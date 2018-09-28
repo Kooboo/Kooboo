@@ -2,7 +2,7 @@
 
 Kooboo is a new way of web development, it contains many things you need to do web development.  It contains a builtin webserver, an email server, template engine, dynamic Database and JavaScript executor. 
 
-The binary release can be download from http://www.kooboo.com
+The binary release can documentation can be found at: http://www.kooboo.com
 
 Some of the features as below: 
 
