@@ -1,0 +1,61 @@
+<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-bind="click: reset" class="close"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.site.view.dataSource"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default" style="margin-top:15px;">
+                    <div class="panel-body" data-bind="error: methodId" style="position: relative">
+                        <div id="action_tree"></div>
+                    </div>
+                </div>
+                <table class="table" data-bind="visible: parameterMappings().length">
+                    <thead>
+                        <tr>
+                            <th data-bind="text: Kooboo.text.component.actionDialog.parameter"></th>
+                            <th data-bind="text: Kooboo.text.component.actionDialog.mapTo"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- ko foreach: parameterMappings -->
+                        <tr>
+                            <td>
+                                {<span class="form-control-static" data-bind="text: fromParameter"></span>}
+                            </td>
+                            <td>
+                                <select class="form-control" data-bind="options:$parent.fields, optionsText: 'name', optionsValue: 'value',optionsCaption:'&lt;Default context&gt;', value: toParameter"></select>
+                            </td>
+                        </tr>
+                        <!-- /ko -->
+                    </tbody>
+                </table>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-2" data-bind="text: Kooboo.text.component.actionDialog.aliasName"></label>
+                        <div class="col-md-10">
+                            <input type="text" class="form-control" data-bind="value:name,error:name,disable:isEdit" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <p class="pull-left">
+                    <i class="fa fa-file icon-state-warning"></i> <span class="margin-right-15" data-bind="text: Kooboo.text.component.actionDialog.global"></span>
+                    <i class="fa fa-file icon-state-info"></i> <span data-bind="text: Kooboo.text.component.actionDialog.local"></span>
+                </p>
+                <!-- ko if:methodId -->
+                <!-- ko if:isGlobal() || isPublic() -->
+                <button class="btn green" data-bind="visible: !isEdit(), click: next, text: Kooboo.text.common.next"></button>
+                <button class="btn green" data-bind="visible: isEdit, click: edit, text: Kooboo.text.common.edit"></button>
+                <!-- /ko -->
+                <!-- ko if: !isGlobal() && !isPublic() -->
+                <button class="btn green" data-bind="click: edit, text: Kooboo.text.common.edit"></button>
+                <!-- /ko -->
+                <!-- /ko -->
+                <button class="btn gray" data-bind="click: reset, text: Kooboo.text.common.cancel" aria-hidden="true"></button>
+            </div>
+        </div>
+    </div>
+</div>

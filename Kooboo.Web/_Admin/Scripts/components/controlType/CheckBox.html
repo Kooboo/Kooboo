@@ -1,0 +1,25 @@
+<div class="form-group">
+    <!-- ko if:isMultilingual -->
+    <label data-bind="text: fieldName() + ' (' + lang() + ')', css: { 'text-muted':  disabled }" class="control-label col-md-3"></label>
+    <!-- /ko -->
+
+    <!-- ko if:!isMultilingual() -->
+    <label data-bind="text: fieldName(), css: { 'text-muted':  disabled }" class="control-label col-md-3"></label>
+    <!-- /ko -->
+
+    <div class="col-md-9" style="position: relative;">
+
+        <!-- ko foreach: options -->
+        <label class="checkbox-inline">
+                <input type="checkbox" name="checkbox" data-bind="value: $data.value, checked: $parent.fieldValue">
+                <span data-bind="text: $data.key"></span>
+            </label>
+        <!-- /ko -->
+
+        <span data-bind="textError: fieldValue" style="position: absolute;">&nbsp;</span>
+
+        <!-- ko if: !!tooltip() -->
+        <span class="help-block" data-bind="text:tooltip"></span>
+        <!-- /ko -->
+    </div>
+</div>

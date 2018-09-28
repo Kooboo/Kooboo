@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{83D7B143-E3AB-44DC-B1FE-ADE82E415AAD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Kooboo.Dom</RootNamespace>
+    <AssemblyName>Kooboo.Dom</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Server|AnyCPU'">
+    <OutputPath>bin\Server\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CSS\Selector\negativePseudoClassSelector.cs" />
+    <Compile Include="EncodingDetector.cs" />
+    <Compile Include="Helper\BomReader.cs" />
+    <Compile Include="CSSParser\CSSParser.cs" />
+    <Compile Include="CSSParser\Definition.cs" />
+    <Compile Include="CSSParser\model\AtRule.cs" />
+    <Compile Include="CSSParser\model\ComponentValue.cs" />
+    <Compile Include="CSSParser\model\ComponentValueExtension.cs" />
+    <Compile Include="CSSParser\model\Declaration.cs" />
+    <Compile Include="CSSParser\model\enumRuleType.cs" />
+    <Compile Include="CSSParser\model\Function.cs" />
+    <Compile Include="CSSParser\model\PreservedToken.cs" />
+    <Compile Include="CSSParser\model\QualifiedRule.cs" />
+    <Compile Include="CSSParser\model\Rule.cs" />
+    <Compile Include="CSSParser\model\SimpleBlock.cs" />
+    <Compile Include="CSSParser\model\stylesheet.cs" />
+    <Compile Include="CSSParser\TokenParser.cs" />
+    <Compile Include="CSSParser\Tokenizer.cs" />
+    <Compile Include="CSSParser\TokenizerHelper.cs" />
+    <Compile Include="CSSParser\Tokens\at_keyword_token.cs" />
+    <Compile Include="CSSParser\Tokens\bad_string_token.cs" />
+    <Compile Include="CSSParser\Tokens\bad_url_token.cs" />
+    <Compile Include="CSSParser\Tokens\CDC_token.cs" />
+    <Compile Include="CSSParser\Tokens\CDO_token.cs" />
+    <Compile Include="CSSParser\Tokens\colon_token.cs" />
+    <Compile Include="CSSParser\Tokens\column_token.cs" />
+    <Compile Include="CSSParser\Tokens\comma_token.cs" />
+    <Compile Include="CSSParser\Tokens\cssToken.cs" />
+    <Compile Include="CSSParser\Tokens\curly_bracket_left_token.cs" />
+    <Compile Include="CSSParser\Tokens\curly_bracket_right_token.cs" />
+    <Compile Include="CSSParser\Tokens\dash_match_token.cs" />
+    <Compile Include="CSSParser\Tokens\delim_token.cs" />
+    <Compile Include="CSSParser\Tokens\dimension_token.cs" />
+    <Compile Include="CSSParser\Tokens\enumHashFlag.cs" />
+    <Compile Include="CSSParser\Tokens\enumNumericType.cs" />
+    <Compile Include="CSSParser\Tokens\enumTokenType.cs" />
+    <Compile Include="CSSParser\Tokens\EOF_token.cs" />
+    <Compile Include="CSSParser\Tokens\function_token.cs" />
+    <Compile Include="CSSParser\Tokens\hash_token.cs" />
+    <Compile Include="CSSParser\Tokens\ident_token.cs" />
+    <Compile Include="CSSParser\Tokens\include_match_token.cs" />
+    <Compile Include="CSSParser\Tokens\number_token.cs" />
+    <Compile Include="CSSParser\Tokens\percentage_token.cs" />
+    <Compile Include="CSSParser\Tokens\prefix_match_token.cs" />
+    <Compile Include="CSSParser\Tokens\round_bracket_left_token.cs" />
+    <Compile Include="CSSParser\Tokens\round_bracket_right_token.cs" />
+    <Compile Include="CSSParser\Tokens\semicolon_token.cs" />
+    <Compile Include="CSSParser\Tokens\square_bracket_left_token.cs" />
+    <Compile Include="CSSParser\Tokens\square_bracket_right_token.cs" />
+    <Compile Include="CSSParser\Tokens\string_token.cs" />
+    <Compile Include="CSSParser\Tokens\substring_match_token.cs" />
+    <Compile Include="CSSParser\Tokens\suffix_match_token.cs" />
+    <Compile Include="CSSParser\Tokens\TokenExtension.cs" />
+    <Compile Include="CSSParser\Tokens\unicode_range_token.cs" />
+    <Compile Include="CSSParser\Tokens\url_token.cs" />
+    <Compile Include="CSSParser\Tokens\whitespace_token.cs" />
+    <Compile Include="CSS\CSSCharsetRule.cs" />
+    <Compile Include="CSS\CSSConditionRule.cs" />
+    <Compile Include="CSS\CSSDeclaration.cs" />
+    <Compile Include="CSS\CSSDeclarationBlock.cs" />
+    <Compile Include="CSS\CSSFontFaceRule.cs" />
+    <Compile Include="CSS\CSSGroupingRule.cs" />
+    <Compile Include="CSS\CSSImportRule.cs" />
+    <Compile Include="CSS\CSSMarginRule.cs" />
+    <Compile Include="CSS\CSSMediaRule.cs" />
+    <Compile Include="CSS\CSSPageRule.cs" />
+    <Compile Include="CSS\CSSPropertyIndex.cs" />
+    <Compile Include="CSS\CSSRule.cs" />
+    <Compile Include="CSS\CSSRuleList.cs" />
+    <Compile Include="CSS\CSSStyleDeclaration.cs" />
+    <Compile Include="CSS\CSSStyleRule.cs" />
+    <Compile Include="CSS\CSSStyleSheet.cs" />
+    <Compile Include="CSS\enumCSSRuleType.cs" />
+    <Compile Include="CSS\Media\MediaQuery.cs" />
+    <Compile Include="CSS\Selector\attributeSelector.cs" />
+    <Compile Include="CSS\Selector\classSelector.cs" />
+    <Compile Include="CSS\Selector\combinatorClause.cs" />
+    <Compile Include="CSS\Selector\combinatorSelector.cs" />
+    <Compile Include="CSS\Selector\Definitions.cs" />
+    <Compile Include="CSS\MediaList.cs" />
+    <Compile Include="CSS\Selector\selectorMatch.cs" />
+    <Compile Include="CSS\Selector\SelectorParser.cs" />
+    <Compile Include="CSS\Selector\idSelector.cs" />
+    <Compile Include="CSS\Selector\pseudoClassSelector.cs" />
+    <Compile Include="CSS\Selector\pseudoElementSelector.cs" />
+    <Compile Include="CSS\Selector\simpleSelector.cs" />
+    <Compile Include="CSS\Selector\simpleSelectorParser.cs" />
+    <Compile Include="CSS\Selector\typeSelector.cs" />
+    <Compile Include="CSS\Selector\universalSelector.cs" />
+    <Compile Include="CSS\StyleSheet.cs" />
+    <Compile Include="CSS\StyleSheetList.cs" />
+    <Compile Include="DomExtension\HtmlElementContentModel.cs" />
+    <Compile Include="DomExtension\HtmlElementSementicIndex.cs" />
+    <Compile Include="DomExtension\HtmlElementType.cs" />
+    <Compile Include="DomExtension\HtmlOptionalTags.cs" />
+    <Compile Include="DomExtension\Location.cs" />
+    <Compile Include="DomExtension\Size.cs" />
+    <Compile Include="DomParser\documentMode.cs" />
+    <Compile Include="DomParser\DomParser.cs" />
+    <Compile Include="DomParser\FormattingElement.cs" />
+    <Compile Include="DomParser\ActiveFormattingElementList.cs" />
+    <Compile Include="DomParser\CharacterReferences.cs" />
+    <Compile Include="DomParser\CommonIdoms.cs" />
+    <Compile Include="DomParser\ElementPointer.cs" />
+    <Compile Include="DomParser\enumInsertionMode.cs" />
+    <Compile Include="DomParser\enumParseState.cs" />
+    <Compile Include="DomParser\enumScriptParseState.cs" />
+    <Compile Include="DomParser\HtmlToken.cs" />
+    <Compile Include="DomParser\enumHtmlTokenType.cs" />
+    <Compile Include="DomParser\insertionLocation.cs" />
+    <Compile Include="DomParser\StackOpenElements.cs" />
+    <Compile Include="DomParser\StackTemplateMode.cs" />
+    <Compile Include="Helper\CharacterExtension.cs" />
+    <Compile Include="DomParser\Tokenizer.cs" />
+    <Compile Include="DomParser\TreeConstruction.cs" />
+    <Compile Include="Dom\Attr.cs" />
+    <Compile Include="Dom\CharacterData.cs" />
+    <Compile Include="Dom\Comment.cs" />
+    <Compile Include="Dom\Document.cs" />
+    <Compile Include="Dom\DocumentFragment.cs" />
+    <Compile Include="Dom\DocumentType.cs" />
+    <Compile Include="Dom\DOMImplementation.cs" />
+    <Compile Include="Dom\DOMTokenList.cs" />
+    <Compile Include="Dom\Element.cs" />
+    <Compile Include="Dom\Html\HTMLElement.cs" />
+    <Compile Include="Dom\Html\HTMLScriptElement.cs" />
+    <Compile Include="Dom\enumNodeComparePosition.cs" />
+    <Compile Include="Dom\enumNodeType.cs" />
+    <Compile Include="Dom\enumWhatToShow.cs" />
+    <Compile Include="Dom\Event.cs" />
+    <Compile Include="Dom\EventTarget.cs" />
+    <Compile Include="Dom\HTMLCollection.cs" />
+    <Compile Include="Dom\Html\HtmlStyleElement.cs" />
+    <Compile Include="Dom\Html\LinkStyle.cs" />
+    <Compile Include="Dom\Node.cs" />
+    <Compile Include="Dom\NodeFilter.cs" />
+    <Compile Include="Dom\NodeIterator.cs" />
+    <Compile Include="Dom\NodeList.cs" />
+    <Compile Include="Dom\ProcessingInstruction.cs" />
+    <Compile Include="Dom\Range.cs" />
+    <Compile Include="Dom\Text.cs" />
+    <Compile Include="Dom\TreeWalker.cs" />
+    <Compile Include="Dom\XmlDocument.cs" />
+    <Compile Include="Helper\Loader.cs" />
+    <Compile Include="Helper\PathHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CSSParser\CSSSerializer.cs" />
+    <Compile Include="CSSParser\CSSFileScanner.cs" />
+    <Compile Include="CSSParser\CSSQuery.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj">
+      <Project>{d8996716-de67-48a3-93d5-b9ca1d2b69da}</Project>
+      <Name>Kooboo.Lib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CSS\CSSNamespaceRule.cs" />
+    <Content Include="CSS\Important.txt" />
+    <Content Include="DomParser\note.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Doc\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,282 @@
+<!-- #layout name=default -->
+<div id="main" class="offset-top">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="page-header">
+                    <h1 class="title">Profile</h1>
+                </div>
+                <ul class="nav nav-tabs" data-bind="foreach: { data: tabs, as: 'tab' }">
+                    <li data-bind="css: { active: $parent.curType() == tab.value }, click: $parent.changeType.bind(this, tab.value)">
+                        <a href="javascript:;" data-bind="text: tab.displayName"></a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <section data-bind="css: { active: curType() == 'Account', in: curType() == 'Account' }" class="tab-pane fade">
+                        <div class="form-horizontal margin-top-20">
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Username</label>
+                                <div class="col-md-9">
+                                    <p data-bind="text: username" class="form-control-static"></p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Email</label>
+                                <div class="col-md-9">
+                                    <!-- ko if: email -->
+                                    <p data-bind="text: email" class="form-control-static"></p>
+                                    <!-- /ko -->
+                                    <!-- ko ifnot: email -->
+                                    <input type="text" class="form-control input-large" data-bind="value: newEmail, error: newEmail">
+                                    <!-- /ko -->
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Language</label>
+                                <div class="col-md-9">
+                                    <select data-bind="options: languageOptions, optionsText: 'value', optionsValue: 'key', value: language" class="form-control input-large"></select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-9 col-md-offset-3">
+                                    <button data-bind="click: saveUser" class="btn green">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section data-bind="css: { active: curType() == 'Password', in: curType() == 'Password' }" class="tab-pane fade">
+                        <div class="form-horizontal margin-top-20">
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Old password</label>
+                                <div class="col-md-9">
+                                    <input type="password" data-bind="value: oldPassword, error: oldPassword" class="form-control input-large">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">New password</label>
+                                <div class="col-md-9">
+                                    <input type="password" data-bind="value: newPassword, error: newPassword" class="form-control input-large">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Confirm password</label>
+                                <div class="col-md-9">
+                                    <input type="password" data-bind="value: confirmPassword, error: confirmPassword" class="form-control input-large">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-9 col-md-offset-3">
+                                    <button data-bind="click: savePassword" class="btn green">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section data-bind="css: { active: curType() == 'Organization', in: curType() == 'Organization' }" class="tab-pane fade">
+                        <div class="form-horizontal margin-top-20">
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Current organization</label>
+                                <div class="col-md-9">
+                                    <p data-bind="text: organizationName" class="form-control-static"></p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Is Admin</label>
+                                <div class="col-md-9">
+                                    <p data-bind="text: Kooboo.text.common[isAdmin()?'yes':'no']" class="form-control-static"></p>
+                                    <span data-bind="visible: !isAdmin()" class="help-block">You are not administrator of current organization, you do not have access to organization profile.</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Switch organization</label>
+                                <div class="col-md-9">
+                                    <select data-bind="options: organizationOptions, optionsText: 'name', optionsValue: 'id', value: organization" class="form-control input-large"></select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-9 col-md-offset-3">
+                                    <button data-bind="click: saveOrganization" class="btn green">Switch</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section data-bind="css: { active: curType() == 'Balance', in: curType() == 'Balance' }" class="tab-pane fade">
+                        <div class="form-horizontal margin-top-20">
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Organization name</label>
+                                <div class="col-md-9">
+                                    <p data-bind="text: organizationName" class="form-control-static"></p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Balance</label>
+                                <div class="col-md-9">
+                                    <p data-bind="text: organizationBalance" class="form-control-static"></p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Voucher</label>
+                                <div class="col-md-9" id="verify-coupon-code">
+                                    <div class="input-group input-large">
+                                        <input data-bind="value: couponCode" class="form-control" type="text">
+                                        <span class="input-group-btn">
+                                            <a data-bind="click: startRecharge" class="btn btn-success">Use now</a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Amount</label>
+                                <div class="col-md-9">
+                                    <input data-bind="value: recharge, error: recharge, attr: { placeholder: Kooboo.text.placeholder.inputValueGreaterThan + '0.01' }, event: { keydown: inputNumberOnly }" class="form-control input-large" type="number">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Payment method</label>
+                                <div class="col-md-9">
+                                    <label class="radio-inline"><input data-bind="checked: paymentMethod" type="radio" name="paymentMethod" value="wechat">Wechat</label>
+                                    <label class="radio-inline" style="display:none"><input data-bind="checked: paymentMethod" type="radio" name="paymentMethod" value="alipay">Alipay</label>
+                                    <label class="radio-inline" style="display:none"><input data-bind="checked: paymentMethod" type="radio" name="paymentMethod" value="creditCard">Credit card</label>
+                                    <label class="radio-inline"><input data-bind="checked: paymentMethod" type="radio" name="paymentMethod" value="paypal">Paypal</label>
+                                </div>
+                            </div>
+                            <div class="margin-bottom-15" data-bind="visible: paymentMethod() == 'creditCard'">
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Card number</label>
+                                    <div class="col-md-9">
+                                        <input type="text" data-bind="value: cardNumber, error: cardNumber" class="form-control input-large">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">Expiration Date</label>
+                                    <div class="col-md-9">
+                                        <div class="input-groups">
+                                            <div class="input-group" style="margin-bottom: 0">
+                                                <input type="text" data-bind="value: expMonth, error: expMonth" class="form-control key input-small" placeholder="MM">
+                                                <span class="input-group-addon">/</span>
+                                                <input type="text" data-bind="value: expYear, error: expYear" class="form-control value input-small" placeholder="YYYY">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3">CVV</label>
+                                    <div class="col-md-9">
+                                        <input type="text" data-bind="value: cvv, error: cvv" class="form-control input-large">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-9 col-md-offset-3">
+                                    <button data-bind="click:paynow" class="btn green">Pay</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section data-bind="css: { active: curType() == 'Users', in: curType() == 'Users' }" class="tab-pane fade">
+                        <div class="form-horizontal margin-top-20">
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Organization name</label>
+                                <div class="col-md-9">
+                                    <p data-bind="text: organizationName" class="form-control-static"></p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Users</label>
+                                <div class="col-md-9">
+                                    <ul data-bind="foreach: organizationUsers">
+                                        <li>
+                                            <span data-bind="text: $data"></span>
+                                            <!-- ko if: $parent.deletableUser($data) -->
+                                            <a href="javascript:;" data-bind="click: $parent.deleteUser.bind(this, $data)" title="Remove">
+                                                <i class="fa fa-close"></i>
+                                            </a>
+                                            <!-- /ko -->
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Add user</label>
+                                <div class="col-md-9">
+                                    <input type="text" data-bind="value: newUser, error: newUser" class="form-control input-large" placeholder="Enter user name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-9 col-md-offset-3">
+                                    <button data-bind="click: addNewUser" class="btn green">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section data-bind="css: { active: curType() == 'DataCenter', in: curType() == 'DataCenter' }" class="tab-pane fade">
+                        <div class="form-horizontal margin-top-20">
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Organization name</label>
+                                <div class="col-md-9">
+                                    <p class="form-control-static" data-bind="text: dataCenterOrganizationName"></p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Current data center</label>
+                                <div class="col-md-9">
+                                    <p class="form-control-static" data-bind="text: dataCenterCurrent"></p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Avaliable data center</label>
+                                <div class="col-md-9">
+                                    <select class="form-control input-large" data-bind="options: avaliableDataCenter, value: newDataCenter, optionsText: 'name', optionsValue: 'value'"></select>
+                                    <span class="help-block">Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.</span>
+                                </div>
+                            </div>
+                            <div class="form-group" data-bind="visible: showUpdateDataCenterBtn">
+                                <div class="col-md-9 col-md-offset-3">
+                                    <button class="btn green" data-bind="click: updateDataCenter">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-bind="modal: paymentModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-bind="click: userConfirmPaymentStatus.bind(this, 'cancel')" class="close"><i class="fa fa-close"></i></button>
+                    <h4 class="modal-title">Payment</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="qr-code" style="text-align:center"></div>
+                </div>
+                <div class="modal-footer">
+                    <button data-bind="click: userConfirmPaymentStatus.bind(this, 'success')" class="btn green">Payment success</button>
+                    <button data-bind="click: userConfirmPaymentStatus.bind(this, 'fail')" class="btn red">Payment failure</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-bind="modal: paypalModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog" style="width:470px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-bind="click: cancelPaypal.bind(this)" class="close"><i class="fa fa-close"></i></button>
+                    <h4 class="modal-title">Payment</h4>
+                </div>
+                <div class="modal-body">
+                    <iframe id="paypalIframe" style="border: none;width:100%;height:550px"></iframe>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- <script src="https://www.paypalobjects.com/api/checkout.js" data-version-4></script> -->
+<!--<script type="text/javascript" src="https://www.2checkout.com/checkout/api/2co.min.js"></script>-->
+<script>
+    (function() {
+        Kooboo.loadJS(["/_Admin/Scripts/lib/jquery.qrcode.min.js"])
+    })()
+</script>
+<script src="/_Admin/View/Account/Profile.js"></script>

@@ -1,0 +1,14 @@
+﻿1. This parser does not execute javascript or take into the consideration of javascript write. 
+
+for example, In the following example, the tree construction stage will be called upon to 
+handle a "p" start tag token while handling the "script" end tag token:
+
+...
+<script>
+ document.write('<p>');
+</script>
+...
+
+This is ignored for now.
+
+2. We do not check encoding for now.

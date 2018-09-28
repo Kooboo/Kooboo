@@ -1,0 +1,6 @@
+﻿Please be aware of the following remarks. 
+
+1. all selctorText are treated as case-insensitive right now. which means. 
+.someClass is identical to .Someclass, and will be groupby or merge in the cssRules (ruleList).
+This is generally true, but not 100% true because HTML document type might define class name to be case-sensitive.
+

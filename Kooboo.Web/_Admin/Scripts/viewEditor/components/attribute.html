@@ -1,0 +1,39 @@
+<div class="modal fade" data-bind="modal:isShow" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-bind="click:reset"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.component.viewEditor.attribute"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-2" data-bind="text: Kooboo.text.component.viewEditor.attribute"></label>
+                        <div class="col-md-10 input-groups">
+                            <!-- ko foreach: { data: attributes, as: 'attribute' } -->
+                            <div class="input-group">
+                                <input type="text" class="form-control key" placeholder="Key" data-bind="typeahead:keys, name:key, value:key, items:3" style="width:150px;">
+                                <span class="input-group-addon">:</span>
+                                <input type="text" class="form-control input-medium" data-bind="textInput: value, error: value">
+                                <span class="input-group-btn">
+                                    <a class="btn btn-default" href="#" data-toggle="tooltip" title="" data-original-title="Remove" data-bind="click: $parent.removeAttribute"><i class="fa fa-minus"></i></a>
+                                </span>
+                            </div>
+                            <div class="margin-bottom-10" data-bind="foreach: { data: fields, as: 'field' }">
+                                <!-- ko foreach: { data: field.list, as: 'li' } -->
+                                <span class="btn btn-xs btn-default" data-bind="text: li.name, click: $component.insertDataField.bind(li, attribute)" href="javascript:;"></span>
+                                <!-- /ko -->
+                            </div>
+                            <!-- /ko -->
+                            <a class="btn dark" href="#" data-bind="click: addAttribute, tooltip: Kooboo.text.tooltip.add"><i class="fa fa-plus"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="click:save, enable:valid(), text: Kooboo.text.common.save"></button>
+                <button class="btn gray" aria-hidden="true" data-bind="click:reset, text: Kooboo.text.common.cancel"></button>
+            </div>
+        </div>
+    </div>
+</div>

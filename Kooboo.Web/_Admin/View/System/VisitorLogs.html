@@ -1,0 +1,119 @@
+<!-- #layout name=blank-->
+<div class="page-header">
+    <h1 class="title">Visitor logs</h1>
+    <div class="form-inline pull-right" data-bind="visible: curLogType() !== 'Graphs'">
+        <label class="control-label">Week</label>
+        <select data-bind="options: weeks, value: week" class="form-control"></select>
+    </div>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'SITES'
+},{
+    name: 'DASHBOARD'
+},{
+    name: Kooboo.text.common.visitorLogs
+}]}"></div>
+<ul data-bind="foreach: logTypes" class="nav nav-tabs">
+    <li data-bind="css: { 'active': $parent.curLogType() == $data.value }, click: $parent.changeLogType.bind(this, $data.value)">
+        <a href="javascript:;" data-bind="text: $data.displayName"></a>
+    </li>
+</ul>
+
+<div class="col-md-12" data-bind="visible: curLogType() == 'Graphs'">
+    <div class="row panel panel-default">
+        <div class="panel-heading clickable" data-bind="click: toggleVisitsCharts">
+            <h3 class="panel-title">Page Views</h3>
+            <a class="btn btn-xs btn-link pull-right"><i class="fa fa-2x" data-bind="css: visitsCharts()?'fa-angle-up':'fa-angle-down'"></i></a>
+        </div>
+        <div class="panel-body" data-bind="collapsein: visitsCharts">
+            <div class="row" id="monthly" style="height: 460px;"></div>
+        </div>
+    </div>
+</div>
+
+<div data-bind="component: { name: 'kb-table', params: tableData }, visible: curLogType() !== 'Graphs'"></div>
+<div data-bind="component: { name: 'kb-pager', params: pager }, visible: curLogType() == 'All'"></div>
+<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-bind="click: resetModal" class="close"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Entries</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Time elapsed</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: entries">
+                        <tr>
+                            <td data-bind="text: $data.value"></td>
+                            <td>
+                                <span data-bind="style:{ background: Kooboo.getLabelColor($data.name()) }, text: Kooboo.text.component.table[$data.name()]" class="label label-sm"></span>
+                            </td>
+                            <td>
+                                <span data-bind="text: $parent.getElapsedTime($data.endTime, $data.startTime)" class="badge badge-success"></span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: resetModal" class="btn btn-default">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-bind="modal: showErrorDetailModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-bind="click: hideErrorDetailModal" class="close"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Error detail</h4>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>IP</th>
+                                <th>Status code</th>
+                                <th>Message</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: errorDetails">
+                            <tr>
+                                <td data-bind="text: $data.ip"></td>
+                                <td>
+                                    <label class="label label-sm label-warning" data-bind="text: $data.statusCode"></label>
+                                </td>
+                                <td data-bind="text: $data.message || '-'"></td>
+                                <td data-bind="text: $data.displayDate"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: hideErrorDetailModal" class="btn btn-default">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/lib/echarts.min.js",
+            "/_Admin/Scripts/tableModel.js",
+            "/_Admin/Scripts/components/kbTable.js",
+            "/_Admin/Scripts/components/kbPager.js",
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+        ])
+    })()
+</script>
+<script src="/_Admin/View/System/VisitorLogs.js"></script>

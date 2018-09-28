@@ -1,0 +1,120 @@
+<!-- #layout name=blank -->
+<div class="page-header">
+    <h1 class="title">Forms</h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'SITES'
+},{
+    name: 'DASHBOARD'
+},{
+    name: Kooboo.text.common.Forms
+}] }"></div>
+<div class="navbar navbar-default">
+    <div class="container-fluid">
+        <a data-bind="attr: { href: createFormUrl }" class="btn green navbar-btn">Create a form</a>
+        <a data-bind="attr: { href: createKooFormUrl }" class="btn green navbar-btn">Create Kform</a>
+        <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
+    </div>
+</div>
+<ul class="nav nav-tabs" data-bind="foreach: types">
+    <li data-bind="css: { 'active' : $data.value === $parent.curType() }">
+        <a href="javascript:;" data-bind="text: $data.displayName, click: $parent.fetchDataByType.bind(this)"></a>
+    </li>
+</ul>
+<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
+<div data-bind="modal: showSettingModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-bind="click: onHideSettingModal" class="close"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Setting</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Enable</label>
+                        <div class="col-md-9">
+                            <input type="checkbox" id="enable-setting-switch" data-bind="checked: enableSetting">
+                        </div>
+                    </div>
+                    <div data-bind="collapsein: enableSetting">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Method</label>
+                            <div class="col-md-9">
+                                <label class="radio-inline">
+                                    <input type="radio" value="get" name="method" data-bind="checked: method">Get
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" value="post" name="method" data-bind="checked: method">Post
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Redirect to</label>
+                            <div class="col-md-9">
+                                <select data-bind="options: linkList, optionsValue: 'path', optionsText: 'name', value: redirect, css: { 'margin-bottom-10': showExternalLinkInput }" class="form-control"></select>
+                                <input type="text" data-bind="value: externalLink, visible: showExternalLinkInput" class="form-control" placeholder="External link address">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Submitter</label>
+                            <div class="col-md-9">
+                                <select data-bind="options: availableSubmitters, optionsValue: 'name', optionsText: 'name', value: formSubmitter" class="form-control"></select>
+                            </div>
+                        </div>
+                        <!-- ko if: settings -->
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Setting</label>
+                            <div class="col-md-9">
+                                <div class="col-md-12">
+                                    <!-- ko foreach: settings -->
+                                    <div class="form-group">
+                                        <label data-bind="text: $data.name && Kooboo.text.component.table[$data.name.toLowerCase()]" class="control-label"></label>
+                                        <!-- ko if: $data.controlType == 'TextBox' -->
+                                        <input type="text" class="form-control" data-bind="value: $data.defaultValue" />
+                                        <!-- /ko -->
+                                        <!-- ko if: $data.controlType == 'TextArea' -->
+                                        <textarea class="form-control" data-bind="value: $data.defaultValue" ></textarea>
+                                        <!-- /ko -->
+                                        <!-- ko if: $data.controlType == 'Selection' -->
+                                        <select data-bind="options: $data.selectionValues, optionsValue: 'key', optionsText: 'value', value: $data.defaultValue" class="form-control"></select>
+                                        <!-- /ko -->
+                                    </div>
+                                    <!-- /ko -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: saveSettingModal" class="btn green">Save</button>
+                <button data-bind="click: onHideSettingModal" class="btn gray">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-bind="component: { name: 'kb-relation-modal' }"></div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbTable.js",
+            "/_Admin/Scripts/components/kbRelationModal.js",
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/lib/codemirror/lib/codemirror.js",
+            "/_Admin/Scripts/lib/codemirror/mode/htmlmixed/htmlmixed.js",
+            "/_Admin/Scripts/lib/codemirror/mode/xml/xml.js",
+            "/_Admin/Scripts/lib/codemirror/mode/javascript/javascript.js",
+            "/_Admin/Scripts/lib/codemirror/mode/css/css.js",
+            "/_Admin/Scripts/kobindings.codemirror.js",
+            "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
+            "/_Admin/Scripts/tableModel.js"
+        ]);
+        Kooboo.loadCSS([
+            "/_Admin/Scripts/lib/codemirror/lib/codemirror.css",
+            "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css"
+        ]);
+    })()
+</script>
+<script src="/_Admin/View/Development/Forms.js"></script>

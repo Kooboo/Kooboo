@@ -1,0 +1,180 @@
+<!-- #layout name=default -->
+<style>
+    .debugger-container {
+        margin: -67px -20px 0;
+        padding: 16px;
+    }
+    
+    .debugger-container ul li {
+        list-style: none;
+        font-size: 14px;
+        font-family: "Source Code Pro", Consolas, Menlo, Monaco, "Courier New", monospace
+    }
+    
+    .code-wrapper {
+        margin: 16px auto;
+        padding: 0;
+        border: 1px solid #e5e5e5;
+        border-radius: 2px;
+        max-height: 500px;
+        overflow-y: auto;
+        background: #fbfbfb;
+    }
+    
+    .line-idx,
+    .line-code {
+        padding: 2px;
+        display: inline-block;
+        position: relative;
+    }
+    
+    .line-idx {
+        padding-left: 12px;
+        padding-right: 16px;
+        background: #e0e0e0;
+        cursor: pointer;
+    }
+    
+    .line-idx i.fa {
+        font-size: 10px;
+        color: #e61d1d;
+        position: absolute;
+        top: 7px;
+        right: 3px;
+        z-index: 1;
+    }
+    
+    .line-idx .hover {
+        display: none;
+        opacity: .3;
+    }
+    
+    .line-idx:hover .hover {
+        display: inline;
+    }
+    
+    .is-current {
+        background: #eeeeee;
+    }
+    
+    .is-current .line-code {
+        background: #ffec58;
+    }
+    
+    .command-histories {
+        margin: 10px -11px -11px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    
+    .command-histories .list-group-item {
+        padding: 0 5px;
+        font-size: 13px;
+    }
+    
+    .command-histories .list-group-item.command:before {
+        content: '·> ';
+        color: #bebebe;
+        letter-spacing: -2px;
+        margin-right: 4px;
+    }
+    
+    .command-histories .list-group-item.result {
+        color: #484df9;
+    }
+    
+    .command-histories .list-group-item.result.error {
+        color: #c03232;
+    }
+    
+    .command-histories .list-group-item.result::before {
+        content: '<· ';
+        color: #bebebe;
+        letter-spacing: -2px;
+        margin-right: 4px;
+    }
+    
+    .form-group.execute-input {
+        margin: -11px;
+    }
+    
+    .variable-container {
+        margin-bottom: 0;
+    }
+    
+    .variable-container .string {
+        color: #29a729;
+    }
+    
+    .variable-container .number {
+        color: #b37429;
+    }
+    
+    .variable-container .boolean {
+        color: #484df9;
+    }
+    
+    .variable-container .null {
+        color: #a524a5;
+    }
+    
+    .variable-container .key {
+        color: #c03232;
+    }
+</style>
+<div id="main" class="fixed">
+    <div class="debugger-container">
+        <!-- ko if: isDebugMode -->
+        <button class="btn btn-default" data-bind="click: debugClick.bind(this, 'none')"><i class="glyphicon glyphicon-arrow-right"></i> <span>Continue</span><span>(F8)</span></button>
+        <!-- /ko -->
+        <!-- ko ifnot: isDebugMode -->
+        <button class="btn btn-default" data-bind="click: startDebug"><i class="glyphicon glyphicon-play"></i> <span>Start debugging</span></button>
+        <!-- /ko -->
+        <button class="btn btn-default" data-bind="click: debugClick.bind(this, 'into')"><i class="glyphicon glyphicon-log-in"></i> <span>Step into</span><span>(F11)</span></button>
+        <button class="btn btn-default" data-bind="click: debugClick.bind(this, 'over')"><i class="glyphicon glyphicon-new-window"></i> <span>Step over</span><span>(F10)</span></button>
+        <button class="btn btn-default" data-bind="click: debugClick.bind(this, 'out')"><i class="glyphicon glyphicon-log-out"></i> <span>Step out</span><span>(Shift + F11)</span></button>
+        <ul class="code-wrapper" data-bind="foreach: { data: lines, as: 'line' }">
+            <li data-bind="css: { 'is-current': line.isCurrent }, attr: { id: 'code-line-' + line.idx() }">
+                <div class="line-idx" data-bind="click: $parent.toggleBreakpoint.bind(this)">
+                    <span data-bind="html: line.index"></span>
+                    <i data-bind="visible: line.isBreakpoint" class="fa fa-circle"></i>
+                    <i class="fa fa-circle hover"></i>
+                </div>
+                <div class="line-code" data-bind="html: line.message"></div>
+            </li>
+        </ul>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-default panel-small">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Variables</h3>
+                    </div>
+                    <div class="panel-body">
+                        <pre class="variable-container" data-bind="html: variablesData"></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default panel-small">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Execute code</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="form-group execute-input">
+                            <div class="input-group">
+                                <input class="form-control" placeholder="Input your code here" type="text" data-bind="value: command, event: { keyup: handleEnter }">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" data-bind="click: executeCode" type="button"><i class="fa fa-arrow-left fa-fw"></i> <span>Execute</span></button>
+                                </span>
+                            </div>
+                        </div>
+                        <ul class="list-group command-histories" data-bind="foreach: { data: executeHistories, as: 'history'}">
+                            <li data-bind="text: history.content, attr: { class: 'list-group-item ' + (history.isCommand ? 'command' : 'result') + (!!history.hasError ? ' error': '')}"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/_Admin/View/Development/KScript/Debugger.js"></script>

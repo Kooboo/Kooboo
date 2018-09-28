@@ -1,0 +1,15 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Kooboo.Render.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="LayoutFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">_layout</Value>
+    </Setting>
+    <Setting Name="StartPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">_admin</Value>
+    </Setting>
+    <Setting Name="ViewFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)">_view</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

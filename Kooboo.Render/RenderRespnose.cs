@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Kooboo.Render
+{
+  public class RenderRespnose
+    {
+        public UrlFileType FileType { get; set; }
+
+        public string ContentType { get; set; }
+         
+        public byte[] BinaryBytes { get; set; } 
+
+        public string Body { get; set; }
+
+        public Stream Stream { get; set; }
+    }
+}

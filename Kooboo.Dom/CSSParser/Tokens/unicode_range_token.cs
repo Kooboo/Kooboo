@@ -1,0 +1,23 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Kooboo.Dom.CSS.Tokens
+{
+    public class unicode_range_token: cssToken
+    {
+
+        public unicode_range_token()
+        {
+            this.Type = enumTokenType.unicode_range;
+
+        }
+
+        public int start;
+
+        public int end;
+
+    }
+}

@@ -1,0 +1,47 @@
+<!-- #layout name=blank -->
+<div class="page-header">
+    <h1 class="title">Urls</h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params: [{
+    name: 'SITES'
+}, {
+    name: 'DASHBOARD'
+}, {
+    name: Kooboo.text.site.URL.name
+}] }"></div>
+
+<ul data-bind="foreach: routeTypes" class="nav nav-tabs">
+    <li data-bind="css: { 'active': $parent.curType() == $data.value }, click: $parent.changeType.bind(this, $data.value)">
+        <a href="javascript:;" data-bind="text: $data.displayName"></a>
+    </li>
+</ul>
+
+<div class="navbar navbar-default">
+    <div class="container-fluid">
+        <a data-bind="visible: showDeleteBtn, click: onDelete, text: Kooboo.text.common[curType() == 'internal' ? 'deleteUsage' : 'delete'] " class="btn red navbar-btn"></a>
+    </div>
+</div>
+
+<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
+<div data-bind="component: { name: 'kb-pager', params: pager }"></div>
+<div data-bind="component: { name: 'kb-relation-modal' }"></div>
+
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/kooboo/Guid.js",
+            "/_Admin/Scripts/kobindings.sortable.js",
+            "/_Admin/Scripts/components/kbTable.js",
+            "/_Admin/Scripts/components/kbPager.js",
+            "/_Admin/Scripts/components/kbRelationModal.js",
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/lib/jquery-ui-customized.js",
+            "/_Admin/Scripts/tableModel.js",
+            "/_Admin/Scripts/lib/x-editable/bootstrap-editable.min.js"
+        ])
+        Kooboo.loadCSS([
+            "/_Admin/Styles/bootstrap-editable/css/bootstrap-editable.css"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Development/URLs.js"></script>

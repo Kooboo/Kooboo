@@ -1,0 +1,85 @@
+<!--#layout name=printMail-->
+<div class="block-email">
+    <div class="email-wrapper-toolbar" data-bind="visible: !printing()">
+        <div class="btn-group pull-left">
+            <button class="btn btn-xs blue" data-bind="click: onPrint"><i class="fa fa-print"></i>Print</button>
+        </div>
+        <div class="btn-group pull-right">
+            <button class="btn btn-xs blue" onclick="javascript:window.close()"><i class="fa fa-close"></i>Close</button>
+        </div>
+    </div>
+    <!-- ko if: currentMail() -->
+    <div class="email-wrapper-content">
+        <div class="email-wrapper-header">
+            <h4 data-bind="text: currentMail().subject || '(' + Kooboo.text.mail.noSubject + ')'" class="title"></h4>
+            <table>
+                <tr>
+                    <th>From</th>
+                    <td>
+                        <strong data-bind="text: currentMail().from.name"></strong>
+                        <!-- ko text: '<' + currentMail().from.address + '>'-->
+                        <!-- /ko -->
+                    </td>
+                </tr>
+                <tr>
+                    <th>To</th>
+                    <td data-bind="foreach: currentMail().to">
+                        <strong data-bind="text: $data.name"></strong>
+                        <!-- ko text: '<' + $data.address + '>' -->
+                        <!-- /ko -->
+                        <!-- ko if: $parent.currentMail().to.length - 1 !== $index() -->,
+                        <!-- /ko -->
+                    </td>
+                </tr>
+                <!-- ko if: currentMail().cc.length -->
+                <tr data-bind="visible: currentMail().cc.length">
+                    <th>Cc</th>
+                    <td data-bind="foreach: currentMail().cc">
+                        <strong data-bind="text: $data.name"></strong>
+                        <!-- ko text: '<' + $data.address + '>' -->
+                        <!-- /ko -->
+                        <!-- ko if: $parent.currentMail().cc.length - 1 !== $index() -->,
+                        <!-- /ko -->
+                    </td>
+                </tr>
+                <!-- /ko -->
+                <!--ko if:  currentMail().bcc.length-->
+                <tr data-bind="visible: currentMail().bcc.length">
+                    <th>Bcc</th>
+                    <td data-bind="foreach: currentMail().bcc">
+                        <strong data-bind="text: $data.name"></strong>
+                        <!-- ko text: '<' + $data.address + '>' -->
+                        <!-- /ko -->
+                        <!-- ko if: $parent.currentMail().bcc.length - 1 !== $index() -->,
+                        <!-- /ko -->
+                    </td>
+                </tr>
+                <!-- /ko -->
+                <tr>
+                    <th>Date</th>
+                    <td>
+                        <strong data-bind="text: getDetailDate"></strong>
+                    </td>
+                </tr>
+                <!-- ko if: currentMail().attachments.length -->
+                <tr data-bind="visible: currentMail().attachments.length">
+                    <th>
+                        <i class="meta fa fa-paperclip"></i>
+                        <!-- ko text: currentMail().attachments.length + Kooboo.text.mail.attachments-->
+                        <!-- /ko -->
+                    </th>
+                    <td>
+                        <!-- ko foreach: currentMail().attachments-->
+                        <a href="javascript:;" data-bind="text: $data.fileName, click: $parent.downloadAttachment.bind(this, $data)"></a>,
+                        <!-- /ko -->
+                        | <strong><a href="" data-bind="click: downloadAttachment.bind(this, null)">Download All</a></strong>
+                    </td>
+                </tr>
+                <!-- /ko -->
+            </table>
+        </div>
+        <iframe src="about:blank" class="auto-height"></iframe>
+    </div>
+    <!-- /ko -->
+</div>
+<script src="/_Admin/View/Emails/Print.js"></script>

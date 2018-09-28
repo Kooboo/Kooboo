@@ -1,0 +1,12 @@
+<div class="page-bar">
+    <ol data-bind="foreach: breads" class="breadcrumb">
+        <!-- ko ifnot: $index() == $parent.breads().length - 1 -->
+        <li>
+            <a data-bind="text: $data.text, attr: { href: $data.url }, click: $component.SPAClick"></a>
+        </li>
+        <!-- /ko -->
+        <!-- ko if: $index() == $parent.breads().length - 1 -->
+        <li data-bind="text: $data.text" class="active"></li>
+        <!-- /ko -->
+    </ol>
+</div>

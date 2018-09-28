@@ -1,0 +1,138 @@
+<!-- ko foreach: validateData -->
+<div class="panel panel-default panel-small">
+    <div class="panel-heading">
+        <a data-bind="click: $parent.removeValiteRule.bind($parent, $data), tooltip: Kooboo.text.common.remove, tooltipPlacement: 'left'" class="btn btn-xs dark pull-right" href="javascript:;">
+            <i class="fa fa-minus"></i>
+        </a>
+        <h4 class="panel-title" data-bind="text: Kooboo.text.validationRule[validateType()]"></h4>
+    </div>
+    <!-- ko if: validateType()==="required" -->
+    <div class="panel-body">
+        <p data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></p>
+        <input type="text" data-bind="value:errorMessage, attr: { placeholder: Kooboo.text.component.fieldEditor.errorMsg }" name="ErrorMessage" class="form-control">
+    </div>
+    <!-- /ko -->
+    <!-- ko if: validateType()==="unique" -->
+    <div class="panel-body">
+        <p data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></p>
+        <input type="text" data-bind="value:errorMessage, attr: { placeholder: Kooboo.text.component.fieldEditor.errorMsg }" name="ErrorMessage" class="form-control">
+    </div>
+    <!-- /ko -->
+    <!-- ko if: validateType()==="stringLength" -->
+    <div class="panel-body">
+        <div class="form-group">
+            <div class="input-group" data-bind="error: result">
+                <span class="kb-error-holder">
+                    <input type="number" id="string-length-min" data-bind="value: min, error: min, errorPlacement: 'left', event: { keydown: Kooboo.event.input.positiveIntegerOnly }" name="Min" class="form-control" placeholder="Minimal value">
+                </span>
+                <span class="input-group-addon">-</span>
+                <span class="kb-error-holder">
+                    <input type="number" id="string-length-max" data-bind="value: max, error: max, event: { keydown: Kooboo.event.input.positiveIntegerOnly }" name="Max" class="form-control" placeholder="Maximum value">
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <p data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></p>
+            <input type="text" data-bind="value:errorMessage, attr: { placeholder: Kooboo.text.component.fieldEditor.errorMsg }" name="ErrorMessage" class="form-control">
+        </div>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: validateType()==="range" -->
+    <div class="panel-body">
+        <div class="form-group">
+            <div class="input-group">
+                <span class="kb-error-holder">
+                    <input type="number" id="range-min" data-bind="value: min, error: min, errorPlacement: 'left', event: { keydown: Kooboo.event.input.positiveIntegerOnly }" name="min" class="form-control" placeholder="Minimal value">
+                </span>
+                <span class="input-group-addon">-</span>
+                <span class="kb-error-holder">
+                    <input type="number" id="range-max" data-bind="value: max, error: max, event: { keydown: Kooboo.event.input.positiveIntegerOnly }" name="max" class="form-control" placeholder="Maximum value">
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <p data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></p>
+            <input type="text" data-bind="value:errorMessage, attr: { placeholder: Kooboo.text.component.fieldEditor.errorMsg }" name="ErrorMessage" class="form-control">
+        </div>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: validateType()==="dataType" -->
+    <div class="panel-body">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-md-3">Data type</label>
+                <div class="col-md-9">
+                    <select class="form-control" data-bind="options: types, optionsText: 'displayName', optionsValue: 'value', value:dataType"></select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-3">Error message</label>
+                <div class="col-md-9">
+                    <input type="text" data-bind="value:errorMessage" name="ErrorMessage" class="form-control">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: validateType()==="regex" -->
+    <div class="panel-body">
+        <div class="form-group">
+            <input type="text" data-bind="value: pattern, error: pattern" name="Pattern" class="form-control" placeholder="Pattern" kb-error-container="#regex-error-container">
+            <div id="regex-error-container" style="position: absolute; width: 150%;"></div>
+        </div>
+        <div class="form-group">
+            <p data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></p>
+            <input type="text" data-bind="value:errorMessage, attr: { placeholder: Kooboo.text.component.fieldEditor.errorMsg }" name="ErrorMessage" class="form-control">
+        </div>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: validateType()==="min" -->
+    <div class="panel-body">
+        <div class="form-group">
+            <input type="number" data-bind="value: minValue, error: minValue, event: { keydown: $parent.inputNumberOnly }" name="minValue" class="form-control" placeholder="Minimal value" kb-error-container="#min-error-container">
+            <div id="min-error-container" style="position: absolute; width: 150%;"></div>
+        </div>
+        <div class="form-group">
+            <p data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></p>
+            <input type="text" data-bind="value: errorMessage, attr: { placeholder: Kooboo.text.component.fieldEditor.errorMsg }" name="ErrorMessage" class="form-control">
+        </div>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: validateType()==="max" -->
+    <div class="panel-body">
+        <div class="form-group">
+            <input type="number" data-bind="value: maxValue, error: maxValue, event: { keydown: $parent.inputNumberOnly }" name="maxValue" class="form-control" placeholder="Maximum value" kb-error-container="#max-error-container">
+            <div id="max-error-container" style="position: absolute; width: 150%;"></div>
+        </div>
+        <div class="form-group">
+            <p data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></p>
+            <input type="text" data-bind="value:errorMessage, attr: { placeholder: Kooboo.text.component.fieldEditor.errorMsg }" name="ErrorMessage" class="form-control">
+        </div>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: validateType()==="minChecked" -->
+    <div class="panel-body">
+        <div class="form-group">
+            <input type="number" data-bind="value: minChecked, error: minChecked, event: { keydown: $parent.inputNumberOnly }" name="minChecked" class="form-control" placeholder="Minimal value" kb-error-container="#min-checked-error-container">
+            <div id="min-checked-error-container" style="position: absolute; width: 150%;"></div>
+        </div>
+        <div class="form-group">
+            <p data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></p>
+            <input type="text" data-bind="value:errorMessage, attr: { placeholder: Kooboo.text.component.fieldEditor.errorMsg }" name="ErrorMessage" class="form-control">
+        </div>
+    </div>
+    <!-- /ko -->
+    <!-- ko if: validateType()==="maxChecked" -->
+    <div class="panel-body">
+        <div class="form-group">
+            <input type="number" data-bind="value: maxChecked, error: maxChecked, event: { keydown: $parent.inputNumberOnly }" name="maxChecked" class="form-control" placeholder="Maximum value" kb-error-container="#max-checked-error-container">
+            <div id="max-checked-error-container" style="position: absolute; width: 150%;"></div>
+        </div>
+        <div class="form-group">
+            <p data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></p>
+            <input type="text" data-bind="value:errorMessage, attr: { placeholder: Kooboo.text.component.fieldEditor.errorMsg }" name="ErrorMessage" class="form-control">
+        </div>
+    </div>
+    <!-- /ko -->
+</div>
+<!-- /ko -->

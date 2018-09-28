@@ -1,0 +1,179 @@
+<!--#layout name=mail-->
+<div class="block-email">
+    <div class="email-panel">
+        <div class="email-panel-header">
+            <div class="btn-group btn-checkbox">
+                <a href="javascript:;" data-toggle="dropdown" class="btn btn-default btn-xs dropdown-toggle">
+                    <input type="checkbox"><i class="fa fa-angle-down"></i>
+                </a>
+                <ul data-bind="foreach: checkTypes" class="dropdown-menu">
+                    <li data-bind="click: $parent.onCheckType.bind(this, $data.value)">
+                        <a href="javascript:;" data-bind="text: $data.displayName"></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown"><span>Action</span> <i class="fa fa-angle-down"></i></button>
+                <ul data-bind="foreach: actions" class="dropdown-menu">
+                    <li data-bind="click: $parent.onAction.bind(this,$data.value), css: { 'disabled': !$parent.selectedList().length }">
+                        <a href="javascript:;" data-bind="text: $data.displayText"></a>
+                    </li>
+                </ul>
+            </div>
+            <button class="btn btn-default btn-xs pull-right" title="Refresh" data-bind="click: refreshList"><i class="fa fa-refresh"></i></button>
+        </div>
+        <div class="list-group">
+            <!-- ko foreach: { data: mailList, as: 'mail' } -->
+            <a data-bind="click: $parent.selectMail, css: { active: mail.reading, highlight: !mail.read() }" href="javascript:;" class="list-group-item">
+                <input type="checkbox" data-bind="checked: mail.selected, click: function(){ return true }, clickBubble: false" class="meta">
+                <!-- ko if: mail.hasAttachment -->
+                <i class="meta fa fa-paperclip"></i>
+                <!-- /ko -->
+                <span data-bind="text: mail.displayDate" class="meta data"></span>
+                <h4 data-bind="text: mail.subject() || '(' + Kooboo.text.mail.noSubject + ')'" class="list-group-item-heading"></h4>
+                <p data-bind="text: mail.from()" class="list-group-item-text nowrap-text"></p>
+            </a>
+            <!-- /ko -->
+            <a href="javascript:;" data-bind="click: loadMore" class="list-group-item action text-center">More...</a>
+        </div>
+    </div>
+    <div data-bind="visible: currentMail" class="email-wrapper">
+        <!-- ko if: currentMail -->
+        <div class="email-wrapper-toolbar">
+            <div class="btn-group pull-left">
+                <a data-bind="click: onReply" class="btn btn-xs blue"><i class="fa fa-reply"></i> <span>Reply</span></a>
+                <button data-toggle="dropdown" class="btn btn-xs blue dropdown-toggle"><i class="fa fa-angle-down"></i></button>
+                <ul class="dropdown-menu">
+                    <li data-bind="click: onForward">
+                        <a href="javascript:;">Forward</a>
+                    </li>
+                    <li data-bind="click: onPrint">
+                        <a href="javascript:;">Print</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li data-bind="click: moveToFolder.bind(this, 'Spam')">
+                        <a href="javascript:;">Spam it</a>
+                    </li>
+                    <li data-bind="click: moveToFolder.bind(this, 'Trash')">
+                        <a href="javascript:;">Delete</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="btn-group pull-right">
+                <a href="javascript:;" data-bind="click: showPrevMail" class="btn btn-xs btn-default"><i class="fa fa-fw fa-angle-left"></i></a>
+                <a href="javascript:;" data-bind="click: showNextMail" class="btn btn-xs btn-default"><i class="fa fa-fw fa-angle-right"></i></a>
+            </div>
+        </div>
+        <div class="email-wrapper-content">
+            <div class="email-wrapper-header">
+                <h4 data-bind="text: currentMail().subject || '(' + Kooboo.text.mail.noSubject + ')'" class="title"></h4>
+                <table>
+                    <tr>
+                        <th><span>From</span>:</th>
+                        <td>
+                            <strong data-bind="text: currentMail().from.name"></strong>
+                            <!-- ko text: '<' + currentMail().from.address + '>'-->
+                            <!-- /ko -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><span>MAIL_TO</span>:</th>
+                        <td data-bind="foreach: currentMail().to">
+                            <strong data-bind="text: $data.name"></strong>
+                            <!-- ko text: '<' + $data.address + '>' -->
+                            <!-- /ko -->
+                            <!-- ko if: $parent.currentMail().to.length - 1 !== $index() -->,
+                            <!-- /ko -->
+                        </td>
+                    </tr>
+                    <!-- ko if: currentMail().cc.length -->
+                    <tr data-bind="visible: currentMail().cc.length">
+                        <th><span>Cc</span>:</th>
+                        <td data-bind="foreach: currentMail().cc">
+                            <strong data-bind="text: $data.name"></strong>
+                            <!-- ko text: '<' + $data.address + '>' -->
+                            <!-- /ko -->
+                            <!-- ko if: $parent.currentMail().cc.length - 1 !== $index() -->,
+                            <!-- /ko -->
+                        </td>
+                    </tr>
+                    <!-- /ko -->
+                    <!--ko if:  currentMail().bcc.length-->
+                    <tr data-bind="visible: currentMail().bcc.length">
+                        <th><span>Bcc</span>:</th>
+                        <td data-bind="foreach: currentMail().bcc">
+                            <strong data-bind="text: $data.name"></strong>
+                            <!-- ko text: '<' + $data.address + '>' -->
+                            <!-- /ko -->
+                            <!-- ko if: $parent.currentMail().bcc.length - 1 !== $index() -->,
+                            <!-- /ko -->
+                        </td>
+                    </tr>
+                    <!-- /ko -->
+                    <tr>
+                        <th><span>Date</span>:</th>
+                        <td>
+                            <strong data-bind="text: getDetailDate"></strong>
+                        </td>
+                    </tr>
+                </table>
+                <!-- ko if: currentMail().attachments.length -->
+                <table>
+                    <tr>
+                        <th>
+                            <i class="meta fa fa-paperclip"></i>
+                            <!-- ko text: currentMail().attachments.length + Kooboo.text.mail.attachments-->
+                            <!-- /ko -->:
+                        </th>
+                        <td>
+                            <!-- ko foreach: currentMail().attachments-->
+                            <a href="javascript:;" data-bind="text: $data.fileName, click: $parent.downloadAttachment.bind(this, $data)"></a>
+                            <!-- ko if: $parent.currentMail().attachments.length - 1 !== $index() -->,
+                            <!-- /ko -->
+                            <!-- /ko -->
+                            | <strong><a href="" data-bind="click: downloadAttachment.bind(this, null)">Download all</a></strong>
+                        </td>
+                    </tr>
+                </table>
+                <!-- /ko -->
+            </div>
+            <iframe src="about:blank" class="auto-height"></iframe>
+        </div>
+        <!-- /ko -->
+    </div>
+</div>
+<div data-bind="modal: showMoveModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-bind="click: resetModal" class="close"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Move to</h4>
+            </div>
+            <div class="modal-body">
+                <div class="note note-info">
+                    <p>The selected messages will be moved</p>
+
+                    <dl>
+                        <!-- ko foreach: selectedList -->
+                        <dt data-bind="text: $data.subject"></dt>
+                        <dd data-bind="text: $parent.getDisplayDate($data.date())"></dd>
+                        <!-- /ko -->
+                    </dl>
+                </div>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Move to</label>
+                        <div class="col-md-10">
+                            <select data-bind="options: folders, optionsText: 'displayName', optionsValue: 'value', value: targetFolder" class="form-control"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: startMove" class="btn green">Save</button>
+                <button data-bind="click: resetModal" class="btn gray">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/_Admin/View/Emails/Inbox.js"></script>

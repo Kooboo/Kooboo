@@ -1,0 +1,45 @@
+<div class="form-group">
+    <!-- ko if:isMultilingual -->
+    <label data-bind="text: fieldName() + ' (' + lang() + ')', css: { 'text-muted': disabled }" class="control-label col-md-3"></label>
+    <!-- /ko -->
+
+    <!-- ko if:!isMultilingual() -->
+    <label data-bind="text: fieldName(), css: { 'text-muted': disabled }" class="control-label col-md-3"></label>
+    <!-- /ko -->
+
+    <div class="col-md-9">
+        <div class="row" data-bind="textError: fieldValue">
+            <div class="col-md-10 kb-files-picker">
+                <!-- ko if: pics().length>0 -->
+                <div class="file-list">
+                    <ul>
+                        <!-- ko foreach: pics -->
+                        <li>
+                            <div class="fileinput-new thumbnail">
+                                <img data-bind="attr:{src:$data.thumbnail}" alt="No Image [120x120]" style="width: 120px; height: 120px;" src="" data-holder-rendered="true">
+                            </div>
+                            <!-- ko text: $data.url -->
+                            <!-- /ko -->
+                            <!-- ko if: !$parent.disabled() -->
+                            <a data-bind="attr: { title: Kooboo.text.common.remove}, click: $parent.removePic.bind($parent, $data)" href="javascript:;">
+                                <i class="fa fa-remove"></i>
+                            </a>
+                            <!-- /ko -->
+                        </li>
+                        <!-- /ko -->
+                    </ul>
+                </div>
+                <!-- /ko -->
+                <input data-bind="value: fieldValue" type="hidden" class="kb-media-grid-value">
+
+                <span data-bind="visible: !disabled()">
+                        <a data-bind="click: selectFile, text: Kooboo.text.common.selectFile" class="btn blue kb-media-grid-causer"></a>
+                    </span>
+            </div>
+        </div>
+        <!-- ko if: !!tooltip() -->
+        <span class="help-block" data-bind="text:tooltip"></span>
+        <!-- /ko -->
+    </div>
+</div>
+<kb-media-dialog params="data: mediaDialogData, multiple: enableMultiple"></kb-media-dialog>

@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Kooboo.Dom.CSS
+{
+    /// <summary>
+    /// http://dev.w3.org/csswg/cssom/#the-cssmarginrule-interface
+    /// </summary>
+    public class CSSMarginRule : CSSRule
+    {
+        public CSSMarginRule()
+        {
+            base.type = enumCSSRuleType.MARGIN_RULE;
+            this.style = new CSSStyleDeclaration();
+        }
+        public string name { get; set; }
+        public CSSStyleDeclaration style { get; set; }
+    }
+}

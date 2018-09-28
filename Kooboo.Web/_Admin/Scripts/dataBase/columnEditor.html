@@ -1,0 +1,94 @@
+<div class="modal fade" data-bind="modal: showModal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onReset"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.component.columnEditor.title"></h4>
+            </div>
+            <div class="modal-body">
+                <!-- ko if: data -->
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label data-bind="text: Kooboo.text.common.name" class="col-md-3 control-label"></label>
+                        <div class="col-md-9">
+                            <!-- ko if: isNew -->
+                            <input type="text" class="form-control" data-bind="value: data().name, error: data().name">
+                            <!-- /ko -->
+                            <!-- ko ifnot: isNew -->
+                            <p class="form-control-static" data-bind="text: data().name"></p>
+                            <!-- /ko -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label data-bind="text: Kooboo.text.component.fieldEditor.controlType" class="col-md-3 control-label"></label>
+                        <div class="col-md-9">
+                            <!-- ko if: availableControlTypes().length > 1 -->
+                            <select class="form-control" data-bind="options: availableControlTypes, optionsText: 'displayName', optionsValue: 'value', value: data().controlType"></select>
+                            <!-- /ko -->
+                            <!-- ko ifnot: availableControlTypes().length > 1-->
+                            <p class="form-control-static" data-bind="text: data().controlType() ? Kooboo.columnEditor.controlTypeNames[data().controlType().toLowerCase()] : ''"></p>
+                            <!-- /ko -->
+                        </div>
+                    </div>
+                    <div class="form-group" data-bind="collapsein: data().controlType() && showOptionForm()">
+                        <label class="col-md-3 control-label">Options</label>
+                        <div class="col-md-9">
+                            <div class="input-groups" data-bind="foreach: data().options, visible: data().options().length">
+                                <div class="input-group">
+                                    <input type="text" class="form-control key input-small" placeholder="Display" data-bind="textInput: $data.key, error: $data.key, errorPlacement: 'left'">
+                                    <span class="input-group-addon">:</span>
+                                    <input type="text" class="form-control value input-small" placeholder="Value" data-bind="textInput: $data.value">
+                                    <span class="input-group-btn" data-bind="error: $data.value"><a class="btn btn-default" href="javascript:;" data-bind="click: $parent.removeOption.bind(this)"><i class="fa fa-minus"></i></a></span>
+                                </div>
+                            </div>
+                            <div>
+                                <a class="btn dark" href="javascript:;" data-bind="click: addOption.bind(this), attr: { disabled: !isAbleToAddOption() }, error: _optionRequired"><i class="fa fa-plus"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group" data-bind="collapsein: data().controlType() && data().controlType().toLowerCase() == 'number'">
+                        <div class="col-md-offset-3 col-md-9">
+                            <label class="checkbox-inline">
+                                <input type="checkbox" data-bind="checked: data().isIncremental, attr: { disabled: data().disableIncremental }">
+                                <span data-bind="text: Kooboo.text.component.columnEditor.incremental"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group" data-bind="collapsein: data().isIncremental()">
+                        <label class="col-md-3 control-label" data-bind="text: Kooboo.text.component.columnEditor.seed"></label>
+                        <div class="col-md-9">
+                            <input type="number" min="1" class="form-control" data-bind="value: data().seed, error: data().seed, event: { keydown: inputNumberOnly }">
+                        </div>
+                    </div>
+                    <div class="form-group" data-bind="collapsein: data().isIncremental()">
+                        <label class="col-md-3 control-label" data-bind="text: Kooboo.text.component.columnEditor.scale"></label>
+                        <div class="col-md-9">
+                            <input type="number" min="1" class="form-control" data-bind="value: data().scale, error: data().scale, event: { keydown: inputNumberOnly }">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-offset-3 col-md-9">
+                            <label class="checkbox-inline">
+                                <input type="checkbox" data-bind="checked: data().isPrimaryKey">
+                                <span data-bind="text: Kooboo.text.component.columnEditor.primaryKey"></span>
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" data-bind="checked: data().isUnique">
+                                <span data-bind="text: Kooboo.text.component.columnEditor.unique"></span>
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" data-bind="checked: data().isIndex">
+                                <span data-bind="text: Kooboo.text.component.columnEditor.index"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!-- /ko -->
+            </div>
+            <div class="modal-footer">
+                <a href="javascript:;" class="btn green" data-bind="click: onEditorSave, text: Kooboo.text.common.save"></a>
+                <a href="javascript:;" class="btn gray" data-bind="click: onReset, text: Kooboo.text.common.cancel"></a>
+            </div>
+        </div>
+    </div>
+</div>

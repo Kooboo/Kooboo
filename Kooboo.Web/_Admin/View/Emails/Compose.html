@@ -1,0 +1,133 @@
+<!--#layout name=mail-->
+<div class="page-header">
+    <h1 class="title">Compose</h1>
+</div>
+<div class="form-horizontal">
+    <div class="form-group">
+        <label class="control-label col-md-1">MAIL_FROM</label>
+        <div class="col-md-11">
+            <select data-bind="value: address, options: addresses, optionsValue: 'id', optionsText: 'address'" class="form-control"></select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-1">MAIL_TO</label>
+        <div class="col-md-11">
+            <input type="text" data-bind="value: receiverAddressesValidate, error: receiverAddressesValidate" class="ko-bindings-error-input">
+            <select style="width: 100%" data-bind="options: defaultReceiver, selectedOptions: receiverAddresses, select2: {
+                tags: true ,
+                tokenSeparators: [',', ' ', ';'],
+                closeOnSelect: true,
+                language:{
+                    'noResults': function(){
+                        return Kooboo.text.mail.noAddressFound
+                    }
+                }
+            }" multiple class="form-control" id="to_selector"></select>
+            <span class="block-helper">
+                <a href="javascript:;" data-bind="click: addCC, visible: !showCC()" tabindex="-1" class="margin-right-10">Add CC</a>
+                <a href="javascript:;" data-bind="click: addBCC, visible: !showBCC()" tabindex="-1">Add Bcc</a>
+            </span>
+        </div>
+    </div>
+    <div data-bind="visible: showCC" class="form-group">
+        <label class="control-label col-md-1">Cc</label>
+        <div class="col-md-11">
+            <input type="text" data-bind="value: ccAddressesValidate, error: ccAddressesValidate" class="ko-bindings-error-input">
+            <select data-bind="options: defaultCC, selectedOptions: ccAddresses, select2: {
+                tags: true ,
+                tokenSeparators: [',', ' ', ';'],
+                closeOnSelect: true,
+                language:{
+                    'noResults': function(){
+                        return Kooboo.text.mail.noAddressFound
+                    }
+                }
+            }" multiple style="width: 100%" id="cc_selector"></select>
+            <span class="block-helper">
+                <a href="javascript:;" data-bind="click: removeCC">Remove</a>
+            </span>
+        </div>
+    </div>
+    <div data-bind="visible: showBCC" class="form-group">
+        <label class="control-label col-md-1">Bcc</label>
+        <div class="col-md-11">
+            <input type="text" data-bind="value: bccAddressesValidate, error: bccAddressesValidate" class="ko-bindings-error-input">
+            <select data-bind="options: defaultBCC, selectedOptions: bccAddresses, select2: {
+                tags: true ,
+                tokenSeparators: [',', ' ', ';'],
+                closeOnSelect: true,
+                language:{
+                    'noResults': function(){
+                        return Kooboo.text.mail.noAddressFound
+                    }
+                }
+            }" multiple style="width: 100%" id="bcc_selector"></select>
+            <span class="block-helper">
+                <a href="javascript:;" data-bind="click: removeBCC">Remove</a>
+            </span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-1">Subject</label>
+        <div class="col-md-11" data-bind="visible: !savingDraft()">
+            <input type="text" data-bind="value: subject, error: subject" class="form-control">
+        </div>
+        <div class="col-md-11" data-bind="visible: savingDraft">
+            <input type="text" data-bind="value: subject" class="form-control">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-1">Attachment</label>
+        <div class="col-md-11">
+
+            <div class="file-list">
+                <div class="btn-group pull-left margin-right-10">
+                    <a class="btn blue btn-file">Select<input type="file" id="attachments"></a>
+                </div>
+                <ul data-bind="visible: attachments().length, foreach: attachments" style="margin-bottom: 0;">
+                    <li>
+                        <span data-bind="text: $data.fileName"></span>
+                        <a href="javascript:;" data-bind="click: $parent.removeAttachment"><span class="fa fa-remove"></span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-md-1">Content</label>
+        <div class="col-md-11">
+            <!-- ko if: contentLoaded -->
+            <textarea data-bind="richeditor: content, value: content, editorConfig:{
+                autoresize_min_height: 300,
+                autoresize_max_height: 600
+            }, mailConfig: true" style="opacity: 0"></textarea>
+            <!-- /ko -->
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-11 col-md-offset-1">
+            <button data-bind="click: send" class="btn green margin-right-5">Send</button>
+            <button data-bind="click: saveDraft" class="btn green margin-right-5">Save draft</button>
+            <button data-bind="click: cancel" class="btn gray">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    Kooboo.mailEditor = {};
+</script>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
+            "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
+            "/_Admin/Scripts/kobindings.richeditor.js",
+            "/_Admin/Scripts/lib/select2.min.js",
+            "/_Admin/Scripts/kobindings.select2.js"
+        ])
+        Kooboo.loadCSS([
+            "/_Admin/Styles/select2/select2.css"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Emails/Compose.js"></script>

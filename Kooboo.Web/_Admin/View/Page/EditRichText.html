@@ -1,0 +1,65 @@
+<!-- #layout name=default -->
+<div id="main" class="fixed">
+    <div class="container">
+        <div class="form-horizontal margin-bottom-25">
+            <div class="form-group">
+                <label class="control-label col-md-1" data-bind="text: Kooboo.text.common.Page + ': '"></label>
+                <div class="col-md-11">
+                    <!-- ko if: isNewPage -->
+                    <input type="text" data-bind="value: name, error: name" class="form-control input-large">
+                    <!-- /ko -->
+                    <!-- ko ifnot: isNewPage -->
+                    <p class="form-control-static" data-bind="text: name"></p>
+                    <!-- /ko -->
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-1">URL</label>
+                <div class="col-md-11">
+                    <input type="text" data-bind="value: url, error: url" class="form-control input-large">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-1">Title</label>
+                <div class="col-md-11">
+                    <input type="text" data-bind="value: title, error: title" class="form-control input-large">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-1">Content</label>
+                <div class="col-md-11">
+                    <textarea data-bind="richeditor: content, editorConfig: {
+                        autoresize_min_height: 400,
+                        autoresize_max_height: 12000
+                    }" style="opacity: 0"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="page-buttons">
+        <div class="btn-group dropup">
+            <button data-bind="click: onSaveAndReturn" class="btn green" style="margin: 0;">Save & Return</button>
+            <a class="btn green dropdown-toggle" data-toggle="dropdown" style="margin:0;min-width:auto;">
+                <i class="fa fa-angle-up"></i>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="javascript:;" data-bind="click: onSave">Save</a></li>
+            </ul>
+        </div>
+        <a data-bind="click: goBack" class="btn gray">Cancel</a>
+    </div>
+    <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog>
+</div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
+            "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
+            "/_Admin/Scripts/kobindings.richeditor.js",
+            "/_Admin/Scripts/kooboo/Guid.js",
+            "/_Admin/Scripts/components/kbMultilangSelector.js",
+            "/_Admin/Scripts/components/kb-media-dialog.js"
+        ]);
+    })()
+</script>
+<script src="/_Admin/View/Page/EditRichText.js"></script>

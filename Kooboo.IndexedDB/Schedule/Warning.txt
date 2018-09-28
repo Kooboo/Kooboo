@@ -1,0 +1,6 @@
+﻿This schedule object is designed for applications that require very heavy use of schedule task. This schedule object features
+
+1. Very faster in Speed. 
+2. Better use of space. 
+
+For regular purpose of schdule task, A regular object store with DateTime tick as the key is good enough to use. 

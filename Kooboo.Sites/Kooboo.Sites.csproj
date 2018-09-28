@@ -1,0 +1,611 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{28102DF1-17F6-439C-B79E-D89F4971E56B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Kooboo.Sites</RootNamespace>
+    <AssemblyName>Kooboo.Sites</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Server|AnyCPU'">
+    <OutputPath>bin\Server\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Authorization\Actions.cs" />
+    <Compile Include="Authorization\EnumUserRole.cs" />
+    <Compile Include="Authorization\Hierarchy.cs" />
+    <Compile Include="Authorization\RoleManagement.cs" />
+    <Compile Include="DataSources\ContentItem.cs" />
+    <Compile Include="DataSources\ContentList.cs" />
+    <Compile Include="DataSources\Filter.cs" />
+    <Compile Include="DataSources\FilterHelper.cs" />
+    <Compile Include="DataSources\kScript.cs" />
+    <Compile Include="DataSources\ScriptSourceManager.cs" />
+    <Compile Include="DataSources\Search.cs" />
+    <Compile Include="DataSources\SiteInfo.cs" />
+    <Compile Include="Diagnosis\CheckerTask.cs" />
+    <Compile Include="Diagnosis\DiagnosisHelper.cs" />
+    <Compile Include="Diagnosis\Advanced\DomParser.cs" />
+    <Compile Include="Diagnosis\Implementation\DuplicateId.cs" />
+    <Compile Include="Diagnosis\Implementation\ExternalLink.cs" />
+    <Compile Include="Diagnosis\Implementation\HtmlTag.cs" />
+    <Compile Include="Diagnosis\Implementation\ImageSize.cs" />
+    <Compile Include="Diagnosis\Implementation\MissingImage.cs" />
+    <Compile Include="Diagnosis\KDiagnosis.cs" />
+    <Compile Include="Diagnosis\SessionStatus.cs" />
+    <Compile Include="Diagnosis\CodeDiagnosis.cs" />
+    <Compile Include="Diagnosis\DiagnosisChecker.cs" />
+    <Compile Include="Diagnosis\DiagnosisSession.cs" />
+    <Compile Include="Diagnosis\IDiagnosis.cs" />
+    <Compile Include="Diagnosis\Implementation\BrokenLink.cs" />
+    <Compile Include="Diagnosis\Manager.cs" />
+    <Compile Include="Diagnosis\Message.cs" />
+    <Compile Include="Diagnosis\MessageType.cs" />
+    <Compile Include="Diagnosis\Progress.cs" />
+    <Compile Include="Engine\IEngine.cs" />
+    <Compile Include="Engine\KForm.cs" />
+    <Compile Include="Engine\KScript.cs" />
+    <Compile Include="Engine\Less.cs" />
+    <Compile Include="Engine\Manager.cs" />
+    <Compile Include="Engine\MarkDown.cs" />
+    <Compile Include="Engine\Text.cs" />
+    <Compile Include="FrontEvent\EventConditionSetting.cs" />
+    <Compile Include="FrontEvent\Condition.cs" />
+    <Compile Include="FrontEvent\ConditionManager.cs" />
+    <Compile Include="FrontEvent\IFrontEvent.cs" />
+    <Compile Include="FrontEvent\Manager.cs" />
+    <Compile Include="Cache\RenderPlan.cs" />
+    <Compile Include="Cache\RouteTree.cs" />
+    <Compile Include="Cache\SiteObject.cs" />
+    <Compile Include="Cache\WebSite.cs" />
+    <Compile Include="Constraints\Implementation\PageHeader.cs" />
+    <Compile Include="Contents\Models\TextContent.cs" />
+    <Compile Include="Contents\UserKeyHelper.cs" />
+    <Compile Include="Events\Cms\SiteObjectChangeEvent.cs" />
+    <Compile Include="Events\FrontFlow\FrontEventHelper.cs" />
+    <Compile Include="FrontEvent\View.cs" />
+    <Compile Include="FrontEvent\Page.cs" />
+    <Compile Include="FrontEvent\Route.cs" />
+    <Compile Include="Events\SiteObjectChangeEventHierarchyResolver.cs" />
+    <Compile Include="FrontEvent\enumEventType.cs" />
+    <Compile Include="Helper\ChangeHelper.cs" />
+    <Compile Include="Helper\ContentHelper.cs" />
+    <Compile Include="Helper\ElementHelper.cs" />
+    <Compile Include="Helper\RelationHelper.cs" />
+    <Compile Include="Helper\RouteHelper.cs" />
+    <Compile Include="HtmlForm\ApiSubmitter.cs" />
+    <Compile Include="HtmlForm\ContentFolderSubmitter.cs" />
+    <Compile Include="HtmlForm\FormManager.cs" />
+    <Compile Include="HtmlForm\SubmitToExternal.cs" />
+    <Compile Include="HtmlForm\SubmitToPage.cs" />
+    <Compile Include="HtmlForm\ValueSubmitter.cs" />
+    <Compile Include="Helper\MenuHelper.cs" />
+    <Compile Include="InlineEditor\CmsRuleChange.cs" />
+    <Compile Include="InlineEditor\Converter\ConvertContext.cs" />
+    <Compile Include="InlineEditor\Converter\ConvertManager.cs" />
+    <Compile Include="InlineEditor\Converter\ConvertResult.cs" />
+    <Compile Include="InlineEditor\Converter\ConvertSourceUpdate.cs" />
+    <Compile Include="InlineEditor\Converter\DataAddResponse.cs" />
+    <Compile Include="InlineEditor\Converter\DataField.cs" />
+    <Compile Include="InlineEditor\Converter\DataManager.cs" />
+    <Compile Include="InlineEditor\Converter\IContinueConverter.cs" />
+    <Compile Include="InlineEditor\Converter\IConverter.cs" />
+    <Compile Include="InlineEditor\Converter\Implementation\ContentListConverter.cs" />
+    <Compile Include="InlineEditor\Converter\Implementation\HtmlBlockConverter.cs" />
+    <Compile Include="InlineEditor\Converter\Implementation\LayoutConverter.cs" />
+    <Compile Include="InlineEditor\Converter\Implementation\MenuConverter.cs" />
+    <Compile Include="InlineEditor\Converter\Implementation\ViewConverter.cs" />
+    <Compile Include="InlineEditor\CssSelectorComparer.cs" />
+    <Compile Include="InlineEditor\EditorContainer.cs" />
+    <Compile Include="InlineEditor\Executor\ConverterExecutor.cs" />
+    <Compile Include="InlineEditor\Executor\DomExecutor.cs" />
+    <Compile Include="InlineEditor\Executor\HtmlBlockExecutor.cs" />
+    <Compile Include="InlineEditor\Executor\ImageExecutor.cs" />
+    <Compile Include="InlineEditor\Executor\LabelExecutor.cs" />
+    <Compile Include="InlineEditor\Executor\ContentExecutor.cs" />
+    <Compile Include="InlineEditor\Executor\StyleExecutor.cs" />
+    <Compile Include="InlineEditor\IInlineExecutor.cs" />
+    <Compile Include="InlineEditor\IInlineModel.cs" />
+    <Compile Include="InlineEditor\InlineSourceUpdate.cs" />
+    <Compile Include="InlineEditor\Model\ConverterModel.cs" />
+    <Compile Include="InlineEditor\Model\ImageModel.cs" />
+    <Compile Include="InlineEditor\Model\StyleModel.cs" />
+    <Compile Include="InlineEditor\UpdateHelper.cs" />
+    <Compile Include="InlineEditor\UpdateManager.cs" />
+    <Compile Include="Models\BusinessRule.cs" />
+    <Compile Include="Models\Code.cs" />
+    <Compile Include="Models\SiteCluster.cs" />
+    <Compile Include="Models\CoreObject.cs" />
+    <Compile Include="Cache\ViewInSamePosition.cs" />
+    <Compile Include="Models\DiskSync.cs" />
+    <Compile Include="Models\FormSetting.cs" />
+    <Compile Include="Models\Notification.cs" />
+    <Compile Include="Models\SiteUser.cs" />
+    <Compile Include="Models\Synchronization.cs" />
+    <Compile Include="Relation\DataMethodRelation.cs" />
+    <Compile Include="Relation\GroupRelation.cs" />
+    <Compile Include="Render\Commands\Command.cs" />
+    <Compile Include="Render\Commands\CommandManager.cs" />
+    <Compile Include="Render\Commands\CommandParser.cs" />
+    <Compile Include="Render\Commands\DBCommandSourceProvider.cs" />
+    <Compile Include="Render\Commands\ICommand.cs" />
+    <Compile Include="Render\Commands\ICommandSourceProvider.cs" />
+    <Compile Include="Render\Commands\IncludeCommand.cs" />
+    <Compile Include="Render\Commands\LayoutCommand.cs" />
+    <Compile Include="Render\Components\Constants.cs" />
+    <Compile Include="Render\Components\ScriptComponent.cs" />
+    <Compile Include="Render\Components\Container.cs" />
+    <Compile Include="Render\Components\Manager.cs" />
+    <Compile Include="Render\Components\ComponentSetting.cs" />
+    <Compile Include="Render\Components\FormComponent.cs" />
+    <Compile Include="Render\Components\HtmlBlockComponent.cs" />
+    <Compile Include="Render\Components\IComponent.cs" />
+    <Compile Include="Render\Components\MenuComponent.cs" />
+    <Compile Include="Render\Components\StyleComponent.cs" />
+    <Compile Include="Render\Components\ViewComponent.cs" />
+    <Compile Include="Render\EvaluatorContainer.cs" />
+    <Compile Include="Render\EvaluatorOption.cs" />
+    <Compile Include="Render\EvaluatorResponse.cs" />
+    <Compile Include="Render\Evaluators\Attribute.cs" />
+    <Compile Include="Render\Evaluators\CommandEvaluator.cs" />
+    <Compile Include="Render\Evaluators\Component.cs" />
+    <Compile Include="Render\Evaluators\Condition.cs" />
+    <Compile Include="Render\Evaluators\Content.cs" />
+    <Compile Include="Render\Evaluators\ForEvaluator.cs" />
+    <Compile Include="Render\Evaluators\Form.cs" />
+    <Compile Include="Render\Evaluators\Header.cs" />
+    <Compile Include="Render\Evaluators\Label.cs" />
+    <Compile Include="Render\Evaluators\OmitTag.cs" />
+    <Compile Include="Render\Evaluators\PlaceHolder.cs" />
+    <Compile Include="Render\Evaluators\Repeater.cs" />
+    <Compile Include="Render\Evaluators\SiteLayout.cs" />
+    <Compile Include="Render\Evaluators\Url.cs" />
+    <Compile Include="Render\Functions\PagerFunction.cs" />
+    <Compile Include="Render\Functions\AppendUrlFunction.cs" />
+    <Compile Include="Render\Functions\CountFunction.cs" />
+    <Compile Include="Render\Functions\DateFormatFunction.cs" />
+    <Compile Include="Render\Functions\FunctionContainer.cs" />
+    <Compile Include="Render\Functions\FunctionHelper.cs" />
+    <Compile Include="Render\Functions\GetValueFunction.cs" />
+    <Compile Include="Render\Functions\IFunction.cs" />
+    <Compile Include="Render\Functions\JoinFunction.cs" />
+    <Compile Include="Render\Functions\NowFunction.cs" />
+    <Compile Include="Render\Functions\SetUrlFunction.cs" />
+    <Compile Include="Render\Functions\ValueFunction.cs" />
+    <Compile Include="Render\IEvaluator.cs" />
+    <Compile Include="Render\IRenderTask.cs" />
+    <Compile Include="Render\ModelBinder.cs" />
+    <Compile Include="Render\Renderers\CodeRenderer.cs" />
+    <Compile Include="Render\RenderEvaluator.cs" />
+    <Compile Include="Render\RenderHelper.cs" />
+    <Compile Include="Render\RenderPlanManager.cs" />
+    <Compile Include="Render\RenderResult.cs" />
+    <Compile Include="Render\RenderTask\BindingContentRenderTask.cs" />
+    <Compile Include="Render\RenderTask\BindingObjectRenderTask.cs" />
+    <Compile Include="Render\RenderTask\BindingTextContentItemRenderTask.cs" />
+    <Compile Include="Render\RenderTask\CommandRenderTask.cs" />
+    <Compile Include="Render\RenderTask\ComponentsRenderTask.cs" />
+    <Compile Include="Render\RenderTask\ConditionEvaluatorImplementations.cs" />
+    <Compile Include="Render\RenderTask\ConditionEvaluatorManagercs.cs" />
+    <Compile Include="Render\RenderTask\ConditionRenderTask.cs" />
+    <Compile Include="Render\RenderTask\ContentRenderTask.cs" />
+    <Compile Include="Render\RenderTask\DataRenderTask.cs" />
+    <Compile Include="Render\RenderTask\FormRenderTask.cs" />
+    <Compile Include="Render\RenderTask\ForRenderTask.cs" />
+    <Compile Include="Render\RenderTask\HeaderRenderTask.cs" />
+    <Compile Include="Render\RenderTask\IConditionEvaluator.cs" />
+    <Compile Include="Render\RenderTask\LabelRenderTask.cs" />
+    <Compile Include="Render\RenderTask\LayoutRenderTask.cs" />
+    <Compile Include="Render\RenderTask\PlaceHolderRenderTask.cs" />
+    <Compile Include="Render\RenderTask\RepeaterRenderTask.cs" />
+    <Compile Include="Render\RenderTask\UrlRenderTask.cs" />
+    <Compile Include="Render\RenderTask\ValueRenderTask.cs" />
+    <Compile Include="Repository\BusinessRuleRepository.cs" />
+    <Compile Include="Repository\CodeRepository.cs" />
+    <Compile Include="Repository\SiteClusterRepository.cs" />
+    <Compile Include="Repository\ContinueConvertRepository.cs" />
+    <Compile Include="Repository\FormSettingRepository.cs" />
+    <Compile Include="Repository\SearchIndexRepository.cs" />
+    <Compile Include="Repository\NotificationRepository.cs" />
+    <Compile Include="Repository\SynchronizationRepository.cs" />
+    <Compile Include="Repository\TextContentRepository.cs" />
+    <Compile Include="ScriptDebugger\DebugInfo.cs" />
+    <Compile Include="ScriptDebugger\SessionManager.cs" />
+    <Compile Include="ScriptDebugger\DebugSession.cs" />
+    <Compile Include="Scripting\Extension.cs" />
+    <Compile Include="Scripting\ExtensionContainer.cs" />
+    <Compile Include="Scripting\Extension\SiteUser.cs" />
+    <Compile Include="Scripting\Extension\WebService.cs" />
+    <Compile Include="Scripting\Global\Cookie.cs" />
+    <Compile Include="Scripting\Global\Curl.cs" />
+    <Compile Include="Scripting\Global\Current.cs" />
+    <Compile Include="Scripting\Global\kDatabase.cs" />
+    <Compile Include="Scripting\Global\FileIO.cs" />
+    <Compile Include="Scripting\Global\kHelper.cs" />
+    <Compile Include="Scripting\Global\kKeyValue.cs" />
+    <Compile Include="Scripting\Global\Mail.cs" />
+    <Compile Include="Scripting\Global\MsSql.cs" />
+    <Compile Include="Scripting\Global\Request.cs" />
+    <Compile Include="Scripting\Global\Response.cs" />
+    <Compile Include="Scripting\Constants.cs" />
+    <Compile Include="Scripting\Global\Security.cs" />
+    <Compile Include="Scripting\Global\SiteData.cs" />
+    <Compile Include="Scripting\Global\Session.cs" />
+    <Compile Include="Scripting\Global\kSiteDb.cs" />
+    <Compile Include="Scripting\Global\KTable.cs" />
+    <Compile Include="Scripting\Global\SiteItem\BinaryRepository.cs" />
+    <Compile Include="Scripting\Global\SiteItem\MultilingualObject.cs" />
+    <Compile Include="Scripting\Global\SiteItem\MultilingualRepository.cs" />
+    <Compile Include="Scripting\Global\SiteItem\RepositoryBase.cs" />
+    <Compile Include="Scripting\Global\SiteItem\RoutableTextRepository.cs" />
+    <Compile Include="Scripting\Global\SiteItem\TextContentObject.cs" />
+    <Compile Include="Scripting\Global\SiteItem\TextContentQuery.cs" />
+    <Compile Include="Scripting\Global\SiteItem\TextContentRepository.cs" />
+    <Compile Include="Scripting\Global\SiteItem\TextRepository.cs" />
+    <Compile Include="Scripting\Global\SiteItem\UserModel.cs" />
+    <Compile Include="Scripting\Global\SiteItem\WebSiteModel.cs" />
+    <Compile Include="Scripting\Global\TableQuery.cs" />
+    <Compile Include="Scripting\Global\UploadFile.cs" />
+    <Compile Include="Scripting\Helper\Render\RenderBase.cs" />
+    <Compile Include="Scripting\Helper\Model\ExampleSetting.cs" />
+    <Compile Include="Scripting\Helper\Model\KScriptSetting.cs" />
+    <Compile Include="Scripting\Helper\Model\Method.cs" />
+    <Compile Include="Scripting\Helper\Render\Node.cs" />
+    <Compile Include="Scripting\Helper\Model\Param.cs" />
+    <Compile Include="Scripting\Helper\Model\Property.cs" />
+    <Compile Include="Scripting\Helper\Model\SettingBase.cs" />
+    <Compile Include="Scripting\Helper\Render\Tree.cs" />
+    <Compile Include="Scripting\Helper\Model\ViewSetting.cs" />
+    <Compile Include="Scripting\Helper\ScriptHelper\ScriptHelperReader.cs" />
+    <Compile Include="Scripting\Helper\ScriptHelper\ScriptHelperRender.cs" />
+    <Compile Include="Scripting\Helper\DocumentHelper.cs" />
+    <Compile Include="Scripting\Helper\ViewHelp\ViewHelpReader.cs" />
+    <Compile Include="Scripting\Helper\ViewHelp\ViewHelpRender.cs" />
+    <Compile Include="Scripting\Interfaces\IScriptNS.cs" />
+    <Compile Include="Scripting\JsList.cs" />
+    <Compile Include="Scripting\k.cs" />
+    <Compile Include="Scripting\Manager.cs" />
+    <Compile Include="Scripting\ScriptHelper.cs" />
+    <Compile Include="Scripting\Setting.cs" />
+    <Compile Include="Service\CleanerService.cs" />
+    <Compile Include="Service\ColorService.cs" />
+    <Compile Include="Service\DownloadEncoding.cs" />
+    <Compile Include="Service\FontService.cs" />
+    <Compile Include="Service\GroupService.cs" />
+    <Compile Include="Service\StartService.cs" />
+    <Compile Include="Service\VisitorLogService.cs" />
+    <Compile Include="InlineEditor\ActionType.cs" />
+    <Compile Include="InlineEditor\Model\AttributeModel.cs" />
+    <Compile Include="InlineEditor\Model\ContentModel.cs" />
+    <Compile Include="InlineEditor\Model\DomModel.cs" />
+    <Compile Include="InlineEditor\Model\HtmlblockModel.cs" />
+    <Compile Include="InlineEditor\Model\LabelModel.cs" />
+    <Compile Include="SiteTransfer\Analyzer\AnalyzerManager.cs" />
+    <Compile Include="SiteTransfer\Analyzer\CSSAnalyzer.cs" />
+    <Compile Include="SiteTransfer\Analyzer\EmbeddedAnalyzer.cs" />
+    <Compile Include="SiteTransfer\Analyzer\ImageAnalyzer.cs" />
+    <Compile Include="SiteTransfer\Analyzer\InlineAnalyzer.cs" />
+    <Compile Include="SiteTransfer\Analyzer\LinkAnalyzer.cs" />
+    <Compile Include="SiteTransfer\Analyzer\ScriptAnalyzer.cs" />
+    <Compile Include="SiteTransfer\Continue\ContinueConverter.cs" />
+    <Compile Include="SiteTransfer\Continue\ContinueTask.cs" />
+    <Compile Include="SiteTransfer\CssManager.cs" />
+    <Compile Include="SiteTransfer\Download\DownloadManager.cs" />
+    <Compile Include="SiteTransfer\Download\DownloadTask.cs" />
+    <Compile Include="SiteTransfer\Download\FileExecutor.cs" />
+    <Compile Include="SiteTransfer\Download\IDownloadExecutor.cs" />
+    <Compile Include="SiteTransfer\Download\ImageExecutor.cs" />
+    <Compile Include="SiteTransfer\Download\ScriptExecutor.cs" />
+    <Compile Include="SiteTransfer\Download\StyleExecutor.cs" />
+    <Compile Include="SiteTransfer\EnumTransferTaskType.cs" />
+    <Compile Include="SiteTransfer\Executor\TransferByLevelExecutor.cs" />
+    <Compile Include="SiteTransfer\Executor\TransferBySelectedPagesExecutor.cs" />
+    <Compile Include="SiteTransfer\Executor\TransferProgress.cs" />
+    <Compile Include="SiteTransfer\Executor\TransferSinglePageExecutor.cs" />
+    <Compile Include="SiteTransfer\ITransferAnalyzer.cs" />
+    <Compile Include="SiteTransfer\ITransferExecutor.cs" />
+    <Compile Include="SiteTransfer\Model\TransferPage.cs" />
+    <Compile Include="SiteTransfer\Model\TransferTask.cs" />
+    <Compile Include="SiteTransfer\TransferHelper.cs" />
+    <Compile Include="SiteTransfer\TransferManager.cs" />
+    <Compile Include="SiteTransfer\WebSiteScanService.cs" />
+    <Compile Include="Sync\DiskSyncHelper.cs" />
+    <Compile Include="Sync\DiskSyncManager.cs" />
+    <Compile Include="Sync\SiteClusterSync\ClusterUrl.cs" />
+    <Compile Include="Sync\SiteClusterSync\SiteClusterManager.cs" />
+    <Compile Include="Sync\SiteClusterSync\SiteSetting.cs" />
+    <Compile Include="TaskQueue\DiskSyncWorker.cs" />
+    <Compile Include="TaskQueue\EusureWorker.cs" />
+    <Compile Include="TaskQueue\JobBackGroundWorker.cs" />
+    <Compile Include="TaskQueue\Model\BlockUpload.cs" />
+    <Compile Include="TaskQueue\Model\DeleteDisk.cs" />
+    <Compile Include="TaskQueue\Model\PostSyncObject.cs" />
+    <Compile Include="TaskQueue\Model\WriteToDisk.cs" />
+    <Compile Include="TaskQueue\QueueManager.cs" />
+    <Compile Include="TaskQueue\QueueWorker.cs" />
+    <Compile Include="TaskQueue\TaskExecutor\DeleteDiskExecutor.cs" />
+    <Compile Include="TaskQueue\TaskExecutor\HttpPostStringContentExecutor.cs" />
+    <Compile Include="TaskQueue\TaskExecutor\ITaskExecutor.cs" />
+    <Compile Include="TaskQueue\QueueObject.cs" />
+    <Compile Include="Repository\IEmbeddableRepositoryBase.cs" />
+    <Compile Include="TaskQueue\Model\HttpPostStringContent.cs" />
+    <Compile Include="Sync\Cluster\ClusterService.cs" />
+    <Compile Include="Sync\Cluster\ClusterNode.cs" />
+    <Compile Include="Constraints\ConstraintResponse.cs" />
+    <Compile Include="Constraints\ConstraintChecker.cs" />
+    <Compile Include="Constraints\Implementation\CssResource.cs" />
+    <Compile Include="Constraints\Implementation\DomReference.cs" />
+    <Compile Include="Constraints\IConstraintChecker.cs" />
+    <Compile Include="Contents\Models\ContentFolder.cs" />
+    <Compile Include="Contents\Models\MultipleLanguageObject.cs" />
+    <Compile Include="Contents\Models\ContentProperty.cs" />
+    <Compile Include="Contents\Models\ContentType.cs" />
+    <Compile Include="Contents\Models\ControlTypes.cs" />
+    <Compile Include="Contents\Models\HtmlBlock.cs" />
+    <Compile Include="Contents\Models\Label.cs" />
+    <Compile Include="Contents\Models\ContentCategory.cs" />
+    <Compile Include="Contents\Models\SystemFields.cs" />
+    <Compile Include="Models\DomObject.cs" />
+    <Compile Include="Models\IDomObject.cs" />
+    <Compile Include="Relation\ObjectRelation.cs" />
+    <Compile Include="Relation\RelationManager.cs" />
+    <Compile Include="Service\ConstTypeService.cs" />
+    <Compile Include="Cache\CompileMethod.cs" />
+    <Compile Include="DataSources\DataMethodExecutor.cs" />
+    <Compile Include="DataSources\DataSourceHelper.cs" />
+    <Compile Include="DataSources\Models\TypeFieldModel.cs" />
+    <Compile Include="DataSources\Models\TypeInfoModel.cs" />
+    <Compile Include="DataSources\ParameterBinder.cs" />
+    <Compile Include="Events\Cms\SiteObjectEvent.cs" />
+    <Compile Include="Events\Handlers\HandleWebSiteChange.cs" />
+    <Compile Include="Models\DownloadTrack.cs" />
+    <Compile Include="Models\Form.cs" />
+    <Compile Include="Models\FormValue.cs" />
+    <Compile Include="Models\HtmlHeader.cs" />
+    <Compile Include="Models\HtmlMeta.cs" />
+    <Compile Include="Models\ObjectInfo.cs" />
+    <Compile Include="Models\ResourceGroup.cs" />
+    <Compile Include="Models\SiteChanges.cs" />
+    <Compile Include="Models\SiteObject.cs" />
+    <Compile Include="Models\SourceUpdate.cs" />
+    <Compile Include="Models\SyncSetting.cs" />
+    <Compile Include="Models\ViewDataMethod.cs" />
+    <Compile Include="DataSources\Content\ContentQueryParams.cs" />
+    <Compile Include="DataSources\DataSourceContainer.cs" />
+    <Compile Include="DataSources\SiteDataSource.cs" />
+    <Compile Include="Extensions\DomExtension.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Models\CmsCssDeclaration.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Render\Renderers\ViewRenderer.cs" />
+    <Compile Include="Render\RenderTask\Condition\ConditionEvaluatorImplementations.cs" />
+    <Compile Include="Render\RenderTask\Condition\IConditionEvaluator.cs" />
+    <Compile Include="Render\RenderTask\Condition\RepeatCondition.cs" />
+    <Compile Include="Repository\CmsChangeHandler.cs" />
+    <Compile Include="Repository\CmsCssRuleRepository.cs" />
+    <Compile Include="Repository\CmsFileRepository.cs" />
+    <Compile Include="Repository\ContentCategoryRepository.cs" />
+    <Compile Include="Repository\ContentFolderRepository.cs" />
+    <Compile Include="Repository\ContentTypeRepository.cs" />
+    <Compile Include="Repository\CssDeclarationRepository.cs" />
+    <Compile Include="Repository\DataMethodSettingRepository.cs" />
+    <Compile Include="Repository\DomElementRepository.cs" />
+    <Compile Include="Repository\ExternalResourceRepository.cs" />
+    <Compile Include="Repository\FolderRepository.cs" />
+    <Compile Include="Repository\FormRepository.cs" />
+    <Compile Include="Repository\FormValueRepository.cs" />
+    <Compile Include="Repository\HtmlBlockRepository.cs" />
+    <Compile Include="Repository\ImageRepository.cs" />
+    <Compile Include="Repository\LabelRepository.cs" />
+    <Compile Include="Repository\LayoutRepository.cs" />
+    <Compile Include="Repository\MenuRepository.cs" />
+    <Compile Include="Repository\PageRepository.cs" />
+    <Compile Include="Repository\RelationRepository.cs" />
+    <Compile Include="Repository\ResourceGroupRepository.cs" />
+    <Compile Include="Repository\RouteRepository.cs" />
+    <Compile Include="Repository\ScriptRepository.cs" />
+    <Compile Include="Repository\SiteRepositoryBase.cs" />
+    <Compile Include="Repository\SiteDb.cs" />
+    <Compile Include="Relation\CmsCssRuleRelation.cs" />
+    <Compile Include="Relation\DomRelation.cs" />
+    <Compile Include="Render\RenderEngine.cs" />
+    <Compile Include="Render\Renderers\StyleRenderer.cs" />
+    <Compile Include="Render\Renderers\FileRenderer.cs" />
+    <Compile Include="Render\Renderers\ImageRenderer.cs" />
+    <Compile Include="Render\RouteRenderer.cs" />
+    <Compile Include="Render\Renderers\PageRenderer.cs" />
+    <Compile Include="Render\Renderers\ScriptRenderer.cs" />
+    <Compile Include="Render\FrontContext.cs" />
+    <Compile Include="Repository\StyleRepository.cs" />
+    <Compile Include="Repository\ThumbnailRepository.cs" />
+    <Compile Include="Repository\TransferPageRepository.cs" />
+    <Compile Include="Repository\TransferTaskRepository.cs" />
+    <Compile Include="Repository\ViewDataMethodRepository.cs" />
+    <Compile Include="Repository\ViewRepository.cs" />
+    <Compile Include="Routing\PageRoute.cs" />
+    <Compile Include="Service\BindingService.cs" />
+    <Compile Include="Service\HtmlHeadService.cs" />
+    <Compile Include="Service\DomService.cs" />
+    <Compile Include="Service\DomUrlService.cs" />
+    <Compile Include="Service\LogService.cs" />
+    <Compile Include="Service\MenuService.cs" />
+    <Compile Include="Service\ObjectService.cs" />
+    <Compile Include="Service\WebSiteService.cs" />
+    <Compile Include="SiteConstants.cs" />
+    <Compile Include="SiteElements\LayoutCleaner.cs" />
+    <Compile Include="SiteElements\LayoutElements.cs" />
+    <Compile Include="SiteElements\PageElement.cs" />
+    <Compile Include="SiteElements\PageElementManager.cs" />
+    <Compile Include="Sync\Stores.cs" />
+    <Compile Include="Sync\Cluster\NodeProgress.cs" />
+    <Compile Include="Sync\Cluster\Integrity.cs" />
+    <Compile Include="Sync\Cluster\NodeUpdate.cs" />
+    <Compile Include="Sync\DiskDbUrl.cs" />
+    <Compile Include="Sync\DiskPathService.cs" />
+    <Compile Include="Sync\DiskSyncFolderWatcher.cs" />
+    <Compile Include="Sync\ImportExport.cs" />
+    <Compile Include="Sync\PullRequest.cs" />
+    <Compile Include="Sync\SyncObject.cs" />
+    <Compile Include="Sync\SyncObjectConvertor.cs" />
+    <Compile Include="Sync\SyncService.cs" />
+    <Compile Include="Systems\Routes.cs" />
+    <Compile Include="Systems\SystemRender.cs" />
+    <Compile Include="Tag\AllowedTags.cs" />
+    <Compile Include="Tag\ContentModel.cs" />
+    <Compile Include="Tag\ElementFilter.cs" />
+    <Compile Include="Tag\Property.cs" />
+    <Compile Include="Tag\Sementic.cs" />
+    <Compile Include="Models\ExternalResource.cs" />
+    <Compile Include="Models\Folder.cs" />
+    <Compile Include="Models\Path.cs" />
+    <Compile Include="Models\Thumbnail.cs" />
+    <Compile Include="Service\CssService.cs" />
+    <Compile Include="Service\DomAttribue.cs" />
+    <Compile Include="Service\PageService.cs" />
+    <Compile Include="Service\PathService.cs" />
+    <Compile Include="Service\ThumbnailService.cs" />
+    <Compile Include="Extensions\SiteExtension.cs" />
+    <Compile Include="Models\CmsCssRule.cs" />
+    <Compile Include="Models\CmsFile.cs" />
+    <Compile Include="Models\Menu.cs" />
+    <Compile Include="Models\Image.cs" />
+    <Compile Include="Models\Layout.cs" />
+    <Compile Include="Models\Page.cs" />
+    <Compile Include="Models\Script.cs" />
+    <Compile Include="Models\Style.cs" />
+    <Compile Include="Models\View.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Relation\StyleRelation.cs" />
+    <Compile Include="Routing\Route.cs" />
+    <Compile Include="Routing\ObjectRoute.cs" />
+    <Compile Include="Routing\PathTree.cs" />
+    <Compile Include="Tag\TagGroup.cs" />
+    <Compile Include="TAL\ConstTALAttributes.cs" />
+    <Compile Include="TAL\Functions\IFunction.cs" />
+    <Compile Include="TaskQueue\TaskExecutor\PostSyncObjectTask.cs" />
+    <Compile Include="TaskQueue\TaskExecutor\TaskExecutorContainer.cs" />
+    <Compile Include="TaskQueue\TaskExecutor\WriteToDiskExecutor.cs" />
+    <Compile Include="ThreadPool\StorePool.cs" />
+    <Compile Include="Upgrade\ContentDataSourceUpgrade.cs" />
+    <Compile Include="Upgrade\HardCodeUpgrade.cs" />
+    <Compile Include="Upgrade\IApplicationUpgrade.cs" />
+    <Compile Include="Upgrade\IWebSiteUpgrade.cs" />
+    <Compile Include="Upgrade\SiteContentDataSourceUpgrade.cs" />
+    <Compile Include="Upgrade\UpdateChecker.cs" />
+    <Compile Include="Upgrade\UpgradeHandler.cs" />
+    <Compile Include="Upgrade\UpgradeManager.cs" />
+    <Compile Include="ViewModel\CategoryContentsViewModel.cs" />
+    <Compile Include="ViewModel\ClusterWebSite.cs" />
+    <Compile Include="ViewModel\ColorDeclaration.cs" />
+    <Compile Include="ViewModel\DiskSize.cs" />
+    <Compile Include="ViewModel\FontFamilyDeclaration.cs" />
+    <Compile Include="ViewModel\MenuViewModel.cs" />
+    <Compile Include="ViewModel\TextContent.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj">
+      <Project>{d8413e81-0018-4dab-aeaf-5d36c3c43a52}</Project>
+      <Name>Kooboo.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj">
+      <Project>{83d7b143-e3ab-44dc-b1fe-ade82e415aad}</Project>
+      <Name>Kooboo.Dom</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj">
+      <Project>{d9e6c6ef-2480-46f5-bb81-d21b8456075a}</Project>
+      <Name>Kooboo.IndexedDB</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj">
+      <Project>{d8996716-de67-48a3-93d5-b9ca1d2b69da}</Project>
+      <Name>Kooboo.Lib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.csproj">
+      <Project>{6fd5d24d-1bc3-487b-b62d-388c7091231e}</Project>
+      <Name>Kooboo.Mail</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.csproj">
+      <Project>{9833e83f-1aa7-42a2-a55e-543e56558d49}</Project>
+      <Name>Kooboo.Search</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TAL\Binding\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

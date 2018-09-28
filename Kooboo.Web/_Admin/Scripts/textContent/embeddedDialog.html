@@ -1,0 +1,26 @@
+<div id="embeddedDialog" class="modal fade" data-backdrop="static" data-bind="" style="z-index: 200002">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-bind="click: close"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.common.Embedded"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <div class="navbar navbar-default">
+                            <div class="container-fluid">
+                                <a data-bind="click: newTextContent, text: Kooboo.text.common.new" class="btn green navbar-btn"></a>
+                                <a data-bind="visible: showDeleteBtn, click: onDelete, text: Kooboo.text.common.delete" class="btn red navbar-btn"></a>
+                            </div>
+                        </div>
+                        <div data-bind="component: { name: 'kb-table', params: tableData }"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: close, text: Kooboo.text.common.OK" class="btn btn-default"></button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,53 @@
+﻿<!-- #layout name=default -->
+<div id="main" class="offset-top">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="page-header">
+                    <h1 class="title">Create a new site</h1>
+                </div>
+                <form data-bind="submit: onCreateSubmit">
+                    <fieldset class="form-horizontal">
+                        <div class="note note-info">
+                            <p>Create a blank new website, and use well defined elements to develop your website.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="SiteName">Site name</label>
+                            <div class="col-md-10">
+                                <input data-bind="value: siteName, error: siteName" class="input-medium form-control" placeholder="Site name" type="text">
+                                <span class="help-block">Start with letters and no space allowed.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="SubDomain">domain</label>
+                            <div class="col-md-10">
+                                <div class="form-inline">
+                                    <input data-bind="value: subDomain" class="input-medium form-control" placeholder="SubDomain" type="text">
+                                    <select data-bind="foreach: domains, value: rootDomain, error: subDomain" class="form-control">
+                                        <option data-bind="text: '.'+$data.domainName, value: $data.domainName"></option>
+                                    </select>
+                                </div>
+                                <span class="help-block">Give your site a domain that other people can access.</span>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <ul class="pager">
+                        <li class="next"><button class="btn blue" type="submit">Start</button></li>
+                        <li class="previous"><a data-bind="click: SPAClick" class="btn gray">Return</a></li>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/SPA.js"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Sites/Create.js"></script>

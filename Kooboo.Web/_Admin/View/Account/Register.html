@@ -1,0 +1,156 @@
+﻿<!-- #layout name=empty -->
+<div class="page-loading" style="display: none;">
+    <div class="content">
+        <p><i class="fa fa-spinner fa-spin"></i> <span>Registering...</span></p>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+            <div class="block-small-form">
+                <div class="logo">
+                    <img src="/_Admin/Images/logo-blue.png" alt="Logo">
+                </div>
+                <form data-bind="submit: onRegister">
+                    <div class="form-group">
+                        <label class="sr-only">Username</label>
+                        <input class="form-control" type="text" data-bind="value: username, error: username" placeholder="Username" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only">Email</label>
+                        <input class="form-control" type="text" data-bind="value: email, error: email" placeholder="Email address" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only">Password</label>
+                        <input class="form-control" type="password" data-bind="value: password, error: password" placeholder="Password" />
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only">Password</label>
+                        <input class="form-control" type="password" data-bind="value: confirmPassword, error: confirmPassword" placeholder="Confirm your password" />
+                    </div>
+                    <div class="form-group">
+                        <p class="form-control-static"><span>By clicking 'Sign up', you agree to our</span> <a href="#">terms of service</a> <span>and</span> <a href="#">privacy policy</a>.</p>
+                    </div>
+
+                    <input type="hidden" name="Captcha" value="123" />
+                    <a class="btn gray pull-left" data-bind="attr: { href: loginPageUrl }">Back</a>
+                    <button class="btn blue pull-right" type="submit">Sign up</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function() {
+
+        var registerViewModel = function() {
+            var self = this;
+
+            self.showError = ko.observable(false);
+
+            self.username = ko.validateField({
+                required: Kooboo.text.validation.required,
+                stringlength: {
+                    min: 5,
+                    max: 255,
+                    message: Kooboo.text.validation.minLength + 5 + ", " + Kooboo.text.validation.maxLength + 255
+                },
+                remote: {
+                    url: Kooboo.User.isUniqueName(),
+                    message: Kooboo.text.validation.taken,
+                    type: "get",
+                    data: {
+                        name: function() {
+                            return self.username()
+                        }
+                    }
+                },
+                regex: {
+                    pattern: /^\w+$/,
+                    message: Kooboo.text.validation.usernameInvalid
+                }
+            });
+
+            self.email = ko.validateField({
+                required: Kooboo.text.validation.required,
+                regex: {
+                    pattern: /^\s*[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~]+(\.[a-zA-Z0-9!#$%&'*+\-/=?^_`{|}~]+)*@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})\s*$/,
+                    message: Kooboo.text.validation.emailInvalid
+                },
+                remote: {
+                    url: Kooboo.User.isUniqueEmail(),
+                    message: Kooboo.text.validation.taken,
+                    type: "get",
+                    data: {
+                        email: function () {
+                            return self.email()
+                        }
+                    }
+                }
+            });
+
+            self.password = ko.validateField({
+                required: Kooboo.text.validation.required
+            });
+            self.password.subscribe(function() {
+                self.confirmPassword.valueHasMutated();
+            })
+
+            self.confirmPassword = ko.validateField({
+                required: Kooboo.text.validation.required,
+                equals: {
+                    value: function() {
+                        return self.password()
+                    },
+                    related: self.password,
+                    message: Kooboo.text.validation.notEqual
+                }
+            });
+
+            self.isValid = function() {
+                if (!self.username()) {
+                    self.username("")
+                }
+                if (!self.email()) {
+                    self.email("")
+                }
+                if (!self.password()) {
+                    self.password("")
+                }
+                if (!self.confirmPassword()) {
+                    self.confirmPassword("")
+                }
+
+                return self.username.isValid() &&
+                    self.email.isValid() &&
+                    self.password.isValid() &&
+                    self.confirmPassword.isValid();
+            };
+
+            self.onRegister = function() {
+                if (self.isValid()) {
+                    self.showError(false);
+
+                    Kooboo.User.register({
+                        username: self.username(),
+                        password: self.password(),
+                        email: self.email()
+                    }).then(function(res) {
+                        if (res.success) {
+                            location.href = Kooboo.Route.User.RegisterSuccess;
+                        }
+                    });
+                } else {
+                    self.showError(true);
+                }
+            }
+
+            self.loginPageUrl = ko.pureComputed(function() {
+                return Kooboo.Route.User.LoginPage;
+            });
+        }
+
+        var register = new registerViewModel();
+        ko.applyBindings(register, document.getElementsByClassName("container")[0]);
+    });
+</script>

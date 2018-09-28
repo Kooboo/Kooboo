@@ -1,0 +1,197 @@
+﻿<!-- #layout name=blank-->
+
+<div class="page-header">
+    <h1 class="title">Data sources</h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params: [{
+    name: 'SITES'
+},{
+    name: 'DASHBOARD'
+},{
+    name: Kooboo.text.common.DataSources
+}]}"></div>
+<ul class="nav nav-tabs">
+    <li class="active"><a href="#tab_1_1" data-toggle="tab" aria-expanded="true">Public</a></li>
+    <li class=""><a href="#tab_1_2" data-toggle="tab" aria-expanded="false">Private</a></li>
+</ul>
+<div class="tab-content">
+    <section class="tab-pane fade active in" id="tab_1_1">
+        <table id="publicDataSourceTable" class="table table-striped table-hover data-source-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th class="table-common">Type</th>
+                    <th class="table-common">Used by</th>
+                    <th class="table-action"></th>
+                    <th class="table-action"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ko foreach: publicDataSource -->
+                <tr data-bind="attr:{'data-name': level}">
+                    <td>
+                        <span class="table-tree-indent"></span>
+                        <a class="table-tree-toggle" href="#">
+                            <i class="fa fa-caret-down" data-bind="visible: methods.length>0"></i> <i class="fa fa-file margin-right-5"></i><!-- ko text: displayName --><!-- /ko -->
+                        </a>
+                        <!-- ko if: isThridPartyDataSource -->
+                        <span data-bind="text: assembly" class="text-muted"></span>
+                        <!-- /ko -->
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="text-right">
+                        <div data-bind="tooltip: Kooboo.text.tooltip.add" class="btn-group">
+                            <button class="btn btn-xs blue dropdown-toggle" data-toggle="dropdown"><i class="fa fa-plus"></i></button>
+                            <ul class="dropdown-menu pull-right">
+                                <li data-bind="foreach: methods">
+                                    <!-- ko if: isGlobal -->
+                                    <a data-bind="text: methodName, attr: {href: newMethodUrl}"></a>
+                                    <!-- /ko -->
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                <!-- ko foreach: methods -->
+                <tr data-bind="attr:{'data-parent': $parent.level}">
+                    <td>
+                        <span class="table-tree-indent" style="width: 11px;"></span>
+                        <!-- ko if: isGlobal -->
+                        <span data-bind="attr:{'data-content': des}" data-toggle="popover" data-trigger="hover" data-placement="right" title="Description">
+                            <i class="fa fa-flash"></i> <span></span>
+                        <!-- ko text: methodName -->
+                        <!-- /ko -->
+                        </span>
+                        <!-- /ko -->
+                        <!-- ko ifnot: isGlobal -->
+                        <a data-bind="attr: {href: editUrl, 'data-content': des}" data-toggle="popover" data-trigger="hover" data-placement="right" title="Description">
+                            <i class="fa fa-flash"></i>
+                            <!-- ko text: displayName -->
+                            <!-- /ko -->
+                        </a>
+                        <!-- /ko -->
+                    </td>
+                    <td>
+                        <!-- ko if: isGlobal -->
+                        <span class="label label-sm blue">Global</span>
+                        <!-- /ko -->
+                        <!-- ko ifnot: isGlobal -->
+                        <span class="label label-sm orange">Local</span>
+                        <!-- /ko -->
+                    </td>
+                    <td>
+                        <!-- ko if: Object.keys($data.relations).length > 0 -->
+                        <!-- ko foreach: { data: Object.keys($data.relations), as: 'refer' } -->
+                        <a data-bind="text: $parent.relations[refer] + ' ' + Kooboo.text.component.table[refer.toLowerCase()], click: $root.getRelation.bind(this, $parent), clickBubble: false, style: { background: Kooboo.getLabelColor(refer.toLowerCase()) }" href="javascript:;"
+                            class="label label-sm"></a>
+                        <!-- /ko -->
+                        <!-- /ko -->
+                        <!-- ko ifnot: Object.keys($data.relations).length > 0 -->
+                        -
+                        <!-- /ko -->
+                    </td>
+                    <td>
+                        <!-- ko ifnot: isGlobal -->
+                        <a data-bind="attr: {href: editUrl}" class="btn btn-sm btn-default blue">Edit</a>
+                        <!-- /ko -->
+                    </td>
+                    <td class="text-right">
+                        <!-- ko ifnot: isGlobal -->
+                        <a href="javascript:;" data-bind="click: $root.deleteMethod" class="btn btn-xs red"><i class="fa fa-minus"></i></a>
+                        <!-- /ko -->
+                    </td>
+                </tr>
+                <!-- /ko -->
+                <!-- /ko -->
+
+            </tbody>
+        </table>
+    </section>
+    <section class="tab-pane fade" id="tab_1_2">
+        <table id="privateDataSourceTable" class="table table-striped table-hover data-source-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th class="table-common">Type</th>
+                    <th class="table-common">Used by</th>
+                    <th class="table-action"></th>
+                    <th class="table-action"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ko foreach: privateDataSource -->
+                <tr data-bind="attr:{'data-name': level}">
+                    <td>
+                        <span class="table-tree-indent"></span>
+                        <a class="table-tree-toggle" href="#">
+                            <i class="fa fa-caret-down" data-bind="visible: methods.length>0"></i> <i class="fa fa-file margin-right-5"></i><!-- ko text: displayName --><!-- /ko -->
+                        </a>
+                        <!-- ko if: isThridPartyDataSource -->
+                        <span data-bind="text: assembly" class="text-muted"></span>
+                        <!-- /ko -->
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="text-right"></td>
+                </tr>
+                <!-- ko foreach: { data: methods, as: 'method' } -->
+                <tr data-bind="attr:{'data-parent': $parent.level}">
+                    <td>
+                        <span class="table-tree-indent" style="width: 11px;"></span>
+                        <!-- ko if: isGlobal -->
+                        <span data-bind="attr:{'data-content': des}" data-toggle="popover" data-trigger="hover" data-placement="right" title="Description">
+                            <i class="fa fa-flash"></i> <span></span>
+                        <!-- ko text: method.methodName -->
+                        <!-- /ko -->
+                        </span>
+                        <!-- /ko -->
+                        <!-- ko ifnot: method.isGlobal -->
+                        <span data-bind="attr: {'data-content': des}" data-toggle="popover" data-trigger="hover" data-placement="right" title="Description">
+                            <i class="fa fa-flash"></i> <!-- ko text: viewName + " " + originalMethodName --><!-- /ko -->
+                        </span>
+                        <!-- /ko -->
+                    </td>
+                    <td>
+                        <!-- ko if: method.isGlobal -->
+                        <span class="label label-sm blue">Global</span>
+                        <!-- /ko -->
+                        <!-- ko ifnot:method. isGlobal -->
+                        <span class="label label-sm orange">Local</span>
+                        <!-- /ko -->
+                    </td>
+                    <td>
+                        <!-- ko if: Object.keys(method.relations).length > 0 -->
+                        <!-- ko foreach: { data: Object.keys(method.relations), as: 'refer' } -->
+                        <a data-bind="text: method.relations[refer] + ' ' + Kooboo.text.component.table[refer.toLowerCase()], click: $root.getRelation.bind(this, $parent), clickBubble: false, style: { background: Kooboo.getLabelColor(refer.toLowerCase()) }" href="javascript:;"
+                            class="label label-sm"></a>
+                        <!-- /ko -->
+                        <!-- /ko -->
+                        <!-- ko ifnot: Object.keys(method.relations).length > 0 -->
+                        -
+                        <!-- /ko -->
+                    </td>
+                    <td></td>
+                    <td class="text-right"></td>
+                </tr>
+                <!-- /ko -->
+                <!-- /ko -->
+
+            </tbody>
+        </table>
+    </section>
+    <div data-bind="component: { name: 'kb-relation-modal' }"></div>
+</div>
+
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbRelationModal.js",
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/tableModel.js"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Development/DataSources.js"></script>

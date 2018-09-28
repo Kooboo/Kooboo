@@ -1,0 +1,139 @@
+﻿<!-- #layout name=default -->
+<div id="main" class="offset-top">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="page-header">
+                    <h1 class="title">Transfer a website</h1>
+                </div>
+                <form data-bind="submit: startConvert">
+                    <fieldset class="form-horizontal">
+                        <div class="note note-info">
+                            <p>Enter any website Url, Kooboo will clone the website and allow you to inline edit anything directly.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="url" class="col-md-2 control-label">URL</label>
+                            <div class="col-md-10">
+                                <input data-bind="value: url, error: url, event: { keydown: handleEnter }, hasFocus: urlFocused" type="text" class="form-control" placeholder="URL, example: http://www.kooboo.com/">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="SiteName" class="col-md-2 control-label">Site name</label>
+                            <div class="col-md-10">
+                                <input data-bind="textInput: siteName, error: siteName" type="text" class="form-control input-medium" placeholder="Site name">
+                                <span class="help-block">Start with letters and no space allowed.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="SubDomain" class="col-md-2 control-label">Domain</label>
+                            <div class="col-md-10">
+                                <div class="form-inline">
+                                    <div data-bind="error: subDomain" style="display: inline-block">
+                                        <input data-bind="textInput: subDomain" type="text" class="input-medium form-control" placeholder="SubDomain" />
+                                        <div class="form-group">
+                                            <select data-bind="foreach: domains, value: rootDomain" class="form-control">
+                                        <option data-bind="text: '.'+$data.domainName, value: $data.domainName"></option>
+                                    </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="help-block">Give your site a domain that other people can access.</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group" k-if="kooboosetting.IsLocal = true">
+                            <label class="col-md-2 control-label">Setting</label>
+                            <div class="col-md-10">
+                                <div class="radio">
+                                    <label>
+                                    <input data-bind="checked: convertType" name="ConvertType" type="radio" value="0" /><span>Auto</span>
+                                </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                    <input data-bind="checked: convertType" name="ConvertType" type="radio" value="1" /><span>SemiAuto</span>
+                                </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                    <input data-bind="checked: convertType" name="ConvertType" type="radio" value="2" /><span>Manual</span>
+                                </label>
+                                </div>
+
+                                <div data-bind="visible: !autoConvert()" class="panel panel-default margin-top-10">
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div data-bind="css: { 'col-md-6': convertType() == 1, 'col-md-10': convertType() == 2 }">
+                                                <label for="pages">Pages</label>
+                                                <input data-bind="value: totalPages" class="form-control" placeholder="pages" />
+                                                <span class="help-block">Max amount of pages to clone</span>
+                                            </div>
+                                            <div data-bind="visible: convertType() == 1" class="col-md-6">
+                                                <label for="deeps">Deeps</label>
+                                                <select data-bind="options: ['1','2','3','4','5'],value: depth" class="form-control"></select>
+                                                <span class="help-block">The number of clicks away from the start page</span>
+                                            </div>
+                                            <div data-bind="visible: enableScan" class="col-md-2">
+                                                <label>&nbsp;</label>
+                                                <button data-bind="enable: url() && !autoConvert(), click: scanStart" class="btn btn-block green" tabindex="-1">Scan</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <table class="table table-striped table-hover" data-bind="visible: scanDone">
+                                        <thead>
+                                            <tr>
+                                                <th class="table-checkbox"><input type="checkbox" data-bind="checked: checkAllUrl"></th>
+                                                <th class="table-short">No.</th>
+                                                <th>Page URL</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody data-bind="foreach: urls">
+                                            <tr data-bind="click: $parent.checkUrl">
+                                                <td><input type="checkbox" data-bind="value:$data.value, checked: $data.selected" name="ConvertUrls" style="pointer-events: none;" /></td>
+                                                <td data-bind="text:$index()+1"></td>
+                                                <td style="white-space: nowrap;">
+                                                    <i class="fa fa-file icon-color-blue"></i>
+                                                    <!--ko text: $data.value-->
+                                                    <!--/ko-->
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" k-if="kooboosetting.IsLocal = false">
+                            <label class="col-md-2 control-label">Setting</label>
+                            <div class="col-md-10">
+                                <p class="form-control-static"><strong>* This online version allows you to clone not more than 3 pages, use desktop version if you need more.</strong></p>
+
+                                <div class="radio" style="display: none;">
+                                    <label>
+                                        <input data-bind="checked: convertType" name="ConvertType" type="radio" value="3" /><span>Online</span>
+                                    </label>
+                                </div>
+                            </div>
+                            </div>
+                    </fieldset>
+                    <ul class="pager">
+                        <li class="previous"><a data-bind="click: SPAClick" class="btn gray">Return</a></li>
+                        <li class="next start">
+                            <button data-bind="attr:{ disabled: startDisabled }" class="btn blue" type="submit">Start</button>
+                        </li>
+                    </ul>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (function() {
+            Kooboo.loadJS([
+                "/_Admin/Scripts/SPA.js"
+            ])
+        })()
+    </script>
+    <script src="/_Admin/View/Sites/Transfer.js"></script>

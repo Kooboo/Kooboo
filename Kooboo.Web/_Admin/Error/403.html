@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="Shortcut Icon" href="/_Admin/favicon.ico">
+    <title>Document</title>
+    <link rel="stylesheet" href="/_Admin/Styles/styles.css">
+    <link rel="stylesheet" href="/_Admin/Error/css/page.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4 col-sm-12 text-center">
+                <div class="content margin-bottom-20">
+                    <div class="content-container">
+                        <div class="error-container">
+                            <div class="content">
+                                <div class="error-code">403</div>
+                                <div class="error-msg margin-bottom-20">Access Denied</div>
+                                <div class="description text-center">
+                                    <p>User: <span k-content="User.Username"></span> is not allowed to view this page.</p>
+                                    <p>You can <a href="/_Admin/Account/Logout">Logout</a> and retry.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="copyright">
+                    <div>Powered by <a href="https://www.kooboo.com" target="_blank">Kooboo</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

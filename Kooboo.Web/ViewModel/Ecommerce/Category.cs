@@ -1,0 +1,38 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Kooboo.Web.ViewModel.Ecommerce
+{
+   public class CategoryViewModel
+    {
+        public Guid Id { get; set; }
+
+        public string Name { get; set; }
+
+        public string Values { get; set; }
+
+        private List<CategoryViewModel> _subcats; 
+
+        public List<CategoryViewModel> SubCats {
+            get
+            {
+                if (_subcats == null)
+                {
+                    _subcats = new List<CategoryViewModel>(); 
+                }
+                return _subcats; 
+            }
+            set
+            {
+                _subcats = value; 
+            }
+
+        }
+
+    }
+
+
+}

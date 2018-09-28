@@ -1,0 +1,18 @@
+﻿using Kooboo.Data.Definition;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+  
+//Kooboo.Sites.DataSources.FilterDefinition
+
+namespace Kooboo.Sites.DataSources
+{ 
+    public class FilterDefinition
+    {
+        public string FieldName { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Comparer Comparer { get; set; } = Comparer.EqualTo; 
+
+        public string FieldValue { get; set; }
+    }
+}

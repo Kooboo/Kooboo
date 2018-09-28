@@ -1,0 +1,23 @@
+﻿<p style="margin: 1em 0px; color: rgb(0, 0, 0); font-family: sans-serif; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+    <dfn id="syntax-cdata" data-anolis-xref="syntax-cdata" style="font-weight: bold; font-style: normal;">CDATA sections</dfn><span class="Apple-converted-space">&nbsp;</span>must consist of the following components, in this order:</p>
+<ol style="color: rgb(0, 0, 0); font-family: sans-serif; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px;">
+    <li style="margin: 1em 0px;">The string &quot;<code data-anolis-xref="" style="font-size: inherit; font-family: monospace; font-variant: normal; color: rgb(217, 59, 0);">&lt;![CDATA[</code>&quot;.</li>
+    <li style="margin: 1em 0px;">Optionally,<span class="Apple-converted-space">&nbsp;</span><a data-anolis-xref="syntax-text" href="http://www.w3.org/TR/html5/syntax.html#syntax-text" style="color: rgb(102, 0, 153); background: transparent;">text</a>, with the additional restriction that the text must not contain the string &quot;<code data-anolis-xref="" style="font-size: inherit; font-family: monospace; font-variant: normal; color: rgb(217, 59, 0);">]]&gt;</code>&quot;.</li>
+    <li style="margin: 1em 0px;">The string &quot;<code data-anolis-xref="" style="font-size: inherit; font-family: monospace; font-variant: normal; color: rgb(217, 59, 0);">]]&gt;</code>&quot;.</li>
+</ol>
+<div class="example" style="display: block; color: rgb(34, 34, 34); border-left-style: solid; border-color: rgb(192, 192, 192); border-left-width: 0.25em; margin-left: 1em; padding-left: 1em; padding-bottom: 0.5em; font-family: sans-serif; font-size: medium; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; background: rgb(252, 252, 252);">
+    <p style="margin: 1em 0px;">
+        CDATA sections can only be used in foreign content (MathML or SVG). In this example, a CDATA section is used to escape the contents of an<span class="Apple-converted-space">&nbsp;</span><code style="font-size: inherit; font-family: monospace; font-variant: normal; color: rgb(217, 59, 0);">ms</code><span class="Apple-converted-space">&nbsp;</span>element:</p>
+    <pre style="margin-left: 2em; white-space: pre-wrap; font-size: inherit; font-family: monospace; font-variant: normal;">&lt;p&gt;You can add a string to a number, but this stringifies the number:&lt;/p&gt;
+&lt;math&gt;
+ &lt;ms&gt;&lt;![CDATA[x&lt;y]]&gt;&lt;/ms&gt;
+ &lt;mo&gt;+&lt;/mo&gt;
+ &lt;mn&gt;3&lt;/mn&gt;
+ &lt;mo&gt;=&lt;/mo&gt;
+ &lt;ms&gt;&lt;![CDATA[x&lt;y3]]&gt;&lt;/ms&gt;
+&lt;/math&gt;</pre>
+</div>
+<p>
+    &nbsp;</p>
+<p>
+    &nbsp;</p>

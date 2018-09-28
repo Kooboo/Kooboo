@@ -1,0 +1,367 @@
+<!-- #layout name=default -->
+<style>
+    .bx-wrapper .bx-prev {
+        background: url("/_Admin/Scripts/lib/bxSlider/images/controls.png") no-repeat 0 -32px;
+    }
+    
+    .bx-wrapper .bx-next {
+        background: url("/_Admin/Scripts/lib/bxSlider/images/controls.png") no-repeat -43px -32px;
+    }
+</style>
+<div id="main">
+    <div class="content-fluid">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <div class="page-header">
+                    <h1 class="title">Template</h1>
+                    <div class="col-md-4 pull-right" data-bind="visible: type() == 'list'">
+                        <div class="row input-group">
+                            <input type="text" data-bind="value: searchKey, hasFocus: keywordFocus, event: { keyup: handleEnter }" class="form-control" placeholder="Enter your keyword" style="height: 32px;">
+                            <div class="input-group-btn">
+                                <button class="btn btn-default" data-bind="click: searchStart"><i class="fa fa-search"></i>Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix">
+                    <ul class="nav nav-tabs" data-bind="visible: !searched()">
+                        <li data-bind="click: changeType.bind(this, 'list')">
+                            <a href="#public" data-toggle="tab">Public</a>
+                        </li>
+                        <li data-bind="click: changeType.bind(this, 'personal')">
+                            <a href="#personal" data-toggle="tab">Personal</a>
+                        </li>
+                    </ul>
+                    <div class="alert alert-block alert-info" data-bind="visible: searched(), css: { 'alert-info': packages().length, 'alert-warning': !packages().length }">
+                        <!-- ko if: packages().length -->
+                        <h4>Search result</h4>
+                        <p data-bind="text: Kooboo.text.site.template.weHaveFound + searchCount() + Kooboo.text.site.template.templateUnit"></p>
+                        <!-- /ko -->
+                        <!-- ko if: !packages().length -->
+                        <h4 data-bind="text: Kooboo.text.common.sorry"></h4>
+                        <p>No template found</p>
+                        <!-- /ko -->
+                        <br>
+                        <p>
+                            <a class="btn" href="javascript:;" data-bind="click: changeKeyword, css: { blue: packages().length, orange: !packages().length }">Try other keyword</a>
+                            <a class="btn btn-default" href="javascript:;" data-bind="click: clearSearchResult">Return</a>
+                        </p>
+                    </div>
+                    <div class="tab-content">
+                        <div class="tab-pane fade" id="public">
+                            <div class="row template-list" data-bind="foreach: { data: packages, afterRender: afterRender }">
+                                <div class="col-sm-6 col-md-3">
+                                    <a href="javascript:;" data-bind="click: $parent.chooseTemplate.bind(this)" class="thumbnail">
+                                        <span class="wrapper">
+                                            <img alt="thumbnail" class="lazy" data-bind="attr: { 'data-original': $data.thumbNail,alt: $data.name }">
+                                            <span data-bind="text: $data.description" class="desc"></span>
+                                        </span>
+                                        <div class="caption">
+                                            <strong data-bind="text: $data.name"></strong>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="personal">
+                            <div class="row template-list" data-bind="foreach: { data: personalPackages, afterRender: afterRender }">
+                                <div class="col-sm-6 col-md-3">
+                                    <a href="javascript:;" data-bind="click: $parent.chooseTemplate.bind(this)" class="thumbnail">
+                                        <span class="wrapper">
+                                        <img alt="thumbnail" class="lazy" data-bind="attr: { 'data-original': $data.thumbNail,alt: $data.name }">
+                                        <span data-bind="text: $data.description" class="desc"></span>
+                                        </span>
+                                        <div class="caption">
+                                            <strong data-bind="text: $data.name"></strong>
+                                            <button data-bind="click: $parent.removePackage, tooltip: Kooboo.text.common.remove, clickBubble: false" class="btn btn-xs red pull-right clickable"><i class="fa fa-minus"></i></button>
+                                            <button data-bind="click: $parent.editPackage, tooltip: Kooboo.text.common.edit, clickBubble: false" class="btn btn-xs blue margin-right-10 pull-right clickable"><i class="fa fa-pencil"></i></button>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div data-bind="component: { name: 'kb-pager', params: pager }"></div>
+                    <div data-bind="visible: ((type() == 'list' && !packages().length )|| (type() == 'personal' && !personalPackages().length)) && !searched()">
+                        <div class="well well-lg">
+                            <h4 data-bind="text: Kooboo.text.common.sorry"></h4>
+                            <p>
+                                <span>No template available now</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-bind="modal: templateModal" class="modal fade" id="templateModal" data-backdrop="static" data-keyboard="false">
+        <!-- ko if: package -->
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-bind="click: modalReset" class="close"><i class="fa fa-close"></i></button>
+                    <h4 data-bind="text: package().name" class="modal-title"></h4>
+                </div>
+                <div class="modal-body template-info">
+                    <div class="row">
+                        <!--ko ifnot: selected-->
+                        <div class="col-md-8">
+                            <ul data-bind="foreach: { data: package().images }" class="bxslider">
+                                <li><img data-bind="attr: { src: $data }"></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <span class="title">Author</span>
+                                    <!-- ko text: package().userName -->
+                                    <!-- /ko -->
+                                </li>
+                                <!-- ko if: package().link -->
+                                <li class="list-group-item">
+                                    <span class="title">Link</span>
+                                    <a href="#" class="text-break" data-bind="attr: { href: package().link }, text: package().link" target="_blank"></a>
+                                </li>
+                                <!-- /ko -->
+                                <li class="list-group-item">
+                                    <span class="title">Description</span>
+                                    <!-- ko text: package().description || Kooboo.text.site.template.noDescription -->
+                                    <!-- /ko -->
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="title">Downloads</span>
+                                    <!-- ko text: package().downloadCount -->
+                                    <!-- /ko -->
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="title">Size</span>
+                                    <!-- ko text: package().size -->
+                                    <!-- /ko -->
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="title">Last modified</span>
+                                    <!-- ko text: package().lastModified -->
+                                    <!-- /ko -->
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="title">Dynamic contents</span>
+                                    <div class="margin-top-5">
+                                        <!-- ko if: package().allDynamicCount -->
+                                        <!-- ko if: package().layoutCount -->
+                                        <label class="label label-sm kb-table-label-refer" data-bind="style: { background: Kooboo.getLabelColor('layout') }, text: package().layoutCount + ' ' + Kooboo.text.component.table.layout"></label>
+                                        <!-- /ko -->
+                                        <!-- ko if: package().menuCount -->
+                                        <label class="label label-sm kb-table-label-refer" data-bind="style: { background: Kooboo.getLabelColor('menu') }, text: package().menuCount + ' ' + Kooboo.text.component.table.menu"></label>
+                                        <!-- /ko -->
+                                        <!-- ko if: package().pageCount -->
+                                        <label class="label label-sm kb-table-label-refer" data-bind="style: { background: Kooboo.getLabelColor('page') }, text: package().pageCount + ' ' + Kooboo.text.component.table.page"></label>
+                                        <!-- /ko -->
+                                        <!-- ko if: package().viewCount -->
+                                        <label class="label label-sm kb-table-label-refer" data-bind="style: { background: Kooboo.getLabelColor('view') }, text: package().viewCount + ' ' + Kooboo.text.component.table.view"></label>
+                                        <!-- /ko -->
+                                        <!-- ko if: package().imageCount -->
+                                        <label class="label label-sm kb-table-label-refer" data-bind="style: { background: Kooboo.getLabelColor('image') }, text: package().imageCount + ' ' + Kooboo.text.component.table.image"></label>
+                                        <!-- /ko -->
+                                        <!-- ko if: package().contentCount -->
+                                        <label class="label label-sm kb-table-label-refer" data-bind="style: { background: Kooboo.getLabelColor('textcontent') }, text: package().contentCount + ' ' + Kooboo.text.component.table.textcontent"></label>
+                                        <!-- /ko -->
+                                        <!-- /ko -->
+
+                                        <!-- ko ifnot: package().allDynamicCount -->
+                                        <!-- ko text: Kooboo.text.site.template.noDynamic -->
+                                        <!-- /ko -->
+                                        <!-- /ko -->
+                                    </div>
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="title">Tags</span>
+                                    <div class="margin-top-5">
+                                        <!-- ko if: package().tags -->
+                                        <!-- ko foreach: { data: package().tags.split(','), as: 'tag' } -->
+                                        <label class="label label-sm gray kb-table-label-refer" data-bind="text: tag"></label>
+                                        <!-- /ko -->
+                                        <!-- /ko -->
+
+                                        <!-- ko ifnot: package().tags -->
+                                        <!-- ko text: Kooboo.text.site.template.noTag -->
+                                        <!-- /ko -->
+                                        <!-- /ko -->
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <!--/ko-->
+                        <!--ko if: selected-->
+                        <div class="col-md-10 col-md-offset-1">
+
+                            <fieldset class="form-horizontal">
+                                <div class="note note-info">
+                                    <p>Use the selected template as the base to create this website</p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label" for="SiteName">Site name</label>
+                                    <div class="col-md-10">
+                                        <input data-bind="value: siteName, error: siteName" type="text" class="form-control input-medium" name="SiteName" placeholder="Site name">
+                                        <span class="help-block">Start with letters and no space allowed</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="SubDomain" class="col-md-2 control-label">Domain</label>
+                                    <div class="col-md-10">
+                                        <div class="form-inline">
+                                            <input data-bind="textInput: subDomain, error: subDomain" type="text" class="input-medium form-control" placeholder="SubDomain" />
+                                            <div class="form-group">
+                                                <select data-bind="foreach: domains, value: rootDomain" class="form-control">
+                                                    <option data-bind="text: '.'+$data.domainName, value: $data.domainName"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <span class="help-block">Give your site a domain that other people can access.</span>
+                                    </div>
+                                </div>
+                                <!-- <div class="form-group">
+                                    <div class="col-md-10 col-md-offset-2">
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" data-bind="value: agree, checked: agree" />I accept <a href="javascript:;" target="_blank">agreement</a>
+                                        </label>
+                                    </div>
+                                </div> -->
+                            </fieldset>
+                        </div>
+                        <!--/ko-->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <!-- ko ifnot: selected -->
+                    <button class="btn blue" type="button" data-bind="click: useTemplate">Use this template</button>
+                    <a class="btn gray" href="#" data-bind="attr: { href: package().previewUrl }, visible: package().previewUrl" target="_blank">Preview</a>
+                    <!-- /ko -->
+                    <!-- ko if: selected -->
+                    <button class="btn blue" data-bind="click: start">Start</button>
+                    <button class="btn gray" type="button" data-bind="click: useTemplate">Back</button>
+                    <!-- /ko -->
+                </div>
+            </div>
+        </div>
+        <!-- /ko -->
+    </div>
+    <div data-bind="modal: editTemplateModal" class="modal fade" id="editTemplateModal" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-bind="click: resetEdit" class="close"><i class="fa fa-close"></i></button>
+                    <h4 class="modal-title">Edit template</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-10 col-md-offset-1">
+                            <div class="form-horizontal">
+                                <!-- ko if: editing() -->
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Site name</label>
+                                    <div class="col-md-10 row">
+                                        <div class="col-md-6">
+                                            <p data-bind="text: editing().name" class="form-control-static"></p>
+                                        </div>
+                                        <!-- <div class="col-md-6 checkbox-inline">
+                                            <label> <input data-bind="checked: editing().isPrivate" type="checkbox"> <span>Make private</span> </label>
+                                        </div> -->
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Tags</label>
+                                    <div class="col-md-10">
+                                        <select id="select2_element" data-bind="options: editing().tags, selectedOptions: editing().selectedTags" multiple class="form-control invisible"></select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Description</label>
+                                    <div class="col-md-10">
+                                        <textarea data-bind="value: editing().description" class="form-control autosize"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Link</label>
+                                    <div class="col-md-10">
+                                        <input data-bind="value: editing().link" class="form-control" placeholder="link description">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-2 control-label">Thumbnails</label>
+                                    <div class="col-md-10">
+                                        <div class="fileinput">
+                                            <span class="btn btn-default btn-file"><span>Select images</span>
+                                            <input id="edit_file" type="file" multiple/>
+                                            </span>&nbsp;
+                                            <span data-bind="visible: !editing().imgList().length"><span>Support types: bmp, png, jpg, jpeg.</span>&nbsp;<span>System will add thumbnails automatically if user don't upload any thumbnail.</span></span>
+                                            <span data-bind="visible: editing().imgList().length">Click the image below to select cover image.</span>
+                                        </div>
+                                        <div class="file-list img-list">
+                                            <ul data-bind="visible: editing().imgList().length">
+                                                <!-- ko foreach: editing().imgList -->
+                                                <li data-bind="click: $parent.chooseAsDefault, css: { active: $data.selected }">
+                                                    <div class="fileinput-new thumbnail">
+                                                        <img data-bind="attr: { src: $data.value }" style="width: 100px; height: 100px;" src="">
+                                                    </div>
+                                                    <a data-bind="tooltip:Kooboo.text.common.remove,click: $parent.removeFile.bind(this, $data.type)" href="javascript:;"><i class="fa fa-remove"></i></a>
+                                                </li>
+                                                <!-- /ko -->
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /ko -->
+                                <div class="form-group">
+                                    <label for="" class="col-md-2 control-label">Update package</label>
+                                    <div class="col-md-10">
+                                        <div class="fileinput fileinput-new">
+                                            <span class="btn btn-default btn-file">
+                                                <!-- ko ifnot: packageExist -->
+                                                <!-- ko text: Kooboo.text.common.selectFile --><!-- /ko -->
+                                                <!-- /ko -->
+                                                <!-- ko if: packageExist -->
+                                                <!-- ko text: Kooboo.text.common.change --><!-- /ko -->
+                                                <!-- /ko -->
+                                                <input type="file" id="update-package" name="package" accept="application/zip, application/x-zip, application/octet-stream, application/x-zip-compressed" />
+                                            </span>
+                                            <!-- ko if: !packageExist() -->
+                                            &nbsp;<span>Select file</span>
+                                            <!-- /ko -->
+                                            <span data-bind="visible: packageExist, text: packageName" class="fileinput-filename"></span>
+                                            <a data-bind="visible: packageExist, click: clearFile" class="close"><i class="fa fa-close"></i></a>
+                                            <span class="help-block">Accept type: *.zip</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-bind="click: saveEdit" class="btn green">Save</button>
+                    <button data-bind="click: resetEdit" class="btn gray">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/lib/holder.js",
+            "/_Admin/Scripts/components/kbPager.js",
+            "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
+            "/_Admin/Scripts/lib/jquery.lazyload.min.js",
+            "/_Admin/Scripts/lib/select2.min.js",
+            "/_Admin/Scripts/lib/bxSlider/jquery.bxslider.min.js",
+            "/_Admin/Scripts/tableModel.js"
+        ])
+        Kooboo.loadCSS([
+            "/_Admin/Styles/select2/select2.css",
+            "/_Admin/Scripts/lib/bxSlider/jquery.bxslider.min.css"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Sites/Template.js"></script>

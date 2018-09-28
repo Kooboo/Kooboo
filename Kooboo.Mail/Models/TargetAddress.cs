@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using Kooboo.Extensions;
+
+namespace Kooboo.Mail
+{
+    public class TargetAddress : IMailObject
+    {
+        private int _id;
+        public int Id
+        {
+            set { _id = value; }
+            get
+            {
+                if (_id == default(int))
+                {
+                    _id = ToId(Address);
+                }
+                return _id;
+            }
+        }
+
+        public string Name { get; set; }
+
+        public string Address { get; set; }
+
+        public static int ToId(string address)
+        {
+            return  Lib.Security.Hash.ComputeInt(address);
+        }
+    }
+}

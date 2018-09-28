@@ -1,0 +1,313 @@
+﻿<!-- #layout name=default -->
+<div id="main" class="sites">
+    <div class="page-header">
+        <h1 class="title">Sites Overview</h1>
+        <button data-bind="visible: siteList().length, click: activeBatch, css: { gray: batchManagementMode }" class="btn btn-default pull-right">
+            <i data-bind="css: { 'margin-right-5': batchManagementMode }" class="fa fa-gear"></i>
+            <span data-bind="visible: batchManagementMode">Cancel</span>
+        </button>
+        <button class="btn btn-info margin-right-10 pull-right" data-bind="visible: batchManagementMode() && (selectedSites().length < siteList().length), click: selectAllSites">Select all</button>
+        <button class="btn red margin-right-10 pull-right" data-bind="visible: selectedSites().length, click: deleteSites">Delete</button>
+        <button class="btn green margin-right-5 pull-right" data-bind="visible: selectedSites().length, click: batchExport">Batch export</button>
+    </div>
+    <div class="page-bar">
+        <ol class="breadcrumb">
+            <li class="active">Sites</li>
+        </ol>
+    </div>
+    <div data-bind="visible: siteList().length" class="clearfix">
+        <div class="col-sm-12 col-md-8 col-lg-9 row">
+            <div class="row" data-bind="foreach: siteList">
+                <div class="col-sm-12 col-md-6 col-lg-4">
+                    <div class="widget clickable" data-bind="css: { 'gray': !$data.online(), 'operating': $parent.batchManagementMode, 'selected': $data.selected }">
+                        <a data-bind="click: $parent.siteDetail.bind(this, $data)" href="javascript:;">
+                            <h6 class="title" data-bind="text: $data.siteDisplayName()"></h6>
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <!-- ko if:$data.inProgress() -->
+                                    <i class="fa fa-spinner fa-spin fa-3x"></i>
+                                    <!-- /ko -->
+                                    <!-- ko ifnot:$data.inProgress() -->
+                                    <i class="fa fa-bar-chart fa-3x"></i>
+                                    <!-- /ko -->
+                                </div>
+                                <div class="col-xs-8">
+                                    <ul class="list-unstyled pull-right">
+                                        <li>
+                                            <i class="icon-layers"></i> <span>Pages</span>:
+                                            <!-- ko text:$data.pageCount() -->
+                                            <!-- /ko -->
+                                        </li>
+                                        <li>
+                                            <i class="icon-picture"></i> <span>Images</span>:
+                                            <!-- ko text:$data.imageCount() -->
+                                            <!-- /ko -->
+                                        </li>
+                                        <li>
+                                            <i class="icon-user-follow"></i> <span>Visitors</span>:
+                                            <!-- ko text:$data.visitors() -->
+                                            <!-- /ko -->
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </a>
+                        <div data-bind="visible: !$parent.batchManagementMode()" class="setting btn-group">
+                            <i class="fa fa-chevron-circle-down" data-toggle="dropdown" title="Setting"></i>
+                            <ul role="menu" class="dropdown-menu pull-right">
+                                <!-- ko if:!$data.inProgress() -->
+                                <li><a data-bind="click: $parent.exportSite.bind(this, $data)" href="javascript:;">Export</a></li>
+                                <li><a data-bind="click: $parent.SPAClick.bind(this, 'share')" href="javascript:;">Share</a></li>
+                                <li>
+                                    <a data-bind="text:( $data.online() ? Kooboo.text.site.sites.takeOffline : Kooboo.text.site.sites.takeOnline), click: $parent.switchStatus" href="javascript:;"></a>
+                                </li>
+                                <!-- /ko -->
+                                <li k-if="kooboosetting.IsLocal=true"><a data-bind="click: $parent.onSyncFileDisk" href="javascript:;">Disk synchronize</a></li>
+                                <li><a data-bind="click: $parent.deleteSite, visible: !$data.inProgress()" href="javascript:;">Delete</a></li>
+                            </ul>
+                        </div>
+                        <div data-bind="visible: $parent.batchManagementMode()" class="setting" style="pointer-events: none;">
+                            <input type="checkbox" data-bind="checked: selected">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-4 col-lg-3 pull-right">
+            <div class="row">
+                <ul class="nav nav-tabs nav-justified" id="create_site_tab" style="margin-bottom: 0">
+                    <li role="presentation" class="active"><a href="#Transfer">Transfer</a></li>
+                    <li role="presentation"><a href="#Templates">Templates</a></li>
+                    <li role="presentation"><a href="#Create">Create</a></li>
+                    <li role="presentation"><a href="#Import">Import</a></li>
+                </ul>
+                <div class="site-instruction tab-content" style="border: 1px solid #dddddd; border-top: 0">
+                    <div role="tabpanel" class="tab-pane fade in active" id="Transfer">
+                        <img class="center-block" src="/_Admin/Images/site-instru-transfer.png" />
+                        <h4 class="text-center">Transfer a website</h4>
+                        <p class="text-center">Enter any website Url, Kooboo will clone the website and allow you to inline edit anything directly.</p>
+                        <div class="text-center margin-top-20">
+                            <a data-bind="click: SPAClick.bind(this, 'transfer')" class="btn green navbar-btn col-md-4 col-sm-3">Transfer</a>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="Templates">
+                        <img class="center-block" src="/_Admin/Images/site-instru-template.png" />
+                        <h4 class="text-center">Template</h4>
+                        <p class="text-center">Share or use templates made by public users or from your organization private packages.</p>
+                        <div class="text-center margin-top-20">
+                            <a data-bind="click: SPAClick.bind(this, 'template')" class="btn green navbar-btn col-md-5 col-sm-3">Pick</a><br>
+                            <a data-bind="click: showShareModal" class="btn green navbar-btn col-md-5 col-sm-3">Share</a>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="Create">
+                        <img class="center-block" src="/_Admin/Images/site-instru-create.png" />
+                        <h4 class="text-center">Create Blank Website</h4>
+                        <p class="text-center">Create a blank new website, and use well defined elements to develop your website.</p>
+                        <div class="text-center margin-top-20">
+                            <a data-bind="click: showCreateModal" class="btn green navbar-btn col-md-4 col-sm-3">Create</a>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="Import">
+                        <img class="center-block" src="/_Admin/Images/site-instru-import.png" />
+                        <h4 class="text-center">Import Website</h4>
+                        <p class="text-center">Import a Kooboo or standard Html package, Kooboo will convert it into a Kooboo site.</p>
+                        <div class="text-center margin-top-20">
+                            <a data-bind="click: SPAClick.bind(this, 'import')" class="btn green navbar-btn col-md-4 col-sm-3">Import</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-bind="visible: !siteList().length" class="clearfix">
+        <div class="col-md-3 site-instruction">
+            <img class="center-block" src="/_Admin/Images/site-instru-transfer.png" />
+            <h4 class="text-center">Transfer a website</h4>
+            <p class="text-center">Enter any website Url you like. Kooboo will download, reverse engine that website, and allows you to inline editing anything directly.</p>
+            <div class="text-center margin-top-20">
+                <a data-bind="click: SPAClick.bind(this, 'transfer')" class="btn green navbar-btn col-md-4">Transfer</a>
+            </div>
+        </div>
+        <div class="col-md-3 site-instruction">
+            <img class="center-block" src="/_Admin/Images/site-instru-template.png" />
+            <h4 class="text-center">Template</h4>
+            <p class="text-center">Share or use templates made by public users or from your organization private packages.</p>
+            <div class="text-center margin-top-20">
+                <a data-bind="click: SPAClick.bind(this, 'template')" class="btn green navbar-btn col-md-4">Pick</a>
+            </div>
+        </div>
+        <div class="col-md-3 site-instruction">
+            <img class="center-block" src="/_Admin/Images/site-instru-create.png" />
+            <h4 class="text-center">Create Blank Website</h4>
+            <p class="text-center">Create a blank new website, and use well defined elements to develop your website.</p>
+            <div class="text-center margin-top-20">
+                <a data-bind="click: SPAClick.bind(this, 'create')" class="btn green navbar-btn col-md-4">Create</a>
+            </div>
+        </div>
+        <div class="col-md-3 site-instruction">
+            <img class="center-block" src="/_Admin/Images/site-instru-import.png" />
+            <h4 class="text-center">Import Website</h4>
+            <p class="text-center">Import a Kooboo site package, or standard Html package, Kooboo will convert it into a Kooboo site.</p>
+            <div class="text-center margin-top-20">
+                <a data-bind="click: SPAClick.bind(this, 'import')" class="btn green navbar-btn col-md-4">Import</a>
+            </div>
+        </div>
+    </div>
+
+    <div data-bind="modal: showSyncFileDiskModal" class="modal fade" data-backdrop="static" k-if="kooboosetting.IsLocal=true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-bind="click: resetSyncFileDiskModal" type="button" class="close"><i class="fa fa-close"></i></button>
+                    <h4 class="modal-title">File synchronize</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Enable file sync</label>
+                            <div class="col-md-9">
+                                <input type="checkbox" id="sync-switch" data-bind="checked: hasSyncSwitch">
+                            </div>
+                        </div>
+                        <!-- ko if: syncEnabled -->
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Path</label>
+                            <div class="col-md-9">
+                                <input type="text" id="folder-path" class="form-control input-inline input-large" data-bind="textInput: folderPath">
+                                <button type="button" id="copy" data-clipboard-target="#folder-path" class="btn btn-link">Copy</button>
+                            </div>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <!-- ko if: isSyncInfoChange -->
+                    <button data-bind="click: saveSync" class="btn green">Save</button>
+                    <!-- /ko -->
+                    <button data-bind="click: resetSyncFileDiskModal" class="btn btn-default">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div data-bind="modal: shareSiteModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-bind="click: hideShareSiteModal" class="close"><i class="fa fa-close"></i></button>
+                    <h4 class="modal-title">Share site</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Choose site</label>
+                            <div class="col-md-9">
+                                <select data-bind="options: selectableSites, optionsText: 'name', optionsValue: 'id', value: selectedSiteId" class="form-control"></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button data-bind="click: goSharing" class="btn green">Next</button>
+                    <button data-bind="click: hideShareSiteModal" class="btn gray">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-bind="component: { name: 'kb-export-modal', params: { isShow: showExportModal, siteId: selectedSiteId }}"></div>
+</div>
+<div id="create">
+    <div data-bind="modal: createSiteModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-bind="click: hideCreateSiteModal" class="close"><i class="fa fa-close"></i></button>
+                    <h4 class="modal-title">Create a new site</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="note note-info">
+                            <p>Create a blank new website, and use well defined elements to develop your website.</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="SiteName">Site name</label>
+                            <div class="col-md-10">
+                                <input data-bind="value: siteName, error: siteName" class="input-medium form-control" placeholder="Site name" type="text">
+                                <span class="help-block">Start with letters and no space allowed.</span>
+                            </div>
+                        </div>
+                        <div class="form-group margin-bottom-10">
+                            <label class="col-md-2 control-label" for="SubDomain">Domain</label>
+                            <div class="col-md-10">
+                                <div class="form-inline">
+                                    <input data-bind="value: subDomain" class="input-medium form-control" placeholder="SubDomain" type="text">
+                                    <select data-bind="options: domains, value: rootDomain, optionsValue: 'value', optionsText: 'displayName', error: subDomain" class="form-control"></select>
+                                </div>
+                                <span class="help-block">Give your site a domain that other people can access.</span>
+                            </div>
+                        </div>
+                        <!-- <div class="form-group margin-bottom-15">
+                              <div class="col-md-10 col-md-offset-2">
+                                  <label class="checkbox-inline"><input type="checkbox" data-bind="checked: allowRemote"> <span>Clone from remote</span></label>
+                              </div>
+                          </div>-->
+                    </div>
+                    <!--<div data-bind="visible: allowRemote" class="form-horizontal">
+                        <form action="" method="post" id="remote-login">
+                            <div class="form-group">
+                                <label class="control-label col-md-2">Server</label>
+                                <div class="col-md-10">
+                                    <select data-bind="value: server" class="form-control relate-show" name="Server" data-kb-show=".servers">
+                                        <option value="http://www.kooboo.cn">kooboo.cn</option>
+                                        <option value="">My own server</option>
+                                    </select>
+                                    <input data-bind="textInput: customServer, error: customServer, visible: !server()" type="text" name="CustomServer" class="form-control margin-top-10 servers" placeholder="http://www.mykooboosite.com" />
+                                </div>
+                            </div>
+                            <div data-bind="collapsein: remoteSitesAvaliable" class="form-group">
+                                <label class="control-label col-md-2 ">Site name</label>
+                                <div class="col-md-10">
+                                    <select data-bind="options: remoteSites, optionsText: 'name', optionsValue: 'id', value: remoteSiteId" class="form-control" id="siteSelect" name="RemoteSiteId"></select>
+                                </div>
+                            </div>
+                            <div class="form-group collapse save margin-bottom-20">
+                                <div class="col-md-10 col-md-offset-2">
+                                    <button data-bind="click: post" class="btn blue" type="button">Save & Go to the synchronization page</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>-->
+                </div>
+                <div class="modal-footer">
+                    <!-- ko if: createWithRemote -->
+                    <button data-bind="click: onCreateWithRemote" class="btn green">Create</button>
+                    <!-- /ko -->
+                    <!-- ko ifnot: createWithRemote -->
+                    <!-- ko if: allowRemote -->
+                    <button data-bind="click: login" class="btn blue" type="button">Next</button>
+                    <!-- /ko -->
+                    <!-- ko ifnot: allowRemote -->
+                    <button data-bind="click: onCreateSubmit" class="btn green">Create</button>
+                    <!-- /ko -->
+                    <!-- /ko -->
+                    <button data-bind="click: hideCreateSiteModal" class="btn gray">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/lib/clipboard.min.js",
+            "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
+            "/_Admin/Scripts/components/kbExportModal.js",
+            "/_Admin/Scripts/tableModel.js",
+            "/_Admin/Scripts/SPA.js"
+        ])
+        Kooboo.loadCSS([
+            "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Sites.js"></script>

@@ -1,0 +1,87 @@
+<!-- #layout name=blank -->
+<div class="page-header">
+    <h1 class="title">Views</h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'SITES'
+},{
+    name: 'DASHBOARD'
+},{
+    name: Kooboo.text.common.Views
+}] }"></div>
+<div class="navbar navbar-default">
+    <div class="container-fluid">
+        <a class="btn green navbar-btn" data-bind="attr: { href: createUrl }">Create</a>
+        <a class="btn green navbar-btn" data-bind="click: onShowCopyModal, visible: showCopyBtn">Copy</a>
+        <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
+    </div>
+</div>
+<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
+<div data-bind="component: { name: 'kb-relation-modal' }"></div>
+<div data-bind="modal: isDataSourceModalShow" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-bind="click: hideDataSourceModal" class="close"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Data Source</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th class="table-action">Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="foreach: dataSources">
+                        <tr>
+                            <td data-bind="text: $data.aliasName"></td>
+                            <td>
+                                <a data-bind="attr: { href: $parent.getDataSourceEditUrl($data) }" target="_blank" class="btn btn-xs blue"><i class="fa fa-pencil"></i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: hideDataSourceModal" class="btn btn-default">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-bind="modal: copyModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHideCopyModal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.site.view.copyView + ': ' + copyView().name"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Name</label>
+                        <div class="col-md-9">
+                            <input type="text" data-bind="value: copyName, error: copyName" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: onStartCopy" class="btn green">Start</button>
+                <button data-bind="click: onHideCopyModal" class="btn gray">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbTable.js",
+            "/_Admin/Scripts/components/kbRelationModal.js",
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/tableModel.js"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Development/Views.js"></script>

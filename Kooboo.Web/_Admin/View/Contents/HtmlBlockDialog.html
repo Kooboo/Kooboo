@@ -1,0 +1,31 @@
+<!-- #layout name=empty -->
+<div id="mainDialog" style="overflow: hidden">
+    <div class="clearfix">
+        <div data-bind="component: { name: 'kb-multilang-selector', params: multiLangs }"></div>
+    </div>
+    <div class="container-fluid">
+        <!-- ko foreach: contents -->
+        <div data-bind="visible: $data.show" class="form-group">
+            <label data-bind="text: Kooboo.text.common.Content + '(' + $data.abbr + ')'" class="control-label"></label>
+            <div>
+                <textarea data-bind="richeditor: $data.value" style="opacity: 0"></textarea>
+            </div>
+        </div>
+        <!-- /ko -->
+    </div>
+    <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog>
+</div>
+
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
+            "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
+            "/_Admin/Scripts/kobindings.richeditor.js",
+            "/_Admin/Scripts/kooboo/Guid.js",
+            "/_Admin/Scripts/components/kbMultilangSelector.js",
+            "/_Admin/Scripts/components/kb-media-dialog.js"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Contents/HtmlBlockDialog.js"></script>

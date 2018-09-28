@@ -1,0 +1,30 @@
+<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-bind="click: reset" class="close"><i class="fa fa-close"></i></button>
+                <h4 data-bind="text: title" class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <div data-bind="error: name" class="panel-body">
+                        <div id="component_tree" data-bind="visible: !emptyMode()"></div>
+                        <span data-bind="visible: emptyMode(), text: Kooboo.text.common.empty"></span>
+                    </div>
+                </div>
+                <!-- <div data-bind="visible: showParameters">
+                    <h4>Patameters</h4>
+                </div> -->
+            </div>
+            <div class="modal-footer">
+                <!-- ko if: !emptyMode() -->
+                <button data-bind="click: save, text: Kooboo.text.common.save" class="btn green"></button>
+                <button data-bind="click: reset, text: Kooboo.text.common.cancel" class="btn gray"></button>
+                <!-- /ko -->
+                <!-- ko if: emptyMode -->
+                <button class="btn btn-default" data-bind="click: reset, text: Kooboo.text.common.close"></button>
+                <!-- /ko -->
+            </div>
+        </div>
+    </div>
+</div>

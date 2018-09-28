@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<KScriptSetting>
+  <Name>database</Name>
+  <Description>The kScript database engine</Description>
+  <Example>
+    var db = k.database;
+  </Example>
+  <Props />
+  <Methods>
+    <Method>
+      <Name>getTable</Name>
+      <Description>Return the kScript database table object, if the table is not exists, it will be created. </Description>
+      <Example> 
+        var table = k.database.getTable("mytablename");
+        var obj = {name: "my value"}; 
+        table.add(obj);  
+      </Example>
+      <Params>
+        <Param>
+          <Name>name</Name>
+          <Description>name</Description>
+          <Type>string</Type>
+        </Param>
+      </Params>
+      <ReturnType>Table</ReturnType>
+    </Method>
+  </Methods>
+</KScriptSetting>

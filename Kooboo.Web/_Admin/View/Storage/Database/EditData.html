@@ -1,0 +1,96 @@
+<!-- #layout name=default -->
+<div id="main">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3 col-sm-12 col-xs-12 margin-bottom-25">
+                <div data-bind="foreach: { data: columns, as: 'col' }">
+                    <div class="form-group" data-bind="ifnot: col.isSystem()">
+                        <label class="control-labal" data-bind="text: col.name"></label>
+                        <div>
+                            <!-- ko if: col.isIncremental -->
+                            <p class="form-control-static">
+                                <!-- ko text: (col.value() || Kooboo.text.common.empty) + ' ' -->
+                                <!-- /ko -->-
+                                <i data-bind="text:' ('+ Kooboo.text.component.columnEditor.unableToChangeSelfIncrementField+')'"></i>
+                            </p>
+                            <!-- /ko -->
+                            <!-- ko ifnot: col.isIncremental -->
+
+                            <!-- ko if: col.controlType() == 'TextBox' -->
+                            <input type="text" class="form-control" data-bind="value: col.value">
+                            <!-- /ko -->
+
+                            <!-- ko if: col.controlType() == 'TextArea' -->
+                            <textarea class="form-control" data-bind="value: col.value"></textarea>
+                            <!-- /ko -->
+
+                            <!-- ko if: col.controlType() == 'Tinymce' -->
+                            <textarea data-bind="richeditor: col.value" style="opacity: 0"></textarea>
+                            <!-- /ko -->
+
+                            <!-- ko if: col.controlType() == 'Selection' -->
+                            <select class="form-control" data-bind="options: col.options, optionsText: 'key', optionsValue: 'value', value: col.value"></select>
+                            <!-- /ko -->
+
+                            <!-- ko if: col.controlType() == 'CheckBox' -->
+                            <!-- ko foreach: { data: col.options, as: 'opt' } -->
+                            <label class="checkbox-inline">
+                                <input type="checkbox" data-bind="value: opt.value, checked: col.value">
+                                <span data-bind="text: opt.key"></span>
+                            </label>
+                            <!-- /ko -->
+                            <!-- /ko -->
+
+                            <!-- ko if: col.controlType() == 'RadioBox' -->
+                            <!-- ko foreach: { data: col.options, as: 'opt' } -->
+                            <label class="radio-inline">
+                                <input type="radio" data-bind="value: opt.value, checked: col.value">
+                                <span data-bind="text: opt.key"></span>
+                            </label>
+                            <!-- /ko -->
+                            <!-- /ko -->
+
+                            <!-- ko if: col.controlType() == 'Boolean' -->
+                            <label class="checkbox-inline">
+                                <input type="checkbox" data-bind="value: col.value, checked: col.value">
+                                <span data-bind="text: col.name"></span>
+                            </label>
+                            <!-- /ko -->
+
+                            <!-- ko if: col.controlType() == 'DateTime' -->
+                            <input type="datetime-local" class="form-control" data-bind="value: col.value">
+                            <!-- /ko -->
+
+                            <!-- ko if: col.controlType() == 'Number' -->
+                            <input type="number" class="form-control" data-bind="value: col.value">
+                            <!-- /ko -->
+
+                            <!-- /ko -->
+                        </div>
+                    </div>
+                </div>
+                <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-buttons">
+        <button data-bind="click: onSave" class="btn green">Save</button>
+        <a data-bind="attr: { href: dataPage }" class="btn gray">Cancel</a>
+    </div>
+</div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/kooboo/Guid.js",
+            "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
+            "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
+            "/_Admin/Scripts/kobindings.richeditor.js",
+            "/_Admin/Scripts/components/kb-media-dialog.js",
+        ]);
+        Kooboo.loadCSS([
+            "/_Admin/Styles/bootstrap-datetimepicker.min.css"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Storage/Database/EditData.js"></script>

@@ -1,0 +1,128 @@
+<div id="J_NewFolder" class="modal fade" data-backdrop="static" data-keyboard="false" data-bind="modal:newFolderModalShow">
+    <form method="post" data-bind="submit:submit">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bind="click:reset"><i class="fa fa-close"></i></button>
+                    <h4 class="modal-title" data-bind="text: Kooboo.text.component.folderEditor.folder"></h4>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs">
+                        <li class="active">
+                            <a data-toggle="tab" href="#tab_basic" data-bind="text: Kooboo.text.component.folderEditor.basicInfo"></a>
+                        </li>
+                        <li>
+                            <a data-toggle="tab" href="#tab_relation" data-bind="text: Kooboo.text.component.folderEditor.relationFolders"></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content margin-top-20">
+                        <input type="hidden" name="Id" id="Id" data-bind="value:id" />
+                        <section class="tab-pane fade active in" id="tab_basic">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="control-label col-md-3" data-bind="text: Kooboo.text.common.name"></label>
+                                    <div class="col-md-9">
+                                        <!-- ko ifnot:isNew -->
+                                        <input type="hidden" data-bind="value:name" name="Name" />
+                                        <p class="form-control-static" data-bind="text:name"></p>
+                                        <!--/ko-->
+                                        <!-- ko if:isNew-->
+                                        <input class="form-control" data-bind="value: name, error:name" id="Name" name="Name" type="text" kb-error-container=".name-error-container" />
+                                        <span class="field-validation-valid" data-valmsg-for="Name" data-valmsg-replace="true"></span>
+                                        <div class="name-error-container" style="position: absolute; width: 150%"></div>
+                                        <!-- /ko -->
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3" data-bind="text: Kooboo.text.component.folderEditor.displayName"></label>
+                                    <div class="col-md-9">
+                                        <input class="form-control" data-bind="value:displayName" id="DisplayName" name="DisplayName" type="text" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3" data-bind="text: Kooboo.text.common.ContentType"></label>
+                                    <div class="col-md-9">
+                                        <!-- ko if:hasContentType -->
+                                        <p class="form-control-static" data-bind="text:contentTypeName"></p>
+                                        <!-- /ko -->
+                                        <!-- ko ifnot:hasContentType -->
+                                        <select class="form-control" data-bind='value:contentTypeId,options:contentTypes,optionsText:"name",optionsValue:"id", error: contentTypeId' kb-error-container=".content-type-error-container"></select>
+                                        <div class="content-type-error-container" style="position: absolute; width: 150%"></div>
+                                        <!-- /ko -->
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <section class="tab-pane fade" id="tab_relation">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="control-label col-md-3" data-bind="text: Kooboo.text.component.folderEditor.categoryFolders"></label>
+                                    <div class="col-md-9">
+                                        <div class="input-groups">
+                                            <!-- ko foreach:categoryFolders -->
+                                            <div class="input-group">
+                                                <select class="form-control key" data-bind="value:folderId,options:$component.availableFolders(folderId),optionsText:'displayName',optionsValue:'id'"></select>
+                                                <span class="input-group-addon">
+                                                    <span class="checkbox">
+                                                        <label><input type="checkbox" data-bind="checked:multiple, attr: { disabled: !enableMultiple() }">
+                                                        <!-- ko text: Kooboo.text.component.folderEditor.multiple -->
+                                                        <!-- /ko -->
+                                                        </label>
+                                                    </span>
+                                                </span>
+                                                <span class="input-group-btn">
+                                                    <a class="btn btn-default" href="javascript:;" data-bind="click:$parent.removeCategoryFolders, tooltip: Kooboo.text.common.remove">
+                                                        <i class="fa fa-minus"></i>
+                                                    </a>
+                                                </span>
+                                                <input class="form-control" data-bind="value:alias, error: alias, errorContainer: '#category-error-container-' + $index(), attr: { placeholder: Kooboo.text.component.folderEditor.alias }" type="text">
+                                                <div data-bind="attr: { id: 'category-error-container-' + $index() }" style="position: absolute; width: 150%;"></div>
+                                            </div>
+                                            <!-- /ko -->
+                                            <!-- ko if: ableToAddRelationFolder() -->
+                                            <a class="btn dark" href="javascript:;" data-bind="click:addCategoryFolders, tooltip: Kooboo.text.common.add, tooltipPlacement: 'right'"><i class="fa fa-plus"></i></a>
+                                            <!-- /ko -->
+                                            <!-- ko if: categoryFolders().length == 0 && !ableToAddRelationFolder() -->
+                                            <p class="form-control-static" data-bind="text: Kooboo.text.component.folderEditor.noFolderAvailable"></p>
+                                            <!-- /ko -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label col-md-3" data-bind="text: Kooboo.text.component.folderEditor.EmbeddedFolders"></label>
+                                    <div class="col-md-9">
+                                        <div class="input-groups">
+                                            <!-- ko foreach:embeddedFolders -->
+                                            <div class="input-group">
+                                                <select class="form-control key" data-bind="value:folderId,options:$component.availableFolders(folderId),optionsText:'displayName',optionsValue:'id'"></select>
+                                                <span class="input-group-addon"></span>
+                                                <span class="input-group-btn">
+                                                    <a class="btn btn-default" href="javascript:;" data-bind="click:$parent.removeEmbeddedFolders, tooltip: Kooboo.text.common.remove">
+                                                        <i class="fa fa-minus"></i>
+                                                    </a>
+                                                </span>
+                                                <input class="form-control" data-bind="value:alias, error: alias, errorContainer: '#embedded-error-container-' + $index(), attr: { placeholder: Kooboo.text.component.folderEditor.alias }" type="text">
+                                                <div data-bind="attr: { id: 'embedded-error-container-' + $index() }" style="position: absolute; width: 150%;"></div>
+                                            </div>
+                                            <!-- /ko -->
+                                            <!-- ko if: ableToAddRelationFolder() -->
+                                            <a class="btn dark" href="javascript:;" data-bind="click:addEmbeddedFolders, tooltip: Kooboo.text.common.add, tooltipPlacement: 'right'"><i class="fa fa-plus"></i></a>
+                                            <!-- /ko -->
+                                            <!-- ko if: embeddedFolders().length == 0 && !ableToAddRelationFolder() -->
+                                            <p class="form-control-static" data-bind="text: Kooboo.text.component.folderEditor.noFolderAvailable"></p>
+                                            <!-- /ko -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn green" data-bind="click: submit, text: Kooboo.text.common.save"></button>
+                    <button class="btn gray" data-bind="click: reset, text: Kooboo.text.common.cancel"></button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

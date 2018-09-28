@@ -1,0 +1,37 @@
+<!-- #layout name=blank-->
+<div class="page-header">
+    <h1 class="title" data-bind="text: Kooboo.text.common.Contents"></h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name:'SITES'
+},{
+    name:'DASHBOARD'
+},{
+    name:Kooboo.text.common.Contents
+}]}"></div>
+<div class="navbar navbar-default">
+    <div class="container-fluid">
+        <a data-bind="attr: { href: newContent }" class="btn green navbar-btn btn-folder">New Content</a>
+        <a data-bind="click: newFolder" class="btn green navbar-btn btn-folder">New folder</a>
+        <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
+    </div>
+</div>
+<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
+<div data-bind="component: { name: 'kb-relation-modal' }"></div>
+
+<folder-editor params="allFolders: folders"></folder-editor>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/kooboo/Guid.js",
+            "/_Admin/Scripts/components/kbTable.js",
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/components/kbRelationModal.js",
+            "/_Admin/Scripts/textContent/folderEditor.js",
+            "/_Admin/Scripts/lib/select2.min.js",
+            "/_Admin/Scripts/tableModel.js"
+        ])
+        Kooboo.loadCSS(["/_Admin/Styles/select2/select2.css"]);
+    })()
+</script>
+<script src="/_Admin/View/Contents/TextContents.js"></script>

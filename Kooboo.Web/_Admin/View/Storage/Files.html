@@ -1,0 +1,135 @@
+<!-- #layout name=blank -->
+<div class="page-header">
+    <h1 class="title">Files</h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'SITES'
+},{
+    name: 'DASHBOARD'
+},{
+    name: Kooboo.text.common.Files
+}]}"></div>
+<div class="navbar navbar-default">
+    <div class="container-fluid">
+        <a data-bind="click: onCreateFolder" class="btn green navbar-btn">New folder</a>
+        <a href="javascript:;" class="btn green navbar-btn btn-file"><span>Upload files</span>
+            <input type="file" multiple data-bind="upload:{
+                allowMultiple: true,
+                acceptTypes: ['*/*'],
+                callback: uploadFile
+            }"> 
+        </a>
+        <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
+    </div>
+</div>
+<div class="page-bar">
+    <ol data-bind="foreach: crumbPath" class="breadcrumb">
+        <!-- ko ifnot: ($index() == ($parent.crumbPath().length - 1)) -->
+        <li>
+            <a data-bind="click: $parent.onChoosingFolder.bind($data, $data.fullPath), text: $data.name" href="javascript:;"></a>
+        </li>
+        <!-- /ko -->
+        <!-- ko if: ($index() == ($parent.crumbPath().length - 1)) -->
+        <li data-bind="text: $data.name" class="active"></li>
+        <!-- /ko -->
+    </ol>
+</div>
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th class="table-checkbox">
+                    <input data-bind="checked: selectAll, enable: hasDocs" type="checkbox" />
+                </th>
+                <th>URL</th>
+                <th>Used by</th>
+                <th>Size</th>
+                <th>Last modified</th>
+                <th class="table-action">Preview</th>
+            </tr>
+        </thead>
+        <tbody data-bind="visible: hasDocs">
+            <!-- ko foreach: folders -->
+            <tr data-bind="click: $parent.selectDoc">
+                <td><input data-bind="checked: $data.selected, click: $data.onSelect" type="checkbox" /></td>
+                <td>
+                    <a data-bind="click: $parent.onChoosingFolder.bind($data, $data.fullPath())" href="javascript:;">
+                        <i class="table-icon fa fa-folder"></i>
+                        <!-- ko text: $data.fullPath -->
+                        <!-- /ko -->
+                    </a>
+                </td>
+                <td>-</td>
+                <td data-bind="text: $data.size || '-'"></td>
+                <td data-bind="text: $parent.localDate($data.lastModified)"></td>
+                <td></td>
+            </tr>
+            <!-- /ko -->
+            <!-- ko foreach: { data: files, as: 'file' }-->
+            <tr data-bind="click: $parent.selectDoc">
+                <td>
+                    <input data-bind="checked: file.selected, click: file.onSelect" type="checkbox" />
+                </td>
+                <td data-bind="text: file.url"></td>
+                <td>
+                    <!-- ko if: Object.keys(file.relations).length > 0 -->
+                    <!-- ko foreach: { data: Object.keys(file.relations), as: 'refer' } -->
+                    <a data-bind="text: file.relations[refer]() + ' ' + Kooboo.text.component.table[refer.toLowerCase()], click: $root.getRelation.bind(this, $parent), clickBubble: false, style: { background: Kooboo.getLabelColor(refer) }" href="javascript:;" class="label label-sm kb-table-label-refer"></a>
+                    <!-- /ko -->
+                    <!-- /ko -->
+                    <!-- ko ifnot: Object.keys(file.relations).length > 0 -->
+                    -
+                    <!-- /ko -->
+                </td>
+                <td data-bind="text: Kooboo.bytesToSize(file.size()) || '-'"></td>
+                <td data-bind="text: $parent.localDate(file.lastModified)"></td>
+                <td>
+                    <a class="btn blue" data-bind="attr: { href: file.previewUrl }" target="_blank">Preview</a>
+                </td>
+            </tr>
+            <!-- /ko -->
+        </tbody>
+        <tbody data-bind="visible: !hasDocs()">
+            <tr>
+                <td class="text-center" colspan="100">Empty</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div data-bind="modal: newFolderModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-bind="click: onNewFolderModalReset" class="close"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">New folder</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">Name</label>
+                        <div class="col-md-9">
+                            <input type="text" data-bind="value: folderName, error: folderName" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: onNewFolderModalSubmit" class="btn green">Save</button>
+                <button data-bind="click: onNewFolderModalReset" class="btn gray">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div data-bind="component: { name: 'kb-relation-modal' }"></div>
+
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbRelationModal.js",
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/tableModel.js"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Storage/Files.js"></script>

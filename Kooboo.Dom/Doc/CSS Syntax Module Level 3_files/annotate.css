@@ -1,0 +1,302 @@
+/*******************************************************************************
+ *
+ *  Copyright © 2011-2014 Hewlett-Packard Development Company, L.P. 
+ *  Style by Lea Verou
+ *
+ *  This work is distributed under the W3C® Software License [1] 
+ *  in the hope that it will be useful, but WITHOUT ANY 
+ *  WARRANTY; without even the implied warranty of 
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+ *
+ *  [1] http://www.w3.org/Consortium/Legal/2002/copyright-software-20021231 
+ *
+ *  Adapted from the Mobile Test Harness
+ *  Copyright © 2007 World Wide Web Consortium
+ *  http://dev.w3.org/cvsweb/2007/mobile-test-harness/
+ * 
+ ******************************************************************************/
+
+div.annotation {
+	position: relative;
+	float: right;
+    xclear: both;
+	max-width: 13em;
+	min-height: 14px;
+	padding: .5em .5em 0;
+	margin: 0 0 .5em 1em;
+	border: 1px solid rgba(0,0,0,.2);
+	background: #e0e6ea;
+	background-image: -moz-linear-gradient(rgba(255,255,255,0), white 120%);
+	background-image: -ms-linear-gradient(rgba(255,255,255,0), white 120%);
+	background-image: -o-linear-gradient(rgba(255,255,255,0), white 120%);
+	background-image: -webkit-linear-gradient(rgba(255,255,255,0), white 120%);
+	background-image: linear-gradient(rgba(255,255,255,0), white 120%);
+	color: black;
+    line-height: initial;
+    font-family: sans-serif;
+	font-size: 12pt;
+	font-weight: normal;
+	font-style: normal;
+	font-variant: normal;
+	text-align: center;
+	text-shadow: 0 1px white;
+    z-index: 1;
+	
+	border-radius: .5em;
+	box-shadow: 0 .1em .5em -.3em black, 0 1px white inset;
+}
+
+div.annotation.need {
+	background-color: #fcc;
+}
+
+div.annotation div {
+	display: block;
+}
+
+div.annotation a {
+	color: #005A9C;
+	text-decoration: none;
+}
+
+div.annotation a:hover,
+div.annotation a:hover span {
+	text-decoration: underline;
+	background: none;
+}
+
+div.annotation .button {
+	width: 12px;
+	height: 12px;
+	padding: 1px;
+	border: thin solid transparent;
+	cursor: pointer;
+	border-radius: 4px;
+	background: no-repeat center;
+}
+
+div.annotation .button:hover {
+	border-color: #555;
+	border-color: rgba(0,0,0,.3);
+	background-color: #777;
+	background-color: rgba(0,0,0,.3);
+	box-shadow: 1px 1px 2px rgba(0,0,0,.5) inset;
+}
+
+div.annotation .button.disclosure {
+	float: left;
+	margin: -3px 4px 0 -3px;
+	background-image: url(../img/open_dark.png);
+}
+
+div.annotation .button.close {
+	float:right;
+	margin: -3px -3px 0 4px;
+	background-image: url(../img/close_dark.png);
+}
+
+div.annotation.closed .button.disclosure {
+	background-image: url(../img/closed_dark.png);
+}
+
+div.annotation .button.disclosure:hover {
+	background-image: url(../img/open_light.png);
+}
+
+div.annotation.closed .button.disclosure:hover {
+	background-image: url(../img/closed_light.png);
+}
+
+div.annotation .button.close:hover {
+	background-image: url(../img/close_light.png);
+}
+
+div.annotation div.title {
+	font-size: 8.5pt;
+	line-height: 1.3;
+}
+
+div.annotation div.heading {
+	margin: 0 14px;
+	font-size: 120%;
+}
+
+div.annotation div.title + div.heading {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+	div.annotation div.heading span {
+		display: block;
+		font-size: 60%;
+		margin: .2em 0 .5em;
+	}
+	
+		div.annotation img.need {
+			margin-top: -.15em;
+			vertical-align: -2px;
+		}
+
+/* div.annotation div.engines {} */
+	
+	/* To be removed in final */
+	div.annotation.test div.engines span {
+		font-size: inherit;
+	}
+	
+	div.annotation div.engines span {
+		display: inline-block;
+		font-size: x-small;
+		padding: .4em .5em;
+		margin: .2em 0;
+		border: 1px solid rgba(0,0,0,.15);
+		color: white;
+		line-height: 1	;
+		font-weight: bold;
+		text-shadow: 1px 1px 1px rgba(0,0,0,.1);
+		
+		border-radius: 4px;
+		box-shadow: 0 1px rgba(255,255,255,.2) inset;
+	}
+	
+		div.annotation div.engines span a {
+			color: white;
+		}
+		
+		div.annotation div.engines span img {
+			width: 24px;
+			height: 24px;
+		}
+	
+	div.annotation div.engines .major {
+		padding: .5em .7em;
+		border-radius: 8px;
+		background-image: -moz-radial-gradient(closest-side, rgba(0,0,0,.1), transparent);
+		background-image: -ms-radial-gradient(closest-side, rgba(0,0,0,.1), transparent);
+		background-image: -o-radial-gradient(closest-side, rgba(0,0,0,.1), transparent);
+		background-image: -webkit-radial-gradient(closest-side, rgba(0,0,0,.1), transparent);
+		background-image: radial-gradient(closest-side, rgba(0,0,0,.1), transparent);
+	}
+	
+	div.annotation div.engines .webkit img {
+		width: 28px;
+		height: 28px;
+		margin: -4px -1px 0 -3px;
+	}
+	
+	div.annotation div.engines span.active {
+		position: relative;
+    }
+
+	div.annotation div.engines span.active:not(.major) {
+        padding-right: 16px;
+	}
+	
+	div.annotation div.engines span.active::after {
+		content: url(../img/bookmark.svg);
+		position: absolute;
+		top: -2px;
+		right: 2px;
+		width: 12px;
+		height: 24px;
+		z-index: 100;
+		text-indent: 0;
+	}
+	div.annotation div.engines span.active.major::after {
+      right: 5px;
+    }
+
+	div.annotation .pass {
+		background-color: #490;
+	}
+	
+	div.annotation .almost-pass {
+		background-color: #8c0;
+	}
+	
+	div.annotation .slightly-buggy {
+		background-color: #bb0;
+	}
+	
+	div.annotation .buggy {
+		background-color: #e80;
+	}
+	
+	div.annotation .very-buggy {
+		background-color: #e60;
+	}
+	
+	div.annotation .fail {
+		background-color: #e20;
+	}
+	
+	div.annotation .epic-fail {
+		background-color: #b00;
+	}
+	
+	div.annotation .untested {
+		background-color: #999;
+	}
+		
+div.annotation .details {
+	max-height: 0;
+	padding-top: .5em;
+	overflow: hidden;
+	
+	-moz-transition: 1s max-height;
+	-ms-transition: 1s max-height;
+	-o-transition: 1s max-height;
+	-webkit-transition: 1s max-height;
+	transition: 1s max-height;
+}
+
+div.annotation .details.open {
+	max-height: 3em;
+}
+
+	div.annotation .details .meter {
+		position: relative;
+		width: 100%;
+		height: 1.2em;
+		margin-bottom: .5em;
+		overflow: hidden;
+		border-radius: .3em;
+	}
+	
+		div.annotation .details .numbers {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			font-size: 75%;
+			line-height: 1.6em;
+			text-align: center;
+			color: white;
+			font-weight: bold;
+			text-shadow: 1px 1px 2px rgba(0,0,0,.3);
+		}
+	
+		div.annotation .details .meter span {
+			float: left;
+			height: 100%;
+			padding: 0;
+			border: 0;
+			overflow: hidden;
+			border-radius: 0;
+			background-image: -moz-linear-gradient(rgba(255,255,255,.4), rgba(255,255,255,0) 60%),
+			                  -moz-repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(255,255,255,.1) 8px, rgba(255,255,255,.1) 16px);
+			background-image: -ms-linear-gradient(rgba(255,255,255,.4), rgba(255,255,255,0) 60%),
+			                  -ms-repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(255,255,255,.1) 8px, rgba(255,255,255,.1) 16px);
+			background-image: -o-linear-gradient(rgba(255,255,255,.4), rgba(255,255,255,0) 60%),
+			                  -o-repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(255,255,255,.1) 8px, rgba(255,255,255,.1) 16px);
+			background-image: -webkit-linear-gradient(rgba(255,255,255,.4), rgba(255,255,255,0) 60%),
+			                  -webkit-repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(255,255,255,.1) 8px, rgba(255,255,255,.1) 16px);
+			background-image: linear-gradient(rgba(255,255,255,.4), rgba(255,255,255,0) 60%),
+			                  repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(255,255,255,.1) 8px, rgba(255,255,255,.1) 16px);
+		}
+
+@media print {
+	div.annotation {
+		display: none;
+	}
+}

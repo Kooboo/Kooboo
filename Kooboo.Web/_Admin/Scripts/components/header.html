@@ -1,0 +1,34 @@
+﻿<header id="header" class="navbar navbar-fixed-top">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar" kb-target=".kb-panel"><i class="fa fa-bars"></i></button>
+        <div class="navbar-brand">
+            <a class="logo" href="javascript:;" data-toggle="dropdown">
+                <img src="/_Admin/Images/logo.png" alt="LOGO" />
+                <i class="fa"></i>
+            </a>
+            <ul data-bind="foreach: menus" class="dropdown-menu">
+                <li>
+                    <a data-bind="click: $parent.menuClick.bind(this, $data.url), attr: { href: $data.url }" class="icon-btn btn-lg blue">
+                        <i data-bind="css: $data.icon"></i>
+                        <div data-bind="text: $data.name"></div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <ul class="nav navbar-nav navbar-right hidden-xs">
+        <li k-if="kooboosetting.IsDebug = true"><a href="javascript:;" data-bind="click: removeLocalStorage"><i class="fa fa-trash"></i> Clear LStorage</a></li>
+        <li>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                <i class="icon icon-user"></i>
+                <!-- ko text: Kooboo.text.common.hello + ', ' + user().name -->
+                <!-- /ko -->
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="/_Admin/Account/Profile"><i class="icon icon-lock"></i><span data-bind="text: Kooboo.text.component.header.user.profile"></span></a></li>
+                <li><a href="javascript:;" data-bind="click: logout"><i class="icon icon-logout"></i><span data-bind="text: Kooboo.text.component.header.user.signOut"></span></a></li>
+            </ul>
+        </li>
+    </ul>
+</header>

@@ -1,0 +1,94 @@
+<!--#layout name=default-->
+<div id="main" class="offset-top">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="page-header">
+                    <h1 class="title">Share a website</h1>
+                </div>
+                <fieldset class="form-horizontal">
+                    <div class="note note-info">
+                        <p>Share your website as a template for public users or within your organization.</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Site name</label>
+                        <div class="col-md-10 row">
+                            <div class="col-md-6">
+                                <input type="text" data-bind="textInput: siteName, error: siteName" class="form-control input-medium" placeholder="Site name">
+                            </div>
+                            <!-- <div class="col-md-6 checkbox-inline">
+                                <label> <input data-bind="checked: makePrivate" type="checkbox">Make private</label>
+                            </div> -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Tags</label>
+                        <div class="col-md-10">
+                            <select data-bind="options: tags, selectedOptions: selectedTags, select2: {
+                                tags: true ,
+                                tokenSeparators: [',', ' ', ';'],
+                                language:{
+                                    'noResults': function(){
+                                        return Kooboo.text.site.share.noTagFound
+                                    }
+                                }
+                            }" multiple class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Description</label>
+                        <div class="col-md-10">
+                            <textarea data-bind="value: description" class="form-control autosize"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Link</label>
+                        <div class="col-md-10">
+                            <input data-bind="value: link" class="form-control" placeholder="publisher url">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Thumbnails</label>
+                        <div class="col-md-10">
+                            <div class="fileinput">
+                                <span class="btn btn-default btn-file"><span>Select images</span>
+                                <input type="file" accept="image/*" multiple/>
+                                </span>&nbsp;
+                                <span data-bind="visible: !fileList().length"><span>Support types: bmp, png, jpg, jpeg.</span>&nbsp;<span>System will add thumbnails automatically if user don't upload any thumbnail.</span></span>
+                                <span data-bind="visible: fileList().length">Click the image below to select cover image.</span>
+                            </div>
+                            <div class="file-list img-list">
+                                <ul data-bind="visible: fileList().length, foreach: fileList">
+                                    <li data-bind="click: $parent.chooseAsDefault, css: { active: $data.selected }">
+                                        <div class="fileinput-new thumbnail">
+                                            <img data-bind="attr: { src: $data.value }" alt="No Image [100x100]" style="width: 100px; height: 100px;" src="">
+                                        </div>
+                                        <a data-bind="tooltip:Kooboo.text.common.remove, click: $parent.removeFile, clickBubble: false" href="javascript:;"><i class="fa fa-remove"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+                <ul class="pager">
+                    <li class="next"><button data-bind="click: onShare" class="btn blue">Share</button></li>
+                    <li class="previous"><a href="javascript:;" data-bind="click: SPAClick" class="btn gray">Return</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/lib/select2.min.js",
+            "/_Admin/Scripts/kobindings.select2.js",
+            "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
+            "/_Admin/Scripts/SPA.js"
+        ])
+        Kooboo.loadCSS([
+            "/_Admin/Styles/select2/select2.css"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Sites/Share.js"></script>

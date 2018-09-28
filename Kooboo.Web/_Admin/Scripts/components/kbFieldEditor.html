@@ -1,0 +1,168 @@
+<div data-bind="modal: onShow" class="modal fade" data-keyboard="false" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.component.fieldEditor.title">Field editor</h4>
+            </div>
+            <div class="modal-body">
+                <div data-bind="if: field">
+                    <ul class="nav nav-tabs" data-bind="visible: !field().isSystemField()">
+                        <!-- ko foreach: tabs -->
+                        <li data-bind="css: { active: $data.value == $parent.curTab() }, click: $parent.changeTab.bind(this)">
+                            <a href="javascript:;" data-bind="text: $data.displayText"></a>
+                        </li>
+                        <!-- /ko -->
+                        <li data-bind="css: { active: curTab() == 'validation' }, click: changeTab.bind(this, {value: 'validation'}), visible: showValidationTab">
+                            <a href="javascript:;" data-bind="text: Kooboo.text.component.fieldEditor.validation"></a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <section class="tab-pane fade" data-bind="css: { 'active in': curTab() == 'basic' }" id="basic_pane">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" data-bind="text: Kooboo.text.common.name"></label>
+                                    <div class="col-md-9">
+                                        <div class="input-group" data-bind="error: field().name, errorContainer: '.name-error-container'">
+                                            <!-- ko if: field().isNewField -->
+                                            <input type="text" class="form-control key" data-bind="textInput: field().name">
+                                            <!-- /ko -->
+                                            <!-- ko if: !field().isNewField() -->
+                                            <p class="form-control-static key" data-bind="text: field().name" style="word-break: break-word;"></p>
+                                            <!-- /ko -->
+                                            <!-- ko if: field().modifiedField() -->
+                                            <span class="input-group-addon" data-bind="visible: !field().isSystemField()">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" data-bind="checked: field()[field().modifiedFieldName]">
+                                                    <!-- ko text: field().modifiedFieldText -->
+                                                    <!-- /ko -->
+                                                </label>
+                                            </div>
+                                        </span>
+                                            <!-- /ko -->
+                                        </div>
+                                    </div>
+                                    <div class="name-error-container" style="position: absolute; width: 150%;"></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-3 control-label" data-bind="text: Kooboo.text.common.displayName"></label>
+                                    <div class="col-md-9">
+                                        <input type="text" class="form-control key" data-bind="textInput: field().displayName">
+                                    </div>
+                                </div>
+                                <div class="form-group" data-bind="visible: field().isSystemField()">
+                                    <div class="col-md-9 col-md-offset-3">
+                                        <div class="checkbox">
+                                            <label>
+                                            <input type="checkbox" data-bind="checked: field().editable"><span data-bind="text: Kooboo.text.component.fieldEditor.userEditable"></span>
+                                        </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group" data-bind="visible: !field().isSystemField()">
+                                    <label class="col-md-3 control-label" data-bind="text:Kooboo.text.component.fieldEditor.controlType"></label>
+                                    <div class="col-md-9">
+                                        <!-- ko if: controlTypes().length > 1 -->
+                                        <select class="form-control" data-bind="value: field().controlType, options: controlTypes, optionsText: 'displayName', optionsValue: 'value'"></select>
+                                        <!-- /ko -->
+                                        <!-- ko if: controlTypes().length == 1 -->
+                                        <p class="form-control-static" data-bind="text: Kooboo.text.component.controlType[_.camelCase(field().controlType())]"></p>
+                                        <!-- /ko -->
+                                    </div>
+                                </div>
+                                <div class="form-group" data-bind="visible: showAddOptionPanel">
+                                    <label class="col-md-3 control-label" data-bind="text: Kooboo.text.component.fieldEditor.Options"></label>
+                                    <div class="col-md-9">
+                                        <div class="input-groups" data-bind="foreach: field().options, visible: field().options().length">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control key input-small" data-bind="textInput: $data.key, error: $data.key, errorContainer: '.option-error-container', errorPlacement: 'left', attr: { placeholder: Kooboo.text.common.displayName }">
+                                                <span class="input-group-addon">:</span>
+                                                <input type="text" class="form-control value input-small" data-bind="textInput: $data.value, attr: { placeholder: Kooboo.text.common.value }">
+                                                <span class="input-group-btn" data-bind="error: $data.value, errorContainer: '.option-error-container'"><a href="javascript:;" class="btn btn-default" data-bind="click: $parent.field().removeOption.bind(this)"><i class="fa fa-minus"></i></a></span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="kb-error-holder">
+                                                <a href="javascript:;" class="btn dark" data-bind="click: field().addOption, attr: { disabled: !field().isOptionsValid() }, error: field()._optionRequired, errorContainer: '.option-error-container'"><i class="fa fa-plus"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="option-error-container" style="position: absolute; width: 150%;"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group" data-bind="visible: showMediaFilePanel">
+                                    <div class="col-md-9 col-md-offset-3">
+                                        <div class="checkbox">
+                                            <label>
+                                            <input type="checkbox" data-bind="checked: field().isMultipleValue, attr: { disabled: !field().isNewField() }">
+                                            <span data-bind="text: Kooboo.text.component.fieldEditor.enableMultipleImages"></span>
+                                        </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-bind="visible: showDBColumnPanel">
+
+                                </div>
+                                <div class="panel panel-default margin-top-20" data-bind="visible: showPreviewPanel">
+                                    <div class="panel-heading">
+                                        <h6 class="panel-title" data-bind="text: Kooboo.text.common.preview"></h6>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3" data-bind="text: field().displayName() || field().name()"></label>
+                                            <div class="col-md-9">
+                                                <img data-bind="attr: { src: previewImage, alt: previewType }" style="max-width: 100%;">
+                                                <span class="help-block" data-bind="text: field().tooltip"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <section class="tab-pane fade" data-bind="css: { 'active in': curTab() == 'advanced' }">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="control-label col-md-3" data-bind="text: Kooboo.text.component.fieldEditor.tooltip"></label>
+                                    <div class="col-md-9">
+                                        <input type="text" data-bind="textInput: field().tooltip" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group" data-bind="visible: multilinguable() && showMultilingualOption()">
+                                    <div class="col-md-9 col-md-offset-3">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" data-bind="checked: field().multilingual">
+                                                <span data-bind="text: Kooboo.text.component.fieldEditor.enableMultilingual"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default margin-top-20" data-bind="visible: showPreviewPanel">
+                                    <div class="panel-heading">
+                                        <h6 class="panel-title" data-bind="text: Kooboo.text.common.preview"></h6>
+                                    </div>
+                                    <div class="panel-body form-horizontal">
+                                        <div class="form-group">
+                                            <label class="control-label col-md-3" data-bind="text: field().displayName() || field().name()"></label>
+                                            <div class="col-md-9">
+                                                <img data-bind="attr: { src: previewImage, alt: previewType }" style="max-width: 100%;">
+                                                <span class="help-block" data-bind="text: field().tooltip"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <section class="tab-pane fade" data-bind="css: { 'active in': curTab() == 'validation' }">
+                            <div data-bind="component: { name: 'kb-field-validation', params:{ field:field }}"></div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="click: onModalSave">Save</button>
+                <button class="btn gray" data-bind="click: onHide">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

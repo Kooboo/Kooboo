@@ -1,0 +1,120 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Kooboo.IndexedDB.Helper
+{
+    public static class KeyHelper
+    {
+        public static int GetKeyLen(Type keytype, int len=0)
+        {
+            if (keytype == typeof(string))
+            {
+                if (len ==0)
+                {
+                    return GlobalSettings.defaultKeyLength;
+                }
+                else
+                {
+                    return len; 
+                } 
+            }
+            else if (keytype == typeof(Int32))
+            {
+                return 4;
+            }
+            else if (keytype == typeof(Int64))
+            {
+                return 8;
+            }
+            else if (keytype == typeof(Int16))
+            {
+                return 2;
+            }
+            else if (keytype == typeof(decimal))
+            {
+                ///decimal is not available, will be converted to double directly on byteconverter.
+                return 8;
+            }
+            else if (keytype == typeof(double))
+            {
+                return 8;
+            }
+            else if (keytype == typeof(float))
+            {
+                return 4;
+            }
+            else if (keytype == typeof(DateTime))
+            {
+                return 8;
+            }
+            else if (keytype == typeof(Guid))
+            {
+                return 16;
+            }
+            else if (keytype == typeof(byte))
+            {
+                return 1;
+            }
+            else if (keytype == typeof(bool))
+            {
+                return 1;
+            }
+            else if (keytype.IsEnum)
+            {
+                return 4;
+            }
+            else
+            {
+                throw new Exception(keytype.ToString() + " data type not supported"); 
+            }  
+        }
+
+        public static byte[] AppendToKeyLength(byte[] input, bool IsString, int KeyLen)
+        {
+            if (!IsString)
+            {
+                return input;
+            }
+            int currentbytecount = input.Count();
+
+            if (currentbytecount > KeyLen)
+            {
+                byte[] fixedlenbytes = new byte[KeyLen];
+                System.Buffer.BlockCopy(input, 0, fixedlenbytes, 0, KeyLen);
+                return fixedlenbytes;
+            }
+            else if (currentbytecount < KeyLen)
+            {
+                byte[] fixedlenbytes = new byte[KeyLen];
+                System.Buffer.BlockCopy(input, 0, fixedlenbytes, 0, currentbytecount);
+                return fixedlenbytes;
+            }
+            else
+            {
+                return input;
+            }
+        }
+
+
+        public static Guid ComputeGuid(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                input = string.Empty;
+            }
+            input = input.ToLower();
+
+            byte[] bytes = System.Text.Encoding.ASCII.GetBytes(input);
+
+            // create the md5 hash
+            MD5 md5Hasher = MD5.Create();
+            byte[] data = md5Hasher.ComputeHash(bytes);
+            // convert the hash to a Guid
+            return new Guid(data);
+        }
+    }
+}

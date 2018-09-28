@@ -1,0 +1,38 @@
+<div class="panel panel-default">
+    <div class="panel-heading clickable" data-toggle="collapse" data-parent="#J_SettingAccordion" data-target="#J_Setting_Basic">
+        <h4 class="panel-title" data-bind="text: Kooboo.text.component.pageEditor.basic"></h4>
+    </div>
+    <div id="J_Setting_Basic" class="panel-collapse collapse in">
+        <div class="panel-body">
+            <!-- ko foreach: { data: multiContentTitle, as: 'title' } -->
+            <div data-bind="collapsein: title.show" class="form-group">
+                <label class="control-label">
+                    <span data-bind="text: Kooboo.text.component.pageEditor.contentTitle"></span>
+                    <!-- ko ifnot: title.isDefault -->
+                    (<!-- ko text: title.name--><!-- /ko -->)
+                    <!-- /ko -->
+                </label>
+                <input type="text" data-bind="value: title.value" class="form-control">
+                <div class="btn-group margin-top-10" data-bind="foreach: $component.metaBindingHelpers, visible: $component.metaBindingHelpers().length">
+                    <a class="btn btn-xs btn-default" data-bind="text:$data ,click: $component.metaHelp.bind(this, title)" href="#"></a>
+                </div>
+                <!-- ko ifnot: title.isDefault -->
+                <span class="help-block" data-bind="text: Kooboo.text.component.pageEditor.basicHelper"></span>
+                <!-- /ko -->
+            </div>
+            <!-- /ko -->
+
+            <div class="form-group">
+                <label class="control-label">
+                    <span data-bind="text: Kooboo.text.component.pageEditor.URL"></span>
+                    <span id="url-path-error-container"></span>
+                </label>
+                <input type="text" data-bind="value: urlPath, error: urlPath, errorPlacement: 'top'" class="form-control" id="url-route-input">
+                <div class="btn-group margin-top-10" data-bind="foreach: routeHelpers, visible: routeHelpers().length">
+                    <a class="btn btn-xs btn-default" data-bind="text:$data ,click: $parent.routeHelp" href="#"></a>
+                </div>
+                <p class="help-block" data-bind="text: Kooboo.text.component.pageEditor.urlHelper"></p>
+            </div>
+        </div>
+    </div>
+</div>

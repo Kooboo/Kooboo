@@ -1,0 +1,35 @@
+<!-- #layout name=empty -->
+<div id="main" style="margin:0">
+    <div class="page-header">
+        <h1 class="title">Text Content</h1>
+        <div data-bind="component: { name: 'kb-multilang-selector', params: siteLangs }"></div>
+    </div>
+    <div class="clearfix" data-bind="component: { name: 'kb-field-panel', params: {
+        fields: fields,
+        categories: categories,
+        embedded: embedded,
+        startValidating: startValidating,
+        validationPassed: validationPassed,
+        values: contentValues,
+        siteLangs: siteLangs
+    }}"></div>
+    <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog>
+</div>
+
+<script>
+    window.__gl = {};
+    Kooboo.viewEditor = {
+        component: {}
+    };
+</script>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbMultilangSelector.js",
+            "/_Admin/Scripts/components/kbFieldPanel.js",
+
+            "/_Admin/Scripts/kooboo/Guid.js",
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Contents/ContentDialog.js"></script>

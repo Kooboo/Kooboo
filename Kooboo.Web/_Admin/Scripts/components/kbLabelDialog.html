@@ -1,0 +1,29 @@
+<div data-bind="modal: isShow" class="modal fade" style="z-index:100001" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-bind="click: reset" class="close"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: title"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-2" data-bind="text: Kooboo.text.common.name"></label>
+                        <div class="col-md-10">
+                            <select data-bind="options: existLabels, optionsText: 'name', optionsValue: 'value', value: labelValue" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="form-group" data-bind="visible: showInput">
+                        <div class="col-md-10 col-md-offset-2">
+                            <input type="text" data-bind="value: text, error: text,attr: {placeholder: placeholder}" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: save, text: Kooboo.text.common.save" class="btn green"></button>
+                <button data-bind="click: reset, text: Kooboo.text.common.cancel" class="btn gray"></button>
+            </div>
+        </div>
+    </div>
+</div>

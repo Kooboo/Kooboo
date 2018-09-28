@@ -1,0 +1,65 @@
+<!-- #layout name=blank -->
+<div class="page-header">
+    <h1 class="title">Key-Value Store</h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'SITES'
+},{
+    name: 'DASHBOARD'
+},{
+    name: Kooboo.text.common.KeyValueStore
+}]}"></div>
+<div class="navbar navbar-default">
+    <div class="container-fluid">
+        <a data-bind="click: onCreate" class="btn green navbar-btn">New</a>
+        <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
+    </div>
+</div>
+<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
+<div data-bind="modal: showEditModal" id="modal" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: hideEditModal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: isNewStore() ? Kooboo.text.common.new : Kooboo.text.common.edit"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Key</label>
+                        <div class="col-md-10">
+                            <!-- ko ifnot: isNewStore -->
+                            <p class="form-control-static" data-bind="text: editingName"></p>
+                            <!-- /ko -->
+                            <!-- ko if: isNewStore -->
+                            <input type="text" class="form-control" data-bind="value: editingName, error: editingName">
+                            <!-- /ko -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2">Value</label>
+                        <div class="col-md-10">
+                            <textarea data-bind="value: editingValue, error: editingValue" class="form-control autosize"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="click: saveEditing">Save</button>
+                <button class="btn gray" data-bind="click: hideEditModal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/tableModel.js",
+            "/_Admin/Scripts/kooboo/Guid.js",
+            "/_Admin/Scripts/components/kbTable.js",
+            "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
+        ])
+    })();
+</script>
+<script src="/_Admin/View/Storage/KeyValue.js"></script>

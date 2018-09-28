@@ -1,0 +1,444 @@
+<!-- #layout name=blank-->
+<div class="page-header">
+    <h1 class="title">Settings</h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'SITES'
+},{
+    name: 'DASHBOARD'
+},{
+    name: Kooboo.text.common.Settings
+}] }"></div>
+
+<style>
+    .setting-list p.form-control-static {
+        word-wrap: break-word;
+        min-height: 0;
+    }
+    
+    .setting-list {
+        padding: 0;
+        list-style: none;
+    }
+    
+    .setting-list li {
+        padding: 15px 0;
+        border-bottom: 1px solid #eeeeee;
+    }
+    
+    .setting-list li:last-child {
+        border-bottom: 0;
+    }
+</style>
+
+
+<ul class="setting-list clearfix">
+    <li class="item clearfix">
+        <div class="col-md-3">
+            <label class="control-label">Display name</label>
+        </div>
+        <div class="col-md-9">
+            <input type="text" data-bind="value: displayName" class="form-control input-large">
+        </div>
+    </li>
+    <li class="item clearfix">
+        <div class="col-md-3">
+            <label class="control-label">Site type</label>
+        </div>
+        <div class="col-md-9">
+            <select class="form-control input-large" data-bind="value: siteType, options: siteTypes, optionsText: 'value', optionsValue: 'key'"></select>
+        </div>
+    </li>
+    <li class="item clearfix">
+        <div class="col-md-3">
+            <label class="control-label">Import/Export site</label>
+            <p class="form-control-static"></p>
+        </div>
+        <div class="col-md-9">
+            <button data-bind="click: onShowUploadModal" class="btn btn-default">
+                <i class="fa fa-download"></i> <span data-bind="text: Kooboo.text.tooltip.uploadNewContent"></span>
+            </button>
+            <button data-bind="click: onShowExportModal" class="btn btn-default">
+                <i class="fa fa-upload"></i> <span data-bind="text: Kooboo.text.tooltip.exportSite"></span>
+            </button>
+        </div>
+    </li>
+    <li class="item clearfix">
+        <div class="col-md-3">
+            <label class="control-label">Enable Visitor Log</label>
+            <p class="form-control-static"></p>
+        </div>
+        <div class="col-md-9">
+            <input type="checkbox" id="enable_visitor_log" data-bind="checked: enableVisitorLog">
+        </div>
+    </li>
+    <li class="item clearfix">
+        <div class="col-md-3">
+            <label class="control-label">Enable Constraint Fix On Save</label>
+            <p class="form-control-static"></p>
+        </div>
+        <div class="col-md-9">
+            <input type="checkbox" id="enable_constraint_fix_on_save" data-bind="checked: enableConstraintFixOnSave">
+        </div>
+    </li>
+    <li class="item clearfix">
+        <div class="col-md-3">
+            <label class="control-label">Enable Front Events</label>
+            <p class="form-control-static"></p>
+        </div>
+        <div class="col-md-9">
+            <input type="checkbox" id="enable_front_events" data-bind="checked: enableFrontEvents">
+        </div>
+    </li>
+    <li class="item clearfix" k-if="kooboosetting.IsLocal=true">
+        <div class="col-md-3">
+            <label class="control-label">Enable Disk Sync</label>
+            <p class="form-control-static"></p>
+        </div>
+        <div class="col-md-9">
+            <div class="form-group">
+                <input type="checkbox" id="enable_disk_sync" data-bind="checked: enableDiskSync">
+            </div>
+            <div data-bind="collapsein: enableDiskSync">
+                <div class="form-group">
+                    <input type="text" id="folder-path" class="form-control input-inline input-large" data-bind="value: diskSyncFolder">
+                    <button type="button" id="copy_sync_path" data-clipboard-target="#folder-path" class="btn btn-link">Copy</button>
+                </div>
+            </div>
+        </div>
+    </li>
+    <li class="item clearfix">
+        <div class="col-md-3">
+            <label class="control-label">Enable Multilingual</label>
+            <p class="form-control-static"></p>
+        </div>
+        <div class="col-md-9">
+            <input type="checkbox" id="enable_multilingual" data-bind="checked: enableMultilingual">
+            <div class="margin-top-20" data-bind="collapsein: enableMultilingual">
+                <div class="form-group">
+                    <label class="control-label">Multilingual</label>
+                    <div class="file-list">
+                        <ul data-bind="foreach: { data: langs, as: 'lang' }" class="form-control input-large" style="display: inline-table;">
+                            <li>
+                                <!-- ko text: lang.value -->
+                                <!-- /ko -->
+                                <a href="javascript:;" data-bind="click: $parent.removeLang, tooltip: Kooboo.text.common.remove"><i class="fa fa-remove"></i></a>
+                            </li>
+                        </ul>
+                        <a class="btn btn-default" data-bind="click: onAddLangModalShow, tooltip: Kooboo.text.site.setting.configuration"><i class="fa fa-cog"></i></a>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Default Language</label>
+                    <select data-bind="options: langs, optionsText: 'value', optionsValue: 'key', value: defaultCulture" class="form-control input-large"></select>
+                </div>
+            </div>
+        </div>
+    </li>
+    <li class="item clearfix" data-bind="collapsein: enableMultilingual">
+        <div class="col-md-3">
+            <label class="control-label">Enable language path</label>
+            <p class="form-control-static">Language path is a virtual path of your website. You may create a path eg. www.kooboo.com/en, en is the language path.</p>
+        </div>
+        <div class="col-md-9">
+            <div class="form-group">
+                <input type="checkbox" id="enable_site_path" data-bind="checked: enableSitePath">
+            </div>
+            <div data-bind="collapsein: enableSitePath">
+                <!-- ko foreach: { data: langs, as: 'lang' } -->
+                <div class="form-group">
+                    <label class="control-label" data-bind="text: lang.key"></label>
+                    <input type="text" data-bind="attr:{ name:'SitePath.' + lang.key() }, value: $root.getSitePath(lang.key())" class="form-control input-large">
+                </div>
+                <!-- /ko -->
+            </div>
+        </div>
+    </li>
+    <li class="item clearfix" data-bind="collapsein: enableMultilingual">
+        <div class="col-md-3">
+            <label class="control-label">Auto detect culture</label>
+            <p class="form-control-static"></p>
+        </div>
+        <div class="col-md-9">
+            <div class="form-group">
+                <input type="checkbox" id="enable_auto_detect_culture" data-bind="checked: autoDetectCulture">
+            </div>
+        </div>
+    </li>
+    <li class="item clearfix">
+        <div class="col-md-3">
+            <label class="control-label">Site mirror</label>
+            <p class="form-control-static"></p>
+        </div>
+        <div class="col-md-9">
+            <div class="form-group">
+                <a href="javascript:;" class="btn btn-default" data-bind="click: onShowSiteMirrorConfigModal"><i class="fa fa-gear"></i> <span>Config</span></a>
+            </div>
+
+        </div>
+    </li>
+    <li class="item clearfix">
+        <div class="col-md-3">
+            <label class="control-label">Force SSL</label>
+            <p class="form-control-static"></p>
+        </div>
+        <div class="col-md-9">
+            <input type="checkbox" id="enable_force_ssl" data-bind="checked: forceSSL">
+        </div>
+    </li>
+    <li class="item clearfix">
+        <div class="col-md-3">
+            <label class="control-label">Custom settings</label>
+            <p class="form-control-static"></p>
+        </div>
+        <div class="col-md-9">
+            <div class="input-groups">
+                <!-- ko foreach:customSettingArray-->
+                <div class="input-group">
+                    <input type="text" data-bind="value:key" class="form-control key" placeholder="Key">
+                    <span class="input-group-addon">-</span>
+                    <input type="text" data-bind="value:value" class="form-control value" placeholder="Value">
+                    <span class="input-group-btn">
+                        <a data-bind="click:$parent.removeCustomSetting, tooltip: Kooboo.text.common.remove, tooltipPlacement: 'right'" class="btn btn-default" href="javascript:;">
+                            <i class="fa fa-minus"></i>
+                        </a>
+                    </span>
+                </div>
+                <!-- /ko -->
+                <a data-bind="click:addCustomSetting, tooltip: Kooboo.text.tooltip.add, tooltipPlacement: 'right'" class="btn dark" href="javascript:;"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+    </li>
+    <li class="item clearfix">
+        <div class="col-md-3">
+            <label class="control-label">
+                <button class="btn green" data-bind="click: save">Save</button>
+            </label>
+        </div>
+    </li>
+</ul>
+<div data-bind="modal: langModalShow" class="modal fade" data-backdrop="static" data-keyboard="fasle">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-bind="click: onAddLangModalHide" class="close"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Configuration</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group margin-top-10">
+                        <div class="col-md-12 input-groups">
+                            <!-- ko foreach: { data: editingLangs, as: 'lang' } -->
+                            <div class="input-group">
+                                <input type="text" class="form-control input-medium" data-bind="typeahead: $parent.culturesKey, name: lang.key, value: lang.key, error: lang.key, defaultShow: true, items: 10, errorPlacement: 'left'" placeholder="Language code">
+                                <span class="input-group-addon">:</span>
+                                <input type="text" class="form-control input-medium" data-bind="value: lang.value, hasFocus: lang.focus" placeholder="Language name">
+                                <span class="input-group-btn" data-bind="error: lang.value, errorPlacement: 'right'">
+                                    <a class="btn btn-default" href="javascript:;" data-bind="click: $parent.removeEditingLang.bind(this, lang), tooltip: Kooboo.text.common.remove"><i class="fa fa-minus"></i></a>
+                                </span>
+                            </div>
+                            <!-- /ko -->
+                            <a class="btn dark" data-bind="click: addNewLang, tooltip: Kooboo.text.tooltip.add"><i class="fa fa-plus"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: onAddLangModalSave" class="btn green">Save</button>
+                <button data-bind="click: onAddLangModalHide" class="btn gray">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-bind="modal: showSiteMirrorConfigModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: hideSiteMirrorConfigModal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Site mirror configuration</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal" data-bind="visible: !isSlaveSite()">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">Enable</label>
+                        <div class="col-md-9">
+                            <input type="checkbox" id="enable_cluster">
+                        </div>
+                    </div>
+                    <div data-bind="collapsein: enableCluster">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Root server</label>
+                            <div class="col-md-9">
+                                <p class="form-control-static">
+                                    <!-- ko foreach: _clusters -->
+                                    <!-- ko if: $data.isRoot -->
+                                    <a href="javascript:;" class="btn blue" disabled data-bind="tooltip:">
+                                        <i class="fa fa-dot-circle-o"></i>
+                                        <!-- ko text: $data.displayName() + ' (' + $data.name() + ')' -->
+                                        <!-- /ko -->
+                                    </a>
+                                    <!-- /ko -->
+                                    <!-- /ko -->
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Available server</label>
+                            <div class="col-md-9">
+                                <div class="margin-bottom-5" data-bind="foreach: _clusters, visible: _clusters().length">
+                                    <!-- ko ifnot: $data.isRoot -->
+                                    <a href="javascript:;" class="btn" data-bind="click: changeStatus, css: { 'btn-default': !$data.isSelected(), 'blue': $data.isSelected() }, attr: { disabled: $data.disabled, title: 'IP: ' + $data.ip() + ':' + $data.port() }" style="margin: 0 5px 5px 0;">
+                                        <i class="fa" data-bind="css: { 'fa-dot-circle-o': $data.isSelected(), 'fa-circle-o': !$data.isSelected() }"></i>
+                                        <!-- ko text: $data.displayName() + ' (' + $data.name() + ')' -->
+                                        <!-- /ko -->
+                                        <!-- ko if: $data.isCustom -->
+                                        <i class="fa fa-close" data-bind="click: $parent.removeCustomCluster, tooltip: Kooboo.text.common.remove, clickBubble: false" style="margin-left: 5px; margin-right: 5px;"></i>
+                                        <!-- /ko -->
+                                    </a>
+                                    <!-- /ko -->
+                                </div>
+                                <a href="javascript:;" class="btn dark" data-bind="click: addCustomServer, tooltip: Kooboo.text.common.add" style="margin-top: -5px;"><i class="fa fa-plus"></i></a>
+                            </div>
+                        </div>
+                        <div k-if="kooboosetting.IsLocal = false">
+                            <hr>
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">Location redirect</label>
+                                <div class="col-md-9">
+                                    <input type="checkbox" id="enable_location_redirect">
+                                </div>
+                            </div>
+                            <div data-bind="collapsein: enableLocationRedirect">
+                                <div class="form-group">
+                                    <p class="col-md-9 col-md-offset-3">Site Cluster enable your website to have mirrors on different data centers</p>
+                                </div>
+                                <!-- ko foreach: _clusters -->
+                                <div class="form-group" data-bind="collapsein: $data.isSelected">
+                                    <label class="col-md-3 control-label" data-bind="text: $data.displayName"></label>
+                                    <div class="col-md-9">
+                                        <div class="form-inline">
+                                            <div data-bind="error: $data.subDomain" style="display: inline-block;">
+                                                <input type="text" class="form-control" data-bind="textInput: $data.subDomain">
+                                                <select class="form-control" data-bind="options: $parent.domains, value: $data.rootDomain, optionsValue: 'value', optionsText: 'name'"></select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /ko -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-horizontal" data-bind="visible: isSlaveSite">
+                    <div class="form-group">
+                        <div class="col-md-10 col-md-offset-1">
+                            <p class="form-control-static">This is a Slave site, editing is not allowed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="javascript:;" class="btn green" data-bind="click: saveSiteMirrorConfigModal">Save</a>
+                <a href="javascript:;" class="btn gray" data-bind="click: hideSiteMirrorConfigModal">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-bind="modal: uploadModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-bind="click: onHideUploadModal" class="close"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Import</h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">Import kooboo package or HTML files</div>
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">File</label>
+                        <div class="col-md-9">
+                            <a class="btn btn-default btn-file">
+                                <input type="file" data-bind="upload: {
+                                    allowMultiple: false,
+                                    acceptTypes: [
+                                        'application/zip',
+                                        'application/x-zip', 
+                                        'application/octet-stream',
+                                        'application/x-zip-compressed'
+                                    ],
+                                    acceptSuffix:['zip'],
+                                    callback: uploadFile
+                                }">
+                                <span>Select file</span>
+                            </a> <span>Support files: *.zip</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: onHideUploadModal" class="btn btn-default">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-bind="component: { name: 'kb-export-modal', params: { isShow: showExportModal }}"></div>
+<div data-bind="modal: showCustomServerModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHideCustomServerModal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Custom server</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">IP</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" data-bind="value: customServerIP, error: customServerIP">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">Port</label>
+                        <div class="col-md-9">
+                            <input type="number" class="form-control" data-bind="value: customServerPort, error: customServerPort">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-md-3 control-label">Name</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" data-bind="value: customServerName, error: customServerName">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="col-md-3 control-label">Display name</label>
+                        <div class="col-md-9">
+                            <input type="text" class="form-control" data-bind="value: customServerDisplayName, error: customServerDisplayName">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="click: onSaveCustomServer">Save</button>
+                <button class="btn gray" data-bind="click: onHideCustomServerModal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/lib/clipboard.min.js",
+            "/_Admin/Scripts/kobindings.typeahead.js",
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/SPA.js",
+            "/_Admin/Scripts/tableModel.js",
+            "/_Admin/Scripts/lib/bootstrap3-typeahead.min.js",
+            "/_Admin/Scripts/components/kbExportModal.js",
+            "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js"
+        ])
+        Kooboo.loadCSS([
+            "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/System/Settings.js"></script>

@@ -1,0 +1,54 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Kooboo.Mail.Imap.Commands
+{
+    public class SEARCHCmd : ICommand
+    {
+        public string AdditionalResponse
+        {
+            get; set;
+        }
+
+        public string CommandName
+        {
+            get
+            {
+                return "SEARCH";
+            }
+        }
+
+        public bool RequireAuth
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public bool RequireFolder
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        public bool RequireTwoPartCommand
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public Task<List<ImapResponse>> Execute(ImapSession session, string args)
+        {
+            var result = SearchCommand.Search.ExecuteBySeqNo(session.MailDb, session.SelectFolder, args);
+            return Task.FromResult(result);
+        }
+    }
+}

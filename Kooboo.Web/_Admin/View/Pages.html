@@ -1,0 +1,205 @@
+<!-- #layout name=blank -->
+<div class="page-header">
+    <h1 class="title">Pages</h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'SITES'
+},{
+    name: 'DASHBOARD'
+},{
+    name: Kooboo.text.common.Pages
+}]}"></div>
+<div class="navbar navbar-default">
+    <div class="container-fluid">
+        <a class="btn green navbar-btn" data-bind="attr: { href: createNewPageUrl }">New page</a>
+        <a class="btn green navbar-btn" data-bind="attr: { href: createNewConntentPageUrl }">New rich text page</a>
+        <div class="btn-group navbar-btn">
+            <button class="btn green" data-toggle="dropdown"><span>New layout page</span> <i class="fa fa-angle-down"></i></button>
+            <ul class="dropdown-menu" data-bind="foreach: layouts">
+                <li>
+                    <a data-bind="text:$data.name, attr:{href:$data.href}"></a>
+                </li>
+            </ul>
+        </div>
+        <a class="btn green navbar-btn" data-bind="click: showImportModal">Import</a>
+        <a class="btn green navbar-btn" data-bind="click: onShowCopyModal, visible: showCopyBtn">Copy</a>
+        <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
+        <a href="javascript:;" class="btn btn-default navbar-btn pull-right" data-bind="tooltip: Kooboo.text.tooltip.pageRouterManager, tooltipPlacement: 'left', click: onShowRouterManager" style="margin-right:0"><i class="fa fa-gear"></i></a>
+    </div>
+</div>
+<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
+<div class="modal fade" data-backdrop="static" data-keyboard="false" data-bind="modal: importModal">
+    <form data-bind="submit: onImportSubmit">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bind="click: hideImportModal"><i class="fa fa-close"></i></button>
+                    <h4 class="modal-title">Import</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">From</label>
+                            <div class="col-md-9">
+                                <label class="radio-inline">
+                                    <input type="radio" value="url" data-bind="checked: importFrom">URL</label>
+                                <label class="radio-inline">
+                                    <input type="radio" value="file" data-bind="checked: importFrom">File</label>
+                            </div>
+                        </div>
+                        <!-- ko if: importFrom() == "url" -->
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Page URL</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" data-bind="textInput: importPageUrl, error: importPageUrl" placeholder="Input page URL" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">URL</label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" data-bind="textInput: importBasePath, error: importBasePath" placeholder="Input page path" />
+                            </div>
+                        </div>
+                        <!-- /ko -->
+                        <!-- ko if: importFrom() == "file" -->
+                        <div class="form-group">
+                            <label class="control-label col-md-3">File</label>
+                            <div class="col-md-9">
+                                <a class="btn btn-default btn-file">
+                                    <input type="file" data-bind="upload: {
+                                        allowMultiple: false,
+                                        acceptTypes: [
+                                            'application/pdf',
+                                            'application/msword', 
+                                            'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+                                            'application/vnd.ms-word.document.macroEnabled.12',
+                                            'application/msexcel', 
+                                            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                            'application/vnd.ms-powerpoint', 
+                                            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                                            'application/x-rar-compressed', 
+                                            'application/octet-stream',
+                                            'application/x-zip-compressed',
+                                            'application/zip',
+                                            'application/octet-stream',
+                                            'text/html'
+                                        ],
+                                        acceptSuffix: ['html', 'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'zip'],
+                                        callback: uploadFile
+                                    }"> <span>Select file</span>
+                                </a> <span>Support types: HTML, PDF, Word, Excel, PPT, ZIP</span>
+                            </div>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn green" data-bind="visible: importFrom() == 'url'" type="submit">Start</button>
+                    <button class="btn gray" data-bind="click: hideImportModal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div data-bind="modal: showRouterManager" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: hideRouterManager"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Route setting</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="alert alert-info alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><i class="fa fa-close"></i></button>
+                        <strong>Redirect routes</strong>
+                        <p>Set the redirect pages for default home page, 404 and error pages</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Home page</label>
+                        <div class="col-md-9">
+                            <select data-bind="value: defaultPage, options: IndexRouterSelection, optionsValue: 'id', optionsText: 'path'" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">404 page</label>
+                        <div class="col-md-9">
+                            <select data-bind="value: notFoundPage, options: RouterSelection, optionsValue: 'id', optionsText: 'path'" class="form-control"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Error page</label>
+                        <div class="col-md-9">
+                            <select data-bind="value: errorPage, options: RouterSelection, optionsValue: 'id', optionsText: 'path'" class="form-control"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="click: saveRouterManager">Save</button>
+                <button class="btn gray" data-bind="click: hideRouterManager">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-bind="component: { name: 'kb-relation-modal' }"></div>
+<div data-bind="modal: copyModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHideCopyModal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.site.page.copyPage + ': ' + copyPage().name"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Name</label>
+                        <div class="col-md-9">
+                            <input type="text" data-bind="value: copyName, error: copyName" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">URL</label>
+                        <div class="col-md-9">
+                            <input type="text" data-bind="value: copyRoute, error: copyRoute" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: onStartCopy" class="btn green">Start</button>
+                <button data-bind="click: onHideCopyModal" class="btn gray">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div data-bind="modal: showQRCodeModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: hideQRCodeModal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.site.page.previewInMobile"></h4>
+            </div>
+            <div class="modal-body">
+                <div id="qr-code" style="text-align:center"></div>
+            </div>
+            <div class="modal-footer">
+                <button data-bind="click: hideQRCodeModal, text: Kooboo.text.common.OK" class="btn btn-default"></button>
+            </div>
+        </div>
+    </div>
+</div>
+<div k-if="kooboosetting.IsLocal=true"><input type="hidden" name="local" id="isLocalKooboo"></div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/tableModel.js",
+            "/_Admin/Scripts/kooboo/Guid.js",
+            "/_Admin/Scripts/components/kbTable.js",
+            "/_Admin/Scripts/components/kbRelationModal.js",
+            "/_Admin/Scripts/lib/jquery.qrcode.min.js"
+        ])
+    })();
+</script>
+<script src="/_Admin/View/Pages.js"></script>

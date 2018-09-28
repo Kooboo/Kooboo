@@ -1,0 +1,90 @@
+<!-- #layout name=default -->
+<div id="main" class="offset-top">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="page-header">
+                    <h1 class="title">Import a site</h1>
+                </div>
+                <form data-bind="submit: startSubmit" class="import-form">
+
+                    <fieldset class="form-horizontal">
+                        <div class="note note-info">
+                            <p>Import a Kooboo or standard Html package, Kooboo will convert it into a Kooboo site.</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="SiteName">Site name</label>
+                            <div class="col-md-10">
+                                <input data-bind="value: siteName, error: siteName" class="input-medium form-control" placeholder="Site name" type="text">
+                                <span class="help-block">Start with letters and no space allowed</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="SubDomain">Domain</label>
+                            <div class="col-md-10">
+                                <div class="form-inline">
+                                    <input data-bind="value: subDomain" class="input-medium form-control" id="SubDomain" name="SubDomain" placeholder="SubDomain" type="text">
+                                    <select data-bind="foreach: domains, value: rootDomain, error: subDomain" class="form-control">
+                                        <option data-bind="text: '.'+$data.domainName, value: $data.domainName"></option>
+                                    </select>
+                                </div>
+                                <span class="help-block" data-bind="text: Kooboo.text.info.subDomainInfo"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="Package">Package</label>
+                            <div class="col-md-10">
+
+                                <div class="well" id="dropArea" data-bind="visible: showDropArea" style="border: 1px dashed #9a9a9a">
+                                    <h4 class="text-center">Drop here</h4>
+                                </div>
+
+                                <div class="fileinput fileinput-new">
+                                    <span data-bind="error: fileRequire" class="btn btn-default btn-file">
+                                    <!-- ko ifnot: fileExist -->
+                                    <!-- ko text: Kooboo.text.common.selectFile --><!-- /ko -->
+                                    <!-- /ko -->
+                                    <!-- ko if: fileExist -->
+                                    <!-- ko text: Kooboo.text.common.change --><!-- /ko -->
+                                    <!-- /ko -->
+                                    <input type="file" name="package" />
+                                </span>
+                                    <!-- ko if: ableToDragFile() && !fileExist() -->
+                                    &nbsp;<span>or drag zip file here.</span>
+                                    <!-- /ko -->
+                                    <span data-bind="visible: fileExist, text: fileName" class="fileinput-filename"></span>
+                                    <a data-bind="visible: fileExist, click: clearFile" class="close"><i class="fa fa-close"></i></a>
+                                    <span class="help-block">Accept type: *.zip</span>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <div data-bind="visible: !importing()">
+                        <ul class="pager">
+                            <li class="next"><button class="btn blue" type="submit">Start</button></li>
+                            <li class="previous"><a data-bind="click: SPAClick" class="btn gray">Return</a></li>
+                        </ul>
+                    </div>
+                </form>
+                <div class="pager" data-bind="component: {
+                        name: 'kb-upload-progressor',
+                        params: {
+                            percentage: uploadPercentage()
+                        }
+                    }, visible: importing">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/SPA.js",
+            "/_Admin/Scripts/components/kbUploadProgressor.js"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Sites/Import.js"></script>

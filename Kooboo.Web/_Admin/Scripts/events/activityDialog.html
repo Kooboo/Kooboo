@@ -1,0 +1,54 @@
+﻿<div class="modal fade" data-bind="modal: modalShow" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button data-bind="click: close" type="button" class="close"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.component.event[(mode() == 'edit' ? 'edit':'add') + 'Activity'] + ': ' + name()"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <!-- ko if: settings().length -->
+                    <div class="form-horizontal" id="activity-config-default">
+                        <!-- ko foreach: settings -->
+
+                        <!-- ko if: controlType() === "TextBox" -->
+                        <!-- ko component: {
+                            name: "text-box",
+                            params: $data 
+                        } -->
+                        <!-- /ko -->
+                        <!-- /ko -->
+
+                        <!-- ko if: controlType() === "CheckBox" -->
+                        <!-- ko component: {
+                            name: "check-box",
+                            params: $data
+                        } -->
+                        <!-- /ko -->
+                        <!-- /ko -->
+
+                        <!-- ko if: controlType() === "Selection" -->
+                        <!-- ko component: {
+                            name: "selection",
+                            params: $data
+                        } -->
+                        <!-- /ko -->
+                        <!-- /ko -->
+
+                        <!-- /ko -->
+                    </div>
+                    <!-- /ko -->
+                    <!-- ko ifnot: settings().length -->
+                    <div class="form-group">
+                        <p class="form-control-static" data-bind="text: Kooboo.text.site.code.noSetting"></p>
+                    </div>
+                    <!-- /ko -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="javascript:;" data-bind="click: submit, text: Kooboo.text.common.save" class="btn green"></a>
+                <a href="javascript:;" data-bind="click: close, text: Kooboo.text.common.cancel" class="btn gray"></a>
+            </div>
+        </div>
+    </div>
+</div>
