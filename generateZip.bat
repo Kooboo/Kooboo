@@ -20,12 +20,16 @@ if exist "%zipFile%" (del %zipFile%)
 ::sign kooboo
 set signToolPath=%batPath%\tools\signtool
 set certPath=%koobooPath%\bin\%buildType%\yardi.pfx
+if exist "%certPath%" (
 %signToolPath% sign /f %certPath% /p 1 %koobooPath%\bin\%buildType%\kooboo.exe
 %signToolPath% timestamp /t http://timestamp.wosign.com/timestamp  %koobooPath%\bin\%buildType%\kooboo.exe
+)
 
 
 ::compress js and css in Admin folder
+if exist "%fileCompressPath%" (
 %fileCompressPath%\FileCompress.exe
+)
 
 set copyBasePath=%koobooPath%\bin\%buildType%\Kooboo
 set copyFolder=%copyBasePath%\Kooboo
@@ -42,8 +46,10 @@ if exist "%minifierAmdinPath%" ( set adminPath=%minifierAmdinPath%)
 C:\Windows\System32\robocopy  %adminPath% %copyAdminPath% /e /xd kbtest .vscode mobileEditor Market
 ::copy kbtest 
 C:\Windows\System32\robocopy  %adminPath%\kbtest %copyAdminPath%\kbtest /e
-::copy dll,exe,config
-C:\Windows\System32\robocopy  %dllPath% %copyDllPath% Kooboo.exe Kooboo.Upgrade.exe *.config
+::Kooboo.exe
+C:\Windows\System32\robocopy  %dllPath% %copyDllPath% Kooboo.exe
+::Kooboo.Upgrade.exe
+C:\Windows\System32\robocopy  %dllPath% %copyDllPath%\Upgrade  Kooboo.Upgrade.exe 
 ::copy language
 C:\Windows\System32\robocopy  %langPath% %copyLangPath%
 
