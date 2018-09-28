@@ -32,7 +32,7 @@ namespace Kooboo.Upgrade
         public static void Upgrade()
         {
             if (!File.Exists(DownloadZipFile)) return;
-            Console.WriteLine("downloadZip");
+
             CloseKooboo();
 
             DeleteOldFiles();
@@ -95,7 +95,6 @@ namespace Kooboo.Upgrade
         private static void DeleteOldFiles()
         {
             var path = ParentExePath;
-            Console.WriteLine("parentExepath:"+path);
 
             var dirs = Directory.GetDirectories(path);
 
