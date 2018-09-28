@@ -6,6 +6,8 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Threading;
+using System.Reflection;
+using System.IO;
 
 namespace Kooboo.App
 {
@@ -17,7 +19,11 @@ namespace Kooboo.App
 
             string path = System.IO.Path.Combine(root, "upgradePackage");
             KoobooZipFullName = System.IO.Path.Combine(path, "Kooboo.zip");
+#if DEBUG
             UpgradeExeFullName = System.IO.Path.Combine(root, "Kooboo.Upgrade.exe");
+#else
+            UpgradeExeFullName = System.IO.Path.Combine(root,"Upgrade", "Kooboo.Upgrade.exe");
+#endif
         }
 
         public static bool IsRunning { get; set; } = false;
@@ -28,16 +34,41 @@ namespace Kooboo.App
         public static bool IsAutoUpgrade
         {
             get
-            { 
-                return Data.AppSettings.GetBool("AutoUpgrade");
+            {
+                var autoUpgradePath = GetAutoUpgradeSettingPath();
+                if (!File.Exists(autoUpgradePath))
+                {
+                    return false;
+                }
+
+                var autoStart = false;
+                var result = File.ReadAllText(autoUpgradePath);
+                bool.TryParse(result, out autoStart);
+
+                return autoStart;
             } 
         }
 
         public static void SetAutoUpgrade(bool auto)
         {
-            AppSettings.SetConfigValue("AutoUpgrade", auto.ToString());
+            var autoUpgradePath = GetAutoUpgradeSettingPath();
+            var dir = System.IO.Path.GetDirectoryName(autoUpgradePath);
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            File.WriteAllText(autoUpgradePath, auto.ToString());
         }
 
+        private static string GetAutoUpgradeSettingPath()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var dir = System.IO.Path.GetDirectoryName(assembly.Location);
+            dir = System.IO.Path.Combine(dir, "_Admin");
+            var autoStartPath = System.IO.Path.Combine(dir, "AutoUpgrade.txt");
+
+            return autoStartPath;
+        }
         private static string KoobooZipFullName { get; set; }
 
         public static string UpgradeExeFullName { get; set; }

@@ -67,9 +67,9 @@ namespace Kooboo.App
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             //第一次默认启动
-            if (KoobooAutoStartManager.IsFirstTimeAutoStart())
+            if (KoobooAutoStart.IsFirstTimeAutoStart())
             {
-                KoobooAutoStartManager.AutoStart(true);
+                KoobooAutoStart.AutoStart(true);
             }
 
             GlobalSettings.RootPath = Kooboo.Data.AppSettings.DatabasePath;

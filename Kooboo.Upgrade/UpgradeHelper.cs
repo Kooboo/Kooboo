@@ -16,19 +16,23 @@ namespace Kooboo.Upgrade
 
         static UpgradeHelper()
         {
-              ExeRoot = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location); 
-            string path = System.IO.Path.Combine(ExeRoot, "upgradePackage");  
+            var exeRoot = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            ParentExePath = Directory.GetParent(exeRoot).FullName;
+
+            string path = System.IO.Path.Combine(ParentExePath, "upgradePackage");  
             DownloadZipFile = System.IO.Path.Combine(path, "Kooboo.zip");
         }
 
         public static string DownloadZipFile { get; set; }
 
-        public static string ExeRoot { get; set; }
+        //public static string ExeRoot { get; set; }
+
+        public static string ParentExePath { get; set; }
          
         public static void Upgrade()
         {
             if (!File.Exists(DownloadZipFile)) return;
-
+            Console.WriteLine("downloadZip");
             CloseKooboo();
 
             DeleteOldFiles();
@@ -54,7 +58,7 @@ namespace Kooboo.Upgrade
                     // make sure does not close other instance.  
                     string fullPath = process.MainModule.FileName;
 
-                    if (fullPath.StartsWith(ExeRoot))
+                    if (fullPath.StartsWith(ParentExePath))
                     {
                         //show Kooboo Window,if kooboo window is hidden.
                         ShowKoobooWindow(windows, process);
@@ -90,14 +94,22 @@ namespace Kooboo.Upgrade
 
         private static void DeleteOldFiles()
         {
-            var path = ExeRoot;  /// this is not right, keep it for not. should use Data.AppSettings.RootPath. 
+            var path = ParentExePath;
+            Console.WriteLine("parentExepath:"+path);
 
             var dirs = Directory.GetDirectories(path);
+
+            var excludeFiles = new List<string>()
+            {
+                "appdata",
+                "upgradepackage",
+                "upgrade"
+            };
             foreach (var dir in dirs)
             {
                 var dirInfo = new DirectoryInfo(dir);
 
-                if (dirInfo != null && dirInfo.Name.ToLower() != "appdata" && dirInfo.Name.ToLower() != "upgradepackage")
+                if (dirInfo != null && !excludeFiles.Contains(dirInfo.Name.ToLower()))
                 {
                     try
                     {
@@ -114,7 +126,7 @@ namespace Kooboo.Upgrade
             {
                 var fileInfo = new FileInfo(file);
 
-                if (fileInfo != null && fileInfo.Name.ToLower() != "kooboo.upgrade.exe" && fileInfo.Name.ToLower() != "kooboo.exe.config")
+                if (fileInfo != null && fileInfo.Name.ToLower() != "kooboo.exe.config")
                 {
                     try
                     {
@@ -132,7 +144,7 @@ namespace Kooboo.Upgrade
         {
             if (!File.Exists(DownloadZipFile)) return;
 
-            var unzipPath = ExeRoot; 
+            var unzipPath = ParentExePath; 
 
             using (var archive = ZipFile.Open(DownloadZipFile, ZipArchiveMode.Read))
             {
@@ -160,30 +172,30 @@ namespace Kooboo.Upgrade
                         {
                             continue;  // already updated... 
                         }
-                        else if (entry.Name.ToLower() == "kooboo.exe.config")
-                        {
-                            var configPath =Path.Combine(ExeRoot, "kooboo.exe");
-                            var config = ConfigurationManager.OpenExeConfiguration(configPath);
-                            var settings = config.AppSettings;
+                        //else if (entry.Name.ToLower() == "kooboo.exe.config")
+                        //{
+                        //    var configPath =Path.Combine(ExeRoot, "kooboo.exe");
+                        //    var config = ConfigurationManager.OpenExeConfiguration(configPath);
+                        //    var settings = config.AppSettings;
 
-                            var keyValues = new Dictionary<string, string>();
-                            foreach (var key in settings.Settings.AllKeys)
-                            {
-                                keyValues.Add(key, settings.Settings[key].Value);
-                            }
-                            entry.ExtractToFile(path, true);
+                        //    var keyValues = new Dictionary<string, string>();
+                        //    foreach (var key in settings.Settings.AllKeys)
+                        //    {
+                        //        keyValues.Add(key, settings.Settings[key].Value);
+                        //    }
+                        //    entry.ExtractToFile(path, true);
 
-                            config = ConfigurationManager.OpenExeConfiguration(configPath);
-                            foreach (var keyPair in keyValues)
-                            {
+                        //    config = ConfigurationManager.OpenExeConfiguration(configPath);
+                        //    foreach (var keyPair in keyValues)
+                        //    {
 
-                                if (config.AppSettings.Settings[keyPair.Key] != null)
-                                    config.AppSettings.Settings[keyPair.Key].Value = keyPair.Value;
-                                else
-                                    config.AppSettings.Settings.Add(keyPair.Key, keyPair.Value);
-                            }
-                            config.Save(ConfigurationSaveMode.Modified);
-                        }
+                        //        if (config.AppSettings.Settings[keyPair.Key] != null)
+                        //            config.AppSettings.Settings[keyPair.Key].Value = keyPair.Value;
+                        //        else
+                        //            config.AppSettings.Settings.Add(keyPair.Key, keyPair.Value);
+                        //    }
+                        //    config.Save(ConfigurationSaveMode.Modified);
+                        //}
                         else
                         {
                             EnsureFileDirectoryExists(path);  
@@ -202,7 +214,7 @@ namespace Kooboo.Upgrade
 
         public static void OpenKoobooApp()
         {
-            var path = Path.Combine(ExeRoot, "Kooboo.exe");
+            var path = Path.Combine(ParentExePath, "Kooboo.exe");
 
             try
             {

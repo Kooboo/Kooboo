@@ -21,7 +21,7 @@ namespace Kooboo.Data.Upgrade
                 {
                     foreach (var entry in archive.Entries)
                     {
-                        if (entry.FullName.IndexOf("kooboo.data.dll", StringComparison.OrdinalIgnoreCase) > -1)
+                        if (entry.FullName.IndexOf("kooboo.exe", StringComparison.OrdinalIgnoreCase) > -1)
                         { 
                             System.IO.MemoryStream mo = new MemoryStream();
                             entry.Open().CopyTo(mo); 
@@ -38,8 +38,32 @@ namespace Kooboo.Data.Upgrade
         public static string GetVersion(byte[] DllBytes)
         {
             var assembely = Assembly.Load(DllBytes);
-            var version = assembely.GetName().Version;
-            return version.ToString();
+
+            var resource = assembely.GetManifestResourceNames().First(n => n.Equals("Kooboo.Data.dll",StringComparison.OrdinalIgnoreCase));
+
+            if(resource != null)
+            {
+                using (var stream = assembely.GetManifestResourceStream(resource))
+                {
+                    if (stream == null)
+                        return null;
+
+                    var bytes = new byte[stream.Length];
+                    stream.Read(bytes, 0, bytes.Length);
+                    try
+                    {
+                        var dataAssembly = Assembly.Load(bytes);
+                        var version = dataAssembly.GetName().Version;
+                        return version.ToString();
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
+                }
+            }
+            return null;
+            
         }
 
     } 
