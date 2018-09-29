@@ -64,6 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AA.cs" />
     <Compile Include="Account\Url\Cluster.cs" />
     <Compile Include="Account\Url\Org.cs" />
     <Compile Include="Account\Url\User.cs" />
