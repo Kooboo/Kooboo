@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Data.Infrastructure
 {
-  public  class InfraType
+    public enum InfraType
     {
-        public const byte Email = 1;
+        Email = 1,
 
-        public const byte Bandwidth = 2;
+        Bandwidth = 2,
 
-        public const byte Disk = 3;
+        Disk = 3
 
-        public const byte Hits = 4;     
     }
 }

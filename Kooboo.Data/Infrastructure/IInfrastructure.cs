@@ -10,8 +10,8 @@ namespace Kooboo.Data.Infrastructure
 {
   public  interface IInfrastructure
     {
-        bool Test(Guid OrganizationId, byte InfraType, int amount);
+        bool Test(Guid OrganizationId, InfraType InfraType, int amount);
 
-        void Add(Guid OrganizationId, byte InfraType, int Amount, string Item); 
+        void Add(Guid OrganizationId, InfraType InfraType, int Amount, string Item); 
     }
 }
