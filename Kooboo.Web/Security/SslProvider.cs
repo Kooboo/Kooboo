@@ -9,8 +9,7 @@ using Kooboo.HttpServer;
 namespace Kooboo.Web.Security
 {
     public class SslProvider : Kooboo.HttpServer.ISslCertificateProvider
-    {
-
+    {  
         public SslProvider()
         {
             diskcache = LoadDisk(); 
@@ -53,11 +52,9 @@ namespace Kooboo.Web.Security
                     if (diskcert !=null)
                     {
                         cache[hostName] = diskcert;
-                    }
-
+                    }   
                     return diskcert; 
-                } 
-
+                }    
             }
 
             return Kooboo.Data.Server.SslCertificate.DefaultCert;
@@ -65,13 +62,15 @@ namespace Kooboo.Web.Security
         }
 
         public Dictionary<string, X509Certificate2> LoadDisk()
-        {
-            Dictionary<string, X509Certificate2> result = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase); 
-
+        {  
+            Dictionary<string, X509Certificate2> result = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);
+         
             string folder = Kooboo.Data.AppSettings.RootPath;
+            folder = System.IO.Path.Combine(folder, "AppData"); 
             folder = Lib.Helper.IOHelper.CombinePath(folder, "ssl");
 
             Kooboo.Lib.Helper.IOHelper.EnsureDirectoryExists(folder);
+
             var allfiles = System.IO.Directory.GetFiles(folder, "*.pfx");
 
             foreach (var item in allfiles)
