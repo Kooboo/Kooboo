@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<AssemblyName>Kooboo.Mail</AssemblyName>
+	<RootNamespace>Kooboo.Mail</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MimeMapping" Version="1.0.1.12" />
+    <PackageReference Include="System.Runtime.Caching" Version="4.5.0-preview1-26216-02" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.5.0-preview1-26216-02" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.CrossPlatform.csproj" />
+  </ItemGroup>
+
+</Project>

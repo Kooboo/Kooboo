@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<AssemblyName>Kooboo.Search</AssemblyName>
+	<RootNamespace>Kooboo.Search</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Scanner\EncodingHelper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.CrossPlatform.csproj" />
+  </ItemGroup>
+
+</Project>

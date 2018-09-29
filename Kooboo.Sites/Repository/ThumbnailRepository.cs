@@ -1,12 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Sites.Models;
+﻿using Kooboo.Sites.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.IndexedDB;
+using Kooboo.Lib.Helper;
 
 namespace Kooboo.Sites.Repository
 {
@@ -36,7 +31,7 @@ namespace Kooboo.Sites.Repository
                 thumbnail = new Thumbnail();
 
                 //Image koobooimage = SiteDb.ImagePool.Get(imageid);
-                Image koobooimage = SiteDb.Images.Get(imageid);
+                Kooboo.Sites.Models.Image koobooimage = SiteDb.Images.Get(imageid);
 
                 if (koobooimage == null)
                 {
@@ -81,41 +76,19 @@ namespace Kooboo.Sites.Repository
                 else
                 {
 
-                    var systhumbnail = GenerateThumbnail(koobooimage, width, height);
-                    if (systhumbnail == null)
+                    if (koobooimage == null|| koobooimage.ContentBytes==null)
                     {
                         return null; 
-                    } 
-                       System.IO.MemoryStream memstream = new System.IO.MemoryStream();
-                        systhumbnail.Save(memstream, System.Drawing.Imaging.ImageFormat.Png);
-                        thumbnail.ContentBytes = memstream.ToArray(); 
+                    }
+                    var contentBytes = SystemImageHelper.GetThumbnailImage(koobooimage.ContentBytes, width, height);
+                    if (contentBytes == null) return null;
+
+                    thumbnail.ContentBytes = contentBytes; 
                 }
               
                 AddOrUpdate(thumbnail); 
             }
             return thumbnail;
-        }
-
-        public System.Drawing.Image GenerateThumbnail(Image koobooimage, int width, int height)
-        {
-            if (koobooimage == null || koobooimage.ContentBytes==null)
-            {
-                return null;
-            }
-
-            System.IO.MemoryStream stream = new System.IO.MemoryStream(koobooimage.ContentBytes);
-
-            System.Drawing.Image image = null;
-            System.Drawing.Image systhumbnail = null;
-
-            image = System.Drawing.Image.FromStream(stream);
-            if (image.Width < width && image.Height < height)
-            {
-                return image;
-            }
-            systhumbnail = image.GetThumbnailImage(width, height, null, new IntPtr());
-
-            return systhumbnail;
         }
 
         public void DeleteByImageId(Guid ImageId)

@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using System.Text;
+﻿using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Sites.Models;
   

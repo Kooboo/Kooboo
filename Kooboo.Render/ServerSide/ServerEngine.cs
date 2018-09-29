@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Render.ObjectSource;
 using System;
 using System.Collections.Generic;
@@ -249,7 +247,18 @@ namespace Kooboo.Render.ServerSide
                 {
                     // find the end..
                     int end = source.IndexOf(";", index);
-                    int EndLine = source.IndexOf("\n", index);
+                    int EndLine = -1;
+                    if (Kooboo.Lib.Helper.RuntimeSystemHelper.IsWindow())
+                    {
+                        EndLine = source.IndexOf("\n", index);
+                    }
+                    else
+                    {
+                        //linux source.IndexOf("\n", index) will be -1;
+                        //only source.IndexOf("\r\n", index) can get the index
+                        EndLine = source.IndexOf("\r\n", index)+1;
+                    }
+                    
 
                     if (EndLine > 0 && EndLine < end)
                     {

@@ -1,8 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using System;
+﻿using System;
 using System.Collections.Generic;
+#if NETSTANDARD2_0
+using GeoCoordinatePortable;
+#else
 using System.Device.Location;
+#endif
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -120,6 +122,7 @@ namespace Kooboo.Data.GeoLocation
         {
             GeoCoordinate cordx = new GeoCoordinate(xLa, xLong);
             GeoCoordinate cordy = new GeoCoordinate(yLa, yLong);
+
             return cordx.GetDistanceTo(cordy);
         }
     }

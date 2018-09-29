@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.IndexedDB.Btree;
+﻿using Kooboo.IndexedDB.Btree;
 using Kooboo.IndexedDB.ByteConverter;
 using Kooboo.IndexedDB.Query;
 using System;

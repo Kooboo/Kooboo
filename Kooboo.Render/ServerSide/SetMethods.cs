@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Render.ObjectSource;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,8 +26,6 @@ namespace Kooboo.Render.ServerSide
                     string body = string.Empty; 
                       
                     relativeurl = ServerHelper.EnsureRelative(relativeurl, baseRelativeUrl);
-
-                    relativeurl = relativeurl.Replace("/", "\\");
 
                     RenderFiles(sourceProvider, option, context, varname, relativeurl, ref scriptHeader, ref body); 
 
@@ -114,7 +110,7 @@ namespace Kooboo.Render.ServerSide
 
                     ScriptHeader += "if (typeof " + subvarname + " === \"undefined\" ) { " + subvarname + "= {};  } \r\n";
 
-                    string subpath = relativePath + "\\" + name;
+                    string subpath = Kooboo.Lib.Helper.PathHelper.CombineRelativePath(relativePath,name);
                      
                     RenderFiles(sourceProvider, option, context, subvarname, subpath, ref ScriptHeader, ref Body); 
                 }

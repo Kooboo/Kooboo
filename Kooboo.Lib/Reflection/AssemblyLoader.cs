@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
@@ -87,11 +85,11 @@ namespace Kooboo.Lib.Reflection
                         typelist.Add(type);
                     }
                 }
-            }
 
-            return typelist;     
+            }
+            
+            return typelist;
         }
-                      
 
         public static List<Type> LoadTypeByGenericInterface(Type GenericInterface)
         {

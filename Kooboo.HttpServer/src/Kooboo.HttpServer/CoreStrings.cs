@@ -12,7 +12,7 @@ namespace Kooboo.HttpServer
     public class CoreStrings
     {
         private static readonly ResourceManager _resourceManager
-            = new ResourceManager("Kooboo.HttpServer.Resources.CoreStrings", Assembly.GetExecutingAssembly());
+                    = new ResourceManager("Kooboo.HttpServer.Resources.CoreStrings", Assembly.GetExecutingAssembly());
         /// <summary>
         /// Bad request.
         /// </summary>

@@ -1,11 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Sites.Render.Commands;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Kooboo.Lib.Helper;
 
 namespace Kooboo.Render.ObjectSource
 {
@@ -51,16 +50,61 @@ namespace Kooboo.Render.ObjectSource
             return null;
         }
 
+        private static string GetCaseInsensitiveFile(string fullPath)
+        {
+            var folder = new DirectoryInfo(Kooboo.Data.AppSettings.RootPath);
+            fullPath = fullPath.Replace(Kooboo.Data.AppSettings.RootPath, "");
 
+            var segments = fullPath.Split('/');
+            for (int i = 0; i < segments.Length; i++)
+            {
+                string part = segments[i];
+                bool last = i == segments.Length - 1;
+
+                if (last)
+                {
+                    var fileinfo = folder.GetFiles().FirstOrDefault(file =>
+                          file.Name.StartsWith(part, StringComparison.OrdinalIgnoreCase));
+                    if (fileinfo != null)
+                    {
+                        segments[i] = fileinfo.Name;
+                    }
+                }
+                else
+                {
+                    folder = folder.GetDirectories().FirstOrDefault(dir =>
+                        dir.Name.Equals(part, StringComparison.OrdinalIgnoreCase));
+                    if (folder != null)
+                    {
+                        segments[i] = folder.Name;
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+            }
+
+            var reletivePath= string.Join("/", segments);
+            string path=Kooboo.Data.AppSettings.RootPath + reletivePath;
+
+            return path;
+        }
         private string FindFile(string FullPath)
         {
+            //mac/linux
+            if (!RuntimeSystemHelper.IsWindow())
+            {
+                FullPath = PathHelper.GetCaseInsensitiveFile(Kooboo.Data.AppSettings.RootPath, FullPath);
+            }
+
             if (System.IO.File.Exists(FullPath))
             {
                 return FullPath;
             }
 
             var fileinfo = new System.IO.FileInfo(FullPath);
-
             if (!fileinfo.Directory.Exists)
             {
                 return null;

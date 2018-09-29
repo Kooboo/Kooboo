@@ -1,0 +1,70 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<AssemblyName>Kooboo.Web</AssemblyName>
+	<RootNamespace>Kooboo.Web</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Api\Implementation\Ecommerce\**" />
+    <Compile Remove="AppData\**" />
+    <Compile Remove="Areas\**" />
+    <Compile Remove="KoobooData\**" />
+    <Compile Remove="upgradePackage\**" />
+    <Compile Remove="_Admin\**" />
+    <EmbeddedResource Remove="Api\Implementation\Ecommerce\**" />
+    <EmbeddedResource Remove="AppData\**" />
+    <EmbeddedResource Remove="Areas\**" />
+    <EmbeddedResource Remove="KoobooData\**" />
+    <EmbeddedResource Remove="upgradePackage\**" />
+    <EmbeddedResource Remove="_Admin\**" />
+    <None Remove="Api\Implementation\Ecommerce\**" />
+    <None Remove="AppData\**" />
+    <None Remove="Areas\**" />
+    <None Remove="KoobooData\**" />
+    <None Remove="upgradePackage\**" />
+    <None Remove="_Admin\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Api\Implementation\Download.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="DashBoard\DashBoardItem.html" />
+    <None Remove="DashBoard\MyVisitor\FrontVisitors.html" />
+    <None Remove="DashBoard\Resource\SiteResource.html" />
+    <None Remove="DashBoard\TopPages\TopPages.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="DashBoard\DashBoardItem.html" />
+    <EmbeddedResource Include="DashBoard\MyVisitor\FrontVisitors.html" />
+    <EmbeddedResource Include="DashBoard\Resource\SiteResource.html" />
+    <EmbeddedResource Include="DashBoard\TopPages\TopPages.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kooboo.Api\Kooboo.Api.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.HttpServer\src\Kooboo.HttpServer\Kooboo.HttpServer.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Render\Kooboo.Render.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.CrossPlatform.csproj" />
+  </ItemGroup>
+
+</Project>

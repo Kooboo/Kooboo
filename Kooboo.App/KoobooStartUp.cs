@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.App.Models;
+﻿using Kooboo.App.Models;
 using Kooboo.Data;
 using Kooboo.Lib;
 using System;
@@ -64,4 +62,51 @@ namespace Kooboo.App
         }
     }
 
+    public class KoobooAutoStartManager
+    {
+        public static bool IsFirstTimeAutoStart()
+        {
+            var autostartStr = AppSettings.AutoStart;
+            if (string.IsNullOrEmpty(autostartStr))
+                return true;
+            return false;
+        }
+        public static bool IsAutoStart()
+        {
+            var autostartStr = AppSettings.AutoStart;
+            bool autoStart;
+
+            if (!bool.TryParse(autostartStr, out autoStart))
+            {
+                autoStart = false;
+            }
+            return autoStart;
+        }
+        public static void AutoStart(bool auto)
+        {
+            try
+            {
+                string path = System.Windows.Forms.Application.ExecutablePath;
+                RegistryKey rk = Registry.LocalMachine;
+                RegistryKey subKey = rk.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
+                if (auto)
+                {
+                    subKey.SetValue("KoobooApp", path);
+                }
+                else
+                {
+                    subKey.DeleteValue("KoobooApp", false);
+                }
+
+                AppSettings.SetConfigValue("AutoStart", auto.ToString());
+                subKey.Close();
+                rk.Close();
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+        }
+    }
 }

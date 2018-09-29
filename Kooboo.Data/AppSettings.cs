@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using System;
+﻿using System;
 using Kooboo.Lib;
 using System.IO;
 using System.Configuration;
@@ -32,17 +30,17 @@ namespace Kooboo.Data
 
             string orgfolder = GetOrganizationFolder(orgid);
 
-            string websitefolder = System.IO.Path.Combine(orgfolder, website.Name);
+            string websitefolder =Kooboo.Lib.Helper.PathHelper.CombinePath(orgfolder, website.Name);
 
-            string fileiofolder = System.IO.Path.Combine(websitefolder, "__FileIO");
+            string fileiofolder = Kooboo.Lib.Helper.PathHelper.CombinePath(websitefolder, "__FileIO");
 
             Kooboo.Lib.Helper.IOHelper.EnsureDirectoryExists(fileiofolder);
 
-            return fileiofolder;    
+            return fileiofolder;
         }
 
         public static System.Version Version { get; set; }
-
+       
         public static int MaxForEachLoop { get; set; } = 100;
 
         public static string GetMailDbName(Guid OrganizationId)
@@ -141,31 +139,49 @@ namespace Kooboo.Data
             var basefolder = AppDomain.CurrentDomain.BaseDirectory;
             if (IsKoobooDiskRoot(basefolder))
             {
-                return basefolder;
+               return basefolder; 
             }
 
             List<string> trypaths = new List<string>();
-            trypaths.Add(@"..\..\..\Kooboo.Web");
-            trypaths.Add(@"..\..\..\Github\Kooboo.Web"); 
-            trypaths.Add(@"..\");
-            trypaths.Add(@"..\..\");
-            trypaths.Add(@"..\..\..\");
+
+            if(RuntimeSystemHelper.IsWindow())
+            {
+#if NETSTANDARD2_0
+                trypaths.Add(@"..\..\..\..\Kooboo.Web");
+                trypaths.Add(@"..\..\");
+                trypaths.Add(@"..\..\..\");
+                trypaths.Add(@"..\..\..\..\");
+#else
+                trypaths.Add(@"..\..\..\Kooboo.Web");
+                trypaths.Add(@"..\");
+                trypaths.Add(@"..\..\");
+                trypaths.Add(@"..\..\..\");
+#endif
+            }
+            else
+            {
+                trypaths.Add(@"../../../Kooboo.Web");
+                trypaths.Add(@"../");
+                trypaths.Add(@"../../");
+                trypaths.Add(@"../../../");
+            }
+            
 
             foreach (var item in trypaths)
             {
                 basefolder = System.IO.Path.GetFullPath(item);
                 if (basefolder != null && IsKoobooDiskRoot(basefolder))
                 {
-                    return basefolder;
+                    return basefolder; 
                 }
             }
 
-            return AppDomain.CurrentDomain.BaseDirectory;
+            return AppDomain.CurrentDomain.BaseDirectory; 
         }
-
+         
         public static string RootPath
         {
-            get; set;
+            get;set;
         }
 
         public static string CmsLang
@@ -194,8 +210,8 @@ namespace Kooboo.Data
 
 
         public static string DefaultLocalHost { get; set; } = "kooboo";
-
-        public static int CurrentUsedPort { get; set; } = 80;
+          
+        public static int CurrentUsedPort { get; set; } = 80; 
 
         private static string _starthost;
         public static string StartHost
@@ -216,7 +232,7 @@ namespace Kooboo.Data
         }
 
         private static string _hostdomain;
-
+          
         public static string HostDomain
         {
             get
@@ -256,10 +272,10 @@ namespace Kooboo.Data
                 }
                 return _screenShotUrl;
             }
-            set { _screenShotUrl = value; }
+            set { _screenShotUrl = value;  }
         }
 
-        #region "resource url"
+#region "resource url"
 
         public static void ResetLocation()
         {
@@ -345,7 +361,7 @@ namespace Kooboo.Data
 
             return null;
         }
-
+         
         private static ServerSetting _serversetting;
 
         public static ServerSetting ServerSetting
@@ -357,16 +373,16 @@ namespace Kooboo.Data
                     if (IsOnlineServer)
                     {
                         // if there is a root url.. 
-                        string rooturl = ConfigurationManager.AppSettings.Get("RootUrl");
-                        string url = null;
+                        string rooturl  = ConfigurationManager.AppSettings.Get("RootUrl");
+                        string url = null; 
                         if (string.IsNullOrEmpty(rooturl))
                         {
-                            url = Helper.AccountUrlHelper.System("GetSetting");
+                              url = Helper.AccountUrlHelper.System("GetSetting");
                         }
                         else
                         {
-                            url = Lib.Helper.UrlHelper.Combine(rooturl, "system/GetSetting");
-                        }
+                            url = Lib.Helper.UrlHelper.Combine(rooturl, "system/GetSetting"); 
+                        } 
                         _serversetting = HttpHelper.Get<ServerSetting>(url);
                     }
                     else
@@ -379,19 +395,19 @@ namespace Kooboo.Data
         }
 
         public static bool GetBool(string settingKey)
-        {
+        { 
             string value = ConfigurationManager.AppSettings.Get(settingKey);
             if (string.IsNullOrEmpty(value))
             {
-                return false;
+                return false; 
             }
             else
             {
-                bool boolValue;
+                bool boolValue; 
                 bool.TryParse(value, out boolValue);
 
-                return boolValue;
-            }
+                return boolValue; 
+            } 
         }
 
         private static string _themeurl;
@@ -425,7 +441,7 @@ namespace Kooboo.Data
         {
             get
             {
-                if (_themedomain == null)
+                if (_themedomain == null) 
                 {
                     if (!IsOnlineServer)
                     {
@@ -434,7 +450,7 @@ namespace Kooboo.Data
                     else
                     {
                         // template server must be an online server as well.  
-                        _themedomain = ServerSetting.ServerId + "." + ServerSetting.HostDomain;
+                        _themedomain = ServerSetting.ServerId + "." +  ServerSetting.HostDomain;   
                     }
 
                     if (_themedomain == null)
@@ -486,7 +502,7 @@ namespace Kooboo.Data
             }
         }
 
-        #endregion
+#endregion
 
         private static string _databasepath;
         public static string DatabasePath
@@ -495,7 +511,8 @@ namespace Kooboo.Data
             {
                 if (_databasepath == null)
                 {
-                    _databasepath = GetPhysicsPath(@"AppData\KoobooData");
+                    _databasepath = GetPhysicsPath("AppData/KoobooData");
+
                     IOHelper.EnsureDirectoryExists(_databasepath);
                 }
                 return _databasepath;
@@ -509,7 +526,7 @@ namespace Kooboo.Data
             {
                 if (_tempdatapath == null)
                 {
-                    _tempdatapath = GetPhysicsPath(@"AppData\TempData");
+                    _tempdatapath = GetPhysicsPath(@"AppData/TempData");
                     IOHelper.EnsureDirectoryExists(_tempdatapath);
                 }
                 return _tempdatapath;
@@ -520,7 +537,7 @@ namespace Kooboo.Data
         {
             get
             {
-                var path = GetPhysicsPath(@"AppData\theme");
+                var path = GetPhysicsPath(@"AppData/theme");
                 IOHelper.EnsureDirectoryExists(path);
                 return path;
             }
@@ -528,7 +545,16 @@ namespace Kooboo.Data
 
         public static string GetPhysicsPath(string relativePath)
         {
-            var path = relativePath.Replace("/", "\\").Replace("\\\\", "\\").TrimStart('\\', '/');
+            var path = string.Empty;
+            if (RuntimeSystemHelper.IsWindow())
+            {
+                path = relativePath.Replace("/", "\\").Replace("\\\\", "\\").TrimStart('\\', '/');
+            }
+            else
+            {
+                path = relativePath.Replace("\\", "/");
+            }
+            
             return Path.Combine(System.IO.Path.GetFullPath(AppSettings.RootPath), path);
         }
 
@@ -539,20 +565,21 @@ namespace Kooboo.Data
                 return 1024 * 1024 * 20;
             }
         }
-
-        public static bool IsTemplateServer { get; set; }
-
+          
+        public static bool IsTemplateServer  {get;set;  }
+            
         public static bool IsOnlineServer { get; set; }
-
+                                
         public static GlobalInfo Global { get; set; }
 
         public class GlobalInfo
         {
-            public bool IsOnlineServer { get; set; }    
+            public bool IsOnlineServer { get; set; }
+                      
 
             public bool EnableLog { get; set; }
-
-            public string LogPath { get; set; }
+ 
+            public string LogPath  {  get;set; }
         }
     }
 }

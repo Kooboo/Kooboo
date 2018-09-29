@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.IndexedDB;
+﻿using Kooboo.IndexedDB;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
@@ -570,7 +568,7 @@ namespace Kooboo.Sites.Repository
                 {
                     string name = null;
 
-                    int lastslash = item.LastIndexOf("\\");
+                    int lastslash =Kooboo.Lib.Helper.PathHelper.GetLastSlash(item);
                     if (lastslash > -1)
                     {
                         name = item.Substring(lastslash + 1);

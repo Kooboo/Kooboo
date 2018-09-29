@@ -1,21 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Kooboo.Data.ViewModel
 {
 
     public class PaymentRequest
     {
-        [Required]
         public string Name { get; set; }
 
-        [Required]
         public Guid OrganizationId { get; set; }
 
         public int Years { get; set; }
@@ -41,13 +32,10 @@ namespace Kooboo.Data.ViewModel
 
     public class RechargeRequest
     {
-        [Required]
         public Guid OrganizationId { get; set; }
 
-        [Required]
         public string UserIp { get; set; }
 
-        [Required]
         public decimal Money { get; set; }
 
         public PaymentMethod PaymentMethod { get; set; }

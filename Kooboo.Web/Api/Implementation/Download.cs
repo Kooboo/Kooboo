@@ -1,8 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Api;
+﻿using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
 using System;
+#if NETSTANDARD2_0
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp.Processing.Transforms;
+#endif
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -108,8 +111,11 @@ namespace Kooboo.Web.Api.Implementation
                 if (System.IO.File.Exists(path))
                 {
                     var allbytes = System.IO.File.ReadAllBytes(path);
-
+#if NETSTANDARD2_0
+                    SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = SixLabors.ImageSharp.Image.Load(new System.IO.MemoryStream(allbytes));
+#else
                     System.Drawing.Image image = System.Drawing.Image.FromStream(new System.IO.MemoryStream(allbytes));
+#endif
 
                     if (image.Height < height && image.Width < width)
                     {
@@ -125,12 +131,18 @@ namespace Kooboo.Web.Api.Implementation
                     {
                         width = (int)height * image.Width / image.Height;
                     }
-
+#if NETSTANDARD2_0
+                    image.Mutate(x => x.Resize(width, height));
+                    image.Save(thumbnailpath);
+#else
                     var thumbnail = image.GetThumbnailImage(width, height, null, new IntPtr());
-
                     thumbnail.Save(thumbnailpath);
+#endif
 
-                } 
+
+
+
+                }
             }
          
             if (System.IO.File.Exists(thumbnailpath))

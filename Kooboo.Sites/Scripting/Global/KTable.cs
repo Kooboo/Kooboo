@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.IndexedDB.Dynamic;
+﻿using Kooboo.IndexedDB.Dynamic;
 using System.Collections.Generic;
 
 namespace Kooboo.Sites.Scripting.Global

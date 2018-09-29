@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Data.Interface;
+﻿using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
@@ -40,15 +38,9 @@ namespace Kooboo.Sites.Sync
         {
             relativeUrl = ReplaceQuestionMark(relativeUrl, false);
 
-            string relativepath = relativeUrl.Replace("/", "\\");
-            if (relativepath.StartsWith("\\"))
-            {
-                relativepath = relativepath.Substring(1);
-            }
+            var relativepath = EscapeChar(relativeUrl, false);
 
-            relativepath = EscapeChar(relativepath, false);
-
-            string FullPath = System.IO.Path.Combine(WebSite.DiskSyncFolder, relativepath);
+            string FullPath =Kooboo.Lib.Helper.PathHelper.CombinePath(WebSite.DiskSyncFolder, relativepath);
 
             if (FullPath.EndsWith("/") || FullPath.EndsWith("\\"))
             {

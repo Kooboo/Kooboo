@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Api;
+﻿using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
 using System;
 using System.Collections.Generic;
@@ -49,7 +47,8 @@ namespace Kooboo.Web.Api.Implementation.Mails
             if (bytes != null && bytes.Length > 0)
             {
                 var response = new BinaryResponse();
-                response.ContentType = System.Web.MimeMapping.GetMimeMapping(filename);
+
+                response.ContentType = Kooboo.Mail.Helper.MineTypeHelper.GetMineType(filename);
                 response.Headers.Add("Content-Disposition", $"filename={System.Web.HttpUtility.UrlEncode(filename)}");
                 response.BinaryBytes = bytes;
                 return response;
@@ -88,7 +87,8 @@ namespace Kooboo.Web.Api.Implementation.Mails
                     if (bytes != null && bytes.Length > 0)
                     {
                         var response = new BinaryResponse();
-                        response.ContentType = System.Web.MimeMapping.GetMimeMapping(filename);
+
+                        response.ContentType = Kooboo.Mail.Helper.MineTypeHelper.GetMineType(filename);
                         response.Headers.Add("Content-Disposition", $"filename={System.Web.HttpUtility.UrlEncode(filename)}");
                         response.BinaryBytes = bytes;
                         return response;

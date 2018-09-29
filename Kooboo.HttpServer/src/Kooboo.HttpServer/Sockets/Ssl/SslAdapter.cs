@@ -61,7 +61,7 @@ namespace Kooboo.HttpServer.Http
             // Switch to SSL
             _sslStream = new SslStream(wrappedStream);
 
-            System.Security.Authentication.SslProtocols sslProtocols = SslProtocols.Ssl3 | SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
+            System.Security.Authentication.SslProtocols sslProtocols =SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
 
             await _sslStream.AuthenticateAsServerAsync(certificate,false, sslProtocols, false);
 

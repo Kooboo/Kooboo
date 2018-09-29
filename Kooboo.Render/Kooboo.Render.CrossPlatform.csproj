@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<AssemblyName>Kooboo.Render</AssemblyName>
+	<RootNamespace>Kooboo.Render</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.CrossPlatform.csproj" />
+  </ItemGroup>
+
+</Project>

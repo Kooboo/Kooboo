@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<AssemblyName>Kooboo.Lib</AssemblyName>
+	<RootNamespace>Kooboo.Lib</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="ServiceProcess\**" />
+    <EmbeddedResource Remove="ServiceProcess\**" />
+    <None Remove="ServiceProcess\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Extensions\ImageFormatExtensions.cs" />
+    <Compile Remove="Less\configuration\DotlessConfigurationSectionHandler.cs" />
+    <Compile Remove="Less\Parser\Functions\GradientImageFunction.cs" />
+    <Compile Remove="Utilities\CacheUtility.cs" />
+    <Compile Remove="Utilities\NetworkUtility.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
+    <PackageReference Include="Veldrid.ImageSharp" Version="4.3.3" />
+  </ItemGroup>
+
+</Project>

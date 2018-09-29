@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Data.Definition;
+﻿using Kooboo.Data.Definition;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
   

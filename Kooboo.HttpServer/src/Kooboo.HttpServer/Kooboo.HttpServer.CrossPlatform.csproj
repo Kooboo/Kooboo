@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<AssemblyName>Kooboo.HttpServer</AssemblyName>
+	<RootNamespace>Kooboo.HttpServer</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;netstandard;NETSTANDARD2_0;FEATURE_PORTABLE_SPAN;NETSTANDARD2_0</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>false</Optimize>
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>7.2</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>TRACE;RELEASE;NETSTANDARD2_0;netstandard;FEATURE_PORTABLE_SPAN;</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Http\Http2\**" />
+    <EmbeddedResource Remove="Http\Http2\**" />
+    <None Remove="Http\Http2\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Infrastructure\CancellationTokenExtensions.cs" />
+    <Compile Remove="Infrastructure\DebuggerWrapper.cs" />
+    <Compile Remove="Infrastructure\Disposable.cs" />
+    <Compile Remove="Infrastructure\DisposableAction.cs" />
+    <Compile Remove="Infrastructure\HttpConnectionManagerShutdownExtensions.cs" />
+    <Compile Remove="Infrastructure\HttpHeartbeatManager.cs" />
+    <Compile Remove="Infrastructure\IDebugger.cs" />
+    <Compile Remove="Infrastructure\IKestrelTrace.cs" />
+    <Compile Remove="Infrastructure\KestrelEventSource.cs" />
+    <Compile Remove="Infrastructure\KestrelTrace.cs" />
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <Compile Remove="Sockets\SocketTaskExtensions.cs" />
+    <Compile Remove="System\MemoryExtensions.Fast.cs" />
+    <Compile Remove="System\SpanHelpers.byte.cs" />
+    <Compile Remove="System\ThrowHelper1.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.1" />
+  </ItemGroup>
+
+</Project>

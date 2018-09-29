@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Data;
+﻿using Kooboo.Data;
 using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
 using Kooboo.Lib.Helper;
@@ -74,7 +72,7 @@ namespace Kooboo.Sites.Sync
                     {
                         continue;
                     }
-                    newarchive.CreateEntryFromFile(path, path.Replace(DiskPath, "").Trim('\\'));
+                    newarchive.CreateEntryFromFile(path, path.Replace(DiskPath, "").Trim('\\').Trim('/'));
                 }
 
                 newarchive.Dispose();
@@ -124,14 +122,19 @@ namespace Kooboo.Sites.Sync
 
         private static bool SkipExport(string FilePath)
         {
-            if (FilePath.Contains("\\EventRules")
-                  || FilePath.Contains("\\_koobooeditlog")
-                  || FilePath.Contains("\\SyncSetting")
-                  || FilePath.Contains("\\Thumbnail")
-                  || FilePath.Contains("\\TransferPage")
-                  || FilePath.Contains("\\Synchronization")
-                //|| FilePath.Contains("\\TransferTask")
-                || FilePath.Contains("\\DownloadFailTrack")
+            var slash = "\\";
+            if (!RuntimeSystemHelper.IsWindow())
+            {
+                slash = "/";
+            }
+            if (FilePath.Contains(slash+"EventRules")
+                  || FilePath.Contains(slash + "_koobooeditlog")
+                  || FilePath.Contains(slash + "SyncSetting")
+                  || FilePath.Contains(slash + "Thumbnail")
+                  || FilePath.Contains(slash + "TransferPage")
+                  || FilePath.Contains(slash + "Synchronization")
+                //|| FilePath.Contains(slash+"TransferTask")
+                || FilePath.Contains(slash + "DownloadFailTrack")
                   )
             {
                 return true;
@@ -379,21 +382,7 @@ namespace Kooboo.Sites.Sync
                 return true;
             };
 
-            Func<string, List<string>> ToSegments = (input) =>
-            {
-                if (string.IsNullOrEmpty(input))
-                {
-                    return new List<string>();
-                }
-                input = input.Replace('/', '\\');
-                input = input.Trim();
-                if (input.StartsWith("\\"))
-                {
-                    input = input.Substring(1);
-                }
-                return input.Split('\\').ToList();
-
-            };
+            Func<string, List<string>> ToSegments = Kooboo.Lib.Helper.PathHelper.GetSegments;
 
 
             if (paths == null || paths.Count() == 1)
@@ -460,7 +449,7 @@ namespace Kooboo.Sites.Sync
 
             foreach (var path in files)
             {
-                newarchive.CreateEntryFromFile(path, path.Replace(DiskPath, "").Trim('\\'));
+                newarchive.CreateEntryFromFile(path, path.Replace(DiskPath, "").Trim('\\').Trim('/'));
             }
 
             newarchive.Dispose();
@@ -489,7 +478,7 @@ namespace Kooboo.Sites.Sync
 
             foreach (var path in files)
             {
-                newarchive.CreateEntryFromFile(path, path.Replace(DiskPath, "").Trim('\\'));
+                newarchive.CreateEntryFromFile(path, path.Replace(DiskPath, "").Trim('\\').Trim('/'));
             }
 
             newarchive.Dispose();
