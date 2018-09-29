@@ -1,4 +1,6 @@
-﻿using Jint.Parser;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Jint.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;

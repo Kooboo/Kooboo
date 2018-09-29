@@ -1,4 +1,6 @@
-﻿using Kooboo.Data.Definition;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Data.Definition;
 using System.Collections.Generic;
  
 namespace Kooboo.Sites.Contents.Models

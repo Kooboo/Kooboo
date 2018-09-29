@@ -1,4 +1,6 @@
-﻿using Kooboo.Dom;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Dom;
 using Kooboo.Sites.Render.RenderTask;
 using System.Collections.Generic;
 using System.Linq;

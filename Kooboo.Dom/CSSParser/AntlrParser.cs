@@ -1,4 +1,6 @@
-﻿#region License
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+#region License
 // 
 // Copyright (c) 2013, Kooboo team
 // 

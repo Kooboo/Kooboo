@@ -1,4 +1,6 @@
-﻿using Kooboo.Events; 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Events; 
 using Kooboo.Data.Context;
 
 namespace Kooboo.Web.Backend.Events.Hanlders

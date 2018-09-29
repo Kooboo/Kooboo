@@ -1,4 +1,6 @@
-﻿using Kooboo.Mail.Queue.Model;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Mail.Queue.Model;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
