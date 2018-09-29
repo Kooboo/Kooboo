@@ -528,9 +528,6 @@
     <Compile Include="Utilities\NetworkUtility.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Less\Lib\" />
     <Folder Include="Less\Plugins\Cache\" />
     <Folder Include="Less\Plugins\configuration\" />
