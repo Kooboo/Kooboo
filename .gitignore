@@ -31,3 +31,5 @@
 /Kooboo.Web/AppData/
 /Kooboo.Web/bin/
 /Kooboo.Web/obj/
+
+*.csproj.user
