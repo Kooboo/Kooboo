@@ -336,7 +336,7 @@
     </ItemGroup>
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Release call $(SolutionDir)generateZip.bat release Kooboo.App</PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Release call $(SolutionDir)generateZip.bat $(SolutionDir)</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

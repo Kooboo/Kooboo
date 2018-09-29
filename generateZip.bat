@@ -1,17 +1,15 @@
 @ECHO off
 ::%1--->build type:release,server
-set buildType=%1
-set appType=%2
-set batPath=%~dp0
+set buildType=Release
+set batPath=%1
 set adminPath=%batPath%Kooboo.Web\_Admin
 
-set koobooPath=%batPath%%appType%
+set koobooPath=%batPath%Kooboo.App
 
 set dllPath=%koobooPath%\bin\%buildType%
 set langPath=%batPath%Kooboo.Web\Lang
 
 set zipFile=%dllPath%\Kooboo.zip
-if "%buildType%"=="server" set zipFile=%dllPath%\KoobooServer.zip
 set fileCompressPath=%batPath%\published\
 
 ::delete existed zipFile
