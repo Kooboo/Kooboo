@@ -146,6 +146,7 @@ namespace Kooboo.Data
 
             List<string> trypaths = new List<string>();
             trypaths.Add(@"..\..\..\Kooboo.Web");
+            trypaths.Add(@"..\..\..\Github\Kooboo.Web"); 
             trypaths.Add(@"..\");
             trypaths.Add(@"..\..\");
             trypaths.Add(@"..\..\..\");
