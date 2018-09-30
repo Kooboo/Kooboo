@@ -18,7 +18,7 @@ namespace Kooboo.App
         {
             var assembly = Assembly.GetExecutingAssembly();
             var dir = System.IO.Path.GetDirectoryName(assembly.Location);
-            dir = System.IO.Path.Combine(dir, "_Admin");
+            dir = System.IO.Path.Combine(dir, "_Admin","View");
             var autoStartPath = System.IO.Path.Combine(dir, "AutoStart.txt");
 
             return autoStartPath;

@@ -16,12 +16,6 @@ namespace Kooboo.Upgrade
 
         static UpgradeHelper()
         {
-            var exeRoot = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            ParentExePath = Directory.GetParent(exeRoot).FullName;
-
-            string path = System.IO.Path.Combine(ParentExePath, "upgradePackage");
-            DownloadZipFile = System.IO.Path.Combine(path, "Kooboo.zip");
-
             InitRootAndZip(); 
         }
 
@@ -122,7 +116,7 @@ namespace Kooboo.Upgrade
                     // make sure does not close other instance.  
                     string fullPath = process.MainModule.FileName;
 
-                    if (fullPath.StartsWith(ParentExePath))
+                    if (fullPath.StartsWith(RootPath))
                     {
                         //show Kooboo Window,if kooboo window is hidden.
                         ShowKoobooWindow(windows, process);
@@ -158,21 +152,19 @@ namespace Kooboo.Upgrade
 
         private static void DeleteOldFiles()
         {
-            var path = ParentExePath;
+            var dirs = Directory.GetDirectories(RootPath);
 
-            var dirs = Directory.GetDirectories(path);
-
-            var excludeFiles = new List<string>()
+            var deleteFolders = new List<string>()
             {
-                "appdata",
-                "upgradepackage",
-                "upgrade"
+                "_admin",
+                "lang"
             };
+
             foreach (var dir in dirs)
             {
                 var dirInfo = new DirectoryInfo(dir);
 
-                if (dirInfo != null && !excludeFiles.Contains(dirInfo.Name.ToLower()))
+                if (dirInfo != null && deleteFolders.Contains(dirInfo.Name.ToLower()))
                 {
                     try
                     {
@@ -184,12 +176,12 @@ namespace Kooboo.Upgrade
                 }
             }
 
-            var files = Directory.GetFiles(path);
+            var files = Directory.GetFiles(RootPath);
             foreach (var file in files)
             {
                 var fileInfo = new FileInfo(file);
 
-                if (fileInfo != null && fileInfo.Name.ToLower() != "kooboo.exe.config")
+                if (fileInfo != null)
                 {
                     try
                     {
@@ -207,8 +199,6 @@ namespace Kooboo.Upgrade
         {
             if (!File.Exists(DownloadZipFile)) return;
 
-            var unzipPath = ParentExePath;
-
             using (var archive = ZipFile.Open(DownloadZipFile, ZipArchiveMode.Read))
             {
                 if (archive.Entries.Count > 0)
@@ -225,7 +215,7 @@ namespace Kooboo.Upgrade
 
                         if (string.IsNullOrEmpty(name)) continue;
 
-                        var path = Path.Combine(unzipPath, name);
+                        var path = Path.Combine(RootPath, name);
 
                         if (string.IsNullOrEmpty(entry.Name))
                         {
@@ -253,7 +243,7 @@ namespace Kooboo.Upgrade
 
         public static void OpenKoobooApp()
         {
-            var path = Path.Combine(ParentExePath, "Kooboo.exe");
+            var path = Path.Combine(RootPath, "Kooboo.exe");
 
             try
             {
