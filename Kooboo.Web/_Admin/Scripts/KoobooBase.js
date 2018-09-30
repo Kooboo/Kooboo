@@ -1664,6 +1664,7 @@
     wind.Kooboo = {
         Attachment: new Attachment(),
         Bar: new Bar(),
+        BaseModel: new BaseModel(),
         Binding: new Binding(),
         BusinessRule: new BusinessRule(),
         Certificate: new Certificate(),
@@ -2020,9 +2021,9 @@
             var scripts = Kooboo.System.loadFile(unCachedScripts);
             var _paths = Object.keys(scripts);
             _paths.forEach(function(path) {
-                localStorage.setItem(path, scripts[path]);
                 if (scripts[path]) {
                     loadJS(path, scripts[path], fromLayout);
+                    localStorage.setItem(path, scripts[path]);
                 } else {
                     console.error('Load ' + path + ' failed. Please ensure your script path is correct.');
                 }

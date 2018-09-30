@@ -1,5 +1,9 @@
 $(function() {
 
+    Kooboo.loadJS([
+        "/_Admin/View/Market/Scripts/components/HardwareModal.js"
+    ])
+
     var NAV_APP_TOP = $('#nav_app')[0].getBoundingClientRect().top,
         NAV_HARDWARE_TOP = $('#nav_hardware')[0].getBoundingClientRect().top,
         NAV_TEMPLATE_TOP = $('#nav_template')[0].getBoundingClientRect().top,
@@ -58,6 +62,27 @@ $(function() {
         }
 
         /* Coupon END */
+
+        /* Hardware START */
+        this.hardwares = ko.observableArray();
+
+        Kooboo.Infrastructure.getSalesItems()
+            .then(function(res) {
+                if (res.success) {
+                    self.hardwares(res.model);
+                }
+            })
+
+        this.showHardwareModal = ko.observable(false);
+        this.hardwareData = ko.observable();
+
+        this.onSelectHardware = function(m, e) {
+            self.hardwareData(m);
+            self.showHardwareModal(true);
+        }
+
+
+        /* Hardware END */
 
         /* Template START */
         this.templates = ko.observableArray();
