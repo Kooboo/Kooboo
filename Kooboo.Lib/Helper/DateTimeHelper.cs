@@ -257,6 +257,11 @@ namespace Kooboo.Lib.Helper
             return formates;
         }
 
+        // compare till minutes. 
+        public static bool EqualMinitues(DateTime timeone, DateTime timetwo)
+        {
+            return timeone.Year == timetwo.Year && timeone.DayOfYear == timetwo.DayOfYear && timeone.Hour == timetwo.Hour && timeone.Minute == timetwo.Minute; 
+        }    
     }
 }
 
