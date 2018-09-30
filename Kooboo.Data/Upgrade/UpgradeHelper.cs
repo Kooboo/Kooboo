@@ -26,7 +26,7 @@ namespace Kooboo.Data.Upgrade
             {
                 var allbytes = System.IO.File.ReadAllBytes(koobooZipFile);
 
-                return GetKoobooVersion(koobooZipFile);
+                return GetKoobooVersion(allbytes);
             }
             return null;
         }
