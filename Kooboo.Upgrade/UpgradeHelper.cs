@@ -3,11 +3,9 @@
 using System;
 using System.IO;
 using System.IO.Compression;
-using System.Diagnostics;
-using System.Configuration;
+using System.Diagnostics;    
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
+using System.Runtime.InteropServices;    
 
 namespace Kooboo.Upgrade
 {
@@ -21,16 +19,80 @@ namespace Kooboo.Upgrade
             var exeRoot = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             ParentExePath = Directory.GetParent(exeRoot).FullName;
 
-            string path = System.IO.Path.Combine(ParentExePath, "upgradePackage");  
+            string path = System.IO.Path.Combine(ParentExePath, "upgradePackage");
             DownloadZipFile = System.IO.Path.Combine(path, "Kooboo.zip");
+
+            InitRootAndZip(); 
         }
+
+        public static void InitRootAndZip()
+        {
+            RootPath = GetRoot();
+            if (RootPath !=null)
+            {
+                DownloadZipFile = GetPackageZip(RootPath); 
+            }
+        }
+
+        private static string GetRoot()
+        {
+            var basedir = AppDomain.CurrentDomain.BaseDirectory;
+            if (IsKoobooDiskRoot(basedir))
+            {
+                return basedir;
+            }
+            var info = new System.IO.DirectoryInfo(basedir);
+            var parent = info.Parent;
+            if (IsKoobooDiskRoot(parent.FullName))
+            {
+                return parent.FullName;
+            }
+            parent = parent.Parent;
+            if (IsKoobooDiskRoot(parent.FullName))
+            {
+                return parent.FullName;
+            }
+            return null;
+        }
+
+        private static string GetPackageZip(string root)
+        {    
+            string name = System.IO.Path.Combine(root, "upgrade", "Kooboo.zip"); 
+            if (System.IO.File.Exists(name))
+            {
+                return name; 
+            }
+            name = System.IO.Path.Combine(root, "upgradePackage", "Kooboo.zip");
+            if (System.IO.File.Exists(name))
+            {
+                return name;
+            }        
+            return null; 
+        }
+
+        public static string RootPath { get; set; }
 
         public static string DownloadZipFile { get; set; }
 
         //public static string ExeRoot { get; set; }
 
         public static string ParentExePath { get; set; }
-         
+                                                             
+        private static bool IsKoobooDiskRoot(string FullPath)
+        {
+            string ScriptFolder = System.IO.Path.Combine(FullPath, "_Admin", "Scripts");
+            if (!Directory.Exists(ScriptFolder))
+            {
+                return false;
+            }
+            string ViewFolder = System.IO.Path.Combine(FullPath, "_Admin", "View");
+            if (!Directory.Exists(ViewFolder))
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static void Upgrade()
         {
             if (!File.Exists(DownloadZipFile)) return;
@@ -44,7 +106,7 @@ namespace Kooboo.Upgrade
             // clean the download zip...
             if (File.Exists(DownloadZipFile))
             {
-               File.Delete(DownloadZipFile);
+                File.Delete(DownloadZipFile);
             }
         }
 
@@ -56,7 +118,7 @@ namespace Kooboo.Upgrade
             if (koobooProcesses != null)
             {
                 foreach (var process in koobooProcesses)
-                { 
+                {
                     // make sure does not close other instance.  
                     string fullPath = process.MainModule.FileName;
 
@@ -66,17 +128,17 @@ namespace Kooboo.Upgrade
                         ShowKoobooWindow(windows, process);
 
                         //closeMainWindow only trigger when Kooboo window is show
-                        var close= process.CloseMainWindow();
+                        var close = process.CloseMainWindow();
 
                         process.Close();
-                        
+
                     }
                 }
             }
 
         }
 
-        private static void ShowKoobooWindow(List<IntPtr> windows,Process process)
+        private static void ShowKoobooWindow(List<IntPtr> windows, Process process)
         {
             //hidden kooboo window,process.MainWindowHandle will be IntPrt.Zero
             var hwnd = process.MainWindowHandle;
@@ -91,7 +153,7 @@ namespace Kooboo.Upgrade
                     ShowWindow(hwnd, SW_SHOW);
                 }
             }
-            
+
         }
 
         private static void DeleteOldFiles()
@@ -136,8 +198,8 @@ namespace Kooboo.Upgrade
                     catch (Exception ex)
                     {
 
-                    } 
-                } 
+                    }
+                }
             }
         }
 
@@ -145,7 +207,7 @@ namespace Kooboo.Upgrade
         {
             if (!File.Exists(DownloadZipFile)) return;
 
-            var unzipPath = ParentExePath; 
+            var unzipPath = ParentExePath;
 
             using (var archive = ZipFile.Open(DownloadZipFile, ZipArchiveMode.Read))
             {
@@ -154,12 +216,12 @@ namespace Kooboo.Upgrade
                     foreach (var entry in archive.Entries)
                     {
                         //remove base dir// 
-                        string basedir = "Kooboo/";  
-                        string name = entry.FullName; 
+                        string basedir = "Kooboo/";
+                        string name = entry.FullName;
                         if (name.StartsWith(basedir))
                         {
-                            name = name.Substring(basedir.Length); 
-                        } 
+                            name = name.Substring(basedir.Length);
+                        }
 
                         if (string.IsNullOrEmpty(name)) continue;
 
@@ -167,45 +229,21 @@ namespace Kooboo.Upgrade
 
                         if (string.IsNullOrEmpty(entry.Name))
                         {
-                            EnsureDirectoryExists(path); 
+                            EnsureDirectoryExists(path);
                         }
                         else if (entry.Name.ToLower() == "kooboo.upgrade.exe")
                         {
                             continue;  // already updated... 
-                        }
-                        //else if (entry.Name.ToLower() == "kooboo.exe.config")
-                        //{
-                        //    var configPath =Path.Combine(ExeRoot, "kooboo.exe");
-                        //    var config = ConfigurationManager.OpenExeConfiguration(configPath);
-                        //    var settings = config.AppSettings;
-
-                        //    var keyValues = new Dictionary<string, string>();
-                        //    foreach (var key in settings.Settings.AllKeys)
-                        //    {
-                        //        keyValues.Add(key, settings.Settings[key].Value);
-                        //    }
-                        //    entry.ExtractToFile(path, true);
-
-                        //    config = ConfigurationManager.OpenExeConfiguration(configPath);
-                        //    foreach (var keyPair in keyValues)
-                        //    {
-
-                        //        if (config.AppSettings.Settings[keyPair.Key] != null)
-                        //            config.AppSettings.Settings[keyPair.Key].Value = keyPair.Value;
-                        //        else
-                        //            config.AppSettings.Settings.Add(keyPair.Key, keyPair.Value);
-                        //    }
-                        //    config.Save(ConfigurationSaveMode.Modified);
-                        //}
+                        }    
                         else
                         {
-                            EnsureFileDirectoryExists(path);  
+                            EnsureFileDirectoryExists(path);
                             try
                             {
-                                entry.ExtractToFile(path, true); 
+                                entry.ExtractToFile(path, true);
                             }
                             catch (Exception ex)
-                            { 
+                            {
                             }
                         }
                     }
@@ -230,7 +268,7 @@ namespace Kooboo.Upgrade
                 //Process.Start(path);
             }
         }
-         
+
         private static void EnsureDirectoryExists(string path)
         {
             if (!Directory.Exists(path))
@@ -242,10 +280,10 @@ namespace Kooboo.Upgrade
         private static void EnsureFileDirectoryExists(string filePath)
         {
             var dir = Path.GetDirectoryName(filePath);
-            if (dir !=null)
+            if (dir != null)
             {
                 EnsureDirectoryExists(dir);
-            } 
+            }
         }
 
     }

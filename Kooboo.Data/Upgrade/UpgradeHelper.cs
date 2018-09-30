@@ -74,9 +74,9 @@ namespace Kooboo.Data.Upgrade
         }
 
         // TODO: can move to kooboo.lib.
-        public static byte[] GetManifestResourceFile(byte[] containerDll, string FileName)
+        public static byte[] GetManifestResourceFile(byte[] ContainterBinary, string FileName)
         {
-            var assembely = Assembly.Load(containerDll); 
+            var assembely = Assembly.Load(ContainterBinary); 
             var resource = assembely.GetManifestResourceNames().First(n => n.Equals(FileName, StringComparison.OrdinalIgnoreCase));
 
             if (resource != null)

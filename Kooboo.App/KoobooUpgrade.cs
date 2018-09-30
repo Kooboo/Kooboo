@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Threading;
-using System.Reflection;
 using System.IO;
 
 namespace Kooboo.App
@@ -16,16 +15,11 @@ namespace Kooboo.App
     public class KoobooUpgrade
     {
         static KoobooUpgrade()
-        {
-            string root = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-
-            string path = System.IO.Path.Combine(root, "upgradePackage");
-            KoobooZipFullName = System.IO.Path.Combine(path, "Kooboo.zip");
-#if DEBUG
-            UpgradeExeFullName = System.IO.Path.Combine(root, "Kooboo.Upgrade.exe");
-#else
-            UpgradeExeFullName = System.IO.Path.Combine(root,"Upgrade", "Kooboo.Upgrade.exe");
-#endif
+        {      
+            string path = System.IO.Path.Combine(Data.AppSettings.RootPath, "upgrade");  
+            KoobooZipFullName = System.IO.Path.Combine(path, "Kooboo.zip");   
+            UpgradeExeFullName = System.IO.Path.Combine(path, "Kooboo.Upgrade.exe"); 
+            InitAutoUpgrade(); 
         }
 
         public static bool IsRunning { get; set; } = false;
@@ -33,44 +27,28 @@ namespace Kooboo.App
 
         private static int LastCheckDay { get; set; }
 
-        public static bool IsAutoUpgrade
-        {
-            get
-            {
-                var autoUpgradePath = GetAutoUpgradeSettingPath();
-                if (!File.Exists(autoUpgradePath))
-                {
-                    return false;
-                }
-
-                var autoStart = false;
-                var result = File.ReadAllText(autoUpgradePath);
-                bool.TryParse(result, out autoStart);
-
-                return autoStart;
-            } 
-        }
+        public static bool IsAutoUpgrade;     
 
         public static void SetAutoUpgrade(bool auto)
         {
-            var autoUpgradePath = GetAutoUpgradeSettingPath();
-            var dir = System.IO.Path.GetDirectoryName(autoUpgradePath);
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
-            File.WriteAllText(autoUpgradePath, auto.ToString());
+            string filepath = System.IO.Path.Combine(Data.AppSettings.RootPath, "_admin", "AutoUpgrade.txt");
+            Lib.Helper.IOHelper.EnsureFileDirectoryExists(filepath);   
+            File.WriteAllText(filepath, auto.ToString());
+            IsAutoUpgrade = auto; 
         }
 
-        private static string GetAutoUpgradeSettingPath()
+        public static void InitAutoUpgrade()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var dir = System.IO.Path.GetDirectoryName(assembly.Location);
-            dir = System.IO.Path.Combine(dir, "_Admin");
-            var autoStartPath = System.IO.Path.Combine(dir, "AutoUpgrade.txt");
+            // init auto upgrade.
+            string filepath = System.IO.Path.Combine(Data.AppSettings.RootPath, "_admin", "AutoUpgrade.txt");
 
-            return autoStartPath;
+            if (File.Exists(filepath))
+            {
+                var result = File.ReadAllText(filepath);
+                bool.TryParse(result, out IsAutoUpgrade);
+            }
         }
+                                              
         private static string KoobooZipFullName { get; set; }
 
         public static string UpgradeExeFullName { get; set; }
@@ -92,6 +70,7 @@ namespace Kooboo.App
             }
             return version;
         }
+
         private static async Task<byte[]> DownloadKoobooZip(System.Net.DownloadProgressChangedEventHandler downloadProgressChanged)
         {
             string serverUrl = AppSettings.ConvertApiUrl + "/_api/converter/DownloadUpgradePackage";
@@ -141,6 +120,7 @@ namespace Kooboo.App
             {
                 IsRunning = true;
                 LastCheckDay = DateTime.Now.DayOfYear; 
+
                 try
                 {
                     var newVersion = await GetLatestVersion();
@@ -153,20 +133,27 @@ namespace Kooboo.App
                             hasupgrade = true;
 
                             Lib.Helper.IOHelper.EnsureFileDirectoryExists(KoobooZipFullName); 
+
                             System.IO.File.WriteAllBytes(KoobooZipFullName, package);
-                             
-                            using (var archive = ZipFile.Open(KoobooZipFullName, ZipArchiveMode.Read))
+
+                            string upgradeExeFileName = "Kooboo.Upgrade.exe"; 
+
+                            byte[] upgradeexe = Kooboo.Data.Upgrade.UpgradeHelper.ExtractFileFromZip(package, upgradeExeFileName);
+                           
+                            if (upgradeexe == null)
                             {
-                                foreach (var entry in archive.Entries)
+                                var koobooexebytes = Data.Upgrade.UpgradeHelper.ExtractFileFromZip(package, "Kooboo.exe"); 
+                                if (koobooexebytes !=null)
                                 {
-                                    if (entry.FullName.IndexOf("Kooboo.Upgrade.exe", StringComparison.OrdinalIgnoreCase) > -1)
-                                    {
-                                        entry.ExtractToFile(UpgradeExeFullName, true);
-                                        break;
-                                    }
-                                }
+                                    upgradeexe = Data.Upgrade.UpgradeHelper.GetManifestResourceFile(koobooexebytes, upgradeExeFileName);    
+                                }    
                             }
 
+                            if (upgradeexe !=null)
+                            {
+                                hasupgrade = true;
+                                System.IO.File.WriteAllBytes(UpgradeExeFullName, upgradeexe); 
+                            }       
                         }
 
                     }
