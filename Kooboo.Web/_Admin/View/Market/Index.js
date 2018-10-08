@@ -1,9 +1,5 @@
 $(function() {
 
-    Kooboo.loadJS([
-        "/_Admin/View/Market/Scripts/components/HardwareModal.js"
-    ])
-
     var NAV_APP_TOP = $('#nav_app')[0].getBoundingClientRect().top,
         NAV_HARDWARE_TOP = $('#nav_hardware')[0].getBoundingClientRect().top,
         NAV_TEMPLATE_TOP = $('#nav_template')[0].getBoundingClientRect().top,
@@ -87,6 +83,13 @@ $(function() {
         /* Template START */
         this.templates = ko.observableArray();
 
+        this.templatesRendered = function() {
+            $("img.lazy").lazyload({
+                event: "scroll",
+                effect: "fadeIn"
+            });
+        }
+
         Kooboo.Template.getList({
             pageSize: 12
         }).then(function(res) {
@@ -95,9 +98,23 @@ $(function() {
             }
         })
 
+        this.showTemplateModal = ko.observable(false);
+        this.templateData = ko.observable();
+
+        this.onSelectTemplate = function(m, e) {
+            Kooboo.Template.Get({
+                id: m.id
+            }).then(function(res) {
+                if (res.success) {
+                    console.log(res.model);
+                    self.templateData(res.model);
+                    self.showTemplateModal(true);
+
+                }
+            })
+        }
+
         /* Template END */
-
-
     }
 
     var vm = new Market();

@@ -84,6 +84,14 @@
     .media .icon i {
         color: #aaaaaa;
     }
+    
+    .bx-wrapper .bx-prev {
+        background: url("/_Admin/Scripts/lib/bxSlider/images/controls.png") no-repeat 0 -32px;
+    }
+    
+    .bx-wrapper .bx-next {
+        background: url("/_Admin/Scripts/lib/bxSlider/images/controls.png") no-repeat -43px -32px;
+    }
 </style>
 <div id="main">
     <div class="page-header">
@@ -326,20 +334,17 @@
             </div>
             <div class="content-container" id="template">
                 <h2>Template</h2>
-                <div class="content row clearfix" data-bind="foreach: templates">
-                    <div class="col-md-4">
-                        <div class="item clearfix">
-                            <div class="col-md-12">
-                                <div class="media">
-                                    <a class="pull-left" href="#"><img class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%20preserveAspectRatio%3D%22none%22%3E%3C!--%0ASource%20URL%3A%20holder.js%2F64x64%0ACreated%20with%20Holder.js%202.8.2.%0ALearn%20more%20at%20http%3A%2F%2Fholderjs.com%0A(c)%202012-2015%20Ivan%20Malopinsky%20-%20http%3A%2F%2Fimsky.co%0A--%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%3C!%5BCDATA%5B%23holder_1660ea77f6a%20text%20%7B%20fill%3A%23AAAAAA%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A10pt%20%7D%20%5D%5D%3E%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1660ea77f6a%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20fill%3D%22%23EEEEEE%22%2F%3E%3Cg%3E%3Ctext%20x%3D%2213.1796875%22%20y%3D%2236.5%22%3E64x64%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"
-                                            data-holder-rendered="true" style="width: 64px; height: 64px;"></a>
-                                    <div class="media-body">
-                                        <h4 class="media-heading" data-bind="text: $data.name"></h4>
-                                        <p data-bind="text: $data.description || Kooboo.text.site.template.noDescription"></p>
-                                    </div>
-                                </div>
+                <div class="content row clearfix" data-bind="foreach: { data: templates, afterRender: templatesRendered }">
+                    <div class="col-md-3">
+                        <a href="javascript:;" class="thumbnail" data-bind="click: $parent.onSelectTemplate">
+                            <span class="wrapper">
+                                <img alt="thumbnail" class="lazy" data-bind="attr: { 'data-original': $data.thumbNail,alt: $data.name }">
+                                <span data-bind="text: $data.description" class="desc"></span>
+                            </span>
+                            <div class="caption">
+                                <strong data-bind="text: $data.name"></strong>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -566,6 +571,22 @@
             data: hardwareData
         }
     }"></div>
+
+    <template-modal params="isShow: showTemplateModal, data: templateData" />
 </div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/View/Market/Scripts/components/HardwareModal.js",
+            "/_Admin/View/Market/Scripts/components/TemplateModal.js",
+            "/_Admin/Scripts/lib/bxSlider/jquery.bxslider.min.js",
+            "/_Admin/Scripts/lib/jquery.lazyload.min.js"
+        ])
+
+        Kooboo.loadCSS([
+            "/_Admin/Scripts/lib/bxSlider/jquery.bxslider.min.css"
+        ])
+    })()
+</script>
 <script src="/_Admin/View/Market/Scripts/Kooboo.Server.js"></script>
 <script src="/_Admin/View/Market/Index.js"></script>
