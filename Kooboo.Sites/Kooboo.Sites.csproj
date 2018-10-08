@@ -538,7 +538,6 @@
     <Compile Include="Routing\PathTree.cs" />
     <Compile Include="Tag\TagGroup.cs" />
     <Compile Include="TAL\ConstTALAttributes.cs" />
-    <Compile Include="TAL\Functions\IFunction.cs" />
     <Compile Include="TaskQueue\TaskExecutor\PostSyncObjectTask.cs" />
     <Compile Include="TaskQueue\TaskExecutor\TaskExecutorContainer.cs" />
     <Compile Include="TaskQueue\TaskExecutor\WriteToDiskExecutor.cs" />
@@ -591,9 +590,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TAL\Binding\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets')" />
   <PropertyGroup>
