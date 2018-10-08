@@ -1,6 +1,6 @@
 # Kooboo
 
-Kooboo is a new way of web development. It saves you hours and make your website in a better way. 
+Kooboo is a new kind of web development. It saves you hours and make your website in a better way. 
 
 It contains many things you need to do web development.  It contains a builtin webserver, an email server, template engine, dynamic Database and JavaScript executor. 
 
