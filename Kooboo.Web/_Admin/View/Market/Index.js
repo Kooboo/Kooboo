@@ -106,7 +106,6 @@ $(function() {
                 id: m.id
             }).then(function(res) {
                 if (res.success) {
-                    console.log(res.model);
                     self.templateData(res.model);
                     self.showTemplateModal(true);
 

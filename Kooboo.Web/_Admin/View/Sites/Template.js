@@ -1,5 +1,4 @@
 $(function() {
-    var slider = null;
 
     var publicTabNeedRefresh = false;
 
@@ -203,139 +202,24 @@ $(function() {
 
         this.chooseTemplate = function(package) {
             Kooboo.Template.Get({
-                siteId: package.siteId,
                 id: package.id
             }).then(function(res) {
 
                 if (res.success) {
-                    var p = res.model,
-                        d = new Date(p.lastModified);
-                    p.size = Kooboo.bytesToSize(p.size);
-                    p.lastModified = d.toDefaultLangString();
-                    p.allDynamicCount = p.layoutCount + p.menuCount + p.pageCount + p.viewCount + p.imageCount + p.contentCount;
-                    self.package(p);
-                    self.templateModal(true);
+                    self.templateData(res.model);
+                    self.showTemplateModal(true);
                 }
             })
         }
+
+        this.showTemplateModal = ko.observable(false);
+        this.templateData = ko.observable();
 
         this.templateModal = ko.observable(false);
 
         this.searchTag = function(tag) {
             console.log("TODO\t search tag: " + tag);
         }
-
-        this.selected = ko.observable(false);
-
-        this.useTemplate = function() {
-            self.showError(false);
-            self.selected(!self.selected());
-
-            if (!self.selected()) {
-                slider.destroySlider();
-                slider = $(".bxslider").bxSlider({ auto: false })
-            }
-        }
-
-        this.initSlider = function() {
-            if (!slider) {
-                slider = $(".bxslider").bxSlider({ auto: false });
-            }
-        }
-
-        this.ableToStart = function() {
-            return self.siteName.isValid() && self.subDomain.isValid();
-        }
-
-        this.start = function() {
-
-            if (self.ableToStart()) {
-
-                Kooboo.Template.Use({
-                    siteName: self.siteName(),
-                    subDomain: self.subDomain(),
-                    rootDomain: self.rootDomain(),
-                    downloadCode: self.package().downloadCode
-                }).then(function(res) {
-
-                    if (res.success) {
-                        location.href = Kooboo.Route.Get(Kooboo.Route.Site.DetailPage, {
-                            SiteId: res.model
-                        })
-                    }
-                })
-            } else {
-                self.showError(true);
-            }
-        }
-
-        this.modalReset = function() {
-            self.showError(false);
-            self.templateModal(false);
-            self.package(null);
-            self.siteName(null);
-            self.subDomain(null);
-            self.agree(false);
-            self.selected(false);
-            slider.destroySlider();
-            slider = null;
-        }
-
-        this.showError = ko.observable(false);
-
-        this.siteName = ko.validateField({
-            required: Kooboo.text.validation.required,
-            remote: {
-                url: Kooboo.Site.isUniqueName(),
-                message: Kooboo.text.validation.taken,
-                type: "get",
-                data: {
-                    name: function() {
-                        return self.siteName()
-                    }
-                }
-            },
-            regex: {
-                pattern: /^[A-Za-z][\w\-]*$/,
-                message: Kooboo.text.validation.siteNameInvalid
-            }
-        });
-        this.siteName.subscribe(function(val) {
-            // var name = _.words(val).join("-");
-            self.subDomain(val);
-        });
-
-        this.rootDomain = ko.observable();
-
-        this.subDomain = ko.validateField({
-            required: Kooboo.text.validation.required,
-            remote: {
-                url: Kooboo.Site.CheckDomainBindingAvailable(),
-                message: Kooboo.text.validation.taken,
-                type: "get",
-                data: {
-                    SubDomain: function() {
-                        return self.subDomain && self.subDomain();
-                    },
-                    RootDomain: function() {
-                        return self.rootDomain && self.rootDomain();
-                    }
-                }
-            },
-            stringlength: {
-                min: 1,
-                max: 63,
-                message: Kooboo.text.validation.minLength + 1 + ", " + Kooboo.text.validation.maxLength + 63
-            },
-            regex: {
-                pattern: /^[A-Za-z][\w\-]*$/,
-                message: Kooboo.text.validation.siteNameInvalid
-            }
-        });
-
-        this.domains = ko.observableArray();
-
-        this.agree = ko.observable(false);
 
         this.editTemplateModal = ko.observable(false);
 
@@ -499,18 +383,6 @@ $(function() {
 
     ko.applyBindings(vm, document.getElementById("main"));
 
-    Kooboo.Domain.getAvailable().then(function(res) {
-
-        if (res.success) {
-            vm.domains(res.model);
-        }
-    });
-    $("#templateModal").on("show.bs.modal", function() {
-        vm.initSlider();
-    });
-    $("#templateModal").on("shown.bs.modal", function() {
-        slider.reloadSlider();
-    });
     $("#editTemplateModal").on("shown.bs.modal", function() {
         var test = $("#select2_element").select2({
             tags: true,

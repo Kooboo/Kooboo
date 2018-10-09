@@ -1,6 +1,14 @@
 (function() {
+    Kooboo.loadJS([
+        "/_Admin/Scripts/lib/bxSlider/jquery.bxslider.min.js"
+    ])
+
+    Kooboo.loadCSS([
+        "/_Admin/Scripts/lib/bxSlider/jquery.bxslider.min.css"
+    ])
+
     var template = Kooboo.getTemplate('/_Admin/Scripts/components/kbTemplateModal.html'),
-        slider = null
+        slider = null;
 
     ko.components.register('kb-template-modal', {
         viewModel: function(params) {
@@ -138,7 +146,6 @@
                             value: domain.domainName
                         }
                     }));
-                    console.log(self.domains());
                 }
             })
         },
