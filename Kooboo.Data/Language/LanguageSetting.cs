@@ -236,7 +236,7 @@ namespace Kooboo.Data.Language
 
             string basedir = AppSettings.RootPath;
 
-            string langpath = System.IO.Path.Combine(AppSettings.RootPath, "lang");
+            string langpath = System.IO.Path.Combine(AppSettings.RootPath, "Lang");
 
             if (System.IO.Directory.Exists(langpath))
             {
