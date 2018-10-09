@@ -1,8 +1,8 @@
 (function() {
-    var template = Kooboo.getTemplate('/_Admin/View/Market/Scripts/components/TemplateModal.html'),
+    var template = Kooboo.getTemplate('/_Admin/Scripts/components/kbTemplateModal.html'),
         slider = null
 
-    ko.components.register('template-modal', {
+    ko.components.register('kb-template-modal', {
         viewModel: function(params) {
             var self = this;
 
