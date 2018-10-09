@@ -39,8 +39,14 @@ namespace Kooboo.Render.ServerSide
         private void RenderFiles(CommandDiskSourceProvider sourceProvider, RenderOption option, RenderContext context,  string varname, string relativePath, ref string ScriptHeader, ref string Body)
         {  
 
-            var root = sourceProvider.GetRoot(context); 
+            var root = sourceProvider.GetRoot(context);
+#if NETSTANDARD2_0
+            var folder = Lib.Helper.PathHelper.CombinePath(root, relativePath);
+#else
             var folder = Lib.Helper.IOHelper.CombinePath(root, relativePath);
+#endif
+
+
 
             if (System.IO.Directory.Exists(folder))
             {
