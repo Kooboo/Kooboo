@@ -13,6 +13,18 @@ $(function() {
         this.order = function(para) {
             return this.executePost('Order', para);
         }
+
+        this.getMonthlyReport = function(para) {
+            return this.executeGet('MonthlyReport', para);
+        }
+
+        this.getMonthlyLogs = function(para) {
+            return this.executeGet('MonthlyLogs', para, true);
+        }
+
+        this.getTypes = function(para) {
+            return this.executeGet('Types', para);
+        }
     }
     extend(Infrastructure, Kooboo.BaseModel);
 

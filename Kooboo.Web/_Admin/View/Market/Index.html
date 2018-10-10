@@ -84,6 +84,21 @@
     .media .icon i {
         color: #aaaaaa;
     }
+    
+    .section-header a {
+        color: inherit;
+    }
+    
+    .section-header .title i {
+        margin-left: 8px;
+        font-size: 20px;
+        position: relative;
+        top: -3px;
+    }
+    
+    .section-header .extend i {
+        font-size: 18px;
+    }
 </style>
 <div id="main">
     <div class="page-header">
@@ -130,7 +145,14 @@
         <div class="col-md-9">
             <!-- App, Hardware, Template, Domain -->
             <div class="content-container" id="hardware">
-                <h2>Hardware</h2>
+                <h2 class="section-header clearfix">
+                    <div class="pull-left title">
+                        <a href="javascript:;">Hardware<i class="fa fa-chevron-right"></i></a>
+                    </div>
+                    <div class="pull-right extend">
+                        <a href="./UsageReport" data-bind="tooltip: 'Usage report', tooltipPlacement: 'left'"><i class="fa fa-area-chart"></i></a>
+                    </div>
+                </h2>
                 <div class="content row clearfix" data-bind="foreach: hardwares">
                     <div class="col-md-4">
                         <div class="item clearfix" data-bind="click: $parent.onSelectHardware">
@@ -152,7 +174,14 @@
                 </div>
             </div>
             <div class="content-container" id="app">
-                <h2>App</h2>
+                <h2 class="section-header clearfix">
+                    <div class="pull-left title">
+                        <a href="javascript:;">App<i class="fa fa-chevron-right"></i></a>
+                    </div>
+                    <div class="pull-right extend">
+                        <a href="javascript:;" data-bind="tooltip: 'Purchase history', tooltipPlacement: 'left'"><i class="fa fa-history"></i></a>
+                    </div>
+                </h2>
                 <div class="content row clearfix">
                     <div class="col-md-4">
                         <div class="item clearfix">
@@ -349,7 +378,11 @@
                 </div>
             </div>
             <div class="content-container" id="template">
-                <h2>Template</h2>
+                <h2 class="section-header clearfix">
+                    <div class="pull-left title">
+                        <a href="javascript:;">Template<i class="fa fa-chevron-right"></i></a>
+                    </div>
+                </h2>
                 <div class="content row clearfix" data-bind="foreach: { data: templates, afterRender: templatesRendered }">
                     <div class="col-md-3">
                         <a href="javascript:;" class="thumbnail" data-bind="click: $parent.onSelectTemplate">
@@ -365,7 +398,11 @@
                 </div>
             </div>
             <div class="content-container" id="domain">
-                <h2>Domain</h2>
+                <h2 class="section-header clearfix">
+                    <div class="pull-left title">
+                        <a href="javascript:;">Domain<i class="fa fa-chevron-right"></i></a>
+                    </div>
+                </h2>
                 <div class="content row clearfix">
                     <div class="col-md-6 col-md-offset-3 margin-bottom-25">
                         <div class="form-horizontal">
