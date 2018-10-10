@@ -584,16 +584,16 @@ namespace Kooboo.Mail.Multipart
 
             while (true)
             {
-                nextindex = index + 256;
+                nextindex = index + 254;
                 if (nextindex > len)
                 {
-                    sb.AppendLine(value.Substring(index));
+                    sb.Append(value.Substring(index)).Append("\r\n");
                     break;
                 }
                 else
                 {
-                    sb.AppendLine(value.Substring(index, 256));
-                    index = index + 256;
+                    sb.Append(value.Substring(index,254)).Append("\r\n");
+                    index = index + 254;
                 }
             }
             return sb.ToString();
