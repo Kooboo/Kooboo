@@ -16,7 +16,7 @@
             TransferPage: GetRoute("Sites/Transfer", true),
             TemplatePage: GetRoute("Sites/Template", true),
             Transferring: GetRoute("Sites/Transferring", true),
-            Share: GetRoute("Sites/Share")
+            Share: GetRoute("Sites/Share", true)
         },
         Email: {
             Compose: GetRoute("Emails/Compose", true),

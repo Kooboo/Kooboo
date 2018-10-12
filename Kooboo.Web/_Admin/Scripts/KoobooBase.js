@@ -1952,6 +1952,19 @@
                     return false;
                 }
             },
+            positiveNumberOnly: function(m, e) {
+                if (e.keyCode >= 48 && e.keyCode <= 57 /*number*/ ) {
+                    return true;
+                } else if (e.keyCode >= 96 && e.keyCode <= 105 /*number*/ ) {
+                    return true;
+                } else if (e.keyCode == 8 /*BACKSPACE*/ || e.keyCode == 190 /*.*/ || e.keyCode == 110 /* . */ ) {
+                    return true;
+                } else if (e.keyCode == 9 /* Tab */ ) {
+                    return true
+                } else {
+                    return false;
+                }
+            },
             inputNumberOnly: function(m, e) {
                 if (e.keyCode >= 48 && e.keyCode <= 57 /*number*/ ) {
                     return true;

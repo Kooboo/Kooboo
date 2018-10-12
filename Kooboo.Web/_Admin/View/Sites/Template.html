@@ -87,8 +87,6 @@
         </div>
     </div>
 
-    <kb-template-modal params="isShow: showTemplateModal, data: templateData" />
-
     <div data-bind="modal: editTemplateModal" class="modal fade" id="editTemplateModal" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -188,20 +186,21 @@
             </div>
         </div>
     </div>
+
+    <kb-template-modal params="isShow: showTemplateModal, data: templateData" />
 </div>
 
 <script>
     (function() {
-        Kooboo.loadCSS([
-            "/_Admin/Styles/select2/select2.css",
-        ])
         Kooboo.loadJS([
-            "/_Admin/Scripts/lib/holder.js",
+            "/_Admin/Scripts/lib/select2.min.js",
             "/_Admin/Scripts/components/kbTemplateModal.js",
             "/_Admin/Scripts/components/kbPager.js",
             "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
             "/_Admin/Scripts/lib/jquery.lazyload.min.js",
-            "/_Admin/Scripts/lib/select2.min.js"
+        ])
+        Kooboo.loadCSS([
+            "/_Admin/Styles/select2/select2.css",
         ])
     })()
 </script>

@@ -222,6 +222,39 @@ $(function() {
         }
 
         this.editTemplateModal = ko.observable(false);
+        this.editTemplateModal.subscribe(function(show) {
+            if (show) {
+                setTimeout(function() {
+                    var test = $("#select2_element").select2({
+                        tags: true,
+                        tokenSeparators: [',', ' ', ';']
+                    });
+                    $(".autosize").textareaAutoSize().trigger("keyup");
+
+                    $("#edit_file").change(function() {
+                        var files = this.files,
+                            filesLength = files.length,
+                            uploadLength = 0;
+
+                        if (filesLength) {
+                            _.forEach(files, function(file) {
+                                let suffix = file.name.split('.').reverse()[0].toLowerCase();
+                                if (['bmp', 'png', 'jpg', 'jpeg'].indexOf(suffix) > -1) {
+                                    vm.editing().files.push(file);
+                                    uploadLength++;
+                                }
+                            })
+                        }
+
+                        if (uploadLength !== filesLength) {
+                            alert(Kooboo.text.alert.imageFileUploaded);
+                        }
+
+                        $(this).val("");
+                    })
+                }, 300);
+            }
+        })
 
         this.selectedTags = ko.observableArray();
 
@@ -383,35 +416,6 @@ $(function() {
 
     ko.applyBindings(vm, document.getElementById("main"));
 
-    $("#editTemplateModal").on("shown.bs.modal", function() {
-        var test = $("#select2_element").select2({
-            tags: true,
-            tokenSeparators: [',', ' ', ';']
-        });
-        $(".autosize").textareaAutoSize().trigger("keyup");
-
-        $("#edit_file").change(function() {
-            var files = this.files,
-                filesLength = files.length,
-                uploadLength = 0;
-
-            if (filesLength) {
-                _.forEach(files, function(file) {
-                    let suffix = file.name.split('.').reverse()[0].toLowerCase();
-                    if (['bmp', 'png', 'jpg', 'jpeg'].indexOf(suffix) > -1) {
-                        vm.editing().files.push(file);
-                        uploadLength++;
-                    }
-                })
-            }
-
-            if (uploadLength !== filesLength) {
-                alert(Kooboo.text.alert.imageFileUploaded);
-            }
-
-            $(this).val("");
-        })
-    })
     $('.nav.nav-tabs a').click(function(e) {
         $(this).tab('show');
         setTimeout(function() {

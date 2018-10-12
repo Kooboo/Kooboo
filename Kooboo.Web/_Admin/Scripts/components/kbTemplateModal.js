@@ -50,6 +50,7 @@
             this.onHide = function() {
                 slider.destroySlider();
                 slider = null;
+                self.selected(false);
                 self.isShow(false);
             }
 
