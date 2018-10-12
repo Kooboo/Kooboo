@@ -124,7 +124,7 @@ namespace Kooboo.Api
             }
 
             if (apiobject.RequireSite && WebSite == null)
-            {
+            {        
                 return false;
             }
 
