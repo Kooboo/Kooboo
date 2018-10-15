@@ -117,7 +117,7 @@
                     </div>
                     <div class="balance-func">
                         <div class="btn-group btn-group-justified">
-                            <a href="javascript:;" class="btn btn-link">Recharge</a>
+                            <a href="javascript:;" data-bind="click: onShowRechargeModal" class="btn btn-link">Recharge</a>
                             <a href="javascript:;" data-bind="click: onShowCouponModal" class="btn btn-link">Coupon</a>
                             <a href="./RechargeHistory" class="btn btn-link">History</a>
                         </div>
@@ -126,10 +126,10 @@
             </div>
             <div id="side-nav" class="hidden-xs hidden-sm">
                 <ul class="nav nav-pills nav-stacked affix" style="max-width: 260px;">
-                    <li id="nav_app" class="active">
+                    <li id="nav_hardware" class="active">
                         <a href="#hardware">Hardware</a>
                     </li>
-                    <li id="nav_hardware">
+                    <li id="nav_app">
                         <a href="#app">App</a>
                     </li>
                     <li id="nav_template">
@@ -143,7 +143,6 @@
             <div></div>
         </div>
         <div class="col-md-9">
-            <!-- App, Hardware, Template, Domain -->
             <div class="content-container" id="hardware">
                 <h2 class="section-header clearfix">
                     <div class="pull-left title">
@@ -616,6 +615,14 @@
             </div>
         </div>
     </div>
+
+    <div data-bind="component: {
+        name: 'recharge-modal',
+        params: {
+            isShow: showRechargeModal
+        }
+    }"></div>
+
     <div data-bind="modal: showCouponModal" class="modal fade" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -654,6 +661,7 @@
 <script>
     (function() {
         Kooboo.loadJS([
+            "/_Admin/View/Market/Scripts/components/RechargeModal.js",
             "/_Admin/View/Market/Scripts/components/HardwareModal.js",
             "/_Admin/Scripts/components/kbTemplateModal.js",
             "/_Admin/Scripts/lib/jquery.lazyload.min.js"

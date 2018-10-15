@@ -1,0 +1,114 @@
+<style>
+    .payment-method {
+        border-radius: 2px;
+        border: 1px solid #dedede;
+        cursor: pointer;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .payment-method.active {
+        border-color: #0087c2;
+    }
+    
+    .payment-method.active::after {
+        content: '';
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-right: 6px solid #0087c2;
+        border-bottom: 6px solid #0087c2;
+        border-left: 6px solid transparent;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+    
+    .payment-method img {
+        width: 100%;
+    }
+    
+    .price-package {
+        margin-bottom: 15px;
+        text-align: center;
+        border-radius: 2px;
+        border: 1px solid #dedede;
+        cursor: pointer;
+        padding: 5px 0;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .price-package.active {
+        border-color: #0087c2;
+    }
+    
+    .price-package.active::after {
+        content: '';
+        width: 0;
+        height: 0;
+        border-top: 6px solid transparent;
+        border-right: 6px solid #0087c2;
+        border-bottom: 6px solid #0087c2;
+        border-left: 6px solid transparent;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+    
+    .price-package .price {
+        font-size: 20px;
+        margin-bottom: 5px;
+    }
+</style>
+<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Recharge</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="" class="control-label">Payment method</label>
+                    <div class="row" data-bind="foreach: paymentMethods">
+                        <div class="col-md-3">
+                            <div class="payment-method" data-bind="css: { active: $data.method == $parent.paymentMethod() }, click: $parent.changePaymentMethod">
+                                <img data-bind="attr: { src: $data.image, alt: $data.method }">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label class="control-label">Recharge amount</label>
+                    <div class="row" data-bind="foreach: defaultChargeOptions" style="margin-bottom: -15px;">
+                        <!-- ko if: $data.type == 'set' -->
+                        <div class="col-md-4">
+                            <div class="price-package" data-bind="css: { active: $parent.packageId() == $data.id }, click: $parent.changePackage">
+                                <div data-bind="text: $data.sign + $data.amount" class="price"></div>
+                                <div data-bind="text: 'Price: ' + $data.sign + $data.price" class="sale"></div>
+                            </div>
+                        </div>
+                        <!-- /ko -->
+                        <!-- ko if: $data.type == 'mod' -->
+                        <div class="col-md-4">
+                            <div class="price-package" data-bind="css: { active: $parent.packageId() == $data.id }, click: $parent.changePackage">
+                                <div class="price">Other</div>
+                                <div class="sale">large than 0.01</div>
+                            </div>
+                        </div>
+                        <!-- /ko -->
+                    </div>
+                </div>
+                <div class="form-group" data-bind="collapsein: packageId() == 5">
+                    <input type="text" class="form-control" data-bind="value: chargeAmount, error: chargeAmount, event: { keydown: Kooboo.event.input.positiveNumberOnly }" placeholder="Input a amount large than 0.01">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="click: onPay">Pay</button>
+                <button class="btn gray" data-bind="click: onHide">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

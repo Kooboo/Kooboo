@@ -26,6 +26,14 @@ $(function() {
 
         /* UserInfo END */
 
+        /* Recharge START */
+        this.showRechargeModal = ko.observable(false);
+        this.onShowRechargeModal = function() {
+            self.showRechargeModal(true);
+        }
+
+        /* Recharge END */
+
         /* Coupon START */
         this.couponCode = ko.validateField({
             required: ''
@@ -77,7 +85,6 @@ $(function() {
             self.showHardwareModal(true);
         }
 
-
         /* Hardware END */
 
         /* Template START */
@@ -124,7 +131,6 @@ $(function() {
     }
 
     $(window).scroll(function() {
-
         var appInfo = $('#app')[0].getBoundingClientRect(),
             hardwareInfo = $('#hardware')[0].getBoundingClientRect(),
             templateInfo = $('#template')[0].getBoundingClientRect(),
@@ -137,10 +143,10 @@ $(function() {
 
         $('#side-nav li').removeClass('active');
 
-        if (appRange > NAV_APP_TOP) {
-            $('#nav_app').addClass('active');
-        } else if (hardwareRange > NAV_HARDWARE_TOP) {
+        if (hardwareRange > NAV_HARDWARE_TOP) {
             $('#nav_hardware').addClass('active');
+        } else if (appRange > NAV_APP_TOP) {
+            $('#nav_app').addClass('active');
         } else if (templateRange > NAV_TEMPLATE_TOP) {
             $('#nav_template').addClass('active');
         } else if (domainRange > NAV_DOMAIN_TOP) {

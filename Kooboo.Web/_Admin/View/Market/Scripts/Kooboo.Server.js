@@ -28,7 +28,33 @@ $(function() {
     }
     extend(Infrastructure, Kooboo.BaseModel);
 
+    function Balance() {
+        this.name = "Balance";
+
+        this.getPaymentMethods = function(para) {
+            return this.executeGet('PaymentMethods', para);
+        }
+
+        this.getChargePackages = function(para) {
+            return this.executeGet('ChargePackages', para);
+        }
+
+        this.topup = function(para) {
+            return this.executePost('Topup', para);
+        }
+
+        this.useCoupon = function(para) {
+            return this.executePost('UseCoupon', para);
+        }
+
+        this.TopupHistory = function(para) {
+            return this.executeGet('TopupHistory', para);
+        }
+    }
+    extend(Balance, Kooboo.BaseModel);
+
     Kooboo = Object.assign({
+        Balance: new Balance(),
         Infrastructure: new Infrastructure()
     }, Kooboo);
 })
