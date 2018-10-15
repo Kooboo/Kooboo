@@ -40,17 +40,19 @@ namespace Kooboo.Data.ViewModel
     }
 
     public class RechargeRequest
-    {
-        [Required]
+    {   
+        public Guid PackageId { get; set; }
+
         public Guid OrganizationId { get; set; }
-
-        [Required]
+                            
         public string UserIp { get; set; }
-
-        [Required]
+                  
         public decimal Money { get; set; }
 
+        public decimal Price { get; set; }
+
         public PaymentMethod PaymentMethod { get; set; }
+                                  
         /// <summary>
         /// TwoCheckout token
         /// </summary>
