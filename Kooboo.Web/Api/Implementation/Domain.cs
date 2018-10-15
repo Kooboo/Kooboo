@@ -246,16 +246,7 @@ namespace Kooboo.Web.Api.Implementation
             Guid paymentId = call.GetGuidValue("paymentId");
             Guid organizationId = call.GetGuidValue("organizationId");
             return Data.Service.CommerceService.PaymentStatus(organizationId, paymentId);
-        }
-
-
-        public bool PayTwoCheckoutTest(string token, ApiCall call)
-        {
-            return Data.Service.CommerceService.PayTwoCheckoutTest(token);
-        }
-
-
-
+        }          
 
     }
 

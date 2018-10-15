@@ -61,13 +61,6 @@ namespace Kooboo.Data.Service
         {
             var json = Lib.Helper.JsonHelper.Serialize(request);
             return HttpHelper.Post<PaymentResponse>(PayDomainUrl, json);
-        }
-        public static bool PayTwoCheckoutTest(string token)
-        {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("token", token);
-            var paramStr = Lib.Helper.JsonHelper.Serialize(para);
-            return HttpHelper.Post<bool>(PayTwoCheckoutUrl, paramStr);
-        }
+        }  
     }
 }
