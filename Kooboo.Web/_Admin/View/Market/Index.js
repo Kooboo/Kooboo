@@ -54,13 +54,13 @@ $(function() {
         }
         this.onUseCoupon = function() {
             if (this.couponCode.isValid()) {
-                Kooboo.Organization.useCoupon({
-                    organizationId: this.organizationId(),
+                Kooboo.Balance.useCoupon({
                     code: this.couponCode()
                 }).then(function(res) {
                     self.onHideCouponModal();
                     if (res.success) {
                         window.info.done(Kooboo.text.info.recharge.success);
+                        Kooboo.EventBus.subscribe('kb/market/balance/update')
                     } else {
                         window.info.fail(Kooboo.text.info.recharge.fail);
                     }
