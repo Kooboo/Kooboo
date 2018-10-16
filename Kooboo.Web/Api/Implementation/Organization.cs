@@ -115,7 +115,7 @@ namespace Kooboo.Web.Api
         public PaymentResponse PayRecharge(ApiCall call)
         {
             RechargeRequest request = call.Context.Request.Model as RechargeRequest;
-            var redirectUrl = string.Format("{0}://{1}:{2}/_Admin/Account/Profile", call.Context.Request.Scheme, call.Context.Request.Host, call.Context.Request.Port);
+            var redirectUrl = string.Format("{0}://{1}:{2}/_Admin/Market/Index", call.Context.Request.Scheme, call.Context.Request.Host, call.Context.Request.Port);
             request.PaypalReturnUrl = string.Format("{0}://{1}:{2}/_api/payment/PaypalReturn?redirectUrl={3}", 
                 call.Context.Request.Scheme, call.Context.Request.Host, call.Context.Request.Port,System.Net.WebUtility.UrlEncode(redirectUrl));
             return Data.Service.CommerceService.Recharge(request);
