@@ -62,19 +62,19 @@
     }
 </style>
 <div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog">
+    <div class="modal-dialog" data-bind="css: { 'modal-sm': payingMode }" style="transition: 300ms all;">
         <div class="modal-content">
             <div class="modal-header">
-                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
+                <button class="close" data-bind="click: onHide, visible: !payingMode()"><i class="fa fa-close"></i></button>
                 <h4 class="modal-title">Recharge</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" data-bind="visible: !payingMode()">
                 <div class="form-group">
                     <label for="" class="control-label">Payment method</label>
                     <div class="row" data-bind="foreach: paymentMethods">
                         <div class="col-md-3">
-                            <div class="payment-method" data-bind="css: { active: $data.method == $parent.paymentMethod() }, click: $parent.changePaymentMethod">
-                                <img data-bind="attr: { src: $data.image, alt: $data.method }">
+                            <div class="payment-method" data-bind="css: { active: $data.type == $parent.paymentMethod() }, click: $parent.changePaymentMethod">
+                                <img data-bind="attr: { src: $data.icon, alt: $data.type }">
                             </div>
                         </div>
                     </div>
@@ -82,10 +82,10 @@
                 <hr>
                 <div class="form-group">
                     <label class="control-label">Recharge amount</label>
-                    <div class="row" data-bind="foreach: defaultChargeOptions" style="margin-bottom: -15px;">
+                    <div class="row" data-bind="foreach: paymentPackages" style="margin-bottom: -15px;">
                         <!-- ko if: $data.type == 'set' -->
                         <div class="col-md-4">
-                            <div class="price-package" data-bind="css: { active: $parent.packageId() == $data.id }, click: $parent.changePackage">
+                            <div class="price-package" data-bind="css: { active: $parent.currentPackage() == $data }, click: $parent.changePackage">
                                 <div data-bind="text: $data.sign + $data.amount" class="price"></div>
                                 <div data-bind="text: 'Price: ' + $data.sign + $data.price" class="sale"></div>
                             </div>
@@ -93,7 +93,7 @@
                         <!-- /ko -->
                         <!-- ko if: $data.type == 'mod' -->
                         <div class="col-md-4">
-                            <div class="price-package" data-bind="css: { active: $parent.packageId() == $data.id }, click: $parent.changePackage">
+                            <div class="price-package" data-bind="css: { active: $parent.currentPackage() == $data }, click: $parent.changePackage">
                                 <div class="price">Other</div>
                                 <div class="sale">large than 0.01</div>
                             </div>
@@ -101,13 +101,22 @@
                         <!-- /ko -->
                     </div>
                 </div>
-                <div class="form-group" data-bind="collapsein: packageId() == 5">
-                    <input type="text" class="form-control" data-bind="value: chargeAmount, error: chargeAmount, event: { keydown: Kooboo.event.input.positiveNumberOnly }" placeholder="Input a amount large than 0.01">
+                <div class="form-group" data-bind="collapsein: currentPackage() && currentPackage().type == 'mod'">
+                    <input type="number" class="form-control" data-bind="value: chargeAmount, error: chargeAmountValue, event: { keydown: Kooboo.event.input.positiveNumberOnly }" placeholder="Input a amount large than 0.01">
                 </div>
             </div>
+            <div class="modal-body" data-bind="visible: payingMode">
+                <div id="qr-code" style="text-align:center"></div>
+            </div>
             <div class="modal-footer">
+                <!-- ko if: !payingMode() -->
                 <button class="btn green" data-bind="click: onPay">Pay</button>
                 <button class="btn gray" data-bind="click: onHide">Cancel</button>
+                <!-- /ko -->
+                <!-- ko if: payingMode -->
+                <button class="btn green" data-bind="click: onPayingSuccess">Paied</button>
+                <button class="btn danger" data-bind="click: onPayingFailed">Failed</button>
+                <!-- /ko -->
             </div>
         </div>
     </div>

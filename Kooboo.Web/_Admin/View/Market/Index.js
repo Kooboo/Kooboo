@@ -15,14 +15,17 @@ $(function() {
         this.userName = ko.observable();
         this.balance = ko.observable();
 
-        // TODO: use new API
-        Kooboo.Organization.getOrg().then(function(res) {
-            if (res.success) {
-                self.organizationId(res.model.id);
-                self.userName(res.model.name);
-                self.balance(res.model.balance);
-            }
-        })
+        this.getBasicInfo = function() {
+            // TODO: use new API
+            Kooboo.Organization.getOrg().then(function(res) {
+                if (res.success) {
+                    self.organizationId(res.model.id);
+                    self.userName(res.model.name);
+                    self.balance(res.model.balance);
+                }
+            })
+        }
+        this.getBasicInfo();
 
         /* UserInfo END */
 
@@ -31,6 +34,10 @@ $(function() {
         this.onShowRechargeModal = function() {
             self.showRechargeModal(true);
         }
+        Kooboo.EventBus.subscribe('kb/market/balance/update', function() {
+            debugger
+            self.getBasicInfo();
+        })
 
         /* Recharge END */
 

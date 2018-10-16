@@ -50,6 +50,10 @@ $(function() {
         this.TopupHistory = function(para) {
             return this.executeGet('TopupHistory', para);
         }
+
+        this.getPaymentStatus = function(para) {
+            return this.executeGet('PaymentStatus', para, true);
+        }
     }
     extend(Balance, Kooboo.BaseModel);
 
