@@ -234,6 +234,7 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Organization.cs" />
     <Compile Include="Log\VisitorLog.cs" />
+    <Compile Include="Models\UserBalance.cs" />
     <Compile Include="Models\UserOrganization.cs" />
     <Compile Include="Models\UserPublish.cs" />
     <Compile Include="Models\WebSite.cs" />
