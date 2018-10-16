@@ -16,8 +16,7 @@ $(function() {
         this.balance = ko.observable();
 
         this.getBasicInfo = function() {
-            // TODO: use new API
-            Kooboo.Organization.getOrg().then(function(res) {
+            Kooboo.Balance.getBalance().then(function(res) {
                 if (res.success) {
                     self.organizationId(res.model.id);
                     self.userName(res.model.name);
@@ -35,7 +34,6 @@ $(function() {
             self.showRechargeModal(true);
         }
         Kooboo.EventBus.subscribe('kb/market/balance/update', function() {
-            debugger
             self.getBasicInfo();
         })
 

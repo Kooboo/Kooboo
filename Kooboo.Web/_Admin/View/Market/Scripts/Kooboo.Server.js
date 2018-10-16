@@ -31,6 +31,10 @@ $(function() {
     function Balance() {
         this.name = "Balance";
 
+        this.getBalance = function(para) {
+            return this.executeGet('GetBalance', para);
+        }
+
         this.getPaymentMethods = function(para) {
             return this.executeGet('PaymentMethods', para);
         }
