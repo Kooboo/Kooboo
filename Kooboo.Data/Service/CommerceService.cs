@@ -46,12 +46,13 @@ namespace Kooboo.Data.Service
             return result;
         }
 
-        public static PaymentStatusResponse PaypalReturn(string payerID,Guid guid,bool cancel)
+        public static PaymentStatusResponse PaypalReturn(string payerID,Guid guid,bool cancel,string currency)
         {
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("payerID", payerID);
             para.Add("guid", guid.ToString());
             para.Add("cancel", cancel.ToString());
+            para.Add("currency", currency);
             var paramStr = Lib.Helper.JsonHelper.Serialize(para);
             var result = HttpHelper.Post<PaymentStatusResponse>(PaypalReturnUrl, paramStr);
             return result;
