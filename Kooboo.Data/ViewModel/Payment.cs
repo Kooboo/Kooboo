@@ -51,6 +51,8 @@ namespace Kooboo.Data.ViewModel
 
         public decimal Price { get; set; }
 
+        public string Currency { get; set; }
+
         public PaymentMethod PaymentMethod { get; set; }
                                   
         /// <summary>

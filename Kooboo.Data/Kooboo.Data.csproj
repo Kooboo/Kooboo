@@ -198,6 +198,7 @@
     <Compile Include="Models\Certificate.cs" />
     <Compile Include="Models\CheckResponse.cs" />
     <Compile Include="Models\Coupon.cs" />
+    <Compile Include="Models\Currency.cs" />
     <Compile Include="Models\DashBoardResponseHtml.cs" />
     <Compile Include="Models\DashBoardResponseModel.cs" />
     <Compile Include="Models\DataCenter.cs" />
