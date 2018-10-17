@@ -51,7 +51,7 @@ $(function() {
             return this.executePost('UseCoupon', para);
         }
 
-        this.TopupHistory = function(para) {
+        this.getTopupHistory = function(para) {
             return this.executeGet('TopupHistory', para);
         }
 

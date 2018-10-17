@@ -72,6 +72,14 @@ $(function() {
 
         /* Coupon END */
 
+        /* Topup History START */
+        this.showTopupHistoryModal = ko.observable(false);
+        this.onShowTopupHistoryModal = function() {
+            self.showTopupHistoryModal(true);
+        }
+
+        /* Topup History END */
+
         /* Hardware START */
         this.hardwares = ko.observableArray();
 

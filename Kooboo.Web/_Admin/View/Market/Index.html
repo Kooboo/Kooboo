@@ -119,7 +119,7 @@
                         <div class="btn-group btn-group-justified">
                             <a href="javascript:;" data-bind="click: onShowRechargeModal" class="btn btn-link">Recharge</a>
                             <a href="javascript:;" data-bind="click: onShowCouponModal" class="btn btn-link">Coupon</a>
-                            <a href="./RechargeHistory" class="btn btn-link">History</a>
+                            <a href="javascript:;" data-bind="click: onShowTopupHistoryModal" class="btn btn-link">History</a>
                         </div>
                     </div>
                 </div>
@@ -656,13 +656,16 @@
         }
     }"></div>
 
-    <kb-template-modal params="isShow: showTemplateModal, data: templateData" />
+    <kb-template-modal params="isShow: showTemplateModal, data: templateData"></kb-template-modal>
+
+    <topup-history-modal params="isShow: showTopupHistoryModal"></topup-history-modal>
 </div>
 <script>
     (function() {
         Kooboo.loadJS([
             "/_Admin/View/Market/Scripts/components/RechargeModal.js",
             "/_Admin/View/Market/Scripts/components/HardwareModal.js",
+            "/_Admin/View/Market/Scripts/components/TopupHistoryModal.js",
             "/_Admin/Scripts/components/kbTemplateModal.js",
             "/_Admin/Scripts/lib/jquery.lazyload.min.js"
         ])
