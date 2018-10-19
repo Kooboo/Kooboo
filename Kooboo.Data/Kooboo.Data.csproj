@@ -243,6 +243,7 @@
     <Compile Include="Render\Command.cs" />
     <Compile Include="Render\CommandParser.cs" />
     <Compile Include="Repository\BindingRepository.cs" />
+    <Compile Include="Repository\CurrencyRepository.cs" />
     <Compile Include="Repository\DataMethodRepository.cs" />
     <Compile Include="Repository\DllRepository.cs" />
     <Compile Include="Repository\GlobalSettingRepository.cs" />

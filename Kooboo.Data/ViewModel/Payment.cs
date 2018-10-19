@@ -28,6 +28,7 @@ namespace Kooboo.Data.ViewModel
 
         public PaymentMethod PaymentMethod { get; set; }
 
+        public string Currency { get; set; }
         /// <summary>
         /// TwoCheckout token
         /// </summary>

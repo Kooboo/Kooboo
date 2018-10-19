@@ -30,17 +30,13 @@ namespace Kooboo.Data.Models
             }
         }
 
-        public string Code;
-
-        public string Name { get; set; }
-
         public string StandardMoneyCode { get; set; }
 
-        public decimal MarketExchangeRate { get; set; }
+        public string Code;
 
-        public decimal ReverseMarketExchangeRate { get; set; }
+        public decimal MarketRate { get; set; }
 
-        public decimal ExchangeRate { get; set; }
-        
+        //this Rate Can be modified by us.
+        public decimal Rate { get; set; }
     }
 }

@@ -139,5 +139,13 @@ namespace Kooboo.Data.Repository
             return false;
         }
 
+        public void RemoveOrgCache(Guid orgId)
+        {
+            if (NameCache.ContainsKey(orgId))
+            {
+                NameCache.Remove(orgId);
+            }
+        }
+
     }
 }

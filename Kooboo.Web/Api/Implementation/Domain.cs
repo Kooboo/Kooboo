@@ -223,8 +223,10 @@ namespace Kooboo.Web.Api.Implementation
         {
             string searchurl = Data.Helper.AccountUrlHelper.Domain("search");
 
+            var org = GlobalDb.Organization.Get(call.Context.User.Id);
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("domain", domain);
+            para.Add("currencyCode", org.Currency);
 
             return Lib.Helper.HttpHelper.Get<List<DomainPriceViewModel>>(searchurl, para);
         }
@@ -236,6 +238,10 @@ namespace Kooboo.Web.Api.Implementation
             var redirectUrl = string.Format("{0}://{1}:{2}/_Admin/Domains", call.Context.Request.Scheme, call.Context.Request.Host, call.Context.Request.Port);
             paymentRequest.PaypalReturnUrl = string.Format("{0}://{1}:{2}/_api/payment/PaypalReturn?redirectUrl={3}",
                 call.Context.Request.Scheme, call.Context.Request.Host, call.Context.Request.Port, System.Net.WebUtility.UrlEncode(redirectUrl));
+
+            var org = GlobalDb.Organization.Get(call.Context.User.Id);
+            paymentRequest.Currency = org.Currency;
+
             return Kooboo.Data.Service.CommerceService.PayDomain(paymentRequest);
         }
 

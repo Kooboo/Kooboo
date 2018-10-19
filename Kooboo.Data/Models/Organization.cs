@@ -41,6 +41,8 @@ namespace Kooboo.Data.Models
 
         public decimal Balance { get; set; } = 0;
 
+        public string Currency { get; set; } = "CNY";
+
         public int ServerId { get; set; }
 
         public int ServiceLevel { get; set; }
