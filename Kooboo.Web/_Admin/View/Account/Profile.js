@@ -292,7 +292,7 @@ $(function() {
         this.saveOrganization = function() {
             Kooboo.Organization.changeUserOrg({
                 organizationId: self.organization()
-            }).then(function (res) {
+            }).then(function(res) {
                 self.showUpdateSuccess(res.success);
 
                 if (res.success) {

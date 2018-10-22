@@ -66,11 +66,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close" data-bind="click: onHide, visible: !payingMode()"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title">Recharge</h4>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.component.topupModal.title"></h4>
             </div>
             <div class="modal-body" data-bind="visible: !payingMode()">
                 <div class="form-group">
-                    <label for="" class="control-label">Payment method</label>
+                    <label for="" class="control-label" data-bind="text: Kooboo.text.component.topupModal.paymentMethod"></label>
                     <div class="row" data-bind="foreach: paymentMethods">
                         <div class="col-md-3">
                             <div class="payment-method" data-bind="css: { active: $data.type == $parent.paymentMethod() }, click: $parent.changePaymentMethod">
@@ -81,7 +81,7 @@
                 </div>
                 <hr>
                 <div class="form-group">
-                    <label class="control-label">Recharge amount</label>
+                    <label class="control-label" data-bind="text: Kooboo.text.component.topupModal.rechargeAmount"></label>
                     <div class="row" data-bind="foreach: paymentPackages" style="margin-bottom: -15px;">
                         <!-- ko if: $data.type == 'set' -->
                         <div class="col-md-4">
@@ -94,8 +94,8 @@
                         <!-- ko if: $data.type == 'mod' -->
                         <div class="col-md-4">
                             <div class="price-package" data-bind="css: { active: $parent.currentPackage() == $data }, click: $parent.changePackage">
-                                <div class="price">Other</div>
-                                <div class="sale">large than 0.01</div>
+                                <div class="price" data-bind="text: Kooboo.text.component.topupModal.customize"></div>
+                                <div class="sale" data-bind="text: Kooboo.text.component.topupModal.largeThan"></div>
                             </div>
                         </div>
                         <!-- /ko -->
@@ -110,12 +110,12 @@
             </div>
             <div class="modal-footer">
                 <!-- ko if: !payingMode() -->
-                <button class="btn green" data-bind="click: onPay">Pay</button>
-                <button class="btn gray" data-bind="click: onHide">Cancel</button>
+                <button class="btn green" data-bind="click: onPay,text: Kooboo.text.common.pay"></button>
+                <button class="btn gray" data-bind="click: onHide,text: Kooboo.text.common.cancel"></button>
                 <!-- /ko -->
                 <!-- ko if: payingMode -->
-                <button class="btn green" data-bind="click: onPayingSuccess">Paied</button>
-                <button class="btn danger" data-bind="click: onPayingFailed">Failed</button>
+                <button class="btn green" data-bind="click: onPayingSuccess, text: Kooboo.text.component.topupModal.paid"></button>
+                <button class="btn danger" data-bind="click: onPayingFailed, text: Kooboo.text.common.failed"></button>
                 <!-- /ko -->
             </div>
         </div>

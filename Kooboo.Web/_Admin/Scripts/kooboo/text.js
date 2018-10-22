@@ -50,10 +50,14 @@
             placeholder: "Placeholder",
             type: "Type",
             username: "Username",
+            buy: "Buy",
+            pay: "Pay",
+            failed: "Failed",
 
             API: "API",
             Code: "Code",
             HTML: "HTML",
+            Types: "Types",
             Database: "Database",
             Content: "Content",
             Contents: "Contents",
@@ -665,6 +669,21 @@
                 title: "Conditions",
                 condition: "Condition",
                 add: "Add condition"
+            },
+            hardwareModal: {
+                quantity: "Quantity",
+                unitPrice: "Unit price",
+                totalPrice: "Total price",
+                selectTypeFirst: "Select type first"
+            },
+            topupModal: {
+                title: "Topup",
+                history: "Topup history",
+                paymentMethod: "Payment method",
+                rechargeAmount: "Recharge amount",
+                customize: "Customize",
+                largeThan: "large than 0.01",
+                paied: "Paied"
             }
         },
 
@@ -762,7 +781,6 @@
                 repeat: "Repeat",
                 pending: "Pending",
                 completed: "Completed",
-                failed: "Failed",
                 jobName: "Job name",
                 executionTime: "Execution time",
                 message: "Message"
@@ -896,6 +914,9 @@
                 chosseEventType: "Choose event type",
                 noSetting: "No setting",
                 noActivityAndCreate: "No activity available! Click here to create one."
+            },
+            market: {
+                changeCurrency: "Change currency"
             }
         },
 

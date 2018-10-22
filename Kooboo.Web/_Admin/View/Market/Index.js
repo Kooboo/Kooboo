@@ -15,6 +15,14 @@ $(function() {
         this.userName = ko.observable();
         this.balance = ko.observable();
 
+        this.currency = ko.observable();
+        this.currencySymbol = ko.observable();
+        this.currencyCode = ko.observable();
+        this.showCurrencyModal = ko.observable(false);
+        this.onShowCurrenies = function() {
+            self.showCurrencyModal(true);
+        }
+
         this.getBasicInfo = function() {
             Kooboo.Balance.getBalance().then(function(res) {
                 if (res.success) {
@@ -23,6 +31,15 @@ $(function() {
                     self.balance(res.model.balance);
                 }
             })
+
+            Kooboo.Currency.get().then(function(res) {
+                if (res.success) {
+                    self.currency(res.model);
+                    self.currencySymbol(res.model.symbol);
+                    self.currencyCode(res.model.code);
+                }
+            })
+
         }
         this.getBasicInfo();
 
@@ -134,6 +151,27 @@ $(function() {
         }
 
         /* Template END */
+
+        /* Domian START */
+        this.domainIWant = ko.validateField({
+            required: ''
+        })
+        this.searched = ko.observable(false);
+        this.availableDomains = ko.observableArray();
+        this.onSearchDomain = function() {
+            if (self.domainIWant.isValid()) {
+                Kooboo.Domain.searchDomain({
+                    domain: self.domainIWant()
+                }).then(function(res) {
+                    if (res.success) {
+                        self.searched(true);
+                        self.availableDomains(res.model);
+                    }
+                })
+            }
+        }
+
+        /* Domain END */
     }
 
     var vm = new Market();

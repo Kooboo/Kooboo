@@ -61,8 +61,18 @@ $(function() {
     }
     extend(Balance, Kooboo.BaseModel);
 
+    function Currency() {
+        this.name = 'Currency';
+
+        this.change = function(para) {
+            return this.executePost('Change', para);
+        }
+    }
+    extend(Currency, Kooboo.BaseModel);
+
     Kooboo = Object.assign({
         Balance: new Balance(),
+        Currency: new Currency(),
         Infrastructure: new Infrastructure()
     }, Kooboo);
 })

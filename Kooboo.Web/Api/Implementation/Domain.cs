@@ -231,6 +231,8 @@ namespace Kooboo.Web.Api.Implementation
             return Lib.Helper.HttpHelper.Get<List<DomainPriceViewModel>>(searchurl, para);
         }
 
+
+
         [Attributes.RequireModel(typeof(PaymentRequest))]
         public PaymentResponse PayDomain(ApiCall call)
         {
