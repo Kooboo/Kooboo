@@ -156,8 +156,7 @@ namespace Kooboo.Upgrade
 
             var deleteFolders = new List<string>()
             {
-                "_admin",
-                "lang"
+                "_admin"
             };
 
             foreach (var dir in dirs)
@@ -175,6 +174,21 @@ namespace Kooboo.Upgrade
                     }
                 }
             }
+
+            var deleteLangFiles =new string[] { "en.xml", "zh.xml" };
+            foreach(var file in deleteLangFiles)
+            {
+                var path= System.IO.Path.Combine(RootPath, "lang",file);
+                try
+                {
+                    File.Delete(path);
+                }
+                catch(Exception ex)
+                {
+
+                }
+            }
+
 
             var files = Directory.GetFiles(RootPath);
             foreach (var file in files)
