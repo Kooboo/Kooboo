@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Kooboo.Data.Models
 {
@@ -33,6 +34,8 @@ namespace Kooboo.Data.Models
         public string StandardMoneyCode { get; set; }
 
         public string Code;
+
+        public string Symbol { get; set; }
 
         public decimal MarketRate { get; set; }
 
