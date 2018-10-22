@@ -9,7 +9,7 @@ namespace Kooboo.Data.Repository
     public class CurrencyRepository : RepositoryBase<Currency>
     {
         private string ChangeCurrencyUrl = AccountUrlHelper.Currency("changeCurrency");
-        private string ListUrl = AccountUrlHelper.User("list");
+        private string ListUrl = AccountUrlHelper.Currency("list");
 
         public bool ChangeCurrency(string currencyCode,Guid userId)
         {
