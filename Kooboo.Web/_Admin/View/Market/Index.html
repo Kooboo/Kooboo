@@ -417,7 +417,7 @@
                         </div>
                     </div>
                     <div class="col-md-offset-2 col-md-8">
-                        <div class="domain-list well" style="min-height: 500px;">
+                        <div class="domain-list" style="min-height: 500px;">
                             <!-- ko ifnot: searched -->
 
                             <!-- /ko -->
@@ -429,13 +429,23 @@
                                 <tr>
                                     <th>Suggest domain</th>
                                     <th>Price</th>
-                                    <th class="table-action"></th>
+                                    <th></th>
                                 </tr>
                                 <tbody data-bind="foreach: availableDomains">
                                     <tr>
                                         <td data-bind="text: $data.domain"></td>
                                         <td data-bind="text: $data.price"></td>
-                                        <td></td>
+                                        <td>
+                                            <div class="btn-group pull-right">
+                                                <button class="btn blue btn-xs" data-bind="click: $parent.buyDomain.bind(this, 1)">Buy</button>
+                                                <button class="btn blue btn-xs dropdown-toggle" data-toggle="dropdown"><i class="fa fa-angle-down"></i></button>
+                                                <ul class="dropdown-menu" role="menu" data-bind="foreach: { data: $data.options, as: 'opt' }">
+                                                    <li>
+                                                        <a href="javascript:;" data-bind="click: $root.buyDomain.bind(this, opt.year), text: opt.price + ' / ' + opt.year + ' ' + Kooboo.text.site.domain[opt.year > 1 ? 'years' : 'year']"></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>

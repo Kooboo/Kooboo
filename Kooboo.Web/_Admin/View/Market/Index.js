@@ -170,6 +170,9 @@ $(function() {
                 })
             }
         }
+        this.buyDomain = function(year, e) {
+            console.log(year);
+        }
 
         /* Domain END */
     }

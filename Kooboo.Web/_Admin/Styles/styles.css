@@ -9885,6 +9885,10 @@ fieldset[disabled] .btn.dark.focus {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
+.btn-group > .btn,
+.btn-gorup-vertical > .btn {
+  margin-right: 0;
+}
 /* Icon Button
 ---------------------------------------------------------*/
 .icon-btn {
