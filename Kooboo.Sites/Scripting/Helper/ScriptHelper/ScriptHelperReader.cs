@@ -116,6 +116,10 @@ namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
                     var fileName = Path.GetFileNameWithoutExtension(file).ToLower();
                     settings.Add(fileName, setting);
                 }
+                catch(Exception ex)
+                {
+
+                }
                 finally
                 {
                     reader.Close();
@@ -128,7 +132,7 @@ namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
         public static string GetPath()
         {
 #if DEBUG
-            var path = Path.GetFullPath(@"..\..\..\Kooboo.Web\_Admin\help\kScript");
+            var path = Path.GetFullPath(@"..\..\..\GitHub\Kooboo.Web\_Admin\help\kScript");
 #else
             var path= Path.GetFullPath(@".\_Admin\help\kScript");
 #endif
