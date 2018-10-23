@@ -340,6 +340,7 @@
   <key id="(F10)">(F10)</key>
   <key id="Step out">跳出</key>
   <key id="(Shift + F11)">(Shift + F11)</key>
+  <key id="Reload">刷新</key>
   <key id="Variables">变量</key>
   <key id="Execute code">执行代码</key>
   <key id="Input your code here">再次输入执行的代码</key>

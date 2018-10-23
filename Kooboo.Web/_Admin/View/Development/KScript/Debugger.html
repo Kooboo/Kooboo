@@ -133,6 +133,10 @@
         <button class="btn btn-default" data-bind="click: debugClick.bind(this, 'into')"><i class="glyphicon glyphicon-log-in"></i> <span>Step into</span><span>(F11)</span></button>
         <button class="btn btn-default" data-bind="click: debugClick.bind(this, 'over')"><i class="glyphicon glyphicon-new-window"></i> <span>Step over</span><span>(F10)</span></button>
         <button class="btn btn-default" data-bind="click: debugClick.bind(this, 'out')"><i class="glyphicon glyphicon-log-out"></i> <span>Step out</span><span>(Shift + F11)</span></button>
+        <div class="clearfix pull-right">
+            <a target="blank" class="btn blue" data-bind="attr: { href: editUrl() }">Edit</a>
+            <button class="btn btn-default" data-bind="click: reloadCode"><i class="fa fa-refresh"></i>&nbsp;<span>Reload</span></button>
+        </div>
         <ul class="code-wrapper" data-bind="foreach: { data: lines, as: 'line' }">
             <li data-bind="css: { 'is-current': line.isCurrent }, attr: { id: 'code-line-' + line.idx() }">
                 <div class="line-idx" data-bind="click: $parent.toggleBreakpoint.bind(this)">
