@@ -7,14 +7,25 @@
             this.showError = ko.observable(false);
 
             this.isShow = params.isShow;
+            this.isShow.subscribe(function(show) {
+                if (show) {
+                    var defaultVar = self.variants()[0];
+                    defaultVar.selected(true);
+                    self.currentVar(defaultVar);
+                    self.quantity(defaultVar.quantity);
+                    self.totalPrice(self.quantity() * defaultVar.price);
+                }
+            })
             this.onHide = function() {
-                self.isShow(false);
-
                 self.title('');
+                self.variants().forEach(function(vari) {
+                    vari.selected(false);
+                })
                 self.variants([]);
                 self.currentVar(null);
                 self.totalPrice(0);
                 self.quantity(null);
+                self.isShow(false);
             }
 
             this.data = params.data;
@@ -50,14 +61,14 @@
             this.totalPrice = ko.observable(0);
 
             this.onSelectType = function(m) {
-                m.selected(!m.selected());
-                if (m.selected()) {
-                    self.variants().forEach(function(va) {
-                        if (va.id !== m.id) {
-                            va.selected(false);
-                        }
-                    })
+
+                if (!m.selected()) {
                     self.currentVar(m);
+                    self.variants().forEach(function(va) {
+                        va.selected(false);
+                    })
+
+                    m.selected(true);
                     self.quantity(self.quantity() || m.quantity);
                     self.totalPrice(self.quantity() * m.price);
                 }
