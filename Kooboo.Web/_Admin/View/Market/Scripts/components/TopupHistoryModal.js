@@ -54,11 +54,11 @@
                 });
 
                 var columns = [{
-                    displayName: "Amount",
+                    displayName: Kooboo.text.common.amount,
                     fieldName: "amount",
                     type: "text"
                 }, {
-                    displayName: "Order date",
+                    displayName: Kooboo.text.component.topupModal.orderDate,
                     fieldName: "date",
                     type: "text"
                 }];

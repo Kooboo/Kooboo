@@ -26,38 +26,38 @@
                     <div class="col-md-4">
                         <ul class="list-group">
                             <li class="list-group-item">
-                                <span class="title">Author</span>
+                                <span class="title" data-bind="text: Kooboo.text.common.author"></span>
                                 <!-- ko text: data().userName -->
                                 <!-- /ko -->
                             </li>
                             <!-- ko if: data().link -->
                             <li class="list-group-item">
-                                <span class="title">Link</span>
+                                <span class="title" data-bind="text: Kooboo.text.common.link"></span>
                                 <a href="#" class="text-break" data-bind="attr: { href: data().link }, text: data().link" target="_blank"></a>
                             </li>
                             <!-- /ko -->
                             <li class="list-group-item">
-                                <span class="title">Description</span>
+                                <span class="title" data-bind="text: Kooboo.text.common.description"></span>
                                 <!-- ko text: data().description || Kooboo.text.site.template.noDescription -->
                                 <!-- /ko -->
                             </li>
                             <li class="list-group-item">
-                                <span class="title">Downloads</span>
+                                <span class="title" data-bind="text: Kooboo.text.component.templateModal.downloads"></span>
                                 <!-- ko text: data().downloadCount -->
                                 <!-- /ko -->
                             </li>
                             <li class="list-group-item">
-                                <span class="title">Size</span>
+                                <span class="title" data-bind="text: Kooboo.text.common.size"></span>
                                 <!-- ko text: data().size -->
                                 <!-- /ko -->
                             </li>
                             <li class="list-group-item">
-                                <span class="title">Last modified</span>
+                                <span class="title" data-bind="text: Kooboo.text.common.lastModified"></span>
                                 <!-- ko text: data().lastModified -->
                                 <!-- /ko -->
                             </li>
                             <li class="list-group-item">
-                                <span class="title">Dynamic contents</span>
+                                <span class="title" data-bind="text: Kooboo.text.component.templateModal.dynamicContent"></span>
                                 <div class="margin-top-5">
                                     <!-- ko if: data().allDynamicCount -->
                                     <!-- ko if: data().layoutCount -->
@@ -87,7 +87,7 @@
                                 </div>
                             </li>
                             <li class="list-group-item">
-                                <span class="title">Tags</span>
+                                <span class="title" data-bind="text: Kooboo.text.common.tags"></span>
                                 <div class="margin-top-5">
                                     <!-- ko if: data().tags -->
                                     <!-- ko foreach: { data: data().tags.split(','), as: 'tag' } -->
@@ -102,8 +102,8 @@
                                 </div>
                             </li>
                             <li class="list-group-item">
-                                <span class="title">Preview</span>
-                                <a target="_blank" data-bind="attr: { href: data().previewUrl }">Click here</a>
+                                <span class="title" data-bind="text: Kooboo.text.common.preview"></span>
+                                <a target="_blank" data-bind="attr: { href: data().previewUrl }" data-bind="text: Kooboo.text.component.templateModal.clickHere"></a>
                             </li>
                         </ul>
                     </div>
@@ -113,17 +113,17 @@
 
                         <fieldset class="form-horizontal">
                             <div class="note note-info">
-                                <p>Use the selected template as the base to create this website</p>
+                                <p data-bind="text: Kooboo.text.component.templateModal.hint"></p>
                             </div>
                             <div class="form-group">
-                                <label class="col-md-2 control-label" for="SiteName">Site name</label>
+                                <label class="col-md-2 control-label" for="SiteName" data-bind="text: Kooboo.text.component.templateModal.siteName"></label>
                                 <div class="col-md-10">
                                     <input data-bind="value: siteName, error: siteName" type="text" class="form-control input-medium" name="SiteName" placeholder="Site name">
-                                    <span class="help-block">Start with letters and no space allowed</span>
+                                    <span class="help-block" data-bind="text: Kooboo.text.component.templateModal.siteNameHint"></span>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="SubDomain" class="col-md-2 control-label">Domain</label>
+                                <label for="SubDomain" class="col-md-2 control-label" data-bind="text: Kooboo.text.component.table.domain"></label>
                                 <div class="col-md-10">
                                     <div class="form-inline">
                                         <input data-bind="textInput: subDomain, error: subDomain" type="text" class="input-medium form-control" placeholder="SubDomain" />
@@ -131,7 +131,7 @@
                                             <select data-bind="options: domains, value: rootDomain, optionsText: 'displayText', optionsValue: 'value'" class="form-control"></select>
                                         </div>
                                     </div>
-                                    <span class="help-block">Give your site a domain that other people can access.</span>
+                                    <span class="help-block" data-bind="text: Kooboo.text.component.templateModal.domainHint"></span>
                                 </div>
                             </div>
                         </fieldset>
@@ -141,12 +141,12 @@
             </div>
             <div class="modal-footer">
                 <!-- ko ifnot: selected -->
-                <button data-bind="click: onUse" class="btn green">Use this template</button>
-                <button data-bind="click: onHide" class="btn gray">Cancel</button>
+                <button data-bind="click: onUse, text: Kooboo.text.component.templateModal.useThisTemplate" class="btn green"></button>
+                <button data-bind="click: onHide, text: Kooboo.text.common.cancel" class="btn gray"></button>
                 <!-- /ko -->
                 <!-- ko if: selected -->
-                <button data-bind="click: onImport" class="btn green">Import</button>
-                <button data-bind="click: onUnuse" class="btn gray">Back</button>
+                <button data-bind="click: onImport, text: Kooboo.text.common.import" class="btn green"></button>
+                <button data-bind="click: onUnuse, text: Kooboo.text.common.back" class="btn gray"></button>
                 <!-- /ko -->
             </div>
         </div>

@@ -54,7 +54,7 @@ $(function() {
                                         fieldName: "jobName",
                                         type: "text"
                                     }, {
-                                        displayName: Kooboo.text.site.job.description,
+                                        displayName: Kooboo.text.common.description,
                                         fieldName: "description",
                                         type: "text"
                                     }, {

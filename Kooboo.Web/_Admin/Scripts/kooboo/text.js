@@ -17,6 +17,7 @@
             name: "Name",
             add: "Add",
             select: "Select",
+            amount: "Amount",
             setting: "Setting",
             preview: "Preview",
             edit: "Edit",
@@ -53,6 +54,12 @@
             buy: "Buy",
             pay: "Pay",
             failed: "Failed",
+            price: "Price",
+            author: "Author",
+            description: "Description",
+            tags: "Tags",
+            import: "Import",
+            back: "Back",
 
             API: "API",
             Code: "Code",
@@ -683,7 +690,18 @@
                 rechargeAmount: "Recharge amount",
                 customize: "Customize",
                 largeThan: "large than 0.01",
-                paied: "Paied"
+                paied: "Paied",
+                orderDate: "Order date"
+            },
+            templateModal: {
+                downloads: "Downloads",
+                dynamicContent: "Dynamic contents",
+                clickHere: "Click here",
+                hint: "Use the selected template as the base to create this website",
+                siteName: "Site name",
+                siteNameHint: "Start with letters and no space allowed",
+                domainHint: "Give your site a domain that other people can access.",
+                useThisTemplate: "Use this template"
             }
         },
 
@@ -776,7 +794,6 @@
                 count: "Count"
             },
             job: {
-                description: "Description",
                 startTime: "Start at",
                 repeat: "Repeat",
                 pending: "Pending",
@@ -1023,7 +1040,6 @@
             editLinks: "Edit Links",
             thumbnail: "Thumbnail",
             dimension: "Dimension",
-            amount: "Amount",
             note: "NOTE",
             references: "references",
             convertNoSettings: "This convert has no settings!",

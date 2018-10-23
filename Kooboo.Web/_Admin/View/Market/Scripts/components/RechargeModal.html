@@ -87,7 +87,7 @@
                         <div class="col-md-4">
                             <div class="price-package" data-bind="css: { active: $parent.currentPackage() == $data }, click: $parent.changePackage">
                                 <div data-bind="text: $data.sign + $data.amount" class="price"></div>
-                                <div data-bind="text: 'Price: ' + $data.sign + $data.price" class="sale"></div>
+                                <div data-bind="text: Kooboo.text.common.price + ': ' + $data.sign + $data.price" class="sale"></div>
                             </div>
                         </div>
                         <!-- /ko -->
@@ -114,8 +114,8 @@
                 <button class="btn gray" data-bind="click: onHide,text: Kooboo.text.common.cancel"></button>
                 <!-- /ko -->
                 <!-- ko if: payingMode -->
-                <button class="btn green" data-bind="click: onPayingSuccess, text: Kooboo.text.component.topupModal.paid"></button>
-                <button class="btn danger" data-bind="click: onPayingFailed, text: Kooboo.text.common.failed"></button>
+                <button class="btn green" data-bind="click: onPayingSuccess, text: Kooboo.text.component.topupModal.paied"></button>
+                <button class="btn btn-danger" data-bind="click: onPayingFailed, text: Kooboo.text.common.failed"></button>
                 <!-- /ko -->
             </div>
         </div>
