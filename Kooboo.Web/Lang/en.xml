@@ -446,6 +446,7 @@
   <key id="Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.">Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.</key>
   <key id="Input the domain you want">Input the domain you want</key>
   <key id="Suggest domain">Suggest domain</key>
+  <key id="Buy">Buy</key>
   <key id="Sorry">Sorry</key>
   <key id="We don't find any domain like">We don't find any domain like</key>
   <key id="Use">Use</key>
@@ -637,7 +638,6 @@
   <key id="All">All</key>
   <key id="Upload">Upload</key>
   <key id="Loading">Loading</key>
-  <key id="Buy">Buy</key>
   <key id="Failed">Failed</key>
   <key id="Author">Author</key>
   <key id="API">API</key>

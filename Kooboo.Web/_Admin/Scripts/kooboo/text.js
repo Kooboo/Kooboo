@@ -60,6 +60,7 @@
             tags: "Tags",
             import: "Import",
             back: "Back",
+            use: "Use",
 
             API: "API",
             Code: "Code",

@@ -118,7 +118,6 @@
                     <div class="balance-func">
                         <div class="btn-group btn-group-justified">
                             <a href="javascript:;" data-bind="click: onShowRechargeModal" class="btn btn-link">Topup</a>
-                            <a href="javascript:;" data-bind="click: onShowCouponModal" class="btn btn-link">Coupon</a>
                             <a href="javascript:;" data-bind="click: onShowTopupHistoryModal" class="btn btn-link">Topup history</a>
                             <a href="javascript:;" data-bind="click: onShowCurrenies" class="btn btn-link">Change currency</a>
                         </div>
@@ -479,31 +478,6 @@
             data: hardwareData
         }
     }"></div>
-
-    <div data-bind="modal: showCouponModal" class="modal fade" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button class="close" data-bind="click: onHideCouponModal"><i class="fa fa-close"></i></button>
-                    <h4 class="modal-title">Coupon</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-md-3 control-label">Coupon</label>
-                            <div class="col-md-9">
-                                <input type="text" class="form-control" data-bind="value: couponCode, error: couponCode">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn green" data-bind="click: onUseCoupon">Use</button>
-                    <button class="btn gray" data-bind="click: onHideCouponModal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <kb-template-modal params="isShow: showTemplateModal, data: templateData"></kb-template-modal>
 

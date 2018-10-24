@@ -56,39 +56,6 @@ $(function() {
 
         /* Recharge END */
 
-        /* Coupon START */
-        this.couponCode = ko.validateField({
-            required: ''
-        })
-        this.showCouponModal = ko.observable(false);
-        this.onShowCouponModal = function() {
-            this.showCouponModal(true);
-        }
-        this.onHideCouponModal = function() {
-            this.showError(false);
-            this.couponCode('');
-            this.showCouponModal(false);
-        }
-        this.onUseCoupon = function() {
-            if (this.couponCode.isValid()) {
-                Kooboo.Balance.useCoupon({
-                    code: this.couponCode()
-                }).then(function(res) {
-                    self.onHideCouponModal();
-                    if (res.success) {
-                        window.info.done(Kooboo.text.info.recharge.success);
-                        Kooboo.EventBus.subscribe('kb/market/balance/update')
-                    } else {
-                        window.info.fail(Kooboo.text.info.recharge.fail);
-                    }
-                })
-            } else {
-                this.showError(true);
-            }
-        }
-
-        /* Coupon END */
-
         /* Topup History START */
         this.showTopupHistoryModal = ko.observable(false);
         this.onShowTopupHistoryModal = function() {

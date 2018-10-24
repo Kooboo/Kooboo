@@ -446,6 +446,7 @@
   <key id="Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.">Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.</key>
   <key id="Input the domain you want">输入想要的域名</key>
   <key id="Suggest domain">推荐域名</key>
+  <key id="Buy">购买</key>
   <key id="Sorry">对不起</key>
   <key id="We don't find any domain like">We don't find any domain like</key>
   <key id="Use">使用</key>
@@ -637,7 +638,6 @@
   <key id="All">全部</key>
   <key id="Upload">上传</key>
   <key id="Loading">加载中</key>
-  <key id="Buy">购买</key>
   <key id="Failed">失败</key>
   <key id="Author">作者</key>
   <key id="API">API</key>
