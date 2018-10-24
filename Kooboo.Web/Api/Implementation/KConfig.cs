@@ -13,15 +13,18 @@ namespace Kooboo.Web.Api.Implementation
     public class KConfigApi : SiteObjectApi<KConfig>
     {         
        
-        public void Update(Guid Id, string Binding, ApiCall call)
+        public void Update(KConfig model, ApiCall call)
         {
-            var sitedb = call.WebSite.SiteDb();    
-            var config = sitedb.KConfig.Get(Id);
-            if (config != null)
+            if (model.Id != default(Guid))
             {
-                config.Binding = Binding;
-                sitedb.KConfig.AddOrUpdate(config);     
-            }
+                var sitedb = call.WebSite.SiteDb();
+                var config = sitedb.KConfig.Get(model.Id);
+                if (config != null)
+                {
+                    config.Binding = model.Binding;
+                    sitedb.KConfig.AddOrUpdate(config);
+                }
+            }  
         }
 
 
@@ -38,10 +41,11 @@ namespace Kooboo.Web.Api.Implementation
                 KConfigItemViewModel model = new KConfigItemViewModel();
                 model.Id = item.Id;
                 model.TagName = item.Name;
+                model.TagHtml = item.TagHtml; 
                 model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
                 model.StoreNameHash = storenamehash;
                 model.LastModified = item.LastModified;
-                model.Binding = item.Binding;
+               
                 model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.KConfig.GetUsedBy(item.Id));
                 result.Add(model);
             }

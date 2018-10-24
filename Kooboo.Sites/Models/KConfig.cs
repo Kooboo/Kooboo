@@ -12,17 +12,38 @@ namespace Kooboo.Sites.Models
         {
             this.ConstType = ConstObjectType.Kconfig; 
         }
+
+        private Dictionary<string, string> _binding; 
                
-        public string Binding { get; set; }
+        public Dictionary<string, string> Binding {
+            get {
+                if (_binding == null)
+                {
+                    _binding = new Dictionary<string, string>(); 
+                }
+                return _binding; 
+            }
+            set {
+                _binding = value; 
+            }
+        }
 
         // The original tag.
         public string TagName { get; set; }
 
         public string TagHtml { get; set; }
 
+        //public Dictionary<string, string> Binding { get; set; } 
         public override int GetHashCode()
         {
-            string unique = this.TagName + this.TagHtml + this.Binding;   
+            string unique = this.TagName + this.TagHtml; 
+            if (this.Binding !=null)
+            {
+                foreach (var item in this.Binding)
+                {
+                    unique += item.Key + item.Value; 
+                }
+            }
             return Lib.Security.Hash.ComputeInt(unique);  
         }
 

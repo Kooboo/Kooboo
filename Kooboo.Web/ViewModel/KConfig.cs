@@ -11,8 +11,7 @@ namespace Kooboo.Web.ViewModel
         public Guid Id { get; set; }
 
         public string Name { get; set; }
-
-        public string Binding { get; set; }
+                                                     
                                                
         public string TagName { get; set; }
 

@@ -10,7 +10,7 @@ namespace Kooboo.Sites.Repository
 {
     public class kConfigRepository : SiteRepositoryBase<KConfig>
     {
-                           
+
         internal override ObjectStoreParameters StoreParameters
         {
             get
@@ -21,7 +21,7 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public KConfig GetOrAdd(string key, string TagName,  string TagHtml)
+        public KConfig GetOrAdd(string key, string TagName, string TagHtml)
         {
             var old = GetByNameOrId(key);
 
@@ -34,11 +34,84 @@ namespace Kooboo.Sites.Repository
                 KConfig config = new KConfig();
                 config.Name = key;
                 config.TagHtml = TagHtml;
-                config.TagName = TagName;    
+                config.TagName = TagName;
                 AddOrUpdate(config);
                 return config;
             }
-        }        
+        }
+
+
+        public KConfig GetOrAdd(string key, Kooboo.Dom.Element El)
+        {
+            var old = GetByNameOrId(key);
+
+            if (old != null)
+            {
+                return old;
+            }
+            else
+            {
+                KConfig config = new KConfig();
+                config.Name = key;
+                config.TagHtml = El.OuterHtml;
+                config.TagName = El.tagName;
+
+                config.Binding = GetBindings(El);  
+                AddOrUpdate(config);
+                return config;
+            }
+        }
+
+        public Dictionary<string, string> GetBindings(Kooboo.Dom.Element El)
+        {
+            Dictionary<string, string> Bindings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var item in El.attributes)
+            {
+                if (!IsIgnoreAttribute(item.name))
+                {
+                    Bindings[item.name] = item.value;
+                }
+            }
+
+            if (!Bindings.ContainsKey("innerHtml"))
+            {
+                Bindings.Add("innerHtml", El.InnerHtml);
+            }
+            else if (!Bindings.ContainsKey("innerText"))
+            {
+                Bindings.Add("innerText", El.InnerHtml);
+            }
+            else if (!Bindings.ContainsKey("innerData"))
+            {
+                Bindings.Add("innerData", El.InnerHtml);
+            }
+            else
+            {
+                Bindings["innerKoobooText"] = El.InnerHtml; 
+            }
+
+            return Bindings; 
+        }
+
+
+        public bool IsIgnoreAttribute(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return true;
+            }
+
+            string lower = name.ToLower();
+
+            if (lower.StartsWith("on") || lower.Contains("-") || lower.Contains("_") || lower == "style")
+            {
+                return true;
+            }
+
+            return false;
+
+        }
     }
 
 
