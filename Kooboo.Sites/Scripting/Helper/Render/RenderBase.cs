@@ -107,6 +107,10 @@ namespace Kooboo.Sites.Scripting
             StringBuilder builder = new StringBuilder();
 #if DEBUG
             var path = Path.GetFullPath(@"..\..\..\GitHub\Kooboo.Web\_Admin\Scripts");
+            if (!Directory.Exists(path))
+            {
+                path = Path.GetFullPath(@"..\..\..\Kooboo.Web\_Admin\Scripts");
+            }
 #else
             var path= Path.GetFullPath(@".\_Admin\Scripts");
 #endif
