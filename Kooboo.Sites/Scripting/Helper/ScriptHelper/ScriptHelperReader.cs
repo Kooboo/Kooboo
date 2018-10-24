@@ -109,9 +109,9 @@ namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
                 var reader = new StreamReader(file);
                 try
                 {
-                    var serializer = new XmlSerializer(typeof(KScriptSetting));
+                    System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(KScriptSetting));
 
-                    var setting = serializer.Deserialize(reader) as KScriptSetting;
+                    KScriptSetting setting = serializer.Deserialize(reader) as KScriptSetting;
 
                     var fileName = Path.GetFileNameWithoutExtension(file).ToLower();
                     settings.Add(fileName, setting);

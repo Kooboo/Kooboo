@@ -130,6 +130,7 @@
     <Compile Include="Api\Implementation\ExternalResource.cs" />
     <Compile Include="Api\Implementation\File.cs" />
     <Compile Include="Api\Implementation\Form.cs" />
+    <Compile Include="Api\Implementation\KConfig.cs" />
     <Compile Include="Api\Implementation\KScript.cs" />
     <Compile Include="Api\Implementation\Mails\EmailAddress.cs" />
     <Compile Include="Api\Implementation\Extension.cs" />
@@ -222,6 +223,7 @@
     <Compile Include="ViewModel\HtmlBlock.cs" />
     <Compile Include="ViewModel\InlineEditor.cs" />
     <Compile Include="ViewModel\Job.cs" />
+    <Compile Include="ViewModel\KConfig.cs" />
     <Compile Include="ViewModel\Label.cs" />
     <Compile Include="ViewModel\Layout.cs" />
     <Compile Include="ViewModel\Link.cs" />

@@ -207,6 +207,7 @@
     <Compile Include="Render\Evaluators\ForEvaluator.cs" />
     <Compile Include="Render\Evaluators\Form.cs" />
     <Compile Include="Render\Evaluators\Header.cs" />
+    <Compile Include="Render\Evaluators\Kconfig.cs" />
     <Compile Include="Render\Evaluators\Label.cs" />
     <Compile Include="Render\Evaluators\OmitTag.cs" />
     <Compile Include="Render\Evaluators\PlaceHolder.cs" />
@@ -255,6 +256,7 @@
     <Compile Include="Render\RenderTask\ValueRenderTask.cs" />
     <Compile Include="Repository\BusinessRuleRepository.cs" />
     <Compile Include="Repository\CodeRepository.cs" />
+    <Compile Include="Repository\kConfigRepository.cs" />
     <Compile Include="Repository\SiteClusterRepository.cs" />
     <Compile Include="Repository\ContinueConvertRepository.cs" />
     <Compile Include="Repository\FormSettingRepository.cs" />
