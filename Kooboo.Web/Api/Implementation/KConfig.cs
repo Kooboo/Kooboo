@@ -40,8 +40,9 @@ namespace Kooboo.Web.Api.Implementation
             {
                 KConfigItemViewModel model = new KConfigItemViewModel();
                 model.Id = item.Id;
-                model.TagName = item.Name;
-                model.TagHtml = item.TagHtml; 
+                model.TagName = item.TagName;
+                model.TagHtml = item.TagHtml;
+                model.Name = item.Name; 
                 model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
                 model.StoreNameHash = storenamehash;
                 model.LastModified = item.LastModified;
