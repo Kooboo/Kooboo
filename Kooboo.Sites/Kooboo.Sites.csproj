@@ -166,6 +166,7 @@
     <Compile Include="InlineEditor\UpdateManager.cs" />
     <Compile Include="Models\BusinessRule.cs" />
     <Compile Include="Models\Code.cs" />
+    <Compile Include="Models\KConfig.cs" />
     <Compile Include="Models\SiteCluster.cs" />
     <Compile Include="Models\CoreObject.cs" />
     <Compile Include="Cache\ViewInSamePosition.cs" />

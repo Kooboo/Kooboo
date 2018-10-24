@@ -258,7 +258,7 @@ namespace Kooboo.Web.Api.Implementation
             };
         }
 
-        private List<MenuItem> SiteMenu_Advance(ApiCall call)
+        protected virtual List<MenuItem> SiteMenu_Advance(ApiCall call)
         {
             User user = call.Context.User;
             SiteDb siteDb = call.Context.WebSite.SiteDb();
@@ -287,7 +287,10 @@ namespace Kooboo.Web.Api.Implementation
             if (call.WebSite != null && call.WebSite.EnableFrontEvents)
             {
                 var eventmenus = SiteMenu_Events(call);
-                sysmenu.Items.Add(eventmenus); 
+                if (eventmenus !=null && eventmenus.Items.Count()>0)
+                {
+                    sysmenu.Items.Add(eventmenus);
+                }       
             }
 
             items.Add(sysmenu);
@@ -387,7 +390,7 @@ namespace Kooboo.Web.Api.Implementation
             return items;
         }
 
-        private MenuItem SiteMenu_Events(ApiCall call)
+        protected virtual MenuItem SiteMenu_Events(ApiCall call)
         {
             User user = call.Context.User;
             SiteDb siteDb = call.WebSite.SiteDb();

@@ -2,8 +2,7 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Collections;
+using System.Reflection;  
 
 namespace Kooboo
 {
@@ -71,9 +70,10 @@ namespace Kooboo
         public const byte ProductCategory = 72;
         public const byte ProductVariants = 73;
         public const byte ProductType = 74;
-                                           
 
-        public const byte kfile = 80; 
+        public const byte kfile = 80;
+
+        public const byte Kconfig = 81; 
 
         private static Dictionary<string, byte> _Types;
 

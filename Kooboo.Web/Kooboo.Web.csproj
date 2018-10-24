@@ -190,6 +190,7 @@
     <Compile Include="JsTest\RenderEngine.cs" />
     <Compile Include="JsTest\JsTestMiddleWare.cs" />
     <Compile Include="JsTest\JsTestOption.cs" />
+    <Compile Include="KQL\DatabaseExecutor.cs" />
     <Compile Include="Security\ActionControl.cs" />
     <Compile Include="Security\SslProvider.cs" />
     <Compile Include="Security\WebSiteAccessControl.cs" />
@@ -329,6 +330,9 @@
     <Resource Include="Lang\zh.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Lang\ru.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -337,7 +337,7 @@ namespace Kooboo.Web.Api.Implementation
             return data;
         }
 
-        public void Share(ApiCall call)
+        public virtual void Share(ApiCall call)
         {
             SiteDb siteDb = call.WebSite != null ? call.WebSite.SiteDb() : null;
             if (siteDb == null)
@@ -379,7 +379,7 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public void ShareBatch(ApiCall call)
+        public virtual void ShareBatch(ApiCall call)
         {
             SiteDb siteDb = call.WebSite != null ? call.WebSite.SiteDb() : null;
 
