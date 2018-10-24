@@ -121,29 +121,25 @@ namespace Jint.Runtime.Debugger
 
         private bool BpTest(Statement statement, BreakPoint breakpoint)
         {
-           if (breakpoint.Line != statement.Location.Start.Line || breakpoint.Line != statement.Location.End.Line)
+
+            bool afterStart, beforeEnd;
+
+            afterStart = (breakpoint.Line == statement.Location.Start.Line &&
+                             breakpoint.Char >= statement.Location.Start.Column);
+
+            if (!afterStart)
             {
                 return false;
             }
 
-            //bool afterStart, beforeEnd;
+            beforeEnd = breakpoint.Line < statement.Location.End.Line
+                        || (breakpoint.Line == statement.Location.End.Line &&
+                            breakpoint.Char <= statement.Location.End.Column);
 
-            //afterStart = (breakpoint.Line == statement.Location.Start.Line &&
-            //                 breakpoint.Char >= statement.Location.Start.Column);
-
-            //if (!afterStart)
-            //{
-            //    return false;
-            //}
-
-            //beforeEnd = breakpoint.Line < statement.Location.End.Line
-            //            || (breakpoint.Line == statement.Location.End.Line &&
-            //                breakpoint.Char <= statement.Location.End.Column);
-
-            //if (!beforeEnd)
-            //{
-            //    return false;
-            //}
+            if (!beforeEnd)
+            {
+                return false;
+            }
 
             if (!string.IsNullOrEmpty(breakpoint.Condition))
             {
