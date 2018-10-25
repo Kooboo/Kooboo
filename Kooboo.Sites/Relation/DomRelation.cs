@@ -191,8 +191,9 @@ namespace Kooboo.Sites.Relation
                 if (string.IsNullOrEmpty(key))
                 {
                     continue;
-                }      
-                var config = sitedb.KConfig.GetOrAdd(key, item.tagName, item.OuterHtml);
+                }
+                //var config = sitedb.KConfig.GetOrAdd(key, item.tagName, item.OuterHtml);
+                var config = sitedb.KConfig.GetOrAdd(key, item);
 
                 configids.Add(config.Id);
             }
