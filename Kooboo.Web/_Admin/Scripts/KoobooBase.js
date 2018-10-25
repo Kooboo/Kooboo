@@ -1661,6 +1661,15 @@
     }
     extend(ProductCategory, BaseModel);
 
+    function KConfig() {
+        this.name = 'KConfig';
+
+        this.update = function(para) {
+            return this.executePost('Update', para);
+        }
+    }
+    extend(KConfig, BaseModel);
+
     wind.Kooboo = {
         Attachment: new Attachment(),
         Bar: new Bar(),
@@ -1694,6 +1703,7 @@
         HtmlBlock: new HtmlBlock(),
         Editor: new Editor(),
         Job: new Job(),
+        KConfig: new KConfig(),
         KScript: new KScript(),
         Label: new Label(),
         Layout: new Layout(),

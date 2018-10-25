@@ -437,7 +437,6 @@
   <key id="You do not have any rules yet.">您还没有创建任何规则引擎</key>
   <key id="Market">市场</key>
   <key id="Topup">充值</key>
-  <key id="Coupon">优惠券</key>
   <key id="Topup history">充值历史</key>
   <key id="Change currency">更改币种</key>
   <key id="Hardware">硬件</key>
@@ -449,7 +448,6 @@
   <key id="Buy">购买</key>
   <key id="Sorry">对不起</key>
   <key id="We don't find any domain like">We don't find any domain like</key>
-  <key id="Use">使用</key>
   <key id="Report">报告</key>
   <key id="Usage">Usage</key>
   <key id="Logs">日志</key>
@@ -457,6 +455,7 @@
   <key id="Used">已使用</key>
   <key id="Usage rate">使用率</key>
   <key id="Count">数量</key>
+  <key id="Coupon">优惠券</key>
   <key id="Input a amount large than 0.01">输入值需大于0.01</key>
   <key id="Design">设计</key>
   <key id="Settings">设置</key>
@@ -640,6 +639,7 @@
   <key id="Loading">加载中</key>
   <key id="Failed">失败</key>
   <key id="Author">作者</key>
+  <key id="Use">使用</key>
   <key id="API">API</key>
   <key id="HTML">HTML</key>
   <key id="Types">类型</key>
@@ -656,6 +656,7 @@
   <key id="Content folders">内容文件夹</key>
   <key id="Embedded">内嵌</key>
   <key id="Debug">调试</key>
+  <key id="Kooboo Config">Kooboo 配置</key>
   <key id="online_YES">在线</key>
   <key id="online_NO">离线</key>
   <key id="Are you sure you want to delete this item?">您确定要删除这一项吗？</key>

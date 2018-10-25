@@ -75,7 +75,7 @@
 
                 <!-- ko if: col.type == 'label' -->
                 <td>
-                    <span data-bind="text: doc[col.fieldName].text, css: doc[col.fieldName].class, style: { background: doc[col.fieldName].bgColor }" class="label"></span>
+                    <span data-bind="text: doc[col.fieldName].text, css: doc[col.fieldName].class, style: { background: doc[col.fieldName].bgColor }, tooltip: doc[col,fieldName].tooltip" class="label"></span>
                 </td>
                 <!-- /ko -->
 
@@ -175,7 +175,7 @@
 
                     <!-- ko if: action.type == "communication-icon-btn" -->
                     <!-- ko if: doc[action.fieldName] -->
-                    <a data-bind="click: $component.communicate.bind(doc, doc[action.fieldName].url, { id: doc.id() }), css: doc[action.fieldName].class? doc[action.fieldName].class : 'blue' ,clickBubble: false, attr: { title: doc[action.fieldName].title }" class="btn btn-sm">
+                    <a data-bind="click: $component.communicate.bind(doc, doc[action.fieldName].url, { id: doc.id() }), css: doc[action.fieldName].class? doc[action.fieldName].class : 'blue' ,clickBubble: false, attr: { title: doc[action.fieldName].title }" class="btn btn-xs">
                         <i class="fa" data-bind="css: doc[action.fieldName].iconClass"></i>
                     </a>
                     <!-- /ko -->

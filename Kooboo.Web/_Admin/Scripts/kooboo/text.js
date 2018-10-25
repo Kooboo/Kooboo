@@ -126,6 +126,7 @@
             Search: "Search",
             Debug: "Debug",
             SiteUser: "Site user",
+            KConfig: "Kooboo Config",
 
             ProductManagement: "Products management",
             ProductTypes: "Product types",
