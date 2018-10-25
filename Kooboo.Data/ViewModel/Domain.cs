@@ -36,6 +36,14 @@ namespace Kooboo.Data.ViewModel
         }
         public string Currency { get; set; }
 
+        public string Symbol
+        {
+            get
+            {
+                return Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Currency);
+            }
+        }
+
         public List<DomainOption> Options { get; set; }
 
     }

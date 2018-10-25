@@ -35,7 +35,13 @@ namespace Kooboo.Data.Models
 
         public string Code;
 
-        public string Symbol { get; set; }
+        public string Symbol
+        {
+            get
+            {
+                return Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Code);
+            }
+        }
 
         public decimal MarketRate { get; set; }
 

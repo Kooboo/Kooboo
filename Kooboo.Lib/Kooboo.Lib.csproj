@@ -86,6 +86,7 @@
     <Compile Include="Helper\CharHelper.cs" />
     <Compile Include="Helper\CmdHelper.cs" />
     <Compile Include="Helper\ConverterHelper.cs" />
+    <Compile Include="Helper\CurrencyHelper.cs" />
     <Compile Include="Helper\DataTypeHelper.cs" />
     <Compile Include="Helper\DateTimeHelper.cs" />
     <Compile Include="Helper\DictionaryHelper.cs" />
