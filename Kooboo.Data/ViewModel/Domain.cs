@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kooboo.Data.Models;
 
 namespace Kooboo.Data.ViewModel
 {
@@ -34,15 +35,8 @@ namespace Kooboo.Data.ViewModel
                 }
             }
         }
-        public string Currency { get; set; }
+        public Currency Currency { get; set; }
 
-        public string Symbol
-        {
-            get
-            {
-                return Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Currency);
-            }
-        }
 
         public List<DomainOption> Options { get; set; }
 
