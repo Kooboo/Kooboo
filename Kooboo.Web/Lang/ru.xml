@@ -42,7 +42,7 @@
   <key id="Input page path">URL страницы ввода</key>
   <key id="Select file">Выбрать файл</key>
   <key id="Support types: HTML, PDF, Word, Excel, PPT, ZIP">Тип поддержки: HTML, PDF, Word, Excel, PPT, ZIP</key>
-  <key id="Start">Начать</key>
+  <key id="Start">Старт</key>
   <key id="Route setting">Настройки маршрутизации</key>
   <key id="Redirect routes">Перенаправление маршрута</key>
   <key id="Set the redirect pages for default home page, 404 and error pages">Задайте домашнюю страницу, 404 и страницу с ошибкой</key>
