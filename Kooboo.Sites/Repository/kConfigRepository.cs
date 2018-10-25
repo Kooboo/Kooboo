@@ -56,7 +56,7 @@ namespace Kooboo.Sites.Repository
                 config.TagHtml = El.OuterHtml;
                 config.TagName = El.tagName;
 
-                config.Binding = GetBindings(El);  
+                config.Binding = GetBindings(El);
                 AddOrUpdate(config);
                 return config;
             }
@@ -74,24 +74,19 @@ namespace Kooboo.Sites.Repository
                 }
             }
 
-            if (!Bindings.ContainsKey("innerHtml"))
+            if (!Service.DomService.IsSelfCloseTag(El.tagName))
             {
-                Bindings.Add("innerHtml", El.InnerHtml);
-            }
-            else if (!Bindings.ContainsKey("innerText"))
-            {
-                Bindings.Add("innerText", El.InnerHtml);
-            }
-            else if (!Bindings.ContainsKey("innerData"))
-            {
-                Bindings.Add("innerData", El.InnerHtml);
-            }
-            else
-            {
-                Bindings["innerKoobooText"] = El.InnerHtml; 
+                // if (!Bindings.ContainsKey("innerHtml"))
+                // {
+                Bindings["innerHtml"] = El.InnerHtml;
+                // }
+                //else
+                //{
+                //    Bindings["innerKoobooText"] = El.InnerHtml;
+                //}
             }
 
-            return Bindings; 
+            return Bindings;
         }
 
 
@@ -108,9 +103,7 @@ namespace Kooboo.Sites.Repository
             {
                 return true;
             }
-
             return false;
-
         }
     }
 

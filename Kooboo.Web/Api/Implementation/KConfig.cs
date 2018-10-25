@@ -61,9 +61,6 @@ namespace Kooboo.Web.Api.Implementation
                 keys.Add(item.Name);
             }
             return keys;
-        }
-
-    }
-
-
+        }   
+    }    
 }

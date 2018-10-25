@@ -32,7 +32,8 @@ namespace Kooboo.Sites.Render
                     _list.Add(new ComponentEvaluator());
                     _list.Add(new HeaderEvaluator());
                     _list.Add(new FormEvaluator());
-                    _list.Add(new CommandEvaluator()); 
+                    _list.Add(new CommandEvaluator());
+                    _list.Add(new KConfigContentEvaluator()); 
                 }
                 return _list; 
             }

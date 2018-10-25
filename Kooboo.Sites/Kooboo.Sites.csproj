@@ -248,6 +248,7 @@
     <Compile Include="Render\RenderTask\ForRenderTask.cs" />
     <Compile Include="Render\RenderTask\HeaderRenderTask.cs" />
     <Compile Include="Render\RenderTask\IConditionEvaluator.cs" />
+    <Compile Include="Render\RenderTask\KConfigRenderTask.cs" />
     <Compile Include="Render\RenderTask\LabelRenderTask.cs" />
     <Compile Include="Render\RenderTask\LayoutRenderTask.cs" />
     <Compile Include="Render\RenderTask\PlaceHolderRenderTask.cs" />

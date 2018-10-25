@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Dom;
+using Kooboo.Sites.Render.RenderTask;
 
 namespace Kooboo.Sites.Render.Evaluators
 {
@@ -36,9 +37,8 @@ namespace Kooboo.Sites.Render.Evaluators
             {
                 var response = new EvaluatorResponse();
                 List<IRenderTask> result = new List<IRenderTask>();
-                string value = element.getAttribute(attName);
-                element.removeAttribute(attName);
-                result.Add(new ValueRenderTask(value));
+
+                result.Add(new KConfigRenderTask(element, attName));  
                 response.ContentTask = result;  
                       
                 return response;
