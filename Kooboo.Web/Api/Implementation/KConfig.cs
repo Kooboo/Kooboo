@@ -34,7 +34,7 @@ namespace Kooboo.Web.Api.Implementation
 
             var sitedb = call.WebSite.SiteDb();
 
-            int storenamehash = Lib.Security.Hash.ComputeInt(sitedb.Labels.StoreName);
+            int storenamehash = Lib.Security.Hash.ComputeInt(sitedb.KConfig.StoreName);
 
             foreach (var item in sitedb.KConfig.All())
             {

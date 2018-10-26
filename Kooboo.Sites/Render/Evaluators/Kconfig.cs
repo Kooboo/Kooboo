@@ -25,11 +25,13 @@ namespace Kooboo.Sites.Render.Evaluators
             var element = node as Element;
 
             string attName = null;
+            string attValue = null; 
             foreach (var item in element.attributes)
             {
                 if (item.name == "k-config")
                 {
                     attName = item.name;
+                    attValue = item.value; 
                     break;
                 }
             }
@@ -38,8 +40,9 @@ namespace Kooboo.Sites.Render.Evaluators
                 var response = new EvaluatorResponse();
                 List<IRenderTask> result = new List<IRenderTask>();
 
-                result.Add(new KConfigRenderTask(element, attName));  
-                response.ContentTask = result;  
+                result.Add(new KConfigRenderTask(element, attValue));  
+                response.ContentTask = result;
+                response.OmitTag = true; 
                       
                 return response;
             }
