@@ -131,7 +131,12 @@
             ProductManagement: "Products management",
             ProductTypes: "Product types",
             ProductType: "Product type",
-            ProductCategories: "Product categories"
+            ProductCategories: "Product categories",
+
+            unitPrice: "Unit price",
+            totalPrice: "Total price",
+            year: "Year",
+            years: "Years"
         },
 
         online: {
@@ -325,6 +330,10 @@
             recharge: {
                 success: "Recharge successful",
                 fail: "Recharge failed"
+            },
+            purchase: {
+                success: "Purchase successful",
+                fail: "Purchase failed"
             },
 
             noRemoteSiteAvaliable: "No remote sites avaliable.",
@@ -681,9 +690,11 @@
             },
             hardwareModal: {
                 quantity: "Quantity",
-                unitPrice: "Unit price",
-                totalPrice: "Total price",
                 selectTypeFirst: "Select type first"
+            },
+            cashierModal: {
+                balanceInsuffisant: "Balance insuffisant, please topup first",
+                purchaseDomain: "Purchase domain"
             },
             topupModal: {
                 title: "Topup",
@@ -933,10 +944,14 @@
                 chosseEventType: "Choose event type",
                 noSetting: "No setting",
                 noActivityAndCreate: "No activity available! Click here to create one."
-            },
-            market: {
-                changeCurrency: "Change currency"
             }
+        },
+
+        market: {
+            usageReport: "Usage report",
+            purchaseHistory: "Purchase history",
+            myDomains: "My domains",
+            changeCurrency: "Change currency"
         },
 
         mail: {

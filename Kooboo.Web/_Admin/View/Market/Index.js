@@ -15,7 +15,6 @@ $(function() {
         this.userName = ko.observable();
         this.balance = ko.observable();
 
-        this.currency = ko.observable();
         this.currencySymbol = ko.observable();
         this.currencyCode = ko.observable();
         this.showCurrencyModal = ko.observable(false);
@@ -29,17 +28,10 @@ $(function() {
                     self.organizationId(res.model.id);
                     self.userName(res.model.name);
                     self.balance(res.model.balance);
+                    self.currencySymbol(res.model.currency.symbol);
+                    self.currencyCode(res.model.currency.code);
                 }
             })
-
-            Kooboo.Currency.get().then(function(res) {
-                if (res.success) {
-                    self.currency(res.model);
-                    self.currencySymbol(res.model.symbol);
-                    self.currencyCode(res.model.code);
-                }
-            })
-
         }
         this.getBasicInfo();
 
@@ -120,6 +112,8 @@ $(function() {
         /* Template END */
 
         /* Domian START */
+        this.showCashierModal = ko.observable(false);
+        this.checkoutItem = ko.observable();
         this.domainIWant = ko.validateField({
             required: ''
         })
@@ -132,16 +126,51 @@ $(function() {
                 }).then(function(res) {
                     if (res.success) {
                         self.searched(true);
-                        self.availableDomains(res.model);
+                        self.availableDomains(res.model.map(function(item) {
+                            return {
+                                domain: item.domain,
+                                currencySymbol: item.currency.symbol,
+                                price: item.price,
+                                displayPrice: item.currency.symbol + item.price,
+                                options: item.options.map(function(opt) {
+                                    return {
+                                        year: opt.year,
+                                        price: opt.price,
+                                        displayPrice: item.currency.symbol + opt.price
+                                    }
+                                })
+                            }
+                        }));
                     }
                 })
             }
         }
-        this.buyDomain = function(year, e) {
-            console.log(year);
+        this.buyDomain = function(domain, idxOrEvent) {
+            var selected = {
+                domain: domain.domain,
+                currencySymbol: domain.currencySymbol,
+                unitPrice: domain.price
+            }
+
+            if (typeof idxOrEvent == "number") {
+                var idx = idxOrEvent;
+                var opt = domain.options[idx];
+                selected.totalPrice = opt.price;
+                selected.year = opt.year;
+            } else {
+                selected.totalPrice = domain.price;
+                selected.year = 1;
+            }
+
+            self.checkoutItem(selected);
+            self.showCashierModal(true);
         }
 
         /* Domain END */
+
+        Kooboo.EventBus.subscribe("kb/component/rechargeModal/show", function() {
+            self.showRechargeModal(true);
+        })
     }
 
     var vm = new Market();

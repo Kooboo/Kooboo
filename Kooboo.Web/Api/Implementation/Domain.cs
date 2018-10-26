@@ -237,6 +237,7 @@ namespace Kooboo.Web.Api.Implementation
         public PaymentResponse PayDomain(ApiCall call)
         {
             PaymentRequest paymentRequest = call.Context.Request.Model as PaymentRequest;
+            paymentRequest.OrganizationId = call.Context.User.Id;
             var redirectUrl = string.Format("{0}://{1}:{2}/_Admin/Domains", call.Context.Request.Scheme, call.Context.Request.Host, call.Context.Request.Port);
             paymentRequest.PaypalReturnUrl = string.Format("{0}://{1}:{2}/_api/payment/PaypalReturn?redirectUrl={3}",
                 call.Context.Request.Scheme, call.Context.Request.Host, call.Context.Request.Port, System.Net.WebUtility.UrlEncode(redirectUrl));

@@ -140,6 +140,7 @@
             DetailList: GetRoute("Sync/List")
         },
         Domain: {
+            IndexPage: GetRoute("Domains", true),
             Register: GetRoute("Domains/Register"),
             DomainBinding: GetRoute("Domains/DomainBinding", true),
             SiteBindingSettings: GetRoute("Domains/SiteBindingSettings", true)

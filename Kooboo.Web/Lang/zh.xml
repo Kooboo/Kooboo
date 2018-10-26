@@ -540,6 +540,7 @@
   <key id="weeks">周</key>
   <key id="months">月</key>
   <key id="No code available">暂无可用代码</key>
+  <key id="Kooboo Config">Kooboo 配置</key>
   <key id="Site type">站点类型</key>
   <key id="Import/Export site">导入/导出站点</key>
   <key id="Enable Visitor Log">启用访客日志</key>
@@ -601,6 +602,7 @@
   <key id="Minimal value">最小值</key>
   <key id="Maximum value">最大值</key>
   <key id="Pattern">规则</key>
+  <key id="No variable attribute">No variable attribute</key>
   <key id="Data type">数据类型</key>
   <key id="Error message">错误信息</key>
   <key id="Maxium value">最大值</key>
@@ -656,7 +658,9 @@
   <key id="Content folders">内容文件夹</key>
   <key id="Embedded">内嵌</key>
   <key id="Debug">调试</key>
-  <key id="Kooboo Config">Kooboo 配置</key>
+  <key id="Total price">总价</key>
+  <key id="Year">年</key>
+  <key id="Years">年</key>
   <key id="online_YES">在线</key>
   <key id="online_NO">离线</key>
   <key id="Are you sure you want to delete this item?">您确定要删除这一项吗？</key>
@@ -776,6 +780,8 @@
   <key id="Disable failed.">禁用失败</key>
   <key id="Recharge successful">充值成功</key>
   <key id="Recharge failed">充值失败</key>
+  <key id="Purchase successful">Purchase successful</key>
+  <key id="Purchase failed">Purchase failed</key>
   <key id="No remote sites avaliable.">未找到远程站点</key>
   <key id="Parameters missing.&lt;br/&gt; Redirecting to site logs...">缺少参数&lt;br/&gt; 正在重定向到网站日志...</key>
   <key id="Parameter missing">缺少参数</key>
@@ -955,8 +961,9 @@
   <key id="Conditions">条件</key>
   <key id="Add condition">添加条件</key>
   <key id="Quantity">数量</key>
-  <key id="Total price">总价</key>
   <key id="Select type first">先选择类型</key>
+  <key id="Balance insuffisant, please topup first">Balance insuffisant, please topup first</key>
+  <key id="Purchase domain">Purchase domain</key>
   <key id="Recharge amount">充值总额</key>
   <key id="Customize">自定义</key>
   <key id="large than 0.01">大于0.01</key>
@@ -1039,8 +1046,6 @@
   <key id="Create a new label">新建标签</key>
   <key id="New label">新标签</key>
   <key id="Read only">只读</key>
-  <key id="years">年</key>
-  <key id="year">年</key>
   <key id="Records">记录</key>
   <key id="Expires">有效期</key>
   <key id="Assembly">配置</key>
@@ -1063,6 +1068,9 @@
   <key id="Choose event type">选择事件类型</key>
   <key id="No setting">暂无设置</key>
   <key id="No activity available! Click here to create one.">暂无可用活动，点击创建一个活动</key>
+  <key id="Usage report">Usage report</key>
+  <key id="Purchase history">Purchase history</key>
+  <key id="My domains">My domains</key>
   <key id="Read">已读</key>
   <key id="Unread">未读</key>
   <key id="Forward to">转发到</key>
