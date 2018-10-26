@@ -214,6 +214,8 @@
     <Compile Include="Models\IPCity.cs" />
     <Compile Include="Models\MailQueue.cs" />
     <Compile Include="Models\OnlineServer.cs" />
+    <Compile Include="Models\Order.cs" />
+    <Compile Include="Models\SalesItem.cs" />
     <Compile Include="Models\ServerSetting.cs" />
     <Compile Include="Models\Cluster.cs" />
     <Compile Include="Models\ServiceLevel.cs" />
