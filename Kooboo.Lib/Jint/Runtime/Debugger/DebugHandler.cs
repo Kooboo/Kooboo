@@ -124,8 +124,10 @@ namespace Jint.Runtime.Debugger
 
             bool afterStart, beforeEnd;
 
-            afterStart = (breakpoint.Line == statement.Location.Start.Line &&
-                             breakpoint.Char >= statement.Location.Start.Column);
+            //afterStart = (breakpoint.Line == statement.Location.Start.Line &&
+            //                 breakpoint.Char >= statement.Location.Start.Column);
+            //our breakpoint column always start with zero,so it don't need to compare the start column
+            afterStart = (breakpoint.Line == statement.Location.Start.Line );
 
             if (!afterStart)
             {
