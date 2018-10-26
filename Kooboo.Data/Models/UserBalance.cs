@@ -11,5 +11,6 @@ namespace Kooboo.Data.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public decimal Balance { get; set; } = 0;
+        public Currency Currency { get; set; }
     }
 }
