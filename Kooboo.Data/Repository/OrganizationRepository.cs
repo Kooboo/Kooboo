@@ -81,7 +81,12 @@ namespace Kooboo.Data.Repository
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("organizationId", organizationId.ToString());
             para.Add("userName", userName);
-            return HttpHelper.Post<string>(Account.Url.Org.AddUser, para);
+            var result =  HttpHelper.Post<string>(Account.Url.Org.AddUser, para);
+
+            var userid = Lib.Security.Hash.ComputeGuidIgnoreCase(userName);
+            Kooboo.Data.Cache.OrganizationUserCache.AddUser(organizationId, userid); 
+
+            return result; 
         }
 
         public bool DeleteUser(string userName, Guid organizationId)
@@ -89,7 +94,13 @@ namespace Kooboo.Data.Repository
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("organizationId", organizationId.ToString());
             para.Add("userName", userName);
-            return HttpHelper.Post<bool>(Account.Url.Org.DeleteUser, para);
+            var ok =  HttpHelper.Post<bool>(Account.Url.Org.DeleteUser, para);
+
+            if (ok)
+            {
+                Kooboo.Data.Cache.OrganizationUserCache.RemoveUser(organizationId, UserId); 
+            }
+            return ok; 
         }
 
         public string GetName(Guid OrgId)

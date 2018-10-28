@@ -66,16 +66,12 @@ namespace Kooboo.Web.Service
                 url = returnUrl;
             }
 
-            string fullurl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, url);
-
-#if DEBUG
-
-            string xbaseurl = currentRequestUrl;
-            string xurl = Kooboo.Sites.Service.StartService.AfterLoginPage(context);
-
-            fullurl = Kooboo.Lib.Helper.UrlHelper.Combine(xbaseurl, xurl);
-#endif
-
+            string fullurl = url; 
+           
+            if (baseurl !=null && baseurl.ToLower().StartsWith("http://") || baseurl.ToLower().StartsWith("https://"))
+            {
+                fullurl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, url);
+            }      
             return fullurl;
         }
 
