@@ -43,6 +43,11 @@ namespace Kooboo.Render.ServerSide
         {
             var fullname = sourceProvider.GetFullFileName(context, RelativeUrl);
 
+            if (string.IsNullOrEmpty(fullname))
+            {
+                return new RenderRespnose() { Body = null };
+            }
+
             if (option.EnableMultilingual && RelativeUrl.ToLower().EndsWith(option.MultilingualJsFile))
             { 
                 return RenderJsLangFile(fullname, context);

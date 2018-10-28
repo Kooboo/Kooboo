@@ -313,12 +313,33 @@ namespace Kooboo.Render.ObjectSource
         {
             Guid key = Lib.Security.Hash.ComputeGuidIgnoreCase(FullFileName);
             string text = null;
+
+            if (option.StartPath !=null)
+            {
+
+                if (option.StartPath.Contains("_admin"))
+                {
 #if DEBUG
+                    {
+                        text = System.IO.File.ReadAllText(FullFileName);
+                        key = Lib.Security.Hash.ComputeHashGuid(text);
+                    }
+#endif
+
+                }
+                else
+                {
+                    text = System.IO.File.ReadAllText(FullFileName);
+                    key = Lib.Security.Hash.ComputeHashGuid(text);
+                }
+
+            }
+            else
             {
                 text = System.IO.File.ReadAllText(FullFileName);
                 key = Lib.Security.Hash.ComputeHashGuid(text);
             }
-#endif
+
 
             if (option.EnableMultilingual)
             {

@@ -186,6 +186,7 @@
     <Compile Include="DashBoard\TopPages\TopPages.cs" />
     <Compile Include="Frontend\DefaultStartMiddleWare.cs" />
     <Compile Include="Frontend\KoobooMiddleWare.cs" />
+    <Compile Include="JQL\CodeGeneration.cs" />
     <Compile Include="JQL\Commands\DatabaseGet.cs" />
     <Compile Include="JQL\Commands\DatabaseDelete.cs" />
     <Compile Include="JQL\Commands\EnumActionType.cs" />
