@@ -98,7 +98,8 @@ namespace Kooboo.Data.Repository
 
             if (ok)
             {
-                Kooboo.Data.Cache.OrganizationUserCache.RemoveUser(organizationId, UserId); 
+                var userid = Lib.Security.Hash.ComputeGuidIgnoreCase(userName); 
+                Kooboo.Data.Cache.OrganizationUserCache.RemoveUser(organizationId, userid); 
             }
             return ok; 
         }

@@ -37,8 +37,7 @@ namespace Kooboo.Web.JQL
             string js = "k.database." + tablename + ".delete(" + NameOrId + ");\r\n";    
             return js;
         }
-
-
+              
            
         public static List<String> GetDatabaseFields(WebSite site, string tablename)
         {

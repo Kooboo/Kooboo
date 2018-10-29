@@ -42,14 +42,13 @@ namespace Kooboo.Web.Api.Implementation
                 return "Site";
             }
         }
-
-
+                        
         public Dictionary<string, string> Types(ApiCall call)
         {
             Dictionary<string, string> types = new Dictionary<string, string>();
-            types.Add("p", Data.Language.Hardcoded.GetValue("public"));
-            types.Add("o", Data.Language.Hardcoded.GetValue("private"));
-            types.Add("m", Data.Language.Hardcoded.GetValue("member"));   
+            types.Add("p", Data.Language.Hardcoded.GetValue("public", call.Context));
+            types.Add("o", Data.Language.Hardcoded.GetValue("private", call.Context));
+            types.Add("m", Data.Language.Hardcoded.GetValue("member", call.Context));   
             return types;
         }
                                                        

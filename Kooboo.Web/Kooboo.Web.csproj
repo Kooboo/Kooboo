@@ -111,6 +111,7 @@
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\Implementation\ApiGeneration.cs" />
     <Compile Include="Api\Implementation\Cluster.cs" />
     <Compile Include="Api\Implementation\Code.cs" />
     <Compile Include="Api\Implementation\DashBoard.cs" />
