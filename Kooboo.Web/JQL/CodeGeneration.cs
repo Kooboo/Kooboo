@@ -115,37 +115,41 @@ namespace Kooboo.Web.JQL
         }
 
         public static void GenerateDatabase(WebSite website, string TableName, List<string> actions)
-        {
-            var sitedb = website.SiteDb();
-
+        {        
             foreach (var item in actions)
             {
-                string scriptbody = null;
-                if (item == "add")
-                {
-                    scriptbody = DatabaseAddScript(website, TableName);    
-                }
-                else if (item == "update")
-                {
-                    scriptbody = DatabaseUpdateScript(website, TableName);
-                }
-                else if (item == "get")
-                {
-                    scriptbody = DatabaseGetScript(website, TableName); 
-                }
-                else if (item == "delete")
-                {
-                    scriptbody = DatabaseDeleteScript(website, TableName);
-                }
-                else if (item == "list")
-                {
-                    scriptbody = DatabaseListScript(website, TableName);
-                }
+                GenerateDatabase(website, TableName, item);
+            }
+        }
 
-                if (scriptbody != null)
-                {
-                    AddDatabaseApi_code(sitedb, TableName, item, scriptbody);
-                }
+        private static void GenerateDatabase(WebSite website, string TableName, string item)
+        {
+            var sitedb = website.SiteDb();
+            string scriptbody = null;
+            if (item == "add")
+            {
+                scriptbody = DatabaseAddScript(website, TableName);
+            }
+            else if (item == "update")
+            {
+                scriptbody = DatabaseUpdateScript(website, TableName);
+            }
+            else if (item == "get")
+            {
+                scriptbody = DatabaseGetScript(website, TableName);
+            }
+            else if (item == "delete")
+            {
+                scriptbody = DatabaseDeleteScript(website, TableName);
+            }
+            else if (item == "list")
+            {
+                scriptbody = DatabaseListScript(website, TableName);
+            }
+
+            if (scriptbody != null)
+            {
+                AddDatabaseApi_code(sitedb, TableName, item, scriptbody);
             }
         }
 

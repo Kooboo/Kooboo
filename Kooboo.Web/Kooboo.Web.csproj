@@ -213,6 +213,7 @@
     <Compile Include="Spa\RenderPlanCache.cs" />
     <Compile Include="Spa\RenderRespnose.cs" />
     <Compile Include="SystemStart.cs" />
+    <Compile Include="ViewModel\ApiGeneration.cs" />
     <Compile Include="ViewModel\ApiHelper.cs" />
     <Compile Include="ViewModel\ApiScript.cs" />
     <Compile Include="ViewModel\Binding.cs" />

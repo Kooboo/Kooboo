@@ -1,5 +1,6 @@
 ﻿using Kooboo.Api;
 using Kooboo.Sites.Extensions;
+using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,68 +14,81 @@ namespace Kooboo.Web.Api.Implementation
         public bool RequireSite => true;
 
         public bool RequireUser => true;
-
-        // return Database and TextContent Now. 
-        public Dictionary<String, string> Types(ApiCall call)
+              
+        public List<ApiGenerationViewModel> Objects(ApiCall call)
         {
-            Dictionary<string, string> result = new Dictionary<string, string>();
-            var db = Kooboo.Data.Language.Hardcoded.GetValue("database", call.Context);
-            var txtContent = Kooboo.Data.Language.Hardcoded.GetValue("textcontent", call.Context);    
-            result.Add("Database", db);
-            result.Add("TextContent", txtContent);
-            return result;
-        }
-                   
-        // Return database table names or TextContent Folder name.s 
-        public List<string> Objects(string type, ApiCall call)
-        {
-            string lower = type.ToLower(); 
-            if (lower == "database")
+            List<ApiGenerationViewModel> result = new List<ApiGenerationViewModel>();
+
+            var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
+            var list = db.GetTables();
+
+            list.RemoveAll(o => o.StartsWith("_sys_"));
+
+            list.RemoveAll(o => o.StartsWith("_koobootemp"));
+
+            var actions = getActions();
+
+            foreach (var item in list)
             {
-                var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
-                var list = db.GetTables();
+                ApiGenerationViewModel model = new ApiGenerationViewModel();
+                model.Type = "Database";
+                model.Name = item;
+                model.DisplayName = item;
+                model.Actions = actions; 
+                result.Add(model); 
+            }    
+            var sitedb = call.Context.WebSite.SiteDb();
+            var folders = sitedb.ContentFolders.All();
 
-                list.RemoveAll(o => o.StartsWith("_sys_"));
-
-                list.RemoveAll(o => o.StartsWith("_koobootemp"));
-
-                return list;
-            }
-            else if (lower == "textcontent")
+            foreach (var item in folders)
             {
-                var db = call.Context.WebSite.SiteDb();
-                var folder = db.ContentFolders.All();
-
-                return folder.Select(o => o.Name).ToList();    
-            }
-
-            return null; 
+                ApiGenerationViewModel model = new ApiGenerationViewModel();
+                model.Type = "TextContent";
+                model.Name = item.Name;
+                model.DisplayName = item.DisplayName;
+                model.Actions = actions; 
+                result.Add(model); 
+            }                   
+            return result; 
         }
-               
-        public List<string> Actions(string type, ApiCall call)
+
+        private List<string> getActions()
         {
             List<string> result = new List<string>();
-
             result.Add("add");
             result.Add("update");
             result.Add("delete");
             result.Add("get");
-            result.Add("query");       
-            return result;    
+            result.Add("query");
+            return result;
         }
 
-        public bool Generate(string type, string name, List<string> actions, ApiCall call)
-        {    
-            if (type== "database")
+        public bool Generate(List<ApiGenerationViewModel> updatemodel, ApiCall call)
+        {
+            var website = call.WebSite; 
+
+            foreach (var item in updatemodel.GroupBy(o=>o.Type))
             {
-                Kooboo.Web.JQL.CodeGeneration.GenerateDatabase(call.WebSite, name, actions);   
-            }
-            else if (type== "textcontent")
-            {
-                Kooboo.Web.JQL.CodeGeneration.GenerateTextContent(call.WebSite, name, actions); 
-            }
-            return true; 
-        }      
-        
+                var key = item.Key.ToLower();
+                var list = item.ToList();
+
+                if (key == "database")
+                {
+                    foreach (var name in list)
+                    {
+                        Kooboo.Web.JQL.CodeGeneration.GenerateDatabase(website, name.Name, name.Actions);
+                    }
+                }
+                else if (key == "textcontent")
+                {
+                    foreach (var name in list)
+                    {
+                        Kooboo.Web.JQL.CodeGeneration.GenerateTextContent(website, name.Name, name.Actions);
+                    }
+                }   
+            }      
+            return true;
+        }
+
     }
 }
