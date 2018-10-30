@@ -3,8 +3,6 @@ using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -26,8 +24,7 @@ namespace Kooboo.Web.Api.Implementation
             result.Add("TextContent", txtContent);
             return result;
         }
-
-
+                   
         // Return database table names or TextContent Folder name.s 
         public List<string> Objects(string type, ApiCall call)
         {
@@ -53,8 +50,7 @@ namespace Kooboo.Web.Api.Implementation
 
             return null; 
         }
-
-
+               
         public List<string> Actions(string type, ApiCall call)
         {
             List<string> result = new List<string>();
@@ -67,11 +63,18 @@ namespace Kooboo.Web.Api.Implementation
             return result;    
         }
 
-        public bool Generate(string type, string name, string action, ApiCall call)
+        public bool Generate(string type, string name, List<string> actions, ApiCall call)
         {    
-            //
+            if (type== "database")
+            {
+                Kooboo.Web.JQL.CodeGeneration.GenerateDatabase(call.WebSite, name, actions);   
+            }
+            else if (type== "textcontent")
+            {
+                Kooboo.Web.JQL.CodeGeneration.GenerateTextContent(call.WebSite, name, actions); 
+            }
             return true; 
-        }          
+        }      
         
     }
 }
