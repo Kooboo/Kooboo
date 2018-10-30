@@ -62,20 +62,20 @@ namespace Kooboo.Web.Api.Implementation
             return HttpHelper.Post<bool>(url, json);
         }
 
-        public bool View(Guid commentId)
+        public bool View(Guid id)
         {
             var url = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/DiscussionReceiver/View");
             var dic = new Dictionary<string, string>();
-            dic.Add("discussionId", commentId.ToString());
+            dic.Add("discussionId", id.ToString());
             var json = JsonConvert.SerializeObject(dic);
             return HttpHelper.Post<bool>(url, json);
         }
 
-        public PagedListViewModel<Comment> CommentList(Guid discussionId)
+        public PagedListViewModel<Comment> CommentList(Guid id)
         {
             var url = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/CommentReceiver/List");
             var dic = new Dictionary<string, string>();
-            dic.Add("discussionId", discussionId.ToString());
+            dic.Add("discussionId", id.ToString());
 
             return HttpHelper.Get<PagedListViewModel<Comment>>(url,dic);
         }

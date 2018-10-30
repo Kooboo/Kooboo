@@ -141,6 +141,7 @@ function KoobooTinymceEditor(win,opt){
         });
     }
     function keyFn(e) {
+        debugger;
         if (e.keyCode == 13) {
             var that=this
             setTimeout(function(){
@@ -170,7 +171,10 @@ function KoobooTinymceEditor(win,opt){
                 $el.addClass(uuid);
                 //必须在tinyMCE实例化之前绑定，才能将回车换行拦截掉
                 $el.on("keypress keydown keyup", keyFn).on("paste", pasteFn);
-
+                $el.on("click",function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                })
                 if (!option) {
                     option = {};
                 }
