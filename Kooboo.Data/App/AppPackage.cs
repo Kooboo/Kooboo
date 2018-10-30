@@ -1,14 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Data.Template
+namespace Kooboo.Data.App
 {
-    public class TemplatePackage : IGolbalObject
+    public class AppPackage:IGolbalObject
     {
         private Guid _id;
         public Guid Id
@@ -57,14 +55,14 @@ namespace Kooboo.Data.Template
         public string Name { get; set; }
 
         public string Link { get; set; }
-  
+
         [Kooboo.IndexedDB.CustomAttributes.KoobooIgnore]
         public string FilePath
         {
             get
             {
                 string file = this.Id.ToString().Replace("-", "") + ".zip";
-                string fullfilename = System.IO.Path.Combine(Data.AppSettings.ThemeFolder, "package", file);
+                string fullfilename = System.IO.Path.Combine(Data.AppSettings.AppFolder, "package", file);
                 Lib.Helper.IOHelper.EnsureFileDirectoryExists(fullfilename);
                 return fullfilename;
             }
@@ -92,7 +90,7 @@ namespace Kooboo.Data.Template
 
         public int ViewCount { get; set; }
 
-        public bool IsApproved { get; set;  }
+        public bool IsApproved { get; set; }
 
         public decimal Price { get; set; } = 0;
 
@@ -100,23 +98,22 @@ namespace Kooboo.Data.Template
 
         public override int GetHashCode()
         {
-            string unique = this.Description + this.Link + this.Name + this.SiteName + this.Tags + this.ThumbNail + this.UserName; 
+            string unique = this.Description + this.Link + this.Name + this.SiteName + this.Tags + this.ThumbNail + this.UserName;
             unique += this.ContentCount.ToString() + this.ImageCount.ToString() + this.LayoutCount.ToString() + this.ViewCount.ToString() + this.PageCount.ToString() + this.MenuCount.ToString();
 
             unique += this.EditVersion.ToString() + this.UserId.ToString() + this.OrganizationId.ToString() + this.SiteId.ToString() + this.Score.ToString();
 
             foreach (var item in this.Images)
             {
-                unique += item; 
+                unique += item;
             }
-            unique += this.IsApproved.ToString(); 
+            unique += this.IsApproved.ToString();
 
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
-        } 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
+        }
 
         public Guid ZipHash { get; set; }
 
-        public Guid BinaryHash { get; set; }  
-        
+        public Guid BinaryHash { get; set; }
     }
 }

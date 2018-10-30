@@ -67,6 +67,7 @@
     <Compile Include="Account\Url\Cluster.cs" />
     <Compile Include="Account\Url\Org.cs" />
     <Compile Include="Account\Url\User.cs" />
+    <Compile Include="App\AppPackage.cs" />
     <Compile Include="Attributes\ActivityEvent.cs" />
     <Compile Include="Attributes\RequireProductType.cs" />
     <Compile Include="Attributes\RequiretModel.cs" />
@@ -197,6 +198,7 @@
     <Compile Include="Models\AuthorizeResult.cs" />
     <Compile Include="Models\Certificate.cs" />
     <Compile Include="Models\CheckResponse.cs" />
+    <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\Coupon.cs" />
     <Compile Include="Models\Currency.cs" />
     <Compile Include="Models\DashBoardResponseHtml.cs" />
@@ -204,6 +206,7 @@
     <Compile Include="Models\DataCenter.cs" />
     <Compile Include="Models\DataMethodResult.cs" />
     <Compile Include="Models\DataString.cs" />
+    <Compile Include="Models\Discussion.cs" />
     <Compile Include="Models\Dll.cs" />
     <Compile Include="Models\DataMethodSetting.cs" />
     <Compile Include="Models\ApiResource.cs" />

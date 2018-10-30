@@ -42,6 +42,8 @@ namespace Kooboo.Data.Models
         public DateTime ExpirationDate { get; set; }
 
         public string Code { get; set; }
+
+        public string CurrencyCode { get; set; }
      
     }
 }
