@@ -30,8 +30,11 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in list)
             {
+                string type = "Database";
+                string typeDisplayName = Kooboo.Data.Language.Hardcoded.GetValue("Database", call.Context); 
                 ApiGenerationViewModel model = new ApiGenerationViewModel();
-                model.Type = "Database";
+                model.Type = type;
+                model.TypeDisplayName = typeDisplayName; 
                 model.Name = item;
                 model.DisplayName = item;
                 model.Actions = actions; 
@@ -42,8 +45,11 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in folders)
             {
+                string type = "TextContent";
+                string TypeDisplayName = Data.Language.Hardcoded.GetValue("TextContent", call.Context);
                 ApiGenerationViewModel model = new ApiGenerationViewModel();
-                model.Type = "TextContent";
+                model.Type = type;
+                model.TypeDisplayName = TypeDisplayName; 
                 model.Name = item.Name;
                 model.DisplayName = item.DisplayName;
                 model.Actions = actions; 
