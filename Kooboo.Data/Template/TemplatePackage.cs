@@ -109,7 +109,8 @@ namespace Kooboo.Data.Template
             {
                 unique += item; 
             }
-            unique += this.IsApproved.ToString(); 
+            unique += this.IsApproved.ToString();
+            unique += this.Price.ToString() + this.Currency.ToString();
 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
         } 

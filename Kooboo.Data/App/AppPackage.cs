@@ -108,6 +108,8 @@ namespace Kooboo.Data.App
                 unique += item;
             }
             unique += this.IsApproved.ToString();
+            unique += this.CanTrial.ToString();
+            unique += this.Price.ToString() + this.Currency.ToString();
 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
@@ -115,5 +117,7 @@ namespace Kooboo.Data.App
         public Guid ZipHash { get; set; }
 
         public Guid BinaryHash { get; set; }
+
+        public bool CanTrial { get; set; }
     }
 }

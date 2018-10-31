@@ -222,6 +222,7 @@
     <Compile Include="ViewModel\Code.cs" />
     <Compile Include="ViewModel\ContentFolder.cs" />
     <Compile Include="ViewModel\ContentType.cs" />
+    <Compile Include="ViewModel\Currency.cs" />
     <Compile Include="ViewModel\DashBoard.cs" />
     <Compile Include="ViewModel\Database.cs" />
     <Compile Include="ViewModel\Domain.cs" />
