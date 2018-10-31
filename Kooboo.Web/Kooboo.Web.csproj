@@ -125,7 +125,6 @@
     <Compile Include="Api\Implementation\ContentType.cs" />
     <Compile Include="Api\Implementation\CssRule.cs" />
     <Compile Include="Api\Implementation\DataMethodSetting.cs" />
-    <Compile Include="Api\Implementation\Discussion.cs" />
     <Compile Include="Api\Implementation\Disk.cs" />
     <Compile Include="Api\Implementation\Domain.cs" />
     <Compile Include="Api\Implementation\BusinessRule.cs" />
