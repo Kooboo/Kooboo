@@ -21,6 +21,7 @@ $(function() {
                         window.info.show(Kooboo.text.info.pull.success, true);
                         self.changeTab("pull");
                         DataCache.removeRelatedData("pull");
+                        Kooboo.SPA.beforeUnload = undefined;
                     }
                 })
             }
@@ -45,8 +46,6 @@ $(function() {
                 if (flag) {
                     CONTIUNE_PULLING = false;
                     return 'refresh';
-                } else {
-                    return 'abort';
                 }
             }
         }
