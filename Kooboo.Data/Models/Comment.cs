@@ -35,6 +35,8 @@ namespace Kooboo.Data.Models
 
         public string UserName { get; set; }
 
+        public int CommentCount { get; set; }
+
         public DateTime LastModified { get; set; }
     }
 }
