@@ -47,5 +47,7 @@ namespace Kooboo.Data.Models
 
         //this Rate Can be modified by us.
         public decimal Rate { get; set; }
+
+        public decimal ServiceChargeRate { get; set; } = 0.0M;
     }
 }

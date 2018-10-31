@@ -36,6 +36,7 @@
                             currencyCode: self.code()
                         }).then(function(res) {
                             if (res.success) {
+                                self._currentCode(self.code());
                                 Kooboo.EventBus.publish('kb/market/balance/update');
                                 self.onHide();
                             }
