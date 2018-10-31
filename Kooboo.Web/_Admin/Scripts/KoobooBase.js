@@ -1670,7 +1670,29 @@
     }
     extend(KConfig, BaseModel);
 
+    function APIGeneration() {
+        this.name = 'APIGeneration';
+
+        this.getTypes = function(para) {
+            return this.executeGet('Types', para);
+        }
+
+        this.getObjects = function(para) {
+            return this.executeGet('Objects', para);
+        }
+
+        this.getActions = function(para) {
+            return this.executeGet('Actions', para);
+        }
+
+        this.Generate = function(para) {
+            return this.executePost('Generate', para);
+        }
+    }
+    extend(APIGeneration, BaseModel);
+
     wind.Kooboo = {
+        APIGeneration: new APIGeneration(),
         Attachment: new Attachment(),
         Bar: new Bar(),
         BaseModel: new BaseModel(),

@@ -41,6 +41,7 @@
             all: "All",
             empty: "Empty",
             next: "Next",
+            previous: "Previous",
             choose: "Choose",
             upload: "Upload",
             uploadImages: "Upload images",
@@ -61,6 +62,7 @@
             import: "Import",
             back: "Back",
             use: "Use",
+            confirm: "Confirm",
 
             API: "API",
             Code: "Code",

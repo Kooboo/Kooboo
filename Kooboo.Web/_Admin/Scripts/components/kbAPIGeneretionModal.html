@@ -1,0 +1,102 @@
+<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">API Generation</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="wizard">
+                        <div class="wrapper" data-bind="foreach: steps">
+                            <span data-bind="css: { active: $index() == $parent.currentStepIdx() }">
+                            <!-- ko text: $data -->
+                            <!-- /ko -->
+                            <b></b></span>
+                        </div>
+                    </div>
+                </div>
+                <div data-bind="visible: currentStepIdx() == 0">
+                    <table class="table table-hover">
+                        <tbody data-bind="foreach: { data: types, as: 'type' }">
+                            <tr>
+                                <td>
+                                    <span class="table-tree-indent"></span>
+                                    <span class="table-tree-toggle"><i class="fa fa-caret-down"></i></span>
+                                    <a href="javascript:;" data-bind="text: type.displayName"></a>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <!-- ko foreach: { data: type.items, as: 'item' } -->
+                            <tr data-bind="click: onToggleItem">
+                                <td>
+                                    <span class="table-tree-indent" style="width:22px"></span>
+                                    <input type="checkbox" data-bind="checked: item.selected">
+                                    <a href="javascript:;" data-bind="text: item.name"></a>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <!-- /ko -->
+                        </tbody>
+                    </table>
+                </div>
+                <div data-bind="visible: currentStepIdx() == 1">
+                    <div class="row" data-bind="foreach: { data: types, as: 'type' }">
+                        <!-- ko foreach: { data: type.items, as: 'item' } -->
+                        <!-- ko if: item.selected -->
+                        <div class="col-sm-12 col-md-4">
+                            <div class="thumbnail">
+                                <div class="caption">
+                                    <h3 data-bind="text: item.name"></h3>
+                                    <div data-bind="foreach: { data: item.actions, as: 'action' }">
+                                        <div class="form-group">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" data-bind="checked: action.selected">
+                                                    <!-- ko text: action.type -->
+                                                    <!-- /ko -->
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /ko -->
+                        <!-- /ko -->
+                    </div>
+                </div>
+                <div data-bind="visible: currentStepIdx() == 2">
+                    <div data-bind="foreach: { data: types, as: 'type' }">
+                        <!-- ko foreach: { data: type.items, as: 'item' } -->
+                        <!-- ko if: item.selected -->
+                        <div class="media">
+                            <div class="media-body">
+                                <h4 class="media-heading" data-bind="text: item.name"></h4>
+                                <p data-bind="text: item.actions().filter(function(act){ return act.selected() }).map(function(act){return act.type() }).join(' / ')"></p>
+                            </div>
+                        </div>
+                        <!-- /ko -->
+                        <!-- /ko -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer ">
+
+                <!-- ko if: currentStepIdx() == 0 -->
+                <button class="btn green " data-bind="text: Kooboo.text.common.next, click: onNext "></button>
+                <!-- /ko -->
+
+                <!-- ko if: currentStepIdx() == 1 -->
+                <button class="btn green " data-bind="text: Kooboo.text.common.previous, click: onPrev "></button>
+                <button class="btn green " data-bind="text: Kooboo.text.common.next, click: onNext "></button>
+                <!-- /ko -->
+
+                <!-- ko if: currentStepIdx() == 2 -->
+                <button class="btn green " data-bind="text: Kooboo.text.common.previous, click: onPrev "></button>
+                <button class="btn blue " data-bind="text: Kooboo.text.common.save, click: onConfirm "></button>
+                <!-- /ko -->
+            </div>
+        </div>
+    </div>
+</div>

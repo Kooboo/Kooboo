@@ -143,6 +143,26 @@ $(function() {
         })
 
         self.changeCodeType('all');
+
+        self.onShowApiModal = function() {
+            self.showAPIGenerationModal(true);
+        }
+
+        self.showAPIGenerationModal = ko.observable(false);
+
+        Kooboo.EventBus.subscribe('kb/code/refresh', function() {
+            self.curType('api');
+
+            self.createBtnText(Kooboo.text.common.create + ' ' + 'API');
+
+            Kooboo.Code.getListByType({
+                codeType: 'api'
+            }).then(function(res) {
+                if (res.success) {
+                    handleData(res.model);
+                }
+            })
+        })
     }
 
     codeModel.prototype = new Kooboo.tableModel(Kooboo.Code.name);
