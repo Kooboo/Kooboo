@@ -224,6 +224,7 @@
     <Compile Include="ViewModel\Currency.cs" />
     <Compile Include="ViewModel\DashBoard.cs" />
     <Compile Include="ViewModel\Database.cs" />
+    <Compile Include="ViewModel\DiscussionEditViewModel.cs" />
     <Compile Include="ViewModel\DiscussionViewModel.cs" />
     <Compile Include="ViewModel\Domain.cs" />
     <Compile Include="ViewModel\Ecommerce\Category.cs" />
