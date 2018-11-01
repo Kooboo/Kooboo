@@ -16,6 +16,8 @@
                 }
             })
             this.onHide = function() {
+                self.currentStepIdx(0);
+                self.types([]);
                 self.isShow(false);
             }
 

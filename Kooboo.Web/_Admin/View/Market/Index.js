@@ -5,7 +5,6 @@ $(function() {
         NAV_TEMPLATE_TOP = $('#nav_template')[0].getBoundingClientRect().top,
         NAV_DOMAIN_TOP = $('#nav_domain')[0].getBoundingClientRect().top;
 
-
     var Market = function() {
         var self = this;
         this.showError = ko.observable(false);

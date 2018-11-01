@@ -1,4 +1,12 @@
-﻿[data-bind*=visible]:not([kb-show]) {
+﻿.editableform-loading {
+    background: url('/_Admin/Styles/bootstrap-editable/img/loading.gif') center center no-repeat;
+}
+
+.editable-clear-x {
+    background: url('/_Admin/Styles/bootstrap-editable/img/clear.png') center center no-repeat;
+}
+
+[data-bind*=visible]:not([kb-show]) {
     display: none !important;
 }
 

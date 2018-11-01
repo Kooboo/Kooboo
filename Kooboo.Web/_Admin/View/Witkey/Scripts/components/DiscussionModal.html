@@ -1,0 +1,26 @@
+<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Add a discussion</h4>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div class="form-group">
+                        <label data-bind="textError: title">Title</label>
+                        <input type="text" class="form-control" data-bind="value: title">
+                    </div>
+                    <div class="form-group">
+                        <label data-bind="textError: content">Content</label>
+                        <textarea class="form-control" data-bind="richeditor: content"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="text: Kooboo.text.common.save, click: onSave"></button>
+                <button class="btn gray" data-bind="text: Kooboo.text.common.cancel, click: onHide"></button>
+            </div>
+        </div>
+    </div>
+</div>

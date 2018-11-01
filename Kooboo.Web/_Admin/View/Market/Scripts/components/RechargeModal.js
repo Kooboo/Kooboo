@@ -47,6 +47,7 @@
 
                                 self.paymentPackages(packages);
                                 self.currentPackage(packages[0])
+                                paymentPackages = packages;
                             }
                         })
                     }
@@ -147,6 +148,7 @@
                 if (m.type !== self.paymentMethod()) {
                     self.showError(false);
                     self.paymentMethod(m.type);
+                    self.currentPackage(paymentPackages[0]);
                 }
             }
 
