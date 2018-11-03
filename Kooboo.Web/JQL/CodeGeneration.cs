@@ -5,8 +5,6 @@ using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.JQL
 {
@@ -52,11 +50,11 @@ namespace Kooboo.Web.JQL
             js += "if (obj) {  k.response.json(obj); }; ";
             return js;
         }
-                                  
+
         public static string DatabaseListScript(WebSite Site, string tablename)
         {
             string js = " var list = k.database." + tablename + ".all();\r\n";
-            js += "if (list) {  k.json(obj); }; ";
+            js += "if (list) {  k.response.json(obj); }; ";
             return js;
         }
 
@@ -78,7 +76,9 @@ namespace Kooboo.Web.JQL
             string js = "var obj={}; \r\n";
             foreach (var item in fields)
             {
-                js += "obj." + item + "=k.request." + item + ";\r\n";
+                js += "if (k.request." + item + ") {";
+
+                js += "obj." + item + "=k.request." + item + ";}\r\n";
             }
 
             js += "var id; \r\n";
@@ -109,20 +109,16 @@ namespace Kooboo.Web.JQL
             return null;
         }
 
-        public static void GenerateTextContent(WebSite website, string TableName, List<string> actions)
-        {
-            return; 
-        }
 
         public static void GenerateDatabase(WebSite website, string TableName, List<string> actions)
-        {        
+        {
             foreach (var item in actions)
             {
                 GenerateDatabase(website, TableName, item);
             }
         }
 
-        private static void GenerateDatabase(WebSite website, string TableName, string item)
+        public static void GenerateDatabase(WebSite website, string TableName, string item)
         {
             var sitedb = website.SiteDb();
             string scriptbody = null;
@@ -155,10 +151,88 @@ namespace Kooboo.Web.JQL
 
         public static void AddDatabaseApi_code(SiteDb sitedb, string tableName, string actionName, string codebody)
         {
-            string url = "/kb_api/" + tableName + "_" + actionName;
+            string url = "/dbapi/" + tableName + "/" + actionName;
 
             Code code = new Code();
-            code.Name = "kb_" + tableName + "_" + actionName;
+            code.Name = "dbapi_" + tableName + "_" + actionName;
+            code.Body = codebody;
+
+            var oldcode = sitedb.Code.Get(code.Id);
+            if (oldcode != null)
+            {
+                return; // already exists. 
+            }
+
+            code.CodeType = CodeType.Api;
+
+            if (code.CodeType == Sites.Models.CodeType.Api)
+            {
+                if (!sitedb.Routes.Validate(url, code.Id))
+                {
+                    // already exists... 
+                    return;
+                }
+            }
+                        
+            sitedb.Code.AddOrUpdate(code);    
+
+            var route = new Kooboo.Sites.Routing.Route();
+            route.Name = url;
+            route.objectId = code.Id;
+            route.DestinationConstType = ConstObjectType.Code;
+            sitedb.Routes.AddOrUpdate(route);
+
+        }
+                               
+
+        public static void GenerateTextContent(WebSite website, string folderName, List<string> actions)
+        {
+            foreach (var item in actions)
+            {
+                GenerateTextContent(website, folderName, item);
+            }
+        }
+
+        public static void GenerateTextContent(WebSite website, string folderName, string item)
+        {
+            var sitedb = website.SiteDb();
+
+            string scriptbody = null;
+            if (item == "add")
+            {
+                scriptbody = TextContentAddScript(website, folderName);
+            }
+            else if (item == "update")
+            {
+                scriptbody = TextContentUpdateScript(website, folderName);
+            }
+            else if (item == "get")
+            {
+                scriptbody = TextContentGetScript(website, folderName);
+            }
+            else if (item == "delete")
+            {
+                scriptbody = TextContentDeleteScript(website, folderName);
+            }
+            else if (item == "list")
+            {
+                scriptbody = TextContentListScript(website, folderName);
+            }
+
+            if (scriptbody != null)
+            {
+                AddTextContentApi_code(sitedb, folderName, item, scriptbody);
+            }
+        }
+
+
+
+        public static void AddTextContentApi_code(SiteDb sitedb, string folderName, string actionName, string codebody)
+        {
+            string url = "/textapi/" + folderName + "/" + actionName;
+
+            Code code = new Code();
+            code.Name = "textapi_" + folderName + "_" + actionName;
             code.Body = codebody;
 
             var oldcode = sitedb.Code.Get(code.Id);
@@ -178,19 +252,118 @@ namespace Kooboo.Web.JQL
                 }
             }
 
-
             sitedb.Code.AddOrUpdate(code);
-
 
             var route = new Kooboo.Sites.Routing.Route();
             route.Name = url;
             route.objectId = code.Id;
             route.DestinationConstType = ConstObjectType.Code;
-            sitedb.Routes.AddOrUpdate(route);
-
+            sitedb.Routes.AddOrUpdate(route); 
         }
 
 
+        public static string TextContentAddScript(WebSite Site, string folderName)
+        {
+            var fields = GetTextContentFields(Site, folderName);
+            if (fields != null && fields.Any())
+            {
+                string js = "var obj={}; \r\n";
+                foreach (var item in fields)
+                {
+                    js += "obj." + item + "=k.request." + item + ";\r\n";
+                }
+                js += "obj.folder='" + folderName + "'\r\n";
+                js += "k.site.textContents.add(obj); \r\n";
+
+                return js;
+            }
+            return null;
+        }
+
+        public static string TextContentUpdateScript(WebSite Site, string tablename)
+        {
+            var fields = GetTextContentFields(Site, tablename);
+            if (fields != null && fields.Any())
+            {      
+                string js = "var id; \r\n";
+                js += "if (k.request._id)\r\n";
+                js += "{ id = k.request._id; }\r\n";
+                js += "else  if (k.reqeust.id) { id = k.request.id; } \r\n";
+                js += "else   { id = k.request.userkey; } \r\n";
+
+                js += "if (id) {\r\n";
+
+                js += "var obj=k.site.textContents.get(id); \r\n";
+
+                js += "if (obj) {\r\n"; 
+
+                foreach (var item in fields)
+                {
+                    js += "if (k.request." + item + ") {";
+
+                    js += "obj." + item + "=k.request." + item + ";}\r\n";
+                }
+                js += "k.site." + tablename + ".update(obj); \r\n";
+
+                js += "}\r\n"; 
+
+                js += "}";
+
+                return js;
+
+
+            }
+            return null;
+        }
+            
+
+        public static string TextContentDeleteScript(WebSite Site, string tablename)
+        {
+            string js = "var id; \r\n";
+            js += "if (k.request._id)\r\n";
+            js += "{ id = k.request._id; }\r\n";
+            js += "else  if (k.reqeust.id) { id = k.request.id; } \r\n";
+            js += "else   { id = k.request.userkey; } \r\n";  
+            js += "k.site.textContents.delete(id);\r\n";
+            return js;
+        }
+
+        public static string TextContentGetScript(WebSite Site, string tablename)
+        {                                       
+            string js = "var id; \r\n";
+            js += "if (k.request._id)\r\n";
+            js += "{ id = k.request._id; }\r\n";
+            js += "else  if (k.reqeust.id) { id = k.request.id; } \r\n";
+            js += "else   { id = k.request.userkey; } \r\n\r\n";
+
+            js += "var obj = k.site.textContents.get(id);\r\n";
+            js += "if (obj) {  k.response.json(obj); }; ";
+            return js;
+        }
+
+        public static string TextContentListScript(WebSite Site, string folderName)
+        {
+            
+            string js = " var list = k.site.textContents.findAll('folder=='"+ folderName+"');\r\n";
+            js += "if (list) {  k.response.json(obj); }; ";
+            return js;
+        }
+
+        public static List<String> GetTextContentFields(WebSite site, string folderName)
+        {
+            var db = site.SiteDb();
+            var folder = db.ContentFolders.Get(folderName);
+            if (folder != null)
+            {
+                var type = db.ContentTypes.Get(folder.ContentTypeId);
+
+                if (type != null)
+                {
+                    return type.Properties.Select(o => o.Name).ToList();
+                }
+            }
+            return null;
+        }
 
 
     }

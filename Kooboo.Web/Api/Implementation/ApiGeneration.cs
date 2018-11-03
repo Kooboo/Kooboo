@@ -65,7 +65,7 @@ namespace Kooboo.Web.Api.Implementation
             result.Add("update");
             result.Add("delete");
             result.Add("get");
-            result.Add("query");
+            result.Add("list");
             return result;
         }
 
