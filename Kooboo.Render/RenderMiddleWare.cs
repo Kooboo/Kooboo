@@ -10,7 +10,7 @@ namespace Kooboo.Render
 {
     public class RenderMiddleWare : IKoobooMiddleWare
     {
-        private RenderOption options;
+        public RenderOption options { get; set; }
 
         public RenderMiddleWare(RenderOption options)
         {
@@ -125,6 +125,11 @@ namespace Kooboo.Render
 
             if (Response != null)
             {  
+                if (this.options.Log !=null)
+                {
+                    this.options.Log(context, Response); 
+                }
+
                 context.Response.ContentType = Response.ContentType;
 
                 context.Response.StatusCode = 200;
