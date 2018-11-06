@@ -47,7 +47,7 @@
                                         <img class="media-object" data-bind="attr: { 'data-src': 'holder.js/48x48?text=' + comment.firstLetter }" alt="48x48" style="width: 48px; height: 48px;">
                                     </a>
                                     <div class="media-body">
-                                        <h4 class="media-heading" data-bind="text: comment.content"></h4>
+                                        <h4 class="media-heading" data-bind="html: comment.content"></h4>
                                         <p class="clearfix">
                                             <span class="pull-left">
                                                 <span data-bind="text: comment.userName"></span>
@@ -55,7 +55,7 @@
                                             <span data-bind="text: comment.date"></span>
                                             </span>
                                             <span class="pull-right">
-                                                <a href="javascript:;" data-bind="click: $parent.onShowSubComment.bind(comment)">
+                                                <a href="javascript:;" data-bind="click: $parent.onToggleSubComment.bind(comment)">
                                                     <i class="fa fa-comment"></i>
                                                     <!-- ko text: comment.commentCount -->
                                                     <!-- /ko -->
@@ -69,7 +69,7 @@
                                                         <img class="media-object" data-bind="attr: { 'data-src': 'holder.js/48x48?text=' + sub.firstLetter }" alt="48x48" style="width: 48px; height: 48px;">
                                                     </a>
                                                     <div class="media-body">
-                                                        <h4 class="media-heading" data-bind="text: sub.content"></h4>
+                                                        <h4 class="media-heading" data-bind="html: sub.content"></h4>
                                                         <p>
                                                             <span class="pull-left">
                                                                 <span data-bind="text: sub.userName"></span>

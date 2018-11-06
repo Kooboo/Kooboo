@@ -46,7 +46,15 @@ $(function() {
             Holder.run();
         }
 
-        this.onShowSubComment = function(m, e) {
+        this.onToggleSubComment = function(m, e) {
+            if (!m.showSubComment()) {
+                self.getNestCommentList(m);
+            } else {
+                m.showSubComment(false);
+            }
+        }
+
+        this.getNestCommentList = function(m) {
             Kooboo.Discussion.getNestCommentList({
                 commentId: m.id()
             }).then(function(res) {
@@ -73,7 +81,7 @@ $(function() {
                 })
 
                 if (comment) {
-                    self.onShowSubComment(comment);
+                    self.getNestCommentList(comment);
                 }
             }
         })
@@ -84,6 +92,9 @@ $(function() {
     ko.applyBindings(vm, document.getElementById('main'))
 
     function Comment(data) {
+        if (data.content.indexOf('\n') > -1) {
+            data.content = data.content.split('\n').join('<br>')
+        }
         var date = new Date(data.lastModified);
         this.id = ko.observable(data.id);
         this.firstLetter = data.userName.split('')[0].toUpperCase();

@@ -25,15 +25,10 @@
             this.onReply = function() {
                 if (this.content.isValid()) {
 
-                    var content = self.content();
-
-                    if (content.indexOf('\n') > -1) {
-                        content = content.split('\n').join('<br>')
-                    }
                     Kooboo.Discussion.reply({
                         discussionId: self.discussionId(),
                         parentCommentId: self.parentCommentId(),
-                        content: content
+                        content: self.content()
                     }).then(function(res) {
                         if (res.success) {
                             Kooboo.EventBus.publish('kb/witkey/component/reply/refresh', {
