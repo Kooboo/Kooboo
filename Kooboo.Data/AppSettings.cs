@@ -24,7 +24,18 @@ namespace Kooboo.Data
             Global.EnableLog = GetBool("Log");
             Global.LogPath = GetPhysicsPath(@"AppData\log");
             IOHelper.EnsureDirectoryExists(Global.LogPath);
+
+            if (IsOnlineServer)
+            {
+                MaxVisitorLogRead = 3000;
+            }
+            else
+            {
+                MaxVisitorLogRead = 10000;
+            }
         }
+         
+        public static int MaxVisitorLogRead { get; set; } = 3000;  // only read the last  3000
 
         public static string GetFileIORoot(WebSite website)
         {

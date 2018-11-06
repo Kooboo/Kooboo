@@ -51,7 +51,7 @@ namespace Kooboo.Web.Api.Implementation
 
             PagedListViewModel<VisitorLog> result = new PagedListViewModel<VisitorLog>();
 
-            var alllog = log.AllItemList();
+            var alllog = log.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead);  
 
             var total = alllog.Count();
             result.TotalCount = total;
