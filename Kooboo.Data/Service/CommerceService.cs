@@ -16,6 +16,7 @@ namespace Kooboo.Data.Service
         private static string PaymentStatusUrl = AccountUrlHelper.Commerce("PaymentStatus");
         private static string PaypalReturnUrl = AccountUrlHelper.Commerce("PayPalReturn");
         private static string PayDomainUrl = AccountUrlHelper.Commerce("PayDomain");
+        private static string PayTemplateUrl = AccountUrlHelper.Commerce("PayTemplateUrl");
         private static string PayTwoCheckoutUrl = AccountUrlHelper.Commerce("TwoCheckoutTest");
 
         public static Organization RedeemVoucher(Guid OrganizationId, string code)
@@ -63,5 +64,11 @@ namespace Kooboo.Data.Service
             var json = Lib.Helper.JsonHelper.Serialize(request);
             return HttpHelper.Post<PaymentResponse>(PayDomainUrl, json);
         }  
+
+        public static PaymentResponse PayTemplate(PayPackageRequest request)
+        {
+            var json = Lib.Helper.JsonHelper.Serialize(request);
+            return HttpHelper.Post<PaymentResponse>(PayTemplateUrl, json);
+        }
     }
 }

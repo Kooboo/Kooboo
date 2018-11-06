@@ -218,6 +218,7 @@
     <Compile Include="Models\MailQueue.cs" />
     <Compile Include="Models\OnlineServer.cs" />
     <Compile Include="Models\Order.cs" />
+    <Compile Include="Models\PayPackageRequest.cs" />
     <Compile Include="Models\SalesItem.cs" />
     <Compile Include="Models\ServerSetting.cs" />
     <Compile Include="Models\Cluster.cs" />
@@ -243,6 +244,7 @@
     <Compile Include="Models\UserBalance.cs" />
     <Compile Include="Models\UserOrganization.cs" />
     <Compile Include="Models\UserPublish.cs" />
+    <Compile Include="Models\UserTemplate.cs" />
     <Compile Include="Models\WebSite.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Render\Command.cs" />

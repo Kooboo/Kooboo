@@ -22,6 +22,8 @@ namespace Kooboo.Data.Models
         public string Thumbnail { get; set; }
         public string Images { get; set; }
         public bool IsDelete { get; set; }
-        public bool BinaryChange { get; set; } = true; 
+        public bool BinaryChange { get; set; } = true;
+        public decimal Price { get; set; } = 0;
+        public string Currency { get; set; } = "CNY";
     }
 }
