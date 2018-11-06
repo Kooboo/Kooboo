@@ -1,11 +1,11 @@
-﻿(function () {
+﻿(function() {
     var languageManager = Kooboo.LanguageManager;
 
     var SITE_ID = Kooboo.getQueryString("SiteId"),
         SITE_ID_STRING = "?SiteId=" + SITE_ID;
 
     ko.bindingHandlers.richeditor = {
-        init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+        init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
             if (!ko.isWriteableObservable(valueAccessor())) {
                 throw 'valueAccessor must be writeable and observable';
             }
@@ -33,9 +33,9 @@
                     'valid_children': '+body[style]',
                     'autoresize_min_height': 300,
                     'autoresize_max_height': 600,
-                    'setup': function (editor) {
+                    'setup': function(editor) {
                         // Ensure the valueAccessor state to achieve a realtime responsive UI.
-                        editor.on('change keyup nodechange', function (args) {
+                        editor.on('change keyup nodechange', function(args) {
                             // Update the valueAccessor
                             if (SITE_ID) {
                                 valueAccessor()(editor.getContent().split(SITE_ID_STRING).join(""));
@@ -44,13 +44,13 @@
                             }
                         });
 
-                        editor.on('NodeChange', function (e) {
+                        editor.on('NodeChange', function(e) {
                             // if (e && e.element.nodeName.toLowerCase() == 'img') {
                             //     tinyMCE.DOM.setAttribs(e.element, { 'width': null, 'height': null });
                             // }
                         });
 
-                        editor.on('init', function (e) {
+                        editor.on('init', function(e) {
                             Kooboo.EventBus.publish("kb/tinymce/initiated", editor);
                         })
                     },
@@ -89,7 +89,7 @@
                 };
 
             if (!isMailEditor) {
-                defaults.file_browser_callback = function (field_name, url, type, win, isPicked) {
+                defaults.file_browser_callback = function(field_name, url, type, win, isPicked) {
                     if (!isPicked) {
                         Kooboo.EventBus.publish("ko/style/list/pickimage/show", {
                             settings: tinymce.editors[0].settings,
@@ -103,22 +103,22 @@
                     }
                 }
             } else {
-                defaults.file_browser_callback = function (field_name, url, type) {
+                defaults.file_browser_callback = function(field_name, url, type) {
                     document.getElementById(field_name).value = url;
                 }
                 defaults.file_picker_types = 'image';
-                defaults.file_picker_callback = function (cb, value, meta) {
+                defaults.file_picker_callback = function(cb, value, meta) {
                     var input = document.createElement('input');
                     input.setAttribute('type', 'file');
                     input.setAttribute('accept', 'image/*');
-                    input.onchange = function () {
+                    input.onchange = function() {
                         var files = this.files;
                         if (files && files.length) {
                             var data = new FormData();
                             data.append("fileName", files[0].name);
                             data.append("file", files[0]);
 
-                            Kooboo.EmailAttachment.ImagePost(data).then(function (res) {
+                            Kooboo.EmailAttachment.ImagePost(data).then(function(res) {
                                 if (res.success) {
                                     cb(res.model);
                                 }
@@ -138,14 +138,14 @@
                 var _tempParent = $("<div>");
                 $(_tempParent).append(valueAccessor()());
                 var imgDoms = $(_tempParent).find('img');
-                imgDoms.each(function (idx, el) {
+                imgDoms.each(function(idx, el) {
                     $(el).attr("src", $(el).attr("src") + SITE_ID_STRING);
                 })
 
                 $(element).text($(_tempParent).html());
             }
             // Tinymce will not be able to calculate the textarea height without this delay
-            setTimeout(function () {
+            setTimeout(function() {
                 if (!element.id) {
                     element.id = tinymce.DOM.uniqueId();
                 }
@@ -153,11 +153,11 @@
                 tinymce.execCommand("mceAddEditor", true, element.id);
             }, 50);
             // To prevent a memory leak, ensure that the underlying element's disposal destroys it's associated editor.
-            ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+            ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
                 element && $(element).attr('id') && tinyMCE.get($(element).attr('id')) && tinyMCE.get($(element).attr('id')).remove();
             });
         },
-        update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+        update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
             // Implement the 'value' binding
             return ko.bindingHandlers['value'].update(element, valueAccessor, allBindings, viewModel, bindingContext);
         }

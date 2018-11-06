@@ -13,7 +13,9 @@
                     </div>
                     <div class="form-group">
                         <label data-bind="textError: content">Content</label>
-                        <textarea class="form-control" data-bind="richeditor: content"></textarea>
+                        <!-- ko if: contentLoaded -->
+                        <textarea class="form-control" data-bind="richeditor: content, value: content"></textarea>
+                        <!-- /ko -->
                     </div>
                 </div>
             </div>

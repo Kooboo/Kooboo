@@ -162,6 +162,11 @@
             },
             CategoriesPage: GetRoute("ECommerce/Product/Categories")
         },
+        Discussion: {
+            ListPage: GetRoute("Witkey/Discussion/Index"),
+            DetailPage: GetRoute("Witkey/Discussion/Detail"),
+            MyPage: GetRoute("Witkey/Discussion/My")
+        },
         Get: function(PageRoute, params) {
 
             var paramStr = "";

@@ -6,6 +6,10 @@ $(function() {
     function Discussion() {
         this.name = 'Discussion';
 
+        this.getEdit = function(para) {
+            return this.executeGet('GetEdit', para);
+        }
+
         this.getCommentList = function(para) {
             return this.executeGet('CommentList', para);
         }
@@ -14,12 +18,16 @@ $(function() {
             return this.executeGet('NestCommentList', para);
         }
 
-        this.add = function(para) {
-            return this.executePost('Add', para);
+        this.addOrUpdate = function(para) {
+            return this.executePost('AddOrUpdate', para);
         }
 
         this.reply = function(para) {
             return this.executePost('Reply', para);
+        }
+
+        this.getUserList = function(para) {
+            return this.executeGet('UserList', para);
         }
     }
     extend(Discussion, Kooboo.BaseModel);
