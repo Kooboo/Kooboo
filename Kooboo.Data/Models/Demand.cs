@@ -35,8 +35,6 @@ namespace Kooboo.Data.Models
 
         public DemandStatus Status { get; set; }
 
-        public Guid WinProposalId { get; set; }//中标id
-
         public string Skills { get; set; }
 
         public decimal Budget { get; set; }
