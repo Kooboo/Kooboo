@@ -16,6 +16,12 @@ namespace Kooboo.Web.ViewModel
 
         public DateTime CreateTime { get; set; }
 
+        public decimal Budget { get; set; }
+
         public int ProposalCount { get; set; }
+
+        public DateTime StartDate { get; set; }
+
+        public DateTime EndDate { get; set; }
     }
 }
