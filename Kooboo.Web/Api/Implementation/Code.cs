@@ -285,6 +285,8 @@ namespace Kooboo.Web.Api.Implementation
         public virtual List<CodeListItem> ListByType(string codetype, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
+            string baseurl = call.WebSite.BaseUrl();
+
             List<CodeListItem> result = new List<CodeListItem>();
 
             List<Code> codes = null;
@@ -309,8 +311,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 CodeListItem model = new CodeListItem();
                 model.Id = item.Id;
-                model.Name = item.Name;
-
+                model.Name = item.Name;       
 
                 if (item.IsEmbedded)
                 {
@@ -326,9 +327,7 @@ namespace Kooboo.Web.Api.Implementation
                 model.LastModified = item.LastModified;
 
                 if (item.CodeType == Sites.Models.CodeType.Api)
-                {
-                    string baseurl = call.WebSite.BaseUrl();
-
+                {                  
                     var route = sitedb.Routes.GetByObjectId(item.Id);
                     if (route != null)
                     {

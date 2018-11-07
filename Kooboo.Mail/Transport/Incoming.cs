@@ -8,18 +8,16 @@ namespace Kooboo.Mail.Transport
 {
     public static class Incoming
     {
-        private static Kooboo.Logging.SimpleDateRollingLogWriter _logger;
+        private static Logging.ILogger _logger;
 
         static Incoming()
         {
-            _logger = new Logging.SimpleDateRollingLogWriter(d =>
-                System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "smtp", "receive-" + d.ToString("yyyy-MM-dd") + ".txt")
-            );
+            _logger = Logging.LogProvider.GetLogger("smtp", "receive");
         }
 
         public static Task Receive(string MailFrom, List<string> Rcptos, string MessageBody)
         {
-            _logger.Log($"{MailFrom},{String.Join("|", Rcptos)},Received");
+            _logger.LogInformation($"{MailFrom},{String.Join("|", Rcptos)},Received");
 
             var msginfo = Kooboo.Mail.Utility.MessageUtility.ParseMeta(MessageBody);
             return Receive(MailFrom, Rcptos, MessageBody, msginfo);
@@ -202,7 +200,7 @@ namespace Kooboo.Mail.Transport
                 }
 
                 string log = "SMTP received: " + session.ClientIP + " " + session.UserName + " " + session.Password;
-                _logger.Log(log);
+                _logger.LogInformation(log);
 
                 if (!string.IsNullOrEmpty(from) && !string.IsNullOrEmpty(msgbody) && tos.Count()>0)
                 {
