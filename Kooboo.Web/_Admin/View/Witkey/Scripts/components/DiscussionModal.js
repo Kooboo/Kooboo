@@ -27,7 +27,7 @@
                     }
                 }
             })
-            this.data = params.data;
+            this.data = params.data || ko.observable();
 
             this.contentLoaded = ko.observable(false);
 

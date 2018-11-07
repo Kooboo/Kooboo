@@ -1691,6 +1691,15 @@
     }
     extend(APIGeneration, BaseModel);
 
+    function Currency() {
+        this.name = 'Currency';
+
+        this.change = function(para) {
+            return this.executePost('Change', para);
+        }
+    }
+    extend(Currency, BaseModel);
+
     wind.Kooboo = {
         APIGeneration: new APIGeneration(),
         Attachment: new Attachment(),
@@ -1706,6 +1715,7 @@
         Commerce: new Commerce(),
         Component: new Component(),
         CSSRule: new CSSRule(),
+        Currency: new Currency(),
         Database: new Database(),
         DataSource: new DataSource(),
         DataMethodSetting: new DataMethodSetting(),
