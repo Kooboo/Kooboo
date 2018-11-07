@@ -104,6 +104,26 @@ namespace Kooboo.Data
             }
         }
 
+        private static CurrencyRepository _currency;
+
+        public static CurrencyRepository Currency
+        {
+            get
+            {
+                if (_currency == null)
+                {
+                    lock (_lock)
+                    {
+                        if (_currency == null)
+                        {
+                            _currency = new CurrencyRepository();
+                        }
+                    }
+                }
+                return _currency;
+            }
+        }
+
         private static LocalUserRepository _localuser;
         public static LocalUserRepository LocalUser
         {

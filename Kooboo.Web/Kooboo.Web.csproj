@@ -111,6 +111,7 @@
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\Implementation\ApiGeneration.cs" />
     <Compile Include="Api\Implementation\Cluster.cs" />
     <Compile Include="Api\Implementation\Code.cs" />
     <Compile Include="Api\Implementation\DashBoard.cs" />
@@ -130,6 +131,7 @@
     <Compile Include="Api\Implementation\ExternalResource.cs" />
     <Compile Include="Api\Implementation\File.cs" />
     <Compile Include="Api\Implementation\Form.cs" />
+    <Compile Include="Api\Implementation\KConfig.cs" />
     <Compile Include="Api\Implementation\KScript.cs" />
     <Compile Include="Api\Implementation\Mails\EmailAddress.cs" />
     <Compile Include="Api\Implementation\Extension.cs" />
@@ -185,11 +187,20 @@
     <Compile Include="DashBoard\TopPages\TopPages.cs" />
     <Compile Include="Frontend\DefaultStartMiddleWare.cs" />
     <Compile Include="Frontend\KoobooMiddleWare.cs" />
+    <Compile Include="JQL\CodeGeneration.cs" />
+    <Compile Include="JQL\Commands\DatabaseGet.cs" />
+    <Compile Include="JQL\Commands\DatabaseDelete.cs" />
+    <Compile Include="JQL\Commands\EnumActionType.cs" />
+    <Compile Include="JQL\Commands\EnumObjectType.cs" />
+    <Compile Include="JQL\Commands\ICommand.cs" />
+    <Compile Include="JQL\Commands\Parser.cs" />
+    <Compile Include="JQL\Commands\DatabaseQuery.cs" />
     <Compile Include="JsTest\JsTestCommand.cs" />
     <Compile Include="JsTest\JsTestHelper.cs" />
     <Compile Include="JsTest\RenderEngine.cs" />
     <Compile Include="JsTest\JsTestMiddleWare.cs" />
     <Compile Include="JsTest\JsTestOption.cs" />
+    <Compile Include="JQL\CommandExecutor.cs" />
     <Compile Include="Security\ActionControl.cs" />
     <Compile Include="Security\SslProvider.cs" />
     <Compile Include="Security\WebSiteAccessControl.cs" />
@@ -202,14 +213,19 @@
     <Compile Include="Spa\RenderPlanCache.cs" />
     <Compile Include="Spa\RenderRespnose.cs" />
     <Compile Include="SystemStart.cs" />
+    <Compile Include="ViewModel\ApiGeneration.cs" />
     <Compile Include="ViewModel\ApiHelper.cs" />
     <Compile Include="ViewModel\ApiScript.cs" />
+    <Compile Include="ViewModel\App.cs" />
     <Compile Include="ViewModel\Binding.cs" />
     <Compile Include="ViewModel\Code.cs" />
     <Compile Include="ViewModel\ContentFolder.cs" />
     <Compile Include="ViewModel\ContentType.cs" />
+    <Compile Include="ViewModel\Currency.cs" />
     <Compile Include="ViewModel\DashBoard.cs" />
     <Compile Include="ViewModel\Database.cs" />
+    <Compile Include="ViewModel\DiscussionEditViewModel.cs" />
+    <Compile Include="ViewModel\DiscussionViewModel.cs" />
     <Compile Include="ViewModel\Domain.cs" />
     <Compile Include="ViewModel\Ecommerce\Category.cs" />
     <Compile Include="ViewModel\Ecommerce\CommerceSite.cs" />
@@ -221,6 +237,7 @@
     <Compile Include="ViewModel\HtmlBlock.cs" />
     <Compile Include="ViewModel\InlineEditor.cs" />
     <Compile Include="ViewModel\Job.cs" />
+    <Compile Include="ViewModel\KConfig.cs" />
     <Compile Include="ViewModel\Label.cs" />
     <Compile Include="ViewModel\Layout.cs" />
     <Compile Include="ViewModel\Link.cs" />
@@ -330,6 +347,9 @@
     <Resource Include="Lang\zh.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Lang\ru.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

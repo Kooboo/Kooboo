@@ -107,12 +107,16 @@ namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
                 var reader = new StreamReader(file);
                 try
                 {
-                    var serializer = new XmlSerializer(typeof(KScriptSetting));
+                    System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(KScriptSetting));
 
-                    var setting = serializer.Deserialize(reader) as KScriptSetting;
+                    KScriptSetting setting = serializer.Deserialize(reader) as KScriptSetting;
 
                     var fileName = Path.GetFileNameWithoutExtension(file).ToLower();
                     settings.Add(fileName, setting);
+                }
+                catch(Exception ex)
+                {
+
                 }
                 finally
                 {
@@ -126,7 +130,11 @@ namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
         public static string GetPath()
         {
 #if DEBUG
-            var path = Path.GetFullPath(@"..\..\..\Kooboo.Web\_Admin\help\kScript");
+            var path = Path.GetFullPath(@"..\..\..\GitHub\Kooboo.Web\_Admin\help\kScript");
+            if (!Directory.Exists(path))
+            {
+                path = Path.GetFullPath(@"..\..\..\Kooboo.Web\_Admin\help\kScript");
+            }
 #else
             var path= Path.GetFullPath(@".\_Admin\help\kScript");
 #endif

@@ -66,6 +66,7 @@ namespace Kooboo.App
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            KoobooUpgrade.DeleteUpgradeRemainedFiles();
             //第一次默认启动
             if (KoobooAutoStartManager.IsFirstTimeAutoStart())
             {

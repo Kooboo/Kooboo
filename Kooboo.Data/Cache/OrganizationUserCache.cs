@@ -25,17 +25,8 @@ namespace Kooboo.Data.Cache
                 {
                     if (!CacheItems.ContainsKey(OrgId))
                     {
-                        OrgUser orguser = new OrgUser();
-                        var users = GetOrgUsers(OrgId); 
-                        if (users !=null)
-                        {
-                            foreach (var item in users)
-                            {
-                                orguser.Users.Add(item.Id); 
-                            }
-                        }
-                        orguser.LastModified = DateTime.Now; 
-                        CacheItems[OrgId] = orguser; 
+                        OrgUser orguser = getOrgUserIds(OrgId);
+                        CacheItems[OrgId] = orguser;
                     }
                 }
             }
@@ -43,6 +34,20 @@ namespace Kooboo.Data.Cache
             return CacheItems[OrgId]; 
         }
 
+        private static OrgUser getOrgUserIds(Guid OrgId)
+        {
+            OrgUser orguser = new OrgUser();
+            var users = GetOrgUsers(OrgId);
+            if (users != null)
+            {
+                foreach (var item in users)
+                {
+                    orguser.Users.Add(item.Id);
+                }
+            }
+            orguser.LastModified = DateTime.Now;
+            return orguser;
+        }
 
         public static void AddUser(Guid OrgId, Guid UserId)
         {
@@ -59,14 +64,28 @@ namespace Kooboo.Data.Cache
         }
 
         public static bool HasUser(Guid OrgId, Guid UserId)
-        {
-
+        {  
             var orgusr = GetOrg(OrgId); 
 
             if (orgusr !=null && orgusr.Users.Contains(UserId))
             {
                 return true; 
             } 
+
+            if (orgusr.LastModified < DateTime.Now.AddHours(-1))
+            {
+                var neworguser = getOrgUserIds(OrgId); 
+                if (neworguser !=null)
+                {
+                    CacheItems[OrgId] = neworguser;    
+
+                    if (neworguser.Users.Contains(UserId))
+                    {
+                        return true; 
+                    }
+                }
+            }
+
             return false;
         }
 

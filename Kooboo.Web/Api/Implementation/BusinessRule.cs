@@ -11,7 +11,7 @@ namespace Kooboo.Web.Api.Implementation
     public class BusinessRuleApi : SiteObjectApi<BusinessRule>
     {
 
-        public Dictionary<Guid, string> GetAvailableCodes(string eventname, ApiCall call)
+        public virtual Dictionary<Guid, string> GetAvailableCodes(string eventname, ApiCall call)
         {
             Enum.TryParse(eventname, out Kooboo.Sites.FrontEvent.enumEventType enumeventyptye);
 
@@ -40,7 +40,7 @@ namespace Kooboo.Web.Api.Implementation
             return Kooboo.Sites.Scripting.Manager.GetSetting(call.Context.WebSite, code);
         }
 
-        public void Post(string eventName, List<IFElseRule> rules, ApiCall call)
+        public virtual void Post(string eventName, List<IFElseRule> rules, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
 
@@ -99,7 +99,7 @@ namespace Kooboo.Web.Api.Implementation
             public int count { get; set; }
         }
 
-        public List<IFElseRule> ListByEvent(string eventname, ApiCall call)
+        public virtual List<IFElseRule> ListByEvent(string eventname, ApiCall call)
         {
             var enumvalue = Lib.Helper.EnumHelper.GetEnum<Kooboo.Sites.FrontEvent.enumEventType>(eventname);
 
@@ -131,7 +131,7 @@ namespace Kooboo.Web.Api.Implementation
 
         }
 
-        public void DeleteRule(Guid id, ApiCall call)
+        public virtual void DeleteRule(Guid id, ApiCall call)
         {
             var sitedb = call.Context.WebSite.SiteDb();
             sitedb.Rules.Delete(id);

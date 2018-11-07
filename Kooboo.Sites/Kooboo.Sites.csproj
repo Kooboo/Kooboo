@@ -166,6 +166,7 @@
     <Compile Include="InlineEditor\UpdateManager.cs" />
     <Compile Include="Models\BusinessRule.cs" />
     <Compile Include="Models\Code.cs" />
+    <Compile Include="Models\KConfig.cs" />
     <Compile Include="Models\SiteCluster.cs" />
     <Compile Include="Models\CoreObject.cs" />
     <Compile Include="Cache\ViewInSamePosition.cs" />
@@ -206,6 +207,7 @@
     <Compile Include="Render\Evaluators\ForEvaluator.cs" />
     <Compile Include="Render\Evaluators\Form.cs" />
     <Compile Include="Render\Evaluators\Header.cs" />
+    <Compile Include="Render\Evaluators\Kconfig.cs" />
     <Compile Include="Render\Evaluators\Label.cs" />
     <Compile Include="Render\Evaluators\OmitTag.cs" />
     <Compile Include="Render\Evaluators\PlaceHolder.cs" />
@@ -246,6 +248,7 @@
     <Compile Include="Render\RenderTask\ForRenderTask.cs" />
     <Compile Include="Render\RenderTask\HeaderRenderTask.cs" />
     <Compile Include="Render\RenderTask\IConditionEvaluator.cs" />
+    <Compile Include="Render\RenderTask\KConfigRenderTask.cs" />
     <Compile Include="Render\RenderTask\LabelRenderTask.cs" />
     <Compile Include="Render\RenderTask\LayoutRenderTask.cs" />
     <Compile Include="Render\RenderTask\PlaceHolderRenderTask.cs" />
@@ -254,6 +257,7 @@
     <Compile Include="Render\RenderTask\ValueRenderTask.cs" />
     <Compile Include="Repository\BusinessRuleRepository.cs" />
     <Compile Include="Repository\CodeRepository.cs" />
+    <Compile Include="Repository\kConfigRepository.cs" />
     <Compile Include="Repository\SiteClusterRepository.cs" />
     <Compile Include="Repository\ContinueConvertRepository.cs" />
     <Compile Include="Repository\FormSettingRepository.cs" />
@@ -538,7 +542,6 @@
     <Compile Include="Routing\PathTree.cs" />
     <Compile Include="Tag\TagGroup.cs" />
     <Compile Include="TAL\ConstTALAttributes.cs" />
-    <Compile Include="TAL\Functions\IFunction.cs" />
     <Compile Include="TaskQueue\TaskExecutor\PostSyncObjectTask.cs" />
     <Compile Include="TaskQueue\TaskExecutor\TaskExecutorContainer.cs" />
     <Compile Include="TaskQueue\TaskExecutor\WriteToDiskExecutor.cs" />
@@ -592,9 +595,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="TAL\Binding\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets')" />
   <PropertyGroup>

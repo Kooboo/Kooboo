@@ -92,6 +92,10 @@ namespace Kooboo.Data.Template
 
         public bool IsApproved { get; set;  }
 
+        public decimal Price { get; set; } = 0;
+
+        public string Currency { get; set; } = "CNY";
+
         public override int GetHashCode()
         {
             string unique = this.Description + this.Link + this.Name + this.SiteName + this.Tags + this.ThumbNail + this.UserName; 
@@ -103,13 +107,15 @@ namespace Kooboo.Data.Template
             {
                 unique += item; 
             }
-            unique += this.IsApproved.ToString(); 
+            unique += this.IsApproved.ToString();
+            unique += this.Price.ToString() + this.Currency.ToString();
 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
         } 
 
         public Guid ZipHash { get; set; }
 
-        public Guid BinaryHash { get; set; }   
+        public Guid BinaryHash { get; set; }  
+        
     }
 }

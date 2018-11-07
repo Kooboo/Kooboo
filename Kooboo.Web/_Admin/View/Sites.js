@@ -276,11 +276,6 @@ $(function() {
                     case 'import':
                         url = Kooboo.Route.Site.ImportPage;
                         break;
-                    case 'share':
-                        url = Kooboo.Route.Get(Kooboo.Route.Site.Share, {
-                            SiteId: m.siteId()
-                        });
-                        break;
                 }
                 return url;
             }
@@ -291,6 +286,12 @@ $(function() {
         this.exportSite = function(m, e) {
             self.showExportModal(true);
             self.selectedSiteId(m.siteId());
+        }
+
+        this.shareSite = function(m, e) {
+            location.href = Kooboo.Route.Get(Kooboo.Route.Site.Share, {
+                SiteId: m.siteId()
+            })
         }
 
         Kooboo.EventBus.subscribe("kb/sites/list/reload", function(sites) {

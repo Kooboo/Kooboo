@@ -16,7 +16,7 @@
             TransferPage: GetRoute("Sites/Transfer", true),
             TemplatePage: GetRoute("Sites/Template", true),
             Transferring: GetRoute("Sites/Transferring", true),
-            Share: GetRoute("Sites/Share")
+            Share: GetRoute("Sites/Share", true)
         },
         Email: {
             Compose: GetRoute("Emails/Compose", true),
@@ -140,6 +140,7 @@
             DetailList: GetRoute("Sync/List")
         },
         Domain: {
+            IndexPage: GetRoute("Domains", true),
             Register: GetRoute("Domains/Register"),
             DomainBinding: GetRoute("Domains/DomainBinding", true),
             SiteBindingSettings: GetRoute("Domains/SiteBindingSettings", true)
@@ -160,6 +161,11 @@
                 DetailPage: GetRoute("ECommerce/Product/Type")
             },
             CategoriesPage: GetRoute("ECommerce/Product/Categories")
+        },
+        Discussion: {
+            ListPage: GetRoute("Witkey/Discussion/Index"),
+            DetailPage: GetRoute("Witkey/Discussion/Detail"),
+            MyPage: GetRoute("Witkey/Discussion/My")
         },
         Get: function(PageRoute, params) {
 

@@ -1,0 +1,44 @@
+<div class="modal fade" data-bind="modal: isShow" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: title"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label for="" class="control-label col-md-3" data-bind="text: Kooboo.text.common.Types"></label>
+                        <div class="col-md-9">
+                            <p class="form-control-static" data-bind="foreach: variants">
+                                <a data-bind="text: $data.displayText, click: $parent.onSelectType, css: { green: $data.selected }" class="label label-sm label-default" href="javascript:;"></a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="control-label col-md-3" data-bind="text: Kooboo.text.common.unitPrice"></label>
+                        <div class="col-md-9">
+                            <p class="form-control-static" data-bind="text: currentVar() ? currentVar().price : Kooboo.text.component.hardwareModal.selectTypeFirst"></p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="control-label col-md-3" data-bind="text: Kooboo.text.component.hardwareModal.quantity"></label>
+                        <div class="col-md-9">
+                            <input type="number" class="form-control input-medium" min='0' data-bind="textInput: quantity, error: quantity, event: { keydown: Kooboo.event.input.positiveIntegerOnly }">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="control-label col-md-3" data-bind="text: Kooboo.text.common.totalPrice"></label>
+                        <div class="col-md-9">
+                            <p class="form-control-static" data-bind="text: totalPrice"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="click: onBuy, enable: isAbleToBuy, text: Kooboo.text.common.buy"></button>
+                <button class="btn gray" data-bind="text: Kooboo.text.common.cancel, click: onHide"></button>
+            </div>
+        </div>
+    </div>
+</div>

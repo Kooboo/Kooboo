@@ -23,5 +23,19 @@ namespace Kooboo.Sites.Scripting.Global
             var tb = db.GetOrCreateTable(Name);
             return new KTable(tb);
         }
+
+        public KTable this[string key]
+        {
+            get
+            {
+                return GetTable(key);  
+            }
+            set
+            {
+                
+            }
+        }
+
+
     }  
 } 

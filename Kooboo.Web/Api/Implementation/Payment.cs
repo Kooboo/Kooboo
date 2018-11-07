@@ -50,7 +50,10 @@ namespace Kooboo.Web.Api.Implementation
             var payerId = call.GetValue("payerID");
             var guid = call.GetGuidValue("guid");
             var cancel = call.GetBoolValue("cancel");
-            var result= Data.Service.CommerceService.PaypalReturn(payerId, guid,cancel);
+            var org = GlobalDb.Organization.Get(call.Context.User.Id);
+
+            var currency = org.Currency;
+            var result= Data.Service.CommerceService.PaypalReturn(payerId, guid,cancel, currency);
 
             var redirectUrl = System.Net.WebUtility.UrlDecode(call.GetValue("redirectUrl"));
             var response = new MetaResponse();

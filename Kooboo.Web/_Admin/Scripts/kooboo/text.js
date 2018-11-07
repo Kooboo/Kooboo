@@ -17,6 +17,7 @@
             name: "Name",
             add: "Add",
             select: "Select",
+            amount: "Amount",
             setting: "Setting",
             preview: "Preview",
             edit: "Edit",
@@ -40,6 +41,7 @@
             all: "All",
             empty: "Empty",
             next: "Next",
+            previous: "Previous",
             choose: "Choose",
             upload: "Upload",
             uploadImages: "Upload images",
@@ -50,10 +52,22 @@
             placeholder: "Placeholder",
             type: "Type",
             username: "Username",
+            buy: "Buy",
+            pay: "Pay",
+            failed: "Failed",
+            price: "Price",
+            author: "Author",
+            description: "Description",
+            tags: "Tags",
+            import: "Import",
+            back: "Back",
+            use: "Use",
+            confirm: "Confirm",
 
             API: "API",
             Code: "Code",
             HTML: "HTML",
+            Types: "Types",
             Database: "Database",
             Content: "Content",
             Contents: "Contents",
@@ -114,11 +128,17 @@
             Search: "Search",
             Debug: "Debug",
             SiteUser: "Site user",
+            KConfig: "Kooboo Config",
 
             ProductManagement: "Products management",
             ProductTypes: "Product types",
             ProductType: "Product type",
-            ProductCategories: "Product categories"
+            ProductCategories: "Product categories",
+
+            unitPrice: "Unit price",
+            totalPrice: "Total price",
+            year: "Year",
+            years: "Years"
         },
 
         online: {
@@ -312,6 +332,10 @@
             recharge: {
                 success: "Recharge successful",
                 fail: "Recharge failed"
+            },
+            purchase: {
+                success: "Purchase successful",
+                fail: "Purchase failed"
             },
 
             noRemoteSiteAvaliable: "No remote sites avaliable.",
@@ -665,6 +689,34 @@
                 title: "Conditions",
                 condition: "Condition",
                 add: "Add condition"
+            },
+            hardwareModal: {
+                quantity: "Quantity",
+                selectTypeFirst: "Select type first"
+            },
+            cashierModal: {
+                balanceInsuffisant: "Balance insuffisant, please topup first",
+                purchaseDomain: "Purchase domain"
+            },
+            topupModal: {
+                title: "Topup",
+                history: "Topup history",
+                paymentMethod: "Payment method",
+                rechargeAmount: "Recharge amount",
+                customize: "Customize",
+                largeThan: "large than 0.01",
+                paied: "Paied",
+                orderDate: "Order date"
+            },
+            templateModal: {
+                downloads: "Downloads",
+                dynamicContent: "Dynamic contents",
+                clickHere: "Click here",
+                hint: "Use the selected template as the base to create this website",
+                siteName: "Site name",
+                siteNameHint: "Start with letters and no space allowed",
+                domainHint: "Give your site a domain that other people can access.",
+                useThisTemplate: "Use this template"
             }
         },
 
@@ -757,12 +809,10 @@
                 count: "Count"
             },
             job: {
-                description: "Description",
                 startTime: "Start at",
                 repeat: "Repeat",
                 pending: "Pending",
                 completed: "Completed",
-                failed: "Failed",
                 jobName: "Job name",
                 executionTime: "Execution time",
                 message: "Message"
@@ -899,6 +949,13 @@
             }
         },
 
+        market: {
+            usageReport: "Usage report",
+            purchaseHistory: "Purchase history",
+            myDomains: "My domains",
+            changeCurrency: "Change currency"
+        },
+
         mail: {
             Inbox: "Inbox",
             Sent: "Sent",
@@ -1002,7 +1059,6 @@
             editLinks: "Edit Links",
             thumbnail: "Thumbnail",
             dimension: "Dimension",
-            amount: "Amount",
             note: "NOTE",
             references: "references",
             convertNoSettings: "This convert has no settings!",

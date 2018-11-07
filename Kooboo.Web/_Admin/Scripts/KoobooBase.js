@@ -1661,9 +1661,41 @@
     }
     extend(ProductCategory, BaseModel);
 
+    function KConfig() {
+        this.name = 'KConfig';
+
+        this.update = function(para) {
+            return this.executePost('Update', para);
+        }
+    }
+    extend(KConfig, BaseModel);
+
+    function APIGeneration() {
+        this.name = 'APIGeneration';
+
+        this.getTypes = function(para) {
+            return this.executeGet('Types', para);
+        }
+
+        this.getObjects = function(para) {
+            return this.executeGet('Objects', para);
+        }
+
+        this.getActions = function(para) {
+            return this.executeGet('Actions', para);
+        }
+
+        this.Generate = function(para) {
+            return this.executePost('Generate', para);
+        }
+    }
+    extend(APIGeneration, BaseModel);
+
     wind.Kooboo = {
+        APIGeneration: new APIGeneration(),
         Attachment: new Attachment(),
         Bar: new Bar(),
+        BaseModel: new BaseModel(),
         Binding: new Binding(),
         BusinessRule: new BusinessRule(),
         Certificate: new Certificate(),
@@ -1693,6 +1725,7 @@
         HtmlBlock: new HtmlBlock(),
         Editor: new Editor(),
         Job: new Job(),
+        KConfig: new KConfig(),
         KScript: new KScript(),
         Label: new Label(),
         Layout: new Layout(),
@@ -1951,6 +1984,19 @@
                     return false;
                 }
             },
+            positiveNumberOnly: function(m, e) {
+                if (e.keyCode >= 48 && e.keyCode <= 57 /*number*/ ) {
+                    return true;
+                } else if (e.keyCode >= 96 && e.keyCode <= 105 /*number*/ ) {
+                    return true;
+                } else if (e.keyCode == 8 /*BACKSPACE*/ || e.keyCode == 190 /*.*/ || e.keyCode == 110 /* . */ ) {
+                    return true;
+                } else if (e.keyCode == 9 /* Tab */ ) {
+                    return true
+                } else {
+                    return false;
+                }
+            },
             inputNumberOnly: function(m, e) {
                 if (e.keyCode >= 48 && e.keyCode <= 57 /*number*/ ) {
                     return true;
@@ -2020,9 +2066,9 @@
             var scripts = Kooboo.System.loadFile(unCachedScripts);
             var _paths = Object.keys(scripts);
             _paths.forEach(function(path) {
-                localStorage.setItem(path, scripts[path]);
                 if (scripts[path]) {
                     loadJS(path, scripts[path], fromLayout);
+                    localStorage.setItem(path, scripts[path]);
                 } else {
                     console.error('Load ' + path + ' failed. Please ensure your script path is correct.');
                 }

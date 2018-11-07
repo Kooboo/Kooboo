@@ -11,7 +11,7 @@ namespace Kooboo.Web.Api.Implementation
 {
     public class CodeApi : SiteObjectApi<Code>
     {
-        public CodeEditViewModel GetEdit(string codetype, ApiCall call)
+        public virtual CodeEditViewModel GetEdit(string codetype, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
             
@@ -152,7 +152,7 @@ namespace Kooboo.Web.Api.Implementation
             return sample;
         }
 
-        public Guid Post(CodeEditViewModel model, ApiCall call)
+        public virtual Guid Post(CodeEditViewModel model, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
 
@@ -282,7 +282,7 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
-        public List<CodeListItem> ListByType(string codetype, ApiCall call)
+        public virtual List<CodeListItem> ListByType(string codetype, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
             List<CodeListItem> result = new List<CodeListItem>();
@@ -354,8 +354,7 @@ namespace Kooboo.Web.Api.Implementation
 
             return result;
         }
-
-
+                                                           
         public bool HasScriptTag(string body)
         {
             if (body.IndexOf("<script", StringComparison.OrdinalIgnoreCase) > -1)
@@ -371,13 +370,12 @@ namespace Kooboo.Web.Api.Implementation
             }
             return false;
         }
-
-
-        public List<IEmbeddableItemListViewModel> EmbeddedScripts(ApiCall apiCall)
+              
+        public virtual List<IEmbeddableItemListViewModel> EmbeddedScripts(ApiCall apiCall)
         {
             return apiCall.WebSite.SiteDb().Code.GetEmbeddeds()
             .Select(o => new IEmbeddableItemListViewModel(apiCall.WebSite.SiteDb(), o)).ToList();
-        }
+        }            
 
     }
 }

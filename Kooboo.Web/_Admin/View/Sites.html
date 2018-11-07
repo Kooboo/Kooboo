@@ -57,7 +57,7 @@
                             <ul role="menu" class="dropdown-menu pull-right">
                                 <!-- ko if:!$data.inProgress() -->
                                 <li><a data-bind="click: $parent.exportSite.bind(this, $data)" href="javascript:;">Export</a></li>
-                                <li><a data-bind="click: $parent.SPAClick.bind(this, 'share')" href="javascript:;">Share</a></li>
+                                <li><a data-bind="click: $parent.shareSite.bind(this, $data)" href="javascript:;">Share</a></li>
                                 <li>
                                     <a data-bind="text:( $data.online() ? Kooboo.text.site.sites.takeOffline : Kooboo.text.site.sites.takeOnline), click: $parent.switchStatus" href="javascript:;"></a>
                                 </li>

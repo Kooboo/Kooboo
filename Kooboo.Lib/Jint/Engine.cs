@@ -309,6 +309,18 @@ namespace Jint
                         error = "JavaScript error on line" + jsex.Location.Start.Line.ToString() + ", cloumn: " + jsex.Location.Start.Column.ToString(); 
                     }
                 }      
+                else if (ex is ParserException)
+                {
+                    var pex = ex as ParserException;
+                    if (pex != null)
+                    {
+                        error = "JavaScript error on line" + pex.LineNumber.ToString() + ", cloumn: " + pex.Column.ToString();
+                    }
+                }
+                else
+                {
+                    error = ex.Message; 
+                }
             }
 
             if (error !=null)

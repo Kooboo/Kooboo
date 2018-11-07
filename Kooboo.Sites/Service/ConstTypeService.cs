@@ -166,6 +166,11 @@ namespace Kooboo.Sites.Service
             {
                 return ConstObjectType.BusinessRule;
             }
+            else if (TValueType == typeof(KConfig))
+            {
+                return ConstObjectType.Kconfig; 
+            }
+
             return ConstObjectType.Unknown;
         }
 
@@ -327,6 +332,10 @@ namespace Kooboo.Sites.Service
                 case ConstObjectType.SiteCluster:
                     {
                         return typeof(SiteCluster);
+                    }
+                case ConstObjectType.Kconfig:
+                    {
+                        return typeof(KConfig); 
                     }
 
                 default:

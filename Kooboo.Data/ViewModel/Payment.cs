@@ -19,6 +19,7 @@ namespace Kooboo.Data.ViewModel
 
         public PaymentMethod PaymentMethod { get; set; }
 
+        public string Currency { get; set; }
         /// <summary>
         /// TwoCheckout token
         /// </summary>
@@ -31,14 +32,21 @@ namespace Kooboo.Data.ViewModel
     }
 
     public class RechargeRequest
-    {
+    {   
+        public Guid PackageId { get; set; }
+
         public Guid OrganizationId { get; set; }
-
+                            
         public string UserIp { get; set; }
-
+                  
         public decimal Money { get; set; }
 
+        public decimal Price { get; set; }
+
+        public string Currency { get; set; }
+
         public PaymentMethod PaymentMethod { get; set; }
+                                  
         /// <summary>
         /// TwoCheckout token
         /// </summary>

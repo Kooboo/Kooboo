@@ -763,6 +763,16 @@ namespace Kooboo.Sites.Repository
             }
         }
 
+        private kConfigRepository  _kconfig;
+
+        public kConfigRepository KConfig
+        {
+            get
+            {
+                return EnsureRepository<kConfigRepository, KConfig>(ref _kconfig);
+            }
+        }
+
         private HtmlBlockRepository _htmlblocks;
         public HtmlBlockRepository HtmlBlocks
         {

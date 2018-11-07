@@ -19,6 +19,10 @@ $(function() {
         this.sessionId = ko.observable();
         this.isScanFinished = ko.observable(false);
 
+        this.diagnosisCodeURL = Kooboo.Route.Get(Kooboo.Route.Code.EditPage, {
+            codeType: 'diagnosis'
+        })
+
         Kooboo.Diagnosis.getList().then(function(res) {
             if (res.success) {
                 var items = Kooboo.objToArr(_.groupBy(res.model, function(item) {

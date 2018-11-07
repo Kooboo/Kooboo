@@ -9,6 +9,11 @@
 },{
     name: Kooboo.text.common.diagnosis
 }]}"></div>
+<div class="navbar navbar-default" data-bind="visible: !isScanningView()">
+    <div class="container-fluid">
+        <a class="btn green navbar-btn" data-bind="attr: { href: diagnosisCodeURL }">Add custom item</a>
+    </div>
+</div>
 <div class="row" id="diagnostics">
     <div class="col-md-12">
         <div class="kb-site-diagnose" data-bind="visible:!isScanningView()">

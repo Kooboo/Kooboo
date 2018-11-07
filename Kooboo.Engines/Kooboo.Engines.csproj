@@ -48,7 +48,8 @@
       <HintPath>Lib\IronRuby.Libraries.Yaml.dll</HintPath>
     </Reference>
     <Reference Include="LibSass.NET, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\libsassnet.3.3.7-alpha-2\lib\net40\LibSass.NET.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\LibSass.NET.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Dynamic">
       <HintPath>Lib\Microsoft.Dynamic.dll</HintPath>
@@ -143,12 +144,17 @@
   <ItemGroup>
     <Content Include="JavaScript\JavaScriptEngines\Notes.txt" />
     <Content Include="JavaScript\SassAndCoffee.JavaScript.csproj" />
+    <Content Include="libsass32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libsass64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="JavaScript\Uglify\uglify.js" />
     <EmbeddedResource Include="JavaScript\TypeScript\typescript.js" />
   </ItemGroup>
   <ItemGroup>
     <None Include="JavaScript\SassAndCoffee.JavaScript.nuspec" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj">
@@ -161,11 +167,4 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\libsassnet.3.3.7-alpha-2\build\libsassnet.targets" Condition="Exists('..\packages\libsassnet.3.3.7-alpha-2\build\libsassnet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\libsassnet.3.3.7-alpha-2\build\libsassnet.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\libsassnet.3.3.7-alpha-2\build\libsassnet.targets'))" />
-  </Target>
 </Project>

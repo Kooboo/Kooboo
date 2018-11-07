@@ -119,6 +119,7 @@ namespace Kooboo.Sites.Cache
                 || TValueType == typeof(ContentCategory)
                 || TValueType == typeof(SiteCluster)
                 || TValueType == typeof(Code)
+                || TValueType == typeof(KConfig)
                 )
             {
                 return true;
@@ -131,7 +132,6 @@ namespace Kooboo.Sites.Cache
               || TValueType == typeof(Style)
               || TValueType == typeof(Script)
               || TValueType == typeof(Image)
-               || TValueType == typeof(Code)
                )
                 {
                     return true;

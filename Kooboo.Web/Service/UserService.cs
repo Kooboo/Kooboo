@@ -45,7 +45,12 @@ namespace Kooboo.Web.Service
             string baseurl = currentRequestUrl; 
             if (Data.AppSettings.IsOnlineServer && !string.IsNullOrWhiteSpace(User.TempRedirectUrl))
             {
-                baseurl = User.TempRedirectUrl; 
+#if !DEBUG
+                {
+                          baseurl = User.TempRedirectUrl;
+                }
+#endif 
+         
             }
 
             string url; 
@@ -59,10 +64,14 @@ namespace Kooboo.Web.Service
                 url = returnUrl; 
             }
 
-            string fullurl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, url);
-
-            return fullurl;    
-        }          
+            string fullurl = url; 
+           
+            if (baseurl !=null && baseurl.ToLower().StartsWith("http://") || baseurl.ToLower().StartsWith("https://"))
+            {
+                fullurl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, url);
+            }      
+            return fullurl;
+        }
 
         public static string GetLoginRedirectUrl(RenderContext context, User user, string currentrequesturl, string returnurl)
         {     

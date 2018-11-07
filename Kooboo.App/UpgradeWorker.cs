@@ -15,7 +15,7 @@ namespace Kooboo.App
             {
                 get
                 {
-                    return  30 * 60;
+                    return  300 * 60;
                 }
             }
 
@@ -29,7 +29,7 @@ namespace Kooboo.App
                 if (KoobooUpgrade.IsAutoUpgrade)
                 {
                     var hours = DateTime.Now.Hour; 
-
+                     // only do it in the midnight of current computer zone. 
                     if (hours == 2 || hours == 3 || hours == 4)
                     {
                        await KoobooUpgrade.Upgrade();

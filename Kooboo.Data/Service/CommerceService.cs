@@ -14,6 +14,7 @@ namespace Kooboo.Data.Service
         private static string PaymentStatusUrl = AccountUrlHelper.Commerce("PaymentStatus");
         private static string PaypalReturnUrl = AccountUrlHelper.Commerce("PayPalReturn");
         private static string PayDomainUrl = AccountUrlHelper.Commerce("PayDomain");
+        private static string PayTemplateUrl = AccountUrlHelper.Commerce("PayTemplateUrl");
         private static string PayTwoCheckoutUrl = AccountUrlHelper.Commerce("TwoCheckoutTest");
 
         public static Organization RedeemVoucher(Guid OrganizationId, string code)
@@ -44,12 +45,13 @@ namespace Kooboo.Data.Service
             return result;
         }
 
-        public static PaymentStatusResponse PaypalReturn(string payerID,Guid guid,bool cancel)
+        public static PaymentStatusResponse PaypalReturn(string payerID,Guid guid,bool cancel,string currency)
         {
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("payerID", payerID);
             para.Add("guid", guid.ToString());
             para.Add("cancel", cancel.ToString());
+            para.Add("currency", currency);
             var paramStr = Lib.Helper.JsonHelper.Serialize(para);
             var result = HttpHelper.Post<PaymentStatusResponse>(PaypalReturnUrl, paramStr);
             return result;
@@ -59,13 +61,12 @@ namespace Kooboo.Data.Service
         {
             var json = Lib.Helper.JsonHelper.Serialize(request);
             return HttpHelper.Post<PaymentResponse>(PayDomainUrl, json);
-        }
-        public static bool PayTwoCheckoutTest(string token)
+        }  
+
+        public static PaymentResponse PayTemplate(PayPackageRequest request)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("token", token);
-            var paramStr = Lib.Helper.JsonHelper.Serialize(para);
-            return HttpHelper.Post<bool>(PayTwoCheckoutUrl, paramStr);
+            var json = Lib.Helper.JsonHelper.Serialize(request);
+            return HttpHelper.Post<PaymentResponse>(PayTemplateUrl, json);
         }
     }
 }

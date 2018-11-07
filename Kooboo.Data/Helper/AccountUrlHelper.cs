@@ -62,6 +62,11 @@ namespace Kooboo.Data.Helper
 
         }
 
+        public static string Currency(string relativeUrl)
+        {
+            return AccountBase + "/account/currency" + ensureRelative(relativeUrl);
+        }
+
 
 
         private static string ensureRelative(string relativeurl)

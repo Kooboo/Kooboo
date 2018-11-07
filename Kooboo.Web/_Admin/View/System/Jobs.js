@@ -18,7 +18,7 @@ $(function() {
             displayName: Kooboo.text.site.job.completed,
             value: 'completed'
         }, {
-            displayName: Kooboo.text.site.job.failed,
+            displayName: Kooboo.text.common.failed,
             value: 'failed'
         }])
 
@@ -54,7 +54,7 @@ $(function() {
                                         fieldName: "jobName",
                                         type: "text"
                                     }, {
-                                        displayName: Kooboo.text.site.job.description,
+                                        displayName: Kooboo.text.common.description,
                                         fieldName: "description",
                                         type: "text"
                                     }, {

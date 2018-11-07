@@ -31,8 +31,9 @@ namespace Kooboo.Sites.Authorization
 
             public static uint Events = Hierarchy.GetInt(1, 1, 8);
 
-
             public static uint Synchronization = Hierarchy.GetInt(1, 1, 9);
+
+            public static uint Configs = Hierarchy.GetInt(1, 1, 10);
         }
          
         public static uint Development = Hierarchy.GetInt(1, 2);

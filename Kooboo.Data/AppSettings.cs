@@ -542,6 +542,15 @@ namespace Kooboo.Data
                 return path;
             }
         }
+        public static string AppFolder
+        {
+            get
+            {
+                var path = GetPhysicsPath(@"AppData\app");
+                IOHelper.EnsureDirectoryExists(path);
+                return path;
+            }
+        }
 
         public static string GetPhysicsPath(string relativePath)
         {

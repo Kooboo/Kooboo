@@ -40,6 +40,16 @@ $(function() {
             }
         }
 
+        this.editUrl = function() {
+            return Kooboo.Route.Get(Kooboo.Route.Code.EditPage, {
+                id: self.id
+            })
+        }
+
+        this.reloadCode = function() {
+            location.reload();
+        }
+
         this.goToLine = function(lineIdx) {
 
             self.lines().forEach(function(line) {

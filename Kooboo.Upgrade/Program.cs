@@ -27,6 +27,7 @@ namespace Kooboo.Upgrade
         static void Main(string[] args)
         {
             Console.WriteLine("Upgrade in progress, please stand by...");
+
             DeleteMenu(GetSystemMenu(GetConsoleWindow(), false), SC_CLOSE, MF_BYCOMMAND);
 
             UpgradeHelper.Upgrade();

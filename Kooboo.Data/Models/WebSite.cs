@@ -288,6 +288,8 @@ namespace Kooboo.Data.Models
 
         [JsonConverter(typeof(StringEnumConverter))]
         public Data.Definition.WebsiteType SiteType { get; set; } = Definition.WebsiteType.p;
+                                            
+        public bool IsApp { get; set; }
 
         public override int GetHashCode()
         {
@@ -298,8 +300,7 @@ namespace Kooboo.Data.Models
             unique += this.LocalRootPath + this.MirrorWebSiteBaseUrl + this._LocalDiskSyncFolder;
 
             unique += this.DefaultCulture + this.AutoDetectCulture.ToString();
-
-
+                                      
             foreach (var item in this.Cultures)
             {
                 unique += item;
@@ -328,7 +329,8 @@ namespace Kooboo.Data.Models
             }
 
             unique += this.Published.ToString();
-            unique += this.SiteType.ToString(); 
+            unique += this.SiteType.ToString();
+            unique += this.IsApp.ToString(); 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }

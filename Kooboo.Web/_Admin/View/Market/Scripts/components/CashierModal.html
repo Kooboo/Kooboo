@@ -1,0 +1,51 @@
+<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.component.cashierModal.purchaseDomain"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th data-bind="text: Kooboo.text.component.table.domain"></th>
+                                <th data-bind="text: Kooboo.text.common.unitPrice"></th>
+                                <th data-bind="text: Kooboo.text.common.year"></th>
+                                <th data-bind="text: Kooboo.text.common.totalPrice"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-bind="if: item()">
+                                <td data-bind="text: item().domain"></td>
+                                <td data-bind="text: item().currencySymbol + item().unitPrice"></td>
+                                <td data-bind="text: item().year"></td>
+                                <td data-bind="text: item().currencySymbol + item().totalPrice"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2"></td>
+                                <td data-bind="text: Kooboo.text.site.profile.Balance"></td>
+                                <td data-bind="text: currencySymbol() + balance(), css: { danger: insuffisant }"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div class="form-group">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <!-- ko ifnot: insuffisant -->
+                <button class="btn green" data-bind="text: Kooboo.text.common.buy, click: onBuy"></button>
+                <!-- /ko -->
+                <!-- ko if: insuffisant -->
+                <button class="btn green" data-bind="text: Kooboo.text.component.cashierModal.balanceInsuffisant, click: onPay"></button>
+                <!-- /ko -->
+                <button class="btn gray" data-bind="text: Kooboo.text.common.cancel, click: onHide"></button>
+            </div>
+        </div>
+    </div>
+</div>

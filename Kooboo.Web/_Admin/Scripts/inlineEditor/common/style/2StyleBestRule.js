@@ -106,7 +106,12 @@ function StyleBestRule(){
     }
     function isEffectiveSelector(selector, el) {
         var doc = el.ownerDocument;
-        return _.includes($(selector, doc), el);
+        try{
+            return _.includes($(selector, doc), el);
+        }
+        catch(err){
+            return false;
+        }
     }
     function getMatchRulesArray(el,notFilterElementRule){
         var matchedCssRules=styleEditorHelper.getMatchedCSSRules(el),

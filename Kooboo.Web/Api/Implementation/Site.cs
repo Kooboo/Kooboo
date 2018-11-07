@@ -40,18 +40,16 @@ namespace Kooboo.Web.Api.Implementation
                 return "Site";
             }
         }
-
-
+                        
         public Dictionary<string, string> Types(ApiCall call)
         {
             Dictionary<string, string> types = new Dictionary<string, string>();
-            types.Add("p", Data.Language.Hardcoded.GetValue("public"));
-            types.Add("o", Data.Language.Hardcoded.GetValue("private"));
-            types.Add("m", Data.Language.Hardcoded.GetValue("member"));   
+            types.Add("p", Data.Language.Hardcoded.GetValue("public", call.Context));
+            types.Add("o", Data.Language.Hardcoded.GetValue("private", call.Context));
+            types.Add("m", Data.Language.Hardcoded.GetValue("member", call.Context));   
             return types;
         }
-
-
+                                                       
         public SiteCultureViewModel Langs(ApiCall request)
         {
             SiteCultureViewModel viewmodel = new SiteCultureViewModel();
@@ -164,7 +162,7 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
-        public BinaryResponse Export(ApiCall call)
+        public virtual BinaryResponse Export(ApiCall call)
         {
             var site = call.WebSite;
             if (site == null)
@@ -188,7 +186,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Attributes.RequireParameters("stores")]
-        public BinaryResponse ExportStore(ApiCall call)
+        public virtual BinaryResponse ExportStore(ApiCall call)
         {
             var site = call.WebSite;
             if (site == null)
@@ -254,6 +252,22 @@ namespace Kooboo.Web.Api.Implementation
                 site.Published = !site.Published;
             }
             Data.GlobalDb.WebSites.AddOrUpdate(site);
+        }
+
+
+        public void Preview(ApiCall call, Guid SiteId)
+        {                      
+            var site = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
+            if (site != null)
+            {                      
+                var baseurl = site.BaseUrl();
+
+                if (!string.IsNullOrEmpty(baseurl))
+                {
+                    call.Context.Response.Redirect(301, baseurl);
+                }   
+            }     
+            
         }
 
         public WebSite Get(ApiCall call)

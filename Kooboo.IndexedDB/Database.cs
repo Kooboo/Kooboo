@@ -219,6 +219,7 @@ namespace Kooboo.IndexedDB
             } 
             return this.openTableList[name];
         }
+                    
 
         public void DeleteTable(string name)
         {

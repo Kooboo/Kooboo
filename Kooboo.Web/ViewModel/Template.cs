@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Kooboo.Data.Models;
 
 namespace Kooboo.Web.ViewModel
 {
@@ -38,6 +39,10 @@ namespace Kooboo.Web.ViewModel
         public int MenuCount { get; set; }
 
         public int ViewCount { get; set; }
+
+        public decimal Price { get; set; }
+        
+        public CurrencyViewModel Currency { get; set; }
 
     }
 
@@ -92,6 +97,10 @@ namespace Kooboo.Web.ViewModel
 
 
         public string ThumbNail { get; set; }
+
+        public decimal Price { get; set; }
+
+        public CurrencyViewModel Currency { get; set; }
 
     }
       

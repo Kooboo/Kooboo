@@ -22,6 +22,7 @@
                 <!-- /ko -->
             </ul>
         </div>
+        <a data-bind="visible: ['api','all'].indexOf(curType()) > -1, click: onShowApiModal" class="btn navbar-btn green">API Generator</a>
         <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
     </div>
 </div>
@@ -32,6 +33,7 @@
 </ul>
 <div data-bind="component: { name: 'kb-table', params: tableData }"></div>
 <div data-bind="component: { name: 'kb-relation-modal' }"></div>
+<kb-api-generation-modal params='isShow: showAPIGenerationModal'></kb-api-generation-modal>
 <script>
     (function() {
         Kooboo.loadJS([
@@ -40,6 +42,7 @@
             "/_Admin/Scripts/components/kbBreadcrumb.js",
             "/_Admin/Scripts/tableModel.js",
             "/_Admin/Scripts/components/kbRelationModal.js",
+            "/_Admin/Scripts/components/kbAPIGenerationModal.js",
         ]);
     })()
 </script>

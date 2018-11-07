@@ -20,6 +20,10 @@ namespace Kooboo.Web.Api.Implementation
 
             var allusers = Kooboo.Data.GlobalDb.Organization.Users(call.Context.User.CurrentOrgId);
 
+            if (allusers == null)
+            {
+                allusers = new List<Data.Models.User>(); 
+            }
 
             var org = Kooboo.Data.GlobalDb.Organization.Get(call.Context.User.CurrentOrgId);
                                                                                          

@@ -47,7 +47,8 @@ namespace Kooboo.Sites.Render
         Repeater = 13,
         SiteLayout = 14,
         Url = 15,
-        KFrom = 16
+        KFrom = 16, 
+        kConfig=17      
     }
 
 }
