@@ -6,6 +6,7 @@ using Newtonsoft.Json.Serialization;
 using Kooboo.Api.ApiResponse;
 using Kooboo.Data.Context;
 using Kooboo.Data.Server;
+using System;
 
 namespace Kooboo.Api
 {
@@ -20,10 +21,10 @@ namespace Kooboo.Api
             }
         }
 
-        private string Prefix { get; set; }
+        public string Prefix { get; set; }
 
         private string _beforeapi; 
-       internal string BeforeApi
+        internal string BeforeApi
         {
             get
             {
@@ -51,7 +52,9 @@ namespace Kooboo.Api
             set
             { _beforeapi = value;    }
         }
-           
+
+        public Action<Kooboo.Data.Context.RenderContext, IResponse> Log { get; set; }
+
         public IApiProvider ApiProvider { get; set;  }
 
         public IKoobooMiddleWare Next
@@ -79,6 +82,11 @@ namespace Kooboo.Api
             ApiCall apirequest = new ApiCall() { Command = command, Context = context };
 
             var response = ApiManager.Execute(apirequest, this.ApiProvider);
+
+            if (Log !=null)
+            {
+                Log(context, response); 
+            }
 
             if (response is MetaResponse)
             {
