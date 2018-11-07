@@ -480,6 +480,11 @@
     <Compile Include="Less\Utils\NodeHelper.cs" />
     <Compile Include="Less\Utils\NumberExtensions.cs" />
     <Compile Include="Less\Utils\StringExtensions.cs" />
+    <Compile Include="Logging\DefaultLogger.cs" />
+    <Compile Include="Logging\ILogger.cs" />
+    <Compile Include="Logging\LogLevel.cs" />
+    <Compile Include="Logging\LogProvider.cs" />
+    <Compile Include="Logging\SimpleDateRollingLogWriter.cs" />
     <Compile Include="Reflection\AssemblyLoader.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Helper\DownloadHelper.cs" />

@@ -12,13 +12,11 @@ namespace Kooboo.Mail.Transport
 {
     public static class Delivery
     {
-        private static Kooboo.Logging.SimpleDateRollingLogWriter _logger;
+        private static Logging.ILogger _logger;
 
         static Delivery()
         {
-            _logger = new Logging.SimpleDateRollingLogWriter(d =>
-                System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "smtp", "send-" + d.ToString("yyyy-MM-dd") + ".txt")
-            );
+            _logger = Logging.LogProvider.GetLogger("smtp", "send");
         }
 
         public static async Task<ActionResponse> Send(string MailFrom, string RcptTo, string MessageContent)
@@ -28,17 +26,17 @@ namespace Kooboo.Mail.Transport
                 var result = await DoSend(MailFrom, RcptTo, MessageContent);
                 if (result.Success)
                 {
-                    _logger.Log($"{MailFrom},{RcptTo},Delivered,");
+                    _logger.LogInformation($"{MailFrom},{RcptTo},Delivered,");
                 }
                 else
                 {
-                    _logger.Log($"{MailFrom},{RcptTo},Bounced,{result.Message}");
+                    _logger.LogInformation($"{MailFrom},{RcptTo},Bounced,{result.Message}");
                 }
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.Log($"{MailFrom},{RcptTo},Exception,{ex.Message}");
+                _logger.LogInformation($"{MailFrom},{RcptTo},Exception,{ex.Message}");
                 throw;
             }
         }

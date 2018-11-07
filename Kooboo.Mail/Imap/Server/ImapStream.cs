@@ -97,22 +97,20 @@ namespace Kooboo.Mail.Imap
             _writer.Dispose();
         }
 
-        //private static Logging.SimpleDateRollingLogWriter _logWriter;
-        //static ImapStream()
-        //{
-        //    _logWriter = new Logging.SimpleDateRollingLogWriter(o =>
-        //        System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "imap", "log-" + o.ToString("yyyyMMdd") + ".txt")
-        //    );
-        //}
+        private static Logging.ILogger _logger;
+        static ImapStream()
+        {
+            _logger = Logging.LogProvider.GetLogger("imap", "imap");
+        }
 
         private void LogRead(string line)
         {
-            //_logWriter.Write("C: " + line);
+            _logger.LogDebug("C: " + line);
         }
 
         private void LogWrite(string line)
         {
-            //_logWriter.Write("S: " + line);
+            _logger.LogDebug("S: " + line);
         }
     }
 
