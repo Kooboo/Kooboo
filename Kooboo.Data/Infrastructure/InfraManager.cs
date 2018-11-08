@@ -38,8 +38,7 @@ namespace Kooboo.Data.Infrastructure
             }
 
         }
-
-
+                                                
         public static bool Test(Guid OrganizationId, InfraType InfraType, int amount)
         {
             return instance.Test(OrganizationId, InfraType, amount); 

@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App\AppContext.cs" />
     <Compile Include="Authorization\Actions.cs" />
     <Compile Include="Authorization\EnumUserRole.cs" />
     <Compile Include="Authorization\Hierarchy.cs" />

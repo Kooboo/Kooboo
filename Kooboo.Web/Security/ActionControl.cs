@@ -22,7 +22,7 @@ namespace Kooboo.Web.Security
                 foreach (var item in allpages.GroupBy(o => o.taskid))
                 {
                     var pages = item.ToList();
-                    if (pages.Count > 15)
+                    if (pages.Count > 5)   // only allow additional download of 5 more pages.. 
                     {
                         return false;
                     }

@@ -213,6 +213,11 @@ namespace Kooboo.Sites.Service
                     return DataConstants.Default407Page; 
                 }
 
+                else if (statusCode == 402)
+                {
+                    return DataConstants.Default402Page; 
+                }
+
                 return DataConstants.DefaultError;
             }
 
@@ -275,7 +280,7 @@ namespace Kooboo.Sites.Service
         {
             string rawcontent = null; 
 
-            if (relativeUrl == DataConstants.Default403Page || relativeUrl == DataConstants.Default407Page || relativeUrl == DataConstants.Default404Page || relativeUrl == DataConstants.Default500Page || relativeUrl == DataConstants.DefaultError)
+            if (relativeUrl == DataConstants.Default403Page || relativeUrl == DataConstants.Default407Page || relativeUrl == DataConstants.Default404Page || relativeUrl == DataConstants.Default402Page || relativeUrl == DataConstants.Default500Page || relativeUrl == DataConstants.DefaultError)
             {
                 string path = relativeUrl.Replace("/", "\\"); 
                 string filename = Lib.Helper.IOHelper.CombinePath(AppSettings.RootPath, relativeUrl) +".html"; 

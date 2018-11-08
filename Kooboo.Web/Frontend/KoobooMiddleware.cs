@@ -72,8 +72,8 @@ namespace Kooboo.Web.FrontRequest
                         {
                             if (Data.AppSettings.IsOnlineServer && !Kooboo.Web.Security.ActionControl.CanServerDownloadMorePages(kooboocontext.SiteDb, kooboocontext.RenderContext.Request.RelativeUrl))
                             {
-                                kooboocontext.RenderContext.Response.StatusCode = 407;
-                                var errorbody = await WebSiteService.RenderCustomError(kooboocontext, 407);
+                                kooboocontext.RenderContext.Response.StatusCode = 402;
+                                var errorbody = await WebSiteService.RenderCustomError(kooboocontext, 402);
                                 if (!string.IsNullOrWhiteSpace(errorbody))
                                 {
                                     kooboocontext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(errorbody);
@@ -150,7 +150,7 @@ namespace Kooboo.Web.FrontRequest
         public async Task ExecuteKooboo(FrontContext frontContext)
         {
             DateTime endtime = default(DateTime);
-
+                                                      
             if (!frontContext.WebSite.Published && frontContext.RenderContext.Request.Channel == Data.Context.RequestChannel.Default)
             {
                 if ((frontContext.Route != null && frontContext.Route.DestinationConstType == ConstObjectType.Page) || frontContext.RenderContext.User == null)
@@ -166,7 +166,7 @@ namespace Kooboo.Web.FrontRequest
                 try
                 {
                     await RouteRenderers.RenderAsync(frontContext);
-                    endtime = DateTime.UtcNow;
+                    endtime = DateTime.UtcNow;   
                 }
                 catch (Exception ex)
                 {
@@ -244,5 +244,8 @@ namespace Kooboo.Web.FrontRequest
             }
             return false;
         }
+
+
+        
     }
 }

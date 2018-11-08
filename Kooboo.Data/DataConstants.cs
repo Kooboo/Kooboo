@@ -30,6 +30,7 @@ namespace Kooboo
         public const string Default404Page = "/_Admin/Error/404";
         public const string Default500Page = "/_Admin/Error/500";
         public const string Default407Page = "/_Admin/Error/407";
+        public const string Default402Page = "/_Admin/Error/402"; //continue download limitation..
         public const string DefaultError = "/_admin/error/default";
 
 

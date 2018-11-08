@@ -158,6 +158,7 @@ namespace Kooboo.Sites.SiteTransfer
                     download = await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer);
                     if (download != null)
                     {
+                       
                         break; 
                     }
                 }
@@ -168,6 +169,11 @@ namespace Kooboo.Sites.SiteTransfer
             {
                 DownloadManager downloadManager = new DownloadManager() {  SiteDb = siteDb }; 
                 SiteObject downloadobject = TransferHelper.AddDownload(downloadManager, download, fullurl, false, true, fullurl);
+
+                if (downloadobject is Page || downloadobject is View)
+                {
+                    siteDb.TransferPages.AddOrUpdate(new TransferPage() { absoluteUrl = fullurl, PageId = downloadobject.Id }); 
+                }
 
                 /// for continue download content... 
                 Continue.ContinueTask.Convert(siteDb, downloadobject); 
