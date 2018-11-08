@@ -35,11 +35,13 @@ namespace Kooboo.Data.Models
 
         public DemandStatus Status { get; set; }
 
-        public string Skills { get; set; }
+        public List<string> Skills { get; set; }
 
         public decimal Budget { get; set; }
 
         public int ProposalCount { get; set; }
+
+        public byte[] Attachments { get; set; }
 
         public DateTime CreateTime { get; set; }
 
