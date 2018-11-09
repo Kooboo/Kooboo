@@ -1,0 +1,78 @@
+<!-- #layout name=default -->
+<div id="main">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" data-bind="text: title"></h3>
+                    </div>
+                    <div class="panel-body">
+                        <div data-bind="html: description" class="margin-bottom-20"></div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Duration</label>
+                                    <p class="form-control-static" data-bind="text: duration"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>Required skills</label>
+                                    <p class="form-control-static">
+                                        <!-- ko foreach: skills -->
+                                        <label class="label label-info" data-bind="text: $data"></label>
+                                        <!-- /ko -->
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Budget</label>
+                                    <p class="form-control-static" data-bind="text: budget"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Status</label>
+                                    <p class="form-control-static" data-bind="text: budget"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Discussion</h3>
+                    </div>
+                    <div class="panel-body"></div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Proposals</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="list-group" data-bind="foreach: proposals">
+                                <a href="#" class="list-group-item active">
+                                    <h4 class="list-group-item-heading">List group item heading</h4>
+                                    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function() {
+        // Kooboo.loadJS([])
+    })()
+</script>
+<script src="/_Admin/View/Witkey/Scripts/Kooboo.Witkey.js"></script>
+<script src="/_Admin/View/Witkey/Demand/Detail.js"></script>

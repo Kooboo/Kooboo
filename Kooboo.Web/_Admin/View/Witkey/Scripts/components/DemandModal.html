@@ -7,27 +7,43 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Title</label>
-                    <input type="text" class="form-control">
+                    <label data-bind="textError: title">Title</label>
+                    <input type="text" class="form-control" data-bind="value: title">
                 </div>
                 <div class="form-group">
-                    <label>Description</label>
-                    <textarea class="form-control"></textarea>
+                    <label data-bind="textError: title">Required skills</label>
+                    <input type="text" class="form-control" data-bind="value: skills">
+                </div>
+                <div class="form-group">
+                    <label data-bind="textError: description">Description</label>
+                    <textarea class="form-control" data-bind="richeditor: description, value: description"></textarea>
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <label>Start time</label>
-                        <input type="text" class="form-control">
+                        <div class="form-group">
+                            <label data-bind="textError: startDate">Start time</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="date" class="form-control" data-bind="value: startDate">
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-4">
-                        <label>End time</label>
-                        <input type="text" class="form-control">
+                        <div class="form-group">
+                            <label data-bind="textError: endDate">End time</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="date" class="form-control" data-bind="value: endDate">
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-4">
-                        <label>Budget</label>
-                        <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-cny"></i></span>
-                            <input type="text" class="form-control">
+                        <div class="form-group">
+                            <label data-bind="textError: budget">Budget</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i data-bind="attr: { class: 'fa fa-' + currencyCode(), title: currencyCode }"></i></span>
+                                <input type="number" class="form-control" data-bind="value: budget, event: { keydown: Kooboo.event.input.positiveNumberOnly }">
+                            </div>
                         </div>
                     </div>
                 </div>

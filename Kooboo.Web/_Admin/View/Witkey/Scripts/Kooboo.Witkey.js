@@ -32,7 +32,25 @@ $(function() {
     }
     extend(Discussion, Kooboo.BaseModel);
 
+    function Demand() {
+        this.name = 'Demand';
+
+        this.addOrUpdate = function(para) {
+            return this.executePost('AddOrUpdate', para);
+        }
+
+        this.getProposalList = function(para) {
+            return this.executeGet('ProposalList', para);
+        }
+
+        this.isProposalUser = function(para) {
+            return this.executeGet('IsProposalUser', para);
+        }
+    }
+    extend(Demand, Kooboo.BaseModel);
+
     Kooboo = Object.assign({
+        Demand: new Demand(),
         Discussion: new Discussion()
     }, Kooboo);
 })

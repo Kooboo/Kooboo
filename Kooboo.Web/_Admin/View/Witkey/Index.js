@@ -10,8 +10,6 @@ $(function() {
         Kooboo.User.get().then(function(res) {
             if (res.success) {
                 self.userName(res.model.userName);
-
-                self.demands([1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4]);
             }
         })
 
@@ -19,11 +17,23 @@ $(function() {
 
         this.demands = ko.observableArray();
 
-        Kooboo.Discussion.getList().then(function(res) {
+        Kooboo.Discussion.getList({
+            pageSize: 8
+        }).then(function(res) {
             if (res.success) {
                 self.discussions(res.model.list);
             }
         })
+
+        this.deleteDemand = function(m, e) {
+            Kooboo.Demand.Delete({
+                id: m
+            }).then(function(res) {
+                if (res.success) {
+                    self.getDemandList();
+                }
+            })
+        }
 
         this.showDiscussionModal = ko.observable(false);
         this.onAddDiscussion = function() {
@@ -35,6 +45,36 @@ $(function() {
             self.showDemandModal(true);
         }
 
+        this.getDemandList = function() {
+            Kooboo.Demand.getList({
+                pageSize: 8
+            }).then(function(res) {
+                if (res.success) {
+                    self.demands(res.model.list.map(function(item) {
+                        return {
+                            id: item.id,
+                            title: item.title,
+                            userName: item.userName,
+                            url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
+                                id: item.id
+                            }),
+                            startDate: new Date(item.startDate).toLocaleDateString(),
+                            endDate: new Date(item.endDate).toLocaleDateString(),
+                            budget: item.budget,
+                            skills: item.skills,
+                            createdTime: new Date(item.createTime).toDefaultLangString(),
+                            proposalCount: item.proposalCount
+                        }
+                    }));
+                }
+            })
+        }
+
+        this.getDemandList();
+
+        Kooboo.EventBus.subscribe('kb/component/demand-modal/saved', function() {
+            self.getDemandList();
+        })
     }
 
     var vm = new viewModel();

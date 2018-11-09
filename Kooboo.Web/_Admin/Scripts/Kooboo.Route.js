@@ -164,8 +164,11 @@
         },
         Discussion: {
             ListPage: GetRoute("Witkey/Discussion/Index"),
-            DetailPage: GetRoute("Witkey/Discussion/Detail"),
-            MyPage: GetRoute("Witkey/Discussion/My")
+            DetailPage: GetRoute("Witkey/Discussion/Detail")
+        },
+        Demand: {
+            ListPage: GetRoute("Witkey/Demand/Index"),
+            DetailPage: GetRoute("Witkey/Demand/Detail")
         },
         Get: function(PageRoute, params) {
 
