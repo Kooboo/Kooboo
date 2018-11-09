@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Kooboo.Data.Models;
 
-namespace Kooboo.Data.Models
+namespace Kooboo.Web.ViewModel
 {
-    public class Demand : IGolbalObject
+    public class DemandItemViewModel
     {
         private Guid _id;
         public Guid Id
@@ -30,11 +31,11 @@ namespace Kooboo.Data.Models
 
         public string Description { get; set; }
 
-        public Guid UserId { get; set; }
-
         public string UserName { get; set; }
 
-        public DemandStatus Status { get; set; }
+        public string StatusKey { get; set; }
+
+        public string StatusValue { get; set; }
 
         public List<string> Skills { get; set; }
 
@@ -46,7 +47,6 @@ namespace Kooboo.Data.Models
 
         public string Currency { get; set; }
 
-        [JsonIgnore]
         public string Symbol
         {
             get
@@ -60,14 +60,5 @@ namespace Kooboo.Data.Models
         public DateTime StartDate { get; set; }
 
         public DateTime EndDate { get; set; }
-    }
-
-    public enum DemandStatus
-    {
-        Tendering=0,
-        EndOfTender=1,
-        UnFinished=2,
-        Finish=3,
-        Invalid=4
     }
 }
