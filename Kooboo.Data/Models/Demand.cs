@@ -36,6 +36,15 @@ namespace Kooboo.Data.Models
 
         public DemandStatus Status { get; set; }
 
+        [JsonIgnore]
+        public string DemandStatus
+        {
+            get
+            {
+                return Status.ToString();
+            }
+        }
+
         public List<string> Skills { get; set; }
 
         public decimal Budget { get; set; }
