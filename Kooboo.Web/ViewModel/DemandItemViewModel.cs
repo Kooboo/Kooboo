@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Kooboo.Data.Models;
+using Newtonsoft.Json.Linq;
 
 namespace Kooboo.Web.ViewModel
 {
@@ -33,9 +34,7 @@ namespace Kooboo.Web.ViewModel
 
         public string UserName { get; set; }
 
-        public string StatusKey { get; set; }
-
-        public string StatusValue { get; set; }
+        public JObject Status { get; set; }
 
         public List<string> Skills { get; set; }
 
