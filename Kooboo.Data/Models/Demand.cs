@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Kooboo.Data.Models
 {
@@ -42,6 +43,17 @@ namespace Kooboo.Data.Models
         public int ProposalCount { get; set; }
 
         public byte[] Attachments { get; set; }
+
+        public string Currency { get; set; }
+
+        [JsonIgnore]
+        public string Symbol
+        {
+            get
+            {
+                return Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Currency);
+            }
+        }
 
         public DateTime CreateTime { get; set; }
 
