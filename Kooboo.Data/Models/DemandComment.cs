@@ -26,11 +26,19 @@ namespace Kooboo.Data.Models
         }
         public Guid DemandId { get; set; }
 
+        public Guid ProposalId { get; set; }
+
+        public Guid ParentCommentId { get; set; }
+
+        public int CommentCount { get; set; }
+
         public string Content { get; set; }
 
         public Guid UserId { get; set; }
 
         public string UserName { get; set; }
+
+        //public bool IsShare { get; set; }
 
         public DateTime CreateTime { get; set; }
 
