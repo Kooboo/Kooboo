@@ -26,8 +26,6 @@ namespace Kooboo.Data.Models
             }
         }
 
-        public string Title { get; set; }
-
         public string Description { get; set; }
 
         public Guid UserId { get; set; }
@@ -55,9 +53,10 @@ namespace Kooboo.Data.Models
 
         public DateTime CreateTime { get; set; }
 
-        public DateTime StartDate { get; set; }
-
-        public DateTime EndDate { get; set; }
+        /// <summary>
+        /// days
+        /// </summary>
+        public int Duration { get; set; }
 
     }
 
