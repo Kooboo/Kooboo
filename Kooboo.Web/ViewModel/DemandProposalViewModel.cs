@@ -14,6 +14,10 @@ namespace Kooboo.Web.ViewModel
 
         public string Budget { get; set; }
 
+        public string Currency { get; set; }
+        
+        public string Symbol { get; set; }
+
         public bool WinTheBidding { get; set; }
 
         public DateTime CreateTime { get; set; }
