@@ -18,6 +18,10 @@ namespace Kooboo.Web.ViewModel
 
         public decimal Budget { get; set; }
 
+        public string Currency { get; set; }
+
+        public string Symbol { get; set; }
+
         public int ProposalCount { get; set; }
 
         public List<string> Skills { get; set; }
