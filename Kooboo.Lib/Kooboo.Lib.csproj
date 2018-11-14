@@ -162,6 +162,7 @@
     <Compile Include="Helper\Encoding\Ude\ICharsetDetector.cs" />
     <Compile Include="Helper\Encoding\W3Encoding.cs" />
     <Compile Include="Helper\EnumHelper.cs" />
+    <Compile Include="Helper\HttpClientHelper.cs" />
     <Compile Include="Helper\HttpHelper.cs" />
     <Compile Include="Helper\IPHelper.cs" />
     <Compile Include="Helper\JintHelper.cs" />

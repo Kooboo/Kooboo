@@ -135,27 +135,27 @@ namespace Kooboo.Lib.Helper
         {
             try
             {
-                using (HttpClient client = CreateHttpClient(cookieContainer))
+                HttpClient client = HttpClientHelper.Client;
+                HttpClientHelper.SetCookieContainer(cookieContainer, fullUrl);
+
+                var response = await client.GetAsync(fullUrl);
+
+                if (response == null)
                 {
-                    var response = await client.GetAsync(fullUrl);
-
-                    if (response == null)
-                    {
-                        return null;
-                    }
-
-                    var statuscode = (int)response.StatusCode;
-                    if (statuscode >= 300 && statuscode <= 399)
-                    {
-                        var url = response.Headers.GetValues("Location").FirstOrDefault();
-                        if (!string.IsNullOrEmpty(url) && !url.ToLower().StartsWith("http"))
-                        {
-                            url = Lib.Helper.UrlHelper.Combine(fullUrl, url);
-                        }
-                        return await DownloadUrlAsync(url, cookieContainer);
-                    }
-                    return await ProcessResponse1(response);
+                    return null;
                 }
+
+                var statuscode = (int)response.StatusCode;
+                if (statuscode >= 300 && statuscode <= 399)
+                {
+                    var url = response.Headers.GetValues("Location").FirstOrDefault();
+                    if (!string.IsNullOrEmpty(url) && !url.ToLower().StartsWith("http"))
+                    {
+                        url = Lib.Helper.UrlHelper.Combine(fullUrl, url);
+                    }
+                    return await DownloadUrlAsync(url, cookieContainer);
+                }
+                return await ProcessResponse1(response);
             }
             catch (Exception ex)
             {
@@ -315,32 +315,6 @@ namespace Kooboo.Lib.Helper
                 return true;
             }
             return false;
-        }
-
-        public static HttpClient CreateHttpClient(CookieContainer cookiecontainer)
-        { 
-            HttpClientHandler handler = new HttpClientHandler();
-            if (cookiecontainer == null)
-            {
-                handler.CookieContainer = new CookieContainer();
-            }
-            else
-            {
-                handler.CookieContainer = cookiecontainer; 
-            }
-       
-            handler.Proxy = null;
-            handler.AllowAutoRedirect = true; 
-            
-            HttpClient client = new HttpClient(handler);
-            client.Timeout = new TimeSpan(0, 0, 45);
-
-            client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("*/*"));
-            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36");
-            client.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
-            //client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.8"); 
-
-            return client;
         }
     }
 
