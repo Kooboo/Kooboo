@@ -225,6 +225,7 @@
     <Compile Include="ViewModel\DashBoard.cs" />
     <Compile Include="ViewModel\Database.cs" />
     <Compile Include="ViewModel\DemandItemViewModel.cs" />
+    <Compile Include="ViewModel\DemandProposalViewModel.cs" />
     <Compile Include="ViewModel\DemandViewModel.cs" />
     <Compile Include="ViewModel\DiscussionEditViewModel.cs" />
     <Compile Include="ViewModel\DiscussionViewModel.cs" />
