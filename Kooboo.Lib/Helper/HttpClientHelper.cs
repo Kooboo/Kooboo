@@ -10,23 +10,15 @@ namespace Kooboo.Lib.Helper
 {
     public static class HttpClientHelper
     {
-        private static HttpClient _client;
        
-        public static HttpClient Client
-        {
-            get
-            {
-                return _client;
-            }
-        }
+        public static HttpClient Client { get; private set; }
 
         private static CookieContainer _cookieContainer;
 
         static HttpClientHelper()
         {
             _cookieContainer = new CookieContainer();
-            _client = CreateHttpClient(_cookieContainer);
-
+            Client = CreateHttpClient(_cookieContainer);
         }
 
         public static void SetCookieContainer(CookieContainer cookieContainer,string url)
