@@ -64,10 +64,10 @@ namespace Kooboo.Data.Models
 
     public enum DemandStatus
     {
-        Tendering=0,
-        EndOfTender=1,
-        UnFinished=2,
-        Finish=3,
-        Invalid=4
+        Tendering = 0,
+        EndOfTender = 1,
+        Unfinished = 2,
+        Finished = 3,
+        Invalid = 4
     }
 }

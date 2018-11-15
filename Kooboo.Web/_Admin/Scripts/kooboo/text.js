@@ -149,6 +149,7 @@
         confirm: {
             deleteItem: "Are you sure you want to delete this item?",
             deleteItems: "Are you sure you want to delete these items?",
+            recallProposal: "Are you sure to recall your proposal?",
             deleteItemsWithRef: "This item is being used, deleting an in-use item will remove the reference from the container object, are you sure you want to continue?",
             overrideFile: "A file with the same name already exists, would you like to overwrite it?",
             exit: "Are you sure you want to exit?",

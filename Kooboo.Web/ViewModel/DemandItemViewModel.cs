@@ -36,7 +36,7 @@ namespace Kooboo.Web.ViewModel
 
         public string UserName { get; set; }
 
-        public JObject Status { get; set; }
+        public Dictionary<string, string> Status { get; set; }
 
         public List<string> Skills { get; set; }
 

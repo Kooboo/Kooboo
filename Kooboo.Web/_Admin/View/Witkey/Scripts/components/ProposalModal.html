@@ -1,0 +1,40 @@
+<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Proposal</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea class="autosize form-control" data-bind="value: description"></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label data-bind="textError: endDate">Duration</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" data-bind="value: duration, event: { keydown: Kooboo.event.input.positiveIntegerOnly }">
+                                <span class="input-group-addon">Day(s)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Budget</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i data-bind="attr: { class: 'fa fa-' + currencySymbol(), title: currencyCode }"></i></span>
+                                <input type="number" class="form-control" data-bind="value: budget, event: { keydown: Kooboo.event.input.positiveNumberOnly }">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="text: Kooboo.text.site.form.submit, click: onSave"></button>
+                <button class="btn gray" data-bind="click: onHide">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

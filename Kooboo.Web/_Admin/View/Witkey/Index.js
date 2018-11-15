@@ -60,7 +60,8 @@ $(function() {
                             }),
                             startDate: new Date(item.startDate).toLocaleDateString(),
                             endDate: new Date(item.endDate).toLocaleDateString(),
-                            budget: item.budget,
+                            budget: item.symbol + item.budget,
+                            currency: item.currency,
                             skills: item.skills,
                             createdTime: new Date(item.createTime).toDefaultLangString(),
                             proposalCount: item.proposalCount

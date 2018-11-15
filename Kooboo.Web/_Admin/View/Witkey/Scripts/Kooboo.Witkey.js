@@ -43,8 +43,16 @@ $(function() {
             return this.executeGet('ProposalList', para);
         }
 
-        this.isProposalUser = function(para) {
-            return this.executeGet('IsProposalUser', para);
+        this.getUserProposal = function(para) {
+            return this.executeGet('GetUserProposal', para);
+        }
+
+        this.deleteProposal = function(para) {
+            return this.executePost('DeleteProposal', para);
+        }
+
+        this.addOrUpdateProposal = function(para) {
+            return this.executePost('AddOrUpdateProposal', para);
         }
     }
     extend(Demand, Kooboo.BaseModel);

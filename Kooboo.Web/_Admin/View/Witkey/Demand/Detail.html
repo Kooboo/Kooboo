@@ -11,6 +11,21 @@
                         <div data-bind="html: description" class="margin-bottom-20"></div>
                         <hr>
                         <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Demand owner</label>
+                                    <p class="form-control-static" data-bind="text: userName"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Budget</label>
+                                    <p class="form-control-static" data-bind="text: budget, attr: { title: currency }"></p>
+                                </div>
+                            </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Duration</label>
@@ -22,21 +37,15 @@
                                     <label>Required skills</label>
                                     <p class="form-control-static">
                                         <!-- ko foreach: skills -->
-                                        <label class="label label-info" data-bind="text: $data"></label>
+                                        <label class="label label-sm label-info" data-bind="text: $data"></label>
                                         <!-- /ko -->
                                     </p>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label>Budget</label>
-                                    <p class="form-control-static" data-bind="text: budget"></p>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
                                     <label>Status</label>
-                                    <p class="form-control-static" data-bind="text: budget"></p>
+                                    <p class="form-control-static" data-bind="text: displayStatus"></p>
                                 </div>
                             </div>
                         </div>
@@ -44,9 +53,18 @@
                 </div>
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Discussion</h3>
+                        <h3 class="panel-title">Comment</h3>
                     </div>
-                    <div class="panel-body"></div>
+                    <div class="panel-body">
+                        <!-- ko ifnot: isTendering -->
+                        <div class="well text-center">
+                            <p><i class="fa fa-ban"></i> <span>This demand is invalid now.</span></p>
+                        </div>
+                        <!-- /ko -->
+                        <!-- ko if: isTendering -->
+                        <reply-panel></reply-panel>
+                        <!-- /ko -->
+                    </div>
                 </div>
             </div>
             <div class="col-md-4">
@@ -55,23 +73,61 @@
                         <h3 class="panel-title">Proposals</h3>
                     </div>
                     <div class="panel-body">
-                        <div class="row">
-                            <div class="list-group" data-bind="foreach: proposals">
-                                <a href="#" class="list-group-item active">
-                                    <h4 class="list-group-item-heading">List group item heading</h4>
-                                    <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus. Maecenas sed diam eget risus varius blandit.</p>
-                                </a>
-                            </div>
+                        <!-- ko if: isTendering -->
+                        <!-- ko if: isProposalUser -->
+                        <div class="btn-group btn-group-justified">
+                            <a href="javascript:;" class="btn blue" data-bind="click: onShowProposalModal">Update your bid</a>
+                            <!-- ko ifnot: isSelectedProposal -->
+                            <a href="javascript:;" class="btn red" data-bind="click: onDeleteMyProposal">Delete your bid</a>
+                            <!-- /ko -->
                         </div>
+                        <!-- /ko -->
+                        <!-- ko ifnot: isProposalUser -->
+                        <div class="form-group">
+                            <button class="btn btn-block blue" data-bind="click: onShowProposalModal">Make a bid</button>
+                        </div>
+                        <!-- /ko -->
+                        <!-- /ko -->
+                        <!-- ko ifnot: isTendering -->
+                        <div class="well well-sm text-center">
+                            <p><i class="fa fa-ban"></i> <span>This demand is invalid now.</span></p>
+                        </div>
+                        <!-- /ko -->
                     </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <td>Bidder</td>
+                                <td>Duration</td>
+                                <td>Budget</td>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="visible: proposals().length, foreach: proposals">
+                            <tr>
+                                <td data-bind="text: $data.userName"></td>
+                                <td data-bind="text: $data.duration"></td>
+                                <td data-bind="text: $data.budget, attr: { title: $data.currency }"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot data-bind="visible: !proposals().length">
+                            <tr>
+                                <td colspan="3" class="text-center">No bidder</td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
+    <proposal-modal params="isShow: showProposalModal, demandId: id, currencyCode: currency, data: myProposal"></proposal-modal>
 </div>
 <script>
     (function() {
-        // Kooboo.loadJS([])
+        Kooboo.loadJS([
+            "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
+            "/_Admin/View/Witkey/Scripts/components/ReplyPanel.js",
+            "/_Admin/View/Witkey/Scripts/components/ProposalModal.js"
+        ])
     })()
 </script>
 <script src="/_Admin/View/Witkey/Scripts/Kooboo.Witkey.js"></script>

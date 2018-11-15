@@ -1,5 +1,6 @@
 (function() {
     Kooboo.loadJS([
+        "/_Admin/Scripts/kooboo/Guid.js",
         "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js"
     ])
 
