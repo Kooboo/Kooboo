@@ -10,7 +10,8 @@
         viewModel: function(params) {
             var self = this;
 
-            this.discussionId = params.discussionId;
+            this.type = ko.observable(params.type);
+            this.typeId = params.typeId;
             this.parentCommentId = params.parentCommentId || ko.observable(Kooboo.Guid.Empty);
 
             this.showError = ko.observable(false);
@@ -25,20 +26,38 @@
 
             this.onReply = function() {
                 if (this.content.isValid()) {
-
-                    Kooboo.Discussion.reply({
-                        discussionId: self.discussionId(),
-                        parentCommentId: self.parentCommentId(),
-                        content: self.content()
-                    }).then(function(res) {
-                        if (res.success) {
-                            Kooboo.EventBus.publish('kb/witkey/component/reply/refresh', {
-                                id: self.discussionId(),
-                                parentCommentId: self.parentCommentId()
+                    switch (self.type()) {
+                        case 'discussion':
+                            Kooboo.Discussion.reply({
+                                discussionId: self.typeId(),
+                                parentCommentId: self.parentCommentId(),
+                                content: self.content()
+                            }).then(function(res) {
+                                if (res.success) {
+                                    Kooboo.EventBus.publish('kb/witkey/component/reply/refresh', {
+                                        id: self.typeId(),
+                                        parentCommentId: self.parentCommentId()
+                                    })
+                                    self.content('');
+                                }
                             })
-                            self.content('');
-                        }
-                    })
+                            break;
+                        case 'demand':
+                            Kooboo.Demand.reply({
+                                demandId: self.typeId(),
+                                parentCommentId: self.parentCommentId(),
+                                content: self.content()
+                            }).then(function(res) {
+                                if (res.success) {
+                                    Kooboo.EventBus.publish('kb/witkey/demand/reply/refresh', {
+                                        id: self.typeId(),
+                                        parentCommentId: self.parentCommentId()
+                                    })
+                                    self.content('');
+                                }
+                            })
+                            break;
+                    }
                 } else {
                     self.showError(true);
                 }

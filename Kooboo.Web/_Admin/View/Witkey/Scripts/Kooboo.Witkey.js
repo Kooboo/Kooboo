@@ -47,12 +47,36 @@ $(function() {
             return this.executeGet('GetUserProposal', para);
         }
 
+        this.getProposal = function(para) {
+            return this.executeGet('GetProposal', para);
+        }
+
+        this.acceptProposal = function(para) {
+            return this.executeGet('AcceptProposal', para);
+        }
+
         this.deleteProposal = function(para) {
             return this.executePost('DeleteProposal', para);
         }
 
         this.addOrUpdateProposal = function(para) {
             return this.executePost('AddOrUpdateProposal', para);
+        }
+
+        this.reply = function(para) {
+            return this.executeGet('ReplyDemand', para);
+        }
+
+        this.getPublicCommentList = function(para) {
+            return this.executeGet('PublicCommentList', para);
+        }
+
+        this.getPublicNestedCommentList = function(para) {
+            return this.executeGet('PublicNestedCommentList', para);
+        }
+
+        this.getPrivateCommentList = function(para) {
+            return this.executeGet('PrivateCommentList', para);
         }
     }
     extend(Demand, Kooboo.BaseModel);

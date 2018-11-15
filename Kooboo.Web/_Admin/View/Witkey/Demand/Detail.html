@@ -62,7 +62,7 @@
                         </div>
                         <!-- /ko -->
                         <!-- ko if: isTendering -->
-                        <reply-panel></reply-panel>
+                        <reply-panel params="type: 'demand', typeId: id"></reply-panel>
                         <!-- /ko -->
                     </div>
                 </div>
@@ -73,6 +73,7 @@
                         <h3 class="panel-title">Proposals</h3>
                     </div>
                     <div class="panel-body">
+                        <!-- ko if: !isOwner() -->
                         <!-- ko if: isTendering -->
                         <!-- ko if: isProposalUser -->
                         <div class="btn-group btn-group-justified">
@@ -93,25 +94,41 @@
                             <p><i class="fa fa-ban"></i> <span>This demand is invalid now.</span></p>
                         </div>
                         <!-- /ko -->
+                        <!-- /ko -->
+                        <!-- ko if: isOwner() && isTendering() -->
+                        Owner
+                        <!-- /ko -->
                     </div>
                     <table class="table">
                         <thead>
                             <tr>
-                                <td>Bidder</td>
-                                <td>Duration</td>
-                                <td>Budget</td>
+                                <th>Bidder</th>
+                                <th>Duration</th>
+                                <th>Budget</th>
+                                <!-- ko if: isOwner() && isTendering()-->
+                                <th class="table-action"></th>
+                                <th class="table-action"></th>
+                                <!-- /ko -->
                             </tr>
                         </thead>
                         <tbody data-bind="visible: proposals().length, foreach: proposals">
-                            <tr>
+                            <tr data-bind="css: { success: $data.winTheBidding }">
                                 <td data-bind="text: $data.userName"></td>
                                 <td data-bind="text: $data.duration"></td>
                                 <td data-bind="text: $data.budget, attr: { title: $data.currency }"></td>
+                                <!-- ko if: $parent.isOwner() && $parent.isTendering() -->
+                                <td class="text-right">
+                                    <button class="btn btn-xs btn-default" data-bind="click: $parent.onViewProposalDetail.bind(this, $data), tooltip: 'View proposal detail'"><i class="fa fa-eye"></i></button>
+                                </td>
+                                <td class="text-right">
+                                    <button class="btn btn-xs btn-info" data-bind="click: $parent.onViewProposalDetail.bind(this, $data)"><i class="fa fa-check"></i></button>
+                                </td>
+                                <!-- /ko -->
                             </tr>
                         </tbody>
                         <tfoot data-bind="visible: !proposals().length">
                             <tr>
-                                <td colspan="3" class="text-center">No bidder</td>
+                                <td colspan="5" class="text-center">No bidder</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -119,7 +136,7 @@
             </div>
         </div>
     </div>
-    <proposal-modal params="isShow: showProposalModal, demandId: id, currencyCode: currency, data: myProposal"></proposal-modal>
+    <proposal-modal params="isShow: showProposalModal, demandId: id, currencyCode: currency, data: showingProposal, mode: proposalViewingMode"></proposal-modal>
 </div>
 <script>
     (function() {

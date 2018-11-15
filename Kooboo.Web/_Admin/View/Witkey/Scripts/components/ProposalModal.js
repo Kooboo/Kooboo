@@ -17,18 +17,26 @@
                     if (params.data()) {
                         var data = params.data();
                         self.proposalId(data.id);
+                        self.userName(data.userName);
                         self.description(data.description);
                         self.duration(data.duration);
                         self.budget(data.budget);
+                        self.displayBudget(data.symbol + data.budget);
+                        self.displayDuration(data.duration + ' Day(s)');
                     }
                 }
             })
+            this.mode = params.mode;
             this.demandId = params.demandId;
             this.proposalId = ko.observable();
             this.currencyCode = params.currencyCode;
             this.currencySymbol = ko.pureComputed(function() {
                 return self.currencyCode() && self.currencyCode().toLowerCase();
             })
+
+            this.userName = ko.observable();
+            this.displayBudget = ko.observable();
+            this.displayDuration = ko.observable();
 
             this.description = ko.validateField({
                 required: ''
@@ -77,6 +85,19 @@
                     })
                 } else {
                     self.showError(true);
+                }
+            }
+
+            this.onAcceptProposal = function() {
+                if (confirm('you sure?')) {
+                    Kooboo.Demand.acceptProposal({
+                        proposalId: self.proposalId()
+                    }).then(function(res) {
+                        if (res.success) {
+                            self.onHide();
+                            Kooboo.EventBus.publish("kb/demand/proposal/update");
+                        }
+                    })
                 }
             }
         },

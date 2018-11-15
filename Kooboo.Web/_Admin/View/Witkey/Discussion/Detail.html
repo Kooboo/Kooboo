@@ -81,13 +81,13 @@
                                                 </div>
                                             </div>
                                             <hr>
-                                            <reply-panel params="discussionId: $root.id, parentCommentId: comment.id"></reply-panel>
+                                            <reply-panel params="type: 'discussion', typeId: $root.id, parentCommentId: comment.id"></reply-panel>
                                         </div>
                                     </div>
                                 </li>
                             </ul>
                             <hr data-bind="visible: comments().length">
-                            <reply-panel params="discussionId: id"></reply-panel>
+                            <reply-panel params="type: 'discussion', typeId: id"></reply-panel>
                         </div>
                         <div data-bind="component: { name: 'kb-pager', params: pager }"></div>
                     </div>

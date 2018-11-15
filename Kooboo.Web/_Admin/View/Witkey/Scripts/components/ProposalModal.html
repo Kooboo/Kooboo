@@ -6,6 +6,7 @@
                 <h4 class="modal-title">Proposal</h4>
             </div>
             <div class="modal-body">
+                <!-- ko if: mode() == 'edit' -->
                 <div class="form-group">
                     <label>Description</label>
                     <textarea class="autosize form-control" data-bind="value: description"></textarea>
@@ -30,9 +31,43 @@
                         </div>
                     </div>
                 </div>
+                <!-- /ko -->
+                <!-- ko if: mode() == 'view' -->
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Bidder</label>
+                            <p class="form-control-static" data-bind="text: userName"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <p class="form-control-static" data-bind="text: displayDuration"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Budget</label>
+                            <p class="form-control-static" data-bind="text: displayBudget, attr: { title: currencyCode }"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <p class="form-control-static" data-bind="text: description"></p>
+                        </div>
+                    </div>
+                </div>
+                <!-- /ko -->
             </div>
             <div class="modal-footer">
+                <!-- ko if: mode() == 'edit' -->
                 <button class="btn green" data-bind="text: Kooboo.text.site.form.submit, click: onSave"></button>
+                <!-- /ko -->
+                <!-- ko if: mode() == 'view' -->
+                <button class="btn green" data-bind="click: onAcceptProposal">Accept</button>
+                <!-- /ko -->
                 <button class="btn gray" data-bind="click: onHide">Cancel</button>
             </div>
         </div>

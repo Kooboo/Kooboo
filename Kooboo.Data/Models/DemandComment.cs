@@ -28,6 +28,8 @@ namespace Kooboo.Data.Models
 
         public Guid ProposalId { get; set; }
 
+        public bool IsPublic { get; set; }
+
         public Guid ParentCommentId { get; set; }
 
         public int CommentCount { get; set; }

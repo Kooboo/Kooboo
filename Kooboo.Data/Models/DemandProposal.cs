@@ -42,7 +42,6 @@ namespace Kooboo.Data.Models
 
         public string Currency { get; set; }
         
-        [JsonIgnore]
         public string Symbol
         {
             get
