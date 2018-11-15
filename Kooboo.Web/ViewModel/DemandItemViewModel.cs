@@ -32,7 +32,7 @@ namespace Kooboo.Web.ViewModel
 
         public string Description { get; set; }
 
-        public Guid UserId { get; set; }
+        public bool IsOwner { get; set; }
 
         public string UserName { get; set; }
 
