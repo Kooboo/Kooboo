@@ -49,7 +49,7 @@
                 min: 0
             })
 
-            this.attachements = ko.observableArray();
+            this.attachments = ko.observableArray();
 
             this.uploadFile = function(data, files) {
                 var fd = new FormData();
@@ -57,7 +57,7 @@
                 fd.append('file', files[0]);
                 Kooboo.Demand.uploadFile(fd).then(function(res) {
                     if (res.success) {
-                        self.attachements.push(res.model);
+                        self.attachments.push(res.model);
                     }
                 })
             }
@@ -67,7 +67,7 @@
                     id: data.id
                 }).then(function(res) {
                     if (res.success) {
-                        self.attachements.remove(data);
+                        self.attachments.remove(data);
                     }
                 })
             }
@@ -88,7 +88,7 @@
                 self.startDate('');
                 self.endDate('');
                 self.budget('');
-                self.attachements([]);
+                self.attachments([]);
                 self.showError(false);
                 self.isShow(false);
             }
@@ -111,7 +111,7 @@
                     title: self.title(),
                     skills: self.skills().split(','),
                     description: self.description(),
-                    attachements: self.attachements(),
+                    attachments: self.attachments(),
                     startDate: self.startDate(),
                     endDate: self.endDate(),
                     budget: self.budget()

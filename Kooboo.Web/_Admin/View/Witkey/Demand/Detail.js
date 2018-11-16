@@ -20,6 +20,7 @@ $(function() {
 
         this.title = ko.observable();
         this.description = ko.observable();
+        this.attachments = ko.observableArray();
         this.userName = ko.observable();
         this.currency = ko.observable();
         this.budget = ko.observable();
@@ -75,6 +76,10 @@ $(function() {
                 if (res.success) {
                     self.title(res.model.title);
                     self.description(res.model.description);
+                    self.attachments(res.model.attachments ? res.model.attachments.map(function(item) {
+                        item.downloadUrl = '/_api/demand/getFile?id=' + item.id + '&fileName=' + item.fileName;
+                        return item;
+                    }) : [])
                     self.userName(res.model.userName);
                     self.isOwner(res.model.isOwner);
                     self.currency(res.model.currency);

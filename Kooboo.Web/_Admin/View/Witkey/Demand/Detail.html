@@ -9,6 +9,16 @@
                     </div>
                     <div class="panel-body">
                         <div data-bind="html: description" class="margin-bottom-20"></div>
+                        <div class="form-group">
+                            <label>Attachments</label>
+                            <p class="form-control-static" data-bind="foreach: attachments">
+                                <a data-bind="attr: { href: $data.downloadUrl }" target="_blank">
+                                    <i class="fa fa-paperclip"></i>
+                                    <!-- ko text: $data.fileName -->
+                                    <!-- /ko -->
+                                </a>
+                            </p>
+                        </div>
                         <hr>
                         <div class="row">
                             <div class="col-md-6">
