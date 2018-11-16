@@ -81,6 +81,18 @@
                     Holder.run()
                 }, 300);
             }
+
+            this.uploadFile = function(data, files) {
+                var fd = new FormData();
+                fd.append('filename', files[0].name);
+                fd.append('file', files[0]);
+                debugger
+                Kooboo.Demand.uploadFile(fd).then(function(res) {
+                    if (res.success) {
+                        debugger
+                    }
+                })
+            }
         },
         template: template
     })

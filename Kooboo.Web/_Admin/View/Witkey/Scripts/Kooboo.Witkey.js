@@ -82,6 +82,10 @@ $(function() {
         this.getPrivateCommentList = function(para) {
             return this.executeGet('PrivateCommentList', para, true);
         }
+
+        this.uploadFile = function(para) {
+            return this.executeUpload('UploadFile', para);
+        }
     }
     extend(Demand, Kooboo.BaseModel);
 
