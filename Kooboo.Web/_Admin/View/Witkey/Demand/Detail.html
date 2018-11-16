@@ -63,6 +63,54 @@
                         <!-- /ko -->
                         <!-- ko if: isTendering -->
                         <reply-panel params="type: 'demand', typeId: id"></reply-panel>
+                        <div data-bind="visible: publicCommentList().length">
+                            <hr>
+                            <ul class="media-list" data-bind="foreach: { data: publicCommentList, as: 'public', afterRender: commentRendered }">
+                                <li class="media">
+                                    <a href="javascript:;" class="pull-left">
+                                        <img class="media-object" data-bind="attr: { 'data-src': 'holder.js/48x48?text=' + public.firstLetter }" alt="48x48" style="width: 48px; height: 48px;">
+                                    </a>
+                                    <div class="media-body">
+                                        <h4 class="media-heading" data-bind="html: public.content"></h4>
+                                        <p class="clearfix">
+                                            <span class="pull-left">
+                                                <span data-bind="text: public.userName"></span>
+                                            <span> comments at </span>
+                                            <span data-bind="text: public.date"></span>
+                                            </span>
+                                            <span class="pull-right">
+                                                <a href="javascript:;" data-bind="click: $parent.onToggleSubComment.bind(public)">
+                                                    <i class="fa fa-comment"></i>
+                                                    <!-- ko text: public.commentCount -->
+                                                    <!-- /ko -->
+                                                </a>
+                                            </span>
+                                        </p>
+                                        <div data-bind="visible: public.showSubComment">
+                                            <div data-bind="foreach:{ data: public.subCommentList, as: 'sub', afterRender: $parent.commentRendered }">
+                                                <div class="media margin-top-15">
+                                                    <a class="pull-left" href="#">
+                                                        <img class="media-object" data-bind="attr: { 'data-src': 'holder.js/48x48?text=' + sub.firstLetter }" alt="48x48" style="width: 48px; height: 48px;">
+                                                    </a>
+                                                    <div class="media-body">
+                                                        <h4 class="media-heading" data-bind="html: sub.content"></h4>
+                                                        <p>
+                                                            <span class="pull-left">
+                                                                <span data-bind="text: sub.userName"></span>
+                                                            <span> replies at </span>
+                                                            <span data-bind="text: sub.date"></span>
+                                                            </span>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <reply-panel params="type: 'demand', typeId: $root.id, parentCommentId: public.id"></reply-panel>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
                         <!-- /ko -->
                     </div>
                 </div>
@@ -77,9 +125,10 @@
                         <!-- ko if: isTendering -->
                         <!-- ko if: isProposalUser -->
                         <div class="btn-group btn-group-justified">
-                            <a href="javascript:;" class="btn blue" data-bind="click: onShowProposalModal">Update your bid</a>
+                            <a href="javascript:;" class="btn btn-default" data-bind="click: onShowChatModal">Chat with owner</a>
+                            <a href="javascript:;" class="btn btn-default" data-bind="click: onShowProposalModal">Update your bid</a>
                             <!-- ko ifnot: isSelectedProposal -->
-                            <a href="javascript:;" class="btn red" data-bind="click: onDeleteMyProposal">Delete your bid</a>
+                            <a href="javascript:;" class="btn btn-info" data-bind="click: onDeleteMyProposal">Delete your bid</a>
                             <!-- /ko -->
                         </div>
                         <!-- /ko -->
@@ -108,6 +157,7 @@
                                 <!-- ko if: isOwner() && isTendering()-->
                                 <th class="table-action"></th>
                                 <th class="table-action"></th>
+                                <th class="table-action"></th>
                                 <!-- /ko -->
                             </tr>
                         </thead>
@@ -118,10 +168,13 @@
                                 <td data-bind="text: $data.budget, attr: { title: $data.currency }"></td>
                                 <!-- ko if: $parent.isOwner() && $parent.isTendering() -->
                                 <td class="text-right">
+                                    <button class="btn btn-xs btn-block btn-default" data-bind="click: $parent.onShowProposalChatModal.bind(this, $data), tooltip: 'Chat with ' + $data.userName"><i class="fa fa-comment-o"></i></button>
+                                </td>
+                                <td class="text-right">
                                     <button class="btn btn-xs btn-default" data-bind="click: $parent.onViewProposalDetail.bind(this, $data), tooltip: 'View proposal detail'"><i class="fa fa-eye"></i></button>
                                 </td>
                                 <td class="text-right">
-                                    <button class="btn btn-xs btn-info" data-bind="click: $parent.onViewProposalDetail.bind(this, $data)"><i class="fa fa-check"></i></button>
+                                    <button class="btn btn-xs btn-info" data-bind="click: $parent.onViewProposalDetail.bind(this, $data), tooltip: 'Accept this proposal'"><i class="fa fa-check"></i></button>
                                 </td>
                                 <!-- /ko -->
                             </tr>
@@ -137,13 +190,16 @@
         </div>
     </div>
     <proposal-modal params="isShow: showProposalModal, demandId: id, currencyCode: currency, data: showingProposal, mode: proposalViewingMode"></proposal-modal>
+    <chat-modal params="isShow: showChatModal, demandId: id, proposalId: proposalId"></chat-modal>
 </div>
 <script>
     (function() {
         Kooboo.loadJS([
+            "/_Admin/Scripts/lib/holder.js",
             "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
             "/_Admin/View/Witkey/Scripts/components/ReplyPanel.js",
-            "/_Admin/View/Witkey/Scripts/components/ProposalModal.js"
+            "/_Admin/View/Witkey/Scripts/components/ProposalModal.js",
+            "/_Admin/View/Witkey/Scripts/components/ChatModal.js"
         ])
     })()
 </script>

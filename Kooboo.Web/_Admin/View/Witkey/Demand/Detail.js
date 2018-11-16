@@ -13,6 +13,9 @@ $(function() {
         this.isSelectedProposal = ko.pureComputed(function() {
             return self.showingProposal() && self.showingProposal().winTheBidding;
         })
+        this.proposalId = ko.pureComputed(function() {
+            return self.showingProposal().id;
+        })
         this.proposalViewingMode = ko.observable();
 
         this.title = ko.observable();
@@ -124,24 +127,40 @@ $(function() {
             })
         }
 
+        this.publicCommentList = ko.observableArray();
         this.getCommentList = function() {
             Kooboo.Demand.getPublicCommentList({
                 demandId: self.id()
             }).then(function(res) {
                 if (res.success) {
-                    // debugger;
+                    self.publicCommentList(res.model.list.map(function(item) {
+                        return new Comment(item);
+                    }));
                 }
             })
-
-            // if (self.isProposalUser()) {
-            Kooboo.Demand.getPrivateCommentList({
-                    demandId: self.id()
-                }).then(function(res) {
-                    if (res.success) {
-                        debugger;
-                    }
-                })
-                // }
+        }
+        this.getNestedCommentList = function(m) {
+            Kooboo.Demand.getNestedPublicCommentList({
+                commentId: m.id()
+            }).then(function(res) {
+                if (res.success) {
+                    m.showSubComment(true);
+                    m.subCommentList(res.model.map(function(item) {
+                        return new Comment(item);
+                    }));
+                    $(".autosize").textareaAutoSize().trigger("keyup");
+                }
+            })
+        }
+        this.onToggleSubComment = function(m, e) {
+            if (m.showSubComment()) {
+                m.showSubComment(false);
+            } else {
+                self.getNestedCommentList(m);
+            }
+        }
+        this.commentRendered = function() {
+            Holder.run();
         }
 
         this.getCommentList();
@@ -150,21 +169,50 @@ $(function() {
             $(".autosize").textareaAutoSize().trigger("keyup");
         });
 
+        this.showChatModal = ko.observable(false);
+        this.onShowChatModal = function() {
+            self.showChatModal(true);
+        }
+        this.onShowProposalChatModal = function(m) {
+            self.showingProposal(m);
+            self.onShowChatModal();
+        }
+
         Kooboo.EventBus.subscribe("kb/demand/proposal/update", function() {
             self.getMyProposal();
             self.getProposalList();
         })
 
         Kooboo.EventBus.subscribe("kb/witkey/demand/reply/refresh", function(data) {
-            debugger
             if (data.parentCommentId == Kooboo.Guid.Empty) {
-
-            } else {
                 self.getCommentList();
+            } else {
+                var current = _.find(self.publicCommentList(), function(item) {
+                    return item.id() == data.parentCommentId
+                })
+                if (current) {
+                    current.commentCount(current.commentCount() + 1);
+                    self.getNestedCommentList(current);
+                }
             }
         })
     }
 
     var vm = new detailModel();
     ko.applyBindings(vm, document.getElementById('main'))
+
+    function Comment(data) {
+        if (data.content.indexOf('\n') > -1) {
+            data.content = data.content.split('\n').join('<br>')
+        }
+        var date = new Date(data.createTime);
+        this.id = ko.observable(data.id);
+        this.firstLetter = data.userName.split('')[0].toUpperCase();
+        this.userName = data.userName;
+        this.content = data.content;
+        this.date = date.toDefaultLangString();
+        this.commentCount = ko.observable(data.commentCount);
+        this.showSubComment = ko.observable(false);
+        this.subCommentList = ko.observableArray([]);
+    }
 })

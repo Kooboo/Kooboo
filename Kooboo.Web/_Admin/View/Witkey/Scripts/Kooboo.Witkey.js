@@ -64,11 +64,15 @@ $(function() {
         }
 
         this.reply = function(para) {
-            return this.executeGet('ReplyDemand', para);
+            return this.executeGet('ReplyDemand', para, true);
         }
 
         this.getPublicCommentList = function(para) {
             return this.executeGet('PublicCommentList', para);
+        }
+
+        this.getNestedPublicCommentList = function(para) {
+            return this.executeGet('NestedPublicCommentList', para);
         }
 
         this.getPublicNestedCommentList = function(para) {
@@ -76,7 +80,7 @@ $(function() {
         }
 
         this.getPrivateCommentList = function(para) {
-            return this.executeGet('PrivateCommentList', para);
+            return this.executeGet('PrivateCommentList', para, true);
         }
     }
     extend(Demand, Kooboo.BaseModel);
