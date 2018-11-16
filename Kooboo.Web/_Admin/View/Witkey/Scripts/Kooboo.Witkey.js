@@ -91,6 +91,10 @@ $(function() {
             return this.executeUpload('UploadFile', para);
         }
 
+        this.deleteFile = function(para) {
+            return this.executePost('DeleteFile', para);
+        }
+
         this.getProposalTypes = function(para) {
             return this.executeGet('GetProposalType', para);
         }
