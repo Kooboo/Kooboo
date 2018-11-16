@@ -1,0 +1,45 @@
+<!-- #layout name=default -->
+<div id="main">
+    <div class="container">
+        <ul class="nav nav-tabs" data-bind="foreach: { data: proposalTypes, as: 'type' }">
+            <li data-bind="css: { active: $parent.curType() == type.value }">
+                <a href="javascript:;" data-toggle="tab" data-bind="text: type.displayName"></a>
+            </li>
+        </ul>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: records">
+                <tr>
+                    <!-- 
+                        budget: "200"
+                        createTime: "2018-11-16T14:04:59.0175765"
+                        currency: "CNY"
+                        demandId: "6d52bff4-ac0f-456a-bc52-3263c165cf6d"
+                        description: "test"
+                        duration: 20
+                        id: "8e799257-17e8-4778-af49-94d864155d48"
+                        proposalType: 0
+                        symbol: "¥"
+                        userName: "currencyTest1"
+                        winTheBidding: false
+                     -->
+                </tr>
+            </tbody>
+        </table>
+        <div data-bind="component: { name: 'kb-pager', params: pager }"></div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbPager.js"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Witkey/Scripts/Kooboo.Witkey.js"></script>
+<script src="/_Admin/View/Witkey/Proposal.js"></script>

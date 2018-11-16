@@ -40,9 +40,7 @@ namespace Kooboo.Data.Models
 
         public string UserName { get; set; }
 
-        public string AttachmentName { get; set; }
-
-        public byte[] Attachment { get; set; }
+        public List<DemandAttachment> Attachments { get; set; }
 
         public DateTime CreateTime { get; set; }
 

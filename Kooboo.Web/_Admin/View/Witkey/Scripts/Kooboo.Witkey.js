@@ -64,7 +64,11 @@ $(function() {
         }
 
         this.reply = function(para) {
-            return this.executeGet('ReplyDemand', para, true);
+            return this.executePost('ReplyDemand', para, true);
+        }
+
+        this.chat = function(para) {
+            return this.executePost('ReplyChat', para, true);
         }
 
         this.getPublicCommentList = function(para) {
@@ -85,6 +89,14 @@ $(function() {
 
         this.uploadFile = function(para) {
             return this.executeUpload('UploadFile', para);
+        }
+
+        this.getProposalTypes = function(para) {
+            return this.executeGet('GetProposalType', para);
+        }
+
+        this.getMyProposalList = function(para) {
+            return this.executeGet('MyProposalList', para);
         }
     }
     extend(Demand, Kooboo.BaseModel);

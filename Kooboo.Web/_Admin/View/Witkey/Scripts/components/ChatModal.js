@@ -52,7 +52,7 @@
 
             this.onSendMsg = function() {
                 if (self.newMsg.isValid()) {
-                    Kooboo.Demand.reply({
+                    Kooboo.Demand.chat({
                         demandId: self.demandId(),
                         proposalId: self.proposalId(),
                         isPublic: false,
@@ -86,10 +86,15 @@
                 var fd = new FormData();
                 fd.append('filename', files[0].name);
                 fd.append('file', files[0]);
-                debugger
                 Kooboo.Demand.uploadFile(fd).then(function(res) {
                     if (res.success) {
-                        debugger
+                        Kooboo.Demand.chat({
+                            demandId: self.demandId(),
+                            proposalId: self.proposalId(),
+                            isPublic: false,
+                            content: '',
+                            attachments: [res.model]
+                        })
                     }
                 })
             }
@@ -108,5 +113,9 @@
         this.content = ko.observable(data.content);
         this.isCurrentUser = ko.observable(data.userId == CURRENT_USER_ID);
         this.date = ko.observable(date.toDefaultLangString());
+        this.attachments = ko.observableArray(data.attachments ? data.attachments.map(function(item) {
+            item.downloadUrl = '/_api/demand/getFile?id=' + item.id + '&fileName=' + item.fileName;
+            return item;
+        }) : []);
     }
 })()

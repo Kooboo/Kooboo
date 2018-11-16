@@ -202,14 +202,14 @@ $(function() {
     ko.applyBindings(vm, document.getElementById('main'))
 
     function Comment(data) {
-        if (data.content.indexOf('\n') > -1) {
+        if (data.content && data.content.indexOf('\n') > -1) {
             data.content = data.content.split('\n').join('<br>')
         }
         var date = new Date(data.createTime);
         this.id = ko.observable(data.id);
         this.firstLetter = data.userName.split('')[0].toUpperCase();
         this.userName = data.userName;
-        this.content = data.content;
+        this.content = data.content || '';
         this.date = date.toDefaultLangString();
         this.commentCount = ko.observable(data.commentCount);
         this.showSubComment = ko.observable(false);

@@ -41,6 +41,10 @@
         top: 8px;
         left: -4px;
     }
+    
+    h4.media-heading a {
+        color: inherit;
+    }
 </style>
 <div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
@@ -56,7 +60,15 @@
                             <img class="media-object" data-bind="attr: { 'data-src': 'holder.js/' + message.firstLetter() }" style="width: 48px; height: 48px;">
                         </a>
                         <div class="media-body" data-bind="css: { 'pull-right': message.isCurrentUser, 'pull-left': !message.isCurrentUser() }">
-                            <h4 class="media-heading" data-bind="text: message.content"></h4>
+                            <h4 class="media-heading" data-bind="visible: message.content, text: message.content"></h4>
+                            <h4 class="media-heading" data-bind="visible: message.attachments().length">
+                                <!-- ko foreach: message.attachments -->
+                                <a data-bind="attr: { href: $data.downloadUrl }" target="_blank" title="Download"><i class="fa fa-paperclip"></i>&nbsp;
+                                    <!-- ko text: $data.fileName -->
+                                    <!-- /ko -->
+                                </a>
+                                <!-- /ko -->
+                            </h4>
                             <p data-bind="text: 'reply at ' + message.date()"></p>
                         </div>
                     </li>
