@@ -34,6 +34,8 @@ namespace Kooboo.Data.Models
 
         public Guid DemandId { get; set; }
 
+        public string DemandTitle { get; set; }
+
         public List<string> Skills { get; set; }
 
         public decimal Budget { get; set; }

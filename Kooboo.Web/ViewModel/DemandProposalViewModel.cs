@@ -23,6 +23,8 @@ namespace Kooboo.Web.ViewModel
 
         public bool WinTheBidding { get; set; }
 
+        public string DemandTitle { get; set; }
+
         public Guid DemandId { get; set; }
 
         public ProposalStatus ProposalType { get; set; }
