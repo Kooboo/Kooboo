@@ -56,12 +56,20 @@ namespace Kooboo.Data.Models
                 return Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Currency);
             }
         }
+        public List<DemandAttachment> Attachments { get; set; }
 
         public DateTime CreateTime { get; set; }
 
         public DateTime StartDate { get; set; }
 
         public DateTime EndDate { get; set; }
+    }
+
+    public class DemandAttachment
+    {
+        public Guid Id { get; set; }
+        public string FileName { get; set; }
+        public long Size { get; set; }
     }
 
     public enum DemandStatus

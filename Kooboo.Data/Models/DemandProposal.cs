@@ -40,6 +40,8 @@ namespace Kooboo.Data.Models
 
         public bool WinTheBidding { get; set; }
 
+        public ProposalStatus ProposalStatus { get; set; }
+
         public string Currency { get; set; }
         
         public string Symbol
@@ -63,4 +65,14 @@ namespace Kooboo.Data.Models
 
     }
 
+
+    public enum ProposalStatus
+    {
+        InTheBid = 0,
+        WinTheBidding = 1,
+        LoseTheBid=2,
+        UnFinished = 3,
+        Finished = 4,
+        Invalid = 5
+    }
 }

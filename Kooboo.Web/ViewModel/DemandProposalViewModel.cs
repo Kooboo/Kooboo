@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Kooboo.Data.Models;
 
 namespace Kooboo.Web.ViewModel
 {
@@ -21,6 +22,10 @@ namespace Kooboo.Web.ViewModel
         public string Symbol { get; set; }
 
         public bool WinTheBidding { get; set; }
+
+        public Guid DemandId { get; set; }
+
+        public ProposalStatus ProposalType { get; set; }
 
         public DateTime CreateTime { get; set; }
 
