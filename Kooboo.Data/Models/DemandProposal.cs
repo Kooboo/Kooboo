@@ -57,6 +57,10 @@ namespace Kooboo.Data.Models
         /// </summary>
         public int Duration { get; set; }
 
+        public string AttachmentName { get; set; }
+
+        public byte[] Attachment { get; set; }
+
     }
 
 }

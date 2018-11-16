@@ -44,7 +44,8 @@ namespace Kooboo.Web.ViewModel
 
         public int ProposalCount { get; set; }
 
-        public byte[] Attachments { get; set; }
+        public string AttachmentName { get; set; }
+        public byte[] Attachment { get; set; }
 
         public string Currency { get; set; }
 

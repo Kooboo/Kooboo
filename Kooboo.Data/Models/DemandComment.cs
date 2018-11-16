@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Data.Models
 {
-    public class DemandComment:IGolbalObject
+    public class DemandComment : IGolbalObject
     {
         private Guid _id;
         public Guid Id
@@ -40,7 +40,9 @@ namespace Kooboo.Data.Models
 
         public string UserName { get; set; }
 
-        //public bool IsShare { get; set; }
+        public string AttachmentName { get; set; }
+
+        public byte[] Attachment { get; set; }
 
         public DateTime CreateTime { get; set; }
 
