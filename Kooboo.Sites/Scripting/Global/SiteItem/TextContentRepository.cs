@@ -280,17 +280,18 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
                     if (col.MultipleLanguage)
                     {
+                        bool isPassed = false;
                         foreach (var cul in this.context.WebSite.Culture)
                         {
                             var value = TextContent.GetValue(col.Name, cul.Key);
 
                             if (value != null && FilterHelper.Check(value.ToString(), ToFilterCompare(item.Comparer), item.Value, clrtype))
                             {
-                                continue;
+                                isPassed = true;
+                                break;
                             }
                         }
-
-                        return false;
+                        return isPassed;
                     }
                     else
                     {
