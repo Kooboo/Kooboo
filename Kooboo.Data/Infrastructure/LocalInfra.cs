@@ -10,12 +10,12 @@ namespace Kooboo.Data.Infrastructure
 {
     public class LocalInfra : IInfrastructure
     {
-        public void Add(Guid OrganizationId, InfraType InfraType, int Amount, string Item)
+        public void Add(Guid OrganizationId, InfraType InfraType, long Amount, string Item)
         {
 
         }
 
-        public bool Test(Guid OrganizationId, InfraType InfraType, int amount)
+        public bool Test(Guid OrganizationId, InfraType InfraType, long amount)
         {
             return true;
         }

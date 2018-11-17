@@ -166,7 +166,10 @@ namespace Kooboo.Web.FrontRequest
                 try
                 {
                     await RouteRenderers.RenderAsync(frontContext);
-                    endtime = DateTime.UtcNow;   
+                    endtime = DateTime.UtcNow;
+
+                    // check for rights...    
+
                 }
                 catch (Exception ex)
                 {
@@ -246,6 +249,48 @@ namespace Kooboo.Web.FrontRequest
         }
 
 
+        public async void CheckUserBandwidth(FrontContext frontContext)
+        {
+            if (Data.AppSettings.IsOnlineServer && frontContext.RenderContext.Response.StatusCode == 200)
+            {
+                long length = 0;
+
+                if (frontContext.RenderContext.Response.Body !=null)
+                {
+                    length = frontContext.RenderContext.Response.Body.Length; 
+                }
+
+                if (length == 0)
+                {
+                    if (frontContext.RenderContext.Response.Stream !=null)
+                    {
+                        length = frontContext.RenderContext.Response.Stream.Length; 
+                    }
+                }
+
+               if (length >0)
+                {
+                    var orgid = frontContext.RenderContext.WebSite.OrganizationId; 
+                    var testok  =  Kooboo.Data.Infrastructure.InfraManager.Test(orgid, Data.Infrastructure.InfraType.Bandwidth, length); 
+
+                    if (!testok)
+                    {     
+                        frontContext.RenderContext.Response.StatusCode = 402;        
+                        var errorbody = await WebSiteService.RenderCustomError(frontContext, 402);
+                        if (!string.IsNullOrWhiteSpace(errorbody))
+                        {
+                            frontContext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(errorbody);
+                        }   
+                    }
+                    else
+                    {
+                       // Kooboo.Data.Infrastructure.InfraManager.Add(orgid, Data.Infrastructure.InfraType.Bandwidth, length, frontContext.RenderContext.Request.Url)
+                    }
+                }
+
+            }    
+
+        }
         
     }
 }

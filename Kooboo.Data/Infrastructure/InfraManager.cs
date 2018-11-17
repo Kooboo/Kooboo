@@ -39,12 +39,12 @@ namespace Kooboo.Data.Infrastructure
 
         }
                                                 
-        public static bool Test(Guid OrganizationId, InfraType InfraType, int amount)
+        public static bool Test(Guid OrganizationId, InfraType InfraType, long amount)
         {
             return instance.Test(OrganizationId, InfraType, amount); 
         }
 
-        public static void Add(Guid OrganizationId, InfraType InfraType, int amount, string message)
+        public static void Add(Guid OrganizationId, InfraType InfraType, long amount, string message)
         {
             instance.Add(OrganizationId, InfraType, amount, message); 
         }
