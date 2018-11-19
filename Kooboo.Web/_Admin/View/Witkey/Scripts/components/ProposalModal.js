@@ -1,4 +1,8 @@
 (function() {
+    Kooboo.loadJS([
+        "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js"
+    ])
+
     var template = Kooboo.getTemplate("/_Admin/View/Witkey/Scripts/components/ProposalModal.html");
 
     ko.components.register('proposal-modal', {
@@ -23,13 +27,14 @@
                         self.budget(data.budget);
                         self.displayBudget(data.symbol + data.budget);
                         self.displayDuration(data.duration + ' Day(s)');
+                        self.currencyCode(data.currency);
                     }
                 }
             })
             this.mode = params.mode;
             this.demandId = params.demandId;
             this.proposalId = ko.observable();
-            this.currencyCode = params.currencyCode;
+            this.currencyCode = params.currencyCode || ko.observable();
             this.currencySymbol = ko.pureComputed(function() {
                 return self.currencyCode() && self.currencyCode().toLowerCase();
             })

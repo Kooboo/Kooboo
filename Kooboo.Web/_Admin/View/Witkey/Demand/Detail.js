@@ -37,7 +37,7 @@ $(function() {
             return self.status() == 'tendering';
         })
         this.isEndOfTendering = ko.pureComputed(function() {
-            return self.status() == 'endoftendering';
+            return self.status() == 'endoftender';
         })
 
         this.proposals = ko.observableArray();

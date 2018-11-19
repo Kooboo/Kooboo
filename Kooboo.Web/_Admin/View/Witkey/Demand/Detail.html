@@ -9,7 +9,7 @@
                     </div>
                     <div class="panel-body">
                         <div data-bind="html: description" class="margin-bottom-20"></div>
-                        <div class="form-group">
+                        <div class="form-group" data-bind="visible: attachments().length">
                             <label>Attachments</label>
                             <p class="form-control-static" data-bind="foreach: attachments">
                                 <a data-bind="attr: { href: $data.downloadUrl }" target="_blank">
@@ -154,8 +154,13 @@
                         </div>
                         <!-- /ko -->
                         <!-- /ko -->
-                        <!-- ko if: isOwner() && isTendering() -->
+                        <!-- ko if: isOwner -->
+                        <!-- ko if: isTendering -->
                         Owner
+                        <!-- /ko -->
+                        <!-- ko if: isEndOfTendering -->
+                        <button class="btn btn-block btn-info">Chat with the bidder</button>
+                        <!-- /ko -->
                         <!-- /ko -->
                     </div>
                     <table class="table">
