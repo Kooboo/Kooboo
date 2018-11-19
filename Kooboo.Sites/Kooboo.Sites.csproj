@@ -124,6 +124,7 @@
     <Compile Include="Helper\ChangeHelper.cs" />
     <Compile Include="Helper\ContentHelper.cs" />
     <Compile Include="Helper\ElementHelper.cs" />
+    <Compile Include="Helper\PackageHelper.cs" />
     <Compile Include="Helper\RelationHelper.cs" />
     <Compile Include="Helper\RouteHelper.cs" />
     <Compile Include="HtmlForm\ApiSubmitter.cs" />
