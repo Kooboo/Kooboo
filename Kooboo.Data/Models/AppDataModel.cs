@@ -37,5 +37,26 @@ namespace Kooboo.Data.Models
 
         public string Tags { get; set; }
 
+        public decimal Price { get; set; } = 0;
+
+        public string Currency { get; set; } = "CNY";
+
+        public string Symbol
+        {
+            get
+            {
+                return Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Currency);
+            }
+        }
+
+        public List<PackageImages> Images { get; set; } = new List<PackageImages>();
+
+    }
+
+    public class PackageImages
+    {
+        public string FileName { get; set; }
+        public string Base64 { get; set; }
+        public bool IsDefault { get; set; }
     }
 }

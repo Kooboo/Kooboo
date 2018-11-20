@@ -10,6 +10,23 @@ namespace Kooboo.Sites.Helper
 {
     public class PackageHelper
     {
+        public static string GetExtension(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+            {
+                return ".png";
+            }
+            string ext = Kooboo.Lib.Helper.UrlHelper.FileExtension(input);
+
+            if (string.IsNullOrEmpty(ext))
+            {
+                return ".png";
+            }
+            else
+            {
+                return ext;
+            }
+        }
         public static string GetThumbnailUrl(string thumbNail)
         {
             string imgbase = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/download/themeimg/");
