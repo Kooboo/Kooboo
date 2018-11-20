@@ -16,6 +16,8 @@ namespace Kooboo.Web.ViewModel
 
         public DateTime CreateTime { get; set; }
 
+        public DateTime LastModify { get; set; }
+
         public decimal Budget { get; set; }
 
         public string Currency { get; set; }

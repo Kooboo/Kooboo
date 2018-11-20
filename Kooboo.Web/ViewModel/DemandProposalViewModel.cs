@@ -31,6 +31,8 @@ namespace Kooboo.Web.ViewModel
 
         public DateTime CreateTime { get; set; }
 
+        public DateTime LastModify { get; set; }
+
         /// <summary>
         /// days
         /// </summary>

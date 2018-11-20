@@ -57,6 +57,8 @@ namespace Kooboo.Data.Models
 
         public DateTime CreateTime { get; set; }
 
+        public DateTime LastModify { get; set; }
+
         public DateTime StartDate { get; set; }
 
         public DateTime EndDate { get; set; }
