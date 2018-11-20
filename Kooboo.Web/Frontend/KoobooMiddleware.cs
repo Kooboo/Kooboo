@@ -168,7 +168,8 @@ namespace Kooboo.Web.FrontRequest
                     await RouteRenderers.RenderAsync(frontContext);
                     endtime = DateTime.UtcNow;
 
-                    // check for rights...    
+                    // check for rights...
+                    CheckUserBandwidth(frontContext); 
 
                 }
                 catch (Exception ex)
@@ -251,7 +252,22 @@ namespace Kooboo.Web.FrontRequest
 
         public async void CheckUserBandwidth(FrontContext frontContext)
         {
-            if (Data.AppSettings.IsOnlineServer && frontContext.RenderContext.Response.StatusCode == 200)
+            bool shouldcheck = false; 
+            if (frontContext.RenderContext.Response.StatusCode ==200)
+            {
+                if (Data.AppSettings.IsOnlineServer)
+                {
+                    shouldcheck = true; 
+                }
+
+#if DEBUG
+               
+                    shouldcheck = true; 
+                
+#endif 
+            }             
+
+            if (shouldcheck)
             {
                 long length = 0;
 
@@ -284,7 +300,8 @@ namespace Kooboo.Web.FrontRequest
                     }
                     else
                     {
-                       // Kooboo.Data.Infrastructure.InfraManager.Add(orgid, Data.Infrastructure.InfraType.Bandwidth, length, frontContext.RenderContext.Request.Url)
+                        string url = frontContext.RenderContext.Request.Host +  frontContext.RenderContext.Request.RawRelativeUrl; 
+                        Kooboo.Data.Infrastructure.InfraManager.Add(orgid, Data.Infrastructure.InfraType.Bandwidth, length, url);
                     }
                 }
 

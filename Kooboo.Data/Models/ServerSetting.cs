@@ -61,6 +61,8 @@ namespace Kooboo.Data.Models
         public string Ns2 { get; set; }
 
         public string MyIP { get; set; }
+
+        public ServerType ServerType { get; set; }
     }
 
     public class ReverseDns
