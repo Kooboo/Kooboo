@@ -10,6 +10,7 @@ namespace Kooboo.Data.Repository
     {
         private string ChangeCurrencyUrl = AccountUrlHelper.Currency("changeCurrency");
         private string ListUrl = AccountUrlHelper.Currency("list");
+        private string PriceConvertUrl = AccountUrlHelper.Currency("priceConvert");
 
         public bool ChangeCurrency(string currencyCode,Guid userId)
         {
@@ -25,6 +26,16 @@ namespace Kooboo.Data.Repository
         public List<Currency> List()
         {
             return Lib.Helper.HttpHelper.Get<List<Currency>>(ListUrl);
+        }
+
+        public decimal PriceConvert(decimal price,string fromCode,string toCode)
+        {
+            var dic = new Dictionary<string, string>();
+            dic.Add("price", price.ToString());
+            dic.Add("fromCode", fromCode);
+            dic.Add("toCode", toCode);
+
+            return HttpHelper.Post<decimal>(PriceConvertUrl, dic);
         }
     }
 }
