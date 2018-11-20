@@ -35,6 +35,10 @@ $(function() {
     function Demand() {
         this.name = 'Demand';
 
+        this.getUserList = function(para) {
+            return this.executeGet('UserList', para);
+        }
+
         this.addOrUpdate = function(para) {
             return this.executePost('AddOrUpdate', para);
         }
@@ -69,6 +73,10 @@ $(function() {
 
         this.chat = function(para) {
             return this.executePost('ReplyChat', para, true);
+        }
+
+        this.confirmDemandStatus = function(para) {
+            return this.executePost('ConfirmDemandStatus', para);
         }
 
         this.getPublicCommentList = function(para) {

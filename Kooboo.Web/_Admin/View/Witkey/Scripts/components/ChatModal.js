@@ -17,7 +17,6 @@
                         self.isShow(true);
                     })
 
-
                     INTERVAL = setInterval(function() {
                         self.getMessages();
                     }, 5000);

@@ -1,4 +1,8 @@
 <style>
+    .chat .media {
+        overflow: initial;
+    }
+    
     .chat .media .media-body {
         padding: 8px 8px 0;
         width: 50%;
@@ -55,15 +59,12 @@
             </div>
             <div class="modal-body" style="max-height: 500px; overflow-y: auto;">
                 <ul class="chat media-list" data-bind="foreach: { data: messages, as: 'message', afterRender: rendered }">
-                    <li class="media">
-                        <a data-bind="css: { 'pull-right': message.isCurrentUser, 'pull-left': !message.isCurrentUser() }" href="javascript:;">
-                            <img class="media-object" data-bind="attr: { 'data-src': 'holder.js/' + message.firstLetter() }" style="width: 48px; height: 48px;">
-                        </a>
+                    <li class="media clearfix">
                         <div class="media-body" data-bind="css: { 'pull-right': message.isCurrentUser, 'pull-left': !message.isCurrentUser() }">
                             <h4 class="media-heading" data-bind="visible: message.content, text: message.content"></h4>
                             <h4 class="media-heading" data-bind="visible: message.attachments().length">
                                 <!-- ko foreach: message.attachments -->
-                                <a data-bind="attr: { href: $data.downloadUrl }" target="_blank" title="Download"><i class="fa fa-paperclip"></i>&nbsp;
+                                <a data-bind="attr: { href: $data.downloadUrl }" target="_blank" title="Download"><i class="fa fa-paperclip"></i>
                                     <!-- ko text: $data.fileName -->
                                     <!-- /ko -->
                                 </a>

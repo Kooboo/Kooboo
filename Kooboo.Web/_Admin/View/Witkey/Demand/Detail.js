@@ -16,6 +16,9 @@ $(function() {
         this.proposalId = ko.pureComputed(function() {
             return self.showingProposal().id;
         })
+        this.successfulBidding = ko.pureComputed(function() {
+            return self.showingProposal() && self.showingProposal().winTheBidding;
+        })
         this.proposalViewingMode = ko.observable();
 
         this.title = ko.observable();
@@ -68,12 +71,24 @@ $(function() {
                 }
             })
         }
+        this.onAcceptProposal = function(data, e) {
+            if (confirm('you sure?')) {
+                Kooboo.Demand.acceptProposal({
+                    proposalId: data.id
+                }).then(function(res) {
+                    if (res.success) {
+                        Kooboo.EventBus.publish("kb/demand/proposal/update");
+                    }
+                })
+            }
+        }
 
         this.getDetail = function(cb) {
             Kooboo.Demand.get({
                 id: self.id()
             }).then(function(res) {
                 if (res.success) {
+                    self.currentDemand(res.model);
                     self.title(res.model.title);
                     self.description(res.model.description);
                     self.attachments(res.model.attachments ? res.model.attachments.map(function(item) {
@@ -101,6 +116,26 @@ $(function() {
             self.getProposalList();
         }
 
+        this.showDemandModal = ko.observable(false);
+        this.currentDemand = ko.observable();
+        this.onUpdateDemand = function() {
+            self.showDemandModal(true);
+        }
+
+        this.onFinishTheDemand = function(isFinished) {
+            debugger;
+            if (confirm('You sure?')) {
+                Kooboo.Demand.confirmDemandStatus({
+                    id: self.id(),
+                    isFinished: isFinished
+                }).then(function(res) {
+                    if (res.success) {
+                        location.reload();
+                    }
+                })
+            }
+        }
+
         this.getMyProposal = function() {
             if (!self.isOwner()) {
                 Kooboo.Demand.getUserProposal({
@@ -119,6 +154,10 @@ $(function() {
             }).then(function(res) {
                 if (res.success) {
                     self.proposals(res.model.list.map(function(item) {
+                        if (item.winTheBidding) {
+                            self.winningProposal(item);
+                        }
+
                         return {
                             id: item.id,
                             userName: item.userName,
@@ -131,6 +170,8 @@ $(function() {
                 }
             })
         }
+
+        this.winningProposal = ko.observable();
 
         this.publicCommentList = ko.observableArray();
         this.getCommentList = function() {
@@ -179,7 +220,11 @@ $(function() {
             self.showChatModal(true);
         }
         this.onShowProposalChatModal = function(m) {
-            self.showingProposal(m);
+            if (m) {
+                self.showingProposal(m);
+            } else {
+                self.showingProposal(self.winningProposal());
+            }
             self.onShowChatModal();
         }
 
@@ -200,6 +245,10 @@ $(function() {
                     self.getNestedCommentList(current);
                 }
             }
+        })
+
+        Kooboo.EventBus.subscribe("kb/component/demand-modal/saved", function() {
+            location.reload();
         })
     }
 

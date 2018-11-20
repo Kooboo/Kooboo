@@ -153,7 +153,7 @@
                     <div class="balance-func">
                         <div class="btn-group btn-group-justified">
                             <a data-bind="attr: { href: Kooboo.Route.Get(Kooboo.Route.Discussion.ListPage,{ type: 'me' }) }" class="btn btn-link">My question</a>
-                            <a href="javascript:;" class="btn btn-link">My demand</a>
+                            <a href="/_Admin/Witkey/Demand" class="btn btn-link">My demand</a>
                             <a href="/_Admin/Witkey/Proposal" class="btn btn-link">My proposals</a>
                         </div>
                     </div>
@@ -189,7 +189,7 @@
                         <div class="item clearfix">
                             <div class="col-md-12">
                                 <div class="discussion">
-                                    <a target="discussion" data-bind="attr: { href: Kooboo.Route.Get(Kooboo.Route.Discussion.DetailPage, { id: $data.id }) }">
+                                    <a target="_blank" data-bind="attr: { href: Kooboo.Route.Get(Kooboo.Route.Discussion.DetailPage, { id: $data.id }) }">
                                         <div class="discussion-body">
                                             <h4 class="discussion-heading" data-bind="text: $data.title, attr: { title: title }"></h4>
                                             <div class="clearfix">
@@ -242,7 +242,7 @@
                                 <div class="discussion">
                                     <button class="close" data-bind="click: $parent.deleteDemand.bind(this, $data.id)"><i class="fa fa-close"></i></button>
                                     <div class="discussion-body">
-                                        <a target="discussion" data-bind="attr: { href: $data.url }">
+                                        <a target="_blank" data-bind="attr: { href: $data.url }">
                                             <h4 class="discussion-heading" data-bind="text: $data.title, attr: { title: $data.title }"></h4>
                                         </a>
                                         <ul class="row list-group margin-top-15">
@@ -303,10 +303,6 @@
 <script>
     (function() {
         Kooboo.loadJS([
-            "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
-            "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
-            "/_Admin/Scripts/kobindings.richeditor.js",
-            "/_Admin/Scripts/kobindings.textError.js",
             "/_Admin/View/Witkey/Scripts/components/DiscussionModal.js",
             "/_Admin/View/Witkey/Scripts/components/DemandModal.js"
         ])

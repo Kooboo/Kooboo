@@ -1,4 +1,11 @@
 (function() {
+    Kooboo.loadJS([
+        "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
+        "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
+        "/_Admin/Scripts/kobindings.richeditor.js",
+        "/_Admin/Scripts/kobindings.textError.js"
+    ]);
+
     var template = Kooboo.getTemplate("/_Admin/Witkey/Scripts/components/DemandModal.html");
 
     ko.components.register('demand-modal', {
@@ -16,8 +23,36 @@
                             self.currencySymbol(res.model.symbol);
                         }
                     })
+
+                    if (params.data) {
+                        var data = params.data();
+                        self.id(data.id);
+                        self.title(data.title);
+                        self.skills(data.skills.join(','));
+                        self.description(data.description);
+                        self.startDate(self.getDateString(data.startDate));
+                        self.endDate(self.getDateString(data.endDate));
+                        self.budget(data.budget);
+                        self.attachments(data.attachments);
+
+                        setTimeout(function() {
+                            self.showDescription(true);
+                        }, 100)
+                    } else {
+                        self.showDescription(true);
+                    }
+
                 }
             })
+
+            this.id = ko.observable();
+
+            this.getDateString = function(str) {
+                var date = new Date(str);
+                return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+            }
+
+            this.showDescription = ko.observable(false);
 
             this.currencyCode = ko.observable();
             this.currencySymbol = ko.observable();
@@ -72,8 +107,6 @@
                 })
             }
 
-            // this.descriptionLoaded = ko.observable(false);
-
             this.isValid = function() {
                 return self.title.isValid() &&
                     self.description.isValid() &&
@@ -88,7 +121,9 @@
                 self.startDate('');
                 self.endDate('');
                 self.budget('');
+                self.skills('');
                 self.attachments([]);
+                self.showDescription(false);
                 self.showError(false);
                 self.isShow(false);
             }
@@ -107,7 +142,7 @@
             }
 
             this.getData = function() {
-                return {
+                var data = {
                     title: self.title(),
                     skills: self.skills().split(','),
                     description: self.description(),
@@ -115,6 +150,12 @@
                     startDate: self.startDate(),
                     endDate: self.endDate(),
                     budget: self.budget()
+                }
+
+                if (self.id()) {
+                    return Object.assign(data, { id: self.id() })
+                } else {
+                    return data;
                 }
             }
         },

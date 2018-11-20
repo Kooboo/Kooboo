@@ -40,7 +40,9 @@
                 </div>
                 <div class="form-group">
                     <label data-bind="textError: description">Description</label>
+                    <!-- ko if: showDescription -->
                     <textarea class="form-control" data-bind="richeditor: description, value: description"></textarea>
+                    <!-- /ko -->
                 </div>
                 <div class="row">
                     <div class="col-md-4">
