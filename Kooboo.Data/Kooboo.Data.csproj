@@ -209,6 +209,7 @@
     <Compile Include="Models\DataString.cs" />
     <Compile Include="Models\Demand.cs" />
     <Compile Include="Models\DemandComment.cs" />
+    <Compile Include="Models\DemandObjection.cs" />
     <Compile Include="Models\Discussion.cs" />
     <Compile Include="Models\Dll.cs" />
     <Compile Include="Models\DataMethodSetting.cs" />
