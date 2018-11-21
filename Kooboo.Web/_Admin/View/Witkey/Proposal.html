@@ -13,8 +13,8 @@
                     <th>Budget</th>
                     <th>Duration</th>
                     <th>Created at</th>
-                    <!-- ko if: curType() == 'inTheBid' -->
                     <th class="table-action"></th>
+                    <!-- ko if: curType() == 'inTheBid' -->
                     <th class="table-action"></th>
                     <th class="table-action"></th>
                     <!-- /ko -->
@@ -26,12 +26,12 @@
                     <td data-bind="text: $data.budget, attr: { title: $data.currency }"></td>
                     <td data-bind="text: $data.duration"></td>
                     <td data-bind="text: $data.createTime"></td>
-                    <!-- ko if: $parent.curType() == 'inTheBid' -->
                     <td>
                         <a class="btn btn-xs btn-default" target="_blank" data-bind="attr: { href: $data.previewUrl() }">
                             <i class="fa fa-eye"></i>
                         </a>
                     </td>
+                    <!-- ko if: $parent.curType() == 'inTheBid' -->
                     <td>
                         <button class="btn btn-xs btn-info" data-bind="click: $parent.onUpdateProposal.bind(this, $data)">
                             <i class="fa fa-pencil"></i>

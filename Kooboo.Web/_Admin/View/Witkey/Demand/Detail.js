@@ -39,8 +39,14 @@ $(function() {
         this.isTendering = ko.pureComputed(function() {
             return self.status() == 'tendering';
         })
-        this.isEndOfTendering = ko.pureComputed(function() {
+        this.isEndOfTender = ko.pureComputed(function() {
             return self.status() == 'endoftender';
+        })
+        this.isDemandClosed = ko.pureComputed(function() {
+            return ['finished', 'unfinished'].indexOf(self.status()) > -1;
+        })
+        this.isDemandInvalid = ko.pureComputed(function() {
+            return self.status() == 'invalid';
         })
 
         this.proposals = ko.observableArray();
@@ -226,6 +232,11 @@ $(function() {
                 self.showingProposal(self.winningProposal());
             }
             self.onShowChatModal();
+        }
+
+        this.showObjectionModal = ko.observable(false);
+        this.onShowObjectionModal = function() {
+            self.showObjectionModal(true);
         }
 
         Kooboo.EventBus.subscribe("kb/demand/proposal/update", function() {

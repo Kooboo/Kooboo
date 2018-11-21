@@ -110,6 +110,18 @@ $(function() {
         this.getMyProposalList = function(para) {
             return this.executeGet('MyProposalList', para);
         }
+
+        this.raiseObjection = function(para) {
+            return this.executePost('RaiseAnObjection', para);
+        }
+
+        this.getDemandObjection = function(para) {
+            return this.executeGet('GetDemandObjection', para);
+        }
+
+        this.getDemandObejctionList = function(para) {
+            return this.executeGet('GetDemandObjectionList', para);
+        }
     }
     extend(Demand, Kooboo.BaseModel);
 

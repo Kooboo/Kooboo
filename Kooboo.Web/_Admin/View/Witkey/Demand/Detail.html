@@ -68,7 +68,7 @@
                     <div class="panel-body">
                         <!-- ko ifnot: isTendering -->
                         <div class="well text-center">
-                            <p><i class="fa fa-ban"></i> <span>This demand is invalid now.</span></p>
+                            <p><i class="fa fa-ban"></i> <span>This demand is not tendering now, you can't comment.</span></p>
                         </div>
                         <!-- /ko -->
                         <!-- ko if: isTendering -->
@@ -135,6 +135,7 @@
                     <div class="panel-body">
 
                         <!-- ko if: !isOwner() -->
+
                         <!-- ko if: isTendering -->
                         <!-- ko if: isProposalUser -->
                         <div class="btn-group btn-group-justified">
@@ -151,7 +152,8 @@
                         </div>
                         <!-- /ko -->
                         <!-- /ko -->
-                        <!-- ko if: isEndOfTendering -->
+
+                        <!-- ko if: isEndOfTender -->
                         <!-- ko if: successfulBidding -->
                         <button class="btn btn-block btn-default" data-bind="click: onShowChatModal">
                             <i class="fa fa-comments-o"></i>
@@ -160,17 +162,33 @@
                         <!-- /ko -->
                         <!-- ko ifnot: successfulBidding -->
                         <div class="well well-sm text-center">
-                            <p><i class="fa fa-ban"></i> <span>This demand is invalid now.</span></p>
+                            <p><i class="fa fa-ban"></i> <span>Sorry, you have not won the bid.</span></p>
                         </div>
                         <!-- /ko -->
                         <!-- /ko -->
+
+                        <!-- ko if: isDemandClosed -->
+                        <button class="btn btn-block btn-default" data-bind="click: onShowObjectionModal">
+                            <i class="fa fa-user-md"></i>
+                            <span>Custom service</span>
+                        </button>
+                        <!-- /ko -->
+
+                        <!-- ko if: isDemandInvalid -->
+                        <div class="well well-sm text-center">
+                            <p>This demand is expired.</p>
+                        </div>
+                        <!-- /ko -->
+
                         <!-- /ko -->
 
                         <!-- ko if: isOwner -->
+
                         <!-- ko if: isTendering -->
                         <button class="btn btn-block btn-info" data-bind="click: onUpdateDemand">Update demand</button>
                         <!-- /ko -->
-                        <!-- ko if: isEndOfTendering -->
+
+                        <!-- ko if: isEndOfTender -->
                         <a href="javascript:;" class="btn btn-default btn-block margin-bottom-15" data-bind="click: onShowProposalChatModal.bind(this, null)">
                             <i class="fa fa-comments-o"></i>
                             <span>Chat with the bidder</span>
@@ -186,6 +204,19 @@
                             </a>
                         </div>
                         <!-- /ko -->
+
+                        <!-- ko if: isDemandClosed -->
+                        <div class="well well-sm text-center">
+                            <p>This demand is <span data-bind="text: displayStatus"></span></p>
+                        </div>
+                        <!-- /ko -->
+
+                        <!-- ko if: isDemandInvalid -->
+                        <div class="well well-sm text-center">
+                            <p>This demand is expired.</p>
+                        </div>
+                        <!-- /ko -->
+
                         <!-- /ko -->
                     </div>
                     <table class="table">
@@ -229,6 +260,7 @@
             </div>
         </div>
     </div>
+    <objection-modal params="isShow: showObjectionModal, demandId: id"></objection-modal>
     <demand-modal params="isShow: showDemandModal, data: currentDemand"></demand-modal>
     <proposal-modal params="isShow: showProposalModal, demandId: id, currencyCode: currency, data: showingProposal, mode: proposalViewingMode"></proposal-modal>
     <chat-modal params="isShow: showChatModal, demandId: id, proposalId: proposalId"></chat-modal>
@@ -241,7 +273,8 @@
             "/_Admin/View/Witkey/Scripts/components/ReplyPanel.js",
             "/_Admin/View/Witkey/Scripts/components/ProposalModal.js",
             "/_Admin/View/Witkey/Scripts/components/ChatModal.js",
-            "/_Admin/View/Witkey/Scripts/components/DemandModal.js"
+            "/_Admin/View/Witkey/Scripts/components/DemandModal.js",
+            "/_Admin/View/Witkey/Scripts/components/ObjectionModal.js"
         ])
     })()
 </script>
