@@ -62,6 +62,9 @@ namespace Kooboo.Data.Models
         public DateTime StartDate { get; set; }
 
         public DateTime EndDate { get; set; }
+
+        //demand objection when demandstaus set to Unfinished
+        public bool HasObjection { get; set; }
     }
 
     public class DemandAttachment

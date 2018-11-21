@@ -27,6 +27,8 @@ namespace Kooboo.Data.Models
 
         public Guid DemandId { get; set; }
 
+        public string DemandTitle { get; set; }
+
         public Guid UserId { get; set; }
 
         public string UserName { get; set; }

@@ -13,12 +13,14 @@ namespace Kooboo.Web.ViewModel
 
         public Guid DemandId { get; set;}
 
+        public string DemandTitle { get; set; }
+
         public Guid UserId { get; set; }
 
         public string UserName { get; set; }
 
         public DateTime CreateTime { get; set; }
 
-        public string Status { get; set; }
+        public Dictionary<string,string> Status { get; set; }
     }
 }
