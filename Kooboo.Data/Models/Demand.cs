@@ -40,8 +40,9 @@ namespace Kooboo.Data.Models
 
         public decimal Budget { get; set; }
 
-        public int ProposalCount { get; set; }
+        public decimal FinalPrice { get; set; }
 
+        public int ProposalCount { get; set; }
 
         public string Currency { get; set; }
 
@@ -65,6 +66,11 @@ namespace Kooboo.Data.Models
 
         //demand objection when demandstaus set to Unfinished
         public bool HasObjection { get; set; }
+        //to mark whether unresolved demand is confirmed
+        public bool IsConfirmed { get; set; }
+        //job auto confirm,manual confirm
+        public string ConfirmRemark { get; set; }
+
     }
 
     public class DemandAttachment

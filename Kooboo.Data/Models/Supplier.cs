@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Data.Models
 {
-    public class DemandObjection:IGolbalObject
+    public class Supplier: IGolbalObject
     {
         private Guid _id;
         public Guid Id
@@ -25,29 +25,24 @@ namespace Kooboo.Data.Models
             }
         }
 
-        public Guid DemandId { get; set; }
-
-        public string DemandTitle { get; set; }
-
         public Guid UserId { get; set; }
-
+        
         public string UserName { get; set; }
+       
+        public string Introduction { get; set; }
 
-        public string Description { get; set; }
+        public List<SupplierExpertise> Expertises { get; set; }
 
-        public string Contact { get; set; }
-
-        public DateTime CreateTime { get; set; }
-
-        public DemandObjectionStatus Status { get; set; }
-
-        public string Remark { get; set; }
+        public string Currency { get; set; }
 
     }
 
-    public enum DemandObjectionStatus
+    public class SupplierExpertise
     {
-        UnResolved=0,
-        Resolved=1
+        public string Name { get; set; }
+
+        public string Description { get; set; }
+
+        public decimal Price { get; set; }
     }
 }

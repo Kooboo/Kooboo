@@ -257,6 +257,8 @@
     <Compile Include="ViewModel\SiteLog.cs" />
     <Compile Include="ViewModel\IEmbeddable.cs" />
     <Compile Include="ViewModel\Style.cs" />
+    <Compile Include="ViewModel\SupplierItemViewModel.cs" />
+    <Compile Include="ViewModel\SupplierViewModel.cs" />
     <Compile Include="ViewModel\Template.cs" />
     <Compile Include="ViewModel\TextContent.cs" />
     <Compile Include="Api\Implementation\SiteObjectApi.cs" />
