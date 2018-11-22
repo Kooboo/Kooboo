@@ -174,9 +174,7 @@ namespace Kooboo.Sites.Scripting
                 get; set;
             }
         }
-
-
-
+                     
         private kSiteDb _sitedb;
         public kSiteDb SiteDb
         {
