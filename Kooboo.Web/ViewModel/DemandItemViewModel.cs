@@ -44,7 +44,7 @@ namespace Kooboo.Web.ViewModel
 
         public int ProposalCount { get; set; }
 
-        public List<DemandAttachment> Attachments { get; set; }
+        public List<ResouceAttachment> Attachments { get; set; }
 
         public string Currency { get; set; }
 

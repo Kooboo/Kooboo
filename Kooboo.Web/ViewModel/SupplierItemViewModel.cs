@@ -26,5 +26,7 @@ namespace Kooboo.Web.ViewModel
                 return Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Currency);
             }
         }
+
+        public List<ResouceAttachment> Attachments { get; set; }
     }
 }

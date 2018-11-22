@@ -54,7 +54,7 @@ namespace Kooboo.Data.Models
                 return Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Currency);
             }
         }
-        public List<DemandAttachment> Attachments { get; set; }
+        public List<ResouceAttachment> Attachments { get; set; }
 
         public DateTime CreateTime { get; set; }
 
@@ -71,13 +71,6 @@ namespace Kooboo.Data.Models
         //job auto confirm,manual confirm
         public string ConfirmRemark { get; set; }
 
-    }
-
-    public class DemandAttachment
-    {
-        public Guid Id { get; set; }
-        public string FileName { get; set; }
-        public long Size { get; set; }
     }
 
     public enum DemandStatus

@@ -35,6 +35,8 @@ namespace Kooboo.Data.Models
 
         public string Currency { get; set; }
 
+        public List<ResouceAttachment> Attachments { get; set; }
+
     }
 
     public class SupplierExpertise

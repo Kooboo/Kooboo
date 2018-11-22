@@ -225,6 +225,7 @@
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\PayPackageRequest.cs" />
     <Compile Include="Models\DemandProposal.cs" />
+    <Compile Include="Models\ResouceAttachment.cs" />
     <Compile Include="Models\SalesItem.cs" />
     <Compile Include="Models\ServerSetting.cs" />
     <Compile Include="Models\Cluster.cs" />
