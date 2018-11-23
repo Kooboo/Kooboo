@@ -33,7 +33,8 @@ namespace Kooboo.Sites.InlineEditor.Converter
             Sites.Contents.Models.HtmlBlock block = new Contents.Models.HtmlBlock();
              block.Name = name;
             string convertvalue = Lib.Helper.JsonHelper.GetString(ConvertResult, "HtmlBody");
-            block.SetValue("", convertvalue);
+            var culture = string.IsNullOrEmpty(context.Culture) ? string.Empty : context.Culture;
+            block.SetValue(culture, convertvalue);
 
             context.WebSite.SiteDb().HtmlBlocks.AddOrUpdate(block);
 
