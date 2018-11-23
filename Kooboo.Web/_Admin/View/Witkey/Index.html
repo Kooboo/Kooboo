@@ -293,21 +293,76 @@
                 </div>
                 <!-- /ko -->
             </div>
+            <div class="content-container" id="suppliers">
+                <h2 class="section-header clearfix">
+                    <div class="pull-left title">
+                        <a href="javascript:;">Suppliers<i class="fa fa-chevron-right"></i></a>
+                    </div>
+                    <div class="pull-right extend">
+                        <!-- ko ifnot: isSupplier -->
+                        <a href="javascript:;" data-bind="click: onApplySupplier"><i class="fa fa-plus"></i></a>
+                        <!-- /ko -->
+                        <!-- ko if: isSupplier -->
+                        <a href="javascript:;" data-bind="click: onEditSupplier, tooltip: 'Edit my intro', tooltipPlacement: 'left'"><i class="fa fa-pencil"></i></a>
+                        <!-- /ko -->
+                    </div>
+                </h2>
+                <!-- ko if: suppliers().length -->
+                <div class="content row clearfix" data-bind="foreach: { data: suppliers, as: 'sup' }">
+                    <div class="col-md-4">
+                        <div class="thumbnail">
+                            <div class="caption">
+                                <h3 data-bind="text: sup.userName"></h3>
+                                <div class="form-horizontal margin-bottom-15">
+                                    <div class="form-group">
+                                        <label class="col-md-3">Expertises</label>
+                                        <div class="col-md-9">
+                                            <p class="form-control-static" data-bind="foreach: sup.expertises">
+                                                <span class="label label-sm label-info" data-bind="text: $data"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3">Introduction</label>
+                                        <div class="col-md-9">
+                                            <p class="form-control-static" data-bind="text: sup.introduction"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p>
+                                    <a href="javascript:;" target="_blank" class="btn btn-info" data-bind="attr: { href: sup.detailUrl }">View</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /ko -->
+                <!-- ko ifnot: suppliers().length -->
+                <div class="content">
+                    <div class="well">
+                        <h4>No supplier found</h4>
+                        <p><a href="javascript:;" data-bind="click: onApplySupplier">Click here</a> to apply supplier.</p>
+                    </div>
+                </div>
+                <!-- /ko -->
+            </div>
         </div>
     </div>
 
     <discussion-modal params="isShow: showDiscussionModal"></discussion-modal>
     <demand-modal params="isShow: showDemandModal"></demand-modal>
+    <apply-supplier-modal params="isShow: showApplySupplier, data: mySupplierIntro"></apply-supplier-modal>
 </div>
 
 <script>
     (function() {
         Kooboo.loadJS([
             "/_Admin/View/Witkey/Scripts/components/DiscussionModal.js",
+            "/_Admin/View/Witkey/Scripts/components/ApplySupplierModal.js",
             "/_Admin/View/Witkey/Scripts/components/DemandModal.js"
         ])
     })()
 </script>
 
 <script src="/_Admin/View/Witkey/Scripts/Kooboo.Witkey.js"></script>
-<script src="/_Admin/View/Witkey/Index.js"></script>
+<script src="/_Admin/View/Witkey/Index.js"></script>`

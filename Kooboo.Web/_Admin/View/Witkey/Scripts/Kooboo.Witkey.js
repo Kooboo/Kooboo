@@ -125,8 +125,26 @@ $(function() {
     }
     extend(Demand, Kooboo.BaseModel);
 
+    function Supplier() {
+        this.name = 'Supplier';
+
+        this.isSupplier = function(para) {
+            return this.executeGet('IsSupplier', para);
+        }
+
+        this.getByUser = function(para) {
+            return this.executeGet('GetByUser', para);
+        }
+
+        this.addOrUpdate = function(para) {
+            return this.executePost('AddOrUpdate', para);
+        }
+    }
+    extend(Supplier, Kooboo.BaseModel);
+
     Kooboo = Object.assign({
         Demand: new Demand(),
-        Discussion: new Discussion()
+        Discussion: new Discussion(),
+        Supplier: new Supplier()
     }, Kooboo);
 })

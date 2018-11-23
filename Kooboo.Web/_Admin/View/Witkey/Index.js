@@ -73,6 +73,52 @@ $(function() {
 
         this.getDemandList();
 
+        this.isSupplier = ko.observable(false);
+        this.mySupplierIntro = ko.observable();
+
+        this.showApplySupplier = ko.observable(false);
+        this.onApplySupplier = function() {
+            self.showApplySupplier(true);
+        }
+        this.onEditSupplier = function() {
+            Kooboo.Supplier.getByUser().then(function(res) {
+                if (res.success) {
+                    self.mySupplierIntro(res.model);
+                    self.showApplySupplier(true);
+                }
+            })
+        }
+        this.suppliers = ko.observableArray();
+
+        this.onViewSupplier = function(data, e) {
+            Kooboo.Supplier.get({
+                id: data.id
+            }).then(function(res) {
+                if (res.success) {
+
+                }
+            })
+        }
+
+        Kooboo.Supplier.getList({
+            pageSize: 12
+        }).then(function(res) {
+            if (res.success) {
+                self.suppliers(res.model.list.map(function(item) {
+                    item.detailUrl = Kooboo.Route.Get(Kooboo.Route.Supplier.DetailPage, {
+                        id: item.id
+                    })
+                    return item;
+                }));
+            }
+        })
+
+        Kooboo.Supplier.isSupplier().then(function(res) {
+            if (res.success) {
+                self.isSupplier(res.model);
+            }
+        })
+
         Kooboo.EventBus.subscribe('kb/component/demand-modal/saved', function() {
             self.getDemandList();
         })

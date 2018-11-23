@@ -170,6 +170,9 @@
             ListPage: GetRoute("Witkey/Demand/Index"),
             DetailPage: GetRoute("Witkey/Demand/Detail")
         },
+        Supplier: {
+            DetailPage: GetRoute("Witkey/Supplier/Detail")
+        },
         Get: function(PageRoute, params) {
 
             var paramStr = "";

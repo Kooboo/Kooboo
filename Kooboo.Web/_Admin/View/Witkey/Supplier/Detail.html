@@ -1,0 +1,38 @@
+<!-- #layout name=default -->
+<div id="main">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Supplier</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Supplier</label>
+                                    <p class="form-control-static" data-bind="text: username"></p>
+                                </div>
+                            </div>
+                            <div class="col-md-10">
+                                <div class="form-group">
+                                    <label>Expertise</label>
+                                    <p class="form-control-static">
+                                        <!-- ko foreach: expertises -->
+                                        <label class="label label-sm label-info" data-bind="text: $data.name, attr: { title: $data.description }"></label>
+                                        <!-- /ko -->
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <p data-bind="html: introduction"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/_Admin/View/Witkey/Scripts/Kooboo.Witkey.js"></script>
+<script src="/_Admin/View/Witkey/Supplier/Detail.js"></script>
