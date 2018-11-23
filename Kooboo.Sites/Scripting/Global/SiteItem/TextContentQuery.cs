@@ -89,6 +89,14 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }   
             }
 
+
+            if (condition.CategoryId != default(Guid))
+            {
+                var allcontentids = sitedb.ContentCategories.Query.Where(o => o.CategoryId == condition.CategoryId).SelectAll().Select(o => o.ContentId).ToList();
+
+                tablequery.WhereIn("Id", allcontentids);
+            }
+
             var all = tablequery.SelectAll();
 
                   

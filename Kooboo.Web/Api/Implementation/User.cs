@@ -55,7 +55,14 @@ namespace Kooboo.Web.Api.Implementation
                     if (returnUrl != null && returnUrl.ToLower().Contains("accesstoken"))
                     {
                         returnUrl = null; 
-                    }    
+                    }
+
+                    var lower = returnUrl.ToLower(); 
+                           
+                    if (lower == "/_admin" || lower == "/_admin/" || lower == "\\_admin" || lower == "\\_admin\\")
+                    {
+                        returnUrl = null; 
+                    }
                 }
                 bool isRemember = false;
                 if (!string.IsNullOrEmpty(remember))
@@ -72,8 +79,7 @@ namespace Kooboo.Web.Api.Implementation
                 if (isRemember)
                 {
                     redirct = Lib.Helper.UrlHelper.AppendQueryString(redirct, "remember", "yes");
-                }
-
+                }      
                 response.Model = redirct;
                 // resposne redirect url. for online and local version...  
                 return response;

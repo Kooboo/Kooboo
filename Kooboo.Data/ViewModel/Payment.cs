@@ -96,7 +96,8 @@ namespace Kooboo.Data.ViewModel
         Wechat,
         CreditCard,
         Paypal,
-    }
+    }         
+
     public class BillAddress
     {
         public string AddressLine { get; set; }

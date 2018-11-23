@@ -315,6 +315,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }
                 else
                 {
+                    // Should check for category fields... 
                     return false;
                 }
             }
