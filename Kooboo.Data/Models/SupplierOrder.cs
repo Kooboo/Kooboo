@@ -24,11 +24,19 @@ namespace Kooboo.Data.Models
 
         public string UserName { get; set; }
 
-        public string SupplierId { get; set; }
+        public Guid SupplierId { get; set; }
+
+        public Guid SupplierUserId { get; set; }
+
+        public string SupplierUserName { get; set; }
+
+        public string Expertise { get; set; }
 
         public decimal Price { get; set; }
 
         public string Currency { get; set; }
+
+        public DateTime CreateTime { get; set; }
 
         public SupplierOrderStatus Status { get; set; }
     }

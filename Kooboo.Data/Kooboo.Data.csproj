@@ -210,7 +210,7 @@
     <Compile Include="Models\Demand.cs" />
     <Compile Include="Models\DemandComment.cs" />
     <Compile Include="Models\DemandObjection.cs" />
-    <Compile Include="Models\DemandPrice.cs" />
+    <Compile Include="Models\BalanceChangeModel.cs" />
     <Compile Include="Models\Discussion.cs" />
     <Compile Include="Models\Dll.cs" />
     <Compile Include="Models\DataMethodSetting.cs" />
@@ -240,6 +240,7 @@
     <Compile Include="Models\Queue.cs" />
     <Compile Include="Models\SimpleSetting.cs" />
     <Compile Include="Models\Supplier.cs" />
+    <Compile Include="Models\SupplierOrder.cs" />
     <Compile Include="Models\SystemStatus.cs" />
     <Compile Include="Models\Template.cs" />
     <Compile Include="Models\ThirdPartyDataSource.cs" />
