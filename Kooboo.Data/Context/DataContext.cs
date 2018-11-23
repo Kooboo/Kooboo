@@ -810,9 +810,17 @@ namespace Kooboo.Data.Context
             {
                 return this.CurrentCounter.Current == 1;
             }
+           else if (lower == "!first" || lower == "nonfirst")
+            {
+                return this.CurrentCounter.Current != 1; 
+            }
             else if (lower == "last")
             {
                 return this.CurrentCounter.Current == this.CurrentCounter.Total;
+            }
+            else if (lower == "!last" || lower == "nonlast")
+            {
+                return this.CurrentCounter.Current != this.CurrentCounter.Total;
             }
             else
             {

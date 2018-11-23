@@ -22,7 +22,7 @@
     //repeat item match... only match even rows. 
      <div k-repeat='item list'><div k-if='repeat/even'><p>text</p></div></div>" 
      
-     // available keywords: k-if='repeat/even', k-if='repeat/odd', k-if='repeat/first', k-if='repeat/last', 
+     // available keywords: k-if='repeat/even', k-if='repeat/odd', k-if='repeat/first', k-if='repeat/last', k-if='repeat/!first', k-if='repeat/!last',
      
      // use the number or css numbering rule. 
      // k-if='repeat/2'    // the second row. 
