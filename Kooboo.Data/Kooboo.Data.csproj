@@ -198,6 +198,7 @@
     <Compile Include="Models\AppDataModel.cs" />
     <Compile Include="Models\AuthorizeResult.cs" />
     <Compile Include="Models\Certificate.cs" />
+    <Compile Include="Models\Chat.cs" />
     <Compile Include="Models\CheckResponse.cs" />
     <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\Coupon.cs" />
