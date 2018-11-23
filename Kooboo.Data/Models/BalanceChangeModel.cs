@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Data.Models
 {
-    public class DemandPrice
+    public class BalanceChangeModel
     {
         public Guid UserId { get; set; }
 
@@ -14,6 +14,6 @@ namespace Kooboo.Data.Models
 
         public string Currency { get; set; }
 
-        public Guid DemandId { get; set; }
+        public Guid Id { get; set; }
     }
 }
