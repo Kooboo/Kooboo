@@ -68,6 +68,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             var allContentTypes = sitedb.ContentTypes.All();
 
             ContentType onlyType = null;
+            ContentFolder onlyFolder = null;
 
             var condition = this.txtObjRepo.ParseCondition(this.SearchCondition);
 
@@ -76,7 +77,13 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             if (condition.FolderId != default(Guid))
             {
                 tablequery.Where(o => o.FolderId == condition.FolderId);
-                onlyType = sitedb.ContentTypes.GetByFolder(condition.FolderId);
+
+                var folder = sitedb.ContentFolders.Get(condition.FolderId); 
+                if(folder !=null)
+                {
+                    onlyFolder = folder;
+                    onlyType = sitedb.ContentTypes.Get(folder.ContentTypeId); 
+                }   
             }
 
             if (condition.ContentTypeId != default(Guid))
@@ -98,10 +105,9 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
 
             var all = tablequery.SelectAll();
+                          
 
-                  
-
-            var filteritems = this.txtObjRepo.filterItems(all, condition.Conditions, onlyType);
+            var filteritems = this.txtObjRepo.filterItems(all, condition.Conditions, onlyType, onlyFolder);
 
             if (filteritems == null || !filteritems.Any())
             {
