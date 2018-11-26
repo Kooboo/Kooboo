@@ -523,6 +523,11 @@ namespace Kooboo.Sites.Repository
 
             if (value is Kooboo.Sites.Models.CoreObject && changetype != ChangeType.Delete)
             {
+                if (value is Kooboo.Sites.Routing.Route)
+                {
+                    return; 
+                }
+
                 var size = Kooboo.Sites.Service.ObjectService.GetSize(value); 
                 
                 if (!Kooboo.Data.Infrastructure.InfraManager.Test(this.WebSite.OrganizationId, Data.Infrastructure.InfraType.Disk, size))
@@ -532,15 +537,19 @@ namespace Kooboo.Sites.Repository
                 }
                 else
                 {
-                    string msg = null; 
+
+                    string msg = ConstObjectType.GetName(value.ConstType);
+
                     var objinfo = Kooboo.Sites.Service.ObjectService.GetObjectInfo(this.SiteDb, value);
+                     
+                     
                     if (objinfo !=null)
                     {
-                        msg = objinfo.DisplayName; 
+                        msg +=  "| " + objinfo.DisplayName; 
                     }
                     else
                     {
-                        msg =  value.Name; 
+                        msg += "| " + value.Name; 
                     }
 
                     Kooboo.Data.Infrastructure.InfraManager.Add(this.WebSite.OrganizationId, Data.Infrastructure.InfraType.Disk, size, msg); 
