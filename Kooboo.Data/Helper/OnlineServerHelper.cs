@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Data.Models;
+using System.Configuration;
 
 namespace Kooboo.Data.Helper
 {
     public class OnlineServerHelper
     {
-        private static string RootUrl = "https://162.211.126.186:50005/_api/";
+        private static string RootUrl = ConfigurationManager.AppSettings.Get("RootUrl");
         private static List<OnlineServer> cacheServers { get; set; }
         private static DateTime NextCheck { get; set; }
 
@@ -27,7 +28,7 @@ namespace Kooboo.Data.Helper
         {
             try
             {
-                string serverurl = RootUrl + "Server/all?AccessToken=6db401e9-3a9c-9ec0-04af-910b55d8a85b";
+                string serverurl = RootUrl + "Server/all";
                 return Lib.Helper.HttpHelper.Get<List<OnlineServer>>(serverurl);
             }
             catch (Exception ex)
