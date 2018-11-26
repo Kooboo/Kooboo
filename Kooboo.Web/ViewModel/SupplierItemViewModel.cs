@@ -13,6 +13,8 @@ namespace Kooboo.Web.ViewModel
 
         public string UserName { get; set; }
 
+        public bool IsOwner { get; set; }
+
         public string Introduction { get; set; }
 
         public List<SupplierExpertise> Expertises { get; set; }
