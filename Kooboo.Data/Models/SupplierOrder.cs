@@ -43,10 +43,10 @@ namespace Kooboo.Data.Models
 
     public enum SupplierOrderStatus
     {
-        Pending=0,
-        Accept=1,
-        Deny=2,
-        UnFinished=3,
-        Finished=4
+        Pending = 0,
+        Accepted = 1,
+        Denied = 2,
+        UnFinished = 3,
+        Finished = 4
     }
 }

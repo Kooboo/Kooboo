@@ -139,6 +139,26 @@ $(function() {
         this.addOrUpdate = function(para) {
             return this.executePost('AddOrUpdate', para);
         }
+
+        this.getOrdersBySupplier = function(para) {
+            return this.executeGet('OrderBySupplierUser', para);
+        }
+
+        this.getOrdersByUser = function(para) {
+            return this.executeGet('OrdersByUser', para);
+        }
+
+        this.addOrUpdateOrder = function(para) {
+            return this.executePost('AddOrUpdateOrder', para);
+        }
+
+        this.acceptOrder = function(para) {
+            return this.executePost('AcceptSupplierOrder', para);
+        }
+
+        this.orderFinished = function(para) {
+            return this.executePost('ConfirmSupplierOrder', para);
+        }
     }
     extend(Supplier, Kooboo.BaseModel);
 
