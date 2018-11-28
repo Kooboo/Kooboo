@@ -101,6 +101,7 @@
     <Compile Include="GeoLocation\IPLocation.cs" />
     <Compile Include="GeoLocation\IPViewModel.cs" />
     <Compile Include="GeoLocation\StateInfo.cs" />
+    <Compile Include="Helper\DownloadZipHelper.cs" />
     <Compile Include="Helper\OnlineServerHelper.cs" />
     <Compile Include="Helper\PermissionHelper.cs" />
     <Compile Include="Helper\ServerHelper.cs" />

@@ -15,20 +15,6 @@ set fileCompressPath=%batPath%\published\
 ::delete existed zipFile
 if exist "%zipFile%" (del %zipFile%)
 
-::sign kooboo
-set signToolPath=%batPath%\tools\signtool
-set certPath=%koobooPath%\bin\%buildType%\yardi.pfx
-if exist "%certPath%" (
-%signToolPath% sign /f %certPath% /p 1 %koobooPath%\bin\%buildType%\kooboo.exe
-%signToolPath% timestamp /t http://timestamp.wosign.com/timestamp  %koobooPath%\bin\%buildType%\kooboo.exe
-)
-
-
-::compress js and css in Admin folder
-if exist "%fileCompressPath%" (
-%fileCompressPath%\FileCompress.exe
-)
-
 set copyBasePath=%koobooPath%\bin\%buildType%\Kooboo
 set copyFolder=%copyBasePath%\Kooboo
 set copyAdminPath=%copyFolder%\_Admin
