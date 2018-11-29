@@ -46,8 +46,7 @@ namespace Kooboo.Sites.Models
                 _id = value;
             }
         }
-
-        private string _template;
+         
         /// <summary>
         /// The template in the format with merge field of 
         /// {href}, {anchortext}, {item1}, {ActiveString} 
@@ -55,65 +54,8 @@ namespace Kooboo.Sites.Models
         /// </summary> 
         public string Template
         {
-            get
-            {
-                return _template;
-            }
-            set
-            {
-                _template = value;
-                if (!string.IsNullOrEmpty(_template))
-                {
-                    int activeindex = _template.IndexOf("{activeclass:");
-                    if (activeindex >= 0)
-                    {
-                        var endindex = _template.IndexOf("}", activeindex);
-                        if (endindex > 0)
-                        {
-                            var activeclass = _template.Substring(activeindex, endindex - activeindex);
-                            activeclass = activeclass.Replace("{activeclass:", "");
-                            this.HasActiveClass = true;
-                            this.ActiveClass = activeclass;
-                        }
-
-                        if (_template.IndexOf(" class", StringComparison.OrdinalIgnoreCase) != -1)
-                        {
-                            // find the right place to insert 
-                            int index = _template.IndexOf(" class", StringComparison.OrdinalIgnoreCase);
-                            int nextequalmark = _template.IndexOf("=", index);
-                            if (index > -1 && nextequalmark > -1)
-                            {
-                                string newtemplate = _template.Substring(0, activeindex) + _template.Substring(endindex + 1);
-                                var insertposition = MenuHelper.FindClassInsertPosition(newtemplate);
-
-                                if (insertposition > -1)
-                                {
-                                    _template = newtemplate.Substring(0, insertposition) + MenuHelper.MarkActiveClassReplacer + " " + newtemplate.Substring(insertposition);
-                                }
-                                else
-                                {
-                                    _template = _template.Substring(0, activeindex) + "class='" + MenuHelper.MarkActiveClassReplacer + "'" + _template.Substring(endindex + 1);
-                                }
-                            }
-                            else
-                            {
-                                _template = _template.Substring(0, activeindex) + "class='" + MenuHelper.MarkActiveClassReplacer + "'" + _template.Substring(endindex + 1);
-                            }
-
-                        }
-                        else
-                        {
-                            _template = _template.Substring(0, activeindex) + "class='" + MenuHelper.MarkActiveClassReplacer + "'" + _template.Substring(endindex + 1);
-                        }
-                    }
-
-                    if (_template.IndexOf(MenuHelper.MarkParentId) > -1 || _template.IndexOf(MenuHelper.MarkCurrentId) > -1)
-                    {
-                        this.RenderId = true;
-                    }
-                }
-            }
-        }
+            get;set;
+        }  
 
         public string Url { get; set; }
 
@@ -173,12 +115,8 @@ namespace Kooboo.Sites.Models
             }
             submenu.tempdata = null;
         }
-
-        internal bool HasActiveClass { get; set; }
-        internal string ActiveClass { get; set; }
-
-        internal bool RenderId { get; set; }
-
+         
+         
         public Guid DataSourceId { get; set; } = default(Guid);
 
         /// <summary>
@@ -206,14 +144,13 @@ namespace Kooboo.Sites.Models
 
         public override int GetHashCode()
         {
-            string unique = this.Name + this.Url + this._template + this.SubItemTemplate + this.SubItemContainer;
-
+            string unique = this.Name + this.Url + this.Template + this.SubItemTemplate + this.SubItemContainer;
+             
             foreach (var item in Values)
             {
                 unique += item.Key + item.Value;
             }
-
-
+             
             if (this._children != null && this._children.Count > 0)
             {
                 foreach (var item in _children)
@@ -225,6 +162,9 @@ namespace Kooboo.Sites.Models
 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
+
+        [KoobooIgnore] 
+        internal MenuRenderData TempRenderData { get; set; }
     }
 
     /// <summary>
@@ -236,6 +176,18 @@ namespace Kooboo.Sites.Models
         public int EndIndex { get; set; }
 
         public int StartIndex { get; set; }
+    }
+
+    public class MenuRenderData
+    {
+        public string ActiveClass { get; set; }
+
+        public string FineTemplate { get; set; }
+
+        public bool HasActiveClass { get; set; } 
+
+        public bool RenderId { get; set; }
+
     }
 
 }

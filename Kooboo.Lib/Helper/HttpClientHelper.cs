@@ -26,7 +26,7 @@ namespace Kooboo.Lib.Helper
             if (cookieContainer == null)
                 return;
             Uri uri;
-            if(Uri.TryCreate(url,UriKind.Absolute,out uri))
+            if(cookieContainer !=null &&  Uri.TryCreate(url,UriKind.Absolute,out uri))
             {
                 var cookies = cookieContainer.GetCookies(uri);
                 foreach (var cookieObj in cookies)

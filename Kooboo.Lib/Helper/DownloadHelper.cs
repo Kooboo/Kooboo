@@ -136,6 +136,7 @@ namespace Kooboo.Lib.Helper
             try
             {
                 HttpClient client = HttpClientHelper.Client;
+
                 HttpClientHelper.SetCookieContainer(cookieContainer, fullUrl);
 
                 var response = await client.GetAsync(fullUrl);
