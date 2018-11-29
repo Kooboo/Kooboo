@@ -158,12 +158,21 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
         {
             get
             {
+                List<string> mykey = new List<string>();
+                mykey.Add("id");
+                mykey.Add("userKey");
+                mykey.Add("lastModifled"); 
+
                 var store = this.TextContent.GetContentStore(this.Culture);
                 if (store != null)
                 {
-                    return store.FieldValues.Keys;
+                    foreach (var item in store.FieldValues.Keys)
+                    {
+                        mykey.Add(item); 
+                    } 
                 }
-                return new List<string>();
+
+                return mykey;  
             }
         }
 
