@@ -23,6 +23,8 @@ namespace Kooboo.Lib.Helper
 
         public static void SetCookieContainer(CookieContainer cookieContainer,string url)
         {
+            if (cookieContainer == null)
+                return;
             Uri uri;
             if(Uri.TryCreate(url,UriKind.Absolute,out uri))
             {
