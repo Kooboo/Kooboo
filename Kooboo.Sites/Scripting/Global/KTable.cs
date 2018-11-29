@@ -72,7 +72,22 @@ namespace Kooboo.Sites.Scripting.Global
         public void update(object id, object newvalue)
         {
             this.table.Update(id, newvalue);  
-        } 
+        }
+
+        public void update(object newvalue)
+        {
+            var newdata = this.table.PrepareData(newvalue);
+
+            if (newdata.ContainsKey("_id"))
+            {
+                var key = newdata["_id"];
+                this.update(key, newvalue); 
+            }
+            else
+            {
+                this.table.UpdateOrAdd(newvalue);
+            } 
+        }
 
         public void createIndex(string fieldname)
         {
