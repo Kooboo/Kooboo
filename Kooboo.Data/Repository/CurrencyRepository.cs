@@ -19,6 +19,7 @@ namespace Kooboo.Data.Repository
             dic.Add("userId", userId.ToString());
             
             var result= HttpHelper.Post<bool>(ChangeCurrencyUrl, dic);
+
             GlobalDb.Organization.RemoveOrgCache(userId);
 
             return result;
