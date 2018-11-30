@@ -31,6 +31,7 @@
 
             // display documents
             var list = [];
+
             _.forEach(params.docs, function(doc) {
                 list.push(new docModel(doc));
             });

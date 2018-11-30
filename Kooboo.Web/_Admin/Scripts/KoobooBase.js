@@ -501,14 +501,17 @@
     function Sidebar() {
         var self = this;
         this.name = "Bar";
-        self.getSidebar = function(para) {
+        this.getSidebar = function(para) {
             return self.executeGet("sitemenu", para);
         }
-        self.getDomainSidebar = function(para) {
+        this.getDomainSidebar = function(para) {
             return self.executeGet("domainMenu", para);
         }
-        self.getExtensionSidebar = function(para) {
+        this.getExtensionSidebar = function(para) {
             return self.executeGet("extensionMenu", para);
+        }
+        this.getMarketSidebar = function(para) {
+            return self.executeGet('MarketSideBar', para);
         }
     }
     extend(Sidebar, BaseModel);

@@ -1,0 +1,97 @@
+<!-- #layout name=blank --sideType='market'-->
+
+<div class="page-header">
+    <h1 class="title">Suppliers</h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'MARKET'
+},{
+    name: 'Suppliers',
+    url: Kooboo.Route.Supplier.ListPage
+},{
+    name: 'My Expertises'
+}]}"></div>
+
+
+<style>
+    .setting-list p.form-control-static {
+        word-wrap: break-word;
+        min-height: 0;
+    }
+    
+    .setting-list {
+        padding: 0;
+        list-style: none;
+    }
+    
+    .setting-list li {
+        padding: 15px 0;
+        border-bottom: 1px solid #eeeeee;
+    }
+    
+    .setting-list li:last-child {
+        border-bottom: 0;
+    }
+</style>
+
+
+<ul class="setting-list clearfix">
+    <li class="item clearfix">
+        <div class="col-md-3">
+            <label class="control-label">Self Introduction</label>
+        </div>
+        <div class="col-md-9">
+            <textarea class="form-control autosize input-large" data-bind="value: introduction, error: introduction"></textarea>
+        </div>
+    </li>
+    <li class="item clearfix">
+        <div class="col-md-3">
+            <label class="control-label">Display name</label>
+        </div>
+        <div class="col-md-9">
+            <input type="text" data-bind="value: displayName" class="form-control input-large">
+        </div>
+    </li>
+</ul>
+
+<div class="row margin-bottom-15">
+    <div class="col-md-4 col-sm-12">
+        <div class="form-group">
+            <label>Self Introduction</label>
+            <textarea class="form-control autosize" data-bind="value: introduction, error: introduction"></textarea>
+        </div>
+        <div class="form-group">
+            <label data-bind="text: 'Expertises' + (expertises().length ? (': ' + expertises().length + ' Items') : '')"></label>
+            <div data-bind="if: expertises().length">
+                <div class="input-groups" data-bind="foreach: expertises">
+                    <div class="margin-bottom-10">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-medium" placeholder="Expertise" data-bind="value: $data.name, error: $data.name">
+                            <span class="input-group-addon">-</span>
+                            <input type="number" min="0" class="form-control input-medium" placeholder="Acceptable price" data-bind="value: $data.price, error: $data.price">
+                            <span class="input-group-btn">
+                                <a class="btn btn-default" href="javascript:;" data-bind="click: $parent.onRemoveExpertise.bind(this, $data)"><i class="fa fa-minus"></i></a>
+                            </span>
+                        </div>
+                        <textarea class="form-control autosize" data-bind="value: $data.description" placeholder="Description"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <a class="btn dark" href="javascript:;" data-bind="tooltip: Kooboo.text.common.add, tooltipPlacement: 'right', click: onAddExpertise"><i class="fa fa-plus"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button class="btn green" data-bind="click: onSave">Save</button>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Market/Scripts/Kooboo.Market.js"></script>
+<script src="/_Admin/View/Market/Supplier/MyExpertises.js"></script>

@@ -1,0 +1,91 @@
+<!-- #layout name=blank --sideType='market'-->
+<style>
+    .content-container .item {
+        border: 1px solid rgba(0, 0, 0, .2);
+        border-radius: 2px;
+        margin-bottom: 15px;
+        padding: 15px 0;
+        cursor: pointer;
+        position: relative;
+        transition: all 200ms;
+        top: 0;
+    }
+    
+    .content-container .item:hover {
+        top: -4px;
+    }
+    
+    .content-container .item p {
+        text-overflow: ellipsis;
+        max-height: 36px;
+        overflow: hidden;
+    }
+    
+    .media .icon {
+        width: 64px;
+        height: 64px;
+        text-align: center;
+        line-height: 64px;
+        background: #eeeeee;
+        display: block;
+        border-radius: 2px;
+        position: relative;
+    }
+    
+    .media .icon i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #aaaaaa;
+    }
+</style>
+
+<div class="page-header">
+    <h1 class="title">Hardwares</h1>
+</div>
+
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'MARKET'
+},{
+    name: 'Hardwares'
+}]}"></div>
+
+<div class="content-container row clearfix" data-bind="foreach: hardwares">
+    <div class="col-md-4">
+        <div class="item clearfix" data-bind="click: $parent.onSelectHardware">
+            <div class="col-md-12">
+                <div class="media">
+                    <a class="pull-left" href="#">
+                        <span class="icon">
+                            <i class="fa fa-2x" data-bind="css: $data.icon"></i>
+                        </span>
+                    </a>
+                    <div class="media-body">
+                        <h4 class="media-heading" data-bind="text: $data.name"></h4>
+                        <p data-bind="text: $data.description || Kooboo.text.site.template.noDescription"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div data-bind="component: {
+    name: 'hardware-modal',
+    params: {
+        isShow: showHardwareModal,
+        data: hardwareData
+    }
+}"></div>
+
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/View/Market/Scripts/components/HardwareModal.js",
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Market/Scripts/Kooboo.Market.js"></script>
+<script src="/_Admin/View/Market/Hardware/Index.js"></script>
