@@ -172,7 +172,8 @@
         },
         Supplier: {
             ListPage: GetRoute("Market/Supplier/Index"),
-            DetailPage: GetRoute("Market/Supplier/Detail")
+            DetailPage: GetRoute("Market/Supplier/Detail"),
+            ExpertisePage: GetRoute("Market/Supplier/Expertise")
         },
         Template: {
             ListPage: GetRoute("Market/Template/Index")

@@ -29,7 +29,7 @@ namespace Kooboo.Web.ViewModel
         }
     }
 
-    public class UserExpertisItemViewModel
+    public class UserExpertiseItemViewModel
     {
         public Guid Id { get; set; }
 

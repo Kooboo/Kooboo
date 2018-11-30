@@ -7,11 +7,48 @@
     name: 'MARKET'
 }]}"></div>
 
+<div class="row">
+    <div class="col-md-3 block-dashboard-stat">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">Balance</h4>
+                <div class="panel-actions">
+                    <div class="btn-group" role="group">
+                        <button data-bind="click: onShowRechargeModal" class="btn btn-default"><i class="fa fa-plus"></i></button>
+                        <button data-bind="click: onShowTopupHistoryModal" class="btn btn-default"><i class="fa fa-history"></i></button>
+                        <button data-bind="click: onShowCurrenies" class="btn btn-default"><i class="fa fa-money"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="item">
+                    <div class="number" data-bind="text: displayBalance"></div>
+                    <small class="text-muted" data-bind="text: currencyCode"></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div data-bind="component: {
+    name: 'recharge-modal',
+    params: {
+        isShow: showRechargeModal
+    }
+}"></div>
+
+<currency-modal params="isShow: showCurrencyModal, code: currencyCode"></currency-modal>
+<topup-history-modal params="isShow: showTopupHistoryModal"></topup-history-modal>
+
 <script>
     (function() {
         Kooboo.loadJS([
-            "/_Admin/Scripts/components/kbBreadcrumb.js"
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/View/Market/Scripts/components/CurrencyModal.js",
+            "/_Admin/View/Market/Scripts/components/RechargeModal.js",
+            "/_Admin/View/Market/Scripts/components/TopupHistoryModal.js",
         ])
     })()
 </script>
+<script src="/_Admin/View/Market/Scripts/Kooboo.Market.js"></script>
 <script src="/_Admin/View/Market/Index.js"></script>

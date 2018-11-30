@@ -96,6 +96,8 @@ namespace Kooboo.Web.ViewModel
         public int? Count { get; set; }
 
         public string BadgeIcon { get; set; }
+
+        public bool OpenInNewWindow { get; set; }
     }
 
     public class MainMenuItemViewModel

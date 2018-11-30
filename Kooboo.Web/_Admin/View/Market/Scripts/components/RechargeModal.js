@@ -9,6 +9,8 @@
     var interval = null,
         paymentSuccess = false;
 
+    var infoShowed = false;
+
     ko.components.register("recharge-modal", {
         viewModel: function(params) {
             var self = this;
@@ -20,7 +22,7 @@
                 if (show) {
                     if (!paymentMethods.length) {
                         // 加载支付方式
-                        Kooboo.Balance.getPaymentMethods().then(function(res) {
+                        Kooboo.Payment.getMethods().then(function(res) {
                             if (res.success) {
                                 self.paymentMethods(res.model);
                                 self.paymentMethod(res.model[0].type);
@@ -154,7 +156,7 @@
 
             this.checkPaymentStatus = function(paymentId) {
                 if (!paymentSuccess) {
-                    Kooboo.Balance.getPaymentStatus({
+                    Kooboo.Payment.getStatus({
                         paymentId: paymentId
                     }).then(function(res) {
                         if (res.success && (res.model.success || res.model.message == "canceled")) {
@@ -162,10 +164,10 @@
                             clearInterval(interval);
                             self.onHide();
                             if (res.model.success) {
-                                window.info.show(Kooboo.text.info.payment.success, true);
+                                if (!infoShowed) { window.info.done(Kooboo.text.info.payment.success); }
                                 Kooboo.EventBus.publish('kb/market/balance/update');
                             } else {
-                                window.info.show(Kooboo.text.info.payment.cancel, true);
+                                if (!infoShowed) { window.info.done(Kooboo.text.info.payment.cancel); }
                             }
                         }
                     })

@@ -166,6 +166,26 @@ $(function() {
             // 在 supply 中发出的 orders
             return this.executeGet('MyOrdersInSupply', para);
         }
+
+        this.getUserExpertiseList = function(para) {
+            return this.executeGet('UserExpertiseList', para);
+        }
+
+        this.deleteExpertise = function(para) {
+            return this.executePost('DeleteExpertise', para);
+        }
+
+        this.addOrUpdateExpertise = function(para) {
+            return this.executePost('AddOrUpdateExpertise', para);
+        }
+
+        this.getExpertiseList = function(para) {
+            return this.executeGet('ExpertiseList', para);
+        }
+
+        this.getExpertise = function(para) {
+            return this.executeGet('GetExpertise', para);
+        }
     }
     extend(Supplier, Kooboo.BaseModel);
 
@@ -240,12 +260,32 @@ $(function() {
     }
     extend(App, Kooboo.BaseModel);
 
+    function Payment() {
+        this.name = 'Payment';
+
+        this.getMethods = function(para) {
+            return this.executeGet('Methods', para);
+        }
+
+        this.getStatus = function(para) {
+            return this.executeGet('Status', para);
+        }
+    }
+    extend(Payment, Kooboo.BaseModel);
+
+    function Order() {
+        this.name = 'Order';
+    }
+    extend(Order, Kooboo.BaseModel);
+
     Kooboo = Object.assign({
         App: new App(),
         Balance: new Balance(),
         Infrastructure: new Infrastructure(),
         Demand: new Demand(),
         Discussion: new Discussion(),
-        Supplier: new Supplier()
+        Order: new Order(),
+        Payment: new Payment(),
+        Supplier: new Supplier(),
     }, Kooboo);
 })

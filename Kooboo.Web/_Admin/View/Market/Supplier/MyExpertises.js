@@ -8,42 +8,68 @@ $(function() {
         this.introduction = ko.validateField({
             required: ''
         })
+        this._introduction = ko.observable();
+        this.introductionChanged = ko.pureComputed(function() {
+            return self.introduction() !== self._introduction();
+        })
+
+        this.onResetIntroduction = function() {
+            self.introduction(self._introduction());
+            $(".autosize").textareaAutoSize().trigger("keyup");
+        }
+
+        this.onSaveIntroduction = function() {
+            var data = {
+                introduction: self.introduction()
+            }
+
+            if (self.id()) {
+                data.id = self.id()
+            }
+
+            Kooboo.Supplier.addOrUpdate(data).then(function(res) {
+                if (res.success) {
+                    self._introduction(self.introduction());
+                    window.info.done(Kooboo.text.info.update.success);
+                }
+            })
+        }
+
         this.expertises = ko.observableArray();
 
         this.onAddExpertise = function() {
-            self.expertises.push(new Expertise())
+            self.expertises.push(new Expertise());
+            self.isEditingExp(true);
+
+            $(".autosize").textareaAutoSize().trigger("keyup");
         }
 
         this.onRemoveExpertise = function(data, e) {
-            data.showError(false);
-            self.expertises.remove(data)
+            if (confirm(Kooboo.text.confirm.deleteItem)) {
+                data.onRemove(function() {
+                    self.expertises.remove(data);
+                    self.isEditingExp(false);
+                })
+            }
         }
 
-        this.onSave = function() {
-            if (self.introduction.isValid()) {
-                if (self.isAllExpertiseValid()) {
-                    var data = {
-                        introduction: self.introduction(),
-                        expertises: self.getExpertisesData()
-                    };
+        this.onSaveExpertise = function(data, e) {
+            data.onSave(function() {
+                self.isEditingExp(false);
+            })
+        }
 
-                    if (self.id()) {
-                        data.id = self.id()
-                    }
+        this.onEditExpertise = function(data, e) {
+            data.onEdit(function() {
+                self.isEditingExp(true);
+            })
+        }
 
-                    Kooboo.Supplier.addOrUpdate(data).then(function(res) {
-                        if (res.success) {
-                            Kooboo.EventBus.publish("kb/witkey/supplier/update");
-                            self.onGet();
-                        }
-                    })
-                } else {
-                    self.showExpertiseError();
-                }
-            } else {
-                self.showError(true);
-            }
-        };
+        this.isEditingExp = ko.observable(false);
+
+        this.currency = ko.observable();
+
+        this.currencySymbol = ko.observable();
 
         this.onGet = function() {
             Kooboo.Supplier.getByUser().then(function(res) {
@@ -52,10 +78,29 @@ $(function() {
                     if (data) {
                         self.id(data.id);
                         self.introduction(data.introduction);
-                        self.expertises(data.expertises ? data.expertises.map(function(exp) {
-                            return new Expertise(exp);
-                        }) : [])
+                        self._introduction(self.introduction());
                     }
+
+                    setTimeout(function() {
+                        $(".autosize").textareaAutoSize().trigger("keyup");
+                    }, 250);
+                }
+            })
+
+            Kooboo.Supplier.getUserExpertiseList().then(function(res) {
+                if (res.success) {
+                    if (res.model.length) {
+                        self.expertises(res.model.map(function(exp) {
+                            return new Expertise(exp);
+                        }))
+                    }
+                }
+            })
+
+            Kooboo.Currency.get().then(function(res) {
+                if (res.success) {
+                    self.currency(res.model.code);
+                    self.currencySymbol(res.model.symbol);
                 }
             })
         }
@@ -91,6 +136,8 @@ $(function() {
         var data = data || {};
         var self = this;
 
+        this.id = ko.observable(data.id);
+
         this.showError = ko.observable(false);
 
         this.name = ko.validateField(data.name, {
@@ -108,16 +155,52 @@ $(function() {
         }
 
         this.getValue = function() {
-            return {
+            var data = {
                 name: self.name(),
                 price: self.price(),
                 description: self.description()
             }
+            self.id() && (data.id = self.id());
+
+            return data;
         }
 
-        setTimeout(function() {
-            $(".autosize").textareaAutoSize().trigger("keyup");
-        }, 250);
+        this.onEdit = function(cb) {
+            self.isEditing(true);
+            cb && cb();
+        }
+
+        this.onRemove = function(cb) {
+            self.showError(false);
+            if (self.id()) {
+                Kooboo.Supplier.deleteExpertise({
+                    id: self.id()
+                }).then(function(res) {
+                    if (res.success) {
+                        window.info.done(Kooboo.text.info.delete.success);
+                        cb && cb();
+                    }
+                })
+            } else {
+                cb && cb();
+            }
+        }
+
+        this.onSave = function(cb) {
+            if (self.isValid()) {
+                Kooboo.Supplier.addOrUpdateExpertise(self.getValue()).then(function(res) {
+                    if (res.success) {
+                        self.isEditing(false);
+                        self.showError(false);
+                        cb && cb();
+                    }
+                })
+            } else {
+                self.showError(true);
+            }
+        }
+
+        this.isEditing = ko.observable(!data.name);
     }
 
     var vm = new viewModel();

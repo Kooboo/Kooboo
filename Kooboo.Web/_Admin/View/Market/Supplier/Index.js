@@ -5,8 +5,8 @@ $(function() {
         this.pager = ko.observable();
 
         this.getList = function(page) {
-            Kooboo.Supplier.getList({
-                pageNr: page || 1
+            Kooboo.Supplier.getExpertiseList({
+                page: page || 1
             }).then(function(res) {
                 if (res.success) {
                     self.handleData(res.model);
@@ -19,15 +19,26 @@ $(function() {
             var docs = data.list.map(function(item) {
                 return {
                     id: item.id,
-                    name: item.userName,
-                    introduction: item.introduction,
-                    expertises: {
-                        data: item.expertises,
-                        class: 'label label-sm label-info'
+                    name: {
+                        text: item.name,
+                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.ExpertisePage, {
+                            id: item.id
+                        }),
+                        newWindow: true
+                    },
+                    description: item.description,
+                    price: {
+                        text: item.symbol + item.price,
+                        class: 'label-sm label-info',
+                        tooltip: item.currency
+                    },
+                    supplier: {
+                        text: item.supplierName,
+                        class: 'label-sm gray'
                     },
                     view: {
                         iconClass: 'fa-eye',
-                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.DetailPage, {
+                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.ExpertisePage, {
                             id: item.id
                         }),
                         newWindow: true
@@ -38,17 +49,24 @@ $(function() {
             var data = {
                 docs: docs,
                 columns: [{
-                    displayName: 'User',
+                    displayName: 'Expertise',
                     fieldName: 'name',
+                    type: 'link',
+                    showClass: 'table-short'
+                }, {
+                    displayName: 'Price',
+                    fieldName: 'price',
+                    type: 'label',
+                    showClass: 'table-short'
+                }, {
+                    displayName: 'Description',
+                    fieldName: 'description',
                     type: 'text'
                 }, {
-                    displayName: 'Expertises',
-                    fieldName: 'expertises',
-                    type: 'array'
-                }, {
-                    displayName: 'Introduction',
-                    fieldName: 'introduction',
-                    type: 'text'
+                    displayName: "Supplier",
+                    fieldName: "supplier",
+                    type: 'label',
+                    showClass: 'table-short'
                 }],
                 tableActions: [{
                     fieldName: 'view',

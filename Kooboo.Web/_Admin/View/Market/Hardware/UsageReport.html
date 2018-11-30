@@ -17,6 +17,11 @@
     <div class="row">
         <div class="col-md-12">
             <div class="row">
+                <ul class="nav nav-tabs margin-bottom-20" data-bind="foreach: types">
+                    <li data-bind="css: { 'active': $parent.currentType() == $data.value }, click: $parent.changeType">
+                        <a data-bind="text: $data.displayName" href="javascript:;"></a>
+                    </li>
+                </ul>
                 <div class="col-md-8">
                     <div class="row">
                         <div class="panel panel-default">
