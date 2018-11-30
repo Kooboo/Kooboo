@@ -77,6 +77,7 @@
     <Compile Include="IApi.cs" />
     <Compile Include="Methods\ApiMethod.cs" />
     <Compile Include="Methods\ApiMethodManager.cs" />
+    <Compile Include="Methods\IDynamicMethod.cs" />
     <Compile Include="ModelBinding\BindingResponse.cs" />
     <Compile Include="ModelBinding\ModelBinder.cs" />
     <Compile Include="MultilingualService.cs" />

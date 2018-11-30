@@ -286,6 +286,11 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                         result.Add(item.Key, item.Value);
                     }
                 }
+
+                result["id"] = this.TextContent.Id;
+                result["userKey"] = this.TextContent.UserKey;
+                result["lastModified"] = this.TextContent.LastModified; 
+
                 return result;
 
             }
@@ -326,12 +331,30 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
         {
             get
             {
+                //var store = this.TextContent.GetContentStore(this.Culture);
+                //if (store != null)
+                //{
+                //    return store.FieldValues.Keys;
+                //}
+                //return new List<string>();
+
+                List<string> mykey = new List<string>();
+                mykey.Add("id");
+                mykey.Add("userKey");
+                mykey.Add("lastModifled");
+
                 var store = this.TextContent.GetContentStore(this.Culture);
                 if (store != null)
                 {
-                    return store.FieldValues.Keys;
+                    foreach (var item in store.FieldValues.Keys)
+                    {
+                        mykey.Add(item);
+                    }
                 }
-                return new List<string>();
+
+                return mykey;
+
+
             }
         }
 

@@ -23,7 +23,7 @@ namespace Kooboo.Data.Models
 
         private SalesItem _item;
 
-        [SqlIngore]
+    
         public SalesItem Item
         {
             get { return _item; }

@@ -347,6 +347,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Api\Commerce\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
