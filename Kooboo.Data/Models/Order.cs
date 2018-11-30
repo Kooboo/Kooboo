@@ -1,5 +1,5 @@
 ﻿using System;
- 
+
 using Kooboo.Data;
 using Kooboo.Data.Attributes;
 
@@ -23,7 +23,6 @@ namespace Kooboo.Data.Models
 
         private SalesItem _item;
 
-    
         public SalesItem Item
         {
             get { return _item; }
@@ -52,11 +51,30 @@ namespace Kooboo.Data.Models
 
         public decimal TotalPrice
         {
-            get;set;
+            get; set;
         }
 
         public string Currency { get; set; }
-        
+
+        // Delivery method. 
+        public string Delivery { get; set; }
+
+        private OrderLine _Orderline;
+
+        public OrderLine OrderLine
+        {
+            get
+            {
+                if (_Orderline == null)
+                {
+                    _Orderline = new OrderLine();
+                }
+                return _Orderline;
+
+            }
+            set { _Orderline = value; }
+        }
+
     }
 
     public enum OrderStatus
@@ -67,4 +85,20 @@ namespace Kooboo.Data.Models
         Canceled,
         Delivered
     }
+
+    public class OrderLine
+    {
+        public string ProductName { get; set; }
+
+        public string Description { get; set; }
+
+        public decimal UnitPrice { get; set; }
+
+        public int Quantity { get; set; }
+
+        public decimal TotalAmount { get; set; }
+
+
+    }
+
 }
