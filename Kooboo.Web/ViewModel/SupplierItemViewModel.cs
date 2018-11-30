@@ -19,8 +19,6 @@ namespace Kooboo.Web.ViewModel
 
         public string Introduction { get; set; }
 
-        public List<SupplierExpertise> Expertises { get; set; }
-
         public string Currency { get; set; }
 
         public string Symbol

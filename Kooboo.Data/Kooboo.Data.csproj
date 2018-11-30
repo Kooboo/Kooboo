@@ -222,6 +222,7 @@
     <Compile Include="Models\DnsInfo.cs" />
     <Compile Include="Models\DNSRecord.cs" />
     <Compile Include="Models\DomainPrice.cs" />
+    <Compile Include="Models\Expertise.cs" />
     <Compile Include="Models\ICP.cs" />
     <Compile Include="Models\IPCity.cs" />
     <Compile Include="Models\MailQueue.cs" />
@@ -255,6 +256,7 @@
     <Compile Include="Models\Organization.cs" />
     <Compile Include="Log\VisitorLog.cs" />
     <Compile Include="Models\UserBalance.cs" />
+    <Compile Include="Models\UserExpertise.cs" />
     <Compile Include="Models\UserOrganization.cs" />
     <Compile Include="Models\UserPublish.cs" />
     <Compile Include="Models\UserTemplate.cs" />

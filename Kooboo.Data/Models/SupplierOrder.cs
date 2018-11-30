@@ -30,7 +30,9 @@ namespace Kooboo.Data.Models
 
         public string SupplierUserName { get; set; }
 
-        public string Expertise { get; set; }
+        public Guid UserExpertiseId { get; set; }
+
+        public string UserExpertiseName { get; set; }
 
         public decimal Price { get; set; }
 

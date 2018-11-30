@@ -15,7 +15,5 @@ namespace Kooboo.Web.ViewModel
 
         public string Introduction { get; set; }
 
-        public List<string> Expertises { get; set; }
-
     }
 }

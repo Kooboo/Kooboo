@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Data.Models
 {
-    public class Supplier: IGolbalObject
+    public class Expertise : IGolbalObject
     {
         private Guid _id;
         public Guid Id
@@ -25,16 +25,10 @@ namespace Kooboo.Data.Models
             }
         }
 
-        public Guid UserId { get; set; }
-        
-        public string UserName { get; set; }
-       
-        public string Introduction { get; set; }
+        public string Name { get; set; }
 
-        public string Currency { get; set; }
+        public string Description { get; set; }
 
-        public List<ResouceAttachment> Attachments { get; set; }
-
+        public string Lang { get; set; }
     }
-
 }
