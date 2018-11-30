@@ -31,8 +31,6 @@ namespace Kooboo.Data.Models
        
         public string Introduction { get; set; }
 
-        public string Currency { get; set; }
-
         public List<ResouceAttachment> Attachments { get; set; }
 
     }
