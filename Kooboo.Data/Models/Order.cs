@@ -21,6 +21,8 @@ namespace Kooboo.Data.Models
         }
         public Guid OrganizationId { get; set; }
 
+        public Guid WebSiteId { get; set; }
+
         private SalesItem _item;
 
         public SalesItem Item
@@ -74,6 +76,8 @@ namespace Kooboo.Data.Models
             }
             set { _Orderline = value; }
         }
+
+        public bool IsPaid { get; set; }
 
     }
 
