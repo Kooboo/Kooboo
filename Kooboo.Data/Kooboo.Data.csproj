@@ -285,6 +285,7 @@
     <Compile Include="Server\EndMiddleWare.cs" />
     <Compile Include="Server\IKoobooMiddleWare.cs" />
     <Compile Include="Server\ServerHandler.cs" />
+    <Compile Include="Service\WebSiteService.cs" />
     <Compile Include="SSL\SslCertificate.cs" />
     <Compile Include="Server\TextLogMiddleware.cs" />
     <Compile Include="Server\WebServer.cs" />
