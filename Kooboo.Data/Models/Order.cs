@@ -51,7 +51,7 @@ namespace Kooboo.Data.Models
 
         public OrderStatus Status { get; set; }
 
-        public decimal TotalPrice
+        public decimal TotalAmount
         {
             get; set;
         }
@@ -78,6 +78,11 @@ namespace Kooboo.Data.Models
         }
 
         public bool IsPaid { get; set; }
+
+        public bool IsCancel { get; set; }
+
+        // Used for like domain name.. 
+        public string Name { get; set; }
 
     }
 
