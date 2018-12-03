@@ -8,10 +8,15 @@ using System.IO;
 namespace Kooboo.Lib.Reflection
 {
     public static class AssemblyLoader
-    { 
+    {
         static AssemblyLoader()
         {
-            AllAssemblies = new List<Assembly>();
+            AllAssemblies = LoadAllDlls();
+        }
+
+        private static List<Assembly> LoadAllDlls()
+        {
+            var dlls = new List<Assembly>();
 
             var allassembs = AppDomain.CurrentDomain.GetAssemblies();
 
@@ -21,13 +26,37 @@ namespace Kooboo.Lib.Reflection
                 {
                     if (!IsIgnoredName(item.FullName))
                     {
-                        AllAssemblies.Add(item);
+                        dlls.Add(item);
                     }
                 }
             }
-            var otherAssemblies = LoadOtherAssemblies();
 
-            AllAssemblies.AddRange(otherAssemblies);
+            var path = AppDomain.CurrentDomain.BaseDirectory;
+
+            var alldlls = System.IO.Directory.GetFiles(path);
+
+
+            foreach (var name in alldlls)
+            {
+                string dllname = name.Substring(path.Length);
+
+                if (dllname.StartsWith("Kooboo.") && dllname.EndsWith(".dll"))
+                {
+                    var index = dllname.IndexOf(".", 8);
+                    if (index > -1)
+                    {
+                        string koobooname = dllname.Substring(0, index);
+                        var find = dlls.Find(o => o.FullName.StartsWith(koobooname));
+                        if (find == null && !IsIgnoredName(koobooname))
+                        {
+                            var otherAssembly = Assembly.LoadFile(name);
+                            dlls.Add(otherAssembly);
+                        }
+                    }
+                }
+            }
+
+            return dlls;
 
         }
 
@@ -51,7 +80,6 @@ namespace Kooboo.Lib.Reflection
                     var otherAssembly = Assembly.LoadFile(path);
                     otherAssemblies.Add(otherAssembly);
                 }
-
             }
 
             return otherAssemblies;
@@ -65,7 +93,7 @@ namespace Kooboo.Lib.Reflection
             }
 
             string lower = FullName.ToLower();
-            if (lower.StartsWith("mscorlib") || lower.StartsWith("microsoft") || lower.StartsWith("kooboo.dom") || lower.StartsWith("kooboo.indexeddb") || lower.StartsWith("newtonsoft") || lower.StartsWith("vshost"))
+            if (lower.StartsWith("mscorlib") || lower.StartsWith("microsoft") || lower.StartsWith("anonymously") || lower.StartsWith("kooboo.dom") || lower.StartsWith("kooboo.indexeddb") || lower.StartsWith("newtonsoft") || lower.StartsWith("vshost") || lower.StartsWith("kooboo.httpserver"))
             {
                 return true;
             }
@@ -89,14 +117,14 @@ namespace Kooboo.Lib.Reflection
                 }
             }
 
-            return typelist;     
+            return typelist;
         }
-                      
+
 
         public static List<Type> LoadTypeByGenericInterface(Type GenericInterface)
         {
             List<Type> typelist = new List<Type>();
-             
+
             foreach (var item in AllAssemblies)
             {
                 foreach (var type in item.GetTypes())
@@ -107,7 +135,7 @@ namespace Kooboo.Lib.Reflection
                     }
                 }
             }
-             
+
             return typelist;
         }
 

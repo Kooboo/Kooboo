@@ -148,7 +148,6 @@
     <Compile Include="Api\Implementation\Media.cs" />
     <Compile Include="Api\Implementation\Menu.cs" />
     <Compile Include="Api\Implementation\Page.cs" />
-    <Compile Include="Api\Implementation\Payment.cs" />
     <Compile Include="Api\Implementation\Publish.cs" />
     <Compile Include="Api\Implementation\Receiver.cs" />
     <Compile Include="Api\Implementation\Redirect.cs" />
