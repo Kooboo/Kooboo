@@ -114,6 +114,9 @@
                     }
                 } else {
                     if (self.couponCode.isValid()) {
+                        Kooboo.Order.useCoupon().then(function(res) {
+
+                        })
                         Kooboo.Balance.useCoupon({
                             code: self.couponCode()
                         }).then(function(res) {

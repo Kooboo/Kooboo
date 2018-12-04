@@ -271,6 +271,22 @@ $(function() {
 
     function Order() {
         this.name = 'Order';
+
+        this.topup = function(para) {
+            return this.executePost('Topup', para);
+        }
+
+        this.domain = function(para) {
+            return this.executePost('Domain', para);
+        }
+
+        this.infra = function(para) {
+            return this.executePost('Infra', para);
+        }
+
+        this.useCoupon = function(para) {
+            return this.executePost('UseCoupon', para);
+        }
     }
     extend(Order, Kooboo.BaseModel);
 
