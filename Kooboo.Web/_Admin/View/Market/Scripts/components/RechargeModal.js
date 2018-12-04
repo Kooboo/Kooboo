@@ -65,6 +65,8 @@
                 self.couponCode('');
                 self.currentPackage(null);
                 self.isShow(false);
+                paymentSuccess = false;
+                interval && clearInterval(interval);
             }
 
             this.payingMode = ko.observable(false);
@@ -98,9 +100,8 @@
                         })
                     } else {
                         if (self.chargeAmountValue.isValid()) {
-                            debugger
                             Kooboo.Balance.topup({
-                                price: self.chargeAmountValue(),
+                                totalAmount: self.chargeAmountValue(),
                                 PaymentMethod: self.paymentMethod()
                             }).then(function(res) {
                                 if (res.success) {
@@ -166,15 +167,13 @@
                             self.onHide();
                             if (res.model.success) {
                                 if (!infoShowed) {
-                                    window.info.done(Kooboo.text.info.payment.success);
-                                } else {
                                     infoShowed = true;
+                                    window.info.done(Kooboo.text.info.payment.success);
                                 }
                                 Kooboo.EventBus.publish('kb/market/balance/update');
                             } else {
                                 if (!infoShowed) {
                                     window.info.done(Kooboo.text.info.payment.cancel);
-                                } else {
                                     infoShowed = true;
                                 }
                             }

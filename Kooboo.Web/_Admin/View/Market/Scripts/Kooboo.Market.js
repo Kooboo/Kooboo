@@ -264,7 +264,7 @@ $(function() {
         }
 
         this.getStatus = function(para) {
-            return this.executeGet('Status', para);
+            return this.executeGet('Status', para, true);
         }
     }
     extend(Payment, Kooboo.BaseModel);
