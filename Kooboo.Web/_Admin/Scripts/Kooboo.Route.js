@@ -164,16 +164,21 @@
         },
         Discussion: {
             ListPage: GetRoute("Market/Discussion/Index"),
-            DetailPage: GetRoute("Market/Discussion/Detail")
+            DetailPage: GetRoute("Market/Discussion/Detail"),
+            MyPage: GetRoute("Market/Discussion/MyThreads")
         },
         Demand: {
             ListPage: GetRoute("Market/Demand/Index"),
-            DetailPage: GetRoute("Market/Demand/Detail")
+            DetailPage: GetRoute("Market/Demand/Detail"),
+            MyDemandPage: GetRoute("Market/Demand/MyDemands"),
+            MyProposalPage: GetRoute("Market/Demand/Proposals")
         },
         Supplier: {
             ListPage: GetRoute("Market/Supplier/Index"),
             DetailPage: GetRoute("Market/Supplier/Detail"),
-            ExpertisePage: GetRoute("Market/Supplier/Expertise")
+            ExpertisePage: GetRoute("Market/Supplier/Expertise"),
+            MyOrdersPage: GetRoute("Market/Supplier/MyOrders"),
+            MyOffersPage: GetRoute("Market/Supplier/MyOffers")
         },
         Template: {
             ListPage: GetRoute("Market/Template/Index")

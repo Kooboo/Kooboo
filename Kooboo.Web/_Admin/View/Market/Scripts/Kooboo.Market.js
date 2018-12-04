@@ -290,12 +290,22 @@ $(function() {
     }
     extend(Order, Kooboo.BaseModel);
 
+    function Market() {
+        this.name = 'Market';
+
+        this.getMy = function(para) {
+            return this.executeGet('My', para);
+        }
+    }
+    extend(Market, Kooboo.BaseModel);
+
     Kooboo = Object.assign({
         App: new App(),
         Balance: new Balance(),
         Infrastructure: new Infrastructure(),
         Demand: new Demand(),
         Discussion: new Discussion(),
+        Market: new Market(),
         Order: new Order(),
         Payment: new Payment(),
         Supplier: new Supplier(),

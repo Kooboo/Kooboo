@@ -48,8 +48,67 @@ $(function() {
             self.showCurrencyModal(true);
         }
 
+        this.panels = ko.observableArray();
+
+        Kooboo.Market.getMy().then(function(res) {
+            if (res.success) {
+                self.panels(res.model.map(function(item) {
+                    var moreUrl = '',
+                        detailUrl = '';
+
+                    switch (item.title.value.toLowerCase()) {
+                        case 'discussion':
+                            moreUrl = Kooboo.Route.Discussion.MyPage;
+                            detailUrl = Kooboo.Route.Discussion.DetailPage;
+                            break;
+                        case 'demand':
+                            moreUrl = Kooboo.Route.Demand.MyDemandPage;
+                            detailUrl = Kooboo.Route.Demand.DetailPage;
+                            break;
+                        case 'proposal':
+                            moreUrl = Kooboo.Route.Demand.MyProposalPage;
+                            url = Kooboo.Route.Demand.DetailPage;
+                            break;
+                        case 'supplyorder':
+                            moreUrl = Kooboo.Route.Supplier.MyOrdersPage;
+                            detailUrl = Kooboo.Route.Supplier.DetailPage;
+                            break;
+                        case 'supplyoffer':
+                            moreUrl = Kooboo.Route.Supplier.MyOffersPage;
+                            detailUrl = Kooboo.Route.Supplier.DetailPage;
+                            break;
+                    }
+
+                    return {
+                        title: item.title.displayName,
+                        showMoreUrl: moreUrl,
+                        list: item.list.map(function(li) {
+                            return {
+                                title: li.title,
+                                url: Kooboo.Route.Get(detailUrl, {
+                                    id: li.id
+                                })
+                            }
+                        })
+                    }
+                }))
+            }
+        })
+
+        this.afterRender = function() {
+            waterfall('#waterfall')
+        }
+
     }
 
     var vm = new viewModel();
     ko.applyBindings(vm, document.getElementById('main'))
+
+    $(window).on('resize', function() {
+        try {
+            waterfall('#waterfall')
+        } catch (e) {
+            // console.error(e);
+        }
+    })
 })

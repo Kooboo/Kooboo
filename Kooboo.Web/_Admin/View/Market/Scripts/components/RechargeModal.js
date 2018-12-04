@@ -21,11 +21,13 @@
             this.isShow.subscribe(function(show) {
                 if (show) {
                     if (!paymentMethods.length) {
-                        // 加载支付方式
                         Kooboo.Payment.getMethods().then(function(res) {
                             if (res.success) {
-                                self.paymentMethods(res.model);
-                                self.paymentMethod(res.model[0].type);
+                                var methods = res.model.filter(function(item) {
+                                    return item.type !== 'balance';
+                                })
+                                self.paymentMethods(methods);
+                                self.paymentMethod(methods[0].type);
                             }
                         })
                     } else {
@@ -34,7 +36,6 @@
                     }
 
                     if (!paymentPackages.length) {
-                        // 加载支付包选项
                         Kooboo.Balance.getChargePackages().then(function(res) {
                             if (res.success) {
                                 var packages = res.model.map(function(item) {
@@ -114,10 +115,7 @@
                     }
                 } else {
                     if (self.couponCode.isValid()) {
-                        Kooboo.Order.useCoupon().then(function(res) {
-
-                        })
-                        Kooboo.Balance.useCoupon({
+                        Kooboo.Order.useCoupon({
                             code: self.couponCode()
                         }).then(function(res) {
                             if (res.success) {
