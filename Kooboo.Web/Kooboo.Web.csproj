@@ -248,6 +248,7 @@
     <Compile Include="ViewModel\Link.cs" />
     <Compile Include="ViewModel\Media.cs" />
     <Compile Include="ViewModel\Menu.cs" />
+    <Compile Include="ViewModel\MyViewModel.cs" />
     <Compile Include="ViewModel\Page.cs" />
     <Compile Include="ViewModel\PagedList.cs" />
     <Compile Include="ViewModel\Publish.cs" />
