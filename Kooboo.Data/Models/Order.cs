@@ -84,6 +84,9 @@ namespace Kooboo.Data.Models
         // Used for like domain name.. 
         public string Name { get; set; }
 
+        // for coupon code or others... 
+        public string Code { get; set; }
+
     }
 
     public enum OrderStatus
