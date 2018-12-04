@@ -98,6 +98,7 @@
                         })
                     } else {
                         if (self.chargeAmountValue.isValid()) {
+                            debugger
                             Kooboo.Balance.topup({
                                 price: self.chargeAmountValue(),
                                 PaymentMethod: self.paymentMethod()
@@ -129,19 +130,19 @@
                 }
             }
             this.onPaying = function(res) {
-                if (res.success) {
-                    if (res.qrcode) {
-                        $("#qr-code").empty().qrcode(res.qrcode);
-                        self.paymentId(res.paymentId);
+                if (res.actionRequired) {
+                    if (res.qrCode) {
+                        self.paymentId(res.paymentRequestId);
+                        $("#qr-code").empty().qrcode(res.qrCode);
                         self.payingMode(true);
-                    } else if (res.approvalUrl) {
-                        self.paymentId(res.paymentId);
+                    } else if (res.redirectUrl) {
+                        self.paymentId(res.paymentRequestId);
                         self.payingMode(true);
-                        window.open(res.approvalUrl);
+                        window.open(res.redirectUrl);
                     }
 
                     interval = setInterval(function() {
-                        self.checkPaymentStatus(res.paymentId)
+                        self.checkPaymentStatus(res.paymentRequestId)
                     }, 500);
                 }
             }
@@ -157,17 +158,25 @@
             this.checkPaymentStatus = function(paymentId) {
                 if (!paymentSuccess) {
                     Kooboo.Payment.getStatus({
-                        paymentId: paymentId
+                        paymentRequestId: paymentId
                     }).then(function(res) {
                         if (res.success && (res.model.success || res.model.message == "canceled")) {
                             paymentSuccess = true;
-                            clearInterval(interval);
+                            interval && clearInterval(interval);
                             self.onHide();
                             if (res.model.success) {
-                                if (!infoShowed) { window.info.done(Kooboo.text.info.payment.success); }
+                                if (!infoShowed) {
+                                    window.info.done(Kooboo.text.info.payment.success);
+                                } else {
+                                    infoShowed = true;
+                                }
                                 Kooboo.EventBus.publish('kb/market/balance/update');
                             } else {
-                                if (!infoShowed) { window.info.done(Kooboo.text.info.payment.cancel); }
+                                if (!infoShowed) {
+                                    window.info.done(Kooboo.text.info.payment.cancel);
+                                } else {
+                                    infoShowed = true;
+                                }
                             }
                         }
                     })

@@ -221,10 +221,6 @@ $(function() {
             return this.executeGet('GetBalance', para);
         }
 
-        this.getPaymentMethods = function(para) {
-            return this.executeGet('PaymentMethods', para);
-        }
-
         this.getChargePackages = function(para) {
             return this.executeGet('ChargePackages', para);
         }

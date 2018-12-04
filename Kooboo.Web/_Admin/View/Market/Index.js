@@ -35,7 +35,7 @@ $(function() {
             self.showRechargeModal(true);
         }
         Kooboo.EventBus.subscribe('kb/market/balance/update', function() {
-            self.getBasicInfo();
+            self.getBalance();
         })
 
         this.showTopupHistoryModal = ko.observable(false);
