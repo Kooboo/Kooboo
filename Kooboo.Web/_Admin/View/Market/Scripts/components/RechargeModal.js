@@ -101,9 +101,9 @@
                         })
                     } else {
                         if (self.chargeAmountValue.isValid()) {
-                            Kooboo.Balance.topup({
-                                totalAmount: self.chargeAmountValue(),
-                                PaymentMethod: self.paymentMethod()
+                            Kooboo.Order.topup({
+                                paymentMethod: self.paymentMethod(),
+                                totalAmount: self.chargeAmountValue()
                             }).then(function(res) {
                                 if (res.success) {
                                     self.onPaying(res.model);
