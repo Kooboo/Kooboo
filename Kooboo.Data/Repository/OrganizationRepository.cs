@@ -11,6 +11,7 @@ namespace Kooboo.Data.Repository
     {
         internal Dictionary<Guid, string> NameCache = new Dictionary<Guid, string>();
 
+
         public Organization Add(Organization org)
         {
             var json = Lib.Helper.JsonHelper.Serialize(org);
