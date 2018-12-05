@@ -280,8 +280,8 @@ $(function() {
             return this.executePost('Domain', para);
         }
 
-        this.infra = function(para) {
-            return this.executePost('Infra', para);
+        this.getInfraOrder = function(para) {
+            return this.executePost('InfraOrder', para);
         }
 
         this.useCoupon = function(para) {

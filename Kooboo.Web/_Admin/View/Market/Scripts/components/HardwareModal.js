@@ -95,11 +95,10 @@
                         variant: {
                             id: self.currentVar().id,
                             quantity: self.quantity()
-                        },
-                        paymentMethod: 'balance'
+                        }
                     }
 
-                    Kooboo.Order.infra(obj).then(function(res) {
+                    Kooboo.Order.getInfraOrder(obj).then(function(res) {
                         if (res.success) {
                             window.info.done(Kooboo.text.info.payment.success);
                             self.onHide();

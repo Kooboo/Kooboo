@@ -58,6 +58,14 @@ namespace Kooboo.Data.Models
 
         public string Currency { get; set; }
 
+        public string Symbol
+        {
+            get
+            {
+                return Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Currency);
+            }
+        }
+
         // Delivery method. 
         public string Delivery { get; set; }
 
