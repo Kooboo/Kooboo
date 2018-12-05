@@ -280,12 +280,16 @@ $(function() {
             return this.executePost('Domain', para);
         }
 
-        this.getInfraOrder = function(para) {
-            return this.executePost('InfraOrder', para);
+        this.infra = function(para) {
+            return this.executePost('Infra', para);
         }
 
         this.useCoupon = function(para) {
             return this.executePost('UseCoupon', para);
+        }
+
+        this.pay = function(para) {
+            return this.executePost('Pay', para);
         }
     }
     extend(Order, Kooboo.BaseModel);
