@@ -145,7 +145,7 @@
 
                     interval = setInterval(function() {
                         self.checkPaymentStatus(res.paymentRequestId)
-                    }, 500);
+                    }, 1000 * 60);
                 }
             }
             this.changePaymentMethod = function(m, e) {
