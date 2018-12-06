@@ -171,6 +171,10 @@ $(function() {
             return this.executeGet('UserExpertiseList', para);
         }
 
+        this.getMyExpertiseList = function(para) {
+            return this.executeGet('MyExpertiseList', para);
+        }
+
         this.deleteExpertise = function(para) {
             return this.executePost('DeleteExpertise', para);
         }

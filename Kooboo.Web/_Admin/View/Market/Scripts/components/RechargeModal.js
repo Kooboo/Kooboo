@@ -91,9 +91,9 @@
             this.onPay = function() {
                 if (self.paymentMethod() !== 'coupon') {
                     if (self.currentPackage().type == 'set') {
-                        Kooboo.Balance.topup({
-                            packageId: self.currentPackage().id,
-                            PaymentMethod: self.paymentMethod()
+                        Kooboo.Order.topup({
+                            paymentMethod: self.paymentMethod(),
+                            totalAmount: self.chargeAmountValue()
                         }).then(function(res) {
                             if (res.success) {
                                 self.onPaying(res.model);

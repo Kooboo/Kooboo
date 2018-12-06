@@ -3,7 +3,7 @@ $(function() {
         var self = this;
 
         this.onGet = function() {
-            Kooboo.Supplier.getUserExpertiseList().then(function(res) {
+            Kooboo.Supplier.getMyExpertiseList().then(function(res) {
                 if (res.success) {
                     if (res.model.length) {
 

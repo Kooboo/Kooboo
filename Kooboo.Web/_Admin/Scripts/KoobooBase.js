@@ -20,14 +20,14 @@
         start: function() {
             this.requestCount++;
             $(".page-loading").show();
-            $("body").addClass("modal-open");
+            // $("body").addClass("modal-open");
         },
         stop: function() {
             this.requestCount--;
             if (this.requestCount === 0) {
                 $(".page-loading").hide();
             }
-            $("body").removeClass("modal-open");
+            // $("body").removeClass("modal-open");
         },
         initial: function() {
             if (this.requestCount === 0) {
