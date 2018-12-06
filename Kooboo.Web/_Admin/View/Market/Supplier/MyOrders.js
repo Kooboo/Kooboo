@@ -39,13 +39,11 @@ $(function() {
                 columns: [{
                     displayName: 'Expertise',
                     fieldName: 'expertise',
-                    type: 'text',
-                    showClass: 'table-short'
+                    type: 'text'
                 }, {
                     displayName: 'Price',
                     fieldName: 'price',
-                    type: 'text',
-                    showClass: 'table-short'
+                    type: 'text'
                 }, {
                     displayName: 'Status',
                     fieldName: 'status',

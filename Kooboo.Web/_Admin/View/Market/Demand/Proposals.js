@@ -105,7 +105,7 @@ $(function() {
         this.currency = ko.observable(data.currency);
 
         this.previewUrl = function() {
-            return '/_Admin/Witkey/Demand/Detail?id=' + data.demandId
+            return '/_Admin/Market/Demand/Detail?id=' + data.demandId
         }
     }
 })

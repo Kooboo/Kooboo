@@ -24,6 +24,10 @@ $(function() {
                         text: item.status.displayName,
                         class: 'label-sm label-info'
                     },
+                    user: {
+                        text: item.userName,
+                        class: 'label-sm gray'
+                    },
                     view: {
                         iconClass: 'fa-eye',
                         url: Kooboo.Route.Get(Kooboo.Route.Supplier.DetailPage, {
@@ -39,17 +43,19 @@ $(function() {
                 columns: [{
                     displayName: 'Expertise',
                     fieldName: 'expertise',
-                    type: 'text',
-                    showClass: 'table-short'
+                    type: 'text'
                 }, {
                     displayName: 'Price',
                     fieldName: 'price',
-                    type: 'text',
-                    showClass: 'table-short'
+                    type: 'text'
                 }, {
                     displayName: 'Status',
                     fieldName: 'status',
                     type: 'label'
+                }, {
+                    displayName: 'Order user',
+                    fieldName: 'user',
+                    type: 'label',
                 }],
                 tableActions: [{
                     fieldName: 'view',
