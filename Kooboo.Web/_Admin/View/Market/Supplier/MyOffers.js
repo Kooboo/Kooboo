@@ -5,7 +5,7 @@ $(function() {
         this.pager = ko.observable();
 
         this.getList = function() {
-            Kooboo.Supplier.getOrdersByUser().then(function(res) {
+            Kooboo.Supplier.getOrdersBySupplier().then(function(res) {
                 if (res.success) {
                     self.handleData(res.model);
                 }
