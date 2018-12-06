@@ -99,6 +99,25 @@ namespace Kooboo.Mail.Utility
             return null;
         }
 
+        internal static string GetAnyTextBody(MIME_Message MimeMsg)
+        {
+            foreach (var item in MimeMsg.AllEntities)
+            {
+                if (item.ContentType != null)
+                {
+                    if (Lib.Helper.StringHelper.IsSameValue(item.ContentType.Type, "text"))
+                    {
+                        var btext = item.Body as MIME_b_Text;
+                        if (btext != null)
+                        {
+                            return btext.Text;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         public static Kooboo.Mail.Message ParseMeta(MIME_Message MimeMsg)
         {
             Kooboo.Mail.Message message = new Message();

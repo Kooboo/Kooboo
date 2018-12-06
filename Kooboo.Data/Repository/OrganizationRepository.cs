@@ -9,6 +9,7 @@ namespace Kooboo.Data.Repository
     {
         internal Dictionary<Guid, string> NameCache = new Dictionary<Guid, string>();
 
+
         public Organization Add(Organization org)
         {
             var json = Lib.Helper.JsonHelper.Serialize(org);
@@ -100,6 +101,22 @@ namespace Kooboo.Data.Repository
                 Kooboo.Data.Cache.OrganizationUserCache.RemoveUser(organizationId, userid); 
             }
             return ok; 
+        }
+
+        public bool AddProposalUserBalance(Guid proposalUserId, Guid proposalId)
+        {
+            Dictionary<string, string> para = new Dictionary<string, string>();
+            para.Add("proposalUserId", proposalUserId.ToString());
+            para.Add("proposalId", proposalId.ToString());
+            return HttpHelper.Post<bool>(Account.Url.Org.AddProposalUserBalance, para);
+        }
+
+        public bool ChangeDemandUserBalance(Guid demandUserId, Guid proposalId)
+        {
+            Dictionary<string, string> para = new Dictionary<string, string>();
+            para.Add("demandUserId", demandUserId.ToString());
+            para.Add("proposalId", proposalId.ToString());
+            return HttpHelper.Post<bool>(Account.Url.Org.ChangeDemandUserBalance, para);
         }
 
         public string GetName(Guid OrgId)

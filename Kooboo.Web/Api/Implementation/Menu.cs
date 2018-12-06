@@ -91,7 +91,7 @@ namespace Kooboo.Web.Api.Implementation
 
         }
 
-        [Kooboo.Attributes.RequireParameters("Id", "RootId", "SubItemTemplate", "SubItemContainer")]
+        //[Kooboo.Attributes.RequireParameters("Id", "RootId", "SubItemTemplate", "SubItemContainer")]
         public bool UpdateTemplate(ApiCall call)
         {
             string template = call.GetValue("Template");

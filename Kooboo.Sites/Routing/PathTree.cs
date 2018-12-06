@@ -166,6 +166,13 @@ namespace Kooboo.Sites.Routing
                 Path child = _findPath(currentpath, item.RemoveRoutingCurlyBracket(), EnsureObjectId);
                 if (child == null)
                 { 
+                    if (currentpath.Children == null || !currentpath.Children.Any())
+                    {
+                        if (currentpath.ObjectId != default(Guid))
+                        {
+                            return currentpath; 
+                        }
+                    }
                     return null;
                 }
                 else

@@ -44,6 +44,12 @@ namespace Kooboo.Api.Methods
                 return currentlist[key];
             }
 
+            if (instance is IDynamicApi)
+            {
+                var dynamic = instance as IDynamicApi;
+                return GetDynamicApiMethod(dynamic, MethodName); 
+            }
+
             var methodinfo = GetMethodInfo(instance.GetType(), MethodName);
 
             if (methodinfo == null)
@@ -92,8 +98,8 @@ namespace Kooboo.Api.Methods
             string apicallName = GetApiCallName(newmethod.DeclareType);
             if (!string.IsNullOrEmpty(apicallName))
             {
-               
-                    newmethod.SetCall = Kooboo.Lib.Reflection.TypeHelper.GetSetFieldValue<ApiCall>(apicallName, newmethod.DeclareType);  
+
+                newmethod.SetCall = Kooboo.Lib.Reflection.TypeHelper.GetSetFieldValue<ApiCall>(apicallName, newmethod.DeclareType);
             }
 
             try
@@ -110,6 +116,96 @@ namespace Kooboo.Api.Methods
             return newmethod;
         }
 
+
+        public static ApiMethod GetDynamicApiMethod(IDynamicApi instance, string MethodName)
+        {
+            var api = instance as IApi;
+            if (api == null)
+            {
+                return null;
+            }
+
+            var currentlist = List;
+
+            if (string.IsNullOrEmpty(MethodName))
+            {
+                return null;
+            }
+
+            string key = api.ModelName + "." + MethodName;
+            if (currentlist.ContainsKey(key))
+            {
+                return currentlist[key];
+            }
+              
+            var info = instance.GetMethod(MethodName);
+
+            //var methodinfo = GetMethodInfo(instance.GetType(), MethodName);
+
+            if (info == null || info.Method == null)
+            {
+                currentlist[key] = null;
+                return null;
+            }
+
+            ApiMethod newmethod = new ApiMethod();
+            newmethod.MethodName = info.Method.Name;
+            newmethod.ClassInstance = Activator.CreateInstance(info.Type);
+            newmethod.ReturnType = info.Method.ReturnType;
+            newmethod.DeclareType = info.Type;
+            newmethod.IsVoid = info.Method.ReturnType == typeof(void);
+
+            var acceptmodel = info.Method.GetCustomAttribute(typeof(Kooboo.Attributes.RequireModel), true);
+            if (acceptmodel != null)
+            {
+                var Accepted = acceptmodel as Attributes.RequireModel;
+                newmethod.RequireModelType = Accepted.ModelType;
+            }
+
+            var requirepara = info.Method.GetCustomAttribute(typeof(Kooboo.Attributes.RequireParameters));
+            if (requirepara != null)
+            {
+                var RequiredParas = requirepara as Attributes.RequireParameters;
+                newmethod.RequireParas = RequiredParas.Parameters;
+            }
+
+            if (newmethod.IsVoid)
+            {
+                newmethod.Void = Lib.Reflection.TypeHelper.CompileAction(info.Method);
+            }
+            else
+            {
+                newmethod.Func = Lib.Reflection.TypeHelper.CompileFunc(info.Method);
+            }
+
+            var paras = info.Method.GetParameters();
+            foreach (var item in paras)
+            {
+                newmethod.Parameters.Add(new Parameter() { Name = item.Name, ClrType = item.ParameterType });
+            }
+
+            //set set call function. 
+            string apicallName = GetApiCallName(newmethod.DeclareType);
+            if (!string.IsNullOrEmpty(apicallName))
+            {
+
+                newmethod.SetCall = Kooboo.Lib.Reflection.TypeHelper.GetSetFieldValue<ApiCall>(apicallName, newmethod.DeclareType);
+            }
+
+            try
+            {
+                lock (locker)
+                {
+                    currentlist[key] = newmethod;
+                }
+            }
+            catch (Exception ex)
+            {
+                string abc = ex.Message;
+            }
+            return newmethod;
+        }
+         
 
         public static string GetApiCallName(Type apiType)
         {
@@ -136,7 +232,7 @@ namespace Kooboo.Api.Methods
             //  List<object> paras = new List<object>();
             //  paras.Add(request);
 
-            var paras = BindParameters(method, request); 
+            var paras = BindParameters(method, request);
 
             if (method.SetCall == null)
             {
@@ -218,7 +314,7 @@ namespace Kooboo.Api.Methods
                 else if (item.ClrType.IsClass)
                 {
                     // try to assign the model. 
-                    result.Add(AssignModel(call, item.ClrType, item.Name)); 
+                    result.Add(AssignModel(call, item.ClrType, item.Name));
                 }
                 else
                 {
@@ -231,9 +327,9 @@ namespace Kooboo.Api.Methods
 
         public static object AssignModel(ApiCall call, Type ModelType, string fieldname)
         {
-            object model=null;
+            object model = null;
 
-            var fieldvalue = call.Context.Request.GetValue(fieldname); 
+            var fieldvalue = call.Context.Request.GetValue(fieldname);
 
             if (!string.IsNullOrEmpty(fieldvalue))
             {
@@ -241,14 +337,14 @@ namespace Kooboo.Api.Methods
                 {
                     model = Lib.Helper.JsonHelper.Deserialize(fieldvalue, ModelType);
 
-                    return model; 
+                    return model;
                 }
                 catch (Exception ex)
                 {
 
                 }
             }
-          
+
 
             string json = call.Context.Request.Body;
 
@@ -285,16 +381,16 @@ namespace Kooboo.Api.Methods
                     string dictjson = Lib.Helper.JsonHelper.Serialize(values);
                     try
                     {
-                       model = Lib.Helper.JsonHelper.Deserialize(dictjson, ModelType);
+                        model = Lib.Helper.JsonHelper.Deserialize(dictjson, ModelType);
                     }
                     catch (Exception ex)
-                    { 
+                    {
                     }
                 }
- 
+
             }
 
-            return model; 
+            return model;
         }
 
 

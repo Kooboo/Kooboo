@@ -297,6 +297,9 @@ namespace Kooboo.Data.GeoLocation
             return null; 
         }
 
-
+        public static void RenewDataBase()
+        {
+            IPLocation.InitDatabase(false);
+        }
     }
 }

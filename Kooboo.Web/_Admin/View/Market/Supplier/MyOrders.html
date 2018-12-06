@@ -1,0 +1,27 @@
+<!-- #layout name=blank --sideType='market'-->
+
+<div class="page-header">
+    <h1 class="title">Suppliers</h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'MARKET'
+},{
+    name: 'Suppliers',
+    url: Kooboo.Route.Supplier.ListPage
+},{
+    name: 'My Orders'
+}]}"></div>
+<ul class="nav nav-tabs" data-bind="foreach: { data: tabs, as: 'tab' }">
+    <li data-bind="css: { active: $parent.currentTab() == tab.value }, click: $parent.changeTab.bind(this, $data)">
+        <a href="javascript:;" data-toggle="tab" data-bind="text: tab.displayName"></a>
+    </li>
+</ul>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbBreadcrumb.js"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Market/Scripts/Kooboo.Market.js"></script>
+<script src="/_Admin/View/Market/Supplier/MyOrders.js"></script>

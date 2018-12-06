@@ -8,7 +8,7 @@
             </a>
             <ul data-bind="foreach: menus" class="dropdown-menu">
                 <li>
-                    <a data-bind="click: $parent.menuClick.bind(this, $data.url), attr: { href: $data.url }" class="icon-btn btn-lg blue">
+                    <a data-bind="click: $parent.menuClick.bind(this, $data.url), attr: { href: $data.url, target: $data.openInNewWindow ? '_blank' : '_self' }" class="icon-btn btn-lg blue">
                         <i data-bind="css: $data.icon"></i>
                         <div data-bind="text: $data.name"></div>
                     </a>

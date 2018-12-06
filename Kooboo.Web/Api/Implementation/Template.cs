@@ -295,6 +295,15 @@ namespace Kooboo.Web.Api.Implementation
                 data.Tags = formResult.FormData["tags"];
             }
 
+            if (formResult.FormData.ContainsKey("price"))
+            {
+                data.Price=decimal.Parse(formResult.FormData["price"]);
+            }
+            if (formResult.FormData.ContainsKey("currency"))
+            {
+                data.Price = decimal.Parse(formResult.FormData["currency"]);
+            }
+
             data.UserId = call.Context.User.Id;
 
             if (formResult.FormData.ContainsKey("IsPrivate"))

@@ -65,7 +65,7 @@
         top: -4px;
     }
     
-    .content-container .item p {
+    .content-container .item p:not(.form-control-static) {
         text-overflow: ellipsis;
         max-height: 36px;
         overflow: hidden;
@@ -153,8 +153,8 @@
                     <div class="balance-func">
                         <div class="btn-group btn-group-justified">
                             <a data-bind="attr: { href: Kooboo.Route.Get(Kooboo.Route.Discussion.ListPage,{ type: 'me' }) }" class="btn btn-link">My question</a>
-                            <a href="javascript:;" class="btn btn-link">My demand</a>
-                            <a href="javascript:;" class="btn btn-link">I'm a supplier</a>
+                            <a href="/_Admin/Witkey/Demand" class="btn btn-link">My demand</a>
+                            <a href="/_Admin/Witkey/Proposal" class="btn btn-link">My proposals</a>
                         </div>
                     </div>
                 </div>
@@ -168,9 +168,6 @@
                     </li>
                     <li id="nav_demand">
                         <a href="#demands">Demands</a>
-                    </li>
-                    <li id="nav_suppliers">
-                        <a href="#suppliers">Suppliers</a>
                     </li>
                 </ul>
             </div>
@@ -186,12 +183,13 @@
                         <a href="javascript:;" data-bind="click: onAddDiscussion"><i class="fa fa-plus"></i></a>
                     </div>
                 </h2>
+                <!-- ko if: discussions().length -->
                 <div class="content row clearfix" data-bind="foreach: discussions">
                     <div class="col-md-6">
                         <div class="item clearfix">
                             <div class="col-md-12">
                                 <div class="discussion">
-                                    <a data-bind="attr: { href: Kooboo.Route.Get(Kooboo.Route.Discussion.DetailPage, { id: $data.id }) }">
+                                    <a target="_blank" data-bind="attr: { href: Kooboo.Route.Get(Kooboo.Route.Discussion.DetailPage, { id: $data.id }) }">
                                         <div class="discussion-body">
                                             <h4 class="discussion-heading" data-bind="text: $data.title, attr: { title: title }"></h4>
                                             <div class="clearfix">
@@ -217,74 +215,154 @@
                         </div>
                     </div>
                 </div>
+                <!-- /ko -->
+                <!-- ko ifnot: discussions().length -->
+                <div class="content">
+                    <div class="well">
+                        <h4>No disuccsion found</h4>
+                        <p><a href="javascript:;" data-bind="click: onAddDiscussion">Click here</a> to publish your topic.</p>
+                    </div>
+                </div>
+                <!-- /ko -->
             </div>
             <div class="content-container" id="demands">
                 <h2 class="section-header clearfix">
                     <div class="pull-left title">
                         <a href="javascript:;">Demands<i class="fa fa-chevron-right"></i></a>
                     </div>
+                    <div class="pull-right extend">
+                        <a href="javascript:;" data-bind="click: onAddDemand"><i class="fa fa-plus"></i></a>
+                    </div>
                 </h2>
+                <!-- ko if: demands().length -->
                 <div class="content row clearfix" data-bind="foreach: demands">
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <div class="item clearfix">
                             <div class="col-md-12">
-                                <div class="media">
-                                    <a class="pull-left" href="#">
-                                        <img class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%20preserveAspectRatio%3D%22none%22%3E%3C!--%0ASource%20URL%3A%20holder.js%2F64x64%0ACreated%20with%20Holder.js%202.8.2.%0ALearn%20more%20at%20http%3A%2F%2Fholderjs.com%0A(c)%202012-2015%20Ivan%20Malopinsky%20-%20http%3A%2F%2Fimsky.co%0A--%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%3C!%5BCDATA%5B%23holder_1660ea77f6a%20text%20%7B%20fill%3A%23AAAAAA%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A10pt%20%7D%20%5D%5D%3E%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1660ea77f6a%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20fill%3D%22%23EEEEEE%22%2F%3E%3Cg%3E%3Ctext%20x%3D%2213.1796875%22%20y%3D%2236.5%22%3E64x64%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"
-                                            data-holder-rendered="true" style="width: 64px; height: 64px;">
-                                    </a>
-                                    <div class="media-body">
-                                        <h4 class="media-heading">Object heading</h4>
-                                        <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.</p>
+                                <div class="discussion">
+                                    <button class="close" data-bind="click: $parent.deleteDemand.bind(this, $data.id)"><i class="fa fa-close"></i></button>
+                                    <div class="discussion-body">
+                                        <a target="_blank" data-bind="attr: { href: $data.url }">
+                                            <h4 class="discussion-heading" data-bind="text: $data.title, attr: { title: $data.title }"></h4>
+                                        </a>
+                                        <ul class="row list-group margin-top-15">
+                                            <li class="list-group-item">
+                                                <span>Start date:</span>
+                                                <span class="badge gray" data-bind="text: $data.startDate"></span>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span>End date:</span>
+                                                <span class="badge gray" data-bind="text: $data.endDate"></span>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span>Budget:</span>
+                                                <span class="badge gray" data-bind="text: $data.budget, attr: { title: $data.currency }"></span>
+                                            </li>
+                                            <li class="list-group-item">
+                                                <span>Required skills:</span>
+                                                <!-- ko foreach: { data: $data.skills, as: 'skill' } -->
+                                                <span class="badge badge-info" data-bind="text: skill"></span>
+                                                <!-- /ko -->
+                                            </li>
+                                        </ul>
+                                        <div class="clearfix">
+                                            <div class="pull-left">
+                                                <span class="item-left" data-bind="text: $data.userName"></span>
+                                                <span class="item-right" data-bind="text: $data.createdTime"></span>
+                                            </div>
+                                            <div class="pull-right" title="Proposal">
+                                                <span class="item-right"><i class="fa fa-users"></i>&nbsp;
+                                                    <!-- ko text: $data.proposalCount -->
+                                                    <!-- /ko -->
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!-- /ko -->
+                <!-- ko ifnot: demands().length -->
+                <div class="content">
+                    <div class="well">
+                        <h4>No demand found</h4>
+                        <p><a href="javascript:;" data-bind="click: onAddDemand">Click here</a> to publish your demand.</p>
+                    </div>
+                </div>
+                <!-- /ko -->
             </div>
             <div class="content-container" id="suppliers">
                 <h2 class="section-header clearfix">
                     <div class="pull-left title">
                         <a href="javascript:;">Suppliers<i class="fa fa-chevron-right"></i></a>
                     </div>
+                    <div class="pull-right extend">
+                        <!-- ko ifnot: isSupplier -->
+                        <a href="javascript:;" data-bind="click: onApplySupplier"><i class="fa fa-plus"></i></a>
+                        <!-- /ko -->
+                        <!-- ko if: isSupplier -->
+                        <a href="javascript:;" data-bind="click: onEditSupplier, tooltip: 'Edit my intro', tooltipPlacement: 'left'"><i class="fa fa-pencil"></i></a>
+                        <!-- /ko -->
+                    </div>
                 </h2>
-                <div class="content row clearfix" data-bind="foreach: suppliers">
+                <!-- ko if: suppliers().length -->
+                <div class="content row clearfix" data-bind="foreach: { data: suppliers, as: 'sup' }">
                     <div class="col-md-4">
-                        <div class="item clearfix">
-                            <div class="col-md-12">
-                                <div class="media">
-                                    <a class="pull-left" href="#">
-                                        <img class="media-object" data-src="holder.js/64x64" alt="64x64" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2264%22%20height%3D%2264%22%20viewBox%3D%220%200%2064%2064%22%20preserveAspectRatio%3D%22none%22%3E%3C!--%0ASource%20URL%3A%20holder.js%2F64x64%0ACreated%20with%20Holder.js%202.8.2.%0ALearn%20more%20at%20http%3A%2F%2Fholderjs.com%0A(c)%202012-2015%20Ivan%20Malopinsky%20-%20http%3A%2F%2Fimsky.co%0A--%3E%3Cdefs%3E%3Cstyle%20type%3D%22text%2Fcss%22%3E%3C!%5BCDATA%5B%23holder_1660ea77f6a%20text%20%7B%20fill%3A%23AAAAAA%3Bfont-weight%3Abold%3Bfont-family%3AArial%2C%20Helvetica%2C%20Open%20Sans%2C%20sans-serif%2C%20monospace%3Bfont-size%3A10pt%20%7D%20%5D%5D%3E%3C%2Fstyle%3E%3C%2Fdefs%3E%3Cg%20id%3D%22holder_1660ea77f6a%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20fill%3D%22%23EEEEEE%22%2F%3E%3Cg%3E%3Ctext%20x%3D%2213.1796875%22%20y%3D%2236.5%22%3E64x64%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E"
-                                            data-holder-rendered="true" style="width: 64px; height: 64px;">
-                                    </a>
-                                    <div class="media-body">
-                                        <h4 class="media-heading">Object heading</h4>
-                                        <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis.</p>
+                        <div class="thumbnail">
+                            <div class="caption">
+                                <h3 data-bind="text: sup.userName"></h3>
+                                <div class="form-horizontal margin-bottom-15">
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Expertises</label>
+                                        <div class="col-md-9">
+                                            <p class="form-control-static" data-bind="foreach: sup.expertises">
+                                                <span class="label label-sm label-info" data-bind="text: $data"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-md-3 control-label">Introduction</label>
+                                        <div class="col-md-9">
+                                            <p class="form-control-static" data-bind="text: sup.introduction"></p>
+                                        </div>
                                     </div>
                                 </div>
+                                <p>
+                                    <a href="javascript:;" target="_blank" class="btn btn-info" data-bind="attr: { href: sup.detailUrl }">View</a>
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!-- /ko -->
+                <!-- ko ifnot: suppliers().length -->
+                <div class="content">
+                    <div class="well">
+                        <h4>No supplier found</h4>
+                        <p><a href="javascript:;" data-bind="click: onApplySupplier">Click here</a> to apply supplier.</p>
+                    </div>
+                </div>
+                <!-- /ko -->
             </div>
         </div>
     </div>
 
-    <discussion-modal params="isShow: onShowDiscussionModal"></discussion-modal>
+    <discussion-modal params="isShow: showDiscussionModal"></discussion-modal>
+    <demand-modal params="isShow: showDemandModal"></demand-modal>
+    <apply-supplier-modal params="isShow: showApplySupplier, data: mySupplierIntro"></apply-supplier-modal>
 </div>
 
 <script>
     (function() {
         Kooboo.loadJS([
-            "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
-            "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
-            "/_Admin/Scripts/kobindings.richeditor.js",
-            "/_Admin/Scripts/kobindings.textError.js",
-            "/_Admin/View/Witkey/Scripts/components/DiscussionModal.js"
+            "/_Admin/View/Witkey/Scripts/components/DiscussionModal.js",
+            "/_Admin/View/Witkey/Scripts/components/ApplySupplierModal.js",
+            "/_Admin/View/Witkey/Scripts/components/DemandModal.js"
         ])
     })()
 </script>
 
 <script src="/_Admin/View/Witkey/Scripts/Kooboo.Witkey.js"></script>
-<script src="/_Admin/View/Witkey/Index.js"></script>
+<script src="/_Admin/View/Witkey/Index.js"></script>`

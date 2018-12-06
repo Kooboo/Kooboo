@@ -260,6 +260,8 @@ namespace Kooboo.Data.Context
 
         public bool IsSiteBinding { get; set; }
 
+        public bool IsApp { get; set; }
 
+        public string AppParentUrl { get; set; }    
     }
 }

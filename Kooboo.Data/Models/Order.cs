@@ -1,5 +1,5 @@
 ﻿using System;
- 
+
 using Kooboo.Data;
 using Kooboo.Data.Attributes;
 
@@ -21,9 +21,10 @@ namespace Kooboo.Data.Models
         }
         public Guid OrganizationId { get; set; }
 
+        public Guid WebSiteId { get; set; }
+
         private SalesItem _item;
 
-        [SqlIngore]
         public SalesItem Item
         {
             get { return _item; }
@@ -50,13 +51,50 @@ namespace Kooboo.Data.Models
 
         public OrderStatus Status { get; set; }
 
-        public decimal TotalPrice
+        public decimal TotalAmount
         {
-            get;set;
+            get; set;
         }
 
         public string Currency { get; set; }
-        
+
+        public string Symbol
+        {
+            get
+            {
+                return Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Currency);
+            }
+        }
+
+        // Delivery method. 
+        public string Delivery { get; set; }
+
+        private OrderLine _Orderline;
+
+        public OrderLine OrderLine
+        {
+            get
+            {
+                if (_Orderline == null)
+                {
+                    _Orderline = new OrderLine();
+                }
+                return _Orderline;
+
+            }
+            set { _Orderline = value; }
+        }
+
+        public bool IsPaid { get; set; }
+
+        public bool IsCancel { get; set; }
+
+        // Used for like domain name.. 
+        public string Name { get; set; }
+
+        // for coupon code or others... 
+        public string Code { get; set; }
+
     }
 
     public enum OrderStatus
@@ -67,4 +105,20 @@ namespace Kooboo.Data.Models
         Canceled,
         Delivered
     }
+
+    public class OrderLine
+    {
+        public string ProductName { get; set; }
+
+        public string Description { get; set; }
+
+        public decimal UnitPrice { get; set; }
+
+        public int Quantity { get; set; }
+
+        public decimal TotalAmount { get; set; }
+
+
+    }
+
 }

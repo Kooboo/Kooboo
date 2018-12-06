@@ -82,7 +82,7 @@ namespace Kooboo.App
                         {
                             int.TryParse(vm.Port, out port);
                         }
-                        if (port <= 0)
+                        if (port <= 0 || port>65535)
                         {
                             MessageBox.Show(messageText);
                             return;

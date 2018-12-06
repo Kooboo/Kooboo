@@ -7,6 +7,7 @@
 
             var menus = params.menu.map(function(menu) {
                 return {
+                    openInNewWindow: menu.openInNewWindow,
                     name: menu.name,
                     icon: menu.icon,
                     url: menu.url

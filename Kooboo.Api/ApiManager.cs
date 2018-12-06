@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Kooboo.Data.Language;
+using Kooboo.Data.Context;
 
 namespace Kooboo.Api
 {
@@ -34,7 +35,7 @@ namespace Kooboo.Api
                 return new JsonResponse(fakedata) { Success = true };
             }
 
-            if (!ValidateRequirement(call.Command, call.Context.WebSite, call.Context.User, apiProvider))
+            if (!ValidateRequirement(call.Command,call.Context, apiProvider))
             {
                 var result = new JsonResponse() { Success = false };
                 result.Messages.Add(Hardcoded.GetValue("User or website not valid", call.Context));
@@ -108,7 +109,8 @@ namespace Kooboo.Api
             }
         }
 
-        public static bool ValidateRequirement(ApiCommand command, WebSite WebSite, User User, IApiProvider apiProvider)
+   
+        public static bool ValidateRequirement(ApiCommand command, RenderContext context, IApiProvider apiProvider)
         {
             if (command == null)
             {
@@ -121,19 +123,19 @@ namespace Kooboo.Api
                 return false;
             }
 
-            if (apiobject.RequireSite && WebSite == null)
-            {        
+            if (apiobject.RequireSite && context.WebSite == null)
+            {
                 return false;
             }
 
-            if (apiobject.RequireUser && User == null)
+            if (apiobject.RequireUser && context.User == null)
             {
                 return false;
             }
 
             if (apiobject.RequireSite && apiobject.RequireUser)
             {
-                if (WebSite.OrganizationId != User.CurrentOrgId)
+                if (context.WebSite.OrganizationId != context.User.CurrentOrgId)
                 {
                     return false;
                 }
@@ -141,6 +143,7 @@ namespace Kooboo.Api
 
             return true;
         }
+                             
 
         public static bool ValideAssignModel(ApiMethod method, ApiCall call, Action<string> callback)
         {

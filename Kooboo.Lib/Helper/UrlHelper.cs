@@ -125,7 +125,15 @@ namespace Kooboo.Lib.Helper
                     string domain = Kooboo.Lib.Helper.UrlHelper.UriHost(absoluteUrl, true);
 
                     string relativeUrl = UrlHelper.RelativePath(absoluteUrl);
-                    return "/" + domain + relativeUrl;
+                    if (domain !=null)
+                    {
+                        return "/" + domain + relativeUrl;
+                    }
+                    else
+                    {
+                        return relativeUrl;
+                    }
+                   
                 }
                 else
                 {
@@ -322,6 +330,17 @@ namespace Kooboo.Lib.Helper
             {
                 Uri url = new Uri(fullurl);
                 return url.Host.ToLower();
+            }
+            else
+            {
+                try
+                {
+                    Uri url = new Uri(fullurl);
+                    return url.Host.ToLower();
+                }
+                catch (Exception)
+                {       
+                }
             }
 
             return null; 

@@ -70,8 +70,8 @@ namespace Kooboo.Web.FrontRequest
                         {
                             if (Data.AppSettings.IsOnlineServer && !Kooboo.Web.Security.ActionControl.CanServerDownloadMorePages(kooboocontext.SiteDb, kooboocontext.RenderContext.Request.RelativeUrl))
                             {
-                                kooboocontext.RenderContext.Response.StatusCode = 407;
-                                var errorbody = await WebSiteService.RenderCustomError(kooboocontext, 407);
+                                kooboocontext.RenderContext.Response.StatusCode = 402;
+                                var errorbody = await WebSiteService.RenderCustomError(kooboocontext, 402);
                                 if (!string.IsNullOrWhiteSpace(errorbody))
                                 {
                                     kooboocontext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(errorbody);
@@ -148,7 +148,7 @@ namespace Kooboo.Web.FrontRequest
         public async Task ExecuteKooboo(FrontContext frontContext)
         {
             DateTime endtime = default(DateTime);
-
+                                                      
             if (!frontContext.WebSite.Published && frontContext.RenderContext.Request.Channel == Data.Context.RequestChannel.Default)
             {
                 if ((frontContext.Route != null && frontContext.Route.DestinationConstType == ConstObjectType.Page) || frontContext.RenderContext.User == null)
@@ -165,6 +165,10 @@ namespace Kooboo.Web.FrontRequest
                 {
                     await RouteRenderers.RenderAsync(frontContext);
                     endtime = DateTime.UtcNow;
+
+                    // check for rights...
+                    CheckUserBandwidth(frontContext); 
+
                 }
                 catch (Exception ex)
                 {
@@ -242,5 +246,66 @@ namespace Kooboo.Web.FrontRequest
             }
             return false;
         }
+
+
+        public async void CheckUserBandwidth(FrontContext frontContext)
+        {
+            bool shouldcheck = false; 
+            if (frontContext.RenderContext.Response.StatusCode ==200)
+            {
+                if (Data.AppSettings.IsOnlineServer)
+                {
+                    shouldcheck = true; 
+                }
+
+#if DEBUG
+               
+                    shouldcheck = true; 
+                
+#endif 
+            }             
+
+            if (shouldcheck)
+            {
+                long length = 0;
+
+                if (frontContext.RenderContext.Response.Body !=null)
+                {
+                    length = frontContext.RenderContext.Response.Body.Length; 
+                }
+
+                if (length == 0)
+                {
+                    if (frontContext.RenderContext.Response.Stream !=null)
+                    {
+                        length = frontContext.RenderContext.Response.Stream.Length; 
+                    }
+                }
+
+               if (length >0)
+                {
+                    var orgid = frontContext.RenderContext.WebSite.OrganizationId; 
+                    var testok  =  Kooboo.Data.Infrastructure.InfraManager.Test(orgid, Data.Infrastructure.InfraType.Bandwidth, length); 
+
+                    if (!testok)
+                    {     
+                        frontContext.RenderContext.Response.StatusCode = 402;        
+                        var errorbody = await WebSiteService.RenderCustomError(frontContext, 402);
+                        if (!string.IsNullOrWhiteSpace(errorbody))
+                        {
+                            frontContext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(errorbody);
+                        }   
+                    }
+                    else
+                    {
+                        string url = frontContext.RenderContext.Request.Host +  frontContext.RenderContext.Request.RawRelativeUrl; 
+                        Kooboo.Data.Infrastructure.InfraManager.Add(orgid, Data.Infrastructure.InfraType.Bandwidth, length, url);
+                    }
+                }
+
+            }    
+
+        }
+        
     }
 }

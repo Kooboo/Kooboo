@@ -2,6 +2,8 @@
 using Kooboo.IndexedDB;
 using System;
 using System.Linq;
+using Kooboo.Sites.Relation;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Repository
 {
@@ -30,7 +32,38 @@ namespace Kooboo.Sites.Repository
             }
             return Get(key);
         }
-        
+
+        public override bool AddOrUpdate(Menu value)
+        {
+            EnsureNewRender(value); 
+            return base.AddOrUpdate(value);
+        }
+
+        public override bool AddOrUpdate(Menu value, Guid UserId)
+        {
+            EnsureNewRender(value);
+            return base.AddOrUpdate(value, UserId);
+        }
+         
+
+        private void EnsureNewRender(Menu menu)
+        {
+            if (menu == null)
+            {
+                return; 
+            }
+            menu.TempRenderData = null;
+
+            if (menu.children !=null)
+            {
+                foreach (var item in menu.children)
+                {
+                    EnsureNewRender(item); 
+                }
+            }
+            
+        }
+
         private bool HasActive(Menu menu, ref string searchstring)
         {
             if (!string.IsNullOrEmpty(menu.Template) && menu.Template.Contains(searchstring))

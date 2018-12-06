@@ -392,9 +392,23 @@ namespace Kooboo.Data
                         }
                         else
                         {
-                            url = Lib.Helper.UrlHelper.Combine(rooturl, "system/GetSetting"); 
-                        } 
-                        _serversetting = HttpHelper.Get<ServerSetting>(url);
+                            rooturl =  rooturl + "/_api/";
+                            url = Lib.Helper.UrlHelper.Combine(rooturl, "system/GetSetting");
+                        }
+                        try
+                        {
+                            _serversetting = HttpHelper.Get<ServerSetting>(url);
+                        }
+                        catch (Exception)
+                        {
+                           
+                        }
+                       
+                        if (_serversetting == null)
+                        {
+                            Console.WriteLine("Can not find server info from root server");
+                            _serversetting = new ServerSetting(); 
+                        }
                     }
                     else
                     {

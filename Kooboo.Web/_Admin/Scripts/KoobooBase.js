@@ -501,14 +501,17 @@
     function Sidebar() {
         var self = this;
         this.name = "Bar";
-        self.getSidebar = function(para) {
+        this.getSidebar = function(para) {
             return self.executeGet("sitemenu", para);
         }
-        self.getDomainSidebar = function(para) {
+        this.getDomainSidebar = function(para) {
             return self.executeGet("domainMenu", para);
         }
-        self.getExtensionSidebar = function(para) {
+        this.getExtensionSidebar = function(para) {
             return self.executeGet("extensionMenu", para);
+        }
+        this.getMarketSidebar = function(para) {
+            return self.executeGet('MarketSideBar', para);
         }
     }
     extend(Sidebar, BaseModel);
@@ -1691,6 +1694,15 @@
     }
     extend(APIGeneration, BaseModel);
 
+    function Currency() {
+        this.name = 'Currency';
+
+        this.change = function(para) {
+            return this.executePost('Change', para);
+        }
+    }
+    extend(Currency, BaseModel);
+
     wind.Kooboo = {
         APIGeneration: new APIGeneration(),
         Attachment: new Attachment(),
@@ -1706,6 +1718,7 @@
         Commerce: new Commerce(),
         Component: new Component(),
         CSSRule: new CSSRule(),
+        Currency: new Currency(),
         Database: new Database(),
         DataSource: new DataSource(),
         DataMethodSetting: new DataMethodSetting(),

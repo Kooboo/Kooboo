@@ -123,6 +123,10 @@ namespace Kooboo.Api
             {
                 // do nothing. 
             }
+            else if (response is PlainResponse)
+            {
+                RenderPlainResponse(context, response as PlainResponse); 
+            }
             else
             {         
                 MultilingualService.EnsureLangText(response, context);   
@@ -156,5 +160,18 @@ namespace Kooboo.Api
             } 
             context.Response.Body= resposne.BinaryBytes;
         }
+
+        public void RenderPlainResponse(RenderContext context, PlainResponse resposne)
+        {
+            if (resposne == null)
+            {
+                return;
+            }
+            context.Response.ContentType = resposne.ContentType;
+            context.Response.StatusCode = resposne.statusCode;
+
+            context.Response.Body = System.Text.Encoding.UTF8.GetBytes(resposne.Content);  
+        }
+
     }
 } 

@@ -130,7 +130,7 @@ namespace Kooboo.Sites.Service
             else
             {
                 var repo = sitedb.LogByWeek<VisitorLog>(WeekName);
-                var list = sitedb.VisitorLog.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead); 
+                var list = repo.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead); 
                 repo.Close();
                 return list;
             }

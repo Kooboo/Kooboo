@@ -183,6 +183,13 @@ namespace Kooboo.Api
             {
                 return (T)Convert.ChangeType(value, type); 
             }
+            else if (type == typeof(decimal))
+            {
+                decimal decvalue = 0;
+                decimal.TryParse(value, out decvalue);
+                return (T)Convert.ChangeType(decvalue, type);
+                 
+            } 
             else
             {
                 throw new Exception("type of not supported"); 

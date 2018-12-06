@@ -16,6 +16,9 @@
                         <!-- ko if: contentLoaded -->
                         <textarea class="form-control" data-bind="richeditor: content, value: content"></textarea>
                         <!-- /ko -->
+                        <!-- ko ifnot: contentLoaded -->
+                        <p class="form-control-static">Loading</p>
+                        <!-- /ko -->
                     </div>
                 </div>
             </div>

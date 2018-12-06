@@ -6,11 +6,15 @@
                 <h4 class="modal-title" data-bind="text: Kooboo.text.market.changeCurrency"></h4>
             </div>
             <div class="modal-body">
-                <div class="form-group" data-bind="foreach: currencies">
-                    <label class="radio-inline">
-                        <input type="radio" data-bind="value: $data.code, checked: $parent.code">
-                        <span data-bind="text: $data.code + ' (' + $data.symbol + ')'"></span>
-                    </label>
+                <div class="row" data-bind="foreach: currencies">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="radio-inline">
+                                <input type="radio" data-bind="value: $data.code, checked: $parent.code">
+                                <span data-bind="text: $data.code + ' (' + $data.symbol + ')'"></span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">

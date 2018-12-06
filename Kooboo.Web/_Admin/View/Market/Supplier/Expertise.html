@@ -1,0 +1,61 @@
+<!-- #layout name=blank --sideType='market'-->
+
+<div class="page-header">
+    <h1 class="title">Expertise</h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'MARKET'
+},{
+    name: 'Suppliers',
+    url: Kooboo.Route.Supplier.ListPage
+},{
+    name: 'Expertise'
+}]}"></div>
+<div class="thumbnail">
+    <div class="caption">
+        <h3 style="margin-top: 4px;">Expertise: <strong data-bind="text: name"></strong></h3>
+        <hr>
+        <div class="row margin-bottom-15">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label class="control-label">Price</label>
+                    <div>
+                        <p class="form-control-static">
+                            <label class="label label-sm label-info" data-bind="text: price, attr: { title: currency}"></label>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label class="control-label">Supplier</label>
+                    <div>
+                        <p class="form-control-static">
+                            <a data-bind="text: supplierName, attr: { href: supplierPage }" target="_blank"></a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label class="control-label">Description</label>
+                    <div class="well">
+                        <p class="form-control-static" data-bind="text: description"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p>
+            <a href="#" class="btn btn-info">Order</a>
+        </p>
+    </div>
+</div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Market/Scripts/Kooboo.Market.js"></script>
+<script src="/_Admin/View/Market/Supplier/Expertise.js"></script>

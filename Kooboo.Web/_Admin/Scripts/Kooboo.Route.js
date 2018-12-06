@@ -163,9 +163,31 @@
             CategoriesPage: GetRoute("ECommerce/Product/Categories")
         },
         Discussion: {
-            ListPage: GetRoute("Witkey/Discussion/Index"),
-            DetailPage: GetRoute("Witkey/Discussion/Detail"),
-            MyPage: GetRoute("Witkey/Discussion/My")
+            ListPage: GetRoute("Market/Discussion/Index"),
+            DetailPage: GetRoute("Market/Discussion/Detail"),
+            MyPage: GetRoute("Market/Discussion/MyThreads")
+        },
+        Demand: {
+            ListPage: GetRoute("Market/Demand/Index"),
+            DetailPage: GetRoute("Market/Demand/Detail"),
+            MyDemandPage: GetRoute("Market/Demand/MyDemands"),
+            MyProposalPage: GetRoute("Market/Demand/Proposals")
+        },
+        Supplier: {
+            ListPage: GetRoute("Market/Supplier/Index"),
+            DetailPage: GetRoute("Market/Supplier/Detail"),
+            ExpertisePage: GetRoute("Market/Supplier/Expertise"),
+            MyOrdersPage: GetRoute("Market/Supplier/MyOrders"),
+            MyOffersPage: GetRoute("Market/Supplier/MyOffers")
+        },
+        Template: {
+            ListPage: GetRoute("Market/Template/Index")
+        },
+        Hardware: {
+            ListPage: GetRoute("Market/Hardware/Index")
+        },
+        App: {
+            ListPage: GetRoute("Market/App/Index")
         },
         Get: function(PageRoute, params) {
 

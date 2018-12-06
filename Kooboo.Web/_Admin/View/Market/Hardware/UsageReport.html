@@ -1,0 +1,121 @@
+<!-- #layout name=blank --sideType='market'-->
+
+<div class="page-header">
+    <h1 class="title">Hardwares</h1>
+</div>
+
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'MARKET'
+},{
+    name: 'Hardwares',
+    url: Kooboo.Route.Hardware.ListPage
+},{
+    name: 'Usage Report'
+}]}"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <ul class="nav nav-tabs margin-bottom-20" data-bind="foreach: types">
+                    <li data-bind="css: { 'active': $parent.currentType() == $data.value }, click: $parent.changeType">
+                        <a data-bind="text: $data.displayName" href="javascript:;"></a>
+                    </li>
+                </ul>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Usage</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div id="report" style="height: 460px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Logs</h3>
+                        </div>
+                        <div class="panel-body row">
+                            <!-- ko if: currentData -->
+                            <div class="col-md-12 block-dashboard-stat margin-bottom-10">
+                                <div class="row">
+                                    <div class="item col-md-3">
+                                        <div class="number" data-bind="text: currentData().month"></div>
+                                        <small class="text-muted">Month</small>
+                                    </div>
+                                    <div class="item col-md-3">
+                                        <div class="number" data-bind="text: currentData().total"></div>
+                                        <small class="text-muted">Total</small>
+                                    </div>
+                                    <div class="item col-md-3">
+                                        <div class="number" data-bind="text: currentData().used"></div>
+                                        <small class="text-muted">Used</small>
+                                    </div>
+                                    <div class="item col-md-3">
+                                        <div class="number" data-bind="text:  ((currentData().used / currentData().total) * 100).toFixed(2) + '%'"></div>
+                                        <small class="text-muted">Usage rate</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /ko -->
+                            <table class="table" style="margin-bottom: -10px;">
+                                <thead>
+                                    <tr>
+                                        <th>Content</th>
+                                        <th>Date</th>
+                                        <th>Count</th>
+                                    </tr>
+                                </thead>
+                                <!-- ko ifnot: logsLoading -->
+                                <tbody>
+                                    <!-- ko if: logs().length -->
+                                    <!-- ko foreach: logs -->
+                                    <tr>
+                                        <td data-bind="text: $data.content"></td>
+                                        <td data-bind="text: $data.date"></td>
+                                        <td data-bind="text: $data.count"></td>
+                                    </tr>
+                                    <!-- /ko -->
+                                    <!-- /ko -->
+                                    <!-- ko ifnot: logs().length -->
+                                    <tr>
+                                        <td>Empty</td>
+                                    </tr>
+                                    <!-- /ko -->
+                                </tbody>
+                                <!-- /ko -->
+                                <!-- ko if: logsLoading -->
+                                <tbody>
+                                    <tr>
+                                        <td colspan="100" align="center">
+                                            <i class="fa fa-spinner fa-spin"></i>
+                                            <span>Loading...</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <!-- /ko -->
+                            </table>
+                            <div data-bind="component: { name: 'kb-pager', params: pager }" style="float: left; margin-bottom: -20px; margin-left: 10px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/components/kbPager.js",
+            "/_Admin/Scripts/lib/echarts.min.js"
+        ])
+    })()
+</script>
+<script src="/_Admin/View/Market/Scripts/Kooboo.Market.js"></script>
+<script src="/_Admin/View/Market/Hardware/UsageReport.js"></script>

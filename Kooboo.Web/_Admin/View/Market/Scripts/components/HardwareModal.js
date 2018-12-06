@@ -98,9 +98,9 @@
                         }
                     }
 
-                    Kooboo.Infrastructure.order(obj).then(function(res) {
+                    Kooboo.Order.infra(obj).then(function(res) {
                         if (res.success) {
-                            self.onHide();
+                            Kooboo.EventBus.publish("kb/market/component/cashier/show", res.model);
                         }
                     })
                 }

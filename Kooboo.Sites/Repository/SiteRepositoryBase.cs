@@ -1,4 +1,7 @@
-﻿using System;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved. 
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Kooboo.IndexedDB;
@@ -8,7 +11,7 @@ using Kooboo.Sites.Models;
 using Kooboo.Sites.Routing;
 using Kooboo.Events.Cms;
 using Kooboo.Data.Interface;
-using Kooboo.Lib.Helper;
+using Kooboo.Lib.Helper;  
 
 namespace Kooboo.Sites.Repository
 {
@@ -518,6 +521,43 @@ namespace Kooboo.Sites.Repository
                 }
             }
 
+            if (value is Kooboo.Sites.Models.CoreObject && changetype != ChangeType.Delete)
+            {
+                if (value is Kooboo.Sites.Routing.Route)
+                {
+                    return; 
+                }
+
+                var size = Kooboo.Sites.Service.ObjectService.GetSize(value); 
+                
+                if (!Kooboo.Data.Infrastructure.InfraManager.Test(this.WebSite.OrganizationId, Data.Infrastructure.InfraType.Disk, size))
+                {
+                    var message = Data.Language.Hardcoded.GetValue("Over Disk Quota");
+                    throw new Exception(message); 
+                }
+                else
+                {
+
+                    string msg = ConstObjectType.GetName(value.ConstType);
+
+                    var objinfo = Kooboo.Sites.Service.ObjectService.GetObjectInfo(this.SiteDb, value);
+                     
+                     
+                    if (objinfo !=null)
+                    {
+                        msg +=  "| " + objinfo.DisplayName; 
+                    }
+                    else
+                    {
+                        msg += "| " + value.Name; 
+                    }
+
+                    Kooboo.Data.Infrastructure.InfraManager.Add(this.WebSite.OrganizationId, Data.Infrastructure.InfraType.Disk, size, msg); 
+
+                }
+
+            }
+
         }
 
         /// <summary>
@@ -555,6 +595,8 @@ namespace Kooboo.Sites.Repository
             {
                 Sync.DiskSyncHelper.SyncToDisk(SiteDb, value, changetype, this.StoreName);
             }
+
+
 
             if (this.SiteDb.WebSite.EnableFullTextSearch)
             {

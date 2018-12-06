@@ -84,15 +84,32 @@ namespace Kooboo.Mail.Multipart
             {
                 return null;
             }
-            var mime = MessageUtility.ParseMineMessage(msgbody);
 
+            return ComposeRefMsg(context, msgbody, MsgId);
+        }
+
+        public static string ComposeRefMsg(RenderContext context, string msgbody, int MsgId)
+        {
+            var mime = MessageUtility.ParseMineMessage(msgbody);
             return ComposeRefMsg(mime, context, MsgId);
         }
 
         public static string ComposeRefMsg(MIME_Message mime, RenderContext context, int MsgId)
         {
             var bodywithheader = ComposeHeader(mime, context);
-            string htmlbody = BodyComposer.RestoreInlineImages(MessageUtility.GetHtmlBody(mime), context.User, MsgId);
+
+            string mailbody = MessageUtility.GetHtmlBody(mime); 
+            if (mailbody == null)
+            {
+                mailbody = MessageUtility.GetTextBody(mime); 
+            }
+
+            if (mailbody == null)
+            {
+                mailbody = MessageUtility.GetAnyTextBody(mime);
+            } 
+
+            string htmlbody = BodyComposer.RestoreInlineImages(mailbody, context.User, MsgId);
             return bodywithheader.Replace("{{htmlbody}}", htmlbody);
         }
 

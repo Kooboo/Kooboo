@@ -1,5 +1,5 @@
 (function() {
-    var template = Kooboo.getTemplate("/_Admin/Witkey/Scripts/components/DiscussionModal.html");
+    var template = Kooboo.getTemplate("/_Admin/Market/Scripts/components/DiscussionModal.html");
 
     ko.components.register('discussion-modal', {
         viewModel: function(params) {
@@ -10,31 +10,33 @@
             this.isShow = params.isShow;
             this.isShow.subscribe(function(show) {
                 if (show) {
-                    if (self.data()) {
+                    if (self.id()) {
                         Kooboo.Discussion.getEdit({
-                            id: self.data().id
+                            id: self.id()
                         }).then(function(res) {
                             if (res.success) {
                                 self.title(res.model.title);
                                 self.content(res.model.content);
                                 setTimeout(function() {
                                     self.contentLoaded(true);
-                                }, 300);
+                                }, 250);
                             }
                         })
                     } else {
-                        self.contentLoaded(true);
+                        setTimeout(function() {
+                            self.contentLoaded(true);
+                        }, 250);
                     }
                 }
             })
-            this.data = params.data;
+            this.id = params.id || ko.observable();
 
             this.contentLoaded = ko.observable(false);
 
             this.onHide = function() {
                 self.title('');
                 self.content('');
-                self.data(null);
+                self.id(null);
                 self.contentLoaded(false);
                 self.showError(false);
                 self.isShow(false);
@@ -63,12 +65,12 @@
                         content: self.content()
                     }
 
-                    self.data() && (data.id = self.data().id)
+                    self.id() && (data.id = self.id());
 
                     Kooboo.Discussion.addOrUpdate(data).then(function(res) {
                         if (res.success) {
                             Kooboo.EventBus.publish('kb/component/discussion-modal/saved')
-                            window.info.done('successful');
+                            window.info.done(Kooboo.text.info[data.id ? 'update' : 'save'].success);
                             self.onHide();
                         }
                     })

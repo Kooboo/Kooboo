@@ -15,8 +15,10 @@
             } else if (sideType === "domain") {
                 getSideBar = Kooboo.Sidebar.getDomainSidebar
                 this.hasSiteName = false;
+            } else if (sideType === "market") {
+                getSideBar = Kooboo.Sidebar.getMarketSidebar;
+                this.hasSiteName = false;
             }
-
             this.sidebar = ko.observableArray();
             this.siteName = ko.observable();
             var level = 1;
@@ -130,6 +132,7 @@
                     }
                 });
             })
+
         },
         template: template
     });

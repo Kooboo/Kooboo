@@ -97,6 +97,27 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
+
+        private Dictionary<string, string> _viewdata;
+
+        public Dictionary<string, string> ViewData
+        {
+            get
+            {
+                if (_viewdata == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_viewdata == null)
+                        {
+                            _viewdata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); 
+                        }
+                    }
+                }
+                return _viewdata;
+            }
+        }
+
         private InfoModel _siteinfo;
 
         public InfoModel Info
@@ -115,7 +136,7 @@ namespace Kooboo.Sites.Scripting
                                 _siteinfo.Culture = this.RenderContext.Culture;
                                 _siteinfo.Name = this.RenderContext.WebSite.Name;
                                 _siteinfo.Setting = this.RenderContext.WebSite.CustomSettings;
-                                _siteinfo.User = new UserModel(this.RenderContext.User); 
+                                _siteinfo.User = new UserModel(this.RenderContext.User);
                             }
                         }
                     }
@@ -145,14 +166,13 @@ namespace Kooboo.Sites.Scripting
                 set { _setting = value; }
             }
 
-         
+
             public UserModel User
-            {     get;set;    
-            }    
+            {
+                get; set;
+            }
         }
-
-  
-
+                     
         private kSiteDb _sitedb;
         public kSiteDb SiteDb
         {
@@ -164,10 +184,10 @@ namespace Kooboo.Sites.Scripting
                     {
                         if (_sitedb == null)
                         {
-                            if (this.RenderContext.WebSite !=null)
+                            if (this.RenderContext.WebSite != null)
                             {
                                 _sitedb = new kSiteDb(this.RenderContext);
-                            }       
+                            }
                         }
                     }
                 }
@@ -179,7 +199,7 @@ namespace Kooboo.Sites.Scripting
         {
             get
             {
-                return this.SiteDb; 
+                return this.SiteDb;
             }
         }
 
@@ -294,7 +314,7 @@ namespace Kooboo.Sites.Scripting
         public kDatabase DB
         {
 
-            get { return this.Database;  }
+            get { return this.Database; }
         }
 
         private KScriptExtension _ex;
@@ -305,13 +325,13 @@ namespace Kooboo.Sites.Scripting
             {
                 if (_ex == null)
                 {
-                    lock(_locker)
+                    lock (_locker)
                     {
                         if (_ex == null)
                         {
                             _ex = new KScriptExtension(this.RenderContext);
                         }
-                    }    
+                    }
                 }
                 return _ex;
             }
@@ -321,7 +341,7 @@ namespace Kooboo.Sites.Scripting
         {
             get
             {
-                return this.Extension; 
+                return this.Extension;
             }
         }
 
@@ -337,14 +357,14 @@ namespace Kooboo.Sites.Scripting
                         if (_mail == null)
                         {
                             _mail = new Global.Mail(this.RenderContext);
-                        }  
-                    }     
+                        }
+                    }
                 }
                 return _mail;
-            }      
+            }
         }
 
-        Kooboo.Sites.Scripting.Global.Security _security; 
+        Kooboo.Sites.Scripting.Global.Security _security;
 
         public Kooboo.Sites.Scripting.Global.Security Security
         {

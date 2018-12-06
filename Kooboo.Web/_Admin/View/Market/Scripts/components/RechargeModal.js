@@ -9,6 +9,8 @@
     var interval = null,
         paymentSuccess = false;
 
+    var infoShowed = false;
+
     ko.components.register("recharge-modal", {
         viewModel: function(params) {
             var self = this;
@@ -19,11 +21,13 @@
             this.isShow.subscribe(function(show) {
                 if (show) {
                     if (!paymentMethods.length) {
-                        // 加载支付方式
-                        Kooboo.Balance.getPaymentMethods().then(function(res) {
+                        Kooboo.Payment.getMethods().then(function(res) {
                             if (res.success) {
-                                self.paymentMethods(res.model);
-                                self.paymentMethod(res.model[0].type);
+                                var methods = res.model.filter(function(item) {
+                                    return item.type !== 'balance';
+                                })
+                                self.paymentMethods(methods);
+                                self.paymentMethod(methods[0].type);
                             }
                         })
                     } else {
@@ -32,7 +36,6 @@
                     }
 
                     if (!paymentPackages.length) {
-                        // 加载支付包选项
                         Kooboo.Balance.getChargePackages().then(function(res) {
                             if (res.success) {
                                 var packages = res.model.map(function(item) {
@@ -63,6 +66,8 @@
                 self.couponCode('');
                 self.currentPackage(null);
                 self.isShow(false);
+                paymentSuccess = false;
+                interval && clearInterval(interval);
             }
 
             this.payingMode = ko.observable(false);
@@ -96,9 +101,9 @@
                         })
                     } else {
                         if (self.chargeAmountValue.isValid()) {
-                            Kooboo.Balance.topup({
-                                price: self.chargeAmountValue(),
-                                PaymentMethod: self.paymentMethod()
+                            Kooboo.Order.topup({
+                                paymentMethod: self.paymentMethod(),
+                                totalAmount: self.chargeAmountValue()
                             }).then(function(res) {
                                 if (res.success) {
                                     self.onPaying(res.model);
@@ -110,7 +115,7 @@
                     }
                 } else {
                     if (self.couponCode.isValid()) {
-                        Kooboo.Balance.useCoupon({
+                        Kooboo.Order.useCoupon({
                             code: self.couponCode()
                         }).then(function(res) {
                             if (res.success) {
@@ -127,19 +132,19 @@
                 }
             }
             this.onPaying = function(res) {
-                if (res.success) {
-                    if (res.qrcode) {
-                        $("#qr-code").empty().qrcode(res.qrcode);
-                        self.paymentId(res.paymentId);
+                if (res.actionRequired) {
+                    if (res.qrCode) {
+                        self.paymentId(res.paymentRequestId);
+                        $("#qr-code").empty().qrcode(res.qrCode);
                         self.payingMode(true);
-                    } else if (res.approvalUrl) {
-                        self.paymentId(res.paymentId);
+                    } else if (res.redirectUrl) {
+                        self.paymentId(res.paymentRequestId);
                         self.payingMode(true);
-                        window.open(res.approvalUrl);
+                        window.open(res.redirectUrl);
                     }
 
                     interval = setInterval(function() {
-                        self.checkPaymentStatus(res.paymentId)
+                        self.checkPaymentStatus(res.paymentRequestId)
                     }, 500);
                 }
             }
@@ -154,18 +159,24 @@
 
             this.checkPaymentStatus = function(paymentId) {
                 if (!paymentSuccess) {
-                    Kooboo.Balance.getPaymentStatus({
-                        paymentId: paymentId
+                    Kooboo.Payment.getStatus({
+                        paymentRequestId: paymentId
                     }).then(function(res) {
                         if (res.success && (res.model.success || res.model.message == "canceled")) {
                             paymentSuccess = true;
-                            clearInterval(interval);
+                            interval && clearInterval(interval);
                             self.onHide();
                             if (res.model.success) {
-                                window.info.show(Kooboo.text.info.payment.success, true);
+                                if (!infoShowed) {
+                                    infoShowed = true;
+                                    window.info.done(Kooboo.text.info.payment.success);
+                                }
                                 Kooboo.EventBus.publish('kb/market/balance/update');
                             } else {
-                                window.info.show(Kooboo.text.info.payment.cancel, true);
+                                if (!infoShowed) {
+                                    window.info.done(Kooboo.text.info.payment.cancel);
+                                    infoShowed = true;
+                                }
                             }
                         }
                     })

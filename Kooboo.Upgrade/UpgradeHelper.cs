@@ -65,10 +65,6 @@ namespace Kooboo.Upgrade
         public static string RootPath { get; set; }
 
         public static string DownloadZipFile { get; set; }
-
-        //public static string ExeRoot { get; set; }
-
-        public static string ParentExePath { get; set; }
                                                              
         private static bool IsKoobooDiskRoot(string FullPath)
         {

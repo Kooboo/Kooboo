@@ -1,0 +1,31 @@
+<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Expertise</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="" class="control-label">Name</label>
+                    <input type="text" class="form-control" data-bind="value: name, error: name">
+                </div>
+                <div class="form-group">
+                    <label for="" class="control-label">Price</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" data-bind="text: symbol"></span>
+                        <input type="text" class="form-control" data-bind="value: price, error: price, event: { keydown: Kooboo.event.input.positiveNumberOnly }">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="" class="control-label">Description</label>
+                    <textarea class="form-control autosize" data-bind="value: description"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="click: onSave, text: Kooboo.text.common.save"></button>
+                <button class="btn gray" data-bind="click: onHide, text: Kooboo.text.common.cancel"></button>
+            </div>
+        </div>
+    </div>
+</div>

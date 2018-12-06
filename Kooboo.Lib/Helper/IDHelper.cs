@@ -143,7 +143,7 @@ namespace Kooboo.Lib.Helper
             }
             else
             {
-                return Lib.Security.Hash.ComputeHashGuid(strkey);
+                return Lib.Security.Hash.ComputeGuidIgnoreCase(strkey);
             }
         }
 

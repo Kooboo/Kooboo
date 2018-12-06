@@ -57,7 +57,7 @@
     </div>
     <div id="main-container" class="clearfix">
         <div id="sidebarDiv">
-            <sidebar></sidebar>
+            <sidebar tal-attributes="params sideType:'{sideType}'"></sidebar>
         </div>
         <div id="main" tal-placeholder="main"></div>
     </div>

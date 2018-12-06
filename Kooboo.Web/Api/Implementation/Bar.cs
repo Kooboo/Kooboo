@@ -68,7 +68,9 @@ namespace Kooboo.Web.Api.Implementation
 
             header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Emails", context), Url = AdminUrl("Emails/Inbox"), Icon = "fa fa-envelope", Count = 0, BadgeIcon = "badge-primary" });
 
-           //header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Market", context), Url = AdminUrl("Market/Index"), Icon = "fa fa-plug", Count = 0, BadgeIcon = "badge-primary" });
+            // TODO: Add redirect to online server market...
+
+            //header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Market", context), Url = AdminUrl("Market/Index"), Icon = "fa fa-plug", Count = 0, BadgeIcon = "badge-primary", OpenInNewWindow = true });
 
             //  header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("E-Commerce", context), Url = AdminUrl("Ecommerce"), Icon = "fa fa-shopping-cart", Count = 0, BadgeIcon = "badge-success" });
 
@@ -271,7 +273,7 @@ namespace Kooboo.Web.Api.Implementation
                 Items =
                 {
                     new MenuItem{ Name = Hardcoded.GetValue("Settings",context), Url = AdminUrl("System/Settings", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Settings },
-                    new MenuItem{ Name = Hardcoded.GetValue("Kooboo Config",context), Url = AdminUrl("System/KConfig", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Configs },
+                    new MenuItem{ Name = Hardcoded.GetValue("Config",context), Url = AdminUrl("System/KConfig", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Configs },
                     new MenuItem{ Name = Hardcoded.GetValue("Domains", context), Url = AdminUrl("System/Domains", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Domains},
                     new MenuItem{ Name = Hardcoded.GetValue("Sync", context),  Url = AdminUrl("Sync", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Synchronization},
                     new MenuItem{ Name = Hardcoded.GetValue("SiteLogs",context),Url = AdminUrl("System/SiteLogs", siteDb), ActionRights = Sites.Authorization.Actions.Systems.SiteLogs },

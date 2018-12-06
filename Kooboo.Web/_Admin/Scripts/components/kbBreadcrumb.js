@@ -45,7 +45,6 @@
                     text: Kooboo.text.component.breadCrumb.dashboard,
                     url: Kooboo.Route.Get(Kooboo.Route.Site.DetailPage)
                 })
-
                 if (location.pathname.split("/").length == 5) {
                     var _name = location.pathname.split("/").reverse()[1];
                     breadCrumb.push({
@@ -81,6 +80,12 @@
                             _bc.push({
                                 text: Kooboo.text.component.breadCrumb.dashboard,
                                 url: Kooboo.Route.Get(Kooboo.Route.Site.DetailPage)
+                            })
+                            break;
+                        case 'MARKET':
+                            _bc.push({
+                                text: 'Market',
+                                url: '/_Admin/Market/Index'
                             })
                             break;
                         default:

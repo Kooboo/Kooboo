@@ -19,7 +19,7 @@ namespace Kooboo.Api
 
         public List<string> RequireParas { get; set; }
 
-        public IApi ClassInstance { get; set; }
+        public Object ClassInstance { get; set; }
 
         public string AliasOf { get; set; }
 

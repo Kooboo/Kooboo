@@ -62,6 +62,7 @@ namespace Kooboo.Mail.Factory
             return result;
         }
 
+        // this is for email. 
         public static OrgDb OrgDb(string emailAddress)
         {
             string domainName = GetDomain(emailAddress);
@@ -70,6 +71,19 @@ namespace Kooboo.Mail.Factory
 
             if (domain !=null && domain.OrganizationId != default(Guid))
             {
+                if (domain.IsKooboo && Data.AppSettings.IsOnlineServer)
+                {
+                    // for Kooboo subdomain, check if it is in 
+                    var org = Kooboo.Data.GlobalDb.Organization.Get(domain.OrganizationId); 
+                    if (org !=null && Data.AppSettings.ServerSetting !=null)
+                    {
+                        if (org.ServerId != Data.AppSettings.ServerSetting.ServerId)
+                        {
+                            return null;  // this server is not here... 
+                        }
+                    }
+                }
+
                 return OrgDb(domain.OrganizationId); 
             }
             else

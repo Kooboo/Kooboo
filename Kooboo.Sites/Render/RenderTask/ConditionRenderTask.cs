@@ -15,10 +15,10 @@ namespace Kooboo.Sites.Render
 
         private bool IsRepeatCondition { get; set; }
 
-        private  FilterDefinition Filter { get; set; }
+        private FilterDefinition Filter { get; set; }
 
         private ValueRenderTask ValueRenderTask { get; set; }
-         
+
         public ConditionRenderTask(Element element, string ConditionText, EvaluatorOption options)
         {
             if (ConditionText.ToLower().StartsWith("repeat"))
@@ -27,8 +27,8 @@ namespace Kooboo.Sites.Render
                 this.ConditionText = GetConditionText(ConditionText);
             }
             else
-            { 
-                this.Filter = FilterHelper.GetFilter(ConditionText); 
+            {
+                this.Filter = FilterHelper.GetFilter(ConditionText);
             }
             string NewElementString = Service.DomService.ReSerializeElement(element);
 
@@ -68,24 +68,32 @@ namespace Kooboo.Sites.Render
         {
             if (this.IsRepeatCondition)
             {
-                return context.DataContext.RepeatCounter.Check(this.ConditionText); 
+                return context.DataContext.RepeatCounter.Check(this.ConditionText);
             }
             else
             {
-                if(this.Filter !=null)
+                if (this.Filter != null)
                 {
                     if (this.ValueRenderTask == null)
                     {
-                        this.ValueRenderTask = new ValueRenderTask(this.Filter.FieldName); 
+                        this.ValueRenderTask = new ValueRenderTask(this.Filter.FieldName);
                     }
 
                     var value = this.ValueRenderTask.Render(context);
                     if (value == null)
                     {
-                        return false;
-                    } 
-                  return FilterHelper.Check(value.ToString(), this.Filter.Comparer, this.Filter.FieldValue); 
-                } 
+                        // TODO: add more k-system fields. 
+                        if (this.Filter.FieldName == "k-index")
+                        {
+                            value = context.DataContext.RepeatCounter.CurrentCounter.Current.ToString();
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    return FilterHelper.Check(value.ToString(), this.Filter.Comparer, this.Filter.FieldValue);
+                }
             }
 
             return false;
@@ -123,7 +131,7 @@ namespace Kooboo.Sites.Render
 
     public class ConditionFilter
     {
-        public string KeyOrExpression { get; set; } 
+        public string KeyOrExpression { get; set; }
     }
 }
 

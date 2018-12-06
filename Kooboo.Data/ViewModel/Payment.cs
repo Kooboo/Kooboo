@@ -78,6 +78,8 @@ namespace Kooboo.Data.ViewModel
     {
         public bool Success { get; set; }
 
+        public bool HasResult { get; set; }
+
         public string Message { get; set; }
     }
 
@@ -87,7 +89,8 @@ namespace Kooboo.Data.ViewModel
         Wechat,
         CreditCard,
         Paypal,
-    }
+    }         
+
     public class BillAddress
     {
         public string AddressLine { get; set; }

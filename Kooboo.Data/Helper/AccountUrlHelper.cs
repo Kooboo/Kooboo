@@ -66,9 +66,7 @@ namespace Kooboo.Data.Helper
         {
             return AccountBase + "/account/currency" + ensureRelative(relativeUrl);
         }
-
-
-
+          
         private static string ensureRelative(string relativeurl)
         {
             if (string.IsNullOrEmpty(relativeurl))

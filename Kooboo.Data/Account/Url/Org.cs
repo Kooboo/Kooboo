@@ -88,7 +88,33 @@ namespace Kooboo.Data.Account.Url
                 }
                 return _deleteuser;
             }
-        } 
+        }
+
+        private static string _changedemandUserBalance;
+        public static string ChangeDemandUserBalance
+        {
+            get
+            {
+                if (_changedemandUserBalance == null)
+                {
+                    _changedemandUserBalance = AccountUrlHelper.Org("ChangedemandUserBalance");
+                }
+                return _changedemandUserBalance;
+            }
+        }
+
+        private static string _addProposalUserBalance;
+        public static string AddProposalUserBalance
+        {
+            get
+            {
+                if (_addProposalUserBalance == null)
+                {
+                    _addProposalUserBalance = AccountUrlHelper.Org("AddProposalUserBalance");
+                }
+                return _addProposalUserBalance;
+            }
+        }
 
     }
 }

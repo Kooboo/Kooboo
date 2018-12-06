@@ -11759,6 +11759,9 @@ a.thumbnail:focus {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
+.well:last-child {
+  margin-bottom: 0;
+}
 .widget {
   background: #0087c2;
   color: #FFF;

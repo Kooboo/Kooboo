@@ -1,0 +1,83 @@
+<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Publish a demand</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label data-bind="textError: title">Title</label>
+                    <input type="text" class="form-control" data-bind="value: title">
+                </div>
+                <div class="form-group">
+                    <label data-bind="textError: title">Required skills</label>
+                    <input type="text" class="form-control" data-bind="value: skills">
+                </div>
+                <div class="form-group">
+                    <label data-bind="textError: title">Attachments</label>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <button class="btn btn-info btn-file">
+                                <input type="file" data-bind="upload: {
+                                    allowMultiple: false,
+                                    acceptTypes: ['*/*'],
+                                    callback: uploadFile
+                                }" />Upload</button>
+                        </div>
+                        <div class="form-group">
+                            <p class="form-control-static">
+                                <!-- ko foreach: attachments -->
+                                <button class="btn btn-default">
+                                    <!-- ko text: $data.fileName -->
+                                    <!-- /ko -->
+                                    <i class="fa fa-close" data-bind="click: $parent.removeFile.bind(this, $data)"></i>
+                                </button>
+                                <!-- /ko -->
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label data-bind="textError: description">Description</label>
+                    <!-- ko if: showDescription -->
+                    <textarea class="form-control" data-bind="richeditor: description, value: description"></textarea>
+                    <!-- /ko -->
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label data-bind="textError: startDate">Start time</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="date" class="form-control" data-bind="value: startDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label data-bind="textError: endDate">End time</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <input type="date" class="form-control" data-bind="value: endDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label data-bind="textError: budget">Budget</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i data-bind="attr: { class: 'fa fa-' + currencyCode(), title: currencyCode }"></i></span>
+                                <input type="number" class="form-control" data-bind="value: budget, event: { keydown: Kooboo.event.input.positiveNumberOnly }">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="click: onPublish">Publish</button>
+                <button class="btn gray" data-bind="click: onHide, text: Kooboo.text.common.cancel"></button>
+            </div>
+        </div>
+    </div>
+</div>

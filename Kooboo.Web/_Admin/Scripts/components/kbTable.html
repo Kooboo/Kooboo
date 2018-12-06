@@ -79,6 +79,14 @@
                 </td>
                 <!-- /ko -->
 
+                <!-- ko if: col.type == 'array' -->
+                <td>
+                    <!-- ko foreach: { data: doc[col.fieldName].data, as: 'cell' } -->
+                    <a href="javascript:;" data-bind="text: cell, css: doc[col.fieldName].class"></a>
+                    <!-- /ko -->
+                </td>
+                <!-- /ko -->
+
                 <!-- ko if: col.type == 'link' -->
                 <!-- ko if: doc[col.fieldName] -->
                 <td>

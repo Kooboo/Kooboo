@@ -182,13 +182,19 @@
     <Method>
       <Name>update</Name>
       <Description>update an item, key must be the system default Guid key or the key value of primary key field. you can set one field as the primary key.</Description>
-      <Example><![CDATA[
+      <Example>
+        <![CDATA[
         <script engine="kscript">
         var table = k.database.getTable("tablename");
         var obj = {fieldone: "value one", fieldtwo: "value two"};
         var returnid = table.add(obj);
-        obj.fieldone = "new name";
-        table.update(returnid, obj);
+        
+        var dbItem = table.get(returnid); 
+        
+        dbItem.fieldone = "new name";  
+        
+        table.update(dbItem);  
+        
         </script>
 		]]></Example>
       <Params>

@@ -2,6 +2,7 @@
 using Kooboo.Extensions;
 using System.Collections;
 using System.Collections.Generic;
+using Kooboo.IndexedDB.CustomAttributes;
 
 namespace Kooboo.Data.Models
 {
@@ -30,6 +31,9 @@ namespace Kooboo.Data.Models
         public Guid OrganizationId { get; set; }
            
         public DateTime ExpirationDate { get; set; } 
+
+        [KoobooIgnore]
+        public bool IsKooboo { get; set; }
 
     } 
 }
