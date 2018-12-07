@@ -53,6 +53,7 @@
             this.onPay = function() {
                 var order = self.order();
                 order.paymentMethod = self.paymentMethod();
+                order.returnPath = location.pathname;
                 Kooboo.Order.pay(order).then(function(res) {
                     if (res.success) {
                         var data = res.model;

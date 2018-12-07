@@ -93,7 +93,8 @@
                     if (self.currentPackage().type == 'set') {
                         Kooboo.Order.topup({
                             paymentMethod: self.paymentMethod(),
-                            totalAmount: self.chargeAmountValue()
+                            totalAmount: self.chargeAmountValue(),
+                            returnPath: location.pathname
                         }).then(function(res) {
                             if (res.success) {
                                 self.onPaying(res.model);
@@ -103,7 +104,8 @@
                         if (self.chargeAmountValue.isValid()) {
                             Kooboo.Order.topup({
                                 paymentMethod: self.paymentMethod(),
-                                totalAmount: self.chargeAmountValue()
+                                totalAmount: self.chargeAmountValue(),
+                                returnPath: location.pathname
                             }).then(function(res) {
                                 if (res.success) {
                                     self.onPaying(res.model);

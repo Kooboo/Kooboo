@@ -39,6 +39,14 @@ namespace Kooboo.Data.Models
 
         public int CommentCount { get; set; }
 
-        
+
+        public override int GetHashCode()
+        {
+            string unique = this.Title + this.Content + this.UserId.ToString() + this.UserName;
+
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+        }
+
+
     }
 }
