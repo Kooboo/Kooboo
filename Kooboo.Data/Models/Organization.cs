@@ -47,13 +47,16 @@ namespace Kooboo.Data.Models
 
         public int ServiceLevel { get; set; }
 
+        public string Introduction { get; set; }
+
         public bool IsBanned { get; set; }
 
         public override int GetHashCode()
         {
             string unique = this.DisplayName + this.Balance.ToString();
             unique += this.ServerId.ToString() + this.ServiceLevel.ToString();
-            unique += this.AdminUser.ToString() + this.IsBanned.ToString(); 
+            unique += this.AdminUser.ToString() + this.IsBanned.ToString();
+            unique += this.Introduction; 
 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
         }

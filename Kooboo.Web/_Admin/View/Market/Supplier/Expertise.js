@@ -33,14 +33,7 @@ $(function() {
                     self.currency(res.model.currency);
                     self.supplierId(res.model.supplierId);
                     self.supplierName(res.model.supplierName);
-
-                    Kooboo.Supplier.get({
-                        id: self.supplierId()
-                    }).then(function(res) {
-                        if (res.success) {
-                            self.isMe(res.model.userId == localStorage.getItem('_kooboo_api_user'));
-                        }
-                    })
+                    self.isMe(res.model.supplierId == localStorage.getItem('_kooboo_api_user'));
                 }
             })
         }
