@@ -93,6 +93,7 @@
                     if (self.currentPackage().type == 'set') {
                         Kooboo.Order.topup({
                             paymentMethod: self.paymentMethod(),
+                            packageId: self.currentPackage().id,
                             totalAmount: self.chargeAmountValue(),
                             returnPath: location.pathname
                         }).then(function(res) {
