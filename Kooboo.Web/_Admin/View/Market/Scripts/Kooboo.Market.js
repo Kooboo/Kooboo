@@ -95,14 +95,6 @@ $(function() {
             return this.executeGet('PrivateCommentList', para, true);
         }
 
-        this.uploadFile = function(para) {
-            return this.executeUpload('UploadFile', para);
-        }
-
-        this.deleteFile = function(para) {
-            return this.executePost('DeleteFile', para);
-        }
-
         this.getProposalTypes = function(para) {
             return this.executeGet('GetProposalType', para);
         }
@@ -307,8 +299,21 @@ $(function() {
     }
     extend(Market, Kooboo.BaseModel);
 
+    function Attachment() {
+        this.name = "Attachment";
+
+        this.uploadFile = function(para) {
+            return this.executeUpload("UploadFile", para);
+        }
+        this.deleteFile = function(para) {
+            return this.executePost('DeleteFile', para);
+        }
+    }
+    extend(Attachment, Kooboo.BaseModel);
+
     Kooboo = Object.assign({
         App: new App(),
+        Attachment: new Attachment(),
         Balance: new Balance(),
         Infrastructure: new Infrastructure(),
         Demand: new Demand(),

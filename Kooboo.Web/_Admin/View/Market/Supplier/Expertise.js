@@ -39,6 +39,11 @@ $(function() {
         }
 
         this.getData();
+
+        this.showOrderModal = ko.observable(false);
+        this.onShowOrderModal = function() {
+            self.showOrderModal(true);
+        }
     }
 
     var vm = new viewModel();

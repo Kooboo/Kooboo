@@ -33,9 +33,15 @@
             <div class="modal-body" data-bind="visible: isPaying">
                 <div id="qr-code" style="text-align:center"></div>
             </div>
-            <div class="modal-footer" data-bind="visible: !isPaying()">
+            <div class="modal-footer">
+                <!-- ko if: isPaying -->
+                <button class="btn green" data-bind="click: onPayingSuccess, text: Kooboo.text.component.topupModal.paied"></button>
+                <button class="btn btn-danger" data-bind="click: onPayingFailed, text: Kooboo.text.common.failed"></button>
+                <!-- /ko -->
+                <!-- ko ifnot: isPaying -->
                 <button class="btn green" data-bind="click: onPay">Pay</button>
                 <button class="btn gray" data-bind="click: onHide, text: Kooboo.text.common.cancel"></button>
+                <!-- /ko -->
             </div>
         </div>
     </div>

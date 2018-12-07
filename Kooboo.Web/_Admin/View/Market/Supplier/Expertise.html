@@ -45,14 +45,17 @@
             </div>
         </div>
         <p data-bind="visible: !isMe()">
-            <a href="javascript:;" class="btn btn-info">Order</a>
+            <a href="javascript:;" class="btn btn-info" data-bind="click: onShowOrderModal">Order</a>
         </p>
     </div>
+
+    <order-expertise-modal params='isShow: showOrderModal'></order-expertise-modal>
 </div>
 <script>
     (function() {
         Kooboo.loadJS([
             "/_Admin/Scripts/components/kbBreadcrumb.js",
+            '/_Admin/View/Market/Scripts/components/OrderExpertiseModal.js',
         ])
     })()
 </script>

@@ -88,9 +88,10 @@
 
             this.uploadFile = function(data, files) {
                 var fd = new FormData();
+                debugger
                 fd.append('filename', files[0].name);
                 fd.append('file', files[0]);
-                Kooboo.Demand.uploadFile(fd).then(function(res) {
+                Kooboo.Attachment.uploadFile(fd).then(function(res) {
                     if (res.success) {
                         self.attachments.push(res.model);
                     }

@@ -6,8 +6,7 @@
     var paymentMethods = [],
         paymentPackages = [];
 
-    var interval = null,
-        paymentSuccess = false;
+    var PAYMENT_SUCCESS = false;
 
     var infoShowed = false;
 
@@ -66,8 +65,7 @@
                 self.couponCode('');
                 self.currentPackage(null);
                 self.isShow(false);
-                paymentSuccess = false;
-                interval && clearInterval(interval);
+                PAYMENT_SUCCESS = false;
             }
 
             this.payingMode = ko.observable(false);
@@ -146,9 +144,7 @@
                         window.open(res.redirectUrl);
                     }
 
-                    interval = setInterval(function() {
-                        self.checkPaymentStatus(res.paymentRequestId)
-                    }, 1000 * 60);
+                    self.checkPaymentStatus(res.paymentRequestId)
                 }
             }
             this.changePaymentMethod = function(m, e) {
@@ -161,13 +157,10 @@
             }
 
             this.checkPaymentStatus = function(paymentId) {
-                if (!paymentSuccess) {
-                    Kooboo.Payment.getStatus({
-                        paymentRequestId: paymentId
-                    }).then(function(res) {
+                if (!PAYMENT_SUCCESS && self.payingMode()) {
+                    self.getPaymentStatus(id, function(res) {
                         if (res.success && (res.model.success || res.model.message == "canceled")) {
-                            paymentSuccess = true;
-                            interval && clearInterval(interval);
+                            PAYMENT_SUCCESS = true;
                             self.onHide();
                             if (res.model.success) {
                                 if (!infoShowed) {
@@ -181,9 +174,19 @@
                                     infoShowed = true;
                                 }
                             }
+                        } else {
+                            self.checkPaymentStatus(paymentId);
                         }
                     })
                 }
+            }
+
+            this.getPaymentStatus = function(id, cb) {
+                Kooboo.Payment.getStatus({
+                    paymentRequestId: id
+                }).then(function(res) {
+                    cb && cb(res);
+                });
             }
 
             this.confirmBtnText = ko.pureComputed(function() {
@@ -201,7 +204,10 @@
             }
 
             this.onPayingSuccess = function() {
-                self.checkPaymentStatus(self.paymentId());
+                self.getPaymentStatus(self.paymentId(), function() {
+                    self.onHide();
+                    Kooboo.EventBus.publish('kb/market/balance/update');
+                })
             }
             this.onPayingFailed = function() {
                 self.payingMode(false);
