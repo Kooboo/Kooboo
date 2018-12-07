@@ -287,6 +287,10 @@ $(function() {
         this.pay = function(para) {
             return this.executePost('Pay', para);
         }
+
+        this.expertise = function(para) {
+            return this.executePost('Expertise', para);
+        }
     }
     extend(Order, Kooboo.BaseModel);
 

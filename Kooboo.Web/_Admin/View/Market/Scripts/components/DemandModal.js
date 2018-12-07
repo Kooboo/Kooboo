@@ -88,7 +88,6 @@
 
             this.uploadFile = function(data, files) {
                 var fd = new FormData();
-                debugger
                 fd.append('filename', files[0].name);
                 fd.append('file', files[0]);
                 Kooboo.Attachment.uploadFile(fd).then(function(res) {
@@ -99,7 +98,7 @@
             }
 
             this.removeFile = function(data, e) {
-                Kooboo.Demand.deleteFile({
+                Kooboo.Attachment.deleteFile({
                     id: data.id
                 }).then(function(res) {
                     if (res.success) {

@@ -50,12 +50,14 @@
     </div>
 
     <order-expertise-modal params='isShow: showOrderModal'></order-expertise-modal>
+    <div data-bind="component: {name: 'cashier-modal'}"></div>
 </div>
 <script>
     (function() {
         Kooboo.loadJS([
             "/_Admin/Scripts/components/kbBreadcrumb.js",
             '/_Admin/View/Market/Scripts/components/OrderExpertiseModal.js',
+            "/_Admin/View/Market/Scripts/components/CashierModal.js",
         ])
     })()
 </script>
