@@ -101,6 +101,11 @@ namespace Kooboo.Render
                 }
             }
 
+            if (context.Response.End)
+            {
+                return;
+            }
+
             if (!string.IsNullOrEmpty(this.options.LoginPage) && context.Request.RelativeUrl.StartsWith(this.options.LoginPage, System.StringComparison.OrdinalIgnoreCase))
             {
                 if (context.User != null)
@@ -111,10 +116,8 @@ namespace Kooboo.Render
                 }
             }
 
-            // only for this render task. 
-           // context.Request.RelativeUrl = RenderHelper.GetRelativeUrl(context.Request.RawRelativeUrl, options);
             
-            // var Response = RenderEngine.Render(siteContext);
+            
 
             if ((context.User !=null) && !string.IsNullOrWhiteSpace(context.User.Language))
             {

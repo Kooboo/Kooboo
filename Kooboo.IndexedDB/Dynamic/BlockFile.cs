@@ -131,7 +131,8 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public void UpdateCol(long position, int relativeposition, int length, byte[] values)
         {
-            this.Stream.Position = position + 10 + relativeposition + 8;
+            this.Stream.Position = position + 10 + relativeposition + 8; 
+            
             this.Stream.Write(values, 0, length);
         }
 

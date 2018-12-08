@@ -200,6 +200,7 @@
     <Compile Include="Models\ApiExecption.cs" />
     <Compile Include="Models\AppDataModel.cs" />
     <Compile Include="Models\AuthorizeResult.cs" />
+    <Compile Include="Models\BackendLog.cs" />
     <Compile Include="Models\Certificate.cs" />
     <Compile Include="Models\Chat.cs" />
     <Compile Include="Models\CheckResponse.cs" />
@@ -285,6 +286,7 @@
     <Compile Include="Server\EndMiddleWare.cs" />
     <Compile Include="Server\IKoobooMiddleWare.cs" />
     <Compile Include="Server\ServerHandler.cs" />
+    <Compile Include="Service\UserLoginPathService.cs" />
     <Compile Include="Service\WebSiteService.cs" />
     <Compile Include="SSL\SslCertificate.cs" />
     <Compile Include="Server\TextLogMiddleware.cs" />

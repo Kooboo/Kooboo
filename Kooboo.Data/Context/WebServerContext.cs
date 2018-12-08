@@ -64,11 +64,19 @@ namespace Kooboo.Data.Context
         }
 
         public static User GetUser(HttpRequest request, RenderContext context = null)
-        {
-
-            var user = _GetUserFromToken(request);
-
-            if (user == null)
+        { 
+            var user = _GetUserFromToken(request); 
+            // the user first login with token, should try to find the last page of this user.  
+            if (user !=null)
+            {
+                var lasturl = Service.UserLoginPathService.GetLastPath(user.Id); 
+                if (!string.IsNullOrEmpty(lasturl))
+                {
+                    context.Response.Redirect(302, lasturl);
+                    context.Response.End = true; 
+                }
+            }
+            else
             {
                 user = _GetUserFromBasicAuthentication(request);
             }
