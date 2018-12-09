@@ -204,7 +204,6 @@
     <Compile Include="Models\Certificate.cs" />
     <Compile Include="Models\Chat.cs" />
     <Compile Include="Models\CheckResponse.cs" />
-    <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\Coupon.cs" />
     <Compile Include="Models\Currency.cs" />
     <Compile Include="Models\DashBoardResponseHtml.cs" />
@@ -216,7 +215,6 @@
     <Compile Include="Models\DemandComment.cs" />
     <Compile Include="Models\DemandObjection.cs" />
     <Compile Include="Models\BalanceChangeModel.cs" />
-    <Compile Include="Models\Discussion.cs" />
     <Compile Include="Models\Dll.cs" />
     <Compile Include="Models\DataMethodSetting.cs" />
     <Compile Include="Models\ApiResource.cs" />

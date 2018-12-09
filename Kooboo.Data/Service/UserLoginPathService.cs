@@ -37,8 +37,8 @@ namespace Kooboo.Data.Service
 
             var lower = log.Url.ToLower(); 
 
-            if (lower.StartsWith("/_admin") && !lower.StartsWith("/_admin/account"))
-            {
+            if (lower.StartsWith("/_admin") && !lower.StartsWith("/_admin/account") && !lower.StartsWith("/_admin/scripts") && !lower.StartsWith("/_admin/styles") && !lower.StartsWith("/_admin/help"))
+            {  
                 var find = LastPath.Get(log.UserId);
                 if (find != null && find.ContainsKey("_id"))
                 {
