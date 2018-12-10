@@ -26,8 +26,8 @@ $(function() {
             return this.executePost('Reply', para);
         }
 
-        this.getUserList = function(para) {
-            return this.executeGet('UserList', para);
+        this.ListByUser = function(para) {
+            return this.executeGet('ListByUser', para);
         }
     }
     extend(Discussion, Kooboo.BaseModel);
@@ -35,8 +35,8 @@ $(function() {
     function Demand() {
         this.name = 'Demand';
 
-        this.getUserList = function(para) {
-            return this.executeGet('UserList', para);
+        this.ListByUser = function(para) {
+            return this.executeGet('ListByUser', para);
         }
 
         this.addOrUpdate = function(para) {

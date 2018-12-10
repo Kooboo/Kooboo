@@ -14,7 +14,7 @@ $(function() {
         }
 
         this.getItems = function(page) {
-            Kooboo.Discussion.getUserList({
+            Kooboo.Discussion.ListByUser({
                 pageNr: page || 1,
             }).then(function(res) {
                 if (res.success) {

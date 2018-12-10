@@ -245,11 +245,11 @@ $(function() {
         })
 
         Kooboo.EventBus.subscribe("kb/witkey/demand/reply/refresh", function(data) {
-            if (data.parentCommentId == Kooboo.Guid.Empty) {
+            if (data.parentId == Kooboo.Guid.Empty) {
                 self.getCommentList();
             } else {
                 var current = _.find(self.publicCommentList(), function(item) {
-                    return item.id() == data.parentCommentId
+                    return item.id() == data.parentId
                 })
                 if (current) {
                     current.commentCount(current.commentCount() + 1);
