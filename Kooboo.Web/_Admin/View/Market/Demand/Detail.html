@@ -196,11 +196,11 @@
                         <div class="btn-group btn-group-justified">
                             <a href="javascript:;" class="btn btn-info" data-bind="click: onFinishTheDemand.bind(this, true)">
                                 <i class="fa fa-check"></i>
-                                <span>Finished</span>
+                                <span>Accept</span>
                             </a>
                             <a href="javascript:;" class="btn btn-info" data-bind="click: onFinishTheDemand.bind(this, false)">
                                 <i class="fa fa-close"></i>
-                                <span>Unfinish</span>
+                                <span>Reject</span>
                             </a>
                         </div>
                         <!-- /ko -->
@@ -233,7 +233,7 @@
                             </tr>
                         </thead>
                         <tbody data-bind="visible: proposals().length, foreach: proposals">
-                            <tr data-bind="css: { success: $data.winTheBidding }">
+                            <tr data-bind="css: { success: $data.isTaken }">
                                 <td data-bind="text: $data.userName"></td>
                                 <td data-bind="text: $data.duration"></td>
                                 <td data-bind="text: $data.budget, attr: { title: $data.currency }"></td>
@@ -264,6 +264,8 @@
     <demand-modal params="isShow: showDemandModal, data: currentDemand"></demand-modal>
     <proposal-modal params="isShow: showProposalModal, demandId: id, currencyCode: currency, data: showingProposal, mode: proposalViewingMode"></proposal-modal>
     <chat-modal params="isShow: showChatModal, demandId: id, proposalId: proposalId"></chat-modal>
+    <div data-bind="component: {name: 'cashier-modal'}"></div>
+    
 </div>
 <script>
     (function() {
@@ -274,7 +276,8 @@
             "/_Admin/View/Market/Scripts/components/ProposalModal.js",
             "/_Admin/View/Market/Scripts/components/ChatModal.js",
             "/_Admin/View/Market/Scripts/components/DemandModal.js",
-            "/_Admin/View/Market/Scripts/components/ObjectionModal.js"
+            "/_Admin/View/Market/Scripts/components/ObjectionModal.js",
+            "/_Admin/View/Market/Scripts/components/CashierModal.js",
         ])
     })()
 </script>

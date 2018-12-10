@@ -11,13 +11,15 @@ $(function() {
             return !!self.showingProposal();
         });
         this.isSelectedProposal = ko.pureComputed(function() {
-            return self.showingProposal() && self.showingProposal().winTheBidding;
+            debugger;
+            return self.showingProposal() && self.showingProposal().isTaken;
         })
         this.proposalId = ko.pureComputed(function() {
             return self.showingProposal().id;
         })
         this.successfulBidding = ko.pureComputed(function() {
-            return self.showingProposal() && self.showingProposal().winTheBidding;
+            debugger;
+            return self.showingProposal() && self.showingProposal().isTaken;
         })
         this.proposalViewingMode = ko.observable();
 
@@ -84,7 +86,9 @@ $(function() {
                     proposalId: data.id
                 }).then(function(res) {
                     if (res.success) {
-                        Kooboo.EventBus.publish("kb/demand/proposal/update");
+                        debugger;
+                        Kooboo.EventBus.publish("kb/market/component/cashier/show", res.model);
+                        //Kooboo.EventBus.publish("kb/demand/proposal/update");
                     }
                 })
             }
@@ -160,24 +164,23 @@ $(function() {
             }).then(function(res) {
                 if (res.success) {
                     self.proposals(res.model.list.map(function(item) {
-                        if (item.winTheBidding) {
-                            self.winningProposal(item);
+                        if (item.isTaken) {
+                            self.isTaken(item);
                         }
-
                         return {
                             id: item.id,
                             userName: item.userName,
                             duration: item.duration + ' Day' + (item.duration > 1 ? 's' : ''),
                             budget: item.symbol + item.budget,
                             currency: item.currency,
-                            winTheBidding: item.winTheBidding
+                            isTaken: item.isTaken
                         }
                     }));
                 }
             })
         }
 
-        this.winningProposal = ko.observable();
+        this.isTaken = ko.observable();
 
         this.publicCommentList = ko.observableArray();
         this.getCommentList = function() {
