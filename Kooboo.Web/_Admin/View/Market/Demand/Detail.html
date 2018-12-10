@@ -66,12 +66,12 @@
                         <h3 class="panel-title">Comment</h3>
                     </div>
                     <div class="panel-body">
-                        <!-- ko ifnot: isTendering -->
+                        <!-- ko ifnot: isOpening -->
                         <div class="well text-center">
                             <p><i class="fa fa-ban"></i> <span>This demand is not tendering now, you can't comment.</span></p>
                         </div>
                         <!-- /ko -->
-                        <!-- ko if: isTendering -->
+                        <!-- ko if: isOpening -->
                         <reply-panel params="type: 'demand', typeId: id"></reply-panel>
                         <!-- /ko -->
                         <div data-bind="visible: publicCommentList().length">
@@ -116,7 +116,7 @@
                                                 </div>
                                             </div>
                                             <hr>
-                                            <!-- ko if: $root.isTendering -->
+                                            <!-- ko if: $root.isOpening -->
                                             <reply-panel params="type: 'demand', typeId: $root.id, parentId: public.id"></reply-panel>
                                             <!-- /ko -->
                                         </div>
@@ -136,7 +136,7 @@
 
                         <!-- ko if: !isOwner() -->
 
-                        <!-- ko if: isTendering -->
+                        <!-- ko if: isOpening -->
                         <!-- ko if: isProposalUser -->
                         <div class="btn-group btn-group-justified">
                             <a href="javascript:;" class="btn btn-default" data-bind="click: onShowChatModal">Chat with owner</a>
@@ -153,7 +153,7 @@
                         <!-- /ko -->
                         <!-- /ko -->
 
-                        <!-- ko if: isEndOfTender -->
+                        <!-- ko if: isTaken -->
                         <!-- ko if: successfulBidding -->
                         <button class="btn btn-block btn-default" data-bind="click: onShowChatModal">
                             <i class="fa fa-comments-o"></i>
@@ -184,11 +184,11 @@
 
                         <!-- ko if: isOwner -->
 
-                        <!-- ko if: isTendering -->
+                        <!-- ko if: isOpening -->
                         <button class="btn btn-block btn-info" data-bind="click: onUpdateDemand">Update demand</button>
                         <!-- /ko -->
 
-                        <!-- ko if: isEndOfTender -->
+                        <!-- ko if: isTaken -->
                         <a href="javascript:;" class="btn btn-default btn-block margin-bottom-15" data-bind="click: onShowProposalChatModal.bind(this, null)">
                             <i class="fa fa-comments-o"></i>
                             <span>Chat with the bidder</span>
@@ -225,7 +225,7 @@
                                 <th>Bidder</th>
                                 <th>Duration</th>
                                 <th>Budget</th>
-                                <!-- ko if: isOwner() && isTendering()-->
+                                <!-- ko if: isOwner() && isOpening()-->
                                 <th class="table-action"></th>
                                 <th class="table-action"></th>
                                 <th class="table-action"></th>
@@ -237,7 +237,7 @@
                                 <td data-bind="text: $data.userName"></td>
                                 <td data-bind="text: $data.duration"></td>
                                 <td data-bind="text: $data.budget, attr: { title: $data.currency }"></td>
-                                <!-- ko if: $parent.isOwner() && $parent.isTendering() -->
+                                <!-- ko if: $parent.isOwner() && $parent.isOpening() -->
                                 <td class="text-right">
                                     <button class="btn btn-xs btn-block btn-default" data-bind="click: $parent.onShowProposalChatModal.bind(this, $data), tooltip: 'Chat with ' + $data.userName"><i class="fa fa-comment-o"></i></button>
                                 </td>

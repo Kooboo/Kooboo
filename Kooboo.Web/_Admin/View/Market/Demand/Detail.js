@@ -36,14 +36,15 @@ $(function() {
         this.status = ko.observable();
         this.displayStatus = ko.observable();
 
-        this.isTendering = ko.pureComputed(function() {
-            return self.status() == 'tendering';
+        this.isOpening = ko.pureComputed(function() {
+            debugger;
+            return self.status() == 'open';
         })
-        this.isEndOfTender = ko.pureComputed(function() {
-            return self.status() == 'endoftender';
+        this.isTaken = ko.pureComputed(function() {
+            return self.status() == 'taken';
         })
         this.isDemandClosed = ko.pureComputed(function() {
-            return ['finished', 'unfinished'].indexOf(self.status()) > -1;
+            return ['rejected', 'accepted'].indexOf(self.status()) > -1;
         })
         this.isDemandInvalid = ko.pureComputed(function() {
             return self.status() == 'invalid';

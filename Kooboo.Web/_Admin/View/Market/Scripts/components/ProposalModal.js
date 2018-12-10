@@ -98,8 +98,10 @@
                     Kooboo.Demand.acceptProposal({
                         proposalId: self.proposalId()
                     }).then(function(res) {
+                        debugger;
                         if (res.success) {
                             self.onHide();
+                            Kooboo.EventBus.publish("kb/market/component/cashier/show", res.model);
                             Kooboo.EventBus.publish("kb/demand/proposal/update");
                         }
                     })
