@@ -233,7 +233,7 @@
         this.name = ko.validateField(data.name || "", {
             required: "",
             regex: {
-                pattern: /^([A-Za-z][\w\-\.]*)*[A-Za-z0-9]$/,
+                pattern: /^([A-Za-z][\w\-]*)*[A-Za-z0-9]$/,
                 message: Kooboo.text.validation.contentTypeNameRegex
             },
             localUnique: {

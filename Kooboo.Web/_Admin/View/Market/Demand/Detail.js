@@ -98,7 +98,7 @@ $(function() {
                     self.title(res.model.title);
                     self.description(res.model.description);
                     self.attachments(res.model.attachments ? res.model.attachments.map(function(item) {
-                        item.downloadUrl = '/_api/demand/getFile?id=' + item.id + '&fileName=' + item.fileName;
+                        item.downloadUrl = '/_api/attachment/getFile?id=' + item.id + '&fileName=' + item.fileName;
                         return item;
                     }) : [])
                     self.userName(res.model.userName);

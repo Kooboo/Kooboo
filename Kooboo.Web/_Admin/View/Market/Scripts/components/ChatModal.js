@@ -85,7 +85,7 @@
                 var fd = new FormData();
                 fd.append('filename', files[0].name);
                 fd.append('file', files[0]);
-                Kooboo.Demand.uploadFile(fd).then(function(res) {
+                Kooboo.Attachment.uploadFile(fd).then(function(res) {
                     if (res.success) {
                         Kooboo.Demand.chat({
                             demandId: self.demandId(),
@@ -113,7 +113,7 @@
         this.isCurrentUser = ko.observable(data.userId == CURRENT_USER_ID);
         this.date = ko.observable(date.toDefaultLangString());
         this.attachments = ko.observableArray(data.attachments ? data.attachments.map(function(item) {
-            item.downloadUrl = '/_api/demand/getFile?id=' + item.id + '&fileName=' + item.fileName;
+            item.downloadUrl = '/_api/attachment/getFile?id=' + item.id + '&fileName=' + item.fileName;
             return item;
         }) : []);
     }

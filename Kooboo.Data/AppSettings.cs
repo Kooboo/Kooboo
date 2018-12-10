@@ -14,8 +14,7 @@ namespace Kooboo.Data
         {
             Version = typeof(Kooboo.Data.Models.WebSite).Assembly.GetName().Version;
 
-            RootPath = TryRootPath();
-            IsTemplateServer = GetBool("IsTemplateServer");
+            RootPath = TryRootPath(); 
             IsOnlineServer = GetBool("IsOnlineServer");
             Global = new GlobalInfo();
             Global.IsOnlineServer = GetBool("IsOnlineServer");
@@ -599,9 +598,8 @@ namespace Kooboo.Data
                 return 1024 * 1024 * 20;
             }
         }
-          
-        public static bool IsTemplateServer  {get;set;  }
-            
+         
+
         public static bool IsOnlineServer { get; set; }
                                 
         public static GlobalInfo Global { get; set; }

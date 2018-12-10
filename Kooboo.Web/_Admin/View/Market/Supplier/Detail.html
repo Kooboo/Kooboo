@@ -1,121 +1,62 @@
-<!-- #layout name=default -->
-<div id="main">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="panel panel-default">
+<!-- #layout name=blank --sideType='market'-->
+
+<div class="page-header">
+    <h1 class="title">Supplier</h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'MARKET'
+},{
+    name: 'Suppliers',
+    url: Kooboo.Route.Supplier.ListPage
+},{
+    name: 'Detail'
+}]}"></div>
+<div class="thumbnail">
+    <div class="caption">
+        <h3 style="margin-top: 4px;">Supplier: <strong data-bind="text: name"></strong></h3>
+        <hr>
+        <div class="row" data-bind="foreach: expertises">
+            <div class="col-md-3">
+                <div class="panel panel-default panel-small">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Supplier</h3>
+                        <h3 class="panel-title">Expertise</h3>
+                        <div class="panel-actions">
+                            <a class="btn btn-xs btn-info" data-bind="attr: { href: $data.pageUrl }"><i class="fa fa-eye"></i></a>
+                        </div>
                     </div>
                     <div class="panel-body">
                         <div class="row">
-                            <div class="col-md-2">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Supplier</label>
-                                    <p class="form-control-static" data-bind="text: username"></p>
+                                    <label for="">Name</label>
+                                    <p class="form-control-static" data-bind="text: $data.name"></p>
                                 </div>
                             </div>
-                            <div class="col-md-10">
+                            <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Expertise</label>
+                                    <label for="">Price</label>
                                     <p class="form-control-static">
-                                        <!-- ko foreach: expertises -->
-                                        <label class="label label-sm label-info" data-bind="text: $data.name, attr: { title: $data.description }"></label>
-                                        <!-- /ko -->
+                                        <label class="label label-sm label-info" data-bind="text: $data.symbol + $data.price"></label>
                                     </p>
                                 </div>
                             </div>
                         </div>
-                        <hr>
-                        <p data-bind="html: introduction"></p>
-                    </div>
-                </div>
-                <ul class="nav nav-tabs" id="expertises" data-bind="foreach: expertises">
-                    <li data-bind="css: { active: $index() == 0 }">
-                        <a data-toggle="tab" data-bind="text: $data.name, attr: { href: '#exp_' + $index() }"></a>
-                    </li>
-                </ul>
-                <div class="tab-content form-horizontal" data-bind="foreach: expertises">
-                    <div class="tab-pane fade" data-bind="attr: { id: 'exp_' + $index() }, css: { 'active in': $index() == 0 }">
                         <div class="form-group">
-                            <label class="col-md-2 control-label">Price</label>
-                            <div class="col-md-10">
-                                <p class="form-control-static">
-                                    <label class="label label-sm label-info" data-bind="text: $data.symbol() + $data.price(), attr: { title: $data.currency()}"></label>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-md-2 control-label">Description</label>
-                            <div class="col-md-10">
-                                <div class="well" data-bind="html: $data.description"></div>
-                            </div>
-                        </div>
-                        <div class="text-center">
-                            <button class="btn btn-info" data-bind="click: $parent.onOrder.bind(this, $data), visible: !$parent.isOwner()">Order</button>
+                            <label for="">Description</label>
+                            <div class="well well-sm" data-bind="text: $data.description"></div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Orders</h3>
-                    </div>
-                    <div class="panel-body"></div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Expertise</th>
-                                <th>User</th>
-                                <!-- ko if: isOwner -->
-                                <th class="table-action">Accept</th>
-                                <th class="table-action">Deny</th>
-                                <!-- /ko -->
-                                <!-- ko ifnot: isOwner -->
-                                <th class="table-action">Finished</th>
-                                <th class="table-action">Unfinished</th>
-                                <!-- /ko -->
-                            </tr>
-                        </thead>
-                        <tbody data-bind="foreach: orders">
-                            <tr>
-                                <td data-bind="text: $data.expertise"></td>
-                                <td data-bind="text: $data.userName"></td>
-                                <!-- ko if: $parent.isOwner -->
-                                <!-- ko if: $data.status.value == 'Pending' -->
-                                <td>
-                                    <button class="btn btn-xs btn-info" data-bind="click: $parent.onAcceptOrder.bind(this, $data, true)"><i class="fa fa-check"></i></button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-xs btn-danger" data-bind="click: $parent.onAcceptOrder.bind(this, $data, false)"><i class="fa fa-close"></i></button>
-                                </td>
-                                <!-- /ko -->
-                                <!-- ko ifnot: $data.status.value == 'Pending' -->
-                                <td class="text-center" colspan="2" data-bind="text: $data.status.displayName"></td>
-                                <!-- /ko -->
-                                <!-- /ko -->
-
-                                <!-- ko ifnot: $parent.isOwner -->
-                                <!-- ko if: $data.status.value == 'Accepted' -->
-                                <td>
-                                    <button class="btn btn-xs btn-info" data-bind="click: $parent.onFinishOrder.bind(this, $data, true)"><i class="fa fa-check"></i></button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-xs btn-info" data-bind="click: $parent.onFinishOrder.bind(this, $data, false)"><i class="fa fa-close"></i></button>
-                                </td>
-                                <!-- /ko -->
-                                <!-- ko ifnot: $data.status.value == 'Accepted' -->
-                                <td class="text-center" colspan="2" data-bind="text: $data.status.displayName"></td>
-                                <!-- /ko -->
-                                <!-- /ko -->
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+        ])
+    })()
+</script>
 <script src="/_Admin/View/Market/Scripts/Kooboo.Market.js"></script>
 <script src="/_Admin/View/Market/Supplier/Detail.js"></script>

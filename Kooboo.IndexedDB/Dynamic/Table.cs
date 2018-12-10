@@ -996,7 +996,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
             var valuebytes = fieldConverter.ToBytes(colvalue);
 
-            valuebytes = Helper.KeyHelper.AppendToKeyLength(valuebytes, false, col.Length);
+            valuebytes = Helper.KeyHelper.AppendToKeyLength(valuebytes, coltype == typeof(string), col.Length);
 
             lock (_Locker)
             {

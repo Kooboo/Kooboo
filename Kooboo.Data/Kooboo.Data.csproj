@@ -196,10 +196,10 @@
     <Compile Include="Models\ApiExecption.cs" />
     <Compile Include="Models\AppDataModel.cs" />
     <Compile Include="Models\AuthorizeResult.cs" />
+    <Compile Include="Models\BackendLog.cs" />
     <Compile Include="Models\Certificate.cs" />
     <Compile Include="Models\Chat.cs" />
     <Compile Include="Models\CheckResponse.cs" />
-    <Compile Include="Models\Comment.cs" />
     <Compile Include="Models\Coupon.cs" />
     <Compile Include="Models\Currency.cs" />
     <Compile Include="Models\DashBoardResponseHtml.cs" />
@@ -211,7 +211,6 @@
     <Compile Include="Models\DemandComment.cs" />
     <Compile Include="Models\DemandObjection.cs" />
     <Compile Include="Models\BalanceChangeModel.cs" />
-    <Compile Include="Models\Discussion.cs" />
     <Compile Include="Models\Dll.cs" />
     <Compile Include="Models\DataMethodSetting.cs" />
     <Compile Include="Models\ApiResource.cs" />
@@ -281,6 +280,7 @@
     <Compile Include="Server\EndMiddleWare.cs" />
     <Compile Include="Server\IKoobooMiddleWare.cs" />
     <Compile Include="Server\ServerHandler.cs" />
+    <Compile Include="Service\UserLoginPathService.cs" />
     <Compile Include="Service\WebSiteService.cs" />
     <Compile Include="SSL\SslCertificate.cs" />
     <Compile Include="Server\TextLogMiddleware.cs" />

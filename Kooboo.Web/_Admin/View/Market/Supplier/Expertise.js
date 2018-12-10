@@ -12,6 +12,8 @@ $(function() {
 
         this.currency = ko.observable();
 
+        this.isMe = ko.observable(true);
+
         this.supplierId = ko.observable();
         this.supplierName = ko.observable();
         this.supplierPage = ko.pureComputed(function() {
@@ -31,11 +33,17 @@ $(function() {
                     self.currency(res.model.currency);
                     self.supplierId(res.model.supplierId);
                     self.supplierName(res.model.supplierName);
+                    self.isMe(res.model.supplierId == localStorage.getItem('_kooboo_api_user'));
                 }
             })
         }
 
         this.getData();
+
+        this.showOrderModal = ko.observable(false);
+        this.onShowOrderModal = function() {
+            self.showOrderModal(true);
+        }
     }
 
     var vm = new viewModel();

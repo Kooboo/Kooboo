@@ -5,7 +5,6 @@
 
     var PAYMENT_METHODS = [];
 
-    var interval = null;
     var PAYMENT_SUCCESS = false;
     var infoShowed = false;
 
@@ -34,7 +33,6 @@
             })
 
             this.onHide = function() {
-                interval = null;
                 PAYMENT_SUCCESS = false;
                 self.order(null);
                 self.isPaying(false);
@@ -53,6 +51,7 @@
             this.onPay = function() {
                 var order = self.order();
                 order.paymentMethod = self.paymentMethod();
+                order.returnPath = location.pathname;
                 Kooboo.Order.pay(order).then(function(res) {
                     if (res.success) {
                         var data = res.model;
@@ -67,39 +66,55 @@
                                 window.open(data.redirectUrl);
                             }
 
-                            interval = setInterval(function() {
-                                self.checkPaymentStatus(data.paymentRequestId)
-                            }, 500);
+                            self.checkPaymentStatus(data.paymentRequestId);
                         }
                     }
                 })
             }
 
+            this.onPayingSuccess = function() {
+                self.getPaymentStatus(paymentId, function(res) {
+                    self.onHide();
+                    Kooboo.EventBus.publish('kb/market/balance/update');
+                })
+            }
+            this.onPayingFailed = function() {
+                self.onHide();
+            }
+
             this.paymentId = ko.observable();
 
             this.checkPaymentStatus = function(paymentId) {
-                if (!PAYMENT_SUCCESS) {
-                    Kooboo.Payment.getStatus({
-                        paymentRequestId: paymentId
-                    }).then(function(res) {
+                if (!PAYMENT_SUCCESS && self.isPaying()) {
+                    self.getPaymentStatus(paymentId, function(res) {
                         if (res.success && (res.model.success || res.model.message == 'canceled')) {
                             PAYMENT_SUCCESS = true;
-                            interval && clearInterval(interval);
                             self.onHide();
                             if (res.model.success) {
                                 if (!infoShowed) {
                                     infoShowed = true;
                                     window.info.done(Kooboo.text.info.payment.success);
                                 }
+                                Kooboo.EventBus.publish('kb/market/balance/update');
                             } else {
                                 if (!infoShowed) {
                                     infoShowed = true;
                                     window.info.done(Kooboo.text.info.payment.failed);
                                 }
                             }
+                        } else {
+                            self.checkPaymentStatus(paymentId);
                         }
                     })
                 }
+            }
+
+            this.getPaymentStatus = function(id, cb) {
+                Kooboo.Payment.getStatus({
+                    paymentRequestId: id
+                }).then(function(res) {
+                    cb && cb(res);
+                })
             }
 
             Kooboo.EventBus.subscribe('kb/market/component/cashier/show', function(data) {

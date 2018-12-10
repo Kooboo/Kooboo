@@ -20,14 +20,14 @@
         start: function() {
             this.requestCount++;
             $(".page-loading").show();
-            $("body").addClass("modal-open");
+            // $("body").addClass("modal-open");
         },
         stop: function() {
             this.requestCount--;
             if (this.requestCount === 0) {
                 $(".page-loading").hide();
             }
-            $("body").removeClass("modal-open");
+            // $("body").removeClass("modal-open");
         },
         initial: function() {
             if (this.requestCount === 0) {
@@ -1003,15 +1003,6 @@
     }
     extend(Job, BaseModel);
 
-    function Attachment() {
-        this.name = "Attachment";
-
-        this.Upload = function() {
-            return this.executePost("Upload", para);
-        }
-    }
-    extend(Attachment, BaseModel);
-
     function Upload() {
         this.name = "Upload";
 
@@ -1705,7 +1696,6 @@
 
     wind.Kooboo = {
         APIGeneration: new APIGeneration(),
-        Attachment: new Attachment(),
         Bar: new Bar(),
         BaseModel: new BaseModel(),
         Binding: new Binding(),

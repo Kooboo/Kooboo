@@ -24,7 +24,10 @@
                     <div class="form-group">
                         <label for="" class="control-label col-md-3" data-bind="text: Kooboo.text.component.hardwareModal.quantity"></label>
                         <div class="col-md-9">
-                            <input type="number" class="form-control input-medium" min='0' data-bind="textInput: quantity, error: quantity, event: { keydown: Kooboo.event.input.positiveIntegerOnly }">
+                            <div class="input-group input-small">
+                                <input type="number" class="form-control" min='0' data-bind="textInput: quantity, error: quantity, event: { keydown: Kooboo.event.input.positiveIntegerOnly }">
+                                <span class="input-group-addon" data-bind="text: currentVar() && currentVar().period" style="text-transform: capitalize;"></span>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">

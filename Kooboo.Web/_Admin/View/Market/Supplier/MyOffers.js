@@ -5,7 +5,7 @@ $(function() {
         this.pager = ko.observable();
 
         this.getList = function() {
-            Kooboo.Supplier.getOrdersByUser().then(function(res) {
+            Kooboo.Supplier.getOrdersBySupplier().then(function(res) {
                 if (res.success) {
                     self.handleData(res.model);
                 }
@@ -23,6 +23,10 @@ $(function() {
                     status: {
                         text: item.status.displayName,
                         class: 'label-sm label-info'
+                    },
+                    user: {
+                        text: item.userName,
+                        class: 'label-sm gray'
                     },
                     view: {
                         iconClass: 'fa-eye',
@@ -48,6 +52,10 @@ $(function() {
                     displayName: 'Status',
                     fieldName: 'status',
                     type: 'label'
+                }, {
+                    displayName: 'Order user',
+                    fieldName: 'user',
+                    type: 'label',
                 }],
                 tableActions: [{
                     fieldName: 'view',

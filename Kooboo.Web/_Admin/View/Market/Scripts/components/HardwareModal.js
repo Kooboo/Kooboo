@@ -37,6 +37,7 @@
                         id: va.id,
                         displayText: va.name + ' / ' + va.period,
                         price: va.price,
+                        period: va.period,
                         quantity: va.quantity,
                         selected: ko.observable(false)
                     }

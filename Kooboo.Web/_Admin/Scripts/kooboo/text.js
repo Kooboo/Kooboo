@@ -238,7 +238,7 @@
             },
             dataTypeInvalid: "The type of value you input is invalid, the right type is ",
             objectNameRegex: "Name should start with a letter, can contain with . - _ and end with letters or digit.",
-            contentTypeNameRegex: "Name should start with a letter, can contain with - _ and end with letters or digit.",
+            contentTypeNameRegex: "Name should start with a letter, can contain with - _ . and end with letters or digit.",
             siteNameRegex: "Name should start with a letter or digit, can contain with - _ and end with letters or digit.",
             invaildPort: "Invalid port value. Only number is allowed.",
             portRange: "Port range: 0~65535",
