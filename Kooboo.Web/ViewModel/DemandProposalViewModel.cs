@@ -27,7 +27,7 @@ namespace Kooboo.Web.ViewModel
 
         public Guid DemandId { get; set; }
 
-        public ProposalStatus ProposalType { get; set; }
+        public string ProposalType { get; set; }
 
         public DateTime CreateTime { get; set; }
 

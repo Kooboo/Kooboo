@@ -211,9 +211,6 @@
     <Compile Include="Models\DataCenter.cs" />
     <Compile Include="Models\DataMethodResult.cs" />
     <Compile Include="Models\DataString.cs" />
-    <Compile Include="Models\Demand.cs" />
-    <Compile Include="Models\DemandComment.cs" />
-    <Compile Include="Models\DemandObjection.cs" />
     <Compile Include="Models\BalanceChangeModel.cs" />
     <Compile Include="Models\Dll.cs" />
     <Compile Include="Models\DataMethodSetting.cs" />
@@ -221,14 +218,12 @@
     <Compile Include="Models\DnsInfo.cs" />
     <Compile Include="Models\DNSRecord.cs" />
     <Compile Include="Models\DomainPrice.cs" />
-    <Compile Include="Models\Expertise.cs" />
     <Compile Include="Models\ICP.cs" />
     <Compile Include="Models\IPCity.cs" />
     <Compile Include="Models\MailQueue.cs" />
     <Compile Include="Models\OnlineServer.cs" />
     <Compile Include="Models\Order.cs" />
     <Compile Include="Models\PayPackageRequest.cs" />
-    <Compile Include="Models\DemandProposal.cs" />
     <Compile Include="Models\ResouceAttachment.cs" />
     <Compile Include="Models\SalesItem.cs" />
     <Compile Include="Models\ServerSetting.cs" />
@@ -243,8 +238,6 @@
     <Compile Include="Models\PagedResult.cs" />
     <Compile Include="Models\Queue.cs" />
     <Compile Include="Models\SimpleSetting.cs" />
-    <Compile Include="Models\Supplier.cs" />
-    <Compile Include="Models\SupplierOrder.cs" />
     <Compile Include="Models\SystemStatus.cs" />
     <Compile Include="Models\Template.cs" />
     <Compile Include="Models\ThirdPartyDataSource.cs" />
@@ -255,7 +248,6 @@
     <Compile Include="Models\Organization.cs" />
     <Compile Include="Log\VisitorLog.cs" />
     <Compile Include="Models\UserBalance.cs" />
-    <Compile Include="Models\UserExpertise.cs" />
     <Compile Include="Models\UserOrganization.cs" />
     <Compile Include="Models\UserPublish.cs" />
     <Compile Include="Models\UserTemplate.cs" />

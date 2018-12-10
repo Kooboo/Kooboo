@@ -134,12 +134,12 @@ $(function() {
 
         this.getOrdersBySupplier = function(para) {
             // 我收到的所有 orders
-            return this.executeGet('OrderBySupplierUser', para);
+            return this.executeGet('MySupplyOrders', para);
         }
 
         this.getOrdersByUser = function(para) {
             // 我发出的所有 orders
-            return this.executeGet('OrdersByUser', para);
+            return this.executeGet('MyOrders', para);
         }
 
         this.addOrUpdateOrder = function(para) {
@@ -156,7 +156,7 @@ $(function() {
 
         this.getMyOrdersInSupply = function(para) {
             // 在 supply 中发出的 orders
-            return this.executeGet('MyOrdersInSupply', para);
+            return this.executeGet('MyOrdersFilterBySupplier', para);
         }
 
         this.getUserExpertiseList = function(para) {
