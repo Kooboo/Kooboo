@@ -11,7 +11,7 @@
             this.isShow.subscribe(function(show) {
                 if (show) {
                     if (self.id()) {
-                        Kooboo.Discussion.getEdit({
+                        Kooboo.Discussion.get({
                             id: self.id()
                         }).then(function(res) {
                             if (res.success) {

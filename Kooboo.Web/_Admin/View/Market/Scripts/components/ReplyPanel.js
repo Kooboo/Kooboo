@@ -30,7 +30,7 @@
                         case 'discussion':
                             Kooboo.Discussion.reply({
                                 ownerId: self.typeId(),
-                                CommentId: self.parentId(),
+                                parentId: self.parentId(),
                                 content: self.content()
                             }).then(function(res) {
                                 if (res.success) {

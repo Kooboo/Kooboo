@@ -129,9 +129,8 @@ $(function() {
         }
 
         this.onFinishTheDemand = function(isFinished) {
-            debugger;
             if (confirm('You sure?')) {
-                Kooboo.Demand.confirmDemandStatus({
+                Kooboo.Demand.complete({
                     id: self.id(),
                     isFinished: isFinished
                 }).then(function(res) {
@@ -155,7 +154,7 @@ $(function() {
         }
 
         this.getProposalList = function() {
-            Kooboo.Demand.getProposalList({
+            Kooboo.Demand.proposalListByDemand({
                 id: self.id()
             }).then(function(res) {
                 if (res.success) {
