@@ -16,12 +16,22 @@ namespace Kooboo.Data.Service
             setting.AppendColumn("Path", typeof(string), 800);
 
             LastPath = GlobalDatabase.GetOrCreateTable("userpath", setting);
+
+            IgnorePath = new List<string>();
+            IgnorePath.Add("/_admin/account");
+            IgnorePath.Add("/_admin/scripts");
+            IgnorePath.Add("/_admin/styles");
+            IgnorePath.Add("/_admin/images");
+            IgnorePath.Add("/_admin/help"); 
+
         }
 
         public static Database GlobalDatabase { get; set; }
 
    
         public static Table LastPath { get; set; }
+
+        private static List<string> IgnorePath { get; set; }
           
         public static void UpdateLastPath(BackendLog log)
         {
@@ -37,8 +47,21 @@ namespace Kooboo.Data.Service
 
             var lower = log.Url.ToLower(); 
 
-            if (lower.StartsWith("/_admin") && !lower.StartsWith("/_admin/account") && !lower.StartsWith("/_admin/scripts") && !lower.StartsWith("/_admin/styles") && !lower.StartsWith("/_admin/help"))
-            {  
+            if (lower.StartsWith("/_admin"))
+            {
+                foreach (var item in IgnorePath)
+                {
+                    if (lower.StartsWith(item))
+                    {
+                        return; 
+                    }
+                }
+
+               if (lower.EndsWith(".html") || lower.EndsWith(".js")|| lower.EndsWith(".css") || lower.EndsWith(".png"))
+                {
+                    return; 
+                }
+
                 var find = LastPath.Get(log.UserId);
                 if (find != null && find.ContainsKey("_id"))
                 {
@@ -53,7 +76,10 @@ namespace Kooboo.Data.Service
                 }
 
                 LastPath.Close();
-            } 
+
+            }
+
+        
               
         }
 
