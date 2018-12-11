@@ -18,6 +18,9 @@ namespace Kooboo.Data
 
             RootPath = TryRootPath(); 
             IsOnlineServer = GetBool("IsOnlineServer");
+
+            QuotaControl = GetBool("QuotaControl"); 
+
             Global = new GlobalInfo();
             Global.IsOnlineServer = GetBool("IsOnlineServer");
             Global.EnableLog = GetBool("Log");
@@ -33,7 +36,10 @@ namespace Kooboo.Data
                 MaxVisitorLogRead = 10000;
             }
         }
-         
+
+        public static bool QuotaControl { get; set;  }
+
+
         public static int MaxVisitorLogRead { get; set; } = 3000;  // only read the last  3000
 
         public static string GetFileIORoot(WebSite website)
