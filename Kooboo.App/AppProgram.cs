@@ -48,8 +48,7 @@ namespace Kooboo.App
                 if (assemblies.ContainsKey(path))
                 {
                     return assemblies[path];
-                }
-
+                } 
                 return null;
             };
             App.Main();

@@ -95,6 +95,8 @@ namespace Kooboo.Data.Models
         // for coupon code or others... 
         public string Code { get; set; }
 
+        public decimal DiscountAmount { get; set; }
+
     }
 
     public enum OrderStatus

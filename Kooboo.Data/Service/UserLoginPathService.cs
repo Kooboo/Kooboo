@@ -77,9 +77,7 @@ namespace Kooboo.Data.Service
 
                 LastPath.Close();
 
-            }
-
-        
+            } 
               
         }
 
