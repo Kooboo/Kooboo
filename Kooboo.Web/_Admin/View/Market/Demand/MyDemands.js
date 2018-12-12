@@ -17,7 +17,13 @@ $(function() {
             var docs = data.list.map(function(doc) {
                 return {
                     id: doc.id,
-                    title: doc.title,
+                    title: {
+                        text: doc.title,
+                        url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
+                            id: doc.id
+                        }),
+                        newWindow: true
+                    },
                     budget: doc.symbol + doc.budget,
                     startDate: {
                         text: getDateString(doc.startDate),
@@ -54,7 +60,7 @@ $(function() {
                 columns: [{
                     displayName: 'Title',
                     fieldName: 'title',
-                    type: 'text'
+                    type: 'link'
                 }, {
                     displayName: 'Start date',
                     fieldName: 'startDate',

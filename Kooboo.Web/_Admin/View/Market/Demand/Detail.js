@@ -11,14 +11,12 @@ $(function() {
             return !!self.showingProposal();
         });
         this.isSelectedProposal = ko.pureComputed(function() {
-            debugger;
             return self.showingProposal() && self.showingProposal().isTaken;
         })
         this.proposalId = ko.pureComputed(function() {
             return self.showingProposal().id;
         })
         this.successfulBidding = ko.pureComputed(function() {
-            debugger;
             return self.showingProposal() && self.showingProposal().isTaken;
         })
         this.proposalViewingMode = ko.observable();
@@ -39,7 +37,6 @@ $(function() {
         this.displayStatus = ko.observable();
 
         this.isOpening = ko.pureComputed(function() {
-            debugger;
             return self.status() == 'open';
         })
         this.isTaken = ko.pureComputed(function() {
@@ -86,7 +83,6 @@ $(function() {
                     proposalId: data.id
                 }).then(function(res) {
                     if (res.success) {
-                        debugger;
                         Kooboo.EventBus.publish("kb/market/component/cashier/show", res.model);
                         //Kooboo.EventBus.publish("kb/demand/proposal/update");
                     }

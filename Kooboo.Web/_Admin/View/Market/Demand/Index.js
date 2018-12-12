@@ -32,7 +32,13 @@ $(function() {
                 var date = new Date(item.createTime);
                 return {
                     id: item.id,
-                    title: item.title,
+                    title: {
+                        text: item.title,
+                        url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
+                            id: item.id
+                        }),
+                        newWindow: true
+                    },
                     description: getText(item.description),
                     demander: {
                         text: item.userName,
@@ -71,7 +77,7 @@ $(function() {
                 columns: [{
                     displayName: 'Title',
                     fieldName: 'title',
-                    type: 'text'
+                    type: 'link'
                 }, {
                     displayName: 'Description',
                     fieldName: 'description',

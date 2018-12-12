@@ -6,6 +6,11 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title" data-bind="text: title"></h3>
+                        <div class="panel-actions">
+                            <!-- ko if: isOwner() && isOpening() -->
+                            <button class="btn btn-xs btn-info" data-bind="click: onUpdateDemand"><i class="fa fa-pencil"></i></button>
+                            <!-- /ko -->
+                        </div>
                     </div>
                     <div class="panel-body">
                         <div data-bind="html: description" class="margin-bottom-20"></div>
@@ -140,10 +145,6 @@
                         <!-- ko if: isProposalUser -->
                         <div class="btn-group btn-group-justified">
                             <a href="javascript:;" class="btn btn-default" data-bind="click: onShowChatModal">Chat with owner</a>
-                            <a href="javascript:;" class="btn btn-default" data-bind="click: onShowProposalModal">Update your bid</a>
-                            <!-- ko ifnot: isSelectedProposal -->
-                            <a href="javascript:;" class="btn btn-info" data-bind="click: onDeleteMyProposal">Delete your bid</a>
-                            <!-- /ko -->
                         </div>
                         <!-- /ko -->
                         <!-- ko ifnot: isProposalUser -->
@@ -183,10 +184,6 @@
                         <!-- /ko -->
 
                         <!-- ko if: isOwner -->
-
-                        <!-- ko if: isOpening -->
-                        <button class="btn btn-block btn-info" data-bind="click: onUpdateDemand">Update demand</button>
-                        <!-- /ko -->
 
                         <!-- ko if: isTaken -->
                         <a href="javascript:;" class="btn btn-default btn-block margin-bottom-15" data-bind="click: onShowProposalChatModal.bind(this, null)">
@@ -230,6 +227,12 @@
                                 <th class="table-action"></th>
                                 <th class="table-action"></th>
                                 <!-- /ko -->
+                                <!-- ko if: !isOwner() && isOpening() && isProposalUser() -->
+                                <th class="table-action"></th>
+                                <!-- ko ifnot: isSelectedProposal -->
+                                <th class="table-action"></th>
+                                <!-- /ko -->
+                                <!-- /ko -->
                             </tr>
                         </thead>
                         <tbody data-bind="visible: proposals().length, foreach: proposals">
@@ -248,6 +251,16 @@
                                     <button class="btn btn-xs btn-info" data-bind="click: $parent.onAcceptProposal.bind(this, $data), tooltip: 'Accept this proposal'"><i class="fa fa-check"></i></button>
                                 </td>
                                 <!-- /ko -->
+                                <!-- ko if: !$parent.isOwner() && $parent.isOpening() && $parent.isProposalUser() -->
+                                <td class="text-right">
+                                    <a href="javascript:;" class="btn btn-default btn-xs" data-bind="click: $parent.onShowProposalModal"><i class="fa fa-pencil"></i></a>
+                                </td>
+                                <!-- ko ifnot: $parent.isSelectedProposal -->
+                                <td class="text-right">
+                                    <a href="javascript:;" class="btn btn-info btn-xs" data-bind="click: $parent.onDeleteMyProposal"><i class="fa fa-trash"></i></a>
+                                </td>
+                                <!-- /ko -->
+                                <!-- /ko -->
                             </tr>
                         </tbody>
                         <tfoot data-bind="visible: !proposals().length">
@@ -265,7 +278,7 @@
     <proposal-modal params="isShow: showProposalModal, demandId: id, currencyCode: currency, data: showingProposal, mode: proposalViewingMode"></proposal-modal>
     <chat-modal params="isShow: showChatModal, demandId: id, proposalId: proposalId"></chat-modal>
     <div data-bind="component: {name: 'cashier-modal'}"></div>
-    
+
 </div>
 <script>
     (function() {
