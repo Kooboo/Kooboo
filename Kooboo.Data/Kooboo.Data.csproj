@@ -202,7 +202,6 @@
     <Compile Include="Models\AuthorizeResult.cs" />
     <Compile Include="Models\BackendLog.cs" />
     <Compile Include="Models\Certificate.cs" />
-    <Compile Include="Models\Chat.cs" />
     <Compile Include="Models\CheckResponse.cs" />
     <Compile Include="Models\Coupon.cs" />
     <Compile Include="Models\Currency.cs" />

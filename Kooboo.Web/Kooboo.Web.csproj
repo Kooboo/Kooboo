@@ -218,7 +218,6 @@
     <Compile Include="ViewModel\ApiScript.cs" />
     <Compile Include="ViewModel\App.cs" />
     <Compile Include="ViewModel\Binding.cs" />
-    <Compile Include="ViewModel\ChatViewModel.cs" />
     <Compile Include="ViewModel\Code.cs" />
     <Compile Include="ViewModel\ContentFolder.cs" />
     <Compile Include="ViewModel\ContentType.cs" />
