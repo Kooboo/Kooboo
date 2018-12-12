@@ -49,7 +49,7 @@
 
                     self.id() && (exp.id = self.id());
 
-                    Kooboo.Supplier.addOrUpdateExpertise(exp).then(function(res) {
+                    Kooboo.Supplier.addOrUpdate(exp).then(function(res) {
                         if (res.success) {
                             window.info.done(Kooboo.text.info[self.id() ? 'update' : 'save'].success);
                             Kooboo.EventBus.publish('kb/market/component/expertise-modal/updated');
@@ -71,7 +71,7 @@
 
             Kooboo.EventBus.subscribe('kb/market/component/expertise-modal/show', function(id) {
                 if (id) {
-                    Kooboo.Supplier.getExpertise({
+                    Kooboo.Supplier.get({
                         id: id
                     }).then(function(res) {
                         if (res.success) {

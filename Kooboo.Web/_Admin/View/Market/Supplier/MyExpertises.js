@@ -3,7 +3,7 @@ $(function() {
         var self = this;
 
         this.onGet = function() {
-            Kooboo.Supplier.getMyExpertiseList().then(function(res) {
+            Kooboo.Supplier.myList().then(function(res) {
                 if (res.success) {
                     if (res.model.length) {
 
@@ -33,14 +33,14 @@ $(function() {
                                 type: 'text',
                                 showClass: 'table-short'
                             }, {
+                                displayName: 'Description',
+                                fieldName: 'description',
+                                type: 'text'
+                            }, {
                                 displayName: 'Price',
                                 fieldName: 'price',
                                 type: 'text',
                                 showClass: 'table-short'
-                            }, {
-                                displayName: 'Description',
-                                fieldName: 'description',
-                                type: 'text'
                             }],
                             tableActions: [{
                                 fieldName: 'edit',
@@ -51,7 +51,7 @@ $(function() {
                             }],
                             onDelete: function(docs) {
                                 if (confirm(Kooboo.text.confirm.deleteItems)) {
-                                    Kooboo.Supplier.deleteExpertises({
+                                    Kooboo.Supplier.deletes({
                                         ids: docs.map(function(doc) {
                                             return doc.id
                                         })
@@ -84,7 +84,7 @@ $(function() {
 
         Kooboo.EventBus.subscribe('kb/expertise/delete', function(data) {
             if (confirm(Kooboo.text.confirm.deleteItem)) {
-                Kooboo.Supplier.deleteExpertise(data).then(function(res) {
+                Kooboo.Supplier.delete(data).then(function(res) {
                     if (res.success) {
                         window.info.done(Kooboo.text.info.delete.success);
                         self.onGet();

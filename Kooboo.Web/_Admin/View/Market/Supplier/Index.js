@@ -5,7 +5,7 @@ $(function() {
         this.pager = ko.observable();
 
         this.getList = function(page) {
-            Kooboo.Supplier.getExpertiseList({
+            Kooboo.Supplier.list({
                 page: page || 1
             }).then(function(res) {
                 if (res.success) {
@@ -32,8 +32,8 @@ $(function() {
                         class: 'label-sm label-info',
                         tooltip: item.currency
                     },
-                    supplier: {
-                        text: item.supplierName,
+                    orgName: {
+                        text: item.orgName,
                         class: 'label-sm gray'
                     },
                     view: {
@@ -49,22 +49,22 @@ $(function() {
             var data = {
                 docs: docs,
                 columns: [{
-                    displayName: 'Expertise',
+                    displayName: 'Name',
                     fieldName: 'name',
                     type: 'link',
-                    showClass: 'table-short'
-                }, {
-                    displayName: 'Price',
-                    fieldName: 'price',
-                    type: 'label',
                     showClass: 'table-short'
                 }, {
                     displayName: 'Description',
                     fieldName: 'description',
                     type: 'text'
                 }, {
+                    displayName: 'Price',
+                    fieldName: 'price',
+                    type: 'label',
+                    showClass: 'table-short'
+                }, {
                     displayName: "Supplier",
-                    fieldName: "supplier",
+                    fieldName: "orgName",
                     type: 'label',
                     showClass: 'table-short'
                 }],

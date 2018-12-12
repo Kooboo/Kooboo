@@ -3,17 +3,17 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title">Detail</h4>
+                <h4 class="modal-title" data-bind="text: name"></h4>
+                <div>Supplier: <span data-bind="text: supplierName"></span></div>  
+                
+               
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Request</label>
-                    <textarea class="autosize form-control" data-bind="value: request"></textarea>
+                    <label>Remark</label>
+                    <textarea style="min-height:20px" class="form-control" rows="3" data-bind="value: remark"></textarea>
                 </div>
-                <div class="form-group">
-                    <label>Contact</label>
-                    <input type="text" class="form-control" data-bind="value: contact">
-                </div>
+                
                 <div class="form-group">
                     <label>Attachments</label>
                     <div class="form-inline">

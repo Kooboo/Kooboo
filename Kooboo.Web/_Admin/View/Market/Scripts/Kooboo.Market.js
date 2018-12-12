@@ -119,6 +119,31 @@ $(function() {
 
     function Supplier() {
         this.name = 'Supplier';
+        this.list=function(para){
+            return this.executeGet('List', para);
+        }
+        this.myList=function(para){
+            return this.executeGet('myList', para);
+        }
+
+        this.delete = function(para) {
+            return this.executePost('Delete', para);
+        }
+        this.deletes = function(para) {
+            return this.executePost('deletes', para);
+        }
+        
+        this.addOrUpdate = function(para) {
+            return this.executePost('addOrUpdate', para);
+        }
+
+        // this.getExpertiseList = function(para) {
+        //     return this.executeGet('ExpertiseList', para);
+        // }
+
+        this.get = function(para) {
+            return this.executeGet('get', para);
+        }
 
         this.isSupplier = function(para) {
             return this.executeGet('IsSupplier', para);
@@ -128,9 +153,7 @@ $(function() {
             return this.executeGet('GetByUser', para);
         }
 
-        this.addOrUpdate = function(para) {
-            return this.executePost('AddOrUpdate', para);
-        }
+        
 
         this.getOrdersBySupplier = function(para) {
             // 我收到的所有 orders
@@ -159,29 +182,15 @@ $(function() {
             return this.executeGet('MyOrdersFilterBySupplier', para);
         }
 
-        this.getUserExpertiseList = function(para) {
-            return this.executeGet('UserExpertiseList', para);
-        }
+        // this.getUserExpertiseList = function(para) {
+        //     return this.executeGet('UserExpertiseList', para);
+        // }
 
-        this.getMyExpertiseList = function(para) {
-            return this.executeGet('MyExpertiseList', para);
-        }
+        // this.getMyExpertiseList = function(para) {
+        //     return this.executeGet('MyExpertiseList', para);
+        // }
 
-        this.deleteExpertise = function(para) {
-            return this.executePost('DeleteExpertise', para);
-        }
-
-        this.addOrUpdateExpertise = function(para) {
-            return this.executePost('AddOrUpdateExpertise', para);
-        }
-
-        this.getExpertiseList = function(para) {
-            return this.executeGet('ExpertiseList', para);
-        }
-
-        this.getExpertise = function(para) {
-            return this.executeGet('GetExpertise', para);
-        }
+        
     }
     extend(Supplier, Kooboo.BaseModel);
 

@@ -10,6 +10,9 @@
             var self = this;
 
             this.isShow = params.isShow;
+            this.name=params.name;
+            this.id=params.id;
+            this.supplierName=params.supplierName;
             this.isShow.subscribe(function(show) {
                 if (show) {
                     setTimeout(function() {
@@ -22,7 +25,7 @@
                 self.isShow(false);
             }
 
-            this.request = ko.observable();
+            this.remark = ko.observable();
 
             this.attachments = ko.observableArray();
 
@@ -51,9 +54,10 @@
 
             this.onOrder = function() {
                 Kooboo.Order.expertise({
-                    request: self.request(),
-                    attachments: self.attachments(),
-                    contact: self.contact()
+                    UserServiceId: self.id(),
+                    remark: self.remark(),
+                    attachments: self.attachments() 
+                
                 }).then(function(res) {
                     if (res.success) {
                         Kooboo.EventBus.publish("kb/market/component/cashier/show", res.model);
