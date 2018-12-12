@@ -50,10 +50,10 @@
             })
 
             this.onSendMsg = function() {
+                debugger;
                 if (self.newMsg.isValid()) {
                     Kooboo.Demand.chat({
-                        demandId: self.demandId(),
-                        proposalId: self.proposalId(),
+                        ownerId: self.proposalId(),
                         isPublic: false,
                         content: self.newMsg()
                     }).then(function(res) {
@@ -86,10 +86,10 @@
                 fd.append('filename', files[0].name);
                 fd.append('file', files[0]);
                 Kooboo.Attachment.uploadFile(fd).then(function(res) {
+                    debugger;
                     if (res.success) {
                         Kooboo.Demand.chat({
-                            demandId: self.demandId(),
-                            proposalId: self.proposalId(),
+                            ownerId: self.proposalId(),
                             isPublic: false,
                             content: '',
                             attachments: [res.model]

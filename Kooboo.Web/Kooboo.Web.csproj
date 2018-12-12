@@ -218,18 +218,12 @@
     <Compile Include="ViewModel\ApiScript.cs" />
     <Compile Include="ViewModel\App.cs" />
     <Compile Include="ViewModel\Binding.cs" />
-    <Compile Include="ViewModel\ChatViewModel.cs" />
     <Compile Include="ViewModel\Code.cs" />
     <Compile Include="ViewModel\ContentFolder.cs" />
     <Compile Include="ViewModel\ContentType.cs" />
     <Compile Include="ViewModel\Currency.cs" />
     <Compile Include="ViewModel\DashBoard.cs" />
     <Compile Include="ViewModel\Database.cs" />
-    <Compile Include="ViewModel\DemandItemViewModel.cs" />
-    <Compile Include="ViewModel\DemandObjectionItemViewModel.cs" />
-    <Compile Include="ViewModel\DemandObjectionViewModel.cs" />
-    <Compile Include="ViewModel\DemandProposalViewModel.cs" />
-    <Compile Include="ViewModel\DemandViewModel.cs" />
     <Compile Include="ViewModel\Domain.cs" />
     <Compile Include="ViewModel\Ecommerce\Category.cs" />
     <Compile Include="ViewModel\Ecommerce\CommerceSite.cs" />
@@ -257,9 +251,6 @@
     <Compile Include="ViewModel\SiteLog.cs" />
     <Compile Include="ViewModel\IEmbeddable.cs" />
     <Compile Include="ViewModel\Style.cs" />
-    <Compile Include="ViewModel\SupplierItemViewModel.cs" />
-    <Compile Include="ViewModel\SupplierOrderViewModel.cs" />
-    <Compile Include="ViewModel\SupplierViewModel.cs" />
     <Compile Include="ViewModel\Template.cs" />
     <Compile Include="ViewModel\TextContent.cs" />
     <Compile Include="Api\Implementation\SiteObjectApi.cs" />
@@ -267,7 +258,6 @@
     <Compile Include="ViewModel\DataSourceViewModelNew.cs" />
     <Compile Include="ViewModel\Url.cs" />
     <Compile Include="ViewModel\User.cs" />
-    <Compile Include="ViewModel\UserExpertiseViewModel.cs" />
     <Compile Include="ViewModel\ViewDataSourceViewModel.cs" />
     <Compile Include="ViewModel\JsonResultData.cs" />
     <Compile Include="Backend\Events\Hanlders\HandleDiskWatcher.cs" />

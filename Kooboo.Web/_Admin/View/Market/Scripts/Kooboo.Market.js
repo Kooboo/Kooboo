@@ -6,8 +6,8 @@ $(function() {
     function Discussion() {
         this.name = 'Discussion';
 
-        this.getEdit = function(para) {
-            return this.executeGet('GetEdit', para);
+        this.get = function(para) {
+            return this.executeGet('Get', para);
         }
 
         this.getCommentList = function(para) {
@@ -26,8 +26,8 @@ $(function() {
             return this.executePost('Reply', para);
         }
 
-        this.getUserList = function(para) {
-            return this.executeGet('UserList', para);
+        this.ListByUser = function(para) {
+            return this.executeGet('ListByUser', para);
         }
     }
     extend(Discussion, Kooboo.BaseModel);
@@ -35,16 +35,16 @@ $(function() {
     function Demand() {
         this.name = 'Demand';
 
-        this.getUserList = function(para) {
-            return this.executeGet('UserList', para);
+        this.ListByUser = function(para) {
+            return this.executeGet('ListByUser', para);
         }
 
         this.addOrUpdate = function(para) {
             return this.executePost('AddOrUpdate', para);
         }
 
-        this.getProposalList = function(para) {
-            return this.executeGet('ProposalList', para);
+        this.proposalListByDemand = function(para) {
+            return this.executeGet('ProposalListByDemand', para);
         }
 
         this.getUserProposal = function(para) {
@@ -75,8 +75,8 @@ $(function() {
             return this.executePost('ReplyChat', para, true);
         }
 
-        this.confirmDemandStatus = function(para) {
-            return this.executePost('ConfirmDemandStatus', para);
+        this.complete = function(para) {
+            return this.executePost('complete', para);
         }
 
         this.getPublicCommentList = function(para) {
@@ -95,12 +95,12 @@ $(function() {
             return this.executeGet('PrivateCommentList', para, true);
         }
 
-        this.getProposalTypes = function(para) {
-            return this.executeGet('GetProposalType', para);
+        this.proposalTypes = function(para) {
+            return this.executeGet('ProposalTypes', para);
         }
 
-        this.getMyProposalList = function(para) {
-            return this.executeGet('MyProposalList', para);
+        this.MyProposals = function(para) {
+            return this.executeGet('MyProposals', para);
         }
 
         this.raiseObjection = function(para) {
@@ -134,12 +134,12 @@ $(function() {
 
         this.getOrdersBySupplier = function(para) {
             // 我收到的所有 orders
-            return this.executeGet('OrderBySupplierUser', para);
+            return this.executeGet('MySupplyOrders', para);
         }
 
         this.getOrdersByUser = function(para) {
             // 我发出的所有 orders
-            return this.executeGet('OrdersByUser', para);
+            return this.executeGet('MyOrders', para);
         }
 
         this.addOrUpdateOrder = function(para) {
@@ -156,7 +156,7 @@ $(function() {
 
         this.getMyOrdersInSupply = function(para) {
             // 在 supply 中发出的 orders
-            return this.executeGet('MyOrdersInSupply', para);
+            return this.executeGet('MyOrdersFilterBySupplier', para);
         }
 
         this.getUserExpertiseList = function(para) {

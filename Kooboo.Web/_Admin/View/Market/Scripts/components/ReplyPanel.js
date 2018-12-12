@@ -12,7 +12,7 @@
 
             this.type = ko.observable(params.type);
             this.typeId = params.typeId;
-            this.parentCommentId = params.parentCommentId || ko.observable(Kooboo.Guid.Empty);
+            this.parentId = params.parentId || ko.observable(Kooboo.Guid.Empty);
 
             this.showError = ko.observable(false);
 
@@ -29,14 +29,14 @@
                     switch (self.type()) {
                         case 'discussion':
                             Kooboo.Discussion.reply({
-                                discussionId: self.typeId(),
-                                parentCommentId: self.parentCommentId(),
+                                ownerId: self.typeId(),
+                                parentId: self.parentId(),
                                 content: self.content()
                             }).then(function(res) {
                                 if (res.success) {
                                     Kooboo.EventBus.publish('kb/witkey/component/reply/refresh', {
                                         id: self.typeId(),
-                                        parentCommentId: self.parentCommentId()
+                                        parentId: self.parentId()
                                     })
                                     self.content('');
                                 }
@@ -44,14 +44,14 @@
                             break;
                         case 'demand':
                             Kooboo.Demand.reply({
-                                demandId: self.typeId(),
-                                parentCommentId: self.parentCommentId(),
+                                ownerId: self.typeId(),
+                                parentId: self.parentId(),
                                 content: self.content()
                             }).then(function(res) {
                                 if (res.success) {
                                     Kooboo.EventBus.publish('kb/witkey/demand/reply/refresh', {
                                         id: self.typeId(),
-                                        parentCommentId: self.parentCommentId()
+                                        parentId: self.parentId()
                                     })
                                     self.content('');
                                 }

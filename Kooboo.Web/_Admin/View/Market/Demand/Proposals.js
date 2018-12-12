@@ -12,8 +12,8 @@ $(function() {
         this.proposalTypes = ko.observableArray();
 
         this.getListByType = function(type) {
-            Kooboo.Demand.getMyProposalList({
-                type: type
+            Kooboo.Demand.MyProposals({
+                status: type
             }).then(function(res) {
                 if (res.success) {
                     self.handleRecords(res.model);
@@ -56,7 +56,7 @@ $(function() {
         this.records = ko.observableArray();
 
         this.getProposalTypes = function(cb) {
-            Kooboo.Demand.getProposalTypes().then(function(res) {
+            Kooboo.Demand.proposalTypes().then(function(res) {
                 if (res.success) {
                     self.proposalTypes(Kooboo.objToArr(res.model, 'value', 'displayName'));
                     cb && cb();
@@ -76,8 +76,8 @@ $(function() {
         }
 
         Kooboo.EventBus.subscribe("kb/pager/change", function(page) {
-            Kooboo.Demand.getMyProposalList({
-                type: self.curType(),
+            Kooboo.Demand.MyProposals({
+                status: self.curType(),
                 pageNr: page
             }).then(function(res) {
                 if (res.success) {

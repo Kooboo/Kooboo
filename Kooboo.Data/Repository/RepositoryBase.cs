@@ -21,7 +21,7 @@ namespace Kooboo.Data.Repository
             }
         }
         
-        private string StoreName
+        protected virtual string StoreName
         {
             get
             {

@@ -3,7 +3,7 @@ $(function() {
         var self = this;
 
         this.getList = function() {
-            Kooboo.Demand.getUserList().then(function(res) {
+            Kooboo.Demand.ListByUser().then(function(res) {
                 if (res.success) {
                     self.handleData(res.model);
                 }

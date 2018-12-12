@@ -73,11 +73,11 @@ $(function() {
         })
 
         Kooboo.EventBus.subscribe('kb/witkey/component/reply/refresh', function(data) {
-            if (data.parentCommentId == Kooboo.Guid.Empty) {
+            if (data.parentId == Kooboo.Guid.Empty) {
                 self.getCommentList(-1);
             } else {
                 var comment = self.comments().find(function(com) {
-                    return com.id() == data.parentCommentId;
+                    return com.id() == data.parentId;
                 })
 
                 if (comment) {

@@ -11,13 +11,15 @@ $(function() {
             return !!self.showingProposal();
         });
         this.isSelectedProposal = ko.pureComputed(function() {
-            return self.showingProposal() && self.showingProposal().winTheBidding;
+            debugger;
+            return self.showingProposal() && self.showingProposal().isTaken;
         })
         this.proposalId = ko.pureComputed(function() {
             return self.showingProposal().id;
         })
         this.successfulBidding = ko.pureComputed(function() {
-            return self.showingProposal() && self.showingProposal().winTheBidding;
+            debugger;
+            return self.showingProposal() && self.showingProposal().isTaken;
         })
         this.proposalViewingMode = ko.observable();
 
@@ -36,14 +38,15 @@ $(function() {
         this.status = ko.observable();
         this.displayStatus = ko.observable();
 
-        this.isTendering = ko.pureComputed(function() {
-            return self.status() == 'tendering';
+        this.isOpening = ko.pureComputed(function() {
+            debugger;
+            return self.status() == 'open';
         })
-        this.isEndOfTender = ko.pureComputed(function() {
-            return self.status() == 'endoftender';
+        this.isTaken = ko.pureComputed(function() {
+            return self.status() == 'taken';
         })
         this.isDemandClosed = ko.pureComputed(function() {
-            return ['finished', 'unfinished'].indexOf(self.status()) > -1;
+            return ['rejected', 'accepted'].indexOf(self.status()) > -1;
         })
         this.isDemandInvalid = ko.pureComputed(function() {
             return self.status() == 'invalid';
@@ -83,7 +86,9 @@ $(function() {
                     proposalId: data.id
                 }).then(function(res) {
                     if (res.success) {
-                        Kooboo.EventBus.publish("kb/demand/proposal/update");
+                        debugger;
+                        Kooboo.EventBus.publish("kb/market/component/cashier/show", res.model);
+                        //Kooboo.EventBus.publish("kb/demand/proposal/update");
                     }
                 })
             }
@@ -129,9 +134,8 @@ $(function() {
         }
 
         this.onFinishTheDemand = function(isFinished) {
-            debugger;
             if (confirm('You sure?')) {
-                Kooboo.Demand.confirmDemandStatus({
+                Kooboo.Demand.complete({
                     id: self.id(),
                     isFinished: isFinished
                 }).then(function(res) {
@@ -155,29 +159,28 @@ $(function() {
         }
 
         this.getProposalList = function() {
-            Kooboo.Demand.getProposalList({
+            Kooboo.Demand.proposalListByDemand({
                 id: self.id()
             }).then(function(res) {
                 if (res.success) {
                     self.proposals(res.model.list.map(function(item) {
-                        if (item.winTheBidding) {
-                            self.winningProposal(item);
+                        if (item.isTaken) {
+                            self.isTaken(item);
                         }
-
                         return {
                             id: item.id,
                             userName: item.userName,
                             duration: item.duration + ' Day' + (item.duration > 1 ? 's' : ''),
                             budget: item.symbol + item.budget,
                             currency: item.currency,
-                            winTheBidding: item.winTheBidding
+                            isTaken: item.isTaken
                         }
                     }));
                 }
             })
         }
 
-        this.winningProposal = ko.observable();
+        this.isTaken = ko.observable();
 
         this.publicCommentList = ko.observableArray();
         this.getCommentList = function() {
@@ -245,11 +248,11 @@ $(function() {
         })
 
         Kooboo.EventBus.subscribe("kb/witkey/demand/reply/refresh", function(data) {
-            if (data.parentCommentId == Kooboo.Guid.Empty) {
+            if (data.parentId == Kooboo.Guid.Empty) {
                 self.getCommentList();
             } else {
                 var current = _.find(self.publicCommentList(), function(item) {
-                    return item.id() == data.parentCommentId
+                    return item.id() == data.parentId
                 })
                 if (current) {
                     current.commentCount(current.commentCount() + 1);
