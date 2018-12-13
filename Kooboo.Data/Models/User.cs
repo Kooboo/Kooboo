@@ -34,8 +34,19 @@ namespace Kooboo.Data.Models
         // redundant
         public string CurrentOrgName { get; set; }
 
-        // Is Admin of Current Organization. 
-        public bool IsAdmin { get; set; }
+        private bool _isadmin; 
+        public bool IsAdmin {
+            get {
+                if (_isadmin)
+                {
+                    return true; 
+                }
+                return this.Id == this.CurrentOrgId; 
+            }
+            set {
+                _isadmin = value; 
+            }
+        }
 
         private string _username;
         public string UserName
