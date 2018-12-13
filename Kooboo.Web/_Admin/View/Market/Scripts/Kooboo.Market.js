@@ -137,6 +137,12 @@ $(function() {
             return this.executePost('addOrUpdate', para);
         }
 
+        this.myOrdersIn=function(){
+            return this.executePost('MyOrders',{in:true});
+        }
+        this.myOrdersOut=function(){
+            return this.executePost('MyOrders',{in:false});
+        }
         // this.getExpertiseList = function(para) {
         //     return this.executeGet('ExpertiseList', para);
         // }
@@ -160,10 +166,10 @@ $(function() {
             return this.executeGet('MySupplyOrders', para);
         }
 
-        this.getOrdersByUser = function(para) {
-            // 我发出的所有 orders
-            return this.executeGet('MyOrders', para);
-        }
+        // this.getOrdersByUser = function(para) {
+        //     // 我发出的所有 orders
+        //     return this.executeGet('MyOrders', para);
+        // }
 
         this.addOrUpdateOrder = function(para) {
             return this.executePost('AddOrUpdateOrder', para);
@@ -297,9 +303,10 @@ $(function() {
             return this.executePost('Pay', para);
         }
 
-        this.expertise = function(para) {
-            return this.executePost('Expertise', para);
+        this.service = function(para) {
+            return this.executePost('Service', para);
         }
+        
     }
     extend(Order, Kooboo.BaseModel);
 

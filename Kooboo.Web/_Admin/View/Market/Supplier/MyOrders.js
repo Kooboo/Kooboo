@@ -5,7 +5,7 @@ $(function() {
         this.pager = ko.observable();
 
         this.getList = function() {
-            Kooboo.Supplier.getOrdersByUser().then(function(res) {
+            Kooboo.Supplier.myOrdersOut().then(function(res) {
                 if (res.success) {
                     self.handleData(res.model);
                 }
@@ -16,10 +16,11 @@ $(function() {
             self.pager(data);
 
             var docs = data.list.map(function(item) {
+                var symbol=item.symbol?item.symbol:item.currency;
                 return {
                     id: item.id,
-                    expertise: item.expertise,
-                    price: item.symbol + item.price,
+                    name: item.name,
+                    amount: symbol + item.totalAmount,
                     status: {
                         text: item.status.displayName,
                         class: 'label-sm label-info'
@@ -37,12 +38,12 @@ $(function() {
             self.tableData({
                 docs: docs,
                 columns: [{
-                    displayName: 'Expertise',
-                    fieldName: 'expertise',
+                    displayName: 'Name',
+                    fieldName: 'name',
                     type: 'text'
                 }, {
-                    displayName: 'Price',
-                    fieldName: 'price',
+                    displayName: 'Amount',
+                    fieldName: 'amount',
                     type: 'text'
                 }, {
                     displayName: 'Status',

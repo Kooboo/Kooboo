@@ -53,7 +53,7 @@
             }
 
             this.onOrder = function() {
-                Kooboo.Order.expertise({
+                Kooboo.Order.service({
                     UserServiceId: self.id(),
                     remark: self.remark(),
                     attachments: self.attachments() 

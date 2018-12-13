@@ -3,6 +3,7 @@ $(function() {
     var viewModel = function() {
         var self = this;
 
+        debugger;
         this.id = ko.observable(Kooboo.getQueryString('id'));
 
         this.name = ko.observable();
