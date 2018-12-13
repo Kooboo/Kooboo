@@ -4,9 +4,9 @@ $(function() {
             tooltip: {
                 formatter: function(params) {
                     if (params.seriesIndex == 1) {
-                        return params.name + "<br/>" + "Used: " + params.value;
+                        return params.name + "<br/>" + "Used: " + params.data.valueName;
                     } else {
-                        return params.name + "<br/>" + "Total: " + params.value;
+                        return params.name + "<br/>" + "Total: " + params.data.valueName;
                     }
                 }
             },
@@ -78,28 +78,38 @@ $(function() {
                 infraType: type
             }).then(function(res) {
                 if (res.success) {
-
                     var latest = res.model[res.model.length - 1];
 
                     self.currentData({
                         month: latest.month,
+                        totalName:latest.totalName,
+                        usedName:latest.usedName,
                         total: latest.total,
                         used: latest.used
                     })
 
                     var xData = [],
                         value = [],
-                        dataShadow = [];
+                        dataShadow = [],
+                        valueNames=[];
 
                     res.model.forEach(function(data) {
                         xData.push(data.month);
-                        value.push(data.used);
-                        dataShadow.push(data.total);
+                        value.push({
+                            value:data.used,
+                            valueName:data.usedName
+                        });
+
+                        dataShadow.push({
+                            value:data.total,
+                            valueName:data.totalName
+                        });
                     })
 
                     chartOption.xAxis.data = xData;
                     chartOption.series[0]['data'] = dataShadow;
                     chartOption.series[1]['data'] = value;
+                    
 
                     chart = echarts.init(document.getElementById('report'));
                     chart.setOption(chartOption);
@@ -110,15 +120,17 @@ $(function() {
                     chart.on('click', function(params) {
 
                         var dataIdx = params.dataIndex;
-
+                        
                         var total = chartOption.series[0].data[dataIdx],
                             used = chartOption.series[1].data[dataIdx];
-
+                        
                         if (params.name) {
                             self.currentData({
                                 month: params.name,
-                                total: total,
-                                used: used,
+                                totalName:total.valueName,
+                                total: total.value,
+                                used: used.value,
+                                usedName:used.valueName
                             })
 
                             self.getLogs(self.currentData().month)
