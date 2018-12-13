@@ -21,6 +21,8 @@ namespace Kooboo.Data.Models
         }
         public Guid OrganizationId { get; set; }
 
+        public Guid ReceiverOrganizationId { get; set; }
+
         public Guid WebSiteId { get; set; }
 
         private SalesItem _item;
