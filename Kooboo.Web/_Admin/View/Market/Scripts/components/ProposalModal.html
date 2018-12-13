@@ -9,7 +9,7 @@
                 <!-- ko if: mode() == 'edit' -->
                 <div class="form-group">
                     <label>Description</label>
-                    <textarea class="autosize form-control" data-bind="value: description"></textarea>
+                    <textarea class="autosize form-control" data-bind="value: description" style="min-height: 50px;"></textarea>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
@@ -27,6 +27,29 @@
                             <div class="input-group">
                                 <span class="input-group-addon"><i data-bind="attr: { class: 'fa fa-' + currencySymbol(), title: currencyCode }"></i></span>
                                 <input type="number" class="form-control" data-bind="value: budget, event: { keydown: Kooboo.event.input.positiveNumberOnly }">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Attachments</label>
+                            <div class="form-inline">
+                                <button class="btn btn-info btn-file"><input type="file"  data-bind="upload: {
+                                    allowMutiple: false,
+                                    acceptTypes: ['*/*'],
+                                    callback: uploadFile
+                                }">Upload</button>
+                                <div class="form-group">
+                                    <p class="form-control-static">
+                                        <!-- ko foreach: attachments -->
+                                        <button class="btn btn-default">
+                                            <!-- ko text: $data.fileName -->
+                                            <!-- /ko -->
+                                            <i class="fa fa-close" data-bind="click: $parent.removeFile.bind(this, $data)"></i>
+                                        </button>
+                                        <!-- /ko -->
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>

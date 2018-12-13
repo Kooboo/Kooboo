@@ -60,6 +60,7 @@
                 self.budget('');
                 self.duration('');
                 self.showError(false);
+                self.attachments.removeAll();
                 self.isShow(false);
             }
 
@@ -69,13 +70,35 @@
                     self.duration.isValid()
             }
 
+            this.attachments = ko.observableArray();
+            this.uploadFile = function(data, files) {
+                var fd = new FormData();
+                fd.append('filename', files[0].name);
+                fd.append('file', files[0]);
+                Kooboo.Attachment.uploadFile(fd).then(function(res) {
+                    if (res.success) {
+                        self.attachments.push(res.model);
+                    }
+                })
+            }
+            this.removeFile = function(data, e) {
+                Kooboo.Attachment.deleteFile({
+                    id: data.id
+                }).then(function(res) {
+                    if (res.success) {
+                        self.attachments.remove(data);
+                    }
+                })
+            }
+
             this.onSave = function() {
                 if (self.isValid()) {
                     var data = {
                         demandId: self.demandId(),
                         description: self.description(),
                         duration: self.duration(),
-                        budget: self.budget()
+                        budget: self.budget(),
+                        attachments: self.attachments()
                     }
 
                     if (self.proposalId()) {
