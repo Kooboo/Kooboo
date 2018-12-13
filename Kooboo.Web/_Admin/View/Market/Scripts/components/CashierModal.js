@@ -73,7 +73,7 @@
             }
 
             this.onPayingSuccess = function() {
-                self.getPaymentStatus(paymentId, function(res) {
+                self.getPaymentStatus(self.paymentId(), function(res) {
                     self.onHide();
                     Kooboo.EventBus.publish('kb/market/balance/update');
                 })
