@@ -1,4 +1,5 @@
 $(function() {
+    var CURRENT_USER_ID = '';
 
     var detailModel = function() {
         var self = this;
@@ -41,13 +42,16 @@ $(function() {
             return self.status() == 'open';
         })
         this.isTaken = ko.pureComputed(function() {
-            return self.status() == 'taken';
+            return ['taken', 'accepted'].indexOf(self.status()) > -1;
         })
         this.isDemandClosed = ko.pureComputed(function() {
             return ['rejected', 'accepted'].indexOf(self.status()) > -1;
         })
         this.isDemandInvalid = ko.pureComputed(function() {
             return self.status() == 'invalid';
+        })
+        this.takenProposalId = ko.pureComputed(function() {
+            return self.takenProposal() && self.takenProposal().id;
         })
 
         this.proposals = ko.observableArray();
@@ -131,11 +135,11 @@ $(function() {
             self.showDemandModal(true);
         }
 
-        this.onFinishTheDemand = function(isFinished) {
+        this.onFinishTheDemand = function(isAccepted) {
             if (confirm('You sure?')) {
                 Kooboo.Demand.complete({
                     id: self.id(),
-                    isFinished: isFinished
+                    isAccepted: isAccepted
                 }).then(function(res) {
                     if (res.success) {
                         location.reload();
@@ -168,7 +172,16 @@ $(function() {
                 if (res.success) {
                     self.proposals(res.model.list.map(function(item) {
                         if (item.isTaken) {
-                            self.isTaken(item);
+                            self.takenProposal(item);
+                            if (self.isOwner()) {
+                                setInterval(function() {
+                                    self.getDeliveryMessages()
+                                }, 2000)
+                            } else if (self.myProposalId() && (self.myProposalId() == self.takenProposal().id)) {
+                                setInterval(function() {
+                                    self.getDeliveryMessages()
+                                }, 2000)
+                            }
                         }
                         return {
                             id: item.id,
@@ -190,7 +203,7 @@ $(function() {
             })
         }
 
-        this.isTaken = ko.observable();
+        this.takenProposal = ko.observable();
 
         this.publicCommentList = ko.observableArray();
         this.getCommentList = function() {
@@ -278,6 +291,24 @@ $(function() {
         Kooboo.EventBus.subscribe("kb/component/demand-modal/saved", function() {
             location.reload();
         })
+
+        this.messages = ko.observableArray();
+        this.getDeliveryMessages = function(cb) {
+            Kooboo.Demand.getPrivateCommentList({
+                proposalId: self.takenProposal().id
+            }).then(function(res) {
+                if (res.success) {
+                    self.messages(res.model.list.map(function(item) {
+                        return new Message(item);
+                    }));
+                    cb && cb();
+                }
+            })
+        }
+
+        Kooboo.EventBus.subscribe('kb/market/chat/sent', function(cb) {
+            self.getDeliveryMessages(cb);
+        })
     }
 
     var vm = new detailModel();
@@ -296,5 +327,23 @@ $(function() {
         this.commentCount = ko.observable(data.commentCount);
         this.showSubComment = ko.observable(false);
         this.subCommentList = ko.observableArray([]);
+    }
+
+    function Message(data) {
+        if (!CURRENT_USER_ID) {
+            CURRENT_USER_ID = localStorage.getItem('_kooboo_api_user');
+        }
+
+        var date = new Date(data.lastModified);
+
+        this.firstLetter = ko.observable(data.userName.split('')[0].toUpperCase());
+        this.content = ko.observable(data.content);
+        this.isCurrentUser = ko.observable(data.userId == CURRENT_USER_ID);
+        this.userName = ko.observable(this.isCurrentUser() ? 'Me' : data.userName);
+        this.date = ko.observable(date.toDefaultLangString());
+        this.attachment = ko.observable(data.attachments ? data.attachments.map(function(item) {
+            item.url = '/_api/attachment/getFile?id=' + item.id + '&fileName=' + item.fileName;
+            return item;
+        })[0] : '');
     }
 })

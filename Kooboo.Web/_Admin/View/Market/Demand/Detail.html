@@ -1,4 +1,80 @@
 <!-- #layout name=blank --sideType='market'-->
+<style>
+    .bidder-list {
+        margin: 0;
+        padding: 0;
+    }
+    
+    .bidder {
+        list-style: none;
+        padding: 15px 0;
+        border-bottom: 1px solid #dedede;
+    }
+    
+    .bidder:last-child {
+        border-bottom: 0;
+    }
+    
+    .avatar {
+        width: 48px;
+        height: 48px;
+        background: #eee;
+        border-radius: 50%;
+        line-height: 48px;
+        color: #aaa;
+        text-align: center;
+        font-weight: bold;
+        font-size: 14px;
+        margin-right: 10px;
+    }
+    
+    .avatar.blue {
+        background: #009ad7;
+        color: white;
+    }
+    
+    .bidder .nickname {
+        font-size: 16px;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    
+    .bidder .nickname .btn,
+    .bidder .nickname .badge {
+        vertical-align: text-bottom;
+        margin-left: 5px;
+    }
+    
+    .bidder .info {
+        font-size: 14px;
+        line-height: 20px;
+        margin: 20px 0;
+    }
+    
+    .bidder .info .item {
+        margin-right: 10px;
+    }
+    
+    .bidder .info .item .value {
+        font-weight: bold;
+    }
+    
+    .bidder .description {
+        font-size: 15px;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        word-break: break-all;
+    }
+    
+    .bidder .attachments .attachment {
+        display: inline-block;
+        margin-right: 10px;
+        margin-bottom: 4px;
+        padding: 4px 12px;
+        background: #eee;
+        border-radius: 30px;
+    }
+</style>
 <div class="page-header">
     <h1 class="title">Demand</h1>
 </div>
@@ -74,13 +150,15 @@
                 </div>
             </div>
         </div>
-        <ul class="nav nav-tabs margin-bottom-5">
+        <ul class="nav nav-tabs margin-bottom-15">
             <li class="active">
                 <a href="#tab_1_1" data-toggle="tab">Proposals</a>
             </li>
+            <!-- ko if: isTaken() && (successfulBidding() || isOwner() ) -->
             <li>
                 <a href="#tab_1_3" data-toggle="tab">Delivery</a>
             </li>
+            <!-- /ko -->
             <li>
                 <a href="#tab_1_2" data-toggle="tab">Comments</a>
             </li>
@@ -96,86 +174,15 @@
 
                 <!-- ko if: isDemandClosed -->
                 <div class="alert alert-warning">
-                    <strong>Warning!</strong><span>This demand is <span data-bind="text: displayStatus"></span></span>
+                    <strong>Notice</strong>&nbsp;<span>This demand is <span data-bind="text: displayStatus"></span></span>
                 </div>
                 <!-- /ko -->
 
                 <!-- ko if: isDemandInvalid -->
                 <div class="alert alert-danger">
-                    <strong>Notice</strong><span>This demand is expired.</span>
+                    <strong>Notice</strong>&nbsp;<span>This demand is expired.</span>
                 </div>
                 <!-- /ko -->
-
-                <style>
-                    .bidder-list {
-                        margin: 0;
-                        padding: 0;
-                    }
-                    
-                    .bidder {
-                        list-style: none;
-                        padding: 15px 0;
-                        border-bottom: 1px solid #dedede;
-                    }
-                    
-                    .bidder:last-child {
-                        border-bottom: 0;
-                    }
-                    
-                    .bidder .avatar {
-                        width: 48px;
-                        height: 48px;
-                        background: #eee;
-                        border-radius: 50%;
-                        line-height: 48px;
-                        color: #aaa;
-                        text-align: center;
-                        font-weight: bold;
-                        font-size: 14px;
-                        margin-right: 10px;
-                    }
-                    
-                    .bidder .nickname {
-                        font-size: 16px;
-                        margin-bottom: 5px;
-                        font-weight: bold;
-                    }
-                    
-                    .bidder .nickname button {
-                        vertical-align: top;
-                        margin-left: 5px;
-                    }
-                    
-                    .bidder .info {
-                        font-size: 14px;
-                        line-height: 20px;
-                        margin: 20px 0;
-                    }
-                    
-                    .bidder .info .item {
-                        margin-right: 10px;
-                    }
-                    
-                    .bidder .info .item .value {
-                        font-weight: bold;
-                    }
-                    
-                    .bidder .description {
-                        font-size: 15px;
-                        line-height: 1.5;
-                        margin-bottom: 10px;
-                        word-break: break-all;
-                    }
-                    
-                    .bidder .attachments .attachment {
-                        display: inline-block;
-                        margin-right: 10px;
-                        margin-bottom: 4px;
-                        padding: 4px 12px;
-                        background: #eee;
-                        border-radius: 30px;
-                    }
-                </style>
 
                 <ul class="bidder-list" data-bind="visible: proposals().length, foreach: proposals">
                     <li class="bidder clearfix">
@@ -185,26 +192,26 @@
                                 <div class="col-md-6">
                                     <div class="nickname">
                                         <span data-bind="text: $data.userName"></span>
+                                        <!-- ko if: $parent.isTaken -->
+
+                                        <!-- ko if: $parent.takenProposalId() == $data.id -->
+                                        <span class="badge badge-success"><i class="fa fa-trophy"></i></span>
+                                        <!-- /ko -->
+
+                                        <!-- ko ifnot: $parent.takenProposalId() == $data.id -->
+                                        <span class="badge badge-danger"><i class="fa fa-close"></i></span>
+                                        <!-- /ko -->
+
+                                        <!-- /ko -->
+
                                         <!-- ko if: $data.isMyProposal -->
 
                                         <!-- ko if: $parent.isOpening -->
                                         <button class="btn btn-xs btn-info" data-bind="click: $parent.onShowProposalModal"><i class="fa fa-pencil"></i></button>
                                         <!-- /ko -->
 
-                                        <!-- ko if: $parent.isTaken -->
-
-                                        <!-- ko if: successfulBidding -->
-                                        <span class="badge badge-success"><i class="fa fa-check"></i></span>
-                                        <!-- /ko -->
-
-                                        <!-- ko ifnot: successfulBidding -->
-                                        <span class="badge badge-danger"><i class="fa fa-close"></i></span>
-                                        <!-- /ko -->
-
-                                        <!-- /ko -->
-
                                         <!-- ko if: $parent.isDemandClosed -->
-                                        <button class="btn btn-xs btn-default" data-bind="click: onShowObjectionModal"><i class="fa fa-user-md"></i></button>
+                                        <button class="btn btn-xs btn-default" data-bind="click: $parent.onShowObjectionModal"><i class="fa fa-user-md"></i></button>
                                         <!-- /ko -->
 
                                         <!-- /ko -->
@@ -215,9 +222,13 @@
                                         <button class="btn btn-xs btn-info" data-bind="click: $parent.onAcceptProposal.bind(this, $data), tooltip: 'Accept this proposal'"><i class="fa fa-check"></i></button>
                                         <!-- /ko -->
 
-                                        <!-- ko if: $parent.isTaken -->
-                                        <a href="javascript:;" class="btn btn-xs btn-info" data-bind="click: onFinishTheDemand.bind(this, true)"><i class="fa fa-check"></i></a>
-                                        <a href="javascript:;" class="btn btn-xs btn-info" data-bind="click: onFinishTheDemand.bind(this, false)"><i class="fa fa-close"></i></a>
+                                        <!-- ko if: $parent.isTaken()  && !$parent.isDemandClosed() -->
+
+                                        <!-- ko if: $data.isTaken -->
+                                        <a href="javascript:;" class="btn btn-xs btn-info" data-bind="click: $parent.onFinishTheDemand.bind(this, true)"><i class="fa fa-check"></i>&nbsp;<span>Accept</span></a>
+                                        <a href="javascript:;" class="btn btn-xs btn-info" data-bind="click: $parent.onFinishTheDemand.bind(this, false)"><i class="fa fa-close"></i>&nbsp;<span>Reject</span></a>
+                                        <!-- /ko -->
+
                                         <!-- /ko -->
 
                                         <!-- /ko -->
@@ -249,145 +260,8 @@
                         </div>
                     </li>
                 </ul>
-
-                <!-- ko ifnot: proposals().length -->
-
-                <!-- /ko -->
-
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Proposals</h3>
-                    </div>
-                    <div class="panel-body">
-
-                        <!-- ko if: !isOwner() -->
-
-                        <!-- ko if: isOpening -->
-                        <!-- ko if: isProposalUser -->
-                        <div class="btn-group btn-group-justified">
-                            <a href="javascript:;" class="btn btn-default" data-bind="click: onShowChatModal">Chat with owner</a>
-                        </div>
-                        <!-- /ko -->
-                        <!-- ko ifnot: isProposalUser -->
-                        <div class="form-group">
-                            <button class="btn btn-block blue" data-bind="click: onShowProposalModal">Make a bid</button>
-                        </div>
-                        <!-- /ko -->
-                        <!-- /ko -->
-
-                        <!-- ko if: isTaken -->
-                        <!-- ko if: successfulBidding -->
-                        <button class="btn btn-block btn-default" data-bind="click: onShowChatModal">
-                                                <i class="fa fa-comments-o"></i>
-                                                <span>Chat with owner</span>
-                                            </button>
-                        <!-- /ko -->
-                        <!-- ko ifnot: successfulBidding -->
-                        <div class="well well-sm text-center">
-                            <p><i class="fa fa-ban"></i> <span>Sorry, you have not won the bid.</span></p>
-                        </div>
-                        <!-- /ko -->
-                        <!-- /ko -->
-
-                        <!-- ko if: isDemandClosed -->
-                        <button class="btn btn-block btn-default" data-bind="click: onShowObjectionModal">
-                                                <i class="fa fa-user-md"></i>
-                                                <span>Custom service</span>
-                                            </button>
-                        <!-- /ko -->
-
-                        <!-- ko if: isDemandInvalid -->
-                        <div class="well well-sm text-center">
-                            <p>This demand is expired.</p>
-                        </div>
-                        <!-- /ko -->
-
-                        <!-- /ko -->
-
-                        <!-- ko if: isOwner -->
-
-                        <!-- ko if: isTaken -->
-                        <div class="btn-group btn-group-justified">
-                            <a href="javascript:;" class="btn btn-info" data-bind="click: onFinishTheDemand.bind(this, true)">
-                                <i class="fa fa-check"></i>
-                                <span>Accept</span>
-                            </a>
-                            <a href="javascript:;" class="btn btn-info" data-bind="click: onFinishTheDemand.bind(this, false)">
-                                <i class="fa fa-close"></i>
-                                <span>Reject</span>
-                            </a>
-                        </div>
-                        <!-- /ko -->
-
-                        <!-- ko if: isDemandClosed -->
-                        <div class="well well-sm text-center">
-                            <p>This demand is <span data-bind="text: displayStatus"></span></p>
-                        </div>
-                        <!-- /ko -->
-
-                        <!-- ko if: isDemandInvalid -->
-                        <div class="well well-sm text-center">
-                            <p>This demand is expired.</p>
-                        </div>
-                        <!-- /ko -->
-
-                        <!-- /ko -->
-                    </div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Bidder</th>
-                                <th>Duration</th>
-                                <th>Budget</th>
-                                <!-- ko if: isOwner() && isOpening()-->
-                                <th class="table-action"></th>
-                                <th class="table-action"></th>
-                                <th class="table-action"></th>
-                                <!-- /ko -->
-                                <!-- ko if: !isOwner() && isOpening() && isProposalUser() -->
-                                <th class="table-action"></th>
-                                <!-- ko ifnot: isSelectedProposal -->
-                                <th class="table-action"></th>
-                                <!-- /ko -->
-                                <!-- /ko -->
-                            </tr>
-                        </thead>
-                        <tbody data-bind="visible: proposals().length, foreach: proposals">
-                            <tr data-bind="css: { success: $data.isTaken }">
-                                <td data-bind="text: $data.userName"></td>
-                                <td data-bind="text: $data.duration"></td>
-                                <td data-bind="text: $data.budget, attr: { title: $data.currency }"></td>
-                                <!-- ko if: $parent.isOwner() && $parent.isOpening() -->
-                                <td class="text-right">
-                                    <button class="btn btn-xs btn-block btn-default" data-bind="click: $parent.onShowProposalChatModal.bind(this, $data), tooltip: 'Chat with ' + $data.userName"><i class="fa fa-comment-o"></i></button>
-                                </td>
-                                <td class="text-right">
-                                    <button class="btn btn-xs btn-default" data-bind="click: $parent.onViewProposalDetail.bind(this, $data), tooltip: 'View proposal detail'"><i class="fa fa-eye"></i></button>
-                                </td>
-                                <td class="text-right">
-                                    <button class="btn btn-xs btn-info" data-bind="click: $parent.onAcceptProposal.bind(this, $data), tooltip: 'Accept this proposal'"><i class="fa fa-check"></i></button>
-                                </td>
-                                <!-- /ko -->
-                                <!-- ko if: !$parent.isOwner() && $parent.isOpening() && $parent.isProposalUser() -->
-                                <td class="text-right">
-                                    <a href="javascript:;" class="btn btn-default btn-xs" data-bind="click: $parent.onShowProposalModal"><i class="fa fa-pencil"></i></a>
-                                </td>
-                                <!-- ko ifnot: $parent.isSelectedProposal -->
-                                <td class="text-right">
-                                    <a href="javascript:;" class="btn btn-info btn-xs" data-bind="click: $parent.onDeleteMyProposal"><i class="fa fa-trash"></i></a>
-                                </td>
-                                <!-- /ko -->
-                                <!-- /ko -->
-                            </tr>
-                        </tbody>
-                        <tfoot data-bind="visible: !proposals().length">
-                            <tr>
-                                <td colspan="5" class="text-center">No bidder</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
             </div>
+
             <div class="tab-pane fade" id="tab_1_2">
                 <!-- ko ifnot: isOpening -->
                 <div class="well text-center">
@@ -398,7 +272,7 @@
                     <ul class="media-list" data-bind="foreach: { data: publicCommentList, as: 'public', afterRender: commentRendered }">
                         <li class="media">
                             <a href="javascript:;" class="pull-left">
-                                <img class="media-object img-circle" data-bind="attr: { 'data-src': 'holder.js/48x48?text=' + public.firstLetter }" alt="48x48" style="width: 48px; height: 48px;">
+                                <div class="avatar pull-left" data-bind="text: public.firstLetter"></div>
                             </a>
                             <div class="media-body">
                                 <h4 class="media-heading" data-bind="html: public.content"></h4>
@@ -448,14 +322,46 @@
                 <reply-panel params="type: 'demand', typeId: id"></reply-panel>
                 <!-- /ko -->
             </div>
-            <div class="tab-pane fade" id="tab_1_3"></div>
+            <div class="tab-pane fade" id="tab_1_3">
+                <reply-panel params="type: 'delivery', typeId: takenProposalId"></reply-panel>
+                <hr>
+                <div data-bind="visible: messages().length">
+                    <ul class="media-list" data-bind="foreach: { data: messages, as: 'msg' }">
+                        <li class="media">
+                            <a href="javascript:;" class="pull-left">
+                                <div class="avatar pull-left" data-bind="text: $data.firstLetter, css: { 'blue': !isCurrentUser() }"></div>
+                            </a>
+                            <div class="media-body">
+                                <!-- ko if: msg.content -->
+                                <h4 class="media-heading" data-bind="html: msg.content"></h4>
+                                <!-- /ko -->
+                                <!-- ko if: msg.attachment() -->
+                                <h4 class="media-heading">
+                                    <a data-bind="attr: { href: msg.attachment().url }" target="_blank">
+                                        <i class="fa fa-paperclip"></i>
+                                        <!-- ko text: msg.attachment().fileName -->
+                                        <!-- /ko -->
+                                    </a>
+                                </h4>
+                                <!-- /ko -->
+                                <p class="clearfix">
+                                    <span class="pull-left">
+                                                    <span data-bind="text: msg.userName"></span>
+                                    <span> send at </span>
+                                    <span data-bind="text: msg.date"></span>
+                                    </span>
+                                </p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <objection-modal params="isShow: showObjectionModal, demandId: id"></objection-modal>
 <demand-modal params="isShow: showDemandModal, data: currentDemand"></demand-modal>
 <proposal-modal params="isShow: showProposalModal, demandId: id, currencyCode: currency, currencySymbol: currencySymbol, data: showingProposal, mode: proposalViewingMode"></proposal-modal>
-<chat-modal params="isShow: showChatModal, demandId: id, proposalId: proposalId"></chat-modal>
 <div data-bind="component: {name: 'cashier-modal'}"></div>
 
 <script>

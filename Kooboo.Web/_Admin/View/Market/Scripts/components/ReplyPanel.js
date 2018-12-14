@@ -57,10 +57,40 @@
                                 }
                             })
                             break;
+                        case 'delivery':
+                            Kooboo.Demand.chat({
+                                ownerId: self.typeId(),
+                                isPublic: false,
+                                content: self.content()
+                            }).then(function(res) {
+                                if (res.success) {
+                                    Kooboo.EventBus.publish('kb/market/chat/sent', function() {
+                                        self.showError(false);
+                                        self.content('');
+                                    })
+                                }
+                            })
+                            break;
                     }
                 } else {
                     self.showError(true);
                 }
+            }
+
+            this.uploadFile = function(data, files) {
+                var fd = new FormData();
+                fd.append('filename', files[0].name);
+                fd.append('file', files[0]);
+                Kooboo.Attachment.uploadFile(fd).then(function(res) {
+                    if (res.success) {
+                        Kooboo.Demand.chat({
+                            ownerId: self.typeId(),
+                            isPublic: false,
+                            content: '',
+                            attachments: [res.model]
+                        })
+                    }
+                })
             }
 
             $(".autosize").textareaAutoSize().trigger("keyup");
