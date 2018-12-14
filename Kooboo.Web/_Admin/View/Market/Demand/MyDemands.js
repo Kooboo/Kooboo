@@ -17,11 +17,20 @@ $(function() {
             var docs = data.list.map(function(doc) {
                 return {
                     id: doc.id,
-                    title: {
+                /*   title: {
                         text: doc.title,
                         url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
                             id: doc.id
                         }),
+                        newWindow: true
+                    },*/
+                    article: {
+                        title: doc.title,
+                        description: doc.description,
+                        url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
+                            id: doc.id
+                        }),
+                        class: "title",
                         newWindow: true
                     },
                     budget: doc.symbol + doc.budget,
@@ -37,15 +46,7 @@ $(function() {
                         text: doc.proposalCount,
                         class: 'badge-sm badge-info'
                     },
-                    view: {
-                        title: 'Preview',
-                        class: 'btn-xs btn-info',
-                        iconClass: 'fa-eye',
-                        url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
-                            id: doc.id
-                        }),
-                        newWindow: true
-                    },
+                    
                     createTime: new Date(doc.createTime).toDefaultLangString(),
                 }
 
@@ -58,10 +59,10 @@ $(function() {
             self.tableData({
                 docs: docs,
                 columns: [{
-                    displayName: 'Title',
-                    fieldName: 'title',
-                    type: 'link'
-                }, {
+                    displayName: 'Article',
+                    fieldName: 'article',
+                    type: 'article'
+                },{
                     displayName: 'Start date',
                     fieldName: 'startDate',
                     showClass: 'table-short',
@@ -87,10 +88,7 @@ $(function() {
                     showClass: 'table-short',
                     type: 'text'
                 }],
-                tableActions: [{
-                    fieldName: 'view',
-                    type: 'link-icon'
-                }],
+                
                 unselectable: true
             })
         }

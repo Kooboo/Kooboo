@@ -32,14 +32,23 @@ $(function() {
                 var date = new Date(item.createTime);
                 return {
                     id: item.id,
-                    title: {
+                /*    title: {
                         text: item.title,
                         url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
                             id: item.id
                         }),
                         newWindow: true
                     },
-                    description: getText(item.description),
+                    description: getText(item.description),*/
+                    article: {
+                        title: item.title,
+                        description: getText(item.description),
+                        url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
+                            id: item.id
+                        }),
+                        class: "title",
+                        newWindow: true
+                    },
                     demander: {
                         text: item.userName,
                         class: 'label-sm gray'
@@ -51,30 +60,28 @@ $(function() {
                     },
                     date: date.toDefaultLangString(),
                     startDate: {
-                        text: new Date(item.startDate).toLocaleDateString(),
+                        text: new Date(item.startDate).toKBDateString(),
                         class: 'label-sm gray'
                     },
                     endDate: {
-                        text: new Date(item.endDate).toLocaleDateString(),
+                        text: new Date(item.endDate).toKBDateString(),
                         class: 'label-sm gray'
                     },
                     proposalCount: {
                         text: item.proposalCount,
                         class: 'badge badge-info'
                     },
-                    view: {
-                        iconClass: 'fa-eye',
-                        url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
-                            id: item.id
-                        }),
-                        newWindow: true
-                    }
                 }
             })
 
             var data = {
                 docs: docs,
                 columns: [{
+                    displayName: 'Article',
+                    fieldName: 'article',
+                    type: 'article'
+                    }, 
+                    /*{
                     displayName: 'Title',
                     fieldName: 'title',
                     type: 'link'
@@ -82,7 +89,8 @@ $(function() {
                     displayName: 'Description',
                     fieldName: 'description',
                     type: 'text'
-                }, {
+                }, */
+                {
                     displayName: 'Budget',
                     fieldName: 'budget',
                     type: 'label',
@@ -112,10 +120,6 @@ $(function() {
                     fieldName: 'date',
                     type: 'text',
                     showClass: 'table-short'
-                }],
-                tableActions: [{
-                    fieldName: 'view',
-                    type: 'link-icon'
                 }],
                 kbType: Kooboo.Demand.name,
                 unselectable: true

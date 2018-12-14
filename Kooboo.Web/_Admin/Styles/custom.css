@@ -298,3 +298,40 @@ blockquote footer,
 .table .ip-cell {
     width: 104px;
 }
+
+.block-dashboard-stat .number  {
+    font-size: 18px;
+}
+
+.table .table-short {
+    width: 115px;
+}
+
+.article .title {
+    font-size: 16px;
+}
+
+.article a {
+    text-decoration: none;
+}
+
+.table > thead > tr > th, 
+.table > tbody > tr > th, 
+.table > tfoot > tr > th, 
+.table > thead > tr > td, 
+.table > tbody > tr > td, 
+.table > tfoot > tr > td {
+    vertical-align: middle;
+}
+
+.article p{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 450px;
+}
+
+
+.text-center {
+    text-align: center;
+}

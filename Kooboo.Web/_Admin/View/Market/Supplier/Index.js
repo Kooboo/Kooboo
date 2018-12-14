@@ -19,14 +19,16 @@ $(function() {
             var docs = data.list.map(function(item) {
                 return {
                     id: item.id,
-                    name: {
-                        text: item.name,
+                    article: {
+                        title: item.name,
+                        description: item.description,
                         url: Kooboo.Route.Get(Kooboo.Route.Supplier.ExpertisePage, {
                             id: item.id
                         }),
+                        class: "title",
                         newWindow: true
                     },
-                    description: item.description,
+                    
                     price: {
                         text: item.symbol + item.price,
                         class: 'label-sm label-info',
@@ -35,13 +37,6 @@ $(function() {
                     orgName: {
                         text: item.orgName,
                         class: 'label-sm gray'
-                    },
-                    view: {
-                        iconClass: 'fa-eye',
-                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.ExpertisePage, {
-                            id: item.id
-                        }),
-                        newWindow: true
                     }
                 }
             })
@@ -49,15 +44,16 @@ $(function() {
             var data = {
                 docs: docs,
                 columns: [{
+                    displayName: 'Article',
+                    fieldName: 'article',
+                    type: 'article'
+                }, 
+                /*{
                     displayName: 'Name',
                     fieldName: 'name',
                     type: 'link',
                     showClass: 'table-short'
-                }, {
-                    displayName: 'Description',
-                    fieldName: 'description',
-                    type: 'text'
-                }, {
+                },*/{
                     displayName: 'Price',
                     fieldName: 'price',
                     type: 'label',
@@ -68,10 +64,7 @@ $(function() {
                     type: 'label',
                     showClass: 'table-short'
                 }],
-                tableActions: [{
-                    fieldName: 'view',
-                    type: 'link-icon'
-                }],
+                
                 kbType: Kooboo.Supplier.name,
                 unselectable: true
             };

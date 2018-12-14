@@ -29,11 +29,20 @@ $(function() {
 
                 return {
                     id: item.id,
-                    title: {
+                /*    title: {
                         text: item.title,
                         url: Kooboo.Route.Get(Kooboo.Route.Discussion.DetailPage, {
                             id: item.id
                         })
+                    },*/
+                    article: {
+                        title: item.title,
+                        description: item.content,
+                        url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
+                            id: item.id
+                        }),
+                        class: "title",
+                        newWindow: true
                     },
                     comments: {
                         text: item.commentCount,
@@ -47,22 +56,23 @@ $(function() {
                         text: item.userName,
                         class: 'lable label-sm gray'
                     },
-                    view: {
-                        iconClass: 'fa-eye',
-                        url: Kooboo.Route.Get(Kooboo.Route.Discussion.DetailPage, {
-                            id: item.id
-                        })
-                    },
+                    
                     lastModified: date.toDefaultLangString()
                 }
             })
 
             self.tableData({
                 docs: docs,
-                columns: [{
+                columns: [
+                /*{
                     displayName: "Title",
                     fieldName: "title",
                     type: 'link'
+                }, */
+                {
+                    displayName: 'Article',
+                    fieldName: 'article',
+                    type: 'article'
                 }, {
                     displayName: 'Comments',
                     fieldName: 'comments',
@@ -84,10 +94,7 @@ $(function() {
                     showClass: 'table-short',
                     type: 'text'
                 }],
-                tableActions: [{
-                    fieldName: 'view',
-                    type: 'link-icon'
-                }],
+                
                 kbType: Kooboo.Discussion.name,
                 unselectable: true
             })

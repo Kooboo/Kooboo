@@ -10,12 +10,24 @@ $(function() {
                         var docs = res.model.map(function(item) {
                             return {
                                 id: item.id,
-                                name: item.name,
-                                price: item.symbol + item.price,
-                                description: item.description,
-                                edit: {
-                                    iconClass: 'fa-pencil',
-                                    url: 'kb/expertise/edit'
+                                article: {
+                                    title: item.name,
+                                    description: item.description,
+                                    url: Kooboo.Route.Get(Kooboo.Route.Supplier.ExpertisePage, {
+                                        id: item.id
+                                    }),
+                                    class: "title",
+                                    newWindow: true
+                                },
+                            /*    price: item.symbol + item.price,*/
+                                price: {
+                                    text: item.symbol + item.price,
+                                    class: 'label-sm label-info',
+                                    tooltip: item.currency
+                                },
+                                orgName: {
+                                    text: item.orgName,
+                                    class: 'label-sm gray'
                                 },
                                 delete: {
                                     class: 'red',
@@ -28,24 +40,21 @@ $(function() {
                         self.tableData({
                             docs: docs,
                             columns: [{
-                                displayName: 'Name',
-                                fieldName: 'name',
-                                type: 'text',
-                                showClass: 'table-short'
-                            }, {
-                                displayName: 'Description',
-                                fieldName: 'description',
-                                type: 'text'
+                                displayName: 'Article',
+                                fieldName: 'article',
+                                type: 'article'
                             }, {
                                 displayName: 'Price',
                                 fieldName: 'price',
-                                type: 'text',
+                                type: 'label',
+                                showClass: 'table-short'
+                            },{
+                                displayName: "Supplier",
+                                fieldName: "orgName",
+                                type: 'label',
                                 showClass: 'table-short'
                             }],
                             tableActions: [{
-                                fieldName: 'edit',
-                                type: 'communication-icon-btn'
-                            }, {
                                 fieldName: 'delete',
                                 type: 'communication-icon-btn'
                             }],
