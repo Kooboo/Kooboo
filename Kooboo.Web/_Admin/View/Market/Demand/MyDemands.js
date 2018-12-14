@@ -26,7 +26,10 @@ $(function() {
                         class: "title",
                         newWindow: true
                     },
-                    budget: doc.symbol + doc.budget,
+                    budget: {
+                        text: doc.symbol + doc.budget,
+                        class:'label-sm label-info'
+                    },
                     startDate: {
                         text: getDateString(doc.startDate),
                         class: 'label-sm gray'
@@ -52,7 +55,7 @@ $(function() {
             self.tableData({
                 docs: docs,
                 columns: [{
-                    displayName: 'Article',
+                    displayName: Kooboo.text.common.Demand,
                     fieldName: 'article',
                     type: 'article'
                 },{
@@ -69,7 +72,7 @@ $(function() {
                     displayName: 'Budget',
                     fieldName: 'budget',
                     showClass: 'table-short',
-                    type: 'text'
+                    type: 'label'
                 }, {
                     displayName: 'Proposal',
                     fieldName: 'proposalCount',

@@ -28,6 +28,11 @@ $(function() {
                                     text: item.orgName,
                                     class: 'label-sm gray'
                                 },
+                                edit: {
+                                    class: 'blue',
+                                    iconClass: 'fa fa-pencil',
+                                    url: 'kb/expertise/edit'
+                                },
                                 delete: {
                                     class: 'red',
                                     iconClass: 'fa-trash',
@@ -39,7 +44,7 @@ $(function() {
                         self.tableData({
                             docs: docs,
                             columns: [{
-                                displayName: 'Article',
+                                displayName: Kooboo.text.common.Service,
                                 fieldName: 'article',
                                 type: 'article'
                             }, {
@@ -53,7 +58,11 @@ $(function() {
                                 type: 'label',
                                 showClass: 'table-short'
                             }],
-                            tableActions: [{
+                            tableActions: [
+                                {
+                                fieldName: 'edit',
+                                type: 'communication-icon-btn'
+                                },{
                                 fieldName: 'delete',
                                 type: 'communication-icon-btn'
                             }],

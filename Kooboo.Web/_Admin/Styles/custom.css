@@ -309,9 +309,9 @@ blockquote footer,
 
 
 .article .title {
-    font-size: 18px;
+    font-size: 16px;
     color: #205eac;
-    margin-bottom: 5px;
+    margin-bottom: 0px;
 }
 
 .article a {
@@ -327,10 +327,7 @@ blockquote footer,
     vertical-align: middle;
 }
 
-.table > thead > tr > th {
-    font-size: 16px;
-    font-weight: 600;
-}
+
 
 .article p{
     overflow: hidden;

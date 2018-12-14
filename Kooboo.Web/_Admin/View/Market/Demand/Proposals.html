@@ -16,33 +16,37 @@
         <a href="javascript:;" data-toggle="tab" data-bind="text: type.displayName"></a>
     </li>
 </ul>
-<table class="table table-hover">
+<table class="table table-hover table-striped">
     <thead>
         <tr>
             <th>Demand</th>
-            <th>Budget</th>
-            <th>Duration</th>
-            <th>Created at</th>
-            <th class="table-action"></th>
+            <th class="table-short">Budget</th>
+            <th class="table-short">Duration</th>
+            <th class="table-short">Created at</th>
+            
             <!-- ko if: curType() == 'inTheBid' -->
-            <th class="table-action"></th>
-            <th class="table-action"></th>
+            
             <!-- /ko -->
         </tr>
     </thead>
     <tbody data-bind="foreach: records">
         <tr>
-            <td><a href="javascript:;" data-bind="text: $data.title,attr: { href: $data.previewUrl()}" target="_blank"></a></td>
-            <td data-bind="text: $data.budget, attr: { title: $data.currency }"></td>
+            <td class="article">
+                <a href="javascript:;" data-bind="attr: { href: $data.previewUrl()}" target="_blank">
+                    <p class="title" data-bind="text: $data.title"></p>
+                    <p data-bind="text: $data.description"></p>
+                </a>
+            </td>
+            <td><span  class="label label-sm label-info" data-bind="text: $data.budget, attr: { title: $data.currency }"></span></td>
             <td data-bind="text: $data.duration"></td>
             <td data-bind="text: $data.createTime"></td>
-            <td>
+        <!--    <td>
                 <a class="btn btn-xs btn-default" data-bind="attr: { href: $data.previewUrl()}" target="_blank">
                     <i class="fa fa-eye"></i>
                 </a>
-            </td>
+            </td>-->
             <!-- ko if: $parent.curType() == 'inTheBid' -->
-            <td>
+        <!--    <td>
                 <button class="btn btn-xs btn-info" data-bind="click: $parent.onUpdateProposal.bind(this, $data)">
                             <i class="fa fa-pencil"></i>
                         </button>
@@ -51,7 +55,7 @@
                 <button class="btn btn-xs red" data-bind="click: $parent.onDeleteProposal.bind(this, $data)">
                             <i class="fa fa-trash"></i>
                         </button>
-            </td>
+            </td>-->
             <!-- /ko -->
         </tr>
     </tbody>

@@ -132,6 +132,11 @@
 
             Demands: "Demands",
             Demand: "Demand",
+            Services: "services",
+            Service: "service",
+            Discussion: "Discussion",
+            Discussions: "Discussions",
+
 
             ProductManagement: "Products management",
             ProductTypes: "Product types",

@@ -99,6 +99,7 @@ $(function() {
 
         this.id = ko.observable(data.id);
         this.title = ko.observable(data.demandTitle || '-');
+        this.description=ko.observable(data.description || '-');
         this.budget = ko.observable(data.symbol + data.budget);
         this.duration = ko.observable(data.duration + ' Day(s)')
         this.createTime = ko.observable(date.toDefaultLangString());

@@ -69,7 +69,7 @@ $(function() {
             var data = {
                 docs: docs,
                 columns: [{
-                    displayName: Kooboo.text.common.Demands,
+                    displayName: Kooboo.text.common.Demand,
                     fieldName: 'article',
                     type: 'article'
                     }, 

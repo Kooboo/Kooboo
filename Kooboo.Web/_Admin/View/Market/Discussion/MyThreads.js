@@ -66,7 +66,7 @@ $(function() {
                 docs: docs,
                 columns: [
                 {
-                    displayName: 'Article',
+                    displayName: Kooboo.text.common.Discussion,
                     fieldName: 'article',
                     type: 'article'
                 },

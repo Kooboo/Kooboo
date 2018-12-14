@@ -44,7 +44,7 @@ $(function() {
             var data = {
                 docs: docs,
                 columns: [{
-                    displayName: 'Article',
+                    displayName: Kooboo.text.common.Service,
                     fieldName: 'article',
                     type: 'article'
                 },{
