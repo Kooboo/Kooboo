@@ -1,44 +1,38 @@
-$(function() {
+$(function () {
 
-    var viewModel = function() {
+    var viewModel = function () {
         var self = this;
 
         this.pager = ko.observable();
 
-        this.getItems = function(page) {
+        this.getItems = function (page) {
             Kooboo.Discussion.getList({
                 pageNr: page || 1,
-            }).then(function(res) {
+            }).then(function (res) {
                 if (res.success) {
                     self.handleData(res.model);
                 }
             })
         }
 
-        this.onCreateDiscussion = function() {
+        this.onCreateDiscussion = function () {
             self.showDiscussionModal(true);
         }
 
         this.showDiscussionModal = ko.observable(false);
 
-        this.handleData = function(data) {
+        this.handleData = function (data) {
             self.pager(data);
 
-            var docs = data.list.map(function(item) {
+            var docs = data.list.map(function (item) {
                 var date = new Date(item.lastModified);
 
                 return {
                     id: item.id,
-                /*    title: {
-                        text: item.title,
-                        url: Kooboo.Route.Get(Kooboo.Route.Discussion.DetailPage, {
-                            id: item.id
-                        })
-                    },*/
                     article: {
                         title: item.title,
                         description: item.content,
-                        url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
+                        url: Kooboo.Route.Get(Kooboo.Route.Discussion.DetailPage, {
                             id: item.id
                         }),
                         class: "title",
@@ -56,7 +50,7 @@ $(function() {
                         text: item.userName,
                         class: 'lable label-sm gray'
                     },
-                    
+
                     lastModified: date.toDefaultLangString()
                 }
             })
@@ -64,37 +58,37 @@ $(function() {
             self.tableData({
                 docs: docs,
                 columns: [
-                /*{
-                    displayName: "Title",
-                    fieldName: "title",
-                    type: 'link'
-                }, */
-                {
-                    displayName: 'Article',
-                    fieldName: 'article',
-                    type: 'article'
-                }, {
-                    displayName: 'Comments',
-                    fieldName: 'comments',
-                    showClass: 'table-short',
-                    type: 'badge'
-                }, {
-                    displayName: 'Views',
-                    fieldName: 'views',
-                    showClass: 'table-short',
-                    type: 'badge'
-                }, {
-                    displayName: 'User',
-                    fieldName: 'user',
-                    showClass: 'table-short',
-                    type: 'label'
-                }, {
-                    displayName: 'Last modified',
-                    fieldName: 'lastModified',
-                    showClass: 'table-short',
-                    type: 'text'
-                }],
-                
+                    /*{
+                        displayName: "Title",
+                        fieldName: "title",
+                        type: 'link'
+                    }, */
+                    {
+                        displayName: 'Article',
+                        fieldName: 'article',
+                        type: 'article'
+                    }, {
+                        displayName: 'Comments',
+                        fieldName: 'comments',
+                        showClass: 'table-short',
+                        type: 'badge'
+                    }, {
+                        displayName: 'Views',
+                        fieldName: 'views',
+                        showClass: 'table-short',
+                        type: 'badge'
+                    }, {
+                        displayName: 'User',
+                        fieldName: 'user',
+                        showClass: 'table-short',
+                        type: 'label'
+                    }, {
+                        displayName: 'Last modified',
+                        fieldName: 'lastModified',
+                        showClass: 'table-short',
+                        type: 'text'
+                    }],
+
                 kbType: Kooboo.Discussion.name,
                 unselectable: true
             })
@@ -102,11 +96,11 @@ $(function() {
 
         self.getItems();
 
-        Kooboo.EventBus.subscribe("kb/pager/change", function(page) {
+        Kooboo.EventBus.subscribe("kb/pager/change", function (page) {
             self.getItems(page);
         })
 
-        Kooboo.EventBus.subscribe('kb/component/discussion-modal/saved', function() {
+        Kooboo.EventBus.subscribe('kb/component/discussion-modal/saved', function () {
             self.getItems();
         })
     }

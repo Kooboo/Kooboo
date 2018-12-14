@@ -113,7 +113,7 @@
                                 <img class="media-object img-circle" data-bind="attr: { 'data-src': 'holder.js/48x48?text=' + comment.firstLetter }" alt="48x48" style="width: 48px; height: 48px;">
                             </a>
                             <div class="media-body">
-                                <h5 class="media-heading" style="word-break: break-all;" data-bind="text: comment.content"></h5>
+                                <h5 class="media-heading" style="word-break: break-all;" data-bind="html: comment.content"></h5>
                                 <p class="clearfix">
                                     <span class="pull-left item">
                                             <span data-bind="text: userName"></span>
@@ -136,7 +136,7 @@
                                                 <img class="media-object img-circle" data-bind="attr: { 'data-src': 'holder.js/48x48?text=' + sub.firstLetter }" alt="48x48" style="width: 48px; height: 48px;">
                                             </a>
                                             <div class="media-body">
-                                                <h5 class="media-heading" data-bind="text: sub.content"></h5>
+                                                <h5 class="media-heading" data-bind="html: sub.content"></h5>
                                                 <p class="clearfix">
                                                     <span class="pull-left item">
                                                                 <span data-bind="text: sub.userName"></span>
