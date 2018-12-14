@@ -57,11 +57,6 @@
 
                 if (self.paymentMethod() == 'coupon') {
                     order.code = self.couponCode();
-                    Kooboo.Order.useCoupon({
-                        code: self.couponCode()
-                    }).then(function(res) {
-                        if (res.success) {}
-                    })
                 }
 
                 Kooboo.Order.pay(order).then(function(res) {

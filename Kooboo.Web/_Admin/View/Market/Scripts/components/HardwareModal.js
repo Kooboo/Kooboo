@@ -106,6 +106,9 @@
                     })
                 }
             }
+            Kooboo.EventBus.subscribe('kb/market/cashier/done', function() {
+                self.onHide();
+            })
         },
         template: template
     })
