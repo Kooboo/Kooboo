@@ -11,6 +11,14 @@
         border-bottom: 1px solid #dedede;
     }
     
+    .bidder.selected {
+        background: #dff0d8;
+    }
+    
+    .bidder.failed {
+        opacity: 0.2;
+    }
+    
     .bidder:last-child {
         border-bottom: 0;
     }
@@ -185,7 +193,7 @@
                 <!-- /ko -->
 
                 <ul class="bidder-list" data-bind="visible: proposals().length, foreach: proposals">
-                    <li class="bidder clearfix">
+                    <li class="bidder clearfix" data-bind="css: { 'selected': $data.isTaken && $parent.isTaken, 'failed': !$data.isTaken && $parent.isTaken}">
                         <div class="avatar pull-left" data-bind="text: $data.firstLetter"></div>
                         <div class="pull-left col-md-8">
                             <div class="row">
@@ -203,7 +211,32 @@
                                         <!-- /ko -->
 
                                         <!-- /ko -->
-
+                                    </div>
+                                    <div class="description" data-bind="html: $data.description"></div>
+                                    <div class="attachments" data-bind="visible: $data.attachments.length">
+                                        <!-- ko foreach: { data: $data.attachments, as: 'attach' } -->
+                                        <a class="attachment" data-bind="attr: { href: attach.url }" target="_blank">
+                                            <i class="fa fa-paperclip"></i>
+                                            <!-- ko text: attach.fileName -->
+                                            <!-- /ko -->
+                                        </a>
+                                        <!-- /ko -->
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info">
+                                        <div class="item">
+                                            <span>Budget:</span>
+                                            <span class="value" data-bind="text: $data.budget"></span>
+                                        </div>
+                                        <div class="item">
+                                            <span>Duration:</span>
+                                            <span class="value" data-bind="text: $data.duration"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="info">
                                         <!-- ko if: $data.isMyProposal -->
 
                                         <!-- ko if: $parent.isOpening -->
@@ -219,41 +252,18 @@
                                         <!-- ko if: $parent.isOwner() -->
 
                                         <!-- ko if: $parent.isOpening() -->
-                                        <button class="btn btn-xs btn-info" data-bind="click: $parent.onAcceptProposal.bind(this, $data), tooltip: 'Accept this proposal'"><i class="fa fa-check"></i></button>
+                                        <button class="btn btn-sm btn-info" data-bind="click: $parent.onAcceptProposal.bind(this, $data), tooltip: 'Accept this proposal'">Accept</button>
                                         <!-- /ko -->
 
                                         <!-- ko if: $parent.isTaken()  && !$parent.isDemandClosed() -->
 
                                         <!-- ko if: $data.isTaken -->
-                                        <a href="javascript:;" class="btn btn-xs btn-info" data-bind="click: $parent.onFinishTheDemand.bind(this, true)"><i class="fa fa-check"></i>&nbsp;<span>Accept</span></a>
-                                        <a href="javascript:;" class="btn btn-xs btn-info" data-bind="click: $parent.onFinishTheDemand.bind(this, false)"><i class="fa fa-close"></i>&nbsp;<span>Reject</span></a>
-                                        <!-- /ko -->
 
                                         <!-- /ko -->
 
                                         <!-- /ko -->
-                                    </div>
-                                    <div class="description" data-bind="html: $data.description"></div>
-                                    <div class="attachments" data-bind="visible: $data.attachments.length">
-                                        <!-- ko foreach: { data: $data.attachments, as: 'attach' } -->
-                                        <a class="attachment" data-bind="attr: { href: attach.url }" target="_blank">
-                                            <i class="fa fa-paperclip"></i>
-                                            <!-- ko text: attach.fileName -->
-                                            <!-- /ko -->
-                                        </a>
+
                                         <!-- /ko -->
-                                    </div>
-                                </div>
-                                <div class="col-md-6" style="position: relative;">
-                                    <div class="info">
-                                        <div class="item">
-                                            <span>Budget:</span>
-                                            <span class="value" data-bind="text: $data.budget"></span>
-                                        </div>
-                                        <div class="item">
-                                            <span>Duration:</span>
-                                            <span class="value" data-bind="text: $data.duration"></span>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -323,6 +333,9 @@
                 <!-- /ko -->
             </div>
             <div class="tab-pane fade" id="tab_1_3">
+                <a href="javascript:;" class="btn btn-sm btn-info" data-bind="click: onFinishTheDemand.bind(this, true)">Accept</a>
+                <a href="javascript:;" class="btn btn-sm btn-default" data-bind="click: onFinishTheDemand.bind(this, false)">Reject</a>
+                <hr>
                 <reply-panel params="type: 'delivery', typeId: takenProposalId"></reply-panel>
                 <hr>
                 <div data-bind="visible: messages().length">
@@ -372,7 +385,6 @@
             "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
             "/_Admin/View/Market/Scripts/components/ReplyPanel.js",
             "/_Admin/View/Market/Scripts/components/ProposalModal.js",
-            "/_Admin/View/Market/Scripts/components/ChatModal.js",
             "/_Admin/View/Market/Scripts/components/DemandModal.js",
             "/_Admin/View/Market/Scripts/components/ObjectionModal.js",
             "/_Admin/View/Market/Scripts/components/CashierModal.js",

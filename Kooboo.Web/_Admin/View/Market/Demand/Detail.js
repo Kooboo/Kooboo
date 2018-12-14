@@ -266,7 +266,7 @@ $(function() {
         }
 
         Kooboo.EventBus.subscribe('kb/market/cashier/done', function() {
-            Kooboo.EventBus.publish("kb/demand/proposal/update");
+            location.reload();
         })
 
         Kooboo.EventBus.subscribe("kb/demand/proposal/update", function() {
