@@ -1,5 +1,6 @@
 $(function() {
     var CURRENT_USER_ID = '';
+    var INTERVAL = null;
 
     var viewModel = function() {
         var self = this;
@@ -21,7 +22,7 @@ $(function() {
         this.ImBuyer = ko.observable(false);
         this.isFinished = ko.observable(false);
 
-        this.getOrder = function() {
+        this.getOrder = function(cb) {
             Kooboo.Supplier.getOrder({
                 id: self.id()
             }).then(function(res) {
@@ -40,6 +41,13 @@ $(function() {
                     self.supplierName(data.orgName);
                     self.ImBuyer(data.buyerOrganizationId == localStorage.getItem('_kooboo_api_user'));
                     self.isFinished(data.isFinished);
+                    if (data.isFinished) {
+                        self.getPublicCommentList();
+                    } else {
+                        setInterval(function() {
+                            self.getPublicCommentList();
+                        }, 2000);
+                    }
                 }
             })
         }
@@ -71,9 +79,6 @@ $(function() {
         }
 
         this.getOrder();
-        setInterval(function() {
-            self.getPublicCommentList();
-        }, 2000);
 
         Kooboo.EventBus.subscribe('kb/market/reply/sent', function(cb) {
             self.getPublicCommentList(cb);
