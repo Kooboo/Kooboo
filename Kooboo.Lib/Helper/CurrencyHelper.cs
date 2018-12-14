@@ -7,10 +7,28 @@ using System.Globalization;
 
 namespace Kooboo.Lib.Helper
 {
-    public class CurrencyHelper
+    public static class CurrencyHelper
     {
-        public static string GetCurrencySymbol(string ISOCurrencySymbol)
+        private static Dictionary<string, string> CurrencyDic = new Dictionary<string, string>();
+        static CurrencyHelper()
         {
+            CurrencyDic.Add("USD", "$");//United States dollar
+            CurrencyDic.Add("EUR", "€");//Euro
+            CurrencyDic.Add("JPY", "JPY¥");//Japanese yen
+            CurrencyDic.Add("GBP", "£");//Pound sterling
+            CurrencyDic.Add("AUD", "A$");//Australian dollar
+            CurrencyDic.Add("CAD", "C$");//Canadian dollar
+            CurrencyDic.Add("CHF", "Fr");//Swiss franc
+            CurrencyDic.Add("CNY", "¥");//Renminbi
+        }
+        public static string GetCurrencySymbol(string currency)
+        {
+            currency = currency.ToUpper();
+            if (CurrencyDic.ContainsKey(currency))
+            {
+                return CurrencyDic[currency];
+            }
+            throw new Exception(string.Format("currency:{0} is not supported.",currency));
 
 // 1
 
@@ -53,29 +71,6 @@ namespace Kooboo.Lib.Helper
 //CNY(元)
 //4.0 %
 
-
-
-
-            string symbol = CultureInfo
-                .GetCultures(CultureTypes.AllCultures)
-                .Where(c => !c.IsNeutralCulture)
-                .Select(culture => {
-                    try
-                    {
-                        return new RegionInfo(culture.LCID);
-                    }
-                    catch
-                    {
-                        return null;
-                    }
-                })
-                .Where(ri => ri != null && ri.ISOCurrencySymbol == ISOCurrencySymbol)
-                .Select(ri => ri.CurrencySymbol)
-                .FirstOrDefault();
-            if (symbol == null)
-                return string.Empty;
-
-            return symbol;
         }
     }
 }
