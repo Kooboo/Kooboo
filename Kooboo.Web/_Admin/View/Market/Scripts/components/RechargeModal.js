@@ -116,8 +116,9 @@
                     }
                 } else {
                     if (self.couponCode.isValid()) {
-                        Kooboo.Order.useCoupon({
-                            code: self.couponCode()
+                        Kooboo.Order.topup({
+                            code: self.couponCode(),
+                            paymentMethod: self.paymentMethod()
                         }).then(function(res) {
                             if (res.success) {
                                 window.info.done(Kooboo.text.info.recharge.success);
