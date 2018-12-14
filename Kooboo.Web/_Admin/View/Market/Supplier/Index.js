@@ -22,13 +22,13 @@ $(function() {
                     article: {
                         title: item.name,
                         description: item.description,
-                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.ExpertisePage, {
+                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.ServicePage, {
                             id: item.id
                         }),
                         class: "title",
                         newWindow: true
                     },
-                    
+
                     price: {
                         text: item.symbol + item.price,
                         class: 'label-sm label-info',

@@ -3,7 +3,7 @@
         <textarea data-bind="textInput: content, textError: content" class="form-control autosize margin-bottom-15" placeholder="Reply content goes here" style="min-height: 50px;"></textarea>
     </div>
     <div class="form-group">
-        <!-- ko if: type() == 'delivery' -->
+        <!-- ko if: uploadRequired -->
         <div class="input-group">
             <span class="input-group-btn">
                 <button class="btn btn-info" data-bind="click: onReply">Send</button>
@@ -18,7 +18,7 @@
             </span>
         </div>
         <!-- /ko -->
-        <!-- ko if: type() !== 'delivery' -->
+        <!-- ko ifnot: uploadRequired -->
         <button class="btn blue" data-bind="click: onReply, enable: ableToReply">Reply</button>
         <!-- /ko -->
     </div>

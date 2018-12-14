@@ -37,6 +37,7 @@
             this.onHide = function() {
                 PAYMENT_SUCCESS = false;
                 self.order(null);
+                self.couponCode('');
                 self.isPaying(false);
                 self.isShow(false);
             }

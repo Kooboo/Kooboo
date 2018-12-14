@@ -31,14 +31,14 @@ $(function() {
                     self.description(res.model.description || 'No description provided.');
                     self.price(res.model.symbol + res.model.price);
                     self.currency(res.model.currency);
-                    self.supplierId(res.model.supplierId);
+                    self.supplierId(res.model.organizationId);
                     self.supplierName(res.model.orgName);
-                    self.isMe(res.model.supplierId == localStorage.getItem('_kooboo_api_user'));
+                    self.isMe(res.model.organizationId == localStorage.getItem('_kooboo_api_user'));
                 }
             })
         }
         this.getData();
-        
+
         this.showOrderModal = ko.observable(false);
         this.onShowOrderModal = function() {
             self.showOrderModal(true);

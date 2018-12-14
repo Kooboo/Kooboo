@@ -16,6 +16,10 @@
 
             this.showError = ko.observable(false);
 
+            this.uploadRequired = ko.pureComputed(function() {
+                return ['supplier', 'delivery'].indexOf(self.type()) > -1;
+            })
+
             this.content = ko.validateField({
                 required: ''
             })
@@ -71,6 +75,19 @@
                                 }
                             })
                             break;
+                        case 'supplier':
+                            Kooboo.Supplier.reply({
+                                ownerId: self.typeId(),
+                                content: self.content()
+                            }).then(function(res) {
+                                if (res.success) {
+                                    Kooboo.EventBus.publish('kb/market/reply/sent', function() {
+                                        self.showError(false);
+                                        self.content('');
+                                    })
+                                }
+                            })
+                            break;
                     }
                 } else {
                     self.showError(true);
@@ -83,12 +100,23 @@
                 fd.append('file', files[0]);
                 Kooboo.Attachment.uploadFile(fd).then(function(res) {
                     if (res.success) {
-                        Kooboo.Demand.chat({
-                            ownerId: self.typeId(),
-                            isPublic: false,
-                            content: '',
-                            attachments: [res.model]
-                        })
+                        switch (self.type()) {
+                            case 'delivery':
+                                Kooboo.Demand.chat({
+                                    ownerId: self.typeId(),
+                                    isPublic: false,
+                                    content: '',
+                                    attachments: [res.model]
+                                });
+                                break;
+                            case 'supplier':
+                                Kooboo.Supplier.reply({
+                                    ownerId: self.typeId(),
+                                    content: '',
+                                    attachments: [res.model]
+                                })
+                                break;
+                        }
                     }
                 })
             }

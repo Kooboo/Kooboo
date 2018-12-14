@@ -137,15 +137,16 @@ $(function() {
             return this.executePost('addOrUpdate', para);
         }
 
-        this.myOrdersIn=function(){
-            return this.executePost('MyOrders',{in:true});
+        this.myOrdersIn = function() {
+            return this.executePost('MyOrders', { in: true });
         }
-        this.myOrdersOut=function(){
-            return this.executePost('MyOrders',{in:false});
+        this.myOrdersOut = function() {
+            return this.executePost('MyOrders', { in: false });
         }
-        // this.getExpertiseList = function(para) {
-        //     return this.executeGet('ExpertiseList', para);
-        // }
+
+        this.getOrder = function(para) {
+            return this.executeGet('GetOrder', para);
+        }
 
         this.get = function(para) {
             return this.executeGet('get', para);
@@ -159,17 +160,10 @@ $(function() {
             return this.executeGet('GetByUser', para);
         }
 
-
-
         this.getOrdersBySupplier = function(para) {
             // 我收到的所有 orders
             return this.executeGet('MySupplyOrders', para);
         }
-
-        // this.getOrdersByUser = function(para) {
-        //     // 我发出的所有 orders
-        //     return this.executeGet('MyOrders', para);
-        // }
 
         this.addOrUpdateOrder = function(para) {
             return this.executePost('AddOrUpdateOrder', para);
@@ -188,15 +182,17 @@ $(function() {
             return this.executeGet('MyOrdersFilterBySupplier', para);
         }
 
-        // this.getUserExpertiseList = function(para) {
-        //     return this.executeGet('UserExpertiseList', para);
-        // }
+        this.reply = function(para) {
+            return this.executePost('Reply', para);
+        }
 
-        // this.getMyExpertiseList = function(para) {
-        //     return this.executeGet('MyExpertiseList', para);
-        // }
+        this.getPublicCommentList = function(para) {
+            return this.executeGet('PublicCommentList', para, true);
+        }
 
-
+        this.onComplete = function(para) {
+            return this.executePost('Complete', para);
+        }
     }
     extend(Supplier, Kooboo.BaseModel);
 
@@ -302,7 +298,7 @@ $(function() {
         this.service = function(para) {
             return this.executePost('Service', para);
         }
-        
+
     }
     extend(Order, Kooboo.BaseModel);
 

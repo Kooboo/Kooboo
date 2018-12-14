@@ -176,9 +176,10 @@
         Supplier: {
             ListPage: GetRoute("Market/Supplier/Index"),
             DetailPage: GetRoute("Market/Supplier/Detail"),
-            ExpertisePage: GetRoute("Market/Supplier/Expertise"),
+            ServicePage: GetRoute("Market/Supplier/Service"),
             MyOrdersPage: GetRoute("Market/Supplier/MyOrders"),
-            MyOffersPage: GetRoute("Market/Supplier/MyOffers")
+            MyOffersPage: GetRoute("Market/Supplier/MyOffers"),
+            OrderPage: GetRoute("Market/Supplier/Order")
         },
         Template: {
             ListPage: GetRoute("Market/Template/Index")

@@ -13,9 +13,7 @@ $(function() {
                                 article: {
                                     title: item.name,
                                     description: item.description,
-                                    url: Kooboo.Route.Get(Kooboo.Route.Supplier.ExpertisePage, {
-                                        id: item.id
-                                    }),
+                                    url: 'kb/supplier/my/services',
                                     class: "title",
                                     newWindow: true
                                 },
@@ -46,13 +44,13 @@ $(function() {
                             columns: [{
                                 displayName: Kooboo.text.common.Service,
                                 fieldName: 'article',
-                                type: 'article'
+                                type: 'communication-article'
                             }, {
                                 displayName: 'Price',
                                 fieldName: 'price',
                                 type: 'label',
                                 showClass: 'table-short'
-                            },{
+                            }, {
                                 displayName: "Supplier",
                                 fieldName: "orgName",
                                 type: 'label',
@@ -91,7 +89,8 @@ $(function() {
 
         this.onGet();
 
-        Kooboo.EventBus.subscribe('kb/expertise/edit', function(data) {
+        Kooboo.EventBus.subscribe('kb/supplier/my/services', function(data) {
+            debugger
             Kooboo.EventBus.publish('kb/market/component/expertise-modal/show', data.id);
         })
 

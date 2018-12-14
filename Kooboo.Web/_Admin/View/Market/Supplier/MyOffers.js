@@ -14,14 +14,13 @@ $(function() {
 
         this.handleData = function(data) {
             self.pager(data);
-     
+
             var docs = data.list.map(function(item) {
-                debugger;
-                var symbol=item.symbol?item.symbol:item.currency;
+                var symbol = item.symbol ? item.symbol : item.currency;
                 return {
                     id: item.id,
                     name: item.name,
-                    amount:  symbol+ item.totalAmount,
+                    amount: symbol + item.totalAmount,
                     status: {
                         text: item.status.displayName,
                         class: 'label-sm label-info'
@@ -32,7 +31,7 @@ $(function() {
                     },
                     view: {
                         iconClass: 'fa-eye',
-                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.DetailPage, {
+                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.OrderPage, {
                             id: item.id
                         }),
                         newWindow: true

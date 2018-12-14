@@ -10,9 +10,9 @@
             var self = this;
 
             this.isShow = params.isShow;
-            this.name=params.name;
-            this.id=params.id;
-            this.supplierName=params.supplierName;
+            this.name = params.name;
+            this.id = params.id;
+            this.supplierName = params.supplierName;
             this.isShow.subscribe(function(show) {
                 if (show) {
                     setTimeout(function() {
@@ -56,14 +56,21 @@
                 Kooboo.Order.service({
                     UserServiceId: self.id(),
                     remark: self.remark(),
-                    attachments: self.attachments() 
-                
+                    attachments: self.attachments()
+
                 }).then(function(res) {
                     if (res.success) {
                         Kooboo.EventBus.publish("kb/market/component/cashier/show", res.model);
                     }
                 })
             }
+
+            Kooboo.EventBus.subscribe('kb/market/cashier/done', function() {
+                self.isShow(false);
+                setTimeout(function() {
+                    location.href = Kooboo.Route.Supplier.MyOrdersPage;
+                }, 300);
+            });
         },
         template: template
     })

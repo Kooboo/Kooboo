@@ -16,21 +16,19 @@ $(function() {
             self.pager(data);
 
             var docs = data.list.map(function(item) {
-                var symbol=item.symbol?item.symbol:item.currency;
+                var symbol = item.symbol ? item.symbol : item.currency;
                 return {
                     id: item.id,
-                    name: item.name,
+                    name: {
+                        text: item.name,
+                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.OrderPage, {
+                            id: item.id
+                        })
+                    },
                     amount: symbol + item.totalAmount,
                     status: {
                         text: item.status.displayName,
                         class: 'label-sm label-info'
-                    },
-                    view: {
-                        iconClass: 'fa-eye',
-                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.DetailPage, {
-                            id: item.id
-                        }),
-                        newWindow: true
                     }
                 }
             })
@@ -40,7 +38,7 @@ $(function() {
                 columns: [{
                     displayName: 'Name',
                     fieldName: 'name',
-                    type: 'text'
+                    type: 'link'
                 }, {
                     displayName: 'Amount',
                     fieldName: 'amount',
@@ -50,10 +48,7 @@ $(function() {
                     fieldName: 'status',
                     type: 'label'
                 }],
-                tableActions: [{
-                    fieldName: 'view',
-                    type: 'link-icon'
-                }],
+                tableActions: [],
                 unselectable: true,
                 kbType: Kooboo.Supplier.name
             })
