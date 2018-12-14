@@ -7,12 +7,14 @@
             </div>
             <div class="modal-body">
                 <!-- ko if: mode() == 'edit' -->
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea class="autosize form-control" data-bind="value: description" style="min-height: 50px;"></textarea>
-                </div>
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12 margin-bottom-15">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="autosize form-control" data-bind="value: description" style="min-height: 50px;"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-md-6 margin-bottom-15">
                         <div class="form-group">
                             <label data-bind="textError: duration">Duration</label>
                             <div class="input-group">
@@ -21,16 +23,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 margin-bottom-15">
                         <div class="form-group">
                             <label>Budget</label>
                             <div class="input-group">
-                                <span class="input-group-addon"><i data-bind="attr: { class: 'fa fa-' + currencySymbol(), title: currencyCode }"></i></span>
+                                <span class="input-group-addon" data-bind="text: currencySymbol, attr: { title: currencyCode }"></span>
                                 <input type="number" class="form-control" data-bind="value: budget, event: { keydown: Kooboo.event.input.positiveNumberOnly }">
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12">
+                    <div class="col-md-12 margin-bottom-15">
                         <div class="form-group">
                             <label>Attachments</label>
                             <div class="form-inline">

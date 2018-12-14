@@ -1,138 +1,261 @@
-<!-- #layout name=default-->
-<div id="main">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title" data-bind="text: title"></h3>
-                        <div class="panel-actions">
-                            <!-- ko if: isOwner() && isOpening() -->
-                            <button class="btn btn-xs btn-info" data-bind="click: onUpdateDemand"><i class="fa fa-pencil"></i></button>
-                            <!-- /ko -->
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <div data-bind="html: description" class="margin-bottom-20"></div>
-                        <div class="form-group" data-bind="visible: attachments().length">
-                            <label>Attachments</label>
-                            <p class="form-control-static" data-bind="foreach: attachments">
-                                <a data-bind="attr: { href: $data.downloadUrl }" target="_blank">
-                                    <i class="fa fa-paperclip"></i>
-                                    <!-- ko text: $data.fileName -->
-                                    <!-- /ko -->
-                                </a>
-                            </p>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Demand owner</label>
-                                    <p class="form-control-static" data-bind="text: userName"></p>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label>Budget</label>
-                                    <p class="form-control-static" data-bind="text: budget, attr: { title: currency }"></p>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label>Duration</label>
-                                    <p class="form-control-static" data-bind="text: duration"></p>
-                                </div>
-                            </div>
-                            <div class="col-md-5">
-                                <div class="form-group">
-                                    <label>Required skills</label>
-                                    <p class="form-control-static">
-                                        <!-- ko foreach: skills -->
-                                        <label class="label label-sm label-info" data-bind="text: $data"></label>
-                                        <!-- /ko -->
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label>Status</label>
-                                    <p class="form-control-static" data-bind="text: displayStatus"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<!-- #layout name=blank --sideType='market'-->
+<div class="page-header">
+    <h1 class="title">Demand</h1>
+</div>
+
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+        name: 'MARKET'
+    },{
+        name: 'Demands',
+        url: Kooboo.Route.Demand.ListPage
+    },{
+        name: 'Detail'
+    }]}"></div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title" data-bind="text: title"></h3>
+                <div class="panel-actions">
+                    <!-- ko if: isOwner() && isOpening() -->
+                    <button class="btn btn-xs btn-info" data-bind="click: onUpdateDemand"><i class="fa fa-pencil"></i></button>
+                    <!-- /ko -->
                 </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Comment</h3>
-                    </div>
-                    <div class="panel-body">
-                        <!-- ko ifnot: isOpening -->
-                        <div class="well text-center">
-                            <p><i class="fa fa-ban"></i> <span>This demand is not tendering now, you can't comment.</span></p>
+            </div>
+            <div class="panel-body">
+                <div data-bind="html: description" class="margin-bottom-20"></div>
+                <div class="form-group" data-bind="visible: attachments().length">
+                    <label>Attachments</label>
+                    <p class="form-control-static" data-bind="foreach: attachments">
+                        <a data-bind="attr: { href: $data.downloadUrl }" target="_blank">
+                            <i class="fa fa-paperclip"></i>
+                            <!-- ko text: $data.fileName -->
+                            <!-- /ko -->
+                        </a>
+                    </p>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-md-2 col-sm-4 col-xs-6">
+                        <div class="form-group">
+                            <label>Status</label>
+                            <p class="form-control-static" data-bind="text: displayStatus"></p>
                         </div>
-                        <!-- /ko -->
-                        <!-- ko if: isOpening -->
-                        <reply-panel params="type: 'demand', typeId: id"></reply-panel>
-                        <!-- /ko -->
-                        <div data-bind="visible: publicCommentList().length">
-                            <hr>
-                            <ul class="media-list" data-bind="foreach: { data: publicCommentList, as: 'public', afterRender: commentRendered }">
-                                <li class="media">
-                                    <a href="javascript:;" class="pull-left">
-                                        <img class="media-object" data-bind="attr: { 'data-src': 'holder.js/48x48?text=' + public.firstLetter }" alt="48x48" style="width: 48px; height: 48px;">
-                                    </a>
-                                    <div class="media-body">
-                                        <h4 class="media-heading" data-bind="html: public.content"></h4>
-                                        <p class="clearfix">
-                                            <span class="pull-left">
-                                                <span data-bind="text: public.userName"></span>
-                                            <span> comments at </span>
-                                            <span data-bind="text: public.date"></span>
-                                            </span>
-                                            <span class="pull-right">
-                                                <a href="javascript:;" data-bind="click: $parent.onToggleSubComment.bind(public)">
-                                                    <i class="fa fa-comment"></i>
-                                                    <!-- ko text: public.commentCount -->
-                                                    <!-- /ko -->
-                                                </a>
-                                            </span>
-                                        </p>
-                                        <div data-bind="visible: public.showSubComment">
-                                            <div data-bind="foreach:{ data: public.subCommentList, as: 'sub', afterRender: $parent.commentRendered }">
-                                                <div class="media margin-top-15">
-                                                    <a class="pull-left" href="#">
-                                                        <img class="media-object" data-bind="attr: { 'data-src': 'holder.js/48x48?text=' + sub.firstLetter }" alt="48x48" style="width: 48px; height: 48px;">
-                                                    </a>
-                                                    <div class="media-body">
-                                                        <h4 class="media-heading" data-bind="html: sub.content"></h4>
-                                                        <p>
-                                                            <span class="pull-left">
-                                                                <span data-bind="text: sub.userName"></span>
-                                                            <span> replies at </span>
-                                                            <span data-bind="text: sub.date"></span>
-                                                            </span>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <!-- ko if: $root.isOpening -->
-                                            <reply-panel params="type: 'demand', typeId: $root.id, parentId: public.id"></reply-panel>
-                                            <!-- /ko -->
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
+                    </div>
+                    <div class="col-md-1 col-sm-4 col-xs-6">
+                        <div class="form-group">
+                            <label>Budget</label>
+                            <p class="form-control-static" data-bind="text: budget, attr: { title: currency }"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 col-xs-6">
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <p class="form-control-static" data-bind="text: duration"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-4 col-xs-6">
+                        <div class="form-group">
+                            <label>Demand owner</label>
+                            <p class="form-control-static" data-bind="text: userName"></p>
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-sm-8 col-xs-6">
+                        <div class="form-group">
+                            <label>Required skills</label>
+                            <p class="form-control-static">
+                                <!-- ko foreach: skills -->
+                                <label class="label label-sm label-info" data-bind="text: $data"></label>
+                                <!-- /ko -->
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+        </div>
+        <ul class="nav nav-tabs margin-bottom-5">
+            <li class="active">
+                <a href="#tab_1_1" data-toggle="tab">Proposals</a>
+            </li>
+            <li>
+                <a href="#tab_1_3" data-toggle="tab">Delivery</a>
+            </li>
+            <li>
+                <a href="#tab_1_2" data-toggle="tab">Comments</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade active in" id="tab_1_1">
+
+                <!-- ko if: !isOwner() && !isProposalUser() -->
+                <div class="alert alert-info">
+                    You haven't make a bid yet. Click <a href="javascript:;" class="alert-link" data-bind="click: onShowProposalModal">here</a> to make your bid.
+                </div>
+                <!-- /ko -->
+
+                <!-- ko if: isDemandClosed -->
+                <div class="alert alert-warning">
+                    <strong>Warning!</strong><span>This demand is <span data-bind="text: displayStatus"></span></span>
+                </div>
+                <!-- /ko -->
+
+                <!-- ko if: isDemandInvalid -->
+                <div class="alert alert-danger">
+                    <strong>Notice</strong><span>This demand is expired.</span>
+                </div>
+                <!-- /ko -->
+
+                <style>
+                    .bidder-list {
+                        margin: 0;
+                        padding: 0;
+                    }
+                    
+                    .bidder {
+                        list-style: none;
+                        padding: 15px 0;
+                        border-bottom: 1px solid #dedede;
+                    }
+                    
+                    .bidder:last-child {
+                        border-bottom: 0;
+                    }
+                    
+                    .bidder .avatar {
+                        width: 48px;
+                        height: 48px;
+                        background: #eee;
+                        border-radius: 50%;
+                        line-height: 48px;
+                        color: #aaa;
+                        text-align: center;
+                        font-weight: bold;
+                        font-size: 14px;
+                        margin-right: 10px;
+                    }
+                    
+                    .bidder .nickname {
+                        font-size: 16px;
+                        margin-bottom: 5px;
+                        font-weight: bold;
+                    }
+                    
+                    .bidder .nickname button {
+                        vertical-align: top;
+                        margin-left: 5px;
+                    }
+                    
+                    .bidder .info {
+                        font-size: 14px;
+                        line-height: 20px;
+                        margin: 20px 0;
+                    }
+                    
+                    .bidder .info .item {
+                        margin-right: 10px;
+                    }
+                    
+                    .bidder .info .item .value {
+                        font-weight: bold;
+                    }
+                    
+                    .bidder .description {
+                        font-size: 15px;
+                        line-height: 1.5;
+                        margin-bottom: 10px;
+                        word-break: break-all;
+                    }
+                    
+                    .bidder .attachments .attachment {
+                        display: inline-block;
+                        margin-right: 10px;
+                        margin-bottom: 4px;
+                        padding: 4px 12px;
+                        background: #eee;
+                        border-radius: 30px;
+                    }
+                </style>
+
+                <ul class="bidder-list" data-bind="visible: proposals().length, foreach: proposals">
+                    <li class="bidder clearfix">
+                        <div class="avatar pull-left" data-bind="text: $data.firstLetter"></div>
+                        <div class="pull-left col-md-8">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="nickname">
+                                        <span data-bind="text: $data.userName"></span>
+                                        <!-- ko if: $data.isMyProposal -->
+
+                                        <!-- ko if: $parent.isOpening -->
+                                        <button class="btn btn-xs btn-info" data-bind="click: $parent.onShowProposalModal"><i class="fa fa-pencil"></i></button>
+                                        <!-- /ko -->
+
+                                        <!-- ko if: $parent.isTaken -->
+
+                                        <!-- ko if: successfulBidding -->
+                                        <span class="badge badge-success"><i class="fa fa-check"></i></span>
+                                        <!-- /ko -->
+
+                                        <!-- ko ifnot: successfulBidding -->
+                                        <span class="badge badge-danger"><i class="fa fa-close"></i></span>
+                                        <!-- /ko -->
+
+                                        <!-- /ko -->
+
+                                        <!-- ko if: $parent.isDemandClosed -->
+                                        <button class="btn btn-xs btn-default" data-bind="click: onShowObjectionModal"><i class="fa fa-user-md"></i></button>
+                                        <!-- /ko -->
+
+                                        <!-- /ko -->
+
+                                        <!-- ko if: $parent.isOwner() -->
+
+                                        <!-- ko if: $parent.isOpening() -->
+                                        <button class="btn btn-xs btn-default" data-bind="click: $parent.onShowProposalChatModal.bind(this, $data), tooltip: 'Chat with ' + $data.userName"><i class="fa fa-comment-o"></i></button>
+                                        <button class="btn btn-xs btn-info" data-bind="click: $parent.onAcceptProposal.bind(this, $data), tooltip: 'Accept this proposal'"><i class="fa fa-check"></i></button>
+                                        <!-- /ko -->
+
+                                        <!-- ko if: $parent.isTaken -->
+                                        <a href="javascript:;" class="btn btn-default btn-xs" data-bind="click: onShowProposalChatModal.bind(this, null)"><i class="fa fa-comments-o"></i></a>
+                                        <a href="javascript:;" class="btn btn-xs btn-info" data-bind="click: onFinishTheDemand.bind(this, true)"><i class="fa fa-check"></i></a>
+                                        <a href="javascript:;" class="btn btn-xs btn-info" data-bind="click: onFinishTheDemand.bind(this, false)"><i class="fa fa-close"></i></a>
+                                        <!-- /ko -->
+
+                                        <!-- /ko -->
+                                    </div>
+                                    <div class="description" data-bind="html: $data.description"></div>
+                                    <div class="attachments" data-bind="visible: $data.attachments.length">
+                                        <!-- ko foreach: { data: $data.attachments, as: 'attach' } -->
+                                        <a class="attachment" data-bind="attr: { href: attach.url }" target="_blank">
+                                            <i class="fa fa-paperclip"></i>
+                                            <!-- ko text: attach.fileName -->
+                                            <!-- /ko -->
+                                        </a>
+                                        <!-- /ko -->
+                                    </div>
+                                </div>
+                                <div class="col-md-6" style="position: relative;">
+                                    <div class="info">
+                                        <div class="item">
+                                            <span>Budget:</span>
+                                            <span class="value" data-bind="text: $data.budget"></span>
+                                        </div>
+                                        <div class="item">
+                                            <span>Duration:</span>
+                                            <span class="value" data-bind="text: $data.duration"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- ko ifnot: proposals().length -->
+
+                <!-- /ko -->
+
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">Proposals</h3>
@@ -157,9 +280,9 @@
                         <!-- ko if: isTaken -->
                         <!-- ko if: successfulBidding -->
                         <button class="btn btn-block btn-default" data-bind="click: onShowChatModal">
-                            <i class="fa fa-comments-o"></i>
-                            <span>Chat with owner</span>
-                        </button>
+                                                <i class="fa fa-comments-o"></i>
+                                                <span>Chat with owner</span>
+                                            </button>
                         <!-- /ko -->
                         <!-- ko ifnot: successfulBidding -->
                         <div class="well well-sm text-center">
@@ -170,9 +293,9 @@
 
                         <!-- ko if: isDemandClosed -->
                         <button class="btn btn-block btn-default" data-bind="click: onShowObjectionModal">
-                            <i class="fa fa-user-md"></i>
-                            <span>Custom service</span>
-                        </button>
+                                                <i class="fa fa-user-md"></i>
+                                                <span>Custom service</span>
+                                            </button>
                         <!-- /ko -->
 
                         <!-- ko if: isDemandInvalid -->
@@ -271,19 +394,81 @@
                     </table>
                 </div>
             </div>
+            <div class="tab-pane fade" id="tab_1_2">
+                <!-- ko ifnot: isOpening -->
+                <div class="well text-center">
+                    <p><i class="fa fa-ban"></i> <span>This demand is not tendering now, you can't comment.</span></p>
+                </div>
+                <!-- /ko -->
+                <div data-bind="visible: publicCommentList().length">
+                    <ul class="media-list" data-bind="foreach: { data: publicCommentList, as: 'public', afterRender: commentRendered }">
+                        <li class="media">
+                            <a href="javascript:;" class="pull-left">
+                                <img class="media-object img-circle" data-bind="attr: { 'data-src': 'holder.js/48x48?text=' + public.firstLetter }" alt="48x48" style="width: 48px; height: 48px;">
+                            </a>
+                            <div class="media-body">
+                                <h4 class="media-heading" data-bind="html: public.content"></h4>
+                                <p class="clearfix">
+                                    <span class="pull-left">
+                                                <span data-bind="text: public.userName"></span>
+                                    <span> comments at </span>
+                                    <span data-bind="text: public.date"></span>
+                                    </span>
+                                    <span class="pull-right">
+                                                <a href="javascript:;" data-bind="click: $parent.onToggleSubComment.bind(public)">
+                                                    <i class="fa fa-comment-o"></i>
+                                                    <!-- ko text: public.commentCount -->
+                                                    <!-- /ko -->
+                                                </a>
+                                            </span>
+                                </p>
+                                <div data-bind="visible: public.showSubComment">
+                                    <div data-bind="foreach:{ data: public.subCommentList, as: 'sub', afterRender: $parent.commentRendered }">
+                                        <div class="media margin-top-15">
+                                            <a class="pull-left" href="#">
+                                                <img class="media-object" data-bind="attr: { 'data-src': 'holder.js/48x48?text=' + sub.firstLetter }" alt="48x48" style="width: 48px; height: 48px;">
+                                            </a>
+                                            <div class="media-body">
+                                                <h4 class="media-heading" data-bind="html: sub.content"></h4>
+                                                <p>
+                                                    <span class="pull-left">
+                                                                <span data-bind="text: sub.userName"></span>
+                                                    <span> replies at </span>
+                                                    <span data-bind="text: sub.date"></span>
+                                                    </span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <!-- ko if: $root.isOpening -->
+                                    <reply-panel params="type: 'demand', typeId: $root.id, parentId: public.id"></reply-panel>
+                                    <!-- /ko -->
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <hr>
+                <!-- ko if: isOpening -->
+                <reply-panel params="type: 'demand', typeId: id"></reply-panel>
+                <!-- /ko -->
+            </div>
+            <div class="tab-pane fade" id="tab_1_3"></div>
         </div>
     </div>
-    <objection-modal params="isShow: showObjectionModal, demandId: id"></objection-modal>
-    <demand-modal params="isShow: showDemandModal, data: currentDemand"></demand-modal>
-    <proposal-modal params="isShow: showProposalModal, demandId: id, currencyCode: currency, data: showingProposal, mode: proposalViewingMode"></proposal-modal>
-    <chat-modal params="isShow: showChatModal, demandId: id, proposalId: proposalId"></chat-modal>
-    <div data-bind="component: {name: 'cashier-modal'}"></div>
-
 </div>
+<objection-modal params="isShow: showObjectionModal, demandId: id"></objection-modal>
+<demand-modal params="isShow: showDemandModal, data: currentDemand"></demand-modal>
+<proposal-modal params="isShow: showProposalModal, demandId: id, currencyCode: currency, currencySymbol: currencySymbol, data: showingProposal, mode: proposalViewingMode"></proposal-modal>
+<chat-modal params="isShow: showChatModal, demandId: id, proposalId: proposalId"></chat-modal>
+<div data-bind="component: {name: 'cashier-modal'}"></div>
+
 <script>
     (function() {
         Kooboo.loadJS([
             "/_Admin/Scripts/lib/holder.js",
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
             "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
             "/_Admin/View/Market/Scripts/components/ReplyPanel.js",
             "/_Admin/View/Market/Scripts/components/ProposalModal.js",

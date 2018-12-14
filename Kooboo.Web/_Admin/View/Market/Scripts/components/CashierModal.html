@@ -16,7 +16,7 @@
                 </div>
                 <h5>Please choose a payment method: </h5>
                 <ul class="list-group" data-bind="foreach: paymentMethods">
-                    <li class="list-group-item">
+                    <li class="list-group-item" style="min-height: 54px;">
                         <div class="radio-inline">
                             <label style="margin: 0">
                                 <input name="method" type="radio" data-bind="value: $data.type, checked: $parent.paymentMethod">
@@ -24,6 +24,9 @@
                                 <!-- /ko -->
                             </label>
                         </div>
+                        <!-- ko if: $data.type == 'coupon' -->
+                        <input type="text" class="pull-right form-control input-medium" data-bind="value: $parent.couponCode">
+                        <!-- /ko -->
                         <!-- ko if: $data.type == 'balance' -->
                         <span class="badge gray" data-bind="text: $parent.userBalance"></span>
                         <!-- /ko -->

@@ -26,6 +26,7 @@ $(function() {
         this.attachments = ko.observableArray();
         this.userName = ko.observable();
         this.currency = ko.observable();
+        this.currencySymbol = ko.observable();
         this.budget = ko.observable();
         this.skills = ko.observableArray();
         this.startDate = ko.observable();
@@ -84,7 +85,6 @@ $(function() {
                 }).then(function(res) {
                     if (res.success) {
                         Kooboo.EventBus.publish("kb/market/component/cashier/show", res.model);
-                        //Kooboo.EventBus.publish("kb/demand/proposal/update");
                     }
                 })
             }
@@ -105,6 +105,7 @@ $(function() {
                     self.userName(res.model.userName);
                     self.isOwner(res.model.isOwner);
                     self.currency(res.model.currency);
+                    self.currencySymbol(res.model.symbol);
                     self.budget(res.model.symbol + res.model.budget);
                     self.skills(res.model.skills);
 
@@ -116,11 +117,12 @@ $(function() {
                     self.displayStatus(res.model.status.displayName);
 
                     cb && cb();
+
+                    self.getMyProposal(function() {
+                        self.getProposalList();
+                    });
                 }
             })
-
-            self.getMyProposal();
-            self.getProposalList();
         }
 
         this.showDemandModal = ko.observable(false);
@@ -142,15 +144,20 @@ $(function() {
             }
         }
 
-        this.getMyProposal = function() {
+        this.myProposalId = ko.observable();
+        this.getMyProposal = function(cb) {
             if (!self.isOwner()) {
                 Kooboo.Demand.getUserProposal({
                     demandId: self.id()
                 }).then(function(res) {
                     if (res.success) {
                         self.showingProposal(res.model);
+                        self.myProposalId(res.model && res.model.id);
+                        cb && cb();
                     }
                 })
+            } else {
+                cb && cb();
             }
         }
 
@@ -165,11 +172,18 @@ $(function() {
                         }
                         return {
                             id: item.id,
+                            firstLetter: item.userName.split('')[0].toUpperCase(),
                             userName: item.userName,
                             duration: item.duration + ' Day' + (item.duration > 1 ? 's' : ''),
                             budget: item.symbol + item.budget,
+                            description: item.description.split('\n').join('<br>'),
                             currency: item.currency,
-                            isTaken: item.isTaken
+                            isTaken: item.isTaken,
+                            attachments: item.attachments ? item.attachments.map(function(item) {
+                                item.url = '/_api/attachment/getFile?id=' + item.id + '&fileName=' + item.fileName;
+                                return item;
+                            }) : [],
+                            isMyProposal: ko.observable(self.myProposalId() ? self.myProposalId() == item.id : false)
                         }
                     }));
                 }
@@ -238,6 +252,10 @@ $(function() {
             self.showObjectionModal(true);
         }
 
+        Kooboo.EventBus.subscribe('kb/market/cashier/done', function() {
+            Kooboo.EventBus.publish("kb/demand/proposal/update");
+        })
+
         Kooboo.EventBus.subscribe("kb/demand/proposal/update", function() {
             self.getMyProposal();
             self.getProposalList();
@@ -269,7 +287,7 @@ $(function() {
         if (data.content && data.content.indexOf('\n') > -1) {
             data.content = data.content.split('\n').join('<br>')
         }
-        var date = new Date(data.createTime);
+        var date = new Date(data.lastModified);
         this.id = ko.observable(data.id);
         this.firstLetter = data.userName.split('')[0].toUpperCase();
         this.userName = data.userName;

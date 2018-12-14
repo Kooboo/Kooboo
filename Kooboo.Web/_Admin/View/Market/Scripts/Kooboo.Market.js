@@ -119,10 +119,10 @@ $(function() {
 
     function Supplier() {
         this.name = 'Supplier';
-        this.list=function(para){
+        this.list = function(para) {
             return this.executeGet('List', para);
         }
-        this.myList=function(para){
+        this.myList = function(para) {
             return this.executeGet('myList', para);
         }
 
@@ -132,7 +132,7 @@ $(function() {
         this.deletes = function(para) {
             return this.executePost('deletes', para);
         }
-        
+
         this.addOrUpdate = function(para) {
             return this.executePost('addOrUpdate', para);
         }
@@ -159,7 +159,7 @@ $(function() {
             return this.executeGet('GetByUser', para);
         }
 
-        
+
 
         this.getOrdersBySupplier = function(para) {
             // 我收到的所有 orders
@@ -196,7 +196,7 @@ $(function() {
         //     return this.executeGet('MyExpertiseList', para);
         // }
 
-        
+
     }
     extend(Supplier, Kooboo.BaseModel);
 
@@ -238,10 +238,6 @@ $(function() {
 
         this.topup = function(para) {
             return this.executePost('Topup', para);
-        }
-
-        this.useCoupon = function(para) {
-            return this.executePost('UseCoupon', para);
         }
 
         this.getTopupHistory = function(para) {

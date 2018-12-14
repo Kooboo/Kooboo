@@ -28,6 +28,8 @@
                         self.displayBudget(data.symbol + data.budget);
                         self.displayDuration(data.duration + ' Day(s)');
                         self.currencyCode(data.currency);
+                        self.currencySymbol(data.symbol);
+                        self.attachments(data.attachments);
                     }
                 }
             })
@@ -35,9 +37,7 @@
             this.demandId = params.demandId;
             this.proposalId = ko.observable();
             this.currencyCode = params.currencyCode || ko.observable();
-            this.currencySymbol = ko.pureComputed(function() {
-                return self.currencyCode() && self.currencyCode().toLowerCase();
-            })
+            this.currencySymbol = params.currencySymbol || ko.observable();
 
             this.userName = ko.observable();
             this.displayBudget = ko.observable();
