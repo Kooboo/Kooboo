@@ -3,11 +3,7 @@ $(function() {
         chartOption = {
             tooltip: {
                 formatter: function(params) {
-                    if (params.seriesIndex == 1) {
-                        return params.name + "<br/>" + "Used: " + params.data.valueName;
-                    } else {
-                        return params.name + "<br/>" + "Total: " + params.data.valueName;
-                    }
+                    return params.name + "<br/>" + "Used: " + params.data.usedName+ "<br/>" + "Total: " + params.data.totalName;
                 }
             },
             xAxis: {
@@ -173,14 +169,18 @@ $(function() {
                         xData.push(data.month);
                         value.push({
                             value:data.used,
-                            valueName:data.usedName
+                            usedName:data.usedName,
+                            totalValue:data.total,
+                            totalName:data.totalName
                         });
                         if(data.total>maxYData){
                             maxYData=data.total;
                         }
                         dataShadow.push({
+                            usedvalue:data.used,
+                            usedName:data.usedName,
                             value:data.total,
-                            valueName:data.totalName
+                            totalName:data.totalName
                         });
                     })
                     var maxSize=getSize(maxYData);
@@ -236,10 +236,10 @@ $(function() {
                         if (params.name) {
                             self.currentData({
                                 month: params.name,
-                                totalName:total.valueName,
-                                total: total.value,
-                                used: used.value,
-                                usedName:used.valueName
+                                totalName:total.totalName,
+                                total: total.total,
+                                used: used.used,
+                                usedName:used.usedName
                             })
 
                             self.getLogs(self.currentData().month)
