@@ -60,7 +60,7 @@
                 self.budget('');
                 self.duration('');
                 self.showError(false);
-                self.attachments.removeAll();
+                self.attachments([]);
                 self.isShow(false);
             }
 

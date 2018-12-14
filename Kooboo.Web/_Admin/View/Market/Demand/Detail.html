@@ -212,12 +212,10 @@
                                         <!-- ko if: $parent.isOwner() -->
 
                                         <!-- ko if: $parent.isOpening() -->
-                                        <button class="btn btn-xs btn-default" data-bind="click: $parent.onShowProposalChatModal.bind(this, $data), tooltip: 'Chat with ' + $data.userName"><i class="fa fa-comment-o"></i></button>
                                         <button class="btn btn-xs btn-info" data-bind="click: $parent.onAcceptProposal.bind(this, $data), tooltip: 'Accept this proposal'"><i class="fa fa-check"></i></button>
                                         <!-- /ko -->
 
                                         <!-- ko if: $parent.isTaken -->
-                                        <a href="javascript:;" class="btn btn-default btn-xs" data-bind="click: onShowProposalChatModal.bind(this, null)"><i class="fa fa-comments-o"></i></a>
                                         <a href="javascript:;" class="btn btn-xs btn-info" data-bind="click: onFinishTheDemand.bind(this, true)"><i class="fa fa-check"></i></a>
                                         <a href="javascript:;" class="btn btn-xs btn-info" data-bind="click: onFinishTheDemand.bind(this, false)"><i class="fa fa-close"></i></a>
                                         <!-- /ko -->
@@ -309,10 +307,6 @@
                         <!-- ko if: isOwner -->
 
                         <!-- ko if: isTaken -->
-                        <a href="javascript:;" class="btn btn-default btn-block margin-bottom-15" data-bind="click: onShowProposalChatModal.bind(this, null)">
-                            <i class="fa fa-comments-o"></i>
-                            <span>Chat with the bidder</span>
-                        </a>
                         <div class="btn-group btn-group-justified">
                             <a href="javascript:;" class="btn btn-info" data-bind="click: onFinishTheDemand.bind(this, true)">
                                 <i class="fa fa-check"></i>
