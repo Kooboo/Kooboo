@@ -47,13 +47,7 @@ $(function() {
                     displayName: 'Article',
                     fieldName: 'article',
                     type: 'article'
-                }, 
-                /*{
-                    displayName: 'Name',
-                    fieldName: 'name',
-                    type: 'link',
-                    showClass: 'table-short'
-                },*/{
+                },{
                     displayName: 'Price',
                     fieldName: 'price',
                     type: 'label',

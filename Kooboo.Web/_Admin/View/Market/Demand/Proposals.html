@@ -32,12 +32,12 @@
     </thead>
     <tbody data-bind="foreach: records">
         <tr>
-            <td data-bind="text: $data.title"></td>
+            <td><a href="javascript:;" data-bind="text: $data.title,attr: { href: $data.previewUrl()}" target="_blank"></a></td>
             <td data-bind="text: $data.budget, attr: { title: $data.currency }"></td>
             <td data-bind="text: $data.duration"></td>
             <td data-bind="text: $data.createTime"></td>
             <td>
-                <a class="btn btn-xs btn-default" target="_blank" data-bind="attr: { href: $data.previewUrl() }">
+                <a class="btn btn-xs btn-default" data-bind="attr: { href: $data.previewUrl()}" target="_blank">
                     <i class="fa fa-eye"></i>
                 </a>
             </td>

@@ -1,4 +1,4 @@
-(function() {
+(function () {
     var text = {
 
         common: {
@@ -129,6 +129,9 @@
             Debug: "Debug",
             SiteUser: "Site user",
             KConfig: "Kooboo Config",
+
+            Demands: "Demands",
+            Demand: "Demand",
 
             ProductManagement: "Products management",
             ProductTypes: "Product types",
@@ -954,7 +957,7 @@
             usageReport: "Usage report",
             purchaseHistory: "Purchase history",
             myDomains: "My domains",
-            changeCurrency: "Change currency"
+            changeCurrency: "Change currency",
         },
 
         mail: {

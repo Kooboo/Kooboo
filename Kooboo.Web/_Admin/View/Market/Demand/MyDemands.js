@@ -17,13 +17,6 @@ $(function() {
             var docs = data.list.map(function(doc) {
                 return {
                     id: doc.id,
-                /*   title: {
-                        text: doc.title,
-                        url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
-                            id: doc.id
-                        }),
-                        newWindow: true
-                    },*/
                     article: {
                         title: doc.title,
                         description: doc.description,

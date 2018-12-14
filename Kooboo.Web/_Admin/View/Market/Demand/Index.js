@@ -32,14 +32,6 @@ $(function() {
                 var date = new Date(item.createTime);
                 return {
                     id: item.id,
-                /*    title: {
-                        text: item.title,
-                        url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
-                            id: item.id
-                        }),
-                        newWindow: true
-                    },
-                    description: getText(item.description),*/
                     article: {
                         title: item.title,
                         description: getText(item.description),
@@ -77,19 +69,10 @@ $(function() {
             var data = {
                 docs: docs,
                 columns: [{
-                    displayName: 'Article',
+                    displayName: Kooboo.text.common.Demands,
                     fieldName: 'article',
                     type: 'article'
                     }, 
-                    /*{
-                    displayName: 'Title',
-                    fieldName: 'title',
-                    type: 'link'
-                }, {
-                    displayName: 'Description',
-                    fieldName: 'description',
-                    type: 'text'
-                }, */
                 {
                     displayName: 'Budget',
                     fieldName: 'budget',

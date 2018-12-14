@@ -58,37 +58,32 @@ $(function () {
             self.tableData({
                 docs: docs,
                 columns: [
-                    /*{
-                        displayName: "Title",
-                        fieldName: "title",
-                        type: 'link'
-                    }, */
-                    {
-                        displayName: 'Article',
-                        fieldName: 'article',
-                        type: 'article'
-                    }, {
-                        displayName: 'Comments',
-                        fieldName: 'comments',
-                        showClass: 'table-short',
-                        type: 'badge'
-                    }, {
-                        displayName: 'Views',
-                        fieldName: 'views',
-                        showClass: 'table-short',
-                        type: 'badge'
-                    }, {
-                        displayName: 'User',
-                        fieldName: 'user',
-                        showClass: 'table-short',
-                        type: 'label'
-                    }, {
-                        displayName: 'Last modified',
-                        fieldName: 'lastModified',
-                        showClass: 'table-short',
-                        type: 'text'
-                    }],
-
+                {
+                    displayName: 'Article',
+                    fieldName: 'article',
+                    type: 'article'
+                }, {
+                    displayName: 'Comments',
+                    fieldName: 'comments',
+                    showClass: 'table-short',
+                    type: 'badge'
+                }, {
+                    displayName: 'Views',
+                    fieldName: 'views',
+                    showClass: 'table-short',
+                    type: 'badge'
+                }, {
+                    displayName: 'User',
+                    fieldName: 'user',
+                    showClass: 'table-short',
+                    type: 'label'
+                }, {
+                    displayName: 'Last modified',
+                    fieldName: 'lastModified',
+                    showClass: 'table-short',
+                    type: 'text'
+                }],
+                
                 kbType: Kooboo.Discussion.name,
                 unselectable: true
             })

@@ -62,7 +62,7 @@
                                 </div>
                             </div>
                             <!-- /ko -->
-                            <table class="table" style="margin-bottom: -10px;">
+                            <table class="table Logs-table" style="margin-bottom: -10px;">
                                 <thead>
                                     <tr>
                                         <th>Content</th>
@@ -75,7 +75,7 @@
                                     <!-- ko if: logs().length -->
                                     <!-- ko foreach: logs -->
                                     <tr>
-                                        <td data-bind="text: $data.content"></td>
+                                        <td data-bind="text: $data.content, tooltip: $data.content"></td>
                                         <td data-bind="text: $data.date"></td>
                                         <td data-bind="text: $data.count"></td>
                                     </tr>

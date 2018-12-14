@@ -31,16 +31,10 @@ $(function() {
 
                 return {
                     id: item.id,
-                /*    title: {
-                        text: item.title,
-                        url: Kooboo.Route.Get(Kooboo.Route.Discussion.DetailPage, {
-                            id: item.id
-                        })
-                    },*/
                     article: {
                         title: item.title,
                         description: item.content,
-                        url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
+                        url: Kooboo.Route.Get(Kooboo.Route.Discussion.DetailPage, {
                             id: item.id
                         }),
                         class: "title",
@@ -71,11 +65,6 @@ $(function() {
             self.tableData({
                 docs: docs,
                 columns: [
-                /*    {
-                    displayName: "Title",
-                    fieldName: "title",
-                    type: 'link'
-                }, */
                 {
                     displayName: 'Article',
                     fieldName: 'article',

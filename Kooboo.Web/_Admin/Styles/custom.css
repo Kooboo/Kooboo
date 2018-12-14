@@ -307,8 +307,11 @@ blockquote footer,
     width: 115px;
 }
 
+
 .article .title {
-    font-size: 16px;
+    font-size: 18px;
+    color: #205eac;
+    margin-bottom: 5px;
 }
 
 .article a {
@@ -324,14 +327,27 @@ blockquote footer,
     vertical-align: middle;
 }
 
+.table > thead > tr > th {
+    font-size: 16px;
+    font-weight: 600;
+}
+
 .article p{
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 450px;
+    color: #676767;
 }
 
 
 .text-center {
     text-align: center;
+}
+
+.Logs-table > tbody > tr > td {
+    max-width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }

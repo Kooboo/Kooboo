@@ -19,7 +19,6 @@ $(function() {
                                     class: "title",
                                     newWindow: true
                                 },
-                            /*    price: item.symbol + item.price,*/
                                 price: {
                                     text: item.symbol + item.price,
                                     class: 'label-sm label-info',
