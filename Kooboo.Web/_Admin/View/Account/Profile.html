@@ -99,79 +99,12 @@
                             </div>
                         </div>
                     </section>
-                    <section data-bind="css: { active: curType() == 'Balance', in: curType() == 'Balance' }" class="tab-pane fade">
-                        <div class="form-horizontal margin-top-20">
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Organization name</label>
-                                <div class="col-md-9">
-                                    <p data-bind="text: organizationName" class="form-control-static"></p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Balance</label>
-                                <div class="col-md-9">
-                                    <p data-bind="text: organizationBalance" class="form-control-static"></p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Voucher</label>
-                                <div class="col-md-9" id="verify-coupon-code">
-                                    <div class="input-group input-large">
-                                        <input data-bind="value: couponCode" class="form-control" type="text">
-                                        <span class="input-group-btn">
-                                            <a data-bind="click: startRecharge" class="btn btn-success">Use now</a>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Amount</label>
-                                <div class="col-md-9">
-                                    <input data-bind="value: recharge, error: recharge, attr: { placeholder: Kooboo.text.placeholder.inputValueGreaterThan + '0.01' }, event: { keydown: inputNumberOnly }" class="form-control input-large" type="number">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Payment method</label>
-                                <div class="col-md-9">
-                                    <label class="radio-inline"><input data-bind="checked: paymentMethod" type="radio" name="paymentMethod" value="wechat">Wechat</label>
-                                    <label class="radio-inline" style="display:none"><input data-bind="checked: paymentMethod" type="radio" name="paymentMethod" value="alipay">Alipay</label>
-                                    <label class="radio-inline" style="display:none"><input data-bind="checked: paymentMethod" type="radio" name="paymentMethod" value="creditCard">Credit card</label>
-                                    <label class="radio-inline"><input data-bind="checked: paymentMethod" type="radio" name="paymentMethod" value="paypal">Paypal</label>
-                                </div>
-                            </div>
-                            <div class="margin-bottom-15" data-bind="visible: paymentMethod() == 'creditCard'">
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Card number</label>
-                                    <div class="col-md-9">
-                                        <input type="text" data-bind="value: cardNumber, error: cardNumber" class="form-control input-large">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">Expiration Date</label>
-                                    <div class="col-md-9">
-                                        <div class="input-groups">
-                                            <div class="input-group" style="margin-bottom: 0">
-                                                <input type="text" data-bind="value: expMonth, error: expMonth" class="form-control key input-small" placeholder="MM">
-                                                <span class="input-group-addon">/</span>
-                                                <input type="text" data-bind="value: expYear, error: expYear" class="form-control value input-small" placeholder="YYYY">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label col-md-3">CVV</label>
-                                    <div class="col-md-9">
-                                        <input type="text" data-bind="value: cvv, error: cvv" class="form-control input-large">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-9 col-md-offset-3">
-                                    <button data-bind="click:paynow" class="btn green">Pay</button>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+
+
+
+
+
+
                     <section data-bind="css: { active: curType() == 'Users', in: curType() == 'Users' }" class="tab-pane fade">
                         <div class="form-horizontal margin-top-20">
                             <div class="form-group">

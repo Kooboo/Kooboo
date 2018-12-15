@@ -126,8 +126,7 @@ namespace Kooboo.Web.Api
             var organizationId = call.Context.User.CurrentOrgId;
              return GlobalDb.Organization.Get(organizationId);  
         }
-
-
+         
         public Organization GetOwnOrg(ApiCall call)
         {
             return GlobalDb.Organization.GetByUser(call.Context.User.Id); 
