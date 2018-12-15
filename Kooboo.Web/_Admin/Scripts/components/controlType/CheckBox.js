@@ -8,3 +8,8 @@
         template: template
     })
 })()
+
+
+kooboo.text.market.ok; 
+
+GetValue("OK")
