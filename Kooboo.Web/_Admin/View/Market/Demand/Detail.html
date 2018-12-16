@@ -176,7 +176,7 @@
 
                 <!-- ko if: !isOwner() && !isProposalUser() -->
                 <div class="alert alert-info">
-                    You haven't make a bid yet. Click <a href="javascript:;" class="alert-link" data-bind="click: onShowProposalModal">here</a> to make your bid.
+                   You have not bid yet, click <a href="javascript:;" class="alert-link" data-bind="click: onShowProposalModal">here</a> to make a bid.
                 </div>
                 <!-- /ko -->
 
@@ -188,7 +188,7 @@
 
                 <!-- ko if: isDemandInvalid -->
                 <div class="alert alert-danger">
-                    <strong>Notice</strong>&nbsp;<span>This demand is expired.</span>
+                    <strong>Notice</strong>&nbsp;<span>Demand expired</span>
                 </div>
                 <!-- /ko -->
 
@@ -226,11 +226,11 @@
                                 <div class="col-md-3">
                                     <div class="info">
                                         <div class="item">
-                                            <span>Budget:</span>
+                                            <span>Budget</span>:
                                             <span class="value" data-bind="text: $data.budget"></span>
                                         </div>
                                         <div class="item">
-                                            <span>Duration:</span>
+                                            <span>Duration</span>:
                                             <span class="value" data-bind="text: $data.duration"></span>
                                         </div>
                                     </div>
@@ -275,7 +275,7 @@
             <div class="tab-pane fade" id="tab_1_2">
                 <!-- ko ifnot: isOpening -->
                 <div class="well text-center">
-                    <p><i class="fa fa-ban"></i> <span>This demand is not tendering now, you can't comment.</span></p>
+                    <p><i class="fa fa-ban"></i> <span>Demand closed, no comment allowed</span></p>
                 </div>
                 <!-- /ko -->
                 <div data-bind="visible: publicCommentList().length">

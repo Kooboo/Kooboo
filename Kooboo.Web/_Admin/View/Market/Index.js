@@ -55,6 +55,7 @@ $(function() {
 
         Kooboo.Market.getMy().then(function(res) {
             if (res.success) {
+                debugger; 
                 self.panels(res.model.map(function(item) {
                     var moreUrl = '',
                         detailUrl = '';
@@ -68,18 +69,11 @@ $(function() {
                             moreUrl = Kooboo.Route.Demand.MyDemandPage;
                             detailUrl = Kooboo.Route.Demand.DetailPage;
                             break;
-                        case 'proposal':
-                            moreUrl = Kooboo.Route.Demand.MyProposalPage;
-                            url = Kooboo.Route.Demand.DetailPage;
+                        case 'service':
+                            moreUrl = "/_admin/market/supplier/index";
+                            url = "/_admin/market/supplier/service";
                             break;
-                        case 'supplyorder':
-                            moreUrl = Kooboo.Route.Supplier.MyOrdersPage;
-                            detailUrl = Kooboo.Route.Supplier.DetailPage;
-                            break;
-                        case 'supplyoffer':
-                            moreUrl = Kooboo.Route.Supplier.MyOffersPage;
-                            detailUrl = Kooboo.Route.Supplier.DetailPage;
-                            break;
+            
                     }
 
                     return {

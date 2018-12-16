@@ -13,9 +13,11 @@
             this.type = ko.observable(params.type);
             this.typeId = params.typeId;
             this.parentId = params.parentId || ko.observable(Kooboo.Guid.Empty);
+  
+            params.disabled = true;
 
-            this.disabled = ko.observable(params.disabled);
-
+            this.disabled = ko.observable(params.disabled); 
+           
             this.showError = ko.observable(false);
 
             this.uploadRequired = ko.pureComputed(function() {
