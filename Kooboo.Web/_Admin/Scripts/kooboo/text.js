@@ -704,7 +704,7 @@
                 selectTypeFirst: "Select type first"
             },
             cashierModal: {
-                balanceInsuffisant: "Balance insuffisant, please topup first",
+                balanceInsuffisant: "No enough balance, please topup first",
                 purchaseDomain: "Purchase domain"
             },
             topupModal: {
@@ -1087,7 +1087,7 @@
             outlineColor: "Outline-color",
             textShadow: "Text-shadow",
             boxShadow: "Box-shadow",
-            cantEditCopyItem: "Copy item can't be edited",
+            cantEditCopyItem: "Can not edit copied item",
             cantEdit: "The element is dynamic generated after page has rendered.So it can't be edited!",
             editArea: "Edit Area",
             selectImage: "please select image",
