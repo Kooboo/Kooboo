@@ -699,7 +699,12 @@ namespace Kooboo.Data.Context
                     {
                         response.Stream.CopyTo(context.Features.Response.Body);
                     }
+                    else if (response.ContentType !=null && response.ContentType.ToLower().Contains("javascript"))
+                    {
+
+                    }
                     else
+
                     {
                         // 404.   
                         string filename = Lib.Helper.IOHelper.CombinePath(AppSettings.RootPath, Kooboo.DataConstants.Default404Page) + ".html";
