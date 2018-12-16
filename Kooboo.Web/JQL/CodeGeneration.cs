@@ -34,20 +34,14 @@ namespace Kooboo.Web.JQL
 
         public static string DatabaseDeleteScript(WebSite Site, string tablename)
         {
-            string js = "var id; \r\n";
-            js += "if (k.request._id)\r\n";
-            js += "{ id = k.request._id; }\r\n";
-            js += "else  { id = k.request.id; } \r\n";
+            string js = "var id=k.request.id; \r\n"; 
             js += "k.database." + tablename + ".delete(id);\r\n";
             return js;
         }
 
         public static string DatabaseGetScript(WebSite Site, string tablename)
         {
-            string js = "var id; \r\n";
-            js += "if (k.request._id)\r\n";
-            js += "{ id = k.request._id; }\r\n";
-            js += "else  { id = k.request.id; } \r\n";
+            string js = "var id = k.request.id; \r\n"; 
             js += " var obj = k.database." + tablename + ".get(id);\r\n";
             js += "if (obj) {  k.response.json(obj); }; ";
             return js;

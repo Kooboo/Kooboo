@@ -723,6 +723,19 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 newdata[Dynamic.Constants.DefaultIdFieldName] = key;
 
+                if (oldvalue !=null && newvalue is IDictionary<string, object>)
+                {
+                    var newdict = newvalue as IDictionary<string, object>; 
+
+                    foreach (var item in oldvalue)
+                    {
+                        if (!newdict.ContainsKey(item.Key))
+                        {
+                            newdata[item.Key] = item.Value;
+                        } 
+                    }
+                }
+                  
                 CheckUpdateConstraints(oldvalue, newdata);
 
                 byte[] valuebyte = ObjectConverter.ToBytes(newdata);
@@ -795,6 +808,21 @@ namespace Kooboo.IndexedDB.Dynamic
                         }
 
                         newdata[Dynamic.Constants.DefaultIdFieldName] = key;
+
+
+                        if (oldvalue != null && newvalue is IDictionary<string, object>)
+                        {
+                            var newdict = newvalue as IDictionary<string, object>;
+
+                            foreach (var item in oldvalue)
+                            {
+                                if (!newdict.ContainsKey(item.Key))
+                                {
+                                    newdata[item.Key] = item.Value;
+                                }
+                            }
+                        }
+
 
                         CheckUpdateConstraints(oldvalue, newdata);
 
@@ -874,6 +902,19 @@ namespace Kooboo.IndexedDB.Dynamic
                         }
 
                         newdata[Dynamic.Constants.DefaultIdFieldName] = key;
+
+                        if (oldvalue != null && newvalue is IDictionary<string, object>)
+                        {
+                            var newdict = newvalue as IDictionary<string, object>;
+
+                            foreach (var item in oldvalue)
+                            {
+                                if (!newdict.ContainsKey(item.Key))
+                                {
+                                    newdata[item.Key] = item.Value;
+                                }
+                            }
+                        } 
 
                         CheckUpdateConstraints(oldvalue, newdata);
 
