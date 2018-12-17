@@ -3,18 +3,18 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title">Pay</h4>
+                <h4 class="modal-title" data-bind="text:Kooboo.text.common.pay"></h4>
             </div>
             <div class="modal-body" data-bind="visible: !isPaying()">
                 <div class="form-horizontal">
                     <div class="form-group">
-                        <label class="control-label col-md-3" style="text-align: left;">Total amount</label>
+                        <label class="control-label col-md-3" style="text-align: left;" data-bind="text:Kooboo.text.common.totalAmount"></label> : 
                         <div class="col-md-9">
                             <p class="form-control-static" data-bind="text: displayAmount"></p>
                         </div>
                     </div>
                 </div>
-                <h5>Please choose a payment method</h5>
+                <h5 data-bind="text:Kooboo.text.cashierModal.choosePaymentMethod"></h5> : 
                 <ul class="list-group" data-bind="foreach: paymentMethods">
                     <li class="list-group-item" style="min-height: 54px;">
                         <div class="radio-inline">
@@ -42,7 +42,7 @@
                 <button class="btn btn-danger" data-bind="click: onPayingFailed, text: Kooboo.text.common.failed"></button>
                 <!-- /ko -->
                 <!-- ko ifnot: isPaying -->
-                <button class="btn green" data-bind="click: onPay">Pay</button>
+                <button class="btn green" data-bind="click: onPay" data-bind="text: Kooboo.text.common.pay"></button>
                 <button class="btn gray" data-bind="click: onHide, text: Kooboo.text.common.cancel"></button>
                 <!-- /ko -->
             </div>

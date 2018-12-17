@@ -3,19 +3,19 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title">Expertise</h4>
+                <h4 class="modal-title" data-bind="text:  Kooboo.text.component.expertiseModal.expertise"></h4>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="" class="control-label">Name</label>
+                    <label for="" class="control-label" data-bind="text: Kooboo.text.common.name"></label>
                     <input type="text" class="form-control" data-bind="value: name, error: name">
                 </div>
                 <div class="form-group">
-                    <label for="" class="control-label">Description</label>
+                    <label for="" class="control-label" data-bind="text: Kooboo.text.common.description"></label>
                     <textarea class="form-control autosize" style="min-height:60px;" data-bind="value: description"></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="" class="control-label">Price</label>
+                    <label for="" class="control-label" data-bind="text: Kooboo.text.common.price"></label></label>
                     <div class="input-group">
                         <span class="input-group-addon" data-bind="text: symbol"></span>
                         <input type="text" class="form-control" data-bind="value: price, error: price, event: { keydown: Kooboo.event.input.positiveNumberOnly }">

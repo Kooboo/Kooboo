@@ -54,7 +54,7 @@ function ImageHelper(context,isEditIamge){
             labelSize : Kooboo.text.common.size,
             buttonChange : Kooboo.text.inlineEditor.changeImage,
             labelAlt : Kooboo.text.inlineEditor.alt,
-            labelTitle :Kooboo.text.inlineEditor.title,
+            labelTitle :Kooboo.text.common.title,
         });
 
         return data; 

@@ -3,7 +3,8 @@
         "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
         "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
         "/_Admin/Scripts/kobindings.richeditor.js",
-        "/_Admin/Scripts/kobindings.textError.js"
+        "/_Admin/Scripts/kobindings.textError.js",
+        "/_Admin/Scripts/kooboo/text.js"
     ]);
 
     var template = Kooboo.getTemplate("/_Admin/Market/Scripts/components/DemandModal.html");

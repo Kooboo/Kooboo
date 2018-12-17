@@ -1,4 +1,10 @@
 (function() {
+    Kooboo.loadJS([
+        "/_Admin/Scripts/kobindings.textError.js",
+        "/_Admin/Scripts/kooboo/text.js"
+    ]);
+
+
     var template = Kooboo.getTemplate('/_Admin/View/Market/Scripts/components/ExpertiseModal.html');
 
     ko.components.register('expertise-modal', {

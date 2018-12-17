@@ -3,29 +3,29 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title">Proposal</h4>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.component.proposalModal.proposal"></h4>
             </div>
             <div class="modal-body">
                 <!-- ko if: mode() == 'edit' -->
                 <div class="row">
                     <div class="col-md-12 margin-bottom-15">
                         <div class="form-group">
-                            <label>Description</label>
+                            <label data-bind="text: Kooboo.text.common.description"></label>
                             <textarea class="autosize form-control" data-bind="value: description" style="min-height: 50px;"></textarea>
                         </div>
                     </div>
                     <div class="col-md-6 margin-bottom-15">
                         <div class="form-group">
-                            <label data-bind="textError: duration">Duration</label>
+                            <label data-bind="text: Kooboo.text.component.proposalModal.duration, textError: duration"></label>
                             <div class="input-group">
                                 <input type="text" class="form-control" data-bind="value: duration, event: { keydown: Kooboo.event.input.positiveIntegerOnly }">
-                                <span class="input-group-addon">Day(s)</span>
+                                <span class="input-group-addon" data-bind="text: Kooboo.text.component.proposalModal.day"></span>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6 margin-bottom-15">
                         <div class="form-group">
-                            <label>Budget</label>
+                            <label data-bind="text: Kooboo.text.common.budget"></label>
                             <div class="input-group">
                                 <span class="input-group-addon" data-bind="text: currencySymbol, attr: { title: currencyCode }"></span>
                                 <input type="number" class="form-control" data-bind="value: budget, event: { keydown: Kooboo.event.input.positiveNumberOnly }">
@@ -34,13 +34,14 @@
                     </div>
                     <div class="col-md-12 margin-bottom-15">
                         <div class="form-group">
-                            <label>Attachments</label>
+                            <label data-bind="text: Kooboo.text.common.attachments"></label>
                             <div class="form-inline">
-                                <button class="btn btn-info btn-file"><input type="file"  data-bind="upload: {
+                                <button class="btn btn-info btn-file" data-bind="text: Kooboo.text.common.upload">
+                                    <input type="file"  data-bind="upload: {
                                     allowMutiple: false,
                                     acceptTypes: ['*/*'],
                                     callback: uploadFile
-                                }">Upload</button>
+                                }"></button>
                                 <div class="form-group">
                                     <p class="form-control-static">
                                         <!-- ko foreach: attachments -->
@@ -61,25 +62,25 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label>Bidder</label>
+                            <label data-bind="text: Kooboo.text.component.proposalModal.bidder"></label>
                             <p class="form-control-static" data-bind="text: userName"></p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label>Duration</label>
+                            <label data-bind="text: Kooboo.text.component.proposalModal.duration"></label>
                             <p class="form-control-static" data-bind="text: displayDuration"></p>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label>Budget</label>
+                            <label data-bind="text: Kooboo.text.common.budget"></label>
                             <p class="form-control-static" data-bind="text: displayBudget, attr: { title: currencyCode }"></p>
                         </div>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label>Description</label>
+                            <label data-bind="text: Kooboo.text.common.description"></label>
                             <p class="form-control-static" data-bind="text: description"></p>
                         </div>
                     </div>
@@ -91,9 +92,9 @@
                 <button class="btn green" data-bind="text: Kooboo.text.site.form.submit, click: onSave"></button>
                 <!-- /ko -->
                 <!-- ko if: mode() == 'view' -->
-                <button class="btn green" data-bind="click: onAcceptProposal">Accept</button>
+                <button class="btn green" data-bind="text: Kooboo.text.component.proposalModal.accept, click: onAcceptProposal">Accept</button>
                 <!-- /ko -->
-                <button class="btn gray" data-bind="click: onHide">Cancel</button>
+                <button class="btn gray" data-bind="click: onHide, text: Kooboo.text.common.cancel"></button>
             </div>
         </div>
     </div>
