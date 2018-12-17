@@ -1,8 +1,7 @@
 (function() {
     Kooboo.loadJS([
         "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
-        "/_Admin/Scripts/kobindings.textError.js",
-        "/_Admin/Scripts/kooboo/text.js"
+        "/_Admin/Scripts/kobindings.textError.js"
     ])
 
     var template = Kooboo.getTemplate("/_Admin/Market/Scripts/components/ProposalModal.html");

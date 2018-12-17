@@ -1,7 +1,6 @@
 (function() {
     Kooboo.loadJS([
-        "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
-        "/_Admin/Scripts/kooboo/text.js"
+        "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js"
     ])
 
     var template = Kooboo.getTemplate('/_Admin/Market/Scripts/components/OrderExpertiseModal.html');

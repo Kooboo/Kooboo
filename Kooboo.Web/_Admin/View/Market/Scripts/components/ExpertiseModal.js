@@ -1,7 +1,6 @@
 (function() {
     Kooboo.loadJS([
-        "/_Admin/Scripts/kobindings.textError.js",
-        "/_Admin/Scripts/kooboo/text.js"
+        "/_Admin/Scripts/kobindings.textError.js"
     ]);
 
 

@@ -1,7 +1,6 @@
 (function() {
     Kooboo.loadJS([
-        "/_Admin/Scripts/lib/jquery.qrcode.min.js",
-        "/_Admin/Scripts/kooboo/text.js"
+        "/_Admin/Scripts/lib/jquery.qrcode.min.js"
     ]);
 
     var template = Kooboo.getTemplate('/_Admin/View/Market/Scripts/components/RechargeModal.html');
