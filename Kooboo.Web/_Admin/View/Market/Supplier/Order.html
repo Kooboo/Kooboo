@@ -24,7 +24,7 @@
 <div data-bind="component: { name: 'kb-breadcrumb', params:[{
     name: 'MARKET'
 },{
-    name: Kooboo.text.market.supplier.myOrders
+    name: Kooboo.text.market.supplier.myOrders,
     url: Kooboo.Route.Supplier.MyOrderPage
 },{
     name: Kooboo.text.common.detail
@@ -35,10 +35,7 @@
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">
-                    <strong>Service:</strong>
-                    <span data-bind="text: serviceName"></span>
-                </h3>
+                <h3 class="panel-title" data-bind="text: serviceName"></h3>
             </div>
             <div class="panel-body">
                 <div data-bind="html: remark" class="margin-bottom-20"></div>
