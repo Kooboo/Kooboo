@@ -90,10 +90,10 @@
 <div data-bind="component: { name: 'kb-breadcrumb', params:[{
         name: 'MARKET'
     },{
-        name: 'Demands',
+        name: Kooboo.text.common.Demands,
         url: Kooboo.Route.Demand.ListPage
     },{
-        name: 'Detail'
+        name: Kooboo.text.common.detail
     }]}"></div>
 
 <div class="row">
@@ -176,7 +176,7 @@
 
                 <!-- ko if: !isOwner() && !isProposalUser() -->
                 <div class="alert alert-info">
-                   You have not bid yet, click <a href="javascript:;" class="alert-link" data-bind="click: onShowProposalModal">here</a> to make a bid.
+                    You have not bid yet, click <a href="javascript:;" class="alert-link" data-bind="click: onShowProposalModal">here</a> to make a bid.
                 </div>
                 <!-- /ko -->
 

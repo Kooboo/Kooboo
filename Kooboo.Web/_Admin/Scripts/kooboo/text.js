@@ -1,4 +1,4 @@
-(function () {
+(function() {
     var text = {
 
         common: {
@@ -63,6 +63,7 @@
             back: "Back",
             use: "Use",
             confirm: "Confirm",
+            detail: "Detail",
 
             API: "API",
             Code: "Code",
@@ -136,7 +137,12 @@
             Service: "service",
             Discussion: "Discussion",
             Discussions: "Discussions",
-
+            Apps: "Apps",
+            Purchased: "Purchased",
+            Hardwares: "Hardwares",
+            Suppliers: "Suppliers",
+            Supplier: "Supplier",
+            Templates: "Templates",
 
             ProductManagement: "Products management",
             ProductTypes: "Product types",
@@ -146,7 +152,8 @@
             unitPrice: "Unit price",
             totalPrice: "Total price",
             year: "Year",
-            years: "Years"
+            years: "Years",
+
         },
 
         online: {
@@ -459,7 +466,8 @@
             },
             breadCrumb: {
                 sites: "Sites",
-                dashboard: "Dashboard"
+                dashboard: "Dashboard",
+                market: "Market"
             },
             events: {
                 editCondition: "Edit condition"
@@ -806,7 +814,6 @@
                 startTime: "Start time",
                 timeElapsed: "Time elapsed",
                 referer: "Referer",
-                detail: "Detail",
                 views: "Views",
                 errorMessage: "Error message",
                 statusCode: "Status code",
@@ -963,6 +970,26 @@
             purchaseHistory: "Purchase history",
             myDomains: "My domains",
             changeCurrency: "Change currency",
+            demand: {
+                myDemands: "My Demands",
+                myProposals: "My Proposals"
+            },
+            discussion: {
+                myThreads: "My Threads"
+            },
+            hardware: {
+                usageReport: "Usage Report"
+            },
+            supplier: {
+                myOffers: "My Offers",
+                myOrders: "My Orders",
+                myServices: "My Services",
+                service: "Service"
+            },
+            template: {
+                myTemplate: "My Template",
+                privateTemplate: "Private Template"
+            }
         },
 
         mail: {

@@ -84,8 +84,8 @@
                             break;
                         case 'MARKET':
                             _bc.push({
-                                text: 'Market',
-                                url: '/_Admin/Market/Index'
+                                text: Kooboo.text.common.breadCrumb.market,
+                                url: Kooboo.Route.Market.IndexPage
                             })
                             break;
                         default:

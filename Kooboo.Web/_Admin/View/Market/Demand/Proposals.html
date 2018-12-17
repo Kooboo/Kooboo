@@ -5,10 +5,10 @@
 <div data-bind="component: { name: 'kb-breadcrumb', params:[{
     name: 'MARKET'
 },{
-    name:'Demands',
+    name: Kooboo.text.common.Demands,
     url: Kooboo.Route.Demand.ListPage
 },{
-    name: 'My proposals'
+    name: Kooboo.text.market.demand.myProposals
 }]}"></div>
 
 <ul class="nav nav-tabs" data-bind="foreach: { data: proposalTypes, as: 'type' }">
@@ -23,9 +23,9 @@
             <th class="table-short">Budget</th>
             <th class="table-short">Duration</th>
             <th class="table-short">Created at</th>
-            
+
             <!-- ko if: curType() == 'inTheBid' -->
-            
+
             <!-- /ko -->
         </tr>
     </thead>
@@ -37,16 +37,16 @@
                     <p data-bind="text: $data.description"></p>
                 </a>
             </td>
-            <td><span  class="label label-sm label-info" data-bind="text: $data.budget, attr: { title: $data.currency }"></span></td>
+            <td><span class="label label-sm label-info" data-bind="text: $data.budget, attr: { title: $data.currency }"></span></td>
             <td data-bind="text: $data.duration"></td>
             <td data-bind="text: $data.createTime"></td>
-        <!--    <td>
+            <!--    <td>
                 <a class="btn btn-xs btn-default" data-bind="attr: { href: $data.previewUrl()}" target="_blank">
                     <i class="fa fa-eye"></i>
                 </a>
             </td>-->
             <!-- ko if: $parent.curType() == 'inTheBid' -->
-        <!--    <td>
+            <!--    <td>
                 <button class="btn btn-xs btn-info" data-bind="click: $parent.onUpdateProposal.bind(this, $data)">
                             <i class="fa fa-pencil"></i>
                         </button>

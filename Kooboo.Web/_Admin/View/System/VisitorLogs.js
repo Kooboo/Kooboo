@@ -236,7 +236,7 @@ $(function() {
                         fieldName: "size",
                         type: "text"
                     }, {
-                        displayName: Kooboo.text.site.visitorLog.detail,
+                        displayName: Kooboo.text.common.detail,
                         fieldName: "detail",
                         type: "communication-badge"
                     }]);

@@ -162,6 +162,9 @@
             },
             CategoriesPage: GetRoute("ECommerce/Product/Categories")
         },
+        Market: {
+            IndexPage: GetRoute("/_Admin/Market/Index", true)
+        },
         Discussion: {
             ListPage: GetRoute("Market/Discussion/Index"),
             DetailPage: GetRoute("Market/Discussion/Detail"),

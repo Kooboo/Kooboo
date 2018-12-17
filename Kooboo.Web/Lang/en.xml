@@ -450,9 +450,10 @@
   <key id="My demands">My demands</key>
   <key id="My proposals">My proposals</key>
   <key id="Created at">Created at</key>
-  <key id="Discussions">Discussions</key>
+  <key id="Discussion">Discussion</key>
   <key id="replied at">replied at</key>
   <key id="Latest Discussions">Latest Discussions</key>
+  <key id="Discussions">Discussions</key>
   <key id="New discussion">New discussion</key>
   <key id="My Threads">My Threads</key>
   <key id="Hardwares">Hardwares</key>
@@ -476,7 +477,7 @@
   <key id="Loading">Loading</key>
   <key id="Expertise">Expertise</key>
   <key id="Objection">Objection</key>
-  <key id="We have receive your objection.">We have receive your objection.</key>
+  <key id="We have receive your objection">We have receive your objection</key>
   <key id="Contact">Contact</key>
   <key id="Supplier:">Supplier:</key>
   <key id="Remark">Remark</key>
@@ -497,7 +498,7 @@
   <key id="Paid">Paid</key>
   <key id="Buyer">Buyer</key>
   <key id="Finished">Finished</key>
-  <key id="Accomplished!">Accomplished!</key>
+  <key id="Complete">Complete</key>
   <key id="Service">Service</key>
   <key id="Private Templates">Private Templates</key>
   <key id="Design">Design</key>
@@ -704,7 +705,6 @@
   <key id="Embedded">Embedded</key>
   <key id="Debug">Debug</key>
   <key id="services">Services</key>
-  <key id="Discussion">Discussion</key>
   <key id="Total price">Total price</key>
   <key id="Year">year</key>
   <key id="Years">years</key>
@@ -896,6 +896,7 @@
   <key id="Request sample response">Request sample response</key>
   <key id="id">id</key>
   <key id="User key">User key</key>
+  <key id="Market">Market</key>
   <key id="Edit condition">Edit condition</key>
   <key id="Text Box">Text Box</key>
   <key id="Text Area">Text Area</key>
@@ -1004,7 +1005,6 @@
   <key id="Remove this selector">Remove this selector</key>
   <key id="Export type">Export type</key>
   <key id="Export content">Export content</key>
-  <key id="Complete">Complete</key>
   <key id="Custom">Custom</key>
   <key id="Conditions">Conditions</key>
   <key id="Add condition">Add condition</key>
@@ -1123,6 +1123,8 @@
   <key id="Purchase history">Purchase history</key>
   <key id="My domains">My domains</key>
   <key id="Change currency">Change currency</key>
+  <key id="My Template">My Template</key>
+  <key id="Private Template">Private Template</key>
   <key id="Read">Read</key>
   <key id="Unread">Unread</key>
   <key id="Forward to">Forward to</key>
@@ -1219,10 +1221,7 @@
   <key id="wechat">Wechat</key>
   <key id="Bandwidth">Bandwidth</key>
   <key id="App does not allow source access">App does not allow source access</key>
-  <key id="Market">Market</key>
   <key id="Available">Available</key>
-  <key id="My Template">My Template</key>
-  <key id="Private Template">Private Template</key>
   <key id="Register">Register</key>
   <key id="Domain does not owned by current user">Domain does not owned by current user</key>
   <key id="port in use">port in use</key>

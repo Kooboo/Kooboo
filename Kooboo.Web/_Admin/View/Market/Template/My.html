@@ -5,10 +5,10 @@
 <div data-bind="component: { name: 'kb-breadcrumb', params:[{
     name: 'MARKET'
 },{
-    name: 'Templates',
+    name: Kooboo.text.common.Templates
     url: Kooboo.Route.Template.ListPage
 },{
-    name: 'My Template'
+    name: Kooboo.text.market.template.myTemplate
 }]}"></div>
 
 <div class="template-list row clearfix" data-bind="foreach: { data: templates, afterRender: templatesRendered }">

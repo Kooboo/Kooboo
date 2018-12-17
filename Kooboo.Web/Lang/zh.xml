@@ -450,9 +450,10 @@
   <key id="My demands">我的需求</key>
   <key id="My proposals">我的竞标</key>
   <key id="Created at">创建于</key>
-  <key id="Discussions">论坛</key>
+  <key id="Discussion">论坛</key>
   <key id="replied at">回复于</key>
   <key id="Latest Discussions">最新讨论</key>
+  <key id="Discussions">论坛</key>
   <key id="New discussion">新讨论</key>
   <key id="My Threads">我的</key>
   <key id="Hardwares">硬件</key>
@@ -497,9 +498,9 @@
   <key id="Paid">已支付</key>
   <key id="Buyer">买家</key>
   <key id="Finished">已完成</key>
-  <key id="Complete">完成</key>
+  <key id="Complete">完整</key>
   <key id="Service">服务</key>
-  <key id="Private Templates">Private Templates</key>
+  <key id="Private Templates">私有模板</key>
   <key id="Design">设计</key>
   <key id="Settings">设置</key>
   <key id="Diagnosis">诊断</key>
@@ -703,8 +704,7 @@
   <key id="Content folders">内容文件夹</key>
   <key id="Embedded">内嵌</key>
   <key id="Debug">调试</key>
-  <key id="services">services</key>
-  <key id="Discussion">论坛</key>
+  <key id="services">服务</key>
   <key id="Total price">总价</key>
   <key id="Year">年</key>
   <key id="Years">年</key>
@@ -896,6 +896,7 @@
   <key id="Request sample response">示例返回值</key>
   <key id="id">id</key>
   <key id="User key">自定义主键</key>
+  <key id="Market">市场</key>
   <key id="Edit condition">编辑条件</key>
   <key id="Text Box">输入框</key>
   <key id="Text Area">输入区</key>
@@ -1004,7 +1005,6 @@
   <key id="Remove this selector">删除选择器</key>
   <key id="Export type">导出类型</key>
   <key id="Export content">导出内容</key>
-  <key id="Complete">完整</key>
   <key id="Custom">自定义</key>
   <key id="Conditions">条件</key>
   <key id="Add condition">添加条件</key>
@@ -1123,6 +1123,8 @@
   <key id="Purchase history">购买历史</key>
   <key id="My domains">我的域名</key>
   <key id="Change currency">更改币种</key>
+  <key id="My Template">我的模板</key>
+  <key id="Private Template">私有模板</key>
   <key id="Read">已读</key>
   <key id="Unread">未读</key>
   <key id="Forward to">转发到</key>
@@ -1211,7 +1213,7 @@
   <key id="No color is able to change.">没有可改变的颜色</key>
   <key id="Delete label">删除标签</key>
   <key id="Domain has been taken">域名已被使用</key>
-  <key id="Domain must use Kooboo DNS server">域名必须使用Kooboo 的DNS 服务器</key>
+  <key id="Domain must use Kooboo DNS server">域名必须使用 Kooboo 的 DNS 服务器</key>
   <key id="Old and New Password are the same">新旧密码相同</key>
   <key id="Kooboo online">Kooboo online</key>
   <key id="is in use">正在使用</key>
@@ -1219,10 +1221,7 @@
   <key id="wechat">微信</key>
   <key id="Bandwidth">带宽</key>
   <key id="App does not allow source access">App不允许查看源代码</key>
-  <key id="Market">市场</key>
   <key id="Available">可用的</key>
-  <key id="My Template">我的模板</key>
-  <key id="Private Template">私有模板</key>
   <key id="Register">注册</key>
   <key id="Domain does not owned by current user">用户没有域名权限</key>
   <key id="port in use">端口被占用</key>
@@ -1237,7 +1236,7 @@
   <key id="user not found">没有找到用户</key>
   <key id="Reset Password Request">Reset Password Request</key>
   <key id="You can use the following link within the next day to reset your password: \r\n\r\n{{link}}\r\n\r\n If you do not use this link within 24 hours, it will expire. \r\n\r\nRegards,\r\nKooboo Team">You can use the following link within the next day to reset your password: \r\n\r\n{{link}}\r\n\r\n If you do not use this link within 24 hours, it will expire. \r\n\r\nRegards,\r\nKooboo Team</key>
-  <key id="An reset password email has been sent to">An reset password email has been sent to</key>
+  <key id="An reset password email has been sent to">重设密码的邮件已发送至：</key>
   <key id="Username or password not provided">需提供用户名或密码</key>
   <key id="user exists">用户已存在</key>
   <key id="Coupon has not enough credit to pay this order">优惠卷金额不够支付本订单</key>
