@@ -36,12 +36,15 @@
                         <div class="form-group">
                             <label data-bind="text: Kooboo.text.common.attachments"></label>
                             <div class="form-inline">
-                                <button class="btn btn-info btn-file" data-bind="text: Kooboo.text.common.upload">
+                                <button class="btn btn-info btn-file">
                                     <input type="file"  data-bind="upload: {
                                     allowMutiple: false,
                                     acceptTypes: ['*/*'],
                                     callback: uploadFile
-                                }"></button>
+                                }">
+                                <!-- ko text: Kooboo.text.common.upload -->
+                                <!-- /ko -->
+                            </button>
                                 <div class="form-group">
                                     <p class="form-control-static">
                                         <!-- ko foreach: attachments -->
@@ -92,7 +95,7 @@
                 <button class="btn green" data-bind="text: Kooboo.text.site.form.submit, click: onSave"></button>
                 <!-- /ko -->
                 <!-- ko if: mode() == 'view' -->
-                <button class="btn green" data-bind="text: Kooboo.text.component.proposalModal.accept, click: onAcceptProposal">Accept</button>
+                <button class="btn green" data-bind="text: Kooboo.text.component.proposalModal.accept, click: onAcceptProposal"></button>
                 <!-- /ko -->
                 <button class="btn gray" data-bind="click: onHide, text: Kooboo.text.common.cancel"></button>
             </div>
