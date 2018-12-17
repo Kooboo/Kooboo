@@ -38,21 +38,30 @@ $(function() {
         this.organizationId = ko.observable();
         self.select = function(m, e) {
             e.preventDefault();
-            var o = this.item,
-                amount = this.amount;
-            if (!o) {
-                return;
-            }
-            self.confirm(true);
-            self.available(true);
-            self.domain(o.domain);
-            self.years(amount);
-            self.unitPrice(o.price);
-            if (self.balance() >= self.totalPrice()) {
-                self.payment("balance");
-            } else {
-                self.payment("wechat");
-            }
+            Kooboo.Order.domain({
+                domainName: this.item.domain,
+                year: this.amount
+            }).then(function(res) {
+                if (res.success) {
+                    Kooboo.EventBus.publish("kb/market/component/cashier/show", res.model);
+                }
+            })
+
+            // var o = this.item,
+            //     amount = this.amount;
+            // if (!o) {
+            //     return;
+            // }
+            // self.confirm(true);
+            // self.available(true);
+            // self.domain(o.domain);
+            // self.years(amount);
+            // self.unitPrice(o.price);
+            // if (self.balance() >= self.totalPrice()) {
+            //     self.payment("balance");
+            // } else {
+            //     self.payment("wechat");
+            // }
         }
 
         self.cancel = function(m, e) {
@@ -74,9 +83,9 @@ $(function() {
                 } else if (m.success === true && m.paid === true) {
                     alert("Paid by balance!");
                     location.href = "/_Admin/Domains";
-                } else if(self.payment()=="paypal"){
-                    window.location.href=m.approvalUrl;
-                }else {
+                } else if (self.payment() == "paypal") {
+                    window.location.href = m.approvalUrl;
+                } else {
                     $('#qrcode').qrcode(m.qrcode);
                     self.showQrcode(m.success);
                     self.paymentId(m.paymentId);
@@ -159,6 +168,10 @@ $(function() {
                 self.organizationId(res.model.id);
                 self.balance(res.model.balance);
             }
+        })
+
+        Kooboo.EventBus.subscribe('kb/market/cashier/done', function() {
+            debugger;
         })
     }
     var vm = new viewModel(model);
