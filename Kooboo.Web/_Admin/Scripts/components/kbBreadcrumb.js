@@ -84,7 +84,7 @@
                             break;
                         case 'MARKET':
                             _bc.push({
-                                text: Kooboo.text.common.breadCrumb.market,
+                                text: Kooboo.text.component.breadCrumb.market,
                                 url: Kooboo.Route.Market.IndexPage
                             })
                             break;

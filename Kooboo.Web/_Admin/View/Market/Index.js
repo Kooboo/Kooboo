@@ -55,7 +55,6 @@ $(function() {
 
         Kooboo.Market.getMy().then(function(res) {
             if (res.success) {
-                debugger; 
                 self.panels(res.model.map(function(item) {
                     var moreUrl = '',
                         detailUrl = '';
@@ -73,7 +72,7 @@ $(function() {
                             moreUrl = "/_admin/market/supplier/index";
                             url = "/_admin/market/supplier/service";
                             break;
-            
+
                     }
 
                     return {
