@@ -71,22 +71,22 @@ $(function() {
                     type: 'article'
                 },
                 {
-                    displayName: 'Comments',
+                    displayName: Kooboo.text.market.discussion.Comments,
                     fieldName: 'comments',
                     showClass: 'table-short',
                     type: 'badge'
                 }, {
-                    displayName: 'Views',
+                    displayName: Kooboo.text.common.Views,
                     fieldName: 'views',
                     showClass: 'table-short',
                     type: 'badge'
                 }, {
-                    displayName: 'User',
+                    displayName: Kooboo.text.common.user,
                     fieldName: 'user',
                     showClass: 'table-short',
                     type: 'label'
                 }, {
-                    displayName: 'Last modified',
+                    displayName: Kooboo.text.common.lastModified,
                     fieldName: 'lastModified',
                     showClass: 'table-short',
                     type: 'text'

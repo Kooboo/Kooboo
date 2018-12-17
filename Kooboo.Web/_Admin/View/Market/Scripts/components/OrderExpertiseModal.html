@@ -4,7 +4,10 @@
             <div class="modal-header">
                 <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
                 <h4 class="modal-title" data-bind="text: name"></h4>
-                <div data-bind="text: Kooboo.text.component.orderModal.supplier"><span data-bind="text: supplierName"></span></div>  
+                <div>
+                    <!-- ko text: Kooboo.text.component.orderModal.supplier -->
+                            <!-- /ko -->
+                    <span data-bind="text: supplierName"></span></div>  
                 
                
             </div>
@@ -15,7 +18,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label data-bind="text: Kooboo.text.component.demandModal.attachments"></label>
+                    <label data-bind="text: Kooboo.text.common.attachments"></label>
                     <div class="form-inline">
                         <div class="form-group">
                             <button class="btn btn-info btn-file">
@@ -43,7 +46,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn green" data-bind="text: Kooboo.text.component.orderModal.order, click: onOrder">Order</button>
+                <button class="btn green" data-bind="text: Kooboo.text.component.orderModal.order, click: onOrder"></button>
                 <button class="btn gray" data-bind="text: Kooboo.text.common.cancel, click: onHide"></button>
             </div>
         </div>

@@ -48,12 +48,12 @@ $(function() {
                     fieldName: 'article',
                     type: 'article'
                 },{
-                    displayName: 'Price',
+                    displayName: Kooboo.text.common.price,
                     fieldName: 'price',
                     type: 'label',
                     showClass: 'table-short'
                 }, {
-                    displayName: "Supplier",
+                    displayName: Kooboo.text.common.Supplier,
                     fieldName: "orgName",
                     type: 'label',
                     showClass: 'table-short'

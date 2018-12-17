@@ -465,7 +465,6 @@
   <key id="Count">Count</key>
   <key id="No record">No record</key>
   <key id="Loading">Loading</key>
-  <key id="Order">Order</key>
   <key id="Input a amount large than 0.01">Input a amount large than 0.01</key>
   <key id="Reply content goes here">Reply content goes here</key>
   <key id="Supplier">Supplier</key>
@@ -476,7 +475,7 @@
   <key id="My Orders">My Orders</key>
   <key id="My Services">My Services</key>
   <key id="Add Service">Add Service</key>
-  <key id="Service:">Service:</key>
+  <key id="Order">Order</key>
   <key id="Paid">Paid</key>
   <key id="Buyer">Buyer</key>
   <key id="Finished">Finished</key>
@@ -1010,6 +1009,7 @@
   <key id="large than 0.01">large than 0.01</key>
   <key id="Paied">Paied</key>
   <key id="Order date">Order date</key>
+  <key id="coupon">Coupon</key>
   <key id="Downloads">Downloads</key>
   <key id="Dynamic contents">Dynamic contents</key>
   <key id="Click here">Click here</key>
@@ -1024,7 +1024,6 @@
   <key id="Proposal">Proposal</key>
   <key id="Day(s)">Day(s)</key>
   <key id="Bidder">Bidder</key>
-  <key id="Coupon">Coupon</key>
   <key id="Take offline">Take offline</key>
   <key id="Take online">Take online</key>
   <key id="Add new language">Add new language</key>
@@ -1123,6 +1122,11 @@
   <key id="Purchase history">Purchase history</key>
   <key id="My domains">My domains</key>
   <key id="Change currency">Change currency</key>
+  <key id="Start date">Start date</key>
+  <key id="End date">End date</key>
+  <key id="Demander">Demander</key>
+  <key id="Create time">Create time</key>
+  <key id="Order user">Order user</key>
   <key id="My Template">My Template</key>
   <key id="Private Template">Private Template</key>
   <key id="Read">Read</key>
@@ -1212,25 +1216,10 @@
   <key id="please select image">please select image</key>
   <key id="No color is able to change.">No color is able to change.</key>
   <key id="Delete label">Delete label</key>
-  <key id="Recharge must be greater than 0">Recharge must be greater than 0</key>
-  <key id="Organization not found">Organization not found</key>
-  <key id="Submit Order failed">Submit Order failed</key>
-  <key id="Deliver Failed">Deliver Failed</key>
-  <key id="Domain not found">Domain not found</key>
-  <key id="Invalid years">Invalid years</key>
-  <key id="amount must be greater than 0">amount must be greater than 0</key>
   <key id="Domain has been taken">Domain has been taken</key>
   <key id="Domain must use Kooboo DNS server">Domain must use Kooboo DNS server</key>
   <key id="Old and New Password are the same">Old and New Password are the same</key>
   <key id="Kooboo online">Kooboo online</key>
-  <key id="Invalid amount">Invalid amount</key>
-  <key id="Update payment failed">Update payment failed</key>
-  <key id="insufficient balance">insufficient balance</key>
-  <key id="currency is wrong">currency is wrong</key>
-  <key id="Update balance failed">Update balance failed</key>
-  <key id="Wechat can only use RMB">Wechat can only use RMB</key>
-  <key id="Wetchat payment error">Wetchat payment error</key>
-  <key id="Payment not supported">Payment not supported</key>
   <key id="is in use">is in use</key>
   <key id="Paypal">Paypal</key>
   <key id="wechat">Wechat</key>
@@ -1244,8 +1233,6 @@
   <key id="You can only submit request for the same domain one time per hour">You can only submit request for the same domain one time per hour</key>
   <key id="You have reached the max number of free certificates">You have reached the max number of free certificates</key>
   <key id="your certificates is being generated, it normally will take 1-2 mins">your certificates is being generated, it normally will take 1-2 mins</key>
-  <key id="SupplyOffer">SupplyOffer</key>
-  <key id="SupplyOrder">SupplyOrder</key>
   <key id="Accepted">Accepted</key>
   <key id="Denied">Denied</key>
   <key id="UnFinished">UnFinished</key>
@@ -1256,6 +1243,7 @@
   <key id="An reset password email has been sent to">An reset password email has been sent to</key>
   <key id="Username or password not provided">Username or password not provided</key>
   <key id="user exists">user exists</key>
+  <key id="Coupon has not enough credit to pay this order">Coupon has not enough credit to pay this order</key>
   <key id="Open status">Open status</key>
   <key id="Winner">Winner</key>
   <key id="Outbid">Outbid</key>

@@ -26,11 +26,7 @@ $(function() {
                                     text: item.orgName,
                                     class: 'label-sm gray'
                                 },
-                                edit: {
-                                    class: 'blue',
-                                    iconClass: 'fa fa-pencil',
-                                    url: 'kb/expertise/edit'
-                                },
+                                
                                 delete: {
                                     class: 'red',
                                     iconClass: 'fa-trash',
@@ -46,21 +42,18 @@ $(function() {
                                 fieldName: 'article',
                                 type: 'communication-article'
                             }, {
-                                displayName: 'Price',
+                                displayName: Kooboo.text.common.price,
                                 fieldName: 'price',
                                 type: 'label',
                                 showClass: 'table-short'
                             }, {
-                                displayName: "Supplier",
+                                displayName: Kooboo.text.common.Supplier,
                                 fieldName: "orgName",
                                 type: 'label',
                                 showClass: 'table-short'
                             }],
                             tableActions: [
                                 {
-                                fieldName: 'edit',
-                                type: 'communication-icon-btn'
-                                },{
                                 fieldName: 'delete',
                                 type: 'communication-icon-btn'
                             }],

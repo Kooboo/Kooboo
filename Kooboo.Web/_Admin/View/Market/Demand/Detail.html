@@ -285,7 +285,7 @@
                                 <div class="avatar pull-left" data-bind="text: public.firstLetter"></div>
                             </a>
                             <div class="media-body">
-                                <h4 class="media-heading" data-bind="html: public.content"></h4>
+                                <h5 class="media-heading" data-bind="html: public.content"></h5>
                                 <p class="clearfix">
                                     <span class="pull-left">
                                                 <span data-bind="text: public.userName"></span>
@@ -304,10 +304,10 @@
                                     <div data-bind="foreach:{ data: public.subCommentList, as: 'sub', afterRender: $parent.commentRendered }">
                                         <div class="media margin-top-15">
                                             <a class="pull-left" href="#">
-                                                <img class="media-object" data-bind="attr: { 'data-src': 'holder.js/48x48?text=' + sub.firstLetter }" alt="48x48" style="width: 48px; height: 48px;">
+                                                <img class="avatar media-object" data-bind="attr: { 'data-src': 'holder.js/48x48?text=' + sub.firstLetter }" alt="48x48" style="width: 48px; height: 48px;">
                                             </a>
                                             <div class="media-body">
-                                                <h4 class="media-heading" data-bind="html: sub.content"></h4>
+                                                <h5 class="media-heading" data-bind="html: sub.content"></h5>
                                                 <p>
                                                     <span class="pull-left">
                                                                 <span data-bind="text: sub.userName"></span>

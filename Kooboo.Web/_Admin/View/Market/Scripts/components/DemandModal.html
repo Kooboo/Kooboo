@@ -18,12 +18,15 @@
                     <label data-bind="text: Kooboo.text.common.attachments,textError: title"></label>
                     <div class="form-inline">
                         <div class="form-group">
-                            <button class="btn btn-info btn-file" data-bind="text: Kooboo.text.common.upload">
+                            <button class="btn btn-info btn-file">
                                 <input type="file" data-bind="upload: {
                                     allowMultiple: false,
                                     acceptTypes: ['*/*'],
                                     callback: uploadFile
-                                }" /></button>
+                                }" />
+                            <!-- ko text: Kooboo.text.common.upload -->
+                            <!-- /ko -->
+                            </button>
                         </div>
                         <div class="form-group">
                             <p class="form-control-static">

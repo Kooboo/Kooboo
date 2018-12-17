@@ -59,27 +59,27 @@ $(function() {
                     fieldName: 'article',
                     type: 'article'
                 },{
-                    displayName: 'Start date',
+                    displayName: Kooboo.text.market.demand.StartDate,
                     fieldName: 'startDate',
                     showClass: 'table-short',
                     type: 'label'
                 }, {
-                    displayName: 'End date',
+                    displayName: Kooboo.text.market.demand.EndDate,
                     fieldName: 'endDate',
                     showClass: 'table-short',
                     type: 'label'
                 }, {
-                    displayName: 'Budget',
+                    displayName: Kooboo.text.common.budget,
                     fieldName: 'budget',
                     showClass: 'table-short',
                     type: 'label'
                 }, {
-                    displayName: 'Proposal',
+                    displayName: Kooboo.text.market.demand.proposals,
                     fieldName: 'proposalCount',
                     showClass: 'table-short',
                     type: 'badge'
                 }, {
-                    displayName: 'Create time',
+                    displayName: Kooboo.text.market.demand.createTime,
                     fieldName: 'createTime',
                     showClass: 'table-short',
                     type: 'text'

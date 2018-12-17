@@ -732,7 +732,8 @@
                 customize: "Customize",
                 largeThan: "large than 0.01",
                 paied: "Paied",
-                orderDate: "Order date"
+                orderDate: "Order date",
+                coupon: "coupon",
             },
             templateModal: {
                 downloads: "Downloads",
@@ -763,7 +764,8 @@
             },
             orderModal: {
                 supplier: "Supplier:",
-                order: "Order"
+                order: "Buy it"
+
             },
             proposalModal: {
                 proposal: "Proposal",
@@ -1012,10 +1014,18 @@
             changeCurrency: "Change currency",
             demand: {
                 myDemands: "My Demands",
-                myProposals: "My Proposals"
+                myProposals: "My Proposals",
+                StartDate: "Start date",
+                EndDate: "End date",
+                proposals: "Proposals",
+                demander: "Demander",
+                createTime: "Create time",
             },
             discussion: {
-                myThreads: "My Threads"
+                myThreads: "My Threads",
+                Comments: "Comments",
+
+
             },
             hardware: {
                 usageReport: "Usage Report"
@@ -1024,7 +1034,9 @@
                 myOffers: "My Offers",
                 myOrders: "My Orders",
                 myServices: "My Services",
-                service: "Service"
+                service: "Service",
+                status: "Status",
+                orderUser: "Order user"
             },
             template: {
                 myTemplate: "My Template",

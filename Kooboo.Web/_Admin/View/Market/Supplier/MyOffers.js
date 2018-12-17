@@ -42,19 +42,19 @@ $(function() {
             self.tableData({
                 docs: docs,
                 columns: [{
-                    displayName: 'Name',
+                    displayName: Kooboo.text.common.name,
                     fieldName: 'name',
                     type: 'text'
                 }, {
-                    displayName: 'Amount',
+                    displayName: Kooboo.text.common.amount,
                     fieldName: 'amount',
                     type: 'text'
                 }, {
-                    displayName: 'Status',
+                    displayName: Kooboo.text.market.supplier.status,
                     fieldName: 'status',
                     type: 'label'
                 }, {
-                    displayName: 'Order user',
+                    displayName: Kooboo.text.market.supplier.orderUser,
                     fieldName: 'user',
                     type: 'label',
                 }],
