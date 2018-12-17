@@ -171,7 +171,9 @@ $(function() {
         })
 
         Kooboo.EventBus.subscribe('kb/market/cashier/done', function() {
-            debugger;
+            setTimeout(function() {
+                location.href = Kooboo.Route.Domain.IndexPage;
+            }, 300);
         })
     }
     var vm = new viewModel(model);
