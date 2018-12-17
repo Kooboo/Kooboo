@@ -1,4 +1,4 @@
-(function() {
+(function () {
     Kooboo.loadJS([
         "/_Admin/Scripts/kooboo/Guid.js",
         "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js"
@@ -7,20 +7,18 @@
     var template = Kooboo.getTemplate("/_Admin/Market/Scripts/components/ReplyPanel.html");
 
     ko.components.register('reply-panel', {
-        viewModel: function(params) {
+        viewModel: function (params) {
             var self = this;
 
             this.type = ko.observable(params.type);
             this.typeId = params.typeId;
             this.parentId = params.parentId || ko.observable(Kooboo.Guid.Empty);
-  
-            params.disabled = true;
 
-            this.disabled = ko.observable(params.disabled); 
-           
+            this.disabled = ko.observable(!!params.disabled);
+
             this.showError = ko.observable(false);
 
-            this.uploadRequired = ko.pureComputed(function() {
+            this.uploadRequired = ko.pureComputed(function () {
                 return ['supplier', 'delivery'].indexOf(self.type()) > -1;
             })
 
@@ -28,11 +26,11 @@
                 required: ''
             })
 
-            this.ableToReply = ko.pureComputed(function() {
+            this.ableToReply = ko.pureComputed(function () {
                 return self.content.isValid();
             })
 
-            this.onReply = function() {
+            this.onReply = function () {
                 if (this.content.isValid()) {
                     switch (self.type()) {
                         case 'discussion':
@@ -40,7 +38,7 @@
                                 ownerId: self.typeId(),
                                 parentId: self.parentId(),
                                 content: self.content()
-                            }).then(function(res) {
+                            }).then(function (res) {
                                 if (res.success) {
                                     Kooboo.EventBus.publish('kb/witkey/component/reply/refresh', {
                                         id: self.typeId(),
@@ -55,7 +53,7 @@
                                 ownerId: self.typeId(),
                                 parentId: self.parentId(),
                                 content: self.content()
-                            }).then(function(res) {
+                            }).then(function (res) {
                                 if (res.success) {
                                     Kooboo.EventBus.publish('kb/witkey/demand/reply/refresh', {
                                         id: self.typeId(),
@@ -70,9 +68,9 @@
                                 ownerId: self.typeId(),
                                 isPublic: false,
                                 content: self.content()
-                            }).then(function(res) {
+                            }).then(function (res) {
                                 if (res.success) {
-                                    Kooboo.EventBus.publish('kb/market/chat/sent', function() {
+                                    Kooboo.EventBus.publish('kb/market/chat/sent', function () {
                                         self.showError(false);
                                         self.content('');
                                     })
@@ -83,9 +81,9 @@
                             Kooboo.Supplier.reply({
                                 ownerId: self.typeId(),
                                 content: self.content()
-                            }).then(function(res) {
+                            }).then(function (res) {
                                 if (res.success) {
-                                    Kooboo.EventBus.publish('kb/market/reply/sent', function() {
+                                    Kooboo.EventBus.publish('kb/market/reply/sent', function () {
                                         self.showError(false);
                                         self.content('');
                                     })
@@ -98,11 +96,11 @@
                 }
             }
 
-            this.uploadFile = function(data, files) {
+            this.uploadFile = function (data, files) {
                 var fd = new FormData();
                 fd.append('filename', files[0].name);
                 fd.append('file', files[0]);
-                Kooboo.Attachment.uploadFile(fd).then(function(res) {
+                Kooboo.Attachment.uploadFile(fd).then(function (res) {
                     if (res.success) {
                         switch (self.type()) {
                             case 'delivery':
