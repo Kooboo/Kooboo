@@ -69,14 +69,19 @@ namespace Kooboo.Data.Context
             // the user first login with token, should try to find the last page of this user.  
             if (user !=null)
             {
-                var lasturl = Service.UserLoginPathService.GetLastPath(user.Id); 
-                if (!string.IsNullOrEmpty(lasturl))
+                string returnurl = RequestManager.GetHttpValue(request, "returnurl");
+
+                if (string.IsNullOrWhiteSpace(returnurl))
                 {
-                    context.Response.Redirect(302, lasturl);
-                    context.Response.End = true; 
-                }
+                    var lasturl = Service.UserLoginPathService.GetLastPath(user.Id);
+                    if (!string.IsNullOrEmpty(lasturl))
+                    {
+                        context.Response.Redirect(302, lasturl);
+                        context.Response.End = true;
+                    }
+                } 
             }
-            else
+            else 
             {
                 user = _GetUserFromBasicAuthentication(request);
             }
@@ -97,10 +102,10 @@ namespace Kooboo.Data.Context
                 user = _GetUserFromCookie(request);
             }
 
-            if (user != null && user.PasswordHash == default(Guid))
-            {
-                return null;
-            }
+            //if (user != null && user.PasswordHash == default(Guid))
+            //{
+            //    return null;
+            //}
 
             return user;
         }

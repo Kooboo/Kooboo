@@ -69,10 +69,8 @@ namespace Kooboo.Web.Api.Implementation
             header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Sites", context), Url = AdminUrl("Sites"), Icon = "fa fa-sitemap", Count = 0, BadgeIcon = "badge-success" });
 
             header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Emails", context), Url = AdminUrl("Emails/Inbox"), Icon = "fa fa-envelope", Count = 0, BadgeIcon = "badge-primary" });
-
-            // TODO: Add redirect to online server market...
-
-            //header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Market", context), Url = AdminUrl("Market/Index"), Icon = "fa fa-plug", Count = 0, BadgeIcon = "badge-primary", OpenInNewWindow = true });
+             
+              header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Market", context), Url = "/_api/user/onlineserver", Icon = "fa fa-plug", Count = 0, BadgeIcon = "badge-primary", OpenInNewWindow = true });
 
             //  header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("E-Commerce", context), Url = AdminUrl("Ecommerce"), Icon = "fa fa-shopping-cart", Count = 0, BadgeIcon = "badge-success" });
 

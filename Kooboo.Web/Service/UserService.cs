@@ -18,9 +18,7 @@ namespace Kooboo.Web.Service
         {
             if (Kooboo.Data.AppSettings.IsOnlineServer && !IsSameServer(user.TempRedirectUrl))
             {
-                var gettokenurl = Kooboo.Data.Helper.AccountUrlHelper.User("GetToken");
-                gettokenurl += "?username=" + user.UserName + "&password=" + user.PasswordHash.ToString();
-                var token = Kooboo.Lib.Helper.HttpHelper.Get<string>(gettokenurl);
+                string token = GetTokenFromOnline(user);
 
 #if DEBUG
                 token = Kooboo.Data.Cache.AccessTokenCache.GetNewToken(user.Id);
@@ -34,6 +32,22 @@ namespace Kooboo.Web.Service
             }
         }
 
+        public static string GetTokenFromOnline(User user)
+        {
+            var gettokenurl = Kooboo.Data.Helper.AccountUrlHelper.User("GetToken");
+            gettokenurl += "?username=" + user.UserName;
+            if (user.PasswordHash != default(Guid))
+            {
+                gettokenurl += "&password=" + user.PasswordHash.ToString();
+            }
+            else if (!string.IsNullOrEmpty(user.Password))
+            {
+                gettokenurl += "&password=" + user.Password;
+            }
+        
+            return Kooboo.Lib.Helper.HttpHelper.Get<string>(gettokenurl);
+          
+        }
 
         public static string GetRedirectUrl(RenderContext context, User User, string currentRequestUrl, string returnUrl)
         {

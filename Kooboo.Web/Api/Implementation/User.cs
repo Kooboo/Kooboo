@@ -134,6 +134,54 @@ namespace Kooboo.Web.Api.Implementation
         }
 
 
+        public virtual MetaResponse OnlineServer(ApiCall call)
+        { 
+            if (call.Context.User == null)
+            {
+                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("User not login", call.Context)); 
+            }
+
+            var user = call.Context.User; 
+            if (string.IsNullOrWhiteSpace(user.Password) && user.PasswordHash == default(Guid))
+            {
+                var dbuser = GlobalDb.Users.Get(user.Id); 
+                if (dbuser !=null)
+                {
+                    user = dbuser; 
+                }
+            }
+
+            var url = Kooboo.Data.Helper.AccountUrlHelper.User("GetMarketServerHost");
+            url += "?UserId=" + user.Id.ToString(); 
+
+            var serverurl = Lib.Helper.HttpHelper.Get<string>(url); 
+
+            if (serverurl !=null && !serverurl.ToLower().StartsWith("http"))
+            {
+                serverurl = "https://" + serverurl;
+            }
+
+            if (serverurl !=null)
+            {
+                serverurl += "/_admin/market/index";
+
+                var token = Service.UserService.GetTokenFromOnline(user); 
+                 if (!string.IsNullOrWhiteSpace(token))
+                {
+                    serverurl += "?accesstoken=" + token; 
+                }
+
+               return new MetaResponse() { RedirectUrl = serverurl, StatusCode = 302 }; 
+            }
+            else
+            {
+                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Server url not found", call.Context));  
+            }
+             
+ 
+        }
+
+
         [Kooboo.Attributes.RequireModel(typeof(User))]
         public bool UpdateProfile(ApiCall call)
         {
