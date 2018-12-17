@@ -29,6 +29,7 @@ $(function() {
             }
 
             var docs = data.list.map(function(item) {
+                var symbol=item.symbol?item.symbol:item.currency;
                 var date = new Date(item.createTime);
                 return {
                     id: item.id,
@@ -46,7 +47,7 @@ $(function() {
                         class: 'label-sm gray'
                     },
                     budget: {
-                        text: item.symbol + item.budget,
+                        text: symbol + item.budget,
                         tooltip: item.currency,
                         class: 'label-sm label-info'
                     },
