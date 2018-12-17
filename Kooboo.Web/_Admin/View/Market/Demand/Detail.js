@@ -41,12 +41,8 @@ $(function() {
         this.isOpening = ko.pureComputed(function() {
             return self.status() == 'open';
         })
-        this.isTaken = ko.pureComputed(function() {
-            return ['taken', 'accepted'].indexOf(self.status()) > -1;
-        })
-        this.isDemandClosed = ko.pureComputed(function() {
-            return ['rejected', 'accepted'].indexOf(self.status()) > -1;
-        })
+        this.isTaken = ko.observable();
+        this.isClose = ko.observable();
         this.isDemandInvalid = ko.pureComputed(function() {
             return self.status() == 'invalid';
         })
@@ -108,6 +104,8 @@ $(function() {
                     }) : [])
                     self.userName(res.model.userName);
                     self.isOwner(res.model.isOwner);
+                    self.isTaken(res.model.isTaken);
+                    self.isClose(res.model.isClose);
                     self.currency(res.model.currency);
                     self.currencySymbol(res.model.symbol);
                     self.budget(res.model.symbol + res.model.budget);
@@ -155,8 +153,11 @@ $(function() {
                     demandId: self.id()
                 }).then(function(res) {
                     if (res.success) {
-                        self.showingProposal(res.model);
-                        self.myProposalId(res.model && res.model.id);
+                        var proposal = res.model;
+                        if (proposal.id !== Kooboo.Guid.Empty) {
+                            self.showingProposal(res.model);
+                            self.myProposalId(res.model && res.model.id);
+                        }
                         cb && cb();
                     }
                 })

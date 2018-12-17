@@ -102,7 +102,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title" data-bind="text: title"></h3>
                 <div class="panel-actions">
-                    <!-- ko if: isOwner() && isOpening() -->
+                    <!-- ko if: isOwner() && !isTaken() && !isClose() -->
                     <button class="btn btn-xs btn-info" data-bind="click: onUpdateDemand"><i class="fa fa-pencil"></i></button>
                     <!-- /ko -->
                 </div>
@@ -174,15 +174,13 @@
         <div class="tab-content">
             <div class="tab-pane fade active in" id="tab_1_1">
 
-                <!-- ko ifnot: isDemandClosed || isDemandInvalid -->
-                <!-- ko if: !isOwner() && !isProposalUser() -->
+                <!-- ko if: !isOwner() && !isProposalUser() && !isTaken() && !isClose() -->
                 <div class="alert alert-info">
                     You have not bid yet, click <a href="javascript:;" class="alert-link" data-bind="click: onShowProposalModal">here</a> to make a bid.
                 </div>
                 <!-- /ko -->
-                <!-- /ko -->
 
-                <!-- ko if: isDemandClosed -->
+                <!-- ko if: isClose -->
                 <div class="alert alert-warning">
                     <strong>Notice</strong>&nbsp;<span>This demand is <span data-bind="text: displayStatus"></span></span>
                 </div>
@@ -245,7 +243,7 @@
                                         <button class="btn btn-xs btn-info" data-bind="click: $parent.onShowProposalModal"><i class="fa fa-pencil"></i></button>
                                         <!-- /ko -->
 
-                                        <!-- ko if: $parent.isDemandClosed -->
+                                        <!-- ko if: $parent.isClose -->
                                         <button class="btn btn-xs btn-default" data-bind="click: $parent.onShowObjectionModal"><i class="fa fa-user-md"></i></button>
                                         <!-- /ko -->
 
@@ -257,7 +255,7 @@
                                         <button class="btn btn-sm btn-info" data-bind="click: $parent.onAcceptProposal.bind(this, $data), tooltip: 'Accept this proposal'">Accept</button>
                                         <!-- /ko -->
 
-                                        <!-- ko if: $parent.isTaken()  && !$parent.isDemandClosed() -->
+                                        <!-- ko if: $parent.isTaken()  && !$parent.isClose() -->
 
                                         <!-- ko if: $data.isTaken -->
 
