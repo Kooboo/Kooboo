@@ -174,10 +174,12 @@
         <div class="tab-content">
             <div class="tab-pane fade active in" id="tab_1_1">
 
+                <!-- ko ifnot: isDemandClosed || isDemandInvalid -->
                 <!-- ko if: !isOwner() && !isProposalUser() -->
                 <div class="alert alert-info">
                     You have not bid yet, click <a href="javascript:;" class="alert-link" data-bind="click: onShowProposalModal">here</a> to make a bid.
                 </div>
+                <!-- /ko -->
                 <!-- /ko -->
 
                 <!-- ko if: isDemandClosed -->
