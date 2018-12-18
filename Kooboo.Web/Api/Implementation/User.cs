@@ -177,8 +177,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Server url not found", call.Context));  
             }
-             
- 
+              
         }
 
 
