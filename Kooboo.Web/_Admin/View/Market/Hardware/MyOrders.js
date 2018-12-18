@@ -22,6 +22,7 @@ $(function() {
                 return {
                     id: doc.salesItemId,
                     name: doc.displayName,
+                    
                     type: {
                         text: doc.type,
                         class: 'label-sm label-info'
@@ -39,7 +40,7 @@ $(function() {
                         class: 'label-sm green'
                     },
                     renew: {
-                        text: 'Renew',
+                        text: Kooboo.text.common.renew,
                         url: 'kb/market/hardware/orders/renew'
                     }
                 }
@@ -52,21 +53,25 @@ $(function() {
                     fieldName: 'name',
                     type: 'text'
                 }, {
-                    displayName: 'Type',
+                    displayName: Kooboo.text.common.type,
                     fieldName: 'type',
-                    type: 'label'
+                    type: 'label',
+                    showClass: 'table-short'
                 }, {
-                    displayName: 'Amount',
+                    displayName: Kooboo.text.common.amount,
                     fieldName: 'amount',
-                    type: 'label'
+                    type: 'label',
+                    showClass: 'table-short'
                 }, {
-                    displayName: 'Start time',
+                    displayName: Kooboo.text.common.startTime,
                     fieldName: 'startTime',
-                    type: 'label'
+                    type: 'label',
+                    showClass: 'table-short'
                 }, {
-                    displayName: 'End month',
+                    displayName: Kooboo.text.common.endMonth,
                     fieldName: 'endMonth',
-                    type: 'label'
+                    type: 'label',
+                    showClass: 'table-short'
                 }],
                 tableActions: [{
                     fieldName: 'renew',

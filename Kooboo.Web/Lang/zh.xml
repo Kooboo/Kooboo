@@ -457,6 +457,7 @@
   <key id="New discussion">新讨论</key>
   <key id="My Threads">我的</key>
   <key id="Hardwares">硬件</key>
+  <key id="My Orders">我的订单</key>
   <key id="Usage">用量</key>
   <key id="Logs">日志</key>
   <key id="Month">月</key>
@@ -472,7 +473,6 @@
   <key id="Expertise">技能</key>
   <key id="Suppliers">供应商</key>
   <key id="My Offers">我的服务</key>
-  <key id="My Orders">我的订单</key>
   <key id="My Services">我的产品</key>
   <key id="Add Service">添加服务</key>
   <key id="Order">订单</key>
@@ -696,6 +696,8 @@
   <key id="Year">年</key>
   <key id="Years">年</key>
   <key id="Publish">发布</key>
+  <key id="End month">结束时间</key>
+  <key id="Renew">续订</key>
   <key id="online_YES">在线</key>
   <key id="online_NO">离线</key>
   <key id="Are you sure you want to delete this item?">您确定要删除这一项吗？</key>
@@ -1025,7 +1027,7 @@
   <key id="We have receive your objection">你的意见已经收到</key>
   <key id="Contact">联系</key>
   <key id="Proposal">报价</key>
-  <key id="Day(s)">天数(s)</key>
+  <key id="Day(s)">天</key>
   <key id="Bidder">报价人</key>
   <key id="Take offline">网站离线</key>
   <key id="Take online">网站上线</key>
@@ -1122,6 +1124,8 @@
   <key id="No setting">暂无设置</key>
   <key id="No activity available! Click here to create one.">暂无可用活动，点击创建一个活动</key>
   <key id="Usage report">用量报告</key>
+  <key id="Used: ">已使用: </key>
+  <key id="Total: ">总计: </key>
   <key id="Purchase history">购买历史</key>
   <key id="My domains">我的域名</key>
   <key id="Change currency">更改币种</key>

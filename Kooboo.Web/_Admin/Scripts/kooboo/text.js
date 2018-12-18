@@ -161,7 +161,10 @@
             attachments: "Attachments",
             send: "Send",
             reply: "Reply",
-            visitors: "visitors"
+            visitors: "visitors",
+            startTime: "Start time",
+            endMonth: "End month",
+            renew: "Renew",
         },
 
         online: {
@@ -1017,6 +1020,8 @@
 
         market: {
             usageReport: "Usage report",
+            Used: "Used: ",
+            Total: "Total: ",
             purchaseHistory: "Purchase history",
             myDomains: "My domains",
             changeCurrency: "Change currency",

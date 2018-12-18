@@ -35,7 +35,11 @@ $(function() {
                     status: {
                         text: item.status,
                         class: 'label-sm label-info'
-                    }
+                    },
+                    orgName: {
+                        text: item.orgName,
+                        class: 'label-sm gray'
+                    } 
                 }
             })
 
@@ -53,6 +57,11 @@ $(function() {
                 }, {
                     displayName: Kooboo.text.market.supplier.status,
                     fieldName: 'status',
+                    type: 'label',
+                    showClass: "table-short"
+                }, {
+                    displayName:  Kooboo.text.common.Supplier,
+                    fieldName: 'orgName',
                     type: 'label',
                     showClass: "table-short"
                 }],
