@@ -722,6 +722,8 @@
   <key id="You are pulling updates from remote server, are you sure you want to abort?">正在从远程服务器更新，确认终止吗？</key>
   <key id="Invalid meta. Please check your meta infomation.">无效的Meta，请检查Meta 的信息</key>
   <key id="The generated css code file has been modified, are you sure you want to overwrite it">生成的CSS文件已被更改， 是否覆盖？</key>
+  <key id="Are you sure you want to take this proposal?">确定采用这个提案吗？</key>
+  <key id="Are you sure you want to accept the job?">确定接受这个并结束这个任务吗?</key>
   <key id="File type error, please upload zip file.">文件类型错误，请上传zip 文件</key>
   <key id="Image files uploaded.">图像文件已上传</key>
   <key id="Please input your Voucher code.">请输入您的抵用券号</key>
@@ -852,6 +854,7 @@
   <key id="Add a selector">新建选择器</key>
   <key id="Add an import rule">新增 @import</key>
   <key id="Add a media query">新增 @media</key>
+  <key id="Accept this proposal">接受这个提案</key>
   <key id="Add to index automatically when documnent changed.">文档内容变化时自动加入索引</key>
   <key id="Required">必填</key>
   <key id="String length">字符串长度</key>
@@ -1233,9 +1236,6 @@
   <key id="You can only submit request for the same domain one time per hour">同一个域名一小时内只能提交一次</key>
   <key id="You have reached the max number of free certificates">你的免费证书已经达到最大数</key>
   <key id="your certificates is being generated, it normally will take 1-2 mins">你的证书正在生成， 通常会需要一到两分钟</key>
-  <key id="Accepted">接受</key>
-  <key id="Denied">拒绝</key>
-  <key id="UnFinished">未完成</key>
   <key id="Target Url is Protected">目标地址被保护</key>
   <key id="user not found">没有找到用户</key>
   <key id="Reset Password Request">Reset Password Request</key>
@@ -1243,7 +1243,8 @@
   <key id="An reset password email has been sent to">重设密码的邮件已发送至：</key>
   <key id="Username or password not provided">需提供用户名或密码</key>
   <key id="user exists">用户已存在</key>
-  <key id="Coupon has not enough credit to pay this order">Coupon has not enough credit to pay this order</key>
+  <key id="Coupon has not enough credit to pay this order">优惠券额度不足，无法完成支付</key>
+  <key id="Demand not found">未找到该需求</key>
   <key id="Open status">开放</key>
   <key id="Winner">取得的</key>
   <key id="Outbid">失败的</key>
@@ -1251,8 +1252,11 @@
   <key id="UnResolved">UnResolved</key>
   <key id="Resolved">Resolved</key>
   <key id="Open">开</key>
-  <key id="Taken">关闭</key>
+  <key id="Taken">已采用</key>
   <key id="Invalid">已失效</key>
+  <key id="Accepted">接受</key>
+  <key id="Denied">拒绝</key>
+  <key id="UnFinished">未完成</key>
   <key id="+ New host">+ 新建主机</key>
   <key id="Domain is required">域名是必填的</key>
   <key id="IP is required">IP是必填的</key>
@@ -1370,6 +1374,8 @@
   <key id="template package not found">未找到模板</key>
   <key id="UserKey has been taken">自定义主键已经存在</key>
   <key id="User name or password not valid">用户名或密码无效</key>
+  <key id="User not login">用户未登录</key>
+  <key id="Server url not found">Server url not found</key>
   <key id="Your password has been reset">你的密码已经重置</key>
   <key id="Password reset failed">密码重置失败</key>
   <key id="LocalHost">LocalHost</key>

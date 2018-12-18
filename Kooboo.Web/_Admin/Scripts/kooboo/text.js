@@ -151,7 +151,7 @@
 
             unitPrice: "Unit price",
             totalPrice: "Total price",
-            totalAmount:"Total amount",
+            totalAmount: "Total amount",
             year: "Year",
             years: "Years",
 
@@ -202,7 +202,11 @@
             changeDataCenter: "You are about to change your data center, are you sure you want to continue?",
             siteSynchronizing: "You are pulling updates from remote server, are you sure you want to abort?",
             invalidMeta: "Invalid meta. Please check your meta infomation.",
-            sourceCodeChanged: "The generated css code file has been modified, are you sure you want to overwrite it"
+            sourceCodeChanged: "The generated css code file has been modified, are you sure you want to overwrite it",
+            demand: {
+                takeProposal: "Are you sure you want to take this proposal?",
+                acceptDelivery: "Are you sure you want to accept the job?"
+            }
         },
 
         alert: {
@@ -309,7 +313,7 @@
                 fail: "Payment failed.",
                 cancel: "Payment canceled.",
                 tryAgain: "Make sure you have paid successfully and try again",
-                
+
             },
             copy: {
                 success: "Copy successful.",
@@ -415,6 +419,9 @@
                 addSelector: "Add a selector",
                 addImportRule: "Add an import rule",
                 addMediaQuery: "Add a media query"
+            },
+            demand: {
+                acceptProposal: "Accept this proposal"
             }
         },
 

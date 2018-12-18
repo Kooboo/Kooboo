@@ -722,6 +722,8 @@
   <key id="You are pulling updates from remote server, are you sure you want to abort?">You are pulling updates from remote server, are you sure you want to abort?</key>
   <key id="Invalid meta. Please check your meta infomation.">Invalid meta. Please check your meta infomation.</key>
   <key id="The generated css code file has been modified, are you sure you want to overwrite it">The generated css code file has been modified, are you sure you want to overwrite it</key>
+  <key id="Are you sure you want to take this proposal?">Are you sure you want to take this proposal?</key>
+  <key id="Are you sure you want to accept the job?">Are you sure you want to accept the job?</key>
   <key id="File type error, please upload zip file.">File type error, please upload zip file.</key>
   <key id="Image files uploaded.">Image files uploaded.</key>
   <key id="Please input your Voucher code.">Please input your Voucher code.</key>
@@ -852,6 +854,7 @@
   <key id="Add a selector">Add a selector</key>
   <key id="Add an import rule">Add an import rule</key>
   <key id="Add a media query">Add a media query</key>
+  <key id="Accept this proposal">Accept this proposal</key>
   <key id="Add to index automatically when documnent changed.">Add to index automatically when documnent changed.</key>
   <key id="Required">Required</key>
   <key id="String length">String length</key>
@@ -1233,9 +1236,6 @@
   <key id="You can only submit request for the same domain one time per hour">You can only submit request for the same domain one time per hour</key>
   <key id="You have reached the max number of free certificates">You have reached the max number of free certificates</key>
   <key id="your certificates is being generated, it normally will take 1-2 mins">your certificates is being generated, it normally will take 1-2 mins</key>
-  <key id="Accepted">Accepted</key>
-  <key id="Denied">Denied</key>
-  <key id="UnFinished">UnFinished</key>
   <key id="Target Url is Protected">Target Url is Protected</key>
   <key id="user not found">user not found</key>
   <key id="Reset Password Request">Reset Password Request</key>
@@ -1244,6 +1244,7 @@
   <key id="Username or password not provided">Username or password not provided</key>
   <key id="user exists">user exists</key>
   <key id="Coupon has not enough credit to pay this order">Coupon has not enough credit to pay this order</key>
+  <key id="Demand not found">Demand not found</key>
   <key id="Open status">Open status</key>
   <key id="Winner">Winner</key>
   <key id="Outbid">Outbid</key>
@@ -1253,6 +1254,9 @@
   <key id="Open">Open</key>
   <key id="Taken">Taken</key>
   <key id="Invalid">Invalid</key>
+  <key id="Accepted">Accepted</key>
+  <key id="Denied">Denied</key>
+  <key id="UnFinished">UnFinished</key>
   <key id="+ New host">+ New host</key>
   <key id="Domain is required">Domain is required</key>
   <key id="IP is required">IP is required</key>
@@ -1370,6 +1374,8 @@
   <key id="template package not found">template package not found</key>
   <key id="UserKey has been taken">UserKey has been taken</key>
   <key id="User name or password not valid">User name or password not valid</key>
+  <key id="User not login">User not login</key>
+  <key id="Server url not found">Server url not found</key>
   <key id="Your password has been reset">Your password has been reset</key>
   <key id="Password reset failed">Password reset failed</key>
   <key id="LocalHost">LocalHost</key>

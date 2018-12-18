@@ -79,7 +79,7 @@ $(function() {
             })
         }
         this.onAcceptProposal = function(data, e) {
-            if (confirm('you sure?')) {
+            if (confirm(Kooboo.text.confirm.demand.takeProposal)) {
                 Kooboo.Demand.acceptProposal({
                     proposalId: data.id
                 }).then(function(res) {
@@ -134,7 +134,7 @@ $(function() {
         }
 
         this.onFinishTheDemand = function(isAccepted) {
-            if (confirm('You sure?')) {
+            if (confirm(Kooboo.text.comfirm.demand.acceptDelivery)) {
                 Kooboo.Demand.complete({
                     id: self.id(),
                     isAccepted: isAccepted
@@ -146,6 +146,9 @@ $(function() {
             }
         }
 
+        this.hasCurrentUserMadeABid = ko.observable(false);
+        this.isTakenByCurrentUser = ko.observable(false);
+
         this.myProposalId = ko.observable();
         this.getMyProposal = function(cb) {
             if (!self.isOwner()) {
@@ -155,8 +158,11 @@ $(function() {
                     if (res.success) {
                         var proposal = res.model;
                         if (proposal.id !== Kooboo.Guid.Empty) {
+                            self.hasCurrentUserMadeABid(true);
                             self.showingProposal(res.model);
                             self.myProposalId(res.model && res.model.id);
+                        } else {
+                            self.hasCurrentUserMadeABid(false);
                         }
                         cb && cb();
                     }
@@ -179,6 +185,7 @@ $(function() {
                                     self.getDeliveryMessages()
                                 }, 2000)
                             } else if (self.myProposalId() && (self.myProposalId() == self.takenProposal().id)) {
+                                self.isTakenByCurrentUser(true);
                                 setInterval(function() {
                                     self.getDeliveryMessages()
                                 }, 2000)
