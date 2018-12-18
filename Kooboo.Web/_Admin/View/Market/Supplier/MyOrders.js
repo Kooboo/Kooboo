@@ -27,7 +27,7 @@ $(function() {
                     },
                     amount: symbol + item.totalAmount,
                     status: {
-                        text: item.status.displayName,
+                        text: item.status,
                         class: 'label-sm label-info'
                     }
                 }

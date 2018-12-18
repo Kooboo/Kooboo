@@ -22,11 +22,11 @@ $(function() {
                     name: item.name,
                     amount: symbol + item.totalAmount,
                     status: {
-                        text: item.status.displayName,
+                        text: item.status,
                         class: 'label-sm label-info'
                     },
                     user: {
-                        text: item.userName,
+                        text: item.buyerOrgName,
                         class: 'label-sm gray'
                     },
                     view: {
@@ -55,7 +55,7 @@ $(function() {
                     type: 'label'
                 }, {
                     displayName: Kooboo.text.market.supplier.orderUser,
-                    fieldName: 'user',
+                    fieldName: 'buyerOrgName',
                     type: 'label',
                 }],
                 tableActions: [{
