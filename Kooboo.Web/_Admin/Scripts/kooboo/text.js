@@ -161,6 +161,7 @@
             attachments: "Attachments",
             send: "Send",
             reply: "Reply",
+            visitors: "visitors"
         },
 
         online: {

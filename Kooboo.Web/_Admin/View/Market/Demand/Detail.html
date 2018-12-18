@@ -341,16 +341,16 @@
                             </a>
                             <div class="media-body">
                                 <!-- ko if: msg.content -->
-                                <h4 class="media-heading" data-bind="html: msg.content"></h4>
+                                <h5 class="media-heading" data-bind="html: msg.content"></h5>
                                 <!-- /ko -->
                                 <!-- ko if: msg.attachment() -->
-                                <h4 class="media-heading">
+                                <h5 class="media-heading">
                                     <a data-bind="attr: { href: msg.attachment().url }" target="_blank">
                                         <i class="fa fa-paperclip"></i>
                                         <!-- ko text: msg.attachment().fileName -->
                                         <!-- /ko -->
                                     </a>
-                                </h4>
+                                </h5>
                                 <!-- /ko -->
                                 <p class="clearfix">
                                     <span class="pull-left">

@@ -57,6 +57,14 @@
         margin-bottom: 0;
         margin-top: 0;
     }
+
+    .list-item a {
+        text-decoration: none;
+    }
+
+    .list-item:hover {
+        background-color: #e9f2f7
+    }
 </style>
 <div class="page-header">
     <h1 class="title">Discussion</h1>
@@ -103,7 +111,7 @@
     <div class="col-md-12 margin-bottom-25">
         <div class="comment row">
             <div class="page-header">
-                <h5 data-bind="text: 'Comments ('+commentCount()+')'"></h5>
+                <h5 data-bind="text: Kooboo.text.market.discussion.Comments + ' ('+commentCount()+')'"></h5>
             </div>
             <div class="col-md-12">
                 <div class="row">
@@ -116,9 +124,9 @@
                                 <h5 class="media-heading" style="word-break: break-all;" data-bind="html: comment.content"></h5>
                                 <p class="clearfix">
                                     <span class="pull-left item">
-                                            <span data-bind="text: userName"></span>
-                                    <span>replied at</span>
-                                    <span data-bind="text: date"></span>
+                                        <span data-bind="text: userName"></span>
+                                        <span>replied at</span>
+                                        <span data-bind="text: date"></span>
                                     </span>
                                     <span class="pull-right">
                                             <a href="javascript:;" data-bind="click: $parent.onToggleSubComment.bind(comment)">
@@ -139,9 +147,9 @@
                                                 <h5 class="media-heading" data-bind="html: sub.content"></h5>
                                                 <p class="clearfix">
                                                     <span class="pull-left item">
-                                                                <span data-bind="text: sub.userName"></span>
-                                                    <span> replies at </span>
-                                                    <span data-bind="text: sub.date"></span>
+                                                        <span data-bind="text: sub.userName"></span>
+                                                        <span>replied at</span>
+                                                        <span data-bind="text: sub.date"></span>
                                                     </span>
                                                 </p>
                                             </div>

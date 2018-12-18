@@ -28,7 +28,7 @@ $(function() {
             }).then(function(res) {
                 if (res.success) {
                     var data = res.model;
-                    self.remark(data.remark.split('\n').join('<br>'));
+                    self.remark(data.remark && data.remark.split('\n').join('<br>'));
                     self.serviceName(data.name);
                     self.createdAt(new Date(data.creationDate).toDefaultLangString());
                     self.attachments(data.attachments ? data.attachments.map(function(item) {

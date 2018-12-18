@@ -15,6 +15,7 @@ $(function() {
         this.handleData = function(data) {
             self.pager(data);
             var docs = data.list.map(function(doc) {
+                var symbol=doc.symbol?doc.symbol:doc.currency;
                 return {
                     id: doc.id,
                     article: {
