@@ -140,8 +140,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                 currentposition += len;
             }
 
-            return BackValue;
-             
+            return BackValue; 
         }
 
         private List<IFieldConverter> Items

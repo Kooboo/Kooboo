@@ -40,6 +40,13 @@ namespace Kooboo.Lib.Reflection
             {
                 string dllname = name.Substring(path.Length);
 
+                if (string.IsNullOrWhiteSpace(dllname))
+                {
+                    continue; 
+                }
+
+                dllname = dllname.Trim('\\').Trim('/'); 
+
                 if (dllname.StartsWith("Kooboo.") && dllname.EndsWith(".dll"))
                 {
                     var index = dllname.IndexOf(".", 8);
