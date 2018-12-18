@@ -273,12 +273,12 @@
     <Compile Include="Server\EndMiddleWare.cs" />
     <Compile Include="Server\IKoobooMiddleWare.cs" />
     <Compile Include="Server\ServerHandler.cs" />
+    <Compile Include="Service\StartService.cs" />
     <Compile Include="Service\UserLoginPathService.cs" />
     <Compile Include="Service\WebSiteService.cs" />
     <Compile Include="SSL\SslCertificate.cs" />
     <Compile Include="Server\TextLogMiddleware.cs" />
     <Compile Include="Server\WebServer.cs" />
-    <Compile Include="Service\CommerceService.cs" />
     <Compile Include="Session\Requirement.cs" />
     <Compile Include="Session\SessionManager.cs" />
     <Compile Include="Template\TemplateData.cs" />

@@ -89,37 +89,7 @@ namespace Kooboo.Web.Api
             var organizationId = call.GetGuidValue("organizationId");
             return GlobalDb.Organization.DeleteUser(userName, organizationId);
         } 
-
-        // TODO: move to commerce api. 
-        [Attributes.RequireParameters("organizationId", "code")]
-        public MetaResponse UseCoupon(ApiCall call)
-        {
-            var code = call.GetValue("code");
-            var organizationId = call.GetGuidValue("organizationId");
-            var organization = Data.Service.CommerceService.RedeemVoucher(organizationId, code);
-            var response = new MetaResponse();
-            if (organization != null)
-            {
-                response.Success = true;
-                response.Model = organization;
-            }
-            else
-            {
-                response.Success = false;
-            }
-            return response;
-        }
-
-        //TODO: Should move to Commerce api.
-        [Attributes.RequireModel(typeof(RechargeRequest))]
-        public PaymentResponse PayRecharge(ApiCall call)
-        {
-            RechargeRequest request = call.Context.Request.Model as RechargeRequest;
-            var redirectUrl = string.Format("{0}://{1}:{2}/_Admin/Market/Index", call.Context.Request.Scheme, call.Context.Request.Host, call.Context.Request.Port);
-            request.PaypalReturnUrl = string.Format("{0}://{1}:{2}/_api/payment/PaypalReturn?redirectUrl={3}", 
-                call.Context.Request.Scheme, call.Context.Request.Host, call.Context.Request.Port,System.Net.WebUtility.UrlEncode(redirectUrl));
-            return Data.Service.CommerceService.Recharge(request);
-        }
+          
       
         public Organization GetOrg(ApiCall call)
         { 

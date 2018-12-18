@@ -78,7 +78,8 @@ namespace Kooboo.Web.Service
 
             if (string.IsNullOrEmpty(returnUrl))
             {
-                url = Kooboo.Sites.Service.StartService.AfterLoginPage(context);
+                context.User = User; 
+                url = Kooboo.Data.Service.StartService.AfterLoginPage(context);
             }
             else
             {

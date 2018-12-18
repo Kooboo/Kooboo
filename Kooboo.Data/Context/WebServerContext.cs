@@ -68,10 +68,8 @@ namespace Kooboo.Data.Context
             var user = _GetUserFromToken(request); 
             // the user first login with token, should try to find the last page of this user.  
             if (user !=null)
-            {
-                string returnurl = RequestManager.GetHttpValue(request, "returnurl");
-
-                if (string.IsNullOrWhiteSpace(returnurl))
+            {  
+                if (Kooboo.Data.Service.StartService.IsDefaultStartPage(request.RelativeUrl) &&  string.IsNullOrWhiteSpace(RequestManager.GetHttpValue(request, "returnurl")))
                 {
                     var lasturl = Service.UserLoginPathService.GetLastPath(user.Id);
                     if (!string.IsNullOrEmpty(lasturl))
