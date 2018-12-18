@@ -101,16 +101,11 @@
                                     <!-- /ko -->
                                 </div>
                             </li>
-                            <li class="list-group-item">
-                                <span class="title" data-bind="text: Kooboo.text.common.preview"></span>
-                                <a target="_blank" data-bind="attr: { href: data().previewUrl }" data-bind="text: Kooboo.text.component.templateModal.clickHere"></a>
-                            </li>
                         </ul>
                     </div>
                     <!--/ko-->
                     <!--ko if: selected-->
                     <div class="col-md-10 col-md-offset-1">
-
                         <fieldset class="form-horizontal">
                             <div class="note note-info">
                                 <p data-bind="text: Kooboo.text.component.templateModal.hint"></p>
@@ -142,7 +137,7 @@
             <div class="modal-footer">
                 <!-- ko ifnot: selected -->
                 <button data-bind="click: onUse, text: Kooboo.text.component.templateModal.useThisTemplate" class="btn green"></button>
-                <button data-bind="click: onHide, text: Kooboo.text.common.cancel" class="btn gray"></button>
+                <a data-bind="text: Kooboo.text.common.preview, attr: { href: data() && data().previewUrl }" class="btn btn-default" target="_blank"></a>
                 <!-- /ko -->
                 <!-- ko if: selected -->
                 <button data-bind="click: onImport, text: Kooboo.text.common.import" class="btn green"></button>
