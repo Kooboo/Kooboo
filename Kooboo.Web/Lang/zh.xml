@@ -437,7 +437,7 @@
   <key id="here">这里</key>
   <key id="to make a bid.">报价.</key>
   <key id="Notice">注意</key>
-  <key id="This demand is">这个需要是</key>
+  <key id="This demand is">该需求已</key>
   <key id="Demand expired">需求已过期</key>
   <key id="Accept">接受</key>
   <key id="Demand closed, no comment allowed">需求已经关闭</key>
@@ -1258,8 +1258,8 @@
   <key id="Open">开</key>
   <key id="Taken">已采用</key>
   <key id="Invalid">已失效</key>
-  <key id="Accepted">接受</key>
-  <key id="Denied">拒绝</key>
+  <key id="Accepted">被接受</key>
+  <key id="Denied">被拒绝</key>
   <key id="UnFinished">未完成</key>
   <key id="+ New host">+ 新建主机</key>
   <key id="Domain is required">域名是必填的</key>
