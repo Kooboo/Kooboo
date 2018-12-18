@@ -56,13 +56,16 @@ namespace Kooboo.Web.Api.Implementation
                     {
                         returnUrl = null; 
                     }
+                    else
+                    { 
+                        var lower = returnUrl.ToLower();
 
-                    var lower = returnUrl.ToLower(); 
-                           
-                    if (lower == "/_admin" || lower == "/_admin/" || lower == "\\_admin" || lower == "\\_admin\\")
-                    {
-                        returnUrl = null; 
+                        if (lower == "/_admin" || lower == "/_admin/" || lower == "\\_admin" || lower == "\\_admin\\")
+                        {
+                            returnUrl = null;
+                        }
                     }
+
                 }
                 bool isRemember = false;
                 if (!string.IsNullOrEmpty(remember))

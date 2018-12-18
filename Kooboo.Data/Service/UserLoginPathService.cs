@@ -24,7 +24,8 @@ namespace Kooboo.Data.Service
             IgnorePath.Add("/_admin/scripts");
             IgnorePath.Add("/_admin/styles");
             IgnorePath.Add("/_admin/images");
-            IgnorePath.Add("/_admin/help"); 
+            IgnorePath.Add("/_admin/help");
+            IgnorePath.Add("_ddmin/sites/edit");
 
         }
 
