@@ -5,7 +5,7 @@ $(function() {
         this.pager = ko.observable();
 
         this.getList = function() {
-            Kooboo.Supplier.getOrdersBySupplier().then(function(res) {
+            Kooboo.Supplier.myOrdersIn().then(function(res) {
                 if (res.success) {
                     self.handleData(res.model);
                 }
@@ -16,10 +16,11 @@ $(function() {
             self.pager(data);
 
             var docs = data.list.map(function(item) {
+                var symbol = item.symbol ? item.symbol : item.currency;
                 return {
                     id: item.id,
-                    expertise: item.expertise,
-                    price: item.symbol + item.price,
+                    name: item.name,
+                    amount: symbol + item.totalAmount,
                     status: {
                         text: item.status.displayName,
                         class: 'label-sm label-info'
@@ -30,7 +31,7 @@ $(function() {
                     },
                     view: {
                         iconClass: 'fa-eye',
-                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.DetailPage, {
+                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.OrderPage, {
                             id: item.id
                         }),
                         newWindow: true
@@ -41,19 +42,19 @@ $(function() {
             self.tableData({
                 docs: docs,
                 columns: [{
-                    displayName: 'Expertise',
-                    fieldName: 'expertise',
+                    displayName: Kooboo.text.common.name,
+                    fieldName: 'name',
                     type: 'text'
                 }, {
-                    displayName: 'Price',
-                    fieldName: 'price',
+                    displayName: Kooboo.text.common.amount,
+                    fieldName: 'amount',
                     type: 'text'
                 }, {
-                    displayName: 'Status',
+                    displayName: Kooboo.text.market.supplier.status,
                     fieldName: 'status',
                     type: 'label'
                 }, {
-                    displayName: 'Order user',
+                    displayName: Kooboo.text.market.supplier.orderUser,
                     fieldName: 'user',
                     type: 'label',
                 }],

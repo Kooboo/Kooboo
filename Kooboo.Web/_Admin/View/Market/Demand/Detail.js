@@ -1,4 +1,5 @@
 $(function() {
+    var CURRENT_USER_ID = '';
 
     var detailModel = function() {
         var self = this;
@@ -11,14 +12,12 @@ $(function() {
             return !!self.showingProposal();
         });
         this.isSelectedProposal = ko.pureComputed(function() {
-            debugger;
             return self.showingProposal() && self.showingProposal().isTaken;
         })
         this.proposalId = ko.pureComputed(function() {
             return self.showingProposal().id;
         })
         this.successfulBidding = ko.pureComputed(function() {
-            debugger;
             return self.showingProposal() && self.showingProposal().isTaken;
         })
         this.proposalViewingMode = ko.observable();
@@ -28,6 +27,7 @@ $(function() {
         this.attachments = ko.observableArray();
         this.userName = ko.observable();
         this.currency = ko.observable();
+        this.currencySymbol = ko.observable();
         this.budget = ko.observable();
         this.skills = ko.observableArray();
         this.startDate = ko.observable();
@@ -39,17 +39,15 @@ $(function() {
         this.displayStatus = ko.observable();
 
         this.isOpening = ko.pureComputed(function() {
-            debugger;
             return self.status() == 'open';
         })
-        this.isTaken = ko.pureComputed(function() {
-            return self.status() == 'taken';
-        })
-        this.isDemandClosed = ko.pureComputed(function() {
-            return ['rejected', 'accepted'].indexOf(self.status()) > -1;
-        })
+        this.isTaken = ko.observable();
+        this.isClose = ko.observable();
         this.isDemandInvalid = ko.pureComputed(function() {
             return self.status() == 'invalid';
+        })
+        this.takenProposalId = ko.pureComputed(function() {
+            return self.takenProposal() && self.takenProposal().id;
         })
 
         this.proposals = ko.observableArray();
@@ -86,9 +84,7 @@ $(function() {
                     proposalId: data.id
                 }).then(function(res) {
                     if (res.success) {
-                        debugger;
                         Kooboo.EventBus.publish("kb/market/component/cashier/show", res.model);
-                        //Kooboo.EventBus.publish("kb/demand/proposal/update");
                     }
                 })
             }
@@ -108,7 +104,10 @@ $(function() {
                     }) : [])
                     self.userName(res.model.userName);
                     self.isOwner(res.model.isOwner);
+                    self.isTaken(res.model.isTaken);
+                    self.isClose(res.model.isClose);
                     self.currency(res.model.currency);
+                    self.currencySymbol(res.model.symbol);
                     self.budget(res.model.symbol + res.model.budget);
                     self.skills(res.model.skills);
 
@@ -120,11 +119,12 @@ $(function() {
                     self.displayStatus(res.model.status.displayName);
 
                     cb && cb();
+
+                    self.getMyProposal(function() {
+                        self.getProposalList();
+                    });
                 }
             })
-
-            self.getMyProposal();
-            self.getProposalList();
         }
 
         this.showDemandModal = ko.observable(false);
@@ -133,11 +133,11 @@ $(function() {
             self.showDemandModal(true);
         }
 
-        this.onFinishTheDemand = function(isFinished) {
+        this.onFinishTheDemand = function(isAccepted) {
             if (confirm('You sure?')) {
                 Kooboo.Demand.complete({
                     id: self.id(),
-                    isFinished: isFinished
+                    isAccepted: isAccepted
                 }).then(function(res) {
                     if (res.success) {
                         location.reload();
@@ -146,15 +146,23 @@ $(function() {
             }
         }
 
-        this.getMyProposal = function() {
+        this.myProposalId = ko.observable();
+        this.getMyProposal = function(cb) {
             if (!self.isOwner()) {
                 Kooboo.Demand.getUserProposal({
                     demandId: self.id()
                 }).then(function(res) {
                     if (res.success) {
-                        self.showingProposal(res.model);
+                        var proposal = res.model;
+                        if (proposal.id !== Kooboo.Guid.Empty) {
+                            self.showingProposal(res.model);
+                            self.myProposalId(res.model && res.model.id);
+                        }
+                        cb && cb();
                     }
                 })
+            } else {
+                cb && cb();
             }
         }
 
@@ -165,22 +173,38 @@ $(function() {
                 if (res.success) {
                     self.proposals(res.model.list.map(function(item) {
                         if (item.isTaken) {
-                            self.isTaken(item);
+                            self.takenProposal(item);
+                            if (self.isOwner()) {
+                                setInterval(function() {
+                                    self.getDeliveryMessages()
+                                }, 2000)
+                            } else if (self.myProposalId() && (self.myProposalId() == self.takenProposal().id)) {
+                                setInterval(function() {
+                                    self.getDeliveryMessages()
+                                }, 2000)
+                            }
                         }
                         return {
                             id: item.id,
+                            firstLetter: item.userName.split('')[0].toUpperCase(),
                             userName: item.userName,
                             duration: item.duration + ' Day' + (item.duration > 1 ? 's' : ''),
                             budget: item.symbol + item.budget,
+                            description: item.description.split('\n').join('<br>'),
                             currency: item.currency,
-                            isTaken: item.isTaken
+                            isTaken: item.isTaken,
+                            attachments: item.attachments ? item.attachments.map(function(item) {
+                                item.url = '/_api/attachment/getFile?id=' + item.id + '&fileName=' + item.fileName;
+                                return item;
+                            }) : [],
+                            isMyProposal: ko.observable(self.myProposalId() ? self.myProposalId() == item.id : false)
                         }
                     }));
                 }
             })
         }
 
-        this.isTaken = ko.observable();
+        this.takenProposal = ko.observable();
 
         this.publicCommentList = ko.observableArray();
         this.getCommentList = function() {
@@ -242,6 +266,10 @@ $(function() {
             self.showObjectionModal(true);
         }
 
+        Kooboo.EventBus.subscribe('kb/market/cashier/done', function() {
+            location.reload();
+        })
+
         Kooboo.EventBus.subscribe("kb/demand/proposal/update", function() {
             self.getMyProposal();
             self.getProposalList();
@@ -264,6 +292,24 @@ $(function() {
         Kooboo.EventBus.subscribe("kb/component/demand-modal/saved", function() {
             location.reload();
         })
+
+        this.messages = ko.observableArray();
+        this.getDeliveryMessages = function(cb) {
+            Kooboo.Demand.getPrivateCommentList({
+                proposalId: self.takenProposal().id
+            }).then(function(res) {
+                if (res.success) {
+                    self.messages(res.model.list.map(function(item) {
+                        return new Message(item);
+                    }));
+                    cb && cb();
+                }
+            })
+        }
+
+        Kooboo.EventBus.subscribe('kb/market/chat/sent', function(cb) {
+            self.getDeliveryMessages(cb);
+        })
     }
 
     var vm = new detailModel();
@@ -273,7 +319,7 @@ $(function() {
         if (data.content && data.content.indexOf('\n') > -1) {
             data.content = data.content.split('\n').join('<br>')
         }
-        var date = new Date(data.createTime);
+        var date = new Date(data.lastModified);
         this.id = ko.observable(data.id);
         this.firstLetter = data.userName.split('')[0].toUpperCase();
         this.userName = data.userName;
@@ -282,5 +328,23 @@ $(function() {
         this.commentCount = ko.observable(data.commentCount);
         this.showSubComment = ko.observable(false);
         this.subCommentList = ko.observableArray([]);
+    }
+
+    function Message(data) {
+        if (!CURRENT_USER_ID) {
+            CURRENT_USER_ID = localStorage.getItem('_kooboo_api_user');
+        }
+
+        var date = new Date(data.lastModified);
+
+        this.firstLetter = ko.observable(data.userName.split('')[0].toUpperCase());
+        this.content = ko.observable(data.content);
+        this.isCurrentUser = ko.observable(data.userId == CURRENT_USER_ID);
+        this.userName = ko.observable(this.isCurrentUser() ? 'Me' : data.userName);
+        this.date = ko.observable(date.toDefaultLangString());
+        this.attachment = ko.observable(data.attachments ? data.attachments.map(function(item) {
+            item.url = '/_api/attachment/getFile?id=' + item.id + '&fileName=' + item.fileName;
+            return item;
+        })[0] : '');
     }
 })

@@ -17,8 +17,19 @@ $(function() {
             var docs = data.list.map(function(doc) {
                 return {
                     id: doc.id,
-                    title: doc.title,
-                    budget: doc.symbol + doc.budget,
+                    article: {
+                        title: doc.title,
+                        description: doc.description,
+                        url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
+                            id: doc.id
+                        }),
+                        class: "title",
+                        newWindow: true
+                    },
+                    budget: {
+                        text: doc.symbol + doc.budget,
+                        class:'label-sm label-info'
+                    },
                     startDate: {
                         text: getDateString(doc.startDate),
                         class: 'label-sm gray'
@@ -31,15 +42,7 @@ $(function() {
                         text: doc.proposalCount,
                         class: 'badge-sm badge-info'
                     },
-                    view: {
-                        title: 'Preview',
-                        class: 'btn-xs btn-info',
-                        iconClass: 'fa-eye',
-                        url: Kooboo.Route.Get(Kooboo.Route.Demand.DetailPage, {
-                            id: doc.id
-                        }),
-                        newWindow: true
-                    },
+                    
                     createTime: new Date(doc.createTime).toDefaultLangString(),
                 }
 
@@ -52,39 +55,36 @@ $(function() {
             self.tableData({
                 docs: docs,
                 columns: [{
-                    displayName: 'Title',
-                    fieldName: 'title',
-                    type: 'text'
-                }, {
-                    displayName: 'Start date',
+                    displayName: Kooboo.text.common.Demand,
+                    fieldName: 'article',
+                    type: 'article'
+                },{
+                    displayName: Kooboo.text.market.demand.StartDate,
                     fieldName: 'startDate',
                     showClass: 'table-short',
                     type: 'label'
                 }, {
-                    displayName: 'End date',
+                    displayName: Kooboo.text.market.demand.EndDate,
                     fieldName: 'endDate',
                     showClass: 'table-short',
                     type: 'label'
                 }, {
-                    displayName: 'Budget',
+                    displayName: Kooboo.text.common.budget,
                     fieldName: 'budget',
                     showClass: 'table-short',
-                    type: 'text'
+                    type: 'label'
                 }, {
-                    displayName: 'Proposal',
+                    displayName: Kooboo.text.market.demand.proposals,
                     fieldName: 'proposalCount',
                     showClass: 'table-short',
                     type: 'badge'
                 }, {
-                    displayName: 'Create time',
+                    displayName: Kooboo.text.market.demand.createTime,
                     fieldName: 'createTime',
                     showClass: 'table-short',
                     type: 'text'
                 }],
-                tableActions: [{
-                    fieldName: 'view',
-                    type: 'link-icon'
-                }],
+                
                 unselectable: true
             })
         }

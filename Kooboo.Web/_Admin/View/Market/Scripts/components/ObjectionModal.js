@@ -1,4 +1,8 @@
 (function() {
+    Kooboo.loadJS([
+        "/_Admin/Scripts/kobindings.textError.js"
+    ]);
+
     var template = Kooboo.getTemplate("/_Admin/Market/Scripts/components/ObjectionModal.html");
 
     ko.components.register('objection-modal', {

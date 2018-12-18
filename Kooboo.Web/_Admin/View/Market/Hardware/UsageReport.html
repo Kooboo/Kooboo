@@ -7,10 +7,10 @@
 <div data-bind="component: { name: 'kb-breadcrumb', params:[{
     name: 'MARKET'
 },{
-    name: 'Hardwares',
+    name: Kooboo.text.common.Hardwares,
     url: Kooboo.Route.Hardware.ListPage
 },{
-    name: 'Usage Report'
+    name: Kooboo.text.market.hardware.usageReport
 }]}"></div>
 
 <div class="container-fluid">
@@ -48,11 +48,11 @@
                                         <small class="text-muted">Month</small>
                                     </div>
                                     <div class="item col-md-3">
-                                        <div class="number" data-bind="text: currentData().total"></div>
+                                        <div class="number" data-bind="text: currentData().totalName"></div>
                                         <small class="text-muted">Total</small>
                                     </div>
                                     <div class="item col-md-3">
-                                        <div class="number" data-bind="text: currentData().used"></div>
+                                        <div class="number" data-bind="text: currentData().usedName"></div>
                                         <small class="text-muted">Used</small>
                                     </div>
                                     <div class="item col-md-3">
@@ -62,7 +62,7 @@
                                 </div>
                             </div>
                             <!-- /ko -->
-                            <table class="table" style="margin-bottom: -10px;">
+                            <table class="table Logs-table" style="margin-bottom: -10px;">
                                 <thead>
                                     <tr>
                                         <th>Content</th>
@@ -75,7 +75,7 @@
                                     <!-- ko if: logs().length -->
                                     <!-- ko foreach: logs -->
                                     <tr>
-                                        <td data-bind="text: $data.content"></td>
+                                        <td data-bind="text: $data.content, tooltip: $data.content"></td>
                                         <td data-bind="text: $data.date"></td>
                                         <td data-bind="text: $data.count"></td>
                                     </tr>

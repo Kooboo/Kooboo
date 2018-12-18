@@ -108,7 +108,7 @@ namespace Kooboo.Render
             {
                 if (context.User != null)
                 {
-                    string afterlogin = Kooboo.Sites.Service.StartService.AfterLoginPage(context); 
+                    string afterlogin = Kooboo.Data.Service.StartService.AfterLoginPage(context); 
                     context.Response.Redirect(302, afterlogin);
                     return;
                 }

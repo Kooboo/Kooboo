@@ -1,23 +1,49 @@
-﻿(function() {
-    Date.prototype.toDefaultLangString = function() {
+﻿(function () {
+    Date.prototype.toDefaultLangString = function () {
         return this.toLocaleString(Kooboo.LanguageManager.getDateLanguage());
     }
 
-    String.prototype.toCamelCase = function() {
+    Date.prototype.toDefaultLangString = function () {
+        // return this.toLocaleString(Kooboo.LanguageManager.getDateLanguage());
+        //'2018-11-23 23:59'
+        var year = this.getFullYear(),
+            month = (this.getMonth() + 1),
+            date = this.getDate();
+
+        var hour = this.getHours(),
+            minute = this.getMinutes();
+
+        return [year, getTwoDigit(month), getTwoDigit(date)].join('-') + ' ' + [getTwoDigit(hour), getTwoDigit(minute)].join(':');
+
+        function getTwoDigit(num) {
+            var str = num + '';
+            return str.length == 2 ? str : ('0' + str)
+        }
+    }
+
+    Date.prototype.toKBDateString = function () {
+        let year = this.getFullYear(),
+            month = (this.getMonth() + 1),
+            date = this.getDate();
+
+        return [year, month, date].join('-');
+    }
+
+    String.prototype.toCamelCase = function () {
         return this[0].toLocaleLowerCase() + this.slice(1);
     }
 
-    $(document).on('mouseover', '[data-toggle="popover"]', function(e) {
+    $(document).on('mouseover', '[data-toggle="popover"]', function (e) {
         e.preventDefault();
         $(e.target).popover({ html: true }).popover("show");
     });
 
-    $(document).on('click.kooboo.menu', '.block-menu [data-toggle="expand"]', function() {
+    $(document).on('click.kooboo.menu', '.block-menu [data-toggle="expand"]', function () {
         $(this).parent().toggleClass('active');
     });
 
     $.fn.extend({
-        readOnly: function(readOnly) {
+        readOnly: function (readOnly) {
             var $container = this;
             $container.css('position', 'relative');
 
@@ -32,26 +58,26 @@
     })
 })()
 
-$(function() {
-    $('[kb-target]').click(function(e) {
+$(function () {
+    $('[kb-target]').click(function (e) {
         e.preventDefault();
         var $target = $($(this).attr('kb-target'));
         if ($target.hasClass('in')) {
             $target.animate({
                 right: -400
-            }, 200, function() {
+            }, 200, function () {
                 $target.removeClass('in')
             })
         } else {
             $target.animate({
                 right: 0
-            }, 200, function() {
+            }, 200, function () {
                 $target.addClass('in');
             })
         }
     })
 
-    $(window).on('resize', function() {
+    $(window).on('resize', function () {
         var $target = $($('[kb-target]').attr('kb-target'));
         if ($target.length) {
             $($target).removeClass('in').removeAttr('style')
@@ -64,17 +90,17 @@ $(function() {
     };
 
     window.info = {
-        show: function(message, success) {
+        show: function (message, success) {
             if (success) {
                 toastr.success(message);
             } else {
                 toastr.error(message);
             }
         },
-        done: function(msg) {
+        done: function (msg) {
             toastr.success(msg);
         },
-        fail: function(msg) {
+        fail: function (msg) {
             toastr.error(msg);
         }
     };

@@ -66,15 +66,18 @@ namespace Kooboo.Data.Context
             var user = _GetUserFromToken(request); 
             // the user first login with token, should try to find the last page of this user.  
             if (user !=null)
-            {
-                var lasturl = Service.UserLoginPathService.GetLastPath(user.Id); 
-                if (!string.IsNullOrEmpty(lasturl))
+            {  
+                if (Kooboo.Data.Service.StartService.IsDefaultStartPage(request.RelativeUrl) &&  string.IsNullOrWhiteSpace(RequestManager.GetHttpValue(request, "returnurl")))
                 {
-                    context.Response.Redirect(302, lasturl);
-                    context.Response.End = true; 
-                }
+                    var lasturl = Service.UserLoginPathService.GetLastPath(user.Id);
+                    if (!string.IsNullOrEmpty(lasturl))
+                    {
+                        context.Response.Redirect(302, lasturl);
+                        context.Response.End = true;
+                    }
+                } 
             }
-            else
+            else 
             {
                 user = _GetUserFromBasicAuthentication(request);
             }
@@ -95,10 +98,10 @@ namespace Kooboo.Data.Context
                 user = _GetUserFromCookie(request);
             }
 
-            if (user != null && user.PasswordHash == default(Guid))
-            {
-                return null;
-            }
+            //if (user != null && user.PasswordHash == default(Guid))
+            //{
+            //    return null;
+            //}
 
             return user;
         }
@@ -697,7 +700,12 @@ namespace Kooboo.Data.Context
                     {
                         response.Stream.CopyTo(context.Features.Response.Body);
                     }
+                    else if (response.ContentType !=null && response.ContentType.ToLower().Contains("javascript"))
+                    {
+
+                    }
                     else
+
                     {
                         // 404.   
                         string filename = Lib.Helper.IOHelper.CombinePath(AppSettings.RootPath, Kooboo.DataConstants.Default404Page) + ".html";

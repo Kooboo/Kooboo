@@ -31,11 +31,14 @@ $(function() {
 
                 return {
                     id: item.id,
-                    title: {
-                        text: item.title,
+                    article: {
+                        title: item.title,
+                        description: item.content,
                         url: Kooboo.Route.Get(Kooboo.Route.Discussion.DetailPage, {
                             id: item.id
-                        })
+                        }),
+                        class: "title",
+                        newWindow: true
                     },
                     comments: {
                         text: item.commentCount,
@@ -49,16 +52,7 @@ $(function() {
                         text: item.userName,
                         class: 'lable label-sm gray'
                     },
-                    edit: {
-                        iconClass: 'fa-pencil',
-                        url: 'kb/discussion/my/edit'
-                    },
-                    view: {
-                        iconClass: 'fa-eye',
-                        url: Kooboo.Route.Get(Kooboo.Route.Discussion.DetailPage, {
-                            id: item.id
-                        })
-                    },
+                    
                     delete: {
                         iconClass: 'fa-trash',
                         class: 'btn-danger',
@@ -70,38 +64,34 @@ $(function() {
 
             self.tableData({
                 docs: docs,
-                columns: [{
-                    displayName: "Title",
-                    fieldName: "title",
-                    type: 'link'
-                }, {
-                    displayName: 'Comments',
+                columns: [
+                {
+                    displayName: Kooboo.text.common.Discussion,
+                    fieldName: 'article',
+                    type: 'article'
+                },
+                {
+                    displayName: Kooboo.text.market.discussion.Comments,
                     fieldName: 'comments',
                     showClass: 'table-short',
                     type: 'badge'
                 }, {
-                    displayName: 'Views',
+                    displayName: Kooboo.text.common.Views,
                     fieldName: 'views',
                     showClass: 'table-short',
                     type: 'badge'
                 }, {
-                    displayName: 'User',
+                    displayName: Kooboo.text.common.user,
                     fieldName: 'user',
                     showClass: 'table-short',
                     type: 'label'
                 }, {
-                    displayName: 'Last modified',
+                    displayName: Kooboo.text.common.lastModified,
                     fieldName: 'lastModified',
                     showClass: 'table-short',
                     type: 'text'
                 }],
-                tableActions: [{
-                    fieldName: 'view',
-                    type: 'link-icon'
-                }, {
-                    fieldName: 'edit',
-                    type: 'communication-icon-btn'
-                }, {
+                tableActions: [ {
                     fieldName: 'delete',
                     type: 'communication-icon-btn'
                 }],

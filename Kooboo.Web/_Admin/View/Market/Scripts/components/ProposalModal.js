@@ -1,6 +1,7 @@
 (function() {
     Kooboo.loadJS([
-        "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js"
+        "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
+        "/_Admin/Scripts/kobindings.textError.js"
     ])
 
     var template = Kooboo.getTemplate("/_Admin/Market/Scripts/components/ProposalModal.html");
@@ -28,6 +29,8 @@
                         self.displayBudget(data.symbol + data.budget);
                         self.displayDuration(data.duration + ' Day(s)');
                         self.currencyCode(data.currency);
+                        self.currencySymbol(data.symbol);
+                        self.attachments(data.attachments);
                     }
                 }
             })
@@ -35,9 +38,7 @@
             this.demandId = params.demandId;
             this.proposalId = ko.observable();
             this.currencyCode = params.currencyCode || ko.observable();
-            this.currencySymbol = ko.pureComputed(function() {
-                return self.currencyCode() && self.currencyCode().toLowerCase();
-            })
+            this.currencySymbol = params.currencySymbol || ko.observable();
 
             this.userName = ko.observable();
             this.displayBudget = ko.observable();
@@ -60,6 +61,7 @@
                 self.budget('');
                 self.duration('');
                 self.showError(false);
+                self.attachments([]);
                 self.isShow(false);
             }
 
@@ -69,13 +71,35 @@
                     self.duration.isValid()
             }
 
+            this.attachments = ko.observableArray();
+            this.uploadFile = function(data, files) {
+                var fd = new FormData();
+                fd.append('filename', files[0].name);
+                fd.append('file', files[0]);
+                Kooboo.Attachment.uploadFile(fd).then(function(res) {
+                    if (res.success) {
+                        self.attachments.push(res.model);
+                    }
+                })
+            }
+            this.removeFile = function(data, e) {
+                Kooboo.Attachment.deleteFile({
+                    id: data.id
+                }).then(function(res) {
+                    if (res.success) {
+                        self.attachments.remove(data);
+                    }
+                })
+            }
+
             this.onSave = function() {
                 if (self.isValid()) {
                     var data = {
                         demandId: self.demandId(),
                         description: self.description(),
                         duration: self.duration(),
-                        budget: self.budget()
+                        budget: self.budget(),
+                        attachments: self.attachments()
                     }
 
                     if (self.proposalId()) {

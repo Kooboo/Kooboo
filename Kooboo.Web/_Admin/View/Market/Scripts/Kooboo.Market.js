@@ -119,6 +119,38 @@ $(function() {
 
     function Supplier() {
         this.name = 'Supplier';
+        this.list = function(para) {
+            return this.executeGet('List', para);
+        }
+        this.myList = function(para) {
+            return this.executeGet('myList', para);
+        }
+
+        this.delete = function(para) {
+            return this.executePost('Delete', para);
+        }
+        this.deletes = function(para) {
+            return this.executePost('deletes', para);
+        }
+
+        this.addOrUpdate = function(para) {
+            return this.executePost('addOrUpdate', para);
+        }
+
+        this.myOrdersIn = function() {
+            return this.executePost('MyOrders', { in: true });
+        }
+        this.myOrdersOut = function() {
+            return this.executePost('MyOrders', { in: false });
+        }
+
+        this.getOrder = function(para) {
+            return this.executeGet('GetOrder', para);
+        }
+
+        this.get = function(para) {
+            return this.executeGet('get', para);
+        }
 
         this.isSupplier = function(para) {
             return this.executeGet('IsSupplier', para);
@@ -128,18 +160,9 @@ $(function() {
             return this.executeGet('GetByUser', para);
         }
 
-        this.addOrUpdate = function(para) {
-            return this.executePost('AddOrUpdate', para);
-        }
-
         this.getOrdersBySupplier = function(para) {
             // 我收到的所有 orders
             return this.executeGet('MySupplyOrders', para);
-        }
-
-        this.getOrdersByUser = function(para) {
-            // 我发出的所有 orders
-            return this.executeGet('MyOrders', para);
         }
 
         this.addOrUpdateOrder = function(para) {
@@ -159,28 +182,16 @@ $(function() {
             return this.executeGet('MyOrdersFilterBySupplier', para);
         }
 
-        this.getUserExpertiseList = function(para) {
-            return this.executeGet('UserExpertiseList', para);
+        this.reply = function(para) {
+            return this.executePost('Reply', para);
         }
 
-        this.getMyExpertiseList = function(para) {
-            return this.executeGet('MyExpertiseList', para);
+        this.getPublicCommentList = function(para) {
+            return this.executeGet('PublicCommentList', para, true);
         }
 
-        this.deleteExpertise = function(para) {
-            return this.executePost('DeleteExpertise', para);
-        }
-
-        this.addOrUpdateExpertise = function(para) {
-            return this.executePost('AddOrUpdateExpertise', para);
-        }
-
-        this.getExpertiseList = function(para) {
-            return this.executeGet('ExpertiseList', para);
-        }
-
-        this.getExpertise = function(para) {
-            return this.executeGet('GetExpertise', para);
+        this.onComplete = function(para) {
+            return this.executePost('Complete', para);
         }
     }
     extend(Supplier, Kooboo.BaseModel);
@@ -223,10 +234,6 @@ $(function() {
 
         this.topup = function(para) {
             return this.executePost('Topup', para);
-        }
-
-        this.useCoupon = function(para) {
-            return this.executePost('UseCoupon', para);
         }
 
         this.getTopupHistory = function(para) {
@@ -288,9 +295,10 @@ $(function() {
             return this.executePost('Pay', para);
         }
 
-        this.expertise = function(para) {
-            return this.executePost('Expertise', para);
+        this.service = function(para) {
+            return this.executePost('Service', para);
         }
+
     }
     extend(Order, Kooboo.BaseModel);
 

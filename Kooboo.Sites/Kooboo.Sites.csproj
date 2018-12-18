@@ -330,7 +330,6 @@
     <Compile Include="Service\DownloadEncoding.cs" />
     <Compile Include="Service\FontService.cs" />
     <Compile Include="Service\GroupService.cs" />
-    <Compile Include="Service\StartService.cs" />
     <Compile Include="Service\VisitorLogService.cs" />
     <Compile Include="InlineEditor\ActionType.cs" />
     <Compile Include="InlineEditor\Model\AttributeModel.cs" />

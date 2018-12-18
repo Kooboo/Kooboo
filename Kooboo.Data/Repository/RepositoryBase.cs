@@ -49,12 +49,15 @@ namespace Kooboo.Data.Repository
                     lock (_locker)
                     {
                         if (_store == null)
-                        {   
-                              _store = DatabaseDb.GetOrCreateObjectStore<Guid, TValue>(StoreName, StoreParameters); 
+                        {
+                            var para = StoreParameters;
+                            para.SetPrimaryKeyField<TValue>(o => o.Id); 
 
-                            if (!_store.CheckSameSetting(StoreParameters))
+                              _store = DatabaseDb.GetOrCreateObjectStore<Guid, TValue>(StoreName, para); 
+
+                            if (!_store.CheckSameSetting(para))
                             {
-                                _store = DatabaseDb.RebuildObjectStore<Guid, TValue>(_store, StoreParameters); 
+                                _store = DatabaseDb.RebuildObjectStore<Guid, TValue>(_store, para); 
                             }
                             
                         }

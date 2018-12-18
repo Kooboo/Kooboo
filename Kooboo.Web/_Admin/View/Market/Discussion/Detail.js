@@ -23,7 +23,9 @@ $(function() {
                 self.title(res.model.title);
                 self.userName(res.model.userName);
                 self.date(new Date(res.model.lastModified).toDefaultLangString())
+
                 self.content(res.model.content);
+
                 self.viewCount(res.model.viewCount);
                 self.commentCount(res.model.commentCount);
                 self.getCommentList();
@@ -63,6 +65,7 @@ $(function() {
                     m.subCommentList(res.model.map(function(item) {
                         return new Comment(item);
                     }))
+                    m.commentCount(res.model.length);
                     $(".autosize").textareaAutoSize().trigger("keyup");
                 }
             })
@@ -86,6 +89,25 @@ $(function() {
             }
         })
 
+        this.posts = ko.observableArray();
+        this.getPosts = function() {
+            Kooboo.Discussion.getList({
+                pageSize: 10
+            }).then(function(res) {
+                if (res.success) {
+                    self.posts(res.model.list.map(function(item) {
+                        var div = $("<div>");
+                        $(div).html(item.content);
+                        item.content = $(div).text();
+                        item.url = Kooboo.Route.Get(Kooboo.Route.Discussion.DetailPage, {
+                            id: item.id
+                        })
+                        return item;
+                    }));
+                }
+            })
+        }
+        this.getPosts();
     }
 
     var vm = new discussionModel();
@@ -101,7 +123,7 @@ $(function() {
         this.userName = data.userName;
         this.content = data.content;
         this.date = date.toDefaultLangString();
-        this.commentCount = data.commentCount;
+        this.commentCount = ko.observable(data.commentCount);
         this.showSubComment = ko.observable(false);
         this.subCommentList = ko.observableArray([]);
     }

@@ -1,4 +1,6 @@
-﻿using Kooboo.Data.Models;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
 using Kooboo.IndexedDB.Dynamic;
 using System;
@@ -22,7 +24,8 @@ namespace Kooboo.Data.Service
             IgnorePath.Add("/_admin/scripts");
             IgnorePath.Add("/_admin/styles");
             IgnorePath.Add("/_admin/images");
-            IgnorePath.Add("/_admin/help"); 
+            IgnorePath.Add("/_admin/help");
+            IgnorePath.Add("_ddmin/sites/edit");
 
         }
 
@@ -77,9 +80,7 @@ namespace Kooboo.Data.Service
 
                 LastPath.Close();
 
-            }
-
-        
+            } 
               
         }
 

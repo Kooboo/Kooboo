@@ -12,13 +12,7 @@ namespace Kooboo.App
     {
         private static System.Diagnostics.Process ScreenShotProcess = null;
         public static void StartAll()
-        {
-            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
-            {
-                System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
-                Environment.Exit(1);
-            };
-
+        {  
             var settingPort = AppSettingsUtility.Get("Port");
             if (string.IsNullOrEmpty(settingPort))
             {

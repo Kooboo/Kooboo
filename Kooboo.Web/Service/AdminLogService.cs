@@ -1,4 +1,6 @@
-﻿using Kooboo.Api.ApiResponse;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Api.ApiResponse;
 using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
 using Kooboo.IndexedDB.Dynamic;

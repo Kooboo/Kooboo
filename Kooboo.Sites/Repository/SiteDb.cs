@@ -888,12 +888,6 @@ namespace Kooboo.Sites.Repository
                 return this.DatabaseDb.Log;
             }
         }
-    }
-
-    public enum LogType
-    {
-        Visitor = 0,
-        Image = 1,
-        SiteError = 2
-    }
+    } 
+ 
 }

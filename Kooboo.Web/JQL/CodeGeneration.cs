@@ -1,4 +1,6 @@
-﻿using Kooboo.Data.Models;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
@@ -32,20 +34,14 @@ namespace Kooboo.Web.JQL
 
         public static string DatabaseDeleteScript(WebSite Site, string tablename)
         {
-            string js = "var id; \r\n";
-            js += "if (k.request._id)\r\n";
-            js += "{ id = k.request._id; }\r\n";
-            js += "else  { id = k.request.id; } \r\n";
+            string js = "var id=k.request.id; \r\n"; 
             js += "k.database." + tablename + ".delete(id);\r\n";
             return js;
         }
 
         public static string DatabaseGetScript(WebSite Site, string tablename)
         {
-            string js = "var id; \r\n";
-            js += "if (k.request._id)\r\n";
-            js += "{ id = k.request._id; }\r\n";
-            js += "else  { id = k.request.id; } \r\n";
+            string js = "var id = k.request.id; \r\n"; 
             js += " var obj = k.database." + tablename + ".get(id);\r\n";
             js += "if (obj) {  k.response.json(obj); }; ";
             return js;
@@ -54,7 +50,7 @@ namespace Kooboo.Web.JQL
         public static string DatabaseListScript(WebSite Site, string tablename)
         {
             string js = " var list = k.database." + tablename + ".all();\r\n";
-            js += "if (list) {  k.response.json(obj); }; ";
+            js += "if (list) {  k.response.json(list); }; ";
             return js;
         }
 
@@ -274,6 +270,7 @@ namespace Kooboo.Web.JQL
                 }
                 js += "obj.folder='" + folderName + "'\r\n";
                 js += "k.site.textContents.add(obj); \r\n";
+                // js += "k.response.write('ok');"; 
 
                 return js;
             }
@@ -284,12 +281,9 @@ namespace Kooboo.Web.JQL
         {
             var fields = GetTextContentFields(Site, tablename);
             if (fields != null && fields.Any())
-            {      
-                string js = "var id; \r\n";
-                js += "if (k.request._id)\r\n";
-                js += "{ id = k.request._id; }\r\n";
-                js += "else  if (k.reqeust.id) { id = k.request.id; } \r\n";
-                js += "else   { id = k.request.userkey; } \r\n";
+            { 
+
+                string js = JsKey();  
 
                 js += "if (id) {\r\n";
 
@@ -303,7 +297,7 @@ namespace Kooboo.Web.JQL
 
                     js += "obj." + item + "=k.request." + item + ";}\r\n";
                 }
-                js += "k.site." + tablename + ".update(obj); \r\n";
+                js += "k.site.textContents.update(obj); \r\n";
 
                 js += "}\r\n"; 
 
@@ -316,25 +310,26 @@ namespace Kooboo.Web.JQL
             return null;
         }
             
+        private static string JsKey()
+        {
+            string js = "var id;\r\n";
+            js += "if (k.request.id)\r\n";
+            js += " { id = k.request.id; }\r\n";
+            js += "else if (k.request.usekey)\r\n";
+            js += "{ id = k.request.userkey; }\r\n";
+            return js; 
+        }
 
         public static string TextContentDeleteScript(WebSite Site, string tablename)
         {
-            string js = "var id; \r\n";
-            js += "if (k.request._id)\r\n";
-            js += "{ id = k.request._id; }\r\n";
-            js += "else  if (k.reqeust.id) { id = k.request.id; } \r\n";
-            js += "else   { id = k.request.userkey; } \r\n";  
+            string js = JsKey(); 
             js += "k.site.textContents.delete(id);\r\n";
             return js;
         }
 
         public static string TextContentGetScript(WebSite Site, string tablename)
-        {                                       
-            string js = "var id; \r\n";
-            js += "if (k.request._id)\r\n";
-            js += "{ id = k.request._id; }\r\n";
-            js += "else  if (k.reqeust.id) { id = k.request.id; } \r\n";
-            js += "else   { id = k.request.userkey; } \r\n\r\n";
+        {
+            string js = JsKey(); 
 
             js += "var obj = k.site.textContents.get(id);\r\n";
             js += "if (obj) {  k.response.json(obj); }; ";
@@ -344,8 +339,8 @@ namespace Kooboo.Web.JQL
         public static string TextContentListScript(WebSite Site, string folderName)
         {
             
-            string js = " var list = k.site.textContents.findAll('folder=='"+ folderName+"');\r\n";
-            js += "if (list) {  k.response.json(obj); }; ";
+            string js = " var list = k.site.textContents.findAll(\"folder=='"+ folderName+"'\");\r\n";
+            js += "if (list) {  k.response.json(list); }; ";
             return js;
         }
 
@@ -359,7 +354,7 @@ namespace Kooboo.Web.JQL
 
                 if (type != null)
                 {
-                    return type.Properties.Select(o => o.Name).ToList();
+                    return type.Properties.Where(o=>!o.IsSystemField).Select(o => o.Name).ToList();
                 }
             }
             return null;

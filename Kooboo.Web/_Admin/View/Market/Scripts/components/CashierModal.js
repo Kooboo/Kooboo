@@ -32,9 +32,12 @@
                 return self.currencySymbol() + self.price();
             })
 
+            this.couponCode = ko.observable();
+
             this.onHide = function() {
                 PAYMENT_SUCCESS = false;
                 self.order(null);
+                self.couponCode('');
                 self.isPaying(false);
                 self.isShow(false);
             }
@@ -52,6 +55,11 @@
                 var order = self.order();
                 order.paymentMethod = self.paymentMethod();
                 order.returnPath = location.pathname;
+
+                if (self.paymentMethod() == 'coupon') {
+                    order.code = self.couponCode();
+                }
+
                 Kooboo.Order.pay(order).then(function(res) {
                     if (res.success) {
                         var data = res.model;
@@ -67,15 +75,20 @@
                             }
 
                             self.checkPaymentStatus(data.paymentRequestId);
+                        } else {
+                            window.info.done(Kooboo.text.info.payment.success);
+                            Kooboo.EventBus.publish('kb/market/cashier/done');
+                            self.onHide();
                         }
                     }
                 })
             }
 
+
             this.onPayingSuccess = function() {
-                self.getPaymentStatus(paymentId, function(res) {
+                self.getPaymentStatus(self.paymentId(), function(res) {
                     self.onHide();
-                    Kooboo.EventBus.publish('kb/market/balance/update');
+                    Kooboo.EventBus.publish('kb/market/cashier/done');
                 })
             }
             this.onPayingFailed = function() {
@@ -95,7 +108,7 @@
                                     infoShowed = true;
                                     window.info.done(Kooboo.text.info.payment.success);
                                 }
-                                Kooboo.EventBus.publish('kb/market/balance/update');
+                                Kooboo.EventBus.publish('kb/market/cashier/done');
                             } else {
                                 if (!infoShowed) {
                                     infoShowed = true;

@@ -47,8 +47,7 @@ namespace Kooboo.Lib.Helper
 
             System.Buffer.BlockCopy(idbytes, 8, lastid, 8, 8);
 
-            return new Guid(lastid);
-
+            return new Guid(lastid); 
         }
          
         public static DateTime ExtractTimeFromGuid(Guid id)

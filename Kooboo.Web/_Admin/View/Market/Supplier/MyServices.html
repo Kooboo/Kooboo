@@ -1,20 +1,20 @@
 <!-- #layout name=blank --sideType='market'-->
 
 <div class="page-header">
-    <h1 class="title">My Expertises</h1>
+    <h1 class="title">My Services</h1>
 </div>
 <div data-bind="component: { name: 'kb-breadcrumb', params:[{
     name: 'MARKET'
 },{
-    name: 'Suppliers',
+    name: Kooboo.text.common.Suppliers,
     url: Kooboo.Route.Supplier.ListPage
 },{
-    name: 'My Expertises'
+    name: Kooboo.text.market.supplier.myServices
 }]}"></div>
 
 <div class="navbar navbar-default">
     <div class="container-fluid">
-        <a data-bind="click: onAdd" class="btn green navbar-btn">Add expertise</a>
+        <a data-bind="click: onAdd" class="btn green navbar-btn">Add Service</a>
         <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
     </div>
 </div>
@@ -35,4 +35,4 @@
     })()
 </script>
 <script src="/_Admin/View/Market/Scripts/Kooboo.Market.js"></script>
-<script src="/_Admin/View/Market/Supplier/MyExpertises.js"></script>
+<script src="/_Admin/View/Market/Supplier/MyServices.js"></script>

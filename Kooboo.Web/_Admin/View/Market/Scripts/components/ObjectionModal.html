@@ -3,14 +3,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title">Objection</h4>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.component.objectionModal.objection"></h4>
             </div>
             <div class="modal-body">
                 <!-- ko if: mode() == 'preview' -->
-                <div class="alert alert-info">We have receive your objection.</div>
+                <div class="alert alert-info" data-bind="text: Kooboo.text.component.objectionModal.receiveObjection"></div>
                 <!-- /ko -->
                 <div class="form-group">
-                    <label class="control-label">Description</label>
+                    <label class="control-label" data-bind="text: Kooboo.text.common.description"></label>
                     <!-- ko if: mode() == 'edit' -->
                     <textarea class="form-control" data-bind="value: description, textError: description"></textarea>
                     <!-- /ko -->
@@ -19,7 +19,7 @@
                     <!-- /ko -->
                 </div>
                 <div class="form-group">
-                    <label class="control-label">Contact</label>
+                    <label class="control-label" data-bind="text: Kooboo.text.component.objectionModal.contact"></label>
                     <!-- ko if: mode() == 'edit' -->
                     <input type="text" class="form-control" data-bind="value: contact, textError: contact" />
                     <!-- /ko -->

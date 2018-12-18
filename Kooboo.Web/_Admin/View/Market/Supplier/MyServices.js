@@ -3,20 +3,30 @@ $(function() {
         var self = this;
 
         this.onGet = function() {
-            Kooboo.Supplier.getMyExpertiseList().then(function(res) {
+            Kooboo.Supplier.myList().then(function(res) {
                 if (res.success) {
                     if (res.model.length) {
 
                         var docs = res.model.map(function(item) {
                             return {
                                 id: item.id,
-                                name: item.name,
-                                price: item.symbol + item.price,
-                                description: item.description,
-                                edit: {
-                                    iconClass: 'fa-pencil',
-                                    url: 'kb/expertise/edit'
+                                article: {
+                                    title: item.name,
+                                    description: item.description,
+                                    url: 'kb/supplier/my/services',
+                                    class: "title",
+                                    newWindow: true
                                 },
+                                price: {
+                                    text: item.symbol + item.price,
+                                    class: 'label-sm label-info',
+                                    tooltip: item.currency
+                                },
+                                orgName: {
+                                    text: item.orgName,
+                                    class: 'label-sm gray'
+                                },
+                                
                                 delete: {
                                     class: 'red',
                                     iconClass: 'fa-trash',
@@ -28,30 +38,28 @@ $(function() {
                         self.tableData({
                             docs: docs,
                             columns: [{
-                                displayName: 'Name',
-                                fieldName: 'name',
-                                type: 'text',
-                                showClass: 'table-short'
+                                displayName: Kooboo.text.common.Service,
+                                fieldName: 'article',
+                                type: 'communication-article'
                             }, {
-                                displayName: 'Price',
+                                displayName: Kooboo.text.common.price,
                                 fieldName: 'price',
-                                type: 'text',
+                                type: 'label',
                                 showClass: 'table-short'
                             }, {
-                                displayName: 'Description',
-                                fieldName: 'description',
-                                type: 'text'
+                                displayName: Kooboo.text.common.Supplier,
+                                fieldName: "orgName",
+                                type: 'label',
+                                showClass: 'table-short'
                             }],
-                            tableActions: [{
-                                fieldName: 'edit',
-                                type: 'communication-icon-btn'
-                            }, {
+                            tableActions: [
+                                {
                                 fieldName: 'delete',
                                 type: 'communication-icon-btn'
                             }],
                             onDelete: function(docs) {
                                 if (confirm(Kooboo.text.confirm.deleteItems)) {
-                                    Kooboo.Supplier.deleteExpertises({
+                                    Kooboo.Supplier.deletes({
                                         ids: docs.map(function(doc) {
                                             return doc.id
                                         })
@@ -74,7 +82,8 @@ $(function() {
 
         this.onGet();
 
-        Kooboo.EventBus.subscribe('kb/expertise/edit', function(data) {
+        Kooboo.EventBus.subscribe('kb/supplier/my/services', function(data) {
+            debugger
             Kooboo.EventBus.publish('kb/market/component/expertise-modal/show', data.id);
         })
 
@@ -84,7 +93,7 @@ $(function() {
 
         Kooboo.EventBus.subscribe('kb/expertise/delete', function(data) {
             if (confirm(Kooboo.text.confirm.deleteItem)) {
-                Kooboo.Supplier.deleteExpertise(data).then(function(res) {
+                Kooboo.Supplier.delete(data).then(function(res) {
                     if (res.success) {
                         window.info.done(Kooboo.text.info.delete.success);
                         self.onGet();

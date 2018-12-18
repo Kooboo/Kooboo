@@ -17,7 +17,13 @@ namespace Kooboo.Data
             RootPath = TryRootPath(); 
             IsOnlineServer = GetBool("IsOnlineServer");
 
-            QuotaControl = GetBool("QuotaControl"); 
+            string quotavalue = ConfigurationManager.AppSettings.Get("QuotaControl");
+            if (string.IsNullOrEmpty(quotavalue))
+            {
+                QuotaControl = true; 
+            }
+            else { QuotaControl = GetBool("QuotaControl"); }
+
 
             Global = new GlobalInfo();
             Global.IsOnlineServer = GetBool("IsOnlineServer");

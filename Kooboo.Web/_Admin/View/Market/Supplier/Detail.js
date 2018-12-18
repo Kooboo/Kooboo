@@ -20,7 +20,7 @@ $(function() {
                     }).then(function(res) {
                         if (res.success) {
                             self.expertises(res.model.map(function(item) {
-                                item.pageUrl = Kooboo.Route.Get(Kooboo.Route.Supplier.ExpertisePage, {
+                                item.pageUrl = Kooboo.Route.Get(Kooboo.Route.Supplier.ServicePage, {
                                     id: item.id
                                 })
                                 return item;

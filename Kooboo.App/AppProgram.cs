@@ -13,6 +13,7 @@ namespace Kooboo.App
         [STAThreadAttribute]
         public static void Main()
         {
+             
             var assemblies = new Dictionary<string, Assembly>();
             var executingAssembly = Assembly.GetExecutingAssembly();
             var resources = executingAssembly.GetManifestResourceNames().Where(n => n.EndsWith(".dll"));
@@ -35,7 +36,8 @@ namespace Kooboo.App
                         
                     }
                 }
-            }
+            } 
+          
 
             AppDomain.CurrentDomain.AssemblyResolve += (s, ev) =>
             {
@@ -46,8 +48,7 @@ namespace Kooboo.App
                 if (assemblies.ContainsKey(path))
                 {
                     return assemblies[path];
-                }
-
+                } 
                 return null;
             };
             App.Main();

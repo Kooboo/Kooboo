@@ -37,6 +37,9 @@ $(function() {
         Kooboo.EventBus.subscribe('kb/market/balance/update', function() {
             self.getBalance();
         })
+        Kooboo.EventBus.subscribe('kb/market/cashier/done', function() {
+            self.getBalance();
+        })
 
         this.showTopupHistoryModal = ko.observable(false);
         this.onShowTopupHistoryModal = function() {
@@ -65,18 +68,11 @@ $(function() {
                             moreUrl = Kooboo.Route.Demand.MyDemandPage;
                             detailUrl = Kooboo.Route.Demand.DetailPage;
                             break;
-                        case 'proposal':
-                            moreUrl = Kooboo.Route.Demand.MyProposalPage;
-                            url = Kooboo.Route.Demand.DetailPage;
+                        case 'service':
+                            moreUrl = "/_admin/market/supplier/index";
+                            url = "/_admin/market/supplier/service";
                             break;
-                        case 'supplyorder':
-                            moreUrl = Kooboo.Route.Supplier.MyOrdersPage;
-                            detailUrl = Kooboo.Route.Supplier.DetailPage;
-                            break;
-                        case 'supplyoffer':
-                            moreUrl = Kooboo.Route.Supplier.MyOffersPage;
-                            detailUrl = Kooboo.Route.Supplier.DetailPage;
-                            break;
+
                     }
 
                     return {

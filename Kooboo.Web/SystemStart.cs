@@ -24,8 +24,7 @@ namespace Kooboo.Web
 
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
-                System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
-                Environment.Exit(1);
+                System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject); 
             };
 
             //foreach (var item in Data.GlobalDb.Dlls.All())

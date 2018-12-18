@@ -1,5 +1,7 @@
 (function() {
-    Kooboo.loadJS(["/_Admin/Scripts/lib/jquery.qrcode.min.js"]);
+    Kooboo.loadJS([
+        "/_Admin/Scripts/lib/jquery.qrcode.min.js"
+    ]);
 
     var template = Kooboo.getTemplate('/_Admin/View/Market/Scripts/components/RechargeModal.html');
 
@@ -116,8 +118,9 @@
                     }
                 } else {
                     if (self.couponCode.isValid()) {
-                        Kooboo.Order.useCoupon({
-                            code: self.couponCode()
+                        Kooboo.Order.topup({
+                            code: self.couponCode(),
+                            paymentMethod: self.paymentMethod()
                         }).then(function(res) {
                             if (res.success) {
                                 window.info.done(Kooboo.text.info.recharge.success);

@@ -23,7 +23,7 @@ $(function() {
         })
 
         this.getData = function(page) {
-            Kooboo.Supplier.getExpertise({
+            Kooboo.Supplier.get({
                 id: self.id()
             }).then(function(res) {
                 if (res.success) {
@@ -31,13 +31,12 @@ $(function() {
                     self.description(res.model.description || 'No description provided.');
                     self.price(res.model.symbol + res.model.price);
                     self.currency(res.model.currency);
-                    self.supplierId(res.model.supplierId);
-                    self.supplierName(res.model.supplierName);
-                    self.isMe(res.model.supplierId == localStorage.getItem('_kooboo_api_user'));
+                    self.supplierId(res.model.organizationId);
+                    self.supplierName(res.model.orgName);
+                    self.isMe(res.model.organizationId == localStorage.getItem('_kooboo_api_user'));
                 }
             })
         }
-
         this.getData();
 
         this.showOrderModal = ko.observable(false);

@@ -3,11 +3,7 @@ $(function() {
         chartOption = {
             tooltip: {
                 formatter: function(params) {
-                    if (params.seriesIndex == 1) {
-                        return params.name + "<br/>" + "Used: " + params.value;
-                    } else {
-                        return params.name + "<br/>" + "Total: " + params.value;
-                    }
+                    return params.name + "<br/>" + "Used: " + params.data.usedName + "<br/>" + "Total: " + params.data.totalName;
                 }
             },
             xAxis: {
@@ -35,7 +31,7 @@ $(function() {
                 axisLabel: {
                     textStyle: {
                         color: '#999'
-                    }
+                    },
                 }
             },
             grid: {
@@ -68,6 +64,81 @@ $(function() {
             }]
         };
 
+    function getSize(filesize) {
+        var gigabytes = 1024 * 1024 * 1024;
+        var returnValue = filesize / gigabytes;
+
+        if (returnValue > 1) {
+            return {
+                value: returnValue.toFixed(1),
+                bytes: gigabytes,
+                unit: "GB"
+            };
+        }
+        var megabyte = 1024 * 1024;
+        returnValue = filesize / megabyte;
+        if (returnValue > 1) {
+            return {
+                value: returnValue.toFixed(1),
+                bytes: megabyte,
+                unit: "MB"
+            };
+        }
+
+        var kilobyte = 1024;
+        returnValue = filesize / kilobyte;
+        return {
+            value: returnValue.toFixed(1),
+            bytes: kilobyte,
+            unit: "KB"
+        };
+    }
+
+    function getSizeWithUnit(value, unit) {
+        var returnValue = value;
+        if (unit == "GB") {
+            returnValue = value / (1024 * 1024 * 1024);
+        } else if (unit == "MB") {
+            returnValue = value / (1024 * 1024);
+        } else if (unit == "KB") {
+            returnValue = value / (1024);
+        }
+        return returnValue;
+    }
+
+    //internal can be 0.1G or 100M
+    function getInterval(maxValue) {
+        var interval = 0;
+        if (maxValue <= 10) {
+            maxValue = parseFloat(maxValue);
+
+            if (maxValue < 2) { //avoid y axis's scals too little.
+                interval = (maxValue / 10);
+                interval = interval.toFixed(1);
+                interval = interval * 2;
+            } else if (maxValue > 6) {
+                interval = 2;
+            } else {
+                interval = 1;
+            }
+
+        } else {
+            var size = Math.floor(Math.log(maxValue) / Math.LN10);
+            interval = Math.pow(10, size);
+            if (maxValue / interval < 2) { //avoid y axis's scals too little.
+                size = Math.floor(Math.log(maxValue / 10) / Math.LN10);
+                interval = Math.pow(10, size);
+            }
+
+            if (maxValue / interval > 6) {
+                interval = interval * 2; //reduce y axis's scale
+            }
+        }
+
+
+        return interval;
+    }
+
     var reportModel = function() {
         var self = this;
 
@@ -78,28 +149,75 @@ $(function() {
                 infraType: type
             }).then(function(res) {
                 if (res.success) {
-
                     var latest = res.model[res.model.length - 1];
 
                     self.currentData({
                         month: latest.month,
+                        totalName: latest.totalName,
+                        usedName: latest.usedName,
                         total: latest.total,
                         used: latest.used
                     })
 
                     var xData = [],
                         value = [],
-                        dataShadow = [];
+                        dataShadow = [],
+                        maxYData = 0;
 
                     res.model.forEach(function(data) {
                         xData.push(data.month);
-                        value.push(data.used);
-                        dataShadow.push(data.total);
+                        value.push({
+                            value: data.used,
+                            usedName: data.usedName,
+                            totalValue: data.total,
+                            totalName: data.totalName
+                        });
+                        if (data.total > maxYData) {
+                            maxYData = data.total;
+                        }
+                        dataShadow.push({
+                            usedvalue: data.used,
+                            usedName: data.usedName,
+                            value: data.total,
+                            totalName: data.totalName
+                        });
                     })
+                    var maxSize = getSize(maxYData);
+                    var maxSizeUnit = maxSize.unit;
 
                     chartOption.xAxis.data = xData;
                     chartOption.series[0]['data'] = dataShadow;
                     chartOption.series[1]['data'] = value;
+                    //format xAxis data
+                    chartOption.yAxis.axisLabel.formatter = function(value) {
+                        if (type == "email") {
+                            return value;
+                        } else {
+                            var unit = maxSizeUnit;
+                            var sizeValue = getSizeWithUnit(value, unit);
+                            return sizeValue + unit;
+                        }
+                    }
+
+                    if (type == "email") {
+                        var interval = getInterval(maxYData);
+                        var splitNumber = Math.ceil(maxYData / interval);
+                        chartOption.yAxis.min = 0;
+                        chartOption.yAxis.splitNumber = splitNumber;
+                        chartOption.yAxis.max = interval * splitNumber;
+                        chartOption.yAxis.interval = interval;
+
+                    } else {
+                        var size = getSize(maxYData);
+                        var interval = getInterval(size.value);
+                        var splitNumber = Math.ceil(size.value / interval);
+                        chartOption.yAxis.min = 0;
+                        chartOption.yAxis.splitNumber = splitNumber;
+
+                        chartOption.yAxis.max = interval * splitNumber * size.bytes;
+                        chartOption.yAxis.interval = interval * size.bytes;
+                    }
+
 
                     chart = echarts.init(document.getElementById('report'));
                     chart.setOption(chartOption);
@@ -117,8 +235,10 @@ $(function() {
                         if (params.name) {
                             self.currentData({
                                 month: params.name,
-                                total: total,
-                                used: used,
+                                totalName: total.totalName,
+                                total: total.value,
+                                used: used.value,
+                                usedName: used.usedName
                             })
 
                             self.getLogs(self.currentData().month)

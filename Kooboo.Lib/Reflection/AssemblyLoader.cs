@@ -118,8 +118,7 @@ namespace Kooboo.Lib.Reflection
 
             return typelist;
         }
-
-
+ 
         public static List<Type> LoadTypeByGenericInterface(Type GenericInterface)
         {
             List<Type> typelist = new List<Type>();

@@ -3,21 +3,21 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
-                <h4 class="modal-title">Add a discussion</h4>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.component.discussionModal.addDiscussion"></h4>
             </div>
             <div class="modal-body">
                 <div>
                     <div class="form-group">
-                        <label data-bind="textError: title">Title</label>
+                        <label data-bind="text: Kooboo.text.common.title, textError: title"></label>
                         <input type="text" class="form-control" data-bind="value: title">
                     </div>
                     <div class="form-group">
-                        <label data-bind="textError: content">Content</label>
+                        <label data-bind="text: Kooboo.text.common.Content, textError: content"></label>
                         <!-- ko if: contentLoaded -->
                         <textarea class="form-control" data-bind="richeditor: content, value: content"></textarea>
                         <!-- /ko -->
                         <!-- ko ifnot: contentLoaded -->
-                        <p class="form-control-static">Loading</p>
+                        <p class="form-control-static" data-bind="text: Kooboo.text.common.loading">Loading</p>
                         <!-- /ko -->
                     </div>
                 </div>

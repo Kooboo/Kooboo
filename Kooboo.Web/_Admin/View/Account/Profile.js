@@ -14,10 +14,7 @@ $(function() {
             }, {
                 displayName: Kooboo.text.site.profile.Organization,
                 value: "Organization"
-            }, {
-                displayName: Kooboo.text.site.profile.Balance,
-                value: "Balance"
-            }, {
+            },  {
                 displayName: Kooboo.text.site.profile.Users,
                 value: "Users"
             }, {
@@ -91,17 +88,7 @@ $(function() {
                             self.curType(type);
                         }
                         break;
-                    case "Balance":
-                        Kooboo.Organization.getOrg().then(function(res) {
-                            if (res.success) {
-                                self.organizationName(res.model.name);
-                                self.organizationBalance(res.model.balance);
-                                self.organization(res.model.id);
-                                self.organizationId(res.model.id);
-                                self.curType(type);
-                            }
-                        })
-                        break;
+         
                     case "Users":
                         if (!self.isUserInit()) {
                             Kooboo.Organization.getOrg().then(function(res) {

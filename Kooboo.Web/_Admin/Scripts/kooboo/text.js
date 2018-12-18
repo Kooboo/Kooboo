@@ -63,6 +63,7 @@
             back: "Back",
             use: "Use",
             confirm: "Confirm",
+            detail: "Detail",
 
             API: "API",
             Code: "Code",
@@ -130,6 +131,19 @@
             SiteUser: "Site user",
             KConfig: "Kooboo Config",
 
+            Demands: "Demands",
+            Demand: "Demand",
+            Services: "services",
+            Service: "service",
+            Discussion: "Discussion",
+            Discussions: "Discussions",
+            Apps: "Apps",
+            Purchased: "Purchased",
+            Hardwares: "Hardwares",
+            Suppliers: "Suppliers",
+            Supplier: "Supplier",
+            Templates: "Templates",
+
             ProductManagement: "Products management",
             ProductTypes: "Product types",
             ProductType: "Product type",
@@ -137,8 +151,16 @@
 
             unitPrice: "Unit price",
             totalPrice: "Total price",
+            totalAmount:"Total amount",
             year: "Year",
-            years: "Years"
+            years: "Years",
+
+            publish: "Publish",
+            title: "Title",
+            budget: "Budget",
+            attachments: "Attachments",
+            send: "Send",
+            reply: "Reply",
         },
 
         online: {
@@ -286,7 +308,8 @@
                 success: "Payment successful.",
                 fail: "Payment failed.",
                 cancel: "Payment canceled.",
-                tryAgain: "Make sure you have paid successfully and try again"
+                tryAgain: "Make sure you have paid successfully and try again",
+                
             },
             copy: {
                 success: "Copy successful.",
@@ -451,7 +474,8 @@
             },
             breadCrumb: {
                 sites: "Sites",
-                dashboard: "Dashboard"
+                dashboard: "Dashboard",
+                market: "Market"
             },
             events: {
                 editCondition: "Edit condition"
@@ -696,8 +720,9 @@
                 selectTypeFirst: "Select type first"
             },
             cashierModal: {
-                balanceInsuffisant: "Balance insuffisant, please topup first",
-                purchaseDomain: "Purchase domain"
+                balanceInsuffisant: "No enough balance, please topup first",
+                purchaseDomain: "Purchase domain",
+                choosePaymentMethod: "Please choose a payment method",
             },
             topupModal: {
                 title: "Topup",
@@ -707,7 +732,8 @@
                 customize: "Customize",
                 largeThan: "large than 0.01",
                 paied: "Paied",
-                orderDate: "Order date"
+                orderDate: "Order date",
+                coupon: "coupon",
             },
             templateModal: {
                 downloads: "Downloads",
@@ -718,6 +744,38 @@
                 siteNameHint: "Start with letters and no space allowed",
                 domainHint: "Give your site a domain that other people can access.",
                 useThisTemplate: "Use this template"
+            },
+            demandModal: {
+                publishDemand: "Publish a demand",
+                requireSkill: "Required skills",
+                startTime: "Start time",
+                endTime: "End time",
+            },
+            discussionModal: {
+                addDiscussion: "Add a discussion",
+            },
+            expertiseModal: {
+                expertise: "Expertise",
+            },
+            objectionModal: {
+                objection: "Objection",
+                receiveObjection: "We have receive your objection",
+                contact: "Contact"
+            },
+            orderModal: {
+                supplier: "Supplier:",
+                order: "Buy it"
+
+            },
+            proposalModal: {
+                proposal: "Proposal",
+                duration: "Duration",
+                day: "Day(s)",
+                bidder: "Bidder",
+                accept: "Accept",
+            },
+            rechargeModal: {
+                coupon: "Coupon",
             }
         },
 
@@ -798,7 +856,6 @@
                 startTime: "Start time",
                 timeElapsed: "Time elapsed",
                 referer: "Referer",
-                detail: "Detail",
                 views: "Views",
                 errorMessage: "Error message",
                 statusCode: "Status code",
@@ -954,7 +1011,37 @@
             usageReport: "Usage report",
             purchaseHistory: "Purchase history",
             myDomains: "My domains",
-            changeCurrency: "Change currency"
+            changeCurrency: "Change currency",
+            demand: {
+                myDemands: "My Demands",
+                myProposals: "My Proposals",
+                StartDate: "Start date",
+                EndDate: "End date",
+                proposals: "Proposals",
+                demander: "Demander",
+                createTime: "Create time",
+            },
+            discussion: {
+                myThreads: "My Threads",
+                Comments: "Comments",
+
+
+            },
+            hardware: {
+                usageReport: "Usage Report"
+            },
+            supplier: {
+                myOffers: "My Offers",
+                myOrders: "My Orders",
+                myServices: "My Services",
+                service: "Service",
+                status: "Status",
+                orderUser: "Order user"
+            },
+            template: {
+                myTemplate: "My Template",
+                privateTemplate: "Private Template"
+            }
         },
 
         mail: {
@@ -1068,7 +1155,6 @@
             clickCollpase: "Click to collpase actions",
             clickExpand: "Click to expand actions",
             alt: "Alt",
-            title: "Title",
             backgroundImage: "Background-image",
             backgroundColor: "Background-color",
             borderColor: "Border-color",
@@ -1079,7 +1165,7 @@
             outlineColor: "Outline-color",
             textShadow: "Text-shadow",
             boxShadow: "Box-shadow",
-            cantEditCopyItem: "Copy item can't be edited",
+            cantEditCopyItem: "Can not edit copied item",
             cantEdit: "The element is dynamic generated after page has rendered.So it can't be edited!",
             editArea: "Edit Area",
             selectImage: "please select image",

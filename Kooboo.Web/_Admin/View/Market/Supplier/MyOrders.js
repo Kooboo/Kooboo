@@ -5,7 +5,7 @@ $(function() {
         this.pager = ko.observable();
 
         this.getList = function() {
-            Kooboo.Supplier.getOrdersByUser().then(function(res) {
+            Kooboo.Supplier.myOrdersOut().then(function(res) {
                 if (res.success) {
                     self.handleData(res.model);
                 }
@@ -16,20 +16,19 @@ $(function() {
             self.pager(data);
 
             var docs = data.list.map(function(item) {
+                var symbol = item.symbol ? item.symbol : item.currency;
                 return {
                     id: item.id,
-                    expertise: item.expertise,
-                    price: item.symbol + item.price,
+                    name: {
+                        text: item.name,
+                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.OrderPage, {
+                            id: item.id
+                        })
+                    },
+                    amount: symbol + item.totalAmount,
                     status: {
                         text: item.status.displayName,
                         class: 'label-sm label-info'
-                    },
-                    view: {
-                        iconClass: 'fa-eye',
-                        url: Kooboo.Route.Get(Kooboo.Route.Supplier.DetailPage, {
-                            id: item.id
-                        }),
-                        newWindow: true
                     }
                 }
             })
@@ -37,22 +36,19 @@ $(function() {
             self.tableData({
                 docs: docs,
                 columns: [{
-                    displayName: 'Expertise',
-                    fieldName: 'expertise',
+                    displayName: Kooboo.text.common.name,
+                    fieldName: 'name',
+                    type: 'link'
+                }, {
+                    displayName: Kooboo.text.common.amount,
+                    fieldName: 'amount',
                     type: 'text'
                 }, {
-                    displayName: 'Price',
-                    fieldName: 'price',
-                    type: 'text'
-                }, {
-                    displayName: 'Status',
+                    displayName: Kooboo.text.market.supplier.status,
                     fieldName: 'status',
                     type: 'label'
                 }],
-                tableActions: [{
-                    fieldName: 'view',
-                    type: 'link-icon'
-                }],
+                tableActions: [],
                 unselectable: true,
                 kbType: Kooboo.Supplier.name
             })

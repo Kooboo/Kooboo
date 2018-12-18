@@ -16,10 +16,13 @@ namespace Kooboo.Web.Service
         {   
            if (Kooboo.Data.AppSettings.IsOnlineServer && !IsSameServer(user.TempRedirectUrl))
             {
-                var gettokenurl = Kooboo.Data.Helper.AccountUrlHelper.User("GetToken");
-                gettokenurl += "?username=" + user.UserName + "&password=" + user.PasswordHash.ToString();    
-                var token = Kooboo.Lib.Helper.HttpHelper.Get<string>(gettokenurl);
-                return token; 
+                string token = GetTokenFromOnline(user);
+
+#if DEBUG
+                token = Kooboo.Data.Cache.AccessTokenCache.GetNewToken(user.Id);
+#endif
+
+                return token;
             }
            else
             {
@@ -27,8 +30,24 @@ namespace Kooboo.Web.Service
             }     
         }
 
+        public static string GetTokenFromOnline(User user)
+        {
+            var gettokenurl = Kooboo.Data.Helper.AccountUrlHelper.User("GetToken");
+            gettokenurl += "?username=" + user.UserName;
+            if (user.PasswordHash != default(Guid))
+            {
+                gettokenurl += "&password=" + user.PasswordHash.ToString();
+            }
+            else if (!string.IsNullOrEmpty(user.Password))
+            {
+                gettokenurl += "&password=" + user.Password;
+            }
         
-        public static string GetRedirectUrl(RenderContext context, User User, string currentRequestUrl,  string returnUrl)
+            return Kooboo.Lib.Helper.HttpHelper.Get<string>(gettokenurl);
+          
+        }
+
+        public static string GetRedirectUrl(RenderContext context, User User, string currentRequestUrl, string returnUrl)
         {
             if (!string.IsNullOrWhiteSpace(returnUrl))
             {
@@ -57,7 +76,8 @@ namespace Kooboo.Web.Service
 
             if (string.IsNullOrEmpty(returnUrl))
             {
-                url = Kooboo.Sites.Service.StartService.AfterLoginPage(context); 
+                context.User = User; 
+                url = Kooboo.Data.Service.StartService.AfterLoginPage(context);
             }
             else
             {

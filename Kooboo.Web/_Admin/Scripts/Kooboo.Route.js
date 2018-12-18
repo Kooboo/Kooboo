@@ -162,6 +162,9 @@
             },
             CategoriesPage: GetRoute("ECommerce/Product/Categories")
         },
+        Market: {
+            IndexPage: GetRoute("/_Admin/Market/Index", true)
+        },
         Discussion: {
             ListPage: GetRoute("Market/Discussion/Index"),
             DetailPage: GetRoute("Market/Discussion/Detail"),
@@ -176,9 +179,10 @@
         Supplier: {
             ListPage: GetRoute("Market/Supplier/Index"),
             DetailPage: GetRoute("Market/Supplier/Detail"),
-            ExpertisePage: GetRoute("Market/Supplier/Expertise"),
+            ServicePage: GetRoute("Market/Supplier/Service"),
             MyOrdersPage: GetRoute("Market/Supplier/MyOrders"),
-            MyOffersPage: GetRoute("Market/Supplier/MyOffers")
+            MyOffersPage: GetRoute("Market/Supplier/MyOffers"),
+            OrderPage: GetRoute("Market/Supplier/Order")
         },
         Template: {
             ListPage: GetRoute("Market/Template/Index")
