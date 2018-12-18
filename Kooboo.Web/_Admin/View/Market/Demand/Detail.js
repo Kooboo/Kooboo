@@ -134,7 +134,7 @@ $(function() {
         }
 
         this.onFinishTheDemand = function(isAccepted) {
-            if (confirm(Kooboo.text.comfirm.demand.acceptDelivery)) {
+            if (confirm(Kooboo.text.confirm.demand.acceptDelivery)) {
                 Kooboo.Demand.complete({
                     id: self.id(),
                     isAccepted: isAccepted

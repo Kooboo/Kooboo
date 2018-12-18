@@ -331,7 +331,7 @@
                 <a href="javascript:;" class="btn btn-sm btn-default" data-bind="click: onFinishTheDemand.bind(this, false)">Reject</a>
                 <hr>
                 <!-- /ko -->
-                <reply-panel params="type: 'delivery', typeId: takenProposalId"></reply-panel>
+                <reply-panel params="type: 'delivery', typeId: takenProposalId, disabled: isClose"></reply-panel>
                 <div data-bind="visible: messages().length">
                     <hr>
                     <ul class="media-list" data-bind="foreach: { data: messages, as: 'msg' }">
