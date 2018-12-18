@@ -12,7 +12,7 @@
         font-size: 14px;
         margin-right: 10px;
     }
-
+    
     .avatar.blue {
         background: #009ad7;
         color: white;
@@ -21,18 +21,7 @@
 <div class="page-header">
     <h1 class="title">Order</h1>
 </div>
-<div data-bind="component: { name: 'kb-breadcrumb', params:[{
-    name: 'MARKET'
-},{
-    name: Kooboo.text.common.Suppliers,
-    url: Kooboo.Route.Supplier.ListPage
-},{
-    name: Kooboo.text.market.supplier.myOrders,
-    url: Kooboo.Route.Supplier.MyOrdersPage
-},{
-    name: Kooboo.text.common.detail
-}]}"></div>
-
+<div data-bind="component: { name: 'kb-breadcrumb', params: breadcrumb() }"></div>
 
 <div class="row">
     <div class="col-md-12">
@@ -134,8 +123,8 @@
                         <p class="clearfix">
                             <span class="pull-left">
                                 <span data-bind="text: msg.userName"></span>
-                                <span> send at </span>
-                                <span data-bind="text: msg.date"></span>
+                            <span> send at </span>
+                            <span data-bind="text: msg.date"></span>
                             </span>
                         </p>
                     </div>
@@ -146,7 +135,7 @@
 </div>
 
 <script>
-    (function () {
+    (function() {
         Kooboo.loadJS([
             "/_Admin/Scripts/components/kbBreadcrumb.js",
             "/_Admin/View/Market/Scripts/components/ReplyPanel.js",

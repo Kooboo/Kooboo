@@ -7,6 +7,8 @@ $(function() {
 
         this.id = ko.observable(Kooboo.getQueryString('id'));
 
+        this.breadcrumb = ko.observable();
+
         this.serviceName = ko.observable();
 
         this.remark = ko.observable();
@@ -48,6 +50,18 @@ $(function() {
                             self.getPublicCommentList();
                         }, 2000);
                     }
+
+                    self.breadcrumb([{
+                        name: 'MARKET'
+                    }, {
+                        name: Kooboo.text.common.Suppliers,
+                        url: Kooboo.Route.Supplier.ListPage
+                    }, {
+                        name: Kooboo.text.market.supplier[self.ImBuyer() ? 'myOrders' : 'myOffers'],
+                        url: Kooboo.Route.Supplier[self.ImBuyer() ? 'MyOrdersPage' : 'MyOffersPage']
+                    }, {
+                        name: Kooboo.text.common.detail
+                    }]);
                 }
             })
         }
