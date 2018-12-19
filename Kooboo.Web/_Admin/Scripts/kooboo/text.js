@@ -289,15 +289,15 @@
 
         info: {
             upload: {
-                success: "Upload successful.",
+                success: "Upload succeeded.",
                 fail: "Upload failed."
             },
             update: {
-                success: "Update successful.",
+                success: "Update succeeded.",
                 fail: "Update failed."
             },
             delete: {
-                success: "Delete successful.",
+                success: "Delete succeeded.",
                 fail: "Delete failed."
             },
             save: {
@@ -305,68 +305,68 @@
                 fail: "Save failed."
             },
             checkout: {
-                success: "Checkout successful.",
+                success: "Checkout succeeded.",
                 fail: "Checkout failed."
             },
             clean: {
-                success: "Clean successfully.",
+                success: "Clean succeeded.",
                 fail: "Clean failed."
             },
             payment: {
-                success: "Payment successful.",
+                success: "Payment succeeded.",
                 fail: "Payment failed.",
                 cancel: "Payment canceled.",
                 tryAgain: "Make sure you have paid successfully and try again",
 
             },
             copy: {
-                success: "Copy successful.",
+                success: "Copy succeeded.",
                 fail: "Copy failed."
             },
             pull: {
-                success: "Pull successful.",
+                success: "Pull succeeded.",
                 fail: "Pull failed."
             },
             push: {
-                success: "Push successful.",
+                success: "Push succeeded.",
                 fail: "Push failed."
             },
             moveTo: {
                 Trash: {
-                    success: "Move to Trash successful.",
+                    success: "Move to Trash succeeded.",
                     fail: "Move to Trash failed."
                 },
                 Spam: {
-                    success: "Move to Spam successful.",
+                    success: "Move to Spam succeeded.",
                     fail: "Move to Spam failed."
                 },
                 Sent: {
-                    success: "Move to Sent successful.",
+                    success: "Move to Sent succeeded.",
                     fail: "Move to Sent failed."
                 },
                 Inbox: {
-                    success: "Move to Inbox successful.",
+                    success: "Move to Inbox succeeded.",
                     fail: "Move to Inbox failed."
                 }
             },
             rebuild: {
-                success: "Rebuild successful.",
+                success: "Rebuild succeeded.",
                 fail: "Rebuild failed."
             },
             enable: {
-                success: "Enable successful.",
+                success: "Enable succeeded.",
                 fail: "Enable failed."
             },
             disable: {
-                success: "Disable successful.",
+                success: "Disable succeeded.",
                 fail: "Disable failed."
             },
             recharge: {
-                success: "Recharge successful",
+                success: "Recharge succeeded",
                 fail: "Recharge failed"
             },
             purchase: {
-                success: "Purchase successful",
+                success: "Purchase succeeded",
                 fail: "Purchase failed"
             },
 
