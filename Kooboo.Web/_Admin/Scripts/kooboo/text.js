@@ -176,7 +176,7 @@
         confirm: {
             deleteItem: "Are you sure you want to delete this item?",
             deleteItems: "Are you sure you want to delete these items?",
-            recallProposal: "Are you sure to recall your proposal?",
+            recallProposal: "Are you sure you want to delete your proposal?",
             deleteItemsWithRef: "This item is being used, deleting an in-use item will remove the reference from the container object, are you sure you want to continue?",
             overrideFile: "A file with the same name already exists, would you like to overwrite it?",
             exit: "Are you sure you want to exit?",
@@ -193,20 +193,21 @@
                 clearVisitorLog: "Are you sure you want to clean visitor logs"
             },
             search: {
-                clean: "Are you sure to clean all the search index?",
-                rebuild: "Do you want to rebuild site's index?"
+                clean: "Are you sure you want to clean all the search index?",
+                rebuild: "Are you sure you want to rebuild site's index?"
             },
             layoutEditor: {
                 labelInside: "This element contains label binding, do you want to continue?"
             },
             domains: {
-                deleteDomainHasSite: "Some domains in your selection have binding site(s), would you want to delete that?"
+                deleteDomainHasSite: "Your selected domains have binding sites. Are you sure you want to delete them?"
             },
-            changePrimaryKey: "System will delete all the old data after you changing primary key. Would you want to continue?",
+            changePrimaryKey: "Changing primary key may delete old data. Are you sure you want to continue?",
             restartExecution: "Debugger is finished, would you want to restart debugging?",
             changeDataCenter: "You are about to change your data center, are you sure you want to continue?",
             siteSynchronizing: "You are pulling updates from remote server, are you sure you want to abort?",
             invalidMeta: "Invalid meta. Please check your meta infomation.",
+            changeCurrency: 'This will transfer all your balance into new currency. Are you sure you want to continue?',
             sourceCodeChanged: "The generated css code file has been modified, are you sure you want to overwrite it",
             demand: {
                 takeProposal: "Are you sure you want to take this proposal?",
@@ -224,8 +225,7 @@
             imageFileUploaded: "Image files uploaded.",
             voucherCode: "Please input your Voucher code.",
             payAmount: "Please input your amount of money.",
-            pleaseChooseAFolder: "Please choose a folder first",
-            vaildFileUploaded: "Vaild files has been uploaded",
+            pleaseChooseAFolder: "Please choose a folder first", 
             fileTypeInvalid: "File type invalid",
             selectBeforePushing: "You should select items before pushing",
             exceptionOccuredAndDebuggerClosed: "Exception occured, debugger closed.",
