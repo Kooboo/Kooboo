@@ -12,7 +12,7 @@
                         <div class="col-md-10 input-groups">
                             <!-- ko foreach: { data: attributes, as: 'attribute' } -->
                             <div class="input-group">
-                                <input type="text" class="form-control key" placeholder="Key" data-bind="typeahead:keys, name:key, value:key, items:3" style="width:150px;">
+                                <input type="text" class="form-control key" data-bind="typeahead:keys, name:key, value:key, items:3, attr: { placeholder: Kooboo.text.common.key }" style="width:150px;">
                                 <span class="input-group-addon">:</span>
                                 <input type="text" class="form-control input-medium" data-bind="textInput: value, error: value">
                                 <span class="input-group-btn">

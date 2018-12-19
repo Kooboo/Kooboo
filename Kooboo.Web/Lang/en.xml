@@ -630,11 +630,6 @@
   <key id="No variable attribute">No variable attribute</key>
   <key id="Data type">Data type</key>
   <key id="Error message">Error message</key>
-  <key id="Maxium value">Maxium value</key>
-  <key id="Minimal checked">Minimal checked</key>
-  <key id="Maxium checked">Maxium checked</key>
-  <key id="Minimal length">Minimal length</key>
-  <key id="Maxium length">Maxium length</key>
   <key id="Click to collapse actions">Click to collapse actions</key>
   <key id="Redo">Redo</key>
   <key id="NOTE!">NOTE!</key>
@@ -872,6 +867,10 @@
   <key id="String length range">String length range</key>
   <key id="Min checked">Min checked</key>
   <key id="Max checked">Max checked</key>
+  <key id="Minimal checked">Minimal checked</key>
+  <key id="Maximum checked">Maximum checked</key>
+  <key id="Minimal length">Minimal length</key>
+  <key id="Maximum length">Maximum length</key>
   <key id="No condition">No condition</key>
   <key id="No activity">No activity</key>
   <key id="Add activity">Add activity</key>

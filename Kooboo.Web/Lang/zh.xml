@@ -630,11 +630,6 @@
   <key id="No variable attribute">No variable attribute</key>
   <key id="Data type">数据类型</key>
   <key id="Error message">错误信息</key>
-  <key id="Maxium value">最大值</key>
-  <key id="Minimal checked">最小选中数</key>
-  <key id="Maxium checked">最大选中数</key>
-  <key id="Minimal length">最小长度</key>
-  <key id="Maxium length">最大长度</key>
   <key id="Click to collapse actions">收起</key>
   <key id="Redo">重做</key>
   <key id="NOTE!">说明!</key>
@@ -872,6 +867,10 @@
   <key id="String length range">输入长度范围</key>
   <key id="Min checked">最少选中数</key>
   <key id="Max checked">最多选中数</key>
+  <key id="Minimal checked">最少选中数</key>
+  <key id="Maximum checked">最多选中数</key>
+  <key id="Minimal length">最小长度</key>
+  <key id="Maximum length">Maximum length</key>
   <key id="No condition">暂无条件</key>
   <key id="No activity">暂无活动</key>
   <key id="Add activity">添加活动</key>

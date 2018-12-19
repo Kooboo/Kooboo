@@ -48,6 +48,7 @@
             from: "From",
             loading: "Loading",
             displayName: "Display name",
+            key: "Key",
             value: "Value",
             placeholder: "Placeholder",
             type: "Type",
@@ -455,6 +456,16 @@
             minChecked: "Min checked",
             maxChecked: "Max checked",
             regex: "Regex"
+        },
+
+        validate: {
+            minimalValue: "Minimal value",
+            maximumValue: "Maximum value",
+            pattern: "Pattern",
+            minimalChecked: "Minimal checked",
+            maximumChecked: "Maximum checked",
+            minimalLength: "Minimal length",
+            maximumLength: "Maximum length"
         },
 
         action: {
