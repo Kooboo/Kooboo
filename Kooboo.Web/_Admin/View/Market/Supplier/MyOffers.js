@@ -24,8 +24,7 @@ $(function() {
                         url: Kooboo.Route.Get(Kooboo.Route.Supplier.OrderPage, {
                             id: item.id
                         }),
-                        class: "title",
-                        newWindow: true
+                        class: "title"
                     },
                     price: {
                         text: symbol + item.totalAmount,
@@ -39,7 +38,7 @@ $(function() {
                     user: {
                         text: item.buyerOrgName,
                         class: 'label-sm gray'
-                    }                   
+                    }
                 }
             })
 
@@ -65,7 +64,7 @@ $(function() {
                     type: 'label',
                     showClass: "table-short"
                 }],
-                
+
                 unselectable: true,
                 kbType: Kooboo.Supplier.name
             })
