@@ -75,7 +75,7 @@
                             <p class="form-control-static" data-bind="text: buyerName"></p>
                         </div>
                     </div>
-                    <!-- ko if: isFinished -->
+                    <!-- ko if: isClose -->
                     <div class="col-md-2 col-sm-4 col-xs-6">
                         <div class="form-group">
                             <label>Status</label>
@@ -85,7 +85,7 @@
                         </div>
                     </div>
                     <!-- /ko -->
-                    <!-- ko if: ImBuyer() && !isFinished() -->
+                    <!-- ko if: ImBuyer() && !isClose() -->
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="form-group">
                             <label>&nbsp;</label>
@@ -99,7 +99,7 @@
             </div>
         </div>
 
-        <reply-panel params="type: 'supplier', typeId: id, disabled: isFinished"></reply-panel>
+        <reply-panel params="type: 'supplier', typeId: id, disabled: isClose"></reply-panel>
         <hr>
         <div data-bind="visible: messages().length" style="max-height: 500px;overflow-y: auto;">
             <ul class="media-list" data-bind="foreach: { data: messages, as: 'msg' }">

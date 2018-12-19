@@ -22,7 +22,7 @@ $(function() {
         this.buyerName = ko.observable();
 
         this.ImBuyer = ko.observable(false);
-        this.isFinished = ko.observable(false);
+        this.isClose = ko.observable(false);
 
         this.getOrder = function(cb) {
             Kooboo.Supplier.getOrder({
@@ -42,8 +42,8 @@ $(function() {
                     self.buyerName(data.buyerOrgName);
                     self.supplierName(data.orgName);
                     self.ImBuyer(data.buyerOrganizationId == localStorage.getItem('_kooboo_api_user'));
-                    self.isFinished(data.isFinished);
-                    if (data.isFinished) {
+                    self.isClose(data.isClose);
+                    if (data.isClose) {
                         self.getPublicCommentList();
                     } else {
                         setInterval(function() {

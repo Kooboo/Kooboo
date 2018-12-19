@@ -166,7 +166,8 @@
             startTime: "Start time",
             endMonth: "End month",
             renew: "Renew",
-            
+            chooseObject: "Choose object",
+            chooseAction: "Choose action" 
         },
 
         online: {
