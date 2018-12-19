@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <Compile Remove="Api\Implementation\Download.cs" />
+    <Compile Remove="Api\Implementation\Payment.cs" />
   </ItemGroup>
 
   <ItemGroup>
