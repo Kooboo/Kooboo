@@ -326,7 +326,7 @@
                 <!-- /ko -->
             </div>
             <div class="tab-pane fade" id="tab_1_3">
-                <!-- ko if: isOwner() && isTaken() -->
+                <!-- ko if: isOwner() && !isTaken() -->
                 <a href="javascript:;" class="btn btn-sm btn-info" data-bind="click: onFinishTheDemand.bind(this, true)">Accept</a>
                 <a href="javascript:;" class="btn btn-sm btn-default" data-bind="click: onFinishTheDemand.bind(this, false)">Reject</a>
                 <hr>
