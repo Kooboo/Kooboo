@@ -61,7 +61,7 @@ $(function () {
                 {
                     displayName: Kooboo.text.common.Discussion,
                     fieldName: 'article',
-                    type: 'article'
+                    type: 'summary'
                 }, {
                     displayName: Kooboo.text.market.discussion.Comments,
                     fieldName: 'comments',

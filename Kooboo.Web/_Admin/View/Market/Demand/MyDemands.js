@@ -59,7 +59,7 @@ $(function() {
                 columns: [{
                     displayName: Kooboo.text.common.Demand,
                     fieldName: 'article',
-                    type: 'article'
+                    type: "summary"
                 }, {
                     displayName: Kooboo.text.market.demand.StartDate,
                     fieldName: 'startDate',

@@ -72,7 +72,7 @@ $(function() {
                 columns: [{
                     displayName: Kooboo.text.common.Demand,
                     fieldName: 'article',
-                    type: 'article'
+                    type: 'summary'
                 }, {
                     displayName: Kooboo.text.common.budget,
                     fieldName: 'budget',

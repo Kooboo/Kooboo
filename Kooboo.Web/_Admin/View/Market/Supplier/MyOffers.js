@@ -47,7 +47,7 @@ $(function() {
                 columns: [{
                     displayName: Kooboo.text.common.name,
                     fieldName: 'article',
-                    type: 'article'
+                    type: 'summary'
                 }, {
                     displayName: Kooboo.text.common.price,
                     fieldName: 'price',
