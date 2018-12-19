@@ -210,6 +210,11 @@
             demand: {
                 takeProposal: "Are you sure you want to take this proposal?",
                 acceptDelivery: "Are you sure you want to accept the job?"
+            },
+            deleteCategory: "This category is related to some products. Would you want to delete?",
+            market: {
+                changeCurrency: "Changing the default currency will transfer all your balance to new currency. Would you want to continue?",
+                sure: "Are you sure?",
             }
         },
 
@@ -385,7 +390,9 @@
         },
 
         placeholder: {
-            inputValueGreaterThan: "Input a value greater than "
+            inputValueGreaterThan: "Input a value greater than ",
+            reply: "Reply content goes here",
+            largeThan: "Input a amount large than 0.01"
         },
 
         tooltip: {

@@ -466,8 +466,6 @@
   <key id="Count">Count</key>
   <key id="No record">No record</key>
   <key id="Loading">Loading</key>
-  <key id="Input a amount large than 0.01">Input a amount large than 0.01</key>
-  <key id="Reply content goes here">Reply content goes here</key>
   <key id="Supplier">Supplier</key>
   <key id="Supplier:">Supplier:</key>
   <key id="Expertise">Expertise</key>
@@ -726,6 +724,9 @@
   <key id="The generated css code file has been modified, are you sure you want to overwrite it">The generated css code file has been modified, are you sure you want to overwrite it</key>
   <key id="Are you sure you want to take this proposal?">Are you sure you want to take this proposal?</key>
   <key id="Are you sure you want to accept the job?">Are you sure you want to accept the job?</key>
+  <key id="This category is related to some products. Would you want to delete?">This category is related to some products. Would you want to delete?</key>
+  <key id="Changing the default currency will transfer all your balance to new currency. Would you want to continue?">Changing the default currency will transfer all your balance to new currency. Would you want to continue?</key>
+  <key id="Are you sure?">Are you sure?</key>
   <key id="File type error, please upload zip file.">File type error, please upload zip file.</key>
   <key id="Image files uploaded.">Image files uploaded.</key>
   <key id="Please input your Voucher code.">Please input your Voucher code.</key>
@@ -833,6 +834,8 @@
   <key id="please check your server.">please check your server.</key>
   <key id="This site is still downloading, please wait.">This site is still downloading, please wait.</key>
   <key id="Please select the content you want before exporting.">Please select the content you want before exporting.</key>
+  <key id="Reply content goes here">Reply content goes here</key>
+  <key id="Input a amount large than 0.01">Input a amount large than 0.01</key>
   <key id="Add relative source">Add relative source</key>
   <key id="Add another rule after this">Add another rule after this</key>
   <key id="Batch operation">Batch operation</key>
