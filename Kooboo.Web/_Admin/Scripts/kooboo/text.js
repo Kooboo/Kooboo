@@ -166,6 +166,7 @@
             startTime: "Start time",
             endMonth: "End month",
             renew: "Renew",
+            
         },
 
         online: {
@@ -1067,7 +1068,8 @@
                 myServices: "My Services",
                 service: "Service",
                 status: "Status",
-                orderUser: "Order user"
+                orderUser: "Order user",
+                me: "Me",
             },
             template: {
                 myTemplate: "My Template",

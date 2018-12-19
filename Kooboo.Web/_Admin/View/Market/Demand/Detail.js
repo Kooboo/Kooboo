@@ -347,7 +347,7 @@ $(function() {
         this.firstLetter = ko.observable(data.userName.split('')[0].toUpperCase());
         this.content = ko.observable(data.content);
         this.isCurrentUser = ko.observable(data.userId == CURRENT_USER_ID);
-        this.userName = ko.observable(this.isCurrentUser() ? 'Me' : data.userName);
+        this.userName = ko.observable(this.isCurrentUser() ? Kooboo.text.market.supplier.me : data.userName);
         this.date = ko.observable(date.toDefaultLangString());
         this.attachment = ko.observable(data.attachments ? data.attachments.map(function(item) {
             item.url = '/_api/attachment/getFile?id=' + item.id + '&fileName=' + item.fileName;
