@@ -30,8 +30,8 @@
                 <td data-bind="text: doc[col.fieldName]"></td>
                 <!-- /ko -->
 
-                <!-- ko if: col.type == 'article' -->
-                <td class="article">
+                <!-- ko if: col.type == 'summary' -->
+                <td class="summary">
                     <a href="javascript:;" data-bind="click: $component.linkTo.bind(doc, doc[col.fieldName].url(), doc[col.fieldName]['newWindow']), clickBubble: false">
                         <p data-bind="text: doc[col.fieldName].title, css: doc[col.fieldName].class,"></p>
                         <p data-bind="text: doc[col.fieldName].description"></p>
@@ -40,7 +40,7 @@
                 <!-- /ko -->
 
                 <!-- ko if: col.type == 'communication-article' -->
-                <td class="article">
+                <td class="summary">
                     <a href="javascript:;" data-bind="click: $component.communicate.bind(doc, doc[col.fieldName].url, { id: doc.id() }), clickBubble: false">
                         <p data-bind="text: doc[col.fieldName].title, css: doc[col.fieldName].class,"></p>
                         <p data-bind="text: doc[col.fieldName].description"></p>
@@ -93,7 +93,7 @@
 
                 <!-- ko if: col.type == 'label' -->
                 <td>
-                    <span data-bind="text: doc[col.fieldName].text, css: doc[col.fieldName].class, style: { background: doc[col.fieldName].bgColor }, tooltip: doc[col,fieldName].tooltip" class="label"></span>
+                    <span data-bind="text: doc[col.fieldName].text, css: doc[col.fieldName].class, style: { background: doc[col.fieldName].bgColor }, tooltip: doc[col.fieldName].tooltip" class="label"></span>
                 </td>
                 <!-- /ko -->
 

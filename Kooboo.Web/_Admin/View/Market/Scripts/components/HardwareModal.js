@@ -18,6 +18,7 @@
             })
             this.onHide = function() {
                 self.title('');
+                self.symbol('');
                 self.variants().forEach(function(vari) {
                     vari.selected(false);
                 })
@@ -32,6 +33,7 @@
             this.data.subscribe(function(data) {
                 self.id(data.id);
                 self.title(data.name);
+                self.symbol(data.symbol);
                 self.variants(data.variants.map(function(va) {
                     return {
                         id: va.id,
@@ -46,6 +48,7 @@
 
             this.id = ko.observable();
             this.title = ko.observable();
+            this.symbol = ko.observable();
             this.variants = ko.observableArray();
             this.currentVar = ko.observable();
             this.quantity = ko.validateField({

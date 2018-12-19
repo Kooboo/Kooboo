@@ -3,10 +3,6 @@
         "/_Admin/Scripts/lib/bxSlider/jquery.bxslider.min.js"
     ])
 
-    Kooboo.loadCSS([
-        "/_Admin/Scripts/lib/bxSlider/jquery.bxslider.min.css"
-    ])
-
     var template = Kooboo.getTemplate('/_Admin/Scripts/components/kbTemplateModal.html'),
         slider = null;
 
@@ -17,27 +13,29 @@
             this.showError = ko.observable(false);
 
             this.isShow = params.isShow;
+            this.isShow.subscribe(function(show) {
+                if (show) {
+                    var temp = self.template();
+                    var date = new Date(temp.lastModified),
+                        size = Kooboo.bytesToSize(temp.size);
+
+                    temp.size = size;
+                    temp.lastModified = date.toDefaultLangString();
+                    temp.allDynamicCount = temp.layoutCount +
+                        temp.menuCount +
+                        temp.pageCount +
+                        temp.viewCount +
+                        temp.imageCount +
+                        temp.contentCount;
+
+                    self.data(temp);
+                    setTimeout(function() {
+                        slider = $(".bxslider").bxSlider({ auto: false })
+                    }, 300);
+                }
+            })
 
             this.template = params.data;
-            this.template.subscribe(function(data) {
-                var temp = data;
-                var date = new Date(data.lastModified),
-                    size = Kooboo.bytesToSize(data.size);
-
-                temp.size = size;
-                temp.lastModified = date.toDefaultLangString();
-                temp.allDynamicCount = temp.layoutCount +
-                    temp.menuCount +
-                    temp.pageCount +
-                    temp.viewCount +
-                    temp.imageCount +
-                    temp.contentCount;
-
-                self.data(temp);
-                setTimeout(function() {
-                    slider = $(".bxslider").bxSlider({ auto: false })
-                }, 300);
-            })
 
             this.data = ko.observable();
 

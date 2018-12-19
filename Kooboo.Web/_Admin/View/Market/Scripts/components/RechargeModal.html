@@ -129,7 +129,7 @@
                     <input type="text" class="form-control" data-bind="value: couponCode, error: couponCode">
                 </div>
                 <div class="form-group" data-bind="collapsein: currentPackage() && currentPackage().type == 'mod'">
-                    <input type="number" class="form-control" data-bind="value: chargeAmount, error: chargeAmountValue, event: { keydown: Kooboo.event.input.positiveNumberOnly }" placeholder="Input a amount large than 0.01">
+                    <input type="number" class="form-control" data-bind="value: chargeAmount, error: chargeAmountValue, event: { keydown: Kooboo.event.input.positiveNumberOnly }, attr: { placeholder: Kooboo.text.placeholder.largeThan }">
                 </div>
             </div>
             <div class="modal-body" data-bind="visible: payingMode">

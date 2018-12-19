@@ -7,9 +7,9 @@
             <div class="form-group">
                 <div data-bind="foreach: defaultRouteValues" class="input-groups">
                     <div class="input-group">
-                        <input type="text" class="form-control key" data-bind="value: name" placeholder='Key' style="width:130px">
+                        <input type="text" class="form-control key" data-bind="value: name, attr: { placeholder: Kooboo.text.common.key }" style="width:130px">
                         <span class="input-group-addon">-</span>
-                        <input type="text" class="form-control value" data-bind="value: value" placeholder='Value' style="width:120px">
+                        <input type="text" class="form-control value" data-bind="value: value, attr: { placeholder: Kooboo.text.common.value }" style="width:120px">
                         <span class="input-group-btn"><a class="btn btn-default" href="#" data-bind="click: $component.removeDefaultRouteValue"><i class="fa fa-minus"></i></a></span>
                     </div>
                 </div>

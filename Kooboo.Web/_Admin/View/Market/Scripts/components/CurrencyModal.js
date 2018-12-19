@@ -31,7 +31,7 @@
 
             this.onSave = function() {
                 if (self.code() !== self._currentCode()) {
-                    if (confirm('Changing the default currency will transfer all your balance to new currency. Would you want to continue?')) {
+                    if (confirm(Kooboo.text.confirm.market.changeCurrency)) {
                         Kooboo.Currency.change({
                             currencyCode: self.code()
                         }).then(function(res) {

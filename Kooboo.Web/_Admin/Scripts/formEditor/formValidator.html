@@ -25,7 +25,7 @@
     <!-- ko if: type === "min" -->
     <div class="panel-body" data-bind="attr: { id: 'min-validation-error-container-' + $index() }">
         <div class="form-group">
-            <input type="number" data-bind="value: min, error: min, errorContainer: '#min-validation-error-container-' + $index(), event: { keydown: $parent.inputNumberOnly }" class="form-control" placeholder="Minimal value">
+            <input type="number" data-bind="value: min, error: min, errorContainer: '#min-validation-error-container-' + $index(), event: { keydown: $parent.inputNumberOnly }, attr: { placeholder: Kooboo.text.validate.minimalValue }" class="form-control">
         </div>
         <div class="form-group">
             <span class="form-control-static" data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></span>
@@ -36,7 +36,7 @@
     <!-- ko if: type === "max" -->
     <div class="panel-body" data-bind="attr: { id: 'max-validation-error-container-' + $index() }">
         <div class="form-group">
-            <input type="number" data-bind="value: max, error: max, errorContainer: '#max-validation-error-container-' + $index(), event: { keydown: $parent.inputNumberOnly }" class="form-control" placeholder="Maxium value">
+            <input type="number" data-bind="value: max, error: max, errorContainer: '#max-validation-error-container-' + $index(), event: { keydown: $parent.inputNumberOnly }, attr: { placeholder: Kooboo.text.validate.maximumValue }" class="form-control">
         </div>
         <div class="form-group">
             <span class="form-control-static" data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></span>
@@ -47,7 +47,7 @@
     <!-- ko if: type === "minChecked" -->
     <div class="panel-body" data-bind="attr: { id: 'minChecked-validation-error-container-' + $index() }">
         <div class="form-group">
-            <input type="number" data-bind="value: minChecked, error: minChecked, errorContainer: '#minChecked-validation-error-container-' + $index(), event: { keydown: $parent.inputNumberOnly }" class="form-control" placeholder="Minimal checked">
+            <input type="number" data-bind="value: minChecked, error: minChecked, errorContainer: '#minChecked-validation-error-container-' + $index(), event: { keydown: $parent.inputNumberOnly }, attr: { placeholder: Kooboo.text.validate.minimalChecked }" class="form-control">
         </div>
         <div class="form-group">
             <span class="form-control-static" data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></span>
@@ -58,7 +58,7 @@
     <!-- ko if: type === "maxChecked" -->
     <div class="panel-body" data-bind="attr: { id: 'maxChecked-validation-error-container-' + $index() }">
         <div class="form-group">
-            <input type="number" data-bind="value: maxChecked, error: maxChecked, errorContainer: '#maxChecked-validation-error-container-' + $index(), event: { keydown: $parent.inputNumberOnly }" class="form-control" placeholder="Maxium checked">
+            <input type="number" data-bind="value: maxChecked, error: maxChecked, errorContainer: '#maxChecked-validation-error-container-' + $index(), event: { keydown: $parent.inputNumberOnly }, attr: { placeholder: Kooboo.text.validate.maximumChecked }" class="form-control">
         </div>
         <div class="form-group">
             <span class="form-control-static" data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></span>
@@ -69,7 +69,7 @@
     <!-- ko if: type === "minLength" -->
     <div class="panel-body" data-bind="attr: { id: 'minLength-validation-error-container-' + $index() }">
         <div class="form-group">
-            <input type="number" data-bind="value: minLength, error: minLength, errorContainer: '#minLength-validation-error-container-' + $index(), event: { keydown: $parent.inputNumberOnly }" class="form-control" placeholder="Minimal length">
+            <input type="number" data-bind="value: minLength, error: minLength, errorContainer: '#minLength-validation-error-container-' + $index(), event: { keydown: $parent.inputNumberOnly }, attr: { placeholder: Kooboo.text.validate.minimalLength }" class="form-control">
         </div>
         <div class="form-group">
             <span class="form-control-static" data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></span>
@@ -80,7 +80,7 @@
     <!-- ko if: type === "maxLength" -->
     <div class="panel-body" data-bind="attr: { id: 'maxLength-validation-error-container-' + $index() }">
         <div class="form-group">
-            <input type="number" data-bind="value: maxLength, error: maxLength, errorContainer: '#maxLength-validation-error-container-' + $index(), event: { keydown: $parent.inputNumberOnly }" class="form-control" placeholder="Maxium length">
+            <input type="number" data-bind="value: maxLength, error: maxLength, errorContainer: '#maxLength-validation-error-container-' + $index(), event: { keydown: $parent.inputNumberOnly }, attr: { placeholder: Kooboo.text.validate.maximumLength }" class="form-control">
         </div>
         <div class="form-group">
             <span class="form-control-static" data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></span>
@@ -91,7 +91,7 @@
     <!-- ko if: type === "regex" -->
     <div class="panel-body" data-bind="attr: { id: 'regex-validation-error-container-' + $index() }">
         <div class="form-group">
-            <input type="text" data-bind="value: regex, error: regex, errorContainer: '#regex-validation-error-container-' + $index()" class="form-control" placeholder="pattern">
+            <input type="text" data-bind="value: regex, error: regex, errorContainer: '#regex-validation-error-container-' + $index(), attr: { placeholder: Kooboo.text.validate.pattern }" class="form-control">
         </div>
         <div class="form-group">
             <span class="form-control-static" data-bind="text: Kooboo.text.component.fieldEditor.errorMsgHint"></span>

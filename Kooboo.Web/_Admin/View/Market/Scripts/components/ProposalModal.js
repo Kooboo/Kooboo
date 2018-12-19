@@ -118,7 +118,7 @@
             }
 
             this.onAcceptProposal = function() {
-                if (confirm('you sure?')) {
+                if (confirm(Kooboo.text.confirm.market.sure)) {
                     Kooboo.Demand.acceptProposal({
                         proposalId: self.proposalId()
                     }).then(function(res) {

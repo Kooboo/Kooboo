@@ -15,6 +15,7 @@ $(function() {
         this.handleData = function(data) {
             self.pager(data);
             var docs = data.list.map(function(doc) {
+                var symbol=doc.symbol?doc.symbol:doc.currency;
                 return {
                     id: doc.id,
                     article: {
@@ -28,7 +29,8 @@ $(function() {
                     },
                     budget: {
                         text: doc.symbol + doc.budget,
-                        class:'label-sm label-info'
+                        tooltip: doc.currency,
+                        class: 'label-sm label-info'
                     },
                     startDate: {
                         text: getDateString(doc.startDate),
@@ -42,7 +44,7 @@ $(function() {
                         text: doc.proposalCount,
                         class: 'badge-sm badge-info'
                     },
-                    
+
                     createTime: new Date(doc.createTime).toDefaultLangString(),
                 }
 
@@ -57,8 +59,8 @@ $(function() {
                 columns: [{
                     displayName: Kooboo.text.common.Demand,
                     fieldName: 'article',
-                    type: 'article'
-                },{
+                    type: "summary"
+                }, {
                     displayName: Kooboo.text.market.demand.StartDate,
                     fieldName: 'startDate',
                     showClass: 'table-short',
@@ -84,7 +86,7 @@ $(function() {
                     showClass: 'table-short',
                     type: 'text'
                 }],
-                
+
                 unselectable: true
             })
         }

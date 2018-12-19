@@ -19,17 +19,27 @@ $(function() {
                 var symbol = item.symbol ? item.symbol : item.currency;
                 return {
                     id: item.id,
-                    name: {
-                        text: item.name,
+                    article: {
+                        title: item.name,
                         url: Kooboo.Route.Get(Kooboo.Route.Supplier.OrderPage, {
                             id: item.id
-                        })
+                        }),
+                        class: "title",
+                        newWindow: true
                     },
-                    amount: symbol + item.totalAmount,
+                    price: {
+                        text: symbol + item.totalAmount,
+                        class: 'label-sm label-info',
+                        tooltip: item.currency
+                    },
                     status: {
-                        text: item.status.displayName,
+                        text: item.status,
                         class: 'label-sm label-info'
-                    }
+                    },
+                    orgName: {
+                        text: item.orgName,
+                        class: 'label-sm gray'
+                    } 
                 }
             })
 
@@ -37,16 +47,23 @@ $(function() {
                 docs: docs,
                 columns: [{
                     displayName: Kooboo.text.common.name,
-                    fieldName: 'name',
-                    type: 'link'
+                    fieldName: 'article',
+                    type: 'summary'
                 }, {
-                    displayName: Kooboo.text.common.amount,
-                    fieldName: 'amount',
-                    type: 'text'
+                    displayName: Kooboo.text.common.price,
+                    fieldName: 'price',
+                    type: 'label',
+                    showClass: "table-short"
                 }, {
                     displayName: Kooboo.text.market.supplier.status,
                     fieldName: 'status',
-                    type: 'label'
+                    type: 'label',
+                    showClass: "table-short"
+                }, {
+                    displayName:  Kooboo.text.common.Supplier,
+                    fieldName: 'orgName',
+                    type: 'label',
+                    showClass: "table-short"
                 }],
                 tableActions: [],
                 unselectable: true,

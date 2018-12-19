@@ -35,9 +35,9 @@
                         <div class="col-md-9">
                             <div class="input-groups" data-bind="foreach: data().options, visible: data().options().length">
                                 <div class="input-group">
-                                    <input type="text" class="form-control key input-small" placeholder="Display" data-bind="textInput: $data.key, error: $data.key, errorPlacement: 'left'">
+                                    <input type="text" class="form-control key input-small" data-bind="textInput: $data.key, error: $data.key, errorPlacement: 'left', attr: { placeholder: Kooboo.text.common.displayName }">
                                     <span class="input-group-addon">:</span>
-                                    <input type="text" class="form-control value input-small" placeholder="Value" data-bind="textInput: $data.value">
+                                    <input type="text" class="form-control value input-small" data-bind="textInput: $data.value, attr: { placeholder: Kooboo.text.common.value }">
                                     <span class="input-group-btn" data-bind="error: $data.value"><a class="btn btn-default" href="javascript:;" data-bind="click: $parent.removeOption.bind(this)"><i class="fa fa-minus"></i></a></span>
                                 </div>
                             </div>

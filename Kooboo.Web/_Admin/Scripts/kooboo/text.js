@@ -48,6 +48,7 @@
             from: "From",
             loading: "Loading",
             displayName: "Display name",
+            key: "Key",
             value: "Value",
             placeholder: "Placeholder",
             type: "Type",
@@ -151,7 +152,7 @@
 
             unitPrice: "Unit price",
             totalPrice: "Total price",
-            totalAmount:"Total amount",
+            totalAmount: "Total amount",
             year: "Year",
             years: "Years",
 
@@ -161,6 +162,10 @@
             attachments: "Attachments",
             send: "Send",
             reply: "Reply",
+            visitors: "visitors",
+            startTime: "Start time",
+            endMonth: "End month",
+            renew: "Renew",
         },
 
         online: {
@@ -202,7 +207,16 @@
             changeDataCenter: "You are about to change your data center, are you sure you want to continue?",
             siteSynchronizing: "You are pulling updates from remote server, are you sure you want to abort?",
             invalidMeta: "Invalid meta. Please check your meta infomation.",
-            sourceCodeChanged: "The generated css code file has been modified, are you sure you want to overwrite it"
+            sourceCodeChanged: "The generated css code file has been modified, are you sure you want to overwrite it",
+            demand: {
+                takeProposal: "Are you sure you want to take this proposal?",
+                acceptDelivery: "Are you sure you want to accept the job?"
+            },
+            deleteCategory: "This category is related to some products. Would you want to delete?",
+            market: {
+                changeCurrency: "Changing the default currency will transfer all your balance to new currency. Would you want to continue?",
+                sure: "Are you sure?",
+            }
         },
 
         alert: {
@@ -281,15 +295,15 @@
 
         info: {
             upload: {
-                success: "Upload successful.",
+                success: "Upload succeeded.",
                 fail: "Upload failed."
             },
             update: {
-                success: "Update successful.",
+                success: "Update succeeded.",
                 fail: "Update failed."
             },
             delete: {
-                success: "Delete successful.",
+                success: "Delete succeeded.",
                 fail: "Delete failed."
             },
             save: {
@@ -297,68 +311,68 @@
                 fail: "Save failed."
             },
             checkout: {
-                success: "Checkout successful.",
+                success: "Checkout succeeded.",
                 fail: "Checkout failed."
             },
             clean: {
-                success: "Clean successfully.",
+                success: "Clean succeeded.",
                 fail: "Clean failed."
             },
             payment: {
-                success: "Payment successful.",
+                success: "Payment succeeded.",
                 fail: "Payment failed.",
                 cancel: "Payment canceled.",
                 tryAgain: "Make sure you have paid successfully and try again",
-                
+
             },
             copy: {
-                success: "Copy successful.",
+                success: "Copy succeeded.",
                 fail: "Copy failed."
             },
             pull: {
-                success: "Pull successful.",
+                success: "Pull succeeded.",
                 fail: "Pull failed."
             },
             push: {
-                success: "Push successful.",
+                success: "Push succeeded.",
                 fail: "Push failed."
             },
             moveTo: {
                 Trash: {
-                    success: "Move to Trash successful.",
+                    success: "Move to Trash succeeded.",
                     fail: "Move to Trash failed."
                 },
                 Spam: {
-                    success: "Move to Spam successful.",
+                    success: "Move to Spam succeeded.",
                     fail: "Move to Spam failed."
                 },
                 Sent: {
-                    success: "Move to Sent successful.",
+                    success: "Move to Sent succeeded.",
                     fail: "Move to Sent failed."
                 },
                 Inbox: {
-                    success: "Move to Inbox successful.",
+                    success: "Move to Inbox succeeded.",
                     fail: "Move to Inbox failed."
                 }
             },
             rebuild: {
-                success: "Rebuild successful.",
+                success: "Rebuild succeeded.",
                 fail: "Rebuild failed."
             },
             enable: {
-                success: "Enable successful.",
+                success: "Enable succeeded.",
                 fail: "Enable failed."
             },
             disable: {
-                success: "Disable successful.",
+                success: "Disable succeeded.",
                 fail: "Disable failed."
             },
             recharge: {
-                success: "Recharge successful",
+                success: "Recharge succeeded",
                 fail: "Recharge failed"
             },
             purchase: {
-                success: "Purchase successful",
+                success: "Purchase succeeded",
                 fail: "Purchase failed"
             },
 
@@ -377,7 +391,9 @@
         },
 
         placeholder: {
-            inputValueGreaterThan: "Input a value greater than "
+            inputValueGreaterThan: "Input a value greater than ",
+            reply: "Reply content goes here",
+            largeThan: "Input a amount large than 0.01"
         },
 
         tooltip: {
@@ -415,6 +431,9 @@
                 addSelector: "Add a selector",
                 addImportRule: "Add an import rule",
                 addMediaQuery: "Add a media query"
+            },
+            demand: {
+                acceptProposal: "Accept this proposal"
             }
         },
 
@@ -437,6 +456,16 @@
             minChecked: "Min checked",
             maxChecked: "Max checked",
             regex: "Regex"
+        },
+
+        validate: {
+            minimalValue: "Minimal value",
+            maximumValue: "Maximum value",
+            pattern: "Pattern",
+            minimalChecked: "Minimal checked",
+            maximumChecked: "Maximum checked",
+            minimalLength: "Minimal length",
+            maximumLength: "Maximum length"
         },
 
         action: {
@@ -1009,6 +1038,8 @@
 
         market: {
             usageReport: "Usage report",
+            Used: "Used: ",
+            Total: "Total: ",
             purchaseHistory: "Purchase history",
             myDomains: "My domains",
             changeCurrency: "Change currency",

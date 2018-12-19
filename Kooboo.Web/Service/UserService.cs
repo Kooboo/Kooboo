@@ -9,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Web.Service
 {
-   public static class UserService
-    {
-
+    public static class UserService
+    { 
         public static string GetToken(User user)
         {   
            if (Kooboo.Data.AppSettings.IsOnlineServer && !IsSameServer(user.TempRedirectUrl))

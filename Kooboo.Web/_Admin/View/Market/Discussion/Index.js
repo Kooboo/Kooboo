@@ -61,14 +61,14 @@ $(function () {
                 {
                     displayName: Kooboo.text.common.Discussion,
                     fieldName: 'article',
-                    type: 'article'
+                    type: 'summary'
                 }, {
                     displayName: Kooboo.text.market.discussion.Comments,
                     fieldName: 'comments',
                     showClass: 'table-short',
                     type: 'badge'
                 }, {
-                    displayName: Kooboo.text.common.Views,
+                    displayName: Kooboo.text.common.visitors,
                     fieldName: 'views',
                     showClass: 'table-short',
                     type: 'badge'

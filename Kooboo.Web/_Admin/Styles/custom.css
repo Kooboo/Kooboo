@@ -308,13 +308,13 @@ blockquote footer,
 }
 
 
-.article .title {
+.summary .title {
     font-size: 16px;
     color: #205eac;
     margin-bottom: 0px;
 }
 
-.article a {
+.summary a {
     text-decoration: none;
 }
 
@@ -329,7 +329,7 @@ blockquote footer,
 
 
 
-.article p{
+.summary p{
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

@@ -23,11 +23,11 @@
         <div class="form-group">
             <div class="input-group" data-bind="error: result">
                 <span class="kb-error-holder">
-                    <input type="number" id="string-length-min" data-bind="value: min, error: min, errorPlacement: 'left', event: { keydown: Kooboo.event.input.positiveIntegerOnly }" name="Min" class="form-control" placeholder="Minimal value">
+                    <input type="number" id="string-length-min" data-bind="value: min, error: min, errorPlacement: 'left', event: { keydown: Kooboo.event.input.positiveIntegerOnly }, attr: { placeholder: Kooboo.text.validate.minimalValue }" name="Min" class="form-control">
                 </span>
                 <span class="input-group-addon">-</span>
                 <span class="kb-error-holder">
-                    <input type="number" id="string-length-max" data-bind="value: max, error: max, event: { keydown: Kooboo.event.input.positiveIntegerOnly }" name="Max" class="form-control" placeholder="Maximum value">
+                    <input type="number" id="string-length-max" data-bind="value: max, error: max, event: { keydown: Kooboo.event.input.positiveIntegerOnly }, attr: { placeholder: Kooboo.text.validate.maximumValue }" name="Max" class="form-control">
                 </span>
             </div>
         </div>
@@ -42,11 +42,11 @@
         <div class="form-group">
             <div class="input-group">
                 <span class="kb-error-holder">
-                    <input type="number" id="range-min" data-bind="value: min, error: min, errorPlacement: 'left', event: { keydown: Kooboo.event.input.positiveIntegerOnly }" name="min" class="form-control" placeholder="Minimal value">
+                    <input type="number" id="range-min" data-bind="value: min, error: min, errorPlacement: 'left', event: { keydown: Kooboo.event.input.positiveIntegerOnly }, attr: { placeholder: Kooboo.text.validate.minimalValue }" name="min" class="form-control">
                 </span>
                 <span class="input-group-addon">-</span>
                 <span class="kb-error-holder">
-                    <input type="number" id="range-max" data-bind="value: max, error: max, event: { keydown: Kooboo.event.input.positiveIntegerOnly }" name="max" class="form-control" placeholder="Maximum value">
+                    <input type="number" id="range-max" data-bind="value: max, error: max, event: { keydown: Kooboo.event.input.positiveIntegerOnly }, attr: { placeholder: Kooboo.text.validate.maximumValue }" name="max" class="form-control">
                 </span>
             </div>
         </div>
@@ -77,7 +77,7 @@
     <!-- ko if: validateType()==="regex" -->
     <div class="panel-body">
         <div class="form-group">
-            <input type="text" data-bind="value: pattern, error: pattern" name="Pattern" class="form-control" placeholder="Pattern" kb-error-container="#regex-error-container">
+            <input type="text" data-bind="value: pattern, error: pattern, attr: { placeholder: Kooboo.text.validate.pattern }" name="Pattern" class="form-control" kb-error-container="#regex-error-container">
             <div id="regex-error-container" style="position: absolute; width: 150%;"></div>
         </div>
         <div class="form-group">
@@ -89,7 +89,7 @@
     <!-- ko if: validateType()==="min" -->
     <div class="panel-body">
         <div class="form-group">
-            <input type="number" data-bind="value: minValue, error: minValue, event: { keydown: $parent.inputNumberOnly }" name="minValue" class="form-control" placeholder="Minimal value" kb-error-container="#min-error-container">
+            <input type="number" data-bind="value: minValue, error: minValue, event: { keydown: $parent.inputNumberOnly }, attr: { placeholder: Kooboo.text.validate.minimalValue }" name="minValue" class="form-control" kb-error-container="#min-error-container">
             <div id="min-error-container" style="position: absolute; width: 150%;"></div>
         </div>
         <div class="form-group">
@@ -101,7 +101,7 @@
     <!-- ko if: validateType()==="max" -->
     <div class="panel-body">
         <div class="form-group">
-            <input type="number" data-bind="value: maxValue, error: maxValue, event: { keydown: $parent.inputNumberOnly }" name="maxValue" class="form-control" placeholder="Maximum value" kb-error-container="#max-error-container">
+            <input type="number" data-bind="value: maxValue, error: maxValue, event: { keydown: $parent.inputNumberOnly }, attr: { placeholder: Kooboo.text.validate.maximumValue }" name="maxValue" class="form-control" kb-error-container="#max-error-container">
             <div id="max-error-container" style="position: absolute; width: 150%;"></div>
         </div>
         <div class="form-group">
@@ -113,7 +113,7 @@
     <!-- ko if: validateType()==="minChecked" -->
     <div class="panel-body">
         <div class="form-group">
-            <input type="number" data-bind="value: minChecked, error: minChecked, event: { keydown: $parent.inputNumberOnly }" name="minChecked" class="form-control" placeholder="Minimal value" kb-error-container="#min-checked-error-container">
+            <input type="number" data-bind="value: minChecked, error: minChecked, event: { keydown: $parent.inputNumberOnly }, attr: { placeholder: Kooboo.text.validate.minimalValue }" name="minChecked" class="form-control" kb-error-container="#min-checked-error-container">
             <div id="min-checked-error-container" style="position: absolute; width: 150%;"></div>
         </div>
         <div class="form-group">
@@ -125,7 +125,7 @@
     <!-- ko if: validateType()==="maxChecked" -->
     <div class="panel-body">
         <div class="form-group">
-            <input type="number" data-bind="value: maxChecked, error: maxChecked, event: { keydown: $parent.inputNumberOnly }" name="maxChecked" class="form-control" placeholder="Maximum value" kb-error-container="#max-checked-error-container">
+            <input type="number" data-bind="value: maxChecked, error: maxChecked, event: { keydown: $parent.inputNumberOnly }, attr: { placeholder: Kooboo.text.validate.maximumValue }" name="maxChecked" class="form-control" kb-error-container="#max-checked-error-container">
             <div id="max-checked-error-container" style="position: absolute; width: 150%;"></div>
         </div>
         <div class="form-group">

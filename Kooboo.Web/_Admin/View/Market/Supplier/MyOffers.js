@@ -19,22 +19,25 @@ $(function() {
                 var symbol = item.symbol ? item.symbol : item.currency;
                 return {
                     id: item.id,
-                    name: item.name,
-                    amount: symbol + item.totalAmount,
-                    status: {
-                        text: item.status.displayName,
-                        class: 'label-sm label-info'
-                    },
-                    user: {
-                        text: item.userName,
-                        class: 'label-sm gray'
-                    },
-                    view: {
-                        iconClass: 'fa-eye',
+                    article: {
+                        title: item.name,
                         url: Kooboo.Route.Get(Kooboo.Route.Supplier.OrderPage, {
                             id: item.id
                         }),
-                        newWindow: true
+                        class: "title"
+                    },
+                    price: {
+                        text: symbol + item.totalAmount,
+                        class: 'label-sm label-info',
+                        tooltip: item.currency
+                    },
+                    status: {
+                        text: item.status,
+                        class: 'label-sm label-info'
+                    },
+                    user: {
+                        text: item.buyerOrgName,
+                        class: 'label-sm gray'
                     }
                 }
             })
@@ -43,25 +46,25 @@ $(function() {
                 docs: docs,
                 columns: [{
                     displayName: Kooboo.text.common.name,
-                    fieldName: 'name',
-                    type: 'text'
+                    fieldName: 'article',
+                    type: 'summary'
                 }, {
-                    displayName: Kooboo.text.common.amount,
-                    fieldName: 'amount',
-                    type: 'text'
+                    displayName: Kooboo.text.common.price,
+                    fieldName: 'price',
+                    type: 'label',
+                    showClass: "table-short"
                 }, {
                     displayName: Kooboo.text.market.supplier.status,
                     fieldName: 'status',
-                    type: 'label'
+                    type: 'label',
+                    showClass: "table-short"
                 }, {
                     displayName: Kooboo.text.market.supplier.orderUser,
                     fieldName: 'user',
                     type: 'label',
+                    showClass: "table-short"
                 }],
-                tableActions: [{
-                    fieldName: 'view',
-                    type: 'link-icon'
-                }],
+
                 unselectable: true,
                 kbType: Kooboo.Supplier.name
             })

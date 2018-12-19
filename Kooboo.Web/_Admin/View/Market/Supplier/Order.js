@@ -7,6 +7,8 @@ $(function() {
 
         this.id = ko.observable(Kooboo.getQueryString('id'));
 
+        this.breadcrumb = ko.observable();
+
         this.serviceName = ko.observable();
 
         this.remark = ko.observable();
@@ -28,7 +30,7 @@ $(function() {
             }).then(function(res) {
                 if (res.success) {
                     var data = res.model;
-                    self.remark(data.remark.split('\n').join('<br>'));
+                    self.remark(data.remark && data.remark.split('\n').join('<br>'));
                     self.serviceName(data.name);
                     self.createdAt(new Date(data.creationDate).toDefaultLangString());
                     self.attachments(data.attachments ? data.attachments.map(function(item) {
@@ -48,6 +50,18 @@ $(function() {
                             self.getPublicCommentList();
                         }, 2000);
                     }
+
+                    self.breadcrumb([{
+                        name: 'MARKET'
+                    }, {
+                        name: Kooboo.text.common.Suppliers,
+                        url: Kooboo.Route.Supplier.ListPage
+                    }, {
+                        name: Kooboo.text.market.supplier[self.ImBuyer() ? 'myOrders' : 'myOffers'],
+                        url: Kooboo.Route.Supplier[self.ImBuyer() ? 'MyOrdersPage' : 'MyOffersPage']
+                    }, {
+                        name: Kooboo.text.common.detail
+                    }]);
                 }
             })
         }

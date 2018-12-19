@@ -3,10 +3,7 @@ using Kooboo.Data.Models;
 using Kooboo.Api.ApiResponse;
 using System;
 using System.Collections.Generic;
-using Kooboo.Api;
-using System.IO;
-using Kooboo.Lib.Helper;
-using Kooboo.Data.Context;
+using Kooboo.Api; 
 using Kooboo.Data.Language;
 
 namespace Kooboo.Web.Api.Implementation
@@ -178,8 +175,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Server url not found", call.Context));  
             }
-             
- 
+              
         }
 
 

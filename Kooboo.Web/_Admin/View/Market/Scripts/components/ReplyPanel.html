@@ -1,6 +1,6 @@
 <div class="reply-panel">
     <div class="form-group" data-bind="attr: { 'id': typeId }">
-        <textarea data-bind="textInput: content, textError: content, enable: !disabled()" class="form-control autosize margin-bottom-15" placeholder="Reply content goes here" style="min-height: 50px;"></textarea>
+        <textarea data-bind="textInput: content, textError: content, enable: !disabled(), attr: { placeholder: Kooboo.text.placeholder.reply }" class="form-control autosize margin-bottom-15" style="min-height: 50px;"></textarea>
     </div>
     <div class="form-group">
         <!-- ko if: uploadRequired -->

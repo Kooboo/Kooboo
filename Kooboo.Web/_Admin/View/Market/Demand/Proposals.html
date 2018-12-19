@@ -31,13 +31,13 @@
     </thead>
     <tbody data-bind="foreach: records">
         <tr>
-            <td class="article">
+            <td class="summary">
                 <a href="javascript:;" data-bind="attr: { href: $data.previewUrl()}" target="_blank">
                     <p class="title" data-bind="text: $data.title"></p>
                     <p data-bind="text: $data.description"></p>
                 </a>
             </td>
-            <td><span class="label label-sm label-info" data-bind="text: $data.budget, attr: { title: $data.currency }"></span></td>
+            <td><span class="label label-sm label-info" data-bind="text: $data.budget, tooltip: $data.currency"></span></td>
             <td data-bind="text: $data.duration"></td>
             <td data-bind="text: $data.createTime"></td>
             <!--    <td>

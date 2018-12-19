@@ -29,7 +29,7 @@ $(function() {
             }
 
             var docs = data.list.map(function(item) {
-                var symbol=item.symbol?item.symbol:item.currency;
+                var symbol = item.symbol ? item.symbol : item.currency;
                 var date = new Date(item.createTime);
                 return {
                     id: item.id,
@@ -72,9 +72,8 @@ $(function() {
                 columns: [{
                     displayName: Kooboo.text.common.Demand,
                     fieldName: 'article',
-                    type: 'article'
-                    }, 
-                {
+                    type: 'summary'
+                }, {
                     displayName: Kooboo.text.common.budget,
                     fieldName: 'budget',
                     type: 'label',
@@ -100,7 +99,7 @@ $(function() {
                     type: 'label',
                     showClass: 'table-short'
                 }, {
-                    displayName:  Kooboo.text.market.demand.createTime,
+                    displayName: Kooboo.text.market.demand.createTime,
                     fieldName: 'date',
                     type: 'text',
                     showClass: 'table-short'
@@ -117,6 +116,10 @@ $(function() {
         })
 
         this.getList();
+
+        Kooboo.EventBus.subscribe("kb/component/demand-modal/saved", function() {
+            this.getList();
+        })
     }
 
     viewModel.prototype = new Kooboo.tableModel(Kooboo.Demand.name);

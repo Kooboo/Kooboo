@@ -21,15 +21,7 @@
 <div class="page-header">
     <h1 class="title">Order</h1>
 </div>
-<div data-bind="component: { name: 'kb-breadcrumb', params:[{
-    name: 'MARKET'
-},{
-    name: Kooboo.text.market.supplier.myOrders,
-    url: Kooboo.Route.Supplier.MyOrderPage
-},{
-    name: Kooboo.text.common.detail
-}]}"></div>
-
+<div data-bind="component: { name: 'kb-breadcrumb', params: breadcrumb() }"></div>
 
 <div class="row">
     <div class="col-md-12">
@@ -130,7 +122,7 @@
                         <!-- /ko -->
                         <p class="clearfix">
                             <span class="pull-left">
-                                                <span data-bind="text: msg.userName"></span>
+                                <span data-bind="text: msg.userName"></span>
                             <span> send at </span>
                             <span data-bind="text: msg.date"></span>
                             </span>

@@ -218,6 +218,14 @@ $(function() {
         this.getTypes = function(para) {
             return this.executeGet('Types', para);
         }
+
+        this.getMyOrders = function(para) {
+            return this.executeGet('MyOrders', para);
+        }
+
+        this.getSalesItem = function(para) {
+            return this.executeGet('GetSalesItem', para);
+        }
     }
     extend(Infrastructure, Kooboo.BaseModel);
 

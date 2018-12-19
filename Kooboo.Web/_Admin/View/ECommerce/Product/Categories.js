@@ -63,7 +63,7 @@ $(function() {
                 }).then(function(res) {
                     if (res.success) {
                         if (res.model) {
-                            if (confirm("This category is related to some products. Would you want to delete?")) {
+                            if (confirm(Kooboo.text.confirm.deleteCategory)) {
                                 deleteById(id);
                             }
                         } else {

@@ -3,7 +3,7 @@ $(function() {
         chartOption = {
             tooltip: {
                 formatter: function(params) {
-                    return params.name + "<br/>" + "Used: " + params.data.usedName + "<br/>" + "Total: " + params.data.totalName;
+                    return params.name + "<br/>" + Kooboo.text.market.Used + params.data.usedName + "<br/>" + Kooboo.text.market.Total + params.data.totalName;
                 }
             },
             xAxis: {
