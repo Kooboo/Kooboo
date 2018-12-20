@@ -757,6 +757,7 @@
   <key id="Please input your coupon code">Please input your coupon code</key>
   <key id="The maximum length is ">The maximum length is </key>
   <key id="The minimal length is ">The minimal length is </key>
+  <key id="The start time should be earlier than end time">The start time should be earlier than end time</key>
   <key id="Input a value greater than ">Input a value greater than </key>
   <key id="Input a value less than ">Input a value less than </key>
   <key id="Input error">Input error</key>

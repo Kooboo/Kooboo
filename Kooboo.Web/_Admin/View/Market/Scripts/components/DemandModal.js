@@ -89,6 +89,10 @@
                 min: 0
             })
 
+            this.dateValidator = ko.validateField('valid', {
+                required: Kooboo.text.validation.earlierThan
+            })
+
             this.attachments = ko.observableArray();
 
             this.uploadFile = function (data, files) {
@@ -115,9 +119,26 @@
             this.isValid = function () {
                 return self.title.isValid() &&
                     self.description.isValid() &&
-                    self.startDate.isValid() &&
-                    self.endDate.isValid() &&
+
+                    self.isDateRangeValid() &&
+                    // self.startDate.isValid() &&
+                    // self.endDate.isValid() &&
                     self.budget.isValid();
+            }
+
+            this.isDateRangeValid = function () {
+                if (!self.startDate.isValid()) return false;
+                if (!self.endDate.isValid()) return false;
+
+                var startDate = new Date(self.startDate().replace(/\-/g, "\/"));
+                var endDate = new Date(self.endDate().replace(/\-/g, "\/"))
+                if (startDate > endDate) {
+                    self.dateValidator('');
+                    return false;
+                } else {
+                    self.dateValidator('VALID');
+                    return true;
+                }
             }
 
             this.onHide = function () {

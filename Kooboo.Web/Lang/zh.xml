@@ -757,6 +757,7 @@
   <key id="Please input your coupon code">请输入您的抵用券</key>
   <key id="The maximum length is ">最大长度为</key>
   <key id="The minimal length is ">最小长度为</key>
+  <key id="The start time should be earlier than end time">开始时间应该早于结束时间</key>
   <key id="Input a value greater than ">请输入一个值大于</key>
   <key id="Input a value less than ">请输入一个值小于</key>
   <key id="Input error">输入有误</key>

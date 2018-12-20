@@ -262,6 +262,7 @@
             couponCodeRequired: "Please input your coupon code",
             maxLength: "The maximum length is ",
             minLength: "The minimal length is ",
+            earlierThan: "The start time should be earlier than end time",
             greaterThan: "Input a value greater than ",
             lessThan: "Input a value less than ",
             inputError: "Input error",

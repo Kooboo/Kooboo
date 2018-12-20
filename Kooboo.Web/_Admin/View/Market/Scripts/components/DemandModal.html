@@ -24,8 +24,8 @@
                                     acceptTypes: ['*/*'],
                                     callback: uploadFile
                                 }" />
-                            <!-- ko text: Kooboo.text.common.upload -->
-                            <!-- /ko -->
+                                <!-- ko text: Kooboo.text.common.upload -->
+                                <!-- /ko -->
                             </button>
                         </div>
                         <div class="form-group">
@@ -51,6 +51,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label data-bind="text: Kooboo.text.component.demandModal.startTime, textError: startDate"></label>
+                            <span data-bind="error: dateValidator" style="display:inline-block;margin-bottom: 12px;">&nbsp;</span>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                 <input type="date" class="form-control" data-bind="value: startDate">
