@@ -110,9 +110,10 @@ namespace Kooboo.Data.Models
         }
 
         public string RegisterIp { get; set; }
-
-        
+         
         public string  TempRedirectUrl { get; set; }
+
+        public DateTime RegistrationDate { get; set; } = DateTime.Now; 
 
         public override int GetHashCode()
         {
