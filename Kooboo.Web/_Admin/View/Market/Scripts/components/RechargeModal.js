@@ -5,9 +5,6 @@
 
     var template = Kooboo.getTemplate('/_Admin/View/Market/Scripts/components/RechargeModal.html');
 
-    var paymentMethods = [],
-        paymentPackages = [];
-
     var PAYMENT_SUCCESS = false;
 
     var infoShowed = false;
@@ -21,40 +18,33 @@
             this.isShow = params.isShow;
             this.isShow.subscribe(function(show) {
                 if (show) {
-                    if (!paymentMethods.length) {
-                        Kooboo.Payment.getMethods().then(function(res) {
-                            if (res.success) {
-                                var methods = res.model.filter(function(item) {
-                                    return item.type !== 'balance';
-                                })
-                                self.paymentMethods(methods);
-                                self.paymentMethod(methods[0].type);
-                            }
-                        })
-                    } else {
-                        self.paymentMethods(paymentMethods);
-                        self.paymentMethod(paymentMethods[0].type);
-                    }
+                    Kooboo.Payment.getMethods().then(function(res) {
+                        if (res.success) {
+                            var methods = res.model.filter(function(item) {
+                                return item.type !== 'balance';
+                            })
+                            self.paymentMethods(methods);
+                            self.paymentMethod(methods[0].type);
+                        }
+                    })
 
-                    if (!paymentPackages.length) {
-                        Kooboo.Balance.getChargePackages().then(function(res) {
-                            if (res.success) {
-                                var packages = res.model.map(function(item) {
-                                    item.type = 'set';
-                                    return item;
-                                });
 
-                                packages.push({
-                                    id: 0,
-                                    type: 'mod'
-                                })
+                    Kooboo.Balance.getChargePackages().then(function(res) {
+                        if (res.success) {
+                            var packages = res.model.map(function(item) {
+                                item.type = 'set';
+                                return item;
+                            });
 
-                                self.paymentPackages(packages);
-                                self.currentPackage(packages[0])
-                                paymentPackages = packages;
-                            }
-                        })
-                    }
+                            packages.push({
+                                id: 0,
+                                type: 'mod'
+                            })
+
+                            self.paymentPackages(packages);
+                            self.currentPackage(packages[0])
+                        }
+                    })
                 }
             })
 
@@ -155,7 +145,7 @@
                 if (m.type !== self.paymentMethod()) {
                     self.showError(false);
                     self.paymentMethod(m.type);
-                    self.currentPackage(paymentPackages[0]);
+                    self.currentPackage(self.paymentPackages()[0]);
                 }
             }
 

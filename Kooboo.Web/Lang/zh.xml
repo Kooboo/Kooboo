@@ -1135,6 +1135,7 @@
   <key id="End date">结束日期</key>
   <key id="Demander">发布人</key>
   <key id="Create time">创建时间</key>
+  <key id="Is open">开放的</key>
   <key id="Order user">订购商</key>
   <key id="Me">我</key>
   <key id="My Template">我的模板</key>
@@ -1261,12 +1262,9 @@
   <key id="Rejected">拒绝</key>
   <key id="UnResolved">未解决</key>
   <key id="Resolved">已解决</key>
-  <key id="Open">开</key>
   <key id="Taken">已采用</key>
   <key id="Invalid">已失效</key>
   <key id="Accepted">被接受</key>
-  <key id="Denied">被拒绝</key>
-  <key id="UnFinished">未完成</key>
   <key id="+ New host">+ 新建主机</key>
   <key id="Domain is required">域名是必填的</key>
   <key id="IP is required">IP是必填的</key>

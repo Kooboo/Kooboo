@@ -1135,6 +1135,7 @@
   <key id="End date">End date</key>
   <key id="Demander">Demander</key>
   <key id="Create time">Create time</key>
+  <key id="Is open">Is open</key>
   <key id="Order user">Order user</key>
   <key id="Me">Me</key>
   <key id="My Template">My Template</key>
@@ -1261,12 +1262,9 @@
   <key id="Rejected">Rejected</key>
   <key id="UnResolved">UnResolved</key>
   <key id="Resolved">Resolved</key>
-  <key id="Open">Open</key>
   <key id="Taken">Taken</key>
   <key id="Invalid">Invalid</key>
   <key id="Accepted">Accepted</key>
-  <key id="Denied">Denied</key>
-  <key id="UnFinished">UnFinished</key>
   <key id="+ New host">+ New host</key>
   <key id="Domain is required">Domain is required</key>
   <key id="IP is required">IP is required</key>

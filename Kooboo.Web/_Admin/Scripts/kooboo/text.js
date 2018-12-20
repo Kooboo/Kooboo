@@ -227,7 +227,7 @@
             imageFileUploaded: "Image files uploaded.",
             voucherCode: "Please input your Voucher code.",
             payAmount: "Please input your amount of money.",
-            pleaseChooseAFolder: "Please choose a folder first", 
+            pleaseChooseAFolder: "Please choose a folder first",
             fileTypeInvalid: "File type invalid",
             selectBeforePushing: "You should select items before pushing",
             exceptionOccuredAndDebuggerClosed: "Exception occured, debugger closed.",
@@ -1053,6 +1053,7 @@
                 proposals: "Proposals",
                 demander: "Demander",
                 createTime: "Create time",
+                isOpen: "Is open"
             },
             discussion: {
                 myThreads: "My Threads",
