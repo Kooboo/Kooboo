@@ -801,9 +801,11 @@
             proposalModal: {
                 proposal: "Proposal",
                 duration: "Duration",
-                day: "Day(s)",
+                days: "Day(s)",
                 bidder: "Bidder",
                 accept: "Accept",
+                day: "Day",
+                s:"s",
             },
             rechargeModal: {
                 coupon: "Coupon",

@@ -140,7 +140,7 @@
   <key id="privacy policy">隐私政策</key>
   <key id="Sign up">注册</key>
   <key id="Reset">重置</key>
-  <key id="s">s</key>
+  <key id="s"></key>
   <key id="Continue">继续</key>
   <key id="Click the &quot;New field&quot; below to create first content field for your content type.">点击下方按钮，为您的数据类型创建新字段。</key>
   <key id="New field">新建字段</key>
@@ -441,7 +441,7 @@
   <key id="Demand expired">需求已过期</key>
   <key id="Accept">接受</key>
   <key id="Demand closed, no comment allowed">需求已经关闭</key>
-  <key id="comments at">评论于</key>
+  <key id="commented at">评论于</key>
   <key id="replied at">回复于</key>
   <key id="Reject">拒绝</key>
   <key id="send at">发送于</key>
