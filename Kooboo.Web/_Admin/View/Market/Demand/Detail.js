@@ -1,6 +1,8 @@
 $(function() {
     var CURRENT_USER_ID = '';
 
+    var MESSAGE_INTERVAL = null;
+
     var detailModel = function() {
         var self = this;
 
@@ -180,15 +182,17 @@ $(function() {
                     self.proposals(res.model.list.map(function(item) {
                         if (item.isTaken) {
                             self.takenProposal(item);
-                            if (self.isOwner()) {
-                                setInterval(function() {
+                            if (self.isOwner() && !self.isClose()) {
+                                MESSAGE_INTERVAL = setInterval(function() {
                                     self.getDeliveryMessages()
                                 }, 2000)
                             } else if (self.myProposalId() && (self.myProposalId() == self.takenProposal().id)) {
                                 self.isTakenByCurrentUser(true);
-                                setInterval(function() {
-                                    self.getDeliveryMessages()
-                                }, 2000)
+                                if (!self.isClose()) {
+                                    MESSAGE_INTERVAL = setInterval(function() {
+                                        self.getDeliveryMessages()
+                                    }, 2000)
+                                }
                             }
                         }
                         return {
@@ -317,6 +321,11 @@ $(function() {
         Kooboo.EventBus.subscribe('kb/market/chat/sent', function(cb) {
             self.getDeliveryMessages(cb);
         })
+
+        Kooboo.SPA.beforeUnload = function() {
+            MESSAGE_INTERVAL && clearInterval(MESSAGE_INTERVAL);
+            return 'refresh';
+        }
     }
 
     var vm = new detailModel();
