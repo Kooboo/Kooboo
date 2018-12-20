@@ -1005,6 +1005,7 @@
   <key id="Add condition">添加条件</key>
   <key id="Quantity">数量</key>
   <key id="Select type first">先选择类型</key>
+  <key id="Start month">开始月份</key>
   <key id="No enough balance, please topup first">余额不够， 请先充值</key>
   <key id="Purchase domain">购买域名</key>
   <key id="Please choose a payment method">选择付款方式</key>
@@ -1031,6 +1032,7 @@
   <key id="Proposal">报价</key>
   <key id="Day(s)">天</key>
   <key id="Bidder">报价人</key>
+  <key id="Day">Day</key>
   <key id="Take offline">网站离线</key>
   <key id="Take online">网站上线</key>
   <key id="Add new language">添加新语言</key>

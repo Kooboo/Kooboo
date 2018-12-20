@@ -167,7 +167,7 @@
             endMonth: "End month",
             renew: "Renew",
             chooseObject: "Choose object",
-            chooseAction: "Choose action" 
+            chooseAction: "Choose action"
         },
 
         online: {
@@ -748,7 +748,8 @@
             },
             hardwareModal: {
                 quantity: "Quantity",
-                selectTypeFirst: "Select type first"
+                selectTypeFirst: "Select type first",
+                startMonth: "Start month"
             },
             cashierModal: {
                 balanceInsuffisant: "No enough balance, please topup first",
@@ -805,7 +806,7 @@
                 bidder: "Bidder",
                 accept: "Accept",
                 day: "Day",
-                s:"s",
+                s: "s",
             },
             rechargeModal: {
                 coupon: "Coupon",

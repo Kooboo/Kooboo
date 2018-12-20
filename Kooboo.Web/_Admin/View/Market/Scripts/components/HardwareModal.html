@@ -31,6 +31,14 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label for="" class="control-label col-md-3" data-bind="text: Kooboo.text.component.hardwareModal.startMonth"></label>
+                        <div class="col-md-9">
+                            <div class="input-group input-small">
+                                <select class="form-control input-small" data-bind="options: availableMonths, optionsText: 'displayName', optionsValue: 'value', value: startMonth"></select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label for="" class="control-label col-md-3" data-bind="text: Kooboo.text.common.totalPrice"></label>
                         <div class="col-md-9">
                             <p class="form-control-static" data-bind="text: symbol() + totalPrice()"></p>
