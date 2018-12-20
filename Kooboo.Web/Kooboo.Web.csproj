@@ -166,7 +166,6 @@
     <Compile Include="Api\Implementation\Site.cs" />
     <Compile Include="Api\Implementation\SiteLog.cs" />
     <Compile Include="Api\Implementation\Style.cs" />
-    <Compile Include="Api\Implementation\Test\Test.cs" />
     <Compile Include="Api\Implementation\TextContent.cs" />
     <Compile Include="Api\Implementation\Transfer.cs" />
     <Compile Include="Api\Implementation\Url.cs" />
