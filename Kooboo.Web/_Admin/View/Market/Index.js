@@ -69,8 +69,8 @@ $(function() {
                             detailUrl = Kooboo.Route.Demand.DetailPage;
                             break;
                         case 'service':
-                            moreUrl = "/_admin/market/supplier/index";
-                            url = "/_admin/market/supplier/service";
+                            moreUrl = Kooboo.Route.Supplier.ListPage;
+                            detailUrl = Kooboo.Route.Supplier.ServicePage;
                             break;
 
                     }

@@ -19,10 +19,7 @@ namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
         public static Tree GetTree()
         {
             Settings = ReadSettings();
-            if (Settings == null)
-            {
-                Settings = ReadSettings();
-            }
+         
             var tree = new Tree();
             tree.Nodes = new List<Node>();
 
@@ -98,6 +95,11 @@ namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
 
         private static Dictionary<string,SettingBase> ReadSettings()
         {
+            //XmlSerializer serializer = new XmlSerializer(typeof(KScriptSetting));
+
+            XmlSerializer serializer =
+XmlSerializer.FromTypes(new[] { typeof(KScriptSetting) })[0];
+
             var path = GetPath();
             var settings = new Dictionary<string,SettingBase>();
             var files = Directory.GetFiles(path);
@@ -106,9 +108,7 @@ namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
                 var file = files[i];
                 var reader = new StreamReader(file);
                 try
-                {
-                    System.Xml.Serialization.XmlSerializer serializer = new System.Xml.Serialization.XmlSerializer(typeof(KScriptSetting));
-
+                {  
                     KScriptSetting setting = serializer.Deserialize(reader) as KScriptSetting;
 
                     var fileName = Path.GetFileNameWithoutExtension(file).ToLower();

@@ -22,7 +22,7 @@ $(function() {
         this.buyerName = ko.observable();
 
         this.ImBuyer = ko.observable(false);
-        this.isFinished = ko.observable(false);
+        this.isClose = ko.observable(false);
 
         this.getOrder = function(cb) {
             Kooboo.Supplier.getOrder({
@@ -42,11 +42,11 @@ $(function() {
                     self.buyerName(data.buyerOrgName);
                     self.supplierName(data.orgName);
                     self.ImBuyer(data.buyerOrganizationId == localStorage.getItem('_kooboo_api_user'));
-                    self.isFinished(data.isFinished);
-                    if (data.isFinished) {
+                    self.isClose(data.isClose);
+                    if (data.isClose) {
                         self.getPublicCommentList();
                     } else {
-                        setInterval(function() {
+                        INTERVAL = setInterval(function() {
                             self.getPublicCommentList();
                         }, 2000);
                     }
@@ -97,6 +97,11 @@ $(function() {
         Kooboo.EventBus.subscribe('kb/market/reply/sent', function(cb) {
             self.getPublicCommentList(cb);
         })
+
+        Kooboo.SPA.beforeUnload = function() {
+            INTERVAL && clearInterval(INTERVAL);
+            return 'refresh';
+        }
     }
 
     var vm = new viewModel();
@@ -112,7 +117,7 @@ $(function() {
         this.firstLetter = ko.observable(data.userName.split('')[0].toUpperCase());
         this.content = ko.observable(data.content);
         this.isCurrentUser = ko.observable(data.userId == CURRENT_USER_ID);
-        this.userName = ko.observable(this.isCurrentUser() ? 'Me' : data.userName);
+        this.userName = ko.observable(this.isCurrentUser() ? Kooboo.text.market.supplier.me : data.userName);
         this.date = ko.observable(date.toDefaultLangString());
         this.attachment = ko.observable(data.attachments ? data.attachments.map(function(item) {
             item.url = '/_api/attachment/getFile?id=' + item.id + '&fileName=' + item.fileName;

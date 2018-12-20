@@ -1,6 +1,8 @@
 $(function() {
     var CURRENT_USER_ID = '';
 
+    var MESSAGE_INTERVAL = null;
+
     var detailModel = function() {
         var self = this;
 
@@ -180,22 +182,24 @@ $(function() {
                     self.proposals(res.model.list.map(function(item) {
                         if (item.isTaken) {
                             self.takenProposal(item);
-                            if (self.isOwner()) {
-                                setInterval(function() {
+                            if (self.isOwner() && !self.isClose()) {
+                                MESSAGE_INTERVAL = setInterval(function() {
                                     self.getDeliveryMessages()
                                 }, 2000)
                             } else if (self.myProposalId() && (self.myProposalId() == self.takenProposal().id)) {
                                 self.isTakenByCurrentUser(true);
-                                setInterval(function() {
-                                    self.getDeliveryMessages()
-                                }, 2000)
+                                if (!self.isClose()) {
+                                    MESSAGE_INTERVAL = setInterval(function() {
+                                        self.getDeliveryMessages()
+                                    }, 2000)
+                                }
                             }
                         }
                         return {
                             id: item.id,
                             firstLetter: item.userName.split('')[0].toUpperCase(),
                             userName: item.userName,
-                            duration: item.duration + ' Day' + (item.duration > 1 ? 's' : ''),
+                            duration: item.duration + Kooboo.text.component.proposalModal.day + (item.duration > 1 ? Kooboo.text.component.proposalModal.s : ''),
                             budget: item.symbol + item.budget,
                             description: item.description.split('\n').join('<br>'),
                             currency: item.currency,
@@ -317,6 +321,11 @@ $(function() {
         Kooboo.EventBus.subscribe('kb/market/chat/sent', function(cb) {
             self.getDeliveryMessages(cb);
         })
+
+        Kooboo.SPA.beforeUnload = function() {
+            MESSAGE_INTERVAL && clearInterval(MESSAGE_INTERVAL);
+            return 'refresh';
+        }
     }
 
     var vm = new detailModel();
@@ -347,7 +356,7 @@ $(function() {
         this.firstLetter = ko.observable(data.userName.split('')[0].toUpperCase());
         this.content = ko.observable(data.content);
         this.isCurrentUser = ko.observable(data.userId == CURRENT_USER_ID);
-        this.userName = ko.observable(this.isCurrentUser() ? 'Me' : data.userName);
+        this.userName = ko.observable(this.isCurrentUser() ? Kooboo.text.market.supplier.me : data.userName);
         this.date = ko.observable(date.toDefaultLangString());
         this.attachment = ko.observable(data.attachments ? data.attachments.map(function(item) {
             item.url = '/_api/attachment/getFile?id=' + item.id + '&fileName=' + item.fileName;

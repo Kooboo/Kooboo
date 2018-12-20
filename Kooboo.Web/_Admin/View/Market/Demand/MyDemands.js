@@ -15,7 +15,7 @@ $(function() {
         this.handleData = function(data) {
             self.pager(data);
             var docs = data.list.map(function(doc) {
-                var symbol=doc.symbol?doc.symbol:doc.currency;
+                var symbol = doc.symbol ? doc.symbol : doc.currency;
                 return {
                     id: doc.id,
                     article: {
@@ -39,6 +39,10 @@ $(function() {
                     endDate: {
                         text: getDateString(doc.endDate),
                         class: 'label-sm gray'
+                    },
+                    isOpen: {
+                        text: Kooboo.text.common[doc.isClose ? 'no' : 'yes'],
+                        class: 'label-sm ' + (doc.isClose ? 'gray' : 'green')
                     },
                     proposalCount: {
                         text: doc.proposalCount,
@@ -80,6 +84,11 @@ $(function() {
                     fieldName: 'proposalCount',
                     showClass: 'table-short',
                     type: 'badge'
+                }, {
+                    displayName: Kooboo.text.market.demand.isOpen,
+                    fieldName: 'isOpen',
+                    showClass: 'table-short',
+                    type: 'label'
                 }, {
                     displayName: Kooboo.text.market.demand.createTime,
                     fieldName: 'createTime',

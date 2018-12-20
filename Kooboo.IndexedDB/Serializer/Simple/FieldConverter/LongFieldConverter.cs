@@ -35,8 +35,24 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         public void SetByteValues(T value, byte[] bytes)
         {
-            long bytevalue = BitConverter.ToInt64(bytes, 0);
-            this.setValue(value, bytevalue);
+            if (bytes.Length >=8)
+            {
+                long bytevalue = BitConverter.ToInt64(bytes, 0);
+                this.setValue(value, bytevalue);
+            }
+            else
+            {
+                if (bytes.Length == 4)
+                {
+                    long bytevalue =(long)BitConverter.ToInt32(bytes, 0);
+                    this.setValue(value, bytevalue);
+                }
+                else if (bytes.Length == 2)
+                {
+                    long bytevalue = (long)BitConverter.ToInt16(bytes, 0);
+                    this.setValue(value, bytevalue);
+                }
+            } 
         }
 
         public byte[] ToBytes(T Value)

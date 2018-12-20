@@ -8,7 +8,7 @@ namespace Kooboo.Web.ViewModel
 {
    public class PagedListViewModel<T>
     {
-        public List<T> List { get; set; }
+        public List<T> List { get; set; } = new List<T>(); 
 
         public int TotalCount { get; set; }
   

@@ -118,7 +118,7 @@ $(function() {
         this.getList();
 
         Kooboo.EventBus.subscribe("kb/component/demand-modal/saved", function() {
-            this.getList();
+            self.getList();
         })
     }
 

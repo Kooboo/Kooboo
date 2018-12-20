@@ -178,7 +178,7 @@
 
                 <!-- ko if: !hasCurrentUserMadeABid() && !isTaken() && !isClose() -->
                 <div class="alert alert-info">
-                    You have not bid yet, click <a href="javascript:;" class="alert-link" data-bind="click: onShowProposalModal">here</a> to make a bid.
+                    <span>You have not bid yet, click</span>&nbsp;<a href="javascript:;" class="alert-link" data-bind="click: onShowProposalModal">here</a>&nbsp;<span>to make a bid.</span>
                 </div>
                 <!-- /ko -->
 
@@ -186,7 +186,7 @@
 
                 <!-- ko if: isClose -->
                 <div class="alert alert-warning">
-                    <strong>Notice</strong>&nbsp;<span>This demand is</span><span data-bind="text: displayStatus"></span>
+                    <strong>Notice</strong>&nbsp;<span>This demand is</span>&nbsp;<span data-bind="text: displayStatus"></span>
                 </div>
                 <!-- /ko -->
 
@@ -282,7 +282,7 @@
                                 <p class="clearfix">
                                     <span class="pull-left">
                                                 <span data-bind="text: public.userName"></span>
-                                    <span>comments at</span>
+                                    <span>commented at</span>
                                     <span data-bind="text: public.date"></span>
                                     </span>
                                     <span class="pull-right">
@@ -304,7 +304,7 @@
                                                 <p>
                                                     <span class="pull-left">
                                                                 <span data-bind="text: sub.userName"></span>
-                                                    <span> replies at </span>
+                                                    <span>replied at</span>
                                                     <span data-bind="text: sub.date"></span>
                                                     </span>
                                                 </p>
@@ -326,7 +326,7 @@
                 <!-- /ko -->
             </div>
             <div class="tab-pane fade" id="tab_1_3">
-                <!-- ko if: isOwner() && isTaken() -->
+                <!-- ko if: isOwner() && isTaken() && !isClose() -->
                 <a href="javascript:;" class="btn btn-sm btn-info" data-bind="click: onFinishTheDemand.bind(this, true)">Accept</a>
                 <a href="javascript:;" class="btn btn-sm btn-default" data-bind="click: onFinishTheDemand.bind(this, false)">Reject</a>
                 <hr>
@@ -355,7 +355,7 @@
                                 <p class="clearfix">
                                     <span class="pull-left">
                                                     <span data-bind="text: msg.userName"></span>
-                                    <span> send at </span>
+                                    <span>send at</span>
                                     <span data-bind="text: msg.date"></span>
                                     </span>
                                 </p>

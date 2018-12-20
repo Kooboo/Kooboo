@@ -33,9 +33,9 @@
                 }))
             }
 
-            this.types = ko.observableArray();
+            this.types = ko.observableArray(); 
 
-            this.steps = ko.observableArray(['Choose items', 'Choose actions', Kooboo.text.common.confirm])
+            this.steps = ko.observableArray([Kooboo.text.common.chooseObject, Kooboo.text.common.chooseAction, Kooboo.text.common.confirm])
             this.currentStepIdx = ko.observable(0);
 
             this.onPrev = function() {

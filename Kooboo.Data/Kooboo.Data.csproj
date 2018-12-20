@@ -217,7 +217,6 @@
     <Compile Include="Models\IPCity.cs" />
     <Compile Include="Models\MailQueue.cs" />
     <Compile Include="Models\OnlineServer.cs" />
-    <Compile Include="Models\PayPackageRequest.cs" />
     <Compile Include="Models\ResouceAttachment.cs" />
     <Compile Include="Models\ServerSetting.cs" />
     <Compile Include="Models\Cluster.cs" />
@@ -249,11 +248,9 @@
     <Compile Include="Render\Command.cs" />
     <Compile Include="Render\CommandParser.cs" />
     <Compile Include="Repository\BindingRepository.cs" />
-    <Compile Include="Repository\CurrencyRepository.cs" />
     <Compile Include="Repository\DataMethodRepository.cs" />
     <Compile Include="Repository\DllRepository.cs" />
     <Compile Include="Repository\GlobalSettingRepository.cs" />
-    <Compile Include="Repository\IpCityRepository.cs" />
     <Compile Include="Repository\LocalUserRepository.cs" />
     <Compile Include="Repository\NotificationRepository.cs" />
     <Compile Include="Repository\OrganizationRepository.cs" />

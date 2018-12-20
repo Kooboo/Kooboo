@@ -36,10 +36,7 @@ namespace Kooboo.Data.Models
         public string DisplayName { get; set; }
 
         public Guid AdminUser { get; set; }
-
-        public decimal Balance { get; set; } = 0;
-
-        public string Currency { get; set; } = "CNY";
+         
 
         public int ServerId { get; set; }
 
@@ -51,7 +48,7 @@ namespace Kooboo.Data.Models
 
         public override int GetHashCode()
         {
-            string unique = this.DisplayName + this.Balance.ToString();
+            string unique = this.DisplayName;
             unique += this.ServerId.ToString() + this.ServiceLevel.ToString();
             unique += this.AdminUser.ToString() + this.IsBanned.ToString();
             unique += this.Introduction; 
