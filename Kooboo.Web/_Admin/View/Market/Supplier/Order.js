@@ -46,7 +46,7 @@ $(function() {
                     if (data.isClose) {
                         self.getPublicCommentList();
                     } else {
-                        setInterval(function() {
+                        INTERVAL = setInterval(function() {
                             self.getPublicCommentList();
                         }, 2000);
                     }
@@ -97,6 +97,11 @@ $(function() {
         Kooboo.EventBus.subscribe('kb/market/reply/sent', function(cb) {
             self.getPublicCommentList(cb);
         })
+
+        Kooboo.SPA.beforeUnload = function() {
+            INTERVAL && clearInterval(INTERVAL);
+            return 'refresh';
+        }
     }
 
     var vm = new viewModel();
