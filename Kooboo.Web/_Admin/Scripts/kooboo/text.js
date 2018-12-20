@@ -1056,7 +1056,8 @@
                 proposals: "Proposals",
                 demander: "Demander",
                 createTime: "Create time",
-                isOpen: "Is open"
+                isOpen: "Is open",
+                proposalCount: "proposalCount"
             },
             discussion: {
                 myThreads: "My Threads",

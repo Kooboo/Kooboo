@@ -89,7 +89,7 @@ $(function() {
                     type: 'label',
                     showClass: 'table-short'
                 }, {
-                    displayName: Kooboo.text.market.demand.proposals,
+                    displayName: Kooboo.text.market.demand.proposalCount,
                     fieldName: 'proposalCount',
                     type: 'badge',
                     showClass: 'table-short'

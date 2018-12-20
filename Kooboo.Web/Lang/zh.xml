@@ -1138,6 +1138,7 @@
   <key id="Demander">发布人</key>
   <key id="Create time">创建时间</key>
   <key id="Is open">开放的</key>
+  <key id="proposalCount">报价人数</key>
   <key id="Order user">订购商</key>
   <key id="Me">我</key>
   <key id="My Template">我的模板</key>
