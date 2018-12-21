@@ -264,6 +264,7 @@
             maxLength: "The maximum length is ",
             minLength: "The minimal length is ",
             earlierThan: "The start time should be earlier than end time",
+            GreaterThan: "Budget should be greater than 0",
             greaterThan: "Input a value greater than ",
             lessThan: "Input a value less than ",
             inputError: "Input error",

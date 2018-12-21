@@ -86,10 +86,14 @@
 
             this.budget = ko.validateField({
                 required: '',
-                min: 0
+                min: {
+                    value: 0,
+                    message: Kooboo.text.validation.GreaterThan
+                }
             })
 
-            this.dateValidator = ko.validateField('valid', {
+    
+            this.dateValidator = ko.validateField('date', {
                 required: Kooboo.text.validation.earlierThan
             })
 
@@ -119,11 +123,9 @@
             this.isValid = function () {
                 return self.title.isValid() &&
                     self.description.isValid() &&
-
                     self.isDateRangeValid() &&
-                    // self.startDate.isValid() &&
-                    // self.endDate.isValid() &&
-                    self.budget.isValid();
+                     self.budget.isValid() ;
+                  
             }
 
             this.isDateRangeValid = function () {
@@ -136,7 +138,7 @@
                     self.dateValidator('');
                     return false;
                 } else {
-                    self.dateValidator('VALID');
+                    self.dateValidator('date');
                     return true;
                 }
             }
@@ -155,6 +157,7 @@
             }
 
             this.onPublish = function () {
+               
                 if (self.isValid()) {
                     Kooboo.Demand.addOrUpdate(self.getData()).then(function (res) {
                         if (res.success) {
