@@ -169,10 +169,10 @@ namespace Kooboo.Data
             if(RuntimeSystemHelper.IsWindow())
             {
 #if NETSTANDARD2_0
-                trypaths.Add(@"..\Github\Kooboo.Web");
-                trypaths.Add(@"..\");
+                trypaths.Add(@"..\..\..\..\Github\Kooboo.Web");
                 trypaths.Add(@"..\..\");
                 trypaths.Add(@"..\..\..\");
+                trypaths.Add(@"..\..\..\..\");
 #else
                 trypaths.Add(@"..\..\..\Github\Kooboo.Web"); 
                 trypaths.Add(@"..\");
