@@ -169,6 +169,7 @@ namespace Kooboo.Web.Api
                 {
                     if (item.Name != defaultcenter.Name)
                     {
+                        info.Availables.Add(new DataCenterInfo.Info() { Country = "China", DisplayName = item.Name, Value = item.Name });  
                         info.AvailableDataCenters.Add(item.Name, item.Name);
                     } 
                 } 
@@ -184,9 +185,27 @@ namespace Kooboo.Web.Api
 
             public string CurrentDataCenter { get; set; }
 
-            public Dictionary<string, string> AvailableDataCenters { get; set; } = new Dictionary<string, string>(); 
-         
+            public Dictionary<string, string> AvailableDataCenters { get; set; } = new Dictionary<string, string>();
+
+
+            public List<Info> Availables { get; set; } = new List<Info>(); 
+
+
+            public class Info
+            {
+                public string Country { get; set; }
+
+                public string Value { get; set; }
+
+                public string DisplayName { get; set; }
+            } 
+
+
+
         }
+
+
+       
          
     }
 }
