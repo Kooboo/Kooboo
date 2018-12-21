@@ -65,6 +65,7 @@
             use: "Use",
             confirm: "Confirm",
             detail: "Detail",
+            balance: "Balance",
 
             API: "API",
             Code: "Code",
@@ -236,7 +237,8 @@
                 emptyFile: "is(are) empty file.",
                 invalidSuffix: "has(have) invalid suffix",
                 invalidType: "is(are) invalid"
-            }
+            },
+            verificationEmailSent: "A verification Email has sent to the email you input. Please check in time."
         },
 
         validation: {
@@ -813,6 +815,12 @@
             },
             rechargeModal: {
                 coupon: "Coupon",
+            },
+            dataCenterModal: {
+                changeExplanation: "Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually."
+            },
+            userVerifyModal: {
+                verify: "Verify"
             }
         },
 

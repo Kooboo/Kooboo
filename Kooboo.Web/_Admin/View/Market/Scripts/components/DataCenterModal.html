@@ -1,0 +1,25 @@
+<div data-bind="modal: isShow" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: onHide"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title" data-bind="text: Kooboo.text.site.profile.DataCenter"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>Info!</strong>
+                    <span>Info content goes here</span>
+                </div>
+                <div class="form-group">
+                    <label for="">Available</label>
+                    <select class="form-control" data-bind="options: dataCenters, optionsText: 'displayName', optionsValue: 'value', value: dataCenter"></select>
+                    <span class="help-block" data-bind="text: Kooboo.text.component.dataCenterModal.changeExplanation"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="text: Kooboo.text.common.save, click: onSave"></button>
+                <button class="btn gray" data-bind="text: Kooboo.text.common.cancel, click: onHide"></button>
+            </div>
+        </div>
+    </div>
+</div>
