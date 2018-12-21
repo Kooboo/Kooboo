@@ -723,6 +723,7 @@
   <key id="This category is related to some products. Would you want to delete?">此类别与某些内容有关，你想删除吗？</key>
   <key id="Changing the default currency will transfer all your balance to new currency. Would you want to continue?">更改默认货币会将所有余额转换成新货币，你想继续吗？</key>
   <key id="Are you sure?">你确定吗</key>
+  <key id="Are you sure your order has been completed?">你确定订单已经完成了吗?</key>
   <key id="File type error, please upload zip file.">文件类型错误，请上传zip 文件</key>
   <key id="Image files uploaded.">图像文件已上传</key>
   <key id="Please input your Voucher code.">请输入您的抵用券号</key>
@@ -1033,7 +1034,7 @@
   <key id="Proposal">报价</key>
   <key id="Day(s)">天</key>
   <key id="Bidder">报价人</key>
-  <key id="Day">Day</key>
+  <key id="Day">天</key>
   <key id="Take offline">网站离线</key>
   <key id="Take online">网站上线</key>
   <key id="Add new language">添加新语言</key>
@@ -1263,7 +1264,7 @@
   <key id="Open status">开放</key>
   <key id="Winner">取得的</key>
   <key id="Outbid">失败的</key>
-  <key id="Rejected">拒绝</key>
+  <key id="Rejected">被拒绝</key>
   <key id="UnResolved">未解决</key>
   <key id="Resolved">已解决</key>
   <key id="Taken">已采用</key>

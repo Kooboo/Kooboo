@@ -219,6 +219,7 @@
             market: {
                 changeCurrency: "Changing the default currency will transfer all your balance to new currency. Would you want to continue?",
                 sure: "Are you sure?",
+                completedOrder: "Are you sure your order has been completed?"
             }
         },
 

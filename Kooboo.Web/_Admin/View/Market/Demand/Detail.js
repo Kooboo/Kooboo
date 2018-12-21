@@ -199,7 +199,7 @@ $(function() {
                             id: item.id,
                             firstLetter: item.userName.split('')[0].toUpperCase(),
                             userName: item.userName,
-                            duration: item.duration + Kooboo.text.component.proposalModal.day + (item.duration > 1 ? Kooboo.text.component.proposalModal.s : ''),
+                            duration: item.duration +' '+ Kooboo.text.component.proposalModal.day + (item.duration > 1 ? Kooboo.text.component.proposalModal.s : ''),
                             budget: item.symbol + item.budget,
                             description: item.description.split('\n').join('<br>'),
                             currency: item.currency,
