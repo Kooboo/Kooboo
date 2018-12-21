@@ -6,11 +6,6 @@
             var self = this;
 
             this.isShow = params.isShow;
-            this.isShow.subscribe(function(show) {
-                if (show) {
-                    self.dataCenter(params.current());
-                }
-            })
 
             this.dataCenter = ko.observable();
             this.dataCenters = params.available;
