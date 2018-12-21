@@ -216,7 +216,6 @@
     <Compile Include="Models\ApiResource.cs" />
     <Compile Include="Models\DnsInfo.cs" />
     <Compile Include="Models\DNSRecord.cs" />
-    <Compile Include="Models\DomainPrice.cs" />
     <Compile Include="Models\ICP.cs" />
     <Compile Include="Models\IPCity.cs" />
     <Compile Include="Models\MailQueue.cs" />
