@@ -42,7 +42,12 @@ $(function() {
                 if (res.success) {
                     self.username(res.model.organizationName);
                     self.currentDataCenter(res.model.currentDatacenterName);
-                    self.availableDataCenters(Kooboo.objToArr(res.model.availableDataCenters, 'value', 'displayName'));
+                    self.availableDataCenters(res.model.availables.map(function(dc) {
+                        return {
+                            displayName: dc.displayName + ' (' + dc.country + ')',
+                            value: dc.value
+                        }
+                    }));
                 }
             })
             Kooboo.User.getUser().then(function(res) {
