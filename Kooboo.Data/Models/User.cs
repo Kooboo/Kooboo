@@ -60,6 +60,8 @@ namespace Kooboo.Data.Models
         }
         
         public string EmailAddress {get;set; }
+
+        public bool IsEmailValid { get; set; }
         
         public string Password { get; set; }
 
