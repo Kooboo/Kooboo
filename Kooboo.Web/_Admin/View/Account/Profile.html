@@ -141,34 +141,6 @@
                             </div>
                         </div>
                     </section>
-                    <section data-bind="css: { active: curType() == 'DataCenter', in: curType() == 'DataCenter' }" class="tab-pane fade">
-                        <div class="form-horizontal margin-top-20">
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Organization name</label>
-                                <div class="col-md-9">
-                                    <p class="form-control-static" data-bind="text: dataCenterOrganizationName"></p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Current data center</label>
-                                <div class="col-md-9">
-                                    <p class="form-control-static" data-bind="text: dataCenterCurrent"></p>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Avaliable data center</label>
-                                <div class="col-md-9">
-                                    <select class="form-control input-large" data-bind="options: avaliableDataCenter, value: newDataCenter, optionsText: 'name', optionsValue: 'value'"></select>
-                                    <span class="help-block">Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.</span>
-                                </div>
-                            </div>
-                            <div class="form-group" data-bind="visible: showUpdateDataCenterBtn">
-                                <div class="col-md-9 col-md-offset-3">
-                                    <button class="btn green" data-bind="click: updateDataCenter">Update</button>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
                 </div>
             </div>
         </div>
