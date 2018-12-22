@@ -85,6 +85,16 @@ namespace Kooboo.Sites.Cache
             return result;
         }
 
+        public static void SetNull(Guid SiteId)
+        {
+            _SiteDbs[SiteId] = null;   
+        }
+
+        public static void RemoveNull(Guid SiteId)
+        {
+            _SiteDbs.Remove(SiteId); 
+        }
+
         public static void Remove(SiteDb sitedb)
         {
             Cache.RenderPlan.RemoveSiteDb(sitedb.Id);

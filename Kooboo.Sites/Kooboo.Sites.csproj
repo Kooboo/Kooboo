@@ -368,6 +368,7 @@
     <Compile Include="SiteTransfer\WebSiteScanService.cs" />
     <Compile Include="Sync\DiskSyncHelper.cs" />
     <Compile Include="Sync\DiskSyncManager.cs" />
+    <Compile Include="Sync\OrganizationSync.cs" />
     <Compile Include="Sync\SiteClusterSync\ClusterUrl.cs" />
     <Compile Include="Sync\SiteClusterSync\SiteClusterManager.cs" />
     <Compile Include="Sync\SiteClusterSync\SiteSetting.cs" />

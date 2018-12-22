@@ -64,6 +64,17 @@ namespace Kooboo.Mail.Factory
             return result;
         }
 
+        // only when prepare for moving. 
+        public static void SetNull(Guid OrganizationId)
+        {
+            _orgdbs[OrganizationId] = null; 
+        }
+
+        public static void RemoveNull(Guid OrganizationId)
+        {
+            _orgdbs.Remove(OrganizationId);  
+        }
+
         // this is for email. 
         public static OrgDb OrgDb(string emailAddress)
         {
