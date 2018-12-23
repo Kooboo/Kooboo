@@ -97,8 +97,7 @@ namespace Kooboo.Sites.Service
             }
             return referercount.OrderByDescending(o => o.Count).ToList();
         }
-
-
+        
         public static List<ResourceCount> TopPages(SiteDb sitedb, string WeekName = null)
         {
             List<ResourceCount> pagecountes = new List<ResourceCount>();
@@ -125,9 +124,7 @@ namespace Kooboo.Sites.Service
         {
             if (string.IsNullOrEmpty(WeekName))
             {
-                return sitedb.VisitorLog.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead); 
-                //return sitedb.VisitorLog.QueryDescending(true).Take(MaxReadLogCount); 
-               // return sitedb.VisitorLog.AllItemList();
+                return sitedb.VisitorLog.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead);  
             }
             else
             {
@@ -189,8 +186,7 @@ namespace Kooboo.Sites.Service
                 }
             }
             return imagecounts.OrderByDescending(o => o.Count).ToList();
-        }
-              
+        } 
 
         public static List<ResourceCount> MonthlyVisitors(SiteDb sitedb)
         {

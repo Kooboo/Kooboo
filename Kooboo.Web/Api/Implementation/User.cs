@@ -209,8 +209,7 @@ namespace Kooboo.Web.Api.Implementation
                     if (org.AdminUser == user.Id)
                     {
                         user.IsAdmin = true;
-                    }
-
+                    } 
                 }
                 else
                 {

@@ -121,7 +121,8 @@ namespace Kooboo.Data.Models
         {
             string unique = this.CurrentHostDomain + this.CurrentOrgId.ToString() + this.CurrentOrgName;
             unique += this.EmailAddress + this.FirstName + this.LastName + this.Language;
-            unique += this.Password + this.PasswordHash.ToString(); 
+            unique += this.Password + this.PasswordHash.ToString();
+            unique += this.IsEmailVerified.ToString(); 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);  
         }
     }
