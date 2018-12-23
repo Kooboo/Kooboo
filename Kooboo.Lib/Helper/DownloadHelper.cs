@@ -48,7 +48,7 @@ namespace Kooboo.Lib.Helper
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 downloadok = false;
             }
@@ -362,7 +362,7 @@ namespace Kooboo.Lib.Helper
         protected override WebRequest GetWebRequest(Uri uri)
         {
             WebRequest w = base.GetWebRequest(uri);
-            w.Timeout = 10000;
+            w.Timeout = 30000;
             return w;
         }
     }

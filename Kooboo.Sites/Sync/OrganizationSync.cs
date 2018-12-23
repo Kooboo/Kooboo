@@ -122,8 +122,23 @@ namespace Kooboo.Sites.Sync
             if (System.IO.Directory.Exists(folder))
             { 
                 try
-                {  
-                    System.IO.Directory.Delete(folder, true);
+                {
+                    var websites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(OrganizationId);
+                    foreach (var item in websites)
+                    {
+                        item.Published = false; 
+                    }
+
+                    foreach (var item in websites)
+                    {
+                        Kooboo.Sites.Service.WebSiteService.Delete(item.Id); 
+                    }
+
+                    var dirs = System.IO.Directory.GetDirectories(folder); 
+                    if (dirs !=null && dirs.Any())
+                    {
+                        System.IO.Directory.Delete(folder, true);
+                    } 
                 }
                 catch (Exception)
                 {
@@ -180,10 +195,13 @@ namespace Kooboo.Sites.Sync
                 {
                     item.Site.OrganizationId = OrganizationId;
                     item.Site.Id = default(Guid);  // reset id.  
+                    item.Site.DiskSyncFolder = null;
+                    item.Site.EnableDiskSync = false; 
                     Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(item.Site);
                     foreach (var binding in item.Bindings)
                     {
-                        binding.WebSiteId = item.Site.Id; 
+                        binding.WebSiteId = item.Site.Id;
+                        binding.OrganizationId = OrganizationId; 
                         GlobalDb.Bindings.AddOrUpdate(binding); 
                     }
                 }
@@ -198,6 +216,22 @@ namespace Kooboo.Sites.Sync
                 } 
             }
             return true;
+        }
+
+        public static bool ImportOrg(byte[] contentbytes, Guid OrganizationId)
+        {
+            try
+            {
+                ZipArchive archive = new ZipArchive(new MemoryStream(contentbytes));
+
+                return ImportOrg(archive, OrganizationId); 
+            }
+            catch (Exception)
+            {
+                 
+            }
+
+            return false; 
         }
 
     }
