@@ -13,5 +13,13 @@ namespace Kooboo.Data.Context
         public string UserName { get; set; }
 
         public string Password { get; set; }
+
+        public Guid Id
+        {
+            get
+            {
+                return Lib.Security.Hash.ComputeGuidIgnoreCase(this.UserName); 
+            }
+        }
     }
 }

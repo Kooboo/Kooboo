@@ -7,6 +7,8 @@ using System.Configuration;
 using Kooboo.Lib.Helper;
 using Kooboo.Data.Models;
 using System.Collections.Generic;
+using Kooboo.Data.Context;
+using System.Linq; 
 
 namespace Kooboo.Data
 {
@@ -24,8 +26,7 @@ namespace Kooboo.Data
             {
                 QuotaControl = true; 
             }
-            else { QuotaControl = GetBool("QuotaControl"); }
-
+            else { QuotaControl = GetBool("QuotaControl"); } 
 
             Global = new GlobalInfo();
             Global.IsOnlineServer = GetBool("IsOnlineServer");
@@ -40,11 +41,61 @@ namespace Kooboo.Data
             else
             {
                 MaxVisitorLogRead = 10000;
+            } 
+
+            // users  
+            SetUser();  
+        }
+
+        private static void SetUser()
+        {
+            string defaultuser = ConfigurationManager.AppSettings.Get("DefaultUser");
+            string alloweUsers = ConfigurationManager.AppSettings.Get("AllowUsers");
+
+            if (!string.IsNullOrWhiteSpace(defaultuser))
+            {
+                int index = defaultuser.IndexOf(",");
+                if (index > -1)
+                {
+                    var username = defaultuser.Substring(0, index);
+                    var password = defaultuser.Substring(index + 1);
+                    DefaultUser = new BasicUser() { UserName = username.Trim().ToLower(), Password = password.Trim() }; 
+                }
+            } 
+
+            if (!string.IsNullOrWhiteSpace(alloweUsers))
+            {
+                if (alloweUsers != "*")
+                { 
+                    List<string> userlist = new List<string>(); 
+                    string[] users = alloweUsers.Split(',');
+                    foreach (var item in users)
+                    {
+                        if (!string.IsNullOrWhiteSpace(item))
+                        {
+                            userlist.Add(item.ToLower().Trim()); 
+                        }
+                    }
+
+                    if (userlist.Any())
+                    {
+                        AllowUsers = new List<Guid>();
+                        foreach (var item in userlist)
+                        {
+                            AllowUsers.Add(Lib.Security.Hash.ComputeGuidIgnoreCase(item)); 
+                        } 
+                    }
+                }
             }
         }
 
+
         public static bool QuotaControl { get; set;  }
 
+
+        public static BasicUser DefaultUser { get; set; }
+
+        public static List<Guid> AllowUsers { get; set; }
 
         public static int MaxVisitorLogRead { get; set; } = 3000;  // only read the last  3000
 

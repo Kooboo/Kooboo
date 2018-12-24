@@ -160,7 +160,7 @@ namespace Kooboo.Web.Service
                 }
 
                 Add(model);
-                Kooboo.Data.Service.UserLoginPathService.UpdateLastPath(model);
+                Kooboo.Data.Service.UserLoginService.UpdateLastPath(model);
             }
         }
 

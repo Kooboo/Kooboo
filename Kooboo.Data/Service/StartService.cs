@@ -16,7 +16,7 @@ namespace Kooboo.Data.Service
             {
                 if (Data.AppSettings.IsOnlineServer)
                 { 
-                    var lasturl = Service.UserLoginPathService.GetLastPath(Context.User.Id);
+                    var lasturl = Service.UserLoginService.GetLastPath(Context.User.Id);
                     if (!string.IsNullOrEmpty(lasturl) && !lasturl.ToLower().StartsWith("/_admin/sites/edit"))
                     {
                         return lasturl;
