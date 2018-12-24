@@ -49,9 +49,9 @@
                 </div>
                 <div class="row">
                     <div class="col-md-4">
-                        <div class="form-group">
+                        <div class="form-group" style="margin-bottom: 14px">
                             <label data-bind="text: Kooboo.text.component.demandModal.startTime,error: dateValidator"></label>
-                            <div data-bind="textError: startDate" style="display:inline-block; margin-bottom: 14px">&nbsp;</div>
+                            <div data-bind="textError: startDate" style="display:inline-block; ">&nbsp;</div>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                 <input type="date" class="form-control" data-bind="value: startDate">
@@ -59,8 +59,8 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label data-bind="text: Kooboo.text.component.demandModal.endTime, textError: endDate"></label>
+                        <div class="form-group" style="margin-bottom: 14px">
+                            <label data-bind="text: Kooboo.text.component.demandModal.endTime, textError: endDate" ></label>
                             <div class="input-group">
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                                 <input type="date" class="form-control" data-bind="value: endDate">
@@ -68,7 +68,7 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="form-group">
+                        <div class="form-group" style="margin-bottom: 14px">
                            <label data-bind="text: Kooboo.text.common.budget, textError: budget"></label>
                             <div class="input-group">
                                 <span class="input-group-addon" data-bind="text: currencySymbol, attr: { title: currencyCode }"></span>
