@@ -366,6 +366,7 @@
     <Compile Include="SiteTransfer\TransferHelper.cs" />
     <Compile Include="SiteTransfer\TransferManager.cs" />
     <Compile Include="SiteTransfer\WebSiteScanService.cs" />
+    <Compile Include="Sync\Cluster\ClusterWorker.cs" />
     <Compile Include="Sync\DiskSyncHelper.cs" />
     <Compile Include="Sync\DiskSyncManager.cs" />
     <Compile Include="Sync\OrganizationSync.cs" />
