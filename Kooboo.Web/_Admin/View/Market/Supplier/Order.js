@@ -82,14 +82,16 @@ $(function() {
         }
 
         this.onComplete = function() {
-            Kooboo.Supplier.onComplete({
-                id: self.id(),
-                isAccept: true
-            }).then(function(res) {
-                if (res.success) {
-                    location.reload();
-                }
-            })
+            if(confirm(Kooboo.text.confirm.market.completedOrder)){
+                Kooboo.Supplier.onComplete({
+                    id: self.id(),
+                    isAccept: true
+                }).then(function(res) {
+                    if (res.success) {
+                        location.reload();
+                    }
+                })
+            }
         }
 
         this.getOrder();

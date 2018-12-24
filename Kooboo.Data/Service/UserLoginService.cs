@@ -8,9 +8,9 @@ using System.Collections.Generic;
 
 namespace Kooboo.Data.Service
 {
-    public class UserLoginPathService
+    public class UserLoginService
     {
-        static UserLoginPathService()
+        static UserLoginService()
         {
             GlobalDatabase = Kooboo.Data.DB.Global();
 
@@ -136,7 +136,6 @@ namespace Kooboo.Data.Service
 
         public static string GetSiteIdFromPath(string path)
         {
-
             ///_Admin/Site?SiteId=ef9b3c71-f09b-a23c-431c-3d8d40905226
             string siteid = null;
 
@@ -154,19 +153,113 @@ namespace Kooboo.Data.Service
                     siteid = path.Substring(index + 7);
                 }
             }
-             
-            if (siteid !=null)
+
+            if (siteid != null)
             {
                 Guid key = default(Guid);
                 if (System.Guid.TryParse(siteid, out key))
                 {
-                    return siteid; 
+                    return siteid;
                 }
-            } 
+            }
             return null;
         }
 
-    }
+        public static User LoginDefaultUser(string username,  string password)
+        {
+            if (username == null || password == null)
+            {
+                return null;
+            }
 
+            if (Data.AppSettings.DefaultUser != null)
+            {
+                if (username.ToLower() == AppSettings.DefaultUser.UserName && password == AppSettings.DefaultUser.Password)
+                {
+                    User user = _defaultUser();
 
+                    return user;
+                }
+            }
+
+            return null;
+        }
+
+        private static User _defaultUser()
+        {
+            var user = new User() { UserName = AppSettings.DefaultUser.UserName, Password = AppSettings.DefaultUser.Password };
+            user.CurrentOrgName = user.UserName;
+            user.CurrentOrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(user.UserName);
+
+            if (!string.IsNullOrWhiteSpace(AppSettings.CmsLang))
+            {
+                user.Language = AppSettings.CmsLang;
+            }
+            else
+            {
+                user.Language = "en";
+            }
+
+            user.PasswordHash = System.Guid.NewGuid();  // Fake. 
+
+            return user;
+        }
+
+        public static User GetDefaultUser(string NameOrId)
+        {
+            if (NameOrId == null)
+            {
+                return null;
+            }
+
+            if (Data.AppSettings.DefaultUser !=null)
+            {
+                Guid userid = default(Guid); 
+                if (!System.Guid.TryParse(NameOrId, out userid))
+                {
+                    userid = Lib.Security.Hash.ComputeGuidIgnoreCase(NameOrId); 
+                }
+
+                if (userid== Data.AppSettings.DefaultUser.Id)
+                {
+                    return _defaultUser(); 
+                } 
+            } 
+            return null; 
+        }
+
+        public static bool IsAllow(string username)
+        {
+            if (string.IsNullOrWhiteSpace(username))
+            {
+                return false;
+            }
+
+            if (Data.AppSettings.AllowUsers == null)
+            {
+                return true;
+            }
+
+            Guid UserId = Lib.Security.Hash.ComputeGuidIgnoreCase(username);
+
+            return IsAllow(UserId); 
+             
+        }
+
+        public static bool IsAllow(Guid UserId)
+        { 
+            if (Data.AppSettings.AllowUsers == null)
+            {
+                return true;
+            }
+             
+            if (Data.AppSettings.AllowUsers.Contains(UserId))
+            {
+                return true;
+            }
+
+            return false;
+        } 
+      
+    } 
 }

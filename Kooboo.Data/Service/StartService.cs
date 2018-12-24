@@ -14,12 +14,15 @@ namespace Kooboo.Data.Service
         {
             if (Context != null && Context.User != null)
             {
-                var lasturl = Service.UserLoginPathService.GetLastPath(Context.User.Id);
-                if (!string.IsNullOrEmpty(lasturl) && !lasturl.ToLower().StartsWith("/_admin/sites/edit"))
-                {
-                    return lasturl;
+                if (Data.AppSettings.IsOnlineServer)
+                { 
+                    var lasturl = Service.UserLoginService.GetLastPath(Context.User.Id);
+                    if (!string.IsNullOrEmpty(lasturl) && !lasturl.ToLower().StartsWith("/_admin/sites/edit"))
+                    {
+                        return lasturl;
+                    }
                 }
-            } 
+            }
 
             var host = Context.Request.Host;
 

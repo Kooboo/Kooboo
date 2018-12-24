@@ -65,6 +65,7 @@
             use: "Use",
             confirm: "Confirm",
             detail: "Detail",
+            balance: "Balance",
 
             API: "API",
             Code: "Code",
@@ -167,7 +168,7 @@
             endMonth: "End month",
             renew: "Renew",
             chooseObject: "Choose object",
-            chooseAction: "Choose action" 
+            chooseAction: "Choose action"
         },
 
         online: {
@@ -219,6 +220,7 @@
             market: {
                 changeCurrency: "Changing the default currency will transfer all your balance to new currency. Would you want to continue?",
                 sure: "Are you sure?",
+                completedOrder: "Are you sure your order has been completed?"
             }
         },
 
@@ -235,7 +237,8 @@
                 emptyFile: "is(are) empty file.",
                 invalidSuffix: "has(have) invalid suffix",
                 invalidType: "is(are) invalid"
-            }
+            },
+            verificationEmailSent: "A verification Email has sent to the email you input. Please check in time."
         },
 
         validation: {
@@ -262,6 +265,8 @@
             couponCodeRequired: "Please input your coupon code",
             maxLength: "The maximum length is ",
             minLength: "The minimal length is ",
+            earlierThan: "The start time should be earlier than end time",
+            GreaterThan: "Budget should be greater than 0",
             greaterThan: "Input a value greater than ",
             lessThan: "Input a value less than ",
             inputError: "Input error",
@@ -748,7 +753,8 @@
             },
             hardwareModal: {
                 quantity: "Quantity",
-                selectTypeFirst: "Select type first"
+                selectTypeFirst: "Select type first",
+                startMonth: "Start month"
             },
             cashierModal: {
                 balanceInsuffisant: "No enough balance, please topup first",
@@ -805,10 +811,16 @@
                 bidder: "Bidder",
                 accept: "Accept",
                 day: "Day",
-                s:"s",
+                s: "s",
             },
             rechargeModal: {
                 coupon: "Coupon",
+            },
+            dataCenterModal: {
+                changeExplanation: "Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually."
+            },
+            userVerifyModal: {
+                verify: "Verify"
             }
         },
 
@@ -1055,7 +1067,8 @@
                 proposals: "Proposals",
                 demander: "Demander",
                 createTime: "Create time",
-                isOpen: "Is open"
+                isOpen: "Is open",
+                proposalCount: "proposalCount"
             },
             discussion: {
                 myThreads: "My Threads",

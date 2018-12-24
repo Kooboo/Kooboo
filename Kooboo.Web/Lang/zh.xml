@@ -423,6 +423,9 @@
   <key id="New rule">新建规则</key>
   <key id="You do not have any rules yet.">您还没有创建任何规则引擎</key>
   <key id="Mine">我的</key>
+  <key id="Account">账户</key>
+  <key id="Verified">已验证</key>
+  <key id="Data center">数据中心</key>
   <key id="Apps">应用</key>
   <key id="Purchased">己购</key>
   <key id="Demand">需求</key>
@@ -464,6 +467,9 @@
   <key id="Usage rate">使用率</key>
   <key id="Count">数量</key>
   <key id="No record">没有记录</key>
+  <key id="Info!">Info!</key>
+  <key id="Info content goes here">Info content goes here</key>
+  <key id="Available">可用的</key>
   <key id="Loading">加载中</key>
   <key id="Supplier">供应商</key>
   <key id="Supplier:">供应商:</key>
@@ -723,6 +729,7 @@
   <key id="This category is related to some products. Would you want to delete?">此类别与某些内容有关，你想删除吗？</key>
   <key id="Changing the default currency will transfer all your balance to new currency. Would you want to continue?">更改默认货币会将所有余额转换成新货币，你想继续吗？</key>
   <key id="Are you sure?">你确定吗</key>
+  <key id="Are you sure your order has been completed?">你确定订单已经完成了吗?</key>
   <key id="File type error, please upload zip file.">文件类型错误，请上传zip 文件</key>
   <key id="Image files uploaded.">图像文件已上传</key>
   <key id="Please input your Voucher code.">请输入您的抵用券号</key>
@@ -734,6 +741,7 @@
   <key id="is(are) empty file.">是空文件</key>
   <key id="has(have) invalid suffix">后缀名无效</key>
   <key id="is(are) invalid">是无效文件</key>
+  <key id="A verification Email has sent to the email you input. Please check in time.">验证邮件已发送至您填写的邮箱地址，请及时查收。</key>
   <key id="Field required">必填字段</key>
   <key id="The value has been taken">值已被使用</key>
   <key id="Value not found">没有找到值</key>
@@ -757,6 +765,8 @@
   <key id="Please input your coupon code">请输入您的抵用券</key>
   <key id="The maximum length is ">最大长度为</key>
   <key id="The minimal length is ">最小长度为</key>
+  <key id="The start time should be earlier than end time">开始时间应该早于结束时间</key>
+  <key id="Budget should be greater than 0">预算应该大于0</key>
   <key id="Input a value greater than ">请输入一个值大于</key>
   <key id="Input a value less than ">请输入一个值小于</key>
   <key id="Input error">输入有误</key>
@@ -1005,6 +1015,7 @@
   <key id="Add condition">添加条件</key>
   <key id="Quantity">数量</key>
   <key id="Select type first">先选择类型</key>
+  <key id="Start month">开始月份</key>
   <key id="No enough balance, please topup first">余额不够， 请先充值</key>
   <key id="Purchase domain">购买域名</key>
   <key id="Please choose a payment method">选择付款方式</key>
@@ -1031,6 +1042,8 @@
   <key id="Proposal">报价</key>
   <key id="Day(s)">天</key>
   <key id="Bidder">报价人</key>
+  <key id="Day">天</key>
+  <key id="Verify">验证</key>
   <key id="Take offline">网站离线</key>
   <key id="Take online">网站上线</key>
   <key id="Add new language">添加新语言</key>
@@ -1111,9 +1124,7 @@
   <key id="No dynamic content">无动态内容</key>
   <key id="We have found ">我们找到了 </key>
   <key id=" template(s)"> 个模板</key>
-  <key id="Account">账户</key>
   <key id="Organization">组织</key>
-  <key id="Data center">数据中心</key>
   <key id="Searched count">被搜索次数</key>
   <key id="Keywords">关键词</key>
   <key id="Document found">找到的文档数</key>
@@ -1136,6 +1147,7 @@
   <key id="Demander">发布人</key>
   <key id="Create time">创建时间</key>
   <key id="Is open">开放的</key>
+  <key id="proposalCount">报价人数</key>
   <key id="Order user">订购商</key>
   <key id="Me">我</key>
   <key id="My Template">我的模板</key>
@@ -1239,7 +1251,6 @@
   <key id="Monthly bandwidth quota">每月流量额度</key>
   <key id="Size of disk">磁盘大小</key>
   <key id="App does not allow source access">App不允许查看源代码</key>
-  <key id="Available">可用的</key>
   <key id="Register">注册</key>
   <key id="Domain does not owned by current user">用户没有域名权限</key>
   <key id="port in use">端口被占用</key>
@@ -1254,12 +1265,14 @@
   <key id="An reset password email has been sent to">重设密码的邮件已发送至：</key>
   <key id="Username or password not provided">需提供用户名或密码</key>
   <key id="user exists">用户已存在</key>
+  <key id="Email address verification">Email address verification</key>
+  <key id="You can use the following link within the next day to verify your email address: \r\n\r\n{{link}}\r\n\r\n If you do not use this link within 24 hours, it will expire. \r\n\r\nRegards,\r\nKooboo Team">You can use the following link within the next day to verify your email address: \r\n\r\n{{link}}\r\n\r\n If you do not use this link within 24 hours, it will expire. \r\n\r\nRegards,\r\nKooboo Team</key>
   <key id="Coupon has not enough credit to pay this order">优惠券额度不足，无法完成支付</key>
   <key id="Demand not found">未找到该需求</key>
   <key id="Open status">开放</key>
   <key id="Winner">取得的</key>
   <key id="Outbid">失败的</key>
-  <key id="Rejected">拒绝</key>
+  <key id="Rejected">被拒绝</key>
   <key id="UnResolved">未解决</key>
   <key id="Resolved">已解决</key>
   <key id="Taken">已采用</key>

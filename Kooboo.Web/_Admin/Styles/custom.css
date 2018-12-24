@@ -348,12 +348,3 @@ blockquote footer,
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-
-.item {
-    color: #999;
-}
-
-.media-heading {
-    margin: 6px 0px;
-    word-break: break-all;
-}

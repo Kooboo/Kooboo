@@ -13,7 +13,11 @@ $(function() {
         this.currencyCode = ko.observable();
 
         this.displayBalance = ko.pureComputed(function() {
-            return self.currencySymbol() + self.balance();
+            if (self.currencySymbol() !== undefined && self.balance() !== undefined) {
+                return self.currencySymbol() + self.balance();
+            } else {
+                return Kooboo.text.common.loading;
+            }
         })
 
         this.getBalance = function() {
@@ -28,7 +32,45 @@ $(function() {
             })
         }
 
+        this.username = ko.observable();
+        this.userEmail = ko.observable();
+        this.isUserVerified = ko.observable(false);
+        this.currentDataCenter = ko.observable();
+        this.availableDataCenters = ko.observableArray();
+        this.getUser = function() {
+            Kooboo.Organization.getDataCenter().then(function(res) {
+                if (res.success) {
+                    self.username(res.model.organizationName);
+                    self.currentDataCenter(res.model.currentDatacenterName);
+                    self.availableDataCenters(res.model.availables.map(function(dc) {
+                        return {
+                            displayName: dc.displayName + ' (' + dc.country + ')',
+                            value: dc.value
+                        }
+                    }));
+                }
+            })
+            Kooboo.User.getUser().then(function(res) {
+                if (res.success) {
+                    self.userEmail(res.model.emailAddress);
+                    self.isUserVerified(res.model.isEmailVerified);
+                }
+            })
+        }
+        this.showDataCenterModal = ko.observable(false);
+        this.onChangeDC = function() {
+            self.showDataCenterModal(true);
+        }
+
+        this.showUserVerifyModal = ko.observable(false);
+        this.onVerifyUser = function() {
+            if (!self.isUserVerified()) {
+                self.showUserVerifyModal(true);
+            }
+        }
+
         this.getBalance();
+        this.getUser();
 
         this.showRechargeModal = ko.observable(false);
         this.onShowRechargeModal = function() {
@@ -95,6 +137,9 @@ $(function() {
             waterfall('#waterfall')
         }
 
+        Kooboo.EventBus.subscribe('kb/market/datacenter/updated', function(data) {
+            self.currentDataCenter(data.loc);
+        })
     }
 
     var vm = new viewModel();
