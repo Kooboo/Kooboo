@@ -14,12 +14,9 @@ $(function() {
             }, {
                 displayName: Kooboo.text.site.profile.Organization,
                 value: "Organization"
-            },  {
+            }, {
                 displayName: Kooboo.text.site.profile.Users,
                 value: "Users"
-            }, {
-                displayName: Kooboo.text.site.profile.DataCenter,
-                value: "DataCenter"
             }],
             noneAdminTabs = [{
                 displayName: Kooboo.text.site.profile.Account,
@@ -88,7 +85,7 @@ $(function() {
                             self.curType(type);
                         }
                         break;
-         
+
                     case "Users":
                         if (!self.isUserInit()) {
                             Kooboo.Organization.getOrg().then(function(res) {
@@ -115,38 +112,7 @@ $(function() {
                             self.curType(type);
                         }
                         break;
-                    case 'DataCenter':
-                        Kooboo.Organization.getDataCenter().then(function(res) {
-                            if (res.success) {
-                                self.dataCenterOrganizationName(res.model.organizationName);
-                                self.dataCenterCurrent(res.model.currentDataCenter);
-                                self.avaliableDataCenter(Kooboo.objToArr(res.model.availableDataCenters, 'value', 'name'));
-                            }
-                        })
-                        break;
                 }
-            }
-        }
-
-        this.dataCenterOrganizationName = ko.observable();
-        this.dataCenterCurrent = ko.observable();
-        this.avaliableDataCenter = ko.observableArray();
-        this.showUpdateDataCenterBtn = ko.observable(false);
-        this.newDataCenter = ko.observable();
-        this.newDataCenter.subscribe(function(changed) {
-            self.showUpdateDataCenterBtn(!!changed);
-        })
-
-        this.updateDataCenter = function() {
-            if (confirm(Kooboo.text.confirm.changeDataCenter)) {
-                Kooboo.Organization.updateDataCenter({
-                    datacenter: self.newDataCenter()
-                }).then(function(res) {
-                    if (res.success) {
-                        window.info.done(Kooboo.text.info.update.success);
-                        window.location.href = res.model.redirectUrl || Kooboo.Route.User.LoginPage;
-                    }
-                })
             }
         }
 

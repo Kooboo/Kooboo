@@ -58,6 +58,8 @@ namespace Kooboo.Data.Models
         }
         
         public string EmailAddress {get;set; }
+
+        public bool IsEmailVerified { get; set; }
         
         public string Password { get; set; }
 
@@ -108,15 +110,17 @@ namespace Kooboo.Data.Models
         }
 
         public string RegisterIp { get; set; }
-
-        
+         
         public string  TempRedirectUrl { get; set; }
+
+        public DateTime RegistrationDate { get; set; } = DateTime.Now; 
 
         public override int GetHashCode()
         {
             string unique = this.CurrentHostDomain + this.CurrentOrgId.ToString() + this.CurrentOrgName;
             unique += this.EmailAddress + this.FirstName + this.LastName + this.Language;
-            unique += this.Password + this.PasswordHash.ToString(); 
+            unique += this.Password + this.PasswordHash.ToString();
+            unique += this.IsEmailVerified.ToString(); 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);  
         }
     }

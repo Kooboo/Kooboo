@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Kooboo.Data.Interface;
 using Kooboo.IndexedDB;
 using Kooboo.IndexedDB.Query;

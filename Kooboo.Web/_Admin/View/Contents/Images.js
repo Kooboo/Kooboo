@@ -312,6 +312,7 @@ $(function() {
                 Kooboo.Upload.Images(data).then(function(res) {
 
                     if (res.success) {
+                        self.currentPath('');
                         self.onChoosingFolder(folders[0].fullPath);
                     }
                 })

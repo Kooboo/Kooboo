@@ -30,6 +30,16 @@
     .panel-body {
         padding: 0;
     }
+
+    .color-gray {
+        color: #999;
+    
+    }
+
+    .media-heading {
+        margin: 6px 0px;
+        word-break: break-all;
+    }
     
     .list-item {
         padding: 8px;
@@ -79,11 +89,11 @@
                         <h3 class="discussion-heading" data-bind="text: title, attr: { title: title }"></h3>
                         <div class="clearfix margin-bottom-10">
                             <div class="pull-left">
-                                <span class="item item-left" data-bind="text: userName"></span>
-                                <span class="item item-left" data-bind="text: date"></span>
+                                <span class="item-left color-gray" data-bind="text: userName"></span>
+                                <span class="item-left color-gray" data-bind="text: date"></span>
                             </div>
                             <div class="pull-right">
-                                <span class="item item-right"><i class="fa fa-eye"></i>&nbsp;
+                                <span class="item-right color-gray"><i class="fa fa-eye"></i>&nbsp;
                                     <!-- ko text: viewCount -->
                                     <!-- /ko -->
                                 </span>
@@ -114,7 +124,7 @@
                             <div class="media-body">
                                 <h5 class="media-heading" style="word-break: break-all;" data-bind="html: comment.content"></h5>
                                 <p class="clearfix">
-                                    <span class="pull-left item">
+                                    <span class="pull-left color-gray">
                                         <span data-bind="text: userName"></span>
                                         <span>commented at</span>
                                         <span data-bind="text: date"></span>
@@ -137,7 +147,7 @@
                                             <div class="media-body">
                                                 <h5 class="media-heading" data-bind="html: sub.content"></h5>
                                                 <p class="clearfix">
-                                                    <span class="pull-left item">
+                                                    <span class="pull-left color-gray">
                                                         <span data-bind="text: sub.userName"></span>
                                                         <span>replied at</span>
                                                         <span data-bind="text: sub.date"></span>

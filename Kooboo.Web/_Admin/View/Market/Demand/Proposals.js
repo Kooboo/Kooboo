@@ -101,7 +101,7 @@ $(function() {
         this.title = ko.observable(data.demandTitle || '-');
         this.description=ko.observable(data.description || '-');
         this.budget = ko.observable(data.symbol + data.budget);
-        this.duration = ko.observable(data.duration + ' '+Kooboo.text.component.proposalModal.days)
+        this.duration = ko.observable(data.duration + ' '+Kooboo.text.component.proposalModal.day+ (data.duration > 1 ? Kooboo.text.component.proposalModal.s : ''))
         this.createTime = ko.observable(date.toDefaultLangString());
         this.currency = ko.observable(data.currency);
 

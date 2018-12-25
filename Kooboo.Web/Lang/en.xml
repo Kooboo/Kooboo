@@ -423,6 +423,9 @@
   <key id="New rule">New rule</key>
   <key id="You do not have any rules yet.">You do not have any rules yet.</key>
   <key id="Mine">Mine</key>
+  <key id="Account">Account</key>
+  <key id="Verified">Verified</key>
+  <key id="Data center">Data center</key>
   <key id="Apps">Apps</key>
   <key id="Purchased">Purchased</key>
   <key id="Demand">Demand</key>
@@ -464,6 +467,9 @@
   <key id="Usage rate">Usage rate</key>
   <key id="Count">Count</key>
   <key id="No record">No record</key>
+  <key id="Info!">Info!</key>
+  <key id="Info content goes here">Info content goes here</key>
+  <key id="Available">Available</key>
   <key id="Loading">Loading</key>
   <key id="Supplier">Supplier</key>
   <key id="Supplier:">Supplier:</key>
@@ -723,6 +729,7 @@
   <key id="This category is related to some products. Would you want to delete?">This category is related to some products. Would you want to delete?</key>
   <key id="Changing the default currency will transfer all your balance to new currency. Would you want to continue?">Changing the default currency will transfer all your balance to new currency. Would you want to continue?</key>
   <key id="Are you sure?">Are you sure?</key>
+  <key id="Are you sure your order has been completed?">Are you sure your order has been completed?</key>
   <key id="File type error, please upload zip file.">File type error, please upload zip file.</key>
   <key id="Image files uploaded.">Image files uploaded.</key>
   <key id="Please input your Voucher code.">Please input your Voucher code.</key>
@@ -734,6 +741,7 @@
   <key id="is(are) empty file.">is(are) empty file.</key>
   <key id="has(have) invalid suffix">has(have) invalid suffix</key>
   <key id="is(are) invalid">is(are) invalid</key>
+  <key id="A verification Email has sent to the email you input. Please check in time.">A verification Email has sent to the email you input. Please check in time.</key>
   <key id="Field required">Field required</key>
   <key id="The value has been taken">The value has been taken</key>
   <key id="Value not found">Value not found</key>
@@ -757,6 +765,8 @@
   <key id="Please input your coupon code">Please input your coupon code</key>
   <key id="The maximum length is ">The maximum length is </key>
   <key id="The minimal length is ">The minimal length is </key>
+  <key id="The start time should be earlier than end time">The start time should be earlier than end time</key>
+  <key id="Budget should be greater than 0">Budget should be greater than 0</key>
   <key id="Input a value greater than ">Input a value greater than </key>
   <key id="Input a value less than ">Input a value less than </key>
   <key id="Input error">Input error</key>
@@ -1005,6 +1015,7 @@
   <key id="Add condition">Add condition</key>
   <key id="Quantity">Quantity</key>
   <key id="Select type first">Select type first</key>
+  <key id="Start month">Start month</key>
   <key id="No enough balance, please topup first">No enough balance, please topup first</key>
   <key id="Purchase domain">Purchase domain</key>
   <key id="Please choose a payment method">Please choose a payment method</key>
@@ -1032,6 +1043,7 @@
   <key id="Day(s)">Day(s)</key>
   <key id="Bidder">Bidder</key>
   <key id="Day">Day</key>
+  <key id="Verify">Verify</key>
   <key id="Take offline">Take offline</key>
   <key id="Take online">Take online</key>
   <key id="Add new language">Add new language</key>
@@ -1112,9 +1124,7 @@
   <key id="No dynamic content">No dynamic content</key>
   <key id="We have found ">We have found </key>
   <key id=" template(s)"> template(s)</key>
-  <key id="Account">Account</key>
   <key id="Organization">Organization</key>
-  <key id="Data center">Data center</key>
   <key id="Searched count">Searched count</key>
   <key id="Keywords">Keywords</key>
   <key id="Document found">Document found</key>
@@ -1137,6 +1147,7 @@
   <key id="Demander">Demander</key>
   <key id="Create time">Create time</key>
   <key id="Is open">Is open</key>
+  <key id="proposalCount">proposalCount</key>
   <key id="Order user">Order user</key>
   <key id="Me">Me</key>
   <key id="My Template">My Template</key>
@@ -1240,7 +1251,6 @@
   <key id="Monthly bandwidth quota">Monthly bandwidth quota</key>
   <key id="Size of disk">Size of disk</key>
   <key id="App does not allow source access">App does not allow source access</key>
-  <key id="Available">Available</key>
   <key id="Register">Register</key>
   <key id="Domain does not owned by current user">Domain does not owned by current user</key>
   <key id="port in use">port in use</key>
@@ -1255,6 +1265,8 @@
   <key id="An reset password email has been sent to">An reset password email has been sent to</key>
   <key id="Username or password not provided">Username or password not provided</key>
   <key id="user exists">user exists</key>
+  <key id="Email address verification">Email address verification</key>
+  <key id="You can use the following link within the next day to verify your email address: \r\n\r\n{{link}}\r\n\r\n If you do not use this link within 24 hours, it will expire. \r\n\r\nRegards,\r\nKooboo Team">You can use the following link within the next day to verify your email address: \r\n\r\n{{link}}\r\n\r\n If you do not use this link within 24 hours, it will expire. \r\n\r\nRegards,\r\nKooboo Team</key>
   <key id="Coupon has not enough credit to pay this order">Coupon has not enough credit to pay this order</key>
   <key id="Demand not found">Demand not found</key>
   <key id="Open status">Open status</key>

@@ -34,6 +34,12 @@
                 self.id(data.id);
                 self.title(data.name);
                 self.symbol(data.symbol);
+                self.availableMonths(data.startMonth.map(function(mon) {
+                    return {
+                        displayName: mon,
+                        value: mon
+                    }
+                }))
                 self.variants(data.variants.map(function(va) {
                     return {
                         id: va.id,
@@ -55,6 +61,8 @@
                 required: '',
                 min: 0
             })
+            this.availableMonths = ko.observableArray();
+            this.startMonth = ko.observable();
             this.quantity.subscribe(function(quantity) {
                 if (self.currentVar()) {
                     self.totalPrice(quantity * self.currentVar().price);
@@ -96,12 +104,12 @@
                 if (this.isAbleToBuy()) {
                     var obj = {
                         id: self.id(),
+                        startMonth: self.startMonth(),
                         variant: {
                             id: self.currentVar().id,
                             quantity: self.quantity()
                         }
                     }
-
                     Kooboo.Order.infra(obj).then(function(res) {
                         if (res.success) {
                             Kooboo.EventBus.publish("kb/market/component/cashier/show", res.model);

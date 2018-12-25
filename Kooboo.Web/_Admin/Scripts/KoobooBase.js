@@ -274,6 +274,10 @@
         this.isUniqueEmail = function(paras) {
             return this._getUrl("isUniqueEmail", paras);
         }
+
+        this.verifyEmail = function(para) {
+            return this.executePost('VerifyEmail', para);
+        }
     }
     extend(User, BaseModel);
 

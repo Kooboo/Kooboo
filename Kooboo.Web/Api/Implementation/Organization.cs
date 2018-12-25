@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using Kooboo.Api;
 using Kooboo.Data;
-using Kooboo.Data.Models;
-using Kooboo.Data.ViewModel;
-using Kooboo.Api.ApiResponse;
+using Kooboo.Data.Models; 
 using System;
 using Kooboo.Web.ViewModel;
 
@@ -108,83 +106,7 @@ namespace Kooboo.Web.Api
             var organizationId = call.GetGuidValue("organizationId");
             return GlobalDb.Users.IsAdmin(organizationId, call.Context.User.Id); 
         }
-
-        public SimpleUser UpdateDataCenter(string datacenter, ApiCall call)
-        {
-            // only allow to change your own admin organization. 
-            var org = Kooboo.Data.GlobalDb.Organization.GetByUser(call.Context.User.Id);
-             
-            if (org !=null)
-            {
-                GlobalDb.Organization.ChangeDataCenter(org.Id, datacenter);
-            }             
-
-            call.Context.Response.DeleteCookie(DataConstants.UserApiSessionKey);
-
-            return new SimpleUser(call.Context.User); 
-
-            //if (GlobalDb.Users.IsAdmin(call.Context.User.CurrentOrgId, call.Context.User.Id))
-            //{
-            //    GlobalDb.Organization.ChangeDataCenter(call.Context.User.CurrentOrgId, datacenter); 
-            //}
-            // else
-            //{
-            //    throw new System.Exception(Data.Language.Hardcoded.GetValue("Require administrator rights to change data center", call.Context)); 
-            //}     
-        }
-
-        public DataCenterInfo GetDataCenter(ApiCall call)
-        {
-            var org = Kooboo.Data.GlobalDb.Organization.GetByUser(call.Context.User.Id); 
-
-            if (org == null)
-            {
-                return null; 
-            }
-             
-            var DataCenterUrl = Kooboo.Data.Helper.AccountUrlHelper.Cluster("GetOrgDataCenter");
-
-            DataCenterUrl = DataCenterUrl + "?organizationid=" + org.Id.ToString();
-
-            var list = Lib.Helper.HttpHelper.Get<List<DataCenter>>(DataCenterUrl); 
-             
-            DataCenterInfo info = new DataCenterInfo();
-            info.OrganizationName = org.Name; 
-
-            if (list !=null && list.Count>0)
-            {
-                var defaultcenter = list.Find(o => o.IsRoot); 
-                if (defaultcenter == null)
-                {
-                    throw new System.Exception(Kooboo.Data.Language.Hardcoded.GetValue("Unexpected error", call.Context)); 
-                }
-
-                info.CurrentDatacenterName = defaultcenter.Name;
-
-                info.CurrentDataCenter = defaultcenter.Name;
-
-                foreach (var item in list)
-                {
-                    if (item.Name != defaultcenter.Name)
-                    {
-                        info.AvailableDataCenters.Add(item.Name, item.Name);
-                    } 
-                } 
-            } 
-            return info; 
-        }
-
-        public class DataCenterInfo
-        {
-            public string OrganizationName { get; set; }
-
-            public string CurrentDatacenterName { get; set; }
-
-            public string CurrentDataCenter { get; set; }
-
-            public Dictionary<string, string> AvailableDataCenters { get; set; } = new Dictionary<string, string>(); 
          
-        }
-         
+          
     }
 }

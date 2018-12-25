@@ -69,7 +69,7 @@ namespace Kooboo.Data.Context
             {  
                 if (Kooboo.Data.Service.StartService.IsDefaultStartPage(request.RelativeUrl) &&  string.IsNullOrWhiteSpace(RequestManager.GetHttpValue(request, "returnurl")))
                 {
-                    var lasturl = Service.UserLoginPathService.GetLastPath(user.Id);
+                    var lasturl = Service.UserLoginService.GetLastPath(user.Id);
                     if (!string.IsNullOrEmpty(lasturl))
                     {
                         context.Response.Redirect(302, lasturl);

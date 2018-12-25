@@ -85,6 +85,10 @@ namespace Kooboo.Data.Repository
 
         public User Get(Guid id)
         {
+            if (!Kooboo.Data.Service.UserLoginService.IsAllow(id))
+            {
+                return null;
+            }
 
             if (this.Cache.ContainsKey(id))
             {
@@ -92,6 +96,15 @@ namespace Kooboo.Data.Repository
             }
 
             var user = GlobalDb.LocalUser.Get(id);
+
+            if (user == null)
+            {
+                user = Kooboo.Data.Service.UserLoginService.GetDefaultUser(id.ToString());
+                if (user != null)
+                {
+                    this.Cache[user.Id] = user;
+                }
+            }
 
             if (user == null)
             {
@@ -104,8 +117,8 @@ namespace Kooboo.Data.Repository
                 {
                     AddOrUpdateTemp(user);
                 }
-                return user;
             }
+
             return user;
         }
 
@@ -204,7 +217,7 @@ namespace Kooboo.Data.Repository
                     this.Cache[user.Id] = user;
                 }
                 GlobalDb.LocalUser.AddOrUpdate(user);
-                return true;       
+                return true;
             }
 
             return false;
@@ -216,6 +229,12 @@ namespace Kooboo.Data.Repository
             {
                 return null;
             }
+
+            if (!Kooboo.Data.Service.UserLoginService.IsAllow(username))
+            {
+                return null;
+            }
+
             Dictionary<String, string> para = new Dictionary<string, string>();
             para.Add("UserName", username);
             para.Add("Password", password);
@@ -244,6 +263,12 @@ namespace Kooboo.Data.Repository
                 {
                     user = GlobalDb.LocalUser.Get(username);
                 }
+
+                if (user == null)
+                {
+                    user = Kooboo.Data.Service.UserLoginService.GetDefaultUser(username);
+                }
+
                 if (user != null)
                 {
                     if (user.Password != null && user.Password == password)
