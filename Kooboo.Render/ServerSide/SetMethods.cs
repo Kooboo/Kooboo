@@ -40,7 +40,7 @@ namespace Kooboo.Render.ServerSide
         {  
 
             var root = sourceProvider.GetRoot(context);
-#if NETSTANDARD2_0
+#if NETSTANDARD
             var folder = Lib.Helper.PathHelper.CombinePath(root, relativePath);
 #else
             var folder = Lib.Helper.IOHelper.CombinePath(root, relativePath);

@@ -4,7 +4,7 @@ using System.Text;
 using System.IO;
 using Kooboo.Lib.Utilities;
 using System.Drawing;
-#if NETSTANDARD2_0
+#if NETSTANDARD
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Transforms;
@@ -22,7 +22,7 @@ namespace Kooboo.Lib.Helper
             try
             {
                 MemoryStream stream = new MemoryStream(imagebytes);
-#if NETSTANDARD2_0
+#if NETSTANDARD
                 var image = Image.Identify(stream);
                 measure.Height = image.Height;
                 measure.Width = image.Width;
@@ -47,7 +47,7 @@ namespace Kooboo.Lib.Helper
             MemoryStream stream = new MemoryStream(contentBytes);
 
             
-#if NETSTANDARD2_0
+#if NETSTANDARD
             Image<SixLabors.ImageSharp.PixelFormats.Rgba32> systhumbnail = null;
             Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = Image.Load(stream);
             if (image.Width < width && image.Height < height)
@@ -84,7 +84,7 @@ namespace Kooboo.Lib.Helper
             byte[] imageBytes = Convert.FromBase64String(base64Str);
 
             MemoryStream memoryStream = new MemoryStream(imageBytes, 0, imageBytes.Length);
-#if NETSTANDARD2_0
+#if NETSTANDARD
             var image = Image.Load(memoryStream);
 #else
             Image image = Image.FromStream(memoryStream, false);
@@ -95,7 +95,7 @@ namespace Kooboo.Lib.Helper
             using (MemoryStream ms = new MemoryStream())
             {
                 size = GetEqualProportionSize(image.Width,image.Height, size);
-#if NETSTANDARD2_0
+#if NETSTANDARD
                 image.Mutate(x => x.Resize(size.Width, size.Height));
                 image.Save(ms, ImageFormats.Png);
 #else

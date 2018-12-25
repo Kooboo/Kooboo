@@ -67,7 +67,7 @@ namespace Kooboo.Lib.Security
         {
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
             byte[] bytes;
-#if NETSTANDARD2_0
+#if NETSTANDARD
             FromXmlString(rsa, publickey);
 #else
             rsa.FromXmlString(publickey); 
@@ -86,7 +86,7 @@ namespace Kooboo.Lib.Security
         {
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(); 
             byte[] bytes;
-#if NETSTANDARD2_0
+#if NETSTANDARD
             FromXmlString(rsa,privatekey);
 #else
             rsa.FromXmlString(privatekey);
@@ -115,7 +115,7 @@ namespace Kooboo.Lib.Security
                 //save private key
                 fs = new FileStream(privateKeyPath, FileMode.Create, FileAccess.Write);
                 sw = new StreamWriter(fs);
-#if NETSTANDARD2_0
+#if NETSTANDARD
                 sw.Write(ToXmlString(rsa, true));
 #else
                 sw.Write(rsa.ToXmlString(true));
@@ -133,7 +133,7 @@ namespace Kooboo.Lib.Security
                 //save public key
                 fs = new FileStream(publicKeyPath, FileMode.Create, FileAccess.Write);
                 sw = new StreamWriter(fs);
-#if NETSTANDARD2_0
+#if NETSTANDARD
                 sw.Write(ToXmlString(rsa,false));
 #else
                 sw.Write(rsa.ToXmlString(false));
@@ -152,7 +152,7 @@ namespace Kooboo.Lib.Security
         {
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(size);
             RsaKeys keys = new RsaKeys();
-#if NETSTANDARD2_0
+#if NETSTANDARD
             keys.PublicKey = ToXmlString(rsa,false);
             keys.PrivateKey = ToXmlString(rsa, true);
 #else
@@ -162,7 +162,7 @@ namespace Kooboo.Lib.Security
             return keys;
         }
 
-#if NETSTANDARD2_0
+#if NETSTANDARD
         private static void FromXmlString(RSACryptoServiceProvider rsa, string xmlString)
         {
             RSAParameters parameters = new RSAParameters();

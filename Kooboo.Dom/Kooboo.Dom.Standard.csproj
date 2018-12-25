@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.Standard.csproj" />
   </ItemGroup>
 
   <ItemGroup>

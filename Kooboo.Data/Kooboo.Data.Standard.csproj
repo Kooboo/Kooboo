@@ -28,10 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.HttpServer\src\Kooboo.HttpServer\Kooboo.HttpServer.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.HttpServer\src\Kooboo.HttpServer\Kooboo.HttpServer.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.Standard.csproj" />
   </ItemGroup>
 
 </Project>

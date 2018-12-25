@@ -871,6 +871,8 @@
         "type": "project",
         "framework": ".NETStandard,Version=v2.0",
         "dependencies": {
+          "GeoCoordinate.NetStandard1": "1.0.1",
+          "MimeMapping": "1.0.1.12",
           "Newtonsoft.Json": "11.0.2",
           "System.Configuration.ConfigurationManager": "4.4.1",
           "System.Text.Encoding.CodePages": "4.5.0",
@@ -959,6 +961,7 @@
       "type": "package",
       "path": "geocoordinate.netstandard1/1.0.1",
       "files": [
+        ".nupkg.metadata",
         "geocoordinate.netstandard1.1.0.1.nupkg.sha512",
         "geocoordinate.netstandard1.nuspec",
         "lib/netstandard1.1/GeoCoordinate.NetStandard1.dll"
@@ -1068,6 +1071,7 @@
       "type": "package",
       "path": "microsoft.netcore.platforms/1.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/_._",
@@ -1081,6 +1085,7 @@
       "type": "package",
       "path": "microsoft.netcore.targets/1.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/_._",
@@ -1094,6 +1099,7 @@
       "type": "package",
       "path": "mimemapping/1.0.1.12",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard1.1/MimeMapping.dll",
         "lib/netstandard1.1/MimeMapping.xml",
         "mimemapping.1.0.1.12.nupkg.sha512",
@@ -1105,6 +1111,7 @@
       "type": "package",
       "path": "nativelibraryloader/1.0.10",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard2.0/NativeLibraryLoader.dll",
         "lib/netstandard2.0/NativeLibraryLoader.xml",
         "nativelibraryloader.1.0.10.nupkg.sha512",
@@ -1245,6 +1252,7 @@
       "type": "package",
       "path": "newtonsoft.json/11.0.2",
       "files": [
+        ".nupkg.metadata",
         "LICENSE.md",
         "lib/net20/Newtonsoft.Json.dll",
         "lib/net20/Newtonsoft.Json.xml",
@@ -1273,6 +1281,7 @@
       "type": "package",
       "path": "runtime.native.system/4.0.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/_._",
@@ -1285,6 +1294,7 @@
       "type": "package",
       "path": "sharpdx/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "lib/net40/SharpDX.dll",
         "lib/net40/SharpDX.xml",
         "lib/net45/SharpDX.dll",
@@ -1305,6 +1315,7 @@
       "type": "package",
       "path": "sharpdx.d3dcompiler/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "lib/net40/SharpDX.D3DCompiler.dll",
         "lib/net40/SharpDX.D3DCompiler.xml",
         "lib/net45/SharpDX.D3DCompiler.dll",
@@ -1325,6 +1336,7 @@
       "type": "package",
       "path": "sharpdx.direct3d11/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "lib/net40/SharpDX.Direct3D11.dll",
         "lib/net40/SharpDX.Direct3D11.xml",
         "lib/net45/SharpDX.Direct3D11.dll",
@@ -1345,6 +1357,7 @@
       "type": "package",
       "path": "sharpdx.dxgi/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "lib/net40/SharpDX.DXGI.dll",
         "lib/net40/SharpDX.DXGI.xml",
         "lib/net45/SharpDX.DXGI.dll",
@@ -1365,6 +1378,7 @@
       "type": "package",
       "path": "sixlabors.core/1.0.0-beta0005",
       "files": [
+        ".nupkg.metadata",
         "lib/netcoreapp2.0/SixLabors.Core.dll",
         "lib/netcoreapp2.0/SixLabors.Core.xml",
         "lib/netstandard1.1/SixLabors.Core.dll",
@@ -1378,6 +1392,7 @@
       "type": "package",
       "path": "sixlabors.imagesharp/1.0.0-beta0003",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard1.1/SixLabors.ImageSharp.dll",
         "lib/netstandard1.1/SixLabors.ImageSharp.xml",
         "lib/netstandard1.3/SixLabors.ImageSharp.dll",
@@ -1393,6 +1408,7 @@
       "type": "package",
       "path": "system.appcontext/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1446,6 +1462,7 @@
       "type": "package",
       "path": "system.buffers/4.5.0-preview1-26216-02",
       "files": [
+        ".nupkg.metadata",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/netstandard1.1/System.Buffers.dll",
@@ -1475,6 +1492,7 @@
       "type": "package",
       "path": "system.collections/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1651,6 +1669,7 @@
       "type": "package",
       "path": "system.diagnostics.debug/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1717,6 +1736,7 @@
       "type": "package",
       "path": "system.dynamic.runtime/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1786,6 +1806,7 @@
       "type": "package",
       "path": "system.globalization/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1852,6 +1873,7 @@
       "type": "package",
       "path": "system.io/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1931,6 +1953,7 @@
       "type": "package",
       "path": "system.io.filesystem/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1967,6 +1990,7 @@
       "type": "package",
       "path": "system.io.filesystem.primitives/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2004,6 +2028,7 @@
       "type": "package",
       "path": "system.linq/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2074,6 +2099,7 @@
       "type": "package",
       "path": "system.linq.expressions/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2156,6 +2182,7 @@
       "type": "package",
       "path": "system.memory/4.5.0-preview1-26216-02",
       "files": [
+        ".nupkg.metadata",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/netstandard1.1/System.Memory.dll",
@@ -2187,6 +2214,7 @@
       "type": "package",
       "path": "system.numerics.vectors/4.5.0-preview1-26216-02",
       "files": [
+        ".nupkg.metadata",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/MonoAndroid10/_._",
@@ -2226,6 +2254,7 @@
       "type": "package",
       "path": "system.objectmodel/4.0.12",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2294,6 +2323,7 @@
       "type": "package",
       "path": "system.reflection/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2373,6 +2403,7 @@
       "type": "package",
       "path": "system.reflection.emit/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2403,6 +2434,7 @@
       "type": "package",
       "path": "system.reflection.emit.ilgeneration/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/net45/_._",
@@ -2434,6 +2466,7 @@
       "type": "package",
       "path": "system.reflection.emit.lightweight/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/net45/_._",
@@ -2465,6 +2498,7 @@
       "type": "package",
       "path": "system.reflection.extensions/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2520,6 +2554,7 @@
       "type": "package",
       "path": "system.reflection.primitives/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2575,6 +2610,7 @@
       "type": "package",
       "path": "system.reflection.typeextensions/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2627,6 +2663,7 @@
       "type": "package",
       "path": "system.resources.resourcemanager/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2682,6 +2719,7 @@
       "type": "package",
       "path": "system.runtime/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2797,6 +2835,7 @@
       "type": "package",
       "path": "system.runtime.extensions/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2876,6 +2915,7 @@
       "type": "package",
       "path": "system.runtime.handles/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2912,6 +2952,7 @@
       "type": "package",
       "path": "system.runtime.interopservices/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3000,6 +3041,7 @@
       "type": "package",
       "path": "system.runtime.interopservices.runtimeinformation/4.0.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3076,6 +3118,7 @@
       "type": "package",
       "path": "system.security.cryptography.pkcs/4.5.0-preview1-26216-02",
       "files": [
+        ".nupkg.metadata",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/net46/System.Security.Cryptography.Pkcs.dll",
@@ -3148,6 +3191,7 @@
       "type": "package",
       "path": "system.text.encoding/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3262,6 +3306,7 @@
       "type": "package",
       "path": "system.threading/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3331,6 +3376,7 @@
       "type": "package",
       "path": "system.threading.tasks/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3397,6 +3443,7 @@
       "type": "package",
       "path": "veldrid/4.3.3",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard2.0/Veldrid.dll",
         "lib/netstandard2.0/Veldrid.xml",
         "veldrid.4.3.3.nupkg.sha512",
@@ -3408,6 +3455,7 @@
       "type": "package",
       "path": "veldrid.imagesharp/4.3.3",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard2.0/Veldrid.ImageSharp.dll",
         "veldrid.imagesharp.4.3.3.nupkg.sha512",
         "veldrid.imagesharp.nuspec"
@@ -3418,6 +3466,7 @@
       "type": "package",
       "path": "veldrid.metalbindings/4.3.3",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard2.0/Veldrid.MetalBindings.dll",
         "veldrid.metalbindings.4.3.3.nupkg.sha512",
         "veldrid.metalbindings.nuspec"
@@ -3428,6 +3477,7 @@
       "type": "package",
       "path": "veldrid.openglbindings/4.3.3",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard2.0/Veldrid.OpenGLBindings.dll",
         "veldrid.openglbindings.4.3.3.nupkg.sha512",
         "veldrid.openglbindings.nuspec"
@@ -3438,6 +3488,7 @@
       "type": "package",
       "path": "vk/1.0.19",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard1.4/vk.dll",
         "vk.1.0.19.nupkg.sha512",
         "vk.nuspec"
@@ -3445,53 +3496,53 @@
     },
     "Kooboo.Api/1.0.0": {
       "type": "project",
-      "path": "../Kooboo.Api/Kooboo.Api.CrossPlatform.csproj",
-      "msbuildProject": "../Kooboo.Api/Kooboo.Api.CrossPlatform.csproj"
+      "path": "../Kooboo.Api/Kooboo.Api.Standard.csproj",
+      "msbuildProject": "../Kooboo.Api/Kooboo.Api.Standard.csproj"
     },
     "Kooboo.Data/1.0.0": {
       "type": "project",
-      "path": "../Kooboo.Data/Kooboo.Data.CrossPlatform.csproj",
-      "msbuildProject": "../Kooboo.Data/Kooboo.Data.CrossPlatform.csproj"
+      "path": "../Kooboo.Data/Kooboo.Data.Standard.csproj",
+      "msbuildProject": "../Kooboo.Data/Kooboo.Data.Standard.csproj"
     },
     "Kooboo.Dom/1.0.0": {
       "type": "project",
-      "path": "../Kooboo.Dom/Kooboo.Dom.CrossPlatform.csproj",
-      "msbuildProject": "../Kooboo.Dom/Kooboo.Dom.CrossPlatform.csproj"
+      "path": "../Kooboo.Dom/Kooboo.Dom.Standard.csproj",
+      "msbuildProject": "../Kooboo.Dom/Kooboo.Dom.Standard.csproj"
     },
     "Kooboo.HttpServer/1.0.0": {
       "type": "project",
-      "path": "../Kooboo.HttpServer/src/Kooboo.HttpServer/Kooboo.HttpServer.CrossPlatform.csproj",
-      "msbuildProject": "../Kooboo.HttpServer/src/Kooboo.HttpServer/Kooboo.HttpServer.CrossPlatform.csproj"
+      "path": "../Kooboo.HttpServer/src/Kooboo.HttpServer/Kooboo.HttpServer.Standard.csproj",
+      "msbuildProject": "../Kooboo.HttpServer/src/Kooboo.HttpServer/Kooboo.HttpServer.Standard.csproj"
     },
     "Kooboo.IndexedDB/1.0.0": {
       "type": "project",
-      "path": "../Kooboo.IndexedDB/Kooboo.IndexedDB.CrossPlatform.csproj",
-      "msbuildProject": "../Kooboo.IndexedDB/Kooboo.IndexedDB.CrossPlatform.csproj"
+      "path": "../Kooboo.IndexedDB/Kooboo.IndexedDB.Standard.csproj",
+      "msbuildProject": "../Kooboo.IndexedDB/Kooboo.IndexedDB.Standard.csproj"
     },
     "Kooboo.Lib/1.0.0": {
       "type": "project",
-      "path": "../Kooboo.Lib/Kooboo.Lib.CrossPlatform.csproj",
-      "msbuildProject": "../Kooboo.Lib/Kooboo.Lib.CrossPlatform.csproj"
+      "path": "../Kooboo.Lib/Kooboo.Lib.Standard.csproj",
+      "msbuildProject": "../Kooboo.Lib/Kooboo.Lib.Standard.csproj"
     },
     "Kooboo.Mail/1.0.0": {
       "type": "project",
-      "path": "../Kooboo.Mail/Kooboo.Mail.CrossPlatform.csproj",
-      "msbuildProject": "../Kooboo.Mail/Kooboo.Mail.CrossPlatform.csproj"
+      "path": "../Kooboo.Mail/Kooboo.Mail.Standard.csproj",
+      "msbuildProject": "../Kooboo.Mail/Kooboo.Mail.Standard.csproj"
     },
     "Kooboo.Render/1.0.0": {
       "type": "project",
-      "path": "../Kooboo.Render/Kooboo.Render.CrossPlatform.csproj",
-      "msbuildProject": "../Kooboo.Render/Kooboo.Render.CrossPlatform.csproj"
+      "path": "../Kooboo.Render/Kooboo.Render.Standard.csproj",
+      "msbuildProject": "../Kooboo.Render/Kooboo.Render.Standard.csproj"
     },
     "Kooboo.Search/1.0.0": {
       "type": "project",
-      "path": "../Kooboo.Search/Kooboo.Search.CrossPlatform.csproj",
-      "msbuildProject": "../Kooboo.Search/Kooboo.Search.CrossPlatform.csproj"
+      "path": "../Kooboo.Search/Kooboo.Search.Standard.csproj",
+      "msbuildProject": "../Kooboo.Search/Kooboo.Search.Standard.csproj"
     },
     "Kooboo.Sites/1.0.0": {
       "type": "project",
-      "path": "../Kooboo.Sites/Kooboo.Sites.CrossPlatform.csproj",
-      "msbuildProject": "../Kooboo.Sites/Kooboo.Sites.CrossPlatform.csproj"
+      "path": "../Kooboo.Sites/Kooboo.Sites.Standard.csproj",
+      "msbuildProject": "../Kooboo.Sites/Kooboo.Sites.Standard.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -3518,9 +3569,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Web\\Kooboo.Web.CrossPlatform.csproj",
+      "projectUniqueName": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Web\\Kooboo.Web.Standard.csproj",
       "projectName": "Kooboo.Web",
-      "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Web\\Kooboo.Web.CrossPlatform.csproj",
+      "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Web\\Kooboo.Web.Standard.csproj",
       "packagesPath": "C:\\Users\\cz\\.nuget\\packages\\",
       "outputPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Web\\obj\\",
       "projectStyle": "PackageReference",
@@ -3544,35 +3595,35 @@
       "frameworks": {
         "netstandard2.0": {
           "projectReferences": {
-            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Api\\Kooboo.Api.CrossPlatform.csproj": {
-              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Api\\Kooboo.Api.CrossPlatform.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj"
             },
-            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Data\\Kooboo.Data.CrossPlatform.csproj": {
-              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Data\\Kooboo.Data.CrossPlatform.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj"
             },
-            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.CrossPlatform.csproj": {
-              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.CrossPlatform.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj"
             },
-            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.CrossPlatform.csproj": {
-              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.CrossPlatform.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj"
             },
-            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.CrossPlatform.csproj": {
-              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.CrossPlatform.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj"
             },
-            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.CrossPlatform.csproj": {
-              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.CrossPlatform.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj"
             },
-            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.CrossPlatform.csproj": {
-              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.CrossPlatform.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj"
             },
-            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Render\\Kooboo.Render.CrossPlatform.csproj": {
-              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Render\\Kooboo.Render.CrossPlatform.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj"
             },
-            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Search\\Kooboo.Search.CrossPlatform.csproj": {
-              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Search\\Kooboo.Search.CrossPlatform.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj"
             },
-            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.CrossPlatform.csproj": {
-              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.CrossPlatform.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj"
             }
           }
         }

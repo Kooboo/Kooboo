@@ -215,31 +215,8 @@ namespace Kooboo.Data
                return basefolder; 
             }
 
-            List<string> trypaths = new List<string>();
-
-            if(RuntimeSystemHelper.IsWindow())
-            {
-#if NETSTANDARD2_0
-                trypaths.Add(@"..\..\..\..\Github\Kooboo.Web");
-                trypaths.Add(@"..\..\");
-                trypaths.Add(@"..\..\..\");
-                trypaths.Add(@"..\..\..\..\");
-#else
-                trypaths.Add(@"..\..\..\Github\Kooboo.Web"); 
-                trypaths.Add(@"..\");
-                trypaths.Add(@"..\..\");
-                trypaths.Add(@"..\..\..\");
-#endif
-            }
-            else
-            {
-                trypaths.Add(@"../../../Github/Kooboo.Web");
-                trypaths.Add(@"../");
-                trypaths.Add(@"../../");
-                trypaths.Add(@"../../../");
-            }
+            List<string> trypaths = Kooboo.Lib.Helper.SystemAdapter.GetTryPaths();
             
-
             foreach (var item in trypaths)
             {
                 basefolder = System.IO.Path.GetFullPath(item);
@@ -641,17 +618,7 @@ namespace Kooboo.Data
 
         public static string GetPhysicsPath(string relativePath)
         {
-            var path = string.Empty;
-            if (RuntimeSystemHelper.IsWindow())
-            {
-                path = relativePath.Replace("/", "\\").Replace("\\\\", "\\").TrimStart('\\', '/');
-            }
-            else
-            {
-                path = relativePath.Replace("\\", "/");
-            }
-            
-            return Path.Combine(System.IO.Path.GetFullPath(AppSettings.RootPath), path);
+            return Kooboo.Lib.Helper.PathHelper.GetPhysicsPath(AppSettings.RootPath,relativePath);
         }
 
         public static int MaxTemplateSize

@@ -17,7 +17,7 @@ namespace Kooboo.IndexedDB.Helper
 
         public static bool IsWindow()
         {
-#if NETSTANDARD2_0
+#if NETSTANDARD
             return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
 #else
             return true;

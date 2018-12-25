@@ -43,6 +43,7 @@
       "type": "package",
       "path": "microsoft.netcore.platforms/1.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/_._",
@@ -220,9 +221,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.CrossPlatform.csproj",
+      "projectUniqueName": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj",
       "projectName": "Kooboo.HttpServer",
-      "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.CrossPlatform.csproj",
+      "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj",
       "packagesPath": "C:\\Users\\cz\\.nuget\\packages\\",
       "outputPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\obj\\",
       "projectStyle": "PackageReference",

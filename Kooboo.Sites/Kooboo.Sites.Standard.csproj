@@ -53,12 +53,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.Standard.csproj" />
   </ItemGroup>
 
   <ItemGroup>

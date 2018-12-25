@@ -30,8 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.Standard.csproj" />
   </ItemGroup>
 
   <ItemGroup>

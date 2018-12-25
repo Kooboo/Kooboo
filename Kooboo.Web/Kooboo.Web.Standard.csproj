@@ -56,16 +56,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Api\Kooboo.Api.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.HttpServer\src\Kooboo.HttpServer\Kooboo.HttpServer.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.Render\Kooboo.Render.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.CrossPlatform.csproj" />
-    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.CrossPlatform.csproj" />
+    <ProjectReference Include="..\Kooboo.Api\Kooboo.Api.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.HttpServer\src\Kooboo.HttpServer\Kooboo.HttpServer.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Render\Kooboo.Render.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.Standard.csproj" />
   </ItemGroup>
 
 </Project>

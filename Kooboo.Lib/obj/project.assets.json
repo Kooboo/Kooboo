@@ -2,6 +2,18 @@
   "version": 3,
   "targets": {
     ".NETStandard,Version=v2.0": {
+      "GeoCoordinate.NetStandard1/1.0.1": {
+        "type": "package",
+        "dependencies": {
+          "NETStandard.Library": "1.6.1"
+        },
+        "compile": {
+          "lib/netstandard1.1/GeoCoordinate.NetStandard1.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.1/GeoCoordinate.NetStandard1.dll": {}
+        }
+      },
       "Microsoft.DotNet.PlatformAbstractions/2.0.3": {
         "type": "package",
         "dependencies": {
@@ -53,6 +65,18 @@
         },
         "runtime": {
           "lib/netstandard1.0/_._": {}
+        }
+      },
+      "MimeMapping/1.0.1.12": {
+        "type": "package",
+        "dependencies": {
+          "NETStandard.Library": "1.6.1"
+        },
+        "compile": {
+          "lib/netstandard1.1/MimeMapping.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.1/MimeMapping.dll": {}
         }
       },
       "NativeLibraryLoader/1.0.10": {
@@ -725,6 +749,17 @@
     }
   },
   "libraries": {
+    "GeoCoordinate.NetStandard1/1.0.1": {
+      "sha512": "VNgiwP4L7O968FwKujPdJEmeIuWVw6x8VrrlGi3Yoq1Mh58cNJCMyjc24riUPjsJVYMxVl1y6AKzp8lUuZf5Lg==",
+      "type": "package",
+      "path": "geocoordinate.netstandard1/1.0.1",
+      "files": [
+        ".nupkg.metadata",
+        "geocoordinate.netstandard1.1.0.1.nupkg.sha512",
+        "geocoordinate.netstandard1.nuspec",
+        "lib/netstandard1.1/GeoCoordinate.NetStandard1.dll"
+      ]
+    },
     "Microsoft.DotNet.PlatformAbstractions/2.0.3": {
       "sha512": "SjPzgZN6Qp4V7fCtV5gQ2bX4SJwFHQac2TXRl/zN+Z6ULKuomAt/PclgCU9YgYsWWvKCnN0vMmP7U71dnXgttQ==",
       "type": "package",
@@ -761,6 +796,7 @@
       "type": "package",
       "path": "microsoft.netcore.platforms/1.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/_._",
@@ -774,6 +810,7 @@
       "type": "package",
       "path": "microsoft.netcore.targets/1.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/_._",
@@ -782,11 +819,24 @@
         "runtime.json"
       ]
     },
+    "MimeMapping/1.0.1.12": {
+      "sha512": "fuSvazGD66PD9qnDGxw1NXKD2cg+fda5LGwJ33efO9nVnWpxh/ACCjLdGxed/Vd703v6OvtDrxxD6LCvfrtGIg==",
+      "type": "package",
+      "path": "mimemapping/1.0.1.12",
+      "files": [
+        ".nupkg.metadata",
+        "lib/netstandard1.1/MimeMapping.dll",
+        "lib/netstandard1.1/MimeMapping.xml",
+        "mimemapping.1.0.1.12.nupkg.sha512",
+        "mimemapping.nuspec"
+      ]
+    },
     "NativeLibraryLoader/1.0.10": {
       "sha512": "CX6y+nT8EQNdcOq/8nQJ+kKyQDTv+p6Z65n1nFoNvmvWfMlTcmScvabJUY0idMrEXhTJVmSY2L6fsQ7KX6pzLQ==",
       "type": "package",
       "path": "nativelibraryloader/1.0.10",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard2.0/NativeLibraryLoader.dll",
         "lib/netstandard2.0/NativeLibraryLoader.xml",
         "nativelibraryloader.1.0.10.nupkg.sha512",
@@ -927,6 +977,7 @@
       "type": "package",
       "path": "newtonsoft.json/11.0.2",
       "files": [
+        ".nupkg.metadata",
         "LICENSE.md",
         "lib/net20/Newtonsoft.Json.dll",
         "lib/net20/Newtonsoft.Json.xml",
@@ -955,6 +1006,7 @@
       "type": "package",
       "path": "runtime.native.system/4.0.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/_._",
@@ -967,6 +1019,7 @@
       "type": "package",
       "path": "sharpdx/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "lib/net40/SharpDX.dll",
         "lib/net40/SharpDX.xml",
         "lib/net45/SharpDX.dll",
@@ -987,6 +1040,7 @@
       "type": "package",
       "path": "sharpdx.d3dcompiler/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "lib/net40/SharpDX.D3DCompiler.dll",
         "lib/net40/SharpDX.D3DCompiler.xml",
         "lib/net45/SharpDX.D3DCompiler.dll",
@@ -1007,6 +1061,7 @@
       "type": "package",
       "path": "sharpdx.direct3d11/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "lib/net40/SharpDX.Direct3D11.dll",
         "lib/net40/SharpDX.Direct3D11.xml",
         "lib/net45/SharpDX.Direct3D11.dll",
@@ -1027,6 +1082,7 @@
       "type": "package",
       "path": "sharpdx.dxgi/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "lib/net40/SharpDX.DXGI.dll",
         "lib/net40/SharpDX.DXGI.xml",
         "lib/net45/SharpDX.DXGI.dll",
@@ -1047,6 +1103,7 @@
       "type": "package",
       "path": "sixlabors.core/1.0.0-beta0005",
       "files": [
+        ".nupkg.metadata",
         "lib/netcoreapp2.0/SixLabors.Core.dll",
         "lib/netcoreapp2.0/SixLabors.Core.xml",
         "lib/netstandard1.1/SixLabors.Core.dll",
@@ -1060,6 +1117,7 @@
       "type": "package",
       "path": "sixlabors.imagesharp/1.0.0-beta0003",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard1.1/SixLabors.ImageSharp.dll",
         "lib/netstandard1.1/SixLabors.ImageSharp.xml",
         "lib/netstandard1.3/SixLabors.ImageSharp.dll",
@@ -1075,6 +1133,7 @@
       "type": "package",
       "path": "system.appcontext/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1153,6 +1212,7 @@
       "type": "package",
       "path": "system.collections/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1240,6 +1300,7 @@
       "type": "package",
       "path": "system.diagnostics.debug/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1306,6 +1367,7 @@
       "type": "package",
       "path": "system.dynamic.runtime/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1375,6 +1437,7 @@
       "type": "package",
       "path": "system.globalization/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1441,6 +1504,7 @@
       "type": "package",
       "path": "system.io/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1520,6 +1584,7 @@
       "type": "package",
       "path": "system.io.filesystem/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1556,6 +1621,7 @@
       "type": "package",
       "path": "system.io.filesystem.primitives/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1593,6 +1659,7 @@
       "type": "package",
       "path": "system.linq/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1663,6 +1730,7 @@
       "type": "package",
       "path": "system.linq.expressions/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1745,6 +1813,7 @@
       "type": "package",
       "path": "system.memory/4.5.0-preview1-26216-02",
       "files": [
+        ".nupkg.metadata",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/netstandard1.1/System.Memory.dll",
@@ -1776,6 +1845,7 @@
       "type": "package",
       "path": "system.numerics.vectors/4.5.0-preview1-26216-02",
       "files": [
+        ".nupkg.metadata",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/MonoAndroid10/_._",
@@ -1815,6 +1885,7 @@
       "type": "package",
       "path": "system.objectmodel/4.0.12",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1883,6 +1954,7 @@
       "type": "package",
       "path": "system.reflection/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1962,6 +2034,7 @@
       "type": "package",
       "path": "system.reflection.emit/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1992,6 +2065,7 @@
       "type": "package",
       "path": "system.reflection.emit.ilgeneration/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/net45/_._",
@@ -2023,6 +2097,7 @@
       "type": "package",
       "path": "system.reflection.emit.lightweight/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/net45/_._",
@@ -2054,6 +2129,7 @@
       "type": "package",
       "path": "system.reflection.extensions/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2109,6 +2185,7 @@
       "type": "package",
       "path": "system.reflection.primitives/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2164,6 +2241,7 @@
       "type": "package",
       "path": "system.reflection.typeextensions/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2216,6 +2294,7 @@
       "type": "package",
       "path": "system.resources.resourcemanager/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2271,6 +2350,7 @@
       "type": "package",
       "path": "system.runtime/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2388,6 +2468,7 @@
       "type": "package",
       "path": "system.runtime.extensions/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2467,6 +2548,7 @@
       "type": "package",
       "path": "system.runtime.handles/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2503,6 +2585,7 @@
       "type": "package",
       "path": "system.runtime.interopservices/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2591,6 +2674,7 @@
       "type": "package",
       "path": "system.runtime.interopservices.runtimeinformation/4.0.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2664,6 +2748,7 @@
       "type": "package",
       "path": "system.text.encoding/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2778,6 +2863,7 @@
       "type": "package",
       "path": "system.threading/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2847,6 +2933,7 @@
       "type": "package",
       "path": "system.threading.tasks/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2913,6 +3000,7 @@
       "type": "package",
       "path": "veldrid/4.3.3",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard2.0/Veldrid.dll",
         "lib/netstandard2.0/Veldrid.xml",
         "veldrid.4.3.3.nupkg.sha512",
@@ -2924,6 +3012,7 @@
       "type": "package",
       "path": "veldrid.imagesharp/4.3.3",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard2.0/Veldrid.ImageSharp.dll",
         "veldrid.imagesharp.4.3.3.nupkg.sha512",
         "veldrid.imagesharp.nuspec"
@@ -2934,6 +3023,7 @@
       "type": "package",
       "path": "veldrid.metalbindings/4.3.3",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard2.0/Veldrid.MetalBindings.dll",
         "veldrid.metalbindings.4.3.3.nupkg.sha512",
         "veldrid.metalbindings.nuspec"
@@ -2944,6 +3034,7 @@
       "type": "package",
       "path": "veldrid.openglbindings/4.3.3",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard2.0/Veldrid.OpenGLBindings.dll",
         "veldrid.openglbindings.4.3.3.nupkg.sha512",
         "veldrid.openglbindings.nuspec"
@@ -2954,6 +3045,7 @@
       "type": "package",
       "path": "vk/1.0.19",
       "files": [
+        ".nupkg.metadata",
         "lib/netstandard1.4/vk.dll",
         "vk.1.0.19.nupkg.sha512",
         "vk.nuspec"
@@ -2962,6 +3054,8 @@
   },
   "projectFileDependencyGroups": {
     ".NETStandard,Version=v2.0": [
+      "GeoCoordinate.NetStandard1 >= 1.0.1",
+      "MimeMapping >= 1.0.1.12",
       "NETStandard.Library >= 2.0.3",
       "Newtonsoft.Json >= 11.0.2",
       "System.Configuration.ConfigurationManager >= 4.4.1",
@@ -2977,9 +3071,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.CrossPlatform.csproj",
+      "projectUniqueName": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj",
       "projectName": "Kooboo.Lib",
-      "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.CrossPlatform.csproj",
+      "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj",
       "packagesPath": "C:\\Users\\cz\\.nuget\\packages\\",
       "outputPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\obj\\",
       "projectStyle": "PackageReference",
@@ -3014,6 +3108,14 @@
     "frameworks": {
       "netstandard2.0": {
         "dependencies": {
+          "GeoCoordinate.NetStandard1": {
+            "target": "Package",
+            "version": "[1.0.1, )"
+          },
+          "MimeMapping": {
+            "target": "Package",
+            "version": "[1.0.1.12, )"
+          },
           "NETStandard.Library": {
             "suppressParent": "All",
             "target": "Package",

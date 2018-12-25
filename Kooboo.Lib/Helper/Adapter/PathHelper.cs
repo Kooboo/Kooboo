@@ -7,6 +7,15 @@ namespace Kooboo.Lib.Helper
 {
     public class PathHelper
     {
+        public static string GetSlash()
+        {
+            var slash = "\\";
+            if (!RuntimeSystemHelper.IsWindow())
+            {
+                slash = "/";
+            }
+            return slash;
+        }
         public static int GetLastSlash(string path)
         {
             if (RuntimeSystemHelper.IsWindow())
@@ -17,6 +26,10 @@ namespace Kooboo.Lib.Helper
         }
         public static string GetCaseInsensitiveFile(string root,string fullPath)
         {
+            if (RuntimeSystemHelper.IsWindow())
+            {
+                return fullPath;
+            }
             //Kooboo.Data.AppSettings.RootPath
             var folder = new DirectoryInfo(root);
             if (fullPath.IndexOf(root) == 0)
@@ -101,9 +114,17 @@ namespace Kooboo.Lib.Helper
             //url and linux seperate is / ,but window file seperate is \
             if (RuntimeSystemHelper.IsWindow())
             {
+                if (!root.EndsWith("\\"))
+                {
+                    root += "\\";
+                }
                 if (relativePath.StartsWith("\\"))
                 {
                     relativePath = relativePath.Substring(1);
+                }
+                if (string.IsNullOrEmpty(relativePath))
+                {
+                    return root;
                 }
                 var path = relativePath.Replace("/", "\\");
                 fullpath = Path.Combine(root, path);
@@ -159,6 +180,21 @@ namespace Kooboo.Lib.Helper
                 }
                 return input.Split('/').ToList();
             }
+        }
+
+        public static string GetPhysicsPath(string rootPath,string relativePath)
+        {
+            var path = string.Empty;
+            if (RuntimeSystemHelper.IsWindow())
+            {
+                path = relativePath.Replace("/", "\\").Replace("\\\\", "\\").TrimStart('\\', '/');
+            }
+            else
+            {
+                path = relativePath.Replace("\\", "/");
+            }
+
+            return Path.Combine(System.IO.Path.GetFullPath(rootPath), path);
         }
     }
 }

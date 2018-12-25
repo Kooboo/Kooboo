@@ -122,11 +122,7 @@ namespace Kooboo.Sites.Sync
 
         private static bool SkipExport(string FilePath)
         {
-            var slash = "\\";
-            if (!RuntimeSystemHelper.IsWindow())
-            {
-                slash = "/";
-            }
+            var slash = Kooboo.Lib.Helper.PathHelper.GetSlash();
             if (FilePath.Contains(slash+"EventRules")
                   || FilePath.Contains(slash + "_koobooeditlog")
                   || FilePath.Contains(slash + "SyncSetting")
