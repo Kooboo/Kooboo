@@ -125,10 +125,6 @@
   <key id="Remove">移除</key>
   <key id="Add user">添加用户</key>
   <key id="Enter user name">输入您的用户名</key>
-  <key id="Current data center">当前数据中心</key>
-  <key id="Avaliable data center">可用的数据中心</key>
-  <key id="Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.">仅当分配的数据中心离你的主要服务区距离过远时再改变数据中心。你需要手动备份和存储所有网站的数据。</key>
-  <key id="Update">更新</key>
   <key id="Payment">支付</key>
   <key id="Payment success">支付成功</key>
   <key id="Payment failure">支付失败</key>
@@ -467,8 +463,7 @@
   <key id="Usage rate">使用率</key>
   <key id="Count">数量</key>
   <key id="No record">没有记录</key>
-  <key id="Info!">Info!</key>
-  <key id="Info content goes here">Info content goes here</key>
+  <key id="Data Center is your assigned online hosting provider.">数据中心是为你分配的在线服务器的所有者名称</key>
   <key id="Available">可用的</key>
   <key id="Loading">加载中</key>
   <key id="Supplier">供应商</key>
@@ -880,7 +875,8 @@
   <key id="Minimal checked">最少选中数</key>
   <key id="Maximum checked">最多选中数</key>
   <key id="Minimal length">最小长度</key>
-  <key id="Maximum length">Maximum length</key>
+  <key id="Maximum length">最大长度</key>
+  <key id="Update">更新</key>
   <key id="No condition">暂无条件</key>
   <key id="No activity">暂无活动</key>
   <key id="Add activity">添加活动</key>
@@ -1043,6 +1039,7 @@
   <key id="Day(s)">天</key>
   <key id="Bidder">报价人</key>
   <key id="Day">天</key>
+  <key id="Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.">仅当分配的数据中心离你的主要服务区距离过远时再改变数据中心。你需要手动备份和存储所有网站的数据。</key>
   <key id="Verify">验证</key>
   <key id="Take offline">网站离线</key>
   <key id="Take online">网站上线</key>
@@ -1258,6 +1255,7 @@
   <key id="You can only submit request for the same domain one time per hour">同一个域名一小时内只能提交一次</key>
   <key id="You have reached the max number of free certificates">你的免费证书已经达到最大数</key>
   <key id="your certificates is being generated, it normally will take 1-2 mins">你的证书正在生成， 通常会需要一到两分钟</key>
+  <key id="Unexpected error">未知错误</key>
   <key id="Target Url is Protected">目标地址被保护</key>
   <key id="user not found">没有找到用户</key>
   <key id="Reset Password Request">Reset Password Request</key>
@@ -1265,8 +1263,9 @@
   <key id="An reset password email has been sent to">重设密码的邮件已发送至：</key>
   <key id="Username or password not provided">需提供用户名或密码</key>
   <key id="user exists">用户已存在</key>
-  <key id="Email address verification">Email address verification</key>
+  <key id="Email address verification">用户邮箱验证</key>
   <key id="You can use the following link within the next day to verify your email address: \r\n\r\n{{link}}\r\n\r\n If you do not use this link within 24 hours, it will expire. \r\n\r\nRegards,\r\nKooboo Team">You can use the following link within the next day to verify your email address: \r\n\r\n{{link}}\r\n\r\n If you do not use this link within 24 hours, it will expire. \r\n\r\nRegards,\r\nKooboo Team</key>
+  <key id="Can not verify,  please try again">无法验证， 请重试</key>
   <key id="Coupon has not enough credit to pay this order">优惠券额度不足，无法完成支付</key>
   <key id="Demand not found">未找到该需求</key>
   <key id="Open status">开放</key>
@@ -1377,8 +1376,6 @@
   <key id="doit">启用</key>
   <key id="Layout is being used, can not be deleted">该布局正在被使用，无法删除</key>
   <key id="Name already exists">名字已存在</key>
-  <key id="Require administrator rights to change data center">需要管理员权限来修改数据中心</key>
-  <key id="Unexpected error">未知错误</key>
   <key id="Page body and Url are required">页面内容与URL是必填的</key>
   <key id="Hash validation failed">哈希验证失败</key>
   <key id="ContentType">数据类型</key>
