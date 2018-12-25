@@ -334,8 +334,7 @@ namespace Kooboo.Data.Repository
                 {
                     var olduser = this.Cache[user.Id];
                     olduser.CurrentOrgId = user.CurrentOrgId;
-                    olduser.CurrentOrgName = user.CurrentOrgName;
-                    olduser.CurrentHostDomain = user.CurrentHostDomain;
+                    olduser.CurrentOrgName = user.CurrentOrgName; 
                     olduser.IsAdmin = GlobalDb.Users.IsAdmin(user.CurrentOrgId, user.Id);
                 }
 
@@ -343,8 +342,7 @@ namespace Kooboo.Data.Repository
                 if (local != null)
                 {
                     local.CurrentOrgId = user.CurrentOrgId;
-                    local.CurrentOrgName = user.CurrentOrgName;
-                    local.CurrentHostDomain = user.CurrentHostDomain;
+                    local.CurrentOrgName = user.CurrentOrgName; 
                     local.IsAdmin = GlobalDb.Users.IsAdmin(user.CurrentOrgId, user.Id);
                     GlobalDb.LocalUser.AddOrUpdate(local);
                 }

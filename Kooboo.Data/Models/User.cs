@@ -1,8 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using System;
-using Kooboo.Extensions;
-using Kooboo.Data.Attributes;
+using System; 
 
 namespace Kooboo.Data.Models
 {
@@ -29,8 +27,7 @@ namespace Kooboo.Data.Models
 
         public Guid CurrentOrgId { get; set; }
 
-        // redundant. 
-        public string CurrentHostDomain { get; set; }
+ 
         // redundant
         public string CurrentOrgName { get; set; }
 
@@ -119,7 +116,7 @@ namespace Kooboo.Data.Models
 
         public override int GetHashCode()
         {
-            string unique = this.CurrentHostDomain + this.CurrentOrgId.ToString() + this.CurrentOrgName;
+            string unique =  this.CurrentOrgId.ToString() + this.CurrentOrgName;
             unique += this.EmailAddress + this.FirstName + this.LastName + this.Language;
             unique += this.Password + this.PasswordHash.ToString();
             unique += this.IsEmailVerified.ToString(); 
