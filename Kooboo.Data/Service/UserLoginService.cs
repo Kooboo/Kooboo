@@ -187,7 +187,13 @@ namespace Kooboo.Data.Service
 
         private static User _defaultUser()
         {
-            var user = new User() { UserName = AppSettings.DefaultUser.UserName, Password = AppSettings.DefaultUser.Password };
+            var user = new User(); 
+            if (Data.AppSettings.DefaultUser !=null)
+            {
+                user.UserName = AppSettings.DefaultUser.UserName; 
+                user.Password = AppSettings.DefaultUser.Password;
+
+            }
             user.CurrentOrgName = user.UserName;
             user.CurrentOrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(user.UserName);
 

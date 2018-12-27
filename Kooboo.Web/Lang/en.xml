@@ -125,10 +125,6 @@
   <key id="Remove">Remove</key>
   <key id="Add user">Add user</key>
   <key id="Enter user name">Enter user name</key>
-  <key id="Current data center">Current data center</key>
-  <key id="Avaliable data center">Avaliable data center</key>
-  <key id="Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.">Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.</key>
-  <key id="Update">Update</key>
   <key id="Payment">Payment</key>
   <key id="Payment success">Payment success</key>
   <key id="Payment failure">Payment failure</key>
@@ -467,8 +463,7 @@
   <key id="Usage rate">Usage rate</key>
   <key id="Count">Count</key>
   <key id="No record">No record</key>
-  <key id="Info!">Info!</key>
-  <key id="Info content goes here">Info content goes here</key>
+  <key id="Data Center is your assigned online hosting provider.">Data Center is your assigned online hosting provider.</key>
   <key id="Available">Available</key>
   <key id="Loading">Loading</key>
   <key id="Supplier">Supplier</key>
@@ -881,6 +876,7 @@
   <key id="Maximum checked">Maximum checked</key>
   <key id="Minimal length">Minimal length</key>
   <key id="Maximum length">Maximum length</key>
+  <key id="Update">Update</key>
   <key id="No condition">No condition</key>
   <key id="No activity">No activity</key>
   <key id="Add activity">Add activity</key>
@@ -1043,6 +1039,7 @@
   <key id="Day(s)">Day(s)</key>
   <key id="Bidder">Bidder</key>
   <key id="Day">Day</key>
+  <key id="Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.">Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.</key>
   <key id="Verify">Verify</key>
   <key id="Take offline">Take offline</key>
   <key id="Take online">Take online</key>
@@ -1258,6 +1255,7 @@
   <key id="You can only submit request for the same domain one time per hour">You can only submit request for the same domain one time per hour</key>
   <key id="You have reached the max number of free certificates">You have reached the max number of free certificates</key>
   <key id="your certificates is being generated, it normally will take 1-2 mins">your certificates is being generated, it normally will take 1-2 mins</key>
+  <key id="Unexpected error">Unexpected error</key>
   <key id="Target Url is Protected">Target Url is Protected</key>
   <key id="user not found">user not found</key>
   <key id="Reset Password Request">Reset Password Request</key>
@@ -1267,6 +1265,7 @@
   <key id="user exists">user exists</key>
   <key id="Email address verification">Email address verification</key>
   <key id="You can use the following link within the next day to verify your email address: \r\n\r\n{{link}}\r\n\r\n If you do not use this link within 24 hours, it will expire. \r\n\r\nRegards,\r\nKooboo Team">You can use the following link within the next day to verify your email address: \r\n\r\n{{link}}\r\n\r\n If you do not use this link within 24 hours, it will expire. \r\n\r\nRegards,\r\nKooboo Team</key>
+  <key id="Can not verify,  please try again">Can not verify,  please try again</key>
   <key id="Coupon has not enough credit to pay this order">Coupon has not enough credit to pay this order</key>
   <key id="Demand not found">Demand not found</key>
   <key id="Open status">Open status</key>
@@ -1377,8 +1376,6 @@
   <key id="doit">doit</key>
   <key id="Layout is being used, can not be deleted">Layout is being used, can not be deleted</key>
   <key id="Name already exists">Name already exists</key>
-  <key id="Require administrator rights to change data center">Require administrator rights to change data center</key>
-  <key id="Unexpected error">Unexpected error</key>
   <key id="Page body and Url are required">Page body and Url are required</key>
   <key id="Hash validation failed">Hash validation failed</key>
   <key id="ContentType">ContentType</key>
