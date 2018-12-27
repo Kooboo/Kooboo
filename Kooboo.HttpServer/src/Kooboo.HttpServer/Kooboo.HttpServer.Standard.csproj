@@ -1,24 +1,33 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<AssemblyName>Kooboo.HttpServer</AssemblyName>
 	<RootNamespace>Kooboo.HttpServer</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETSTANDARD2_0;netstandard;NETSTANDARD2_0;FEATURE_PORTABLE_SPAN;NETSTANDARD2_0</DefineConstants>
+  <PropertyGroup>
+    <DefineConstants>TRACE;DEBUG;FEATURE_PORTABLE_SPAN;netstandard</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>false</Optimize>
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <LangVersion>7.2</LangVersion>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='netstandard2.0'">
+    <DefineConstants>NETSTANDARD2_0;netstandard;NETSTANDARD</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DefineConstants>TRACE;RELEASE;NETSTANDARD2_0;netstandard;FEATURE_PORTABLE_SPAN;</DefineConstants>
+    <Optimize>false</Optimize>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='net45'">
+    <DefineConstants>NET45;netstandard</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>false</Optimize>
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
 
   <ItemGroup>
     <Compile Remove="Http\Http2\**" />
@@ -38,10 +47,12 @@
     <Compile Remove="Infrastructure\KestrelEventSource.cs" />
     <Compile Remove="Infrastructure\KestrelTrace.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="Sockets\SocketTaskExtensions.cs" />
     <Compile Remove="System\MemoryExtensions.Fast.cs" />
     <Compile Remove="System\SpanHelpers.byte.cs" />
     <Compile Remove="System\ThrowHelper1.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <Compile Remove="Sockets\SocketTaskExtensions.cs" />
   </ItemGroup>
 
   <ItemGroup>

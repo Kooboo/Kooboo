@@ -10,7 +10,7 @@ namespace Kooboo.Lib.Helper
         {
 #if NET45
 
-            Process.Start(url);
+            System.Diagnostics.Process.Start(url);
 #endif
         }
 
@@ -56,7 +56,7 @@ namespace Kooboo.Lib.Helper
 
         public static void ConsoleWait()
         {
-#if NETCOREAPP
+#if NETSTANDARD
             //Console.ReadLine will have exception in linux...
             if (!Kooboo.Lib.Helper.RuntimeSystemHelper.IsWindow())
             {

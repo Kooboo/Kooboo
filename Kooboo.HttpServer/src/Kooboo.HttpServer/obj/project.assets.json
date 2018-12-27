@@ -1,6 +1,17 @@
 {
   "version": 3,
   "targets": {
+    ".NETFramework,Version=v4.5": {
+      "System.Runtime.CompilerServices.Unsafe/4.5.1": {
+        "type": "package",
+        "compile": {
+          "ref/netstandard1.0/System.Runtime.CompilerServices.Unsafe.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard1.0/System.Runtime.CompilerServices.Unsafe.dll": {}
+        }
+      }
+    },
     ".NETStandard,Version=v2.0": {
       "Microsoft.NETCore.Platforms/1.1.0": {
         "type": "package",
@@ -208,6 +219,9 @@
     }
   },
   "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.5": [
+      "System.Runtime.CompilerServices.Unsafe >= 4.5.1"
+    ],
     ".NETStandard,Version=v2.0": [
       "NETStandard.Library >= 2.0.3",
       "System.Runtime.CompilerServices.Unsafe >= 4.5.1"
@@ -227,6 +241,7 @@
       "packagesPath": "C:\\Users\\cz\\.nuget\\packages\\",
       "outputPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\obj\\",
       "projectStyle": "PackageReference",
+      "crossTargeting": true,
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\",
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -238,6 +253,7 @@
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.Fallback.config"
       ],
       "originalTargetFrameworks": [
+        "net45",
         "netstandard2.0"
       ],
       "sources": {
@@ -245,6 +261,9 @@
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
+        "net45": {
+          "projectReferences": {}
+        },
         "netstandard2.0": {
           "projectReferences": {}
         }
@@ -256,6 +275,14 @@
       }
     },
     "frameworks": {
+      "net45": {
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": {
+            "target": "Package",
+            "version": "[4.5.1, )"
+          }
+        }
+      },
       "netstandard2.0": {
         "dependencies": {
           "NETStandard.Library": {

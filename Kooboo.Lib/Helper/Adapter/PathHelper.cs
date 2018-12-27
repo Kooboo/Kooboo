@@ -30,7 +30,7 @@ namespace Kooboo.Lib.Helper
             {
                 return fullPath;
             }
-            //Kooboo.Data.AppSettings.RootPath
+
             var folder = new DirectoryInfo(root);
             if (fullPath.IndexOf(root) == 0)
             {

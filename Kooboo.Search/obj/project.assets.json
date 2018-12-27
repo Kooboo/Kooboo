@@ -1,6 +1,53 @@
 {
   "version": 3,
   "targets": {
+    ".NETFramework,Version=v4.5": {
+      "Newtonsoft.Json/11.0.2": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        },
+        "runtime": {
+          "lib/net45/Newtonsoft.Json.dll": {}
+        }
+      },
+      "Kooboo.Dom/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "Kooboo.Lib": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Kooboo.Dom.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Kooboo.Dom.dll": {}
+        }
+      },
+      "Kooboo.IndexedDB/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "compile": {
+          "bin/placeholder/Kooboo.IndexedDB.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Kooboo.IndexedDB.dll": {}
+        }
+      },
+      "Kooboo.Lib/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5",
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.2"
+        },
+        "compile": {
+          "bin/placeholder/Kooboo.Lib.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Kooboo.Lib.dll": {}
+        }
+      }
+    },
     ".NETStandard,Version=v2.0": {
       "GeoCoordinate.NetStandard1/1.0.1": {
         "type": "package",
@@ -3109,6 +3156,11 @@
     }
   },
   "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.5": [
+      "Kooboo.Dom >= 1.0.0",
+      "Kooboo.IndexedDB >= 1.0.0",
+      "Kooboo.Lib >= 1.0.0"
+    ],
     ".NETStandard,Version=v2.0": [
       "Kooboo.Dom >= 1.0.0",
       "Kooboo.IndexedDB >= 1.0.0",
@@ -3130,6 +3182,7 @@
       "packagesPath": "C:\\Users\\cz\\.nuget\\packages\\",
       "outputPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Search\\obj\\",
       "projectStyle": "PackageReference",
+      "crossTargeting": true,
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\",
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -3141,6 +3194,7 @@
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.Fallback.config"
       ],
       "originalTargetFrameworks": [
+        "net45",
         "netstandard2.0"
       ],
       "sources": {
@@ -3148,6 +3202,19 @@
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
+        "net45": {
+          "projectReferences": {
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj"
+            },
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj"
+            },
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj"
+            }
+          }
+        },
         "netstandard2.0": {
           "projectReferences": {
             "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj": {
@@ -3169,6 +3236,7 @@
       }
     },
     "frameworks": {
+      "net45": {},
       "netstandard2.0": {
         "dependencies": {
           "NETStandard.Library": {
