@@ -11,15 +11,15 @@ namespace Kooboo.Sites.SiteTransfer.Download
     public class DownloadManager
     {
         public DownloadManager()
-        {
-            //if (Kooboo.Data.AppSettings.IsOnlineServer)
-            //{
-            //    this.MaxThread = 30; 
-            //}
-            //else
-            //{
-            //    this.MaxThread = 500; 
-            //}
+        { 
+            if (Kooboo.Data.AppSettings.IsOnlineServer)
+            {
+                this.MaxThread = 3;
+            }
+            else
+            {
+                this.MaxThread = 500;
+            }
             this.CookieContainer = new System.Net.CookieContainer();
         }
 
@@ -35,7 +35,7 @@ namespace Kooboo.Sites.SiteTransfer.Download
 
         private List<Guid> pageids = new List<Guid>();
 
-        private int MaxThread = 200;
+        private int MaxThread { get; set; } = 200;
         private int CurrentThreadCount = 0;
 
         private bool CanAccept
