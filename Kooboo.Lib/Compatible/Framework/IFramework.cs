@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Kooboo.Lib.Utilities;
 using Kooboo.Lib.Security;
+using Kooboo.Lib.Helper;
 
 namespace Kooboo.Lib.Compatible
 {
@@ -22,6 +23,8 @@ namespace Kooboo.Lib.Compatible
 
         byte[] GetThumbnailImage(byte[] contentBytes, int width, int height);
 
+        string GetThumbnailImage(string base64Str, ImageSize size);
+
         string RSADecrypt(string privatekey, string content);
 
         string RSAEncrypt(string publickey, string content);
@@ -29,5 +32,6 @@ namespace Kooboo.Lib.Compatible
         void GenerateRsa(string privateKeyPath, string publicKeyPath, int size);
 
         RsaKeys GenerateKeys(int size = 512);
+
     }
 }

@@ -21,8 +21,6 @@ namespace Kooboo.Lib.Compatible
 
         int GetLastSlash(string path);
 
-        string GetCaseInsensitiveFile(string root, string fullPath);
-
         string CombinePath(string root, string relativePath);
 
         string CombineRelativePath(string relativePath, string path);

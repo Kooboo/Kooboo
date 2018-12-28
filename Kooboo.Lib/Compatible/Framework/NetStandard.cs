@@ -10,6 +10,7 @@ using System.IO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using SixLabors.ImageSharp.Processing.Transforms;
+using Kooboo.Lib.Helper;
 
 namespace Kooboo.Lib.Compatible
 {
@@ -197,6 +198,30 @@ namespace Kooboo.Lib.Compatible
             return memstream.ToArray();
         }
 
+        public string GetThumbnailImage(string base64Str, ImageSize size)
+        {
+            byte[] imageBytes = Convert.FromBase64String(base64Str);
+
+            MemoryStream memoryStream = new MemoryStream(imageBytes, 0, imageBytes.Length);
+            var image = Image.Load(memoryStream);
+
+            memoryStream.Close();
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                size = Kooboo.Lib.Helper.ImageHelper.GetEqualProportionSize(image.Width,image.Height, size);
+                image.Mutate(x => x.Resize(size.Width, size.Height));
+                image.Save(ms, ImageFormats.Png);
+
+                var length = Convert.ToInt32(ms.Length);
+                byte[] data = new byte[length];
+                ms.Position = 0;
+                ms.Read(data, 0, length);
+                ms.Flush();
+                return Convert.ToBase64String(data);
+            }
+        }
+
 #endregion
 
         public void OpenDefaultUrl(string url)
@@ -211,13 +236,9 @@ namespace Kooboo.Lib.Compatible
 
         public void ConsoleWait()
         {
-            //todo confirm
-            if (!Kooboo.Lib.Helper.RuntimeSystemHelper.IsWindow())
+            while (true)
             {
-                while (true)
-                {
-                    System.Threading.Thread.Sleep(1000);
-                }
+                System.Threading.Thread.Sleep(1000);
             }
         }
         

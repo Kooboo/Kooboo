@@ -40,13 +40,8 @@ namespace Kooboo.Render.ServerSide
         {  
 
             var root = sourceProvider.GetRoot(context);
-#if NETSTANDARD
-            var folder = Lib.Helper.PathHelper.CombinePath(root, relativePath);
-#else
+
             var folder = Lib.Helper.IOHelper.CombinePath(root, relativePath);
-#endif
-
-
 
             if (System.IO.Directory.Exists(folder))
             {
@@ -116,7 +111,7 @@ namespace Kooboo.Render.ServerSide
 
                     ScriptHeader += "if (typeof " + subvarname + " === \"undefined\" ) { " + subvarname + "= {};  } \r\n";
 
-                    string subpath = Kooboo.Lib.Helper.PathHelper.CombineRelativePath(relativePath,name);
+                    string subpath = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombineRelativePath(relativePath,name);
                      
                     RenderFiles(sourceProvider, option, context, subvarname, subpath, ref ScriptHeader, ref Body); 
                 }

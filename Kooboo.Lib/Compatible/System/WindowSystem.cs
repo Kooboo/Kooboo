@@ -53,11 +53,6 @@ namespace Kooboo.Lib.Compatible
             return relativePath + slash + path;
         }
 
-        public string GetCaseInsensitiveFile(string root, string fullPath)
-        {
-            return fullPath;
-        }
-
         //todo move
         public string JoinPath(string[] segments)
         {

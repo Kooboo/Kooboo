@@ -7,6 +7,7 @@ using Kooboo.Lib.Utilities;
 using System.Security.Cryptography;
 using System.IO;
 using System.Drawing;
+using Kooboo.Lib.Helper;
 
 namespace Kooboo.Lib.Compatible
 {
@@ -135,7 +136,31 @@ namespace Kooboo.Lib.Compatible
             systhumbnail.Save(memstream, System.Drawing.Imaging.ImageFormat.Png);
             return memstream.ToArray();
         }
-        #endregion
+
+        public string GetThumbnailImage(string base64Str, ImageSize size)
+        {
+            byte[] imageBytes = Convert.FromBase64String(base64Str);
+
+            MemoryStream memoryStream = new MemoryStream(imageBytes, 0, imageBytes.Length);
+            Image image = Image.FromStream(memoryStream, false);
+            memoryStream.Close();
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                size = Kooboo.Lib.Helper.ImageHelper.GetEqualProportionSize(image.Width, image.Height, size);
+                Image thumbImage = image.GetThumbnailImage(size.Width, size.Height, null, IntPtr.Zero);
+                //generate thumbImage
+                thumbImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+
+                var length = Convert.ToInt32(ms.Length);
+                byte[] data = new byte[length];
+                ms.Position = 0;
+                ms.Read(data, 0, length);
+                ms.Flush();
+                return Convert.ToBase64String(data);
+            }
+        }
+#endregion
 
         public void OpenDefaultUrl(string url)
         {

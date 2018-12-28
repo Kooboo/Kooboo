@@ -40,7 +40,7 @@ namespace Kooboo.Sites.Sync
 
             var relativepath = EscapeChar(relativeUrl, false);
 
-            string FullPath =Kooboo.Lib.Helper.PathHelper.CombinePath(WebSite.DiskSyncFolder, relativepath);
+            string FullPath = Lib.Compatible.CompatibleManager.Instance.System.CombinePath(WebSite.DiskSyncFolder, relativepath);
 
             if (FullPath.EndsWith("/") || FullPath.EndsWith("\\"))
             {

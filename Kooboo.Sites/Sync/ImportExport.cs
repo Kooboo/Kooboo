@@ -122,7 +122,7 @@ namespace Kooboo.Sites.Sync
 
         private static bool SkipExport(string FilePath)
         {
-            var slash = Kooboo.Lib.Helper.PathHelper.GetSlash();
+            var slash = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetSlash();
             if (FilePath.Contains(slash+"EventRules")
                   || FilePath.Contains(slash + "_koobooeditlog")
                   || FilePath.Contains(slash + "SyncSetting")
@@ -377,7 +377,7 @@ namespace Kooboo.Sites.Sync
                 return true;
             };
 
-            Func<string, List<string>> ToSegments = Kooboo.Lib.Helper.PathHelper.GetSegments;
+            Func<string, List<string>> ToSegments = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetSegments; ; ;
 
 
             if (paths == null || paths.Count() == 1)

@@ -33,26 +33,17 @@ namespace Kooboo.Lib.Compatible
 
             relativePath = relativePath.TrimStart('/');
             //linux file is case sensitive
-            var fullpath = GetCaseInsensitiveFile(root, relativePath);
-            return fullpath;
-        }
 
-        public string CombineRelativePath(string relativePath, string path)
-        {
-            var slash = GetSlash();
-            return relativePath + slash + path;
-        }
-
-        public string GetCaseInsensitiveFile(string root, string relativePath)
-        {
             var folder = new DirectoryInfo(root);
-            if (relativePath.IndexOf(root,StringComparison.OrdinalIgnoreCase) == 0)
+            if (relativePath.IndexOf(root, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 relativePath = relativePath.ToLower().Replace(root.ToLower(), "");
             }
             relativePath = relativePath.Replace("\\", "/");
 
+            #region get new segments
             var segments = relativePath.Split('/');
+            
             for (int i = 0; i < segments.Length; i++)
             {
                 string segment = segments[i];
@@ -65,10 +56,15 @@ namespace Kooboo.Lib.Compatible
                     {
                         segment = folder.Name;
                     }
+                    else
+                    {
+                        break;
+                    }
                 }
                 else
                 {
                     var extension = Path.GetExtension(segment);
+                    
                     if (!string.IsNullOrEmpty(extension))
                     {
                         var fileInfo = folder.GetFiles().FirstOrDefault(file =>
@@ -90,7 +86,7 @@ namespace Kooboo.Lib.Compatible
                         else
                         {
                             var fileInfo = folder.GetFiles().FirstOrDefault(file =>
-                                    file.Name.Equals(segment+".html", StringComparison.OrdinalIgnoreCase));
+                                    file.Name.Equals(segment + ".html", StringComparison.OrdinalIgnoreCase));
                             if (fileInfo != null)
                             {
                                 segment = fileInfo.Name;
@@ -99,59 +95,9 @@ namespace Kooboo.Lib.Compatible
                     }
                 }
                 segments[i] = segment;
-                //if (i == segments.Length - 1)
-                //{
-                //    var files = folder.GetFiles().Where(file =>
-                //            file.Name.Equals(segment, StringComparison.OrdinalIgnoreCase));
-                //    if (files == null || files.Count() == 0)
-                //    {
-                //        files = folder.GetFiles().Where(file =>
-                //           file.Name.Split('.')[0].Equals(segment, StringComparison.OrdinalIgnoreCase));
-                //    }
-
-                //    if (files != null && files.Count() > 0)
-                //    {
-                //        //default get html
-                //        var fileinfo = files.FirstOrDefault(file =>
-                //          file.Name.IndexOf(".html", StringComparison.OrdinalIgnoreCase) > -1);
-                //        if (fileinfo != null)
-                //        {
-                //            segments[i] = fileinfo.Name;
-                //        }
-                //        else
-                //        {
-                //            segments[i] = files.ToList()[0].Name;
-                //        }
-                //    }
-                //    else
-                //    {
-                //        folder = folder.GetDirectories().FirstOrDefault(dir =>
-                //        dir.Name.Equals(segment, StringComparison.OrdinalIgnoreCase));
-                //        if (folder != null)
-                //        {
-                //            segments[i] = folder.Name;
-                //        }
-                //    }
-
-                //}
-                //else
-                //{
-                //    folder = folder.GetDirectories().FirstOrDefault(dir =>
-                //        dir.Name.Equals(segment, StringComparison.OrdinalIgnoreCase));
-                //    if (folder != null)
-                //    {
-                //        segments[i] = folder.Name;
-                //    }
-                //    else
-                //    {
-                //        break;
-                //    }
-
-                //}
             }
-
+            #endregion
             var reletivePath = string.Join("/", segments);
-
             root = root.Replace("\\", "/");
             if (!root.EndsWith("/"))
             {
@@ -161,8 +107,13 @@ namespace Kooboo.Lib.Compatible
             {
                 reletivePath = reletivePath.TrimStart('/');
             }
-            string path = root + reletivePath;
-            return path;
+            return root + reletivePath;
+        }
+
+        public string CombineRelativePath(string relativePath, string path)
+        {
+            var slash = GetSlash();
+            return relativePath + slash + path;
         }
 
         public string JoinPath(string[] segments)

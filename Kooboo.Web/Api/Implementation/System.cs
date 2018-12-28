@@ -95,7 +95,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             string root = Kooboo.Data.AppSettings.RootPath;
 
-            string fullpath = Kooboo.Lib.Helper.PathHelper.CombinePath(root, url);
+            string fullpath = Lib.Compatible.CompatibleManager.Instance.System.CombinePath(root, url);
             if (System.IO.File.Exists(fullpath))
             {
                 return System.IO.File.ReadAllText(fullpath);

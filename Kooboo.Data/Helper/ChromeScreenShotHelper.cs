@@ -24,7 +24,7 @@ namespace Kooboo.Data.Helper
             try
             {
                 var base64Image = HttpHelper.Get<string>(nodeScreenShotUrl);
-                base64Image = GetThumbnailImage(base64Image, new Size() {Width = width, Height = height});
+                base64Image = GetThumbnailImage(base64Image, new ImageSize() {Width = width, Height = height});
                 // should verify as base64 here.. 
                 return base64Image;
             }
@@ -36,9 +36,9 @@ namespace Kooboo.Data.Helper
         }
 
         //temp method will be remove 
-        public static string GetThumbnailImage(string base64Str, Size size)
+        public static string GetThumbnailImage(string base64Str, ImageSize size)
         {
-            return SystemImageHelper.GetThumbnailImage(base64Str, size);
+            return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(base64Str, size);
         }
 
 

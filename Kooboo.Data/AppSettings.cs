@@ -103,9 +103,9 @@ namespace Kooboo.Data
 
             string orgfolder = GetOrganizationFolder(orgid);
 
-            string websitefolder =Kooboo.Lib.Helper.PathHelper.CombinePath(orgfolder, website.Name);
+            string websitefolder =Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(orgfolder, website.Name);
 
-            string fileiofolder = Kooboo.Lib.Helper.PathHelper.CombinePath(websitefolder, "__FileIO");
+            string fileiofolder = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(websitefolder, "__FileIO");
 
             Kooboo.Lib.Helper.IOHelper.EnsureDirectoryExists(fileiofolder);
 
@@ -215,7 +215,7 @@ namespace Kooboo.Data
                return basefolder; 
             }
 
-            List<string> trypaths = Kooboo.Lib.Helper.SystemAdapter.GetTryPaths();
+            List<string> trypaths = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetTryPaths();
             
             foreach (var item in trypaths)
             {
@@ -618,7 +618,7 @@ namespace Kooboo.Data
 
         public static string GetPhysicsPath(string relativePath)
         {
-            return Kooboo.Lib.Helper.PathHelper.GetPhysicsPath(AppSettings.RootPath,relativePath);
+            return Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(AppSettings.RootPath, relativePath);
         }
 
         public static int MaxTemplateSize

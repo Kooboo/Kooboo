@@ -176,7 +176,7 @@ namespace Kooboo.Mail.Multipart
                     }
                     else
                     {
-                        contenttype = Kooboo.Lib.Helper.SystemAdapter.GetMimeMapping(item.FileName);
+                        contenttype = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(item.FileName);
                     }
                     body += "\r\n--" + this.MixedBondary + "\r\n";
                     body += "Content-Type:" + contenttype + "; name=\"" + Utility.HeaderUtility.EncodeField(item.FileName) + "\"\r\n";
@@ -304,7 +304,7 @@ namespace Kooboo.Mail.Multipart
                 {
                     body += "--" + this.RelatedBoundary + "\r\n";
 
-                    var contentType = Kooboo.Lib.Helper.SystemAdapter.GetMimeMapping(item.FileName);
+                    var contentType = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(item.FileName);
                     body += "Content-Type:" + contentType + ";name=" + Utility.HeaderUtility.EncodeField(item.FileName) + "\r\n";
                     body += "Content-Transfer-Encoding:base64\r\n";
                     body += "Content-Disposition:inline;filename=\"" + Utility.HeaderUtility.EncodeField(item.FileName) + "\"\r\n";

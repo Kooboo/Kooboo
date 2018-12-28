@@ -115,7 +115,7 @@ namespace Kooboo.Data.GeoLocation
 
         public static double GetDistance(double xLa, double xLong, double yLa, double yLong)
         {
-            return Kooboo.Lib.Helper.SystemAdapter.GetDistance(xLa, xLong, yLa, yLong);
+            return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetDistance(xLa, xLong, yLa, yLong);
         }
     }
 
