@@ -11,10 +11,11 @@ namespace Kooboo.Sites.SiteTransfer.Download
     public class DownloadManager
     {
         public DownloadManager()
-        { 
+        {
+            this.MaxThread = 2;
             if (Kooboo.Data.AppSettings.IsOnlineServer)
             {
-                this.MaxThread = 3;
+                this.MaxThread = 2;
             }
             else
             {
