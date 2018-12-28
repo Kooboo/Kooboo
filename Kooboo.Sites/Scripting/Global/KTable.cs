@@ -42,14 +42,16 @@ namespace Kooboo.Sites.Scripting.Global
             return this.table.Query.Where(field, IndexedDB.Query.Comparer.EqualTo, value).FirstOrDefault(); 
         }
 
-        public List<IDictionary<string, object>> findAll(string field, object value)
+        public JsList<IDictionary<string, object>> findAll(string field, object value)
         {
-            return this.table.Query.Where(field, IndexedDB.Query.Comparer.EqualTo, value).SelectAll();
+            var list= this.table.Query.Where(field, IndexedDB.Query.Comparer.EqualTo, value).SelectAll();
+            return GetJsList(list);
         }
          
-        public List<IDictionary<string, object>> findAll(string condition)
+        public JsList<IDictionary<string, object>> findAll(string condition)
         {
-            return this.table.Query.FindAll(condition); 
+            var list= this.table.Query.FindAll(condition);
+            return GetJsList(list);
         }
 
         public object get(object id)
@@ -94,9 +96,20 @@ namespace Kooboo.Sites.Scripting.Global
               this.table.CreateIndex(fieldname, false);  
         }
          
-        public List<IDictionary<string, object>> all()
+        public JsList<IDictionary<string, object>> all()
         {
-            return this.table.All();
+            var all= this.table.All();
+            return GetJsList(all);
+        }
+
+        private JsList<IDictionary<string, object>> GetJsList(List<IDictionary<string, object>> all)
+        {
+            var list = new JsList<IDictionary<string, object>>();
+            foreach (var item in all)
+            {
+                list.Add(item);
+            }
+            return list;
         }
     }
 }
