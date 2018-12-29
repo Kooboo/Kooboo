@@ -10,13 +10,8 @@ namespace Kooboo.App.CrossPlatform
     {
         static void Main(string[] args)
         {
-            AppDomain.CurrentDomain.UnhandledException += (sender, arguments) =>
-            {
-                System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + arguments.ExceptionObject);
-                Environment.Exit(1);
-            };
-
-            TextEncodingHelper.RegisterEncoding();
+     
+            Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.RegisterEncoding();
 
             GlobalSettings.RootPath = Kooboo.Data.AppSettings.DatabasePath;
             var settingPort = AppSettingsUtility.Get("Port");
@@ -24,56 +19,35 @@ namespace Kooboo.App.CrossPlatform
             {
                 settingPort = AppSettingsUtility.Get("port");
             }
-            var port = Kooboo.DataConstants.DefaultPort;
+            var port = DataConstants.DefaultPort;
 
             if (string.IsNullOrEmpty(settingPort))
             {
-                while (Kooboo.Lib.Helper.NetworkHelper.IsPortInUse(port) && port < 65535)
-                {
-                    port += 1;
-                }
+                port = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetPort(port);
             }
-            else if (int.TryParse(settingPort, out port) && Kooboo.Lib.Helper.NetworkHelper.IsPortInUse(port))
+            else if (int.TryParse(settingPort, out port) && Kooboo.Lib.Compatible.CompatibleManager.Instance.System.IsPortInUsed(port))
             {
-                string message = Kooboo.Data.Language.Hardcoded.GetValue("Port") + " " + port.ToString() + " " + Kooboo.Data.Language.Hardcoded.GetValue("is in use");
+                string message = Data.Language.Hardcoded.GetValue("Port") + " " + port.ToString() + " " + Data.Language.Hardcoded.GetValue("is in use");
                 Console.WriteLine(message);
-               //Console.ReadKey();
                 return;
             }
+
             AppSettings.CurrentUsedPort = port;
 
+            Web.SystemStart.Start(port);
+            Console.WriteLine("Web Server Started");
+            Console.WriteLine("port:" + port);
 
-            if (RequireIpData())
+            Mail.EmailWorkers.Start();
+
+            var line = Console.ReadLine();
+
+            while (line != null)
             {
-                Console.WriteLine("IP data missing...");
+                Console.Write(line);
+                line = Console.ReadLine();
             }
-            else
-            {
-                Kooboo.Web.SystemStart.Start(port);
-
-                // GenerateSsl();
-
-                Kooboo.Mail.EmailWorkers.Start();
-                Console.WriteLine($"Server started on http://localhost:{port}");
-            }
-
-            while (true)
-            {
-                System.Threading.Thread.Sleep(1000);
-            }
-            //Console.ReadKey();
         }
 
-        public static bool RequireIpData()
-        {
-            if (Kooboo.Data.AppSettings.IsOnlineServer)
-            {
-                if (Kooboo.Data.GeoLocation.IPLocation.IpCityStore == null)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
     }
 }

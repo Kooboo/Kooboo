@@ -1,25 +1,28 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFrameworks>netcoreapp2.0;net45</TargetFrameworks>
     <AssemblyName>Kooboo.App</AssemblyName>
     <RootNamespace>Kooboo.App</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETCOREAPP2_0;NETSTANDARD2_0</DefineConstants>
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp2.0'">
+    <DefineConstants>NETSTANDARD;NETCOREAPP;NETCOREAPP2_0</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Github\Kooboo.Data\Kooboo.Data.Standard.csproj" />
-    <ProjectReference Include="..\Github\Kooboo.Dom\Kooboo.Dom.Standard.csproj" />
-    <ProjectReference Include="..\Github\Kooboo.IndexedDB\Kooboo.IndexedDB.Standard.csproj" />
-    <ProjectReference Include="..\Github\Kooboo.Lib\Kooboo.Lib.Standard.csproj" />
-    <ProjectReference Include="..\Github\Kooboo.Mail\Kooboo.Mail.Standard.csproj" />
-    <ProjectReference Include="..\Github\Kooboo.Render\Kooboo.Render.Standard.csproj" />
-    <ProjectReference Include="..\Github\Kooboo.Sites\Kooboo.Sites.Standard.csproj" />
-    <ProjectReference Include="..\Github\Kooboo.Web\Kooboo.Web.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Render\Kooboo.Render.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Web\Kooboo.Web.Standard.csproj" />
   </ItemGroup>
 
+  <Target Name="generateLinuxZip" AfterTargets="Publish">
+    <Exec Command="$(SolutionDir)generateLinuxZip.bat"></Exec>
+  </Target>
 </Project>
