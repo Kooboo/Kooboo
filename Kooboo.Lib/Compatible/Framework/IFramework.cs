@@ -13,8 +13,6 @@ namespace Kooboo.Lib.Compatible
 
         string GetMimeMapping(string extension);
 
-        void ConsoleWait();
-
         double GetDistance(double xLa, double xLong, double yLa, double yLong);
 
         void RegisterEncoding();

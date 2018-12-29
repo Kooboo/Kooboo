@@ -171,16 +171,6 @@ namespace Kooboo.Lib.Compatible
         {
             //net45 doesn't need registerEncoding.
         }
-        public void ConsoleWait()
-        {
-            var line = Console.ReadLine();
-
-            while (line != null)
-            {
-                Console.Write(line);
-                line = Console.ReadLine();
-            }
-        }
 
     }
 }
