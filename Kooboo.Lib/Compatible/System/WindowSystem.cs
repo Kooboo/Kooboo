@@ -18,10 +18,6 @@ namespace Kooboo.Lib.Compatible
             return "\\";
         }
 
-        public int GetEndLine(string source, int index)
-        {
-            return source.IndexOf("\n", index);
-        }
         #region
         public string CombinePath(string root, string relativePath)
         {

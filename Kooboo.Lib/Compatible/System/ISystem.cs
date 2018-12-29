@@ -15,8 +15,6 @@ namespace Kooboo.Lib.Compatible
 
         string GetUpgradeUrl(string convertApiUrl);
 
-        int GetEndLine(string source, int index);
-
         string GetSlash();
 
         int GetLastSlash(string path);
