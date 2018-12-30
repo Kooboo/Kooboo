@@ -24,7 +24,7 @@ namespace Kooboo.IndexedDB.Schedule
         /// <summary>
         /// The list of repeat task that is saved at memory. 
         /// </summary>
-        private List<RepeatItem<TValue>> RepeatTaskList;
+        private List<RepeatItem<TValue>> RepeatTaskList { get; set; }
 
         private byte startbyteone = 10;
         private byte startbytetwo = 13;
