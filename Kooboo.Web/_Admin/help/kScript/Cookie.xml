@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <KScriptSetting>
   <Name>cookie</Name>
-  <Description>Set cookie value</Description>
+  <Description>Get or set cookie value</Description>
   <Example><![CDATA[
     <script engine="kscript">
 
