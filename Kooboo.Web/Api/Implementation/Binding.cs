@@ -90,26 +90,16 @@ namespace Kooboo.Web.Api.Implementation
 
             if (SiteId != default(Guid))
             {
-                var domain = GlobalDb.Domains.Get(RootDomain);
-                if (domain.OrganizationId != default(Guid) && AppSettings.IsOnlineServer && domain.OrganizationId != call.Context.User.CurrentOrgId)
-                {
-                    throw new Exception(Data.Language.Hardcoded.GetValue("Domain does not owned by current user", call.Context));
-                }
-
-                if (DefaultBinding && port > 0)
-                {
-                    subdomain = string.Empty;
-                    RootDomain = string.Empty;
-                }
-
-                if (!DefaultBinding)
-                {
-                    port = 0;
-                }
 
                 if (port <= 0)
                 {
                     DefaultBinding = false;
+                }
+
+
+                if (!DefaultBinding)
+                {
+                    port = 0;
                 }
 
 
@@ -120,8 +110,25 @@ namespace Kooboo.Web.Api.Implementation
                         throw new Exception(Data.Language.Hardcoded.GetValue("port in use", call.Context) + ": " + port.ToString());
                     }
                 }
+                  
 
-                GlobalDb.Bindings.AddOrUpdate(RootDomain, subdomain, SiteId, call.Context.User.CurrentOrgId, DefaultBinding, port);
+                if (DefaultBinding && port > 0)
+                {
+
+                    GlobalDb.Bindings.AddOrUpdate(null, null, SiteId, call.Context.User.CurrentOrgId, DefaultBinding, port);
+                }
+                else
+                {
+
+                    var domain = GlobalDb.Domains.Get(RootDomain);
+                    if (domain.OrganizationId != default(Guid) && AppSettings.IsOnlineServer && domain.OrganizationId != call.Context.User.CurrentOrgId)
+                    {
+                        throw new Exception(Data.Language.Hardcoded.GetValue("Domain does not owned by current user", call.Context));
+                    }
+
+                    GlobalDb.Bindings.AddOrUpdate(RootDomain, subdomain, SiteId, call.Context.User.CurrentOrgId, DefaultBinding, port);
+
+                } 
 
             }
         }

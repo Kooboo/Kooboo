@@ -172,7 +172,8 @@ namespace Kooboo.Sites.Scripting
             public UserModel User
             {
                 get; set;
-            }
+            } 
+           
         }
                      
         private kSiteDb _sitedb;
@@ -708,4 +709,64 @@ namespace Kooboo.Sites.Scripting
         public Type ReturnType { get; set; }
     }
 
+
+    public class UserInfoModel
+    {
+        public RenderContext context { get; set; }
+
+        public bool IsLogin
+        {
+            get
+            {
+                return context.User != null; 
+            }
+        }
+
+        public string UserName {
+            get
+            {
+                if (context.User !=null)
+                {
+                    return context.User.UserName; 
+                }
+                return null;
+            }
+        }
+
+        public string FirstName {
+            get
+            {
+                if (context.User !=null)
+                {
+                    return context.User.FirstName; 
+                }
+                return null; 
+            }
+        }
+
+        public string LastName { get; set; }
+
+        public string Language { get; set; }
+
+        public bool Login(string username, string password)
+        {
+            var user = Kooboo.Data.GlobalDb.Users.Validate(UserName, password);
+
+            if (user != null)
+            {
+                context.Response.AppendCookie(DataConstants.UserApiSessionKey, user.Id.ToString(),  30);
+                context.User = user; 
+                return true; 
+            }
+
+            return false; 
+        }  
+
+        public void Logout()
+        {
+            // log user out. 
+            context.Response.DeleteCookie(DataConstants.UserApiSessionKey);   
+        }
+
+    }
 }

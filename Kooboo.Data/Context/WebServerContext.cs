@@ -14,11 +14,9 @@ using Kooboo.Lib.Helper;
 using Microsoft.AspNetCore.Http;
 
 namespace Kooboo.Data.Context
-{
-
+{ 
     public static class WebServerContext
-    {
-
+    { 
         private static Func<string, string, User> _validate;
         public static Func<string, string, User> Validate
         {
