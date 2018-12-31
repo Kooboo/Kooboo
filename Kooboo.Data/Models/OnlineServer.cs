@@ -114,8 +114,7 @@ namespace Kooboo.Data.Models
         public string DataCenter
         {
             get;set;
-        }
-
+        } 
 
         private Guid _hostdomainhash; 
 
@@ -169,8 +168,7 @@ namespace Kooboo.Data.Models
                 return _allips;
             }
         }
-
-
+         
         private string _continent; 
 
         [Newtonsoft.Json.JsonIgnore]
@@ -204,6 +202,9 @@ namespace Kooboo.Data.Models
                 _continent = value; 
             }
         }
+
+        // the new data center id. 
+        public int OnlineDataCenterId { get; set; }
     }
 
     public enum ServerType
