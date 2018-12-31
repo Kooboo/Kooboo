@@ -168,9 +168,10 @@ namespace Kooboo.Data.Models
                 return _allips;
             }
         }
-         
-        private string _continent; 
 
+        
+        private string _continent; 
+        [Obsolete]
         [Newtonsoft.Json.JsonIgnore]
         public string Continent {
             get
@@ -219,4 +220,6 @@ namespace Kooboo.Data.Models
         Root=16
         //0 = normal, 1= template, 2= accountDns, 4= wwwhost. 
     }
+
+
 }
