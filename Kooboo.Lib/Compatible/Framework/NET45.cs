@@ -19,7 +19,7 @@ namespace Kooboo.Lib.Compatible
         }
         
 
-        #region RSA
+#region RSA
         public RsaKeys GenerateKeys(int size = 512)
         {
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(size);
@@ -86,7 +86,7 @@ namespace Kooboo.Lib.Compatible
             bytes = rsa.Decrypt(Convert.FromBase64String(content), false);
             return Encoding.UTF8.GetString(bytes);
         }
-        #endregion
+#endregion
         public double GetDistance(double xLa, double xLong, double yLa, double yLong)
         {
             System.Device.Location.GeoCoordinate cordx = new System.Device.Location.GeoCoordinate(xLa, xLong);
@@ -94,7 +94,7 @@ namespace Kooboo.Lib.Compatible
             return cordx.GetDistanceTo(cordy);
         }
 
-        #region image
+#region image
         public SizeMeansurement GetImageSize(byte[] imagebytes)
         {
             SizeMeansurement measure = new SizeMeansurement();
@@ -170,6 +170,17 @@ namespace Kooboo.Lib.Compatible
         public void RegisterEncoding()
         {
             //net45 doesn't need registerEncoding.
+        }
+
+        public void ConsoleWait()
+        {
+            var line = Console.ReadLine();
+
+            while (line != null)
+            {
+                Console.Write(line);
+                line = Console.ReadLine();
+            }
         }
 
     }

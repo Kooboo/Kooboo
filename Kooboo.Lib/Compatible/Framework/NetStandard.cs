@@ -233,7 +233,16 @@ namespace Kooboo.Lib.Compatible
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         }
-        
+
+        public void ConsoleWait()
+        {
+            while (true)
+            {
+                System.Threading.Thread.Sleep(1000);
+            }
+        }
+
+
     }
 }
 #endif
