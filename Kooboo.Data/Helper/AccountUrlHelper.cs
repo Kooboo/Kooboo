@@ -35,11 +35,6 @@ namespace Kooboo.Data.Helper
         public static string Domain(string relativeUrl)
         {  
             return AccountBase + "/account/domain" + ensureRelative(relativeUrl);
-        }
-
-        public static string Commerce(string relativeUrl)
-        {  
-            return AccountBase + "/account/commerce" +ensureRelative(relativeUrl);
         } 
 
         public static string System(string relativeUrl)
@@ -54,21 +49,20 @@ namespace Kooboo.Data.Helper
 
         public static string Certificate(string relativeUrl)
         {
-            return AccountBase + "/account/certificate" + ensureRelative(relativeUrl);
-
+            return AccountBase + "/account/certificate" + ensureRelative(relativeUrl); 
         }
 
         public static string Ssl(string relativeUrl)
         {
-            return AccountBase + "/account/ssl" + ensureRelative(relativeUrl);
+            return AccountBase + "/account/ssl" + ensureRelative(relativeUrl); 
+        } 
 
-        }
-
-        public static string Currency(string relativeUrl)
+        public static string OnlineDataCenter(string relativeUrl)
         {
-            return AccountBase + "/account/currency" + ensureRelative(relativeUrl);
+            return AccountBase + "/account/OnlineDataCenter" + ensureRelative(relativeUrl); 
         }
-          
+
+
         private static string ensureRelative(string relativeurl)
         {
             if (string.IsNullOrEmpty(relativeurl))

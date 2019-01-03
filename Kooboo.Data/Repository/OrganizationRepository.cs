@@ -152,7 +152,7 @@ namespace Kooboo.Data.Repository
 
         public bool ChangeDataCenter(Guid OrganizationId, string DataCenter)
         {
-            string url = Kooboo.Data.Helper.AccountUrlHelper.Org("ChangeDataCenter");
+            string url = Kooboo.Data.Helper.AccountUrlHelper.OnlineDataCenter("ChangeDataCenter");
 
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("OrganizationId", OrganizationId.ToString());
