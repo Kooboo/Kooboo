@@ -9,8 +9,7 @@ namespace Kooboo.Data.Repository
 {
     public class OrganizationRepository
     {
-        internal Dictionary<Guid, string> NameCache = new Dictionary<Guid, string>();
-
+        public Dictionary<Guid, string> NameCache = new Dictionary<Guid, string>();
 
         public Organization Add(Organization org)
         {
@@ -82,12 +81,12 @@ namespace Kooboo.Data.Repository
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("organizationId", organizationId.ToString());
             para.Add("userName", userName);
-            var result =  HttpHelper.Post<string>(Account.Url.Org.AddUser, para);
+            var result = HttpHelper.Post<string>(Account.Url.Org.AddUser, para);
 
             var userid = Lib.Security.Hash.ComputeGuidIgnoreCase(userName);
-            Kooboo.Data.Cache.OrganizationUserCache.AddUser(organizationId, userid); 
+            Kooboo.Data.Cache.OrganizationUserCache.AddUser(organizationId, userid);
 
-            return result; 
+            return result;
         }
 
         public bool DeleteUser(string userName, Guid organizationId)
@@ -95,31 +94,16 @@ namespace Kooboo.Data.Repository
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("organizationId", organizationId.ToString());
             para.Add("userName", userName);
-            var ok =  HttpHelper.Post<bool>(Account.Url.Org.DeleteUser, para);
+            var ok = HttpHelper.Post<bool>(Account.Url.Org.DeleteUser, para);
 
             if (ok)
             {
-                var userid = Lib.Security.Hash.ComputeGuidIgnoreCase(userName); 
-                Kooboo.Data.Cache.OrganizationUserCache.RemoveUser(organizationId, userid); 
+                var userid = Lib.Security.Hash.ComputeGuidIgnoreCase(userName);
+                Kooboo.Data.Cache.OrganizationUserCache.RemoveUser(organizationId, userid);
             }
-            return ok; 
+            return ok;
         }
 
-        public bool AddProposalUserBalance(Guid proposalUserId, Guid proposalId)
-        {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("proposalUserId", proposalUserId.ToString());
-            para.Add("proposalId", proposalId.ToString());
-            return HttpHelper.Post<bool>(Account.Url.Org.AddProposalUserBalance, para);
-        }
-
-        public bool ChangeDemandUserBalance(Guid demandUserId, Guid proposalId)
-        {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("demandUserId", demandUserId.ToString());
-            para.Add("proposalId", proposalId.ToString());
-            return HttpHelper.Post<bool>(Account.Url.Org.ChangeDemandUserBalance, para);
-        }
 
         public string GetName(Guid OrgId)
         {
@@ -132,8 +116,8 @@ namespace Kooboo.Data.Repository
                     {
                         NameCache[user.CurrentOrgId] = user.CurrentOrgName;
                         return user.CurrentOrgName;
-                    } 
-                } 
+                    }
+                }
                 var getorg = Get(OrgId);
                 if (getorg != null && !string.IsNullOrWhiteSpace(getorg.Name))
                 {
@@ -148,24 +132,6 @@ namespace Kooboo.Data.Repository
             }
 
             return null;
-        }
-
-        public bool ChangeDataCenter(Guid OrganizationId, string DataCenter)
-        {
-            string url = Kooboo.Data.Helper.AccountUrlHelper.OnlineDataCenter("ChangeDataCenter");
-
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("OrganizationId", OrganizationId.ToString());
-            para.Add("DataCenter", DataCenter);
-
-            var org = HttpHelper.Post<Organization>(url, para);
-
-            if (org != null)
-            {
-                GlobalDb.Organization.NameCache[org.Id] = org.Name;
-                return true;
-            }
-            return false;
         }
 
         public void RemoveOrgCache(Guid orgId)
