@@ -734,6 +734,30 @@ namespace Kooboo.Sites.Scripting
 
         public RenderContext context { get; set; }
 
+        public Guid Id
+        {
+            get
+            {
+                if (context.User != null)
+                {
+                    return context.User.Id;
+                }
+                return default(Guid);
+            } 
+        }
+
+        public Guid _Id
+        {
+            get
+            {
+                if (context.User != null)
+                {
+                    return context.User.Id;
+                }
+                return default(Guid);
+            }
+        }
+
         public bool IsLogin
         {
             get

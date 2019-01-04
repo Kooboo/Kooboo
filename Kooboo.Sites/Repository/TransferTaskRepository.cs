@@ -8,11 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Kooboo.IndexedDB;
 using Kooboo.Lib.Helper;
-using System.Net; 
+using System.Net;
+using System.Threading;
 
 namespace Kooboo.Sites.Repository
 {
-   public class TransferTaskRepository : SiteRepositoryBase<TransferTask>
+    public class TransferTaskRepository : SiteRepositoryBase<TransferTask>
     {
         internal override ObjectStoreParameters StoreParameters
         {
@@ -21,31 +22,31 @@ namespace Kooboo.Sites.Repository
                 ObjectStoreParameters paras = new ObjectStoreParameters();
                 paras.AddColumn<TransferTask>(o => o.done);
                 paras.AddColumn<TransferTask>(o => o.CreationDate);
-                paras.SetPrimaryKeyField<TransferTask>(o => o.Id); 
+                paras.SetPrimaryKeyField<TransferTask>(o => o.Id);
                 return paras;
             }
         }
 
         public void SetDone(Guid TaskId)
         {
-            var task = this.Get(TaskId); 
-            if (task!= null)
+            var task = this.Get(TaskId);
+            if (task != null)
             {
                 task.done = true;
-                this.AddOrUpdate(task); 
+                this.AddOrUpdate(task);
             }
         }
-          
-        public   bool IsInProgress()
+
+        public bool IsInProgress()
         {
             foreach (var item in this.All())
             {
-                if (item.done == false  && item.CreationDate > DateTime.Now.AddMinutes(-30))
+                if (item.done == false && item.CreationDate > DateTime.Now.AddMinutes(-30))
                 {
-                    return true; 
-                } 
-            } 
-            return false;   
+                    return true;
+                }
+            }
+            return false;
         }
 
 
@@ -55,7 +56,7 @@ namespace Kooboo.Sites.Repository
             {
                 if (!string.IsNullOrEmpty(value.FullStartUrl))
                 {
-                    value.Domains.Add(UrlHelper.UriHost(value.FullStartUrl, true)); 
+                    value.Domains.Add(UrlHelper.UriHost(value.FullStartUrl, true));
                 }
             }
             return base.AddOrUpdate(value, UserId);
@@ -65,14 +66,14 @@ namespace Kooboo.Sites.Repository
         /// stop all download tasks of this website. 
         /// </summary>
         /// <param name="website"></param>
-        public  void CancelDownload()
-        { 
-            var alltask = this.TableScan.Where(o => o.done == false && o.CreationDate > DateTime.Now.AddMinutes(-30)).SelectAll();  
+        public void CancelDownload()
+        {
+            var alltask = this.TableScan.Where(o => o.done == false && o.CreationDate > DateTime.Now.AddMinutes(-30)).SelectAll();
 
             foreach (var item in alltask)
             {
                 item.done = true;
-               this.AddOrUpdate(item); 
+                this.AddOrUpdate(item);
             }
 
             var allpages = this.SiteDb.TransferPages.TableScan.Where(o => o.done == false).SelectAll();
@@ -84,11 +85,11 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public   string FirstImportHost()
+        public string FirstImportHost()
         {
-            var all = this.All();  
+            var all = this.All();
 
-            foreach (var item in all.OrderBy(o=>o.CreationDate))
+            foreach (var item in all.OrderBy(o => o.CreationDate))
             {
                 foreach (var domain in item.Domains)
                 {
@@ -96,13 +97,13 @@ namespace Kooboo.Sites.Repository
                     {
                         if (!domain.ToLower().StartsWith("http://") && !domain.ToLower().StartsWith("https://"))
                         {
-                            return "http://" + domain; 
+                            return "http://" + domain;
                         }
                         else
                         {
-                            return domain; 
+                            return domain;
                         }
-                    }   
+                    }
                 }
             }
 
@@ -110,7 +111,7 @@ namespace Kooboo.Sites.Repository
             {
                 if (!string.IsNullOrEmpty(item.FullStartUrl))
                 {
-                    return item.FullStartUrl; 
+                    return item.FullStartUrl;
                 }
             }
 
@@ -119,13 +120,13 @@ namespace Kooboo.Sites.Repository
 
         public HashSet<string> History()
         {
-            HashSet<string> result = new HashSet<string>(); 
-             
+            HashSet<string> result = new HashSet<string>();
+
             var all = this.All();
 
             foreach (var item in all.OrderBy(o => o.CreationDate))
             {
-                if (item.Domains.Count()>0)
+                if (item.Domains.Count() > 0)
                 {
                     foreach (var domain in item.Domains)
                     {
@@ -151,60 +152,60 @@ namespace Kooboo.Sites.Repository
                             }
                             else
                             {
-                                  result.Add(domain);
+                                result.Add(domain);
                             }
-                        } 
+                        }
                     }
                 }
                 else
                 {
                     if (!string.IsNullOrEmpty(item.FullStartUrl))
                     {
-                        result.Add(item.FullStartUrl); 
+                        result.Add(item.FullStartUrl);
                     }
                 }
- 
+
             }
 
-            return result;  
+            return result;
 
         }
-        
+
         public void UpdateCookie(Guid taskid, System.Net.CookieContainer cookiecontainer)
         {
-            var task = this.Get(taskid); 
-            if (task !=null)
+            var task = this.Get(taskid);
+            if (task != null)
             {
                 var uri = new Uri(task.FullStartUrl);
                 CookieCollection cookies = cookiecontainer.GetCookies(uri);
-          
-                if (cookies !=null )
+
+                if (cookies != null)
                 {
-                    bool hascookie = false; 
+                    bool hascookie = false;
                     foreach (Cookie item in cookies)
                     {
-                        hascookie = true; 
+                        hascookie = true;
                         if (!item.Expired)
                         {
-                            task.cookies[item.Name] = item.Value; 
+                            task.cookies[item.Name] = item.Value;
                         }
                         else
                         {
-                            task.cookies.Remove(item.Name); 
+                            task.cookies.Remove(item.Name);
                         }
-                    } 
+                    }
 
                     if (hascookie)
                     {
                         this.AddOrUpdate(task);
                     }
-                } 
-         
+                }
+
             }
         }
-        
+
         public CookieContainer GetCookieContainer(Guid TaskId)
-        { 
+        {
             var task = this.Get(TaskId);
             return GetCookieContainer(task);
         }
@@ -231,33 +232,104 @@ namespace Kooboo.Sites.Repository
         {
             if (string.IsNullOrWhiteSpace(Domain))
             {
-                return null; 
+                return null;
             }
-        
+
             var all = this.All();
 
             foreach (var item in all)
             {
                 if (item.Domains.Contains(Domain, StringComparer.OrdinalIgnoreCase))
                 {
-                    return GetCookieContainer(item); 
+                    return GetCookieContainer(item);
                 }
             }
 
-            return null; 
+            return null;
         }
 
         public CookieContainer GetCookieContainerByFullUrl(string fullurl)
         {
             if (!string.IsNullOrWhiteSpace(fullurl) && Uri.IsWellFormedUriString(fullurl, UriKind.Absolute))
             {
-                var uri = new Uri(fullurl); 
-                if (uri !=null)
+                var uri = new Uri(fullurl);
+                if (uri != null)
                 {
-                    return GetCookieContainer(uri.Host); 
+                    return GetCookieContainer(uri.Host);
                 }
-            } 
-            return null; 
+            }
+            return null;
         }
-    } 
+
+        #region ContinueDownload
+
+        public Dictionary<string, DownloadingTask> ContinueDownloading = new Dictionary<string, DownloadingTask>();
+
+        public bool CanStartDownload(string relativeUrl)
+        {
+
+            if (string.IsNullOrEmpty(relativeUrl))
+            {
+                relativeUrl = "/";
+            }
+
+            if (!this.ContinueDownloading.ContainsKey(relativeUrl))
+            {
+                // if not download yet, start download. 
+                this.ContinueDownloading[relativeUrl] = new DownloadingTask() { StartTime = DateTime.Now }; 
+                return true;
+            }
+            else
+            {
+                // if downlaoding, try wait..
+                return EnterWait(relativeUrl); 
+            }
+        }
+
+        public void ReleaseDownload(string relativeUrl)
+        {
+            DownloadingTask lasttime;
+            if (this.ContinueDownloading.TryGetValue(relativeUrl, out lasttime))
+            {
+                lasttime.IsFinished = true;  
+            }
+        }
+
+        private bool EnterWait(string relativeUrl)
+        {
+            DownloadingTask lasttime;
+            if (this.ContinueDownloading.TryGetValue(relativeUrl, out lasttime))
+            {
+                int sleepCounter = 0;
+                while (!lasttime.IsFinished && lasttime.StartTime > DateTime.Now.AddMinutes(-3))
+                {
+                    sleepCounter += 1;
+                    System.Threading.Thread.Sleep(3000);
+                    if (sleepCounter > 10)
+                    {
+                        break;
+                    }
+                }
+
+                if (lasttime.IsFinished)
+                {
+                    return false;
+                }
+                return true;
+            }
+            // not exists any more, continue download. 
+            return true;
+        }
+
+        #endregion
+
+
+        public class DownloadingTask
+        {
+            public DateTime StartTime { get; set; }
+
+            public bool IsFinished { get; set; }
+        }
+
+    }
 }

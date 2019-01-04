@@ -109,6 +109,11 @@ namespace Kooboo.Sites.SiteTransfer
             if (!siteDb.WebSite.ContinueDownload)
             { return null;  }
              
+            if (!siteDb.TransferTasks.CanStartDownload(RelativeUrl))
+            {
+                return null; 
+            }
+
             var history = siteDb.TransferTasks.History().ToList();  
             if (history.Count() == 0)
             {
@@ -158,12 +163,14 @@ namespace Kooboo.Sites.SiteTransfer
                     download = await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer);
                     if (download != null)
                     {
-                       
                         break; 
                     }
                 }
             }
    
+
+
+
             ///// 301, 302, will be converted to 200 and return back as well. So it is safe to == 200.
             if (download != null && download.StatusCode == 200)
             {
@@ -176,7 +183,9 @@ namespace Kooboo.Sites.SiteTransfer
                 }
 
                 /// for continue download content... 
-                Continue.ContinueTask.Convert(siteDb, downloadobject); 
+                Continue.ContinueTask.Convert(siteDb, downloadobject);
+
+                siteDb.TransferTasks.ReleaseDownload(RelativeUrl); 
                 return downloadobject;
             }
 
@@ -188,8 +197,7 @@ namespace Kooboo.Sites.SiteTransfer
             {
                 var filetype = Kooboo.Lib.Helper.UrlHelper.GetFileType(RelativeUrl);
 
-                byte consttype;
-
+                byte consttype; 
                 switch (filetype)
                 {
                     case UrlHelper.UrlFileType.Image:
@@ -217,8 +225,7 @@ namespace Kooboo.Sites.SiteTransfer
 
             return null;
         }
-
-
+         
         public static bool IsUrlBanned(string FullUrl)
         {
             var rootdomain = Kooboo.Data.Helper.DomainHelper.GetRootDomain(FullUrl);
@@ -231,6 +238,6 @@ namespace Kooboo.Sites.SiteTransfer
 
             return Lib.Helper.HttpHelper.Get<bool>(url);
         }
-
+         
     }
 }

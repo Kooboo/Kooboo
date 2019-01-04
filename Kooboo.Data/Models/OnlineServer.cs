@@ -75,7 +75,6 @@ namespace Kooboo.Data.Models
 
         public int EmailServerId { get; set; }
 
-
         private Guid _privateorgid; 
         public Guid PrivateOrgId {
             get {
