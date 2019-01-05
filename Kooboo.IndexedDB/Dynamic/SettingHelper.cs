@@ -695,6 +695,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         {
                             newprimaryfield = find.Name;
                         }
+                        result.ShouldRebuild = true; 
                     }
 
                     if (item.ControlType != find.ControlType || item.Setting != find.Setting)

@@ -63,7 +63,7 @@ namespace Kooboo.Web.Service
             }
 
             string baseurl = currentRequestUrl;
-            if (Data.AppSettings.IsOnlineServer && !string.IsNullOrWhiteSpace(User.TempRedirectUrl))
+            if (Data.AppSettings.IsOnlineServer && !string.IsNullOrWhiteSpace(User.TempRedirectUrl) && context.WebSite == null)
             {
 #if !DEBUG
                 {
