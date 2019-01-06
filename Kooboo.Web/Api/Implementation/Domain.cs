@@ -58,12 +58,13 @@ namespace Kooboo.Web.Api.Implementation
                 info.DnsServers.Add("ns2.dnscall.org");
             }
 
-            info.IPAddress = AppSettings.ServerSetting.ServerId + "." + AppSettings.ServerSetting.HostDomain; 
+            info.CName = AppSettings.ServerSetting.ServerId + "." + AppSettings.ServerSetting.HostDomain;
+             
 
-           // if (Data.AppSettings.ServerSetting.Ips != null && Data.AppSettings.ServerSetting.Ips.Count > 0)
-           // {
-            //    info.IPAddress = AppSettings.ServerSetting.Ips.First();
-            //}
+           if (Data.AppSettings.ServerSetting.Ips != null && Data.AppSettings.ServerSetting.Ips.Count > 0)
+            {
+                info.IPAddress = AppSettings.ServerSetting.Ips.First();
+            }
             return info;
         }
 
@@ -71,6 +72,8 @@ namespace Kooboo.Web.Api.Implementation
         {
             public List<string> DnsServers { get; set; }
             public string IPAddress { get; set; }
+
+            public string CName { get; set; }
         }
 
         public List<Domain> Available(ApiCall apiCall)
