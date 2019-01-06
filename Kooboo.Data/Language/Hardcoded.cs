@@ -23,7 +23,7 @@ namespace Kooboo.Data.Language
                     {
                         _langkeys = new HashSet<string>();
                         // Data center names... 
-                        _langkeys.Add("HK(China)");
+                       // _langkeys.Add("HK(China)");
                          
                         // kooboo app.  
                         //_langkeys.Add("Confirm");

@@ -34,7 +34,7 @@ namespace Kooboo.Api
                     var msg = response.Messages[i];
                     if (!string.IsNullOrWhiteSpace(msg))
                     {
-                        var value = Kooboo.Data.Language.Hardcoded.GetValue(msg, context);
+                        var value = Kooboo.Data.Language.LanguageProvider.GetValue(msg, context);
                         if (msg != value)
                         {
                             response.Messages[i] = value; 
