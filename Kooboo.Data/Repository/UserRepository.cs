@@ -157,7 +157,7 @@ namespace Kooboo.Data.Repository
             }
             user = GlobalDb.LocalUser.Get(id);
 
-            if (user != null && user.PasswordHash != default(Guid) && user.CurrentOrgId != default(Guid))
+            if (user != null && (user.PasswordHash != default(Guid) || !string.IsNullOrWhiteSpace(user.Password)) && user.CurrentOrgId != default(Guid))
             {
                 return user;
             }
@@ -177,12 +177,35 @@ namespace Kooboo.Data.Repository
             return user;
         }
 
+        public bool IsDefaultUser(User user)
+        {
+            if (user == null || Data.AppSettings.DefaultUser == null || string.IsNullOrWhiteSpace(AppSettings.DefaultUser.UserName))
+            {
+                return false;
+            }
+            if (user.UserName.ToUpper() == Data.AppSettings.DefaultUser.UserName.ToUpper())
+            {
+                return true;
+            }
+            return false;
+        }
+
         public bool AddOrUpdate(User user)
         {
             User updateuser = Kooboo.Lib.Serializer.Copy.DeepCopy<User>(user);
 
             string userJson = Lib.Helper.JsonHelper.Serialize(updateuser);
-            var isSuccess = HttpHelper.Post<bool>(AddOrUpdateUserUrl, userJson);
+
+            bool isSuccess = false;
+            if (IsDefaultUser(user))
+            {
+                isSuccess = true;
+            }
+            else
+            {
+                isSuccess = HttpHelper.Post<bool>(AddOrUpdateUserUrl, userJson);
+            }
+
             if (isSuccess)
             {
                 AddOrUpdateTemp(user, true);
@@ -266,7 +289,7 @@ namespace Kooboo.Data.Repository
                     user = GlobalDb.LocalUser.Get(username);
                 }
 
-                if (user == null)
+                if (user == null || string.IsNullOrWhiteSpace(user.Password))
                 {
                     user = Kooboo.Data.Service.UserLoginService.GetDefaultUser(username);
                 }
@@ -334,7 +357,7 @@ namespace Kooboo.Data.Repository
                 {
                     var olduser = this.Cache[user.Id];
                     olduser.CurrentOrgId = user.CurrentOrgId;
-                    olduser.CurrentOrgName = user.CurrentOrgName; 
+                    olduser.CurrentOrgName = user.CurrentOrgName;
                     olduser.IsAdmin = GlobalDb.Users.IsAdmin(user.CurrentOrgId, user.Id);
                 }
 
@@ -342,7 +365,7 @@ namespace Kooboo.Data.Repository
                 if (local != null)
                 {
                     local.CurrentOrgId = user.CurrentOrgId;
-                    local.CurrentOrgName = user.CurrentOrgName; 
+                    local.CurrentOrgName = user.CurrentOrgName;
                     local.IsAdmin = GlobalDb.Users.IsAdmin(user.CurrentOrgId, user.Id);
                     GlobalDb.LocalUser.AddOrUpdate(local);
                 }

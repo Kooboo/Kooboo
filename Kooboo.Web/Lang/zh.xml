@@ -19,7 +19,8 @@
   <key id="All domains you enter will only take effect on your local instance, you are free to use any unprotected domains.">您新建的域名仅在本机有效，您可以使用任何未受保护的域名。</key>
   <key id="Adding a domain to your account">给您的账号添加域名</key>
   <key id="Use below DNS server, all DNS records will be created automatically for you.">使用下列DNS 服务器，所有的DNS 记录将会为你自动建立。</key>
-  <key id="Or do it yourself, create your domain CNAME wildcard record to below domain. To use email service, also configure the Mx record to below domain.">或是你自定义DNS记录，创建一个通配符CNAME记录， 指向下面的域名. 如果你要用邮箱服务， 也要创建 MX 记录，指向到下域名.</key>
+  <key id="Or create your domain  wildcard CNAME record to below domain. To use email service, also configure the Mx record to below domain.">或是创建通配符的 CNAME 记录指向以下域名. 如果要使用邮箱服务，创建指向以下域名的 MX 记录.</key>
+  <key id="Or create your domain wildcard A record to below IP address. This is not recommeneded because we may change our IP">或是创建通配符的 A 记录， 指向以下IP 地址, 并不推荐此选项因为我们有可能会改IP地址。</key>
   <key id="Domain">域名</key>
   <key id="kooboolocal.com">kooboolocal.com</key>
   <key id="Add">新增</key>
@@ -520,7 +521,7 @@
   <key id="The number of clicks away from the start page">距离主页的点击数</key>
   <key id="Scan">扫描</key>
   <key id="No.">No.</key>
-  <key id="* This online version allows you to clone not more than 3 pages, use desktop version if you need more.">* 这是在线版, 一个网站下载三个页面, 单机版不受这个限制, 请确保你有权限使用网站资源.</key>
+  <key id="* This online version allows you to clone 3 pages with very limited speed, use desktop version if you need more.">* This online version allows you to clone 3 pages with very limited speed, use desktop version if you need more.</key>
   <key id="Online">在线情况</key>
   <key id="Transferring">导入中</key>
   <key id="Transferring, you may leave this page">正在迁移，您可以暂时离开这个页面。</key>
@@ -1241,6 +1242,7 @@
   <key id="Old and New Password are the same">新旧密码相同</key>
   <key id="Kooboo online">Kooboo 在线</key>
   <key id="is in use">正在使用</key>
+  <key id="Invalid coupon code">无效的优惠卷</key>
   <key id="Paypal">贝宝</key>
   <key id="wechat">微信</key>
   <key id="Bandwidth">带宽</key>
@@ -1249,8 +1251,8 @@
   <key id="Size of disk">磁盘大小</key>
   <key id="App does not allow source access">App不允许查看源代码</key>
   <key id="Register">注册</key>
-  <key id="Domain does not owned by current user">用户没有域名权限</key>
   <key id="port in use">端口被占用</key>
+  <key id="Domain does not owned by current user">用户没有域名权限</key>
   <key id="Your certificate already exists">证书已经存在</key>
   <key id="You can only submit request for the same domain one time per hour">同一个域名一小时内只能提交一次</key>
   <key id="You have reached the max number of free certificates">你的免费证书已经达到最大数</key>

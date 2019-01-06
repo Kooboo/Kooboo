@@ -179,12 +179,9 @@ namespace Kooboo.Web.Api.Implementation
             }
               
         }
-
-
-        [Kooboo.Attributes.RequireModel(typeof(User))]
-        public bool UpdateProfile(ApiCall call)
-        {
-            var newuser = call.Context.Request.Model as User;
+         
+        public bool UpdateProfile(User newuser, ApiCall call)
+        { 
             var user = call.Context.User;
             user.UserName = newuser.UserName;
             user.Language = newuser.Language;
@@ -223,6 +220,11 @@ namespace Kooboo.Web.Api.Implementation
 
         public MetaResponse ChangePassword(string UserName, string OldPassword, string NewPassword, ApiCall call)
         {
+            if (GlobalDb.Users.IsDefaultUser(call.Context.User))
+            {
+                throw new Exception(Data.Language.Hardcoded.GetValue("Default User can not reset password", call.Context)); 
+            }
+
             bool isSuccess = GlobalDb.Users.ChangePassword(UserName, OldPassword, NewPassword);
             MetaResponse response = new MetaResponse();
             response.Success = isSuccess;

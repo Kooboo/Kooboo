@@ -58,6 +58,7 @@ namespace Kooboo.Data.Models
             get;set;
         }
           
+        //Only for the server that act as DNS server. 
         public string NameServer
         {
             get;set;

@@ -3,9 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections;
 using System.Reflection;
 
 namespace Kooboo.App
@@ -14,8 +11,7 @@ namespace Kooboo.App
     {
         [STAThreadAttribute]
         public static void Main()
-        {
-             
+        {  
             var assemblies = new Dictionary<string, Assembly>();
             var executingAssembly = Assembly.GetExecutingAssembly();
             var resources = executingAssembly.GetManifestResourceNames().Where(n => n.EndsWith(".dll"));
