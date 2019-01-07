@@ -70,7 +70,7 @@ namespace Kooboo.Web.Service
 
             string url;
 
-            if (string.IsNullOrEmpty(returnUrl) || returnUrl == "/" || returnUrl == "\\")
+            if (string.IsNullOrEmpty(returnUrl))
             {
                 context.User = User; 
                 url = Kooboo.Data.Service.StartService.AfterLoginPage(context);
