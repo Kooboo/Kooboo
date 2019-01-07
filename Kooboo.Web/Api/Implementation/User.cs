@@ -44,6 +44,13 @@ namespace Kooboo.Web.Api.Implementation
             {
                 string remember = apiCall.GetValue("remember");
 
+                bool samesite = false;
+                string type = apiCall.GetValue("type"); 
+                if (type !=null && type == "site")
+                {
+                    samesite = true; 
+                }
+
                 string returnUrl = apiCall.GetValue("returnurl");
                 if (returnUrl != null)
                 {
@@ -74,7 +81,7 @@ namespace Kooboo.Web.Api.Implementation
                 var response = new MetaResponse();
 
                 response.Success = true;
-                string redirct = Kooboo.Web.Service.UserService.GetLoginRedirectUrl(apiCall.Context, user, apiCall.Context.Request.Url, returnUrl);
+                string redirct = Kooboo.Web.Service.UserService.GetLoginRedirectUrl(apiCall.Context, user, apiCall.Context.Request.Url, returnUrl, samesite);
 
                 if (isRemember)
                 {

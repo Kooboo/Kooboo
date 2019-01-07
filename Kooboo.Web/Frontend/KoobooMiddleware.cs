@@ -34,7 +34,7 @@ namespace Kooboo.Web.FrontRequest
                     {
                         if (context.User == null)
                         {
-                            context.Response.Redirect(302, "/_admin/account/login?returnurl=" + System.Web.HttpUtility.UrlEncode(context.Request.RawRelativeUrl));
+                            context.Response.Redirect(302, "/_admin/account/login?type=site&returnurl=" + System.Web.HttpUtility.UrlEncode(context.Request.RawRelativeUrl));
                             context.Response.End = true;
                             return;
                         }
