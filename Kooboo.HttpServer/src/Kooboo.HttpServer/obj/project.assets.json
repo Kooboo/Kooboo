@@ -12,42 +12,7 @@
         }
       }
     },
-    ".NETFramework,Version=v4.5/linux-x64": {
-      "System.Runtime.CompilerServices.Unsafe/4.5.1": {
-        "type": "package",
-        "compile": {
-          "ref/netstandard1.0/System.Runtime.CompilerServices.Unsafe.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/System.Runtime.CompilerServices.Unsafe.dll": {}
-        }
-      }
-    },
-    ".NETStandard,Version=v2.0": {
-      "Microsoft.NETCore.Platforms/1.1.0": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard1.0/_._": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/_._": {}
-        }
-      },
-      "NETStandard.Library/2.0.3": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.NETCore.Platforms": "1.1.0"
-        },
-        "compile": {
-          "lib/netstandard1.0/_._": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/_._": {}
-        },
-        "build": {
-          "build/netstandard2.0/NETStandard.Library.targets": {}
-        }
-      },
+    ".NETFramework,Version=v4.6.1": {
       "System.Runtime.CompilerServices.Unsafe/4.5.1": {
         "type": "package",
         "compile": {
@@ -58,7 +23,7 @@
         }
       }
     },
-    ".NETStandard,Version=v2.0/linux-x64": {
+    ".NETStandard,Version=v2.0": {
       "Microsoft.NETCore.Platforms/1.1.0": {
         "type": "package",
         "compile": {
@@ -266,6 +231,9 @@
     ".NETFramework,Version=v4.5": [
       "System.Runtime.CompilerServices.Unsafe >= 4.5.1"
     ],
+    ".NETFramework,Version=v4.6.1": [
+      "System.Runtime.CompilerServices.Unsafe >= 4.5.1"
+    ],
     ".NETStandard,Version=v2.0": [
       "NETStandard.Library >= 2.0.3",
       "System.Runtime.CompilerServices.Unsafe >= 4.5.1"
@@ -295,6 +263,7 @@
       ],
       "originalTargetFrameworks": [
         "net45",
+        "net461",
         "netstandard2.0"
       ],
       "sources": {
@@ -303,6 +272,9 @@
       },
       "frameworks": {
         "net45": {
+          "projectReferences": {}
+        },
+        "net461": {
           "projectReferences": {}
         },
         "netstandard2.0": {
@@ -317,6 +289,14 @@
     },
     "frameworks": {
       "net45": {
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": {
+            "target": "Package",
+            "version": "[4.5.1, )"
+          }
+        }
+      },
+      "net461": {
         "dependencies": {
           "System.Runtime.CompilerServices.Unsafe": {
             "target": "Package",
@@ -342,11 +322,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true
-      }
-    },
-    "runtimes": {
-      "linux-x64": {
-        "#import": []
       }
     }
   }

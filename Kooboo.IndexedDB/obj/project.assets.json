@@ -2,34 +2,8 @@
   "version": 3,
   "targets": {
     ".NETFramework,Version=v4.5": {},
-    ".NETFramework,Version=v4.5/linux-x64": {},
+    ".NETFramework,Version=v4.6.1": {},
     ".NETStandard,Version=v2.0": {
-      "Microsoft.NETCore.Platforms/1.1.0": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard1.0/_._": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/_._": {}
-        }
-      },
-      "NETStandard.Library/2.0.3": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.NETCore.Platforms": "1.1.0"
-        },
-        "compile": {
-          "lib/netstandard1.0/_._": {}
-        },
-        "runtime": {
-          "lib/netstandard1.0/_._": {}
-        },
-        "build": {
-          "build/netstandard2.0/NETStandard.Library.targets": {}
-        }
-      }
-    },
-    ".NETStandard,Version=v2.0/linux-x64": {
       "Microsoft.NETCore.Platforms/1.1.0": {
         "type": "package",
         "compile": {
@@ -202,6 +176,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.5": [],
+    ".NETFramework,Version=v4.6.1": [],
     ".NETStandard,Version=v2.0": [
       "NETStandard.Library >= 2.0.3"
     ]
@@ -230,6 +205,7 @@
       ],
       "originalTargetFrameworks": [
         "net45",
+        "net461",
         "netstandard2.0"
       ],
       "sources": {
@@ -238,6 +214,9 @@
       },
       "frameworks": {
         "net45": {
+          "projectReferences": {}
+        },
+        "net461": {
           "projectReferences": {}
         },
         "netstandard2.0": {
@@ -252,6 +231,7 @@
     },
     "frameworks": {
       "net45": {},
+      "net461": {},
       "netstandard2.0": {
         "dependencies": {
           "NETStandard.Library": {
@@ -266,11 +246,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true
-      }
-    },
-    "runtimes": {
-      "linux-x64": {
-        "#import": []
       }
     }
   }
