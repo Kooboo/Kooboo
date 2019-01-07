@@ -31,6 +31,9 @@ namespace Kooboo.App.CrossPlatform
                 return;
             }
 
+            Kooboo.Data.AppSettings.DefaultLocalHost = "localkooboo.com";
+            Kooboo.Data.AppSettings.StartHost = "127.0.01"; 
+
             AppSettings.CurrentUsedPort = port;
 
             Web.SystemStart.Start(port);
@@ -38,6 +41,8 @@ namespace Kooboo.App.CrossPlatform
             Console.WriteLine("port:" + port);
 
             Mail.EmailWorkers.Start(); 
+
+
 
             Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.ConsoleWait();
 
