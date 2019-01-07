@@ -173,7 +173,7 @@ namespace Kooboo.Sites.Sync
                 }
                 else
                 {
-                    var path = System.IO.Path.Combine(folder, entry.FullName);
+                    var path =  Lib.Compatible.CompatibleManager.Instance.System.CombinePath(folder, entry.FullName);
 
                     if (string.IsNullOrEmpty(entry.Name))
                     {

@@ -1,7 +1,6 @@
 ﻿using System;
 using Kooboo.Data;
-using Kooboo.Lib;
-using Kooboo.Lib.Helper;
+using Kooboo.Lib; 
 using Kooboo.IndexedDB;
 
 namespace Kooboo.App.CrossPlatform
@@ -38,15 +37,10 @@ namespace Kooboo.App.CrossPlatform
             Console.WriteLine("Web Server Started");
             Console.WriteLine("port:" + port);
 
-            Mail.EmailWorkers.Start();
+            Mail.EmailWorkers.Start(); 
 
-            var line = Console.ReadLine();
+            Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.ConsoleWait();
 
-            while (line != null)
-            {
-                Console.Write(line);
-                line = Console.ReadLine();
-            }
         }
 
     }

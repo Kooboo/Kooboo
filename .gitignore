@@ -12,6 +12,7 @@ x86/
 bld/
 [Bb]in/
 [Ll]og/
+[Oo]bj/
 
 /Kooboo.Web/Minifier/
 /Kooboo.Web/AppData/

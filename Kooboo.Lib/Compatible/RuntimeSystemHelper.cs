@@ -8,7 +8,7 @@ namespace Kooboo.Lib.Helper
     {
         public static bool IsLinux()
         {
-#if NETSTANDARD
+#if NETSTANDARD2_0
             return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux);
 #else
              return false;
@@ -18,7 +18,7 @@ namespace Kooboo.Lib.Helper
 
         public static bool IsWindow()
         {
-#if NETSTANDARD
+#if NETSTANDARD2_0
             return System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
 #else
             return true;
