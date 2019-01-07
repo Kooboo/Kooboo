@@ -16,7 +16,7 @@
   <key id="Delete">Delete</key>
   <key id="New local domain">New local domain</key>
   <key id="You are running in local mode">You are running in local mode</key>
-  <key id="All domains you enter will only take effect on your local instance, you are free to use any unprotected domains.">All domains you enter will only take effect on your local instance, you are free to use any unprotected domains.</key>
+  <key id="You need to configure DNS records. For Windows desktop users, a mapping of your website domain to 127.0.0.1 may be created on your system host file">You need to configure DNS records. For Windows desktop users, a mapping of your website domain to 127.0.0.1 may be created on your system host file</key>
   <key id="Adding a domain to your account">Adding a domain to your account</key>
   <key id="Use below DNS server, all DNS records will be created automatically for you.">Use below DNS server, all Dns records will be created automatically for you.</key>
   <key id="Or create your domain  wildcard CNAME record to below domain. To use email service, also configure the Mx record to below domain.">Or create your domain  wildcard CNAME record to below domain. To use email service, also configure the Mx record to below domain.</key>

@@ -16,7 +16,7 @@
   <key id="Delete">删除</key>
   <key id="New local domain">新增域名</key>
   <key id="You are running in local mode">您正在单机版下运行</key>
-  <key id="All domains you enter will only take effect on your local instance, you are free to use any unprotected domains.">您新建的域名仅在本机有效，您可以使用任何未受保护的域名。</key>
+  <key id="You need to configure DNS records. For Windows desktop users, a mapping of your website domain to 127.0.0.1 may be created on your system host file">你需要配置域名记录, Windows客户端的用户，会在你的系统host file中创建指向127.0.0.1 的域名记录</key>
   <key id="Adding a domain to your account">给您的账号添加域名</key>
   <key id="Use below DNS server, all DNS records will be created automatically for you.">使用下列DNS 服务器，所有的DNS 记录将会为你自动建立。</key>
   <key id="Or create your domain  wildcard CNAME record to below domain. To use email service, also configure the Mx record to below domain.">或是创建通配符的 CNAME 记录指向以下域名. 如果要使用邮箱服务，创建指向以下域名的 MX 记录.</key>
