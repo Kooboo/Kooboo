@@ -33,5 +33,7 @@ namespace Kooboo.Lib.Compatible
 
         RsaKeys GenerateKeys(int size = 512);
 
+        bool IsUWP();
+
     }
 }

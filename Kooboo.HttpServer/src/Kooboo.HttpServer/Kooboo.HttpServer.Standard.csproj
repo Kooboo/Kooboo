@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net45;net461</TargetFrameworks>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<AssemblyName>Kooboo.HttpServer</AssemblyName>
 	<RootNamespace>Kooboo.HttpServer</RootNamespace>
@@ -15,14 +15,14 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='netstandard2.0'">
-    <DefineConstants>NETSTANDARD2_0;netstandard;NETSTANDARD</DefineConstants>
+    <DefineConstants>NETSTANDARD2_0;netstandard;NETSTANDARD;FEATURE_PORTABLE_SPAN</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>false</Optimize>
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='net45'">
-    <DefineConstants>NET45;netstandard</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='net45'OR '$(TargetFramework)'=='net461'">
+    <DefineConstants>NET45;netstandard;FEATURE_PORTABLE_SPAN</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>false</Optimize>
     <LangVersion>7.2</LangVersion>
@@ -51,7 +51,7 @@
     <Compile Remove="System\SpanHelpers.byte.cs" />
     <Compile Remove="System\ThrowHelper1.cs" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='net461'">
     <Compile Remove="Sockets\SocketTaskExtensions.cs" />
   </ItemGroup>
 

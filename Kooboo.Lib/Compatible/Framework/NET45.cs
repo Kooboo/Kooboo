@@ -1,4 +1,4 @@
-﻿#if NET45
+﻿#if NET45 || NET461
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -181,6 +181,23 @@ namespace Kooboo.Lib.Compatible
                 Console.Write(line);
                 line = Console.ReadLine();
             }
+        }
+
+         public bool IsUWP()
+        {
+            var uwp= System.Configuration.ConfigurationManager.AppSettings.Get("IsUWP");
+           
+            if (string.IsNullOrEmpty(uwp))
+            {
+                return false; 
+            }
+            else
+            {
+                bool boolValue; 
+                bool.TryParse(uwp, out boolValue);
+
+                return boolValue; 
+            } 
         }
 
     }

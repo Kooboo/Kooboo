@@ -1,4 +1,4 @@
-﻿#if !NET45
+﻿#if !NET45 &&!NET461
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -240,6 +240,11 @@ namespace Kooboo.Lib.Compatible
             {
                 System.Threading.Thread.Sleep(1000);
             }
+        }
+
+        public bool IsUWP()
+        {
+            return false;
         }
 
 
