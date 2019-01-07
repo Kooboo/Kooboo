@@ -1,23 +1,23 @@
-$(function() {
+$(function () {
 
-    var profileModel = function() {
+    var profileModel = function () {
         var self = this;
 
         this.tabs = ko.observableArray();
 
         var adminTabs = [{
-                displayName: Kooboo.text.site.profile.Account,
-                value: "Account"
-            }, {
-                displayName: Kooboo.text.site.profile.Password,
-                value: "Password"
-            }, {
-                displayName: Kooboo.text.site.profile.Organization,
-                value: "Organization"
-            }, {
-                displayName: Kooboo.text.site.profile.Users,
-                value: "Users"
-            }],
+            displayName: Kooboo.text.site.profile.Account,
+            value: "Account"
+        }, {
+            displayName: Kooboo.text.site.profile.Password,
+            value: "Password"
+        }, {
+            displayName: Kooboo.text.site.profile.Organization,
+            value: "Organization"
+        }, {
+            displayName: Kooboo.text.site.profile.Users,
+            value: "Users"
+        }],
             noneAdminTabs = [{
                 displayName: Kooboo.text.site.profile.Account,
                 value: "Account"
@@ -33,14 +33,14 @@ $(function() {
 
         this.isAdmin = ko.observable(false);
 
-        this.changeType = function(type) {
+        this.changeType = function (type) {
             if (self.curType() !== type) {
                 self.curType(type);
                 self.showError(false);
                 switch (type) {
                     case "Account":
                         if (!self.isUserTabInit()) {
-                            Kooboo.User.get().then(function(res) {
+                            Kooboo.User.get().then(function (res) {
                                 if (res.success) {
                                     self.username(res.model.userName);
                                     self.email(res.model.emailAddress);
@@ -63,12 +63,12 @@ $(function() {
                         break;
                     case "Organization":
                         if (!self.isOrganizationInit()) {
-                            Kooboo.Organization.getOrganizations().then(function(res) {
+                            Kooboo.Organization.getOrganizations().then(function (res) {
 
                                 if (res.success) {
                                     self.organizationOptions(res.model);
 
-                                    Kooboo.Organization.getOrg().then(function(r) {
+                                    Kooboo.Organization.getOrg().then(function (r) {
 
                                         if (r.success) {
                                             self.organizationName(r.model.name);
@@ -88,7 +88,7 @@ $(function() {
 
                     case "Users":
                         if (!self.isUserInit()) {
-                            Kooboo.Organization.getOrg().then(function(res) {
+                            Kooboo.Organization.getOrg().then(function (res) {
                                 if (res.success) {
                                     self.organizationName(res.model.name);
                                     self.organizationBalance(res.model.balance);
@@ -98,9 +98,9 @@ $(function() {
 
                                     Kooboo.Organization.getUsers({
                                         organizationId: self.organizationId()
-                                    }).then(function(r) {
+                                    }).then(function (r) {
                                         if (r.success) {
-                                            var users = r.model.map(function(o) {
+                                            var users = r.model.map(function (o) {
                                                 return o.userName;
                                             })
                                             self.organizationUsers(users);
@@ -118,7 +118,7 @@ $(function() {
 
         this.languageOptions = ko.observableArray();
 
-        this.showUpdateSuccess = function(success) {
+        this.showUpdateSuccess = function (success) {
             window.info.show(Kooboo.text.info.update[success ? "success" : "fail"], success);
         }
 
@@ -141,11 +141,11 @@ $(function() {
 
         this._language = ko.observable();
 
-        this.isUserProfileValid = function() {
+        this.isUserProfileValid = function () {
             return this.newEmail.isValid();
         }
 
-        this.saveUser = function() {
+        this.saveUser = function () {
             var self = this,
                 data = {
                     username: this.username(),
@@ -165,11 +165,11 @@ $(function() {
             }
 
             function update(data) {
-                Kooboo.User.updateProfile(data).then(function(res) {
+                Kooboo.User.updateProfile(data).then(function (res) {
                     self.showUpdateSuccess(res.success);
                     if (res.success) {
                         if (self._language() !== self.language()) {
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 location.reload();
                             }, 300);
                         } else {
@@ -192,34 +192,34 @@ $(function() {
         this.newPassword = ko.validateField({
             required: Kooboo.text.validation.required
         });
-        self.newPassword.subscribe(function() {
+        self.newPassword.subscribe(function () {
             self.confirmPassword.valueHasMutated();
         })
 
         this.confirmPassword = ko.validateField({
             required: Kooboo.text.validation.required,
             equals: {
-                value: function() {
+                value: function () {
                     return self.newPassword()
                 },
                 message: Kooboo.text.validation.notEqual
             }
         })
 
-        this.isPasswordValid = function() {
+        this.isPasswordValid = function () {
             return self.newPassword.isValid() &&
                 self.oldPassword.isValid() &&
                 self.confirmPassword.isValid();
         }
 
-        this.savePassword = function() {
+        this.savePassword = function () {
             if (self.isPasswordValid()) {
                 self.showError(false);
                 Kooboo.User.changePassword({
                     userName: self.username(),
                     oldPassword: self.oldPassword(),
                     newPassword: self.newPassword()
-                }).then(function(res) {
+                }).then(function (res) {
 
                     self.oldPassword("");
                     self.newPassword("");
@@ -242,10 +242,10 @@ $(function() {
 
         this.organizationName = ko.observable();
 
-        this.saveOrganization = function() {
+        this.saveOrganization = function () {
             Kooboo.Organization.changeUserOrg({
                 organizationId: self.organization()
-            }).then(function(res) {
+            }).then(function (res) {
                 self.showUpdateSuccess(res.success);
 
                 if (res.success) {
@@ -261,12 +261,12 @@ $(function() {
 
         this.organizationBalance = ko.observable();
 
-        this.inputNumberOnly = function(m, e) {
-            if (e.keyCode >= 48 && e.keyCode <= 57 /*number*/ ) {
+        this.inputNumberOnly = function (m, e) {
+            if (e.keyCode >= 48 && e.keyCode <= 57 /*number*/) {
                 return true;
-            } else if (e.keyCode >= 96 && e.keyCode <= 105 /*number*/ ) {
+            } else if (e.keyCode >= 96 && e.keyCode <= 105 /*number*/) {
                 return true;
-            } else if (e.keyCode == 190 /*.*/ || e.keyCode == 69 /*e*/ || e.keyCode == 8 /*BACKSPACE*/ ) {
+            } else if (e.keyCode == 190 /*.*/ || e.keyCode == 69 /*e*/ || e.keyCode == 8 /*BACKSPACE*/) {
                 return true;
             } else {
                 return false;
@@ -278,7 +278,7 @@ $(function() {
 
         this.couponCode = ko.observable();
 
-        this.startRecharge = function() {
+        this.startRecharge = function () {
 
             if (!self.couponCode()) {
                 alert(Kooboo.text.alert.voucherCode);
@@ -286,7 +286,7 @@ $(function() {
                 Kooboo.Organization.useCoupon({
                     organizationId: self.organizationId(),
                     code: self.couponCode()
-                }).then(function(res) {
+                }).then(function (res) {
                     if (res.success) {
                         self.organizationName(res.model.name);
                         self.organizationBalance(res.model.balance);
@@ -328,11 +328,11 @@ $(function() {
             }
         });
 
-        this.isRechargeValid = function() {
+        this.isRechargeValid = function () {
             return self.recharge.isValid();
         }
 
-        this.isCreditCardValid = function() {
+        this.isCreditCardValid = function () {
             return self.cardNumber.isValid() &&
                 self.expMonth.isValid() &&
                 self.expYear.isValid() &&
@@ -344,7 +344,7 @@ $(function() {
 
         this.paymentId = ko.observable();
 
-        this.paynow = function() {
+        this.paynow = function () {
             if (!self.isRechargeValid()) {
                 self.showError(true);
             } else {
@@ -357,7 +357,7 @@ $(function() {
                             money: Number(self.recharge()),
                             paymentMethod: self.paymentMethod(),
 
-                        }).then(function(res) {
+                        }).then(function (res) {
                             if (res.success) {
                                 if (self.paymentMethod() == "paypal") {
                                     // debugger;
@@ -370,7 +370,7 @@ $(function() {
                                         self.paymentModal(true);
                                         self.paymentId(res.model.paymentId);
 
-                                        interval = setInterval(function() {
+                                        interval = setInterval(function () {
                                             checkStatus(res.model.paymentId);
                                         }, 10000);
                                     } else {
@@ -396,7 +396,7 @@ $(function() {
                             };
                             TCO.loadPubKey('production');
                             $(".page-loading").show();
-                            TCO.requestToken(function(data) {
+                            TCO.requestToken(function (data) {
                                 // success callback
                                 $(".page-loading").hide();
                                 Kooboo.Organization.payRecharge({
@@ -404,12 +404,12 @@ $(function() {
                                     money: Number(self.recharge()),
                                     paymentMethod: self.paymentMethod(),
                                     token: data.response.token.token
-                                }).then(function(res) {
+                                }).then(function (res) {
                                     if (res.success) {
 
                                     }
                                 })
-                            }, function(err) {
+                            }, function (err) {
                                 // failure callback
                                 $(".page-loading").hide();
                                 alert(err.errorMsg);
@@ -423,23 +423,23 @@ $(function() {
         }
 
         this.successAttempt = 0;
-        this.cancelPaypal = function() {
+        this.cancelPaypal = function () {
             self.paypalModal(false);
             //clearInterval(interval);
             window.info.show(Kooboo.text.info.payment.cancel, false);
             self.recharge("");
         }
-        this.userConfirmPaymentStatus = function(status) {
+        this.userConfirmPaymentStatus = function (status) {
             if (status == "success") {
                 Kooboo.Domain.getPaymentStatus({
                     organizationId: self.organizationId(),
                     paymentId: self.paymentId()
-                }).then(function(res) {
+                }).then(function (res) {
 
                     if (res.success && res.model.success) {
                         self.paymentModal(false);
                         window.info.show(Kooboo.text.info.payment.success, true);
-                        Kooboo.Organization.getOrg().then(function(r) {
+                        Kooboo.Organization.getOrg().then(function (r) {
                             self.organizationName(r.model.name);
                             self.organization(r.model.id);
                             self.organizationId(r.model.id);
@@ -480,7 +480,7 @@ $(function() {
                 Kooboo.Domain.getPaymentStatus({
                     organizationId: self.organizationId(),
                     paymentId: paymentId
-                }).then(function(res) {
+                }).then(function (res) {
 
                     if (res.success && (res.model.success || res.model.message == "canceled")) {
                         paymentSuccess = true;
@@ -488,7 +488,7 @@ $(function() {
                         self.paymentModal(false);
                         if (res.model.success) {
                             window.info.show(Kooboo.text.info.payment.success, true);
-                            Kooboo.Organization.getOrg().then(function(r) {
+                            Kooboo.Organization.getOrg().then(function (r) {
                                 self.organizationName(r.model.name);
                                 self.organization(r.model.id);
                                 self.organizationId(r.model.id);
@@ -514,48 +514,45 @@ $(function() {
             required: Kooboo.text.validation.required
         })
 
-        this.isNewUserNameValid = function() {
+        this.isNewUserNameValid = function () {
             return self.newUser.isValid();
         }
 
-        this.addNewUser = function() {
+        this.addNewUser = function () {
             if (!self.isNewUserNameValid()) {
                 self.showError(true);
             } else {
                 Kooboo.Organization.addUser({
                     organizationId: self.organizationId(),
                     userName: self.newUser()
-                }).then(function(res) {
+                }).then(function (res) {
                     self.showError(false);
-                    if (!res.model) {
+                    if (res.success) {
                         self.organizationUsers.push(self.newUser());
-                        self.newUser("");
-                        window.info.show(Kooboo.text.info.update["success"], true);
-                    } else {
-                        self.newUser("");
-                        window.info.show(res.model, false);
+                        self.newUser('');
+                        window.info.done(Kooboo.text.info.update.success);
                     }
-
+                    self.newUser('');
                 })
             }
         }
 
-        this.deletableUser = function(username) {
+        this.deletableUser = function (username) {
             return username !== self.organizationName();
         }
 
-        this.deleteUser = function(username) {
+        this.deleteUser = function (username) {
             Kooboo.Organization.deleteUser({
                 organizationId: self.organizationId(),
                 userName: username
-            }).then(function(res) {
+            }).then(function (res) {
                 if (res.success) {
                     self.organizationUsers.remove(username);
                 }
             })
         }
 
-        Kooboo.User.getCulture().then(function(res) {
+        Kooboo.User.getCulture().then(function (res) {
 
             if (res.success) {
                 self.languageOptions(Kooboo.objToArr(res.model));
@@ -566,9 +563,5 @@ $(function() {
 
     var vm = new profileModel();
     ko.applyBindings(vm, document.getElementById("main"));
-    //add 2co.mine
-    // var script = document.createElement("script");
-    // script.src = "https://www.paypalobjects.com/api/checkout.js";
-    //script.src = "https://www.2checkout.com/checkout/api/2co.min.js";
-    // document.getElementsByTagName("head")[0].appendChild(script);
+
 })
