@@ -3,18 +3,13 @@
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Repository;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Security
 { 
-    public static class WebSiteAccessControl
+    public static class AccessControl
     { 
-        public static bool HasAccess(WebSite site, RenderContext context)
+        public static bool HasWebsiteAccess(WebSite site, RenderContext context)
         {
             switch (site.SiteType)
             {
@@ -55,8 +50,31 @@ namespace Kooboo.Web.Security
    
         }
       
+        public static bool HasServerAccess(RenderContext context)
+        {
+            if (Data.AppSettings.AllowUsers !=null && Data.AppSettings.AllowUsers.Any())
+            {
+                if (context.User !=null)
+                {
+                    if (Data.AppSettings.AllowUsers.Contains(context.User.Id))
+                    {
+                        return true; 
+                    }
+                    else
+                    {
+                        if (Data.AppSettings.DefaultUser != null && Data.AppSettings.DefaultUser.UserName == context.User.UserName)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+            } 
+            return true; 
+        }
        
     }
-
-
 }

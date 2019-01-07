@@ -28,7 +28,7 @@ namespace Kooboo.Web.FrontRequest
 
             if (context.WebSite != null)
             {
-                if (!Kooboo.Web.Security.WebSiteAccessControl.HasAccess(context.WebSite, context))
+                if (!Kooboo.Web.Security.AccessControl.HasWebsiteAccess(context.WebSite, context))
                 {
                     if (!CheckIsBackEndOrImageUrl(kooboocontext.RenderContext.Request.RelativeUrl))
                     {
@@ -126,7 +126,8 @@ namespace Kooboo.Web.FrontRequest
             if (RenderThumbnail(kooboocontext))
             { return; }
 
-            await Next.Invoke(context);
+            // access control for allow users...   
+            await Next.Invoke(context); 
         }
 
         private static bool CheckIsBackEndOrImageUrl(string Relativeurl)

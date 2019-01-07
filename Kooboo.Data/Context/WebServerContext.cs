@@ -123,6 +123,15 @@ namespace Kooboo.Data.Context
                 {
                     Data.Cache.AccessTokenCache.SetToken(user.Id, token);
                 }
+
+                if (user !=null)
+                {
+                    if (!Kooboo.Data.Service.UserLoginService.IsAllow(user.Id))
+                    {
+                        return null; 
+                    }
+                }
+        
                 return user;
             }
 

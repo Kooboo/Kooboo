@@ -428,7 +428,7 @@ namespace Kooboo.Data.Repository
         }
 
         public User GetByToken(string token)
-        {
+        { 
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("mytoken", token);
             var user = HttpHelper.Post<User>(GetByTokenUrl, para);
