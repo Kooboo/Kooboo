@@ -4,16 +4,25 @@
   <Description>The kScript database engine</Description>
   <Example>
     var db = k.database;
+    var table = k.database.getTable("mytablename");
+    // or vresion 1.1 and up
+    k.database.mytablename
+
   </Example>
   <Props />
   <Methods>
     <Method>
       <Name>getTable</Name>
       <Description>Return the kScript database table object, if the table is not exists, it will be created. </Description>
-      <Example> 
+      <Example>
         var table = k.database.getTable("mytablename");
-        var obj = {name: "my value"}; 
-        table.add(obj);  
+        var obj = {name: "my value"};
+        table.add(obj);
+
+        // -- or version 1.1 and up --- 
+        var obj = {name: "my value"};
+        k.database.mytablename.add(obj);
+        
       </Example>
       <Params>
         <Param>

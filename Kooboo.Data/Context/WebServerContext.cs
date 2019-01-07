@@ -12,11 +12,9 @@ using Kooboo.Lib.Helper;
 using Microsoft.AspNetCore.Http;
 
 namespace Kooboo.Data.Context
-{
-
+{ 
     public static class WebServerContext
-    {
-
+    { 
         private static Func<string, string, User> _validate;
         public static Func<string, string, User> Validate
         {
@@ -123,6 +121,15 @@ namespace Kooboo.Data.Context
                 {
                     Data.Cache.AccessTokenCache.SetToken(user.Id, token);
                 }
+
+                if (user !=null)
+                {
+                    if (!Kooboo.Data.Service.UserLoginService.IsAllow(user.Id))
+                    {
+                        return null; 
+                    }
+                }
+        
                 return user;
             }
 

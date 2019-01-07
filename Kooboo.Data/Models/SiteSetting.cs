@@ -105,5 +105,10 @@ namespace Kooboo.Data.Models
         public bool AutoDetectCulture { get; set; }
 
         public bool ForceSsl { get; set; }
+
+
+        public Data.Definition.WebsiteType SiteType { get; set; } = Definition.WebsiteType.p;
+
+        public bool IsApp { get; set; }
     }
 }

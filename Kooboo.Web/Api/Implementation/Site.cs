@@ -138,10 +138,11 @@ namespace Kooboo.Web.Api.Implementation
                 summary.SiteName = item.Name;
                 summary.SiteDisplayName = item.DisplayName;
                 summary.PageCount = sitedb.Pages.Count();
-                summary.ImageCount = sitedb.Images.Count();
+                summary.ImageCount = sitedb.Images.Count(); 
+                // if user has not right to access the site. present the preview link.  
 
                 summary.Online = item.Published;
-                summary.Visitors = sitedb.VisitorLog.QueryDescending(o => true).EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-24)).Count();
+                summary.Visitors = sitedb.VisitorLog.QueryDescending(o => true).EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-12)).Count();
 
                 var alltask = sitedb.TransferTasks.All();
 
@@ -156,7 +157,8 @@ namespace Kooboo.Web.Api.Implementation
                         }
                     }
                 }
-
+                 
+                summary.HomePageLink = item.BaseUrl(); 
                 result.Add(summary);
             }
             return result;

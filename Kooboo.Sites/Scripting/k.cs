@@ -146,6 +146,21 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
+        private UserInfoModel _user; 
+        public UserInfoModel User
+        {
+            get
+            {
+                if (_user == null)
+                {
+                    _user = new UserInfoModel(this.RenderContext); 
+                } 
+                return _user; 
+            } 
+           
+        }
+
+
         public class InfoModel
         {
             public string Culture { get; set; }
@@ -170,7 +185,8 @@ namespace Kooboo.Sites.Scripting
             public UserModel User
             {
                 get; set;
-            }
+            } 
+           
         }
                      
         private kSiteDb _sitedb;
@@ -706,4 +722,133 @@ namespace Kooboo.Sites.Scripting
         public Type ReturnType { get; set; }
     }
 
+
+    public class UserInfoModel
+    { 
+        public UserInfoModel(RenderContext context)
+        {
+            this.context = context; 
+        }
+
+        public RenderContext context { get; set; }
+
+        public Guid Id
+        {
+            get
+            {
+                if (context.User != null)
+                {
+                    return context.User.Id;
+                }
+                return default(Guid);
+            } 
+        }
+
+        public Guid _Id
+        {
+            get
+            {
+                if (context.User != null)
+                {
+                    return context.User.Id;
+                }
+                return default(Guid);
+            }
+        }
+
+        public bool IsLogin
+        {
+            get
+            {
+                return context.User != null; 
+            }
+        }
+
+        public void EnsureLogin(string redirectUrl)
+        {
+            if (!this.IsLogin)
+            {
+                this.context.Response.Redirect(302, redirectUrl);
+                this.context.Response.End = true;
+            }
+        }
+
+        public string UserName {
+            get
+            {
+                if (context.User !=null)
+                {
+                    return context.User.UserName; 
+                }
+                return null;
+            }
+        }
+
+        public string FirstName {
+            get
+            {
+                if (context.User !=null)
+                {
+                    return context.User.FirstName; 
+                }
+                return null; 
+            }
+        }
+
+        public string LastName {
+            get
+            {
+                if (context.User !=null)
+                {
+                    return context.User.LastName; 
+                }
+                return null; 
+            }
+        }
+
+        public string Language
+        {
+            get
+            {
+                if (context.User != null)
+                {
+                    return context.User.LastName;
+                }
+                return null;
+            }
+        }
+
+        public string Email
+        {
+            get
+            {
+                if (context.User != null)
+                {
+                    return context.User.EmailAddress;
+                }
+                return null;
+            }
+        }
+
+        public Kooboo.Data.Models.User Login(string username, string password)
+        {
+            var user = Kooboo.Data.GlobalDb.Users.Validate(username, password);
+
+            if (user != null)
+            {
+                context.Response.AppendCookie(DataConstants.UserApiSessionKey, user.Id.ToString(),  30);
+                context.User = user; 
+                return user; 
+            }
+
+            return null; 
+        }  
+
+        public void Logout()
+        {
+            // log user out. 
+            context.Response.DeleteCookie(DataConstants.UserApiSessionKey);   
+        }
+
+    }
 }

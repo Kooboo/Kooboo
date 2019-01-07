@@ -81,7 +81,8 @@
                         username: self.username(),
                         password: self.password(),
                         remember: self.remember(),
-                        returnUrl: Kooboo.getQueryString("returnurl")
+                        returnUrl: Kooboo.getQueryString("returnurl"),
+                        type: Kooboo.getQueryString("type")
                     }).then(function(res) {
                         if (res.success) {
                             location.href = res.model;

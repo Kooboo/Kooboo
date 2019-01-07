@@ -138,6 +138,13 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in dbTable.Setting.Columns)
             {
+
+                if (item.IsSystem && item.Name == IndexedDB.Dynamic.Constants.DefaultIdFieldName)
+                {
+                    continue;
+                }
+
+
                 DatabaseColumnViewModel model = new DatabaseColumnViewModel() { Name = item.Name, IsIncremental = item.IsIncremental, IsUnique = item.IsUnique, IsIndex = item.IsIndex, IsPrimaryKey = item.IsPrimaryKey, Seed = item.Seed, Scale = item.Increment, IsSystem = item.IsSystem };
 
                 model.DataType = DatabaseColumnHelper.ToFrontEndDataType(item.ClrType);
@@ -161,7 +168,7 @@ namespace Kooboo.Web.Api.Implementation
             var obj = dbTable.Get(Id);
 
             foreach (var item in dbTable.Setting.Columns)
-            {
+            { 
                 DatabaseItemEdit model = new DatabaseItemEdit() { Name = item.Name, IsIncremental = item.IsIncremental, IsUnique = item.IsUnique, IsIndex = item.IsIndex, IsPrimaryKey = item.IsPrimaryKey, Seed = item.Seed, Scale = item.Increment, IsSystem = item.IsSystem };
 
                 model.DataType = DatabaseColumnHelper.ToFrontEndDataType(item.ClrType);
@@ -171,8 +178,7 @@ namespace Kooboo.Web.Api.Implementation
 
                 // get value
                 if (obj != null && obj.ContainsKey(model.Name))
-                {
-
+                { 
                     model.Value = obj[model.Name];
                 }
 

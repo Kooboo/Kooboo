@@ -1129,6 +1129,10 @@ namespace Kooboo.Sites.Sync
             setting.EnableECommerce = site.EnableECommerce;
             setting.EnableCache = site.EnableCache;
 
+            setting.IsApp = site.IsApp;
+            setting.SiteType = site.SiteType; 
+
+
             return setting;
         }
 
@@ -1191,7 +1195,9 @@ namespace Kooboo.Sites.Sync
                     site.Culture.Remove(item.Key);
                 }
             }
-            
+
+            site.IsApp = setting.IsApp;
+            site.SiteType = setting.SiteType;
 
             // site.KoobooVersion = setting.KoobooVersion; 
         }

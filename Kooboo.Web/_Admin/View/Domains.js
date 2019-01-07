@@ -15,6 +15,7 @@ $(function() {
 
         this.dnsServers = ko.observableArray();
         this.providedIP = ko.observable();
+        this.cName = ko.observable(); 
 
         function dataMapping(data) {
             var arr = [];
@@ -139,6 +140,7 @@ $(function() {
             if (res.success) {
                 self.dnsServers(res.model.dnsServers);
                 self.providedIP(res.model.ipAddress);
+                self.cName(res.model.cName); 
             }
         })
     }

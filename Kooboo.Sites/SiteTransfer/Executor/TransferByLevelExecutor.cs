@@ -15,6 +15,8 @@ namespace Kooboo.Sites.SiteTransfer.Executor
 
         public TransferTask TransferTask { get; set; }
 
+        private HashSet<Guid> DoneUrlHash = new HashSet<Guid>(); 
+
         public async Task Execute()
         {
             if (TransferTask == null || string.IsNullOrEmpty(TransferTask.FullStartUrl) || SiteDb == null)
@@ -68,6 +70,7 @@ namespace Kooboo.Sites.SiteTransfer.Executor
             while (true)
             {
                 List<TransferPage> pagelist = query.SelectAll();
+                pagelist.RemoveAll(o => DoneUrlHash.Contains(o.Id)); 
                 if (pagelist == null || pagelist.Count == 0)
                 {
                     if (progress.counter < progress.TotalPages && lowerPriorityPages.Count()>0)
@@ -91,6 +94,8 @@ namespace Kooboo.Sites.SiteTransfer.Executor
 
                 foreach (var item in pagelist)
                 {
+                    DoneUrlHash.Add(item.Id); 
+
                     var down =  await DownloadHelper.DownloadUrlAsync(item.absoluteUrl, manager.CookieContainer);
 
                     siteDb.TransferTasks.UpdateCookie(progress.TaskId, manager.CookieContainer); 

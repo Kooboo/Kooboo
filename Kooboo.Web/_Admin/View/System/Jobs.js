@@ -24,7 +24,7 @@ $(function() {
 
         this.curTab = ko.observable('pending');
 
-        this.changeTab = function(tab) {
+        this.changeTab = function (tab) { 
 
             if (tab !== self.curTab()) {
                 switch (tab) {
@@ -40,10 +40,10 @@ $(function() {
                                 self.curTab(tab);
                                 var docs = res.model.map(function(item) {
                                     return {
-                                        jobName: item.name,
+                                        jobName: item.jobName,
                                         description: item.description,
-                                        executionTime: '',
-                                        message: ''
+                                        executionTime: item.executionTime,
+                                        message: item.message
                                     }
                                 })
 

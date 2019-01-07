@@ -5,6 +5,7 @@ using Kooboo.IndexedDB;
 using Kooboo.IndexedDB.Dynamic;
 using System;
 using System.Collections.Generic;
+using System.Linq; 
 
 namespace Kooboo.Data.Service
 {
@@ -165,7 +166,7 @@ namespace Kooboo.Data.Service
             return null;
         }
 
-        public static User LoginDefaultUser(string username,  string password)
+        public static User LoginDefaultUser(string username, string password)
         {
             if (username == null || password == null)
             {
@@ -187,10 +188,10 @@ namespace Kooboo.Data.Service
 
         private static User _defaultUser()
         {
-            var user = new User(); 
-            if (Data.AppSettings.DefaultUser !=null)
+            var user = new User();
+            if (Data.AppSettings.DefaultUser != null)
             {
-                user.UserName = AppSettings.DefaultUser.UserName; 
+                user.UserName = AppSettings.DefaultUser.UserName;
                 user.Password = AppSettings.DefaultUser.Password;
 
             }
@@ -218,20 +219,20 @@ namespace Kooboo.Data.Service
                 return null;
             }
 
-            if (Data.AppSettings.DefaultUser !=null)
+            if (Data.AppSettings.DefaultUser != null)
             {
-                Guid userid = default(Guid); 
+                Guid userid = default(Guid);
                 if (!System.Guid.TryParse(NameOrId, out userid))
                 {
-                    userid = Lib.Security.Hash.ComputeGuidIgnoreCase(NameOrId); 
+                    userid = Lib.Security.Hash.ComputeGuidIgnoreCase(NameOrId);
                 }
 
-                if (userid== Data.AppSettings.DefaultUser.Id)
+                if (userid == Data.AppSettings.DefaultUser.Id)
                 {
-                    return _defaultUser(); 
-                } 
-            } 
-            return null; 
+                    return _defaultUser();
+                }
+            }
+            return null;
         }
 
         public static bool IsAllow(string username)
@@ -246,26 +247,40 @@ namespace Kooboo.Data.Service
                 return true;
             }
 
-            Guid UserId = Lib.Security.Hash.ComputeGuidIgnoreCase(username);
-
-            return IsAllow(UserId); 
-             
-        }
-
-        public static bool IsAllow(Guid UserId)
-        { 
-            if (Data.AppSettings.AllowUsers == null)
+            if (Data.AppSettings.DefaultUser != null && Lib.Helper.StringHelper.IsSameValue(Data.AppSettings.DefaultUser.UserName, username))
             {
                 return true;
             }
-             
+
+            Guid UserId = Lib.Security.Hash.ComputeGuidIgnoreCase(username);
+
+            return IsAllow(UserId); 
+        }
+
+        public static bool IsAllow(Guid UserId)
+        {
+            if (Data.AppSettings.AllowUsers == null || !Data.AppSettings.AllowUsers.Any())
+            {
+                return true;
+            }
+
             if (Data.AppSettings.AllowUsers.Contains(UserId))
             {
                 return true;
             }
+             
+            if (Data.AppSettings.DefaultUser != null)
+            {
+                var defaultid = Lib.Security.Hash.ComputeGuidIgnoreCase(Data.AppSettings.DefaultUser.UserName);
+                if (defaultid == UserId)
+                {
+                    return true;
+                }
+
+            }
 
             return false;
-        } 
-      
-    } 
+        }
+
+    }
 }

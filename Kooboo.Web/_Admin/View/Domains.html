@@ -41,7 +41,9 @@
                             <!--<dt data-bind="text: 'DNS ' + ($index() + 1)"></dt>-->
                             <dd data-bind="text: $data"></dd>
                         </dl>
-                        <p>Or do it yourself, create your domain CNAME wildcard record to below domain. To use email service, also configure the Mx record to below domain.</p>
+                        <p>Or create your domain  wildcard CNAME record to below domain. To use email service, also configure the Mx record to below domain.</p>
+                        <p data-bind="text: cName"></p> 
+                        <p>Or create your domain wildcard A record to below IP address. This is not recommeneded because we may change our IP</p>
                         <p data-bind="text: providedIP"></p>
                     </div>
 

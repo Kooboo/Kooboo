@@ -26,13 +26,13 @@ namespace Kooboo.Web.FrontRequest
 
             if (context.WebSite != null)
             {
-                if (!Kooboo.Web.Security.WebSiteAccessControl.HasAccess(context.WebSite, context))
+                if (!Kooboo.Web.Security.AccessControl.HasWebsiteAccess(context.WebSite, context))
                 {
                     if (!CheckIsBackEndOrImageUrl(kooboocontext.RenderContext.Request.RelativeUrl))
                     {
                         if (context.User == null)
                         {
-                            context.Response.Redirect(302, "/_admin/account/login?returnurl=" + System.Web.HttpUtility.UrlEncode(context.Request.RawRelativeUrl));
+                            context.Response.Redirect(302, "/_admin/account/login?type=site&returnurl=" + System.Web.HttpUtility.UrlEncode(context.Request.RawRelativeUrl));
                             context.Response.End = true;
                             return;
                         }
@@ -79,8 +79,7 @@ namespace Kooboo.Web.FrontRequest
                                 return;
                             }
                             else
-                            {     
-
+                            {      
                                 var continuedownload = await TransferManager.continueDownload(kooboocontext.SiteDb, kooboocontext.RenderContext.Request.RawRelativeUrl);
                                 if (continuedownload != null)
                                 {
@@ -125,7 +124,8 @@ namespace Kooboo.Web.FrontRequest
             if (RenderThumbnail(kooboocontext))
             { return; }
 
-            await Next.Invoke(context);
+            // access control for allow users...   
+            await Next.Invoke(context); 
         }
 
         private static bool CheckIsBackEndOrImageUrl(string Relativeurl)
