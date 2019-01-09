@@ -16,7 +16,7 @@
   <key id="Delete">Удалить</key>
   <key id="New local domain">Новое доменное имя</key>
   <key id="You are running in local mode">Вы работаете в автономном режиме</key>
-  <key id="You need to configure DNS records. For Windows desktop users, a mapping of your website domain to 127.0.0.1 may be created on your system host file">You need to configure DNS records. For Windows desktop users, a mapping of your website domain to 127.0.0.1 may be created on your system host file">Необходимо настроить записи DNS. Для пользователей рабочего стола Windows, сопоставление домена веб-сайта 127.0.0.1 могут быть созданы на хост-файл системы</key>
+  <key id="You need to configure DNS records. For Windows desktop users, a mapping of your website domain to 127.0.0.1 may be created on your system host file">Необходимо настроить записи DNS. Для пользователей рабочего стола Windows, сопоставление домена веб-сайта 127.0.0.1 могут быть созданы на хост-файл системы</key>
   <key id="Adding a domain to your account">Добавьте доменное имя в свою учетную запись</key>
   <key id="Use below DNS server, all DNS records will be created automatically for you.">С помощью следующих DNS-серверов все записи DNS будут установлены автоматически.</key>
   <key id="Or do it yourself, point wildcard domain A record to below IP address. To use email service, also configure the Mx record.">Или, чтобы настроить, запишите подстановочные знаки на IP-адрес, указанный ниже.Для работы с почтовыми службами настройте записи MX.</key>
