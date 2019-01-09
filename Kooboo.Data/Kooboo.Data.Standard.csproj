@@ -5,6 +5,7 @@
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	<AssemblyName>Kooboo.Data</AssemblyName>
 	<RootNamespace>Kooboo.Data</RootNamespace>
+    <Deterministic>False</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>
