@@ -55,8 +55,8 @@ namespace Kooboo.App
             catch (Exception ex)
             {
             }
-            //linux version now is same.
-            return version >= AppSettings.Version;
+
+            return version > AppSettings.Version;
         }
         public static void Download()
         {
