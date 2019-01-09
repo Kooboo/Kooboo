@@ -42,7 +42,10 @@ namespace Kooboo.App.CrossPlatform
 
             Mail.EmailWorkers.Start(); 
 
-
+            if(UpgradeHelper.HasNewVersion())
+            {
+                UpgradeHelper.Download();
+            }
 
             Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.ConsoleWait();
 
