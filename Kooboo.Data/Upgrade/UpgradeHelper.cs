@@ -36,6 +36,17 @@ namespace Kooboo.Data.Upgrade
             var koobooextbytes = ExtractFileFromZip(allbytes, "kooboo.exe");   
             return GetVersionFromKoobooExe(koobooextbytes);
         }
+
+        public static string GetLinuxKoobooVersion(byte[] allbytes)
+        {
+            var dataBytes = ExtractFileFromZip(allbytes, "Kooboo.Data.dll");
+            if (dataBytes != null)
+            {
+                var version = GetDllVersion(dataBytes);
+                return version != null ? version.ToString() : null;
+            }
+            return null;
+        }
                    
         //TODO: should move to Kooboo.Lib
         public static byte[] ExtractFileFromZip(byte[] ZipBytes, string ContainsName)
