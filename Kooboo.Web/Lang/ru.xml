@@ -825,7 +825,7 @@
   <key id="Purchase succeeded">Успех покупки</key>
   <key id="Purchase failed">Неудачная покупка</key>
   <key id="No remote sites avaliable.">Удаленный сайт не найден</key>
-  <key id="Parameters missing.&lt;br/&gt; Redirecting to site logs..."> Отсутствует параметр &lt;br/ & gt; перенаправляется в журнал сайта...</key>
+  <key id="Parameters missing.&lt;br/&gt; Redirecting to site logs..."> Отсутствует параметр &lt;br/ gt; перенаправляется в журнал сайта...</key>
   <key id="Parameter missing">Отсутствует параметр</key>
   <key id="Name field is required.">Имя поля обязательно</key>
   <key id="File size must be less than ">Размер файла должен быть меньше</key>
