@@ -337,7 +337,7 @@ namespace dotless.Core.Importers
                 }
 
                 loader._fileContents = fileReader.GetBinaryFileContents(fileDependency);
-#if !NETSTANDARD2_0
+#if NET45|| NET461
                 var domainSetup = new AppDomainSetup();
                 domainSetup.ApplicationBase = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
                 var domain = AppDomain.CreateDomain("LoaderDomain", null, domainSetup);

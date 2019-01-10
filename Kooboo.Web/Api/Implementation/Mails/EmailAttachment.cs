@@ -48,7 +48,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
             {
                 var response = new BinaryResponse();
 
-                response.ContentType = Kooboo.Mail.Helper.MineTypeHelper.GetMineType(filename);
+                response.ContentType = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(filename);
                 response.Headers.Add("Content-Disposition", $"filename={System.Web.HttpUtility.UrlEncode(filename)}");
                 response.BinaryBytes = bytes;
                 return response;
@@ -88,7 +88,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
                     {
                         var response = new BinaryResponse();
 
-                        response.ContentType = Kooboo.Mail.Helper.MineTypeHelper.GetMineType(filename);
+                        response.ContentType = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(filename);
                         response.Headers.Add("Content-Disposition", $"filename={System.Web.HttpUtility.UrlEncode(filename)}");
                         response.BinaryBytes = bytes;
                         return response;

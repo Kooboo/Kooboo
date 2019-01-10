@@ -252,18 +252,7 @@ namespace Kooboo.Render.ServerSide
                 {
                     // find the end..
                     int end = source.IndexOf(";", index);
-                    int EndLine = -1;
-                    if (Kooboo.Lib.Helper.RuntimeSystemHelper.IsWindow())
-                    {
-                        EndLine = source.IndexOf("\n", index);
-                    }
-                    else
-                    {
-                        //linux source.IndexOf("\n", index) will be -1;
-                        //only source.IndexOf("\r\n", index) can get the index
-                        EndLine = source.IndexOf("\r\n", index)+1;
-                    }
-                    
+                    int EndLine=source.IndexOf("\r\n", index);
 
                     if (EndLine > 0 && EndLine < end)
                     {

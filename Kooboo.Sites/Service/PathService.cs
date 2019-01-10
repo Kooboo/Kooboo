@@ -154,7 +154,7 @@ namespace Kooboo.Sites.Service
                 return true;
             };
 
-            Func<string, List<string>> ToSegments = Kooboo.Lib.Helper.PathHelper.GetSegments;
+            Func<string, List<string>> ToSegments = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetSegments; ; ;
 
             List<List<string>> AllSegments = new List<List<string>>();
 

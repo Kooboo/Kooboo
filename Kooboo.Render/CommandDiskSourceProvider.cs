@@ -93,11 +93,7 @@ namespace Kooboo.Render.ObjectSource
         }
         private string FindFile(string FullPath)
         {
-            //mac/linux
-            if (!RuntimeSystemHelper.IsWindow())
-            {
-                FullPath = PathHelper.GetCaseInsensitiveFile(Kooboo.Data.AppSettings.RootPath, FullPath);
-            }
+            //FullPath = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetCaseInsensitiveFile(Kooboo.Data.AppSettings.RootPath, FullPath);
 
             if (System.IO.File.Exists(FullPath))
             {

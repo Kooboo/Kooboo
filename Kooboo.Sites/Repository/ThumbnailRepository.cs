@@ -80,7 +80,7 @@ namespace Kooboo.Sites.Repository
                     {
                         return null; 
                     }
-                    var contentBytes = SystemImageHelper.GetThumbnailImage(koobooimage.ContentBytes, width, height);
+                    var contentBytes = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetThumbnailImage(koobooimage.ContentBytes, width, height);
                     if (contentBytes == null) return null;
 
                     thumbnail.ContentBytes = contentBytes; 

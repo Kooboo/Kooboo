@@ -31,7 +31,7 @@ namespace Kooboo.Lib.Helper
             {
                 foreach (var item in allfiles)
                 {
-                    int lastslash =Kooboo.Lib.Helper.PathHelper.GetLastSlash(item);
+                    int lastslash =Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetLastSlash(item);
                     string name = item.Substring(lastslash + 1);
 
                     int index = name.LastIndexOf(".");

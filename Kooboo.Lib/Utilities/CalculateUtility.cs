@@ -36,7 +36,7 @@ namespace Kooboo.Lib.Utilities
           
         public static SizeMeansurement GetImageSize(byte[] imagebytes)
         {
-            return SystemImageHelper.GetImageSize(imagebytes);
+            return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetImageSize(imagebytes);
         }
     }
 

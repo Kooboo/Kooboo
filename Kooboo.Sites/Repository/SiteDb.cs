@@ -568,7 +568,7 @@ namespace Kooboo.Sites.Repository
                 {
                     string name = null;
 
-                    int lastslash =Kooboo.Lib.Helper.PathHelper.GetLastSlash(item);
+                    int lastslash = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetLastSlash(item);
                     if (lastslash > -1)
                     {
                         name = item.Substring(lastslash + 1);

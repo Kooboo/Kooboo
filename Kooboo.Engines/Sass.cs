@@ -34,7 +34,7 @@ namespace Kooboo.Engines
             {
                 return SassHelper.Compile(input,true);
             }
-            //mac template don't support
+            //mac don't support
             return string.Empty;
             
         }

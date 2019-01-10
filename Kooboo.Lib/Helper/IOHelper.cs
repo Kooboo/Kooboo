@@ -819,7 +819,7 @@ namespace Kooboo.Lib.Helper
                 subFolder = subFolder.Substring(1); 
             }
 
-            return Kooboo.Lib.Helper.PathHelper.CombinePath(basefolder, subFolder);
+            return Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(basefolder, subFolder);
         }
 
         /// <summary>
@@ -862,7 +862,7 @@ namespace Kooboo.Lib.Helper
                 return true;
             };
 
-            Func<string, List<string>> ToSegments = Kooboo.Lib.Helper.PathHelper.GetSegments;
+            Func<string, List<string>> ToSegments = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetSegments;
 
             List<List<string>> AllSegments = new List<List<string>>();
 
@@ -906,7 +906,7 @@ namespace Kooboo.Lib.Helper
             }
             else
             {
-                return PathHelper.JoinPath(common.ToArray());
+                return Kooboo.Lib.Compatible.CompatibleManager.Instance.System.JoinPath(common.ToArray());
             }
         }
 

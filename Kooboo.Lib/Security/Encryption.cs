@@ -65,15 +65,7 @@ namespace Kooboo.Lib.Security
         /// <returns></returns>
         public static string RSAEncrypt(string publickey,string content)
         {
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
-            byte[] bytes;
-#if NETSTANDARD2_0
-            FromXmlString(rsa, publickey);
-#else
-            rsa.FromXmlString(publickey); 
-#endif
-            bytes = rsa.Encrypt(Encoding.UTF8.GetBytes(content), false); 
-            return Convert.ToBase64String(bytes);
+            return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.RSAEncrypt(publickey, content);
         }
 
         /// <summary>
@@ -84,15 +76,8 @@ namespace Kooboo.Lib.Security
         /// <returns></returns>
         public static string RSADecrypt(string privatekey,string content)
         {
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(); 
-            byte[] bytes;
-#if NETSTANDARD2_0
-            FromXmlString(rsa,privatekey);
-#else
-            rsa.FromXmlString(privatekey);
-#endif
-            bytes = rsa.Decrypt(Convert.FromBase64String(content), false); 
-            return Encoding.UTF8.GetString(bytes);
+            return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.RSADecrypt(privatekey, content);
+            
         }
 
         /// <summary>
@@ -103,123 +88,13 @@ namespace Kooboo.Lib.Security
         // <param name="size">secure size must be above 512</param> 
         public static void GenerateRsa(string privateKeyPath, string publicKeyPath, int size)
         {
-            //stream to save the keys
-            FileStream fs = null;
-            StreamWriter sw = null;
-
-            //create RSA provider
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(size);
-      
-            try
-            {
-                //save private key
-                fs = new FileStream(privateKeyPath, FileMode.Create, FileAccess.Write);
-                sw = new StreamWriter(fs);
-#if NETSTANDARD2_0
-                sw.Write(ToXmlString(rsa, true));
-#else
-                sw.Write(rsa.ToXmlString(true));
-#endif
-                sw.Flush();
-            }
-            finally
-            {
-                if (sw != null) sw.Close();
-                if (fs != null) fs.Close();
-            }
-
-            try
-            {
-                //save public key
-                fs = new FileStream(publicKeyPath, FileMode.Create, FileAccess.Write);
-                sw = new StreamWriter(fs);
-#if NETSTANDARD2_0
-                sw.Write(ToXmlString(rsa,false));
-#else
-                sw.Write(rsa.ToXmlString(false));
-#endif
-                sw.Flush();
-            }
-            finally
-            {
-                if (sw != null) sw.Close();
-                if (fs != null) fs.Close();
-            }
-            rsa.Clear();
+            Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GenerateRsa(privateKeyPath, publicKeyPath, size);
         }
 
         public static RsaKeys GenerateKeys(int size=512)
         {
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(size);
-            RsaKeys keys = new RsaKeys();
-#if NETSTANDARD2_0
-            keys.PublicKey = ToXmlString(rsa,false);
-            keys.PrivateKey = ToXmlString(rsa, true);
-#else
-            keys.PublicKey =  rsa.ToXmlString(false);
-            keys.PrivateKey = rsa.ToXmlString(true); 
-#endif
-            return keys;
+           return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GenerateKeys(size);
         }
-
-#if NETSTANDARD2_0
-        private static void FromXmlString(RSACryptoServiceProvider rsa, string xmlString)
-        {
-            RSAParameters parameters = new RSAParameters();
-
-            XmlDocument xmlDoc = new XmlDocument();
-            xmlDoc.LoadXml(xmlString);
-
-            if (xmlDoc.DocumentElement.Name.Equals("RSAKeyValue"))
-            {
-                foreach (XmlNode node in xmlDoc.DocumentElement.ChildNodes)
-                {
-                    switch (node.Name)
-                    {
-                        case "Modulus": parameters.Modulus = (string.IsNullOrEmpty(node.InnerText) ? null : Convert.FromBase64String(node.InnerText)); break;
-                        case "Exponent": parameters.Exponent = (string.IsNullOrEmpty(node.InnerText) ? null : Convert.FromBase64String(node.InnerText)); break;
-                        case "P": parameters.P = (string.IsNullOrEmpty(node.InnerText) ? null : Convert.FromBase64String(node.InnerText)); break;
-                        case "Q": parameters.Q = (string.IsNullOrEmpty(node.InnerText) ? null : Convert.FromBase64String(node.InnerText)); break;
-                        case "DP": parameters.DP = (string.IsNullOrEmpty(node.InnerText) ? null : Convert.FromBase64String(node.InnerText)); break;
-                        case "DQ": parameters.DQ = (string.IsNullOrEmpty(node.InnerText) ? null : Convert.FromBase64String(node.InnerText)); break;
-                        case "InverseQ": parameters.InverseQ = (string.IsNullOrEmpty(node.InnerText) ? null : Convert.FromBase64String(node.InnerText)); break;
-                        case "D": parameters.D = (string.IsNullOrEmpty(node.InnerText) ? null : Convert.FromBase64String(node.InnerText)); break;
-                    }
-                }
-            }
-            else
-            {
-                throw new Exception("Invalid XML RSA key.");
-            }
-
-            rsa.ImportParameters(parameters);
-        }
-
-        private static String ToXmlString(RSACryptoServiceProvider rsa, bool includePrivateParameters)
-        {
-
-            // we extend appropriately for private components
-            RSAParameters rsaParams = rsa.ExportParameters(includePrivateParameters);
-            StringBuilder sb = new StringBuilder();
-            sb.Append("<RSAKeyValue>");
-            // Add the modulus
-            sb.Append("<Modulus>" + Convert.ToBase64String(rsaParams.Modulus) + "</Modulus>");
-            // Add the exponent
-            sb.Append("<Exponent>" + Convert.ToBase64String(rsaParams.Exponent) + "</Exponent>");
-            if (includePrivateParameters)
-            {
-                // Add the private components
-                sb.Append("<P>" + Convert.ToBase64String(rsaParams.P) + "</P>");
-                sb.Append("<Q>" + Convert.ToBase64String(rsaParams.Q) + "</Q>");
-                sb.Append("<DP>" + Convert.ToBase64String(rsaParams.DP) + "</DP>");
-                sb.Append("<DQ>" + Convert.ToBase64String(rsaParams.DQ) + "</DQ>");
-                sb.Append("<InverseQ>" + Convert.ToBase64String(rsaParams.InverseQ) + "</InverseQ>");
-                sb.Append("<D>" + Convert.ToBase64String(rsaParams.D) + "</D>");
-            }
-            sb.Append("</RSAKeyValue>");
-            return (sb.ToString());
-        }
-#endif
     }
 
     public class RsaKeys
