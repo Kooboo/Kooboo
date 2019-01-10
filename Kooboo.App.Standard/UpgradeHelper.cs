@@ -55,7 +55,7 @@ namespace Kooboo.App
             catch (Exception ex)
             {
             }
-
+            Log(string.Format("new version:{0},oldersion:{1}", version, AppSettings.Version));
             return version > AppSettings.Version;
         }
         public static void Download()
