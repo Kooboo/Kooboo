@@ -42,7 +42,7 @@ namespace Kooboo.Data.Extensions
 
             foreach (var item in jobs.GetItems())
             {
-                if (item.Item.WebSiteId == WebSiteId)
+                if (item !=null && item.Item !=null && item.Item.WebSiteId == WebSiteId)
                 {
                     sitejobs.Add(item);
                 }

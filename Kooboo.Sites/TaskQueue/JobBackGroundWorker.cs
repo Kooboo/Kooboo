@@ -11,7 +11,7 @@ namespace Kooboo.Sites.TaskQueue
 {
     public class JobBackGroundWorkder : IBackgroundWorker
     {
-        private void ExecuteScheduleJob(ScheduleItem<Job> jobinfo)
+        public void ExecuteScheduleJob(ScheduleItem<Job> jobinfo)
         {
             try
             {
@@ -33,6 +33,7 @@ namespace Kooboo.Sites.TaskQueue
                     else
                     {
                         AddJobLog(jobinfo.Item.JobName, false, DateTime.Now, jobinfo.Item.WebSiteId, "Job code not found");
+                        return; 
                     }
                 }
 
@@ -44,7 +45,7 @@ namespace Kooboo.Sites.TaskQueue
             }
         }
 
-        private void ExecuteRepeatingJob(RepeatItem<Job> repeatingJob)
+        public void ExecuteRepeatingJob(RepeatItem<Job> repeatingJob)
         {
             if (repeatingJob != null && repeatingJob.Item != null)
             {
@@ -68,6 +69,7 @@ namespace Kooboo.Sites.TaskQueue
                         else
                         {
                             AddJobLog(repeatingJob.Item.JobName, false, DateTime.Now, repeatingJob.Item.WebSiteId, "Job code not found");
+                            return; 
                         }
                     }
                     else
@@ -91,7 +93,7 @@ namespace Kooboo.Sites.TaskQueue
             option.Strict(false);
         }
         
-        private static void AddJobLog(string JobName, bool isSuccess, DateTime ExecutionTime, Guid WebSiteId, string message)
+        public  void AddJobLog(string JobName, bool isSuccess, DateTime ExecutionTime, Guid WebSiteId, string message)
         {
             GlobalDb.JobLog().Add(new JobLog()
             {
@@ -109,7 +111,6 @@ namespace Kooboo.Sites.TaskQueue
 
         public void Execute()
         {
-
             var scheduleJob = GlobalDb.ScheduleJob().DeQueue();
             while (scheduleJob != null)
             {

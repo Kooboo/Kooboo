@@ -100,7 +100,13 @@
       <Description>Access to current request information</Description>
       <Type>Info</Type>
     </Property>
-  </Props> 
-   
-  
+ 
+  <Property>
+    <Name>User</Name>
+    <Description>User information and login/logout function</Description>
+    <Type>User</Type>
+  </Property>
+    
+  </Props>
+
 </KScriptSetting>

@@ -32,7 +32,7 @@
     <Property>
       <Name>user</Name>
       <Description>
-        the login user information if any.  Fields are: username, firstname, lastname, language. 
+        the login user information if any, aslo available under k.user.  Fields are: username, firstname, lastname, language. 
       </Description>
       <Type>User</Type>
     </Property>

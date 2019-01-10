@@ -40,7 +40,7 @@ namespace Kooboo.Web.Api.Implementation
                 return true;
             }
         }
-         
+
         public List<JobViewModel> List(ApiCall call)
         {
             var jobs = new List<JobViewModel>();
@@ -55,7 +55,7 @@ namespace Kooboo.Web.Api.Implementation
                 jobs.Add(new JobViewModel(item));
             }
 
-            SetCodeName(jobs, call.WebSite.SiteDb()); 
+            SetCodeName(jobs, call.WebSite.SiteDb());
 
             return jobs;
         }
@@ -64,64 +64,64 @@ namespace Kooboo.Web.Api.Implementation
         {
             foreach (var item in jobs)
             {
-                var code = sitedb.Code.Get(item.CodeId); 
-                if (code !=null)
+                var code = sitedb.Code.Get(item.CodeId);
+                if (code != null)
                 {
-                    item.CodeName = code.Name; 
+                    item.CodeName = code.Name;
                 }
             }
         }
 
 
         public bool Run(Guid id, ApiCall call)
-        { 
+        {
             var sitedb = call.WebSite.SiteDb();
 
             var code = sitedb.Code.Get(id);
 
             if (code != null)
             {
-                Kooboo.Sites.Scripting.Manager.ExecuteCode(call.Context, code.Body, code.Id);  
-                return true; 
+                Kooboo.Sites.Scripting.Manager.ExecuteCode(call.Context, code.Body, code.Id);
+                return true;
             }
-         
-            return false; 
+
+            return false;
         }
 
         [RequireParameters("jobname")]
         public IJob Get(string jobname, ApiCall call)
-        {      
+        {
             var job = Jobs.JobContainer.GetJob(jobname);
             job.Context = call.Context;
             return job;
         }
-         
-        
+
+
         public JobViewModel GetEdit(ApiCall call)
         {
-            var id = call.GetValue<long>("id"); 
+            var id = call.GetValue<long>("id");
             if (id > 0)
             {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Job can not edit, you may delete and create a new one")); 
+                throw new Exception(Data.Language.Hardcoded.GetValue("Job can not edit, you may delete and create a new one"));
 
                 var isrepeat = call.GetBoolValue("IsRepeat");
 
                 if (isrepeat)
                 {
-                    var item = GlobalDb.RepeatingJob().Get(id); 
-                    if (item !=null)
+                    var item = GlobalDb.RepeatingJob().Get(id);
+                    if (item != null)
                     {
-                        return new JobViewModel(item); 
+                        return new JobViewModel(item);
                     }
                 }
                 else
                 {
-                   // var item = GlobalDb.ScheduleJob().
-                } 
+                    // var item = GlobalDb.ScheduleJob().
+                }
             }
-        
-           return new JobViewModel();  
-          
+
+            return new JobViewModel();
+
         }
 
 
@@ -138,18 +138,18 @@ namespace Kooboo.Web.Api.Implementation
             return GlobalDb.JobLog().GetByWebSiteId(call.Context.WebSite.Id, IsSuccess, 100);
         }
 
-   
+
         public void Post(JobEditViewModel model, ApiCall call)
         {
             //JobEditViewModel model = call.Context.Request.Model as JobEditViewModel;
 
             Job newjob = new Job();
-     
+
             newjob.Description = model.Description;
             newjob.JobName = model.Name;
             newjob.WebSiteId = call.Context.WebSite.Id;
             newjob.Script = model.Script;
-            newjob.CodeId = model.CodeId; 
+            newjob.CodeId = model.CodeId;
 
             // add a new job. 
             if (model.IsRepeat)
@@ -194,7 +194,7 @@ namespace Kooboo.Web.Api.Implementation
                     default:
                         break;
                 }
-                 
+
                 GlobalDb.RepeatingJob().Add(repeatjob);
             }
             else
@@ -209,7 +209,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             JobDeleteViewModel model = call.Context.Request.Model as JobDeleteViewModel;
 
-            _delete(model); 
+            _delete(model);
         }
         private void _delete(JobDeleteViewModel model)
         {
@@ -225,17 +225,74 @@ namespace Kooboo.Web.Api.Implementation
 
         public void Deletes(ApiCall call)
         {
-            List<JobDeleteViewModel> deletes = new List<JobDeleteViewModel>(); 
-            var type = deletes.GetType(); 
+            //List<JobDeleteViewModel> deletes = null;
 
-            string json = call.Context.Request.Body; 
+            //string json = call.Context.Request.Body;
 
-           deletes = Lib.Helper.JsonHelper.Deserialize<List<JobDeleteViewModel>>(json);
+            //List<Guid> ids = null; 
 
-            foreach (var item in deletes)
+            //try
+            //{
+            //    deletes = Lib.Helper.JsonHelper.Deserialize<List<JobDeleteViewModel>>(json);
+
+            //    if (deletes != null)
+            //    {
+            //        foreach (var item in deletes)
+            //        {
+            //            _delete(item);
+            //        }
+            //        return;
+            //    }
+            //}
+            //catch (Exception)
+            //{
+
+            //}
+
+            // if not return.
+            try
             {
-                _delete(item); 
+
+                string body = call.GetValue("ids");
+                if (string.IsNullOrEmpty(body))
+                {
+                    body = call.Context.Request.Body;
+                }
+
+                var   ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(body);
+
+                if (ids !=null)
+                {
+                    var schedulejobs = GlobalDb.ScheduleJob().GetByWebSiteId(call.Context.WebSite.Id);
+                    var repeatjobs = GlobalDb.RepeatingJob().GetByWebSiteId(call.Context.WebSite.Id);
+
+                    foreach (var item in ids)
+                    {
+                        var findschedule = schedulejobs.Find(o => o.Item.Id == item); 
+                        if (findschedule !=null)
+                        {
+                            GlobalDb.ScheduleJob().Delete(findschedule.DayInt, findschedule.SecondOfDay, findschedule.BlockPosition);
+                        }
+                        else
+                        {
+                            var findrepeat = repeatjobs.Find(o => o.Item.Id == item);
+                            if (findrepeat !=null)
+                            {
+                                GlobalDb.RepeatingJob().Del(findrepeat);
+                            }
+
+                        }
+                    }
+
+                }
             }
+            catch (Exception)
+            {
+
+            }
+
+
+
         }
 
     }
@@ -248,7 +305,7 @@ namespace Kooboo.Web.Api.Implementation
             get
             {
                 List<JobConfig> result = new List<JobConfig>();
-                result.Add(new JobConfig() { Name =Hardcoded.GetValue("sample", Context), ControlType = "input" });
+                result.Add(new JobConfig() { Name = Hardcoded.GetValue("sample", Context), ControlType = "input" });
                 result.Add(new JobConfig() { Name = Hardcoded.GetValue("doit", Context), ControlType = "CheckBox" });
 
                 return result;

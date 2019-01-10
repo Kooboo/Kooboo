@@ -264,24 +264,7 @@ namespace Kooboo.Data
                 return ConfigurationManager.AppSettings.Get("CmsLang");
             }
         }
-
-        public static string AutoStart
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings.Get("AutoStart");
-            }
-        }
-
-        public static string AutoUpgrade
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings.Get("AutoUpgrade");
-            }
-        }
-
-
+          
         public static string DefaultLocalHost { get; set; } = "kooboo";
           
         public static int CurrentUsedPort { get; set; } = 80; 
@@ -296,6 +279,10 @@ namespace Kooboo.Data
                     _starthost = AppSettingsUtility.Get("ServerHost", "local.kooboo");
                 }
                 return _starthost;
+            }
+            set
+            {
+                _starthost = value; 
             }
         }
 

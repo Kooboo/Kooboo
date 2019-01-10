@@ -16,10 +16,11 @@
   <key id="Delete">Delete</key>
   <key id="New local domain">New local domain</key>
   <key id="You are running in local mode">You are running in local mode</key>
-  <key id="All domains you enter will only take effect on your local instance, you are free to use any unprotected domains.">All domains you enter will only take effect on your local instance, you are free to use any unprotected domains.</key>
+  <key id="You need to configure DNS records. For Windows desktop users, a mapping of your website domain to 127.0.0.1 may be created on your system host file">You need to configure DNS records. For Windows desktop users, a mapping of your website domain to 127.0.0.1 may be created on your system host file</key>
   <key id="Adding a domain to your account">Adding a domain to your account</key>
   <key id="Use below DNS server, all DNS records will be created automatically for you.">Use below DNS server, all Dns records will be created automatically for you.</key>
-  <key id="Or do it yourself, create your domain CNAME wildcard record to below domain. To use email service, also configure the Mx record to below domain.">Or do it yourself, create your domain CNAME wildcard record to below domain. To use email service, also configure the Mx record to below domain.</key>
+  <key id="Or create your domain  wildcard CNAME record to below domain. To use email service, also configure the Mx record to below domain.">Or create your domain  wildcard CNAME record to below domain. To use email service, also configure the Mx record to below domain.</key>
+  <key id="Or create your domain wildcard A record to below IP address. This is not recommeneded because we may change our IP">Or create your domain wildcard A record to below IP address. This is not recommeneded because we may change our IP</key>
   <key id="Domain">Domain</key>
   <key id="kooboolocal.com">kooboolocal.com</key>
   <key id="Add">Add</key>
@@ -125,10 +126,6 @@
   <key id="Remove">Remove</key>
   <key id="Add user">Add user</key>
   <key id="Enter user name">Enter user name</key>
-  <key id="Current data center">Current data center</key>
-  <key id="Avaliable data center">Avaliable data center</key>
-  <key id="Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.">Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.</key>
-  <key id="Update">Update</key>
   <key id="Payment">Payment</key>
   <key id="Payment success">Payment success</key>
   <key id="Payment failure">Payment failure</key>
@@ -467,8 +464,7 @@
   <key id="Usage rate">Usage rate</key>
   <key id="Count">Count</key>
   <key id="No record">No record</key>
-  <key id="Info!">Info!</key>
-  <key id="Info content goes here">Info content goes here</key>
+  <key id="Data Center is your assigned online hosting provider.">Data Center is your assigned online hosting provider.</key>
   <key id="Available">Available</key>
   <key id="Loading">Loading</key>
   <key id="Supplier">Supplier</key>
@@ -525,7 +521,7 @@
   <key id="The number of clicks away from the start page">The number of clicks away from home page</key>
   <key id="Scan">Scan</key>
   <key id="No.">No.</key>
-  <key id="* This online version allows you to clone not more than 3 pages, use desktop version if you need more.">* This online version of Kooboo copy 3 pages per website, desktop version has no limitation. Please make sure you have the rights to use the website material before continue.</key>
+  <key id="* This online version allows you to clone 3 pages with very limited speed, use desktop version if you need more.">* This online version allows you to clone 3 pages with very limited speed, use desktop version if you need more.</key>
   <key id="Online">Online</key>
   <key id="Transferring">Migrate website</key>
   <key id="Transferring, you may leave this page">Migrating the website, you may leave this page</key>
@@ -632,7 +628,7 @@
   <key id="Minimal value">Minimal value</key>
   <key id="Maximum value">Maximum value</key>
   <key id="Pattern">Pattern</key>
-  <key id="No variable attribute">No variable attribute</key>
+  <key id="No configuration item">No configuration item</key>
   <key id="Data type">Data type</key>
   <key id="Error message">Error message</key>
   <key id="Click to collapse actions">Click to collapse actions</key>
@@ -881,6 +877,7 @@
   <key id="Maximum checked">Maximum checked</key>
   <key id="Minimal length">Minimal length</key>
   <key id="Maximum length">Maximum length</key>
+  <key id="Update">Update</key>
   <key id="No condition">No condition</key>
   <key id="No activity">No activity</key>
   <key id="Add activity">Add activity</key>
@@ -1043,6 +1040,7 @@
   <key id="Day(s)">Day(s)</key>
   <key id="Bidder">Bidder</key>
   <key id="Day">Day</key>
+  <key id="Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.">Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.</key>
   <key id="Verify">Verify</key>
   <key id="Take offline">Take offline</key>
   <key id="Take online">Take online</key>
@@ -1244,6 +1242,7 @@
   <key id="Old and New Password are the same">Old and New Password are the same</key>
   <key id="Kooboo online">Kooboo online</key>
   <key id="is in use">is in use</key>
+  <key id="Invalid coupon code">Invalid coupon code</key>
   <key id="Paypal">Paypal</key>
   <key id="wechat">Wechat</key>
   <key id="Bandwidth">Bandwidth</key>
@@ -1252,12 +1251,13 @@
   <key id="Size of disk">Size of disk</key>
   <key id="App does not allow source access">App does not allow source access</key>
   <key id="Register">Register</key>
-  <key id="Domain does not owned by current user">Domain does not owned by current user</key>
   <key id="port in use">port in use</key>
+  <key id="Domain does not owned by current user">Domain does not owned by current user</key>
   <key id="Your certificate already exists">Your certificate already exists</key>
   <key id="You can only submit request for the same domain one time per hour">You can only submit request for the same domain one time per hour</key>
   <key id="You have reached the max number of free certificates">You have reached the max number of free certificates</key>
   <key id="your certificates is being generated, it normally will take 1-2 mins">your certificates is being generated, it normally will take 1-2 mins</key>
+  <key id="Unexpected error">Unexpected error</key>
   <key id="Target Url is Protected">Target Url is Protected</key>
   <key id="user not found">user not found</key>
   <key id="Reset Password Request">Reset Password Request</key>
@@ -1267,6 +1267,7 @@
   <key id="user exists">user exists</key>
   <key id="Email address verification">Email address verification</key>
   <key id="You can use the following link within the next day to verify your email address: \r\n\r\n{{link}}\r\n\r\n If you do not use this link within 24 hours, it will expire. \r\n\r\nRegards,\r\nKooboo Team">You can use the following link within the next day to verify your email address: \r\n\r\n{{link}}\r\n\r\n If you do not use this link within 24 hours, it will expire. \r\n\r\nRegards,\r\nKooboo Team</key>
+  <key id="Can not verify,  please try again">Can not verify,  please try again</key>
   <key id="Coupon has not enough credit to pay this order">Coupon has not enough credit to pay this order</key>
   <key id="Demand not found">Demand not found</key>
   <key id="Open status">Open status</key>
@@ -1377,8 +1378,7 @@
   <key id="doit">doit</key>
   <key id="Layout is being used, can not be deleted">Layout is being used, can not be deleted</key>
   <key id="Name already exists">Name already exists</key>
-  <key id="Require administrator rights to change data center">Require administrator rights to change data center</key>
-  <key id="Unexpected error">Unexpected error</key>
+  <key id="Default account can not add user">Default account can not add user</key>
   <key id="Page body and Url are required">Page body and Url are required</key>
   <key id="Hash validation failed">Hash validation failed</key>
   <key id="ContentType">ContentType</key>
@@ -1397,6 +1397,7 @@
   <key id="User name or password not valid">User name or password not valid</key>
   <key id="User not login">User not login</key>
   <key id="Server url not found">Server url not found</key>
+  <key id="Default User can not reset password">Default User can not reset password</key>
   <key id="Your password has been reset">Your password has been reset</key>
   <key id="Password reset failed">Password reset failed</key>
   <key id="LocalHost">LocalHost</key>
@@ -1412,7 +1413,5 @@
   <key id="method return null for required object type">method return null for required object type</key>
   <key id="required model type not provided">required model type not provided</key>
   <key id="Require parameter not found">Require parameter not found</key>
-  <key id="msg, context">msg, context</key>
   <key id="Max number of sites has been reached, require service level upgrade">Max number of sites has been reached, require service level upgrade</key>
-  <key id="HK(China)">HK(China)</key>
 </Lang>
