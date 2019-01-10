@@ -747,7 +747,7 @@
   <key id="Invalid email">Неправильный адрес электронной почты.</key>
   <key id="Invalid URL">Недопустимый URL</key>
   <key id="The addresses have invalid email">Адрес содержит недопустимый адрес электронной почты</key>
-  <key id="The name doesn't allow containing # / \ : * &amp;quot; &amp;lt; &amp;gt; | and the length should less than 254">Имя файла не может быть включено ? ! & amp;quot; & lt; & gt; * | \ / и длина менее 254</key>
+  <key id="The name doesn't allow containing # / \ : * &amp;quot; &amp;lt; &amp;gt; | and the length should less than 254">Имя файла не может быть включено ? ! &amp;quot; &lt; &gt; * | \ / и длина менее 254</key>
   <key id="Name should only contains letters, digits and underscore, and should start with a letter">Имена должны начинаться с буквы и содержать только буквы, цифры и подчеркивания</key>
   <key id="Name should only contains letters, digits, space and underscore, and should start with a letter">Имена должны начинаться с буквы и содержать только буквы, цифры, пробелы и подчеркивания</key>
   <key id="No puctuation or space is allowed">Пробелы и знаки препинания не могут быть включены в имя</key>
