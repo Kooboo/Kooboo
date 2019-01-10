@@ -122,7 +122,7 @@
       },
       "Kooboo.Data/1.0.0": {
         "type": "project",
-        "framework": ".NETFramework,Version=v4.5",
+        "framework": ".NETFramework,Version=v4.6.1",
         "dependencies": {
           "Kooboo.Dom": "1.0.0",
           "Kooboo.HttpServer": "1.0.0",
@@ -1075,7 +1075,6 @@
       "type": "package",
       "path": "geocoordinate.netstandard1/1.0.1",
       "files": [
-        ".nupkg.metadata",
         "geocoordinate.netstandard1.1.0.1.nupkg.sha512",
         "geocoordinate.netstandard1.nuspec",
         "lib/netstandard1.1/GeoCoordinate.NetStandard1.dll"
@@ -1139,7 +1138,6 @@
       "type": "package",
       "path": "mimemapping/1.0.1.12",
       "files": [
-        ".nupkg.metadata",
         "lib/netstandard1.1/MimeMapping.dll",
         "lib/netstandard1.1/MimeMapping.xml",
         "mimemapping.1.0.1.12.nupkg.sha512",
@@ -1151,7 +1149,6 @@
       "type": "package",
       "path": "nativelibraryloader/1.0.10",
       "files": [
-        ".nupkg.metadata",
         "lib/netstandard2.0/NativeLibraryLoader.dll",
         "lib/netstandard2.0/NativeLibraryLoader.xml",
         "nativelibraryloader.1.0.10.nupkg.sha512",
@@ -1163,8 +1160,6 @@
       "type": "package",
       "path": "netstandard.library/2.0.3",
       "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "build/netstandard2.0/NETStandard.Library.targets",
@@ -1292,7 +1287,6 @@
       "type": "package",
       "path": "newtonsoft.json/11.0.2",
       "files": [
-        ".nupkg.metadata",
         "LICENSE.md",
         "lib/net20/Newtonsoft.Json.dll",
         "lib/net20/Newtonsoft.Json.xml",
@@ -1333,7 +1327,6 @@
       "type": "package",
       "path": "sharpdx/4.0.1",
       "files": [
-        ".nupkg.metadata",
         "lib/net40/SharpDX.dll",
         "lib/net40/SharpDX.xml",
         "lib/net45/SharpDX.dll",
@@ -1354,7 +1347,6 @@
       "type": "package",
       "path": "sharpdx.d3dcompiler/4.0.1",
       "files": [
-        ".nupkg.metadata",
         "lib/net40/SharpDX.D3DCompiler.dll",
         "lib/net40/SharpDX.D3DCompiler.xml",
         "lib/net45/SharpDX.D3DCompiler.dll",
@@ -1375,7 +1367,6 @@
       "type": "package",
       "path": "sharpdx.direct3d11/4.0.1",
       "files": [
-        ".nupkg.metadata",
         "lib/net40/SharpDX.Direct3D11.dll",
         "lib/net40/SharpDX.Direct3D11.xml",
         "lib/net45/SharpDX.Direct3D11.dll",
@@ -1396,7 +1387,6 @@
       "type": "package",
       "path": "sharpdx.dxgi/4.0.1",
       "files": [
-        ".nupkg.metadata",
         "lib/net40/SharpDX.DXGI.dll",
         "lib/net40/SharpDX.DXGI.xml",
         "lib/net45/SharpDX.DXGI.dll",
@@ -1417,7 +1407,6 @@
       "type": "package",
       "path": "sixlabors.core/1.0.0-beta0005",
       "files": [
-        ".nupkg.metadata",
         "lib/netcoreapp2.0/SixLabors.Core.dll",
         "lib/netcoreapp2.0/SixLabors.Core.xml",
         "lib/netstandard1.1/SixLabors.Core.dll",
@@ -1431,7 +1420,6 @@
       "type": "package",
       "path": "sixlabors.imagesharp/1.0.0-beta0003",
       "files": [
-        ".nupkg.metadata",
         "lib/netstandard1.1/SixLabors.ImageSharp.dll",
         "lib/netstandard1.1/SixLabors.ImageSharp.xml",
         "lib/netstandard1.3/SixLabors.ImageSharp.dll",
@@ -1500,7 +1488,6 @@
       "type": "package",
       "path": "system.buffers/4.5.0-preview1-26216-02",
       "files": [
-        ".nupkg.metadata",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/netstandard1.1/System.Buffers.dll",
@@ -1596,8 +1583,6 @@
       "type": "package",
       "path": "system.configuration.configurationmanager/4.4.1",
       "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/net461/System.Configuration.ConfigurationManager.dll",
@@ -2122,7 +2107,6 @@
       "type": "package",
       "path": "system.memory/4.5.0-preview1-26216-02",
       "files": [
-        ".nupkg.metadata",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/netstandard1.1/System.Memory.dll",
@@ -2154,7 +2138,6 @@
       "type": "package",
       "path": "system.numerics.vectors/4.5.0-preview1-26216-02",
       "files": [
-        ".nupkg.metadata",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/MonoAndroid10/_._",
@@ -2999,8 +2982,6 @@
       "type": "package",
       "path": "system.security.cryptography.cng/4.4.0",
       "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/net46/System.Security.Cryptography.Cng.dll",
@@ -3043,7 +3024,6 @@
       "type": "package",
       "path": "system.security.cryptography.pkcs/4.5.0-preview1-26216-02",
       "files": [
-        ".nupkg.metadata",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/net46/System.Security.Cryptography.Pkcs.dll",
@@ -3075,8 +3055,6 @@
       "type": "package",
       "path": "system.security.cryptography.protecteddata/4.4.0",
       "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/MonoAndroid10/_._",
@@ -3364,7 +3342,6 @@
       "type": "package",
       "path": "veldrid/4.3.3",
       "files": [
-        ".nupkg.metadata",
         "lib/netstandard2.0/Veldrid.dll",
         "lib/netstandard2.0/Veldrid.xml",
         "veldrid.4.3.3.nupkg.sha512",
@@ -3376,7 +3353,6 @@
       "type": "package",
       "path": "veldrid.imagesharp/4.3.3",
       "files": [
-        ".nupkg.metadata",
         "lib/netstandard2.0/Veldrid.ImageSharp.dll",
         "veldrid.imagesharp.4.3.3.nupkg.sha512",
         "veldrid.imagesharp.nuspec"
@@ -3387,7 +3363,6 @@
       "type": "package",
       "path": "veldrid.metalbindings/4.3.3",
       "files": [
-        ".nupkg.metadata",
         "lib/netstandard2.0/Veldrid.MetalBindings.dll",
         "veldrid.metalbindings.4.3.3.nupkg.sha512",
         "veldrid.metalbindings.nuspec"
@@ -3398,7 +3373,6 @@
       "type": "package",
       "path": "veldrid.openglbindings/4.3.3",
       "files": [
-        ".nupkg.metadata",
         "lib/netstandard2.0/Veldrid.OpenGLBindings.dll",
         "veldrid.openglbindings.4.3.3.nupkg.sha512",
         "veldrid.openglbindings.nuspec"
@@ -3409,7 +3383,6 @@
       "type": "package",
       "path": "vk/1.0.19",
       "files": [
-        ".nupkg.metadata",
         "lib/netstandard1.4/vk.dll",
         "vk.1.0.19.nupkg.sha512",
         "vk.nuspec"
