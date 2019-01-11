@@ -108,11 +108,26 @@ namespace Kooboo.Sites.Cache
             Cache.SiteObjectCache<SyncSetting>.RemoveSiteDb(sitedb.Id);
             Cache.SiteObjectCache<ContentFolder>.RemoveSiteDb(sitedb.Id);
             Cache.SiteObjectCache<ContentType>.RemoveSiteDb(sitedb.Id);
-            Cache.SiteObjectCache<Page>.RemoveSiteDb(sitedb.Id);
+
+            Cache.SiteObjectCache<ContentCategory>.RemoveSiteDb(sitedb.Id);
+            Cache.SiteObjectCache<SiteCluster>.RemoveSiteDb(sitedb.Id);
+            Cache.SiteObjectCache<KConfig>.RemoveSiteDb(sitedb.Id);
+            Cache.SiteObjectCache<Code>.RemoveSiteDb(sitedb.Id);
+
+            //    || TValueType == typeof(ContentCategory)
+            //    || TValueType == typeof(SiteCluster)
+            //    || TValueType == typeof(Code)
+            //    || TValueType == typeof(KConfig)
+
+
+            Cache.SiteObjectCache<Page>.RemoveSiteDb(sitedb.Id);  
             Cache.SiteObjectCache<Route>.RemoveSiteDb(sitedb.Id);
             Cache.SiteObjectCache<HtmlBlock>.RemoveSiteDb(sitedb.Id);
             Cache.SiteObjectCache<Style>.RemoveSiteDb(sitedb.Id);
             Cache.SiteObjectCache<Script>.RemoveSiteDb(sitedb.Id);
+            Cache.SiteObjectCache<Image>.RemoveSiteDb(sitedb.Id); 
+             
+
             _SiteDbs.Remove(sitedb.WebSite.Id);
         }
 

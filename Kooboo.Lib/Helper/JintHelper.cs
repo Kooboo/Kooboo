@@ -184,9 +184,7 @@ namespace Kooboo.Lib.Helper
             return result;
         }
 
-
-
-
+         
         public static List<Jint.Parser.Ast.FunctionDeclaration> ListRequireJsFuncs(string requireJsBlock)
         {
             Jint.Parser.JavaScriptParser parser = new Jint.Parser.JavaScriptParser();
@@ -335,7 +333,7 @@ namespace Kooboo.Lib.Helper
         }
 
         private static object GetValue(Jint.Runtime.Debugger.DebugInformation info, string property)
-        {
+        { 
             var value = info.Locals.Where(item => item.Key.ToLower() == property).Select(item => item.Value).FirstOrDefault();
             if (value == null)
             {
@@ -343,13 +341,13 @@ namespace Kooboo.Lib.Helper
             }
             return value;
         }
-        public static object GetValue(Jint.Engine engine, string FullProperty)
+        public static object GetGebuggerValue(Jint.Engine engine, string FullProperty)
         {
             if (string.IsNullOrEmpty(FullProperty))
             {
                 return null;
             }
-
+               
             FullProperty = FullProperty.Trim();
             FullProperty = FullProperty.TrimEnd(';'); 
 
