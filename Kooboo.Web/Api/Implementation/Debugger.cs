@@ -171,7 +171,7 @@ namespace Kooboo.Web.Api.Implementation
             }
             else
             {
-                var value = Lib.Helper.JintHelper.GetValue(session.JsEngine, FullName);
+                var value = Lib.Helper.JintHelper.GetGebuggerValue(session.JsEngine, FullName);
 
                 if (value == null)
                 {
@@ -203,7 +203,7 @@ namespace Kooboo.Web.Api.Implementation
                     object value;
                     try
                     {
-                        value = Lib.Helper.JintHelper.GetValue(session.JsEngine, JsStatement);
+                        value = Lib.Helper.JintHelper.GetGebuggerValue(session.JsEngine, JsStatement);
                         result.Success = true;
                         if (value == null)
                         {

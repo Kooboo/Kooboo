@@ -45,10 +45,8 @@ namespace Kooboo.App.CrossPlatform
             if(UpgradeHelper.HasNewVersion())
             {
                 UpgradeHelper.Download();
-            }
-
-            Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.ConsoleWait();
-
+            } 
+            Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.ConsoleWait(); 
         }
 
     }
