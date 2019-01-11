@@ -151,6 +151,18 @@ namespace Jint.Runtime.Debugger
             return true;
         }
 
+        public DebugInformation GetDebugInformation()
+        {
+            var info = new DebugInformation();
+            if (_engine.ExecutionContext != null && _engine.ExecutionContext.LexicalEnvironment != null)
+            {
+                var lexicalEnvironment = _engine.ExecutionContext.LexicalEnvironment;
+                info.Locals = GetLocalVariables(lexicalEnvironment);
+                info.Globals = GetGlobalVariables(lexicalEnvironment);
+            }
+            return info;
+        }
+
         private DebugInformation CreateDebugInformation(Statement statement)
         {
             var info = new DebugInformation { CurrentStatement = statement, CallStack = _debugCallStack };

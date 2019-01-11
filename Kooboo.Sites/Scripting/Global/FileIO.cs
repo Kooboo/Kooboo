@@ -157,7 +157,7 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-        public List<FileInfo> GetAllFiles()
+        public JsList<FileInfo> GetAllFiles()
         {
             var fileList = new List<FileInfo>();
             var seps = "/\\".ToCharArray();
@@ -174,10 +174,10 @@ namespace Kooboo.Sites.Scripting.Global
                     }
                 }
             }
-            return fileList;
+            return fileList.ToJSList<FileInfo>();
         }
 
-        public List<FileInfo> FolderFiles(string folder)
+        public JsList<FileInfo> FolderFiles(string folder)
         {
             if (string.IsNullOrEmpty(folder))
             {
@@ -203,13 +203,14 @@ namespace Kooboo.Sites.Scripting.Global
                     }
                 }
             }
-            return fileList;
+            return fileList.ToJSList();
         }
 
 
-        public List<FileInfo> FolderFiles()
+        public JsList<FileInfo> FolderFiles()
         {
-            return FolderFiles(null);
+            var list= FolderFiles(null);
+            return list.ToJSList();
         }
 
 
@@ -247,7 +248,7 @@ namespace Kooboo.Sites.Scripting.Global
             return null;
         }
 
-        public List<FolderInfo> SubFolders(string folder = null)
+        public JsList<FolderInfo> SubFolders(string folder = null)
         {
             if (string.IsNullOrEmpty(folder))
             {
@@ -264,7 +265,6 @@ namespace Kooboo.Sites.Scripting.Global
             if (System.IO.Directory.Exists(folder))
             {
                 var subdirs = System.IO.Directory.GetDirectories(folder, "*.*", System.IO.SearchOption.TopDirectoryOnly);
-
                 foreach (var item in subdirs)
                 {
                     string fullname = item.Substring(this.RootFolder.Length + 1);
@@ -275,7 +275,7 @@ namespace Kooboo.Sites.Scripting.Global
                     subs.Add(info);
                 }
             }
-            return subs;
+            return subs.ToJSList();
         }
 
         public void CreateFolder(string Folder, string ParentFolder)

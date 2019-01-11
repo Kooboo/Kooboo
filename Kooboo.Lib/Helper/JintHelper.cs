@@ -334,7 +334,15 @@ namespace Kooboo.Lib.Helper
             return result;
         }
 
-
+        private static object GetValue(Jint.Runtime.Debugger.DebugInformation info, string property)
+        {
+            var value = info.Locals.Where(item => item.Key.ToLower() == property).Select(item => item.Value).FirstOrDefault();
+            if (value == null)
+            {
+                value = info.Globals.Where(item => item.Key.ToLower() == property).Select(item => item.Value).FirstOrDefault();
+            }
+            return value;
+        }
         public static object GetValue(Jint.Engine engine, string FullProperty)
         {
             if (string.IsNullOrEmpty(FullProperty))
@@ -346,71 +354,52 @@ namespace Kooboo.Lib.Helper
             FullProperty = FullProperty.TrimEnd(';'); 
 
             string[] parts = FullProperty.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            var info = engine.DebugHandler.GetDebugInformation();
 
-            if (parts.Length == 1)
+            object value = null;
+
+            for (int i = 0; i < parts.Length; i++)
             {
-                var rawvalue =  engine.GetValue(FullProperty);
-               if (rawvalue is Jint.Native.JsValue)
+                if (i == 0)
                 {
-                    var jsvalue = rawvalue as Jint.Native.JsValue;
-                    if (jsvalue !=null)
+                    value = GetValue(info,parts[i]);
+                    if (value == null)
                     {
-                        return jsvalue.ToObject();
-                    } 
+                        return null;
+                    }
                 }
-                return rawvalue; 
+                else
+                {
+                    value = getMember(value, parts[i]);
+                    if (value == null)
+                    {
+                        return null;
+                    }
+                }
             }
-            else
+
+
+            if (value is Jint.Native.JsValue)
             {
-                object value = null;
-
-                for (int i = 0; i < parts.Length; i++)
+                var jsvalue = value as Jint.Native.JsValue;
+                if (jsvalue != null)
                 {
-                    if (i == 0)
-                    {
-                        value = engine.GetValue(parts[i]);
-                        if (value == null)
-                        {
-                            return null;
-                        }
-                    }
-                    else
-                    {
-                        value = getMember(value, parts[i]);
-                        if (value == null)
-                        {
-                            return null;
-                        }
-                    }
+                    return jsvalue.ToObject();
                 }
-
-
-                if (value is Jint.Native.JsValue)
-                {
-                    var jsvalue = value as Jint.Native.JsValue;
-                    if (jsvalue != null)
-                    {
-                        return jsvalue.ToObject();
-                    }
-                }
-             
-                return value;
             }
-             
+
+            return value;
+
 
         }
 
 
-        public static object getMember(object obj, string PropertyName)
+        private static object getMember(object obj, string PropertyName)
         {
             if (obj is IDictionary)
             {
                 var dict = obj as IDictionary;
-                if (dict.Contains(PropertyName))
-                {
-                    return dict[PropertyName];
-                }
-                return null;
+                return GetValueDic(dict, PropertyName);
             }
 
             else if (obj is JObject)
@@ -423,9 +412,7 @@ namespace Kooboo.Lib.Helper
                 IDictionary<String, Object> value = obj as IDictionary<String, Object>;
                 if (value != null)
                 {
-                    object result;
-                    value.TryGetValue(PropertyName, out result);
-                    return result;
+                    return value.Where(item => EqualsIgnoreCasing(PropertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
                 }
                 return null;
             }
@@ -434,9 +421,7 @@ namespace Kooboo.Lib.Helper
                 IDictionary<string, object> value = obj as IDictionary<string, object>;
                 if (value != null)
                 {
-                    object result;
-                    value.TryGetValue(PropertyName, out result);
-                    return result;
+                    return value.Where(item => EqualsIgnoreCasing(PropertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
                 }
                 return null;
             }
@@ -453,9 +438,7 @@ namespace Kooboo.Lib.Helper
                 IDictionary<String, Object> rightvalue = jsObject as IDictionary<String, Object>;
                 if (rightvalue != null)
                 {
-                    object result;
-                    rightvalue.TryGetValue(PropertyName, out result);
-                    return result;
+                    return rightvalue.Where(item => EqualsIgnoreCasing(PropertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
                 }
                 else
                 {
@@ -464,9 +447,7 @@ namespace Kooboo.Lib.Helper
                         IDictionary<String, Object> expvalue = obj as IDictionary<String, Object>;
                         if (expvalue != null)
                         {
-                            object result;
-                            expvalue.TryGetValue(PropertyName, out result);
-                            return result;
+                            return expvalue.Where(item => EqualsIgnoreCasing(PropertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
                         }
                         return null;
                     }
@@ -479,6 +460,42 @@ namespace Kooboo.Lib.Helper
             }
 
             return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(obj, PropertyName);
+        }
+
+        private static object GetValueDic(IDictionary dictionary,string name)
+        {
+            var keys = dictionary.Keys;
+            string matchKey=null;
+            foreach(var key in keys)
+            {
+                if (EqualsIgnoreCasing(name, key as string))
+                {
+                    matchKey = key as string;
+                    break;
+                }
+            }
+            if(!string.IsNullOrEmpty(matchKey))
+            {
+                return dictionary[matchKey];
+            }
+            return null;
+        }
+
+        private static bool EqualsIgnoreCasing(string s1, string s2)
+        {
+            bool equals = false;
+            if (s1.Length == s2.Length)
+            {
+                if (s1.Length > 0 && s2.Length > 0)
+                {
+                    equals = (s1.ToLower()[0] == s2.ToLower()[0]);
+                }
+                if (s1.Length > 1 && s2.Length > 1)
+                {
+                    equals = equals && (s1.Substring(1) == s2.Substring(1));
+                }
+            }
+            return equals;
         }
 
 
