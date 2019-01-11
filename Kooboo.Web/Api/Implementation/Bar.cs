@@ -252,7 +252,7 @@ namespace Kooboo.Web.Api.Implementation
 
             return new List<MenuItem>
             {
-                new MenuItem { Name = Hardcoded.GetValue("Media Library", context), Icon="icon icon-picture", Url = AdminUrl("Contents/Images", siteDb) },
+                new MenuItem { Name = Hardcoded.GetValue("Media library", context), Icon="icon icon-picture", Url = AdminUrl("Contents/Images", siteDb) },
                 new MenuItem { Name = Hardcoded.GetValue("Pages", context), Icon = "icon icon-layers", Url = AdminUrl("Pages", siteDb) },
                 new MenuItem{ Name = Hardcoded.GetValue("Diagnosis", context), Icon = "icon icon-support", Url = AdminUrl("Sites/Diagnosis", siteDb) },
             };

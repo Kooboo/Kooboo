@@ -67,7 +67,7 @@ namespace Kooboo.Data.Language
                             {
                                 string alltext = System.IO.File.ReadAllText(file);
 
-                                var values = Language.MultiLingualHelper.Deserialize(alltext);
+                                var values = Language.MultiLingualHelper.Deserialize(alltext); 
 
                                 langtext[LangCode] = EscapeQuote(values);
                             }
@@ -86,38 +86,15 @@ namespace Kooboo.Data.Language
 
         private static Dictionary<string,string> EscapeQuote(Dictionary<string, string> values)
         {
-            var newValues = new Dictionary<string, string>();
+            var newValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var item in values)
-            {
-                var key = item.Key;
-                //change " to \",because " will cause js error.
-                var value = item.Value.Replace("\"", "\\\"");
-                newValues[key] = value;
+            {  
+                //change " to \",because " will cause js error. 
+                newValues[item.Key] = item.Value.Replace("\"", "\\\"") ;
             }
             return newValues;
         }
-
-        public static void SetValue(string LangCode, Dictionary<string, string> Values)
-        {
-            lock(_locker)
-            {
-                var langcontent = GetLangValues(LangCode); 
-                if (langcontent.Count() == 0)
-                {
-                    langtext[LangCode] = EscapeQuote(Values);
-                }
-                else
-                {
-                    foreach (var item in Values)
-                    {
-                        langcontent[item.Key] = item.Value; 
-                    }
-                    langtext[LangCode]= EscapeQuote(langcontent);
-                }
-              
-            }
-        }
-
+         
    
     }
 }
