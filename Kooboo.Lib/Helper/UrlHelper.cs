@@ -652,7 +652,7 @@ namespace Kooboo.Lib.Helper
                     return UrlFileType.PageOrView;
                 }
 
-                if (extension == ".swf" || extension == ".flv" || extension == ".mid" || extension == ".midi" || extension == ".mp3" || extension == ".mpg" || extension == ".mpeg" || extension == ".mov" || extension == ".rar" || extension == ".zip" || extension == ".7zip" || extension == ".wav" || extension == ".tiff")
+                if (extension == ".swf" || extension == ".flv" || extension == ".mid" || extension == ".midi" || extension == ".mp3" || extension == ".mpg" || extension == ".mpeg" || extension == ".mov" || extension == ".rar" || extension == ".zip" || extension == ".7z" || extension == ".wav" || extension == ".tiff")
                 {
                     return UrlFileType.File;
                 }

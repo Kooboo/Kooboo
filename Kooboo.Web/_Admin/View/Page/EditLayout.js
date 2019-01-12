@@ -208,24 +208,26 @@ $(function() {
 
                     self.getSaveLayout(component, el);
                     $(dom).append(el);
-                } else if (ComponentTool.isNormalComponent(component)) {
-                    var el = $('<' + component.tagName.toLowerCase() + '>'),
-                        data = $(component).data('kb-comp');
-                    $(el).attr('id', data ? data.name : component.getAttribute('id'));
-                    if (component.tagName.toLowerCase() == 'layout') {
-                        self.getSaveLayout(component, el);
-                    }
-                    $(dom).append(el);
-                } else if (ComponentTool.isEnginedComponent(component)) {
-                    var data = $(component).data('kb-comp'),
-                        el = $('<' + data.type.toLowerCase() + '>');
-                    $(el).attr('engine', data.engine)
-                        .attr('id', data.name);
-                    if (data.type.toLowerCase() == 'layout') {
-                        self.getSaveLayout(component, el);
-                    }
-                    $(dom).append(el);
-                } else {
+                } else if($(component).parents('[k-placeholder]').length){
+                    if (ComponentTool.isNormalComponent(component)) {
+                        var el = $('<' + component.tagName.toLowerCase() + '>'),
+                            data = $(component).data('kb-comp');
+                        $(el).attr('id', data ? data.name : component.getAttribute('id'));
+                        if (component.tagName.toLowerCase() == 'layout') {
+                            self.getSaveLayout(component, el);
+                        }
+                        $(dom).append(el);
+                    } else if (ComponentTool.isEnginedComponent(component)) {
+                        var data = $(component).data('kb-comp'),
+                            el = $('<' + data.type.toLowerCase() + '>');
+                        $(el).attr('engine', data.engine)
+                            .attr('id', data.name);
+                        if (data.type.toLowerCase() == 'layout') {
+                            self.getSaveLayout(component, el);
+                        }
+                        $(dom).append(el);
+                    } 
+                }else {
                     self.getSaveLayout(component, dom);
                 }
             })
