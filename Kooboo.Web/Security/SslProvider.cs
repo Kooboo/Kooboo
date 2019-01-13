@@ -36,7 +36,7 @@ namespace Kooboo.Web.Security
 
                 if (cert != null)
                 {
-                    var certificate = new X509Certificate2(cert.Content, "kooboo");
+                    var certificate = TryGetCert(cert.Content);  
                     if (certificate != null)
                     {
                         cache[hostName] = certificate;
@@ -77,12 +77,8 @@ namespace Kooboo.Web.Security
                 var info = new System.IO.FileInfo(item);   
                 string hostname = info.Name;   
 
-                var allbytes = System.IO.File.ReadAllBytes(item);   
-                var cert =  new X509Certificate2(allbytes, "");
-                if (cert == null)
-                {
-                    cert = new X509Certificate2(allbytes, "kooboo"); 
-                }
+                var allbytes = System.IO.File.ReadAllBytes(item);
+                var cert = TryGetCert(allbytes);  
                 if (cert !=null)
                 {
                     string hostName = cert.GetNameInfo(X509NameType.DnsName, false);
@@ -94,6 +90,31 @@ namespace Kooboo.Web.Security
 
         }
 
+        public static X509Certificate2 TryGetCert(byte[] content)
+        {
+            List<string> trypass = new List<string>();
+            trypass.Add("kooboo");
+            trypass.Add("");
+
+            foreach (var item in trypass)
+            {
+                try
+                {
+                    var cert = new X509Certificate2(content, item);
+                    if (cert !=null)
+                    {
+                        return cert; 
+                    }
+                }
+                catch (Exception)
+                { 
+                }
+   
+            }
+
+            return null; 
+
+        }
 
     }
 }
