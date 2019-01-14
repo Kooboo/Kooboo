@@ -11,13 +11,6 @@ namespace Kooboo.Sites.Routing
 {
     public static class ObjectRoute
     {
-        /// <summary>
-        /// parse the router and alter the routing in the context.environment
-        /// route contains the page or file to be loaded.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="site"></param>
-        /// <returns></returns>
         public static void Parse(Render.FrontContext context)
         {
             Route foundroute = null;
@@ -55,18 +48,11 @@ namespace Kooboo.Sites.Routing
                 return;
             }
 
-            /// if this is a server redirect to another route. 
-            while (foundroute.DestinationConstType == ConstObjectType.Route)
+            foundroute = VerifyRoute(context.SiteDb, foundroute);
+
+            if (foundroute == null)
             {
-                Route destinationroute = context.SiteDb.Routes.Get(foundroute.objectId);
-                if (destinationroute != null)
-                {
-                    foundroute = destinationroute;
-                }
-                else
-                {
-                    return;
-                }
+                return;
             }
 
             var newroute = CopyRouteWithoutParameter(foundroute);
@@ -76,7 +62,72 @@ namespace Kooboo.Sites.Routing
             context.Route = newroute;
             context.Log.ConstType = foundroute.DestinationConstType;
             context.Log.ObjectId = foundroute.objectId;
+        }
 
+        public static Route VerifyRoute(SiteDb siteDb, Route OriginalRoute)
+        {
+            if (OriginalRoute.ConstType == ConstObjectType.Route)
+            {
+                int counter = 0;
+                var dest = GetDestinationRoute(siteDb, OriginalRoute, ref counter);
+                if (dest != null)
+                {
+                    if (dest.DestinationConstType == ConstObjectType.Route)
+                    {
+                        if (string.IsNullOrEmpty(OriginalRoute.Name) || OriginalRoute.Name == "/" || OriginalRoute.Name == "\\" || OriginalRoute.Name.StartsWith("/?"))
+                        {
+                            return GetDefaultRoute(siteDb);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        return dest;
+                    }
+
+                }
+            }
+            else
+            {
+                return OriginalRoute;
+            }
+            return null;
+        }
+
+        public static Route GetDestinationRoute(SiteDb sitedb, Route OriginalRoute, ref int counter)
+        {
+
+            if (OriginalRoute.Id == OriginalRoute.objectId)
+            {
+                return OriginalRoute;
+            }
+
+            Route destinationroute = sitedb.Routes.Get(OriginalRoute.objectId);
+
+            if (destinationroute != null)
+            {
+                if (destinationroute.DestinationConstType == ConstObjectType.Route)
+                {
+                    counter += 1;
+                    if (counter > 5)
+                    {
+                        return destinationroute;
+                    }
+                    else
+                    {
+                        return GetDestinationRoute(sitedb, destinationroute, ref counter);
+                    }
+                }
+                else
+                {
+                    return destinationroute;
+                }
+            }
+
+            return OriginalRoute;
         }
 
         private static Route GetRoute(Render.FrontContext context, string url)
@@ -186,9 +237,9 @@ namespace Kooboo.Sites.Routing
                 {
                     sysRoute.Name = "/__kb/{objecttype}/{nameorid}/{action}";
                 }
-                else if (segments.Count()> 4)
+                else if (segments.Count() > 4)
                 {
-                    sysRoute.Name = "/__kb/{objecttype}/{path}"; 
+                    sysRoute.Name = "/__kb/{objecttype}/{path}";
                 }
             }
             else
