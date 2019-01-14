@@ -778,8 +778,7 @@ namespace Kooboo.Lib.Helper
                 local = baseUrl.Substring(marklocal);
                 baseUrl = baseUrl.Substring(0, marklocal);  
             }
-               
-
+                
             int markindex = baseUrl.IndexOf("?");
             string querypart = "";
             string url = baseUrl;
@@ -816,7 +815,7 @@ namespace Kooboo.Lib.Helper
 
                 if (!string.IsNullOrEmpty(item.Value))
                 {
-                    para += "=" + item.Value;
+                    para += "=" + Uri.EscapeDataString(item.Value);
                 }
                 if (first)
                 {
