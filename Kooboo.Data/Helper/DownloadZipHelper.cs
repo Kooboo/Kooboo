@@ -12,6 +12,14 @@ namespace Kooboo.Data.Helper
 {
     public class DownloadZipHelper
     {
+        public static bool DownloadIpData()
+        {
+            var url = AppSettings.ConvertApiUrl + "/_api/converter/IpDataPackage";
+            var task = DownloadZipData(url, "IpData.zip");
+            task.Wait();
+            return task.Result;
+        }
+
         public static async Task<bool> DownloadZipData(string url,string zipName)
         {
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
