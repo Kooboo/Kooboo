@@ -37,14 +37,7 @@ namespace Kooboo.Sites.Scripting.Global
 
         public string postData(string url, object data, string userName, string password)
         {
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-
-            string poststring = string.Empty;
-
-            if (parameters != null && parameters.Count() > 0)
-            {
-                poststring = String.Join("&", parameters.Select(it => String.Concat(it.Key, "=", System.Net.WebUtility.UrlEncode(it.Value))));
-            }
+            string poststring = Kooboo.Lib.Helper.JsonHelper.Serialize(data);
 
             return _Post(url, poststring, userName, password);
         }
