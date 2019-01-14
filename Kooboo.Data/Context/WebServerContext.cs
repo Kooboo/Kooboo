@@ -566,8 +566,11 @@ namespace Kooboo.Data.Context
             NameValueCollection result = new NameValueCollection();
 
             string text = System.Text.Encoding.UTF8.GetString(inputstream);
-            text = System.Net.WebUtility.UrlDecode(text);
-            text = System.Net.WebUtility.HtmlDecode(text);
+
+            text = Uri.UnescapeDataString(text); 
+
+            //text = System.Net.WebUtility.UrlDecode(text);
+            //text = System.Net.WebUtility.HtmlDecode(text);
 
             int textLength = text.Length;
             int equalIndex = text.IndexOf('=');
