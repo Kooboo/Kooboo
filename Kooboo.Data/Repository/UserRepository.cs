@@ -458,8 +458,7 @@ namespace Kooboo.Data.Repository
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("Token", Token.ToString());
             para.Add("newpasspord", newpasspord);
-            return HttpHelper.Get<bool>(this.ResetPasswordUrl, para);
-        }
-
+            return HttpHelper.Post<bool>(this.ResetPasswordUrl, para);
+        } 
     }
 }
