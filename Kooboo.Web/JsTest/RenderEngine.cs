@@ -38,17 +38,17 @@ namespace Kooboo.Web.JsTest
 
             if (!string.IsNullOrEmpty(Folder))
             {
-                para.Add("folder", WebUtility.UrlEncode(Folder));
+                para.Add("folder", Folder);
             }
 
             if (!string.IsNullOrEmpty(File))
             {
-                para.Add("file", WebUtility.UrlEncode(File));
+                para.Add("file", File);
             }
 
             if (!string.IsNullOrEmpty(function))
             {
-                para.Add("function", WebUtility.UrlEncode(function));
+                para.Add("function", function);
             }
 
             return Lib.Helper.UrlHelper.AppendQueryString(url, para);

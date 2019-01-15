@@ -7,23 +7,35 @@ using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB
 {
-
     /// <summary>
     /// Some database configuration settins, feel free to change that. 
     /// </summary>
     public static class GlobalSettings
-    { 
-        /// <summary>
-        /// the root path of all database. all database are file based. 
-        /// </summary>
-        public static string RootPath { get; set; } = new DirectoryInfo("../AppData/KoobooDB").FullName;
+    {
+
+        private static string _rootpath;
+        public static string RootPath
+        {
+            get
+            {
+                if (_rootpath == null)
+                {
+                    _rootpath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AppData", "KoobooDB");
+                }
+                return _rootpath;
+            }
+            set
+            {
+                _rootpath = value;
+            }
+        }
 
         /// <summary>
         /// the folder that contains all queue of this database. 
         /// each queue has its own folder under this folder
         /// </summary>
         public static string QueuePath { get; set; } = "__koobooqueue";
-         
+
         /// <summary>
         /// The field name that must be in the object when enable versioning. 
         /// </summary>
@@ -31,7 +43,7 @@ namespace Kooboo.IndexedDB
 
         public static string EditLogUniqueName { get; set; } = "_koobooeditlog";
 
-        
+
         /// <summary>
         /// the folder that contains all sequence of this database. 
         /// each sequence has its own file under this folder
@@ -68,17 +80,17 @@ namespace Kooboo.IndexedDB
             get
             {
                 if (_startdatetime == null || _startdatetime == default(DateTime))
-                { 
+                {
                     _startdatetime = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
                 }
                 return _startdatetime;
             }
         }
-         
+
         // The records section on one time slot. = sanity 2, + counter 4, 
         // + 4 * 8  + 8 * 25. + 2 for nothing now.. 
         public static int ScheduleRecordsSectorLen = 236;
-         
+
         private static System.Text.Encoding _defaultEncoding;
         /// <summary>
         /// Encoding of your string value, used to convert string to bytes and bytes to string.
@@ -87,7 +99,7 @@ namespace Kooboo.IndexedDB
         public static System.Text.Encoding DefaultEncoding
         {
             get
-            { 
+            {
                 if (_defaultEncoding != null)
                 {
                     return _defaultEncoding;
@@ -134,7 +146,7 @@ namespace Kooboo.IndexedDB
         //change the merge or split may break the system when merge + split ratio > 1;
         public const double MergeRatio = 0.22;      // when to merge with other leaf/node.
         public const double SplitRatio = 0.60;      // when to split leaf/node. 
-        
+
         /// <summary>
         /// The max level of cache...
         /// </summary>

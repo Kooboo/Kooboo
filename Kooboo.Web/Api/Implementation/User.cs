@@ -53,6 +53,7 @@ namespace Kooboo.Web.Api.Implementation
                 if (returnUrl != null)
                 {
                     returnUrl = System.Web.HttpUtility.UrlDecode(returnUrl);
+                    returnUrl = System.Web.HttpUtility.UrlDecode(returnUrl); 
                     // the redirect from access token. 
                     if (returnUrl != null && returnUrl.ToLower().Contains("accesstoken"))
                     {

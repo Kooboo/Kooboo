@@ -85,7 +85,7 @@ namespace Kooboo.Render
                         }
                         
                         Dictionary<string, string> returnurl = new Dictionary<string, string>();
-                        returnurl.Add("returnurl", System.Net.WebUtility.UrlEncode(relative));
+                        returnurl.Add("returnurl",  relative);
                         string fullurl = Kooboo.Lib.Helper.UrlHelper.AppendQueryString(this.options.LoginPage, returnurl);
                         context.Response.Redirect(503, fullurl);
                         return;
