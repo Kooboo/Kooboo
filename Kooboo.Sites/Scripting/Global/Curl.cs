@@ -35,14 +35,7 @@ namespace Kooboo.Sites.Scripting.Global
 
         public string postData(string url, object data, string userName, string password)
         {
-            Dictionary<string, string> parameters = new Dictionary<string, string>();
-
-            string poststring = string.Empty;
-
-            if (parameters != null && parameters.Count() > 0)
-            {
-                poststring = String.Join("&", parameters.Select(it => String.Concat(it.Key, "=", System.Net.WebUtility.UrlEncode(it.Value))));
-            }
+            string poststring = Kooboo.Lib.Helper.JsonHelper.Serialize(data);
 
             return _Post(url, poststring, userName, password);
         }
@@ -117,14 +110,20 @@ namespace Kooboo.Sites.Scripting.Global
         {
             try
             {
-                json = System.Net.WebUtility.UrlEncode(json);
                 var postData = Encoding.UTF8.GetBytes(json);
                 var client = new WebClient();
                 client.Proxy = null;
 
                 client.Headers.Add("user-agent", DefaultUserAgent);
-                client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+                client.Headers.Add("Content-Type", "application/json;charset=UTF-8");
+                if (!string.IsNullOrEmpty(UserName) && !string.IsNullOrEmpty(Password))
+                {
+                    var bytes = Encoding.UTF8.GetBytes(String.Format("{0}:{1}", UserName, Password));
+                    client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(bytes));
+                }
+
                 SetSslValidate(url);
+
                 var responseData = client.UploadData(url, "POST", postData);
 
                 return Encoding.UTF8.GetString(responseData);

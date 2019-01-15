@@ -33,8 +33,7 @@ namespace Kooboo.Web
             //}
 
             Sites.DataSources.DataSourceHelper.InitIDataSource();
-
-            JobWorker.Instance.Start();
+             
 
             Kooboo.Data.Events.EventBus.Raise(new Data.Events.Global.ApplicationStartUp());
 
@@ -56,7 +55,9 @@ namespace Kooboo.Web
                 {
                     StartNewWebServer(443);
                 }
-            }  
+            }
+
+            JobWorker.Instance.Start();
         }
                    
 
