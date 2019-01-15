@@ -31,7 +31,9 @@ namespace Kooboo.Data
             Global = new GlobalInfo();
             Global.IsOnlineServer = GetBool("IsOnlineServer");
             Global.EnableLog = GetBool("Log");
-            Global.LogPath = GetPhysicsPath(@"AppData\log");
+
+            Global.LogPath = System.IO.Path.Combine(RootPath, "Log");  
+
             IOHelper.EnsureDirectoryExists(Global.LogPath);
 
             if (IsOnlineServer)
@@ -611,7 +613,7 @@ namespace Kooboo.Data
         public static string GetPhysicsPath(string relativePath)
         {
             var path = relativePath.Replace("/", "\\").Replace("\\\\", "\\").TrimStart('\\', '/');
-            return Path.Combine(System.IO.Path.GetFullPath(AppSettings.RootPath), path);
+            return Path.Combine(AppSettings.RootPath, path);
         }
 
         public static int MaxTemplateSize

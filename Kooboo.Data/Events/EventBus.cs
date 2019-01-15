@@ -115,5 +115,3 @@ namespace Kooboo.Data.Events
     }
 
 }
-
-
