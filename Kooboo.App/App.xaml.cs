@@ -77,8 +77,7 @@ namespace Kooboo.App
 
             GlobalSettings.RootPath = Kooboo.Data.AppSettings.DatabasePath;
 
-            KoobooStartUp.StartAll();
- 
+            KoobooStartUp.StartAll(); 
          
         }
 

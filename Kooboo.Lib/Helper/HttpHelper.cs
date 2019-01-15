@@ -130,8 +130,7 @@ namespace Kooboo.Lib.Helper
                 var postData = Encoding.UTF8.GetBytes(json);
                 using (var client = new WebClient())
                 {
-                    client.Proxy = null;
-
+                    client.Proxy = null; 
                     client.Headers.Add("user-agent", DefaultUserAgent);
                     client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
                      
@@ -170,8 +169,7 @@ namespace Kooboo.Lib.Helper
                 return ProcessApiResponse<T>(backstring);
             }
         }
-
-
+         
         public static T TryGet<T>(string url, Dictionary<string, string> query = null)
         {
             if (query != null)

@@ -808,8 +808,8 @@ namespace Kooboo.Lib.Helper
                 string para = item.Key;
 
                 if (!string.IsNullOrEmpty(item.Value))
-                {
-                    para += "=" + Uri.EscapeDataString(item.Value);
+                { 
+                    para += "=" + System.Web.HttpUtility.UrlEncode(item.Value);
                 }
                 if (first)
                 {
