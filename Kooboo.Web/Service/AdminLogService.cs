@@ -19,7 +19,7 @@ namespace Kooboo.Web.Service
         static AdminLogService()
         {
             GlobalDatabase = Kooboo.Data.DB.Global();
-            LogFolder = Data.AppSettings.GetPhysicsPath(@"AppData\AdminLog");
+            LogFolder = System.IO.Path.Combine(Data.AppSettings.RootPath, "AppData", "AdminLog"); 
             IOHelper.EnsureDirectoryExists(LogFolder);
 
             var setting = new Setting();

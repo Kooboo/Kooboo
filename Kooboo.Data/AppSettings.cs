@@ -570,7 +570,8 @@ namespace Kooboo.Data
             {
                 if (_databasepath == null)
                 {
-                    _databasepath = GetPhysicsPath(@"AppData\KoobooData");
+                    _databasepath =   Path.Combine(AppSettings.RootPath, "AppData", "KoobooData");
+                     
                     IOHelper.EnsureDirectoryExists(_databasepath);
                 }
                 return _databasepath;
@@ -584,7 +585,7 @@ namespace Kooboo.Data
             {
                 if (_tempdatapath == null)
                 {
-                    _tempdatapath = GetPhysicsPath(@"AppData\TempData");
+                    _tempdatapath = System.IO.Path.Combine(Data.AppSettings.RootPath,"AppData", "TempData");
                     IOHelper.EnsureDirectoryExists(_tempdatapath);
                 }
                 return _tempdatapath;
@@ -595,7 +596,7 @@ namespace Kooboo.Data
         {
             get
             {
-                var path = GetPhysicsPath(@"AppData\theme");
+                var path = System.IO.Path.Combine(Data.AppSettings.RootPath, "AppData", "theme");
                 IOHelper.EnsureDirectoryExists(path);
                 return path;
             }
@@ -604,7 +605,7 @@ namespace Kooboo.Data
         {
             get
             {
-                var path = GetPhysicsPath(@"AppData\app");
+                var path = System.IO.Path.Combine(AppSettings.RootPath, "AppData", "app");
                 IOHelper.EnsureDirectoryExists(path);
                 return path;
             }
