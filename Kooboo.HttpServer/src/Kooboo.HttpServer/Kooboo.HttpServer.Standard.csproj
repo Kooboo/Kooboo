@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DefineConstants>TRACE;DEBUG;FEATURE_PORTABLE_SPAN;netstandard</DefineConstants>
+    <DefineConstants>TRACE;FEATURE_PORTABLE_SPAN;netstandard;RELEASE;NETSTANDARD2_0</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>false</Optimize>
     <LangVersion>7.2</LangVersion>

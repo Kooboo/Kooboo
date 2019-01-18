@@ -94,7 +94,7 @@ namespace Kooboo.HttpServer
         {
             var optionValue = 1;
             var setsockoptStatus = 0;
-
+#if !NET45
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 setsockoptStatus = setsockopt(listenSocket.Handle.ToInt32(), SOL_SOCKET_LINUX, SO_REUSEADDR_LINUX,
@@ -105,7 +105,7 @@ namespace Kooboo.HttpServer
                 setsockoptStatus = setsockopt(listenSocket.Handle.ToInt32(), SOL_SOCKET_OSX, SO_REUSEADDR_OSX,
                                               (IntPtr)(&optionValue), sizeof(int));
             }
-
+#endif
             if (setsockoptStatus != 0)
             {
                 Console.WriteLine(string.Format("Setting SO_REUSEADDR failed with errno '{0}'.", Marshal.GetLastWin32Error()));
