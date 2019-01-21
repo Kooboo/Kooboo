@@ -372,14 +372,14 @@ namespace Kooboo.Data
             else
             {
                 List<string> apis = new List<string>();
-                
+
                 // add the local value. 
-                if (localvalue !=null && localvalue.HasKey("AccountUrl"))
+                if (localvalue != null && localvalue.HasKey("AccountUrl"))
                 {
-                    var accounturl = localvalue.GetValue("AccountUrl"); 
+                    var accounturl = localvalue.GetValue("AccountUrl");
                     if (!string.IsNullOrWhiteSpace(accounturl))
                     {
-                        apis.Add(accounturl); 
+                        apis.Add(accounturl);
                     }
                 }
 
@@ -387,7 +387,7 @@ namespace Kooboo.Data
                 apis.Add("http://51.15.11.145");
                 apis.Add("http://us.koobooapi.com");
                 apis.Add("http://eu.koobooapi.com");
-  
+
                 ApiResource apires = null;
 
                 foreach (var item in apis)
@@ -397,8 +397,13 @@ namespace Kooboo.Data
                     {
                         apires = HttpHelper.Get<ApiResource>(url);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+
+                        Console.WriteLine("---------------");
+                        Console.WriteLine(url);
+                        Console.WriteLine(ex.Message + ex.StackTrace + ex.Source + ex.InnerException.ToString());
+
 
                     }
                     if (apires != null && !string.IsNullOrWhiteSpace(apires.AccountUrl))
@@ -409,7 +414,7 @@ namespace Kooboo.Data
 
                 if (apires != null)
                 {
-                    Kooboo.Data.Helper.ApiHelper.EnsureAccountUrl(apires); 
+                    Kooboo.Data.Helper.ApiHelper.EnsureAccountUrl(apires);
 
                     var localsetting = new GlobalSetting() { Name = "ApiResource", LastModified = DateTime.Now };
                     localsetting.KeyValues["AccountUrl"] = apires.AccountUrl;
@@ -422,18 +427,18 @@ namespace Kooboo.Data
                 else
                 {
                     if (localvalue != null)
-                    { 
+                    {
                         var res = new ApiResource();
                         res.AccountUrl = localvalue.KeyValues["AccountUrl"];
                         res.ThemeUrl = localvalue.KeyValues["ThemeUrl"];
                         res.ConvertUrl = localvalue.KeyValues["ConvertUrl"];
                         res.Expiration = DateTime.Now.AddDays(1);
-                        return res; 
+                        return res;
                     }
                 }
             }
 
-            return new ApiResource() { AccountUrl = "https://159.138.24.241", Expiration = DateTime.Now.AddMinutes(10) };
+            return new ApiResource() { AccountUrl = "http://159.138.24.241", Expiration = DateTime.Now.AddMinutes(10) };
         }
 
         private static ServerSetting _serversetting;
