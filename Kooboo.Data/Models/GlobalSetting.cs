@@ -16,11 +16,25 @@ namespace Kooboo.Data.Models
 
         public Dictionary<string, string> KeyValues { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); 
 
+        public bool HasKey(string key)
+        {
+            return this.KeyValues.ContainsKey(key); 
+        }
+
+        public string GetValue(string key)
+        {
+            if (this.KeyValues.ContainsKey(key))
+            {
+                return this.KeyValues[key]; 
+            }
+            return null; 
+        }
+
         public string Values { get; set; }
 
         public DateTime LastModified { get; set; } = DateTime.Now; 
 
-       public DateTime Expiration { get; set; }
+        public DateTime Expiration { get; set; }
 
         public int Version { get; set; }
         private Guid _id;
@@ -39,5 +53,6 @@ namespace Kooboo.Data.Models
             }
             set { _id = value; }
         }
+         
     }
 }
