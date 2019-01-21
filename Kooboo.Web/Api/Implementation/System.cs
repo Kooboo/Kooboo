@@ -102,6 +102,31 @@ namespace Kooboo.Web.Api.Implementation
             }
             return null;
         }
+
+        public Dictionary<string, string> Info()
+        {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
+            var apires = Kooboo.Data.AppSettings.ApiResource;
+
+            if (apires != null)
+            {
+                result.Add("account", apires.AccountUrl);
+                result.Add("resource", apires.ThemeUrl);
+                result.Add("converter", apires.ConvertUrl);
+            }
+            else
+            {
+                result.Add("ApiResource", null); 
+            }
+
+            if (Data.AppSettings.ServerSetting != null)
+            {
+                result.Add("setting", Lib.Helper.JsonHelper.Serialize(Data.AppSettings.ServerSetting));
+            }
+
+            return result;
+        }
     }
 
     public class SystemVersion

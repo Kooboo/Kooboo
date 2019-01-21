@@ -109,8 +109,8 @@
   <key id="Keep me signed in">Сохранение состояния входа в систему</key>
   <key id="Sign in">Вход в систему</key>
   <key id="Forgot password?">Забыли пароль?</key>
-  <key id="Do not have an account?">Еще нет счета?</key>
-  <key id="Create an account">Зарегистрируйтесь сейчас</key>
+  <key id="Do not have an account?">Нет учетной записи?</key>
+  <key id="Create an account"> Зарегистрируйтесь сейчас</key>
   <key id="Profile">Настройки учетной записи</key>
   <key id="Language">Язык</key>
   <key id="Old password">Старый пароль</key>
@@ -131,10 +131,10 @@
   <key id="Payment failure">Неуплата</key>
   <key id="Registering...">Регистрация...</key>
   <key id="Confirm your password">Подтверждение пароля</key>
-  <key id="By clicking 'Sign up', you agree to our">Нажмите кнопку Зарегистрироваться, чтобы подтвердить свое согласие с нами</key>
-  <key id="terms of service">Условия предоставления услуг</key>
-  <key id="and">И</key>
-  <key id="privacy policy">Политика конфиденциальности</key>
+  <key id="By clicking 'Sign up', you agree to our">Нажмите кнопку Зарегистрироваться, чтобы подтвердить свое согласие.</key>
+  <key id="terms of service">Условия предоставления услуг.</key>
+  <key id="and"> и </key>
+  <key id="privacy policy">Политика конфиденциальности.</key>
   <key id="Sign up">Регистрация</key>
   <key id="Reset">Сброс</key>
   <key id="s"></key>
