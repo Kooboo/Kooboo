@@ -406,6 +406,8 @@ namespace Kooboo.Data
 
                 if (apires != null)
                 {
+                    Kooboo.Data.Helper.ApiHelper.EnsureAccountUrl(apires); 
+
                     var localsetting = new GlobalSetting() { Name = "ApiResource", LastModified = DateTime.Now };
                     localsetting.KeyValues["AccountUrl"] = apires.AccountUrl;
                     localsetting.KeyValues["ThemeUrl"] = apires.ThemeUrl;
