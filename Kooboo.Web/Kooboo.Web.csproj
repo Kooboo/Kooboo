@@ -270,6 +270,7 @@
     <EmbeddedResource Include="DashBoard\DashBoardItem.html" />
     <EmbeddedResource Include="DashBoard\TopPages\TopPages.html" />
     <Resource Include="favicon.ico" />
+    <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
     <Resource Include="Lang\en.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

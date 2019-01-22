@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using LumiSoft.Net.IMAP;
+﻿using LumiSoft.Net.IMAP;
 using System;
 using System.Collections.Generic;
 using System.Linq;

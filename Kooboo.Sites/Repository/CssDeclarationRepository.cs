@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-//using Kooboo.Extensions;
+﻿//using Kooboo.Extensions;
 //using Kooboo.IndexedDB;
 //using Kooboo.Sites.Models;
 //using System;

@@ -1,11 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Lib.Helper;
+﻿using Kooboo.Lib.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Render
 {
@@ -134,21 +128,7 @@ namespace Kooboo.Render
          
         public static string CombinePath(string Root, string RelativeUrl)
         {
-            if (!Root.EndsWith("\\"))
-            {
-                Root = Root + "\\"; 
-            }
-
-            if (string.IsNullOrEmpty(RelativeUrl))
-            {
-                return Root;  
-            }
-            RelativeUrl = RelativeUrl.Replace("/", "\\"); 
-            if (RelativeUrl.StartsWith("\\"))
-            {
-                RelativeUrl = RelativeUrl.Substring(1); 
-            }
-            return System.IO.Path.Combine(Root, RelativeUrl); 
+            return Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(Root, RelativeUrl); 
         }
 
         public static string GetRelativeUrl(Uri AbsoluteUri, RenderOption option)

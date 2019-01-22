@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -821,8 +819,7 @@ namespace Kooboo.Lib.Helper
                 subFolder = subFolder.Substring(1); 
             }
 
-            subFolder = subFolder.Replace("/", "\\"); 
-            return System.IO.Path.Combine(basefolder, subFolder);  
+            return Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(basefolder, subFolder);
         }
 
         /// <summary>
@@ -865,21 +862,7 @@ namespace Kooboo.Lib.Helper
                 return true;
             };
 
-            Func<string, List<string>> ToSegments = (input) =>
-                {
-                    if (string.IsNullOrEmpty(input))
-                    {
-                        return new List<string>();
-                    }
-                    input = input.Replace('/', '\\');
-                    input = input.Trim();
-                    if (input.StartsWith("\\"))
-                    {
-                        input = input.Substring(1);
-                    }
-                    return input.Split('\\').ToList();
-
-                };
+            Func<string, List<string>> ToSegments = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetSegments;
 
             List<List<string>> AllSegments = new List<List<string>>();
 
@@ -923,7 +906,7 @@ namespace Kooboo.Lib.Helper
             }
             else
             {
-                return string.Join("\\", common.ToArray());
+                return Kooboo.Lib.Compatible.CompatibleManager.Instance.System.JoinPath(common.ToArray());
             }
         }
 

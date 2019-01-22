@@ -123,6 +123,7 @@
     <Compile Include="Helper\ExpressionHelper.cs" />
     <Compile Include="Helper\IndexHelper.cs" />
     <Compile Include="Helper\KeyHelper.cs" />
+    <Compile Include="Helper\PathHelper.cs" />
     <Compile Include="Helper\SettingHelper.cs" />
     <Compile Include="Helper\StringHelper.cs" />
     <Compile Include="Indexs\IndexBase.cs" />

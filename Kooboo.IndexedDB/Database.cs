@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -549,7 +547,7 @@ namespace Kooboo.IndexedDB
                 foreach (var item in System.IO.Directory.GetDirectories(this.AbsolutePath))
                 {
                     string subdir = item;
-                    int lastindex = item.LastIndexOf("\\");
+                    int lastindex = Helper.PathHelper.GetLastSlash(item);
                     if (lastindex > 0)
                     {
                         subdir = subdir.Substring(lastindex + 1);

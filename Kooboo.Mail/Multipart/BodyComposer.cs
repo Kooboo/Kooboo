@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Data.Models;
+﻿using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -178,7 +176,7 @@ namespace Kooboo.Mail.Multipart
                     }
                     else
                     {
-                        contenttype = System.Web.MimeMapping.GetMimeMapping(item.FileName);
+                        contenttype = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(item.FileName);
                     }
                     body += "\r\n--" + this.MixedBondary + "\r\n";
                     body += "Content-Type:" + contenttype + "; name=\"" + Utility.HeaderUtility.EncodeField(item.FileName) + "\"\r\n";
@@ -305,7 +303,9 @@ namespace Kooboo.Mail.Multipart
                 foreach (var item in this.InlineImages)
                 {
                     body += "--" + this.RelatedBoundary + "\r\n";
-                    body += "Content-Type:" + System.Web.MimeMapping.GetMimeMapping(item.FileName) + ";name=" + Utility.HeaderUtility.EncodeField(item.FileName) + "\r\n";
+
+                    var contentType = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(item.FileName);
+                    body += "Content-Type:" + contentType + ";name=" + Utility.HeaderUtility.EncodeField(item.FileName) + "\r\n";
                     body += "Content-Transfer-Encoding:base64\r\n";
                     body += "Content-Disposition:inline;filename=\"" + Utility.HeaderUtility.EncodeField(item.FileName) + "\"\r\n";
                     body += "Content-ID:<" + item.ContentId + ">\r\n";
@@ -584,16 +584,16 @@ namespace Kooboo.Mail.Multipart
 
             while (true)
             {
-                nextindex = index + 256;
+                nextindex = index + 254;
                 if (nextindex > len)
                 {
-                    sb.AppendLine(value.Substring(index));
+                    sb.Append(value.Substring(index)).Append("\r\n");
                     break;
                 }
                 else
                 {
-                    sb.AppendLine(value.Substring(index, 256));
-                    index = index + 256;
+                    sb.Append(value.Substring(index,254)).Append("\r\n");
+                    index = index + 254;
                 }
             }
             return sb.ToString();

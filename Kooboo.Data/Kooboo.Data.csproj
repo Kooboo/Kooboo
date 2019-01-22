@@ -104,10 +104,6 @@
     <Compile Include="Helper\OnlineServerHelper.cs" />
     <Compile Include="Helper\PermissionHelper.cs" />
     <Compile Include="Helper\ServerHelper.cs" />
-    <Compile Include="Infrastructure\IInfrastructure.cs" />
-    <Compile Include="Infrastructure\InfraManager.cs" />
-    <Compile Include="Infrastructure\InfraType.cs" />
-    <Compile Include="Infrastructure\LocalInfra.cs" />
     <Compile Include="Interface\IKScript.cs" />
     <Compile Include="Interface\IScriptable.cs" />
     <Compile Include="Log\LogService.cs" />
@@ -303,6 +299,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Embedded\CountryLocation.csv" />
+    <None Include="packages.config" />
     <EmbeddedResource Include="Server\kooboo.pfx" />
     <EmbeddedResource Include="tld.dat" />
   </ItemGroup>

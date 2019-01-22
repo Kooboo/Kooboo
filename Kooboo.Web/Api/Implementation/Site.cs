@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Data;
+﻿using Kooboo.Data;
 using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Service;
@@ -429,6 +427,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public WebSite Create(ApiCall call)
         {
+            Sites.DataSources.DataSourceHelper.InitIDataSource();
             string fulldomain = call.GetValue("FullDomain");
             if (string.IsNullOrEmpty(fulldomain))
             {

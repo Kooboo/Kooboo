@@ -125,7 +125,6 @@
     <Compile Include="HostPage.xaml.cs">
       <DependentUpon>HostPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="KoobooAutoStart.cs" />
     <Compile Include="KoobooStartUp.cs" />
     <Compile Include="KoobooUpgrade.cs" />
     <Compile Include="Models\EditorPageViewModel.cs" />
@@ -324,8 +323,9 @@
     <Resource Include="Resources\Images\upgrade-active.png" />
     <Resource Include="Resources\Images\upgrade-normal.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="AfterResolveReferences" Condition="'$(Configuration)' == 'Release'">
+  <Target Name="AfterResolveReferences">
     <ItemGroup>
       <EmbeddedResource Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.Extension)' == '.dll'">
         <LogicalName>%(ReferenceCopyLocalPaths.DestinationSubDirectory)%(ReferenceCopyLocalPaths.Filename)%(ReferenceCopyLocalPaths.Extension)</LogicalName>
@@ -333,7 +333,7 @@
     </ItemGroup>
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Release call $(SolutionDir)generateZip.bat $(SolutionDir)</PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Release call $(SolutionDir)generateZip.bat release Kooboo.App</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

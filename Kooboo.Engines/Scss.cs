@@ -5,8 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Engine;
-using LibSass.Compiler.Options;
-using LibSass.Compiler;
 
 
 namespace Kooboo.Engines
@@ -25,14 +23,24 @@ namespace Kooboo.Engines
   
         public string Execute(RenderContext context, string input)
         {
-            var sassOptions = new SassOptions
+            if (Kooboo.Lib.Helper.RuntimeSystemHelper.IsWindow())
             {
-                Data = input
-            };
-            var sass = new SassCompiler(sassOptions);
-            var result = sass.Compile();
+                var sassOptions = new LibSass.Compiler.Options.SassOptions
+                {
+                    Data = input
+                };
+                var sass = new LibSass.Compiler.SassCompiler(sassOptions);
+                var result = sass.Compile();
+
+                return result.Output;
+            }
+            if (Kooboo.Lib.Helper.RuntimeSystemHelper.IsLinux())
+            {
+                return SassHelper.Compile(input);
+            }
+            //mac template don't support
+            return string.Empty;
             
-            return result.Output;
         }
     }
 }

@@ -1,6 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -64,7 +62,7 @@ namespace Kooboo.App
             #region 开机启动设置
             lbstart.Text = Data.Language.Hardcoded.GetValue("Start-up");
             chAutoStart.Content = Data.Language.Hardcoded.GetValue("Auto Start");
-            chAutoStart.IsChecked = KoobooAutoStart.IsAutoStart();
+            chAutoStart.IsChecked = KoobooAutoStartManager.IsAutoStart();
             chAutoStart.Checked += AutoStartEvent;
             chAutoStart.Unchecked += AutoStartEvent;
             #endregion
@@ -122,7 +120,7 @@ namespace Kooboo.App
         private void AutoStartEvent(object sender, RoutedEventArgs e)
         {
             var auto = chAutoStart.IsChecked.Value;
-            KoobooAutoStart.AutoStart(auto);
+            KoobooAutoStartManager.AutoStart(auto);
         }
         #endregion
 

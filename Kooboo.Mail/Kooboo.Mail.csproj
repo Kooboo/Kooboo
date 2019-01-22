@@ -98,6 +98,7 @@
     <Compile Include="Dns\Protocol\Utils\ByteStream.cs" />
     <Compile Include="Dns\Protocol\Utils\ObjectStringifier.cs" />
     <Compile Include="Dns\Protocol\Utils\TaskExtensions.cs" />
+    <Compile Include="Helper\MineTypeHelper.cs" />
     <Compile Include="Imap\Commands\FetchCommand\ResponseItem\RFC822.cs" />
     <Compile Include="Imap\Commands\FetchCommand\ResponseItem\RFC822_TEXT.cs" />
     <Compile Include="Imap\Commands\FetchCommand\ResponseItem\RFC822_HEADER.cs" />

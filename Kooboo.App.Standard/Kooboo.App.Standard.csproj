@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>netcoreapp2.0;net45;net461</TargetFrameworks>
+    <AssemblyName>Kooboo.App</AssemblyName>
+    <RootNamespace>Kooboo.App</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)'=='netcoreapp2.0'">
+    <DefineConstants>NETSTANDARD;NETCOREAPP;NETCOREAPP2_0</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kooboo.App.Upgrade\Kooboo.App.Upgrade.csproj" />
+    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Render\Kooboo.Render.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Web\Kooboo.Web.Standard.csproj" />
+  </ItemGroup>
+
+  <Target Name="generateLinuxZip" AfterTargets="Publish">
+    <Exec Command="$(SolutionDir)generateLinuxZip.bat"></Exec>
+  </Target>
+</Project>
