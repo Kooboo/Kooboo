@@ -52,7 +52,7 @@ namespace Kooboo.Sites.Scripting.Global
             return this;
         }
 
-        public List<IDictionary<string, object>> take(int count)
+        public JsList<IDictionary<string, object>> take(int count)
         {
             var query = new IndexedDB.Dynamic.Query(this.ktable.table);
              
@@ -77,8 +77,8 @@ namespace Kooboo.Sites.Scripting.Global
                     query.OrderByDescending(this.OrderByField);
                 }
             }
-
-            return query.Skip(this.skipcount).Take(count);
+            
+            return query.Skip(this.skipcount).Take(count).ToJSList();
 
         }
          
