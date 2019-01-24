@@ -45,18 +45,31 @@ namespace Kooboo.Lib.Helper
             IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
             IPEndPoint[] ipEndPoints = ipProperties.GetActiveTcpListeners();
 
-            if (ipEndPoints.Any(endPoint => endPoint.Port == port))
+            foreach (var item in ipEndPoints)
             {
-                return true;
+                if (item.Port == port) 
+                {
+                    // if in use. 
+                    bool OkToStart = false; 
+                    try
+                    {
+                        TcpListener tcpListener = new TcpListener(System.Net.IPAddress.Any,  port);
+                        tcpListener.Start();
+                        tcpListener.Stop();
+                        tcpListener = null; 
+                    }
+                    catch (SocketException ex)
+                    {
+                        OkToStart = true; 
+                    }
+                    finally
+                    {
+
+                    }
+                    return OkToStart; 
+                }
             }
-
-           IPEndPoint[] ipUdpEndPoints = ipProperties.GetActiveUdpListeners();
-
-            //if (ipUdpEndPoints.Any(endPoint => endPoint.Port == port))
-            //{
-            //    return true;
-            //}
-
+               
             return false;
         }
     }
