@@ -20,6 +20,7 @@ namespace Kooboo.Data
 
             RootPath = TryRootPath();
             IsOnlineServer = GetBool("IsOnlineServer");
+            RedirectUser = GetBool("RedirectUser");  
 
             string quotavalue = ConfigurationManager.AppSettings.Get("QuotaControl");
             if (string.IsNullOrEmpty(quotavalue))
@@ -654,6 +655,8 @@ namespace Kooboo.Data
 
 
         public static bool IsOnlineServer { get; set; }
+
+        public static bool RedirectUser { get; set; }
 
         public static GlobalInfo Global { get; set; }
 

@@ -62,6 +62,10 @@ namespace Kooboo.Web.Service
             { 
                  baseurl = User.TempRedirectUrl;  
             }
+            else if (Data.AppSettings.RedirectUser && !string.IsNullOrWhiteSpace(User.TempRedirectUrl))
+            {
+                baseurl = User.TempRedirectUrl; 
+            }
              
             string url;
 
