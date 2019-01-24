@@ -79,7 +79,8 @@ namespace Kooboo.Web.Api.Implementation
                 int days = isRemember ? 60 : 0;
                 var response = new MetaResponse();
 
-                response.Success = true;
+                response.Success = true; 
+
                 string redirct = Kooboo.Web.Service.UserService.GetLoginRedirectUrl(apiCall.Context, user, apiCall.Context.Request.Url, returnUrl, samesite);
 
                 if (isRemember)
