@@ -103,6 +103,7 @@ namespace Kooboo.Data.Repository
             {
                 Store.delete(id);
                 RaiseEvent(old, ChangeType.Delete, old);
+                Store.Close(); 
             }
         }
 
@@ -111,7 +112,8 @@ namespace Kooboo.Data.Repository
             if (value != null)
             {
                 Store.delete(value.Id);
-                RaiseEvent(value, ChangeType.Delete,value); 
+                RaiseEvent(value, ChangeType.Delete,value);
+                Store.Close(); 
             }
         }
 
