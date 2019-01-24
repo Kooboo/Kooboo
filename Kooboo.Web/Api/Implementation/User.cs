@@ -51,6 +51,12 @@ namespace Kooboo.Web.Api.Implementation
                     samesite = true; 
                 }
 
+#if Debug
+                {
+                samesite = true; 
+                }
+#endif 
+
                 string returnUrl = apiCall.GetValue("returnurl");
                 if (returnUrl != null)
                 {
