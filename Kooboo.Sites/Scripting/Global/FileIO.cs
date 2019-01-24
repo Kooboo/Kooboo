@@ -155,7 +155,7 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-        public JsList<FileInfo> GetAllFiles()
+        public FileInfo[] GetAllFiles()
         {
             var fileList = new List<FileInfo>();
             var seps = "/\\".ToCharArray();
@@ -172,10 +172,10 @@ namespace Kooboo.Sites.Scripting.Global
                     }
                 }
             }
-            return fileList.ToJSList<FileInfo>();
+            return fileList.ToArray();
         }
 
-        public JsList<FileInfo> FolderFiles(string folder)
+        public FileInfo[] FolderFiles(string folder)
         {
             if (string.IsNullOrEmpty(folder))
             {
@@ -201,14 +201,14 @@ namespace Kooboo.Sites.Scripting.Global
                     }
                 }
             }
-            return fileList.ToJSList();
+            return fileList.ToArray();
         }
 
 
-        public JsList<FileInfo> FolderFiles()
+        public FileInfo[] FolderFiles()
         {
             var list= FolderFiles(null);
-            return list.ToJSList();
+            return list.ToArray();
         }
 
 
@@ -246,7 +246,7 @@ namespace Kooboo.Sites.Scripting.Global
             return null;
         }
 
-        public JsList<FolderInfo> SubFolders(string folder = null)
+        public FolderInfo[] SubFolders(string folder = null)
         {
             if (string.IsNullOrEmpty(folder))
             {
@@ -273,7 +273,7 @@ namespace Kooboo.Sites.Scripting.Global
                     subs.Add(info);
                 }
             }
-            return subs.ToJSList();
+            return subs.ToArray();
         }
 
         public void CreateFolder(string Folder, string ParentFolder)
