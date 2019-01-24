@@ -85,15 +85,15 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-        private JsList<UploadFile> _files;
+        private UploadFile[] _files;
 
-        public JsList<UploadFile> files
+        public UploadFile[] files
         {
             get
             { 
                 if (_files == null)
                 {
-                    _files = new JsList<UploadFile>();
+                    var fileList = new List<UploadFile>();
 
                     if (this.context.Request.Files != null)
                     {
@@ -103,9 +103,10 @@ namespace Kooboo.Sites.Scripting.Global
                             uploadfile.FileName = item.FileName;
                             uploadfile.ContentType = item.ContentType;
                             uploadfile.Bytes = item.Bytes;
-                            _files.Add(uploadfile);
+                            fileList.Add(uploadfile);
                         }
                     }
+                    _files = fileList.ToArray();
 
                 }
                 return _files;

@@ -320,7 +320,6 @@
     <Compile Include="Scripting\Helper\ViewHelp\ViewHelpReader.cs" />
     <Compile Include="Scripting\Helper\ViewHelp\ViewHelpRender.cs" />
     <Compile Include="Scripting\Interfaces\IScriptNS.cs" />
-    <Compile Include="Scripting\JsList.cs" />
     <Compile Include="Scripting\k.cs" />
     <Compile Include="Scripting\Manager.cs" />
     <Compile Include="Scripting\ScriptHelper.cs" />
