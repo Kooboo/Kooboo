@@ -129,15 +129,8 @@ XmlSerializer.FromTypes(new[] { typeof(KScriptSetting) })[0];
         }
         public static string GetPath()
         {
-#if DEBUG
-            var path = Path.GetFullPath(@"..\..\..\GitHub\Kooboo.Web\_Admin\help\kScript");
-            if (!Directory.Exists(path))
-            {
-                path = Path.GetFullPath(@"..\..\..\Kooboo.Web\_Admin\help\kScript");
-            }
-#else
-            var path= Path.GetFullPath(@".\_Admin\help\kScript");
-#endif
+            var path = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(Kooboo.Data.AppSettings.RootPath, @"_Admin\help\kScript");
+
             return path;
         }
     }
