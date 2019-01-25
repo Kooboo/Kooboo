@@ -134,6 +134,16 @@ $(function() {
             regex: {
                 pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
                 message: Kooboo.text.validation.emailInvalid
+            },
+            remote: {
+                url: Kooboo.User.isUniqueEmail(),
+                message: Kooboo.text.validation.taken,
+                type: "get",
+                data: {
+                    email: function () {
+                        return self.newEmail()
+                    }
+                }
             }
         });
 
