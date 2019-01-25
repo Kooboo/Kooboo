@@ -1,4 +1,6 @@
-﻿using Kooboo.Data;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Data;
 using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Render;
@@ -280,12 +282,8 @@ namespace Kooboo.Sites.Service
 
             if (relativeUrl == DataConstants.Default403Page || relativeUrl == DataConstants.Default407Page || relativeUrl == DataConstants.Default404Page || relativeUrl == DataConstants.Default402Page || relativeUrl == DataConstants.Default500Page || relativeUrl == DataConstants.DefaultError)
             {
-                var filename = Lib.Compatible.CompatibleManager.Instance.System.CombinePath(AppSettings.RootPath, relativeUrl);
-                var extension = System.IO.Path.GetExtension(filename);
-                if (!".html".Equals(extension, StringComparison.OrdinalIgnoreCase))
-                {
-                    filename += ".html";
-                }
+                string path = relativeUrl.Replace("/", "\\"); 
+                string filename = Lib.Helper.IOHelper.CombinePath(AppSettings.RootPath, relativeUrl) +".html"; 
                 if (System.IO.File.Exists(filename))
                 {
                     return System.IO.File.ReadAllText(filename); 

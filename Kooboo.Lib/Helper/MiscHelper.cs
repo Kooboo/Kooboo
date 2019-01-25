@@ -1,4 +1,6 @@
-﻿using System;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,7 +33,7 @@ namespace Kooboo.Lib.Helper
             {
                 foreach (var item in allfiles)
                 {
-                    int lastslash =Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetLastSlash(item);
+                    int lastslash = item.LastIndexOf("\\");
                     string name = item.Substring(lastslash + 1);
 
                     int index = name.LastIndexOf(".");

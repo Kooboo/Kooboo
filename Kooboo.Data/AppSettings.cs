@@ -94,7 +94,8 @@ namespace Kooboo.Data
                 }
             }
         }
-         
+
+
         public static bool QuotaControl { get; set; }
 
 
@@ -213,7 +214,6 @@ namespace Kooboo.Data
             }
             return true;
         }
-         
 
         private static string TryRootPath()
         {
@@ -223,7 +223,12 @@ namespace Kooboo.Data
                 return basefolder;
             }
 
-            List<string> trypaths = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetTryPaths();
+            List<string> trypaths = new List<string>();
+            trypaths.Add(@"..\..\..\Kooboo.Web");
+            trypaths.Add(@"..\..\..\Github\Kooboo.Web");
+            trypaths.Add(@"..\");
+            trypaths.Add(@"..\..\");
+            trypaths.Add(@"..\..\..\");
 
             foreach (var item in trypaths)
             {
@@ -236,8 +241,6 @@ namespace Kooboo.Data
 
             return AppDomain.CurrentDomain.BaseDirectory;
         }
-
-
 
         public static string RootPath
         {

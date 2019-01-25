@@ -1,4 +1,6 @@
-﻿using System;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -33,7 +35,8 @@ namespace Nager.PublicSuffix
 
         public DomainParser()
         {
-            var reader = Kooboo.Data.Embedded.EmbeddedHelper.GetStreamReader("Kooboo.Data.tld.dat", typeof(Kooboo.Data.Server.WebServer));
+            var reader = Kooboo.Data.Embedded.EmbeddedHelper.GetStreamReader("Kooboo.Data.tld.dat", typeof(Kooboo.Data.Server.WebServer)); 
+             
             string data = reader.ReadToEnd(); 
 
             var ruleParser = new TldRuleParser();

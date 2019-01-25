@@ -1,4 +1,6 @@
-﻿using Kooboo.Data.Models;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,7 +58,7 @@ namespace Kooboo.Mail.Utility
 
                     if (string.IsNullOrEmpty(item.Type) || string.IsNullOrEmpty(item.SubType))
                     {
-                        var mimetype = Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetMimeMapping(item.FileName);
+                        var mimetype = System.Web.MimeMapping.GetMimeMapping(item.FileName);
                         int index = mimetype.IndexOf("/");
                         if (index == -1)
                         {

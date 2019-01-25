@@ -9,5 +9,5 @@ k.setMethods("Kooboo.dom", "dom");
 k.setMethods("Kooboo.converter", "converter"); 
 k.setMethods("Kooboo.converterTypes", "converterTypes"); 
 k.setMethods("Kooboo.plugins", "plugins"); 
-k.setMethods("Kooboo.actionMenu","actionMenu");
+k.setMethods("Kooboo.actionMenu","actionMenu")
 k.setMethods("Kooboo", "floatMenu"); 

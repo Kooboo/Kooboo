@@ -1,4 +1,6 @@
-﻿
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+
 namespace Kooboo.Mail.Imap.Commands
 {
     public class CHECK : NOOP

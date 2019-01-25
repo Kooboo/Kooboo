@@ -1,4 +1,6 @@
-﻿using Kooboo.Data.Context;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Data.Context;
 using Kooboo.Render.ObjectSource;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +24,8 @@ namespace Kooboo.Render.ServerSide
                 if (!string.IsNullOrWhiteSpace(relativeurl))
                 {
                     relativeurl = ServerHelper.EnsureRelative(relativeurl, baseRelativeUrl);
+
+                    relativeurl = relativeurl.Replace("/", "\\"); 
 
                     var root = sourceProvider.GetRoot(context);
 

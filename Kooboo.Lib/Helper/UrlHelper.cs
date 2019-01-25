@@ -1,4 +1,6 @@
-﻿using System;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -492,17 +494,9 @@ namespace Kooboo.Lib.Helper
 
         public static List<string> getSegments(string input)
         {
-            string[] segments;
-            if (RuntimeSystemHelper.IsWindow())
-            {
-                input = input.Replace("/", "\\").ToLower();
-                segments = input.Split('\\');
-            }
-            else
-            {
-                input = input.Replace("\\", "/").ToLower();
-                segments = input.Split('/');
-            }
+
+            input = input.Replace("/", "\\").ToLower();
+            string[] segments = input.Split('\\');
 
             List<string> stringlist = new List<string>();
 

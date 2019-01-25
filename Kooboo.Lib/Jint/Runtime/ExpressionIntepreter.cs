@@ -810,12 +810,8 @@ namespace Jint.Runtime
             }
             else
             {
-                var selectArguments = callExpression.Arguments.Select(EvaluateExpression).Select(_engine.GetValue);
-                System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-                sw.Start();
-                arguments = selectArguments.ToArray();
-                sw.Stop();
-                System.Diagnostics.Debug.Print("---c:" + sw.ElapsedMilliseconds / 1000.0);
+                arguments = callExpression.Arguments.Select(EvaluateExpression).Select(_engine.GetValue).ToArray();
+
                 if (callExpression.CanBeCached)
                 {
                     // The arguments array can be cached if they are all literals

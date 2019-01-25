@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using Kooboo.Sites.Service;
 

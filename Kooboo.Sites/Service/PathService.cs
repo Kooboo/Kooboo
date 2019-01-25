@@ -1,4 +1,6 @@
-﻿using Kooboo.Sites.Routing;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Sites.Routing;
 using System;
 using System.Collections.Generic;
 using Kooboo.Sites.Extensions;
@@ -154,7 +156,21 @@ namespace Kooboo.Sites.Service
                 return true;
             };
 
-            Func<string, List<string>> ToSegments = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetSegments; ; ;
+            Func<string, List<string>> ToSegments = (input) =>
+            {
+                if (string.IsNullOrEmpty(input))
+                {
+                    return new List<string>();
+                }
+                input = input.Replace('/', '\\');
+                input = input.Trim();
+                if (input.StartsWith("\\"))
+                {
+                    input = input.Substring(1);
+                }
+                return input.Split('\\').ToList();
+
+            };
 
             List<List<string>> AllSegments = new List<List<string>>();
 

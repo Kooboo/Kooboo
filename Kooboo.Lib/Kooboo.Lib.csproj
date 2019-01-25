@@ -171,10 +171,6 @@
     <Compile Include="Helper\NetworkHelper.cs" />
     <Compile Include="Helper\IDHelper.cs" />
     <Compile Include="Helper\StringHelper.cs" />
-    <Compile Include="Helper\SystemAdapter\EncodingHelper.cs" />
-    <Compile Include="Helper\SystemAdapter\PathHelper.cs" />
-    <Compile Include="Helper\SystemAdapter\RuntimeSystemHelper.cs" />
-    <Compile Include="Helper\SystemAdapter\SystemImageHelper.cs" />
     <Compile Include="Helper\XmlHelper.cs" />
     <Compile Include="Jint\DeclarationBindingType.cs" />
     <Compile Include="Jint\Engine.cs" />
@@ -525,7 +521,9 @@
     <Compile Include="ServiceProcess\DefaultOptionProvider.cs" />
     <Compile Include="ServiceProcess\ICommandOptions.cs" />
     <Compile Include="ServiceProcess\ICommandOptionsProvider.cs" />
-    <Compile Include="ServiceProcess\IntegratedInstaller.cs" />
+    <Compile Include="ServiceProcess\IntegratedInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ServiceProcess\Res.cs" />
     <Compile Include="Utilities\AppSettingsUtility.cs" />
     <Compile Include="Utilities\CacheUtility.cs" />
@@ -535,9 +533,6 @@
     <Compile Include="Helper\IOHelper.cs" />
     <Compile Include="Utilities\NetworkSetting.cs" />
     <Compile Include="Utilities\NetworkUtility.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Less\Lib\" />

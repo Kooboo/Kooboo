@@ -1,9 +1,10 @@
-﻿using System;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Kooboo.Lib.Helper;
 
 namespace Kooboo.Lib.Utilities
 {
@@ -35,8 +36,22 @@ namespace Kooboo.Lib.Utilities
         }
           
         public static SizeMeansurement GetImageSize(byte[] imagebytes)
-        {
-            return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GetImageSize(imagebytes);
+        { 
+            SizeMeansurement measure = new SizeMeansurement(); 
+             
+            try
+            {
+                System.IO.MemoryStream stream = new System.IO.MemoryStream(imagebytes); 
+                System.Drawing.Image image = null;
+                image = System.Drawing.Image.FromStream(stream);
+                measure.Height = image.Height;
+                measure.Width = image.Width;
+            }
+            catch (Exception ex)
+            { 
+
+            } 
+            return measure;  
         }
     }
 

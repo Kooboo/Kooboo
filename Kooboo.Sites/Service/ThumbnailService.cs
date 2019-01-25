@@ -1,8 +1,18 @@
-﻿using System;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using Kooboo.Data.Models;
 using Kooboo.Extensions;
+using Kooboo.Lib;
+using Kooboo.Lib.Extensions;
 using Kooboo.Lib.Helper;
+using Kooboo.Lib.Utilities;
 using Image = Kooboo.Sites.Models.Image;
+using SystemImage = System.Drawing.Image;
+using System.IO;
+using System.Drawing.Imaging;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 

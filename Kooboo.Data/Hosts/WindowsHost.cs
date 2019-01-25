@@ -1,4 +1,6 @@
-﻿using System;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -64,10 +66,6 @@ namespace Kooboo.Data.Hosts
         /// <param name="IP"></param>
         public static void AddOrUpdate(string FullDomain, string IP)
         {
-            if (!Kooboo.Lib.Helper.RuntimeSystemHelper.IsWindow() ||
-                Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.IsUWP())
-                return;
-
             if (string.IsNullOrEmpty(FullDomain) || IsIp(FullDomain))
             {
                 return; 
@@ -109,10 +107,6 @@ namespace Kooboo.Data.Hosts
         /// <param name="FullDomain"></param>
         public static void Delete(string FullDomain)
         {
-            if (!Kooboo.Lib.Helper.RuntimeSystemHelper.IsWindow()||
-                Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.IsUWP())
-                return;
-
             if (string.IsNullOrEmpty(FullDomain))
             {
                 return; 
@@ -139,10 +133,6 @@ namespace Kooboo.Data.Hosts
 
         public static void RemoveAll()
         {
-            if (!Kooboo.Lib.Helper.RuntimeSystemHelper.IsWindow() ||
-                Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.IsUWP())
-                return;
-
             var list = GetList();
             foreach (var item in list)
             {
@@ -155,8 +145,7 @@ namespace Kooboo.Data.Hosts
             lock (_object)
             {
                 List<HostRecord> list = new List<HostRecord>();
-                if (!Kooboo.Lib.Helper.RuntimeSystemHelper.IsWindow())
-                    return list;
+
                 string[] hostfilelines = Regex.Split(System.IO.File.ReadAllText(HostFile, Encoding.UTF8), "\r\n|\r|\n");
 
                 bool HasStartTag = false;

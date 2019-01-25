@@ -1,4 +1,6 @@
-﻿using Kooboo.IndexedDB.ByteConverter;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.IndexedDB.ByteConverter;
 using Kooboo.IndexedDB.Schedule;
 using System;
 using System.Collections.Generic;
@@ -99,7 +101,7 @@ namespace Kooboo.IndexedDB
             {
                 string temp = string.Empty;
 
-                int lastSlash = Kooboo.IndexedDB.Helper.PathHelper.GetLastSlash(item);
+                int lastSlash = item.LastIndexOf('\\');
                 if (lastSlash > 0)
                 {
                     temp = item.Substring(lastSlash + 1);

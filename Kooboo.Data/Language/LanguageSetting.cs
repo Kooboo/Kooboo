@@ -1,4 +1,6 @@
-﻿using Kooboo.Data.Context;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Data.Context;
 using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
@@ -236,7 +238,7 @@ namespace Kooboo.Data.Language
 
             string basedir = AppSettings.RootPath;
 
-            string langpath = System.IO.Path.Combine(AppSettings.RootPath, "Lang");
+            string langpath = System.IO.Path.Combine(AppSettings.RootPath, "lang");
 
             if (System.IO.Directory.Exists(langpath))
             {

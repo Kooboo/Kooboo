@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -68,9 +70,9 @@ namespace Kooboo.App
         {
             KoobooUpgrade.DeleteUpgradeRemainedFiles();
             //第一次默认启动
-            if (KoobooAutoStartManager.IsFirstTimeAutoStart())
+            if (KoobooAutoStart.IsFirstTimeAutoStart())
             {
-                KoobooAutoStartManager.AutoStart(true);
+                KoobooAutoStart.AutoStart(true);
             }
 
             GlobalSettings.RootPath = Kooboo.Data.AppSettings.DatabasePath;

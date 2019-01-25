@@ -1,4 +1,6 @@
-﻿using Kooboo.IndexedDB.Helper;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.IndexedDB.Helper;
 using System;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter

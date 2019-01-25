@@ -1,6 +1,9 @@
-﻿using System;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Net;
 using System.Net.Sockets;
 using System.Net.NetworkInformation;
@@ -104,8 +107,6 @@ namespace Kooboo.Mail.Utility
         public static TimeSpan MXCacheExpire = TimeSpan.FromHours(1);
         private static object mxResolveLock = new object();
 
-        private static Dictionary<string, CacheItem> DefaultCache = new Dictionary<string, CacheItem>();
-
         static DnsLookup()
         {
             var localMtaDns = System.Configuration.ConfigurationManager.AppSettings["localMtaDns"];
@@ -128,36 +129,18 @@ namespace Kooboo.Mail.Utility
         public static async Task<string[]> ResolveCachedMX(string domainName)
         {
             var key = "MXCache_" + domainName;
-            CacheItem mxsItem = null;
-            if(DefaultCache.ContainsKey(key))
-            {
-                mxsItem = DefaultCache[key];
-            }
-
-            if (mxsItem == null || mxsItem.CacheTime.Add(MXCacheExpire)>DateTime.UtcNow)
+            var mxsItem = MemoryCache.Default.Get(key) as CacheItem;
+            if (mxsItem == null)
             {
                 var mxs = await ResolveMX(domainName);
-                
-                lock (mxResolveLock)
+                mxsItem = new CacheItem
                 {
-                    if (mxsItem == null || mxsItem.CacheTime.Add(MXCacheExpire) > DateTime.UtcNow)
-                    {
-                        mxsItem = new CacheItem
-                        {
-                            MXs = mxs,
-                            CacheTime = DateTime.UtcNow
-                        };
-                        if (DefaultCache.ContainsKey(key))
-                        {
-                            DefaultCache[key] = mxsItem;
-                        }
-                        else
-                        {
-                            DefaultCache.Add(key, mxsItem);
-                        }
-                    }
-                        
-                }
+                    MXs = mxs
+                };
+                MemoryCache.Default.Add(key, mxsItem, new CacheItemPolicy
+                {
+                    AbsoluteExpiration = DateTime.UtcNow.Add(MXCacheExpire),
+                });
                 return mxs;
             }
             return mxsItem.MXs;
@@ -228,8 +211,6 @@ namespace Kooboo.Mail.Utility
         class CacheItem
         {
             public string[] MXs { get; set; }
-
-            public DateTime CacheTime { get; set; }
         }
     }
 

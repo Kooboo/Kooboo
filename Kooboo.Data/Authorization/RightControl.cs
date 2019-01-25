@@ -1,4 +1,6 @@
-﻿using Kooboo.Data.Models;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +18,7 @@ namespace Kooboo.Data.Authorization
               
             } 
             return true; 
-        }
-        
-
+        }  
      
     }
 

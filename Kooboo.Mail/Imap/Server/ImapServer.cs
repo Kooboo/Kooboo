@@ -1,4 +1,6 @@
-﻿using System.IO;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Net;

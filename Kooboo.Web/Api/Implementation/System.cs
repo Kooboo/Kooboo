@@ -1,4 +1,6 @@
-﻿using Kooboo.Api;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Api;
 using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
@@ -95,7 +97,11 @@ namespace Kooboo.Web.Api.Implementation
         {
             string root = Kooboo.Data.AppSettings.RootPath;
 
-            string fullpath = Lib.Compatible.CompatibleManager.Instance.System.CombinePath(root, url);
+            url = url.TrimStart('/');
+            string path = url.Replace("/", "\\");
+
+            string fullpath = System.IO.Path.Combine(root, path);
+
             if (System.IO.File.Exists(fullpath))
             {
                 return System.IO.File.ReadAllText(fullpath);

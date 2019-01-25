@@ -1,4 +1,6 @@
-﻿using Kooboo.Data.Context;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Data.Context;
 using Kooboo.Render.ObjectSource;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +29,8 @@ namespace Kooboo.Render.ServerSide
                       
                     relativeurl = ServerHelper.EnsureRelative(relativeurl, baseRelativeUrl);
 
+                    relativeurl = relativeurl.Replace("/", "\\");
+
                     RenderFiles(sourceProvider, option, context, varname, relativeurl, ref scriptHeader, ref body); 
 
                     return scriptHeader + "\r\n" + body; 
@@ -39,8 +43,7 @@ namespace Kooboo.Render.ServerSide
         private void RenderFiles(CommandDiskSourceProvider sourceProvider, RenderOption option, RenderContext context,  string varname, string relativePath, ref string ScriptHeader, ref string Body)
         {  
 
-            var root = sourceProvider.GetRoot(context);
-
+            var root = sourceProvider.GetRoot(context); 
             var folder = Lib.Helper.IOHelper.CombinePath(root, relativePath);
 
             if (System.IO.Directory.Exists(folder))
@@ -111,7 +114,7 @@ namespace Kooboo.Render.ServerSide
 
                     ScriptHeader += "if (typeof " + subvarname + " === \"undefined\" ) { " + subvarname + "= {};  } \r\n";
 
-                    string subpath = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombineRelativePath(relativePath,name);
+                    string subpath = relativePath + "\\" + name;
                      
                     RenderFiles(sourceProvider, option, context, subvarname, subpath, ref ScriptHeader, ref Body); 
                 }
