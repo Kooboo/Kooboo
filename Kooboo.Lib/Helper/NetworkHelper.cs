@@ -1,4 +1,6 @@
-﻿using System;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -45,18 +47,31 @@ namespace Kooboo.Lib.Helper
             IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
             IPEndPoint[] ipEndPoints = ipProperties.GetActiveTcpListeners();
 
-            if (ipEndPoints.Any(endPoint => endPoint.Port == port))
+            foreach (var item in ipEndPoints)
             {
-                return true;
+                if (item.Port == port) 
+                {
+                    // if in use. 
+                    bool IsInUsed = false; 
+                    try
+                    {
+                        TcpListener tcpListener = new TcpListener(System.Net.IPAddress.Any,  port);
+                        tcpListener.Start();
+                        tcpListener.Stop();
+                        tcpListener = null; 
+                    }
+                    catch (SocketException ex)
+                    {
+                        IsInUsed = true; 
+                    }
+                    finally
+                    {
+
+                    }
+                    return IsInUsed; 
+                }
             }
-
-           IPEndPoint[] ipUdpEndPoints = ipProperties.GetActiveUdpListeners();
-
-            //if (ipUdpEndPoints.Any(endPoint => endPoint.Port == port))
-            //{
-            //    return true;
-            //}
-
+               
             return false;
         }
     }

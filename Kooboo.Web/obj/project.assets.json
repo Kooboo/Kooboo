@@ -1297,10 +1297,11 @@
       ]
     },
     "Microsoft.CSharp/4.5.0": {
-      "sha512": "EGoBmf3Na2ppbhPePDE9PlX81r1HuOZH5twBrq7couJZiPTjUnD3648balerQJO6EJ8Sj+43+XuRwQ7r+3tE3w==",
+      "sha512": "kaj6Wb4qoMuH3HySFJhxwQfe8R/sJsNJnANrvv8WdFPMoNbKY5htfNscv+LHCu5ipz+49m2e+WQXpLXr9XYemQ==",
       "type": "package",
       "path": "microsoft.csharp/4.5.0",
       "files": [
+        ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
@@ -1364,10 +1365,12 @@
       ]
     },
     "Microsoft.DotNet.PlatformAbstractions/2.0.3": {
-      "sha512": "cXgVdJmW3fLwmSxsv0RlTe4BIKs6slVXV5xRvsO4CV4aUeY67GelaujxY/lP5yVlaMjMM22pXKbKtUY9x050Mw==",
+      "sha512": "SjPzgZN6Qp4V7fCtV5gQ2bX4SJwFHQac2TXRl/zN+Z6ULKuomAt/PclgCU9YgYsWWvKCnN0vMmP7U71dnXgttQ==",
       "type": "package",
       "path": "microsoft.dotnet.platformabstractions/2.0.3",
       "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/net45/Microsoft.DotNet.PlatformAbstractions.dll",
@@ -1377,10 +1380,12 @@
       ]
     },
     "Microsoft.Extensions.DependencyModel/2.0.3": {
-      "sha512": "OiNYN/QeZLuYcn4CvYrOmYgODPB1Jpqft+cT4F3Hkq5poj+1DLfbIBftMI/Pn8J7DyHhYeBMLxJUuugjvk/Fuw==",
+      "sha512": "hURToQHB3f5lrAzdDFtcmV/b/qg7o8Ldnj3iU68/unXEzmEUCwhXNkqeINb67L/rbomEkBfwbL6LWumv9g/LcA==",
       "type": "package",
       "path": "microsoft.extensions.dependencymodel/2.0.3",
       "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
         "lib/net451/Microsoft.Extensions.DependencyModel.dll",
@@ -1391,10 +1396,11 @@
       ]
     },
     "Microsoft.NETCore.Platforms/1.1.0": {
-      "sha512": "4C52Kye/Go87fu9ghjD1e/qOlo7W5zwUDdFiqlijOrs72HBXrEMWacxW74ECJYj7h3vKZ+NFm+pAUHDdM4wWCQ==",
+      "sha512": "kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
       "type": "package",
       "path": "microsoft.netcore.platforms/1.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/_._",
@@ -1404,10 +1410,11 @@
       ]
     },
     "Microsoft.NETCore.Targets/1.0.1": {
-      "sha512": "mMt3//cW0jZWJ3K+N2EdwoKkrFQGTTid8+CcB/uSskD/806z36SfcjDeqCjSek6/qiPYj+BgFot043zyylvp5g==",
+      "sha512": "rkn+fKobF/cbWfnnfBOQHKVKIOpxMZBvlSHkqDWgBpwGDcLRduvs3D9OLGeV6GWGvVwNlVi2CBbTjuPmtHvyNw==",
       "type": "package",
       "path": "microsoft.netcore.targets/1.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/_._",
@@ -1594,10 +1601,11 @@
       ]
     },
     "runtime.native.System/4.0.0": {
-      "sha512": "F/cQXeg2bXScnU5oDQCld9fM9SBO4AqC2ocsSfm1uzrNwoXl9k5NYZXj/EEFHR9NfsSzrlCYc8NtMxelQFdE+A==",
+      "sha512": "QfS/nQI7k/BLgmLrw7qm7YBoULEvgWnPI+cYsbfCVFTW8Aj+i8JhccxcFMu1RWms0YZzF+UHguNBK4Qn89e2Sg==",
       "type": "package",
       "path": "runtime.native.system/4.0.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/_._",
@@ -1714,10 +1722,11 @@
       ]
     },
     "System.AppContext/4.1.0": {
-      "sha512": "+R/V6HWmpCVqAfWlSPCVRsgoFRZxBt47nKmXYSgaHpBEZ6R3xZjBl8b65y2Mg6vax6UAardac22TXYfW+QlD/g==",
+      "sha512": "3QjO4jNV7PdKkmQAVp9atA+usVnKRwI3Kx1nMwJ93T0LcQfx7pKAYk0nKz5wn1oP5iqlhZuy6RXOFdhr7rDwow==",
       "type": "package",
       "path": "system.appcontext/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1796,10 +1805,11 @@
       ]
     },
     "System.Collections/4.0.11": {
-      "sha512": "G9ThLuL7NRkf6sfc46J6KxnhOIilhWAe0mRlB3m/VAp+OQt1MLukhyF8B0qM7rf9cFQD8CAr5Ex7LMnEQ2x90Q==",
+      "sha512": "YUJGz6eFKqS0V//mLt25vFGrrCvOnsXjlvFQs+KimpwNxug9x0Pzy4PlFMU3Q2IzqAa9G2L4LsK3+9vCBK7oTg==",
       "type": "package",
       "path": "system.collections/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -1862,10 +1872,11 @@
       ]
     },
     "System.ComponentModel.Annotations/4.5.0": {
-      "sha512": "IjDa643EO77A4CL9dhxfZ6zzGu+pM8Ar0NYPRMN3TvDiga4uGDzFHOj/ArpyNxxKyO5IFT2LZ0rK3kUog7g3jA==",
+      "sha512": "UxYQ3FGUOtzJ7LfSdnYSFd7+oEv6M8NgUatatIN2HxNtDdlcvFAf+VIq4Of9cDMJEJC0aSRv/x898RYhB4Yppg==",
       "type": "package",
       "path": "system.componentmodel.annotations/4.5.0",
       "files": [
+        ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
@@ -1969,10 +1980,11 @@
       ]
     },
     "System.Diagnostics.Debug/4.0.11": {
-      "sha512": "+VGMxGBE1TsGxNM5XZXAD9OeTBqNLm4ihNXANQ6+fVnENHJYOPfI59cBYPyDHzi4Ji/bp1uYH2ZGtCIDV7vvWw==",
+      "sha512": "w5U95fVKHY4G8ASs/K5iK3J5LY+/dLFd4vKejsnI/ZhBsWS9hQakfx3Zr7lRWKg4tAw9r4iktyvsTagWkqYCiw==",
       "type": "package",
       "path": "system.diagnostics.debug/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2035,10 +2047,11 @@
       ]
     },
     "System.Dynamic.Runtime/4.0.11": {
-      "sha512": "xY9bS2UmktLniqQSpFaHTLy6Gj2/s318pyWq4X3FNnGHVaTu5DgrvAFpHlLCWJnm80iCwyqMDYpf2iGJQKAvzQ==",
+      "sha512": "db34f6LHYM0U0JpE+sOmjar27BnqTVkbLJhgfwMpTdgTigG/Hna3m2MYVwnFzGGKnEJk2UXFuoVTr8WUbU91/A==",
       "type": "package",
       "path": "system.dynamic.runtime/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2104,10 +2117,11 @@
       ]
     },
     "System.Globalization/4.0.11": {
-      "sha512": "CCfgLHGQRtr67A2Es3VWRgfPfGfsMIg/CaHyBDFco4n96JK/Ee6OKhUf6o1kh7HUsrp1Ckn0zBJNF+hZSs8nOw==",
+      "sha512": "B95h0YLEL2oSnwF/XjqSWKnwKOy/01VWkNlsCeMTFJLLabflpGV26nK164eRs5GiaRSBGpOxQ3pKoSnnyZN5pg==",
       "type": "package",
       "path": "system.globalization/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2170,10 +2184,11 @@
       ]
     },
     "System.IO/4.1.0": {
-      "sha512": "CEjnwsyCOhwLYHs/osZ3G+rsrld8NGwf40vWepFcq0pZhO22l/OQkfH5erBCexkYB6coV/4ciCz0vSWLqf8yYw==",
+      "sha512": "3KlTJceQc3gnGIaHZ7UBZO26SHL1SHE4ddrmiwumFnId+CEHP+O8r386tZKaE6zlk5/mF8vifMBzHj9SaXN+mQ==",
       "type": "package",
       "path": "system.io/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2249,10 +2264,11 @@
       ]
     },
     "System.IO.FileSystem/4.0.1": {
-      "sha512": "6loGwtdDg07rDVBjJoA/HpFn9in5CckNaFrhtOspUxiVqnRLzAtwpiPaPsKwWeRQp95CsX22Ppx5kZxtL/OAcw==",
+      "sha512": "IBErlVq5jOggAD69bg1t0pJcHaDbJbWNUZTPI96fkYWzwYbN6D9wRHMULLDd9dHsl7C2YsxXL31LMfPI1SWt8w==",
       "type": "package",
       "path": "system.io.filesystem/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2285,10 +2301,11 @@
       ]
     },
     "System.IO.FileSystem.Primitives/4.0.1": {
-      "sha512": "QpuzsC81tHxoEZG2hSsyxm+6TLCt4tyyyer88ZyaeHvh3Xmre52ViyhO2p44tXb3zzs268Anp+ILA2xxHE9KnQ==",
+      "sha512": "kWkKD203JJKxJeE74p8aF8y4Qc9r9WQx4C0cHzHPrY3fv/L/IhWnyCHaFJ3H1QPOH6A93whlQ2vG5nHlBDvzWQ==",
       "type": "package",
       "path": "system.io.filesystem.primitives/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2322,10 +2339,11 @@
       ]
     },
     "System.Linq/4.1.0": {
-      "sha512": "iWflc79TgzAeWzFJgfEkqQsiAOk09beSqxGylUuKPV5mnos4Z7wlQVUEkcTXtAVJUF7xQ0A9A44vWIjp35EIkw==",
+      "sha512": "bQ0iYFOQI0nuTnt+NQADns6ucV4DUvMdwN6CbkB1yj8i7arTGiTN5eok1kQwdnnNWSDZfIUySQY+J3d5KjWn0g==",
       "type": "package",
       "path": "system.linq/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2392,10 +2410,11 @@
       ]
     },
     "System.Linq.Expressions/4.1.0": {
-      "sha512": "eNMsVKJjOdTCTqwx3kKgoMwDtUPctbshsVtmNtJlN+BQ2S45QA9CgmKzaiPzAo1RsxRci57x1Qcdcv46wLkW/A==",
+      "sha512": "I+y02iqkgmCAyfbqOmSDOgqdZQ5tTj80Akm5BPSS8EeB0VGWdy6X1KCoYe8Pk6pwDoAKZUOdLVxnTJcExiv5zw==",
       "type": "package",
       "path": "system.linq.expressions/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2544,10 +2563,11 @@
       ]
     },
     "System.ObjectModel/4.0.12": {
-      "sha512": "56QwevYYV4iHjI1tWLQq5+NaDiqLAkQqKCyAN6Wn/7UjivrsZrrCi7zs0VMPDBSvl4h/dKC5PAIDpyn8vSCYVQ==",
+      "sha512": "tAgJM1xt3ytyMoW4qn4wIqgJYm7L7TShRZG4+Q4Qsi2PCcj96pXN7nRywS9KkB3p/xDUjc2HSwP9SROyPYDYKQ==",
       "type": "package",
       "path": "system.objectmodel/4.0.12",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2612,10 +2632,11 @@
       ]
     },
     "System.Reflection/4.1.0": {
-      "sha512": "rzReQhvc7bnlgkLfDMnmt9ZfSAjxjZaIoWN9wv9aGXQA1djedM6EQyjm0UdRG7U9D+xowz3xU80S6wC8R3UL+g==",
+      "sha512": "JCKANJ0TI7kzoQzuwB/OoJANy1Lg338B6+JVacPl4TpUwi3cReg3nMLplMq2uqYfHFQpKIlHAUVAJlImZz/4ng==",
       "type": "package",
       "path": "system.reflection/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2691,10 +2712,11 @@
       ]
     },
     "System.Reflection.Emit/4.0.1": {
-      "sha512": "umfOPHMGd/EZNVVAVXLplOy7Usu3YMy8/B28lM+TgNKMpIGmyXnS3t3om7qvpis40T36n52PusBpibQC90ECcA==",
+      "sha512": "P2wqAj72fFjpP6wb9nSfDqNBMab+2ovzSDzUZK7MVIm54tBJEPr9jWfSjjoTpPwj1LeKcmX3vr0ttyjSSFM47g==",
       "type": "package",
       "path": "system.reflection.emit/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2721,10 +2743,11 @@
       ]
     },
     "System.Reflection.Emit.ILGeneration/4.0.1": {
-      "sha512": "yVxchpDTw0g9ISfxyJM3wq2ItXa7oB0NVe5hJ06vQ9f9FBmWLhcbWllt4C3D5CJMlviX+9iDWjEnriUPvQKWXw==",
+      "sha512": "Ov6dU8Bu15Bc7zuqttgHF12J5lwSWyTf1S+FJouUXVMSqImLZzYaQ+vRr1rQ0OZ0HqsrwWl4dsKHELckQkVpgA==",
       "type": "package",
       "path": "system.reflection.emit.ilgeneration/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/net45/_._",
@@ -2752,10 +2775,11 @@
       ]
     },
     "System.Reflection.Emit.Lightweight/4.0.1": {
-      "sha512": "5RtXio273FTpztJGdXKEWPenHX35d0rf5ZU6GBWwEz/SR+ibirONdlHHF6/KOp0aeXXgs7QaD0zyGti0Zu9pZw==",
+      "sha512": "sSzHHXueZ5Uh0OLpUQprhr+ZYJrLPA2Cmr4gn0wj9+FftNKXx8RIMKvO9qnjk2ebPYUjZ+F2ulGdPOsvj+MEjA==",
       "type": "package",
       "path": "system.reflection.emit.lightweight/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/net45/_._",
@@ -2783,10 +2807,11 @@
       ]
     },
     "System.Reflection.Extensions/4.0.1": {
-      "sha512": "eTZJe2sA2bXCA/8WNDQGsUKZQiH+wdO2thstpfckHORd74jat1987dpzEhO3NtJclgp6KoSxYj4NjCkqvr+ZRQ==",
+      "sha512": "GYrtRsZcMuHF3sbmRHfMYpvxZoIN2bQGrYGerUiWLEkqdEUQZhH3TRSaC/oI4wO0II1RKBPlpIa1TOMxIcOOzQ==",
       "type": "package",
       "path": "system.reflection.extensions/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2838,10 +2863,11 @@
       ]
     },
     "System.Reflection.Primitives/4.0.1": {
-      "sha512": "GkcGrXhw+NwoeW4nUazlFkXHPmj3HRO9iRRMyrDCJeqRoOExeGWX2O/O8iXsgWvm4tO7RddYAiTjmnor8KsjvA==",
+      "sha512": "4inTox4wTBaDhB7V3mPvp9XlCbeGYWVEM9/fXALd52vNEAVisc1BoVWQPuUuD0Ga//dNbA/WeMy9u9mzLxGTHQ==",
       "type": "package",
       "path": "system.reflection.primitives/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2893,10 +2919,11 @@
       ]
     },
     "System.Reflection.TypeExtensions/4.1.0": {
-      "sha512": "PvAjC/c3MEOUAfFdQh80++qDWHzjBe1AFvMkVuuCrB3U9dhUsAMXlisU3j+sXgm/iIeY4eKZB751v1gNxnBg+A==",
+      "sha512": "tsQ/ptQ3H5FYfON8lL4MxRk/8kFyE0A+tGPXmVP967cT/gzLHYxIejIYSxp4JmIeFHVP78g/F2FE1mUUTbDtrg==",
       "type": "package",
       "path": "system.reflection.typeextensions/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -2945,10 +2972,11 @@
       ]
     },
     "System.Resources.ResourceManager/4.0.1": {
-      "sha512": "NtCrob5PD7Ig3zNeRkuFpZov7lCfZmxWQww/uV893E1k8w/wgKLOHz2ZsNyh1Pf/a8NnGXhgcPoZsAlCtBzCyw==",
+      "sha512": "TxwVeUNoTgUOdQ09gfTjvW411MF+w9MBYL7AtNVc+HtBCFlutPLhUCdZjNkjbhj3bNQWMdHboF0KIWEOjJssbA==",
       "type": "package",
       "path": "system.resources.resourcemanager/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3000,10 +3028,11 @@
       ]
     },
     "System.Runtime/4.1.0": {
-      "sha512": "1E/rZ3bK17/K4pi53RTiDJ1tuYhwK1zhUlvnMsOG83KRNEqNE7Gd52hbOZnMzpXpbWG7kmTwKRU+AMeVyaoptw==",
+      "sha512": "v6c/4Yaa9uWsq+JMhnOFewrYkgdNHNG2eMKuNqRn8P733rNXeRCGvV5FkkjBXn2dbVkPXOsO0xjsEeM1q2zC0g==",
       "type": "package",
       "path": "system.runtime/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3090,10 +3119,11 @@
       ]
     },
     "System.Runtime.CompilerServices.Unsafe/4.5.1": {
-      "sha512": "qUJMNWhbm9oZ3XaMFiEMiYmRPszbnXIkRIi7+4b2Md2xZ6JUOepf0/kY3S85qistRohl9OdMe4PsO+RdG2kTIQ==",
+      "sha512": "Zh8t8oqolRaFa9vmOZfdQm/qKejdqz0J9kr7o2Fu0vPeoH3BL1EOXipKWwkWtLT1JPzjByrF19fGuFlNbmPpiw==",
       "type": "package",
       "path": "system.runtime.compilerservices.unsafe/4.5.1",
       "files": [
+        ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
@@ -3114,10 +3144,11 @@
       ]
     },
     "System.Runtime.Extensions/4.1.0": {
-      "sha512": "O1oLdpbsCd6MSXNUOFHDGi6EU81fGMNmriPRljH8Mh+QNTH3pXJQKP+h1sgBgOaS540D42PsxX1TbkmQI77KJQ==",
+      "sha512": "CUOHjTT/vgP0qGW22U4/hDlOqXmcPq5YicBaXdUR2UiUoLwBT+olO6we4DVbq57jeX5uXH2uerVZhf0qGj+sVQ==",
       "type": "package",
       "path": "system.runtime.extensions/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3193,10 +3224,11 @@
       ]
     },
     "System.Runtime.Handles/4.0.1": {
-      "sha512": "zIeQHhXQJMfoiI0ovrWorVRoCjkX1kbJVeCfd4vrDLFHpuzpmdbb6ukDRRFOO9rfJArOSlHK+YBITBTuzVoE4A==",
+      "sha512": "nCJvEKguXEvk2ymk1gqj625vVnlK3/xdGzx0vOKicQkoquaTBJTP13AIYkocSUwHCLNBwUbXTqTWGDxBTWpt7g==",
       "type": "package",
       "path": "system.runtime.handles/4.0.1",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3229,10 +3261,11 @@
       ]
     },
     "System.Runtime.InteropServices/4.1.0": {
-      "sha512": "t22fSIVsai48g+cyVrqMuqJ43j01dVqIFHWG61nGaNyyaSd29PLrIrfG+C7+ZwiaRjf3oWtdMZJMfPn12ydZDw==",
+      "sha512": "16eu3kjHS633yYdkjwShDHZLRNMKVi/s0bY8ODiqJ2RfMhDMAwxZaUaWVnZ2P71kr/or+X9o/xFWtNqz8ivieQ==",
       "type": "package",
       "path": "system.runtime.interopservices/4.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3317,10 +3350,11 @@
       ]
     },
     "System.Runtime.InteropServices.RuntimeInformation/4.0.0": {
-      "sha512": "/KvC2Zizxl39Ho0fR1FmF2fwqxXH8EGmdRl4KMQQrxEKWwTjszsb/buYV8YovfbHu6bVKM8o9ygWsRxvoUrVLw==",
+      "sha512": "hWPhJxc453RCa8Z29O91EmfGeZIHX1ZH2A8L6lYQVSaKzku2DfArSfMEb1/MYYzPQRJZeu0c9dmYeJKxW5Fgng==",
       "type": "package",
       "path": "system.runtime.interopservices.runtimeinformation/4.0.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3461,10 +3495,11 @@
       ]
     },
     "System.Text.Encoding/4.0.11": {
-      "sha512": "XpBzwcva9vvMdOKgVrUmXZXQ/qjOeOoQiAW0EvBOUAJJsYKtY+eIraNjyLs4iEq+j5lbuJAGhE1iprLR/Zb6/g==",
+      "sha512": "U3gGeMlDZXxCEiY4DwVLSacg+DFWCvoiX+JThA/rvw37Sqrku7sEFeVBBBMBnfB6FeZHsyDx85HlKL19x0HtZA==",
       "type": "package",
       "path": "system.text.encoding/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3527,10 +3562,11 @@
       ]
     },
     "System.Text.Encoding.CodePages/4.5.0": {
-      "sha512": "16EVkWmNnoH3/Yj9c5s5VuLK5Uv/Dnkc3P2kMmnD7wJcUuvcHVvM2IhVJanf2hHRZUitH+cIkPCPHrBoCXc7Rw==",
+      "sha512": "S0wEUiKcLvRlkFUXca8uio1UQ5bYQzYgOmOKtCqaBQC3GR9AJjh43otcM32IGsAyvadFTaAMw9Irm6dS4Evfng==",
       "type": "package",
       "path": "system.text.encoding.codepages/4.5.0",
       "files": [
+        ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
@@ -3574,10 +3610,11 @@
       ]
     },
     "System.Threading/4.0.11": {
-      "sha512": "mUZD2KWrNz3Myxe3nYr6rS98Vk/NYThQyx14ZLsz/UjoLYxot3ZolscYwanXX1QIxqsRUNSuxhpf2Z/VO4ddfQ==",
+      "sha512": "N+3xqIcg3VDKyjwwCGaZ9HawG9aC6cSDI+s7ROma310GQo8vilFZa86hqKppwTHleR/G0sfOzhvgnUxWCR/DrQ==",
       "type": "package",
       "path": "system.threading/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3643,10 +3680,11 @@
       ]
     },
     "System.Threading.Tasks/4.0.11": {
-      "sha512": "JV6SkE//lvs8PIUSA0dAXU1CVdetWXKs8QWP+CLR+e55bHhnnSsj7NoFvhm2XZ5IvTuFp1oKydK+oIdGgMBHuQ==",
+      "sha512": "k1S4Gc6IGwtHGT8188RSeGaX86Qw/wnrgNLshJvsdNUOPP9etMmo8S07c+UlOAx4K/xLuN9ivA1bD0LVurtIxQ==",
       "type": "package",
       "path": "system.threading.tasks/4.0.11",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/MonoAndroid10/_._",
@@ -3851,26 +3889,29 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Guoqi\\.nuget\\packages\\": {},
+    "C:\\Users\\cz\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Web\\Kooboo.Web.Standard.csproj",
+      "projectUniqueName": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Web\\Kooboo.Web.Standard.csproj",
       "projectName": "Kooboo.Web",
-      "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Web\\Kooboo.Web.Standard.csproj",
-      "packagesPath": "C:\\Users\\Guoqi\\.nuget\\packages\\",
-      "outputPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Web\\obj\\",
+      "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Web\\Kooboo.Web.Standard.csproj",
+      "packagesPath": "C:\\Users\\cz\\.nuget\\packages\\",
+      "outputPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Web\\obj\\",
       "projectStyle": "PackageReference",
       "crossTargeting": true,
       "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\",
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "D:\\work\\KoobooNETStandard\\src\\NuGet.Config",
-        "C:\\Users\\Guoqi\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Code\\KoobooLinuxMerge\\src\\NuGet.Config",
+        "C:\\Users\\cz\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.Fallback.config"
       ],
       "originalTargetFrameworks": [
         "net45",
@@ -3884,103 +3925,103 @@
       "frameworks": {
         "net45": {
           "projectReferences": {
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj"
             }
           }
         },
         "net461": {
           "projectReferences": {
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj"
             }
           }
         },
         "netstandard2.0": {
           "projectReferences": {
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Api\\Kooboo.Api.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Data\\Kooboo.Data.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Dom\\Kooboo.Dom.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.IndexedDB\\Kooboo.IndexedDB.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Lib\\Kooboo.Lib.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Mail\\Kooboo.Mail.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Render\\Kooboo.Render.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Search\\Kooboo.Search.Standard.csproj"
             },
-            "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj": {
-              "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj"
+            "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj": {
+              "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.Sites\\Kooboo.Sites.Standard.csproj"
             }
           }
         }

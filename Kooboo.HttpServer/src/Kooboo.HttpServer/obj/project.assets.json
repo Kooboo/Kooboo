@@ -61,10 +61,11 @@
   },
   "libraries": {
     "Microsoft.NETCore.Platforms/1.1.0": {
-      "sha512": "4C52Kye/Go87fu9ghjD1e/qOlo7W5zwUDdFiqlijOrs72HBXrEMWacxW74ECJYj7h3vKZ+NFm+pAUHDdM4wWCQ==",
+      "sha512": "kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
       "type": "package",
       "path": "microsoft.netcore.platforms/1.1.0",
       "files": [
+        ".nupkg.metadata",
         "ThirdPartyNotices.txt",
         "dotnet_library_license.txt",
         "lib/netstandard1.0/_._",
@@ -201,10 +202,11 @@
       ]
     },
     "System.Runtime.CompilerServices.Unsafe/4.5.1": {
-      "sha512": "qUJMNWhbm9oZ3XaMFiEMiYmRPszbnXIkRIi7+4b2Md2xZ6JUOepf0/kY3S85qistRohl9OdMe4PsO+RdG2kTIQ==",
+      "sha512": "Zh8t8oqolRaFa9vmOZfdQm/qKejdqz0J9kr7o2Fu0vPeoH3BL1EOXipKWwkWtLT1JPzjByrF19fGuFlNbmPpiw==",
       "type": "package",
       "path": "system.runtime.compilerservices.unsafe/4.5.1",
       "files": [
+        ".nupkg.metadata",
         ".signature.p7s",
         "LICENSE.TXT",
         "THIRD-PARTY-NOTICES.TXT",
@@ -238,26 +240,29 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Guoqi\\.nuget\\packages\\": {},
+    "C:\\Users\\cz\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj",
+      "projectUniqueName": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj",
       "projectName": "Kooboo.HttpServer",
-      "projectPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj",
-      "packagesPath": "C:\\Users\\Guoqi\\.nuget\\packages\\",
-      "outputPath": "D:\\work\\KoobooNETStandard\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\obj\\",
+      "projectPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\Kooboo.HttpServer.Standard.csproj",
+      "packagesPath": "C:\\Users\\cz\\.nuget\\packages\\",
+      "outputPath": "C:\\Code\\KoobooLinuxMerge\\src\\Github\\Kooboo.HttpServer\\src\\Kooboo.HttpServer\\obj\\",
       "projectStyle": "PackageReference",
       "crossTargeting": true,
       "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackagesFallback\\",
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "D:\\work\\KoobooNETStandard\\src\\NuGet.Config",
-        "C:\\Users\\Guoqi\\AppData\\Roaming\\NuGet\\NuGet.Config",
-        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        "C:\\Code\\KoobooLinuxMerge\\src\\NuGet.Config",
+        "C:\\Users\\cz\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.Fallback.config"
       ],
       "originalTargetFrameworks": [
         "net45",
