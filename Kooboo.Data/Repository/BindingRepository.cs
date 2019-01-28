@@ -237,15 +237,6 @@ namespace Kooboo.Data.Repository
                     }
                 }
 
-                // TEMP. remove all thetheme.com binding. 
-                var alldomains = Kooboo.Data.Hosts.WindowsHost.GetList();
-                foreach (var item in alldomains)
-                {
-                    if (!string.IsNullOrEmpty(item.Domain) && item.Domain.ToLower().EndsWith("thetheme.com"))
-                    {
-                        Data.Hosts.WindowsHost.Delete(item.Domain);
-                    }
-                }
             }
 
             WindowsHost.AddOrUpdate(AppSettings.DefaultLocalHost, "127.0.0.1");
