@@ -52,7 +52,7 @@ namespace Kooboo.Lib.Helper
                 if (item.Port == port) 
                 {
                     // if in use. 
-                    bool OkToStart = false; 
+                    bool IsInUsed = false; 
                     try
                     {
                         TcpListener tcpListener = new TcpListener(System.Net.IPAddress.Any,  port);
@@ -62,13 +62,13 @@ namespace Kooboo.Lib.Helper
                     }
                     catch (SocketException ex)
                     {
-                        OkToStart = true; 
+                        IsInUsed = true; 
                     }
                     finally
                     {
 
                     }
-                    return OkToStart; 
+                    return IsInUsed; 
                 }
             }
                
