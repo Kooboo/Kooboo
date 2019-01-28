@@ -143,7 +143,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
             if (rcpttos.Count>0)
             { 
                 // verify sending quota.
-                if (!Kooboo.Data.Authorization.QuotaControl.CanSendEmail(call.Context.User.CurrentOrgId, rcpttos.Count))
+                if (!Kooboo.Data.Infrastructure.InfraManager.Test(call.Context.User.CurrentOrgId, Data.Infrastructure.InfraType.Email,  rcpttos.Count))
                 {
                     throw new Exception(Data.Language.Hardcoded.GetValue("you have no enough credit to send emails", call.Context));
                 }
@@ -161,7 +161,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
                     usermaildb.Messages.Delete(messageid);
                 } 
 
-                Kooboo.Data.Authorization.QuotaControl.AddSendEmailCount(call.Context.User.CurrentOrgId, rcpttos.Count);
+                Kooboo.Data.Infrastructure.InfraManager.Add(call.Context.User.CurrentOrgId, Data.Infrastructure.InfraType.Email,  rcpttos.Count, string.Join(",", rcpttos));
                  
             } 
 

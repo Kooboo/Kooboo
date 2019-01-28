@@ -94,7 +94,29 @@ namespace Kooboo.Data.Language
             }
             return newValues;
         }
-         
-   
+
+        public static void SetValue(string LangCode, Dictionary<string, string> Values)
+        {
+            Values = EscapeQuote(Values); 
+
+            lock (_locker)
+            {
+                var langcontent = GetLangValues(LangCode);
+                if (langcontent.Count() == 0)
+                {
+                    langtext[LangCode] = Values;
+                }
+                else
+                {
+                    foreach (var item in Values)
+                    {
+                        langcontent[item.Key] = item.Value;
+                    }
+                }
+
+            }
+        }
+
+
     }
 }
