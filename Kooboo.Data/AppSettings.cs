@@ -55,8 +55,7 @@ namespace Kooboo.Data
             // for some servers that does not have hostfile. 
             if (!System.IO.File.Exists(Kooboo.Data.Hosts.WindowsHost.HostFile))
             {
-                DefaultLocalHost = "localkooboo.com";
-                Kooboo.Data.Hosts.WindowsHost.NoChange = true; 
+                DefaultLocalHost = "localkooboo.com"; 
             }
         }
 
