@@ -2,10 +2,8 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Hosts
 {
@@ -16,6 +14,8 @@ namespace Kooboo.Data.Hosts
     /// </summary>
     public static class WindowsHost
     {
+        public static bool NoChange { get; set; }
+
         private static object _object = new object();
 
         private static string kooboostart = "#<kooboo>";
@@ -24,7 +24,7 @@ namespace Kooboo.Data.Hosts
         // split lines var result = Regex.Split(text, "\r\n|\r|\n");
         private static string _hostfile;
 
-        private static string HostFile
+        public static string HostFile
         {
             get
             {
@@ -66,6 +66,11 @@ namespace Kooboo.Data.Hosts
         /// <param name="IP"></param>
         public static void AddOrUpdate(string FullDomain, string IP)
         {
+            if (NoChange)
+            {
+                return; 
+            }
+
             if (string.IsNullOrEmpty(FullDomain) || IsIp(FullDomain))
             {
                 return; 
@@ -107,6 +112,11 @@ namespace Kooboo.Data.Hosts
         /// <param name="FullDomain"></param>
         public static void Delete(string FullDomain)
         {
+            if (NoChange)
+            {
+                return; 
+            }
+
             if (string.IsNullOrEmpty(FullDomain))
             {
                 return; 
@@ -133,6 +143,11 @@ namespace Kooboo.Data.Hosts
 
         public static void RemoveAll()
         {
+            if (NoChange)
+            {
+                return; 
+            }
+
             var list = GetList();
             foreach (var item in list)
             {
@@ -142,6 +157,11 @@ namespace Kooboo.Data.Hosts
 
         public static List<HostRecord> GetList()
         {
+            if (NoChange)
+            {
+                return new List<HostRecord>(); 
+            }
+
             lock (_object)
             {
                 List<HostRecord> list = new List<HostRecord>();

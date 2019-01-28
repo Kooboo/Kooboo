@@ -51,6 +51,13 @@ namespace Kooboo.Data
 
             _accountApiUrl = ConfigurationManager.AppSettings.Get("AccountApiUrl");
             _themeurl = ConfigurationManager.AppSettings.Get("ThemeUrl");
+
+            // for some servers that does not have hostfile. 
+            if (!System.IO.File.Exists(Kooboo.Data.Hosts.WindowsHost.HostFile))
+            {
+                DefaultLocalHost = "localkooboo.com";
+                Kooboo.Data.Hosts.WindowsHost.NoChange = true; 
+            }
         }
 
         private static void SetUser()
