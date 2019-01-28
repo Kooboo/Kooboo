@@ -51,6 +51,11 @@ namespace Kooboo.Web
                      
             if (!WebServers.ContainsKey(443))
             {
+                if (Data.AppSettings.IsOnlineServer)
+                {
+                    StartNewWebServer(443);
+                }
+
                 if (!Lib.Helper.NetworkHelper.IsPortInUse(443))
                 {
                     StartNewWebServer(443);
