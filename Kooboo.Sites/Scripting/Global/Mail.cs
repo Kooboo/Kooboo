@@ -33,41 +33,40 @@ namespace Kooboo.Sites.Scripting.Global
 
                 var orgid = this.context.WebSite.OrganizationId;
 
-                if (Kooboo.Data.Authorization.QuotaControl.CanSendEmail(orgid, 1))
+
+                string messagebody = null;
+                if (maildata.HtmlBody != null)
                 {
-                    string messagebody = null;
-                    if (maildata.HtmlBody != null)
-                    {
-                        messagebody = Kooboo.Mail.Utility.ComposeUtility.ComposeHtmlTextEmailBody(maildata.From, maildata.originalToString, maildata.Subject, maildata.HtmlBody, maildata.TextBody);
-                    }
-                    else
-                    {
-                        messagebody = Kooboo.Mail.Utility.ComposeUtility.ComposeTextEmailBody(maildata.From, maildata.originalToString, maildata.Subject, maildata.TextBody);
-                    }
-
-                    List<string> allrcptos = new List<string>();
-                    allrcptos.AddRange(maildata.To);
-                    if (maildata.Cc != null && maildata.Cc.Any())
-                    {
-                        allrcptos.AddRange(maildata.Cc);
-                    }
-                    if (maildata.Bcc != null && maildata.Bcc.Any())
-                    {
-                        allrcptos.AddRange(maildata.Bcc);
-                    }
-
-                    // check if org allowed to send.
-                    if (!Kooboo.Data.Authorization.QuotaControl.CanSendEmail(orgid, allrcptos.Count()))
-                    {
-                        throw new Exception("No enough email sending credits");
-                    }
-                    else
-                    {
-                        Kooboo.Mail.Transport.Incoming.Receive(maildata.From, allrcptos, messagebody);
-
-                        Kooboo.Data.Authorization.QuotaControl.AddSendEmailCount(orgid, allrcptos.Count());
-                    }
+                    messagebody = Kooboo.Mail.Utility.ComposeUtility.ComposeHtmlTextEmailBody(maildata.From, maildata.originalToString, maildata.Subject, maildata.HtmlBody, maildata.TextBody);
                 }
+                else
+                {
+                    messagebody = Kooboo.Mail.Utility.ComposeUtility.ComposeTextEmailBody(maildata.From, maildata.originalToString, maildata.Subject, maildata.TextBody);
+                }
+
+                List<string> allrcptos = new List<string>();
+                allrcptos.AddRange(maildata.To);
+                if (maildata.Cc != null && maildata.Cc.Any())
+                {
+                    allrcptos.AddRange(maildata.Cc);
+                }
+                if (maildata.Bcc != null && maildata.Bcc.Any())
+                {
+                    allrcptos.AddRange(maildata.Bcc);
+                }
+
+                // check if org allowed to send.
+                if (!Kooboo.Data.Infrastructure.InfraManager.Test(orgid, Data.Infrastructure.InfraType.Email, allrcptos.Count()))
+                {
+                    throw new Exception("No enough email sending credits");
+                }
+                else
+                {
+                    Kooboo.Mail.Transport.Incoming.Receive(maildata.From, allrcptos, messagebody);
+
+                    Kooboo.Data.Infrastructure.InfraManager.Add(orgid, Data.Infrastructure.InfraType.Email, allrcptos.Count(), string.Join(",", allrcptos));
+                }
+
             }
             else
             {
@@ -224,7 +223,7 @@ namespace Kooboo.Sites.Scripting.Global
                     }
                     else
                     {
-                        msg.Body = mailobj.TextBody; 
+                        msg.Body = mailobj.TextBody;
                     }
 
                     if (msg.Body == null)
@@ -232,33 +231,33 @@ namespace Kooboo.Sites.Scripting.Global
                         return;
                     }
 
-                    if (msg.Body.IndexOf("<")==-1 && msg.Body.IndexOf(">")==-1)
+                    if (msg.Body.IndexOf("<") == -1 && msg.Body.IndexOf(">") == -1)
                     {
-                        msg.IsBodyHtml = false; 
+                        msg.IsBodyHtml = false;
                     }
-                          
-                    System.Net.Mail.SmtpClient client; 
-                    
-                    if (server.port >0)
+
+                    System.Net.Mail.SmtpClient client;
+
+                    if (server.port > 0)
                     {
                         client = new System.Net.Mail.SmtpClient(server.Host, server.port);
                     }
                     else
                     {
-                        client = new System.Net.Mail.SmtpClient(server.Host); 
+                        client = new System.Net.Mail.SmtpClient(server.Host);
                     }
 
-                    if (server.username !=null && server.password !=null)
-                    {   
+                    if (server.username != null && server.password != null)
+                    {
                         client.UseDefaultCredentials = false;
                         client.Credentials = new NetworkCredential(server.username, server.password);
                     }
-               
+
                     if (server.Ssl)
                     {
                         client.EnableSsl = true;
-                    }  
-                   
+                    }
+
                     client.Send(msg);
 
                 }
@@ -266,7 +265,7 @@ namespace Kooboo.Sites.Scripting.Global
 
             }
         }
-                
+
 
         internal SmtpServer GetSmtpServer(object dataobj)
         {

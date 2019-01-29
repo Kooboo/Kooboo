@@ -14,7 +14,26 @@ namespace Kooboo.Data.Hosts
     /// </summary>
     public static class WindowsHost
     {
-        public static bool NoChange { get; set; }
+
+        private static HostChange _change; 
+        public static HostChange change {
+            get
+            {
+                if (_change == null)
+                {
+                   if (System.IO.File.Exists(HostFile))
+                    {
+                        _change = new HostChange() { NoChange = false }; 
+                    }
+                   else
+                    {
+                        _change = new HostChange() { NoChange = true }; 
+                    }
+                }
+                return _change; 
+            }
+        }
+         
 
         private static object _object = new object();
 
@@ -66,7 +85,7 @@ namespace Kooboo.Data.Hosts
         /// <param name="IP"></param>
         public static void AddOrUpdate(string FullDomain, string IP)
         {
-            if (NoChange)
+            if (change.NoChange)
             {
                 return; 
             }
@@ -112,7 +131,7 @@ namespace Kooboo.Data.Hosts
         /// <param name="FullDomain"></param>
         public static void Delete(string FullDomain)
         {
-            if (NoChange)
+            if (change.NoChange)
             {
                 return; 
             }
@@ -143,7 +162,7 @@ namespace Kooboo.Data.Hosts
 
         public static void RemoveAll()
         {
-            if (NoChange)
+            if (change.NoChange)
             {
                 return; 
             }
@@ -157,7 +176,7 @@ namespace Kooboo.Data.Hosts
 
         public static List<HostRecord> GetList()
         {
-            if (NoChange)
+            if (change.NoChange)
             {
                 return new List<HostRecord>(); 
             }
@@ -245,5 +264,11 @@ namespace Kooboo.Data.Hosts
             }
         }
 
+    }
+
+    public class HostChange
+
+    {
+        public bool NoChange { get; set;  }
     }
 }

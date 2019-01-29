@@ -12,6 +12,8 @@ namespace Kooboo.Data.Models
 
         public string AccountUrl { get; set;  }
 
+        public string AcccountDomain { get; set; }
+
         public string ConvertUrl { get; set; } 
 
         public DateTime Expiration { get; set; } 

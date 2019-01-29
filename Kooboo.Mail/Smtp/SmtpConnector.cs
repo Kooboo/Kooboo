@@ -77,7 +77,7 @@ namespace Kooboo.Mail.Smtp
                     {                  
                         var reptcounts = session.Log.Keys.Where(o => o.Name == SmtpCommandName.RCPTTO).Count();
 
-                        if (!Kooboo.Data.Authorization.QuotaControl.CanSendEmail(session.OrganizationId, reptcounts))
+                        if (!Kooboo.Data.Infrastructure.InfraManager.Test(session.OrganizationId, Data.Infrastructure.InfraType.Email, reptcounts))
                         {
                             await _writer.WriteLineAsync("550 you have no enough credit to send emails");
                             _client.Close();
@@ -95,8 +95,23 @@ namespace Kooboo.Mail.Smtp
 
                         if (dataresponse.SessionCompleted)
                         {
-                            await Kooboo.Mail.Transport.Incoming.Receive(session);  
-                            Kooboo.Data.Authorization.QuotaControl.AddSendEmailCount(session.OrganizationId, reptcounts); 
+                            await Kooboo.Mail.Transport.Incoming.Receive(session);
+
+                            var tos = session.Log.Keys.Where(o => o.Name == SmtpCommandName.RCPTTO);
+
+                            string subject = "TO: "; 
+                            if (tos !=null)
+                            {
+                                foreach (var item in tos)
+                                {
+                                    if (item !=null && !string.IsNullOrWhiteSpace(item.Value))
+                                    {
+                                        subject += item.Value;
+                                    } 
+                                }
+                            }
+
+                            Kooboo.Data.Infrastructure.InfraManager.Add(session.OrganizationId, Data.Infrastructure.InfraType.Email, reptcounts, subject); 
 
                             session.ReSet();
                         }
