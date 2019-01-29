@@ -867,15 +867,23 @@ namespace Kooboo.Data.Context
 
         internal static string GetEncodedLocation(string location)
         {
-            var lastSlash = location.LastIndexOf("/");
-            if (lastSlash > -1)
+            if (string.IsNullOrEmpty(location))
+                return location;
+            var segments = location.Split('/');
+
+            var builder = new StringBuilder();
+
+            for(var i=0;i<segments.Length;i++)
             {
-                var str = location.Substring(lastSlash + 1);
-                var encodeString = System.Net.WebUtility.UrlEncode(str);
-                location = location.Remove(lastSlash + 1)+ System.Net.WebUtility.UrlEncode(str);
+                var seg = segments[i];
+                builder.Append(System.Net.WebUtility.UrlEncode(seg));
+                if (segments.Length - 1 != i)
+                {
+                    builder.Append("/");
+                }
+                
             }
-            return location;
-            
+            return builder.ToString();
         }
         public static void Log(RenderContext context)
         {
