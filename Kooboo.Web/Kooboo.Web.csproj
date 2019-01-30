@@ -200,8 +200,8 @@
     <Compile Include="JsTest\JsTestOption.cs" />
     <Compile Include="JQL\CommandExecutor.cs" />
     <Compile Include="Security\ActionControl.cs" />
-    <Compile Include="Security\SslProvider.cs" />
     <Compile Include="Security\AccessControl.cs" />
+    <Compile Include="Security\SslProvider.cs" />
     <Compile Include="Service\AdminLogService.cs" />
     <Compile Include="Service\UserService.cs" />
     <Compile Include="Spa\CommandDiskSourceProvider.cs" />

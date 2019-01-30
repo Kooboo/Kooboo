@@ -130,6 +130,14 @@ namespace Kooboo.Data
 
         public static int MaxForEachLoop { get; set; } = 100;
 
+        public static bool CustomSslCheck { get; set; }
+
+        public static void SetCustomSslCheck()
+        {
+            Kooboo.Lib.Helper.HttpHelper.SetCustomSslChecker();
+            CustomSslCheck = true; 
+        }
+
         public static string GetMailDbName(Guid OrganizationId)
         {
             return GetDbName(OrganizationId, "__kooboomailstore");
@@ -405,13 +413,7 @@ namespace Kooboo.Data
                         apires = HttpHelper.Get<ApiResource>(url);
                     }
                     catch (Exception ex)
-                    {
-
-                        Console.WriteLine("---------------");
-                        Console.WriteLine(url);
-                        Console.WriteLine(ex.Message + ex.StackTrace + ex.Source + ex.InnerException.ToString());
-
-
+                    { 
                     }
                     if (apires != null && !string.IsNullOrWhiteSpace(apires.AccountUrl))
                     {
@@ -421,6 +423,11 @@ namespace Kooboo.Data
 
                 if (apires != null)
                 {
+                    if(!CustomSslCheck)
+                    {
+                        apires.AccountUrl = apires.AcccountDomain; 
+                    }
+
                     Kooboo.Data.Helper.ApiHelper.EnsureAccountUrl(apires);
 
                     var localsetting = new GlobalSetting() { Name = "ApiResource", LastModified = DateTime.Now };
