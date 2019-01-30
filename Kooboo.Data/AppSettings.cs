@@ -455,6 +455,9 @@ namespace Kooboo.Data
             return new ApiResource() { AccountUrl = "http://159.138.24.241", Expiration = DateTime.Now.AddMinutes(10) };
         }
 
+
+        public static string RootUrl { get; set; }
+
         private static ServerSetting _serversetting;
 
         public static ServerSetting ServerSetting
@@ -464,18 +467,24 @@ namespace Kooboo.Data
                 if (_serversetting == null)
                 {
                     if (IsOnlineServer)
-                    {
-                        // if there is a root url.. 
-                        string rooturl = ConfigurationManager.AppSettings.Get("RootUrl");
+                    { 
+                        string CurrentRooturl = RootUrl; 
+                        
+                        if (string.IsNullOrWhiteSpace(CurrentRooturl))
+                        {
+                            CurrentRooturl = ConfigurationManager.AppSettings.Get("RootUrl");
+                        }
+                      
                         string url = null;
-                        if (string.IsNullOrEmpty(rooturl))
+
+                        if (string.IsNullOrEmpty(CurrentRooturl))
                         {
                             url = Helper.AccountUrlHelper.System("GetSetting");
                         }
                         else
                         {
-                            rooturl = rooturl + "/_api/";
-                            url = Lib.Helper.UrlHelper.Combine(rooturl, "system/GetSetting");
+                            CurrentRooturl = CurrentRooturl + "/_api/";
+                            url = Lib.Helper.UrlHelper.Combine(CurrentRooturl, "system/GetSetting");
                         }
                         try
                         {
