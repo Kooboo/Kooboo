@@ -9,9 +9,9 @@ namespace Kooboo.App.CrossPlatform
     {
         static void Main(string[] args)
         {
-     
+            Kooboo.Data.Hosts.WindowsHost.NoChange = true;
             Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.RegisterEncoding();
-
+            
             GlobalSettings.RootPath = Kooboo.Data.AppSettings.DatabasePath;
             var settingPort = AppSettingsUtility.Get("Port");
             if (string.IsNullOrEmpty(settingPort))
@@ -44,10 +44,10 @@ namespace Kooboo.App.CrossPlatform
 
             Mail.EmailWorkers.Start(); 
 
-            if(UpgradeHelper.HasNewVersion())
-            {
-                UpgradeHelper.Download();
-            } 
+            //if(UpgradeHelper.HasNewVersion())
+            //{
+            //    UpgradeHelper.Download();
+            //} 
             Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.ConsoleWait(); 
         }
 
