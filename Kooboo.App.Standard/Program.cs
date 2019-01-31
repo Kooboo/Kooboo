@@ -9,7 +9,6 @@ namespace Kooboo.App.CrossPlatform
     {
         static void Main(string[] args)
         {
-            Kooboo.Data.Hosts.WindowsHost.NoChange = true;
             Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.RegisterEncoding();
             
             GlobalSettings.RootPath = Kooboo.Data.AppSettings.DatabasePath;
@@ -33,7 +32,7 @@ namespace Kooboo.App.CrossPlatform
 
             Kooboo.Data.Hosts.WindowsHost.change = new Data.Hosts.HostChange() { NoChange = true }; 
             Kooboo.Data.AppSettings.DefaultLocalHost = "localkooboo.com";
-            Kooboo.Data.AppSettings.StartHost = "127.0.01"; 
+            Kooboo.Data.AppSettings.StartHost = "127.0.0.1"; 
           
 
             AppSettings.CurrentUsedPort = port;
