@@ -58,7 +58,7 @@ namespace Kooboo.Mail.Smtp
                 if (_writers.TryGetValue(fileName, out writer))
                     return writer;
 
-                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"logs\smtpserver", fileName + ".log");
+                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "smtpserver", fileName + ".log");
                 var fileStream = new FileStream(path, FileMode.Append, FileAccess.Write, FileShare.Read);
                 writer = new StreamWriter(fileStream);
                 writer.AutoFlush = true;
@@ -83,7 +83,7 @@ namespace Kooboo.Mail.Smtp
         {
             lock (_exceptionWriteLock)
             {
-                string logfolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"logs\smtpserver");
+                string logfolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "smtpserver");
                 string LogFile = System.IO.Path.Combine(logfolder, System.DateTime.Now.Year.ToString() + System.DateTime.Now.Month.ToString() + System.DateTime.Now.Day.ToString() + "r.txt");
 
 
