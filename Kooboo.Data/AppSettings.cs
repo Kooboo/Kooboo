@@ -389,6 +389,10 @@ namespace Kooboo.Data
                     var accounturl = localvalue.GetValue("AccountUrl");
                     if (!string.IsNullOrWhiteSpace(accounturl))
                     {
+                        if (accounturl.ToLower().StartsWith("https://"))
+                        {
+                            accounturl = accounturl.Replace("https://", "http://"); 
+                        }
                         apis.Add(accounturl);
                     }
                 }
