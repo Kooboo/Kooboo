@@ -32,6 +32,7 @@ namespace Kooboo.Data.Hosts
                 }
                 return _change; 
             }
+            set { _change = value;  }
         }
          
 
