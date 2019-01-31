@@ -561,13 +561,13 @@ namespace Kooboo.Data.Context
         }
 
 
-        private static NameValueCollection GetForm(byte[] inputstream)
+        internal static NameValueCollection GetForm(byte[] inputstream)
         {
             NameValueCollection result = new NameValueCollection();
 
             string text = System.Text.Encoding.UTF8.GetString(inputstream);
 
-            text = Uri.UnescapeDataString(text); 
+            //text = Uri.UnescapeDataString(text); 
 
             //text = System.Net.WebUtility.UrlDecode(text);
             //text = System.Net.WebUtility.HtmlDecode(text);
@@ -593,7 +593,11 @@ namespace Kooboo.Data.Context
                         ++scanIndex;
                     }
                     string name = text.Substring(scanIndex, equalIndex - scanIndex);
+                    name= Uri.UnescapeDataString(name);
+                    
                     string value = text.Substring(equalIndex + 1, delimiterIndex - equalIndex - 1);
+                    value= Uri.UnescapeDataString(value);
+
                     result.Add(name, value);
                     equalIndex = text.IndexOf('=', delimiterIndex);
                     if (equalIndex == -1)
