@@ -13,9 +13,14 @@ namespace Kooboo.Lib.Helper
     {
         static HttpHelper()
         {
-            ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult;
-            //turn on tls12 and tls11,default is ssl3 and tls
+            //ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult;
+            ////turn on tls12 and tls11,default is ssl3 and tls
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
+        }
+
+        public static void SetCustomSslChecker()
+        { 
+            ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult; 
         }
          
         private static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)

@@ -12,7 +12,8 @@ namespace Kooboo.App
     {
         private static System.Diagnostics.Process ScreenShotProcess = null;
         public static void StartAll()
-        {  
+        {
+            Kooboo.Data.AppSettings.SetCustomSslCheck();
             var settingPort = AppSettingsUtility.Get("Port");
             if (string.IsNullOrEmpty(settingPort))
             {

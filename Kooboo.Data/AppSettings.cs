@@ -130,6 +130,14 @@ namespace Kooboo.Data
 
         public static int MaxForEachLoop { get; set; } = 100;
 
+        public static bool CustomSslCheck { get; set; }
+
+        public static void SetCustomSslCheck()
+        {
+            Kooboo.Lib.Helper.HttpHelper.SetCustomSslChecker();
+            CustomSslCheck = true; 
+        }
+
         public static string GetMailDbName(Guid OrganizationId)
         {
             return GetDbName(OrganizationId, "__kooboomailstore");
@@ -400,13 +408,7 @@ namespace Kooboo.Data
                         apires = HttpHelper.Get<ApiResource>(url);
                     }
                     catch (Exception ex)
-                    {
-
-                        Console.WriteLine("---------------");
-                        Console.WriteLine(url);
-                        Console.WriteLine(ex.Message + ex.StackTrace + ex.Source + ex.InnerException.ToString());
-
-
+                    { 
                     }
                     if (apires != null && !string.IsNullOrWhiteSpace(apires.AccountUrl))
                     {
@@ -416,6 +418,11 @@ namespace Kooboo.Data
 
                 if (apires != null)
                 {
+                    if(!CustomSslCheck)
+                    {
+                        apires.AccountUrl = apires.AcccountDomain; 
+                    }
+
                     Kooboo.Data.Helper.ApiHelper.EnsureAccountUrl(apires);
 
                     var localsetting = new GlobalSetting() { Name = "ApiResource", LastModified = DateTime.Now };
@@ -443,6 +450,9 @@ namespace Kooboo.Data
             return new ApiResource() { AccountUrl = "http://159.138.24.241", Expiration = DateTime.Now.AddMinutes(10) };
         }
 
+
+        public static string RootUrl { get; set; }
+
         private static ServerSetting _serversetting;
 
         public static ServerSetting ServerSetting
@@ -452,18 +462,24 @@ namespace Kooboo.Data
                 if (_serversetting == null)
                 {
                     if (IsOnlineServer)
-                    {
-                        // if there is a root url.. 
-                        string rooturl = ConfigurationManager.AppSettings.Get("RootUrl");
+                    { 
+                        string CurrentRooturl = RootUrl; 
+                        
+                        if (string.IsNullOrWhiteSpace(CurrentRooturl))
+                        {
+                            CurrentRooturl = ConfigurationManager.AppSettings.Get("RootUrl");
+                        }
+                      
                         string url = null;
-                        if (string.IsNullOrEmpty(rooturl))
+
+                        if (string.IsNullOrEmpty(CurrentRooturl))
                         {
                             url = Helper.AccountUrlHelper.System("GetSetting");
                         }
                         else
                         {
-                            rooturl = rooturl + "/_api/";
-                            url = Lib.Helper.UrlHelper.Combine(rooturl, "system/GetSetting");
+                            CurrentRooturl = CurrentRooturl + "/_api/";
+                            url = Lib.Helper.UrlHelper.Combine(CurrentRooturl, "system/GetSetting");
                         }
                         try
                         {

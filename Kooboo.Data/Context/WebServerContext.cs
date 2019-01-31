@@ -771,6 +771,7 @@ namespace Kooboo.Data.Context
 
                 if (!string.IsNullOrEmpty(location))
                 {
+                    location = GetEncodedLocation(location);
 
                     var host = renderContext.Request.Port == 80 || renderContext.Request.Port == 443
                         ? renderContext.Request.Host
@@ -786,7 +787,7 @@ namespace Kooboo.Data.Context
                     {
                         context.Features.Response.StatusCode = StatusCodes.Status302Found;
                     }
-
+                    
                     header.HeaderLocation = newUrl;
 
                     context.Features.Response.Body.Dispose();
@@ -862,7 +863,26 @@ namespace Kooboo.Data.Context
             context = null;
         }
 
+        internal static string GetEncodedLocation(string location)
+        {
+            if (string.IsNullOrEmpty(location))
+                return location;
+            var segments = location.Split('/');
 
+            var builder = new StringBuilder();
+
+            for(var i=0;i<segments.Length;i++)
+            {
+                var seg = segments[i];
+                builder.Append(System.Net.WebUtility.UrlEncode(seg));
+                if (segments.Length - 1 != i)
+                {
+                    builder.Append("/");
+                }
+                
+            }
+            return builder.ToString();
+        }
         public static void Log(RenderContext context)
         {
             if (Data.AppSettings.Global.EnableLog)
