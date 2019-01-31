@@ -31,8 +31,10 @@ namespace Kooboo.App.CrossPlatform
                 return;
             }
 
+            Kooboo.Data.Hosts.WindowsHost.change = new Data.Hosts.HostChange() { NoChange = true }; 
             Kooboo.Data.AppSettings.DefaultLocalHost = "localkooboo.com";
             Kooboo.Data.AppSettings.StartHost = "127.0.01"; 
+          
 
             AppSettings.CurrentUsedPort = port;
 
