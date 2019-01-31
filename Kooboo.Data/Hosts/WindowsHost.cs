@@ -50,7 +50,10 @@ namespace Kooboo.Data.Hosts
                 if (string.IsNullOrEmpty(_hostfile))
                 {
                     string systemfolder = Environment.GetEnvironmentVariable("SystemRoot");
-                    _hostfile = System.IO.Path.Combine(systemfolder, "system32", "drivers", "etc", "hosts");
+                    if (!string.IsNullOrWhiteSpace(systemfolder))
+                    {
+                        _hostfile = System.IO.Path.Combine(systemfolder, "system32", "drivers", "etc", "hosts");
+                    } 
                 }
                 return _hostfile;
             }
