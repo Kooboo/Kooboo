@@ -16,7 +16,7 @@ namespace Kooboo.Lib.Helper
     {
         static DownloadHelper()
         {
-            ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult;
+           // ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult;
             //turn on tls12 and tls11,default is ssl3 and tls
             ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
         }

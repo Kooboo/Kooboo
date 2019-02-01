@@ -90,7 +90,12 @@
             });
 
             self.password = ko.validateField({
-                required: Kooboo.text.validation.required
+                required: Kooboo.text.validation.required,
+                stringlength: {
+                    min: 1,
+                    max: 30,
+                    message: Kooboo.text.validation.minLength + 1 + ", " + Kooboo.text.validation.maxLength + 30
+                },
             });
             self.password.subscribe(function() {
                 self.confirmPassword.valueHasMutated();

@@ -228,6 +228,22 @@ namespace Kooboo.Sites.SiteTransfer
          
         public static bool IsUrlBanned(string FullUrl)
         {
+            var domainresult = Data.Helper.DomainHelper.Parse(FullUrl);  
+
+            if (domainresult !=null && !string.IsNullOrWhiteSpace(domainresult.SubDomain))
+            {
+                if (domainresult.SubDomain.Contains("."))
+                {
+                    return false; 
+                }
+
+                string sub = domainresult.SubDomain.ToLower(); 
+                if (sub !="www" && sub.Length > 3)
+                {
+                    return false; 
+                }
+            }
+
             var rootdomain = Kooboo.Data.Helper.DomainHelper.GetRootDomain(FullUrl);
 
             var base64string = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(rootdomain));

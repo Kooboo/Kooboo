@@ -74,7 +74,6 @@
     <Compile Include="ApiResponse\ResponseBase.cs" />
     <Compile Include="ApiResponse\TransferResponse.cs" />
     <Compile Include="ApiRoute\ApiRouting.cs" />
-    <Compile Include="ApiSetting.cs" />
     <Compile Include="IApi.cs" />
     <Compile Include="Methods\ApiMethod.cs" />
     <Compile Include="Methods\ApiMethodManager.cs" />
