@@ -51,7 +51,7 @@ namespace Kooboo.Web.Api.Implementation
                     samesite = true; 
                 }
 
-#if Debug
+#if DEBUG
                 {
                 samesite = true; 
                 }
