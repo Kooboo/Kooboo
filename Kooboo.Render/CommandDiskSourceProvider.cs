@@ -117,12 +117,17 @@ namespace Kooboo.Render.ObjectSource
                 RelativeUrl = RelativeUrl.Substring(1);
             }
             route = "/" + RelativeUrl;
-            if(searchfolders == null)
+
+            string fullpath = RenderHelper.CombinePath(root, route);
+            string Filename = FindFile(fullpath, extensions);
+            if ((searchfolders == null)||(!string.IsNullOrEmpty(Filename)))
             {
-                return RenderHelper.CombinePath(root, route);
+                return Filename;
             }
+
             return ExtendViewSearch(root, route, searchfolders, extensions);
         }
+
         public byte[] GetBinary(RenderContext context, string RelativeUrl)
         {
             string FileName = FindFileSearch(context, RelativeUrl, null,null);
@@ -166,7 +171,7 @@ namespace Kooboo.Render.ObjectSource
                 foreach (var item in this.StartPageNames)
                 {
                     string relativeurl = RenderHelper.CombinePath(RelativeUrl, item);
-                    string fullpath = RenderHelper.CombinePath(root, RelativeUrl);
+                    string fullpath = RenderHelper.CombinePath(root, relativeurl);
 
                     result = FindFile(fullpath,option.Extensions);
 
