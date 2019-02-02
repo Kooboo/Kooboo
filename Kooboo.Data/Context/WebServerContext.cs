@@ -871,9 +871,25 @@ namespace Kooboo.Data.Context
         {
             if (string.IsNullOrEmpty(location))
                 return location;
-            var segments = location.Split('/');
-
             var builder = new StringBuilder();
+            Uri uri;
+            if(Uri.TryCreate(location, UriKind.Absolute,out uri))
+            {
+                var baseUrl = uri.Scheme + "://" + uri.Authority;
+                builder.Append(baseUrl);
+                location = location.Replace(baseUrl,"");
+            }
+
+            var queryString = string.Empty;
+
+            int questionmark = location.IndexOf("?");
+            if (questionmark > -1)
+            {
+                queryString = location.Substring(questionmark);
+                location = location.Substring(0, questionmark);
+                
+            }
+            var segments = location.Split('/');
 
             for(var i=0;i<segments.Length;i++)
             {
@@ -884,6 +900,10 @@ namespace Kooboo.Data.Context
                     builder.Append("/");
                 }
                 
+            }
+            if(!string.IsNullOrEmpty(queryString))
+            {
+                builder.Append(queryString);
             }
             return builder.ToString();
         }
