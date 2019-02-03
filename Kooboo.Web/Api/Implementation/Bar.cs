@@ -69,10 +69,10 @@ namespace Kooboo.Web.Api.Implementation
             header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Sites", context), Url = AdminUrl("Sites"), Icon = "fa fa-sitemap", Count = 0, BadgeIcon = "badge-success" });
 
             header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Emails", context), Url = AdminUrl("Emails/Inbox"), Icon = "fa fa-envelope", Count = 0, BadgeIcon = "badge-primary" });
-             
-            header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Market", context), Url = "/_api/user/onlineserver", Icon = "fa fa-plug", Count = 0, BadgeIcon = "badge-primary", OpenInNewWindow = true });
 
-            header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("E-Commerce", context), Url = AdminUrl("Ecommerce"), Icon = "fa fa-shopping-cart", Count = 0, BadgeIcon = "badge-success" });
+            // header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Market", context), Url = "/_api/user/onlineserver", Icon = "fa fa-plug", Count = 0, BadgeIcon = "badge-primary", OpenInNewWindow = true });
+
+            //  header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("E-Commerce", context), Url = AdminUrl("Ecommerce"), Icon = "fa fa-shopping-cart", Count = 0, BadgeIcon = "badge-success" });
 
             header.Email.Count = unreadCount;
 
@@ -231,7 +231,7 @@ namespace Kooboo.Web.Api.Implementation
                 new MenuItem { Name = Hardcoded.GetValue("SiteMirror", call.Context), Icon = "icon fa fa-sitemap", Url = AdminUrl("Domains/SiteMirror") },
 
              }.ToList();
- 
+
             return menus;
         }
 
@@ -239,8 +239,8 @@ namespace Kooboo.Web.Api.Implementation
         {
             return new MenuItem[]
             {
-                new MenuItem { Name = Hardcoded.GetValue("Assembly", call.Context), Icon = "fa fa-flash", Url = AdminUrl("Extensions/Assembly") },
-                new MenuItem { Name = Hardcoded.GetValue("DataSource", call.Context), Icon = "fa fa-flash", Url = AdminUrl("Extensions/DataSource") }
+               // new MenuItem { Name = Hardcoded.GetValue("Assembly", call.Context), Icon = "fa fa-flash", Url = AdminUrl("Extensions/Assembly") },
+               // new MenuItem { Name = Hardcoded.GetValue("DataSource", call.Context), Icon = "fa fa-flash", Url = AdminUrl("Extensions/DataSource") }
             }.ToList();
         }
 
@@ -288,10 +288,10 @@ namespace Kooboo.Web.Api.Implementation
             if (call.WebSite != null && call.WebSite.EnableFrontEvents)
             {
                 var eventmenus = SiteMenu_Events(call);
-                if (eventmenus !=null && eventmenus.Items.Count()>0)
+                if (eventmenus != null && eventmenus.Items.Count() > 0)
                 {
                     sysmenu.Items.Add(eventmenus);
-                }       
+                }
             }
 
             items.Add(sysmenu);
@@ -336,22 +336,22 @@ namespace Kooboo.Web.Api.Implementation
                 }
             });
 
-            items.Add(new MenuItem
-            {
-                Name = Hardcoded.GetValue("E-Commerce", context),
-                Icon = "icon fa fa-shopping-cart",
-                Items =
-                {
-                    new MenuItem { Name = Hardcoded.GetValue("Products management", context), Url = AdminUrl("ECommerce/Products", siteDb) },
-                    new MenuItem { Name = Hardcoded.GetValue("Product types", context), Url = AdminUrl("ECommerce/Product/Types", siteDb) },
-                    new MenuItem { Name = Hardcoded.GetValue("Product categories", context), Url = AdminUrl("ECommerce/Product/Categories", siteDb) },
-                    new MenuItem { Name = Hardcoded.GetValue("Customers", context), Url = AdminUrl("ECommerce/Product/Categories1", siteDb) },
-                    new MenuItem { Name = Hardcoded.GetValue("Orders", context), Url = AdminUrl("ECommerce/Product/Categories2", siteDb) },
-                    new MenuItem { Name = Hardcoded.GetValue("Marketing", context), Url = AdminUrl("ECommerce/Product/Categories3", siteDb) },
-                    new MenuItem { Name = Hardcoded.GetValue("Reports", context), Url = AdminUrl("ECommerce/Product/Categories4", siteDb) },
-                    new MenuItem { Name = Hardcoded.GetValue("Settings", context), Url = AdminUrl("ECommerce/Product/Categories5", siteDb) }
-                }
-            });
+            //items.Add(new MenuItem
+            //{
+            //    Name = Hardcoded.GetValue("E-Commerce", context),
+            //    Icon = "icon fa fa-shopping-cart",
+            //    Items =
+            //    {
+            //        new MenuItem { Name = Hardcoded.GetValue("Products management", context), Url = AdminUrl("ECommerce/Products", siteDb) },
+            //        new MenuItem { Name = Hardcoded.GetValue("Product types", context), Url = AdminUrl("ECommerce/Product/Types", siteDb) },
+            //        new MenuItem { Name = Hardcoded.GetValue("Product categories", context), Url = AdminUrl("ECommerce/Product/Categories", siteDb) },
+            //        new MenuItem { Name = Hardcoded.GetValue("Customers", context), Url = AdminUrl("ECommerce/Product/Categories1", siteDb) },
+            //        new MenuItem { Name = Hardcoded.GetValue("Orders", context), Url = AdminUrl("ECommerce/Product/Categories2", siteDb) },
+            //        new MenuItem { Name = Hardcoded.GetValue("Marketing", context), Url = AdminUrl("ECommerce/Product/Categories3", siteDb) },
+            //        new MenuItem { Name = Hardcoded.GetValue("Reports", context), Url = AdminUrl("ECommerce/Product/Categories4", siteDb) },
+            //        new MenuItem { Name = Hardcoded.GetValue("Settings", context), Url = AdminUrl("ECommerce/Product/Categories5", siteDb) }                    
+            //    }
+            //});
 
             items.Add(new MenuItem
             {
@@ -359,8 +359,8 @@ namespace Kooboo.Web.Api.Implementation
                 Icon = "icon fa fa-database",
                 Items =
                 {
-                    new MenuItem { Name = Hardcoded.GetValue("KB_localDB",context), Items = SiteMenu_SubDatabase(call) },
-                    new MenuItem { Name = Hardcoded.GetValue("Oracle_DB",context), Items = SiteMenu_SubDatabase(call) }
+                    new MenuItem { Name = Hardcoded.GetValue("Table",context), Url = AdminUrl("Storage/Database", siteDb) },
+                    new MenuItem { Name = Hardcoded.GetValue("Key-Value",context), Url = AdminUrl("Storage/KeyValue", siteDb) }
                 }
             });
 
@@ -468,17 +468,6 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
             return group;
-        }
-
-        private List<MenuItem> SiteMenu_SubDatabase(ApiCall call)
-        {
-            SiteDb siteDb = call.Context.WebSite.SiteDb();
-            var context = call.Context;
-            return new List<MenuItem>
-            {
-                 new MenuItem { Name = Hardcoded.GetValue("Table",context), Url = AdminUrl("Storage/Database", siteDb) },
-                 new MenuItem { Name = Hardcoded.GetValue("Key-Value",context), Url = AdminUrl("Storage/KeyValue", siteDb) }
-            };
         }
 
         private List<MenuItem> SiteMenu_SubContent(User user, SiteDb siteDb)
