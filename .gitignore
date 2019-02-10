@@ -1,4 +1,5 @@
-/.vs/
+﻿/.vs/
+.vs/
 /published/
 /packages/
 
@@ -19,4 +20,3 @@ bld/
 /Kooboo.Web/Mailing
 
 *.csproj.user
-/新建文件夹
