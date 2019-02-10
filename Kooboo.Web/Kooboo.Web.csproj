@@ -199,6 +199,9 @@
     <Compile Include="JsTest\JsTestMiddleWare.cs" />
     <Compile Include="JsTest\JsTestOption.cs" />
     <Compile Include="JQL\CommandExecutor.cs" />
+    <Compile Include="Module\ISiteModuleApi.cs" />
+    <Compile Include="Module\ModuleApiContainer.cs" />
+    <Compile Include="Module\ModuleApiHelper.cs" />
     <Compile Include="Security\ActionControl.cs" />
     <Compile Include="Security\AccessControl.cs" />
     <Compile Include="Security\SslProvider.cs" />
@@ -335,6 +338,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Api\Implementation\Module\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>

@@ -15,6 +15,8 @@ namespace Kooboo.Api
         IApi Get(string ModelName); 
 
         string ApiPrefix { get; set;  }
+        
+        Func<ApiCall, ApiMethod> GetMethod { get; set; }
        
     } 
 }

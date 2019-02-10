@@ -15,6 +15,7 @@ namespace Kooboo.Api
         public static IResponse Execute(ApiCall call, IApiProvider apiProvider)
         {
             var apiobject = apiProvider.Get(call.Command.ObjectType);
+
             if (apiobject == null)
             {
                 var result = new JsonResponse() { Success = false };
@@ -30,6 +31,10 @@ namespace Kooboo.Api
                 result.Messages.Add(Hardcoded.GetValue("Api method Not Found", call.Context));
                 return result;
             }
+
+
+
+
 
             if (call.IsFake)
             {
