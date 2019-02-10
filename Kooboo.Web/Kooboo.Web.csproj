@@ -1371,6 +1371,8 @@
     <Content Include="_Admin\View\Sites\Transferring.js" />
     <Content Include="_Admin\View\Storage\Database.html" />
     <Content Include="_Admin\View\Storage\Database.js" />
+    <Content Include="_Admin\View\Storage\KBlocalDB\Database.html" />
+    <Content Include="_Admin\View\Storage\KBlocalDB\Database.js" />
     <Content Include="_Admin\View\Storage\Database\Columns.html" />
     <Content Include="_Admin\View\Storage\Database\Columns.js" />
     <Content Include="_Admin\View\Storage\Database\Data.html" />
@@ -1379,8 +1381,8 @@
     <Content Include="_Admin\View\Storage\Database\EditData.js" />
     <Content Include="_Admin\View\Storage\Files.html" />
     <Content Include="_Admin\View\Storage\Files.js" />
-    <Content Include="_Admin\View\Storage\KeyValue.html" />
-    <Content Include="_Admin\View\Storage\KeyValue.js" />
+    <Content Include="_Admin\View\Storage\KBlocalDB\KeyValue.html" />
+    <Content Include="_Admin\View\Storage\KBlocalDB\KeyValue.js" />
     <Content Include="_Admin\View\Sync.html" />
     <Content Include="_Admin\View\Sync.js" />
     <Content Include="_Admin\View\Sync\List.html" />

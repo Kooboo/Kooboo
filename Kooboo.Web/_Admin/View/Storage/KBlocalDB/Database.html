@@ -1,0 +1,72 @@
+<!-- #layout name=blank -->
+<div class="page-header">
+    <h1 class="title">Database</h1>
+</div>
+<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+    name: 'SITES'
+},{
+    name: 'DASHBOARD'
+},{
+    name: Kooboo.text.common.Database
+}]}"></div>
+<div class="navbar navbar-default">
+    <div class="container-fluid">
+        <a data-bind="click: onShowCreateTableModal" class="btn green navbar-btn">Create Table</a>
+        <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
+    </div>
+</div>
+<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
+<div data-bind="modal: createTableModal" class="modal fade" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: resetTableModal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Create table</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">Table name</label>
+                        <div class="col-md-9">
+                            <input type="text" data-bind="value: newTableName, error: newTableName" class="form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="click: onSaveNewTable">Save</button>
+                <button class="btn gray" data-bind="click: resetTableModal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" data-bind="modal: columnsModal" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" data-bind="click: resetColumnsModal"><i class="fa fa-close"></i></button>
+                <h4 class="modal-title">Column settings</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal" data-bind="foreach: columns">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn green" data-bind="click: onSaveColumns">Save</button>
+                <button class="btn gray" data-bind="click: resetColumnsModal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function() {
+        Kooboo.loadJS([
+            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/tableModel.js",
+            "/_Admin/Scripts/kooboo/Guid.js",
+            "/_Admin/Scripts/components/kbTable.js",
+        ])
+    })();
+</script>
+<script src="/_Admin/View/Storage/Database.js"></script>

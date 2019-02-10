@@ -129,6 +129,24 @@ namespace Kooboo.Data.Models
             }
         }
 
+        private Dictionary<string, string> _databases;
+
+        public Dictionary<string,string> Databases
+        {
+            get
+            {
+                if (_databases == null)
+                {
+                    _databases = new Dictionary<string, string>();
+                }
+                return _databases;
+            }
+            set
+            {
+                _databases = value;
+            }
+        }
+
         private Dictionary<string, string> _sitepath;
 
         public Dictionary<string, string> SitePath

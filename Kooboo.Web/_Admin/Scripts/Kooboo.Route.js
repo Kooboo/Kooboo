@@ -117,6 +117,9 @@
             EditDataPage: GetRoute("Storage/Database/EditData"),
             ColumnsPage: GetRoute("Storage/Database/Columns")
         },
+        KBlocalDB: {
+            ListPage: GetRoute("Storage/KBlocalDB/Database")
+        },
         TextContent: {
             ListPage: GetRoute("Contents/TextContents"),
             DetailPage: GetRoute("Contents/Content"),

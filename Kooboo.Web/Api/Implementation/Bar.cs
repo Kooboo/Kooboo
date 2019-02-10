@@ -353,15 +353,39 @@ namespace Kooboo.Web.Api.Implementation
                 }
             });
 
+
+            List<string> otherdatabases = new List<string>();
+            otherdatabases.Add("oracle");
+            otherdatabases.Add("mssql");
+            otherdatabases.Add("mysql");
+            otherdatabases.Add("sqlite");
+            foreach (var item in siteDb.WebSite.Databases.Keys.ToList())
+            {
+               otherdatabases.Add(item);
+            }
+
             items.Add(new MenuItem
             {
                 Name = Hardcoded.GetValue("Database", context),
                 Icon = "icon fa fa-database",
+                
                 Items =
                 {
-                    new MenuItem { Name = Hardcoded.GetValue("KB_localDB",context), Items = SiteMenu_SubDatabase(call) },
-                    new MenuItem { Name = Hardcoded.GetValue("Oracle_DB",context), Items = SiteMenu_SubDatabase(call) }
-                }
+                    new MenuItem { Name = Hardcoded.GetValue("Setting",context),Url = AdminUrl("Storage/Database", siteDb) },
+                    new MenuItem { Name = Hardcoded.GetValue("KB_localDB",context),
+                                   Items = new List<MenuItem>{
+                                                   new MenuItem { Name = Hardcoded.GetValue("Table",context), Url = AdminUrl("Storage/KBlocalDB/Database", siteDb) },
+                                                   new MenuItem { Name = Hardcoded.GetValue("Key-Value",context), Url = AdminUrl("Storage/KBlocalDB/KeyValue", siteDb) }
+                                                 }
+                                  },
+                    new MenuItem { Name = Hardcoded.GetValue("Other_DB",context),
+                                   Items = otherdatabases.Select(it => new MenuItem
+                                                {
+                                                    Name = it,
+                                                    Url = AdminUrl("Storage/Database", siteDb)
+                                                }).ToList()
+                                   }
+                 }
             });
 
             if (siteDb.WebSite.EnableMultilingual)
@@ -468,17 +492,6 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
             return group;
-        }
-
-        private List<MenuItem> SiteMenu_SubDatabase(ApiCall call)
-        {
-            SiteDb siteDb = call.Context.WebSite.SiteDb();
-            var context = call.Context;
-            return new List<MenuItem>
-            {
-                 new MenuItem { Name = Hardcoded.GetValue("Table",context), Url = AdminUrl("Storage/Database", siteDb) },
-                 new MenuItem { Name = Hardcoded.GetValue("Key-Value",context), Url = AdminUrl("Storage/KeyValue", siteDb) }
-            };
         }
 
         private List<MenuItem> SiteMenu_SubContent(User user, SiteDb siteDb)
