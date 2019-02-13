@@ -55,6 +55,11 @@
   <ItemGroup>
     <Compile Include="Constants.cs" />
     <Compile Include="CommandDiskSourceProvider.cs" />
+    <Compile Include="Controller\IController.cs" />
+    <Compile Include="Controller\Response\BinaryResponse.cs" />
+    <Compile Include="Controller\Response\RedirectResponse.cs" />
+    <Compile Include="Controller\Response\ResponseBase.cs" />
+    <Compile Include="Controller\Response\StringResponse.cs" />
     <Compile Include="ServerSide\IServerTask.cs" />
     <Compile Include="RenderMiddleWare.cs" />
     <Compile Include="DirectoryRender.cs" />

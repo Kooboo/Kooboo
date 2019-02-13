@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Module
+namespace Kooboo.Render.Controller
 {
-  public  interface ISiteModuleApi
+   public interface IController
     {
-        string ModelName { get;  }
+         
     }
 }

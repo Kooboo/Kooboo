@@ -1,9 +1,7 @@
 ﻿using Kooboo.Lib.Reflection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection.Emit;
 
 namespace Kooboo.Module
 { 
@@ -26,10 +24,14 @@ namespace Kooboo.Module
                              
                             var alldefinedTypes = AssemblyLoader.LoadTypeByInterface(typeof(ISiteModuleApi));
                             foreach (var item in alldefinedTypes)
-                            { 
-                             
-                             // Activator.CreateInstance(item, )
-                              // AddApi(_list, instance);
+                            {
+                                var name = GetNameProperty(item, "ModelName");
+                                if (!string.IsNullOrWhiteSpace(name))
+                                {
+                                    _list.Add(name, item);
+                                } 
+                               // Activator.CreateInstance(item, )
+                               // AddApi(_list, instance);
                             } 
                         }
                     }
@@ -37,29 +39,29 @@ namespace Kooboo.Module
                 return _list;
             }
         }
-  
-     
+      
+        public static Type GetType(string ModelName)
+        {  
+            if (List.ContainsKey(ModelName))
+            {
 
-        // this seems like only for unit test now. 
-        public static void AddApi(Type apitype)
-        {
-            //lock (_locker)
-            //{
-            //    var instance = Activator.CreateInstance(apitype) as IApi;
-            //    if (instance != null)
-            //    {
-            //        var currentlist = List;
-            //        AddApi(currentlist, instance);
-            //    }
-            //}
-        }
-
-        public static Kooboo.Api.ApiMethod GetApi(string ModelName)
-        { 
+            }
             return null;
         }
 
+        public static string GetNameProperty(Type objType, string PropertyName)
+        { 
+            var method = objType.GetProperty(PropertyName).GetGetMethod();
+            var dynamicMethod = new DynamicMethod("meide", typeof(string),
+                                                  Type.EmptyTypes);
+            var generator = dynamicMethod.GetILGenerator();
+            generator.Emit(OpCodes.Ldnull);
+            generator.Emit(OpCodes.Call, method);
+            generator.Emit(OpCodes.Ret);
+            var silly = (Func<string>)dynamicMethod.CreateDelegate(
+                           typeof(Func<string>)); 
+            return silly(); 
+        }  
+        
     }
-
-
 }

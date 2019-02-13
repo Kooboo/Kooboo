@@ -512,6 +512,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\CollectionWrapper.cs" />
     <Compile Include="Reflection\Dynamic.cs" />
+    <Compile Include="Reflection\ParameterHelper.cs" />
     <Compile Include="Reflection\TypeHelper.cs" />
     <Compile Include="Security\Encryption.cs" />
     <Compile Include="Security\Hash.cs" />

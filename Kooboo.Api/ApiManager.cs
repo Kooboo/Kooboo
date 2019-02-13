@@ -1,6 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Data.Models;
+//All rights reserved. 
 using Kooboo.Api.ApiResponse;
 using System;
 using System.Collections.Generic;
@@ -14,27 +13,27 @@ namespace Kooboo.Api
     {
         public static IResponse Execute(ApiCall call, IApiProvider apiProvider)
         {
+            ApiMethod apimethod = null; 
+
             var apiobject = apiProvider.Get(call.Command.ObjectType);
 
-            if (apiobject == null)
+            if (apiobject != null)
             {
-                var result = new JsonResponse() { Success = false };
-                result.Messages.Add(Hardcoded.GetValue("Object type Not Found", call.Context));
-                return result;
+                apimethod = Methods.ApiMethodManager.Get(apiobject, call.Command.Method); 
             }
 
-            var apimethod = Methods.ApiMethodManager.Get(apiobject, call.Command.Method);
-
+            if (apimethod == null && apiProvider.GetMethod!=null)
+            {
+                apimethod = apiProvider.GetMethod(call); 
+            }
+          
             if (apimethod == null)
             {
                 var result = new JsonResponse() { Success = false };
                 result.Messages.Add(Hardcoded.GetValue("Api method Not Found", call.Context));
                 return result;
             }
-
-
-
-
+              
 
             if (call.IsFake)
             {

@@ -96,13 +96,11 @@ namespace Kooboo.Data.Context
             if (user == null)
             {
                 user = _GetUserFromCookie(request);
-            }
-
+            } 
             //if (user != null && user.PasswordHash == default(Guid))
             //{
-            //    return null;
-            //}
-
+            //  return null;
+            //} 
             return user;
         }
 
