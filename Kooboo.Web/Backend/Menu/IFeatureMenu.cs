@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Render.Controller
+namespace Kooboo.Web.Backend.Menu
 {
-   public interface IController
+  public interface IFeatureMenu : IMenu
     {
-         
+
     }
 }
