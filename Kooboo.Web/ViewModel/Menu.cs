@@ -52,43 +52,7 @@ namespace Kooboo.Web.ViewModel
                 _items = value;
             }
         }
-
-        private string SplitName(string name, bool toLower = true)
-        {
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < name.Length; i++)
-            {
-                var ch = name[i];
-                if (ch >= 'A' && ch <= 'Z' && i > 0)
-                {
-                    var prev = name[i - 1];
-                    if (prev != ' ')
-                    {
-                        if (prev >= 'A' && prev <= 'Z')
-                        {
-                            if (i < name.Length - 1)
-                            {
-                                var next = name[i + 1];
-                                if (next >= 'a' && next <= 'z')
-                                {
-                                    builder.Append(' ');
-                                }
-                            }
-                        }
-                        else
-                        {
-                            builder.Append(' ');
-                        }
-                    }
-                    builder.Append(toLower ? ch.ToString().ToLower() : ch.ToString());
-                }
-                else
-                {
-                    builder.Append(ch);
-                }
-            }
-            return builder.ToString();
-        }
+         
     }
 
     public class GlobalMenuItem : MenuItem

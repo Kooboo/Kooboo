@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Web.Backend.Menu
 {
-  public  interface ITopMenu
-    {
-
-
-
+  public  interface ITopMenu : IMenu
+    { 
+       string BadgeIcon { get; set; }
     }
 }

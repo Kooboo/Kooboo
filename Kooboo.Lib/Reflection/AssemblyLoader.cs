@@ -66,7 +66,6 @@ namespace Kooboo.Lib.Reflection
             List<string> subfolders = new List<string>();
             subfolders.Add("dll");
             subfolders.Add("modules");
-            subfolders.Add("module");
             subfolders.Add("packages"); 
 
             foreach (var item in subfolders)
