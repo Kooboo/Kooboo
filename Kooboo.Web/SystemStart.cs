@@ -30,8 +30,7 @@ namespace Kooboo.Web
             };
 
             // ensure that WindowsHost is working . 
-
-            
+             
 
             //foreach (var item in Data.GlobalDb.Dlls.All())
             //{
@@ -116,8 +115,7 @@ namespace Kooboo.Web
 
                             _middlewares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
 
-                            //_middlewares.Add(new Kooboo.Web.Frontend.SslCertMiddleWare());
-
+                            //_middlewares.Add(new Kooboo.Web.Frontend.SslCertMiddleWare()); 
                             _middlewares.Add(new EndMiddleWare());
                         }
                     }

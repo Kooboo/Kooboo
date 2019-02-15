@@ -15,7 +15,7 @@ using Kooboo.Lib.Helper;
 
 namespace Kooboo.Sites.Repository
 {
-    public class SiteRepositoryBase<TValue> : IRepository, IRepository<TValue> where TValue : class, ISiteObject
+    public class SiteRepositoryBase<TValue>: IRepository, IRepository<TValue> where TValue : class, ISiteObject
     {
         private object _locker = new object();
 
@@ -69,7 +69,7 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        internal void init()
+        public void init()
         {
 
             this.UseCache = Cache.WebSiteCache.EnableCache(this.WebSite, this.SiteObjectType);

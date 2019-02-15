@@ -25,6 +25,7 @@ namespace Kooboo.Api
         }
 
         public string ApiPrefix { get; set; } = "/_api";
+        public Func<ApiCall, ApiMethod> GetMethod { get; set; }
 
         public void Set(Type apitype)
         {

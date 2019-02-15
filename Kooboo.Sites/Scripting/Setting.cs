@@ -20,7 +20,7 @@ namespace Kooboo.Sites.Scripting
 
         public static void SetDebugOption(Jint.Options option)
         {
-            option.MaxStatements(500);
+            option.MaxStatements(2000);
             option.Strict(false);
             option.TimeoutInterval(new TimeSpan(0, 0, 150000));
             option.LimitRecursion(30);

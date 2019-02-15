@@ -50,8 +50,7 @@ namespace Kooboo.Render.ObjectSource
 
             return null;
         }
-
-
+         
         private string FindFile(string FullPath)
         {
             if (System.IO.File.Exists(FullPath))
@@ -61,21 +60,20 @@ namespace Kooboo.Render.ObjectSource
 
             var fileinfo = new System.IO.FileInfo(FullPath);
 
-            if (!fileinfo.Directory.Exists)
+            if (fileinfo.Directory.Exists)
             {
-                return null;
-            }
-
-            var dir = fileinfo.Directory;
-            if (!string.IsNullOrEmpty(fileinfo.Name))
-            {
-                var files = dir.GetFiles(fileinfo.Name + ".*", SearchOption.TopDirectoryOnly);
-                if (files != null && files.Count() > 0)
+                var dir = fileinfo.Directory;
+                if (!string.IsNullOrEmpty(fileinfo.Name))
                 {
-                    return files[0].FullName;
+                    var files = dir.GetFiles(fileinfo.Name + ".*", SearchOption.TopDirectoryOnly);
+                    if (files != null && files.Count() > 0)
+                    {
+                        return files[0].FullName;
+                    }
                 }
             }
-            return null;
+
+            return Kooboo.Render.Controller.ModuleFile.FindFile(FullPath);  
         }
 
         private string ExtendViewSearch(string root, string relative, List<string> searchfolders)
@@ -114,8 +112,7 @@ namespace Kooboo.Render.ObjectSource
             }
             return null;
         }
-
-
+        
 
         public string GetFullFileName(RenderContext context, string RelativeUrl)
         {
