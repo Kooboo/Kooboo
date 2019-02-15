@@ -9,7 +9,8 @@ using Kooboo.Web.ViewModel;
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
 using Kooboo.Data.Language;
-using Kooboo.Mail;
+using Kooboo.Sites.ViewModel;
+using Kooboo.Web.CmsMenu;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -51,30 +52,18 @@ namespace Kooboo.Web.Api.Implementation
         public virtual HeaderMenu Header(ApiCall call)
         {
             var user = call.Context.User;
-
-            var context = call.Context;
-            // Email unread
-            var db = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
-
-            var query = db.Messages.FolderQuery(Folder.Inbox).UseColumnData();
-            var unreadCount = query.Count();
-
             HeaderMenu header = new HeaderMenu();
 
-            if (user.IsAdmin)
+            var menus = MenuContainer.SubMenus(typeof(ITopMenu));
+
+            foreach (var item in menus)
             {
-                header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Domains", context), Url = AdminUrl("Domains"), Count = 0, Icon = "fa fa-at", BadgeIcon = "badge-info" });
+                header.Menu.Add(new CmsMenuViewModel(item, call.Context));
             }
 
-            header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Sites", context), Url = AdminUrl("Sites"), Icon = "fa fa-sitemap", Count = 0, BadgeIcon = "badge-success" });
+            //header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Market", context), Url = "/_api/user/onlineserver", Icon = "fa fa-plug", Count = 0, BadgeIcon = "badge-primary", OpenInNewWindow = true });
 
-            header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Emails", context), Url = AdminUrl("Emails/Inbox"), Icon = "fa fa-envelope", Count = 0, BadgeIcon = "badge-primary" });
-
-            // header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Market", context), Url = "/_api/user/onlineserver", Icon = "fa fa-plug", Count = 0, BadgeIcon = "badge-primary", OpenInNewWindow = true });
-
-            //  header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("E-Commerce", context), Url = AdminUrl("Ecommerce"), Icon = "fa fa-shopping-cart", Count = 0, BadgeIcon = "badge-success" });
-
-            header.Email.Count = unreadCount;
+            //header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("E-Commerce", context), Url = AdminUrl("Ecommerce"), Icon = "fa fa-shopping-cart", Count = 0, BadgeIcon = "badge-success" });
 
             header.User = new DisplayName() { name = user.UserName, id = user.UserName, Language = user.Language };
 
@@ -104,9 +93,18 @@ namespace Kooboo.Web.Api.Implementation
                 Items = SiteMenu_Advance(call)
             });
 
+            // additional menu for the extension.
+
+            var sitemenus = Kooboo.Web.CmsMenu.MenuContainer.SubMenus(typeof(ISiteMenu));
+            var oldmenues = sitemenus.Select(o => MenuHelper.ConvertToOld(o, call.Context)).ToList();
+
+            if (oldmenues != null && oldmenues.Any())
+            {
+                menus.AddRange(oldmenues);
+            }
+             
             if (user.IsAdmin)
             {
-
                 return menus;
             }
             else
@@ -125,6 +123,11 @@ namespace Kooboo.Web.Api.Implementation
                     return menus;
                 }
             }
+
+        }
+
+        private void AppendImplementation(List<MenuItem> menus)
+        {
 
         }
 
@@ -171,7 +174,7 @@ namespace Kooboo.Web.Api.Implementation
                 Menu.Items.RemoveAt(item);
             }
         }
-         
+
         public void RemoveUnAccessSub(MenuItem Menu, Kooboo.Sites.Authorization.EnumUserRole userRole)
         {
             List<int> toremove = new List<int>();
@@ -232,15 +235,6 @@ namespace Kooboo.Web.Api.Implementation
              }.ToList();
 
             return menus;
-        }
-
-        public List<MenuItem> ExtensionMenu(ApiCall call)
-        {
-            return new MenuItem[]
-            {
-               // new MenuItem { Name = Hardcoded.GetValue("Assembly", call.Context), Icon = "fa fa-flash", Url = AdminUrl("Extensions/Assembly") },
-               // new MenuItem { Name = Hardcoded.GetValue("DataSource", call.Context), Icon = "fa fa-flash", Url = AdminUrl("Extensions/DataSource") }
-            }.ToList();
         }
 
         private List<MenuItem> SiteMenu_Feature(ApiCall call)
@@ -560,7 +554,7 @@ namespace Kooboo.Web.Api.Implementation
 
     public class HeaderMenu
     {
-        public List<GlobalMenuItem> Menu { get; set; } = new List<GlobalMenuItem>();
+        public List<CmsMenuViewModel> Menu { get; set; } = new List<CmsMenuViewModel>();
 
         public DisplayName User { get; set; }
 

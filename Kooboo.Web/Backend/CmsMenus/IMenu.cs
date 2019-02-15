@@ -6,17 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Web.Backend.Menu
+namespace Kooboo.Web.CmsMenu
 {
     public interface IMenu
     {
-        string Name { get; set; }
+        string Name { get;  }
 
         string GetDisplayName(RenderContext Context);
 
-        string Icon { get; set; }
+        string Icon { get;  }
 
-        string Url { get; set; }
+        string Url { get;  }
+
+        int Order { get;   }
 
         bool CanShow(RenderContext context);
 

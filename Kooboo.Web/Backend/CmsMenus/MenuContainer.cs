@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Web.Backend.Menu
+namespace Kooboo.Web.CmsMenu
 {
     public static class MenuContainer
     {
@@ -53,6 +53,11 @@ namespace Kooboo.Web.Backend.Menu
 
         public static List<IMenu> SubMenus(Type type)
         {
+            if (type.IsInterface)
+            {
+                return SubMenusByInterface(type); 
+            }
+
             List<IMenu> result = new List<IMenu>(); 
 
             foreach (var item in Items)
@@ -70,7 +75,33 @@ namespace Kooboo.Web.Backend.Menu
                     result.Add(item); 
                 }
             }
-            return null; 
+            return result.OrderBy(o=>o.Order).ToList(); 
         }
+
+
+        public static List<IMenu> SubMenusByInterface(Type type)
+        {
+            if (!type.IsInterface)
+            {
+                return SubMenus(type); 
+            }
+            List<IMenu> result = new List<IMenu>();
+
+            foreach (var item in Items)
+            {
+
+                var itemtype = item.GetType(); 
+
+                if (Lib.Reflection.TypeHelper.HasInterface(itemtype, type))
+                {
+                   if (itemtype.BaseType == typeof(object))
+                    {
+                        result.Add(item);
+                    } 
+                }
+            }
+            return result.OrderBy(o=>o.Order).ToList();
+        }
+        
     }
 }

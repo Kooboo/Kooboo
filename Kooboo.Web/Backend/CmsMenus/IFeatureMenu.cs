@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Web.Backend.Menu
+namespace Kooboo.Web.CmsMenu
 {
   public interface IFeatureMenu : IMenu
     {

@@ -1,12 +1,11 @@
 ﻿using Kooboo.Data.Context;
-using Kooboo.Web.Backend.Menu;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Web.Menu.TopMenus
+namespace Kooboo.Web.CmsMenu
 {
   
 
@@ -42,6 +41,8 @@ namespace Kooboo.Web.Menu.TopMenus
         }
 
         public string BadgeIcon { get; set; }
+
+        public int Order => 5;
 
         public string GetDisplayName(RenderContext Context)
         {
