@@ -11,10 +11,11 @@ namespace Kooboo.Render.Controller
     {
         static ModuleFile()
         {
-            ModuleRoot = System.IO.Path.Combine(Data.AppSettings.RootPath, "modules");
+            ModuleRoots.Add(System.IO.Path.Combine(Data.AppSettings.RootPath, "modules"));
+            ModuleRoots.Add(System.IO.Path.Combine(Data.AppSettings.RootPath, "view"));
         }
 
-        public static string ModuleRoot { get; set; }
+        public static List<string> ModuleRoots { get; set; } = new List<string>();
 
         public static string AdminPath { get; set; } = "_admin";
 
@@ -52,14 +53,19 @@ namespace Kooboo.Render.Controller
                 }
 
                 var paths = relative.Split(seps, StringSplitOptions.RemoveEmptyEntries).ToList();
-                paths.Insert(0, ModuleRoot);  
-
-                var fullpath = System.IO.Path.Combine(paths.ToArray());
-                 
-                if (System.IO.File.Exists(fullpath))
+                foreach(var moduleRoot in ModuleRoots)
                 {
-                    return fullpath; 
+                    paths.Insert(0, moduleRoot);
+
+                    var fullpath = System.IO.Path.Combine(paths.ToArray());
+
+                    if (System.IO.File.Exists(fullpath))
+                    {
+                        return fullpath;
+                    }
+                    paths.RemoveAt(0);
                 }
+               
 
             }
 

@@ -44,7 +44,7 @@ namespace Kooboo.Module
         {  
             if (List.ContainsKey(ModelName))
             {
-
+                return List[ModelName];
             }
             return null;
         }

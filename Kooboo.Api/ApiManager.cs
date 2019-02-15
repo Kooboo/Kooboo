@@ -40,13 +40,16 @@ namespace Kooboo.Api
                 var fakedata = Lib.Development.FakeData.GetFakeValue(apimethod.ReturnType);
                 return new JsonResponse(fakedata) { Success = true };
             }
-
-            if (!ValidateRequirement(call.Command,call.Context, apiProvider))
+            if(apiobject!=null)
             {
-                var result = new JsonResponse() { Success = false };
-                result.Messages.Add(Hardcoded.GetValue("User or website not valid", call.Context));
-                return result;
+                if (!ValidateRequirement(call.Command, call.Context, apiProvider))
+                {
+                    var result = new JsonResponse() { Success = false };
+                    result.Messages.Add(Hardcoded.GetValue("User or website not valid", call.Context));
+                    return result;
+                }
             }
+            
             List<string> errors = new List<string>();
             if (!ValideAssignModel(apimethod, call, errors.Add))
             {
