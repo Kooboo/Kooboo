@@ -560,7 +560,6 @@ namespace Kooboo.Web.Api.Implementation
 
     public class HeaderMenu
     {
-
         public List<GlobalMenuItem> Menu { get; set; } = new List<GlobalMenuItem>();
 
         public DisplayName User { get; set; }
@@ -571,7 +570,5 @@ namespace Kooboo.Web.Api.Implementation
         {
             public int Count { get; set; }
         }
-
-
     }
 }

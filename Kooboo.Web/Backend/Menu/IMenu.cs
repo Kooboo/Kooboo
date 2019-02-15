@@ -1,5 +1,5 @@
 ﻿using Kooboo.Api;
-using Kooboo.Data.Context; 
+using Kooboo.Data.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +11,18 @@ namespace Kooboo.Web.Backend.Menu
     public interface IMenu
     {
         string Name { get; set; }
-         
-        string DisplayName(RenderContext Context); 
+
+        string GetDisplayName(RenderContext Context);
 
         string Icon { get; set; }
 
         string Url { get; set; }
 
-        // Does not show any more.  
-        bool Disable { get; set; }
-         
+        bool CanShow(RenderContext context);
+
         List<IMenu> Items
         {
             get; set;
-        }  
+        }
     }
 }

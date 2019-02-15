@@ -178,6 +178,15 @@
     <Compile Include="Api\Implementation\Replica.cs" />
     <Compile Include="Api\SiteApiProvider.cs" />
     <Compile Include="Backend\Events\Hanlders\HandleBindingChange.cs" />
+    <Compile Include="Backend\TopMenus\Domain.cs" />
+    <Compile Include="Backend\Menu\IFeatureMenu.cs" />
+    <Compile Include="Backend\Menu\IMenu.cs" />
+    <Compile Include="Backend\Menu\ITopMenu.cs" />
+    <Compile Include="Backend\Menu\MenuContainer.cs" />
+    <Compile Include="Backend\Menu\MenuHelper.cs" />
+    <Compile Include="Backend\Menu\MenuViewModel.cs" />
+    <Compile Include="Backend\TopMenus\Emails.cs" />
+    <Compile Include="Backend\TopMenus\Sites.cs" />
     <Compile Include="Cache\TempDownloadZip.cs" />
     <Compile Include="DashBoard\DashBoardManager.cs" />
     <Compile Include="DashBoard\MyVisitor\FrontVisitors.cs" />

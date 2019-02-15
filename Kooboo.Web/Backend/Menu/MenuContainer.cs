@@ -37,10 +37,10 @@ namespace Kooboo.Web.Backend.Menu
                 return _items; 
             } 
         }
-         
-
+          
         public static IMenu GetMenu(Type type)
         {
+            // TODO: also do the submenu. 
             foreach (var item in Items)
             {
                 if (item.GetType() == type)
