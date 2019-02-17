@@ -89,7 +89,7 @@ namespace Kooboo.Render.ObjectSource
                     }
                 }
             }
-            return null;
+            return Kooboo.Render.Controller.ModuleFile.FindFile(FullPath);
         }
 
         private string ExtendViewSearch(string root, string relative, List<string> searchfolders, List<string> extensions)
@@ -139,6 +139,8 @@ namespace Kooboo.Render.ObjectSource
             }
             return null;
         }
+
+
 
         public string GetFullFileName(RenderContext context, string RelativeUrl)
         {

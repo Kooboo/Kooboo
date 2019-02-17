@@ -31,11 +31,10 @@ namespace Kooboo.Lib.Reflection
                 }
             }
 
-            var path = AppDomain.CurrentDomain.BaseDirectory;
+            var path =  AppDomain.CurrentDomain.BaseDirectory;
 
-            var alldlls = System.IO.Directory.GetFiles(path);
-
-
+            var alldlls = System.IO.Directory.GetFiles(path, "*.dll", SearchOption.TopDirectoryOnly);
+             
             foreach (var name in alldlls)
             {
                 string dllname = name.Substring(path.Length);
@@ -62,9 +61,39 @@ namespace Kooboo.Lib.Reflection
                     }
                 }
             }
+             
+            // load dll from modules or dll. 
+            List<string> subfolders = new List<string>();
+            subfolders.Add("dll");
+            subfolders.Add("modules");
+            subfolders.Add("packages"); 
 
-            return dlls;
+            foreach (var item in subfolders)
+            {
+                string folder = System.IO.Path.Combine(path, item); 
+                if (System.IO.Directory.Exists(folder))
+                {
+                    var allsubdlls = System.IO.Directory.GetFiles(folder, "*.dll", SearchOption.AllDirectories);
 
+                    foreach (var filename in allsubdlls)
+                    {
+                        try
+                        {
+                            var otherAssembly = Assembly.LoadFile(filename);
+                            if (otherAssembly !=null)
+                            {
+                                dlls.Add(otherAssembly);
+                            } 
+                        }
+                        catch (Exception ex)
+                        {
+ 
+                        } 
+                    } 
+
+                }
+            } 
+            return dlls; 
         }
 
         public static List<Assembly> AllAssemblies

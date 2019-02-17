@@ -1,6 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Data.Models;
+//All rights reserved. 
 using Kooboo.Api.ApiResponse;
 using System;
 using System.Collections.Generic;
@@ -14,35 +13,43 @@ namespace Kooboo.Api
     {
         public static IResponse Execute(ApiCall call, IApiProvider apiProvider)
         {
+            ApiMethod apimethod = null; 
+
             var apiobject = apiProvider.Get(call.Command.ObjectType);
-            if (apiobject == null)
+
+            if (apiobject != null)
             {
-                var result = new JsonResponse() { Success = false };
-                result.Messages.Add(Hardcoded.GetValue("Object type Not Found", call.Context));
-                return result;
+                apimethod = Methods.ApiMethodManager.Get(apiobject, call.Command.Method); 
             }
 
-            var apimethod = Methods.ApiMethodManager.Get(apiobject, call.Command.Method);
-
+            if (apimethod == null && apiProvider.GetMethod!=null)
+            {
+                apimethod = apiProvider.GetMethod(call); 
+            }
+          
             if (apimethod == null)
             {
                 var result = new JsonResponse() { Success = false };
                 result.Messages.Add(Hardcoded.GetValue("Api method Not Found", call.Context));
                 return result;
             }
+              
 
             if (call.IsFake)
             {
                 var fakedata = Lib.Development.FakeData.GetFakeValue(apimethod.ReturnType);
                 return new JsonResponse(fakedata) { Success = true };
             }
-
-            if (!ValidateRequirement(call.Command,call.Context, apiProvider))
+            if(apiobject!=null)
             {
-                var result = new JsonResponse() { Success = false };
-                result.Messages.Add(Hardcoded.GetValue("User or website not valid", call.Context));
-                return result;
+                if (!ValidateRequirement(call.Command, call.Context, apiProvider))
+                {
+                    var result = new JsonResponse() { Success = false };
+                    result.Messages.Add(Hardcoded.GetValue("User or website not valid", call.Context));
+                    return result;
+                }
             }
+            
             List<string> errors = new List<string>();
             if (!ValideAssignModel(apimethod, call, errors.Add))
             {

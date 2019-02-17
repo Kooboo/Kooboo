@@ -89,7 +89,7 @@ namespace Kooboo.Web.Spa
                     }
                 }
             }
-            return null;
+            return Kooboo.Render.Controller.ModuleFile.FindFile(FullPath);
         }
 
         private string ExtendViewSearch(string root, string relative, List<string> searchfolders, List<string> extensions)
