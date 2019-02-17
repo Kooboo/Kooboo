@@ -19,8 +19,7 @@ namespace Kooboo.Web.Modules
             if (call.WebSite !=null)
             {
                 response.Add("sitename", call.WebSite.Name); 
-            }
-
+            } 
             return response; 
         }
     }
