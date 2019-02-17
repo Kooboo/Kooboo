@@ -82,8 +82,6 @@ namespace Kooboo.Render
                     {
                         response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
                     }
-                    
-  
                      
                     break;
                 case UrlFileType.Html:
@@ -168,5 +166,7 @@ namespace Kooboo.Render
 
             return response;
         }
+         
+         
     }
 }

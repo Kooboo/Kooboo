@@ -43,6 +43,21 @@ namespace Kooboo.Web.Api
         }
 
         public string ApiPrefix { get; set; } = "/_api";
+        public Func<ApiCall, ApiMethod> GetMethod {
+            get
+            {
+                return getmethod; 
+            }
+            set
+            {
+
+            }
+        }
+
+        public ApiMethod  getmethod(ApiCall call)
+        {
+            return Kooboo.Module.ModuleApiHelper.GetApiMethod(call);  
+        }
 
         internal void AddApi(Dictionary<string, IApi> currentlist, IApi instance)
         {

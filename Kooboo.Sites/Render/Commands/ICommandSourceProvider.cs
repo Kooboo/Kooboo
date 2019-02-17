@@ -18,6 +18,6 @@ namespace Kooboo.Sites.Render.Commands
         string GetLayout(RenderContext context, string RelativeUrl);
 
         System.IO.Stream GetStream(RenderContext context, string RelativeUrl);
-
+        
     }
 }

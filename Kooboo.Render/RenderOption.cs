@@ -1,4 +1,7 @@
-﻿using System;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Render.Response;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -49,6 +52,8 @@ namespace Kooboo.Render
                 _ShouldTryHandle = value;
             }
         }
+
+        public Func<Data.Context.RenderContext, string, ResponseBase> Render { get; set; }
 
         private string _layoutfolder;
         public string LayoutFolder
@@ -172,6 +177,8 @@ namespace Kooboo.Render
         public bool EnableRenderCache { get; set; }
 
         public string MultilingualJsFile { get; set; }
+
+
     }
 
     public static class DefaultOptions

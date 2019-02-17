@@ -78,6 +78,11 @@
     <Compile Include="Cache\INotifyCacheExpired.cs" />
     <Compile Include="Collections\Collection.cs" />
     <Compile Include="Collections\QueryString.cs" />
+    <Compile Include="CrossPlatform\Helper.cs" />
+    <Compile Include="CrossPlatform\ICrossPlatform.cs" />
+    <Compile Include="CrossPlatform\IImage.cs" />
+    <Compile Include="CrossPlatform\Size.cs" />
+    <Compile Include="CrossPlatform\Windows\WindowsImage.cs" />
     <Compile Include="DataType\MultiItems.cs" />
     <Compile Include="Development\FakeData.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
@@ -511,6 +516,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\CollectionWrapper.cs" />
     <Compile Include="Reflection\Dynamic.cs" />
+    <Compile Include="Reflection\ParameterHelper.cs" />
     <Compile Include="Reflection\TypeHelper.cs" />
     <Compile Include="Security\Encryption.cs" />
     <Compile Include="Security\Hash.cs" />

@@ -1,8 +1,8 @@
 ﻿using Kooboo.Data.Context;
 using System.Threading.Tasks;
-using Kooboo.Data.Server;
-using System.IO;
-using System.Collections.Generic; 
+using Kooboo.Data.Server; 
+using System.Collections.Generic;
+using Kooboo.Render.Response;
 
 namespace Kooboo.Render
 {
@@ -40,23 +40,23 @@ namespace Kooboo.Render
                 await Next.Invoke(context); return;
             }
 
-            if (this.options.InitData!=null)
+            if (this.options.InitData != null)
             {
                 foreach (var item in this.options.InitData)
                 {
-                    context.DataContext.Push(item.Key, item.Value); 
+                    context.DataContext.Push(item.Key, item.Value);
                 }
             }
 
-            Kooboo.Data.Models.User currentUser = null; 
+            Kooboo.Data.Models.User currentUser = null;
 
-            if (context.User !=null)
+            if (context.User != null)
             {
-                currentUser = context.User; 
+                currentUser = context.User;
             }
             else
             {
-                currentUser = new Data.Models.User(); 
+                currentUser = new Data.Models.User();
             }
 
             context.DataContext.Push("User", context.User);
@@ -78,14 +78,14 @@ namespace Kooboo.Render
 
                     if (!string.IsNullOrEmpty(this.options.LoginPage))
                     {
-                        int index = relative.IndexOf("&accesstoken"); 
+                        int index = relative.IndexOf("&accesstoken");
                         if (index > -1)
                         {
-                            relative = relative.Substring(0, index); 
+                            relative = relative.Substring(0, index);
                         }
-                        
+
                         Dictionary<string, string> returnurl = new Dictionary<string, string>();
-                        returnurl.Add("returnurl",  relative);
+                        returnurl.Add("returnurl", relative);
                         string fullurl = Kooboo.Lib.Helper.UrlHelper.AppendQueryString(this.options.LoginPage, returnurl);
                         context.Response.Redirect(503, fullurl);
                         return;
@@ -108,27 +108,24 @@ namespace Kooboo.Render
             {
                 if (context.User != null)
                 {
-                    string afterlogin = Kooboo.Data.Service.StartService.AfterLoginPage(context); 
+                    string afterlogin = Kooboo.Data.Service.StartService.AfterLoginPage(context);
                     context.Response.Redirect(302, afterlogin);
                     return;
                 }
             }
 
-            
-            
-
-            if ((context.User !=null) && !string.IsNullOrWhiteSpace(context.User.Language))
+            if ((context.User != null) && !string.IsNullOrWhiteSpace(context.User.Language))
             {
-                context.Culture = context.User.Language; 
+                context.Culture = context.User.Language;
             }
 
             var Response = RenderEngine.Render(context, this.options, RenderHelper.GetRelativeUrl(context.Request.RawRelativeUrl, options));
 
             if (Response != null)
-            {  
-                if (this.options.Log !=null)
+            {
+                if (this.options.Log != null)
                 {
-                    this.options.Log(context, Response); 
+                    this.options.Log(context, Response);
                 }
 
                 context.Response.ContentType = Response.ContentType;
@@ -136,7 +133,7 @@ namespace Kooboo.Render
                 context.Response.StatusCode = 200;
                 if (Response.Stream != null)
                 {
-                    context.Response.Stream = Response.Stream; 
+                    context.Response.Stream = Response.Stream;
                     return;
                 }
                 else if (Response.BinaryBytes != null)
@@ -151,13 +148,79 @@ namespace Kooboo.Render
                 }
             }
 
-            //  context.Request.RelativeUrl = null; //restore change if any.
+            else
+            {
+                // try render controller... 
+                if (this.options.Render != null)
+                {
+                    string relativeurl = RenderHelper.GetRelativeUrl(context.Request.RawRelativeUrl, options);
+                    var resposne = this.options.Render(context, relativeurl);
+                    if (resposne != null)
+                    {
+                        SetResponse(context, resposne);
+                        return;
+                    }
+                } 
+            }
 
+            // Render controller here...
+            //  context.Request.RelativeUrl = null; //restore change if any.
             if (this.options.RequireSpeicalSite)
             {
                 context.WebSite = currentwebsite;  // restore...
-            } 
+            }
             await Next.Invoke(context);
         }
+
+        public void SetResponse(RenderContext context, ResponseBase response)
+        {
+            foreach (var item in response.Headers)
+            {
+                context.Response.Headers.Add(item.Key, string.Join(null, item.Value));
+            }
+
+            foreach (var item in response.DeletedCookieNames)
+            {
+                context.Response.DeleteCookie(item);
+            }
+            foreach (var item in response.AppendedCookies)
+            {
+                context.Response.AddCookie(item);
+            }
+            response.DeletedCookieNames.Clear();
+            response.AppendedCookies.Clear();
+            response.Headers.Clear();
+
+            context.Response.StatusCode = response.StatusCode;
+            context.Response.ContentType = response.ContentType;
+            if (string.IsNullOrWhiteSpace(context.Response.ContentType))
+            {
+                context.Response.ContentType = "text/html";
+            }
+
+            if (response is RedirectResponse)
+            {
+                var redirect = response as RedirectResponse;
+                if (!string.IsNullOrWhiteSpace(redirect.RedirectUrl))
+                {
+                    context.Response.Redirect(302, redirect.RedirectUrl);
+                    return;
+                }
+            }
+             
+            if (response is BinaryResponse)
+            {
+                var binary = response as BinaryResponse;
+                context.Response.Body = binary.BinaryBytes;
+            }
+            else if (response is StringResponse)
+            {
+                var strres = response as StringResponse;
+                context.Response.Body = System.Text.Encoding.UTF8.GetBytes(strres.Content);
+                // do nothing. 
+            }
+
+        }
+         
     }
 }

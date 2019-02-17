@@ -177,7 +177,17 @@
     <Compile Include="Api\Implementation\Organization.cs" />
     <Compile Include="Api\Implementation\Replica.cs" />
     <Compile Include="Api\SiteApiProvider.cs" />
+    <Compile Include="Backend\CmsMenus\ISiteMenu.cs" />
     <Compile Include="Backend\Events\Hanlders\HandleBindingChange.cs" />
+    <Compile Include="Backend\CmsMenus\TopMenus\Domain.cs" />
+    <Compile Include="Backend\CmsMenus\IFeatureMenu.cs" />
+    <Compile Include="Backend\CmsMenus\IMenu.cs" />
+    <Compile Include="Backend\CmsMenus\ITopMenu.cs" />
+    <Compile Include="Backend\CmsMenus\MenuContainer.cs" />
+    <Compile Include="Backend\CmsMenus\MenuHelper.cs" />
+    <Compile Include="Backend\CmsMenus\CmsMenuViewModel.cs" />
+    <Compile Include="Backend\CmsMenus\TopMenus\Emails.cs" />
+    <Compile Include="Backend\CmsMenus\TopMenus\Sites.cs" />
     <Compile Include="Cache\TempDownloadZip.cs" />
     <Compile Include="DashBoard\DashBoardManager.cs" />
     <Compile Include="DashBoard\MyVisitor\FrontVisitors.cs" />
@@ -199,6 +209,9 @@
     <Compile Include="JsTest\JsTestMiddleWare.cs" />
     <Compile Include="JsTest\JsTestOption.cs" />
     <Compile Include="JQL\CommandExecutor.cs" />
+    <Compile Include="Module\ISiteModuleApi.cs" />
+    <Compile Include="Module\ModuleApiContainer.cs" />
+    <Compile Include="Module\ModuleApiHelper.cs" />
     <Compile Include="Security\ActionControl.cs" />
     <Compile Include="Security\AccessControl.cs" />
     <Compile Include="Security\SslProvider.cs" />
@@ -336,6 +349,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Api\Implementation\Module\" />
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>

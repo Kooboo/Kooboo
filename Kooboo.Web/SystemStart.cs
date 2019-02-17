@@ -27,6 +27,9 @@ namespace Kooboo.Web
                 System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject); 
             };
 
+            // ensure that WindowsHost is working . 
+             
+
             //foreach (var item in Data.GlobalDb.Dlls.All())
             //{
             //    AppDomain.CurrentDomain.Load(item.Content);
@@ -56,7 +59,7 @@ namespace Kooboo.Web
                     StartNewWebServer(443);
                 }
 
-                if (!Lib.Helper.NetworkHelper.IsPortInUse(443))
+                else  if (!Lib.Helper.NetworkHelper.IsPortInUse(443))
                 {
                     StartNewWebServer(443);
                 }
@@ -110,8 +113,7 @@ namespace Kooboo.Web
 
                             _middlewares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
 
-                            //_middlewares.Add(new Kooboo.Web.Frontend.SslCertMiddleWare());
-
+                            //_middlewares.Add(new Kooboo.Web.Frontend.SslCertMiddleWare()); 
                             _middlewares.Add(new EndMiddleWare());
                         }
                     }

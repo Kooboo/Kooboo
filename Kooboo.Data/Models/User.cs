@@ -9,7 +9,7 @@ namespace Kooboo.Data.Models
         public User()
         {
             this.ConstType = ConstObjectType.User;
-        }
+        } 
 
         private Guid _id;
         public Guid Id
@@ -112,7 +112,22 @@ namespace Kooboo.Data.Models
          
         public string  TempRedirectUrl { get; set; }
 
-        public DateTime RegistrationDate { get; set; } = DateTime.Now; 
+        private DateTime _registerdate; 
+
+        public DateTime RegistrationDate {
+            get
+            {
+                if (_registerdate == default(DateTime))
+                {
+                    _registerdate = DateTime.Now; 
+                }
+                return _registerdate; 
+            }
+            set
+            {
+                _registerdate = value; 
+            } 
+        }
 
         public override int GetHashCode()
         {

@@ -60,21 +60,22 @@ namespace Kooboo.Web.Spa
 
             var fileinfo = new System.IO.FileInfo(FullPath);
 
-            if (!fileinfo.Directory.Exists)
-            {
-                return null;
-            }
 
-            var dir = fileinfo.Directory;
-            if (!string.IsNullOrEmpty(fileinfo.Name))
-            {
-                var files = dir.GetFiles(fileinfo.Name + ".*", SearchOption.TopDirectoryOnly);
-                if (files != null && files.Count() > 0)
+
+            if (fileinfo.Directory.Exists)
+            { 
+                var dir = fileinfo.Directory;
+                if (!string.IsNullOrEmpty(fileinfo.Name))
                 {
-                    return files[0].FullName;
+                    var files = dir.GetFiles(fileinfo.Name + ".*", SearchOption.TopDirectoryOnly);
+                    if (files != null && files.Count() > 0)
+                    {
+                        return files[0].FullName;
+                    }
                 }
             }
-            return null;
+
+            return Kooboo.Render.Controller.ModuleFile.FindFile(FullPath);  
         }
 
         private string ExtendViewSearch(string root, string relative, List<string> searchfolders)
