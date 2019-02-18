@@ -52,8 +52,7 @@ namespace Kooboo.Web.Spa
             return null;
         }
 
-
-        private string FindFile(string FullPath)
+        private string FindFile(string FullPath, List<string> extensions)
         {
             if (System.IO.File.Exists(FullPath))
             {
@@ -62,12 +61,15 @@ namespace Kooboo.Web.Spa
 
             var fileinfo = new System.IO.FileInfo(FullPath);
 
+            if (!fileinfo.Directory.Exists)
+            {
+                return null;
+            }
 
-
-            if (fileinfo.Directory.Exists)
-            { 
-                var dir = fileinfo.Directory;
-                if (!string.IsNullOrEmpty(fileinfo.Name))
+            var dir = fileinfo.Directory;
+            if (!string.IsNullOrEmpty(fileinfo.Name))
+            {
+                if (extensions == null)
                 {
                     var files = dir.GetFiles(fileinfo.Name + ".*", SearchOption.TopDirectoryOnly);
                     if (files != null && files.Count() > 0)
@@ -75,18 +77,28 @@ namespace Kooboo.Web.Spa
                         return files[0].FullName;
                     }
                 }
+                else
+                {
+                    foreach (var extension in extensions)
+                    {
+                        var files = dir.GetFiles(fileinfo.Name + "." + extension.ToLower(), SearchOption.TopDirectoryOnly);
+                        if (files != null && files.Count() > 0)
+                        {
+                            return files[0].FullName;
+                        }
+                    }
+                }
             }
-
-            return Kooboo.Render.Controller.ModuleFile.FindFile(FullPath);  
+            return Kooboo.Render.Controller.ModuleFile.FindFile(FullPath);
         }
 
-        private string ExtendViewSearch(string root, string relative, List<string> searchfolders)
+        private string ExtendViewSearch(string root, string relative, List<string> searchfolders, List<string> extensions)
         {
             foreach (var item in searchfolders)
             {
                 string viewrelative = "/" + item + relative;
                 viewrelative = RenderHelper.CombinePath(root, viewrelative);
-                var result = FindFile(viewrelative);
+                var result = FindFile(viewrelative, extensions);
                 if (!string.IsNullOrEmpty(result))
                 {
                     return result;
@@ -95,7 +107,7 @@ namespace Kooboo.Web.Spa
             return null;
         }
 
-        public byte[] GetBinary(RenderContext context, string RelativeUrl)
+        private string FindFileSearch(RenderContext context, string RelativeUrl, List<string> searchfolders, List<string> extensions)
         {
             RelativeUrl = CleanQuestionMark(RelativeUrl);
             string root = GetRoot(context);
@@ -104,10 +116,21 @@ namespace Kooboo.Web.Spa
             {
                 RelativeUrl = RelativeUrl.Substring(1);
             }
-
             route = "/" + RelativeUrl;
+
             string fullpath = RenderHelper.CombinePath(root, route);
-            string FileName = FindFile(fullpath);
+            string Filename = FindFile(fullpath, extensions);
+            if ((searchfolders == null) || (!string.IsNullOrEmpty(Filename)))
+            {
+                return Filename;
+            }
+
+            return ExtendViewSearch(root, route, searchfolders, extensions);
+        }
+
+        public byte[] GetBinary(RenderContext context, string RelativeUrl)
+        {
+            string FileName = FindFileSearch(context, RelativeUrl, null, null);
 
             if (!string.IsNullOrEmpty(FileName))
             {
@@ -119,7 +142,6 @@ namespace Kooboo.Web.Spa
 
         private string SearchRoute(RenderContext context, string RelativeUrl)
         {
-
             string root = option.GetDiskRoot(context);
             if (!string.IsNullOrEmpty(option.StartPath))
             {
@@ -143,14 +165,14 @@ namespace Kooboo.Web.Spa
             {
                 foreach (var item in this.StartPageNames)
                 {
-                    string fullpath = RenderHelper.CombinePath(root, RelativeUrl);
-                    fullpath = RenderHelper.CombinePath(fullpath, item);
+                    string relativeurl = RenderHelper.CombinePath(RelativeUrl, item);
+                    string fullpath = RenderHelper.CombinePath(root, relativeurl);
 
-                    result = FindFile(fullpath);
+                    result = FindFile(fullpath, option.Extensions);
 
                     if (string.IsNullOrWhiteSpace(result))
                     {
-                        result = ExtendViewSearch(root, RelativeUrl, option.ViewFolders);
+                        result = ExtendViewSearch(root, relativeurl, option.ViewFolders, option.Extensions);
                     }
                     if (!string.IsNullOrEmpty(result))
                     { return result; }
@@ -160,11 +182,11 @@ namespace Kooboo.Web.Spa
             {
                 string fullpath = RenderHelper.CombinePath(root, RelativeUrl);
 
-                result = FindFile(fullpath);
+                result = FindFile(fullpath, option.Extensions);
 
                 if (string.IsNullOrWhiteSpace(result))
                 {
-                    result = ExtendViewSearch(root, RelativeUrl, option.ViewFolders);
+                    result = ExtendViewSearch(root, RelativeUrl, option.ViewFolders, option.Extensions);
                 }
             }
 
@@ -179,44 +201,18 @@ namespace Kooboo.Web.Spa
 
             if (!string.IsNullOrEmpty(fullfilename))
             {
-                return GetText(context, option, RelativeUrl, fullfilename);  
+                return GetText(context, option, RelativeUrl, fullfilename);
             }
-            return null; 
+            return null;
         }
 
         public string GetLayout(RenderContext context, string RelativeUrl)
         {
-            RelativeUrl = CleanQuestionMark(RelativeUrl);
-            string root = GetRoot(context);
-
-            string LayoutRoute = null;
-            if (RelativeUrl.StartsWith("/") || RelativeUrl.StartsWith("\\"))
-            {
-                RelativeUrl = RelativeUrl.Substring(1);
-            }
-
-            LayoutRoute = "/" + RelativeUrl;
-            string fullpath = RenderHelper.CombinePath(root, LayoutRoute);
-            string FileName = FindFile(fullpath);
-
-            if (string.IsNullOrEmpty(FileName))
-            {
-                foreach (var item in this.option.LayoutFolders)
-                {
-                    LayoutRoute = "/" + item + "/" + RelativeUrl;
-                    fullpath = RenderHelper.CombinePath(root, LayoutRoute);
-                    FileName = FindFile(fullpath);
-                    if (!string.IsNullOrEmpty(FileName))
-                    {
-                        break;
-                    }
-                }
-            }
-
+            string FileName = FindFileSearch(context, RelativeUrl, option.LayoutFolders, null);
             if (!string.IsNullOrEmpty(FileName))
             {
-               return GetText(context, option, RelativeUrl, FileName); 
-               // return System.IO.File.ReadAllText(FileName);
+                return GetText(context, option, RelativeUrl, FileName);
+                // return System.IO.File.ReadAllText(FileName);
             }
             return null;
         }
@@ -237,24 +233,24 @@ namespace Kooboo.Web.Spa
 
         private static byte[] GetBinary(RenderContext context, SpaRenderOption option, string RelativeUrl, string FullFileName)
         {
-                byte[] result = null;
+            byte[] result = null;
 #if DEBUG
-                {
-                    result = System.IO.File.ReadAllBytes(FullFileName);
-                }
+            {
+                result = System.IO.File.ReadAllBytes(FullFileName);
+            }
 #endif
+            if (result == null)
+            {
+                Guid key = Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(RelativeUrl);
+                result = Kooboo.Data.Cache.RenderCache.GetBinary(key);
                 if (result == null)
                 {
-                    Guid key = Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(RelativeUrl);
-                    result = Kooboo.Data.Cache.RenderCache.GetBinary(key);
-                    if (result == null)
-                    {
-                        result = System.IO.File.ReadAllBytes(FullFileName);
-                        Kooboo.Data.Cache.RenderCache.SetBinary(key, result);
-                    }
+                    result = System.IO.File.ReadAllBytes(FullFileName);
+                    Kooboo.Data.Cache.RenderCache.SetBinary(key, result);
                 }
-                return result;
-           
+            }
+            return result;
+
         }
 
         private static string GetText(RenderContext context, SpaRenderOption option, string RelativeUrl, string FullFileName)
@@ -279,7 +275,7 @@ namespace Kooboo.Web.Spa
                     }
                     htmlbody = Kooboo.Data.Cache.MultiLingualRender.SetGetHtml(context, key, text);
                 }
-                return htmlbody; 
+                return htmlbody;
             }
             else
             {
@@ -290,20 +286,20 @@ namespace Kooboo.Web.Spa
                     {
                         text = File.ReadAllText(FullFileName);
                     }
-                    Kooboo.Data.Cache.RenderCache.SetHtml(key, text); 
-                } 
-                return text;  
-            } 
+                    Kooboo.Data.Cache.RenderCache.SetHtml(key, text);
+                }
+                return text;
+            }
         }
 
         public Stream GetStream(RenderContext context, string RelativeUrl)
         {
-            var binary = GetBinary(context, RelativeUrl); 
-            if (binary !=null)
+            var binary = GetBinary(context, RelativeUrl);
+            if (binary != null)
             {
-                return new System.IO.MemoryStream(binary); 
+                return new System.IO.MemoryStream(binary);
             }
-            return null; 
+            return null;
         }
     }
 
