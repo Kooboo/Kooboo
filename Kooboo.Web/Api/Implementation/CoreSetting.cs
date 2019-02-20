@@ -4,9 +4,6 @@ using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -48,19 +45,18 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         public List<CoreSettingViewModel> List(ApiCall call)
-        { 
-            var alltypes = Kooboo.Sites.Service.CoreSettingService.types.Values; 
+        {  
             var sitedb = call.WebSite.SiteDb();
 
             List<CoreSettingViewModel> result = new List<CoreSettingViewModel>(); 
              
-            foreach (var item in alltypes)
+            foreach (var item in Kooboo.Sites.Service.CoreSettingService.types)
             {
-                var value = sitedb.CoreSetting.Get(item.Name); 
+                var value = sitedb.CoreSetting.Get(item.Key); 
                
                 if (value == null)
                 {
-                    var instance = Activator.CreateInstance(item) as ISiteSetting; 
+                    var instance = Activator.CreateInstance(item.Value) as ISiteSetting; 
                     if (instance !=null)
                     {
                         result.Add(new CoreSettingViewModel() { Name = instance.Name }); 
@@ -70,8 +66,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     var json = Lib.Helper.JsonHelper.Serialize(value.Values); 
 
-                    result.Add(new CoreSettingViewModel() { Name = item.Name, Values = json, lastModify = value.LastModified }); 
-
+                    result.Add(new CoreSettingViewModel() { Name =value.Name, Value = json, lastModify = value.LastModified });  
                 }
 
             }
@@ -94,7 +89,7 @@ namespace Kooboo.Web.Api.Implementation
        
         public string Name { get; set; }
 
-        public string Values { get; set; }
+        public string Value { get; set; }
 
         public DateTime lastModify { get; set; }
     }

@@ -50,8 +50,7 @@ namespace Kooboo.Render.ObjectSource
 
             return null;
         }
-
-
+         
         private string FindFile(string FullPath, List<string> extensions)
         {
             if (System.IO.File.Exists(FullPath))
@@ -61,30 +60,28 @@ namespace Kooboo.Render.ObjectSource
 
             var fileinfo = new System.IO.FileInfo(FullPath);
 
-            if (!fileinfo.Directory.Exists)
-            {
-                return null;
-            }
-
-            var dir = fileinfo.Directory;
-            if (!string.IsNullOrEmpty(fileinfo.Name))
-            {
-                if (extensions == null)
+            if (fileinfo.Directory.Exists)
+            { 
+                var dir = fileinfo.Directory;
+                if (!string.IsNullOrEmpty(fileinfo.Name))
                 {
-                    var files = dir.GetFiles(fileinfo.Name + ".*", SearchOption.TopDirectoryOnly);
-                    if (files != null && files.Count() > 0)
+                    if (extensions == null)
                     {
-                        return files[0].FullName;
-                    }
-                }
-                else
-                {
-                    foreach (var extension in extensions)
-                    {
-                        var files = dir.GetFiles(fileinfo.Name + "." + extension.ToLower(), SearchOption.TopDirectoryOnly);
+                        var files = dir.GetFiles(fileinfo.Name + ".*", SearchOption.TopDirectoryOnly);
                         if (files != null && files.Count() > 0)
                         {
                             return files[0].FullName;
+                        }
+                    }
+                    else
+                    {
+                        foreach (var extension in extensions)
+                        {
+                            var files = dir.GetFiles(fileinfo.Name + "." + extension.ToLower(), SearchOption.TopDirectoryOnly);
+                            if (files != null && files.Count() > 0)
+                            {
+                                return files[0].FullName;
+                            }
                         }
                     }
                 }

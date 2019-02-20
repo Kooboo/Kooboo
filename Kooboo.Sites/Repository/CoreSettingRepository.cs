@@ -68,15 +68,21 @@ namespace Kooboo.Sites.Repository
 
         public ISiteSetting GetSetting(Type siteSettingType)
         {
-            if (cache.ContainsKey(siteSettingType.Name))
+            var name = Sites.Service.CoreSettingService.GetName(siteSettingType); 
+            if (string.IsNullOrEmpty(name))
             {
-               return cache[siteSettingType.Name]; 
+                return null; 
             }
-            var obj = this.Get(siteSettingType.Name);
+
+            if (cache.ContainsKey(name))
+            {
+               return cache[name]; 
+            }
+            var obj = this.Get(name);
             if (obj != null)
             {
                 var result = Kooboo.Sites.Service.CoreSettingService.GetSiteSetting(obj, siteSettingType);
-                cache[siteSettingType.Name] = result;
+                cache[name] = result;
                 return result;
             }
             return null; 

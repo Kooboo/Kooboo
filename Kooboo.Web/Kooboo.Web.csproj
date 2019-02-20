@@ -227,6 +227,7 @@
     <Compile Include="Spa\RenderPlanCache.cs" />
     <Compile Include="Spa\RenderRespnose.cs" />
     <Compile Include="SystemStart.cs" />
+    <Compile Include="temp\AnotherSetting.cs" />
     <Compile Include="temp\SampleSiteSetting.cs" />
     <Compile Include="ViewModel\ApiGeneration.cs" />
     <Compile Include="ViewModel\ApiHelper.cs" />

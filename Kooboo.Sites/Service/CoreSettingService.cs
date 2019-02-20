@@ -30,7 +30,13 @@ namespace Kooboo.Sites.Service
                                 var instance = Activator.CreateInstance(item) as ISiteSetting; 
                                 if (instance !=null)
                                 {
-                                    _types[instance.Name] = item; 
+                                    var name = instance.Name; 
+                                    if (string.IsNullOrWhiteSpace(name))
+                                    {
+                                        name = item.Name; 
+                                    }
+
+                                    _types[name] = item; 
                                 }
                             }
                         }
@@ -40,6 +46,18 @@ namespace Kooboo.Sites.Service
             } 
         }
         
+        public static string GetName(Type type)
+        {
+            foreach (var item in types)
+            {
+                if (item.Value == type)
+                {
+                   return item.Key; 
+                }
+            }
+            return null; 
+        }
+         
         public static Type GetSettingType(string name)
         {
             if (types.ContainsKey(name))
@@ -53,7 +71,7 @@ namespace Kooboo.Sites.Service
         {
             CoreSetting dbsettiing = new CoreSetting();
 
-            dbsettiing.Name = siteSetting.GetType().Name;
+            dbsettiing.Name = siteSetting.Name;
 
             var allprops = Lib.Reflection.TypeHelper.GetPublicPropertyOrFields(siteSetting.GetType());
 

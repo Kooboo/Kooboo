@@ -26,8 +26,9 @@ $(function() {
                 model: Kooboo.arrToObj(self.fields(), 'name', 'value')
             }).then(function(res) {
                 if (res.success) {
-                    info.done(Kooboo.text.info.update.success);
-                    self.onClose();
+                    info.done(Kooboo.text.info.update.success); 
+                    self.onClose(); 
+                    self.getList(); 
                 }
             })
         }
@@ -44,6 +45,7 @@ $(function() {
             }).then(function(res) {
                 self.fields(Kooboo.objToArr(res.model, 'name', 'value'))
                 self.showModal(true);
+                self.getList();
             })
         }
 
