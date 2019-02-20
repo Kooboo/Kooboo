@@ -139,8 +139,7 @@ namespace Kooboo.Render.ObjectSource
             }
             return null;
         }
-
-
+       
 
         public string GetFullFileName(RenderContext context, string RelativeUrl)
         {

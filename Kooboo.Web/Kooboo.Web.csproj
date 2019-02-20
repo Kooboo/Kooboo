@@ -114,6 +114,7 @@
     <Compile Include="Api\Implementation\ApiGeneration.cs" />
     <Compile Include="Api\Implementation\Cluster.cs" />
     <Compile Include="Api\Implementation\Code.cs" />
+    <Compile Include="Api\Implementation\CoreSetting.cs" />
     <Compile Include="Api\Implementation\DashBoard.cs" />
     <Compile Include="Api\Implementation\DataBase.cs" />
     <Compile Include="Api\Implementation\Debugger.cs" />
@@ -212,6 +213,7 @@
     <Compile Include="Module\ISiteModuleApi.cs" />
     <Compile Include="Module\ModuleApiContainer.cs" />
     <Compile Include="Module\ModuleApiHelper.cs" />
+    <Compile Include="Module\SiteModuleApiBase.cs" />
     <Compile Include="Security\ActionControl.cs" />
     <Compile Include="Security\AccessControl.cs" />
     <Compile Include="Security\SslProvider.cs" />
@@ -225,6 +227,7 @@
     <Compile Include="Spa\RenderPlanCache.cs" />
     <Compile Include="Spa\RenderRespnose.cs" />
     <Compile Include="SystemStart.cs" />
+    <Compile Include="temp\SampleSiteSetting.cs" />
     <Compile Include="ViewModel\ApiGeneration.cs" />
     <Compile Include="ViewModel\ApiHelper.cs" />
     <Compile Include="ViewModel\ApiScript.cs" />

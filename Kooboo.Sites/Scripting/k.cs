@@ -846,11 +846,15 @@ namespace Kooboo.Sites.Scripting
             return null; 
         }  
 
+        public bool Exists(string UserName)
+        {
+            return Data.GlobalDb.Users.Get(UserName) != null; 
+        }
+
         public void Logout()
         {
             // log user out. 
             context.Response.DeleteCookie(DataConstants.UserApiSessionKey);   
-        }
-
+        } 
     }
 }

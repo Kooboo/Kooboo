@@ -229,8 +229,7 @@ namespace Kooboo.Sites.Repository
                 return EnsureRepository<SiteRepositoryBase<SyncSetting>, SyncSetting>(ref _SyncSetting);
             }
         }
-
-
+         
 
         private SiteRepositoryBase<QueueObject> _taskqueue;
 
@@ -262,6 +261,17 @@ namespace Kooboo.Sites.Repository
             get
             {
                 return EnsureRepository<SynchronizationRepository, Synchronization>(ref _Synchronization);
+            }
+        }
+
+
+        private CoreSettingRepository  _coresetting;
+
+        public CoreSettingRepository CoreSetting
+        {
+            get
+            {
+                return EnsureRepository<CoreSettingRepository, CoreSetting>(ref _coresetting);
             }
         }
 
