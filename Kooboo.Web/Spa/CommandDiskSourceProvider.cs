@@ -69,7 +69,7 @@ namespace Kooboo.Web.Spa
                     if (extensions == null)
                     {
                         var files = dir.GetFiles(fileinfo.Name + ".*", SearchOption.TopDirectoryOnly);
-                        if (files != null && files.Count() > 0)
+                        if (files != null && files.Any())
                         {
                             return files[0].FullName;
                         }
@@ -79,7 +79,7 @@ namespace Kooboo.Web.Spa
                         foreach (var extension in extensions)
                         {
                             var files = dir.GetFiles(fileinfo.Name + "." + extension.ToLower(), SearchOption.TopDirectoryOnly);
-                            if (files != null && files.Count() > 0)
+                            if (files != null && files.Any())
                             {
                                 return files[0].FullName;
                             }
