@@ -13,9 +13,9 @@ namespace Kooboo.Module
         public static ApiMethod GetApiMethod(ApiCall call)
         {
             // this is only for the sitemodule. 
-            if (call.Context.WebSite !=null)
+            if (call.Context.WebSite == null)
             {
-                return null; 
+                return null;
             }
 
             ApiMethod method = null;

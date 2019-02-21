@@ -8,7 +8,7 @@ namespace Kooboo.Module
 {
   public  interface ISiteModuleApi
     {
-        string ModelName();
+        string ModelName { get; }
     } 
  
 }

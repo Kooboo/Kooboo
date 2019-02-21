@@ -113,12 +113,14 @@ namespace Kooboo.Sites.Service
 
             if (coresetting != null && coresetting.Values != null && coresetting.Values.Any())
             {
+                var properties = type.GetProperties().ToList();
+                var fields = type.GetFields().ToList();
                 foreach (var item in coresetting.Values)
                 {
                     if (item.Value != null)
-                    {   
-                        var prop = type.GetProperty(item.Key);
-
+                    {
+                        var prop = properties.Find(p => p.Name.Equals(item.Key, StringComparison.OrdinalIgnoreCase));
+   
                         if (prop != null)
                         {
                             var value = Lib.Reflection.TypeHelper.ChangeType(item.Value, prop.PropertyType); 
@@ -126,7 +128,7 @@ namespace Kooboo.Sites.Service
                         }
                         else
                         {
-                            var field = type.GetField(item.Key);
+                            var field = fields.Find(f => f.Name.Equals(item.Key, StringComparison.OrdinalIgnoreCase));
                             if (field != null)
                             {
                                 var value = Lib.Reflection.TypeHelper.ChangeType(item.Value, field.FieldType);
@@ -152,11 +154,13 @@ namespace Kooboo.Sites.Service
 
             if (coresetting != null && coresetting.Values != null && coresetting.Values.Any())
             {
+                var properties = SettingType.GetProperties().ToList();
+                var fields = SettingType.GetFields().ToList();
                 foreach (var item in coresetting.Values)
                 {
                     if (item.Value != null)
                     {
-                        var prop = SettingType.GetProperty(item.Key);
+                        var prop = properties.Find(p => p.Name.Equals(item.Key, StringComparison.OrdinalIgnoreCase));
 
                         if (prop != null)
                         {
@@ -165,7 +169,7 @@ namespace Kooboo.Sites.Service
                         }
                         else
                         {
-                            var field = SettingType.GetField(item.Key);
+                            var field = fields.Find(f => f.Name.Equals(item.Key, StringComparison.OrdinalIgnoreCase));
                             if (field != null)
                             {
                                 var value = Lib.Reflection.TypeHelper.ChangeType(item.Value, field.FieldType);

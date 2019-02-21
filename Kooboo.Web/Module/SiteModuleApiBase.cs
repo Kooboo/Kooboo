@@ -12,6 +12,13 @@ namespace Kooboo.Module
 {
    public class SiteModuleApiBase : ISiteModuleApi
     {
+        public string ModelName
+        {
+            get
+            {
+                return "SiteModuleApiBase";
+            }
+        }
         public SiteDb SiteDb { get; set; }
 
         public RenderContext Context { get; set; }
@@ -23,11 +30,6 @@ namespace Kooboo.Module
                 return SiteDb.CoreSetting.GetSetting<T>(); 
              }
             return default(T); 
-        }
-
-        public virtual string ModelName()
-        {
-            return this.GetType().Name;
         }
     }
 }
