@@ -93,8 +93,7 @@ namespace Kooboo.Web.Api.Implementation
                 Items = SiteMenu_Advance(call)
             });
 
-            // additional menu for the extension.
-
+            // additional menu for the extension. 
             var sitemenus = Kooboo.Web.CmsMenu.MenuContainer.SubMenus(typeof(ISiteMenu));
             var oldmenues = sitemenus.Select(o => MenuHelper.ConvertToOld(o, call.Context)).ToList();
 
