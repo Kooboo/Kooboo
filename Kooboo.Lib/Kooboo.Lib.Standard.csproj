@@ -54,7 +54,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.4.1" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
-    <PackageReference Include="Veldrid.ImageSharp" Version="4.3.3" />
+    <PackageReference Include="Veldrid.ImageSharp" Version="4.5.0" />
   </ItemGroup>
 
 </Project>
