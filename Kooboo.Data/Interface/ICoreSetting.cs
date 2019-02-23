@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Module
+namespace Kooboo.Data.Interface
 {
-  public  interface ISiteModuleApi
+  public interface ICoreSetting
     {
-        string ModelName { get; }
-    } 
- 
+
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using Kooboo.Api;
 using Kooboo.Data.Context;
+using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,12 @@ namespace Kooboo.Module
     {
         public static ApiMethod GetApiMethod(ApiCall call)
         {
+            // this is only for the sitemodule. 
+            if (call.Context.WebSite ==null)
+            {
+                return null;
+            }
+
             ApiMethod method = null;
 
             var type = ModuleApiContainer.GetType(call.Command.ObjectType);
@@ -20,7 +27,7 @@ namespace Kooboo.Module
                 var instance = CreateInstance(type, call.Context) as ISiteModuleApi; 
                 if (instance !=null)
                 {
-                    method = GetMethod(instance, call.Command.Method); 
+                    method = GetMethod(instance, call.Command.Method, call); 
                     if (method !=null)
                     {
                         return method; 
@@ -37,7 +44,7 @@ namespace Kooboo.Module
                     var instance = CreateInstance(commandtype, call.Context) as ISiteModuleApi;
                     if (instance != null)
                     {
-                        method = GetMethod(instance, call.Command.Value);
+                        method = GetMethod(instance, call.Command.Value, call);
                         if (method != null)
                         {
                             return method;
@@ -170,11 +177,18 @@ namespace Kooboo.Module
         }
 
 
-        public static ApiMethod GetMethod(ISiteModuleApi instance, string MethodName)
+        public static ApiMethod GetMethod(ISiteModuleApi instance, string MethodName, ApiCall call)
         {
             if (instance == null)
             {
                 return null; 
+            }
+
+            if (instance is  SiteModuleApiBase)
+            {
+                var basemodule = instance as SiteModuleApiBase;
+                basemodule.Context = call.Context;
+                basemodule.SiteDb = call.Context.WebSite.SiteDb(); 
             }
 
             var methodinfo = GetMethodInfo(instance.GetType(), MethodName);

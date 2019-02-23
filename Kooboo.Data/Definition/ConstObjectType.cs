@@ -29,7 +29,7 @@ namespace Kooboo
         public const byte ContentFolder = 24;
         public const byte Domain = 25;
         public const byte UserGroup = 26;
-        // public const byte SyncItem = 27; 
+        //public const byte SyncItem = 27; 
         public const byte ExternalResource = 28;
         public const byte Thumbnail = 29;
         public const byte Folder = 30;
@@ -60,6 +60,8 @@ namespace Kooboo
         public const byte SiteUser = 55;
 
         public const byte Code = 58;
+
+        public const byte CoreSetting = 59; 
 
         public const byte BusinessRule = 65;
 

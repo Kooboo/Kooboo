@@ -132,7 +132,7 @@ namespace Kooboo.Sites.Routing
         {
             Route foundroute = GetRoute(context.WebSite.SiteDb(), url);
 
-            if (foundroute == null)
+            if (foundroute == null || foundroute.objectId == default(Guid))
             {
                 if (string.IsNullOrEmpty(url) || url == "/" || url == "\\" || url.StartsWith("/?"))
                 {

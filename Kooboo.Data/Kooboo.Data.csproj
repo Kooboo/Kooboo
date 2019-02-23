@@ -104,8 +104,14 @@
     <Compile Include="Helper\OnlineServerHelper.cs" />
     <Compile Include="Helper\PermissionHelper.cs" />
     <Compile Include="Helper\ServerHelper.cs" />
+    <Compile Include="Infrastructure\IInfrastructure.cs" />
+    <Compile Include="Infrastructure\InfraManager.cs" />
+    <Compile Include="Infrastructure\InfraType.cs" />
+    <Compile Include="Infrastructure\LocalInfra.cs" />
+    <Compile Include="Interface\ICoreSetting.cs" />
     <Compile Include="Interface\IKScript.cs" />
     <Compile Include="Interface\IScriptable.cs" />
+    <Compile Include="Interface\ISiteSetting.cs" />
     <Compile Include="Log\LogService.cs" />
     <Compile Include="Maintenance.cs" />
     <Compile Include="Constants.cs" />

@@ -75,6 +75,46 @@ namespace Kooboo.Render
                 _layoutfolder = value;
             }
         }
+        private string _Extension;
+        public string Extension
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_Extension))
+                {
+                    _Extension = GetAppSetting("Extension");
+                    if (string.IsNullOrEmpty(_Extension))
+                    {
+                        _Extension = DefaultOptions.DefaultExtension;
+                    }
+                }
+                return _Extension;
+            }
+            set
+            {
+                _Extension = value;
+            }
+        }
+
+        private List<string> _Extensions;
+        internal List<string> Extensions
+        {
+            get
+            {
+                if (_Extensions == null)
+                {
+                    _Extensions = new List<string>();
+                    foreach (var item in Extension.Split(',').ToList())
+                    {
+                        if (!string.IsNullOrEmpty(item))
+                        {
+                            _Extensions.Add(item.Trim());
+                        }
+                    }
+                }
+                return _Extensions;
+            }
+        }
 
         private string _ViewFolder;
         public string ViewFolder
@@ -186,6 +226,8 @@ namespace Kooboo.Render
         public static string DefaultLayoutFolder = "_layout";
 
         public static string DefaultViewFolder = "_view";
+
+        public static string DefaultExtension = "html,cshtml";
 
         public static string DefaultGetRoot(Kooboo.Data.Context.RenderContext request)
         {

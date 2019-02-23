@@ -91,8 +91,7 @@ namespace Kooboo.Web.Api.Implementation
                 Items = SiteMenu_Advance(call)
             });
 
-            // additional menu for the extension.
-
+            // additional menu for the extension. 
             var sitemenus = Kooboo.Web.CmsMenu.MenuContainer.SubMenus(typeof(ISiteMenu));
             var oldmenues = sitemenus.Select(o => MenuHelper.ConvertToOld(o, call.Context)).ToList();
 
@@ -264,7 +263,8 @@ namespace Kooboo.Web.Api.Implementation
                 Items =
                 {
                     new MenuItem{ Name = Hardcoded.GetValue("Settings",context), Url = AdminUrl("System/Settings", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Settings },
-                    new MenuItem{ Name = Hardcoded.GetValue("Config",context), Url = AdminUrl("System/KConfig", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Configs },
+                    new MenuItem{ Name = Hardcoded.GetValue("Config",context), Url = AdminUrl("System/CoreSettings", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Settings },
+                    new MenuItem{ Name = Hardcoded.GetValue("Text",context), Url = AdminUrl("System/KConfig", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Configs },
                     new MenuItem{ Name = Hardcoded.GetValue("Domains", context), Url = AdminUrl("System/Domains", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Domains},
                     new MenuItem{ Name = Hardcoded.GetValue("Sync", context),  Url = AdminUrl("Sync", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Synchronization},
                     new MenuItem{ Name = Hardcoded.GetValue("SiteLogs",context),Url = AdminUrl("System/SiteLogs", siteDb), ActionRights = Sites.Authorization.Actions.Systems.SiteLogs },

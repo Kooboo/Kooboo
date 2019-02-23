@@ -1698,6 +1698,14 @@
     }
     extend(Currency, BaseModel);
 
+    function CoreSetting() {
+        this.name = 'CoreSetting';
+        this.update = function(para) {
+            return this.executePost('update', para);
+        }
+    }
+    extend(CoreSetting, BaseModel);
+
     wind.Kooboo = {
         APIGeneration: new APIGeneration(),
         Bar: new Bar(),
@@ -1711,6 +1719,7 @@
         ContentType: new ContentType(),
         Commerce: new Commerce(),
         Component: new Component(),
+        CoreSetting: new CoreSetting(),
         CSSRule: new CSSRule(),
         Currency: new Currency(),
         Database: new Database(),
@@ -1829,11 +1838,11 @@
 
         return arr;
     };
-    Kooboo.arrToObj = function(arr) {
+    Kooboo.arrToObj = function(arr, keyName, valueName) {
         var obj = {};
         if (arr && arr.length) {
             for (var i = 0, len = arr.length; i < len; i++) {
-                obj[arr[i].key] = arr[i].value;
+                obj[arr[i][keyName || 'key']] = arr[i][valueName || 'value'];
             }
         }
 

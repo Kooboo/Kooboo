@@ -2,17 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.IndexedDB;
 using Kooboo.Lib.Helper;
 using System.Net;
-using System.Threading;
 
 namespace Kooboo.Sites.Repository
 {
     public class TransferTaskRepository : SiteRepositoryBase<TransferTask>
     {
+        public TransferTaskRepository()
+        {
+            this.ContinueDownloading = new Dictionary<string, DownloadingTask>(); 
+        }
+
         internal override ObjectStoreParameters StoreParameters
         {
             get
@@ -261,7 +263,7 @@ namespace Kooboo.Sites.Repository
 
         #region ContinueDownload
 
-        public Dictionary<string, DownloadingTask> ContinueDownloading = new Dictionary<string, DownloadingTask>();
+        public Dictionary<string, DownloadingTask> ContinueDownloading { get; set; }
 
         public bool CanStartDownload(string relativeUrl)
         {

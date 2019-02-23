@@ -156,10 +156,8 @@ namespace Kooboo.Sites.Scripting
                     _user = new UserInfoModel(this.RenderContext); 
                 } 
                 return _user; 
-            } 
-           
-        }
-
+            }  
+        } 
 
         public class InfoModel
         {
@@ -283,8 +281,7 @@ namespace Kooboo.Sites.Scripting
 
         [Attributes.SummaryIgnore]
         public Kooboo.Sites.FrontEvent.IFrontEvent @event { get; set; }
-
-
+         
         public Kooboo.Sites.Diagnosis.KDiagnosis diagnosis { get; set; }
 
         private kKeyValue _sitestore;
@@ -764,6 +761,37 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
+
+        public bool IsOfOrganization(string OrganizationName)
+        {
+            if (context.User == null)
+            {
+                return false; 
+            }
+            Guid OrgId = default(Guid); 
+            if (!Guid.TryParse(OrganizationName, out OrgId))
+            {
+                OrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(OrganizationName);
+            } 
+
+            if (context.User.CurrentOrgId == OrgId)
+            {
+                return true; 
+            }
+
+            var orgs = Data.GlobalDb.Users.Organizations(context.User.Id); 
+            
+            if (orgs.Any())
+            {
+                var find = orgs.Find(o => o.Id == OrgId); 
+                if (find !=null)
+                {
+                    return true;
+                }
+            }
+            return false;  
+        }
+
         public void EnsureLogin(string redirectUrl)
         {
             if (!this.IsLogin)
@@ -844,11 +872,15 @@ namespace Kooboo.Sites.Scripting
             return null; 
         }  
 
+        public bool Exists(string UserName)
+        {
+            return Data.GlobalDb.Users.Get(UserName) != null; 
+        }
+
         public void Logout()
         {
             // log user out. 
             context.Response.DeleteCookie(DataConstants.UserApiSessionKey);   
-        }
-
+        } 
     }
 }

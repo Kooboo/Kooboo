@@ -158,6 +158,10 @@ namespace Kooboo.Sites.Service
             {
                 return ConstObjectType.Code; 
             }
+            else if (TValueType == typeof(CoreSetting))
+            {
+                return ConstObjectType.CoreSetting;
+            }
             else if (TValueType ==typeof(SiteUser))
             {
                 return ConstObjectType.SiteUser; 
@@ -273,7 +277,10 @@ namespace Kooboo.Sites.Service
                     { 
                         return typeof(Code); 
                     }
-
+                case ConstObjectType.CoreSetting:
+                    {
+                        return typeof(CoreSetting); 
+                    }
                 case ConstObjectType.SiteUser: 
                     {
                         return typeof(SiteUser); 

@@ -168,6 +168,7 @@
     <Compile Include="InlineEditor\UpdateManager.cs" />
     <Compile Include="Models\BusinessRule.cs" />
     <Compile Include="Models\Code.cs" />
+    <Compile Include="Models\CoreSetting.cs" />
     <Compile Include="Models\KConfig.cs" />
     <Compile Include="Models\SiteCluster.cs" />
     <Compile Include="Models\CoreObject.cs" />
@@ -259,6 +260,7 @@
     <Compile Include="Render\RenderTask\ValueRenderTask.cs" />
     <Compile Include="Repository\BusinessRuleRepository.cs" />
     <Compile Include="Repository\CodeRepository.cs" />
+    <Compile Include="Repository\CoreSettingRepository.cs" />
     <Compile Include="Repository\kConfigRepository.cs" />
     <Compile Include="Repository\SiteClusterRepository.cs" />
     <Compile Include="Repository\ContinueConvertRepository.cs" />
@@ -326,6 +328,7 @@
     <Compile Include="Scripting\Setting.cs" />
     <Compile Include="Service\CleanerService.cs" />
     <Compile Include="Service\ColorService.cs" />
+    <Compile Include="Service\CoreSettingService.cs" />
     <Compile Include="Service\DownloadEncoding.cs" />
     <Compile Include="Service\FontService.cs" />
     <Compile Include="Service\GroupService.cs" />
