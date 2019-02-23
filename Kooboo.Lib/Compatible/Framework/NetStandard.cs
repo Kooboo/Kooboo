@@ -9,7 +9,6 @@ using System.Xml;
 using System.IO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.ImageSharp.Processing.Transforms;
 using Kooboo.Lib.Helper;
 
 namespace Kooboo.Lib.Compatible
