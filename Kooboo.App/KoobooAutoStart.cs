@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -9,78 +9,94 @@ using System.Reflection;
 using System.IO;
 using System.Windows;
 using Microsoft.Win32;
+using System.Configuration;
+using Microsoft.Win32.TaskScheduler;
 
 namespace Kooboo.App
 {
     public class KoobooAutoStart
     {
-        private static string GetAutoStartPath()
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var dir = System.IO.Path.GetDirectoryName(assembly.Location);
-            dir = System.IO.Path.Combine(dir, "_Admin","View");
-            var autoStartPath = System.IO.Path.Combine(dir, "AutoStart.txt");
+        private readonly static string _appKey = "KoobooApp";
+        private readonly static string _isFirstTimeStart = "IsFirstTimeStart";
+        private readonly static string _path = System.Windows.Forms.Application.ExecutablePath;
 
-            return autoStartPath;
-        }
-        public static bool IsFirstTimeAutoStart()
+        public static bool IsFirstTimeStart()
         {
-            var autoStartPath = GetAutoStartPath();
-            if (!File.Exists(autoStartPath))
-                return true;
-            return false;
+            try
+            {
+                return ConfigurationManager.AppSettings.AllKeys.All(f => f != _isFirstTimeStart)
+
+                //compatible old code
+                && !File.Exists(Path.Combine(_path, "_Admin", "View"));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
+
         public static bool IsAutoStart()
         {
-            var autoStartPath = GetAutoStartPath();
-            if (!File.Exists(autoStartPath))
+            try
             {
-                return true;
+                var task = TaskService.Instance.AllTasks.FirstOrDefault(f => f.Name == _appKey);
+                return task != null;
             }
-
-            var autoStart = false;
-            var result = File.ReadAllText(autoStartPath);
-            bool.TryParse(result,out autoStart);
-            
-            return autoStart;
-        }
-        private static void SetAutoStart(string autoStart)
-        {
-            var autoStartPath = GetAutoStartPath();
-            var dir = System.IO.Path.GetDirectoryName(autoStartPath);
-            if(!Directory.Exists(dir))
+            catch (Exception)
             {
-                Directory.CreateDirectory(dir);
+                return false;
             }
-            File.WriteAllText(autoStartPath, autoStart);
         }
 
         public static void AutoStart(bool auto)
         {
             try
             {
-                string path = System.Windows.Forms.Application.ExecutablePath;
-                RegistryKey rk = Registry.LocalMachine;
-                RegistryKey subKey = rk.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
                 if (auto)
                 {
-                    subKey.SetValue("KoobooApp", path);
+                    var taskDefinition = TaskService.Instance.NewTask();
+                    taskDefinition.Principal.RunLevel = TaskRunLevel.Highest;
+                    taskDefinition.Triggers.AddNew(TaskTriggerType.Logon);
+                    var action = taskDefinition.Actions.Add(_path, "", Path.GetDirectoryName(_path));
+                    TaskService.Instance.RootFolder.RegisterTaskDefinition(_appKey, taskDefinition);
                 }
                 else
                 {
-                    subKey.DeleteValue("KoobooApp", false);
+                    TaskService.Instance.RootFolder.DeleteTask(_appKey, false);
                 }
 
-                SetAutoStart(auto.ToString());
-
-                subKey.Close();
-                rk.Close();
+                if (IsFirstTimeStart()) SetNotFirstTimeStart();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
             }
+        }
 
+        public static bool OldCodeHadSetAutoSart()
+        {
+            try
+            {
+                var rk = Registry.LocalMachine;
+                using (var subKey = rk.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run"))
+                {
+                    object value = subKey.GetValue(_appKey, null);
+                    if (value != null) subKey.DeleteSubKey(_appKey);
+                    return _path.Equals(value);
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private static void SetNotFirstTimeStart()
+        {
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            config.AppSettings.Settings.Add(_isFirstTimeStart, "false");
+            config.AppSettings.SectionInformation.ForceSave = true;
+            config.Save(ConfigurationSaveMode.Modified);
+            ConfigurationManager.RefreshSection("appSettings");
         }
     }
 }

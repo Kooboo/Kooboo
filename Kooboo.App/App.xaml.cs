@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System.Collections.Generic;
 using System.Windows;
@@ -9,7 +9,7 @@ using System.Linq;
 using System;
 
 namespace Kooboo.App
-{ 
+{
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
@@ -52,7 +52,7 @@ namespace Kooboo.App
                 ["site"] = new HomePage(),
                 ["server"] = new ServerPage(),
                 ["host"] = new HostPage(),
-                ["upgrade"]=new UpgradePage()
+                ["upgrade"] = new UpgradePage()
             };
             var btn = sender as RadioButton;
             if (btn != null && e.Source == btn)
@@ -69,25 +69,23 @@ namespace Kooboo.App
         private void Application_Startup(object sender, StartupEventArgs e)
         {
             KoobooUpgrade.DeleteUpgradeRemainedFiles();
-            //第一次默认启动
-            if (KoobooAutoStart.IsFirstTimeAutoStart())
+
+            if (KoobooAutoStart.IsFirstTimeStart() || //first run default auto start
+                KoobooAutoStart.IsAutoStart() || //override task when application path changed
+                KoobooAutoStart.OldCodeHadSetAutoSart()) //compatible old code
             {
                 KoobooAutoStart.AutoStart(true);
             }
 
             GlobalSettings.RootPath = Kooboo.Data.AppSettings.DatabasePath;
 
-            KoobooStartUp.StartAll(); 
-         
+            KoobooStartUp.StartAll();
         }
-
 
         private void Application_Exit(object sender, ExitEventArgs e)
         {
             KoobooStartUp.StopAll();
             System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
-
-        
     }
 }
