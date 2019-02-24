@@ -64,15 +64,7 @@ namespace Kooboo.Web.Spa
                 var dir = fileinfo.Directory;
                 if (!string.IsNullOrEmpty(fileinfo.Name))
                 {
-                    if (extensions == null)
-                    {
-                        var files = dir.GetFiles(fileinfo.Name + ".*", SearchOption.TopDirectoryOnly);
-                        if (files != null && files.Any())
-                        {
-                            return files[0].FullName;
-                        }
-                    }
-                    else
+                    if (extensions != null)
                     {
                         foreach (var extension in extensions)
                         {
@@ -82,6 +74,12 @@ namespace Kooboo.Web.Spa
                                 return files[0].FullName;
                             }
                         }
+                    }
+
+                    var files2 = dir.GetFiles(fileinfo.Name + ".*", SearchOption.TopDirectoryOnly);
+                    if (files2 != null && files2.Any())
+                    {
+                        return files2[0].FullName;
                     }
                 }
             }

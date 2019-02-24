@@ -137,7 +137,7 @@
   <key id="privacy policy">隐私政策</key>
   <key id="Sign up">注册</key>
   <key id="Reset">重置</key>
-  <key id="s"></key>
+  <key id="s">s</key>
   <key id="Continue">继续</key>
   <key id="Click the &quot;New field&quot; below to create first content field for your content type.">点击下方按钮，为您的数据类型创建新字段。</key>
   <key id="New field">新建字段</key>
@@ -521,7 +521,7 @@
   <key id="The number of clicks away from the start page">距离主页的点击数</key>
   <key id="Scan">扫描</key>
   <key id="No.">No.</key>
-  <key id="* This online version allows you to clone 3 pages with very limited speed, use desktop version if you need more.">* This online version allows you to clone 3 pages with very limited speed, use desktop version if you need more.</key>
+  <key id="* This online version allows you to clone 3 pages with very limited speed, use desktop version if you need more.">* 在线版的只允许低速导入3个页面， 更多功能请使用本地版。</key>
   <key id="Online">在线情况</key>
   <key id="Transferring">导入中</key>
   <key id="Transferring, you may leave this page">正在迁移，您可以暂时离开这个页面。</key>
@@ -1022,7 +1022,6 @@
   <key id="Recharge amount">充值总额</key>
   <key id="Customize">自定义</key>
   <key id="large than 0.01">大于0.01</key>
-  <key id="Paied">已支付</key>
   <key id="Order date">下单日期</key>
   <key id="coupon">优惠券</key>
   <key id="Downloads">下载</key>
@@ -1334,18 +1333,18 @@
   <key id="Content folder not found">找不到文件夹</key>
   <key id="cluster should not have two source for the same item">集群中同一项目应只有一个来源</key>
   <key id="TextContent">内容</key>
-  <key id="Emails">邮件</key>
   <key id="E-Commerce">电商</key>
   <key id="Feature">功能</key>
   <key id="Advance">高级</key>
   <key id="SiteBindings">网站绑定</key>
   <key id="SiteMirror">站点镜像</key>
-  <key id="DataSource">数据</key>
   <key id="System">系统</key>
+  <key id="Text">文本</key>
   <key id="SiteLogs">站点日志</key>
   <key id="VisitorLogs">访客日志</key>
   <key id="SiteUser">站点用户</key>
   <key id="Development">开发</key>
+  <key id="DataSource">数据</key>
   <key id="ContentTypes">数据类型</key>
   <key id="HtmlBlocks">HTML 代码块</key>
   <key id="Customers">顾客</key>
@@ -1404,9 +1403,9 @@
   <key id="Invalid address format">无效的地址格式</key>
   <key id="Member address should not be same as group address">组员地址不能是组地址</key>
   <key id="you have no enough credit to send emails">邮件发送信誉值不够</key>
+  <key id="Emails">邮件</key>
   <key id="Visitor">访客</key>
   <key id="Resource">资源</key>
-  <key id="Object type Not Found">未找到对象</key>
   <key id="Api method Not Found">未找到API方法</key>
   <key id="User or website not valid">无效网站或用户</key>
   <key id="Api method define a bool return type and return false">Api 返回不正确</key>
