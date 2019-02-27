@@ -871,11 +871,17 @@ namespace Kooboo.Data.Context
                 return location;
             var builder = new StringBuilder();
             Uri uri;
+            // /admin/sites will be parse to uri.schema= file in linux
             if(Uri.TryCreate(location, UriKind.Absolute,out uri))
             {
-                var baseUrl = uri.Scheme + "://" + uri.Authority;
-                builder.Append(baseUrl);
-                location = location.Replace(baseUrl,"");
+                if(!string.IsNullOrEmpty(uri.Scheme)&& 
+                    (uri.Scheme.Equals("http",StringComparison.OrdinalIgnoreCase)||
+                    uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase)))
+                {
+                    var baseUrl = uri.Scheme + "://" + uri.Authority;
+                    builder.Append(baseUrl);
+                    location = location.Replace(baseUrl, "");
+                }
             }
 
             var queryString = string.Empty;
