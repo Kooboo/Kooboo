@@ -114,22 +114,16 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-        //public JsList<Lib.NETMultiplePart.File> files
-        //{
-        //    get
-        //    {    
-        //        JsList<Lib.NETMultiplePart.File> files = new JsList<Lib.NETMultiplePart.File>();
 
-        //        if (this.context.Request.Files != null)
-        //        {
-        //            foreach (var item in this.context.Request.Files)
-        //            {
-        //                files.Add(item); 
-        //            }  
-        //        }     
-        //        return files;    
-        //    }
-        //}
+        public string body
+        {
+            get
+            {
+                return this.context.Request.Body; 
+            }
+
+        }
+     
 
 
         public string method
