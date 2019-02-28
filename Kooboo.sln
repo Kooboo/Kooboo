@@ -3,33 +3,37 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2024
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.Web", "Kooboo.Web\Kooboo.Web.csproj", "{676A1305-8B53-4FCE-A489-DBEC4B5EF539}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.Web", "Kooboo.Web\Kooboo.Web.csproj", "{676A1305-8B53-4FCE-A489-DBEC4B5EF539}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.IndexedDB", "Kooboo.IndexedDB\Kooboo.IndexedDB.csproj", "{D9E6C6EF-2480-46F5-BB81-D21B8456075A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.IndexedDB", "Kooboo.IndexedDB\Kooboo.IndexedDB.csproj", "{D9E6C6EF-2480-46F5-BB81-D21B8456075A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.Dom", "Kooboo.Dom\Kooboo.Dom.csproj", "{83D7B143-E3AB-44DC-B1FE-ADE82E415AAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.Dom", "Kooboo.Dom\Kooboo.Dom.csproj", "{83D7B143-E3AB-44DC-B1FE-ADE82E415AAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.Lib", "Kooboo.Lib\Kooboo.Lib.csproj", "{D8996716-DE67-48A3-93D5-B9CA1D2B69DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.Lib", "Kooboo.Lib\Kooboo.Lib.csproj", "{D8996716-DE67-48A3-93D5-B9CA1D2B69DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.Sites", "Kooboo.Sites\Kooboo.Sites.csproj", "{28102DF1-17F6-439C-B79E-D89F4971E56B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.Sites", "Kooboo.Sites\Kooboo.Sites.csproj", "{28102DF1-17F6-439C-B79E-D89F4971E56B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.Data", "Kooboo.Data\Kooboo.Data.csproj", "{D8413E81-0018-4DAB-AEAF-5D36C3C43A52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.Data", "Kooboo.Data\Kooboo.Data.csproj", "{D8413E81-0018-4DAB-AEAF-5D36C3C43A52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.Mail", "Kooboo.Mail\Kooboo.Mail.csproj", "{6FD5D24D-1BC3-487B-B62D-388C7091231E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.Mail", "Kooboo.Mail\Kooboo.Mail.csproj", "{6FD5D24D-1BC3-487B-B62D-388C7091231E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.App", "Kooboo.App\Kooboo.App.csproj", "{FA044E8D-3574-4906-96F1-17EA80F00629}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.Render", "Kooboo.Render\Kooboo.Render.csproj", "{8D9BEA84-1B86-491B-A457-EEB4369A243C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.Render", "Kooboo.Render\Kooboo.Render.csproj", "{8D9BEA84-1B86-491B-A457-EEB4369A243C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.Api", "Kooboo.Api\Kooboo.Api.csproj", "{964F25FD-7257-4E6D-8652-9DF77CDB6337}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.Api", "Kooboo.Api\Kooboo.Api.csproj", "{964F25FD-7257-4E6D-8652-9DF77CDB6337}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.Search", "Kooboo.Search\Kooboo.Search.csproj", "{9833E83F-1AA7-42A2-A55E-543E56558D49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.Search", "Kooboo.Search\Kooboo.Search.csproj", "{9833E83F-1AA7-42A2-A55E-543E56558D49}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.HttpServer", "Kooboo.HttpServer\src\Kooboo.HttpServer\Kooboo.HttpServer.csproj", "{A7705D34-5372-412B-ADC1-DC69082FE14F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.HttpServer", "Kooboo.HttpServer\src\Kooboo.HttpServer\Kooboo.HttpServer.csproj", "{A7705D34-5372-412B-ADC1-DC69082FE14F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.Upgrade", "Kooboo.Upgrade\Kooboo.Upgrade.csproj", "{FC69A5A6-DDD6-4323-AC6F-5885E7FB1572}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kooboo.Engines", "Kooboo.Engines\Kooboo.Engines.csproj", "{04E93EB9-4F7D-468A-B84B-F40D57FF0A48}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.App.Standard", "Kooboo.App.Standard\Kooboo.App.Standard.csproj", "{A387EC67-56F5-4968-878D-B2C447C35F56}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kooboo.App.Upgrade", "Kooboo.App.Upgrade\Kooboo.App.Upgrade.csproj", "{88244F92-7BDF-4089-AB5D-3FB2E7EA4A0F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +97,14 @@ Global
 		{04E93EB9-4F7D-468A-B84B-F40D57FF0A48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04E93EB9-4F7D-468A-B84B-F40D57FF0A48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04E93EB9-4F7D-468A-B84B-F40D57FF0A48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A387EC67-56F5-4968-878D-B2C447C35F56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A387EC67-56F5-4968-878D-B2C447C35F56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A387EC67-56F5-4968-878D-B2C447C35F56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A387EC67-56F5-4968-878D-B2C447C35F56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88244F92-7BDF-4089-AB5D-3FB2E7EA4A0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88244F92-7BDF-4089-AB5D-3FB2E7EA4A0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88244F92-7BDF-4089-AB5D-3FB2E7EA4A0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88244F92-7BDF-4089-AB5D-3FB2E7EA4A0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
