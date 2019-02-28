@@ -13,14 +13,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Kooboo.App.Upgrade\Kooboo.App.Upgrade.csproj" />
-    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.Standard.csproj" />
-    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.Standard.csproj" />
-    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.Standard.csproj" />
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.Standard.csproj" />
-    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.Standard.csproj" />
-    <ProjectReference Include="..\Kooboo.Render\Kooboo.Render.Standard.csproj" />
-    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.Standard.csproj" />
-    <ProjectReference Include="..\Kooboo.Web\Kooboo.Web.Standard.csproj" />
+    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj" />
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
+    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.csproj" />
+    <ProjectReference Include="..\Kooboo.Render\Kooboo.Render.csproj" />
+    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.csproj" />
+    <ProjectReference Include="..\Kooboo.Web\Kooboo.Web.csproj" />
   </ItemGroup>
 
   <Target Name="generateLinuxZip" AfterTargets="Publish">

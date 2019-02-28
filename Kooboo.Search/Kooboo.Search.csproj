@@ -1,91 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9833E83F-1AA7-42A2-A55E-543E56558D49}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kooboo.Search</RootNamespace>
-    <AssemblyName>Kooboo.Search</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworks>netstandard2.0;net45;net461</TargetFrameworks>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<AssemblyName>Kooboo.Search</AssemblyName>
+	<RootNamespace>Kooboo.Search</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Server|AnyCPU'">
-    <OutputPath>bin\Server\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <Compile Remove="Scanner\EncodingHelper.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="BitMap.cs" />
-    <Compile Include="DocumentStore.cs" />
-    <Compile Include="Index.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scanner\DefaultTokenizer.cs" />
-    <Compile Include="Scanner\EncodingHelper.cs" />
-    <Compile Include="Scanner\Itokenizer.cs" />
-    <Compile Include="Scanner\Token.cs" />
-    <Compile Include="Scanner\TokenizerManager.cs" />
-    <Compile Include="Setting.cs" />
-    <Compile Include="Utility.cs" />
-    <Compile Include="WordIndex.cs" />
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj">
-      <Project>{83d7b143-e3ab-44dc-b1fe-ade82e415aad}</Project>
-      <Name>Kooboo.Dom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj">
-      <Project>{d9e6c6ef-2480-46f5-bb81-d21b8456075a}</Project>
-      <Name>Kooboo.IndexedDB</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj">
-      <Project>{d8996716-de67-48a3-93d5-b9ca1d2b69da}</Project>
-      <Name>Kooboo.Lib</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

@@ -1,321 +1,43 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D8413E81-0018-4DAB-AEAF-5D36C3C43A52}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kooboo.Data</RootNamespace>
-    <AssemblyName>Kooboo.Data</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFrameworks>netstandard2.0;net45;net461</TargetFrameworks>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<AssemblyName>Kooboo.Data</AssemblyName>
+	<RootNamespace>Kooboo.Data</RootNamespace>
+    <Deterministic>False</Deterministic>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Server|AnyCPU'">
-    <OutputPath>bin\Server\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Device" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Compile Remove="GeoLocation\LocationWatcher.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Account\Url\Cluster.cs" />
-    <Compile Include="Account\Url\Org.cs" />
-    <Compile Include="Account\Url\User.cs" />
-    <Compile Include="App\AppPackage.cs" />
-    <Compile Include="Attributes\ActivityEvent.cs" />
-    <Compile Include="Attributes\RequireProductType.cs" />
-    <Compile Include="Attributes\RequiretModel.cs" />
-    <Compile Include="Attributes\AttributeHelper.cs" />
-    <Compile Include="Attributes\DefaultValue.cs" />
-    <Compile Include="Attributes\Diskable.cs" />
-    <Compile Include="Attributes\NameAsID.cs" />
-    <Compile Include="Attributes\RequireFolder.cs" />
-    <Compile Include="Attributes\RequireParameters.cs" />
-    <Compile Include="Attributes\ReturnType.cs" />
-    <Compile Include="Attributes\Routable.cs" />
-    <Compile Include="Attributes\SqlIngoreAttribute.cs" />
-    <Compile Include="Attributes\SummaryIgnore.cs" />
-    <Compile Include="Authorization\LogStorage.cs" />
-    <Compile Include="Authorization\QuotaControl.cs" />
-    <Compile Include="Authorization\RightControl.cs" />
-    <Compile Include="Cache\AccessTokenCache.cs" />
-    <Compile Include="Cache\OrganizationUserCache.cs" />
-    <Compile Include="Cache\RenderCache.cs" />
-    <Compile Include="Cache\RSAKey.cs" />
-    <Compile Include="ChangeType.cs" />
-    <Compile Include="Context\HeaderValueQuery.cs" />
-    <Compile Include="Context\WebServerContext.cs" />
-    <Compile Include="Definition\WebsiteType.cs" />
-    <Compile Include="Embedded\EmbeddedHelper.cs" />
-    <Compile Include="GeoLocation\CityInfo.cs" />
-    <Compile Include="GeoLocation\CountryCode.cs" />
-    <Compile Include="GeoLocation\CountryLocation.cs" />
-    <Compile Include="GeoLocation\IPCity.cs" />
-    <Compile Include="GeoLocation\IPCountry.cs" />
-    <Compile Include="GeoLocation\IPLocation.cs" />
-    <Compile Include="GeoLocation\IPViewModel.cs" />
-    <Compile Include="GeoLocation\StateInfo.cs" />
-    <Compile Include="Helper\OnlineServerHelper.cs" />
-    <Compile Include="Helper\PermissionHelper.cs" />
-    <Compile Include="Helper\ServerHelper.cs" />
-    <Compile Include="Infrastructure\IInfrastructure.cs" />
-    <Compile Include="Infrastructure\InfraManager.cs" />
-    <Compile Include="Infrastructure\InfraType.cs" />
-    <Compile Include="Infrastructure\LocalInfra.cs" />
-    <Compile Include="Interface\ICoreSetting.cs" />
-    <Compile Include="Interface\IKScript.cs" />
-    <Compile Include="Interface\IScriptable.cs" />
-    <Compile Include="Interface\ISiteSetting.cs" />
-    <Compile Include="Log\LogService.cs" />
-    <Compile Include="Maintenance.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Context\BasicUser.cs" />
-    <Compile Include="DataConstants.cs" />
-    <Compile Include="Definition\Comparer.cs" />
-    <Compile Include="Definition\ConstObjectType.cs" />
-    <Compile Include="Context\DataContext.cs" />
-    <Compile Include="Context\HeaderBindings.cs" />
-    <Compile Include="Context\HttpRequest.cs" />
-    <Compile Include="Context\HttpResponse.cs" />
-    <Compile Include="Context\HttpStringCollection.cs" />
-    <Compile Include="Context\RenderContext.cs" />
-    <Compile Include="Context\RequestChannel.cs" />
-    <Compile Include="Context\RequestManager.cs" />
-    <Compile Include="DB.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Definition\Datasource.cs" />
-    <Compile Include="Definition\DataTypes.cs" />
-    <Compile Include="EnumControlType.cs" />
-    <Compile Include="Events\EventBus.cs" />
-    <Compile Include="Events\Global\ApplicationStartUp.cs" />
-    <Compile Include="Events\Global\BindingChange.cs" />
-    <Compile Include="Events\Global\WebSiteChange.cs" />
-    <Compile Include="Events\IEvent.cs" />
-    <Compile Include="Events\IHandler.cs" />
-    <Compile Include="Extensions\JobExtension.cs" />
-    <Compile Include="AppSettings.cs" />
-    <Compile Include="GeoLocation\LocationWatcher.cs" />
-    <Compile Include="Helper\ApiHelper.cs" />
-    <Compile Include="Helper\ChromeScreenShotHelper.cs" />
-    <Compile Include="Helper\ComparerHelper.cs" />
-    <Compile Include="Helper\DataTypeHelper.cs" />
-    <Compile Include="Helper\DomainHelper.cs" />
-    <Compile Include="Helper\Domain\DomainDataStructure.cs" />
-    <Compile Include="Helper\Domain\DomainName.cs" />
-    <Compile Include="Helper\Domain\DomainParser.cs" />
-    <Compile Include="Helper\Domain\FileTldRuleProvider.cs" />
-    <Compile Include="Helper\Domain\ITldRuleProvider.cs" />
-    <Compile Include="Helper\Domain\TldRule.cs" />
-    <Compile Include="Helper\Domain\TldRuleDivision.cs" />
-    <Compile Include="Helper\Domain\TldRuleParser.cs" />
-    <Compile Include="Helper\Domain\TldRuleType.cs" />
-    <Compile Include="Helper\Domain\WebTldRuleProvider.cs" />
-    <Compile Include="Helper\DomHelper.cs" />
-    <Compile Include="Helper\AccountUrlHelper.cs" />
-    <Compile Include="Helper\RSAHelper.cs" />
-    <Compile Include="Helper\SettingHelper.cs" />
-    <Compile Include="Helper\SimpleSerializerHelper.cs" />
-    <Compile Include="Helper\TemplateHelpder.cs" />
-    <Compile Include="Helper\HashEncryptionHelper.cs" />
-    <Compile Include="Hosts\HostRecord.cs" />
-    <Compile Include="Hosts\WindowsHost.cs" />
-    <Compile Include="IDGenerator.cs" />
-    <Compile Include="Interface\IBackgroundWorker.cs" />
-    <Compile Include="Interface\ICoreObject.cs" />
-    <Compile Include="Interface\IBinaryFile.cs" />
-    <Compile Include="Interface\IDashBoard.cs" />
-    <Compile Include="Interface\IDashBoardResponse.cs" />
-    <Compile Include="Interface\IDataMethodSetting.cs" />
-    <Compile Include="Interface\IDataSource.cs" />
-    <Compile Include="Interface\IDynamic.cs" />
-    <Compile Include="Interface\IEmbeddable.cs" />
-    <Compile Include="Interface\IExtensionable.cs" />
-    <Compile Include="Interface\IFormSubmitter.cs" />
-    <Compile Include="Interface\IGolbalObject.cs" />
-    <Compile Include="Interface\IRepository.cs" />
-    <Compile Include="Interface\ISearchable.cs" />
-    <Compile Include="Interface\ISiteObject.cs" />
-    <Compile Include="Interface\ITextObject.cs" />
-    <Compile Include="Jobs\JobContainer.cs" />
-    <Compile Include="Jobs\JobWorker.cs" />
-    <Compile Include="Jobs\ThrottledTaskPool.cs" />
-    <Compile Include="Language\Hardcoded.cs" />
-    <Compile Include="Language\LanguageSetting.cs" />
-    <Compile Include="Language\LanguageTask.cs" />
-    <Compile Include="Language\LanguageTaskHelper.cs" />
-    <Compile Include="Language\MultiLingualHelper.cs" />
-    <Compile Include="Language\LanguageProvider.cs" />
-    <Compile Include="Cache\MultilingualRender.cs" />
-    <Compile Include="Language\SiteCulture.cs" />
-    <Compile Include="Log\ImageLog.cs" />
-    <Compile Include="Log\JobLog.cs" />
-    <Compile Include="Interface\IJob.cs" />
-    <Compile Include="Log\SiteErrorLog.cs" />
-    <Compile Include="Models\ApiExecption.cs" />
-    <Compile Include="Models\AppDataModel.cs" />
-    <Compile Include="Models\AuthorizeResult.cs" />
-    <Compile Include="Models\BackendLog.cs" />
-    <Compile Include="Models\Certificate.cs" />
-    <Compile Include="Models\CheckResponse.cs" />
-    <Compile Include="Models\Currency.cs" />
-    <Compile Include="Models\DashBoardResponseHtml.cs" />
-    <Compile Include="Models\DashBoardResponseModel.cs" />
-    <Compile Include="Models\DataCenter.cs" />
-    <Compile Include="Models\DataMethodResult.cs" />
-    <Compile Include="Models\DataString.cs" />
-    <Compile Include="Models\BalanceChangeModel.cs" />
-    <Compile Include="Models\Dll.cs" />
-    <Compile Include="Models\DataMethodSetting.cs" />
-    <Compile Include="Models\ApiResource.cs" />
-    <Compile Include="Models\DnsInfo.cs" />
-    <Compile Include="Models\DNSRecord.cs" />
-    <Compile Include="Models\ICP.cs" />
-    <Compile Include="Models\IPCity.cs" />
-    <Compile Include="Models\MailQueue.cs" />
-    <Compile Include="Models\OnlineServer.cs" />
-    <Compile Include="Models\ResouceAttachment.cs" />
-    <Compile Include="Models\ServerSetting.cs" />
-    <Compile Include="Models\Cluster.cs" />
-    <Compile Include="Models\ServiceLevel.cs" />
-    <Compile Include="Models\SslCertificate.cs" />
-    <Compile Include="Models\SslSessionInfo.cs" />
-    <Compile Include="Models\SiteSetting.cs" />
-    <Compile Include="Models\GlobalSetting.cs" />
-    <Compile Include="Models\Job.cs" />
-    <Compile Include="Models\Notification.cs" />
-    <Compile Include="Models\PagedResult.cs" />
-    <Compile Include="Models\Queue.cs" />
-    <Compile Include="Models\SimpleSetting.cs" />
-    <Compile Include="Models\SystemStatus.cs" />
-    <Compile Include="Models\Template.cs" />
-    <Compile Include="Models\ThirdPartyDataSource.cs" />
-    <Compile Include="Models\Binding.cs" />
-    <Compile Include="Models\Domain.cs" />
-    <Compile Include="Models\UsedByRelation.cs" />
-    <Compile Include="Models\User.cs" />
-    <Compile Include="Models\Organization.cs" />
-    <Compile Include="Log\VisitorLog.cs" />
-    <Compile Include="Models\UserBalance.cs" />
-    <Compile Include="Models\UserOrganization.cs" />
-    <Compile Include="Models\UserPublish.cs" />
-    <Compile Include="Models\UserTemplate.cs" />
-    <Compile Include="Models\WebSite.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Render\Command.cs" />
-    <Compile Include="Render\CommandParser.cs" />
-    <Compile Include="Repository\BindingRepository.cs" />
-    <Compile Include="Repository\DataMethodRepository.cs" />
-    <Compile Include="Repository\DllRepository.cs" />
-    <Compile Include="Repository\GlobalSettingRepository.cs" />
-    <Compile Include="Repository\LocalUserRepository.cs" />
-    <Compile Include="Repository\NotificationRepository.cs" />
-    <Compile Include="Repository\OrganizationRepository.cs" />
-    <Compile Include="Repository\DomainRepository.cs" />
-    <Compile Include="Repository\GlobalDb.cs" />
-    <Compile Include="Repository\RepositoryBase.cs" />
-    <Compile Include="Repository\ClusterRepository.cs" />
-    <Compile Include="Repository\SslCertificateRepository.cs" />
-    <Compile Include="Repository\TaskQueueRepository.cs" />
-    <Compile Include="Repository\UserRepository.cs" />
-    <Compile Include="Repository\WebSiteRepository.cs" />
-    <Compile Include="ServerRequestCache.cs" />
-    <Compile Include="Server\EndMiddleWare.cs" />
-    <Compile Include="Server\IKoobooMiddleWare.cs" />
-    <Compile Include="Server\ServerHandler.cs" />
-    <Compile Include="Service\StartService.cs" />
-    <Compile Include="Service\UserLoginService.cs" />
-    <Compile Include="Service\WebSiteService.cs" />
-    <Compile Include="SSL\SslCertificate.cs" />
-    <Compile Include="Server\TextLogMiddleware.cs" />
-    <Compile Include="Server\WebServer.cs" />
-    <Compile Include="Session\Requirement.cs" />
-    <Compile Include="Session\SessionManager.cs" />
-    <Compile Include="Template\TemplateData.cs" />
-    <Compile Include="Template\TemplatePackage.cs" />
-    <Compile Include="TypeCache.cs" />
-    <Compile Include="Upgrade\UpgradeHelper.cs" />
-    <Compile Include="ViewModel\Cluster.cs" />
-    <Compile Include="ViewModel\Domain.cs" />
-    <Compile Include="ViewModel\Payment.cs" />
+    <None Remove="Embedded\CountryLocation.csv" />
+    <None Remove="Server\kooboo.pfx" />
+    <None Remove="tld.dat" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj">
-      <Project>{83d7b143-e3ab-44dc-b1fe-ade82e415aad}</Project>
-      <Name>Kooboo.Dom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.HttpServer\src\Kooboo.HttpServer\Kooboo.HttpServer.csproj">
-      <Project>{a7705d34-5372-412b-adc1-dc69082fe14f}</Project>
-      <Name>Kooboo.HttpServer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj">
-      <Project>{d9e6c6ef-2480-46f5-bb81-d21b8456075a}</Project>
-      <Name>Kooboo.IndexedDB</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj">
-      <Project>{d8996716-de67-48a3-93d5-b9ca1d2b69da}</Project>
-      <Name>Kooboo.Lib</Name>
-    </ProjectReference>
-  </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Include="Embedded\CountryLocation.csv" />
-    <None Include="packages.config" />
     <EmbeddedResource Include="Server\kooboo.pfx" />
     <EmbeddedResource Include="tld.dat" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <PackageReference Include="GeoCoordinate.NetStandard1" Version="1.0.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net45'OR '$(TargetFramework)'=='net461'">
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.IO.Compression" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
+    <ProjectReference Include="..\Kooboo.HttpServer\src\Kooboo.HttpServer\Kooboo.HttpServer.csproj" />
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
+  </ItemGroup>
+
 </Project>
