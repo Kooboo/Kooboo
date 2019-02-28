@@ -1,4 +1,6 @@
-﻿namespace SassAndCoffee.JavaScript.CoffeeScript {
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+namespace SassAndCoffee.JavaScript.CoffeeScript {
     using SassAndCoffee.Core;
 
     public class CoffeeScriptCompiler : JavaScriptCompilerBase {

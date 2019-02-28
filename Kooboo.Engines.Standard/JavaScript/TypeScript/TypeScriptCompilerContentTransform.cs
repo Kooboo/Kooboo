@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using System.Text.RegularExpressions;
 using SassAndCoffee.Core;
 using SassAndCoffee.JavaScript;
 

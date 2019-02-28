@@ -1,4 +1,6 @@
-﻿using Kooboo.IndexedDB.CustomAttributes;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.IndexedDB.CustomAttributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,6 @@
-﻿using Kooboo.Sites.Engine;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Sites.Engine;
 using Kooboo.Data.Context;
 using SassAndCoffee.Core;
 using SassAndCoffee.JavaScript;

@@ -1,4 +1,6 @@
-﻿namespace SassAndCoffee.Core {
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+namespace SassAndCoffee.Core {
     using System;
     using System.IO;
     using System.Reflection;

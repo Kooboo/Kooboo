@@ -1,4 +1,6 @@
-﻿namespace SassAndCoffee.JavaScript.JavaScriptEngines {
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+namespace SassAndCoffee.JavaScript.JavaScriptEngines {
     using System;
     using System.Runtime.InteropServices;
 

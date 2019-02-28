@@ -1,4 +1,6 @@
-﻿namespace SassAndCoffee.JavaScript.Uglify {
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+namespace SassAndCoffee.JavaScript.Uglify {
     using SassAndCoffee.Core;
 
     public class UglifyCompiler : JavaScriptCompilerBase {

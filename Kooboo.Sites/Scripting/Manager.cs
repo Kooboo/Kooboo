@@ -1,4 +1,6 @@
-﻿using Jint.Native;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Jint.Native;
 using Jint.Runtime.Environments;
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;

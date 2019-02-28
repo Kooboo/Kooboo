@@ -1,4 +1,6 @@
-﻿using Kooboo.Sites.InlineEditor.Converter;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Sites.InlineEditor.Converter;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 

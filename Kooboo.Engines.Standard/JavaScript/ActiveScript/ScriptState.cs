@@ -1,4 +1,6 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+namespace SassAndCoffee.JavaScript.ActiveScript {
 
     /// <summary>
     /// Contains named constant values that specify the state of a scripting engine

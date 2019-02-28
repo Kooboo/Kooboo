@@ -1,4 +1,6 @@
-﻿using System.Runtime.ConstrainedExecution;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using System.Runtime.ConstrainedExecution;
 using LibSass.Compiler.Options;
 using static LibSass.Compiler.SassExterns;
 

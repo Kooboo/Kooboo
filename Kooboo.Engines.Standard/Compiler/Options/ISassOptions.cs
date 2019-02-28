@@ -1,4 +1,6 @@
-﻿namespace LibSass.Compiler.Options
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+namespace LibSass.Compiler.Options
 {
     public interface ISassOptions
     {

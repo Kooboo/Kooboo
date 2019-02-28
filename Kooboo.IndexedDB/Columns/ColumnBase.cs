@@ -1,4 +1,6 @@
-﻿using Kooboo.IndexedDB.ByteConverter;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.IndexedDB.ByteConverter;
 using System;
 
 namespace Kooboo.IndexedDB.Columns

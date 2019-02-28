@@ -1,4 +1,6 @@
-﻿namespace SassAndCoffee.JavaScript {
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+namespace SassAndCoffee.JavaScript {
     using System;
     using System.IO;
     using SassAndCoffee.Core;
