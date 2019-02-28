@@ -137,6 +137,15 @@ namespace Kooboo.Lib.Compatible
             return memstream.ToArray();
         }
 
+        public void SaveThumbnailImage(byte[] contentBytes, int width, int height, string path)
+        {
+            if (contentBytes == null) return;
+            Image image = Image.FromStream(new System.IO.MemoryStream(contentBytes));
+
+            var thumbnail = image.GetThumbnailImage(width, height, null, new IntPtr());
+            thumbnail.Save(path);
+        }
+
         public string GetThumbnailImage(string base64Str, ImageSize size)
         {
             byte[] imageBytes = Convert.FromBase64String(base64Str);

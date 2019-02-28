@@ -197,6 +197,17 @@ namespace Kooboo.Lib.Compatible
             return memstream.ToArray();
         }
 
+        public void SaveThumbnailImage(byte[] contentBytes, int width, int height, string path)
+        {
+            if (contentBytes == null) return;
+            MemoryStream stream = new MemoryStream(contentBytes);
+
+            Image<SixLabors.ImageSharp.PixelFormats.Rgba32> image = Image.Load(stream);
+
+            image.Mutate(x => x.Resize(width, height));
+            image.Save(path);
+        }
+
         public string GetThumbnailImage(string base64Str, ImageSize size)
         {
             byte[] imageBytes = Convert.FromBase64String(base64Str);

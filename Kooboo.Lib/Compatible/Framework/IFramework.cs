@@ -23,6 +23,8 @@ namespace Kooboo.Lib.Compatible
 
         byte[] GetThumbnailImage(byte[] contentBytes, int width, int height);
 
+        void SaveThumbnailImage(byte[] contentBytes, int width, int height, string path);
+
         string GetThumbnailImage(string base64Str, ImageSize size);
 
         string RSADecrypt(string privatekey, string content);

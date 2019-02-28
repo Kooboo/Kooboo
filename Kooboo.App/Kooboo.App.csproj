@@ -126,6 +126,7 @@
     <Compile Include="HostPage.xaml.cs">
       <DependentUpon>HostPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="KoobooAutoStart.cs" />
     <Compile Include="KoobooStartUp.cs" />
     <Compile Include="KoobooUpgrade.cs" />
     <Compile Include="Models\EditorPageViewModel.cs" />
@@ -271,44 +272,6 @@
     <Resource Include="Resources\Images\open-folder.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj">
-      <Project>{d8413e81-0018-4dab-aeaf-5d36c3c43a52}</Project>
-      <Name>Kooboo.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj">
-      <Project>{83d7b143-e3ab-44dc-b1fe-ade82e415aad}</Project>
-      <Name>Kooboo.Dom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj">
-      <Project>{D9E6C6EF-2480-46F5-BB81-D21B8456075A}</Project>
-      <Name>Kooboo.IndexedDB</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj">
-      <Project>{d8996716-de67-48a3-93d5-b9ca1d2b69da}</Project>
-      <Name>Kooboo.Lib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.csproj">
-      <Project>{6fd5d24d-1bc3-487b-b62d-388c7091231e}</Project>
-      <Name>Kooboo.Mail</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Render\Kooboo.Render.csproj">
-      <Project>{8d9bea84-1b86-491b-a457-eeb4369a243c}</Project>
-      <Name>Kooboo.Render</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.csproj">
-      <Project>{28102df1-17f6-439c-b79e-d89f4971e56b}</Project>
-      <Name>Kooboo.Sites</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Upgrade\Kooboo.Upgrade.csproj">
-      <Project>{fc69a5a6-ddd6-4323-ac6f-5885e7fb1572}</Project>
-      <Name>Kooboo.Upgrade</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Web\Kooboo.Web.csproj">
-      <Project>{676a1305-8b53-4fce-a489-dbec4b5ef539}</Project>
-      <Name>Kooboo.Web</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
@@ -324,9 +287,46 @@
     <Resource Include="Resources\Images\upgrade-active.png" />
     <Resource Include="Resources\Images\upgrade-normal.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.Standard.csproj">
+      <Project>{ffe0e9c7-68df-4ae0-b933-1a76bdaaef1e}</Project>
+      <Name>Kooboo.Data.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.Standard.csproj">
+      <Project>{14dd931f-a9d7-4ed8-a9dc-ec01bf448261}</Project>
+      <Name>Kooboo.Dom.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.Standard.csproj">
+      <Project>{b67c2e6e-e59c-4f2d-82fe-190c7a372754}</Project>
+      <Name>Kooboo.IndexedDB.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.Standard.csproj">
+      <Project>{cff65694-9f56-4064-bfb2-69f285511a53}</Project>
+      <Name>Kooboo.Lib.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.Standard.csproj">
+      <Project>{ed68890d-2381-45d7-8bd6-efc4f18ae632}</Project>
+      <Name>Kooboo.Mail.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kooboo.Render\Kooboo.Render.Standard.csproj">
+      <Project>{b70b23ea-9220-4b0a-ab70-a14223f90af2}</Project>
+      <Name>Kooboo.Render.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.Standard.csproj">
+      <Project>{34e517bc-f3b6-4cbf-b7a5-5e188b4c3e74}</Project>
+      <Name>Kooboo.Sites.Standard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kooboo.Upgrade\Kooboo.Upgrade.csproj">
+      <Project>{fc69a5a6-ddd6-4323-ac6f-5885e7fb1572}</Project>
+      <Name>Kooboo.Upgrade</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kooboo.Web\Kooboo.Web.Standard.csproj">
+      <Project>{d4e95fce-06c2-4727-a2c3-113a33ef7d55}</Project>
+      <Name>Kooboo.Web.Standard</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="AfterResolveReferences">
+  <Target Name="AfterResolveReferences" Condition="'$(Configuration)' == 'Release'">
     <ItemGroup>
       <EmbeddedResource Include="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.Extension)' == '.dll'">
         <LogicalName>%(ReferenceCopyLocalPaths.DestinationSubDirectory)%(ReferenceCopyLocalPaths.Filename)%(ReferenceCopyLocalPaths.Extension)</LogicalName>
@@ -334,7 +334,7 @@
     </ItemGroup>
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Release call $(SolutionDir)generateZip.bat release Kooboo.App</PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Release call $(SolutionDir)generateZip.bat $(SolutionDir)</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
