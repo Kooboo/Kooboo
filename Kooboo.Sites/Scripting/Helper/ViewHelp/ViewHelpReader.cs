@@ -94,15 +94,8 @@ namespace Kooboo.Sites.Scripting
 
         private static string GetPath()
         {
-#if DEBUG
-            var path = Path.GetFullPath(@"..\..\..\GitHub\Kooboo.Web\_Admin\help\kView");
-            if (!Directory.Exists(path))
-            {
-                path = Path.GetFullPath(@"..\..\..\Kooboo.Web\_Admin\help\kView");
-            }
-#else
-            var path= Path.GetFullPath(@".\_Admin\help\kView");
-#endif
+            var path = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(Kooboo.Data.AppSettings.RootPath, @"_Admin\help\kView");
+
             return path;
         }
         

@@ -282,8 +282,12 @@ namespace Kooboo.Sites.Service
 
             if (relativeUrl == DataConstants.Default403Page || relativeUrl == DataConstants.Default407Page || relativeUrl == DataConstants.Default404Page || relativeUrl == DataConstants.Default402Page || relativeUrl == DataConstants.Default500Page || relativeUrl == DataConstants.DefaultError)
             {
-                string path = relativeUrl.Replace("/", "\\"); 
-                string filename = Lib.Helper.IOHelper.CombinePath(AppSettings.RootPath, relativeUrl) +".html"; 
+                var filename = Lib.Compatible.CompatibleManager.Instance.System.CombinePath(AppSettings.RootPath, relativeUrl);
+                var extension = System.IO.Path.GetExtension(filename);
+                if (!".html".Equals(extension, StringComparison.OrdinalIgnoreCase))
+                {
+                    filename += ".html";
+                }
                 if (System.IO.File.Exists(filename))
                 {
                     return System.IO.File.ReadAllText(filename); 

@@ -72,14 +72,14 @@ namespace Kooboo.IndexedDB
             {
                 if (item.EndsWith(this.queueListExtension))
                 {
-                    int lastslash = item.LastIndexOf('\\');
+                    int lastslash = Helper.PathHelper.GetLastSlash(item);
                     if (lastslash > 0)
                     {
                         string filename = item.Substring(lastslash);
 
                         filename = filename.Replace(this.queueListExtension, "");
 
-                        filename = filename.Replace("\\", "");
+                        filename = filename.Replace("\\", "").Replace("/","");
 
                         this.queueFileIdList.Add(Convert.ToInt32(filename));
                     }

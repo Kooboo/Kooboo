@@ -151,6 +151,7 @@ namespace Kooboo.Lib.Reflection
                         typelist.Add(type);
                     }
                 }
+
             }
 
             return typelist;

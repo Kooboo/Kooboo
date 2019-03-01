@@ -101,7 +101,7 @@ namespace Kooboo.IndexedDB
             {
                 string temp = string.Empty;
 
-                int lastSlash = item.LastIndexOf('\\');
+                int lastSlash = Kooboo.IndexedDB.Helper.PathHelper.GetLastSlash(item);
                 if (lastSlash > 0)
                 {
                     temp = item.Substring(lastSlash + 1);

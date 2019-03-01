@@ -25,8 +25,6 @@ namespace Kooboo.Render.ServerSide
                 {
                     relativeurl = ServerHelper.EnsureRelative(relativeurl, baseRelativeUrl);
 
-                    relativeurl = relativeurl.Replace("/", "\\"); 
-
                     var root = sourceProvider.GetRoot(context);
 
                     var folder = Lib.Helper.IOHelper.CombinePath(root, relativeurl);

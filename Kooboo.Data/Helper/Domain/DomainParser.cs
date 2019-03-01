@@ -35,8 +35,7 @@ namespace Nager.PublicSuffix
 
         public DomainParser()
         {
-            var reader = Kooboo.Data.Embedded.EmbeddedHelper.GetStreamReader("Kooboo.Data.tld.dat", typeof(Kooboo.Data.Server.WebServer)); 
-             
+            var reader = Kooboo.Data.Embedded.EmbeddedHelper.GetStreamReader("Kooboo.Data.tld.dat", typeof(Kooboo.Data.Server.WebServer));
             string data = reader.ReadToEnd(); 
 
             var ruleParser = new TldRuleParser();

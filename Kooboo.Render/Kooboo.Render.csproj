@@ -1,47 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8D9BEA84-1B86-491B-A457-EEB4369A243C}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kooboo.Render</RootNamespace>
-    <AssemblyName>Kooboo.Render</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworks>netstandard2.0;net45;net461</TargetFrameworks>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<AssemblyName>Kooboo.Render</AssemblyName>
+	<RootNamespace>Kooboo.Render</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Server|AnyCPU'">
-    <OutputPath>bin\Server\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+
   <ItemGroup>
+    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj" />
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
+    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net45'OR '$(TargetFramework)'=='net461'">
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -52,69 +24,5 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Constants.cs" />
-    <Compile Include="CommandDiskSourceProvider.cs" />
-    <Compile Include="Controller\ModuleFile.cs" />
-    <Compile Include="Controller\Response\BinaryResponse.cs" />
-    <Compile Include="Controller\Response\RedirectResponse.cs" />
-    <Compile Include="Controller\Response\ResponseBase.cs" />
-    <Compile Include="Controller\Response\StringResponse.cs" />
-    <Compile Include="ServerSide\IServerTask.cs" />
-    <Compile Include="RenderMiddleWare.cs" />
-    <Compile Include="DirectoryRender.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="RenderOption.cs" />
-    <Compile Include="RenderPlanCache.cs" />
-    <Compile Include="RenderEngine.cs" />
-    <Compile Include="RenderHelper.cs" />
-    <Compile Include="RenderRespnose.cs" />
-    <Compile Include="ServerSide\LoadFolder.cs" />
-    <Compile Include="ServerSide\LoadJs.cs" />
-    <Compile Include="ServerSide\LoadJsFolder.cs" />
-    <Compile Include="ServerSide\ServerEngine.cs" />
-    <Compile Include="ServerSide\ServerHelper.cs" />
-    <Compile Include="ServerSide\SetHtml.cs" />
-    <Compile Include="ServerSide\SetMethods.cs" />
-    <Compile Include="ServerSide\StringTask.cs" />
-    <Compile Include="ServerSide\TaskContainer.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj">
-      <Project>{d8413e81-0018-4dab-aeaf-5d36c3c43a52}</Project>
-      <Name>Kooboo.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj">
-      <Project>{83d7b143-e3ab-44dc-b1fe-ade82e415aad}</Project>
-      <Name>Kooboo.Dom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj">
-      <Project>{d8996716-de67-48a3-93d5-b9ca1d2b69da}</Project>
-      <Name>Kooboo.Lib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.csproj">
-      <Project>{28102df1-17f6-439c-b79e-d89f4971e56b}</Project>
-      <Name>Kooboo.Sites</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

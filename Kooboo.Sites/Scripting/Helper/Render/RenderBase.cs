@@ -105,15 +105,7 @@ namespace Kooboo.Sites.Scripting
         private string GetPath()
         {
             StringBuilder builder = new StringBuilder();
-#if DEBUG
-            var path = Path.GetFullPath(@"..\..\..\GitHub\Kooboo.Web\_Admin\Scripts");
-            if (!Directory.Exists(path))
-            {
-                path = Path.GetFullPath(@"..\..\..\Kooboo.Web\_Admin\Scripts");
-            }
-#else
-            var path= Path.GetFullPath(@".\_Admin\Scripts");
-#endif
+            var path = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(Kooboo.Data.AppSettings.RootPath, @"_Admin\Scripts");
             return path;
         }
 

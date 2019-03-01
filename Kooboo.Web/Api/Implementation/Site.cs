@@ -429,6 +429,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public WebSite Create(ApiCall call)
         {
+            Sites.DataSources.DataSourceHelper.InitIDataSource();
             string fulldomain = call.GetValue("FullDomain");
             if (string.IsNullOrEmpty(fulldomain))
             {

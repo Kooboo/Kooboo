@@ -494,9 +494,17 @@ namespace Kooboo.Lib.Helper
 
         public static List<string> getSegments(string input)
         {
-
-            input = input.Replace("/", "\\").ToLower();
-            string[] segments = input.Split('\\');
+            string[] segments;
+            if (RuntimeSystemHelper.IsWindow())
+            {
+                input = input.Replace("/", "\\").ToLower();
+                segments = input.Split('\\');
+            }
+            else
+            {
+                input = input.Replace("\\", "/").ToLower();
+                segments = input.Split('/');
+            }
 
             List<string> stringlist = new List<string>();
 

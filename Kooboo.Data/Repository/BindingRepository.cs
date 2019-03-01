@@ -238,7 +238,7 @@ namespace Kooboo.Data.Repository
                         WindowsHost.AddOrUpdate(fullname, "127.0.0.1");
                     }
                 }
-                 
+
             }
 
             WindowsHost.AddOrUpdate(AppSettings.DefaultLocalHost, "127.0.0.1");

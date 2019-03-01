@@ -549,7 +549,7 @@ namespace Kooboo.IndexedDB
                 foreach (var item in System.IO.Directory.GetDirectories(this.AbsolutePath))
                 {
                     string subdir = item;
-                    int lastindex = item.LastIndexOf("\\");
+                    int lastindex = Helper.PathHelper.GetLastSlash(item);
                     if (lastindex > 0)
                     {
                         subdir = subdir.Substring(lastindex + 1);

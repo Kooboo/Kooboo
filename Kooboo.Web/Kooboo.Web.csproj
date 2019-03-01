@@ -1,100 +1,53 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <CheckForSystemRuntimeDependency>true</CheckForSystemRuntimeDependency>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{676A1305-8B53-4FCE-A489-DBEC4B5EF539}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kooboo.Web</RootNamespace>
-    <AssemblyName>Kooboo.Web</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <WarningLevel>4</WarningLevel>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <PublishUrl>C:\Users\hq\Desktop\kooboo_WebSite\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>http://localhost:26250/</InstallUrl>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
-    <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworks>netstandard2.0;net45;net461</TargetFrameworks>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<AssemblyName>Kooboo.Web</AssemblyName>
+	<RootNamespace>Kooboo.Web</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>false</UseVSHostingProcess>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>1</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TargetZone>LocalIntranet</TargetZone>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
-  </PropertyGroup>
-  <PropertyGroup />
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>5FCE52E365107BCBAC6843C16D14656B9565646E</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestKeyFile>Kooboo.Web_TemporaryKey.pfx</ManifestKeyFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignManifests>false</SignManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Server|AnyCPU'">
-    <OutputPath>bin\Server\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <WarningLevel>1</WarningLevel>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Newtonsoft.Json.dll</HintPath>
-    </Reference>
+    <Compile Remove="Api\Implementation\Ecommerce\**" />
+    <Compile Remove="AppData\**" />
+    <Compile Remove="Areas\**" />
+    <Compile Remove="KoobooData\**" />
+    <Compile Remove="upgradePackage\**" />
+    <Compile Remove="_Admin\**" />
+    <EmbeddedResource Remove="Api\Implementation\Ecommerce\**" />
+    <EmbeddedResource Remove="AppData\**" />
+    <EmbeddedResource Remove="Areas\**" />
+    <EmbeddedResource Remove="KoobooData\**" />
+    <EmbeddedResource Remove="upgradePackage\**" />
+    <EmbeddedResource Remove="_Admin\**" />
+    <None Remove="Api\Implementation\Ecommerce\**" />
+    <None Remove="AppData\**" />
+    <None Remove="Areas\**" />
+    <None Remove="KoobooData\**" />
+    <None Remove="upgradePackage\**" />
+    <None Remove="_Admin\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Api\Implementation\Download.cs" />
+    <Compile Remove="Api\Implementation\Payment.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="DashBoard\DashBoardItem.html" />
+    <None Remove="DashBoard\MyVisitor\FrontVisitors.html" />
+    <None Remove="DashBoard\Resource\SiteResource.html" />
+    <None Remove="DashBoard\TopPages\TopPages.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="DashBoard\DashBoardItem.html" />
+    <EmbeddedResource Include="DashBoard\MyVisitor\FrontVisitors.html" />
+    <EmbeddedResource Include="DashBoard\Resource\SiteResource.html" />
+    <EmbeddedResource Include="DashBoard\TopPages\TopPages.html" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)'=='net45'OR '$(TargetFramework)'=='net461'">
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -110,277 +63,28 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Api\Implementation\ApiGeneration.cs" />
-    <Compile Include="Api\Implementation\Cluster.cs" />
-    <Compile Include="Api\Implementation\Code.cs" />
-    <Compile Include="Api\Implementation\CoreSetting.cs" />
-    <Compile Include="Api\Implementation\DashBoard.cs" />
-    <Compile Include="Api\Implementation\DataBase.cs" />
-    <Compile Include="Api\Implementation\Debugger.cs" />
-    <Compile Include="Api\Implementation\Diagnosis.cs" />
-    <Compile Include="Api\Implementation\Bar.cs" />
-    <Compile Include="Api\Implementation\Binding.cs" />
-    <Compile Include="Api\Implementation\Component.cs" />
-    <Compile Include="Api\Implementation\ContentFolder.cs" />
-    <Compile Include="Api\Implementation\ContentType.cs" />
-    <Compile Include="Api\Implementation\CssRule.cs" />
-    <Compile Include="Api\Implementation\DataMethodSetting.cs" />
-    <Compile Include="Api\Implementation\Disk.cs" />
-    <Compile Include="Api\Implementation\Domain.cs" />
-    <Compile Include="Api\Implementation\BusinessRule.cs" />
-    <Compile Include="Api\Implementation\ExternalResource.cs" />
-    <Compile Include="Api\Implementation\File.cs" />
-    <Compile Include="Api\Implementation\Form.cs" />
-    <Compile Include="Api\Implementation\KConfig.cs" />
-    <Compile Include="Api\Implementation\KScript.cs" />
-    <Compile Include="Api\Implementation\Mails\EmailAddress.cs" />
-    <Compile Include="Api\Implementation\Extension.cs" />
-    <Compile Include="Api\Implementation\Helper.cs" />
-    <Compile Include="Api\Implementation\HtmlBlock.cs" />
-    <Compile Include="Api\Implementation\InlineEditor.cs" />
-    <Compile Include="Api\Implementation\Job.cs" />
-    <Compile Include="Api\Implementation\Label.cs" />
-    <Compile Include="Api\Implementation\Layout.cs" />
-    <Compile Include="Api\Implementation\Link.cs" />
-    <Compile Include="Api\Implementation\Mails\EmailAttachment.cs" />
-    <Compile Include="Api\Implementation\Mails\EmailDraft.cs" />
-    <Compile Include="Api\Implementation\Mails\EmailMessage.cs" />
-    <Compile Include="Api\Implementation\Media.cs" />
-    <Compile Include="Api\Implementation\Menu.cs" />
-    <Compile Include="Api\Implementation\Page.cs" />
-    <Compile Include="Api\Implementation\Publish.cs" />
-    <Compile Include="Api\Implementation\Receiver.cs" />
-    <Compile Include="Api\Implementation\Redirect.cs" />
-    <Compile Include="Api\Implementation\Relation.cs" />
-    <Compile Include="Api\Implementation\ResourceGroup.cs" />
-    <Compile Include="Api\Implementation\Route.cs" />
-    <Compile Include="Api\Implementation\Script.cs" />
-    <Compile Include="Api\Implementation\Search.cs" />
-    <Compile Include="Api\Implementation\Session.cs" />
-    <Compile Include="Api\Implementation\KeyValue.cs" />
-    <Compile Include="Api\Implementation\ServerInfo.cs" />
-    <Compile Include="Api\Implementation\SiteUser.cs" />
-    <Compile Include="Api\Implementation\Submit.cs" />
-    <Compile Include="Api\Implementation\System.cs" />
-    <Compile Include="Api\Implementation\Template.cs" />
-    <Compile Include="Api\Implementation\Site.cs" />
-    <Compile Include="Api\Implementation\SiteLog.cs" />
-    <Compile Include="Api\Implementation\Style.cs" />
-    <Compile Include="Api\Implementation\TextContent.cs" />
-    <Compile Include="Api\Implementation\Transfer.cs" />
-    <Compile Include="Api\Implementation\Url.cs" />
-    <Compile Include="Api\Implementation\User.cs" />
-    <Compile Include="Api\Implementation\UserPublish.cs" />
-    <Compile Include="Api\Implementation\View.cs" />
-    <Compile Include="Api\Implementation\VisitorLog.cs" />
-    <Compile Include="Api\Implementation\Upload.cs" />
-    <Compile Include="Api\Implementation\Organization.cs" />
-    <Compile Include="Api\Implementation\Replica.cs" />
-    <Compile Include="Api\SiteApiProvider.cs" />
-    <Compile Include="Backend\CmsMenus\ISiteMenu.cs" />
-    <Compile Include="Backend\Events\Hanlders\HandleBindingChange.cs" />
-    <Compile Include="Backend\CmsMenus\TopMenus\Domain.cs" />
-    <Compile Include="Backend\CmsMenus\IFeatureMenu.cs" />
-    <Compile Include="Backend\CmsMenus\IMenu.cs" />
-    <Compile Include="Backend\CmsMenus\ITopMenu.cs" />
-    <Compile Include="Backend\CmsMenus\MenuContainer.cs" />
-    <Compile Include="Backend\CmsMenus\MenuHelper.cs" />
-    <Compile Include="Backend\CmsMenus\CmsMenuViewModel.cs" />
-    <Compile Include="Backend\CmsMenus\TopMenus\Emails.cs" />
-    <Compile Include="Backend\CmsMenus\TopMenus\Sites.cs" />
-    <Compile Include="Cache\TempDownloadZip.cs" />
-    <Compile Include="DashBoard\DashBoardManager.cs" />
-    <Compile Include="DashBoard\MyVisitor\FrontVisitors.cs" />
-    <Compile Include="DashBoard\Resource\SiteResource.cs" />
-    <Compile Include="DashBoard\TopPages\TopPages.cs" />
-    <Compile Include="Frontend\DefaultStartMiddleWare.cs" />
-    <Compile Include="Frontend\KoobooMiddleWare.cs" />
-    <Compile Include="JQL\CodeGeneration.cs" />
-    <Compile Include="JQL\Commands\DatabaseGet.cs" />
-    <Compile Include="JQL\Commands\DatabaseDelete.cs" />
-    <Compile Include="JQL\Commands\EnumActionType.cs" />
-    <Compile Include="JQL\Commands\EnumObjectType.cs" />
-    <Compile Include="JQL\Commands\ICommand.cs" />
-    <Compile Include="JQL\Commands\Parser.cs" />
-    <Compile Include="JQL\Commands\DatabaseQuery.cs" />
-    <Compile Include="JsTest\JsTestCommand.cs" />
-    <Compile Include="JsTest\JsTestHelper.cs" />
-    <Compile Include="JsTest\RenderEngine.cs" />
-    <Compile Include="JsTest\JsTestMiddleWare.cs" />
-    <Compile Include="JsTest\JsTestOption.cs" />
-    <Compile Include="JQL\CommandExecutor.cs" />
-    <Compile Include="Module\ISiteModuleApi.cs" />
-    <Compile Include="Module\ModuleApiContainer.cs" />
-    <Compile Include="Module\ModuleApiHelper.cs" />
-    <Compile Include="Module\SiteModuleApiBase.cs" />
-    <Compile Include="Security\ActionControl.cs" />
-    <Compile Include="Security\AccessControl.cs" />
-    <Compile Include="Security\SslProvider.cs" />
-    <Compile Include="Service\AdminLogService.cs" />
-    <Compile Include="Service\UserService.cs" />
-    <Compile Include="Spa\CommandDiskSourceProvider.cs" />
-    <Compile Include="Spa\RenderEngine.cs" />
-    <Compile Include="Spa\RenderHelper.cs" />
-    <Compile Include="Spa\SpaMiddleWare.cs" />
-    <Compile Include="Spa\SpaRenderOption.cs" />
-    <Compile Include="Spa\RenderPlanCache.cs" />
-    <Compile Include="Spa\RenderRespnose.cs" />
-    <Compile Include="SystemStart.cs" />
-    <Compile Include="temp\AnotherSetting.cs" />
-    <Compile Include="temp\SampleSiteSetting.cs" />
-    <Compile Include="ViewModel\ApiGeneration.cs" />
-    <Compile Include="ViewModel\ApiHelper.cs" />
-    <Compile Include="ViewModel\ApiScript.cs" />
-    <Compile Include="ViewModel\App.cs" />
-    <Compile Include="ViewModel\Binding.cs" />
-    <Compile Include="ViewModel\Code.cs" />
-    <Compile Include="ViewModel\ContentFolder.cs" />
-    <Compile Include="ViewModel\ContentType.cs" />
-    <Compile Include="ViewModel\Currency.cs" />
-    <Compile Include="ViewModel\DashBoard.cs" />
-    <Compile Include="ViewModel\Database.cs" />
-    <Compile Include="ViewModel\Domain.cs" />
-    <Compile Include="ViewModel\Ecommerce\Category.cs" />
-    <Compile Include="ViewModel\Ecommerce\CommerceSite.cs" />
-    <Compile Include="ViewModel\Events.cs" />
-    <Compile Include="ViewModel\Extension.cs" />
-    <Compile Include="ViewModel\ExternalResource.cs" />
-    <Compile Include="ViewModel\File.cs" />
-    <Compile Include="ViewModel\Form.cs" />
-    <Compile Include="ViewModel\HtmlBlock.cs" />
-    <Compile Include="ViewModel\InlineEditor.cs" />
-    <Compile Include="ViewModel\Job.cs" />
-    <Compile Include="ViewModel\KConfig.cs" />
-    <Compile Include="ViewModel\Label.cs" />
-    <Compile Include="ViewModel\Layout.cs" />
-    <Compile Include="ViewModel\Link.cs" />
-    <Compile Include="ViewModel\Media.cs" />
-    <Compile Include="ViewModel\Menu.cs" />
-    <Compile Include="ViewModel\MyViewModel.cs" />
-    <Compile Include="ViewModel\Page.cs" />
-    <Compile Include="ViewModel\PagedList.cs" />
-    <Compile Include="ViewModel\Publish.cs" />
-    <Compile Include="ViewModel\Relation.cs" />
-    <Compile Include="ViewModel\Route.cs" />
-    <Compile Include="ViewModel\Site.cs" />
-    <Compile Include="ViewModel\SiteLog.cs" />
-    <Compile Include="ViewModel\IEmbeddable.cs" />
-    <Compile Include="ViewModel\Style.cs" />
-    <Compile Include="ViewModel\Template.cs" />
-    <Compile Include="ViewModel\TextContent.cs" />
-    <Compile Include="Api\Implementation\SiteObjectApi.cs" />
-    <Compile Include="Api\ApiContainer.cs" />
-    <Compile Include="ViewModel\DataSourceViewModelNew.cs" />
-    <Compile Include="ViewModel\Url.cs" />
-    <Compile Include="ViewModel\User.cs" />
-    <Compile Include="ViewModel\ViewDataSourceViewModel.cs" />
-    <Compile Include="ViewModel\JsonResultData.cs" />
-    <Compile Include="Backend\Events\Hanlders\HandleDiskWatcher.cs" />
-    <Compile Include="ViewModel\Transfer.cs" />
-    <Compile Include="ViewModel\TypeTree.cs" />
-    <Compile Include="ViewModel\View.cs" />
-    <Compile Include="ViewModel\Visitor.cs" />
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.6.0-preview.19073.11" />
+    <PackageReference Include="System.Collections" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
+    <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.Handles" Version="4.3.0" />
+    <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Include="DashBoard\Resource\SiteResource.html" />
-    <EmbeddedResource Include="DashBoard\DashBoardItem.html" />
-    <EmbeddedResource Include="DashBoard\TopPages\TopPages.html" />
-    <Resource Include="favicon.ico" />
-    <AppDesigner Include="Properties\" />
-    <Resource Include="Lang\en.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    <ProjectReference Include="..\Kooboo.Api\Kooboo.Api.csproj" />
+    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj" />
+    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
+    <ProjectReference Include="..\Kooboo.HttpServer\src\Kooboo.HttpServer\Kooboo.HttpServer.csproj" />
+    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj" />
+    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
+    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.csproj" />
+    <ProjectReference Include="..\Kooboo.Render\Kooboo.Render.csproj" />
+    <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.csproj" />
+    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Api\Kooboo.Api.csproj">
-      <Project>{964f25fd-7257-4e6d-8652-9df77cdb6337}</Project>
-      <Name>Kooboo.Api</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj">
-      <Project>{d8413e81-0018-4dab-aeaf-5d36c3c43a52}</Project>
-      <Name>Kooboo.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj">
-      <Project>{83d7b143-e3ab-44dc-b1fe-ade82e415aad}</Project>
-      <Name>Kooboo.Dom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.HttpServer\src\Kooboo.HttpServer\Kooboo.HttpServer.csproj">
-      <Project>{a7705d34-5372-412b-adc1-dc69082fe14f}</Project>
-      <Name>Kooboo.HttpServer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj">
-      <Project>{d9e6c6ef-2480-46f5-bb81-d21b8456075a}</Project>
-      <Name>Kooboo.IndexedDB</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj">
-      <Project>{d8996716-de67-48a3-93d5-b9ca1d2b69da}</Project>
-      <Name>Kooboo.Lib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.csproj">
-      <Project>{6fd5d24d-1bc3-487b-b62d-388c7091231e}</Project>
-      <Name>Kooboo.Mail</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Render\Kooboo.Render.csproj">
-      <Project>{8d9bea84-1b86-491b-a457-eeb4369a243c}</Project>
-      <Name>Kooboo.Render</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.csproj">
-      <Project>{9833E83F-1AA7-42A2-A55E-543E56558D49}</Project>
-      <Name>Kooboo.Search</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.csproj">
-      <Project>{28102df1-17f6-439c-b79e-d89f4971e56b}</Project>
-      <Name>Kooboo.Sites</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Api\Implementation\Module\" />
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="DashBoard\MyVisitor\FrontVisitors.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Lang\zh.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Lang\ru.xml" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets" Condition="Exists('..\packages\AutoMapper.3.3.1\tools\AutoMapper.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

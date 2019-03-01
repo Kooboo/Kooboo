@@ -1,4 +1,6 @@
-﻿using Kooboo.Data;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//All rights reserved.
+using Kooboo.Data;
 using Kooboo.Data.Models;
 using Kooboo.Lib.Helper;
 using System;
@@ -173,7 +175,7 @@ namespace Kooboo.Sites.Sync
                 }
                 else
                 {
-                    var path = System.IO.Path.Combine(folder, entry.FullName);
+                    var path =  Lib.Compatible.CompatibleManager.Instance.System.CombinePath(folder, entry.FullName);
 
                     if (string.IsNullOrEmpty(entry.Name))
                     {

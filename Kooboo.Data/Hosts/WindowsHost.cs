@@ -49,7 +49,7 @@ namespace Kooboo.Data.Hosts
             get
             {
                 if (string.IsNullOrEmpty(_hostfile))
-                {
+                { 
                     string systemfolder = Environment.GetEnvironmentVariable("SystemRoot");
                     if (!string.IsNullOrWhiteSpace(systemfolder))
                     {

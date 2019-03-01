@@ -4,6 +4,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 using System.IO;
+using System.Xml;
 
 namespace Kooboo.Lib.Security
 { 
@@ -66,11 +67,7 @@ namespace Kooboo.Lib.Security
         /// <returns></returns>
         public static string RSAEncrypt(string publickey,string content)
         {
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
-            byte[] bytes;
-            rsa.FromXmlString(publickey); 
-            bytes = rsa.Encrypt(Encoding.UTF8.GetBytes(content), false); 
-            return Convert.ToBase64String(bytes);
+            return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.RSAEncrypt(publickey, content);
         }
 
         /// <summary>
@@ -81,11 +78,8 @@ namespace Kooboo.Lib.Security
         /// <returns></returns>
         public static string RSADecrypt(string privatekey,string content)
         {
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(); 
-            byte[] bytes;
-            rsa.FromXmlString(privatekey);
-            bytes = rsa.Decrypt(Convert.FromBase64String(content), false); 
-            return Encoding.UTF8.GetString(bytes);
+            return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.RSADecrypt(privatekey, content);
+            
         }
 
         /// <summary>
@@ -96,50 +90,12 @@ namespace Kooboo.Lib.Security
         // <param name="size">secure size must be above 512</param> 
         public static void GenerateRsa(string privateKeyPath, string publicKeyPath, int size)
         {
-            //stream to save the keys
-            FileStream fs = null;
-            StreamWriter sw = null;
-
-            //create RSA provider
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(size);
-      
-            try
-            {
-                //save private key
-                fs = new FileStream(privateKeyPath, FileMode.Create, FileAccess.Write);
-                sw = new StreamWriter(fs);
-                sw.Write(rsa.ToXmlString(true));
-                sw.Flush();
-            }
-            finally
-            {
-                if (sw != null) sw.Close();
-                if (fs != null) fs.Close();
-            }
-
-            try
-            {
-                //save public key
-                fs = new FileStream(publicKeyPath, FileMode.Create, FileAccess.Write);
-                sw = new StreamWriter(fs);
-                sw.Write(rsa.ToXmlString(false));
-                sw.Flush();
-            }
-            finally
-            {
-                if (sw != null) sw.Close();
-                if (fs != null) fs.Close();
-            }
-            rsa.Clear();
+            Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GenerateRsa(privateKeyPath, publicKeyPath, size);
         }
 
         public static RsaKeys GenerateKeys(int size=512)
         {
-            RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(size);
-            RsaKeys keys = new RsaKeys(); 
-            keys.PublicKey =  rsa.ToXmlString(false);
-            keys.PrivateKey = rsa.ToXmlString(true); 
-            return keys;
+           return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GenerateKeys(size);
         }
     }
 

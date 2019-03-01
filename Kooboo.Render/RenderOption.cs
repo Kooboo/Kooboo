@@ -8,7 +8,8 @@ using System.Linq;
 namespace Kooboo.Render
 {
     public class RenderOption
-    { 
+    {
+
         public Action<Kooboo.Data.Context.RenderContext, RenderRespnose> Log { get; set; }
 
         private Func<Kooboo.Data.Context.RenderContext, string> _GetDbPath;

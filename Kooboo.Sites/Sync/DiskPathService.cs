@@ -40,15 +40,9 @@ namespace Kooboo.Sites.Sync
         {
             relativeUrl = ReplaceQuestionMark(relativeUrl, false);
 
-            string relativepath = relativeUrl.Replace("/", "\\");
-            if (relativepath.StartsWith("\\"))
-            {
-                relativepath = relativepath.Substring(1);
-            }
+            var relativepath = EscapeChar(relativeUrl, false);
 
-            relativepath = EscapeChar(relativepath, false);
-
-            string FullPath = System.IO.Path.Combine(WebSite.DiskSyncFolder, relativepath);
+            string FullPath = Lib.Compatible.CompatibleManager.Instance.System.CombinePath(WebSite.DiskSyncFolder, relativepath);
 
             if (FullPath.EndsWith("/") || FullPath.EndsWith("\\"))
             {

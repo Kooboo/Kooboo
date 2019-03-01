@@ -134,21 +134,11 @@ namespace Kooboo.Web.Spa
          
         public static string CombinePath(string Root, string RelativeUrl)
         {
-            if (!Root.EndsWith("\\"))
-            {
-                Root = Root + "\\"; 
-            }
-
             if (string.IsNullOrEmpty(RelativeUrl))
             {
-                return Root;  
+                return Root;
             }
-            RelativeUrl = RelativeUrl.Replace("/", "\\"); 
-            if (RelativeUrl.StartsWith("\\"))
-            {
-                RelativeUrl = RelativeUrl.Substring(1); 
-            }
-            return System.IO.Path.Combine(Root, RelativeUrl); 
+            return Lib.Compatible.CompatibleManager.Instance.System.CombinePath(Root, RelativeUrl);
         }
 
         public static string GetRelativeUrl(Uri AbsoluteUri, SpaRenderOption option)

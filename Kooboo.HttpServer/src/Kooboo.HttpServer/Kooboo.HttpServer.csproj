@@ -1,378 +1,70 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A7705D34-5372-412B-ADC1-DC69082FE14F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Kooboo.HttpServer</RootNamespace>
-    <AssemblyName>Kooboo.HttpServer</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworks>netstandard2.0;net45;net461</TargetFrameworks>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<AssemblyName>Kooboo.HttpServer</AssemblyName>
+	<RootNamespace>Kooboo.HttpServer</RootNamespace>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+
+  <PropertyGroup>
+    <DefineConstants>FEATURE_PORTABLE_SPAN;netstandard;RELEASE;NETSTANDARD2_0;RELEASE;NETSTANDARD2_0;NETSTANDARD2_0;NETSTANDARD2_0;NETSTANDARD2_0;NETSTANDARD2_0;NETSTANDARD2_0;NETSTANDARD2_0</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;netstandard;FEATURE_PORTABLE_SPAN;NET45</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>1</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='netstandard2.0'">
+    <DefineConstants>NETSTANDARD2_0;netstandard;NETSTANDARD;FEATURE_PORTABLE_SPAN</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>false</Optimize>
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='net45'OR '$(TargetFramework)'=='net461'">
+    <DefineConstants>NET45;netstandard;FEATURE_PORTABLE_SPAN</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>false</Optimize>
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;netstandard;FEATURE_PORTABLE_SPAN;NET45</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <LangVersion>7.2</LangVersion>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PlatformTarget>x64</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Server|AnyCPU'">
-    <OutputPath>bin\Server\</OutputPath>
-    <DefineConstants>TRACE;netstandard;FEATURE_PORTABLE_SPAN;NET45</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <LangVersion>7.2</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
+
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\lib\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <Compile Remove="Http\Http2\**" />
+    <EmbeddedResource Remove="Http\Http2\**" />
+    <None Remove="Http\Http2\**" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Http\Features\IHttpApplication.cs" />
-    <Compile Include="CoreStrings.cs" />
-    <Compile Include="Exceptions\AddressInUseException.cs" />
-    <Compile Include="Exceptions\BadHttpRequestException.cs" />
-    <Compile Include="Exceptions\ConnectionAbortedException.cs" />
-    <Compile Include="Exceptions\ConnectionResetException.cs" />
-    <Compile Include="Http\Http1\HttpScheme.cs" />
-    <Compile Include="Http\Http1\HttpVersion.cs" />
-    <Compile Include="Http\Http1\PipelineExtensions.cs" />
-    <Compile Include="Http\Http1\RequestRejectionReason.cs" />
-    <Compile Include="Http\Http1\HttpMethod.cs" />
-    <Compile Include="Http\Features\HttpFeatures.cs" />
-    <Compile Include="Http\Http1\ConnectionOptions.cs" />
-    <Compile Include="Http\Http1\HttpHeaders.cs" />
-    <Compile Include="Http\Http1\HttpHeaders.Generated.cs" />
-    <Compile Include="Http\Http1\HttpResponseHeaders.cs" />
-    <Compile Include="Http\Http1\IHttpHeadersHandler.cs" />
-    <Compile Include="Http\Http1\IHttpOutputProducer.cs" />
-    <Compile Include="Http\Http1\MessageBody.cs" />
-    <Compile Include="Http\Http1\TransferCoding.cs" />
-    <Compile Include="Http\HttpConnection.cs" />
-    <Compile Include="Http\Features\ConnectionFeature.cs" />
-    <Compile Include="Http\HttpConnectionContext.cs" />
-    <Compile Include="Http\IHttpProtocol.cs" />
-    <Compile Include="Http\IRequestProcessor.cs" />
-    <Compile Include="HttpApplication.cs" />
-    <Compile Include="Infrastructure\Constants.cs" />
-    <Compile Include="Infrastructure\DefaultLogger.cs" />
-    <Compile Include="Infrastructure\HttpUtilities.Generated.cs" />
-    <Compile Include="Infrastructure\ILogger.cs" />
-    <Compile Include="Infrastructure\InlineLoggingThreadPool.cs" />
-    <Compile Include="Infrastructure\ISystemClock.cs" />
-    <Compile Include="Infrastructure\LoggingThreadPool.cs" />
-    <Compile Include="Infrastructure\PipeConnection.cs" />
-    <Compile Include="Infrastructure\StringUtilities.cs" />
-    <Compile Include="Infrastructure\SystemClock.cs" />
-    <Compile Include="Interfaces\HttpContext.cs" />
-    <Compile Include="Interfaces\HttpRequest.cs" />
-    <Compile Include="Interfaces\HttpResponse.cs" />
-    <Compile Include="Micosoft\AspNetCore\Http\CookieOptions.cs" />
-    <Compile Include="Micosoft\AspNetCore\Http\Internal\ResponseCookies.cs" />
-    <Compile Include="Micosoft\AspNetCore\Http\IResponseCookies.cs" />
-    <Compile Include="Micosoft\AspNetCore\Http\SameSiteMode.cs" />
-    <Compile Include="Micosoft\Net\Http\Headers\CookieHeaderParser.cs" />
-    <Compile Include="Micosoft\Net\Http\Headers\CookieHeaderValue.cs" />
-    <Compile Include="Micosoft\Net\Http\Headers\HeaderNames.cs" />
-    <Compile Include="Micosoft\AspNetCore\Http\HttpMethods.cs" />
-    <Compile Include="Micosoft\AspNetCore\Http\IHeaderDictionary.cs" />
-    <Compile Include="Micosoft\AspNetCore\Http\Internal\QueryCollection.cs" />
-    <Compile Include="Micosoft\AspNetCore\Http\Internal\RequestCookieCollection.cs" />
-    <Compile Include="Micosoft\AspNetCore\Http\IQueryCollection.cs" />
-    <Compile Include="Micosoft\AspNetCore\Http\IRequestCookieCollection.cs" />
-    <Compile Include="Micosoft\AspNetCore\Http\QueryString.cs" />
-    <Compile Include="Micosoft\AspNetCore\Http\StatusCodes.cs" />
-    <Compile Include="Micosoft\AspNetCore\WebUtilities\KeyValueAccumulator.cs" />
-    <Compile Include="Micosoft\AspNetCore\WebUtilities\QueryHelpers.cs" />
-    <Compile Include="Micosoft\Extensions\Internal\HashCodeCombiner.cs" />
-    <Compile Include="Micosoft\Extensions\Primitives\InplaceStringBuilder.cs" />
-    <Compile Include="Micosoft\Extensions\Primitives\Resources.Designer.cs" />
-    <Compile Include="Micosoft\Extensions\Primitives\StringSegment.cs" />
-    <Compile Include="Micosoft\Extensions\Primitives\StringSegmentComparer.cs" />
-    <Compile Include="Micosoft\Extensions\Primitives\StringTokenizer.cs" />
-    <Compile Include="Micosoft\Extensions\Primitives\StringValues.cs" />
-    <Compile Include="Micosoft\Extensions\Primitives\ThrowHelper.cs" />
-    <Compile Include="Micosoft\Net\Http\Headers\BaseHeaderParser.cs" />
-    <Compile Include="Micosoft\Net\Http\Headers\GenericHeaderParser.cs" />
-    <Compile Include="Micosoft\Net\Http\Headers\HeaderUtilities.cs" />
-    <Compile Include="Micosoft\Net\Http\Headers\HttpHeaderParser.cs" />
-    <Compile Include="Micosoft\Net\Http\Headers\HttpParseResult.cs" />
-    <Compile Include="Micosoft\Net\Http\Headers\HttpRuleParser.cs" />
-    <Compile Include="Micosoft\Net\Http\Headers\NameValueHeaderValue.cs" />
-    <Compile Include="Micosoft\AspNetCore\WebUtilities\ReasonPhrases.cs" />
-    <Compile Include="HttpServerLimit.cs" />
-    <Compile Include="Http\Features\HttpRequestFeature.cs" />
-    <Compile Include="Http\Features\HttpResponseFeature.cs" />
-    <Compile Include="Http\Http1\Http1Connection.FeatureCollection.cs" />
-    <Compile Include="Micosoft\Net\Http\Headers\SameSiteMode.cs" />
-    <Compile Include="Micosoft\Net\Http\Headers\SetCookieHeaderValue.cs" />
-    <Compile Include="ServiceContext.cs" />
-    <Compile Include="Infrastructure\Heartbeat.cs" />
-    <Compile Include="Infrastructure\HttpConnectionManager.cs" />
-    <Compile Include="Infrastructure\HttpConnectionReference.cs" />
-    <Compile Include="Infrastructure\KoobooThreadPool.cs" />
-    <Compile Include="Infrastructure\ResourceCounter.cs" />
-    <Compile Include="Infrastructure\ThrowingWriteOnlyStream.cs" />
-    <Compile Include="Infrastructure\UriUtilities.cs" />
-    <Compile Include="Infrastructure\WrappingStream.cs" />
-    <Compile Include="Infrastructure\IRequestProcessor.cs" />
-    <Compile Include="Http\Http1\ChunkWriter.cs" />
-    <Compile Include="Http\Http1\DateHeaderValueManager.cs" />
-    <Compile Include="Http\Http1\Http1Connection.cs" />
-    <Compile Include="Http\Http1\Http1ConnectionContext.cs" />
-    <Compile Include="Http\Http1\Http1MessageBody.cs" />
-    <Compile Include="Http\Http1\Http1OutputProducer.cs" />
-    <Compile Include="Http\Http1\Http1ParsingHandler.cs" />
-    <Compile Include="Http\Http1\HttpParser.cs" />
-    <Compile Include="Http\Http1\HttpProtocol.cs" />
-    <Compile Include="Http\Http1\HttpRequestHeaders.cs" />
-    <Compile Include="Http\Http1\HttpRequestStream.cs" />
-    <Compile Include="Http\Http1\HttpRequestTargetForm.cs" />
-    <Compile Include="Http\Http1\HttpResponseStream.cs" />
-    <Compile Include="Http\Http1\HttpStreamState.cs" />
-    <Compile Include="Http\Http1\HttpUpgradeStream.cs" />
-    <Compile Include="Http\Http1\IHttpParser.cs" />
-    <Compile Include="Http\Http1\IHttpProtocolContext.cs" />
-    <Compile Include="Http\Http1\IHttpRequestLineHandler.cs" />
-    <Compile Include="Http\Http1\IHttpResponseControl.cs" />
-    <Compile Include="Http\Http1\PathNormalizer.cs" />
-    <Compile Include="Http\Http1\ProduceEndType.cs" />
-    <Compile Include="Http\Http1\ReasonPhrases.cs" />
-    <Compile Include="Http\Http1\RequestProcessingStatus.cs" />
-    <Compile Include="Infrastructure\HttpUtilities.cs" />
-    <Compile Include="Infrastructure\IHeartbeatHandler.cs" />
-    <Compile Include="Infrastructure\ITimeoutControl.cs" />
-    <Compile Include="Infrastructure\ReadOnlyStream.cs" />
-    <Compile Include="Infrastructure\Streams.cs" />
-    <Compile Include="Infrastructure\TimeoutAction.cs" />
-    <Compile Include="Infrastructure\WriteOnlyStream.cs" />
-    <Compile Include="MinDataRate.cs" />
-    <Compile Include="Sockets\BufferExtensions.cs" />
-    <Compile Include="Infrastructure\CorrelationIdGenerator.cs" />
-    <Compile Include="Sockets\DefaultSocketsTrace.cs" />
-    <Compile Include="Sockets\ISocketsTrace.cs" />
-    <Compile Include="Sockets\Ssl\RawStream.cs" />
-    <Compile Include="Sockets\SocketAwaitable.cs" />
-    <Compile Include="Sockets\SocketConnection.cs" />
-    <Compile Include="Http\HttpMessage.cs" />
-    <Compile Include="HttpServer.cs" />
-    <Compile Include="HttpServerOptions.cs" />
-    <Compile Include="Interfaces\IHttpHandler.cs" />
-    <Compile Include="ISslCertificateProvider.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Sockets\SocketReceiver.cs" />
-    <Compile Include="Sockets\SocketSender.cs" />
-    <Compile Include="Sockets\SocketTaskExtensions.cs" />
-    <Compile Include="Sockets\Ssl\SslAdapter.cs" />
-    <Compile Include="StreamExtended\ClientHelloInfo.cs" />
-    <Compile Include="StreamExtended\Helpers\BufferPool.cs" />
-    <Compile Include="StreamExtended\Models\SslCiphers.cs" />
-    <Compile Include="StreamExtended\Models\SslExtension.cs" />
-    <Compile Include="StreamExtended\Network\ClientHelloAlpnAdderStream.cs" />
-    <Compile Include="StreamExtended\Network\CopyStream.cs" />
-    <Compile Include="StreamExtended\Network\CustomBinaryReader.cs" />
-    <Compile Include="StreamExtended\Network\CustomBinaryWriter.cs" />
-    <Compile Include="StreamExtended\Network\CustomBufferedPeekStream.cs" />
-    <Compile Include="StreamExtended\Network\CustomBufferedStream.cs" />
-    <Compile Include="StreamExtended\Network\IBufferedStream.cs" />
-    <Compile Include="StreamExtended\Network\ServerHelloAlpnAdderStream.cs" />
-    <Compile Include="StreamExtended\ServerHelloInfo.cs" />
-    <Compile Include="StreamExtended\SslExtensions.cs" />
-    <Compile Include="StreamExtended\SslTools.cs" />
-    <Compile Include="System\Buffers\Binary\Reader.cs" />
-    <Compile Include="System\Buffers\Binary\ReaderBigEndian.cs" />
-    <Compile Include="System\Buffers\Binary\ReaderLittleEndian.cs" />
-    <Compile Include="System\Buffers\Binary\Writer.cs" />
-    <Compile Include="System\Buffers\Binary\WriterBigEndian.cs" />
-    <Compile Include="System\Buffers\Binary\WriterLittleEndian.cs" />
-    <Compile Include="System\Buffers\Internal\ArrayMemoryPool.cs" />
-    <Compile Include="System\Buffers\ArrayPool.cs" />
-    <Compile Include="System\Buffers\ArrayPoolEventSource.cs" />
-    <Compile Include="System\Buffers\DefaultArrayPool.cs" />
-    <Compile Include="System\Buffers\DefaultArrayPoolBucket.cs" />
-    <Compile Include="System\Buffers\IMemoryList.cs" />
-    <Compile Include="System\Buffers\IOutput.cs" />
-    <Compile Include="System\Buffers\IRetainable.cs" />
-    <Compile Include="System\Buffers\MemoryHandle.cs" />
-    <Compile Include="System\Buffers\MemoryPool.cs" />
-    <Compile Include="System\Buffers\MemoryPool.T.cs" />
-    <Compile Include="System\Buffers\MemoryPoolBlock.cs" />
-    <Compile Include="System\Buffers\MemoryPoolSlab.cs" />
-    <Compile Include="System\Buffers\OperationStatus.cs" />
-    <Compile Include="System\Buffers\OutputExtensions.cs" />
-    <Compile Include="System\Buffers\OutputWriter.cs" />
-    <Compile Include="System\Buffers\OwnedArray.cs" />
-    <Compile Include="System\Buffers\OwnedMemory.cs" />
-    <Compile Include="System\Buffers\ReadOnlyBuffer.cs" />
-    <Compile Include="System\Buffers\ReadOnlyBufferReader.cs" />
-    <Compile Include="System\Buffers\ReadOnlyBuffer_helpers.cs" />
-    <Compile Include="System\Buffers\SpanLiteralExtensions.cs" />
-    <Compile Include="System\Buffers\StandardFormat.cs" />
-    <Compile Include="System\Buffers\Text\Base64Decoder.cs" />
-    <Compile Include="System\Buffers\Text\Base64Encoder.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Constants.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\FormattingHelpers.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Boolean.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Date.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Date.G.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Date.L.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Date.O.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Date.R.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Decimal.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Decimal.E.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Decimal.F.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Decimal.G.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Float.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Guid.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Signed.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Signed.D.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Signed.Default.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Signed.N.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Unsigned.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Unsigned.D.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Unsigned.Default.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Unsigned.N.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.Integer.Unsigned.X.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Formatter\Utf8Formatter.TimeSpan.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\ParserHelpers.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Boolean.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Date.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Date.Default.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Date.G.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Date.Helpers.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Date.O.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Date.R.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Decimal.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Float.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Guid.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Signed.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Signed.D.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Signed.N.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Unsigned.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Unsigned.D.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Unsigned.N.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Integer.Unsigned.X.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.Number.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.TimeSpan.BigG.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.TimeSpan.C.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.TimeSpan.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.TimeSpan.LittleG.cs" />
-    <Compile Include="System\Buffers\Text\Utf8Parser\Utf8Parser.TimeSpanSplitter.cs" />
-    <Compile Include="System\Buffers\ThrowHelper.cs" />
-    <Compile Include="System\Buffers\Transformation.cs" />
-    <Compile Include="System\Buffers\Utilities.cs" />
-    <Compile Include="System\Collections\ISequence.cs" />
-    <Compile Include="System\Collections\SequencePosition.cs" />
-    <Compile Include="System\Encoders\AllowedCharactersBitmap.cs" />
-    <Compile Include="System\Encoders\BufferInternal.cs" />
-    <Compile Include="System\Encoders\HexUtil.cs" />
-    <Compile Include="System\Encoders\HtmlEncoder.cs" />
-    <Compile Include="System\Encoders\JavaScriptEncoder.cs" />
-    <Compile Include="System\Encoders\TextEncoder.cs" />
-    <Compile Include="System\Encoders\TextEncoderSettings.cs" />
-    <Compile Include="System\Encoders\UnicodeHelpers.cs" />
-    <Compile Include="System\Encoders\UnicodeRange.cs" />
-    <Compile Include="System\Encoders\UnicodeRanges.cs" />
-    <Compile Include="System\Encoders\UnicodeRanges.generated.cs" />
-    <Compile Include="System\Encoders\UrlEncoder.cs" />
-    <Compile Include="System\Encoders\Web\UrlDecoder.cs" />
-    <Compile Include="System\Encoders\Web\UrlEncoder.cs" />
-    <Compile Include="System\Encoders\Web\Utf8BufferEncoder.cs" />
-    <Compile Include="System\IO\Pipelines\BufferSegment.cs" />
-    <Compile Include="System\IO\Pipelines\FlushResult.cs" />
-    <Compile Include="System\IO\Pipelines\IPipeConnection.cs" />
-    <Compile Include="System\IO\Pipelines\Pipe.cs" />
-    <Compile Include="System\IO\Pipelines\PipeAwaitable.cs" />
-    <Compile Include="System\IO\Pipelines\PipeCompletion.cs" />
-    <Compile Include="System\IO\Pipelines\PipeCompletionCallback.cs" />
-    <Compile Include="System\IO\Pipelines\PipeCompletionCallbacks.cs" />
-    <Compile Include="System\IO\Pipelines\PipeExtensions.cs" />
-    <Compile Include="System\IO\Pipelines\PipelinesThrowHelper.cs" />
-    <Compile Include="System\IO\Pipelines\PipeOperationState.cs" />
-    <Compile Include="System\IO\Pipelines\PipeOptions.cs" />
-    <Compile Include="System\IO\Pipelines\PipeReader.cs" />
-    <Compile Include="System\IO\Pipelines\PipeWriter.cs" />
-    <Compile Include="System\IO\Pipelines\ReadResult.cs" />
-    <Compile Include="System\IO\Pipelines\ResultFlags.cs" />
-    <Compile Include="System\IO\Pipelines\SpanLiteralExtensions.cs" />
-    <Compile Include="System\Memory.cs" />
-    <Compile Include="System\MemoryDebugView.cs" />
-    <Compile Include="System\MemoryExtensions.cs" />
-    <Compile Include="System\MemoryExtensions.Portable.cs" />
-    <Compile Include="System\MutableDecimal.cs" />
-    <Compile Include="System\NotImplemented.cs" />
-    <Compile Include="System\Number\Decimal.DecCalc.cs" />
-    <Compile Include="System\Number\Number.cs" />
-    <Compile Include="System\Number\Number.FormatAndParse.cs" />
-    <Compile Include="System\Number\Number.NumberBuffer.cs" />
-    <Compile Include="System\Numerics\Hashing\HashHelpers.cs" />
-    <Compile Include="System\Pinnable.cs" />
-    <Compile Include="System\ReadOnlyMemory.cs" />
-    <Compile Include="System\ReadOnlySpan.cs" />
-    <Compile Include="System\Runtime\CompilerServices\TupleElementNamesAttribute.cs" />
-    <Compile Include="System\Runtime\InteropServices\MemoryMarshal.cs" />
-    <Compile Include="System\Span.cs" />
-    <Compile Include="System\SpanDebugView.cs" />
-    <Compile Include="System\SpanHelpers.BinarySearch.cs" />
-    <Compile Include="System\SpanHelpers.Clear.cs" />
-    <Compile Include="System\SpanHelpers.cs" />
-    <Compile Include="System\SpanHelpers.T.cs" />
-    <Compile Include="System\SR_StrongType.cs" />
-    <Compile Include="System\SR.cs" />
-    <Compile Include="System\Threading\IAwaiter.cs" />
-    <Compile Include="System\Threading\InlineScheduler.cs" />
-    <Compile Include="System\Threading\PipeScheduler.cs" />
-    <Compile Include="System\Threading\Tasks\TaskHelper.cs" />
-    <Compile Include="System\Threading\ThreadPoolScheduler.cs" />
-    <Compile Include="System\Threading\ValueAwaiter.cs" />
-    <Compile Include="System\ThrowHelper.cs" />
-    <Compile Include="System\ValueTuple\TupleExtensions.cs" />
-    <Compile Include="System\ValueTuple\ValueTuple.cs" />
-    <Compile Include="Http\Utility.cs" />
+    <Compile Remove="Infrastructure\CancellationTokenExtensions.cs" />
+    <Compile Remove="Infrastructure\DebuggerWrapper.cs" />
+    <Compile Remove="Infrastructure\Disposable.cs" />
+    <Compile Remove="Infrastructure\DisposableAction.cs" />
+    <Compile Remove="Infrastructure\HttpConnectionManagerShutdownExtensions.cs" />
+    <Compile Remove="Infrastructure\HttpHeartbeatManager.cs" />
+    <Compile Remove="Infrastructure\IDebugger.cs" />
+    <Compile Remove="Infrastructure\IKestrelTrace.cs" />
+    <Compile Remove="Infrastructure\KestrelEventSource.cs" />
+    <Compile Remove="Infrastructure\KestrelTrace.cs" />
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <Compile Remove="System\MemoryExtensions.Fast.cs" />
+    <Compile Remove="System\SpanHelpers.byte.cs" />
+    <Compile Remove="System\ThrowHelper1.cs" />
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0' OR '$(TargetFramework)'=='net461'">
+    <Compile Remove="Sockets\SocketTaskExtensions.cs" />
+  </ItemGroup>
+
   <ItemGroup>
-    <Resource Include="System\Resources\Strings.resx" />
+    <Folder Include="Properties\" />
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Include="Micosoft\Extensions\Primitives\Resources.resx" />
-    <EmbeddedResource Include="Resources\CoreStrings.resx" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.1" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
 </Project>
