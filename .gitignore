@@ -20,3 +20,4 @@ bld/
 /Kooboo.Web/Mailing
 
 *.csproj.user
+*.assets.json
