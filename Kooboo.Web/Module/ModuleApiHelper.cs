@@ -12,6 +12,16 @@ namespace Kooboo.Module
 {
     public static class ModuleApiHelper
     {
+        public static T GetModuleByName<T>(string name)
+        {
+            var type = ModuleApiContainer.GetType(name);
+            if (type != null)
+            {
+                object obj = Activator.CreateInstance(type, true);//根据类型创建实例
+                return (T)obj;//类型转换并返回
+            }
+            return default(T);
+        }
         public static ApiMethod GetApiMethod(ApiCall call)
         {
             // this is only for the sitemodule. 
