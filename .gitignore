@@ -20,3 +20,22 @@ bld/
 /Kooboo.Web/Mailing
 
 *.csproj.user
+Kooboo.Api/obj/project.assets.json
+Kooboo.Api/obj/project.assets.json
+Kooboo.Data/obj/project.assets.json
+Kooboo.Dom/obj/project.assets.json
+Kooboo.HttpServer/src/Kooboo.HttpServer/obj/project.assets.json
+Kooboo.IndexedDB/obj/project.assets.json
+Kooboo.Lib/obj/project.assets.json
+Kooboo.Mail/obj/project.assets.json
+Kooboo.Api/obj/project.assets.json
+Kooboo.Data/obj/project.assets.json
+Kooboo.Dom/obj/project.assets.json
+Kooboo.HttpServer/src/Kooboo.HttpServer/obj/project.assets.json
+Kooboo.IndexedDB/obj/project.assets.json
+Kooboo.Lib/obj/project.assets.json
+Kooboo.Mail/obj/project.assets.json
+Kooboo.Render/obj/project.assets.json
+Kooboo.Search/obj/project.assets.json
+Kooboo.Sites/obj/project.assets.json
+Kooboo.Web/obj/project.assets.json
