@@ -794,6 +794,13 @@ namespace Kooboo.Sites.Scripting
             return false;  
         }
 
+        public Kooboo.Data.Models.User Get(string userName)
+        {
+            if (string.IsNullOrEmpty(userName))
+                return null;
+            return Data.GlobalDb.Users.Get(userName);
+        }
+
         public void EnsureLogin(string redirectUrl)
         {
             if (!this.IsLogin)
