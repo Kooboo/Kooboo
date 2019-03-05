@@ -64,6 +64,5 @@ namespace Kooboo.Module
                            typeof(Func<string>)); 
             return silly(); 
         }  
-        
     }
 }

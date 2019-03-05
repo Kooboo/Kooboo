@@ -74,6 +74,12 @@ namespace Kooboo.Api
             {
                 context.Response.StatusCode = 500;
                 context.Response.Body = System.Text.Encoding.UTF8.GetBytes("Invalid Api command");
+
+                if (Log !=null)
+                {
+                    Log(context, null); 
+                }
+
                 return;
             }
 
