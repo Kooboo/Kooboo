@@ -68,7 +68,6 @@ namespace Kooboo.App
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            GlobalSettings.RootPath = Kooboo.Data.AppSettings.RootPath;
             KoobooUpgrade.DeleteUpgradeRemainedFiles();
 
             if (KoobooAutoStart.IsFirstBoot() || //first run default auto start
@@ -77,7 +76,7 @@ namespace Kooboo.App
             {
                 KoobooAutoStart.AutoStart(true);
             }
-
+            GlobalSettings.RootPath = Kooboo.Data.AppSettings.DatabasePath;
             KoobooStartUp.StartAll();
         }
 
