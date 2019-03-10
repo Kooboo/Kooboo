@@ -33,6 +33,7 @@ namespace Kooboo.Sites.Repository
             this.WebSite = website; 
             var dbName = AppSettings.GetDbName(website.OrganizationId, website.Name);
             this.DatabaseDb = DB.GetDatabase(dbName);
+            this.SiteRepos = new Dictionary<string, IRepository>(StringComparer.OrdinalIgnoreCase); 
         }
 
         public DiskSize GetSize()
@@ -124,11 +125,7 @@ namespace Kooboo.Sites.Repository
         }
 
         private List<IRepository> _AllRepositories;
-
-        /// <summary>
-        /// All repositories excl text content repositories... 
-        /// </summary>
-        /// <returns></returns>
+ 
         internal List<IRepository> AllRepositories
         {
             get
@@ -229,18 +226,7 @@ namespace Kooboo.Sites.Repository
                 return EnsureRepository<SiteRepositoryBase<SyncSetting>, SyncSetting>(ref _SyncSetting);
             }
         }
-         
-
-        private SiteRepositoryBase<QueueObject> _taskqueue;
-
-        public SiteRepositoryBase<QueueObject> TaskQueue
-        {
-            get
-            {
-                return EnsureRepository<SiteRepositoryBase<QueueObject>, QueueObject>(ref _taskqueue);
-            }
-        }
-
+          
         private StorePool<Image> _imagepool;
         public StorePool<Image> ImagePool
         {
@@ -312,6 +298,8 @@ namespace Kooboo.Sites.Repository
             }
         }
 
+    
+          
         private TransferTaskRepository _TransferTask;
 
         public TransferTaskRepository TransferTasks
@@ -333,7 +321,7 @@ namespace Kooboo.Sites.Repository
 
         private TRepository EnsureRepository<TRepository, TSiteObject>(ref TRepository repository)
             where TRepository : SiteRepositoryBase<TSiteObject>
-            where TSiteObject : class, ISiteObject
+            where TSiteObject : class,  ISiteObject
         {
             if (repository == null)
             {
@@ -349,6 +337,49 @@ namespace Kooboo.Sites.Repository
             }
             return repository;
         }
+
+
+        #region newSiteRepo
+
+        private object _repolocker = new object(); 
+
+        public Dictionary<string, IRepository> SiteRepos { get; set; }
+         
+        public T GetSiteRepository<T, TModel>() 
+            where T: IRepository
+            where TModel : class, ISiteObject
+
+        {
+            var name = typeof(TModel).Name; 
+            if (!SiteRepos.ContainsKey(name))
+            {
+                lock(_repolocker)
+                {
+                    var type = SiteRepositoryContainer.GetRepoTypeInfo(name); 
+                    if (type == null)
+                    {
+                        return default(T); 
+                    }
+
+                    var instance = Activator.CreateInstance(type) as SiteRepositoryBase<TModel>;
+                     
+                    if (instance == null)
+                    {
+                        return default(T); 
+                    }
+                    else
+                    {
+                        instance.SiteDb = this;
+                        instance.init(); 
+                        SiteRepos[name] = instance; 
+                    }
+                }
+            }
+
+            return (T)SiteRepos[name]; 
+        }
+         
+        #endregion 
 
         private CmsFileRepository _files;
         public CmsFileRepository Files
@@ -410,7 +441,7 @@ namespace Kooboo.Sites.Repository
 
         private FormValueRepository _formvalues;
 
-        public FormValueRepository FormValues
+        public FormValueRepository FormValues 
         {
             get
             {
@@ -837,8 +868,7 @@ namespace Kooboo.Sites.Repository
 
 
         #region Ecommerce
-
-
+         
         //private CategoryRepository _category;
 
         //public CategoryRepository Category

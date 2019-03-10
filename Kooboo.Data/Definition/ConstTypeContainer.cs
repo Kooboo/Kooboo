@@ -1,7 +1,6 @@
 ﻿using Kooboo.Data.Interface;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Collections.Generic; 
 
 namespace Kooboo
 {
@@ -118,8 +117,7 @@ namespace Kooboo
             }
             return null;
         }
-
-
+         
         public static byte GetConstType(Type modeltype)
         {
             var name = modeltype.Name;
@@ -155,7 +153,5 @@ namespace Kooboo
             return string.Empty;  
         }
 
-    }
-
-
+    } 
 }
