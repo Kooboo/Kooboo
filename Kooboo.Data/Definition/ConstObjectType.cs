@@ -55,6 +55,8 @@ namespace Kooboo
 
         public const byte SiteCluster = 48;
 
+        public const byte ContinueConverter = 49; 
+
         public const byte FormSetting = 50;
 
         public const byte TransferTask = 53;
@@ -75,6 +77,10 @@ namespace Kooboo
         public const byte ProductCategory = 72;
         public const byte ProductVariants = 73;
         public const byte ProductType = 74; 
+
+
+
+
         public const byte kfile = 80; 
         public const byte Kconfig = 81;  
     }

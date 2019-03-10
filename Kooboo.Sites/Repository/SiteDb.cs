@@ -16,6 +16,7 @@ using Kooboo.Lib.Reflection;
 using Kooboo.Sites.ViewModel;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.SiteTransfer.Model;
+using System.Linq;
 //using Kooboo.Sites.Ecommerce.Repository;
 //using Kooboo.Sites.Ecommerce.Models;
 
@@ -27,13 +28,13 @@ namespace Kooboo.Sites.Repository
         {
             get { return this.WebSite.Id; }
         }
-          
+
         public SiteDb(WebSite website)
         {
-            this.WebSite = website; 
+            this.WebSite = website;
             var dbName = AppSettings.GetDbName(website.OrganizationId, website.Name);
             this.DatabaseDb = DB.GetDatabase(dbName);
-            this.SiteRepos = new Dictionary<string, IRepository>(StringComparer.OrdinalIgnoreCase); 
+            this.SiteRepos = new Dictionary<string, IRepository>(StringComparer.OrdinalIgnoreCase);
         }
 
         public DiskSize GetSize()
@@ -125,7 +126,7 @@ namespace Kooboo.Sites.Repository
         }
 
         private List<IRepository> _AllRepositories;
- 
+
         internal List<IRepository> AllRepositories
         {
             get
@@ -167,7 +168,7 @@ namespace Kooboo.Sites.Repository
 
         private object _lock = new object();
 
-        private string _name; 
+        private string _name;
         public string Name
         {
             get
@@ -190,13 +191,8 @@ namespace Kooboo.Sites.Repository
 
         private LayoutRepository _layouts;
 
-        public LayoutRepository Layouts
-        {
-            get
-            {
-                return EnsureRepository<LayoutRepository, Layout>(ref _layouts);
-            }
-        }
+        public LayoutRepository Layouts => GetSiteRepository<LayoutRepository, Layout>(); 
+     
 
         private ContinueConvertRepository _continueConverter;
 
@@ -226,7 +222,7 @@ namespace Kooboo.Sites.Repository
                 return EnsureRepository<SiteRepositoryBase<SyncSetting>, SyncSetting>(ref _SyncSetting);
             }
         }
-          
+
         private StorePool<Image> _imagepool;
         public StorePool<Image> ImagePool
         {
@@ -251,7 +247,7 @@ namespace Kooboo.Sites.Repository
         }
 
 
-        private CoreSettingRepository  _coresetting;
+        private CoreSettingRepository _coresetting;
 
         public CoreSettingRepository CoreSetting
         {
@@ -271,23 +267,23 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        private Kooboo.Sites.Sync.SiteClusterSync.SiteClusterManager _ClusterManager; 
-         
+        private Kooboo.Sites.Sync.SiteClusterSync.SiteClusterManager _ClusterManager;
+
         public Kooboo.Sites.Sync.SiteClusterSync.SiteClusterManager ClusterManager
         {
             get
             {
-               if (_ClusterManager == null)
+                if (_ClusterManager == null)
                 {
                     if (this.WebSite.EnableCluster)
                     {
-                        _ClusterManager = new Sync.SiteClusterSync.SiteClusterManager(this); 
+                        _ClusterManager = new Sync.SiteClusterSync.SiteClusterManager(this);
                     }
-                } 
-                return _ClusterManager; 
+                }
+                return _ClusterManager;
             }
         }
-   
+
         private MenuRepository _menus;
 
         public MenuRepository Menus
@@ -298,8 +294,7 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-    
-          
+
         private TransferTaskRepository _TransferTask;
 
         public TransferTaskRepository TransferTasks
@@ -321,7 +316,7 @@ namespace Kooboo.Sites.Repository
 
         private TRepository EnsureRepository<TRepository, TSiteObject>(ref TRepository repository)
             where TRepository : SiteRepositoryBase<TSiteObject>
-            where TSiteObject : class,  ISiteObject
+            where TSiteObject : class, ISiteObject
         {
             if (repository == null)
             {
@@ -341,45 +336,136 @@ namespace Kooboo.Sites.Repository
 
         #region newSiteRepo
 
-        private object _repolocker = new object(); 
+        private object _repolocker = new object();
+
+        internal bool AllLoaded = false;   // where it should check to load all existing stores or not. 
 
         public Dictionary<string, IRepository> SiteRepos { get; set; }
          
-        public T GetSiteRepository<T, TModel>() 
-            where T: IRepository
-            where TModel : class, ISiteObject
-
+        // this may have slight better performance. 
+        public T GetSiteRepository<T, TModel>()
+            where T : IRepository
+            where TModel : class, ISiteObject 
         {
-            var name = typeof(TModel).Name; 
-            if (!SiteRepos.ContainsKey(name))
+            var instance = GetSiteRepository(typeof(T), typeof(TModel)); 
+            if (instance !=null)
             {
-                lock(_repolocker)
+                return (T)instance; 
+            }
+            return default(T); 
+        }
+         
+        public List<IRepository> ActiveRepositories()
+        {
+            if (!AllLoaded)
+            {
+                lock (_repolocker)
                 {
-                    var type = SiteRepositoryContainer.GetRepoTypeInfo(name); 
-                    if (type == null)
-                    {
-                        return default(T); 
+                    if (!AllLoaded)
+                    { 
+                        LoadExistingStore(); 
                     }
+                    AllLoaded = true;
+                }
+            }
 
-                    var instance = Activator.CreateInstance(type) as SiteRepositoryBase<TModel>;
-                     
-                    if (instance == null)
+            return SiteRepos.Values.ToList();
+        }
+
+
+        internal void LoadExistingStore()
+        { 
+            List<Type> NoActiveTypes = new List<Type>();
+            foreach (var item in SiteRepositoryContainer.Repos)
+            {
+                if (!SiteRepos.ContainsKey(item.Key))
+                {
+                    if (this.DatabaseDb.HasObjectStore(item.Key))
                     {
-                        return default(T); 
-                    }
-                    else
-                    {
-                        instance.SiteDb = this;
-                        instance.init(); 
-                        SiteRepos[name] = instance; 
+                        NoActiveTypes.Add(item.Value);
                     }
                 }
             }
 
-            return (T)SiteRepos[name]; 
+            foreach (var item in NoActiveTypes)
+            {
+                var repo = GetSiteRepository(item); 
+                if (repo !=null)
+                {
+                    SiteRepos[repo.StoreName] = repo; 
+                }
+            } 
         }
-         
-        #endregion 
+
+
+        public T GetSiteRepository<T>()
+    where T : IRepository
+        {
+            var instance = GetSiteRepository(typeof(T)); 
+
+            if (instance == null)
+            {
+                return default(T); 
+            }
+
+            return (T)instance;
+        }
+
+        public IRepository GetSiteRepository(Type RepositoryType)
+        {
+            if (RepositoryType == null)
+            {
+                return null;
+            }
+            var modeltype = Lib.Reflection.TypeHelper.GetGenericType(RepositoryType);
+            return GetSiteRepository(RepositoryType, modeltype);
+        }
+
+
+        public IRepository GetSiteRepository(Type RepositoryType, Type siteModelType)
+        {
+            if (RepositoryType == null || siteModelType == null)
+            {
+                return null;
+            }
+            string name = siteModelType.Name;
+            if (!SiteRepos.ContainsKey(name))
+            {
+                lock (_repolocker)
+                {
+                    if (!SiteRepos.ContainsKey(name))
+                    {
+                        var instance = Activator.CreateInstance(RepositoryType) as IRepository;
+
+                        if (instance == null)
+                        {
+                            return null;
+                        }
+                        else
+                        {
+                            if (instance is ISiteRepositoryBase)
+                            {
+                                var sitebase = instance as ISiteRepositoryBase;
+                                sitebase.SiteDb = this;
+                                sitebase.init();
+                            }
+                            SiteRepos[name] = instance;
+                        }
+                    }
+
+                }
+            }
+
+            return SiteRepos[name];
+        }
+
+
+        public bool IsStoreExists(Type ModelType)
+        {
+            return this.DatabaseDb.HasObjectStore(ModelType.Name);
+        }
+
+        #endregion
 
         private CmsFileRepository _files;
         public CmsFileRepository Files
@@ -399,7 +485,7 @@ namespace Kooboo.Sites.Repository
                 return EnsureRepository<FolderRepository, Folder>(ref _folders);
             }
         }
-          
+
 
         private DomElementRepository _DomElements;
 
@@ -420,28 +506,28 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        private FormRepository _forms; 
+        private FormRepository _forms;
         public FormRepository Forms
         {
             get
             {
                 return EnsureRepository<FormRepository, Form>(ref _forms);
-            } 
+            }
         }
 
-        private FormSettingRepository _formsetting; 
+        private FormSettingRepository _formsetting;
 
-        public FormSettingRepository FormSetting 
+        public FormSettingRepository FormSetting
         {
             get
             {
-                return EnsureRepository<FormSettingRepository, FormSetting>(ref _formsetting); 
+                return EnsureRepository<FormSettingRepository, FormSetting>(ref _formsetting);
             }
         }
 
         private FormValueRepository _formvalues;
 
-        public FormValueRepository FormValues 
+        public FormValueRepository FormValues
         {
             get
             {
@@ -500,7 +586,7 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        private BusinessRuleRepository _rules; 
+        private BusinessRuleRepository _rules;
 
         public BusinessRuleRepository Rules
         {
@@ -509,7 +595,7 @@ namespace Kooboo.Sites.Repository
                 return EnsureRepository<BusinessRuleRepository, BusinessRule>(ref _rules);
             }
         }
- 
+
 
         private RelationRepository _relations;
         public RelationRepository Relations
@@ -591,7 +677,7 @@ namespace Kooboo.Sites.Repository
                 if (_LogFolder == null)
                 {
                     var folder = AppSettings.GetOrganizationFolder(this.WebSite.OrganizationId);
-                    folder = System.IO.Path.Combine(folder, this.WebSite.Name); 
+                    folder = System.IO.Path.Combine(folder, this.WebSite.Name);
                     _LogFolder = System.IO.Path.Combine(folder, "visitorlog");
                     Lib.Helper.IOHelper.EnsureDirectoryExists(_LogFolder);
                 }
@@ -806,7 +892,7 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        private kConfigRepository  _kconfig;
+        private kConfigRepository _kconfig;
 
         public kConfigRepository KConfig
         {
@@ -868,7 +954,7 @@ namespace Kooboo.Sites.Repository
 
 
         #region Ecommerce
-         
+
         //private CategoryRepository _category;
 
         //public CategoryRepository Category
@@ -930,6 +1016,6 @@ namespace Kooboo.Sites.Repository
                 return this.DatabaseDb.Log;
             }
         }
-    } 
- 
+    }
+
 }

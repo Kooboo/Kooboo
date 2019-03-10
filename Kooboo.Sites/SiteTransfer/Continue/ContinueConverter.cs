@@ -9,6 +9,11 @@ namespace Kooboo.Sites.SiteTransfer.Model
 {
     public class ContinueConverter : SiteObject
     {
+        public ContinueConverter()
+        {
+            this.ConstType = ConstObjectType.ContinueConverter; 
+        }
+
         private Guid _id;
         public override Guid Id
         {
