@@ -52,7 +52,7 @@ namespace Kooboo.Web.Api.Implementation
                 fullpath = fullpath.TrimEnd('/');
             }
 
-            Folder folder = new Folder(ConstObjectType.File);
+            Folder folder = new Folder(ConstObjectType.CmsFile);
             folder.FullPath = fullpath;
 
             sitedb.Folders.AddOrUpdate(folder, call.Context.User.Id);
@@ -62,9 +62,9 @@ namespace Kooboo.Web.Api.Implementation
                 Id = folder.FullPath,
                 Name = folder.Segment,
                 FullPath = folder.FullPath,
-                LastModified = PathService.GetLastModified(sitedb, folder.FullPath, ConstObjectType.File),
+                LastModified = PathService.GetLastModified(sitedb, folder.FullPath, ConstObjectType.CmsFile),
                 Count = sitedb.Folders.GetFolderObjects<CmsFile>(folder.FullPath, true, false).Count +
-                sitedb.Folders.GetSubFolders(folder.FullPath, ConstObjectType.File).Count
+                sitedb.Folders.GetSubFolders(folder.FullPath, ConstObjectType.CmsFile).Count
             };
         }
 
@@ -89,7 +89,7 @@ namespace Kooboo.Web.Api.Implementation
 
         private List<FileFolderViewModel> GetFolders(SiteDb siteDb, string path)
         {
-            var SubFolders = siteDb.Folders.GetSubFolders(path, ConstObjectType.File);
+            var SubFolders = siteDb.Folders.GetSubFolders(path, ConstObjectType.CmsFile);
 
             List<FileFolderViewModel> Result = new List<FileFolderViewModel>();
 
@@ -100,8 +100,8 @@ namespace Kooboo.Web.Api.Implementation
                 model.Name = item.Segment;
                 model.FullPath = item.FullPath;
                 model.Count = siteDb.Folders.GetFolderObjects<CmsFile>(item.FullPath, true, false).Count +
-                                siteDb.Folders.GetSubFolders(item.FullPath, ConstObjectType.File).Count;
-                model.LastModified = PathService.GetLastModified(siteDb, item.FullPath, ConstObjectType.File);
+                                siteDb.Folders.GetSubFolders(item.FullPath, ConstObjectType.CmsFile).Count;
+                model.LastModified = PathService.GetLastModified(siteDb, item.FullPath, ConstObjectType.CmsFile);
 
                 Result.Add(model);
             }
@@ -140,7 +140,7 @@ namespace Kooboo.Web.Api.Implementation
             List<string> FolderFullPaths = call.Context.Request.Model as List<string>;   
             foreach (var item in FolderFullPaths)
             {
-                call.WebSite.SiteDb().Folders.Delete(item, ConstObjectType.File);
+                call.WebSite.SiteDb().Folders.Delete(item, ConstObjectType.CmsFile);
             }
         }
 

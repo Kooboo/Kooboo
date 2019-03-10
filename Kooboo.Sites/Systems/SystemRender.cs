@@ -41,7 +41,7 @@ namespace Kooboo.Sites.Systems
                         ImageRender(context, id, paras);
                         return;
                     }
-                case ConstObjectType.File:
+                case ConstObjectType.CmsFile:
                     {
                         FileRender(context, id, paras);
                         return;

@@ -211,7 +211,7 @@ namespace Kooboo.Sites.SiteTransfer
             }
             else
             {
-                newdownload.ConstType = ConstObjectType.File;
+                newdownload.ConstType = ConstObjectType.CmsFile;
             }
             manager.AddTask(newdownload);
             return relativeurl;

@@ -153,7 +153,7 @@ namespace Kooboo.Sites.SiteTransfer.Download
             {
                 return new ImageExecutor() { Manager = this };
             }
-            else if (consttype == ConstObjectType.File)
+            else if (consttype == ConstObjectType.CmsFile)
             {
                 return new FileExecutor() { Manager = this };
             }

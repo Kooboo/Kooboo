@@ -18,7 +18,7 @@ namespace Kooboo.Sites.Relation
     {
         public ObjectRelation()
         {
-            this.ConstType = ConstObjectType.Relation; 
+            this.ConstType = ConstObjectType.ObjectRelation; 
         }
 
         private Guid _id;

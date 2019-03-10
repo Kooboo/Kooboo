@@ -664,7 +664,7 @@ namespace Kooboo.Sites.Sync
             var website = Kooboo.Data.GlobalDb.WebSites.Get(this.WebSiteId);
             var sitedb = website.SiteDb();
 
-            var allrepos = sitedb.AllRepositories;
+            var allrepos = sitedb.ActiveRepositories();
             foreach (var repo in allrepos)
             {
                 if (Kooboo.Attributes.AttributeHelper.IsDiskable(repo.ModelType))

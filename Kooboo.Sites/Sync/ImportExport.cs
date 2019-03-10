@@ -99,7 +99,7 @@ namespace Kooboo.Sites.Sync
             SiteDb newdb = new SiteDb(new Data.Models.WebSite() { Name = "___temp" });
             newdb.DatabaseDb = DB.GetDatabase(DiskPath);
 
-            foreach (var repo in SiteDb.AllRepositories)
+            foreach (var repo in SiteDb.ActiveRepositories())
             {
                 var storename = repo.StoreName;
                 string lower = storename.ToLower();
@@ -491,7 +491,7 @@ namespace Kooboo.Sites.Sync
             DiskPath = System.IO.Path.Combine(DiskPath, System.Guid.NewGuid().ToString());
             IOHelper.EnsureDirectoryExists(DiskPath);
 
-            foreach (var repo in SiteDb.AllRepositories)
+            foreach (var repo in SiteDb.ActiveRepositories())
             {
                 if (!Kooboo.Attributes.AttributeHelper.IsCoreObject(repo.ModelType))
                 {

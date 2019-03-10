@@ -22,7 +22,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
              
             var sitedb = session.context.WebSite.SiteDb();
 
-            foreach (var repo in sitedb.AllRepositories)
+            foreach (var repo in sitedb.ActiveRepositories())
             {
                 if (Lib.Reflection.TypeHelper.HasInterface(repo.ModelType, typeof(IDomObject)))
                 {

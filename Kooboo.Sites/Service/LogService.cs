@@ -165,7 +165,7 @@ namespace Kooboo.Sites.Service
         /// <param name="LatestLogId"></param>
         public static void CheckOut(SiteDb OldDb, SiteDb NewDb, long LatestLogId, bool SelfInclude = true)
         {
-            foreach (var item in OldDb.AllRepositories)
+            foreach (var item in OldDb.ActiveRepositories())
             {
                 var type = item.ModelType;
                 if (Kooboo.Lib.Reflection.TypeHelper.HasInterface(item.ModelType, typeof(ICoreObject)))

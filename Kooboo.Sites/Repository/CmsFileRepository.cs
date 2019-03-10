@@ -26,7 +26,7 @@ namespace Kooboo.Sites.Repository
              
             if (!found)
             {
-                SiteDb.Routes.AddOrUpdate(relativeUrl, ConstObjectType.File, file.Id, UserId);
+                SiteDb.Routes.AddOrUpdate(relativeUrl, ConstObjectType.CmsFile, file.Id, UserId);
             }
 
             this.AddOrUpdate(file, UserId); 

@@ -43,7 +43,7 @@ namespace Kooboo.Sites.Repository
 
             long totallength = 0;
 
-            foreach (var item in this.AllRepositories)
+            foreach (var item in this.ActiveRepositories())
             {
                 RepoSize reposize = new RepoSize();
                 reposize.Name = item.StoreName;
@@ -72,100 +72,21 @@ namespace Kooboo.Sites.Repository
 
         public IRepository GetRepository(Type ModelType)
         {
-            if (ModelType == null)
-            {
-                return null;
-            }
-            var repo = AllRepositories.Find(o => o.ModelType == ModelType);
-            if (repo != null)
-            {
-                return repo;
-            }
-            else
-            {
-                var all = AllRepositories;
-                foreach (var item in all)
-                {
-                    if (item.ModelType == ModelType)
-                    {
-                        return item;
-                    }
-                }
-                return this.GetRepository(ModelType.Name);
-            }
-
+            return GetSiteRepositoryByModelType(ModelType);  
         }
 
         public IRepository GetRepository(byte ConstType)
         {
-            var modeltype = Service.ConstTypeService.GetModelType(ConstType);
+            var modeltype = Service.ConstTypeService.GetModelType(ConstType); 
             return GetRepository(modeltype);
         }
 
         public IRepository GetRepository(string StoreName)
         {
-            if (string.IsNullOrEmpty(StoreName))
-            {
-                return null;
-            }
-            lock (_lock)
-            {
-                var find = this.AllRepositories.Find(o => o.StoreName == StoreName);
-                if (find != null)
-                {
-                    return find;
-                }
-
-                find = this.AllRepositories.Find(o => o.StoreName.ToLower() == StoreName.ToLower());
-                if (find != null)
-                {
-                    return find;
-                }
-            }
-            return null;
+            var repotype = SiteRepositoryContainer.GetRepoTypeInfo(StoreName);
+            return GetSiteRepository(repotype); 
         }
-
-        private List<IRepository> _AllRepositories;
-
-        internal List<IRepository> AllRepositories
-        {
-            get
-            {
-                if (_AllRepositories == null)
-                {
-                    lock (_lock)
-                    {
-                        if (_AllRepositories == null)
-                        {
-                            _AllRepositories = new List<IRepository>();
-
-                            var allproperties = this.GetType().GetProperties();
-                            foreach (var item in allproperties)
-                            {
-                                if (TypeHelper.HasInterface(item.GetMethod.ReturnType, typeof(IRepository)))
-                                {
-                                    var generittype = TypeHelper.GetGenericType(item.GetMethod.ReturnType);
-
-                                    if (generittype != null)
-                                    {
-                                        var repo = item.GetValue(this);
-                                        if (repo != null && repo is IRepository)
-                                        {
-                                            _AllRepositories.Add(repo as IRepository);
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-
-                }
-
-                return _AllRepositories;
-            }
-        }
-
+          
         private object _lock = new object();
 
         private string _name;
@@ -194,17 +115,9 @@ namespace Kooboo.Sites.Repository
         public ContinueConvertRepository ContinueConverter => GetSiteRepository<ContinueConvertRepository, ContinueConverter>(); 
         
         public DataMethodSettingRepository DataMethodSettings => GetSiteRepository<DataMethodSettingRepository, DataMethodSetting>(); 
-      
-        private SiteRepositoryBase<SyncSetting> _SyncSetting;
-
-        public SiteRepositoryBase<SyncSetting> SyncSettings
-        {
-            get
-            {
-                return EnsureRepository<SiteRepositoryBase<SyncSetting>, SyncSetting>(ref _SyncSetting);
-            }
-        }
-
+  
+        public SiteRepositoryBase<SyncSetting> SyncSettings => GetSiteRepository<SiteRepositoryBase<SyncSetting>, SyncSetting>(); 
+     
         private StorePool<Image> _imagepool;
         public StorePool<Image> ImagePool
         {
@@ -217,37 +130,14 @@ namespace Kooboo.Sites.Repository
                 return _imagepool;
             }
         }
-
-        private SynchronizationRepository _Synchronization;
-
-        public SynchronizationRepository Synchronization
-        {
-            get
-            {
-                return EnsureRepository<SynchronizationRepository, Synchronization>(ref _Synchronization);
-            }
-        }
-
-
-        private CoreSettingRepository _coresetting;
-
-        public CoreSettingRepository CoreSetting
-        {
-            get
-            {
-                return EnsureRepository<CoreSettingRepository, CoreSetting>(ref _coresetting);
-            }
-        }
-
-        private SiteClusterRepository _Cluster;
-
-        public SiteClusterRepository SiteCluster
-        {
-            get
-            {
-                return EnsureRepository<SiteClusterRepository, SiteCluster>(ref _Cluster);
-            }
-        }
+          
+        public SynchronizationRepository Synchronization => GetSiteRepository<SynchronizationRepository, Synchronization>(); 
+  
+        public CoreSettingRepository CoreSetting  => GetSiteRepository<CoreSettingRepository, CoreSetting>(); 
+     
+          
+        public SiteClusterRepository SiteCluster => GetSiteRepository<SiteClusterRepository, SiteCluster>(); 
+     
 
         private Kooboo.Sites.Sync.SiteClusterSync.SiteClusterManager _ClusterManager;
 
@@ -265,57 +155,15 @@ namespace Kooboo.Sites.Repository
                 return _ClusterManager;
             }
         }
+         
 
-        private MenuRepository _menus;
+        public MenuRepository Menus => GetSiteRepository<MenuRepository, Menu>();  
 
-        public MenuRepository Menus
-        {
-            get
-            {
-                return EnsureRepository<MenuRepository, Menu>(ref _menus);
-            }
-        }
-
-
-        private TransferTaskRepository _TransferTask;
-
-        public TransferTaskRepository TransferTasks
-        {
-            get
-            {
-                return EnsureRepository<TransferTaskRepository, TransferTask>(ref _TransferTask);
-            }
-        }
-
-        private TransferPageRepository _transferpages;
-        public TransferPageRepository TransferPages
-        {
-            get
-            {
-                return EnsureRepository<TransferPageRepository, TransferPage>(ref _transferpages);
-            }
-        }
-
-        private TRepository EnsureRepository<TRepository, TSiteObject>(ref TRepository repository)
-            where TRepository : SiteRepositoryBase<TSiteObject>
-            where TSiteObject : class, ISiteObject
-        {
-            if (repository == null)
-            {
-                lock (_lock)
-                {
-                    if (repository == null)
-                    {
-                        repository = Activator.CreateInstance<TRepository>();
-                        repository.SiteDb = this;
-                        repository.init();
-                    }
-                }
-            }
-            return repository;
-        }
-
-
+        public TransferTaskRepository TransferTasks => GetSiteRepository<TransferTaskRepository, TransferTask>(); 
+    
+        public TransferPageRepository TransferPages => GetSiteRepository<TransferPageRepository, TransferPage>(); 
+    
+    
         #region newSiteRepo
 
         private object _repolocker = new object();
@@ -378,10 +226,8 @@ namespace Kooboo.Sites.Repository
                 }
             } 
         }
-
-
-        public T GetSiteRepository<T>()
-    where T : IRepository
+         
+        public T GetSiteRepository<T>()    where T : IRepository
         {
             var instance = GetSiteRepository(typeof(T)); 
 
@@ -441,6 +287,11 @@ namespace Kooboo.Sites.Repository
             return SiteRepos[name];
         }
 
+        public IRepository GetSiteRepositoryByModelType(Type ModelType)
+        { 
+            var repotype = SiteRepositoryContainer.GetRepoTypeInfo(ModelType);
+            return GetSiteRepository(repotype, ModelType); 
+        }
 
         public bool IsStoreExists(Type ModelType)
         {
@@ -449,145 +300,35 @@ namespace Kooboo.Sites.Repository
 
         #endregion
 
-        private CmsFileRepository _files;
-        public CmsFileRepository Files  
-        {
-            get
-            {
-                return EnsureRepository<CmsFileRepository, CmsFile>(ref _files);
-            }
-        }
-
-        private FolderRepository _folders;
-
-        public FolderRepository Folders
-        {
-            get
-            {
-                return EnsureRepository<FolderRepository, Folder>(ref _folders);
-            }
-        }
-
-
-        private DomElementRepository _DomElements;
-
-        public DomElementRepository DomElements
-        {
-            get
-            {
-                return EnsureRepository<DomElementRepository, DomElement>(ref _DomElements);
-            }
-        }
-
-        private RouteRepository _routes;
-        public RouteRepository Routes
-        {
-            get
-            {
-                return EnsureRepository<RouteRepository, Route>(ref _routes);
-            }
-        }
-
-        private FormRepository _forms;
-        public FormRepository Forms
-        {
-            get
-            {
-                return EnsureRepository<FormRepository, Form>(ref _forms);
-            }
-        }
-
-        private FormSettingRepository _formsetting;
-
-        public FormSettingRepository FormSetting
-        {
-            get
-            {
-                return EnsureRepository<FormSettingRepository, FormSetting>(ref _formsetting);
-            }
-        }
-
-        private FormValueRepository _formvalues;
-
-        public FormValueRepository FormValues
-        {
-            get
-            {
-                return EnsureRepository<FormValueRepository, FormValue>(ref _formvalues);
-            }
-        }
-
-        private ImageRepository _images;
-
-        public ImageRepository Images
-        {
-            get
-            {
-                return EnsureRepository<ImageRepository, Image>(ref _images);
-            }
-        }
-
-        private PageRepository _pages;
-
-        public PageRepository Pages
-        {
-            get
-            {
-                return EnsureRepository<PageRepository, Page>(ref _pages);
-            }
-        }
-
-        private ViewRepository _views;
-
-        public ViewRepository Views
-        {
-            get
-            {
-                return EnsureRepository<ViewRepository, View>(ref _views);
-            }
-        }
-
-        private ScriptRepository _scripts;
-
-        public ScriptRepository Scripts
-        {
-            get
-            {
-                return EnsureRepository<ScriptRepository, Script>(ref _scripts);
-            }
-        }
-
-
-        private CodeRepository _code;
-
-        public CodeRepository Code
-        {
-            get
-            {
-                return EnsureRepository<CodeRepository, Code>(ref _code);
-            }
-        }
-
-        private BusinessRuleRepository _rules;
-
-        public BusinessRuleRepository Rules
-        {
-            get
-            {
-                return EnsureRepository<BusinessRuleRepository, BusinessRule>(ref _rules);
-            }
-        }
-
-
-        private RelationRepository _relations;
-        public RelationRepository Relations
-        {
-            get
-            {
-                return EnsureRepository<RelationRepository, ObjectRelation>(ref _relations);
-            }
-        }
-
+ 
+        public CmsFileRepository Files => GetSiteRepository<CmsFileRepository, CmsFile>(); 
+      
+        public FolderRepository Folders => GetSiteRepository<FolderRepository, Folder>(); 
+        
+        public DomElementRepository DomElements => GetSiteRepository<DomElementRepository, DomElement>(); 
+        
+        public RouteRepository Routes => GetSiteRepository<RouteRepository, Route>(); 
+    
+        public FormRepository Forms => GetSiteRepository<FormRepository, Form>(); 
+  
+        public FormSettingRepository FormSetting => GetSiteRepository<FormSettingRepository, FormSetting>(); 
+       
+        public FormValueRepository FormValues => GetSiteRepository<FormValueRepository, FormValue>(); 
+     
+        public ImageRepository Images => GetSiteRepository<ImageRepository, Image>(); 
+   
+        public PageRepository Pages => GetSiteRepository<PageRepository, Page>(); 
+        
+        public ViewRepository Views => GetSiteRepository<ViewRepository, View>(); 
+     
+        public ScriptRepository Scripts => GetSiteRepository<ScriptRepository, Script>(); 
+        
+        public CodeRepository Code => GetSiteRepository<CodeRepository, Code>(); 
+        
+        public BusinessRuleRepository Rules => GetSiteRepository<BusinessRuleRepository, BusinessRule>(); 
+       
+        public RelationRepository Relations => GetSiteRepository<RelationRepository, ObjectRelation>(); 
+     
         private SearchIndexRepository _searchindex;
         public SearchIndexRepository SearchIndex
         {
@@ -606,44 +347,14 @@ namespace Kooboo.Sites.Repository
                 return _searchindex;
             }
         }
+         
+        public ViewDataMethodRepository ViewDataMethods => GetSiteRepository<ViewDataMethodRepository, ViewDataMethod>();  
 
-        private ViewDataMethodRepository _ViewDataMethod;
+        public SiteRepositoryBase<DownloadFailTrack> DownloadFailedLog => GetSiteRepository<SiteRepositoryBase<DownloadFailTrack>, DownloadFailTrack>();
+      
 
-        public ViewDataMethodRepository ViewDataMethods
-        {
-            get
-            {
-                return EnsureRepository<ViewDataMethodRepository, ViewDataMethod>(ref _ViewDataMethod);
-            }
-        }
-
-        private SiteRepositoryBase<DownloadFailTrack> _downloadfailelog;
-
-        public SiteRepositoryBase<DownloadFailTrack> DownloadFailedLog
-        {
-            get
-            {
-                return EnsureRepository<SiteRepositoryBase<DownloadFailTrack>, DownloadFailTrack>(ref _downloadfailelog);
-            }
-        }
-
-
-        private SiteRepositoryBase<SiteUser> _siteuser;
-
-        public SiteRepositoryBase<SiteUser> SiteUser
-        {
-            get
-            {
-                return EnsureRepository<SiteRepositoryBase<SiteUser>, SiteUser>(ref _siteuser);
-            }
-        }
-
-
-        /// <summary>
-        /// The cache route tree for route searching.
-        /// </summary>
-        /// <param name="ConstType"></param>
-        /// <returns></returns>
+        public SiteRepositoryBase<SiteUser> SiteUser => GetSiteRepository<SiteRepositoryBase<SiteUser>, SiteUser>();
+        
         public PathTree RouteTree(byte ConstType = 0)
         {
             return Cache.RouteTreeCache.RouteTree(this, ConstType);
@@ -802,139 +513,45 @@ namespace Kooboo.Sites.Repository
                 return _ErrorLog;
             }
         }
+         
+        public EditLog Log
+        {
+            get
+            {
+                return this.DatabaseDb.Log;
+            }
+        }
+
 
         #endregion
 
-        private StyleRepository _styles;
+        public StyleRepository Styles => GetSiteRepository<StyleRepository, Style>();
+    
+ 
+        public ResourceGroupRepository ResourceGroups => GetSiteRepository<ResourceGroupRepository, ResourceGroup>();
+     
+        public CmsCssRuleRepository CssRules => GetSiteRepository<CmsCssRuleRepository, CmsCssRule>();
+  
 
-        public StyleRepository Styles
-        {
-            get
-            {
-                return EnsureRepository<StyleRepository, Style>(ref _styles);
-            }
-        }
+        public ExternalResourceRepository ExternalResource => GetSiteRepository<ExternalResourceRepository, ExternalResource>();
+   
+        public ThumbnailRepository Thumbnails => GetSiteRepository<ThumbnailRepository, Thumbnail>();
+   
+        public LabelRepository Labels => GetSiteRepository<LabelRepository, Label>();
+   
+        public kConfigRepository KConfig => GetSiteRepository<kConfigRepository, KConfig>();
+   
+        public HtmlBlockRepository HtmlBlocks => GetSiteRepository<HtmlBlockRepository, HtmlBlock>();
+         
+        public ContentFolderRepository ContentFolders => GetSiteRepository<ContentFolderRepository, ContentFolder>();
+         
 
-        private ResourceGroupRepository _resourceGroup;
-        public ResourceGroupRepository ResourceGroups
-        {
-            get
-            {
-                return EnsureRepository<ResourceGroupRepository, ResourceGroup>(ref _resourceGroup);
-            }
-        }
-
-        private CmsCssRuleRepository _CssRules;
-
-        public CmsCssRuleRepository CssRules
-        {
-            get
-            {
-                return EnsureRepository<CmsCssRuleRepository, CmsCssRule>(ref _CssRules);
-            }
-        }
-
-
-        //private CssDeclarationRepository _CssDeclarations;
-
-        //public CssDeclarationRepository CssDeclarations
-        //{
-        //    get
-        //    {
-        //        return EnsureRepository<CssDeclarationRepository, CmsCssDeclaration>(ref _CssDeclarations);
-        //    }
-        //}
-
-        private ExternalResourceRepository _ExternalResources;
-
-        public ExternalResourceRepository ExternalResource
-        {
-            get
-            {
-                return EnsureRepository<ExternalResourceRepository, ExternalResource>(ref _ExternalResources);
-            }
-        }
-
-        private ThumbnailRepository _thumbnails;
-        public ThumbnailRepository Thumbnails
-        {
-            get
-            {
-                return EnsureRepository<ThumbnailRepository, Thumbnail>(ref _thumbnails);
-            }
-        }
-
-        private LabelRepository _label;
-
-        public LabelRepository Labels
-        {
-            get
-            {
-                return EnsureRepository<LabelRepository, Label>(ref _label);
-            }
-        }
-
-        private kConfigRepository _kconfig;
-
-        public kConfigRepository KConfig
-        {
-            get
-            {
-                return EnsureRepository<kConfigRepository, KConfig>(ref _kconfig);
-            }
-        }
-
-        private HtmlBlockRepository _htmlblocks;
-        public HtmlBlockRepository HtmlBlocks
-        {
-            get
-            {
-                return EnsureRepository<HtmlBlockRepository, HtmlBlock>(ref _htmlblocks);
-            }
-        }
-
-        private ContentFolderRepository _contentfolder;
-
-        public ContentFolderRepository ContentFolders
-        {
-            get
-            {
-                return EnsureRepository<ContentFolderRepository, ContentFolder>(ref _contentfolder);
-            }
-        }
-
-        private ContentTypeRepository _contenttypes;
-
-        public ContentTypeRepository ContentTypes
-        {
-            get
-            {
-                return EnsureRepository<ContentTypeRepository, ContentType>(ref _contenttypes);
-            }
-
-        }
-
-        private ContentCategoryRepository _contentCategory;
-
-        public ContentCategoryRepository ContentCategories
-        {
-            get
-            {
-                return EnsureRepository<ContentCategoryRepository, ContentCategory>(ref _contentCategory);
-            }
-        }
-
-        private TextContentRepository _textcontentreponew;
-
-        public TextContentRepository TextContent
-        {
-            get
-            {
-                return EnsureRepository<TextContentRepository, TextContent>(ref _textcontentreponew);
-            }
-        }
-
-
+        public ContentTypeRepository ContentTypes => GetSiteRepository<ContentTypeRepository, ContentType>();
+ 
+        public ContentCategoryRepository ContentCategories => GetSiteRepository<ContentCategoryRepository, ContentCategory>();
+         
+        public TextContentRepository TextContent => GetSiteRepository<TextContentRepository, TextContent>();
+     
         #region Ecommerce
 
         //private CategoryRepository _category;
@@ -988,15 +605,7 @@ namespace Kooboo.Sites.Repository
 
 
         #endregion
-            
-
-        public EditLog Log
-        {
-            get
-            {
-                return this.DatabaseDb.Log;
-            }
-        }
+             
     }
 
 }

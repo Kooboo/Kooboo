@@ -162,7 +162,7 @@ namespace Kooboo.Sites.Service
                 else
                 {
                     var sitedb = website.SiteDb();
-                    var allrepos = sitedb.AllRepositories;
+                    var allrepos = sitedb.ActiveRepositories();
                     foreach (var repo in allrepos)
                     {
                         if (Kooboo.Attributes.AttributeHelper.IsDiskable(repo.ModelType))

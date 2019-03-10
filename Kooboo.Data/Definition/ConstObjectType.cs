@@ -19,9 +19,9 @@ namespace Kooboo
         public const byte View = 10;
         public const byte HtmlBlock = 11;
         public const byte CssRule = 13;
-        public const byte File = 14;
+        public const byte CmsFile = 14;
         public const byte Route = 15;
-        public const byte Relation = 16;
+        public const byte ObjectRelation = 16;
         public const byte Image = 17;
         public const byte TextContent = 18;
         public const byte Binding = 19;

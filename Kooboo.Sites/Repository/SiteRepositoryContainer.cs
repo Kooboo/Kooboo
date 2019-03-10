@@ -34,7 +34,7 @@ namespace Kooboo.Sites.Repository
                                     if (genetype !=null)
                                     {
                                         var name = genetype.Name;
-                                        _repos.Add(name, item);
+                                        _repos[name] = item;
                                     } 
                                 }                                
                             }

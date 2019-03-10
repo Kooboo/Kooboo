@@ -210,7 +210,7 @@ namespace Kooboo.Sites.SiteTransfer
                         consttype = ConstObjectType.Style;
                         break;
                     case UrlHelper.UrlFileType.File:
-                        consttype = ConstObjectType.File;
+                        consttype = ConstObjectType.CmsFile;
                         break;
                     case UrlHelper.UrlFileType.PageOrView:
                         consttype = ConstObjectType.Page;

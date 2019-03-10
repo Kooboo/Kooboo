@@ -64,7 +64,7 @@ namespace Kooboo.Sites.SiteTransfer
                         {
                             AbsoluteUrl = absoluteUrl,
                             RelativeUrl = relativeurl,
-                            ConstType = ConstObjectType.File,
+                            ConstType = ConstObjectType.CmsFile,
                             OwnerObjectId = Context.ObjectId
                         });
                     } 

@@ -707,7 +707,7 @@ namespace Kooboo.Sites.Relation
                 }
                 UrlList.Add(fileurl);
             }
-            ComputeUrlRelation(sitedb, objectId, constType, UrlList, ConstObjectType.File);
+            ComputeUrlRelation(sitedb, objectId, constType, UrlList, ConstObjectType.CmsFile);
         }
 
         public static void ComputeUrlRelation(SiteDb sitedb, Guid objectId, byte constType, List<string> urllist, byte DestConstType)

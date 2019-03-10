@@ -20,7 +20,7 @@ namespace Kooboo.Sites.Render
                         await PageRenderer.RenderAsync(context);
                         break;
                     }
-                case ConstObjectType.File:
+                case ConstObjectType.CmsFile:
                     {
                         FileRenderer.Render(context);
                         break;

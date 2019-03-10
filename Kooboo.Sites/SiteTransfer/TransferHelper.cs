@@ -221,7 +221,7 @@ namespace Kooboo.Sites.SiteTransfer
                     break;
                 case UrlHelper.UrlFileType.File:
                     {
-                        consttype = ConstObjectType.File;
+                        consttype = ConstObjectType.CmsFile;
                     }
                     break;
                 default:

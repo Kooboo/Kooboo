@@ -49,7 +49,7 @@ namespace Kooboo.Sites.Service
             }
             else if (TValueType == typeof(CmsFile))
             {
-                return ConstObjectType.File;
+                return ConstObjectType.CmsFile;
             }
             else if (TValueType == typeof(Folder))
             {
@@ -90,7 +90,7 @@ namespace Kooboo.Sites.Service
             }
             else if (TValueType == typeof(ObjectRelation))
             {
-                return ConstObjectType.Relation;
+                return ConstObjectType.ObjectRelation;
             }
             else if (TValueType == typeof(ResourceGroup))
             {
@@ -207,7 +207,7 @@ namespace Kooboo.Sites.Service
                     return ConstObjectType.Style;
 
                 case Lib.Helper.UrlHelper.UrlFileType.File:
-                    return ConstObjectType.File;
+                    return ConstObjectType.CmsFile;
 
                 case Lib.Helper.UrlHelper.UrlFileType.PageOrView:
                     return ConstObjectType.Page;

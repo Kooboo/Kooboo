@@ -13,7 +13,7 @@ namespace Kooboo.Sites.Models
     {
         public CmsFile()
         {
-            this.ConstType = ConstObjectType.File;
+            this.ConstType = ConstObjectType.CmsFile;
         }
 
         private Guid _id;
