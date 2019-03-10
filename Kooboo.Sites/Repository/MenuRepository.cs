@@ -28,9 +28,8 @@ namespace Kooboo.Sites.Repository
             Guid key;
             bool parseok = Guid.TryParse(NameOrGuid, out key);
             if (!parseok)
-            {
-                byte consttype = Service.ConstTypeService.GetConstType(typeof(Menu));
-                key = Data.IDGenerator.GetOrGenerate(NameOrGuid, consttype);
+            { 
+                key = Data.IDGenerator.GetOrGenerate(NameOrGuid, ConstObjectType.Menu);
             }
             return Get(key);
         }

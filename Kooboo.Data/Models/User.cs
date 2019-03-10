@@ -5,12 +5,7 @@ using System;
 namespace Kooboo.Data.Models
 {
     public class User : IGolbalObject
-    {
-        public User()
-        {
-            this.ConstType = ConstObjectType.User;
-        } 
-
+    { 
         private Guid _id;
         public Guid Id
         {
@@ -78,9 +73,7 @@ namespace Kooboo.Data.Models
                 return String.Concat(FirstName, " ", LastName);
             }
         }
-   
-        public byte ConstType { get; set; }
-        
+     
         private string _language;
         public string Language
         {

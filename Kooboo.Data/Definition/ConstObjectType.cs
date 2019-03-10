@@ -57,6 +57,9 @@ namespace Kooboo
 
         public const byte FormSetting = 50;
 
+        public const byte TransferTask = 53;
+        public const byte TransferPage = 54;
+
         // public const byte KScript = 52;
 
         public const byte SiteUser = 55;
@@ -130,7 +133,7 @@ namespace Kooboo
         }
 
         public static string GetName(byte constType)
-        {
+        {   
             foreach (var item in Types)
             {
                 if (item.Value == constType)

@@ -37,6 +37,7 @@ namespace Kooboo.Web.ViewModel
 
     public class ContentFolderViewModel : Kooboo.Sites.Contents.Models.ContentFolder
     {
+        
         public Dictionary<string, int> Relations { get; set; }
 
         public static ContentFolderViewModel Create(ContentFolder folder)

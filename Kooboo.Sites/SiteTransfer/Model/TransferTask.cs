@@ -8,6 +8,11 @@ namespace Kooboo.Sites.SiteTransfer
 { 
     public  class TransferTask : SiteObject
     {
+        public TransferTask()
+        {
+            this.ConstType = ConstObjectType.TransferTask;
+        }
+
         private Guid _id; 
         public override Guid Id {
             get

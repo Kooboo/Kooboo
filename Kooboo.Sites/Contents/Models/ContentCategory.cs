@@ -12,6 +12,8 @@ namespace Kooboo.Sites.Contents.Models
         {
             this.ConstType = ConstObjectType.ContentCategory;
         }
+         
+
         private Guid _id;
         [Kooboo.Attributes.SummaryIgnore]
         public override Guid Id

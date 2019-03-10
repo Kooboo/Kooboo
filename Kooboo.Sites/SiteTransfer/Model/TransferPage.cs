@@ -11,6 +11,11 @@ namespace Kooboo.Sites.SiteTransfer
     /// </summary>
     public class TransferPage  : Kooboo.Sites.Models.SiteObject
     {
+
+        public TransferPage()
+        {
+            this.ConstType = ConstObjectType.TransferPage;  
+        }
        
         private Guid _id; 
         public override Guid Id

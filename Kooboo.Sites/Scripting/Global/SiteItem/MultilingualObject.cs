@@ -12,6 +12,11 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 {
     public class MultilingualObject : Kooboo.Sites.Contents.Models.MultipleLanguageObject, IDictionary<string, object>
     {
+        public MultilingualObject()
+        {
+            // should not use. 
+        }
+
         public RenderContext context { get; set; }
 
         public MultilingualObject(Kooboo.Sites.Contents.Models.MultipleLanguageObject siteobject, RenderContext context)

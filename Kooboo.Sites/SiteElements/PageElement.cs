@@ -10,11 +10,7 @@ using Kooboo.Extensions;
 namespace Kooboo.Sites.Models
 {
     public class DomElement : Kooboo.Data.Interface.ISiteObject
-    {
-        public DomElement()
-        {
-            this.ConstType = ConstObjectType.DomElement; 
-        }
+    { 
         private Guid _id;
         public Guid Id
         {
@@ -216,10 +212,7 @@ namespace Kooboo.Sites.Models
 
         public byte OwnerObjectType { get; set; }
           
-        public byte ConstType
-        {
-            get; set;
-        }
+        public byte ConstType { get; set; } = ConstObjectType.DomElement;
 
         [Kooboo.IndexedDB.CustomAttributes.KoobooIgnore]
         public DateTime CreationDate
