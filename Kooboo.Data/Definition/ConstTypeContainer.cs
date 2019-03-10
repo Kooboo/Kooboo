@@ -5,8 +5,7 @@ using System.Text;
 
 namespace Kooboo
 {
-    // TOOD: improve performance. 
-   
+    // TOOD: improve performance.  
     public static class ConstTypeContainer
     {
         private static object _locker = new object();
@@ -101,8 +100,7 @@ namespace Kooboo
                 return _namebytes; 
             }
         }
-
-
+         
         public static Type GetModelType(byte constType)
         {
             if (ByteTypes.ContainsKey(constType))
@@ -131,6 +129,32 @@ namespace Kooboo
             }
             return 0;
         }
+
+        public static byte GetConstType(string ModelName)
+        { 
+            if (NameBytes.ContainsKey(ModelName))
+            {
+                return NameBytes[ModelName];
+            }
+            return 0;
+        }
+
+
+        public static string GetName(byte constType)
+        {
+
+            if (ByteTypes.ContainsKey(constType))
+            {
+                var type = ByteTypes[constType]; 
+                if (type !=null)
+                {
+                    return type.Name; 
+                }
+            }
+
+            return string.Empty;  
+        }
+
     }
 
 

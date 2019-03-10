@@ -22,7 +22,7 @@ namespace Kooboo.Web.Api.Implementation
                 RouteItemViewModel model = new RouteItemViewModel();
                 model.Id = item.Id;
                 model.Name = item.Name;
-                model.ResourceType = ConstObjectType.GetName(item.DestinationConstType);
+                model.ResourceType = ConstTypeContainer.GetName(item.DestinationConstType);
                 model.ObjectId = item.objectId;
 
                 model.LastModified = item.LastModified;

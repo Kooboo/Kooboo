@@ -23,7 +23,7 @@ namespace Kooboo.Web.Api.Implementation
                 ExternalResourceItemViewModel model = new ExternalResourceItemViewModel();
                 model.Id = item.Id;
                 model.FullUrl = item.FullUrl;
-                model.ResourceType = ConstObjectType.GetName(item.DestinationObjectType);
+                model.ResourceType = ConstTypeContainer.GetName(item.DestinationObjectType);
                 model.LastModified = item.LastModified;
 
                model.Relations =  Sites.Helper.RelationHelper.Sum(sitedb.ExternalResource.GetUsedBy(item.Id));

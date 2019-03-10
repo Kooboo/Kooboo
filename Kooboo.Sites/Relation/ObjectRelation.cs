@@ -16,6 +16,10 @@ namespace Kooboo.Sites.Relation
     /// </summary>
     public class ObjectRelation : Kooboo.Sites.Models.SiteObject
     {
+        public ObjectRelation()
+        {
+            this.ConstType = ConstObjectType.Relation; 
+        }
 
         private Guid _id;
         public override Guid Id

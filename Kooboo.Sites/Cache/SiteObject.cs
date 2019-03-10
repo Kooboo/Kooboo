@@ -67,7 +67,7 @@ namespace Kooboo.Sites.Cache
             Guid id;
             if (!System.Guid.TryParse(NameOrId, out id))
             {
-                var consttype = Service.ConstTypeService.GetConstType(typeof(TValue));
+                var consttype = ConstTypeContainer.GetConstType(typeof(TValue));
                 id = Kooboo.Data.IDGenerator.Generate(NameOrId, consttype);
             }
             return Get(SiteDb, id);

@@ -67,21 +67,6 @@ namespace Kooboo.Lib.Reflection
         }
 
         private static Dictionary<string, Func<object, object>> GetValueFuncs = new Dictionary<string, Func<object, object>>();
-
-
-        public static byte GetPropertyValue(Type objType, string PropertyName)
-        {
-            var method = objType.GetProperty(PropertyName).GetGetMethod();
-            var dynamicMethod = new System.Reflection.Emit.DynamicMethod("meide", typeof(byte),
-                                                  Type.EmptyTypes);
-            var generator = dynamicMethod.GetILGenerator();
-            generator.Emit(System.Reflection.Emit.OpCodes.Ldnull);
-            generator.Emit(System.Reflection.Emit.OpCodes.Call, method);
-            generator.Emit(System.Reflection.Emit.OpCodes.Ret);
-            var silly = (Func<byte>)dynamicMethod.CreateDelegate(
-                           typeof(Func<byte>));
-            return silly();
-        }
-
+          
     }
 }

@@ -277,7 +277,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             string baseurl = siteDb.WebSite.BaseUrl(); 
             // by = View, Page, Layout, TextContent, Style. 
-            byte consttype = ConstObjectType.GetByte(by);
+            byte consttype = ConstTypeContainer.GetConstType(by);
              
             var images = siteDb.Images.ListUsedBy(consttype);
 
@@ -319,7 +319,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             string baseurl = siteDb.WebSite.BaseUrl();
             // by = View, Page, Layout, TextContent, Style. 
-            byte consttype = ConstObjectType.GetByte(by);
+            byte consttype = ConstTypeContainer.GetConstType(by);
 
             var images = siteDb.Images.ListUsedBy(consttype);
 

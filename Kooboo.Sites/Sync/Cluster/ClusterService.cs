@@ -325,7 +325,7 @@ namespace Kooboo.Sites.Sync.Cluster
             if (log.EditType == EditType.Delete)
             {
                 item.IsDelete = true;
-                item.ObjectConstType = Service.ConstTypeService.GetConstType(repo.ModelType);
+                item.ObjectConstType = ConstTypeContainer.GetConstType(repo.ModelType);
                 item.ObjectId = key;
             }
             else

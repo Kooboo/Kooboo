@@ -205,7 +205,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 return null;
             }
-            byte consttype = ConstObjectType.GetByte(type);
+            byte consttype = ConstTypeContainer.GetConstType(type);
 
             if (call.ObjectId != default(Guid))
             {

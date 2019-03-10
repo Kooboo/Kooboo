@@ -250,9 +250,8 @@ namespace Kooboo.Sites.Routing
                 string nameorid = null;
 
                 if (byte.TryParse(start, out output))
-                {
-
-                    if (ConstObjectType.Types.Values.Contains(output))
+                { 
+                    if (ConstTypeContainer.ByteTypes.ContainsKey(output))
                     {
                         if (sitedb != null)
                         {
@@ -273,7 +272,7 @@ namespace Kooboo.Sites.Routing
                 }
                 else
                 {
-                    if (ConstObjectType.Types.ContainsKey(start))
+                    if (ConstTypeContainer.nameTypes.ContainsKey(start))
                     {
                         if (sitedb != null)
                         {

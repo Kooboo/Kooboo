@@ -24,7 +24,7 @@ namespace Kooboo.Sites.Systems
             byte constType = ConstObjectType.Unknown;
             if (!byte.TryParse(constTypeString, out constType))
             {
-                constType = ConstObjectType.GetByte(constTypeString);
+                constType = ConstTypeContainer.GetConstType(constTypeString);
             }
             var id = paras.GetValue("nameorid");
 

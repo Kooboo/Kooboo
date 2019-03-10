@@ -178,11 +178,15 @@ namespace Kooboo.Sites.FrontEvent
             result.Add(new EventConditionSetting() { Name = "UserAgent" });
 
             Dictionary<string, string> objecttypes = new Dictionary<string, string>();
-            foreach (var item in ConstObjectType.Types)
-            {
-                objecttypes.Add(item.Value.ToString(), item.Key);
-            }
 
+            foreach (var item in ConstTypeContainer.ByteTypes)
+            {
+                if (Attributes.AttributeHelper.IsRoutable(item.Value))
+                {
+                    objecttypes.Add(item.Key.ToString(), item.Value.Name);
+                }
+            }
+              
             result.Add(new EventConditionSetting() { Name = "Route.DestinationConstType", ControlType = Data.ControlType.Selection, SelectionValues = objecttypes });
 
             return result;

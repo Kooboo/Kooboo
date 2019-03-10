@@ -63,7 +63,7 @@ namespace Kooboo.Web.Api.Implementation
                 RouteItemViewModel model = new RouteItemViewModel();
                 model.Id = item.Id;
                 model.Name = item.Name;
-                model.ResourceType = ConstObjectType.GetName(item.DestinationConstType);
+                model.ResourceType = ConstTypeContainer.GetName(item.DestinationConstType);
                 model.ObjectId = item.objectId;
                 model.LastModified = item.LastModified;
                 model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.Routes.GetUsedBy(item.Id));
@@ -100,7 +100,7 @@ namespace Kooboo.Web.Api.Implementation
                 ExternalResourceItemViewModel model = new ExternalResourceItemViewModel();
                 model.Id = item.Id;
                 model.FullUrl = item.FullUrl;
-                model.ResourceType = ConstObjectType.GetName(item.DestinationObjectType);
+                model.ResourceType = ConstTypeContainer.GetName(item.DestinationObjectType);
                 model.LastModified = item.LastModified;
 
                 model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.ExternalResource.GetUsedBy(item.Id));

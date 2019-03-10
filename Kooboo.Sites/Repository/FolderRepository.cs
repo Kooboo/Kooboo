@@ -189,7 +189,7 @@ namespace Kooboo.Sites.Repository
         {
             List<T> list = new List<T>();
 
-            byte consttype = Service.ConstTypeService.GetConstType(typeof(T));
+            byte consttype = ConstTypeContainer.GetConstType(typeof(T));
 
             var siteobjectlist = GetFolderObjects(FolderPath, consttype, UseColumnDataOnly, Recursive);
 

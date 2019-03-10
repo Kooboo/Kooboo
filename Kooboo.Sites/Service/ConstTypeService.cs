@@ -4,8 +4,7 @@ using Kooboo.Data.Models;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Relation;
-using Kooboo.Sites.Routing;
-using Kooboo.Lib;
+using Kooboo.Sites.Routing; 
 using System;
 using Kooboo.Lib.Helper;
 
@@ -182,176 +181,7 @@ namespace Kooboo.Sites.Service
 
         public static Type GetModelType(byte ConstType)
         {
-            switch (ConstType)
-            {
-                case ConstObjectType.Binding:
-                    {
-                        return typeof(Binding);
-                    }
-                case ConstObjectType.ContentCategory:
-                    {
-                        return typeof(ContentCategory);
-                    }
-                case ConstObjectType.ContentFolder:
-                    {
-                        return typeof(ContentFolder);
-                    }
-                case ConstObjectType.ContentType:
-                    {
-                        return typeof(ContentType);
-                    }
-
-                case ConstObjectType.CssRule:
-                    {
-                        return typeof(CmsCssRule);
-                    }
-                case ConstObjectType.DataMethodSetting:
-                    {
-                        return typeof(DataMethodSetting);
-                    }
-                case ConstObjectType.Domain:
-                    {
-                        return typeof(Domain);
-                    }
-                case ConstObjectType.ExternalResource:
-                    {
-                        return typeof(ExternalResource);
-                    }
-                case ConstObjectType.File:
-                    {
-                        return typeof(CmsFile);
-                    }
-                case ConstObjectType.Folder:
-                    {
-                        return typeof(Folder);
-                    }
-                case ConstObjectType.Form:
-                    {
-                        return typeof(Form);
-                    }
-
-                case ConstObjectType.FormValue:
-                    {
-                        return typeof(FormValue);
-                    }
-                case ConstObjectType.HtmlBlock:
-                    {
-                        return typeof(HtmlBlock);
-                    }
-                case ConstObjectType.Image:
-                    {
-                        return typeof(Image);
-                    }
-                case ConstObjectType.Label:
-                    {
-                        return typeof(Label);
-                    }
-                case ConstObjectType.Layout:
-                    {
-                        return typeof(Layout);
-                    }
-                case ConstObjectType.Menu:
-                    {
-                        return typeof(Menu);
-                    }
-                case ConstObjectType.Page:
-                    {
-                        return typeof(Page);
-                    }
-                case ConstObjectType.Relation:
-                    {
-                        return typeof(Relation.ObjectRelation);
-                    }
-                case ConstObjectType.ResourceGroup:
-                    {
-                        return typeof(ResourceGroup);
-                    }
-                case ConstObjectType.Route:
-                    {
-                        return typeof(Routing.Route);
-                    }
-                case ConstObjectType.Script:
-                    {
-                        return typeof(Script);
-                    } 
- 
-                case ConstObjectType.Code: 
-                    { 
-                        return typeof(Code); 
-                    }
-                case ConstObjectType.CoreSetting:
-                    {
-                        return typeof(CoreSetting); 
-                    }
-                case ConstObjectType.SiteUser: 
-                    {
-                        return typeof(SiteUser); 
-                    }
-
-                case ConstObjectType.BusinessRule:
-                    {
-                        return typeof(BusinessRule); 
-                    }
-                case ConstObjectType.Style:
-                    {
-                        return typeof(Style);
-                    }
-
-                case ConstObjectType.SyncSetting:
-                    {
-                        return typeof(SyncSetting);
-                    }
-
-                case ConstObjectType.TextContent:
-                    {
-                        return typeof(TextContent);
-                    }
-                case ConstObjectType.Thumbnail:
-                    {
-                        return typeof(Thumbnail);
-                    }
-                case ConstObjectType.User:
-                    {
-                        return typeof(User);
-                    }
-                case ConstObjectType.UserGroup:
-                    {
-                        return typeof(Organization);
-                    }
-                case ConstObjectType.View:
-                    {
-                        return typeof(View);
-                    }
-                case ConstObjectType.ViewDataMethod:
-                    {
-                        return typeof(ViewDataMethod);
-                    }
-                case ConstObjectType.WebSite:
-                    {
-                        return typeof(WebSite);
-                    }
-                case ConstObjectType.Synchronization:
-                    {
-                        return typeof(Synchronization);
-                    }
-                case ConstObjectType.FormSetting: 
-                    {
-                        return typeof(FormSetting);
-                    }
-                case ConstObjectType.SiteCluster:
-                    {
-                        return typeof(SiteCluster);
-                    }
-                case ConstObjectType.Kconfig:
-                    {
-                        return typeof(KConfig); 
-                    }
-
-                default:
-                    break;
-            }
-
-            return null;
+            return ConstTypeContainer.GetModelType(ConstType); 
         }
 
         public static byte GetConstTypeByUrl(string url)
@@ -386,7 +216,7 @@ namespace Kooboo.Sites.Service
             }
         }
 
-        public static string GetContentType(Type ModelType, string filename = null)
+        public static string GetContentType(Type ModelType)
         {
             if (ModelType == typeof(Style))
             {
@@ -396,13 +226,7 @@ namespace Kooboo.Sites.Service
             {
                 return "application/javascript;charset=utf-8;";
             }
-
-            if (!string.IsNullOrEmpty(filename))
-            {
-                return IOHelper.MimeType(filename);
-            }
-
-
+              
             if (Kooboo.Lib.Reflection.TypeHelper.IsOfBaseTypeOrInterface(ModelType, typeof(Kooboo.Data.Interface.IBinaryFile)))
             {
                 return "application/octet-stream";

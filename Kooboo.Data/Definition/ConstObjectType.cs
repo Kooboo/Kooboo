@@ -2,7 +2,7 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Reflection;  
+using System.Reflection; 
 
 namespace Kooboo
 {
@@ -74,74 +74,8 @@ namespace Kooboo
         public const byte Cateogry = 71;
         public const byte ProductCategory = 72;
         public const byte ProductVariants = 73;
-        public const byte ProductType = 74;
-
-        public const byte kfile = 80;
-
-        public const byte Kconfig = 81; 
-
-        private static Dictionary<string, byte> _Types;
-
-        private static object _locker = new object();
-
-        public static Dictionary<string, byte> Types
-        {
-            get
-            {
-                if (_Types == null)
-                {
-                    lock (_locker)
-                    {
-                        if (_Types == null)
-                        {
-                            _Types = new Dictionary<string, byte>(StringComparer.OrdinalIgnoreCase);
-
-                            var allfields = typeof(ConstObjectType).GetFields(BindingFlags.Static | BindingFlags.Public);
-
-                            var instance = Activator.CreateInstance(typeof(ConstObjectType));
-
-                            foreach (var item in allfields)
-                            {
-                                var value = item.GetValue(instance);
-                                var bytevalue = Convert.ToByte(value);
-                                if (bytevalue != 0)
-                                {
-                                    _Types.Add(item.Name, bytevalue);
-                                }
-                            }
-                        }
-
-                    }
-                }
-
-                return _Types;
-            }
-        }
-
-        public static byte GetByte(string constName)
-        {
-            if (string.IsNullOrEmpty(constName))
-            {
-                return 0;
-            }
-
-            if (Types.ContainsKey(constName))
-            {
-                return Types[constName];
-            }
-            return 0;
-        }
-
-        public static string GetName(byte constType)
-        {   
-            foreach (var item in Types)
-            {
-                if (item.Value == constType)
-                {
-                    return item.Key;
-                }
-            }
-            return null;
-        }
+        public const byte ProductType = 74; 
+        public const byte kfile = 80; 
+        public const byte Kconfig = 81;  
     }
 }

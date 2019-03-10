@@ -302,7 +302,7 @@ namespace Kooboo.Sites.Repository
 
             if (!parseok)
             {
-                byte consttype = Service.ConstTypeService.GetConstType(typeof(TValue));
+                byte consttype = ConstTypeContainer.GetConstType(typeof(TValue));
 
                 key = Data.IDGenerator.Generate(NameOrGuid, consttype);
             }
@@ -538,7 +538,7 @@ namespace Kooboo.Sites.Repository
                 else
                 {
 
-                    string msg = ConstObjectType.GetName(value.ConstType);
+                    string msg = ConstTypeContainer.GetName(value.ConstType);
 
                     var objinfo = Kooboo.Sites.Service.ObjectService.GetObjectInfo(this.SiteDb, value);
                      
