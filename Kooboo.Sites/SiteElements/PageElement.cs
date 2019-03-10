@@ -11,6 +11,11 @@ namespace Kooboo.Sites.Models
 {
     public class DomElement : Kooboo.Data.Interface.ISiteObject
     { 
+        public DomElement()
+        {
+            this.ConstType = ConstObjectType.DomElement; 
+        }
+
         private Guid _id;
         public Guid Id
         {

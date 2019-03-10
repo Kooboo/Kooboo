@@ -188,31 +188,13 @@ namespace Kooboo.Sites.Repository
         public Database DatabaseDb { get; set; }
 
         public WebSite WebSite { get; set; }
-
-        private LayoutRepository _layouts;
-
+  
         public LayoutRepository Layouts => GetSiteRepository<LayoutRepository, Layout>(); 
-     
-
-        private ContinueConvertRepository _continueConverter;
-
-        public ContinueConvertRepository ContinueConverter
-        {
-            get
-            {
-                return EnsureRepository<ContinueConvertRepository, ContinueConverter>(ref _continueConverter);
-            }
-        }
-
-        private DataMethodSettingRepository _datamethodsettings;
-        public DataMethodSettingRepository DataMethodSettings
-        {
-            get
-            {
-                return EnsureRepository<DataMethodSettingRepository, DataMethodSetting>(ref _datamethodsettings);
-            }
-        }
-
+    
+        public ContinueConvertRepository ContinueConverter => GetSiteRepository<ContinueConvertRepository, ContinueConverter>(); 
+        
+        public DataMethodSettingRepository DataMethodSettings => GetSiteRepository<DataMethodSettingRepository, DataMethodSetting>(); 
+      
         private SiteRepositoryBase<SyncSetting> _SyncSetting;
 
         public SiteRepositoryBase<SyncSetting> SyncSettings
@@ -468,7 +450,7 @@ namespace Kooboo.Sites.Repository
         #endregion
 
         private CmsFileRepository _files;
-        public CmsFileRepository Files
+        public CmsFileRepository Files  
         {
             get
             {
@@ -1006,8 +988,7 @@ namespace Kooboo.Sites.Repository
 
 
         #endregion
-
-
+            
 
         public EditLog Log
         {
