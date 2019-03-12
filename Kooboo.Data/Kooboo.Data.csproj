@@ -40,4 +40,8 @@
     <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ECommerce\" />
+  </ItemGroup>
+
 </Project>
