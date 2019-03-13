@@ -10,7 +10,7 @@ namespace Kooboo.Sites.Repository
 {
     public class FormRepository : IEmbeddableRepositoryBase<Form>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

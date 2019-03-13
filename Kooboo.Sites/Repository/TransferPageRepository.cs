@@ -12,7 +12,7 @@ namespace Kooboo.Sites.Repository
 {
     public class TransferPageRepository : SiteRepositoryBase<TransferPage>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

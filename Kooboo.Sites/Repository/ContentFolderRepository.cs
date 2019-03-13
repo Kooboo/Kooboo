@@ -15,7 +15,7 @@ namespace Kooboo.Sites.Repository
     public class ContentFolderRepository : SiteRepositoryBase<ContentFolder>
     {
 
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

@@ -13,7 +13,7 @@
 //{
 //    public class CssDeclarationRepository : SiteRepositoryBase<CmsCssDeclaration>
 //    {
-//        internal override ObjectStoreParameters StoreParameters
+//        public override ObjectStoreParameters StoreParameters
 //        {
 //            get
 //            {

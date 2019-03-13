@@ -16,8 +16,8 @@ using Kooboo.Lib.Helper;
 namespace Kooboo.Sites.Repository
 {
     public class ImageRepository : SiteRepositoryBase<Image>
-    { 
-        internal override ObjectStoreParameters StoreParameters
+    {
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

@@ -12,7 +12,7 @@ namespace Kooboo.Sites.Repository
 {
     public class ResourceGroupRepository : SiteRepositoryBase<ResourceGroup>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

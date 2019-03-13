@@ -17,7 +17,7 @@ namespace Kooboo.Sites.Repository
             this.ContinueDownloading = new Dictionary<string, DownloadingTask>(); 
         }
 
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

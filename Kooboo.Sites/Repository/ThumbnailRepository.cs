@@ -9,7 +9,7 @@ namespace Kooboo.Sites.Repository
 {
     public class ThumbnailRepository : SiteRepositoryBase<Thumbnail>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

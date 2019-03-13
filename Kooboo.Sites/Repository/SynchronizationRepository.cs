@@ -17,7 +17,7 @@ namespace Kooboo.Sites.Repository
 
         public Guid GlobalObjectId = default(Guid);
         
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

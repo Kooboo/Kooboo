@@ -11,7 +11,7 @@ namespace Kooboo.Sites.Repository
 {
     public class TextContentRepository : SiteRepositoryBase<TextContent>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

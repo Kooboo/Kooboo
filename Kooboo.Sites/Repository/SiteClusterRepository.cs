@@ -10,7 +10,7 @@ namespace Kooboo.Sites.Repository
 {
     public class SiteClusterRepository : SiteRepositoryBase<SiteCluster>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

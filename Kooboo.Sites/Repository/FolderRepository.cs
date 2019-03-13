@@ -10,7 +10,7 @@ namespace Kooboo.Sites.Repository
 {
     public class FolderRepository : SiteRepositoryBase<Kooboo.Sites.Models.Folder>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

@@ -14,7 +14,7 @@ namespace Kooboo.Sites.Repository
 {
     public class PageRepository : SiteRepositoryBase<Page>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

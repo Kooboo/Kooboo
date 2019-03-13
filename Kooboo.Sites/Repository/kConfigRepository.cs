@@ -13,7 +13,7 @@ namespace Kooboo.Sites.Repository
     public class kConfigRepository : SiteRepositoryBase<KConfig>
     {
 
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

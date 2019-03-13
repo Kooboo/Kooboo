@@ -12,7 +12,7 @@ namespace Kooboo.Sites.Repository
 {
   public  class BusinessRuleRepository : SiteRepositoryBase<BusinessRule>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

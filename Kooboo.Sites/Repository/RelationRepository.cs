@@ -14,8 +14,8 @@ using Kooboo.Sites.Extensions;
 namespace Kooboo.Sites.Repository
 {
     public class RelationRepository : SiteRepositoryBase<ObjectRelation>
-    { 
-        internal override ObjectStoreParameters StoreParameters
+    {
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

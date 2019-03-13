@@ -12,7 +12,7 @@ namespace Kooboo.Sites.Repository
 {
    public class NotificationRepository : SiteRepositoryBase<Notification>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

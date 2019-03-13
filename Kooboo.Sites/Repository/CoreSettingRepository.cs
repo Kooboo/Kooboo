@@ -11,7 +11,7 @@ namespace Kooboo.Sites.Repository
 {
     public class CoreSettingRepository : SiteRepositoryBase<CoreSetting>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

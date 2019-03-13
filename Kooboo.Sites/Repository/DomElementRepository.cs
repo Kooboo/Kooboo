@@ -15,7 +15,7 @@ namespace Kooboo.Sites.Repository
 {
    public class DomElementRepository : SiteRepositoryBase<DomElement>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

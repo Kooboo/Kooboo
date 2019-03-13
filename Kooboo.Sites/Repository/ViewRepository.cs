@@ -13,7 +13,7 @@ namespace Kooboo.Sites.Repository
 {
    public class ViewRepository : SiteRepositoryBase<View>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

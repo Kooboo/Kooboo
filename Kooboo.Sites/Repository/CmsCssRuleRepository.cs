@@ -20,7 +20,7 @@ namespace Kooboo.Sites.Repository
     {
         private object _locker = new object();
 
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

@@ -9,8 +9,8 @@ using Kooboo.IndexedDB;
 namespace Kooboo.Sites.Repository
 {
     public class ContentTypeRepository : SiteRepositoryBase<ContentType>
-    {  
-        internal override ObjectStoreParameters StoreParameters
+    {
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {

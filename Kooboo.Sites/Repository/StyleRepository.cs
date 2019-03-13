@@ -15,7 +15,7 @@ namespace Kooboo.Sites.Repository
 {
     public class StyleRepository : IEmbeddableRepositoryBase<Style>
     {
-        internal override IndexedDB.ObjectStoreParameters StoreParameters
+        public override IndexedDB.ObjectStoreParameters StoreParameters
         {
             get
             {

@@ -113,7 +113,7 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        internal virtual ObjectStoreParameters StoreParameters
+        public virtual ObjectStoreParameters StoreParameters
         {
             get
             {
