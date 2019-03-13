@@ -79,12 +79,22 @@ namespace Kooboo.IndexedDB
             }
         }
 
+        public void AddColumn<TValue>(Expression<Func<TValue, object>> expression,int maxlength)
+        {
+            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(expression);
+
+            if (!string.IsNullOrEmpty(fieldname))
+            {
+                AddColumn(fieldname, maxlength);
+            }
+        }
+
         /// <summary>
         /// create additional index on some other column. Better use for non-string type of index. 
         /// string = FieldName,   int = Fixed length of this Field data in bytes. This lenght is only required for String data type.
         /// An column can not be altered after created, an index can be deleted or rebuilt. 
         /// </summary>
-       public Dictionary<string, int> IndexList = new Dictionary<string, int>();
+        public Dictionary<string, int> IndexList = new Dictionary<string, int>();
 
         /// <summary>
         /// Add an additional index. 
@@ -119,9 +129,19 @@ namespace Kooboo.IndexedDB
            {
                AddIndex(fieldname);
            }
-       }
+        }
 
-       public void SetPrimaryKeyField<TValue>(Expression<Func<TValue, object>> expression, int len = 0)
+        public void AddIndex<TValue>(Expression<Func<TValue, object>> expression, int maxlength)
+        {
+            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(expression);
+
+            if (!string.IsNullOrEmpty(fieldname))
+            {
+                AddIndex(fieldname, maxlength);
+            }
+        }
+
+        public void SetPrimaryKeyField<TValue>(Expression<Func<TValue, object>> expression, int len = 0)
        {
             string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(expression); 
 
