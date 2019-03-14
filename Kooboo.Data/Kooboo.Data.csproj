@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Compile Remove="GeoLocation\LocationWatcher.cs" />
+    <Compile Remove="Payment\PaymentCallback.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +43,7 @@
 
   <ItemGroup>
     <Folder Include="ECommerce\" />
+    <Folder Include="Payment\Methods\" />
   </ItemGroup>
 
 </Project>
