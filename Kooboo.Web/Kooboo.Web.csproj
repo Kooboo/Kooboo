@@ -31,6 +31,7 @@
   <ItemGroup>
     <Compile Remove="Api\Implementation\Download.cs" />
     <Compile Remove="Api\Implementation\Payment.cs" />
+    <Compile Remove="Payment\PaymentRequest.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +39,7 @@
     <None Remove="DashBoard\MyVisitor\FrontVisitors.html" />
     <None Remove="DashBoard\Resource\SiteResource.html" />
     <None Remove="DashBoard\TopPages\TopPages.html" />
+    <None Remove="Payment\Methods\Paypal_Form_doc.html" />
   </ItemGroup>
 
   <ItemGroup>

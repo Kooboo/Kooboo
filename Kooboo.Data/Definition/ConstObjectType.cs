@@ -78,10 +78,9 @@ namespace Kooboo
         public const byte ProductVariants = 73;
         public const byte ProductType = 74;
 
-        public const byte PaymentCallback = 76; 
-
-
-
+        public const byte PaymentCallback = 76;
+        public const byte PaymentRequest = 77;
+         
         public const byte kfile = 80; 
         public const byte Kconfig = 81;  
     }

@@ -11,7 +11,7 @@ namespace Kooboo.Data.Service
 {
   public static   class WebSiteService
     { 
-        public static string GetBaseUrl(WebSite site)
+        public static string GetBaseUrl(WebSite site, bool ForceSsl = false)
         {
             if (site == null)
             {
@@ -45,7 +45,7 @@ namespace Kooboo.Data.Service
                     }
                 }
 
-                if (site.ForceSSL)
+                if (site.ForceSSL || ForceSsl)
                 {
                     var uri = new UriBuilder("https", hostname, 443);
                     return uri.Uri.AbsoluteUri;
@@ -59,6 +59,6 @@ namespace Kooboo.Data.Service
 
             return "/";
         }
-
+         
     }
 }

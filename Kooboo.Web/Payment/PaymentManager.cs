@@ -1,13 +1,10 @@
 ﻿using Kooboo.Data.Context;
-using Kooboo.Data.Models;
-using Kooboo.ServerData.Model;
-using Kooboo.ServerData.Models;
-using Kooboo.ServerData.Payment.Methods;
-using Kooboo.ServerData.Payment.Models;
+using Kooboo.Data.Models; 
+using Kooboo.Sites.Extensions;
+using Kooboo.Web.Payment.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Linq; 
 
 namespace Kooboo.Web.Payment
 {
@@ -15,34 +12,6 @@ namespace Kooboo.Web.Payment
     public static class PaymentManager
     {
         private static object _locker = new object();
-
-        private static List<IPaymentMethod> _paymentmethods;
-
-        private static List<IPaymentMethod> PaymentMethods
-        {
-            get
-            {
-                if (_paymentmethods == null)
-                {
-                    lock (_locker)
-                    {
-                        if (_paymentmethods == null)
-                        {
-                            _paymentmethods = new List<IPaymentMethod>();
-
-                            var alltypes = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(typeof(IPaymentMethod));
-
-                            foreach (var item in alltypes)
-                            {
-                                var instance = Activator.CreateInstance(item) as IPaymentMethod;
-                                _paymentmethods.Add(instance);
-                            }
-                        }
-                    }
-                }
-                return _paymentmethods;
-            }
-        }
           
         public static List<IPaymentMethod> GetMethods(string currency, List<IPaymentMethod> methods)
         {
@@ -73,19 +42,35 @@ namespace Kooboo.Web.Payment
 
             return result;
         }
-
-
-        public static List<IPaymentMethod> GetSiteMethods(WebSite site)
+         
+        public static List<IPaymentMethod> GetSiteMethods(RenderContext context)
         {
-            return null; 
+            var all = PaymentContainer.PaymentMethods;
+
+            List<IPaymentMethod> result = new List<IPaymentMethod>(); 
+
+            foreach (var item in all)
+            {
+                if (item is IKoobooPayment)
+                {
+                    // skip 
+                }
+                else
+                {
+                    if (item.CanUse(context))
+                    {
+                        result.Add(item); 
+                    }
+                }
+            }
+            return result; 
         }
          
         public static IPaymentMethod GetMethod(string paymentmethod)
-        {
-            // TODO: verify currency match. 
+        { 
             paymentmethod = paymentmethod.ToLower();
 
-            foreach (var item in PaymentMethods)
+            foreach (var item in PaymentContainer.PaymentMethods)
             {
                 if (item.Name.ToLower() == paymentmethod)
                 {
@@ -102,13 +87,13 @@ namespace Kooboo.Web.Payment
             var method = GetMethod(request.PaymentMethod);
 
             // save the request data..  
-            var payment = method.MakePayment(request);
+            var payment = method.MakePayment(request, context);
 
             if (!string.IsNullOrEmpty(payment.PaymentReferenceId))
             {
                 request.ProviderReference = payment.PaymentReferenceId;
 
-                SavePaymentRequest(request, context); 
+                SaveRequest(request, context); 
             }
 
             if (payment.PaymentRequestId == default(Guid))
@@ -139,31 +124,53 @@ namespace Kooboo.Web.Payment
             //TODO: ensure the currency. 
         }
 
-        public static string GetCallbackUrl(IPaymentMethod method, string MethodName, WebSite site = null)
+        private static string GetBaseUrl(RenderContext context)
         {
             string baseurl = null;
-            if (site != null)
-            {
-                baseurl = Kooboo.Data.Service.WebSiteService.GetBaseUrl(site);
+            if (context.WebSite != null && context.WebSite.OrganizationId !=default(Guid))
+            { 
+                baseurl = Kooboo.Data.Service.WebSiteService.GetBaseUrl(context.WebSite, true); 
             }
             else
             {
-                if (Data.AppSettings.IsOnlineServer)
+                if (Data.AppSettings.IsOnlineServer && Data.AppSettings.ServerSetting != null)
                 {
-                    if (Data.AppSettings.ServerSetting != null)
-                    {
-                        baseurl = "https://" + Data.AppSettings.ServerSetting.ServerId + "." + Data.AppSettings.ServerSetting.HostDomain;
-                    }
+                   baseurl = "https://" + Data.AppSettings.ServerSetting.ServerId + "." + Data.AppSettings.ServerSetting.HostDomain; 
                 }
             }
 
             if (baseurl == null)
             {
-                baseurl = "https://127.0.0.1"; // TODO: temp' 
+                var url = context.Request.Url;
+                int index = url.IndexOf("/", 10);
+                if (index>-1)
+                {
+                    url = url.Substring(0, index); 
+                }
+                baseurl = url;   
+            }
+            return baseurl; 
+        } 
+
+        public static string EnsureHttp(string url, RenderContext context)
+        {
+             if (string.IsNullOrWhiteSpace(url))
+            {
+                return null; 
+            }
+             if (url.ToLower().StartsWith("http://") || url.ToLower().StartsWith("https://"))
+            {
+                return url; 
             }
 
-            return baseurl + "/_api/paymentcallback/" + method.Name + "_" + MethodName;
+            var baseurl = GetBaseUrl(context);
+            return Lib.Helper.UrlHelper.Combine(baseurl, url); 
+        }
 
+        public static string GetCallbackUrl(IPaymentMethod method, string MethodName, RenderContext context)
+        {
+            var baseurl = GetBaseUrl(context);  
+            return baseurl + "/_api/paymentcallback/" + method.Name + "_" + MethodName; 
         }
 
         public static void  CallBack(PaymentCallback callback, RenderContext context)
@@ -174,14 +181,62 @@ namespace Kooboo.Web.Payment
             }
         }
 
-        public static void SavePaymentRequest(PaymentRequest request, RenderContext context)
-        {
-            //TODO: Kooboo.Server.Commerce.PaymentRequestService.SaveLocalAndRoot(request);
-
+        public static void SaveRequest(PaymentRequest request, RenderContext context)
+        { 
             foreach (var item in PaymentContainer.RequestStore)
             {
                 item.Save(request, context); 
             }
+        }
+
+        public static PaymentRequest GetRequest(Guid PaymentRequestId, RenderContext context)
+        {
+            foreach (var item in PaymentContainer.RequestStore)
+            {
+                var result = item.Get(PaymentRequestId, context); 
+                if (result !=null)
+                {
+                    return result; 
+                }
+            }
+            return null; 
+        }
+
+        public static T GetPaymentSetting<T>(RenderContext context)  where T: IPaymentSetting
+        {
+            if (context.WebSite !=null && context.WebSite.OrganizationId != default(Guid))
+            {
+                var sitedb = context.WebSite.SiteDb();
+                var setting = sitedb.CoreSetting.GetSetting<T>(); 
+                if (setting !=null)
+                {
+                    return setting; 
+                }
+            } 
+
+            return GetDefaultSetting<T>(); 
+        }
+
+        public static void SetDefaultPaymentSetting(IPaymentSetting input)
+        {
+            string typename = input.GetType().Name; 
+
+            defaultSettings[typename] = input; 
+
+        }
+
+        private static Dictionary<string, IPaymentSetting> defaultSettings { get; set; } = new Dictionary<string, IPaymentSetting>(StringComparer.OrdinalIgnoreCase); 
+
+
+        private static T GetDefaultSetting<T>()
+        {
+            var name = typeof(T).Name; 
+            if (defaultSettings.ContainsKey(name))
+            {
+                var setting = defaultSettings[name];
+                return (T)setting; 
+            }
+            return default(T); 
         }
          
     }

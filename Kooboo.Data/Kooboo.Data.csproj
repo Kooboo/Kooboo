@@ -9,14 +9,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Payment\**" />
+    <EmbeddedResource Remove="Payment\**" />
+    <None Remove="Payment\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="GeoLocation\LocationWatcher.cs" />
-    <Compile Remove="Payment\PaymentCallback.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Embedded\CountryLocation.csv" />
     <None Remove="Server\kooboo.pfx" />
     <None Remove="tld.dat" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Payment\PaymentRequest.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,7 +52,6 @@
 
   <ItemGroup>
     <Folder Include="ECommerce\" />
-    <Folder Include="Payment\Methods\" />
   </ItemGroup>
 
 </Project>

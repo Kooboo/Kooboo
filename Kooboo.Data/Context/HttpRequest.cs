@@ -123,6 +123,11 @@ namespace Kooboo.Data.Context
             return RequestManager.GetValue(this, name);
         }
 
+        public string Get(string name)
+        {
+            return this.GetValue(name); 
+        }
+
         public string GetValue(params string[] names)
         {
             return RequestManager.GetValue(this, names);

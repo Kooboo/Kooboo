@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.ServerData.Payment.Models
+namespace Kooboo.Web.Payment.Models
 {
     public class NotOkResponse : IPaymentResponse
     {

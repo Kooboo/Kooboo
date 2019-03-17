@@ -62,5 +62,34 @@ namespace Kooboo.Web.Payment
             }
         }
 
+        private static List<IPaymentMethod> _paymentmethods;
+
+        public static List<IPaymentMethod> PaymentMethods
+        {
+            get
+            {
+                if (_paymentmethods == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_paymentmethods == null)
+                        {
+                            _paymentmethods = new List<IPaymentMethod>();
+
+                            var alltypes = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(typeof(IPaymentMethod));
+
+                            foreach (var item in alltypes)
+                            {
+                                var instance = Activator.CreateInstance(item) as IPaymentMethod;
+                                _paymentmethods.Add(instance);
+                            }
+                        }
+                    }
+                }
+                return _paymentmethods;
+            }
+        }
+
+
     }
 }

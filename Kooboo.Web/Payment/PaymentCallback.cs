@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.ServerData.Model
+namespace Kooboo.Web.Payment
 {
     public class PaymentCallback : IGolbalObject, ISiteObject
     {
@@ -26,21 +26,21 @@ namespace Kooboo.ServerData.Model
         public Guid PaymentRequestId { get; set; }
 
         // all kinds of response. save them all. 
-        public string Response { get; set; } 
+        public string Response { get; set; }
 
         public string RawData { get; set; }
 
         // when reponse with paid, set this to true and update the related order. 
         public bool IsPaid { get; set; }
 
-        public bool IsCancel { get; set;  } 
-        
+        public bool IsCancel { get; set; }
+
         // response to payment provider. 
         [KoobooIgnore]
         public Kooboo.Api.ApiResponse.IResponse CallbackResponse { get; set; }
 
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
-        public byte ConstType { get; set; } = ConstObjectType.PaymentCallback; 
+        public byte ConstType { get; set; } = ConstObjectType.PaymentCallback;
 
         public DateTime LastModified { get; set; }
 

@@ -1,10 +1,10 @@
 ﻿using Kooboo.Data;
+using Kooboo.Data.Interface;
 using System;
-
-
-namespace Kooboo.ServerData.Models
+ 
+namespace Kooboo.Data.Models
 {
-    public class PaymentRequest : IGolbalObject
+    public class PaymentRequest : IGolbalObject, ISiteObject
     {  
         public PaymentRequest() { }
          
@@ -58,8 +58,43 @@ namespace Kooboo.ServerData.Models
         public string ProviderReference { get; set; }
 
         public string ReturnPath { get; set; }
+         
+        public byte ConstType { get; set; } = ConstObjectType.PaymentRequest;
 
-        public DateTime CreationTime { get; set; } = DateTime.Now; 
+
+        private DateTime _creationdate; 
+        public DateTime CreationDate {
+            get
+            {
+                if (_creationdate == default(DateTime))
+                {
+                    _creationdate = DateTime.Now; 
+                }
+                return _creationdate; 
+            }
+            set
+            {
+                _creationdate = value;  
+            }
+        }
+
+
+        private DateTime _lastmodified; 
+        public DateTime LastModified {
+            get
+            {
+                if (_lastmodified == default(DateTime))
+                {
+                    _lastmodified = DateTime.Now; 
+                }
+                return _lastmodified; 
+            }
+            set
+            {
+                _lastmodified = value; 
+            }
+
+        }
 
         public override int GetHashCode()
         { 
@@ -68,6 +103,8 @@ namespace Kooboo.ServerData.Models
             unique += this.Name + this.OrderId.ToString() + this.OrganizationId.ToString() + this.OrganizationName + this.PaymentMethod;
 
             unique += this.ProviderReference + this.TotalAmount.ToString() + this.UserIp + this.WebSiteId.ToString();
+
+            unique += this.LastModified.ToShortTimeString() + this.CreationDate.ToShortDateString(); 
 
             unique += this.ReturnPath; 
 
