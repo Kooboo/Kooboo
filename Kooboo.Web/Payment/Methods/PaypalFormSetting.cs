@@ -6,17 +6,36 @@ namespace Kooboo.Web.Payment.Methods
 {
     public class PaypalFormPaymentSetting : IPaymentSetting
     {
-        public string PaypalUrl => "https://www.paypal.com/cgi-bin/webscr";
+        public string PaypalUrl
+        {
+            get
+            {
+                if (UseSandBox)
+                {
+                    return "https://www.sandbox.paypal.com/cgi-bin/webscr";
+                }
+                return "https://www.paypal.com/cgi-bin/webscr";
 
-        public string PaypalSandboxUrl => "https://www.sandbox.paypal.com/cgi-bin/webscr";
-         
-        public string IPNUrl => "https://ipnpb.paypal.com/cgi-bin/webscr"; 
+            }
+        }
+
+        public string IPNUrl
+        {
+            get
+            {
+                if (UseSandBox)
+                {
+                    return "https://www.sandbox.paypal.com/cgi-bin/webscr";
+                }
+                return "https://ipnpb.paypal.com/cgi-bin/webscr";
+            }
+        }
 
         public string EmailAddress { get; set; }
 
         public bool UseSandBox { get; set; }
 
-        public string RuturnUrl { get; set; }
+        public string ReturnUrl { get; set; }
 
         public string CancelUrl { get; set; }
 

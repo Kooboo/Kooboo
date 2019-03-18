@@ -62,7 +62,16 @@ namespace Kooboo.Web.Payment.Methods
             // TODO: please implement as above doc says...
             if (Currency != null)
             {
-
+                //JPY  transaction amount limit of approximately 1,000,000
+                var currencies = new List<string>();
+                currencies.Add("HUF");
+                currencies.Add("JPY");
+                currencies.Add("TWD");
+                var exist = currencies.Exists(c => c.Equals(Currency, StringComparison.OrdinalIgnoreCase));
+                if (exist)
+                {
+                    return Math.Round(amount).ToString();
+                }
             }
             return amount.ToString("0.00");
         }
@@ -100,11 +109,11 @@ namespace Kooboo.Web.Payment.Methods
                     if (setting != null)
                     {
                         var notifyUrl = this.GetCallbackUrl(nameof(NofityUrl), context);
-                        string returnurl = this.EnsureHttpUrl(setting.RuturnUrl, context);
+                        string returnurl = this.EnsureHttpUrl(setting.ReturnUrl, context);
                         string cancalurl = this.EnsureHttpUrl(setting.CancelUrl, context);
                         string imageurl = this.EnsureHttpUrl(setting.LogoImage, context);
 
-                        string paypalurl = setting.UseSandBox ? setting.PaypalSandboxUrl : setting.PaypalUrl;
+                        string paypalurl = setting.PaypalUrl;
 
                         string formhtml = "<form name='paypal' action='" + paypalurl + "' method='post'>\r\n";
 
@@ -128,7 +137,7 @@ namespace Kooboo.Web.Payment.Methods
                         formhtml += "<input type = 'hidden' name = 'notify_url' value = '" + notifyUrl + "' /> \r\n";
                         formhtml += "<input type = 'hidden' name = 'return' value = '" + returnurl + "' /> \r\n";
                         formhtml += "<input type = 'hidden' name = 'image_url' value = '" + imageurl + "' />\r\n";
-                        formhtml += "<input type = 'hidden' name = 'item_name' value = '" + request.Name + "' /> \r\n";
+                        formhtml += "<input type = 'hidden' name = 'item_name' value = '" + GetRequestName(request.Name) + "' /> \r\n";
                         formhtml += "<input type = 'hidden' name = 'amount' value = '" + this.ToCurrencyString(request.Currency, request.TotalAmount) + "' />\r\n";
 
 
@@ -178,6 +187,26 @@ namespace Kooboo.Web.Payment.Methods
             return result;
         }
 
+
+        private string GetRequestName(string name)
+        {
+            if(!string.IsNullOrEmpty(name))
+            {
+                name = name.Trim();
+                if (name.Length > 0)
+                {
+                    var ch = name[0];
+                    //only support Latin
+                    if (ch > 256)
+                    {
+                        return "name";
+                    }
+                }
+                
+            }
+            return name;
+        }
+
         public PaymentCallback NofityUrl(RenderContext context)
         { 
             // PayPal HTTPS POSTs an IPN message to your listener that notifies it of an event.
@@ -209,7 +238,8 @@ namespace Kooboo.Web.Payment.Methods
                         return null;
                     }
 
-                    if (setting.EmailAddress.ToLower() == email.ToLower() && paymentRequest.Currency.ToLower() == currency.ToLower() && paymentRequest.TotalAmount.ToString("0.00") == mcGross.ToString("0.00"))
+                    if (setting.EmailAddress.ToLower() == email.ToLower() && paymentRequest.Currency.ToLower() == currency.ToLower() &&
+                        IsSameAmount(paymentRequest.Currency,paymentRequest.TotalAmount,mcGross))
                     {
                         var callback = new PaymentCallback()
                         {
@@ -229,6 +259,10 @@ namespace Kooboo.Web.Payment.Methods
             return null;
         }
 
+        private bool IsSameAmount(string currency,decimal requestAmount,decimal mcGross)
+        {
+            return ToCurrencyString(currency, requestAmount) == ToCurrencyString(currency, mcGross);
+        }
 
         private bool ValidateResponse(RenderContext context)
         {

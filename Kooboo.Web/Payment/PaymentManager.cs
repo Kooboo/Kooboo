@@ -141,13 +141,10 @@ namespace Kooboo.Web.Payment
 
             if (baseurl == null)
             {
-                var url = context.Request.Url;
-                int index = url.IndexOf("/", 10);
-                if (index>-1)
-                {
-                    url = url.Substring(0, index); 
-                }
-                baseurl = url;   
+                baseurl = context.Request.Port == 80 || context.Request.Port == 443
+                        ? context.Request.Host
+                        : string.Format("{0}:{1}", context.Request.Host, context.Request.Port);
+                baseurl = context.Request.Scheme + "://" + baseurl;
             }
             return baseurl; 
         } 

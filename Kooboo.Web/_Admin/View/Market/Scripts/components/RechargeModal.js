@@ -151,7 +151,7 @@
 
             this.checkPaymentStatus = function(paymentId) {
                 if (!PAYMENT_SUCCESS && self.payingMode()) {
-                    self.getPaymentStatus(id, function(res) {
+                    self.getPaymentStatus(paymentId, function(res) {
                         if (res.success && (res.model.success || res.model.message == "canceled")) {
                             PAYMENT_SUCCESS = true;
                             self.onHide();
