@@ -1,7 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data.Interface;
+using Kooboo.IndexedDB;
 using Kooboo.Sites.Repository;
+using System;
 
 namespace Kooboo.Events.Cms
 {
@@ -31,6 +33,17 @@ namespace Kooboo.Events.Cms
                 base.Value = value;
             }
         }
+
+        internal ObjectStore<Guid, T> Store { get; set; }
+
+        public long DiskPosition
+        {
+            get
+            {
+                // TODO: Improve performance. 
+                return this.Store.getBlockPosition(Value.Id); 
+            }
+        }
     }
 
 
@@ -45,8 +58,6 @@ namespace Kooboo.Events.Cms
         public ISiteObject OldValue { get; set; }
          
         public SiteDb SiteDb { get; set; }
-
-        public long Position { get; set; }
-        public long OldPosition { get; set; }
+        
     }
 }

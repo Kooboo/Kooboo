@@ -583,7 +583,8 @@ namespace Kooboo.Sites.Repository
             {
                 Value = value,
                 ChangeType = changetype,
-                SiteDb = SiteDb
+                SiteDb = SiteDb,
+                Store = this.Store; 
             };
 
             if (changetype == ChangeType.Update)
