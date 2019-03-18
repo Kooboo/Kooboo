@@ -42,6 +42,8 @@ namespace Kooboo.Data.Models
 
         public Guid OrderId { get; set; }
 
+        public string Order { get; set; }
+
         public string UserIp { get; set; }
 
         public string PaymentMethod { get; set; }  
@@ -55,7 +57,7 @@ namespace Kooboo.Data.Models
         public string Code { get; set; }
 
         // The reference id at the payment provider. 
-        public string ProviderReference { get; set; }
+        public string Reference { get; set; }
 
         public string ReturnPath { get; set; }
          
@@ -102,7 +104,7 @@ namespace Kooboo.Data.Models
 
             unique += this.Name + this.OrderId.ToString() + this.OrganizationId.ToString() + this.OrganizationName + this.PaymentMethod;
 
-            unique += this.ProviderReference + this.TotalAmount.ToString() + this.UserIp + this.WebSiteId.ToString();
+            unique += this.Reference + this.TotalAmount.ToString() + this.UserIp + this.WebSiteId.ToString();
 
             unique += this.LastModified.ToShortTimeString() + this.CreationDate.ToShortDateString(); 
 

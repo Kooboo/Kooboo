@@ -22,6 +22,10 @@ namespace Kooboo.Sites.Scripting
             this.RenderContext = context;
         }
 
+
+        public IkScript this[string key] { get { return ExtensionContainer.Get(key, this.RenderContext); } set { ExtensionContainer.Set(value); } }
+         
+
         private kDataContext _data;
         public kDataContext DataContext
         {

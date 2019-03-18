@@ -91,7 +91,7 @@ namespace Kooboo.Web.Payment
 
             if (!string.IsNullOrEmpty(payment.PaymentReferenceId))
             {
-                request.ProviderReference = payment.PaymentReferenceId;
+                request.Reference = payment.PaymentReferenceId;
 
                 SaveRequest(request, context); 
             }
