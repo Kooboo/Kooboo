@@ -10,16 +10,18 @@ using Kooboo.Events.Cms;
 using Kooboo.Sites.Relation;
 using System.Linq;
 
-namespace Kooboo.Sites.Repository
+namespace Kooboo.Sites.Events
 {
     /// <summary>
     /// For built in change event, we handle it directly here without fire the event bus. 
     /// </summary>
-    public class CmsChangeHandler
+    public class  Handler
     {
-        private static Dictionary<Type, object> _handlers = new Dictionary<Type, object>();
+        private static Dictionary<Type, List<object>> _handlers = new Dictionary<Type, List<object>>();
 
-        static CmsChangeHandler()
+        private static object _locker = new object(); 
+
+        static Handler()
         {
             AddHandler<Routing.Route>(HandleRoute);
             AddHandler<Page>(HandlePageChange);
@@ -38,23 +40,45 @@ namespace Kooboo.Sites.Repository
             AddHandler<ObjectRelation>(HandleObjectRelationChange);
         }
 
-        private static void AddHandler<T>(Action<SiteObjectChangeEvent<T>> handle)
+        public static void AddHandler<T>(Action<SiteObjectEvent<T>> handle)
             where T : class, Data.Interface.ISiteObject
         {
-            _handlers.Add(typeof(T), handle);
+
+          lock(_locker)
+            {
+                if (!_handlers.ContainsKey(typeof(T)))
+                {
+                    List<object> target = new List<object>();
+                    target.Add(handle);
+                    _handlers.Add(typeof(T), target); 
+                }
+                else
+                {
+                    var target = _handlers[typeof(T)];
+                    target.Add(handle); 
+                }
+            } 
+    
         }
 
-        public static void HandleChange<T>(SiteObjectChangeEvent<T> e)
+        public static void HandleChange<T>(SiteObjectEvent<T> e)
             where T : class, Data.Interface.ISiteObject
         {
-            object handler;
+            List<object> handler;
             if (!_handlers.TryGetValue(typeof(T), out handler))
                 return;
 
-            (handler as Action<SiteObjectChangeEvent<T>>)(e);
+            foreach (var item in handler)
+            {
+               var HandleItem = item as Action<SiteObjectEvent<T>>; 
+               if (HandleItem !=null)
+                {
+                    HandleItem(e); 
+                }
+            }  
         }
 
-        public static void HandleRoute(SiteObjectChangeEvent<Routing.Route> ChangeEvent)
+        private static void HandleRoute(SiteObjectEvent<Routing.Route> ChangeEvent)
         {
             if (ChangeEvent.ChangeType == ChangeType.Add)
             {
@@ -83,7 +107,7 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public static void HandlePageChange(SiteObjectChangeEvent<Page> PageEvent)
+        private static void HandlePageChange(SiteObjectEvent<Page> PageEvent)
         {
             if (PageEvent.ChangeType == ChangeType.Add)
             {
@@ -108,7 +132,7 @@ namespace Kooboo.Sites.Repository
             Routing.PageRoute.UpdatePageRouteParameter(PageEvent.SiteDb, PageEvent.Value.Id);
         }
 
-        public static void HandleViewChange(SiteObjectChangeEvent<View> ViewEvent)
+        private static void HandleViewChange(SiteObjectEvent<View> ViewEvent)
         {
             if (ViewEvent.ChangeType == ChangeType.Add)
             {
@@ -155,7 +179,7 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public static void HandleLayoutChange(SiteObjectChangeEvent<Layout> LayoutEvent)
+        private static void HandleLayoutChange(SiteObjectEvent<Layout> LayoutEvent)
         {
             if (LayoutEvent.ChangeType == ChangeType.Add)
             {
@@ -189,7 +213,7 @@ namespace Kooboo.Sites.Repository
 
         }
 
-        public static void HandleContentTypeChange(SiteObjectChangeEvent<ContentType> contenttypeevent)
+        private static void HandleContentTypeChange(SiteObjectEvent<ContentType> contenttypeevent)
         {
             if (contenttypeevent.ChangeType == ChangeType.Add)
             {
@@ -215,7 +239,7 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public static void HandleContentFolderChange(SiteObjectChangeEvent<ContentFolder> TheEvent)
+        private static void HandleContentFolderChange(SiteObjectEvent<ContentFolder> TheEvent)
         {
             var sitedb = TheEvent.SiteDb;
             if (TheEvent.Value == null || TheEvent.Value.Id == default(Guid))
@@ -288,7 +312,7 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public static void HandleStyleChange(Kooboo.Events.Cms.SiteObjectChangeEvent<Style> StyleEvent)
+        private static void HandleStyleChange(Kooboo.Events.Cms.SiteObjectEvent<Style> StyleEvent)
         {
             //if (StyleEvent.ChangeType == ChangeType.Add)
             //{
@@ -323,7 +347,7 @@ namespace Kooboo.Sites.Repository
 
         }
 
-        public static void HandleDataMethodSettingChange(Kooboo.Events.Cms.SiteObjectChangeEvent<Kooboo.Data.Models.DataMethodSetting> MethodEvent)
+        private static void HandleDataMethodSettingChange(Kooboo.Events.Cms.SiteObjectEvent<Kooboo.Data.Models.DataMethodSetting> MethodEvent)
         {
             var sitedb = MethodEvent.SiteDb;
 
@@ -364,7 +388,7 @@ namespace Kooboo.Sites.Repository
 
         }
 
-        public static void HandleViewDataMethodChange(Kooboo.Events.Cms.SiteObjectChangeEvent<ViewDataMethod> ViewDataMethodEvent)
+        private static void HandleViewDataMethodChange(Kooboo.Events.Cms.SiteObjectEvent<ViewDataMethod> ViewDataMethodEvent)
         { 
             var viewid = ViewDataMethodEvent.Value.ViewId;
             var pages = ViewDataMethodEvent.SiteDb.Relations.GetReferredByRelations(viewid, ConstObjectType.Page);
@@ -390,7 +414,7 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public static void HandleCssRuleChange(Kooboo.Events.Cms.SiteObjectChangeEvent<CmsCssRule> CssRuleEvent)
+        private static void HandleCssRuleChange(Kooboo.Events.Cms.SiteObjectEvent<CmsCssRule> CssRuleEvent)
         {
             //if (CssRuleEvent.ChangeType == ChangeType.Add)
             //{
@@ -423,11 +447,10 @@ namespace Kooboo.Sites.Repository
             //    {
             //        CssRuleEvent.SiteDb.CssDeclarations.Delete(item.Id);
             //    }
-
             //}
         }
 
-        public static void HandleFormChange(Kooboo.Events.Cms.SiteObjectChangeEvent<Form> FormEvent)
+        private static void HandleFormChange(Kooboo.Events.Cms.SiteObjectEvent<Form> FormEvent)
         {
             if (FormEvent.ChangeType == ChangeType.Delete)
             {
@@ -441,7 +464,7 @@ namespace Kooboo.Sites.Repository
 
         }
 
-        public static void HandleImageChange(Kooboo.Events.Cms.SiteObjectChangeEvent<Image> ImageEvent)
+        private static void HandleImageChange(Kooboo.Events.Cms.SiteObjectEvent<Image> ImageEvent)
         {
             Guid imageid = default(Guid);
             if (ImageEvent.Value != null)
@@ -456,7 +479,7 @@ namespace Kooboo.Sites.Repository
             ImageEvent.SiteDb.Thumbnails.DeleteByImageId(imageid);
         }
 
-        public static void HandleObjectRelationChange(SiteObjectChangeEvent<ObjectRelation> relationEvent)
+        private static void HandleObjectRelationChange(SiteObjectEvent<ObjectRelation> relationEvent)
         {
             if (relationEvent.ChangeType == ChangeType.Delete)
             {

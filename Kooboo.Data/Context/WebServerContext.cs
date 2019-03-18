@@ -323,11 +323,7 @@ namespace Kooboo.Data.Context
             }
             return default(Guid);
         }
-
-        //internal static List<Binding> _fastGetBinding(string host)
-        //{
-
-        //}
+         
 
         internal static DomainResult _fastFirstDomain(string host)
         {

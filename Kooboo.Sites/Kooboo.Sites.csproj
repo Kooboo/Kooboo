@@ -16,21 +16,24 @@
     <Compile Remove="Ecommerce\**" />
     <Compile Remove="NodeTree\**" />
     <Compile Remove="SizeAnalyze\**" />
-    <Compile Remove="TAL\Functions\Extended\**" />
+    <Compile Remove="TAL\Binding\**" />
+    <Compile Remove="TAL\Functions\**" />
     <Compile Remove="TAL\Helper\**" />
     <Compile Remove="TreesTemp\**" />
     <EmbeddedResource Remove="Automation\**" />
     <EmbeddedResource Remove="Ecommerce\**" />
     <EmbeddedResource Remove="NodeTree\**" />
     <EmbeddedResource Remove="SizeAnalyze\**" />
-    <EmbeddedResource Remove="TAL\Functions\Extended\**" />
+    <EmbeddedResource Remove="TAL\Binding\**" />
+    <EmbeddedResource Remove="TAL\Functions\**" />
     <EmbeddedResource Remove="TAL\Helper\**" />
     <EmbeddedResource Remove="TreesTemp\**" />
     <None Remove="Automation\**" />
     <None Remove="Ecommerce\**" />
     <None Remove="NodeTree\**" />
     <None Remove="SizeAnalyze\**" />
-    <None Remove="TAL\Functions\Extended\**" />
+    <None Remove="TAL\Binding\**" />
+    <None Remove="TAL\Functions\**" />
     <None Remove="TAL\Helper\**" />
     <None Remove="TreesTemp\**" />
   </ItemGroup>
@@ -43,15 +46,6 @@
     <Compile Remove="SiteElements\PageElementExtension.cs" />
     <Compile Remove="Sync\Cluster\ClusterWorker.cs" />
     <Compile Remove="Sync\Template.cs" />
-    <Compile Remove="TAL\Binding\DomHelper.cs" />
-    <Compile Remove="TAL\Binding\ExpressionBindingInfo.cs" />
-    <Compile Remove="TAL\Binding\ExpressionEvaluator.cs" />
-    <Compile Remove="TAL\Binding\ObjectHelper.cs" />
-    <Compile Remove="TAL\Binding\TalBinder.cs" />
-    <Compile Remove="TAL\Functions\Function.cs" />
-    <Compile Remove="TAL\Functions\FunctionContainer.cs" />
-    <Compile Remove="TAL\Functions\FunctionParser.cs" />
-    <Compile Remove="TAL\Functions\IFunction.cs" />
     <Compile Remove="TaskQueue\TaskExecutor\TemplateSyncExecutor.cs" />
     <Compile Remove="TaskQueue\TemplateDownloadWorker.cs" />
   </ItemGroup>
@@ -80,11 +74,6 @@
     <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
     <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.csproj" />
     <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="TAL\Binding\" />
-    <Folder Include="TAL\Functions\" />
   </ItemGroup>
 
 </Project>

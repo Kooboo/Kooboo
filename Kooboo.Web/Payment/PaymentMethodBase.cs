@@ -28,8 +28,7 @@ namespace Kooboo.Web.Payment
             if (dbrequest !=null && dbrequest.IsPaid)
             {
                 return new PaymentStatusResponse() { HasResult = true, IsPaid = true };
-            } 
- 
+            }  
             return new PaymentStatusResponse();  
         }
 

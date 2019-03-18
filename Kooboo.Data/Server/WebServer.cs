@@ -8,8 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Data.Server
-{
-  
+{ 
     public class WebServer 
     {
         private int port = 80;

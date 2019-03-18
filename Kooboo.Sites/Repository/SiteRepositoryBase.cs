@@ -579,7 +579,7 @@ namespace Kooboo.Sites.Repository
                 core.Version = lastdeletelogid;
             }
 
-            var siteevent = new SiteObjectChangeEvent<TValue>
+            var siteevent = new SiteObjectEvent<TValue>
             {
                 Value = value,
                 ChangeType = changetype,
@@ -628,13 +628,12 @@ namespace Kooboo.Sites.Repository
                 {
                     Sites.Helper.ChangeHelper.DeleteRoutableObject(SiteDb, this, objectvalue);
                 }
-                Sites.Helper.ChangeHelper.DeleteComponentFromSource(SiteDb, objectvalue);
-
+                Sites.Helper.ChangeHelper.DeleteComponentFromSource(SiteDb, objectvalue); 
             }
 
             Relation.RelationManager.Compute(siteevent);
 
-            CmsChangeHandler.HandleChange(siteevent);
+            Kooboo.Sites.Events.Handler.HandleChange(siteevent);
 
             Data.Events.EventBus.Raise(siteevent);
 
