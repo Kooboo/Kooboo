@@ -59,10 +59,8 @@ namespace Kooboo.Web.Payment.Methods
         // see: https://developer.paypal.com/docs/classic/api/currency_codes/
         private string ToCurrencyString(string Currency, decimal amount)
         {
-            // TODO: please implement as above doc says...
             if (Currency != null)
             {
-                //JPY  transaction amount limit of approximately 1,000,000
                 var currencies = new List<string>();
                 currencies.Add("HUF");
                 currencies.Add("JPY");
@@ -70,7 +68,7 @@ namespace Kooboo.Web.Payment.Methods
                 var exist = currencies.Exists(c => c.Equals(Currency, StringComparison.OrdinalIgnoreCase));
                 if (exist)
                 {
-                    return Math.Round(amount).ToString();
+                    return Math.Round(amount).ToString("0");
                 }
             }
             return amount.ToString("0.00");
