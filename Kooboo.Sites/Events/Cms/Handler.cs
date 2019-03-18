@@ -11,10 +11,7 @@ using Kooboo.Sites.Relation;
 using System.Linq;
 
 namespace Kooboo.Sites.Events
-{
-    /// <summary>
-    /// For built in change event, we handle it directly here without fire the event bus. 
-    /// </summary>
+{ 
     public class  Handler
     {
         private static Dictionary<Type, List<object>> _handlers = new Dictionary<Type, List<object>>();
