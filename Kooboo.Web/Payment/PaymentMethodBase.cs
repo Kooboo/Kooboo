@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Kooboo.Web.Payment
 {
-    public abstract class PaymentMethodBase<T> : IPaymentMethod<T> where T : IPaymentSetting
+    public abstract class PaymentMethodBase<TSetting> : IPaymentMethod<TSetting> where TSetting : IPaymentSetting
     {
         public abstract string Name { get; }
 
@@ -34,9 +34,9 @@ namespace Kooboo.Web.Payment
 
         public abstract IPaymentResponse MakePayment(PaymentRequest request, RenderContext Context);
 
-        public T GetSetting(RenderContext context)
+        public TSetting GetSetting(RenderContext context)
         {
-            return PaymentManager.GetPaymentSetting<T>(context);
+            return PaymentManager.GetPaymentSetting<TSetting>(context);
         }
          
 
