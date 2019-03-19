@@ -80,7 +80,6 @@
     <ProjectReference Include="..\Kooboo.Api\Kooboo.Api.csproj" />
     <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj" />
     <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
-    <ProjectReference Include="..\Kooboo.HttpServer\src\Kooboo.HttpServer\Kooboo.HttpServer.csproj" />
     <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj" />
     <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
     <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.csproj" />

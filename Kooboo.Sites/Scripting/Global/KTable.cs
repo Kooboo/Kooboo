@@ -7,7 +7,7 @@ namespace Kooboo.Sites.Scripting.Global
 {
   public  class KTable
     {
-        internal Table table { get; set; }
+        public Table table { get; set; }
 
         public KTable(Table table)
         {
