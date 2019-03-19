@@ -268,7 +268,7 @@ $(function() {
     extend(App, Kooboo.BaseModel);
 
     function Payment() {
-        this.name = 'Payment';
+        this.name = 'ServerPayment';
 
         this.getMethods = function(para) {
             return this.executeGet('Methods', para);
@@ -281,7 +281,7 @@ $(function() {
     extend(Payment, Kooboo.BaseModel);
 
     function Order() {
-        this.name = 'Order';
+        this.name = 'ServerOrder';
 
         this.topup = function(para) {
             return this.executePost('Topup', para);

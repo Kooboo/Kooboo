@@ -15,7 +15,7 @@ namespace Kooboo.Sites.Models
     {
         public Form()
         {
-            this.ConstType = ConstObjectType.Form;
+            this.ConstType = ConstObjectType.Form; 
         }
 
         private string _body;
@@ -61,7 +61,21 @@ namespace Kooboo.Sites.Models
             }
         }
 
-        public Dictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
+
+        private Dictionary<string, string> _attributes; 
+        public Dictionary<string, string> Attributes {
+            get {
+               if (_attributes == null)
+                {
+                    _attributes = new Dictionary<string, string>(); 
+                }
+                return _attributes; 
+            }
+            set {
+                _attributes = value; 
+            }
+        }
+     
 
         /// <summary>
         /// the Action method, HTTP Post or Http Get. 
@@ -134,7 +148,20 @@ namespace Kooboo.Sites.Models
             get { return "form"; }
         }
 
-        public Dictionary<string, string> Setting { get; set; } = new Dictionary<string, string>();
+        private Dictionary<string, string> _setting; 
+        public Dictionary<string, string> Setting {
+            get {
+                if (_setting== null)
+                {
+                    _setting = new Dictionary<string, string>(); 
+                }
+                return _setting;  
+            }
+            set
+            {
+                _setting = value; 
+            }
+        }
 
         [Obsolete]
         public string FormSubmitter { get; set; }
@@ -150,15 +177,22 @@ namespace Kooboo.Sites.Models
         public override int GetHashCode()
         {
             string unique = this.Body + this.FormSubmitter + this.Method + this.RedirectUrl + this.AllowAjax.ToString() + this.FailedCallBack + this.SuccessCallBack + this.IsEmbedded.ToString();
-            foreach (var item in Setting)
+
+            if (_setting !=null)
             {
-                unique += item.Key + item.Value;
+                foreach (var item in Setting)
+                {
+                    unique += item.Key + item.Value;
+                }
             }
 
-            foreach (var item in Attributes)
+            if (_attributes !=null)
             {
-                unique += item.Key + item.Value;
-            }
+                foreach (var item in Attributes)
+                {
+                    unique += item.Key + item.Value;
+                }
+            } 
 
             unique += this.Fields + this.Style; 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);

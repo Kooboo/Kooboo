@@ -27,10 +27,11 @@ namespace Kooboo.Sites.Sync
             //-Route, Image, Style, Script, menu, form, and then others. 
             InnerImportOrder.Add(typeof(Kooboo.Sites.Routing.Route).Name, 1);
             InnerImportOrder.Add(typeof(Kooboo.Sites.Models.Image).Name, 2);
-            InnerImportOrder.Add(typeof(Kooboo.Sites.Models.Style).Name, 3);
-            InnerImportOrder.Add(typeof(Kooboo.Sites.Models.Script).Name, 4);
-            InnerImportOrder.Add(typeof(Kooboo.Sites.Models.Menu).Name, 5);
-            InnerImportOrder.Add(typeof(Kooboo.Sites.Models.Form).Name, 6);
+            InnerImportOrder.Add(typeof(Kooboo.Sites.Models.View).Name, 3);
+            InnerImportOrder.Add(typeof(Kooboo.Sites.Models.Style).Name, 4);
+            InnerImportOrder.Add(typeof(Kooboo.Sites.Models.Script).Name, 5);
+            InnerImportOrder.Add(typeof(Kooboo.Sites.Models.Menu).Name, 6);
+            InnerImportOrder.Add(typeof(Kooboo.Sites.Models.Form).Name, 7);
         }
 
         private static string KoobooSettingFileName { get; set; } = "kooboosetting.json";

@@ -296,7 +296,7 @@ namespace Kooboo.Web.Api.Implementation
 
 
         public bool IsUniqueName(string name, ApiCall apiCall)
-        {
+        { 
             var user = Kooboo.Data.GlobalDb.Users.Get(name);
             if (user != null)
             {

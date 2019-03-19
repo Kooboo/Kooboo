@@ -55,6 +55,10 @@
                     max: 30,
                     message: Kooboo.text.validation.minLength + 5 + ", " + Kooboo.text.validation.maxLength + 30
                 },
+                regex: {
+                    pattern: /^[a-zA-Z0-9_-]+$/,
+                    message: Kooboo.text.validation.usernameInvalid
+                },
                 remote: {
                     url: Kooboo.User.isUniqueName(),
                     message: Kooboo.text.validation.taken,
@@ -64,10 +68,6 @@
                             return self.username()
                         }
                     }
-                },
-                regex: {
-                    pattern: /^\w+$/,
-                    message: Kooboo.text.validation.usernameInvalid
                 }
             });
 
