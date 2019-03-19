@@ -456,7 +456,7 @@ namespace Kooboo.IndexedDB.Dynamic
             }
         }
 
-        public Guid Add(object Value, bool CheckCol = false)
+        public Guid Add(object Value, bool CheckCol = false,Action<long> CallBackPos = null)
         {
             lock (_Locker)
             {
@@ -484,6 +484,11 @@ namespace Kooboo.IndexedDB.Dynamic
                 CheckAddConstraints(data);
 
                 Int64 contentposition = _addBlock(data);
+
+                if (CallBackPos != null)
+                {
+                    CallBackPos(contentposition);
+                }
 
                 foreach (var item in this.Indexs)
                 {
