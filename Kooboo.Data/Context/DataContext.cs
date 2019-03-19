@@ -461,14 +461,27 @@ namespace Kooboo.Data.Context
                     }
                     else
                     {
-                        var type = item.GetType();
 
-                        if (!type.IsValueType || !type.IsPrimitive)
+                        if (item is IDictionary)
                         {
-                            result = getMember(item, query.MemberName);
+                            var idic = item as IDictionary;
+                            result = _getDictValueCaseInsensitive(idic, query.MemberName);
                             if (result != null)
                             {
                                 return result;
+                            }
+                        }
+                        else
+                        { 
+                            var type = item.GetType();
+
+                            if (!type.IsValueType || !type.IsPrimitive)
+                            {
+                                result = getMember(item, query.MemberName);
+                                if (result != null)
+                                {
+                                    return result;
+                                }
                             }
                         }
 

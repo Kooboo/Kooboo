@@ -315,6 +315,29 @@ namespace Kooboo.Sites.Routing
                 ValueResult = GetValueByNamingConvention(Key, Value, context);
             }
 
+            // last try to id alternative. 
+            if (ValueResult == null)
+            {
+                //check for id == _id convertion. 
+                string lower = expression.ToLower();
+                if (lower == "_id")
+                {
+                    ValueResult = context.RenderContext.DataContext.GetValue("id"); 
+                    if (ValueResult == null)
+                    {
+                        ValueResult = RenderContextHelper.GetValue("{id}", Value, context.RenderContext);
+                    }
+                }
+                else if (lower == "id")
+                {
+                    ValueResult = context.RenderContext.DataContext.GetValue("_id");
+                    if (ValueResult == null)
+                    {
+                        ValueResult = RenderContextHelper.GetValue("{_id}", Value, context.RenderContext);
+                    }
+                }
+            }
+            
             return ValueResult;
         }
 
