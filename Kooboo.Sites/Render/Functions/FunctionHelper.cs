@@ -44,6 +44,13 @@ namespace Kooboo.Sites.Render.Functions
                             }
                         }
                     }
+                    else
+                    {
+                        var kfunc = new kScriptFunction(); 
+                        kfunc.Parameters = ParseParamter(functionexpr.Body);
+                        kfunc.FunctionName = functionexpr.Name;
+                        return kfunc;  
+                    }
                 }
             } 
         
