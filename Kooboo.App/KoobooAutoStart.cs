@@ -79,8 +79,12 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
     </Exec>
   </Actions>
 </Task>";
-                    File.WriteAllText("task.xml", taskConfig);
-                    string path = Path.Combine(_dir, "task.xml");
+                    var dir = System.IO.Path.Combine(Kooboo.Data.AppSettings.RootPath, "AppData");
+                    Kooboo.Lib.Helper.IOHelper.EnsureDirectoryExists(dir);
+
+                    string path = Path.Combine(dir, "task.xml");
+                    File.WriteAllText(path, taskConfig);
+
                     ExecuteSchtasksCmd($"/Create /TN {_taskName} /XML {path} /F", out bool success);
                 }
                 else
