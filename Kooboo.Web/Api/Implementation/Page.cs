@@ -273,8 +273,10 @@ namespace Kooboo.Web.Api.Implementation
                 if (oldpage == null)
                 {
                     return model.Id;
-                }      
+                }
 
+                page.DefaultStart = oldpage.DefaultStart;
+                page.IsSecure = oldpage.IsSecure; 
      
                 sitedb.Pages.AddOrUpdate(page, call.Context.User.Id);
 

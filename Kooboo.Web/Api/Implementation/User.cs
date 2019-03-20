@@ -119,6 +119,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("Username or password not provided", apiCall.Context));
             }
+            UserName = Lib.Helper.StringHelper.ToValidUserNames(UserName);
             var currentuser = Kooboo.Data.GlobalDb.Users.Get(UserName);
             if (currentuser != null)
             {
@@ -248,6 +249,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public bool CheckUser(string username, ApiCall call)
         {
+            username = Lib.Helper.StringHelper.ToValidUserNames(username);
             var user = Kooboo.Data.GlobalDb.Users.Get(username);
             return user != null;
         }
@@ -293,10 +295,10 @@ namespace Kooboo.Web.Api.Implementation
             response.Success = true;
             return response;
         }
-
-
+         
         public bool IsUniqueName(string name, ApiCall apiCall)
-        { 
+        {
+            name = Lib.Helper.StringHelper.ToValidUserNames(name); 
             var user = Kooboo.Data.GlobalDb.Users.Get(name);
             if (user != null)
             {

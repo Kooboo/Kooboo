@@ -72,6 +72,28 @@ namespace Kooboo.Lib.Helper
             return string.Empty;
         }
 
+
+        public static string ToValidUserNames(string input)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                var current = input[i];
+                 
+                if (Helper.CharHelper.isAlphanumeric(current) || current == '_' || current == '-')
+                {
+                    sb.Append(current); 
+                }
+                else
+                {
+                  //sb.Append('~'); 
+                } 
+            }  
+            return sb.ToString(); 
+        }
+
+
         /// <summary>
         ///  check whether this is a string value or not. 
         /// </summary>

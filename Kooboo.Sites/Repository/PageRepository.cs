@@ -212,8 +212,18 @@ namespace Kooboo.Sites.Repository
                 List.Add(newId);
                 CurrentResult[consttype] = List;
             }
-        }  
-         
-    
+        }
+
+
+        public override bool AddOrUpdate(Page value)
+        {
+            return this.AddOrUpdate(value, default(Guid));
+        }
+
+        public override bool AddOrUpdate(Page value, Guid UserId)
+        {
+            return base.AddOrUpdate(value, UserId);
+        }
+
     }
 }
