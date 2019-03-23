@@ -60,11 +60,10 @@
             }
         },
         setAdminVersion: function(onlineVer) {
-            var localVer = new Version(sessionStorage.getItem(this.ADMIN_KEY));
-
+            var localVer = new Version(sessionStorage.getItem(this.ADMIN_KEY)); 
             if (!localVer.isValid()) {
                 sessionStorage.setItem(this.ADMIN_KEY, onlineVer.toString());
-            } else if (onlineVer.isNewerThan(localVer)) {
+            } else if (onlineVer.isDiffFrom(localVer)) {
                 sessionStorage.setItem(this.ADMIN_KEY, onlineVer.toString());
                 this.onAdminVersionChange(localVer, onlineVer);
             }
@@ -135,6 +134,22 @@
 
         this.toString = function() {
             return this.name;
+        }
+
+        this.isDiffFrom = function (comp) {
+            if (this._major !== comp._major) {
+                return true;
+            }
+            if (this._minor !== comp._minor) {
+                return true;
+            }
+            if (this._patch !== comp._patch) {
+                return true;
+            }
+            if (this._revision !== comp._revision) {
+                return true;
+            }
+            return false;
         }
 
         this.isNewerThan = function(comp) {

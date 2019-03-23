@@ -221,6 +221,10 @@ namespace Kooboo.Data.Context
             if (siteid == default(Guid))
             {
                 siteid = _GetSiteIdByDefaultPort(context.Request);
+                if (siteid !=default(Guid))
+                {
+                    context.IsSiteBinding = true;
+                } 
             }
 
             if (siteid == default(Guid) && GetWebSiteFunc != null)

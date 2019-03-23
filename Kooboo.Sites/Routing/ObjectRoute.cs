@@ -66,7 +66,7 @@ namespace Kooboo.Sites.Routing
 
         public static Route VerifyRoute(SiteDb siteDb, Route OriginalRoute)
         {
-            if (OriginalRoute.ConstType == ConstObjectType.Route)
+            if (OriginalRoute.DestinationConstType == ConstObjectType.Route)
             {
                 int counter = 0;
                 var dest = GetDestinationRoute(siteDb, OriginalRoute, ref counter);

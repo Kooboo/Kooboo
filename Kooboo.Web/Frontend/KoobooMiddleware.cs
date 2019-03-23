@@ -23,9 +23,7 @@ namespace Kooboo.Web.FrontRequest
             FrontContext kooboocontext = new FrontContext();
             context.SetItem<FrontContext>(kooboocontext);
             kooboocontext.RenderContext = context;
-
-            bool IsBackEndOrImageUrl = false;
-
+              
             if (context.WebSite != null)
             {
                 if (!Kooboo.Web.Security.AccessControl.HasWebsiteAccess(context.WebSite, context))
@@ -44,27 +42,28 @@ namespace Kooboo.Web.FrontRequest
                             context.Response.End = true;
                             return;
                         }
-                    }
-
+                    } 
                 }
+                 
 
-                ObjectRoute.Parse(kooboocontext);
-
-                if (kooboocontext.Route != null && kooboocontext.Route.objectId != default(Guid))
+                if (kooboocontext.RenderContext.IsSiteBinding || !CheckIsBackEndOrImageUrl(kooboocontext.RenderContext.Request.RelativeUrl))
                 {
-                    await ExecuteKooboo(kooboocontext);
-                    return;
+                    ObjectRoute.Parse(kooboocontext);
+                    if (kooboocontext.Route != null && kooboocontext.Route.objectId != default(Guid))
+                    {
+                        await ExecuteKooboo(kooboocontext);
+                        return;
+                    }
                 }
+          
 
                 if (kooboocontext.Route == null && !String.IsNullOrEmpty(kooboocontext.WebSite.LocalRootPath))
                 {
                     await Next.Invoke(context);
                     return;
-                }
+                } 
 
-                IsBackEndOrImageUrl = CheckIsBackEndOrImageUrl(kooboocontext.RenderContext.Request.RelativeUrl);
-
-                if (!IsBackEndOrImageUrl)
+                if (!CheckIsBackEndOrImageUrl(kooboocontext.RenderContext.Request.RelativeUrl))
                 {
                     if (kooboocontext.Route == null || kooboocontext.Route.objectId == default(Guid))
                     {
