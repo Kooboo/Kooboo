@@ -47,7 +47,7 @@ namespace Kooboo.Sites.Repository
           
         public static Type GetRepoTypeInfo(string ModelName)
         {
-            if (Repos.ContainsKey(ModelName))
+            if (ModelName !=null && Repos.ContainsKey(ModelName))
             {
                 return Repos[ModelName]; 
             }
@@ -57,8 +57,7 @@ namespace Kooboo.Sites.Repository
         public static Type GetRepoTypeInfo(Type SiteModel)
         {
             return GetRepoTypeInfo(SiteModel.Name); 
-        }
-
+        } 
 
         public static  bool IsSubclassSiteRepository(Type toCheck)
         {

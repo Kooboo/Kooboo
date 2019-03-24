@@ -539,7 +539,7 @@ namespace Kooboo.Data.Context
                 }
                 else
                 {
-                    httprequest.Forms.Add(GetForm(httprequest.PostData));
+                    httprequest.Forms.Add(GetForm(httprequest.PostData, contenttype));
                 }
 
             }
@@ -559,17 +559,29 @@ namespace Kooboo.Data.Context
         }
 
 
-        internal static NameValueCollection GetForm(byte[] inputstream)
+        internal static NameValueCollection GetForm(byte[] inputstream, string contenttype=null)
         {
+            bool hasEncoded = false; 
+            if (contenttype !=null && contenttype.ToLower().Contains("urlencoded"))
+            {
+                hasEncoded = true; 
+            }
+
+// The encoding type of a form is determined by the attribute enctype.It can have three values, 
+//application / x - www - form - urlencoded - Represents an URL encoded form. This is the default value if enctype attribute is not set to anything. 
+//multipart / form - data - Represents a Multipart form.This type of form is used when the user wants to upload files 
+//text / plain - A new form type introduced in HTML5, that as the name suggests, simply sends the data without any encoding
+
+
             NameValueCollection result = new NameValueCollection();
 
             string text = System.Text.Encoding.UTF8.GetString(inputstream);
 
-            //text = Uri.UnescapeDataString(text); 
-
-            //text = System.Net.WebUtility.UrlDecode(text);
-            //text = System.Net.WebUtility.HtmlDecode(text);
-
+            if (hasEncoded && text !=null)
+            {
+                text = System.Net.WebUtility.UrlDecode(text); 
+            }
+              
             int textLength = text.Length;
             int equalIndex = text.IndexOf('=');
             if (equalIndex == -1)
@@ -591,10 +603,10 @@ namespace Kooboo.Data.Context
                         ++scanIndex;
                     }
                     string name = text.Substring(scanIndex, equalIndex - scanIndex);
-                    name= Uri.UnescapeDataString(name);
+                   //   name= Uri.UnescapeDataString(name);
                     
                     string value = text.Substring(equalIndex + 1, delimiterIndex - equalIndex - 1);
-                    value= Uri.UnescapeDataString(value);
+                   // value= Uri.UnescapeDataString(value);
 
                     result.Add(name, value);
                     equalIndex = text.IndexOf('=', delimiterIndex);
