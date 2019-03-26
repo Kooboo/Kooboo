@@ -22,10 +22,15 @@ namespace Kooboo.Lib.IOC
         public static Dictionary<string, List<Object>> Instances { get; set; }
 
 
+        public static Dictionary<Type, Type> ImplementationType { get; set; }
+
+
         public static Dictionary<string, Object> SingleTons { get; set; }
 
         public static Dictionary<string, Type> Transients { get; set; }
          
+
+       // get the Singleton instance. 
         public static T GetSingleton<T>()
         {
             var result = GetSingleTon(typeof(T));
@@ -73,6 +78,18 @@ namespace Kooboo.Lib.IOC
             var name = typeof(T).Name;
             SingleTons[name] = instance;
         }
+
+        
+        public static Type GetImplementation<T>()
+        {
+            return null; 
+        }
+
+        public static void AddImplementation(Type interfaceType, Type implementation)
+        {
+
+        }
+
 
         public static List<Type> GetTypes<T>()
         {

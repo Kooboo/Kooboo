@@ -1,14 +1,10 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
-using Kooboo.HttpServer;
-using System;
+using Kooboo.HttpServer; 
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Server
-{ 
+{   
     public class WebServer 
     {
         private int port = 80;
@@ -82,8 +78,7 @@ namespace Kooboo.Data.Server
             }
             this.StartWare = this.MiddleWares[0];
         }
-          
- 
+           
         public Kooboo.HttpServer.HttpServer Server { get; set; }
          
         /// <summary>
@@ -100,6 +95,7 @@ namespace Kooboo.Data.Server
             // TODO:  I also need a stop option... 
         }
         
+         
     }
-
+      
 }

@@ -29,7 +29,9 @@ namespace Kooboo.Sites.Render
             newoption.OwnerObjectId = this.OwnerObjectId;
             return newoption; 
         }
-         
+          
+        public List<IEvaluator> Evaluators { get; set; }
+
     }
 
 
