@@ -577,10 +577,15 @@ namespace Kooboo.Data.Context
 
             string text = System.Text.Encoding.UTF8.GetString(inputstream);
 
-            if (hasEncoded && text !=null)
+            if (text == null)
             {
-                text = System.Net.WebUtility.UrlDecode(text); 
+                return result; 
             }
+
+            //if (hasEncoded && text !=null)
+            //{
+            //    text = System.Net.WebUtility.UrlDecode(text); 
+            //}
               
             int textLength = text.Length;
             int equalIndex = text.IndexOf('=');
@@ -603,10 +608,18 @@ namespace Kooboo.Data.Context
                         ++scanIndex;
                     }
                     string name = text.Substring(scanIndex, equalIndex - scanIndex);
+                    if (hasEncoded)
+                    {
+                        name = System.Net.WebUtility.UrlDecode(name); 
+                    }
                    //   name= Uri.UnescapeDataString(name);
                     
                     string value = text.Substring(equalIndex + 1, delimiterIndex - equalIndex - 1);
-                   // value= Uri.UnescapeDataString(value);
+                    // value= Uri.UnescapeDataString(value);
+                    if (hasEncoded)
+                    {
+                        value = System.Net.WebUtility.UrlDecode(value);
+                    }
 
                     result.Add(name, value);
                     equalIndex = text.IndexOf('=', delimiterIndex);

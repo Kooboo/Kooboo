@@ -202,7 +202,15 @@ namespace Kooboo.Web.Api.Implementation
                     oldcode.Config = model.Config;
                     oldcode.IsJson = Lib.Helper.JsonHelper.IsJson(oldcode.Body);
 
-                    sitedb.Code.AddOrUpdate(oldcode);
+                    if (oldcode.IsEmbedded && oldcode.CodeType == Sites.Models.CodeType.PageScript)
+                    {
+                        sitedb.Code.AddOrUpdate(oldcode, true, true, call.Context.User.Id);
+                    }
+                    else
+                    {
+                        sitedb.Code.AddOrUpdate(oldcode, call.Context.User.Id);
+                    }
+                     
 
                     code.EventType = oldcode.EventType;
                     code.CodeType = oldcode.CodeType;
