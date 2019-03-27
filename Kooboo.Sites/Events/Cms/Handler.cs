@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Kooboo.Sites.Events
 { 
-    public class  Handler
+    public static class  Handler
     {
         private static Dictionary<Type, List<object>> _handlers = new Dictionary<Type, List<object>>();
 
