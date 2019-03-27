@@ -719,6 +719,7 @@
   <key id="You are about to change your data center, are you sure you want to continue?">You are about to change your data center, are you sure you want to continue?</key>
   <key id="You are pulling updates from remote server, are you sure you want to abort?">You are pulling updates from remote server, are you sure you want to abort?</key>
   <key id="Invalid meta. Please check your meta infomation.">Invalid meta. Please check your meta infomation.</key>
+  <key id="This will transfer all your balance into new currency. Are you sure you want to continue?">This will transfer all your balance into new currency. Are you sure you want to continue?</key>
   <key id="The generated css code file has been modified, are you sure you want to overwrite it">The generated css code file has been modified, are you sure you want to overwrite it</key>
   <key id="Are you sure you want to take this proposal?">Are you sure you want to take this proposal?</key>
   <key id="Are you sure you want to accept the job?">Are you sure you want to accept the job?</key>
@@ -747,7 +748,7 @@
   <key id="Invalid email">Invalid email</key>
   <key id="Invalid URL">Invalid URL</key>
   <key id="The addresses have invalid email">The addresses have invalid email</key>
-  <key id="The name doesn't allow containing # / \ : * &amp;quot; &amp;lt; &amp;gt; | and the length should less than 254">The name doesn't allow containing # / \ : * &amp;quot; &amp;lt; &amp;gt; | and the length should less than 254</key>
+  <key id="The name doesn't allow containing # /  : * &amp;quot; &amp;lt; &amp;gt; | and the length should less than 254">The name doesn't allow containing # /  : * &amp;quot; &amp;lt; &amp;gt; | and the length should less than 254</key>
   <key id="Name should only contains letters, digits and underscore, and should start with a letter">Name should only contains letters, digits and underscore, and should start with a letter</key>
   <key id="Name should only contains letters, digits, space and underscore, and should start with a letter">Name should only contains letters, digits, space and underscore, and should start with a letter</key>
   <key id="No puctuation or space is allowed">No puctuation or space is allowed</key>
@@ -927,7 +928,7 @@
   <key id="Advanced">Advanced</key>
   <key id="Validation">Validation</key>
   <key id="Enable multiple selection">Enable multiple selection</key>
-  <key id="Enable multiple images">Enable multiple images</key>
+  <key id="Enable multiple">Enable multiple</key>
   <key id="Select validation rules">Select validation rules</key>
   <key id="Tooltip">Tooltip</key>
   <key id="TextBox">TextBox</key>
@@ -1022,6 +1023,7 @@
   <key id="Recharge amount">Recharge amount</key>
   <key id="Customize">Customize</key>
   <key id="large than 0.01">large than 0.01</key>
+  <key id="Paied">Paied</key>
   <key id="Order date">Order date</key>
   <key id="coupon">Coupon</key>
   <key id="Downloads">Downloads</key>
@@ -1242,8 +1244,6 @@
   <key id="Kooboo online">Kooboo online</key>
   <key id="is in use">is in use</key>
   <key id="Invalid coupon code">Invalid coupon code</key>
-  <key id="Paypal">Paypal</key>
-  <key id="wechat">Wechat</key>
   <key id="Bandwidth">Bandwidth</key>
   <key id="Email sending credits">Email sending credits</key>
   <key id="Monthly bandwidth quota">Monthly bandwidth quota</key>
@@ -1406,6 +1406,9 @@
   <key id="Emails">Emails</key>
   <key id="Visitor">Visitor</key>
   <key id="Resource">Resource</key>
+  <key id="Paypal">Paypal</key>
+  <key id="wechat">Wechat</key>
+  <key id="method.Name, context">method.Name, context</key>
   <key id="Api method Not Found">Api method Not Found</key>
   <key id="User or website not valid">User or website not valid</key>
   <key id="Api method define a bool return type and return false">Api method define a bool return type and return false</key>

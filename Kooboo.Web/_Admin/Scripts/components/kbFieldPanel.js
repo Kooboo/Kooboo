@@ -3,6 +3,7 @@
         "/_Admin/Scripts/tableModel.js",
         "/_Admin/Scripts/components/kbTable.js",
         "/_Admin/Scripts/components/kb-media-dialog.js",
+        "/_Admin/Scripts/components/kb-file-dialog.js",
         "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
         "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
         "/_Admin/Scripts/lib/jstree.min.js",
@@ -21,6 +22,7 @@
         "/_Admin/Scripts/components/controlType/RadioBox.js",
         "/_Admin/Scripts/components/controlType/Switch.js",
         "/_Admin/Scripts/components/controlType/MediaFile.js",
+        "/_Admin/Scripts/components/controlType/File.js",
         "/_Admin/Scripts/components/controlType/DateTime.js",
     ]);
     Kooboo.loadCSS([

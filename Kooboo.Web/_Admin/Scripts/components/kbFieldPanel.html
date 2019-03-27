@@ -66,6 +66,14 @@
         <!-- /ko -->
         <!-- /ko -->
 
+        <!-- ko if: controlType() == 'File' -->
+        <!-- ko component: {
+            name: "file",
+            params: $data
+        } -->
+        <!-- /ko -->
+        <!-- /ko -->
+
         <!-- ko if: controlType() == 'DateTime' -->
         <!-- ko component: {
             name: "date-time",

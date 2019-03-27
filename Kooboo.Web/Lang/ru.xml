@@ -719,6 +719,7 @@
   <key id="You are about to change your data center, are you sure you want to continue?">Вы измените свой центр обработки данных, чтобы подтвердить продолжение?</key>
   <key id="You are pulling updates from remote server, are you sure you want to abort?">Обновление с удаленного сервера, подтверждение завершения?</key>
   <key id="Invalid meta. Please check your meta infomation.">Неверный мета, пожалуйста, проверьте информацию о мета</key>
+  <key id="This will transfer all your balance into new currency. Are you sure you want to continue?">This will transfer all your balance into new currency. Are you sure you want to continue?</key>
   <key id="The generated css code file has been modified, are you sure you want to overwrite it">Сгенерированный файл CSS был изменен и перезаписан?</key>
   <key id="Are you sure you want to take this proposal?">Вы уверены, что принимаете это предложение?</key>
   <key id="Are you sure you want to accept the job?">Ты уверена, что хочешь принять это и закончить миссию?</key>
@@ -747,7 +748,7 @@
   <key id="Invalid email">Неправильный адрес электронной почты.</key>
   <key id="Invalid URL">Недопустимый URL</key>
   <key id="The addresses have invalid email">Адрес содержит недопустимый адрес электронной почты</key>
-  <key id="The name doesn't allow containing # / \ : * &amp;quot; &amp;lt; &amp;gt; | and the length should less than 254">Имя файла не может быть включено ? ! &amp;quot; &lt; &gt; * | \ / и длина менее 254</key>
+  <key id="The name doesn't allow containing # /  : * &amp;quot; &amp;lt; &amp;gt; | and the length should less than 254">The name doesn't allow containing # /  : * &amp;quot; &amp;lt; &amp;gt; | and the length should less than 254</key>
   <key id="Name should only contains letters, digits and underscore, and should start with a letter">Имена должны начинаться с буквы и содержать только буквы, цифры и подчеркивания</key>
   <key id="Name should only contains letters, digits, space and underscore, and should start with a letter">Имена должны начинаться с буквы и содержать только буквы, цифры, пробелы и подчеркивания</key>
   <key id="No puctuation or space is allowed">Пробелы и знаки препинания не могут быть включены в имя</key>
@@ -927,7 +928,7 @@
   <key id="Advanced">Старший</key>
   <key id="Validation">Проверка</key>
   <key id="Enable multiple selection">Множественный список выбора</key>
-  <key id="Enable multiple images">Множественный выбор изображений</key>
+  <key id="Enable multiple">Enable multiple</key>
   <key id="Select validation rules">Выберите правило проверки</key>
   <key id="Tooltip">Советы</key>
   <key id="TextBox">Поле ввода</key>
@@ -1022,6 +1023,7 @@
   <key id="Recharge amount">Общая сумма пополнения</key>
   <key id="Customize">Настройка</key>
   <key id="large than 0.01">Больше 0. 01</key>
+  <key id="Paied">Paied</key>
   <key id="Order date">Дата размещения заказа</key>
   <key id="coupon">Купоны</key>
   <key id="Downloads">Скачать</key>
@@ -1242,8 +1244,6 @@
   <key id="Kooboo online">Kooboo онлайн</key>
   <key id="is in use">Используется</key>
   <key id="Invalid coupon code">Недействительный объем предложения</key>
-  <key id="Paypal">PayPal</key>
-  <key id="wechat">WeChat</key>
   <key id="Bandwidth">Пропускная способность</key>
   <key id="Email sending credits">Количество отправленных сообщений</key>
   <key id="Monthly bandwidth quota">Ежемесячные лимиты трафика</key>
@@ -1406,6 +1406,9 @@
   <key id="Emails">Почта</key>
   <key id="Visitor">Посетители.</key>
   <key id="Resource">Ресурсы</key>
+  <key id="Paypal">PayPal</key>
+  <key id="wechat">WeChat</key>
+  <key id="method.Name, context">method.Name, context</key>
   <key id="Api method Not Found">Метод API не найден</key>
   <key id="User or website not valid">Недопустимый веб-сайт или пользователь</key>
   <key id="Api method define a bool return type and return false">Неправильный возврат Api</key>
