@@ -719,7 +719,7 @@
   <key id="You are about to change your data center, are you sure you want to continue?">你将改变你的数据中心，确认继续吗？</key>
   <key id="You are pulling updates from remote server, are you sure you want to abort?">正在从远程服务器更新，确认终止吗？</key>
   <key id="Invalid meta. Please check your meta infomation.">无效的Meta，请检查Meta 的信息</key>
-  <key id="This will transfer all your balance into new currency. Are you sure you want to continue?">This will transfer all your balance into new currency. Are you sure you want to continue?</key>
+  <key id="This will transfer all your balance into new currency. Are you sure you want to continue?">这会将你的余额全部转成新的货币，  确定继续吗?</key>
   <key id="The generated css code file has been modified, are you sure you want to overwrite it">生成的CSS文件已被更改， 是否覆盖？</key>
   <key id="Are you sure you want to take this proposal?">确定采用这个提案吗？</key>
   <key id="Are you sure you want to accept the job?">确定接受这个并结束这个任务吗?</key>
@@ -748,7 +748,7 @@
   <key id="Invalid email">邮件地址有误</key>
   <key id="Invalid URL">无效URL</key>
   <key id="The addresses have invalid email">地址中含有无效邮件地址</key>
-  <key id="The name doesn't allow containing # /  : * &amp;quot; &amp;lt; &amp;gt; | and the length should less than 254">The name doesn't allow containing # /  : * &amp;quot; &amp;lt; &amp;gt; | and the length should less than 254</key>
+  <key id="The name doesn't allow containing # /  : * &amp;quot; &amp;lt; &amp;gt; | and the length should less than 254">名字不可以包含 # /  : * &amp;quot; &amp;lt; &amp;gt; | 并且最长254个字符</key>
   <key id="Name should only contains letters, digits and underscore, and should start with a letter">命名应该以字母开头，只能包含字母、数字和下划线</key>
   <key id="Name should only contains letters, digits, space and underscore, and should start with a letter">命名应该以字母开头，只能包含字母、数字、空格和下划线</key>
   <key id="No puctuation or space is allowed">名称中不能包含空格和标点符号</key>
