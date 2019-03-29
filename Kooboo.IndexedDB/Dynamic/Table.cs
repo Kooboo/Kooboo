@@ -367,9 +367,10 @@ namespace Kooboo.IndexedDB.Dynamic
                     {
                         Value = _ParseKey(Value);
                     }
-
-                    data.Add(item.Name, Value);
-
+                    if (!data.ContainsKey(item.Name))
+                    {
+                        data.Add(item.Name, Value);
+                    } 
                 }
 
                 else
@@ -394,6 +395,11 @@ namespace Kooboo.IndexedDB.Dynamic
                     {
                         var index = this.Indexs.Find(o => o.FieldName == item.Name);
                         Value = index.NextIncrement();
+                       if (item.IsPrimaryKey)
+                        {
+                            var keyvalue = _ParseKey(Value);
+                            data[Dynamic.Constants.DefaultIdFieldName] = keyvalue; 
+                        }
                     }
 
                     if (Value == null)
