@@ -51,7 +51,7 @@ $(function() {
                                     model[col.name] = data;
                                 }
                             })
-                            model.id = obj['_id'];
+                            // model.id = obj['_id'];
                             model.edit = {
                                 text: Kooboo.text.common.edit,
                                 url: Kooboo.Route.Get(Kooboo.Route.Database.EditDataPage, {
