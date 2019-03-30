@@ -15,6 +15,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public override List<object> List(ApiCall call)
         {
+            
             var sitedb = call.Context.WebSite.SiteDb(); 
 
             List<ContentFolderViewModel> result = new List<ContentFolderViewModel>();

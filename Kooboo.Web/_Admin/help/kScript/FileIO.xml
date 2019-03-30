@@ -5,7 +5,7 @@
   <Example> 
     <![CDATA[
 <script engine="kscript">
-    if (k.request.method = "POST") {
+    if (k.request.method == "POST") {
         if (k.request.files.length > 0) {
             var file = k.request.files[0];
             var filename = file.fileName;

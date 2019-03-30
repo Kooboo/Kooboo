@@ -108,8 +108,11 @@ namespace Kooboo.Web
                             _middlewares = new List<IKoobooMiddleWare>();
                             _middlewares.Add(new FrontRequest.KoobooMiddleware());
                             _middlewares.Add(new ApiMiddleware(new SiteApiProvider()));
+
                             _middlewares.Add(new SpaMiddleWare(KoobooSpaViewOption()));
+
                             _middlewares.Add(new RenderMiddleWare(KoobooBackEndViewOption()));
+
                             _middlewares.Add(new JsTestMiddleWare(KoobooJsTestOption()));
                             _middlewares.Add(new RenderMiddleWare(KoobooLolcaServerOption()));
 

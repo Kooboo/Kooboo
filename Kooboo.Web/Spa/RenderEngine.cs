@@ -127,7 +127,8 @@ namespace Kooboo.Web.Spa
             var hashid = Lib.Security.Hash.ComputeHashGuid(htmlbody);
 
             var EvaluatorOption = new EvaluatorOption();
-            EvaluatorOption.IgnoreEvaluators = EnumEvaluator.Form | EnumEvaluator.LayoutCommand; 
+            EvaluatorOption.IgnoreEvaluators = EnumEvaluator.Form | EnumEvaluator.LayoutCommand;
+            EvaluatorOption.Evaluators = Kooboo.Render.Components.EvaluatorContainer.ListWithServerComponent; 
               
             var RenderPlan = RenderPlanCache.GetOrAddRenderPlan(hashid, () => RenderEvaluator.Evaluate(htmlbody, EvaluatorOption));
 

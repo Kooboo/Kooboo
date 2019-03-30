@@ -92,12 +92,22 @@ namespace Kooboo.Sites.Render
 
             List<EvaluatorResponse> responseList = new List<EvaluatorResponse>();
 
+            List<IEvaluator> Evaluator; 
+            if (options.Evaluators !=null)
+            {
+                Evaluator = options.Evaluators;
+            }
+            else
+            {
+                Evaluator = EvaluatorContainer.DefaultList; 
+            }
+
             while (nextnode != null)
             {
                 if (ShouldTryRender(nextnode))
                 {
 
-                    foreach (var item in EvaluatorContainer.List)
+                    foreach (var item in Evaluator)
                     {
                         var response = item.Evaluate(nextnode, options);
                         if (response != null)

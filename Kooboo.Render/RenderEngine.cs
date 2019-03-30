@@ -151,7 +151,10 @@ namespace Kooboo.Render
 
             var hashid = Lib.Security.Hash.ComputeHashGuid(htmlbody);
 
-            var RenderPlan = RenderPlanCache.GetOrAddRenderPlan(hashid, () => RenderEvaluator.Evaluate(htmlbody, new EvaluatorOption()));
+            var EvaluatorOption = new EvaluatorOption();
+            EvaluatorOption.Evaluators = Kooboo.Render.Components.EvaluatorContainer.ListWithServerComponent; 
+             
+            var RenderPlan = RenderPlanCache.GetOrAddRenderPlan(hashid, () => RenderEvaluator.Evaluate(htmlbody, EvaluatorOption));
 
             string result = Kooboo.Sites.Render.RenderHelper.Render(RenderPlan, Context);
 

@@ -66,9 +66,7 @@ namespace Kooboo.Render.Controller
                         return fullpath;
                     }
                     paths.RemoveAt(0);
-                }
-               
-
+                }  
             }
 
             return null; 

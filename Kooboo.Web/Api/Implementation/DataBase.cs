@@ -45,7 +45,9 @@ namespace Kooboo.Web.Api.Implementation
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite); 
             var table = db.GetOrCreateTable(call.GetValue("table"));
              
+             
             var total =  table.All();
+             
 
             var pager = ApiHelper.GetPager(call, 30);
 
@@ -71,7 +73,10 @@ namespace Kooboo.Web.Api.Implementation
 
             return result; 
         }
-          
+        
+        
+
+
         public void CreateTable(string name, ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
