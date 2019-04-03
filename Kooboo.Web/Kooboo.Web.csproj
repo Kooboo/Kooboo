@@ -88,8 +88,4 @@
     <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="_Admin\" />
-  </ItemGroup>
-
 </Project>

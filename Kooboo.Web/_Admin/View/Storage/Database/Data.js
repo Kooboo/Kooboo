@@ -37,9 +37,8 @@ $(function() {
 
                     if (res.model.list && res.model.list.length) {
                         res.model.list.forEach(function (obj) {
-                            var model = {};
-                            self.columns().forEach(function (col) {
-                                if (!col.isSystem) {
+                            var model = {}; 
+                            self.columns().forEach(function (col) { 
                                     var data = '';
                                     if (obj[col.name]) {
                                         data = obj[col.name].toString();
@@ -48,14 +47,12 @@ $(function() {
                                             data = obj[_.lowerFirst(col.name)].toString();
                                         }
                                     }
-                                    model[col.name] = data;
-                                }
-                            })
-                            // model.id = obj['_id'];
+                                    model[col.name] = data; 
+                            }) 
                             model.edit = {
                                 text: Kooboo.text.common.edit,
                                 url: Kooboo.Route.Get(Kooboo.Route.Database.EditDataPage, {
-                                    id: model.id,
+                                    id: model._id,
                                     table: self.name()
                                 })
                             }
@@ -85,7 +82,8 @@ $(function() {
                         class: 'table-bordered',
                         onDelete: function(list) {
                             if (confirm(Kooboo.text.confirm.deleteItems)) {
-                                var ids = list.map(function(o) { return o['id'] })
+                                debugger; 
+                                var ids = list.map(function(o) { return o['_id'] })
 
                                 Kooboo.Database.deleteData({
                                     tableName: self.name(),

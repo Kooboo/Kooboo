@@ -7,6 +7,10 @@
 	<RootNamespace>Kooboo.Lib</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="ServiceProcess\**" />
     <EmbeddedResource Remove="ServiceProcess\**" />

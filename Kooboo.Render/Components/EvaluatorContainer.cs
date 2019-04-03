@@ -21,11 +21,11 @@ namespace Kooboo.Render.Components
                     _list.Add(new ConditionEvaluator());
                     _list.Add(new ForEvaluator());
                     _list.Add(new AttributeEvaluator());
-                 //   _list.Add(new UrlEvaluator());
+                 // _list.Add(new UrlEvaluator());
                     _list.Add(new LabelEvaluator());
                     _list.Add(new OmitTagEvaluator());
                     _list.Add(new ContentEvaluator());
-                 //   _list.Add(new ComponentEvaluator());
+                    _list.Add(new ComponentEvaluator());
                     _list.Add(new HeaderEvaluator());
                     _list.Add(new FormEvaluator());
                     _list.Add(new CommandEvaluator());

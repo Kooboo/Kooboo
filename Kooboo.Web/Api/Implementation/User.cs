@@ -38,7 +38,18 @@ namespace Kooboo.Web.Api.Implementation
 
         public MetaResponse Login(string UserName, string Password, ApiCall apiCall)
         {
+
+            if (!Kooboo.Data.Service.UserLoginProtection.CanTryLogin(UserName, apiCall.Context.Request.IP))
+            {
+                throw new Exception(Data.Language.Hardcoded.GetValue("user or ip temporarily lockout", apiCall.Context)); 
+            }
+
             var user = Kooboo.Data.GlobalDb.Users.Validate(UserName, Password);
+
+            if (user == null)
+            {
+                Data.Service.UserLoginProtection.AddLoginFail(UserName, apiCall.Context.Request.IP); 
+            }
 
             if (user != null)
             {
