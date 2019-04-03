@@ -313,7 +313,18 @@ namespace Kooboo.Web.Api.Implementation
                 if (find == null)
                 {
                     Type datatype = DatabaseColumnHelper.ToClrType(item.DataType);
-                    setting.AppendColumn(item.Name, datatype, 0);
+
+                    int length = 0; 
+
+                    if (datatype == typeof(string) && item.ControlType != null)
+                    {
+                        if (item.ControlType.ToLower() != "textbox")
+                        {
+                            length = int.MaxValue;
+                        }
+                    }
+                     
+                    setting.AppendColumn(item.Name, datatype, length);
                     var col = setting.Columns.FirstOrDefault(o => o.Name == item.Name);
                     col.Setting = item.Setting;
                     col.ControlType = item.ControlType;
@@ -327,13 +338,27 @@ namespace Kooboo.Web.Api.Implementation
                 else
                 {
                     find.Setting = item.Setting;
+
+                    // check string change the controltype from textbox to textarea. 
+                    if (find.ClrType ==typeof(string))
+                    {
+                        if (item.ControlType !=null && item.ControlType.ToLower() != "textbox")
+                        {
+                            if (find.ControlType !=null && find.ControlType.ToLower()=="textbox")
+                            {
+                                find.Length = int.MaxValue; 
+                            }
+                        }
+                    }
+
                     find.ControlType = item.ControlType;
                     find.IsIncremental = item.IsIncremental;
                     find.Seed = item.Seed;
                     find.Increment = item.Scale;
                     find.IsIndex = item.IsIndex;
                     find.IsPrimaryKey = item.IsPrimaryKey;
-                    find.IsUnique = item.IsUnique;
+                    find.IsUnique = item.IsUnique; 
+                  
                 }
             }
             

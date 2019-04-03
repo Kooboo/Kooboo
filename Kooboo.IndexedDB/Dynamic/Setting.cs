@@ -177,7 +177,9 @@ namespace Kooboo.IndexedDB.Dynamic
                 else
                 {
                     col.Length = SettingHelper.GetColumnLen(col.ClrType, col.Length);
-                    // get all the relative positive without the complex flxiable position.  
+                    // get all the relative positive without the complex flxiable position.
+       
+
                     if (col.Length == int.MaxValue)
                     {
                         col.relativePosition = int.MaxValue;
