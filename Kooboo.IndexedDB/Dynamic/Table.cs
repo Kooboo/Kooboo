@@ -758,7 +758,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 long newblock = blockposition;
 
-                var newdata = this.PrepareData(newvalue);
+                var newdata = this.PrepareData(newvalue, true);
 
                 // verify that update does not change primary key. 
                 if (IsPrimaryKeyChange(oldvalue, newdata))

@@ -6,8 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Linq; 
+using System.Threading.Tasks; 
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -39,17 +38,16 @@ namespace Kooboo.Web.Api.Implementation
 
             return list; 
         }
-
-        [Attributes.RequireParameters("table")]
-        public PagedListViewModel<IDictionary<string, object>> Data(string tablexx, ApiCall call)
+         
+        public PagedListViewModel<IDictionary<string, object>> Data(string table, ApiCall call)
         { 
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite); 
-            var dbtable = db.GetOrCreateTable(call.GetValue("table"));
+            var dbtable = db.GetOrCreateTable(table);
 
-            string sortfield = call.GetValue("sort", "orderby");  
+            string sortfield = call.GetValue("sort", "orderby", "order");  
             // verify sortfield. 
 
-            if (sortfield == null)
+            if (sortfield != null)
             {
                 var col = dbtable.Setting.Columns.First(o => o.Name == sortfield);
                 if (col==null)
