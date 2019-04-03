@@ -47,6 +47,22 @@ namespace Kooboo.IndexedDB.Dynamic
             }
         }
 
+        public long length
+        {
+            get
+            {
+                return this.PrimaryBtree.Count(false); 
+            }
+        }
+
+        public long count
+        {
+            get
+            {
+                return this.length; 
+            }
+        }
+
         public List<Guid> Keys
         {
             get
@@ -730,7 +746,7 @@ namespace Kooboo.IndexedDB.Dynamic
             lock (_Locker)
             {
                 var primary = this.Indexs.Find(o => o.IsSystem);
-
+                 
                 var blockposition = primary.Get(key);
 
                 if (blockposition <= 0)

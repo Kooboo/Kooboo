@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq; 
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -40,21 +41,41 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Attributes.RequireParameters("table")]
-        public PagedListViewModel<IDictionary<string, object>> Data(ApiCall call)
+        public PagedListViewModel<IDictionary<string, object>> Data(string tablexx, ApiCall call)
         { 
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite); 
-            var table = db.GetOrCreateTable(call.GetValue("table"));
-             
-             
-            var total =  table.All();
-             
+            var dbtable = db.GetOrCreateTable(call.GetValue("table"));
 
+            string sortfield = call.GetValue("sort", "orderby");  
+            // verify sortfield. 
+
+            if (sortfield == null)
+            {
+                var col = dbtable.Setting.Columns.First(o => o.Name == sortfield);
+                if (col==null)
+                {
+                    sortfield = null; 
+                }
+            }
+
+            if (sortfield == null)
+            {
+                var primarycol = dbtable.Setting.Columns.First(o => o.IsPrimaryKey); 
+                if (primarycol !=null)
+                {
+                    sortfield = primarycol.Name; 
+                }
+            }
+
+              
             var pager = ApiHelper.GetPager(call, 30);
 
-            PagedListViewModel<IDictionary<string, object>> result = new PagedListViewModel<IDictionary<string, object>>(); 
+            PagedListViewModel<IDictionary<string, object>> result = new PagedListViewModel<IDictionary<string, object>>();
 
-            result.TotalCount = total.Count;
-            result.TotalPages = ApiHelper.GetPageCount(total.Count, pager.PageSize);
+           int totalcount = (int)dbtable.length;
+
+            result.TotalCount = totalcount; 
+            result.TotalPages = ApiHelper.GetPageCount(totalcount, pager.PageSize);
             result.PageNr = pager.PageNr;
             result.PageSize = pager.PageSize;
 
@@ -64,7 +85,14 @@ namespace Kooboo.Web.Api.Implementation
                 totalskip = (pager.PageNr - 1) * pager.PageSize;
             }
 
-            var items = total.Skip(totalskip).Take(pager.PageSize).ToList();  
+            var query = dbtable.Query; 
+
+            if (!string.IsNullOrWhiteSpace(sortfield))
+            {
+                query.OrderByDescending(sortfield);
+            }
+
+            var items = query.Skip(totalskip).Take(pager.PageSize).ToList();  
 
             if (items != null && items.Count() > 0)
             {
