@@ -74,8 +74,8 @@ namespace Kooboo.Sites.HtmlForm
 
             string submiturl = "/_api/submit/form/" + shortformid;
 
-            string baseulr = context.WebSite.BaseUrl();
-            submiturl = Kooboo.Lib.Helper.UrlHelper.Combine(baseulr, submiturl);
+            //string baseulr = context.WebSite.BaseUrl();
+            //submiturl = Kooboo.Lib.Helper.UrlHelper.Combine(baseulr, submiturl);
 
             return submiturl; 
         }
