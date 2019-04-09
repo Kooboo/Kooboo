@@ -86,7 +86,7 @@ namespace Kooboo.Mail.Smtp
                             break;
                         }
 
-                        var data = await _stream.ReadToDotLine();
+                        var data = await _stream.ReadToDotLine(TimeSpan.FromSeconds(60));
 
                         var dataresponse = session.Data(data);
 
