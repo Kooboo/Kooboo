@@ -16,7 +16,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
     public class ProductCategoryRepository : SiteRepositoryBase<ProductCategory>
     {
 
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {
@@ -58,7 +58,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
         public List<ProductCategory> GetCatIdByProduct(Guid ProductId)
         {
             
-            var list = this.SiteDb.ProductCategory.Query.Where(o => o.ProductId == ProductId).SelectAll();
+            var list = this.Query.Where(o => o.ProductId == ProductId).SelectAll();
 
             return list; 
         }  

@@ -12,7 +12,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
    public class CategoryRepository : SiteRepositoryBase<Category>
     {
 
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {
@@ -24,7 +24,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
 
         public override void Delete(Guid id)
         {           
-            var allcate = this.SiteDb.Category.All();
+            var allcate = this.SiteDb.GetSiteRepository<CategoryRepository>().All();
             _delete(id, ref allcate); 
         }
 

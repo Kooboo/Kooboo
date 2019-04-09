@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <Compile Remove="Automation\**" />
-    <Compile Remove="Ecommerce\**" />
     <Compile Remove="NodeTree\**" />
     <Compile Remove="SizeAnalyze\**" />
     <Compile Remove="TAL\Binding\**" />
@@ -21,7 +20,6 @@
     <Compile Remove="TAL\Helper\**" />
     <Compile Remove="TreesTemp\**" />
     <EmbeddedResource Remove="Automation\**" />
-    <EmbeddedResource Remove="Ecommerce\**" />
     <EmbeddedResource Remove="NodeTree\**" />
     <EmbeddedResource Remove="SizeAnalyze\**" />
     <EmbeddedResource Remove="TAL\Binding\**" />
@@ -29,7 +27,6 @@
     <EmbeddedResource Remove="TAL\Helper\**" />
     <EmbeddedResource Remove="TreesTemp\**" />
     <None Remove="Automation\**" />
-    <None Remove="Ecommerce\**" />
     <None Remove="NodeTree\**" />
     <None Remove="SizeAnalyze\**" />
     <None Remove="TAL\Binding\**" />

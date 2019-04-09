@@ -14,7 +14,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
   
     public class ProductTypeRepository : SiteRepositoryBase<ProductType>
     {
-        internal override ObjectStoreParameters StoreParameters
+        public override ObjectStoreParameters StoreParameters
         {
             get
             {
