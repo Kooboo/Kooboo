@@ -26,6 +26,11 @@
 
         public CallStackElement Pop()
         {
+            if (!_stack.Any())
+            {
+                return null; 
+            }
+            
             var item = _stack.Pop();
             if (_statistics[item] == 0)
             {

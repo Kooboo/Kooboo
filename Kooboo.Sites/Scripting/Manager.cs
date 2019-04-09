@@ -247,6 +247,7 @@ namespace Kooboo.Sites.Scripting
             try
             {
                 engine.Execute(JsCode);
+               
             }
             catch (Exception ex)
             {
@@ -307,6 +308,7 @@ namespace Kooboo.Sites.Scripting
             }
             return output;
         }
+         
 
         public static string ExecuteInnerScript(RenderContext context, string InnerJsCode)
         {

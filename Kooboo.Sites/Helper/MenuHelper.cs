@@ -135,18 +135,53 @@ namespace Kooboo.Sites.Helper
             }
 
             string url = menu.Url;
+
             if (string.IsNullOrWhiteSpace(url))
             {
                 return null;
             }
-            if (context != null && context.WebSite.EnableSitePath)
+
+            if (url.ToLower().StartsWith("https://") || url.ToLower().StartsWith("http://"))
             {
-                return Lib.Helper.UrlHelper.Combine("/" + context.Culture, url);
+                return url; 
             }
-            else
+              
+             
+            if (context.WebSite.EnableMultilingual && context.WebSite.Culture.Count > 1)
             {
-                return url;
+                if (context.WebSite.EnableSitePath)
+                {
+                    string path = context.Request.SitePath;
+                    if (string.IsNullOrEmpty(path))
+                    {
+                        path = context.Culture;
+                    }
+
+                    if (string.IsNullOrEmpty(path))
+                    {
+                        path = context.WebSite.DefaultCulture;
+                    }
+
+                    if (url.StartsWith("/"))
+                    {
+                        return "/" + path + url;
+                    }
+                    else
+                    {
+                        return "/" + path + "/" +  url;
+                    }
+                }
+                else
+                {
+                    string culture = context.Culture;
+                    if (!string.IsNullOrWhiteSpace(culture))
+                    {
+                        return Lib.Helper.UrlHelper.AppendQueryString(url, "lang", culture);
+                    }
+                }
             }
+            return url; 
+
         }
 
         /// <summary>
@@ -250,8 +285,7 @@ namespace Kooboo.Sites.Helper
             if (!string.IsNullOrEmpty(Menu.Url) && !string.IsNullOrEmpty(menuname))
             {
                 string url = getMenuUrl(Menu, context);
-
-
+                 
                 EnsureMenuRenderData(Menu);
 
                 var renderdata = Menu.TempRenderData;

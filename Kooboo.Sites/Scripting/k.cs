@@ -2,6 +2,7 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Scripting.Global;
 using Kooboo.Sites.Scripting.Global.SiteItem;
 using System;
@@ -401,6 +402,26 @@ namespace Kooboo.Sites.Scripting
                 }
                 return _security;
             }
+        }
+
+
+        public void Import(string codename)
+        {
+            var sitedb = this.RenderContext.WebSite.SiteDb();
+            var code = sitedb.Code.Get(codename); 
+            if (code !=null)
+            {
+              var result =    Kooboo.Sites.Scripting.Manager.ExecuteCode(this.RenderContext, code.Body, code.Id); 
+                if (result !=null)
+                {
+                    Response.write(result); 
+                }
+            }
+        }
+
+        public void ImportCode(string codename)
+        {
+            Import(codename); 
         }
 
         #region APIHelper
