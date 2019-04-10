@@ -168,13 +168,17 @@ namespace Kooboo.Sites.Routing
                 Path child = _findPath(currentpath, item.RemoveRoutingCurlyBracket(), EnsureObjectId);
                 if (child == null)
                 { 
-                    if (currentpath.Children == null || !currentpath.Children.Any())
-                    {
-                        if (currentpath.ObjectId != default(Guid))
-                        {
-                            return currentpath; 
-                        }
-                    }
+                    // TODO: verify situation of this task. It breaks now of importing sites with both
+                    //  pages for   [/subpath]   and [/subpath/sub/sub.html]. 
+                    // if currentpath has {} sub. 
+                    //if (currentpath.Children == null || !currentpath.Children.Any())
+                    //{
+                    //    if (currentpath.ObjectId != default(Guid))
+                    //    {
+                    //        return currentpath; 
+                    //    }
+                    //}
+                     
                     return null;
                 }
                 else
