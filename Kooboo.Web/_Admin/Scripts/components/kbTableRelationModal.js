@@ -84,11 +84,11 @@
             fieldA: this.mainTableField(),
             tableB: this.subTable(),
             fieldB: this.subTableField(),
-            relationType: this.relationType()
+            relation: this.relationType()
           }).then(function(res) {
             if (res.success) {
               window.info.done(Kooboo.text.info.save.success);
-              this.reset();
+              self.reset();
             }
           });
         } else {

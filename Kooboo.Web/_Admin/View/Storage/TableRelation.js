@@ -15,43 +15,47 @@ $(function() {
         if (res.success) {
           self.tableData({
             docs: res.model.map(function(item) {
-              return {
+                return {
+                id: item.id,
                 name: item.name,
-                tablea: item.tablea,
-                fielda: item.fielda,
-                tableb: item.tableb,
-                fieldb: item.fieldb,
-                relation: item.relation.name
+                tablea: item.tableA,
+                fielda: item.fieldA,
+                tableb: item.tableB,
+                fieldb: item.fieldB,
+                relation: {
+                    text: item.relationName,
+                    class: 'label-sm green'
+                }
               };
             }),
             columns: [
               {
-                displayName: "Name",
+                displayName: Kooboo.text.common.name,
                 fieldName: "name",
                 type: "text"
               },
               {
-                displayName: "Main table",
+                displayName: Kooboo.text.component.tableRelation.tableA,
                 fieldName: "tablea",
                 type: "text"
               },
               {
-                displayName: "Main table field",
+                  displayName: Kooboo.text.component.tableRelation.fieldA,
                 fieldName: "fielda",
                 type: "text"
               },
               {
-                displayName: "Relation",
+                  displayName: Kooboo.text.common.Relation,
                 fieldName: "relation",
-                type: "text"
+                type: "label"
               },
               {
-                displayName: "Sub table",
+                  displayName: Kooboo.text.component.tableRelation.tableB,
                 fieldName: "tableb",
                 type: "text"
               },
               {
-                displayName: "Sub table field",
+                  displayName: Kooboo.text.component.tableRelation.fieldB,
                 fieldName: "fieldb",
                 type: "text"
               }

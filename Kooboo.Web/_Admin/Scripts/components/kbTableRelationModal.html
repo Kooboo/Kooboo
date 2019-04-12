@@ -18,7 +18,7 @@
       <div class="modal-body">
         <div class="form-horizontal">
           <div class="form-group">
-            <label class="col-md-3 control-label">Name</label>
+            <label class="col-md-3 control-label" data-bind="text: Kooboo.text.common.name"></label>
             <div class="col-md-9">
               <input
                 type="text"
@@ -28,7 +28,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-3 control-label">Main table</label>
+            <label class="col-md-3 control-label" data-bind="text: Kooboo.text.component.tableRelation.tableA"></label>
             <div class="col-md-9">
               <select
                 class="form-control"
@@ -37,7 +37,7 @@
             </div>
           </div>
           <div class="form-group" data-bind="visible: mainTable">
-            <label class="col-md-3 control-label">Main table field</label>
+            <label class="col-md-3 control-label" data-bind="text:Kooboo.text.component.tableRelation.fieldA"></label>
             <div class="col-md-9">
               <select
                 class="form-control"
@@ -46,7 +46,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-3 control-label">Relation</label>
+            <label class="col-md-3 control-label" data-bind="text: Kooboo.text.common.Relation"></label>
             <div class="col-md-9">
               <select
                 class="form-control"
@@ -55,7 +55,7 @@
             </div>
           </div>
           <div class="form-group">
-            <label class="col-md-3 control-label">Sub table</label>
+            <label class="col-md-3 control-label" data-bind="text: Kooboo.text.component.tableRelation.tableB"></label>
             <div class="col-md-9">
               <select
                 class="form-control"
@@ -64,7 +64,7 @@
             </div>
           </div>
           <div class="form-group" data-bind="visible: subTable">
-            <label class="col-md-3 control-label">Sub table field</label>
+            <label class="col-md-3 control-label" data-bind="text: Kooboo.text.component.tableRelation.fieldB"></label>
             <div class="col-md-9">
               <select
                 class="form-control"

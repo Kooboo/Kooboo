@@ -2,6 +2,8 @@
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,19 +81,19 @@ namespace Kooboo.Web.Api.Implementation
                 var model = new TableRelationViewModel(item);
                 if (item.Relation == EnumTableRelation.OneOne)
                 {
-                    model.DisplayName = Data.Language.Hardcoded.GetValue("OneOne", call.Context);
+                    model.relationName = Data.Language.Hardcoded.GetValue("OneOne", call.Context);
                 }
                 else if (item.Relation == EnumTableRelation.OneMany)
                 {
-                    model.DisplayName = Data.Language.Hardcoded.GetValue("OneMany", call.Context);
+                    model.relationName = Data.Language.Hardcoded.GetValue("OneMany", call.Context);
                 }
                 else if (item.Relation == EnumTableRelation.ManyMany)
                 {
-                    model.DisplayName = Data.Language.Hardcoded.GetValue("ManyMany", call.Context);
+                    model.relationName = Data.Language.Hardcoded.GetValue("ManyMany", call.Context);
                 }
                 else if (item.Relation == EnumTableRelation.ManyOne)
                 {
-                    model.DisplayName = Data.Language.Hardcoded.GetValue("ManyOne", call.Context);
+                    model.relationName = Data.Language.Hardcoded.GetValue("ManyOne", call.Context);
                 }
 
                 result.Add(model);
@@ -102,7 +104,7 @@ namespace Kooboo.Web.Api.Implementation
         }
     }
 
-    public class TableRelationViewModel : TableRelation
+    public class TableRelationViewModel  
     {
         public TableRelationViewModel(TableRelation relation)
         {
@@ -111,9 +113,27 @@ namespace Kooboo.Web.Api.Implementation
             this.Relation = relation.Relation;
             this.TableA = relation.TableA;
             this.TableB = relation.TableB;
+            this.Id = relation.Id;
+            this.Name = relation.Name; 
         }
 
-        public string DisplayName { get; set; }
+        public string Name { get; set; }
+
+        public Guid Id { get; set; }
+
+        public string TableA { get; set; }
+
+        public string FieldA { get; set; }
+
+
+        public string TableB { get; set; }
+
+        public string FieldB { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public EnumTableRelation Relation { get; set; }
+
+        public string relationName { get; set; }
 
     }
 

@@ -510,6 +510,12 @@
     },
 
     component: {
+        tableRelation: {
+            tableA: "Table A",
+            fieldA: "Field A",
+            tableB: "Table B",
+            fieldB: "Field B"
+        },
       event: {
         noCondition: "No condition",
         noActivity: "No activity",
