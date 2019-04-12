@@ -19,6 +19,8 @@ namespace Kooboo.Web.ViewModel
 
         public string TagHtml { get; set; }
 
+        public string ControlType { get; set; } = "TextBox"; 
+
         public DateTime LastModified
         {
             get; set;

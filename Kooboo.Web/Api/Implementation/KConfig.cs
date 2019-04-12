@@ -48,6 +48,11 @@ namespace Kooboo.Web.Api.Implementation
                 model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
                 model.StoreNameHash = storenamehash;
                 model.LastModified = item.LastModified;
+
+                if (model.TagName == "img")
+                {
+                    model.ControlType = "MediaFile"; 
+                }
                
                 model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.KConfig.GetUsedBy(item.Id));
                 result.Add(model);

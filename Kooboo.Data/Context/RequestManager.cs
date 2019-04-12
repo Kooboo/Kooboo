@@ -57,7 +57,7 @@ namespace Kooboo.Data.Context
             if (!string.IsNullOrEmpty(request.Body))
             {
                 string body = request.Body;
-                if (Kooboo.Lib.Reflection.TypeHelper.IsJson(body))
+                if (Kooboo.Lib.Helper.JsonHelper.IsJson(body))
                 {
                     try
                     {

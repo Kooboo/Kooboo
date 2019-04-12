@@ -1,7 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Attributes;
 using Kooboo.Data.Interface;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Kooboo.Attributes
@@ -161,8 +163,20 @@ namespace Kooboo.Attributes
         {
             return Lib.Reflection.TypeHelper.HasInterface(SiteObjectType, typeof(ICoreObject)); 
         }
-
-
-
+         
+        public static List<OptionalParameter> GetOptionalParameters(Type ModelType)
+        {
+            List<OptionalParameter> Result = new List<OptionalParameter>();  
+            var allattributes = ModelType.GetCustomAttributes(false); 
+            foreach (var item in allattributes)
+            {
+                if (item is OptionalParameter)
+                {
+                    var op = item as OptionalParameter; 
+                    Result.Add(op);  
+                }
+            }
+            return Result;
+        } 
     }
 }

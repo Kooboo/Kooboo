@@ -838,24 +838,7 @@ namespace Kooboo.Lib.Reflection
 
             return Expression.Lambda<Action<object, object[]>>(methodCall, instanceParam, argsParam).Compile();
         }
-
-        public static bool IsJson(string input)
-        {
-            if (string.IsNullOrEmpty(input))
-            {
-                return false;
-            }
-
-            if (input.Contains("{") && input.Contains("}") && input.Contains(":"))
-            {
-                return true;
-            }
-            if (input.Contains("[") && input.Contains("]"))
-            {
-                return true;
-            }
-            return false;
-        }
+         
 
 
         public static bool IsFieldType(Type type)
@@ -1011,6 +994,31 @@ namespace Kooboo.Lib.Reflection
                 return new List<FieldInfo>(); 
             }
         }
+
+
+        public static MethodInfo GetMethodInfo(Type type, string methodname)
+        {
+            var method = type.GetMethod(methodname);
+            if (method != null)
+            {
+                return method;
+            }
+
+            var lowername = methodname.ToLower();
+
+            var allmethods = Kooboo.Lib.Reflection.TypeHelper.GetPublicMethods(type);
+            foreach (var item in allmethods)
+            {
+                if (item.Name.ToLower() == lowername)
+                {
+                    return item;
+                }
+            }
+
+            return null;
+        }
+
+         
 
     }
 }
