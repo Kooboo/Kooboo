@@ -52,7 +52,7 @@ namespace Kooboo.Api.Methods
                 return GetDynamicApiMethod(dynamic, MethodName); 
             }
 
-            var methodinfo = GetMethodInfo(instance.GetType(), MethodName);
+            var methodinfo = Lib.Reflection.TypeHelper.GetMethodInfo(instance.GetType(), MethodName);
 
             if (methodinfo == null)
             {
@@ -264,31 +264,7 @@ namespace Kooboo.Api.Methods
                 }
             }
         }
-
-
-        private static MethodInfo GetMethodInfo(Type type, string methodname)
-        {
-            var method = type.GetMethod(methodname);
-            if (method != null)
-            {
-                return method;
-            }
-
-            var lowername = methodname.ToLower();
-
-            var allmethods = Kooboo.Lib.Reflection.TypeHelper.GetPublicMethods(type);
-            foreach (var item in allmethods)
-            {
-                if (item.Name.ToLower() == lowername)
-                {
-                    return item;
-                }
-            }
-
-            return null;
-        }
-
-
+         
         public static List<object> BindParameters(ApiMethod method, ApiCall call)
         {
             List<object> result = new List<object>();
@@ -394,8 +370,7 @@ namespace Kooboo.Api.Methods
 
             return model;
         }
-
-
+         
 
     }
 }

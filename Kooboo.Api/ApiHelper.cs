@@ -72,6 +72,18 @@ namespace Kooboo.Api
             return newtotal < totalcount ? number + 1 : number;  
 
         }
+
+        public static List<Parameter> GetParameters(System.Reflection.MethodInfo method)
+        {
+            List<Parameter> result = new List<Parameter>(); 
+
+            var paras = method.GetParameters();
+            foreach (var item in paras)
+            {
+                result.Add(new Parameter() { Name = item.Name, ClrType = item.ParameterType });
+            }
+            return result; 
+        }
     }
 
     public class Pager
