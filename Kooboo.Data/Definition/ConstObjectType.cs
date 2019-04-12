@@ -82,6 +82,8 @@ namespace Kooboo
         public const byte PaymentRequest = 77;
          
         public const byte kfile = 80; 
-        public const byte Kconfig = 81;  
+        public const byte Kconfig = 81;
+
+        public const byte TableRelation = 82; 
     }
 }

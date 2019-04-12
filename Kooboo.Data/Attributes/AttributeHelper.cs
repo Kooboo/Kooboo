@@ -164,10 +164,10 @@ namespace Kooboo.Attributes
             return Lib.Reflection.TypeHelper.HasInterface(SiteObjectType, typeof(ICoreObject)); 
         }
          
-        public static List<OptionalParameter> GetOptionalParameters(Type ModelType)
+        public static List<OptionalParameter> GetOptionalParameters(MethodInfo methodinfo)
         {
             List<OptionalParameter> Result = new List<OptionalParameter>();  
-            var allattributes = ModelType.GetCustomAttributes(false); 
+            var allattributes = methodinfo.GetCustomAttributes(false); 
             foreach (var item in allattributes)
             {
                 if (item is OptionalParameter)

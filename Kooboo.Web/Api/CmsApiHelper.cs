@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Kooboo.Attributes;
 
 namespace Kooboo.Web.Api
 {
@@ -16,6 +17,25 @@ namespace Kooboo.Web.Api
         {
             var apiProvider = GetApiProvider();
             return GetParameters(ObjectType, Method, apiProvider);
+        }
+
+        public static List<Kooboo.Api.Parameter> GetParameters(string route)
+        {
+            if (string.IsNullOrWhiteSpace(route))
+            {
+                return null;
+            }
+            var sep = "/\\_".ToCharArray();
+            var parts = route.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+            if (parts.Length >= 2)
+            {
+                return GetParameters(parts[0], parts[1]);
+            }
+            else
+            {
+                return null;
+            } 
+
         }
 
         public static List<Kooboo.Api.Parameter> GetParameters(string ObjectType, string Method, IApiProvider ApiProvider = null)
@@ -41,7 +61,7 @@ namespace Kooboo.Web.Api
                 var para = GetParameters(api.GetType(), Method);
 
                 cache[cachekey] = para;
-                return para; 
+                return para;
             }
             return null;
         }
@@ -52,13 +72,25 @@ namespace Kooboo.Web.Api
             var methodinfo = Lib.Reflection.TypeHelper.GetMethodInfo(type, method);
             if (methodinfo != null)
             {
+                var result = new List<Parameter>();
+
                 var para = Kooboo.Api.ApiHelper.GetParameters(methodinfo);
                 if (para != null && para.Any())
                 {
                     para.RemoveAll(o => o.ClrType == typeof(ApiCall));
+                    result.AddRange(para);
                 }
-                return para;
-            } 
+
+                var attrPara = AttributeHelper.GetOptionalParameters(methodinfo);
+                if (attrPara != null)
+                {
+                    foreach (var item in attrPara)
+                    {
+                        result.Add(new Parameter() { Name = item.name, ClrType = item.clrType });
+                    }
+                }
+                return result;
+            }
 
             return null;
         }
