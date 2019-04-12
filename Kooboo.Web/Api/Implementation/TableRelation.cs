@@ -10,8 +10,7 @@ using System.Text;
 namespace Kooboo.Web.Api.Implementation
 {
     public class TableRelationApi : SiteObjectApi<TableRelation>
-    {
-
+    { 
         public List<TableRelationViewModel> getTablesAndFields(ApiCall call)
         {
             List<TableRelationViewModel> Result = new List<TableRelationViewModel>();
@@ -41,8 +40,7 @@ namespace Kooboo.Web.Api.Implementation
 
             return Result;
         }
-
-
+         
         public override Guid Post(ApiCall call)
         {
             return base.Post(call);
@@ -65,10 +63,8 @@ namespace Kooboo.Web.Api.Implementation
 
         public   List<TableRelation> RelationList(ApiCall call)
         {
-            var sitedb = call.Context.WebSite.SiteDb();
-
-            return sitedb.GetSiteRepository<TableRelationRepository>().All();
-             
+            var sitedb = call.Context.WebSite.SiteDb(); 
+            return sitedb.GetSiteRepository<TableRelationRepository>().All(); 
         } 
     }
 
