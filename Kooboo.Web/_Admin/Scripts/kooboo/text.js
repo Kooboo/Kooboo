@@ -131,6 +131,7 @@
       Debug: "Debug",
       SiteUser: "Site user",
       KConfig: "Kooboo Config",
+      TableRelation: "Table Relation",
 
       Demands: "Demands",
       Demand: "Demand",

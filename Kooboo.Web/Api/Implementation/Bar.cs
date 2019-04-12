@@ -353,6 +353,7 @@ namespace Kooboo.Web.Api.Implementation
                 Items =
                 {
                     new MenuItem { Name = Hardcoded.GetValue("Table",context), Url = AdminUrl("Storage/Database", siteDb) },
+                    new MenuItem { Name = Hardcoded.GetValue("Table Relation",context), Url = AdminUrl("Storage/TableRelation", siteDb) },
                     new MenuItem { Name = Hardcoded.GetValue("Key-Value",context), Url = AdminUrl("Storage/KeyValue", siteDb) }
                 }
             });
