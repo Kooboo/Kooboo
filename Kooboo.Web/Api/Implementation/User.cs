@@ -36,24 +36,24 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public MetaResponse Login(string UserName, string Password, ApiCall apiCall)
+        public MetaResponse Login(Kooboo.Model.Setting.UserModelSetting userModel, ApiCall apiCall)
         {
 
-            if (!Kooboo.Data.Service.UserLoginProtection.CanTryLogin(UserName, apiCall.Context.Request.IP))
+            if (!Kooboo.Data.Service.UserLoginProtection.CanTryLogin(userModel.UserName, apiCall.Context.Request.IP))
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("user or ip temporarily lockout", apiCall.Context)); 
             }
 
-            var user = Kooboo.Data.GlobalDb.Users.Validate(UserName, Password);
+            var user = Kooboo.Data.GlobalDb.Users.Validate(userModel.UserName, userModel.Password);
 
             if (user == null)
             {
-                Data.Service.UserLoginProtection.AddLoginFail(UserName, apiCall.Context.Request.IP); 
+                Data.Service.UserLoginProtection.AddLoginFail(userModel.Password, apiCall.Context.Request.IP); 
             }
 
             if (user != null)
             {
-                string remember = apiCall.GetValue("remember");
+                string remember =userModel.Remember.ToString();
 
                 bool samesite = false;
                 string type = apiCall.GetValue("type"); 
@@ -68,7 +68,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
 #endif 
 
-                string returnUrl = apiCall.GetValue("returnurl");
+                string returnUrl = userModel.Returnurl;
                 if (returnUrl != null)
                 {
                     returnUrl = System.Web.HttpUtility.UrlDecode(returnUrl);

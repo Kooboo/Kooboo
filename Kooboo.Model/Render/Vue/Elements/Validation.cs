@@ -11,6 +11,8 @@ namespace Kooboo.Model.Render.Vue
     {
         public string Name { get; set; }
 
+        public List<Validation> Validations { get; set; } 
+
         public List<ValidationRule> Rules { get; set; }
     }
 
@@ -24,21 +26,52 @@ namespace Kooboo.Model.Render.Vue
                 {
                     builder.Validations(b =>
                     {
-                        b.AppendLine($"{ParserHelper.ToJsName(item.Name)}: [").Indent();
-                        int i = 0;
-                        foreach (var rule in item.Rules)
-                        {
-                            if (i > 0)
-                            {
-                                b.AppendLine(",");
-                            }
-                            b.Append(rule.GetRule());
-                            i++;
-                        }
+                        Render(b, item);
+                        //b.AppendLine($"{ParserHelper.ToJsName(item.Name)}: [").Indent();
+                        //int i = 0;
+                        //foreach (var rule in item.Rules)
+                        //{
+                        //    if (i > 0)
+                        //    {
+                        //        b.AppendLine(",");
+                        //    }
+                        //    b.Append(rule.GetRule());
+                        //    i++;
+                        //}
 
-                        b.AppendLine().Unindent().Append("]");
+                        //b.AppendLine().Unindent().Append("]");
                     });
                 }
+            }
+            private void Render(InnerJsBuilder b,Validation item)
+            {
+                if (item.Rules==null||item.Rules.Count == 0)
+                {
+                    b.AppendLine($"{ParserHelper.ToJsName(item.Name)}:{{").Indent();
+                    foreach(var valiation in item.Validations)
+                    {
+                        Render(b, valiation);
+                        b.Append(",");
+                    }
+                    b.AppendLine().Unindent().Append("}");
+                }
+                else
+                {
+                    b.AppendLine($"{ParserHelper.ToJsName(item.Name)}: [").Indent();
+                    int i = 0;
+                    foreach (var rule in item.Rules)
+                    {
+                        if (i > 0)
+                        {
+                            b.AppendLine(",");
+                        }
+                        b.Append(rule.GetRule());
+                        i++;
+                    }
+
+                    b.AppendLine().Unindent().Append("]");
+                }
+                
             }
         }
     }

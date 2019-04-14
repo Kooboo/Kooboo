@@ -83,6 +83,7 @@
     <ProjectReference Include="..\Kooboo.IndexedDB\Kooboo.IndexedDB.csproj" />
     <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
     <ProjectReference Include="..\Kooboo.Mail\Kooboo.Mail.csproj" />
+    <ProjectReference Include="..\Kooboo.Model\Kooboo.Model.csproj" />
     <ProjectReference Include="..\Kooboo.Render\Kooboo.Render.csproj" />
     <ProjectReference Include="..\Kooboo.Search\Kooboo.Search.csproj" />
     <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.csproj" />

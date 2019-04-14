@@ -4,7 +4,7 @@ var helpers = validators.helpers;
 Vue.resetValid = function (vueData) {
     if (vueData.validations &&
         Object.keys(vueData.validations).length > 0) {
-        vueData.validations = window.validators.Extend.resetValidations(vueData.validations);
+        vueData.validations = window.validators.Extend.extendValidations(vueData.validations);
     }
     return vueData;
 }
@@ -67,26 +67,40 @@ validators.Extend = {
         })
         return params;
     },
-    resetValidations: function (validations) {
-        var keys = Object.keys(validations);
-        keys.forEach(function (key) {
-            var rules = validations[key];
-            validations[key] = {
-                rules: validators.multiRule(rules)
-            }
-        });
-        return validations;
+    extendValidations: function (validations) {
+        function getValidation(validation){
+            var keys=Object.keys(validation);
+            keys.forEach(function(key){
+                var value=validation[key];
+                if(value instanceof Array){
+                    var rules=value;
+                    validation[key]={
+                        rules:validators.multiRule(rules)
+                    }
+                }else if(value instanceof Object){
+                    validation[key]=getValidation(value);
+                } 
+            });
+            return validation;
+        }
+        return getValidation(validations);
     }
 }
 
 validators.multiRule = function (rules) {
     var param = {
         type: "rules",
-        rules: rules
+        rules: rules,
+        errors:[]
     };
     return helpers.withParams(param, function (value) {
         var result = validators.Extend.validateRule(rules, value);
-        param.errors = result.errors;
+        //param.errors=param.errors.concat(result.errors);
+        //todo check,param.errors=param.errors.concat(result.errors); 
+        //can't refresh the errors
+        for(var i=0;i<result.errors.length;i++){
+            param.errors.push(result.errors[i]);
+        }
 
         return result.isValid;
     });

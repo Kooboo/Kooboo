@@ -43,7 +43,7 @@ namespace Kooboo.Model.Render.Parsers
             }
 
             // @submit.native
-            el.setAttribute("@submit.native", $"{Vue.SubmitData.Keyword_Submit}_{modelName}");
+            el.setAttribute("@submit.prevent", $"{Vue.SubmitData.Keyword_Submit}_{modelName}");
 
             // data model
             context.Js.Data(modelName, ParserHelper.GetJsonFromModel(meta.Model));
@@ -57,14 +57,21 @@ namespace Kooboo.Model.Render.Parsers
             // submit method
             context.Js.Submit(urlWithParams, modelName);
 
+
             // validations
+            var validations = new List<Kooboo.Model.Render.Vue.Validation>();
             foreach (var prop in meta.Model.Properties)
             {
                 if (prop.Rules.Any())
                 {
-                    context.Js.Validation(prop.Name, prop.Rules);
+                    validations.Add(new Vue.Validation()
+                    {
+                        Name = prop.Name,
+                        Rules = prop.Rules
+                    });
                 }
             }
+            context.Js.Validation(modelName, validations);
 
             visitChildren?.Invoke();
         }

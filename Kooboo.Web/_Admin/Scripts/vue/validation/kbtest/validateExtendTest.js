@@ -158,15 +158,30 @@ function validateRule(){
 
 }
 
-function resetValidations(){
+function extendValidations(){
   var rules=[{type:'required',message:"error"}];
   var validations={
     name:rules
   }
-  debugger;
-  var newValue=validators.Extend.resetValidations(validations);
+  var newValue=validators.Extend.extendValidations(validations);
+  
   expect(newValue["name"]).not.to.be(undefined);
   var rules=newValue["name"]["rules"];
+  expect(rules("")).to.be(false);
+  expect(rules("test")).to.be(true);
+
+  validations={
+    user:{
+      username:[{type:'required',message:"error"}]
+    }
+  }
+  newValue=validators.Extend.extendValidations(validations);
+  expect(newValue["user"]).not.to.be(undefined);
+  var userName=newValue["user"]["username"];
+  expect(userName).not.to.be(undefined);
+
+  var rules=userName["rules"];
+  expect(rules).not.to.be(undefined);
   expect(rules("")).to.be(false);
   expect(rules("test")).to.be(true);
 }
