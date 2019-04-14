@@ -1,0 +1,8 @@
+<tr @click='onToggleSelectDoc'>
+    <td v-if='selectable' class="table-checkbox">
+        <input type="checkbox" :value='doc.id' v-model='selectedDocs'>
+    </td>
+    <template v-for='col in cols.concat(acts)'>
+        <component :is='"kb-table-cell-" + col.type' :data='getCellData(col)' :col='col' :key='col.fieldName' @publishEvent='onPublishEvent' @onClick='onCellClick'></component>
+    </template>
+</tr>

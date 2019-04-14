@@ -1,0 +1,5 @@
+<kb-modal :show='showModal' :config='modalConfig' @close='onClose'>
+    <div class="table-responsive" slot="body" v-if="detailData">
+        <kb-table :data='detailData'></kb-table>
+    </div>
+</kb-modal>

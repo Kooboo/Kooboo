@@ -1,0 +1,76 @@
+<!-- #layout name=empty -->
+<!--VueRender-->
+<div class="page-loading" style="display: none;">
+    <div class="content">
+        <p><i class="fa fa-spinner fa-spin"></i> <span>Logging in...</span></p>
+    </div>
+</div>
+<div class="container" id="app" kv-el kv-datafrom="User.login">
+    <div class="row">
+        <div class="col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+            <div class="block-small-form">
+                <div class="logo">
+                    <img src="/_admin/Images/logo-blue.png" alt="Logo">
+                </div>
+                <div class="tab-content">
+                    <div id="tab_account_login" class="tab-pane fade active in">
+
+                        <form @submit.prevent='login' kv-api="User.login" >
+                            <div class="form-group" :class="{ 'has-error': $v.UserName.$error }">
+                                <label class="sr-only">Username</label>
+                                <input class="form-control" type="text" v-model='UserName' placeholder="Username" />
+                                <div v-if="$v.UserName.$error">
+                                    <span class="help-block"  v-for='error in $v.UserName.$params.rule.errors' v-text='error'></span>
+                                </div>
+                            </div>                       
+                            <div class="form-group" :class="{ 'has-error': $v.Password.$error }">
+                                <label class="sr-only">Password</label>
+                                <input class="form-control" type="password" v-model='Password' placeholder="Password" />
+                                <div v-if="$v.Password.$error">
+                                    <span class="help-block" v-for='error in $v.Password.$params.rule.errors' v-text='error'></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" v-model='Remember' />Keep me signed in</label>
+                                </div>
+                            </div>
+                            <button class="btn blue" type="submit">Sign in</button>
+                            <p>
+                                <a >Forgot password?</a>
+                            </p>
+                            <p>
+                                <span >Do not have an account?</span> <a @click="test">Create an account</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/_Admin/Scripts/vue/vue.js"></script>
+<script src="/_Admin/Scripts/vue/vuelidate.min.js"></script>
+<script src="/_Admin/Scripts/vue/validators.min.js"></script>
+<script src="/_Admin/Scripts/vue/validateHelper.js"></script>
+<script src="/_Admin/Scripts/vue/VueExtend.js"></script>
+<script>
+
+    Vue.kExtend({
+        el:"#app",
+        methods:{
+            test:function(){
+                alert("test extend");
+            },
+            loginCallBack:function(res){
+                if(res.success){
+                    location.href=res.model;
+                }
+            }
+        },
+        
+    })
+</script>
+

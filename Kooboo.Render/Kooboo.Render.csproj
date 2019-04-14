@@ -11,6 +11,7 @@
     <ProjectReference Include="..\Kooboo.Data\Kooboo.Data.csproj" />
     <ProjectReference Include="..\Kooboo.Dom\Kooboo.Dom.csproj" />
     <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
+    <ProjectReference Include="..\Kooboo.Model\Kooboo.Model.csproj" />
     <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net45'OR '$(TargetFramework)'=='net461'">

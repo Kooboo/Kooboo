@@ -1,0 +1,10 @@
+<kb-modal :show='showModal' :config='modalConfig' @close='onClose'>
+    <div class="form-horizontal" slot='body'>
+        <div class="form-group">
+            <label class="col-md-3 control-label">{{ modalConfig.labelName }}</label>
+            <div class="col-md-9">
+                <input type="text" class="form-control" v-model='modalConfig.copyName'>
+            </div>
+        </div>
+    </div>
+</kb-modal>

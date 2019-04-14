@@ -1,0 +1,21 @@
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th v-if='data.selectable'>
+                <input type="checkbox" v-model='allSelected' :disabled='!data.docs.length' />
+            </th>
+            <th v-for='col in data.cols' :class='col.class' v-text='col.displayName' :key='col.fieldName'></th>
+            <th v-for='action in data.acts' class="table-action" :key='action.fieldName' :class='action.class'></th>
+        </tr>
+    </thead>
+    <tbody>
+        <template v-if='data.docs.length'>
+            <kb-table-row v-for='doc in data.docs' :doc='doc' :key='doc.id' :selectable='data.selectable' :cols='data.cols' :acts='data.acts' :selectedDocs='selectedDocs' @toggleSelectDoc='onToggleSelectDoc'></kb-table-row>
+        </template>
+        <template v-else>
+            <tr>
+                <td colspan="100" class="text-center">Empty</td>
+            </tr>
+        </template>
+    </tbody>
+</table>
