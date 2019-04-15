@@ -70,3 +70,26 @@ function getMergeHooks(){
   mergeHooks["created"]();
   expect(a).to.be(2);
 }
+
+function parameterBind_getKeyValue(){
+  var vue=new Vue();
+  var url="aa?id={idx}&data={datax}"
+  
+  var keyvalue= vue.$parameterBinder().getUrlKeyValue(url);
+  expect(Object.keys(keyvalue).length).to.be(3);
+  expect(keyvalue["id"]).to.be("idx");
+  expect(keyvalue["data"]).to.be("datax");
+  expect(keyvalue["siteId"]).to.be("siteId");
+}
+
+function parameterBind_bind(){
+  var vue=new Vue({
+    data:{
+      idx:"1",
+      datax:"aa"
+    }
+  });
+  var url="aa?id={idx}&data={datax}"
+  var url=vue.$parameterBinder().bind(url);
+  expect(url).to.be("aa?siteId=&id=1&data=aa");
+}

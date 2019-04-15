@@ -69,3 +69,79 @@ Vue.kExecute=function(){
     }
     
 }
+
+Vue.prototype.$parameterBinder=function(){
+    var self=this;
+    var ParameterBinder={
+        bind:function(url){
+            var model=self.$data;
+            if(!url) return "";
+            var keyValue=this.getUrlKeyValue(url);
+            url=this.getUrl(url,keyValue,model);
+    
+            return url;
+        },
+        getUrl:function(url,keyValue,model){
+            var keys=Object.keys(keyValue);
+            url=url.split("?")[0];
+            if(keys.length>0){
+                url+="?";
+            }
+            for(var i=0;i<keys.length;i++){
+                if(i>0){
+                    url+="&"
+                }
+                var key=keys[i];
+                var value=this.getQueryStringValue(model,keyValue[key]);
+                url+=key+"="+value;
+            }
+            return url;
+        },
+        getUrlKeyValue:function(url){
+            parts=url.split("?");
+            var keyValue={"siteId":"siteId"};//default add siteid
+            if(parts.length>1){
+                var queryStringPart=parts[1].split("&");
+                for(var i=0;i<queryStringPart.length;i++){
+                    var part=queryStringPart[i];
+                    var itemParts=part.split("=");
+                    if(itemParts.length==2){
+                        var key=itemParts[0];
+                        var valuePlaceholder=itemParts[1];
+                        if(valuePlaceholder){
+                            valuePlaceholder= valuePlaceholder.replace("{","").replace("}","").trim();
+                            keyValue[key]=valuePlaceholder;
+                        }
+                    }
+                }
+            }
+            return keyValue;
+        },
+        getQueryStringValue:function(model,key){
+            if(model[key]){
+                return model[key]
+            }
+            var value=this.getQueryString(key);
+            if(value){
+                return value
+            }
+                
+            return "";
+        },
+        //code from kooboobase
+        getQueryString:function(name, source) {
+            if (!name) {
+                return null;
+            }
+            source = source || window.location.search.substr(1);
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = source.match(reg);
+            if (r != null) {
+                return r[2];
+            }
+            return null;
+        }
+    
+    }
+    return ParameterBinder;
+};
