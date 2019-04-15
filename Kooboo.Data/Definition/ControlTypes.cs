@@ -1,11 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Data.Definition;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 
-namespace Kooboo.Sites.Contents.Models
+namespace Kooboo.Data.Definition
 {
     public class ControlTypes
     {
@@ -39,7 +37,7 @@ namespace Kooboo.Sites.Contents.Models
 
         public const string Selection = "Selection";
 
-        public const string RadioBox = "RadioBox"; 
+        public const string RadioBox = "RadioBox";
 
 
         private static List<string> _list;
@@ -59,8 +57,8 @@ namespace Kooboo.Sites.Contents.Models
                     foreach (var item in allfields)
                     {
                         var value = item.GetValue(instance);
-                        _list.Add(value.ToString());  
-                    }  
+                        _list.Add(value.ToString());
+                    }
                 }
                 return _list;
             }
