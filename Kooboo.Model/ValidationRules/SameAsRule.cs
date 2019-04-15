@@ -17,7 +17,7 @@ namespace Kooboo.Model.ValidationRules
 
         public override string GetRule()
         {
-            return string.Format("{{type:\"sameAs\",field:{1},message:\"{0}\"}}", Message,_field);
+            return string.Format("{{type:\"sameAs\",field:\"{1}\",message:\"{0}\"}}", Message,_field);
         }
 
 
