@@ -22,7 +22,7 @@ namespace Kooboo.Model.Render.Vue
     partial class LoadData
     {
         public const string Keyword_ApiGet = "api.get";
-        public const string Keyword_ParameterBind = "$parameterBinder().bind";
+        public const string Keyword_ParameterBind = "ParameterBinder.bind";
 
         public class RootViewRenderer : IVueRenderer
         {
@@ -75,7 +75,7 @@ namespace Kooboo.Model.Render.Vue
                     builder.AppendLine().AppendLine();
                 }
 
-                builder.AppendLine($"url = vm.{Keyword_ParameterBind}('{item.Url}')");
+                builder.AppendLine($"url = {Keyword_ParameterBind}('{item.Url}', vm)");
                 builder.Append($"{Keyword_ApiGet}(url).then(function(d) {{ vm.{item.ModelName} = d }})");
 
                 i++;
