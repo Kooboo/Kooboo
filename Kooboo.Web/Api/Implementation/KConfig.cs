@@ -29,6 +29,24 @@ namespace Kooboo.Web.Api.Implementation
             }  
         }
 
+        public override object Get(ApiCall call)
+        {
+            var obj =  base.Get(call);
+
+            if (obj is KConfig)
+            {
+                var kconfig = obj as KConfig;
+
+                var model = new KConfigEditModel(kconfig); 
+                 
+                if (kconfig.TagName == "img")
+                {
+                    model.ControlType = Kooboo.Data.Definition.ControlTypes.MediaFile;
+                }
+                return model; 
+            }
+            return obj; 
+        }
 
         public override List<object> List(ApiCall call)
         {
@@ -51,7 +69,7 @@ namespace Kooboo.Web.Api.Implementation
 
                 if (model.TagName == "img")
                 {
-                    model.ControlType = "MediaFile"; 
+                    model.ControlType = Kooboo.Data.Definition.ControlTypes.MediaFile; 
                 }
                
                 model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.KConfig.GetUsedBy(item.Id));
