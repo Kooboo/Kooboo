@@ -15,12 +15,14 @@ namespace Kooboo.Web.ViewModel
 
         public string Name { get; set; }
 
+        public Dictionary<string, string> Binding
+        {
+            get; set;
+        }
 
         public string TagName { get; set; }
 
         public string TagHtml { get; set; }
-
-        public string ControlType { get; set; } = "TextBox";
 
         public DateTime LastModified
         {
@@ -49,12 +51,14 @@ namespace Kooboo.Web.ViewModel
             get; set;
         }
 
+        public string Id { get; set; }
+
         // The original tag.
         public string TagName { get; set; }
 
         public string TagHtml { get; set; }
 
-        public string ControlType { get; set; }
+        public string ControlType { get; set; } = "TextBox";
     }
 
 

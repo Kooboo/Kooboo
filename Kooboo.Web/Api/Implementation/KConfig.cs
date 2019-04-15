@@ -37,7 +37,9 @@ namespace Kooboo.Web.Api.Implementation
             {
                 var kconfig = obj as KConfig;
 
-                var model = new KConfigEditModel(kconfig); 
+                var model = new KConfigEditModel(kconfig);
+
+                model.Id = kconfig.Id.ToString();
                  
                 if (kconfig.TagName == "img")
                 {
@@ -66,12 +68,8 @@ namespace Kooboo.Web.Api.Implementation
                 model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
                 model.StoreNameHash = storenamehash;
                 model.LastModified = item.LastModified;
+                model.Binding = item.Binding;
 
-                if (model.TagName == "img")
-                {
-                    model.ControlType = Kooboo.Data.Definition.ControlTypes.MediaFile; 
-                }
-               
                 model.Relations = Sites.Helper.RelationHelper.Sum(sitedb.KConfig.GetUsedBy(item.Id));
                 result.Add(model);
             }
