@@ -149,13 +149,6 @@ namespace Kooboo.Render
                 return response;
             }
 
-            htmlbody = Kooboo.Model.KoobooModelManager.Render(htmlbody, new Model.ModelRenderContext
-            {
-                HttpContext = Context,
-                SourceProvider = sourceprovider,
-                RelativeUrl = relativeurl
-            });
-
             var hashid = Lib.Security.Hash.ComputeHashGuid(htmlbody);
 
             var EvaluatorOption = new EvaluatorOption();

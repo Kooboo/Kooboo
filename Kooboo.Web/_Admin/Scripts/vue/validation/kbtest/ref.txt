@@ -1,6 +1,0 @@
-/_Admin/Scripts/lib/jquery.min.js
-/_Admin/Scripts/vue/vue.js
-/_Admin/Scripts/vue/VueExtend.js
-/_Admin/Scripts/vue/validation/vuelidate.min.js
-/_Admin/Scripts/vue/validation/validators.min.js
-/_Admin/Scripts/vue/validation/validateExtend.js
