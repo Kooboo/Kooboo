@@ -28,14 +28,11 @@ namespace Kooboo.Model.Render.Vue
                         b.AppendLine($"{Keyword_Submit}_{item.ModelName}: function(e) {{").Indent();
 
                         b.AppendLine($"const vm = this");
-                        b.AppendLine($"this.$v.{item.ModelName}.$touch()");
-                        b.AppendLine($"var valid=!this.$v.{item.ModelName}.$invalid");
-                        b.AppendLine("//need encapsulate,then use this code");
-                        b.AppendLine($"//e.target.validate(function(valid) {{").Indent();
+                        b.AppendLine($"e.target.validate(function(valid) {{").Indent();
                         b.AppendLine($"if (!valid) return");
                         b.AppendLine($"const url = {LoadData.Keyword_ParameterBind}('{item.Url}', vm)");
                         b.AppendLine($"{Keyword_ApiPost}(url, this.{item.ModelName})");
-                        b.Unindent().AppendLine($"//}})");
+                        b.Unindent().AppendLine($"}})");
 
                         b.Unindent().Append("}");
                     });

@@ -14,8 +14,7 @@ namespace Kooboo.Model
         {
             if (!IsNeedRender(context.HttpContext))
                 return html;
-            //var options = ViewParseOptions.Instance;
-            //options.ApiMetaProvider = new ApiMetaProvider();
+
             html = new ViewParser(ViewParseOptions.Instance).RenderRootView(html, context);
             
             return html;
