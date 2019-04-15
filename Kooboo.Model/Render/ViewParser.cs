@@ -84,7 +84,7 @@ namespace Kooboo.Model.Render
             parser.Parse(context);
 
             var result = new StringBuilder()
-                .AppendLine(ParserHelper.ToHtml(context.Dom.childNodes.item))
+                .AppendLine(ParserHelper.ToHtml(context.Dom.body.childNodes.item))
                 .AppendLine("<script>")
                 .AppendLine(context.Js.Build())
                 .AppendLine("</script>")

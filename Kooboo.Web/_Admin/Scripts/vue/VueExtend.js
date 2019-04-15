@@ -43,6 +43,10 @@ Kooboo.Vue={
             
         }
         return vueData;
+    },
+    execute:function(el){
+        var vueData= Kooboo.Vue.getVueData(this.data[el]);
+        var app=new Vue(vueData);
     }
 }
 
@@ -55,17 +59,4 @@ Vue.kExtend=function(model){
     models.push(model);
     Kooboo.Vue.data[model.el]=models;
    }
-}
-
-Vue.kExecute=function(){
-    var data=Kooboo.Vue.data;
-    if(data&&Object.keys(data).length>0){
-        var keys=Object.keys(data);
-        for(var i=0;i<keys.length;i++){
-            var value=data[keys[i]];
-            var vueData= Kooboo.Vue.getVueData(value);
-            new Vue(vueData);
-        }
-    }
-    
 }
