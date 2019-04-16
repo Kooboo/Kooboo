@@ -6,11 +6,17 @@ namespace Kooboo.Data.Definition.KModel
 {
  public   class Column
     { 
+        public Column()
+        {
+            this.Header = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            this.Cell = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); 
+        }
+
         public string Name { get; set; }
 
-        public Header Header { get; set; }
-        public Cell Cell { get; set; }
+        public Dictionary<string, string> Header { get; set; }
 
+        public Dictionary<string,string> Cell { get; set; }  
     }
      
 

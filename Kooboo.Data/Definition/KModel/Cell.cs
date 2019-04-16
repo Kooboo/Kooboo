@@ -9,31 +9,31 @@ namespace Kooboo.Data.Definition.KModel
   public  class Cell
     {
         [JsonConverter(typeof(StringEnumConverter))]
-        public CellType Type { get; set; }  // Link, Text... 
+        public EnumCellType Type { get; set; }  // Link, Text... 
          
         public string Style { get; set; }
 
         public string Class { get; set; }
 
-        public ActionType Action { get; set; } 
+        public EnumActionType Action { get; set; } 
 
         public string Url { get; set; } 
-        //      cell: {
-        //      type: "link",//cell type
-        //      style: "",//cell style
-        //      class: "",//cell class
-        //      action: "newWindow",//cell action
-        //      url: "/layout/detail?id={id}" //cell url
+        //    cell: {
+        //    type: "link",//cell type
+        //    style: "",//cell style
+        //    class: "",//cell class
+        //    action: "newWindow",//cell action
+        //    url: "/layout/detail?id={id}" //cell url
         //    } 
     }
 
-    public enum CellType
+    public enum EnumCellType
     {
         Text = 0, 
         Link = 1, 
     }
 
-    public enum ActionType
+    public enum EnumActionType
     {
         NewWindow = 0,
         Redirect = 1,

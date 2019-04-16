@@ -7,6 +7,7 @@ using Kooboo.Sites.Contents.Models;
 using Newtonsoft.Json.Linq;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Models;
+using Kooboo.Data.Definition;
 
 namespace Kooboo.Sites.InlineEditor.Converter
 {

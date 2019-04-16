@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kooboo.Data.Definition.KModel
 {
-  public   class Model
+  public   class KMeta
     {
         public List<Column> Columns { get; set; } = new List<Column>(); 
 

@@ -158,7 +158,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public List<string> AvailableControlTypes(ApiCall call)
         {
-            return Kooboo.Sites.Contents.Models.ControlTypes.List;
+            return Kooboo.Data.Definition.ControlTypes.List;  
         }
 
         public List<DatabaseColumnViewModel> Columns(string table, ApiCall call)
