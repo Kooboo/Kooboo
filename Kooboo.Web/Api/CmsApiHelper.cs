@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Kooboo.Attributes;
+using Kooboo.Api.Methods;
 
 namespace Kooboo.Web.Api
 {
@@ -12,13 +13,35 @@ namespace Kooboo.Web.Api
 
         private static Dictionary<string, List<Parameter>> cache = new Dictionary<string, List<Parameter>>(StringComparer.OrdinalIgnoreCase);
 
-
+        [Obsolete]
         public static List<Kooboo.Api.Parameter> GetParameters(string ObjectType, string Method)
         {
             var apiProvider = GetApiProvider();
             return GetParameters(ObjectType, Method, apiProvider);
         }
 
+
+        public static ApiMethod GetApiMethod(string ObjectType, string Method)
+        {
+            var apiProvider = GetApiProvider();
+
+            var apiobject = apiProvider.Get(ObjectType);
+
+            if (apiobject != null)
+            {
+                var apimethod = ApiMethodManager.Get(apiobject, Method);
+
+                if (apimethod != null)
+                {
+                    apimethod.Parameters.RemoveAll(o => o.ClrType == typeof(ApiCall));
+                }
+                return apimethod;
+            }
+            return null;
+        }
+
+
+        [Obsolete]
         public static List<Kooboo.Api.Parameter> GetParameters(string route)
         {
             if (string.IsNullOrWhiteSpace(route))
@@ -34,10 +57,11 @@ namespace Kooboo.Web.Api
             else
             {
                 return null;
-            } 
+            }
 
         }
 
+        [Obsolete]
         public static List<Kooboo.Api.Parameter> GetParameters(string ObjectType, string Method, IApiProvider ApiProvider = null)
         {
             string cachekey = ObjectType + Method;
@@ -66,7 +90,7 @@ namespace Kooboo.Web.Api
             return null;
         }
 
-
+        [Obsolete]
         public static List<Kooboo.Api.Parameter> GetParameters(Type type, string method)
         {
             var methodinfo = Lib.Reflection.TypeHelper.GetMethodInfo(type, method);
@@ -95,7 +119,7 @@ namespace Kooboo.Web.Api
             return null;
         }
 
-
+        [Obsolete]
         // Get the default API provider. 
         public static IApiProvider GetApiProvider()
         {
