@@ -12,7 +12,9 @@ namespace Kooboo.App.CrossPlatform
         static void Main(string[] args)
         {
             Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.RegisterEncoding();
-            
+
+            Kooboo.Data.AppSettings.SetCustomSslCheck();
+             
             GlobalSettings.RootPath = Kooboo.Data.AppSettings.DatabasePath;
             var settingPort = AppSettingsUtility.Get("Port");
             if (string.IsNullOrEmpty(settingPort))

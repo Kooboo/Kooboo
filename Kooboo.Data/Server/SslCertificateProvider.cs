@@ -58,6 +58,48 @@ namespace Kooboo.Data.Server
             // return null;    
         }
 
+        public static X509Certificate2 SelectCertificate2(string hostName)
+        {
+            if (hostName != null)
+            {
+                if (cache.ContainsKey(hostName))
+                {
+                    var item = cache[hostName];
+                    if (item.NotAfter > DateTime.Now)
+                    {
+                        return item;
+                    }
+                }
+
+                var cert = Kooboo.Data.GlobalDb.SslCertificate.GetByDomain(hostName);
+
+                if (cert != null)
+                {
+                    var certificate = TryGetCert(cert.Content);
+                    if (certificate != null)
+                    {
+                        cache[hostName] = certificate;
+                    }
+
+                    return certificate;
+                }
+
+                if (diskcache.ContainsKey(hostName))
+                {
+                    var diskcert = diskcache[hostName];
+                    if (diskcert != null)
+                    {
+                        cache[hostName] = diskcert;
+                    }
+                    return diskcert;
+                }
+            }
+
+            return Kooboo.Data.Server.SslCertificate.DefaultCert;
+            // return null;    
+        }
+
+
         public static Dictionary<string, X509Certificate2> LoadDisk()
         {
             Dictionary<string, X509Certificate2> result = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);

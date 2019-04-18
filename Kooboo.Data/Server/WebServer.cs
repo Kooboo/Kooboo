@@ -1,5 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+  
+#if !NETSTANDARD2_0
+ 
 using Kooboo.HttpServer; 
 using System.Collections.Generic;
 
@@ -99,3 +102,5 @@ namespace Kooboo.Data.Server
     }
       
 }
+
+#endif
