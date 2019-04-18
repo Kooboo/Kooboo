@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace Kooboo.Data.Server
 {   
-    public class WebServer 
+    public class WebServer : IWebServer
     {
         private int port = 80;
         private List<IKoobooMiddleWare> MiddleWares = new List<IKoobooMiddleWare>();
         private IKoobooMiddleWare StartWare = null;
          
-        public WebServer(int Port, ISslCertificateProvider SslCertProvider)
+        public WebServer(int Port)
         {
             this.port = Port;
 
@@ -20,18 +20,18 @@ namespace Kooboo.Data.Server
             if (Port == 443)
             {
                 https = true;
-            }  
+            }
             var options = new HttpServerOptions()
             {
                 HttpHandler = new ServerHandler(r => this.StartWare.Invoke(r)),
-                SslCertificateProvider = SslCertProvider, 
+                SelectCertificate = Kooboo.Data.Server.SslCertificateProvider.SelectCertificate,  
                 IsHttps = https
             };
 
             this.Server = new Kooboo.HttpServer.HttpServer(new System.Net.IPEndPoint(System.Net.IPAddress.Any, this.port), options);
         }
 
-        public WebServer(int Port, ISslCertificateProvider SslCertProvider, bool IsHttps)
+        public WebServer(int Port, bool IsHttps)
         {
             this.port = Port;
 
@@ -40,7 +40,7 @@ namespace Kooboo.Data.Server
             var options = new HttpServerOptions()
             {
                 HttpHandler = new ServerHandler(r => this.StartWare.Invoke(r)),
-                SslCertificateProvider = SslCertProvider,
+                SelectCertificate = Kooboo.Data.Server.SslCertificateProvider.SelectCertificate, 
                 IsHttps = https
             };
 

@@ -14,7 +14,8 @@ using Kooboo.Lib.Helper;
 
 namespace Kooboo.Data.Server
 {
-   
+    
+
     public class ServerHandler : IHttpHandler
     {
         public Func<RenderContext, Task> _handle;
@@ -531,6 +532,5 @@ namespace Kooboo.Data.Server
         }
 
     }
-    
-
+     
 }

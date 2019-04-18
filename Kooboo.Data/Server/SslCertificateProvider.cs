@@ -1,25 +1,23 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
-using Kooboo.HttpServer;
+using System.Text;
 
-namespace Kooboo.Web.Security
+namespace Kooboo.Data.Server
 {
-    public class SslProvider : Kooboo.HttpServer.ISslCertificateProvider
-    {  
-        public SslProvider()
+    public static class SslCertificateProvider
+    {
+        static SslCertificateProvider()
         {
-            diskcache = LoadDisk(); 
+            diskcache = LoadDisk();
         }
 
-        private Dictionary<string, X509Certificate2> diskcache = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);
+        private static Dictionary<string, X509Certificate2> diskcache = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);
 
 
-        private Dictionary<string, X509Certificate2> cache = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);
+        private static Dictionary<string, X509Certificate2> cache = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);
 
-        X509Certificate ISslCertificateProvider.SelectCertificate(string hostName)
+        public static X509Certificate SelectCertificate(string hostName)
         {
             if (hostName != null)
             {
@@ -36,7 +34,7 @@ namespace Kooboo.Web.Security
 
                 if (cert != null)
                 {
-                    var certificate = TryGetCert(cert.Content);  
+                    var certificate = TryGetCert(cert.Content);
                     if (certificate != null)
                     {
                         cache[hostName] = certificate;
@@ -47,25 +45,25 @@ namespace Kooboo.Web.Security
 
                 if (diskcache.ContainsKey(hostName))
                 {
-                    var diskcert = diskcache[hostName]; 
-                    if (diskcert !=null)
+                    var diskcert = diskcache[hostName];
+                    if (diskcert != null)
                     {
                         cache[hostName] = diskcert;
-                    }   
-                    return diskcert; 
-                }    
+                    }
+                    return diskcert;
+                }
             }
 
             return Kooboo.Data.Server.SslCertificate.DefaultCert;
             // return null;    
         }
 
-        public Dictionary<string, X509Certificate2> LoadDisk()
-        {  
+        public static Dictionary<string, X509Certificate2> LoadDisk()
+        {
             Dictionary<string, X509Certificate2> result = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);
-         
+
             string folder = Kooboo.Data.AppSettings.RootPath;
-            folder = System.IO.Path.Combine(folder, "AppData"); 
+            folder = System.IO.Path.Combine(folder, "AppData");
             folder = Lib.Helper.IOHelper.CombinePath(folder, "ssl");
 
             Kooboo.Lib.Helper.IOHelper.EnsureDirectoryExists(folder);
@@ -73,20 +71,20 @@ namespace Kooboo.Web.Security
             var allfiles = System.IO.Directory.GetFiles(folder, "*.pfx");
 
             foreach (var item in allfiles)
-            {             
-                var info = new System.IO.FileInfo(item);   
-                string hostname = info.Name;   
+            {
+                var info = new System.IO.FileInfo(item);
+                string hostname = info.Name;
 
                 var allbytes = System.IO.File.ReadAllBytes(item);
-                var cert = TryGetCert(allbytes);  
-                if (cert !=null)
+                var cert = TryGetCert(allbytes);
+                if (cert != null)
                 {
                     string hostName = cert.GetNameInfo(X509NameType.DnsName, false);
 
-                    result[hostName] = cert; 
+                    result[hostName] = cert;
                 }
-            }             
-            return result; 
+            }
+            return result;
 
         }
 
@@ -101,20 +99,25 @@ namespace Kooboo.Web.Security
                 try
                 {
                     var cert = new X509Certificate2(content, item);
-                    if (cert !=null)
+                    if (cert != null)
                     {
-                        return cert; 
+                        return cert;
                     }
                 }
                 catch (Exception)
-                { 
+                {
                 }
-   
+
             }
 
-            return null; 
+            return null;
 
         }
 
     }
+
+
+
+
+
 }
