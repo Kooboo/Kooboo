@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,14 +10,15 @@ namespace Kooboo.HttpServer
     public class HttpServerOptions
     {
         public IHttpHandler HttpHandler { get; set; } = new SampleHandler();
+         
 
-        public ISslCertificateProvider SslCertificateProvider { get; set; }
-
+        public Func<string, X509Certificate> SelectCertificate { get; set; }
+          
         public bool SslEnabled
         {
             get
             {
-                return SslCertificateProvider != null;
+                return SelectCertificate != null;
             }
         }
 

@@ -56,7 +56,7 @@ namespace Kooboo.HttpServer.Http
             }
 
             // Select certificate
-            var certificate =  Context.ServiceContext.ServerOptions.SslCertificateProvider.SelectCertificate(hostName);
+            var certificate =  Context.ServiceContext.ServerOptions.SelectCertificate(hostName);
 
             // Switch to SSL
             _sslStream = new SslStream(wrappedStream);

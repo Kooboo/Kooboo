@@ -1,5 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+
+#if !NETSTANDARD2_0
+
+
 using System;
 using Kooboo.Data.Context;
 using Kooboo.HttpServer; 
@@ -14,7 +18,7 @@ using Kooboo.Lib.Helper;
 
 namespace Kooboo.Data.Server
 {
-   
+     
     public class ServerHandler : IHttpHandler
     {
         public Func<RenderContext, Task> _handle;
@@ -531,6 +535,8 @@ namespace Kooboo.Data.Server
         }
 
     }
-    
-
+     
 }
+
+
+#endif

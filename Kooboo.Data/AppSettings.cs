@@ -134,8 +134,11 @@ namespace Kooboo.Data
 
         public static void SetCustomSslCheck()
         {
-            Kooboo.Lib.Helper.HttpHelper.SetCustomSslChecker();
-            CustomSslCheck = true; 
+            if (!CustomSslCheck)
+            {
+                Kooboo.Lib.Helper.HttpHelper.SetCustomSslChecker();
+                CustomSslCheck = true;
+            } 
         }
 
         public static string GetMailDbName(Guid OrganizationId)

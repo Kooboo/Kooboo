@@ -19,14 +19,14 @@ namespace Kooboo.Web
     {
         private static object _locker = new object();
 
-        public static Dictionary<int, WebServer> WebServers = new Dictionary<int, WebServer>();
+        public static Dictionary<int, IWebServer> WebServers = new Dictionary<int, IWebServer>();
 
         public static void Start(int port)
         {
 
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
-                System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject); 
+                System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
             };
 
             // ensure that WindowsHost is working .  
@@ -37,12 +37,12 @@ namespace Kooboo.Web
             //}
 
             Sites.DataSources.DataSourceHelper.InitIDataSource();
-             
+
 
             Kooboo.Data.Events.EventBus.Raise(new Data.Events.Global.ApplicationStartUp());
 
             Data.GlobalDb.Bindings.EnsureLocalBinding();
-        
+
             StartNewWebServer(port);
 
             foreach (var item in Kooboo.Data.GlobalDb.Bindings.All())
@@ -52,7 +52,7 @@ namespace Kooboo.Web
                     StartNewWebServer(item.Port);
                 }
             }
-                     
+
             if (!WebServers.ContainsKey(443))
             {
                 if (Data.AppSettings.IsOnlineServer)
@@ -60,7 +60,7 @@ namespace Kooboo.Web
                     StartNewWebServer(443);
                 }
 
-                else  if (!Lib.Helper.NetworkHelper.IsPortInUse(443))
+                else if (!Lib.Helper.NetworkHelper.IsPortInUse(443))
                 {
                     StartNewWebServer(443);
                 }
@@ -68,26 +68,16 @@ namespace Kooboo.Web
 
             JobWorker.Instance.Start();
         }
-                   
+
 
         public static void StartNewWebServer(int port)
         {
             if (!WebServers.ContainsKey(port))
             {
-                if (port == 443)
-                {
-                    Data.Server.WebServer server = new WebServer(port, new Kooboo.Web.Security.SslProvider());
-                    server.SetMiddleWares(Middleware);
-                    server.Start();
-                    WebServers[port] = server;
-                }
-                else
-                {
-                    Data.Server.WebServer server = new WebServer(port, null);
-                    server.SetMiddleWares(Middleware);
-                    server.Start();
-                    WebServers[port] = server;
-                }
+                var server = Kooboo.Data.Server.WebServerFactory.Create(port, Middleware);
+
+                server.Start();
+                WebServers[port] = server; 
             }
         }
 

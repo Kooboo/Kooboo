@@ -16,6 +16,7 @@ namespace Kooboo.App
         public static void StartAll()
         {
             Kooboo.Data.AppSettings.SetCustomSslCheck();
+
             var settingPort = AppSettingsUtility.Get("Port");
             if (string.IsNullOrEmpty(settingPort))
             {
