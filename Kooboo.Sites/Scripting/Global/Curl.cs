@@ -9,6 +9,9 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Net.Http.Headers;
 
 namespace Kooboo.Sites.Scripting.Global
 {
@@ -17,29 +20,29 @@ namespace Kooboo.Sites.Scripting.Global
     {
         public string get(string url)
         {
-            return _get(url);
+            return  _get(url).Result;
         }
 
         public string Get(string url, string username, string password)
         {
-            return _get(url, null, username, password);
+            return _get(url, null, username, password).Result;
         }
 
         public string post(string url, string data)
         {
-            return _Post(url, data);
+            return _Post(url, data).Result;
         }
 
         public string post(string url, string data, string userName, string password)
         {
-            return _Post(url, data, userName, password);
+            return _Post(url, data, userName, password).Result;
         }
 
         public string postData(string url, object data, string userName, string password)
         {
             string poststring = Kooboo.Lib.Helper.JsonHelper.Serialize(data);
 
-            return _Post(url, poststring, userName, password);
+            return _Post(url, poststring, userName, password).Result;
         }
 
 
@@ -108,27 +111,30 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
 
-        private static string _Post(string url, string json, string UserName = null, string Password = null)
+        private static async Task<string> _Post(string url, string json, string UserName = null, string Password = null)
         {
             try
             {
-                var postData = Encoding.UTF8.GetBytes(json);
-                var client = new WebClient();
-                client.Proxy = null;
+                var client = HttpClientHelper.Client;
 
-                client.Headers.Add("user-agent", DefaultUserAgent);
-                client.Headers.Add("Content-Type", "application/json;charset=UTF-8");
+                var content = new StringContent(json, Encoding.UTF8);
+                content.Headers.ContentType = new MediaTypeWithQualityHeaderValue("application/json");
+                var requestMessage = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(url),
+                    Method = HttpMethod.Post,
+                    Content=content,
+                };
                 if (!string.IsNullOrEmpty(UserName) && !string.IsNullOrEmpty(Password))
                 {
                     var bytes = Encoding.UTF8.GetBytes(String.Format("{0}:{1}", UserName, Password));
-                    client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(bytes));
+                    requestMessage.Headers.Add(HttpRequestHeader.Authorization.ToString(), "Basic " + Convert.ToBase64String(bytes));
                 }
 
-                SetSslValidate(url);
+                var response =await client.SendAsync(requestMessage);
 
-                var responseData = client.UploadData(url, "POST", postData);
-
-                return Encoding.UTF8.GetString(responseData);
+                var byteArray = await response.Content.ReadAsByteArrayAsync();
+                return Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
 
             }
             catch (Exception ex)
@@ -138,21 +144,7 @@ namespace Kooboo.Sites.Scripting.Global
 
         }
 
-        private static void SetSslValidate(string url)
-        {
-            if (url.ToLower().StartsWith("https", StringComparison.OrdinalIgnoreCase))
-            {
-                ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult;
-            }
-        }
-
-        private static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
-        {
-            //make self signed cert ,so not validate cert in client
-            return true;
-        }
-
-        private static string _get(string url, Dictionary<string, string> query = null, string UserName = null, string Password = null)
+        private static async Task<string> _get(string url, Dictionary<string, string> query = null, string UserName = null, string Password = null)
         {
 
             try
@@ -161,19 +153,23 @@ namespace Kooboo.Sites.Scripting.Global
                 {
                     url = UrlHelper.AppendQueryString(url, query);
                 }
-                var client = new WebClient();
-                client.Headers.Add("user-agent", DefaultUserAgent);
 
+                HttpClient client = HttpClientHelper.Client;
+                var requestMessage = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(url),
+                    Method = HttpMethod.Get
+                };
                 if (!string.IsNullOrEmpty(UserName) && !string.IsNullOrEmpty(Password))
                 {
                     var bytes = Encoding.UTF8.GetBytes(String.Format("{0}:{1}", UserName, Password));
-                    client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(bytes));
+                    requestMessage.Headers.Add(HttpRequestHeader.Authorization.ToString(), "Basic " + Convert.ToBase64String(bytes));
                 }
-                client.Proxy = null;
-                client.Encoding = Encoding.UTF8;
-                SetSslValidate(url);
-                var uri = new Uri(url);
-                return client.DownloadString(url);
+
+                var response = await client.SendAsync(requestMessage);
+
+                var byteArray = await response.Content.ReadAsByteArrayAsync();
+                return Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
             }
             catch (Exception ex)
             {
@@ -182,6 +178,5 @@ namespace Kooboo.Sites.Scripting.Global
 
         }
 
-        private static readonly string DefaultUserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 4.0.30319)";
     }
 }
