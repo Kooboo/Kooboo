@@ -382,7 +382,20 @@ namespace Kooboo.Data.Context
                     return null;
                 }
 
-                if (jsObject is IDictionary<string, object>)
+                if (jsObject is IDynamic)
+                {
+                    var content = jsObject as IDynamic;
+                    if (this.renderContext == null)
+                    {
+                        return content.GetValue(PropertyName);
+                    }
+                    else
+                    {
+                        return content.GetValue(PropertyName, renderContext);
+                    }
+                }
+
+                else  if (jsObject is IDictionary<string, object>)
                 {
                     IDictionary<String, Object> rightvalue = jsObject as IDictionary<String, Object>;
                     if (rightvalue != null)

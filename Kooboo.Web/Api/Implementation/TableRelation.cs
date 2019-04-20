@@ -22,22 +22,24 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in tablelist)
             {
-                var table = db.GetOrCreateTable(item);
-                if (table != null)
-                {
-                    TableFieldsViewModel model = new TableFieldsViewModel();
-
-                    model.Name = table.Name;
-                    foreach (var col in table.Setting.Columns)
+                if (!item.StartsWith("_sys_"))
+                { 
+                    var table = db.GetOrCreateTable(item);
+                    if (table != null)
                     {
-                        if (!col.IsSystem)
-                        {
-                            model.Fields.Add(col.Name);
-                        }
-                    }
-                    Result.Add(model);
-                }
+                        TableFieldsViewModel model = new TableFieldsViewModel();
 
+                        model.Name = table.Name;
+                        foreach (var col in table.Setting.Columns)
+                        {
+                            if (!col.IsSystem)
+                            {
+                                model.Fields.Add(col.Name);
+                            }
+                        }
+                        Result.Add(model);
+                    }
+                }
             }
 
             return Result;

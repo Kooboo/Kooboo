@@ -147,6 +147,7 @@ namespace Kooboo.Sites.Cache
                 || TValueType == typeof(SiteCluster)
                 || TValueType == typeof(Code)
                 || TValueType == typeof(KConfig)
+                || TValueType == typeof(TableRelation)
                 )
             {
                 return true;

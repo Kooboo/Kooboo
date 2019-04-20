@@ -16,14 +16,12 @@ namespace Kooboo.Sites.Scripting.Global
         {
             var db = Kooboo.Data.DB.GetKDatabase(this.context.WebSite);
             var tb =  db.GetOrCreateTable(Name);
-            return new KTable(tb); 
+            return new KTable(tb, this.context); 
         }
 
         public KTable Table(string Name)
         {
-            var db = Kooboo.Data.DB.GetKDatabase(this.context.WebSite);
-            var tb = db.GetOrCreateTable(Name);
-            return new KTable(tb);
+            return GetTable(Name); 
         }
 
         public KTable this[string key]

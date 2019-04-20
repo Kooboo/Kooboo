@@ -1,5 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
+using Kooboo.Data.Context;
 using Kooboo.IndexedDB.Dynamic;
 using System.Collections.Generic;
 
@@ -9,9 +10,12 @@ namespace Kooboo.Sites.Scripting.Global
     {
         public Table table { get; set; }
 
-        public KTable(Table table)
+        public   RenderContext context { get; set; }
+
+        public KTable(Table table, RenderContext context)
         {
-            this.table = table;  
+            this.table = table;
+            this.context = context; 
         }
 
         public KTable()
@@ -32,31 +36,34 @@ namespace Kooboo.Sites.Scripting.Global
             this.table.Delete(id); 
         }
 
-        public IDictionary<string, object> find(string searchCondition)
+        public DynamicTableObject  find(string searchCondition)
         { 
-            return this.table.Query.Find(searchCondition);  
+            var result =  this.table.Query.Find(searchCondition);
+            return DynamicTableObject.Create(result, this.table, this.context); 
         }
 
-        public IDictionary<string, object> find(string field, object value)
+        public DynamicTableObject find(string field, object value)
         {
-            return this.table.Query.Where(field, IndexedDB.Query.Comparer.EqualTo, value).FirstOrDefault(); 
+            var obj =  this.table.Query.Where(field, IndexedDB.Query.Comparer.EqualTo, value).FirstOrDefault();
+            return DynamicTableObject.Create(obj, this.table, this.context); 
         }
 
-        public IDictionary<string, object>[] findAll(string field, object value)
+        public DynamicTableObject[] findAll(string field, object value)
         {
             var list= this.table.Query.Where(field, IndexedDB.Query.Comparer.EqualTo, value).SelectAll();
-            return list.ToArray();
+            return DynamicTableObject.CreateList(list.ToArray(), this.table, this.context);
         }
          
-        public IDictionary<string, object>[] findAll(string condition)
+        public DynamicTableObject[]  findAll(string condition)
         {
             var list= this.table.Query.FindAll(condition);
-            return list.ToArray();
+            return DynamicTableObject.CreateList(list.ToArray(), this.table, this.context);  
         }
 
-        public object get(object id)
+        public DynamicTableObject get(object id)
         {  
-            return this.table.Get(id); 
+            var obj =  this.table.Get(id);
+            return DynamicTableObject.Create(obj, this.table, this.context); 
         }
         
         public TableQuery Query()
@@ -96,10 +103,10 @@ namespace Kooboo.Sites.Scripting.Global
               this.table.CreateIndex(fieldname, false);  
         }
          
-        public IDictionary<string, object>[] all()
+        public DynamicTableObject[] all()
         {
             var all= this.table.All();
-            return all.ToArray();
+            return DynamicTableObject.CreateList(all.ToArray(), this.table, this.context);
         }
 
     }

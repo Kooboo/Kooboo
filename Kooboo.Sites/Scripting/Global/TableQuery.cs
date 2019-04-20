@@ -12,7 +12,7 @@ namespace Kooboo.Sites.Scripting.Global
     {
         public TableQuery(KTable table)
         {
-            this.ktable = table; 
+            this.ktable = table;  
         }
 
         [Attributes.SummaryIgnore]
@@ -52,7 +52,7 @@ namespace Kooboo.Sites.Scripting.Global
             return this;
         }
 
-        public IDictionary<string, object>[] take(int count)
+        public DynamicTableObject[] take(int count)
         {
             var query = new IndexedDB.Dynamic.Query(this.ktable.table);
              
@@ -78,7 +78,8 @@ namespace Kooboo.Sites.Scripting.Global
                 }
             }
             
-            return query.Skip(this.skipcount).Take(count).ToArray();
+            var result =  query.Skip(this.skipcount).Take(count).ToArray();
+            return DynamicTableObject.CreateList(result, this.ktable.table, this.ktable.context); 
 
         }
          

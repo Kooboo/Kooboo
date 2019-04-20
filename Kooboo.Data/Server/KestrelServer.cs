@@ -152,7 +152,7 @@ namespace Kooboo.Data.Server
                     ssloption.ClientCertificateValidation = (x, y, z) => { return true; };
                     ssloption.HandshakeTimeout = new TimeSpan(0, 0, 30);
 
-                    ssloption.SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls11;
+                    ssloption.SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls;
 
                     lisOption.UseHttps(ssloption);
                 }
@@ -667,8 +667,7 @@ namespace Kooboo.Data.Server
                     Kooboo.Data.Log.HttpLog.Write(log);
                 }
             }
-
-
+            
         }
 
     }

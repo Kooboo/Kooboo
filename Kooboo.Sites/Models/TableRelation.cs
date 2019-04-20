@@ -17,14 +17,19 @@ namespace Kooboo.Sites.Models
         public string TableA { get; set; }
 
         public string FieldA { get; set; }
-
-
+         
         public string TableB { get; set; }
 
         public string FieldB { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public EnumTableRelation Relation { get; set; }
+
+        public override int GetHashCode()
+        {
+            string unique = this.TableA + this.TableB + this.FieldA + this.FieldB + this.Relation.ToString();
+            return Lib.Security.Hash.ComputeInt(unique); 
+        }
 
     }
 
