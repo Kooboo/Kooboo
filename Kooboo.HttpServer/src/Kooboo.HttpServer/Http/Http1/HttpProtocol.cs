@@ -438,6 +438,11 @@ namespace Kooboo.HttpServer.Http
                         if (BeginRead(out var awaitable))
                         {
                             result = await awaitable;
+                            if (result.Buffer.IsEmpty)
+                            {
+                                // Avoid CPU 100% when empty read
+                                await Task.Delay(1);
+                            }
                         }
                     } while (!TryParseRequest(result, out endConnection));
 

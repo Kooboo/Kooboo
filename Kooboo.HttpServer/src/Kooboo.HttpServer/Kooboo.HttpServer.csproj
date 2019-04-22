@@ -45,7 +45,6 @@
     <Compile Remove="Infrastructure\Disposable.cs" />
     <Compile Remove="Infrastructure\DisposableAction.cs" />
     <Compile Remove="Infrastructure\HttpConnectionManagerShutdownExtensions.cs" />
-    <Compile Remove="Infrastructure\HttpHeartbeatManager.cs" />
     <Compile Remove="Infrastructure\IDebugger.cs" />
     <Compile Remove="Infrastructure\IKestrelTrace.cs" />
     <Compile Remove="Infrastructure\KestrelEventSource.cs" />
