@@ -12,6 +12,8 @@ namespace Kooboo.Data.Interface
 
         void AddUserNameFailure(string UserName);
 
-        bool IsUserNameBlocked(string name);   
+        bool IsUserNameBlocked(string name);
+
+        void AddLoginOK(string username, string ip); 
     }
 } 

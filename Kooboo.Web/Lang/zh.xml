@@ -98,6 +98,8 @@
   <key id="Server address">服务器地址</key>
   <key id="Ok">OK</key>
   <key id="Sub domain">子域名</key>
+  <key id="Event">事件</key>
+  <key id="xxxxvalue">xxxxvalue</key>
   <key id="Email">邮件</key>
   <key id="Email address">邮箱地址</key>
   <key id="After submiting your request, we will send you a verification mail, please check in time">提交后，我们将发送一封验证邮件，请及时查收。</key>
@@ -416,7 +418,6 @@
   <key id="The following message will be moved">移动以下消息</key>
   <key id="Not Spam">非垃圾邮件</key>
   <key id="Restore to">恢复</key>
-  <key id="Event">事件</key>
   <key id="New rule">新建规则</key>
   <key id="You do not have any rules yet.">您还没有创建任何规则引擎</key>
   <key id="Mine">我的</key>
@@ -534,6 +535,7 @@
   <key id="Upload files">上传文件</key>
   <key id="Key-Value Store">键值存储</key>
   <key id="Key">键</key>
+  <key id="Table Relation">Table Relation</key>
   <key id="Data table">数据表</key>
   <key id="New column">新建字段</key>
   <key id="Column name">字段名</key>
@@ -879,6 +881,10 @@
   <key id="Minimal length">最小长度</key>
   <key id="Maximum length">最大长度</key>
   <key id="Update">更新</key>
+  <key id="Table A">Table A</key>
+  <key id="Field A">Field A</key>
+  <key id="Table B">Table B</key>
+  <key id="Field B">Field B</key>
   <key id="No condition">暂无条件</key>
   <key id="No activity">暂无活动</key>
   <key id="Add activity">添加活动</key>
@@ -1385,6 +1391,10 @@
   <key id="Storage">存储</key>
   <key id="You have no changes">没有更新s</key>
   <key id="User does not own website">该网站不归该用户所有</key>
+  <key id="OneOne">OneOne</key>
+  <key id="OneMany">OneMany</key>
+  <key id="ManyMany">ManyMany</key>
+  <key id="ManyOne">ManyOne</key>
   <key id="Exceed max template size">超过最大的模板大小</key>
   <key id="Share template failed">分享站点失败</key>
   <key id="Invalid package id">无效ID</key>
@@ -1393,6 +1403,7 @@
   <key id="SiteName is taken">站点名称已被使用</key>
   <key id="template package not found">未找到模板</key>
   <key id="UserKey has been taken">自定义主键已经存在</key>
+  <key id="user or ip temporarily lockout">user or ip temporarily lockout</key>
   <key id="User name or password not valid">用户名或密码无效</key>
   <key id="User not login">用户未登录</key>
   <key id="Server url not found">网址未找到</key>

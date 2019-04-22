@@ -30,6 +30,7 @@ namespace Kooboo.Data.Service
             return true; 
         }
 
+         
         public static void AddLoginFail(string UserName, string IP)
         {
             if (BlockingService !=null)
@@ -37,7 +38,14 @@ namespace Kooboo.Data.Service
                 BlockingService.AddIpFailure(IP);
                 BlockingService.AddUserNameFailure(UserName); 
             }
-        } 
+        }
 
+        public static void AddLoginOK(string UserName, string IP)
+        {
+            if (BlockingService != null)
+            {
+                BlockingService.AddLoginOK(UserName, IP);  
+            }
+        } 
     }
 }

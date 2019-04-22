@@ -98,6 +98,8 @@
   <key id="Server address">Server address</key>
   <key id="Ok">OK</key>
   <key id="Sub domain">Sub domain</key>
+  <key id="Event">Event</key>
+  <key id="xxxxvalue">xxxxvalue</key>
   <key id="Email">Email</key>
   <key id="Email address">Email Address</key>
   <key id="After submiting your request, we will send you a verification mail, please check in time">After submiting your request, we will send you a verification mail, please check in time</key>
@@ -416,7 +418,6 @@
   <key id="The following message will be moved">The following message will be moved</key>
   <key id="Not Spam">Not Spam</key>
   <key id="Restore to">Restore to</key>
-  <key id="Event">Event</key>
   <key id="New rule">New rule</key>
   <key id="You do not have any rules yet.">You do not have any rules yet.</key>
   <key id="Mine">Mine</key>
@@ -534,6 +535,7 @@
   <key id="Upload files">Upload files</key>
   <key id="Key-Value Store">Key-Value Store</key>
   <key id="Key">Key</key>
+  <key id="Table Relation">Table Relation</key>
   <key id="Data table">Data table</key>
   <key id="New column">New column</key>
   <key id="Column name">Column name</key>
@@ -879,6 +881,10 @@
   <key id="Minimal length">Minimal length</key>
   <key id="Maximum length">Maximum length</key>
   <key id="Update">Update</key>
+  <key id="Table A">Table A</key>
+  <key id="Field A">Field A</key>
+  <key id="Table B">Table B</key>
+  <key id="Field B">Field B</key>
   <key id="No condition">No condition</key>
   <key id="No activity">No activity</key>
   <key id="Add activity">Add activity</key>
@@ -1385,6 +1391,10 @@
   <key id="Storage">Storage</key>
   <key id="You have no changes">You have no changes</key>
   <key id="User does not own website">User does not own website</key>
+  <key id="OneOne">OneOne</key>
+  <key id="OneMany">OneMany</key>
+  <key id="ManyMany">ManyMany</key>
+  <key id="ManyOne">ManyOne</key>
   <key id="Exceed max template size">Exceed max template size</key>
   <key id="Share template failed">Share template failed</key>
   <key id="Invalid package id">Invalid package id</key>
@@ -1393,6 +1403,7 @@
   <key id="SiteName is taken">SiteName is taken</key>
   <key id="template package not found">template package not found</key>
   <key id="UserKey has been taken">UserKey has been taken</key>
+  <key id="user or ip temporarily lockout">user or ip temporarily lockout</key>
   <key id="User name or password not valid">User name or password not valid</key>
   <key id="User not login">User not login</key>
   <key id="Server url not found">Server url not found</key>

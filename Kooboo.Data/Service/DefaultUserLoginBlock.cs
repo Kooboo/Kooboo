@@ -7,12 +7,12 @@ namespace Kooboo.Data.Service
 {
     public class DefaultUserLoginBlock : ILoginBlock
     {
-        public int MaxFailure { get; set; } = 5; 
+        public int MaxFailure { get; set; } = 5;
 
         public Dictionary<string, List<DateTime>> IPFailure { get; set; } = new Dictionary<string, List<DateTime>>();
 
         public Dictionary<Guid, List<DateTime>> UserNameFailure { get; set; } = new Dictionary<Guid, List<DateTime>>();
-          
+
         public virtual void AddIpFailure(string IP)
         {
             if (!IPFailure.ContainsKey(IP))
@@ -29,12 +29,29 @@ namespace Kooboo.Data.Service
             }
         }
 
+        public void AddLoginOK(string username, string ip)
+        {
+            if (ip != null)
+            {
+                if (IPFailure.ContainsKey(ip))
+                {
+                    IPFailure.Remove(ip);
+                }
+            }
+
+            if (username !=null)
+            {
+                var userid = Lib.Security.Hash.ComputeGuidIgnoreCase(username);
+                UserNameFailure.Remove(userid);  
+            }
+        }
+
         public void AddUserNameFailure(string UserName)
         {
             if (UserName == null)
             {
                 return;
-            } 
+            }
             var userid = Lib.Security.Hash.ComputeGuidIgnoreCase(UserName);
 
             if (!UserNameFailure.ContainsKey(userid))
@@ -57,14 +74,14 @@ namespace Kooboo.Data.Service
             {
                 var items = IPFailure[IP];
 
-                items.RemoveAll(o => o < DateTime.Now.AddHours(-4)); 
+                items.RemoveAll(o => o < DateTime.Now.AddHours(-4));
 
-                if (items.Count> MaxFailure)
+                if (items.Count > MaxFailure)
                 {
-                    return true; 
+                    return true;
                 }
             }
-            return false; 
+            return false;
         }
 
         public bool IsUserNameBlocked(string UserName)
@@ -87,8 +104,8 @@ namespace Kooboo.Data.Service
                     return true;
                 }
             }
-            return false;  
+            return false;
         }
     }
-     
+
 }

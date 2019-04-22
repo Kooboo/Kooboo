@@ -98,6 +98,8 @@
   <key id="Server address">Адрес сервера</key>
   <key id="Ok">OK</key>
   <key id="Sub domain">Имя поддомена</key>
+  <key id="Event">События</key>
+  <key id="xxxxvalue">xxxxvalue</key>
   <key id="Email">Почта</key>
   <key id="Email address">Адрес электронной почты</key>
   <key id="After submiting your request, we will send you a verification mail, please check in time">После отправки, мы отправим письмо проверки, пожалуйста проверим своевременное</key>
@@ -416,7 +418,6 @@
   <key id="The following message will be moved">Переместите следующее сообщение</key>
   <key id="Not Spam">Не спам</key>
   <key id="Restore to">Восстановление</key>
-  <key id="Event">События</key>
   <key id="New rule">Новые правила</key>
   <key id="You do not have any rules yet.">Вы не создали механизм правил</key>
   <key id="Mine">Мой.</key>
@@ -534,6 +535,7 @@
   <key id="Upload files">Загрузка файлов</key>
   <key id="Key-Value Store">Хранилище ключей</key>
   <key id="Key">Ключи</key>
+  <key id="Table Relation">Table Relation</key>
   <key id="Data table">Таблица данных</key>
   <key id="New column">Новое поле</key>
   <key id="Column name">Имя поля</key>
@@ -879,6 +881,10 @@
   <key id="Minimal length">Минимальная длина</key>
   <key id="Maximum length">Максимальная длина</key>
   <key id="Update">Обновление</key>
+  <key id="Table A">Table A</key>
+  <key id="Field A">Field A</key>
+  <key id="Table B">Table B</key>
+  <key id="Field B">Field B</key>
   <key id="No condition">Временно и безоговорочно.</key>
   <key id="No activity">Отсутствие активности</key>
   <key id="Add activity">Добавление действий</key>
@@ -1385,6 +1391,10 @@
   <key id="Storage">Хранение</key>
   <key id="You have no changes">Нет обновления s</key>
   <key id="User does not own website">Сайт не принадлежит пользователю</key>
+  <key id="OneOne">OneOne</key>
+  <key id="OneMany">OneMany</key>
+  <key id="ManyMany">ManyMany</key>
+  <key id="ManyOne">ManyOne</key>
   <key id="Exceed max template size">Превышен максимальный размер шаблона</key>
   <key id="Share template failed">Сбой совместного использования сайта</key>
   <key id="Invalid package id">Недопустимый идентификатор id</key>
@@ -1393,6 +1403,7 @@
   <key id="SiteName is taken">Имя сайта используется</key>
   <key id="template package not found">Шаблон не найден</key>
   <key id="UserKey has been taken">Пользовательский первичный ключ уже существует</key>
+  <key id="user or ip temporarily lockout">user or ip temporarily lockout</key>
   <key id="User name or password not valid">Недопустимое имя пользователя или пароль</key>
   <key id="User not login">Пользователь не вошел в систему</key>
   <key id="Server url not found">Url не найден</key>
