@@ -103,6 +103,18 @@ namespace Kooboo.IndexedDB.Dynamic
             return result;
         }
 
+
+        public static  T ChangeType<T>(object value)
+        {
+            var type = typeof(T);
+            var newvalue = ChangeType(value, type); 
+            if (newvalue != null)
+            {
+                return (T)newvalue; 
+            }
+            return default(T); 
+        }
+
         public static object GetValue(IDictionary<string, object> Dynamic, string FieldName, Type ClrType)
         {
             if (Dynamic.ContainsKey(FieldName))

@@ -409,7 +409,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                     if (item.IsIncremental && !Update)
                     {
-                        if (Value == null)
+                        if (Value == null || Accessor.ChangeType<long>(Value) ==0)
                         {
                             var index = this.Indexs.Find(o => o.FieldName == item.Name);
                             Value = index.NextIncrement();
