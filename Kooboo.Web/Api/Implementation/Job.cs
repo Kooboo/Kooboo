@@ -173,7 +173,7 @@ namespace Kooboo.Web.Api.Implementation
                             repeatjob.Frequence = RepeatFrequence.Day;
                             break;
                         }
-                    case "minute":
+                    case "minutes":
                         {
                             repeatjob.Frequence = RepeatFrequence.Minutes;
                             break;
