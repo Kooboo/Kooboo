@@ -51,7 +51,7 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             get
             {
-                return this.PrimaryBtree.Count(false); 
+                return this.PrimaryBtree.Count(false);
             }
         }
 
@@ -59,7 +59,7 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             get
             {
-                return this.length; 
+                return this.length;
             }
         }
 
@@ -386,7 +386,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     if (!data.ContainsKey(item.Name))
                     {
                         data.Add(item.Name, Value);
-                    } 
+                    }
                 }
 
                 else
@@ -409,13 +409,17 @@ namespace Kooboo.IndexedDB.Dynamic
 
                     if (item.IsIncremental && !Update)
                     {
-                        var index = this.Indexs.Find(o => o.FieldName == item.Name);
-                        Value = index.NextIncrement();
-                       if (item.IsPrimaryKey)
+                        if (Value == null || Accessor.ChangeType<long>(Value) ==0)
+                        {
+                            var index = this.Indexs.Find(o => o.FieldName == item.Name);
+                            Value = index.NextIncrement();
+                        }
+
+                        if (item.IsPrimaryKey && Value != null)
                         {
                             var keyvalue = _ParseKey(Value);
-                            data[Dynamic.Constants.DefaultIdFieldName] = keyvalue; 
-                        }
+                            data[Dynamic.Constants.DefaultIdFieldName] = keyvalue;
+                        } 
                     }
 
                     if (Value == null)
@@ -478,7 +482,7 @@ namespace Kooboo.IndexedDB.Dynamic
             }
         }
 
-        public Guid Add(object Value, bool CheckCol = false,Action<long> CallBackPos = null)
+        public Guid Add(object Value, bool CheckCol = false, Action<long> CallBackPos = null)
         {
             lock (_Locker)
             {
@@ -746,7 +750,7 @@ namespace Kooboo.IndexedDB.Dynamic
             lock (_Locker)
             {
                 var primary = this.Indexs.Find(o => o.IsSystem);
-                 
+
                 var blockposition = primary.Get(key);
 
                 if (blockposition <= 0)
