@@ -47,9 +47,10 @@ namespace Kooboo.HttpServer
                 ThreadPool = GetThreadPool(logger),
                 Application = new HttpApplication(options.HttpHandler)
             };
+            var httpHeartbeatManager = new HttpHeartbeatManager(ServiceContext.ConnectionManager);
             //todo add http2 heatbeatManager
             heartbeat = new Heartbeat(
-                 new IHeartbeatHandler[] { ServiceContext.DateHeaderValueManager },
+                 new IHeartbeatHandler[] { httpHeartbeatManager },
                 ServiceContext.SystemClock,
                 logger);
         }
@@ -74,6 +75,8 @@ namespace Kooboo.HttpServer
 
             _listenSocket = listenSocket;
             _listenTask = Task.Run(() => Loop());
+
+            heartbeat.Start();
         }
 
         private async Task Loop()

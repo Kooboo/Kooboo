@@ -11,6 +11,8 @@ namespace Kooboo.HttpServer
     {
         public string ConnectionId { get; set; }
 
+        public long HttpConnectionId { get; set; }
+
         public IPEndPoint LocalEndPoint { get; set; }
 
         public IPEndPoint RemoteEndPoint { get; set; }

@@ -32,6 +32,7 @@ namespace Kooboo.HttpServer.Sockets
         private static Action<Exception, object> _completeTcs = CompleteTcs;
         private volatile bool _aborted;
 
+        private static long _lastHttpConnectionId = long.MinValue;
 
         public SocketConnection(Socket socket, ServiceContext context)
         {
@@ -42,9 +43,11 @@ namespace Kooboo.HttpServer.Sockets
             var localEndPoint = (IPEndPoint)_socket.LocalEndPoint;
             var remoteEndPoint = (IPEndPoint)_socket.RemoteEndPoint;
 
+            var httpConnectionId = Interlocked.Increment(ref _lastHttpConnectionId);
             ConnectionFeature = new ConnectionFeature
             {
                 ConnectionId = CorrelationIdGenerator.GetNextId(),
+                HttpConnectionId= httpConnectionId,
                 LocalEndPoint = localEndPoint,
                 RemoteEndPoint = remoteEndPoint,
             };
