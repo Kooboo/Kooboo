@@ -17,8 +17,7 @@ namespace Kooboo.Sites.Scripting.Global
         {
             this.obj = orgObj;
             this.context = renderContext;
-            this.table = orgtable; 
-
+            this.table = orgtable;  
         }
 
         public object this[string key]
@@ -26,6 +25,10 @@ namespace Kooboo.Sites.Scripting.Global
             get
             {
                 return GetValueFromDict(key);
+            }
+            set
+            {
+                this.obj[key] = value; 
             }
         }
 

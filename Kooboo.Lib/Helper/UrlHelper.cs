@@ -672,7 +672,13 @@ namespace Kooboo.Lib.Helper
                 if (extension == ".ts" || extension == ".coffee" )
                 {
                     return UrlFileType.JavaScript;
-                }
+                } 
+               
+            }
+
+            if (string.IsNullOrEmpty(ContentType))
+            {
+                ContentType = IOHelper.MimeType(url); 
             }
 
             if (!string.IsNullOrWhiteSpace(ContentType))
@@ -703,6 +709,22 @@ namespace Kooboo.Lib.Helper
                 else if (ContentType.Contains("application"))
                 {
                     return UrlFileType.File;
+                }
+                else if (ContentType.Contains("font"))
+                {
+                    return UrlFileType.File; 
+                }
+                else if (ContentType.Contains("video"))
+                {
+                    return UrlFileType.File; 
+                }
+                else if (ContentType.Contains("audio"))
+                {
+                    return UrlFileType.File; 
+                }
+                else if (ContentType.StartsWith("x-"))
+                {
+                    return UrlFileType.File; 
                 }
             }
 
@@ -741,7 +763,7 @@ namespace Kooboo.Lib.Helper
             }
 
 
-            return UrlFileType.File;
+            return UrlFileType.PageOrView;
 
         }
 

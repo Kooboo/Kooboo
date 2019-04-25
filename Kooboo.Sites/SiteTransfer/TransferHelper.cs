@@ -51,21 +51,21 @@ namespace Kooboo.Sites.SiteTransfer
                 if (PossibleDomain.Contains("."))
                 {
                     // and the part after dot must be like domains... 
-                    int index = PossibleDomain.LastIndexOf("."); 
+                    int index = PossibleDomain.LastIndexOf(".");
                     if (index > -1)
                     {
                         var lastpart = PossibleDomain.Substring(index);
-                        lastpart = lastpart.Trim(); 
+                        lastpart = lastpart.Trim();
                         if (lastpart.StartsWith("."))
                         {
-                            lastpart = lastpart.Substring(1); 
+                            lastpart = lastpart.Substring(1);
                         }
-                        if (lastpart !=null && OnlyAscii(lastpart.Trim()))
+                        if (lastpart != null && OnlyAscii(lastpart.Trim()))
                         {
-                            return PossibleDomain; 
+                            return PossibleDomain;
                         }
                     }
-                 
+
                 }
             }
 
@@ -76,19 +76,19 @@ namespace Kooboo.Sites.SiteTransfer
         {
             if (string.IsNullOrWhiteSpace(input))
             {
-                return false; 
+                return false;
             }
 
             for (int i = 0; i < input.Length; i++)
             {
-                var currentchar = input[i]; 
+                var currentchar = input[i];
                 if (!Lib.Helper.CharHelper.IsAscii(currentchar))
                 {
-                    return false; 
+                    return false;
                 }
             }
 
-            return true; 
+            return true;
         }
 
         /// <summary>
@@ -174,11 +174,14 @@ namespace Kooboo.Sites.SiteTransfer
             var oldroute = sitedb.Routes.GetByObjectId(PageId);
             if (oldroute != null)
             {
-                Routing.Route newroute = new Routing.Route();
-                newroute.Name = relativeurl;
-                newroute.objectId = oldroute.Id;
-                newroute.DestinationConstType = ConstObjectType.Route;
-                sitedb.Routes.appendRoute(newroute, default(Guid));
+                if (!Lib.Helper.StringHelper.IsSameValue(oldroute.Name, relativeurl))
+                { 
+                    Routing.Route newroute = new Routing.Route();
+                    newroute.Name = relativeurl;
+                    newroute.objectId = oldroute.Id;
+                    newroute.DestinationConstType = ConstObjectType.Route;
+                    sitedb.Routes.appendRoute(newroute, default(Guid));
+                }
             }
             else
             {
@@ -192,7 +195,7 @@ namespace Kooboo.Sites.SiteTransfer
 
         public static SiteObject AddDownload(DownloadManager manager, DownloadContent download, string absoluteUrl, bool DefaultStartPage, bool AnalyzePage, string originalimporturl = "")
         {
-            var sitedb = manager.SiteDb; 
+            var sitedb = manager.SiteDb;
 
             bool issamehost = UrlHelper.isSameHost(originalimporturl, absoluteUrl);
 
@@ -261,8 +264,8 @@ namespace Kooboo.Sites.SiteTransfer
 
                         if (page.Name == "untitled")
                         {
-                           var titleel =  Service.DomService.GetTitleElement(page.Dom);  
-                            if (titleel!=null)
+                            var titleel = Service.DomService.GetTitleElement(page.Dom);
+                            if (titleel != null)
                             {
                                 string title = titleel.InnerHtml;
                                 if (!string.IsNullOrEmpty(title))
@@ -270,7 +273,7 @@ namespace Kooboo.Sites.SiteTransfer
                                     title = Lib.Helper.StringHelper.SementicSubString(title, 0, 30);
                                     page.Name = title.Trim();
                                 }
-                                
+
                             }
                         }
 
@@ -284,8 +287,8 @@ namespace Kooboo.Sites.SiteTransfer
                     {
                         string csstext = download.GetString();
                         if (AnalyzePage)
-                        { 
-                            CssManager.ProcessResource(ref csstext, absoluteUrl, manager, default(Guid));  
+                        {
+                            CssManager.ProcessResource(ref csstext, absoluteUrl, manager, default(Guid));
                         }
                         var style = new Style();
                         style.Body = csstext;
@@ -312,7 +315,7 @@ namespace Kooboo.Sites.SiteTransfer
                             Name = UrlHelper.FileName(relativeurl),
                         };
 
-                      
+
                         sitedb.Routes.AddOrUpdate(relativeurl, koobooimage, manager.UserId);
                         sitedb.Images.AddOrUpdate(koobooimage, manager.UserId);
                         return koobooimage;
@@ -359,8 +362,8 @@ namespace Kooboo.Sites.SiteTransfer
                     }
             }
         }
-        
-         
+
+
         public static bool IsPageUrl(string url)
         {
             var filetype = Lib.Helper.UrlHelper.GetFileType(url);
@@ -378,8 +381,8 @@ namespace Kooboo.Sites.SiteTransfer
         {
             if (string.IsNullOrEmpty(url))
             {
-                return false; 
-            } 
+                return false;
+            }
             List<string> keywords = new List<string>();
             keywords.Add("login");
             keywords.Add("logon");
@@ -389,7 +392,7 @@ namespace Kooboo.Sites.SiteTransfer
             keywords.Add("forgetpassword");
             keywords.Add("profile");
             keywords.Add("privacy");
-            keywords.Add("cookie"); 
+            keywords.Add("cookie");
 
             var lower = url.ToLower();
 
@@ -397,18 +400,18 @@ namespace Kooboo.Sites.SiteTransfer
 
             if (string.IsNullOrEmpty(relative) || relative.Length < 5)
             {
-                return false; 
+                return false;
             }
 
             foreach (var item in keywords)
             {
                 if (relative.Contains(item))
                 {
-                    return true; 
+                    return true;
                 }
-            } 
-             
-            return false; 
+            }
+
+            return false;
         }
 
         public static string TrimQuestionMark(string input)

@@ -315,7 +315,7 @@ namespace Kooboo.IndexedDB.Dynamic
             Type objecttype = null;
 
             if (idict == null)
-            {
+            { 
                 dynamicobj = dataobj as IDictionary<string, object>;
             }
 

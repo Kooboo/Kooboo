@@ -166,7 +166,7 @@ namespace Kooboo.Sites.Service
 
             foreach (var item in input)
             {
-                if (!item.RawUrl.StartsWith("#"))
+                if (!item.RawUrl.StartsWith("#") && !item.RawUrl.Contains("/#"))
                 {
                     result.Add(item); 
                 }
