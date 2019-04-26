@@ -80,6 +80,10 @@ namespace Kooboo.Lib.Helper
                     return "audio/aiff";
                 case ".application":
                     return "application/x-ms-application";
+                case ".apk":
+                    return "application/vnd.android.package-archive";
+                case ".xapk":
+                    return "application/vnd.android.package-archive"; 
                 case ".art":
                     return "image/x-jg";
                 case ".asd":
