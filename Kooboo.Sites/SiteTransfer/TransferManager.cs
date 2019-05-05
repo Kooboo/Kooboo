@@ -167,10 +167,7 @@ namespace Kooboo.Sites.SiteTransfer
                     }
                 }
             }
-   
-
-
-
+    
             ///// 301, 302, will be converted to 200 and return back as well. So it is safe to == 200.
             if (download != null && download.StatusCode == 200)
             {
@@ -187,6 +184,10 @@ namespace Kooboo.Sites.SiteTransfer
 
                 siteDb.TransferTasks.ReleaseDownload(RelativeUrl); 
                 return downloadobject;
+            }
+            else
+            {
+                siteDb.TransferTasks.ReleaseDownload(RelativeUrl); 
             }
 
             //download failed. 

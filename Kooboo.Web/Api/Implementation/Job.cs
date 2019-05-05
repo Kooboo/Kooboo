@@ -178,6 +178,11 @@ namespace Kooboo.Web.Api.Implementation
                             repeatjob.Frequence = RepeatFrequence.Minutes;
                             break;
                         }
+                    case "minute": 
+                        {
+                            repeatjob.Frequence = RepeatFrequence.Minutes;
+                            break;
+                        }
                     case "second":
                         {
                             repeatjob.Frequence = RepeatFrequence.Second;
@@ -197,13 +202,14 @@ namespace Kooboo.Web.Api.Implementation
                         break;
                 }
 
-                GlobalDb.RepeatingJob().Add(repeatjob);
+                GlobalDb.RepeatingJob().Add(repeatjob); 
+                GlobalDb.RepeatingJob().Close();  
             }
             else
             {
                 GlobalDb.ScheduleJob().Add(newjob, model.StartTime);
-            }
-
+                GlobalDb.ScheduleJob().Close(); 
+            } 
         }
 
         [RequireModel(typeof(JobDeleteViewModel))]
@@ -218,40 +224,18 @@ namespace Kooboo.Web.Api.Implementation
             if (model.IsRepeat)
             {
                 GlobalDb.RepeatingJob().Del(model.Id);
+                GlobalDb.RepeatingJob().Close(); 
             }
             else
             {
                 GlobalDb.ScheduleJob().Delete(model.DayInt, model.SecondOfDay, model.BlockPosition);
+                GlobalDb.ScheduleJob().Close(); 
             }
         }
 
         public void Deletes(ApiCall call)
         {
-            //List<JobDeleteViewModel> deletes = null;
-
-            //string json = call.Context.Request.Body;
-
-            //List<Guid> ids = null; 
-
-            //try
-            //{
-            //    deletes = Lib.Helper.JsonHelper.Deserialize<List<JobDeleteViewModel>>(json);
-
-            //    if (deletes != null)
-            //    {
-            //        foreach (var item in deletes)
-            //        {
-            //            _delete(item);
-            //        }
-            //        return;
-            //    }
-            //}
-            //catch (Exception)
-            //{
-
-            //}
-
-            // if not return.
+ 
             try
             {
 

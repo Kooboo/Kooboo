@@ -40,7 +40,14 @@ namespace Kooboo.Sites.Sync
                             return;
                         }
 
-                        IOHelper.EnsureDirectoryExists(WebSite.DiskSyncFolder);
+                        try
+                        {
+                            IOHelper.EnsureDirectoryExists(WebSite.DiskSyncFolder);
+                        }
+                        catch (Exception)
+                        {
+                            return;
+                        }
 
                         FileSystemWatcher watcher = new System.IO.FileSystemWatcher(WebSite.DiskSyncFolder);
 

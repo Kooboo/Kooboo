@@ -709,5 +709,20 @@ namespace Kooboo.IndexedDB.Schedule
             }
         }
 
+
+        public void Close()
+        {
+           if (_ContentStream !=null)
+            {
+                _ContentStream.Close();
+                _ContentStream = null; 
+            }
+
+           if (_RecordStream !=null)
+            {
+                _RecordStream.Close();
+                _RecordStream = null; 
+            }
+        }
     }
 }
