@@ -34,14 +34,14 @@ namespace Kooboo.Sites.Helper
             var langcontent = Content.GetContentStore(lang);
             if (langcontent != null)
             {
-                model.Values = langcontent.FieldValues;
+                model.TextValues = langcontent.FieldValues;
             }
 
             if (Properties != null)
             {
                 foreach (var item in Properties.Where(o => !o.IsSystemField && !o.MultipleLanguage))
                 {
-                    if (!model.Values.ContainsKey(item.Name) || string.IsNullOrEmpty(model.Values[item.Name]))
+                    if (!model.TextValues.ContainsKey(item.Name) || string.IsNullOrEmpty(model.TextValues[item.Name]))
                     {
                         bool found = false;
                         foreach (var citem in Content.Contents)
@@ -50,7 +50,7 @@ namespace Kooboo.Sites.Helper
                             {
                                 if (fielditem.Key == item.Name)
                                 {
-                                    model.Values[item.Name] = fielditem.Value;
+                                    model.TextValues[item.Name] = fielditem.Value;
                                     found = true;
                                     break;
                                 }
@@ -114,7 +114,7 @@ namespace Kooboo.Sites.Helper
                     {
                         var displayname = displayFields[item.Key];
 
-                        model.Values[displayname] = item.Value;
+                        model.TextValues[displayname] = item.Value;
                     }
                 }
             }
@@ -123,7 +123,7 @@ namespace Kooboo.Sites.Helper
                 if (!string.IsNullOrEmpty(Content.UserKey))
                 {
                     var userKeyField = ContentType.Properties.Find(o => o.Name == "UserKey");
-                    model.Values[userKeyField.DisplayName] = Content.UserKey;
+                    model.TextValues[userKeyField.DisplayName] = Content.UserKey;
                 }
             }
             return model;
@@ -151,7 +151,7 @@ namespace Kooboo.Sites.Helper
 
             string text = string.Empty;
 
-            foreach (var item in view.Values)
+            foreach (var item in view.TextValues)
             {
                 text += ShowText(item.Value) + " ";
                 if (!string.IsNullOrEmpty(text) && text.Length > 150)
@@ -339,7 +339,7 @@ namespace Kooboo.Sites.Helper
 
         public static string GetTitle(SiteDb sitedb, TextContentViewModel contentview)
         {
-            if (contentview == null || !contentview.Values.Any())
+            if (contentview == null || !contentview.TextValues.Any())
             {
                 return string.Empty;
             }
@@ -373,7 +373,7 @@ namespace Kooboo.Sites.Helper
                     }
                 }
             }
-            return contentview.Values.First().Value;
+            return contentview.TextValues.First().Value;
         }
 
     }

@@ -76,7 +76,7 @@ namespace Kooboo.Sites.Repository
             foreach (var item in list.Where(o => o.Online))
             {
                 var view = GetView(item, CurrentCulture);
-                if (view != null && view.Values.Count() > 0)
+                if (view != null && view.TextValues.Count() > 0)
                 {
                     return view;
                 }
@@ -85,7 +85,7 @@ namespace Kooboo.Sites.Repository
             foreach (var item in list.Where(o => !o.Online))
             {
                 var view = GetView(item, CurrentCulture);
-                if (view != null && view.Values.Count() > 0)
+                if (view != null && view.TextValues.Count() > 0)
                 {
                     return view;
                 }

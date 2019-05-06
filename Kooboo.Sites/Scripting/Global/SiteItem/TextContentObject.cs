@@ -289,7 +289,9 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
                 result["id"] = this.TextContent.Id;
                 result["userKey"] = this.TextContent.UserKey;
-                result["lastModified"] = this.TextContent.LastModified; 
+                result["lastModified"] = this.TextContent.LastModified;
+                result["ContentTypeId"] = this.TextContent.ContentTypeId.ToString();
+                result["ParentId"] = this.TextContent.ParentId.ToString(); 
 
                 return result;
 
@@ -363,12 +365,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
         {
             get
             {
-                var store = this.TextContent.GetContentStore(this.Culture);
-                if (store != null)
-                {
-                    return store.FieldValues.Values.ToList<object>();
-                }
-                return new List<object>();
+                return this.data; 
             }
         }
 

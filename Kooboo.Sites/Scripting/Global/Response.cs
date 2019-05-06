@@ -1,7 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data.Context;
-using System.Collections.Generic;
+using System.Collections.Generic; 
+using System.Collections; 
 
 namespace Kooboo.Sites.Scripting.Global
 {
@@ -22,7 +23,25 @@ namespace Kooboo.Sites.Scripting.Global
             string output = null; 
             if (!(value is string) && value.GetType().IsClass)
             {
-                output = Lib.Helper.JsonHelper.SerializeCaseSensitive(value);
+                if (value is Kooboo.Data.Interface.IDynamic)
+                {
+                    var dynamic = value as Kooboo.Data.Interface.IDynamic;
+                    output = Lib.Helper.JsonHelper.SerializeCaseSensitive(dynamic.Values); 
+                } 
+                else if (value is IDictionary<string, object>)
+                {
+                    var idict = value as IDictionary<string, object>;
+                    output = Lib.Helper.JsonHelper.SerializeCaseSensitive(idict.Values);
+                }
+                else if (value is IDictionary<string, string>)
+                {
+                    var idict = value as IDictionary<string, string>;
+                    output = Lib.Helper.JsonHelper.SerializeCaseSensitive(idict.Values);
+                }
+                else
+                {
+                    output = Lib.Helper.JsonHelper.SerializeCaseSensitive(value);
+                } 
             }
             else
             {

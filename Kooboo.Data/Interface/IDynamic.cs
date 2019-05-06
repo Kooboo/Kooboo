@@ -2,6 +2,7 @@
 //All rights reserved.
 using Kooboo.Data.Context;
 using System;
+using System.Collections.Generic; 
 
 namespace Kooboo.Data.Interface
 {
@@ -12,5 +13,7 @@ namespace Kooboo.Data.Interface
         Object GetValue(string FieldName, RenderContext Context); 
          
         void SetValue(string FieldName, Object Value); 
+
+        Dictionary<string, object> Values { get; }
     }
 }

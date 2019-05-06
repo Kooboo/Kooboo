@@ -21,7 +21,7 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
 
         public int Order { get; set; }
                                              
-        public Dictionary<string, string> Values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        public Dictionary<string, string> Values { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public Object GetValue(string FieldName)
         {
@@ -172,5 +172,13 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
         public string Summary { get; set; }
 
         public bool Online { get; set; }
+
+        Dictionary<string, object> IDynamic.Values
+        {
+            get
+            {
+                return this.Values.ToDictionary(o=>o.Key, o=>(object)o.Value);
+            }
+        }
     } 
 }

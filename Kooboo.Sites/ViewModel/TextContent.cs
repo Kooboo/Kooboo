@@ -15,6 +15,7 @@ namespace Kooboo.Sites.ViewModel
         public Guid Id { get; set; }
 
         public string UserKey { get; set; }
+
         public Guid FolderId { get; set; }
 
         public Guid ParentId { get; set; }
@@ -25,7 +26,7 @@ namespace Kooboo.Sites.ViewModel
 
         public Dictionary<Guid, List<Guid>> Embedded = new Dictionary<Guid, List<Guid>>();
 
-        public Dictionary<string, string> Values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        public Dictionary<string, string> TextValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public Object GetValue(string FieldName)
         {  
@@ -48,9 +49,9 @@ namespace Kooboo.Sites.ViewModel
                 return this.Order; 
             }
 
-            if (Values.ContainsKey(FieldName))
+            if (TextValues.ContainsKey(FieldName))
             {
-                return Values[FieldName];
+                return TextValues[FieldName];
             }
    
               if (lower == "parentid")
@@ -82,7 +83,7 @@ namespace Kooboo.Sites.ViewModel
 
         public void SetValue(string FieldName, object Value)
         {
-            this.Values[FieldName] = Value.ToString();
+            this.TextValues[FieldName] = Value.ToString();
         }
 
         public Object GetValue(string FieldName, RenderContext Context)
@@ -178,6 +179,22 @@ namespace Kooboo.Sites.ViewModel
         public DateTime CreationDate { get; set; }
 
         public bool Online { get; set; }
+
+        public Dictionary<string, object> Values
+        {
+            get
+            {
+                var result =  this.TextValues.ToDictionary(o => o.Key, o => (object)o.Value);
+                result["Id"] = this.Id.ToString();
+                result["ParentId"] = this.ParentId.ToString();
+                result["ContentTypeId"] = this.ContentTypeId.ToString();
+                result["UserKey"] = this.UserKey;
+                result["LastModified"] = this.LastModified.ToString();
+                result["Online"] = this.Online.ToString(); 
+ 
+                return result; 
+            }
+        }
     }
      
     public class EmbeddedContentViewModel

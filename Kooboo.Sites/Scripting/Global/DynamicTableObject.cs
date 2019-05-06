@@ -4,6 +4,7 @@ using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using System.Collections.Generic;
+using System.Linq; 
 
 namespace Kooboo.Sites.Scripting.Global
 {
@@ -12,6 +13,15 @@ namespace Kooboo.Sites.Scripting.Global
         public IDictionary<string, object> obj { get; set; }
         private RenderContext context { get; set; }
         private Table table { get; set; }
+
+        public Dictionary<string, object> Values
+        {
+            get
+            {
+                return this.obj.ToDictionary(o => o.Key, o => o.Value); 
+            }
+        }
+
 
         public DynamicTableObject(IDictionary<string, object> orgObj, Table orgtable, RenderContext renderContext)
         {
