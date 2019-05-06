@@ -28,16 +28,7 @@ namespace Kooboo.Sites.Scripting.Global
                     var dynamic = value as Kooboo.Data.Interface.IDynamic;
                     output = Lib.Helper.JsonHelper.SerializeCaseSensitive(dynamic.Values); 
                 } 
-                else if (value is IDictionary<string, object>)
-                {
-                    var idict = value as IDictionary<string, object>;
-                    output = Lib.Helper.JsonHelper.SerializeCaseSensitive(idict.Values);
-                }
-                else if (value is IDictionary<string, string>)
-                {
-                    var idict = value as IDictionary<string, string>;
-                    output = Lib.Helper.JsonHelper.SerializeCaseSensitive(idict.Values);
-                }
+   
                 else
                 {
                     output = Lib.Helper.JsonHelper.SerializeCaseSensitive(value);
