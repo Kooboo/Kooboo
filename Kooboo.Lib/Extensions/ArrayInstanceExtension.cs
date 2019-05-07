@@ -6,14 +6,11 @@ using Jint.Native.Array;
 using Jint.Runtime.Interop;
 namespace Jint
 {
-//    { typeof(byte[]),(Engine engine, object v) => engine.Array.Construct((byte[]) v)
-//},
     public static class ArrayInstanceExtension
     {
         public static ObjectInstance Construct(this ArrayConstructor arrayConstructor, byte[] bytes)
         {
             return new ObjectWrapper(arrayConstructor.Engine, bytes);
-            //return null;
         }
     }
 
