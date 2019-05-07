@@ -18,6 +18,10 @@ namespace Kooboo.Sites.Scripting
 {
     public class Manager
     {
+        static Manager()
+        {
+            Jint.JintEngineHelper.AddTypeMapper();
+        }
 
         public static string DebuggerEngineName { get; set; } = "__kooboodebugger";
 
