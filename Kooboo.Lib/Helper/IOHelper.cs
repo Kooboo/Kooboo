@@ -21,19 +21,28 @@ namespace Kooboo.Lib.Helper
                 return "text/html";
             }
 
-            int Qmark = fileName.IndexOf("?"); 
+            int Qmark = fileName.IndexOf("?");
             if (Qmark > -1)
             {
-                fileName = fileName.Substring(0, Qmark); 
+                fileName = fileName.Substring(0, Qmark);
             }
 
-            int HashMark = fileName.IndexOf("#"); 
-            if (HashMark >-1)
+            int HashMark = fileName.IndexOf("#");
+            if (HashMark > -1)
             {
-                fileName = fileName.Substring(0, HashMark); 
+                fileName = fileName.Substring(0, HashMark);
             }
 
-            var extension = Path.GetExtension(fileName);
+            string extension = null;
+
+            try
+            {
+                extension = Path.GetExtension(fileName);
+            }
+            catch (Exception)
+            {
+            }
+
             if (extension == null)
             {
                 return "text/html";
@@ -83,7 +92,7 @@ namespace Kooboo.Lib.Helper
                 case ".apk":
                     return "application/vnd.android.package-archive";
                 case ".xapk":
-                    return "application/vnd.android.package-archive"; 
+                    return "application/vnd.android.package-archive";
                 case ".art":
                     return "image/x-jg";
                 case ".asd":
@@ -808,21 +817,21 @@ namespace Kooboo.Lib.Helper
             return mimeType.Contains("text") || mimeType.Contains("script") || mimeType.Contains("xml") || mimeType.Contains("json") || mimeType.Contains("style") || mimeType.Contains("html");
         }
 
-        public static string CombinePath(string basefolder, string subFolder) 
+        public static string CombinePath(string basefolder, string subFolder)
         {
             if (string.IsNullOrEmpty(subFolder))
             {
-                return basefolder; 
+                return basefolder;
             }
 
             if (string.IsNullOrEmpty(basefolder))
             {
-                return subFolder; 
+                return subFolder;
             }
 
             if (subFolder.StartsWith("/") || subFolder.StartsWith("\\"))
             {
-                subFolder = subFolder.Substring(1); 
+                subFolder = subFolder.Substring(1);
             }
 
             return Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(basefolder, subFolder);
@@ -920,7 +929,7 @@ namespace Kooboo.Lib.Helper
         {
             if (!System.IO.Directory.Exists(Folder))
             {
-                return 0; 
+                return 0;
             }
             if (Recursive)
             {
@@ -1002,7 +1011,7 @@ namespace Kooboo.Lib.Helper
         public static void WriteAllBytes(string FilePath, byte[] bytes)
         {
             Lib.Helper.IOHelper.EnsureFileDirectoryExists(FilePath);
-            System.IO.File.WriteAllBytes(FilePath, bytes); 
+            System.IO.File.WriteAllBytes(FilePath, bytes);
         }
 
         public static void Copy(string oldPath, string newPath)
@@ -1010,9 +1019,9 @@ namespace Kooboo.Lib.Helper
             if (System.IO.File.Exists(oldPath))
             {
                 Lib.Helper.IOHelper.EnsureFileDirectoryExists(newPath);
-                System.IO.File.Copy(oldPath, newPath); 
+                System.IO.File.Copy(oldPath, newPath);
             }
-        }        
+        }
 
         public static bool IsDirectory(string path)
         {
@@ -1023,7 +1032,7 @@ namespace Kooboo.Lib.Helper
                 return false;
             }
 
-             parts = parts.Reverse().ToArray(); 
+            parts = parts.Reverse().ToArray();
 
             if (parts[0].Contains("."))
             {

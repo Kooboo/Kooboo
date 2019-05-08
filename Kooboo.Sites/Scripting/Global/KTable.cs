@@ -1,7 +1,8 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data.Context;
-using Kooboo.IndexedDB.Dynamic; 
+using Kooboo.IndexedDB.Dynamic;
+using System;
 
 namespace Kooboo.Sites.Scripting.Global
 {
@@ -23,13 +24,23 @@ namespace Kooboo.Sites.Scripting.Global
         public object add(object value)
         {
             value = CleanDynamicObject(value);
-            return this.table.Add(value, true);
+            var result = this.table.Add(value, true);
+            if (result == default(Guid))
+            {
+                return null;
+            }
+            return result;
         }
 
         public object append(object value)
         {
             value = CleanDynamicObject(value);
-            return this.table.Add(value, false);
+            var result = this.table.Add(value, false);
+            if (result == default(Guid))
+            {
+                return null;
+            }
+            return result;
         }
 
         public void update(object id, object newvalue)
@@ -40,8 +51,8 @@ namespace Kooboo.Sites.Scripting.Global
 
         public void update(object newvalue)
         {
-            newvalue = CleanDynamicObject(newvalue); 
-            var newdata = this.table.PrepareData(newvalue); 
+            newvalue = CleanDynamicObject(newvalue);
+            var newdata = this.table.PrepareData(newvalue);
             if (newdata.ContainsKey("_id"))
             {
                 var key = newdata["_id"];

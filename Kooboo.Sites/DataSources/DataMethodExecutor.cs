@@ -52,7 +52,7 @@ namespace Kooboo.Sites.DataSources
             {
                 var type = result.GetType();
 
-                if (Kooboo.Lib.Reflection.TypeHelper.IsCollection(type))
+                if (Kooboo.Lib.Reflection.TypeHelper.IsGenericCollection(type))
                 {
                     List<DataMethodResult> results = new List<DataMethodResult>();
                     var itemcollection = ((IEnumerable)result).Cast<object>().ToList();
@@ -386,7 +386,7 @@ namespace Kooboo.Sites.DataSources
                 {
                     var type = Kooboo.Data.TypeCache.GetType(item.ReturnType);
 
-                    if (type != null && Kooboo.Lib.Reflection.TypeHelper.IsCollection(type))
+                    if (type != null && Kooboo.Lib.Reflection.TypeHelper.IsGenericCollection(type))
                     {
                         CorrectMethods.Add(item);
                     }

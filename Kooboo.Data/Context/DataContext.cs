@@ -145,7 +145,7 @@ namespace Kooboo.Data.Context
             {
                 foreach (var item in dictitems.Values)
                 {
-                    if (Kooboo.Lib.Reflection.TypeHelper.IsCollection(item.GetType()))
+                    if (Kooboo.Lib.Reflection.TypeHelper.IsGenericCollection(item.GetType()))
                     {
                         continue;
                     }

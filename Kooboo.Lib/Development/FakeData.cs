@@ -30,7 +30,7 @@ namespace Kooboo.Lib.Development
             {
                 return GetFakeList(FieldType);
             }
-            else if (Lib.Reflection.TypeHelper.IsCollection(FieldType))
+            else if (Lib.Reflection.TypeHelper.IsGenericCollection(FieldType))
             {
                 return GetFakeCollection(FieldType);
             }
@@ -194,7 +194,7 @@ namespace Kooboo.Lib.Development
                     {
                         if (ptype.IsClass && ptype != typeof(string))
                         {
-                            if (!TypeHelper.IsCollection(ptype) && !TypeHelper.IsDictionary(ptype) && !TypeHelper.IsList(ptype))
+                            if (!TypeHelper.IsGenericCollection(ptype) && !TypeHelper.IsDictionary(ptype) && !TypeHelper.IsList(ptype))
                             {
                                 continue;
                             } 
@@ -213,7 +213,7 @@ namespace Kooboo.Lib.Development
                     {
                         if (ftype.IsClass && ftype != typeof(string))
                         {
-                            if (!TypeHelper.IsCollection(ftype) && !TypeHelper.IsDictionary(ftype) && !TypeHelper.IsList(ftype))
+                            if (!TypeHelper.IsGenericCollection(ftype) && !TypeHelper.IsDictionary(ftype) && !TypeHelper.IsList(ftype))
                             {
                                 continue;
                             }
@@ -243,7 +243,7 @@ namespace Kooboo.Lib.Development
                     return true;
                 }
             }
-            else if (TypeHelper.IsCollection(SubType))
+            else if (TypeHelper.IsGenericCollection(SubType))
             {
                 var keytype = TypeHelper.GetEnumberableType(SubType);
                 if (keytype == BaseType)

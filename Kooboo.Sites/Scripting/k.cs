@@ -508,7 +508,7 @@ namespace Kooboo.Sites.Scripting
                 if (item.ReturnType == null || item.ReturnType == typeof(string) || !item.ReturnType.IsClass)
                 {
                     result += "<br/><br/><b>" + item.Name + "</b>";
-                    bool iscol = Lib.Reflection.TypeHelper.IsCollection(item.ReturnType);
+                    bool iscol = Lib.Reflection.TypeHelper.IsGenericCollection(item.ReturnType);
 
                     if (iscol)
                     {
@@ -562,7 +562,7 @@ namespace Kooboo.Sites.Scripting
 
                 if (item.ReturnType != typeof(void))
                 {
-                    bool iscol = Lib.Reflection.TypeHelper.IsCollection(item.ReturnType);
+                    bool iscol = Lib.Reflection.TypeHelper.IsGenericCollection(item.ReturnType);
 
                     if (iscol)
                     {

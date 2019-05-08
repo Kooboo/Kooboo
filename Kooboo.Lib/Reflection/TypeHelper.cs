@@ -315,12 +315,7 @@ namespace Kooboo.Lib.Reflection
             }
             return result;
         }
-
-        /// <summary>
-        /// Test if this is a dictionary... 
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
+         
         public static bool IsDictionary(Type type)
         {
             if (!type.IsGenericType)
@@ -351,7 +346,7 @@ namespace Kooboo.Lib.Reflection
             return false;
         }
 
-        public static bool IsCollection(Type type)
+        public static bool IsGenericCollection(Type type)
         {
             if (!type.IsGenericType)
             { return false; }
@@ -369,9 +364,24 @@ namespace Kooboo.Lib.Reflection
                         return true;
                     }
                 }
-            }
-
+            } 
             return false;
+        }
+
+        public static bool IsCollection(Type type)
+        {
+            if (type.IsGenericType)
+            {
+                return IsGenericCollection(type); 
+            }
+            else
+            {
+                if (HasInterface(type, typeof(System.Collections.IEnumerable)))
+                {
+                    return true; 
+                }
+            }
+            return false; 
         }
 
         public static bool HasInterface(Type CheckType, Type InterfaceType)
