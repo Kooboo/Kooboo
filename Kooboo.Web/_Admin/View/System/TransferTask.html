@@ -1,0 +1,35 @@
+<!-- #layout name=blank-->
+<div class="page-header">
+  <h1 class="title">Transfer Task</h1>
+</div>
+<div
+  data-bind="component: { name: 'kb-breadcrumb', params:[{
+  name: 'SITES'
+},{
+  name: 'DASHBOARD'
+},{
+  name: Kooboo.text.common.TransferTask
+}]}"
+></div>
+<div class="navbar navbar-default">
+  <div class="container-fluid">
+    <a
+      data-bind="visible: showDeleteBtn, click: onDelete"
+      class="btn red navbar-btn"
+      >Delete</a
+    >
+  </div>
+</div>
+<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
+<script>
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/lib/echarts.min.js",
+      "/_Admin/Scripts/tableModel.js",
+      "/_Admin/Scripts/components/kbTable.js",
+      "/_Admin/Scripts/components/kbPager.js",
+      "/_Admin/Scripts/components/kbBreadcrumb.js"
+    ]);
+  })();
+</script>
+<script src="/_Admin/View/System/TransferTask.js"></script>

@@ -132,6 +132,7 @@
       SiteUser: "Site user",
       KConfig: "Kooboo Config",
       TableRelation: "Table Relation",
+      TransferTask:"Transfer Task",
 
       Demands: "Demands",
       Demand: "Demand",

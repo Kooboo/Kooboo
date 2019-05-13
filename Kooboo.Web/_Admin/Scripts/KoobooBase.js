@@ -1722,6 +1722,11 @@
   }
   extend(TableRelation, BaseModel);
 
+  function TransferTask() {
+    this.name = "TransferTask";
+  }
+  extend(TransferTask, BaseModel);
+
   wind.Kooboo = {
     APIGeneration: new APIGeneration(),
     Bar: new Bar(),
@@ -1784,6 +1789,7 @@
     TableRelation: new TableRelation(),
     Template: new Template(),
     Transfer: new Transfer(),
+    TransferTask: new TransferTask(),
     VisitorLog: new VisitorLog(),
     Upload: new Upload(),
     User: new User(),
