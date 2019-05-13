@@ -185,6 +185,8 @@ namespace Kooboo.Web.Api.Implementation
                 model.ControlType = item.ControlType;
                 model.Setting = item.Setting;
 
+                model.Length = item.Length; 
+
                 result.Add(model);
             }
             return result;

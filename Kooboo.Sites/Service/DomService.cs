@@ -46,8 +46,7 @@ namespace Kooboo.Sites.Service
 
                     newHtml.Append(" ").Append(Kooboo.Sites.SiteConstants.KoobooIdAttributeName).AppendFormat("=\"{0}\"", koobooid);
 
-                    currentIndex = openTokenEndIndex;
-
+                    currentIndex = openTokenEndIndex; 
 
                 }
 

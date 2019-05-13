@@ -37,6 +37,8 @@ namespace Kooboo.Web.ViewModel
         public string Setting { get; set; }  
 
         public bool IsSystem { get; set; }
+
+        public int Length { get; set; }
     }
 
 

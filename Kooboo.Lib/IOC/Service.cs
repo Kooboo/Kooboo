@@ -30,9 +30,9 @@ namespace Kooboo.Lib.IOC
         public static Dictionary<string, Type> Transients { get; set; }
           
         // get the Singleton instance. 
-        public static T GetSingleTon<T>()
+        public static T GetSingleTon<T>(bool SearchImplemention = false)
         {
-            var result = GetSingleTon(typeof(T));
+            var result = GetSingleTon(typeof(T), SearchImplemention);
             if (result == null)
             {
                 return default(T);
@@ -41,31 +41,39 @@ namespace Kooboo.Lib.IOC
             {
                 return (T)result;
             }
-        }
+        }  
 
-        public static Object GetSingleTon(Type objType)
+        public static Object GetSingleTon(Type objType, bool SearchImplementation)
         {
             string name = objType.Name;
 
             if (!SingleTons.ContainsKey(name))
             {
-                lock (_lock)
-                {
-                    if (!SingleTons.ContainsKey(name))
+                if (SearchImplementation)
+                { 
+                    lock (_lock)
                     {
-                        var types = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(objType);
-                        //TODO: add rule to get the right intance. 
-                        if (types != null && types.Any())
+                        if (!SingleTons.ContainsKey(name))
                         {
-                            var type = types[0];
-                            var obj = Activator.CreateInstance(type);
-                            SingleTons[name] = obj;
-                        }
-                        else
-                        {
-                            SingleTons[name] = null;
+                            var types = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(objType);
+
+                            //TODO: add rule to get the right intance. 
+                            if (types != null && types.Any())
+                            {
+                                var type = types[0];
+                                var obj = Activator.CreateInstance(type);
+                                SingleTons[name] = obj;
+                            }
+                            else
+                            {
+                                SingleTons[name] = null;
+                            }
                         }
                     }
+                }
+                else
+                {
+                    return null; 
                 }
             }
 
