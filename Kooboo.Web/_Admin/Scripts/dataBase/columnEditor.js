@@ -26,12 +26,15 @@
                         }
                     }
 
-                    self.data().controlType.subscribe(function() {
+                    self.data().controlType.subscribe(function(type) {
                         self.data().options().forEach(function(opt) {
                             self.removeOption(opt);
                         })
                         self._optionRequired("");
                         self.showError(false);
+                        if(self.showStringLengthForm()){
+                            !self.data().length() && self.data().length(1024);
+                        }
                     })
                 }
             })
@@ -77,6 +80,13 @@
                     return false;
                 } else {
                     return ['selection', 'checkbox', 'radiobox'].indexOf(self.data().controlType().toLowerCase()) > -1;
+                }
+            }
+            this.showStringLengthForm = function(){
+                if (!self.data().controlType()) {
+                    return false;
+                } else {
+                    return ['textbox', 'textarea', 'tinymce'].indexOf(self.data().controlType().toLowerCase()) > -1;
                 }
             }
             this.isValid = function() {

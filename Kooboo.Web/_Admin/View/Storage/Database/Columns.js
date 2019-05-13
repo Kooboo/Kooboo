@@ -152,6 +152,7 @@ $(function() {
             self.seed(1);
             self.scale(1);
         })
+        this.length = ko.observable(data ? data.length : 1024);
         this.controlTypeName = ko.pureComputed(function() {
             return self.controlType() ? Kooboo.columnEditor.controlTypeNames[self.controlType().toLowerCase()] : '';
         })
