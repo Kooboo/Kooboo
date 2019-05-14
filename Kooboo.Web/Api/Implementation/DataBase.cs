@@ -320,13 +320,26 @@ namespace Kooboo.Web.Api.Implementation
 
                     if (datatype == typeof(string) && item.ControlType != null)
                     {
-                        if (item.ControlType.ToLower() != "textbox")
+                        if (item.Length > 0)
                         {
-                            length = int.MaxValue;
+                            length = item.Length; 
                         }
+                        else
+                        {
+                            if (item.ControlType.ToLower() != "textbox")
+                            {
+                                length = int.MaxValue;
+                            }
+                            else
+                            {
+                                length = 256;
+                            }
+                        } 
+                        
                     }
                      
                     setting.AppendColumn(item.Name, datatype, length);
+
                     var col = setting.Columns.FirstOrDefault(o => o.Name == item.Name);
                     col.Setting = item.Setting;
                     col.ControlType = item.ControlType;
@@ -344,13 +357,10 @@ namespace Kooboo.Web.Api.Implementation
                     // check string change the controltype from textbox to textarea. 
                     if (find.ClrType ==typeof(string))
                     {
-                        if (item.ControlType !=null && item.ControlType.ToLower() != "textbox")
+                        if (find.Length != item.Length && item.Length >0)
                         {
-                            if (find.ControlType !=null && find.ControlType.ToLower()=="textbox")
-                            {
-                                find.Length = int.MaxValue; 
-                            }
-                        }
+                            find.Length = item.Length; 
+                        } 
                     }
 
                     find.ControlType = item.ControlType;
@@ -359,8 +369,7 @@ namespace Kooboo.Web.Api.Implementation
                     find.Increment = item.Scale;
                     find.IsIndex = item.IsIndex;
                     find.IsPrimaryKey = item.IsPrimaryKey;
-                    find.IsUnique = item.IsUnique; 
-                  
+                    find.IsUnique = item.IsUnique;  
                 }
             }
             

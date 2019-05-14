@@ -291,9 +291,9 @@ namespace Kooboo.IndexedDB.Dynamic
                     {
                         item.IsUnique = true;
                         item.IsIndex = true;
-                        if (item.Seed < 1)
+                        if (item.Seed < 0)
                         {
-                            item.Seed = 1;
+                            item.Seed = 0;
                         }
                         if (item.Increment < 1)
                         {

@@ -428,7 +428,6 @@ namespace Kooboo.IndexedDB.Dynamic
 
         private static bool QuickCheckChange(List<TableColumn> newcols, Setting setting)
         {
-
             if (newcols.Count() != setting.Columns.Count())
             {
                 return true;
@@ -447,10 +446,16 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
                 else
                 {
-                    if (item.Length > find.Length || item.DataType != find.DataType || item.IsIndex != find.IsIndex || item.IsIncremental != find.IsIncremental || item.Seed != find.Seed || item.Increment != find.Increment || item.IsUnique != find.IsUnique || item.IsPrimaryKey != find.IsPrimaryKey || item.ControlType != find.ControlType || item.Setting != find.Setting)
+                    if ( item.DataType != find.DataType || item.IsIndex != find.IsIndex || item.IsIncremental != find.IsIncremental || item.Seed != find.Seed || item.Increment != find.Increment || item.IsUnique != find.IsUnique || item.IsPrimaryKey != find.IsPrimaryKey || item.ControlType != find.ControlType || item.Setting != find.Setting)
                     {
                         return true;
                     }
+
+                    if (item.Length >0 && item.Length != find.Length)
+                    {
+                        return true; 
+                    }
+
                 }
             }
 
@@ -501,14 +506,13 @@ namespace Kooboo.IndexedDB.Dynamic
                     else
                     {
                         // allow change or datatype or length..... 
-                        if (item.Length > find.Length && item.Length != Constants.DefaultColLen)
+                        if (item.Length > find.Length && item.Length >0 && item.Length != Constants.DefaultColLen)
                         {
                             find.Length = item.Length;
                             result.HasChange = true;
                             result.ShouldRebuild = true;
                         }
-
-
+                        
                         if (item.DataType != find.DataType)
                         {
                             if(!CanConvertType(item.ClrType, find.ClrType))
@@ -659,7 +663,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 else
                 {
                     // allow change or datatype or length..... 
-                    if (item.Length > find.Length && item.Length != Constants.DefaultColLen)
+                    if (item.Length != find.Length && item.Length>0 && item.Length != Constants.DefaultColLen)
                     {
                         find.Length = item.Length;
 
