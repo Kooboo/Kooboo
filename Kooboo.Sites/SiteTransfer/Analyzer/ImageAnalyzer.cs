@@ -79,7 +79,7 @@ namespace Kooboo.Sites.SiteTransfer
 
                         bool issamehost = Kooboo.Lib.Helper.UrlHelper.isSameHost(absoluteUrl, Context.OriginalImportUrl);
 
-                        string relativeurl = EnsureUrlWithoutQuestionMark(UrlHelper.RelativePath(absoluteUrl, issamehost));
+                        string relativeurl = EusureUrl(UrlHelper.RelativePath(absoluteUrl, issamehost));
 
                         if (itemsrc != relativeurl)
                         {
@@ -108,21 +108,23 @@ namespace Kooboo.Sites.SiteTransfer
             }
         }
 
-        public string EnsureUrlWithoutQuestionMark(string relativeUrl)
+        public string EusureUrl(string relativeUrl)
         {
             if (string.IsNullOrEmpty(relativeUrl))
             {
                 return null;
             }
 
-            if (relativeUrl.IndexOf("?") > -1)
-            {
-                return relativeUrl.Replace("?", "/");
-            }
-            else
-            {
-                return relativeUrl;
-            }
+            return System.Net.WebUtility.UrlDecode(relativeUrl); 
+
+            //if (relativeUrl.IndexOf("?") > -1)
+            //{
+            //    return relativeUrl.Replace("?", "/");
+            //}
+            //else
+            //{
+            //    return relativeUrl;
+            //}
         }
 
         public Dictionary<Kooboo.Dom.Element, string> GetImageUrls(List<Kooboo.Dom.Element> imagetags)

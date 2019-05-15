@@ -137,6 +137,11 @@ namespace Kooboo.Sites.Constraints
 
             string RelativeUrl = Kooboo.Lib.Helper.UrlHelper.Combine(ObjectRelativeUrl, itemsrc);
 
+            if (RelativeUrl !=null)
+            {
+                RelativeUrl = System.Net.WebUtility.UrlDecode(RelativeUrl); 
+            }
+
             if (itemsrc != RelativeUrl)
             {
                 string oldstring = Kooboo.Sites.Service.DomService.GetOpenTag(item);
