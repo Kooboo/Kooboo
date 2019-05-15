@@ -71,6 +71,7 @@ body {
     vertical-align: top;
     word-wrap: break-word;
     word-break: break-all;
+    float: left;
 }
 
 .side_l .col_side {
@@ -112,16 +113,8 @@ body {
 }
 
 .container_box.cell_layout .col_main {
-    width: 2000px;
+    width: 82%;
     height: 700px;
-}
-
-.container_box.cell_layout .col_side,
-.container_box.cell_layout .col_main {
-    display: table-cell;
-    vertical-align: top;
-    word-wrap: break-word;
-    word-break: break-all;
 }
 
 .main_bd {
@@ -269,36 +262,49 @@ pre code {
 }
 
 @media screen and (max-width: 1000px) {
+
     .head_innner,
     .main_area_inner {
         width: 100%;
     }
+
     .head_innner {
         height: 70px;
     }
+
     .main_bd {
         padding: 25px 20px;
     }
+
     .container_box.cell_layout .col_side {
         display: none;
         position: absolute;
         min-width: 260px;
         height: 2476px;
     }
+
+    .container_box.cell_layout .col_main {
+        width: 100%;
+        float: none
+    }
+
     .head_container .head_title {
         display: none;
     }
+
     .head_container .menu_container {
         display: block;
         height: 54px;
         left: 4px;
     }
+
     .head_container .menu_container .menu_btn {
         width: 22px;
         padding: 16px;
         display: block;
         float: left;
     }
+
     .head_container .menu_container .menu_btn i {
         display: block;
         width: 22px;
@@ -308,12 +314,14 @@ pre code {
         background-size: contain;
         background-position: center;
     }
+
     .head_container .menu_container #open_in_tab {
         float: right;
         width: 22px;
         padding: 16px;
         display: block;
     }
+
     .head_container .menu_container #open_in_tab i {
         display: block;
         width: 22px;
