@@ -46,8 +46,8 @@ namespace Kooboo.Render.ServerSide
                 if (text !=null)
                 {
                     text = text.Replace("\"", "\\\"");
-
-                    text = text.Replace("\r\n", "\\\r\n"); 
+                    //html in github will change \r\n to \n
+                    text = System.Text.RegularExpressions.Regex.Replace(text, "(?<!\r)\n|\r\n", "\\\r\n");
                 }
 
                 result = "var " + name + "=\"" + text + "\"; "; 
