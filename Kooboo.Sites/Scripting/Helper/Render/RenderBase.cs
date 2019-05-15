@@ -20,12 +20,23 @@ namespace Kooboo.Sites.Scripting
         }
         public virtual string Render(RenderContext context,Tree tree)
         {
-            if (IsHelpDetail(context))
-                return RenderDetail(context);
+            var node = GetFirstNode(tree);
+            var detail = RenderDetail(context, node);
 
-            return RenderHelpMenu(context, tree);
+            return Render(context, tree, detail);
+
         }
-        public virtual string RenderHelpMenu(RenderContext context, Tree tree)
+
+        private Node GetFirstNode(Tree tree)
+        {
+            Node node = null;
+            if (tree.Nodes.Count > 0)
+            {
+                node = tree.Nodes[0];
+            }
+            return node;
+        }
+        private string Render(RenderContext context, Tree tree,string detail)
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(GetScript());
@@ -51,8 +62,8 @@ namespace Kooboo.Sites.Scripting
             builder.AppendFormat("<div class='menu_box_primary' id='leftTree'></div>");
             builder.Append("</div>");
 
-            builder.AppendFormat("<div class='col_main'><iframe frameborder='0' src='{0}' id='iframe'></iframe></div>", GetDefaultUrl(context, tree));
-
+            //builder.AppendFormat("<div class='col_main'><iframe frameborder='0' src='{0}' id='iframe'></iframe></div>", GetDefaultUrl(context, tree));
+            builder.AppendFormat("<div class='col_main'>{0}</div>", detail);
 
             builder.Append("</div>");
 
@@ -63,18 +74,18 @@ namespace Kooboo.Sites.Scripting
                 data:{0},
                 onNodeSelected: function(event, node) {{
                     var src='{1}'+node.url;
-                    $('#iframe').attr('src',src);
+                    window.location.href=src;
                  }},
             ", JsonHelper.Serialize(tree.Nodes), GetBaseurl(context));
 
             builder.AppendFormat("<script>{0}</script>",
-                string.Format("$('#leftTree').treeview({{{0}}});var nodeId=$('#leftTree li').first().data('nodeid');;$('#leftTree').treeview('selectNode',[nodeId])", treeviewData));
+                string.Format("$('#leftTree').treeview({{{0}}});", treeviewData));
 
             builder.AppendFormat("<script>{0}</script>", File.ReadAllText(Path.Combine(GetHelpPath(), "helpMenu.js")));
 
             return builder.ToString();
         }
-        public virtual string RenderDetail(RenderContext context)
+        public virtual string RenderDetail(RenderContext context,Node node)
         {
 
             return string.Empty;
@@ -162,7 +173,7 @@ namespace Kooboo.Sites.Scripting
             var path = GetHelpPath();
             builder.AppendFormat("<style>{0}</style>", File.ReadAllText(Path.Combine(path, "help.css")));
             builder.AppendFormat("<style>{0}</style>", File.ReadAllText(Path.Combine(path, "prism.css")));
-            builder.AppendFormat("<script>{0}</script>", File.ReadAllText(Path.Combine(GetJqueryPath(), "jquery.min.js")));
+            //builder.AppendFormat("<script>{0}</script>", File.ReadAllText(Path.Combine(GetJqueryPath(), "jquery.min.js")));
             builder.AppendFormat("<script>{0}</script>", File.ReadAllText(Path.Combine(path, "prism.js")));
             builder.AppendFormat("<script>{0}</script>", File.ReadAllText(Path.Combine(path, "prismfill.js")));
 

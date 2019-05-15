@@ -28,12 +28,15 @@ namespace Kooboo.Sites.Scripting
             return !string.IsNullOrEmpty(tag);
         }
 
-        public override string RenderDetail(RenderContext context)
+        public override string RenderDetail(RenderContext context,Node node)
         {
             var kview = context.Request.QueryString["kview"];
-
+            if (string.IsNullOrEmpty(kview) && node != null)
+            {
+                kview = node.Text;
+            }
             StringBuilder builder = new StringBuilder();
-            if(ViewHelpReader.Models.ContainsKey(kview))
+            if(kview!=null && ViewHelpReader.Models.ContainsKey(kview))
             {
                 var model = ViewHelpReader.Models[kview];
                 builder.Append(RenderDetailStart());

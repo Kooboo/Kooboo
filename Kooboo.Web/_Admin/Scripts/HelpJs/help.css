@@ -179,6 +179,7 @@ table td {
     text-align: left;
     vertical-align: top;
     border-top: 1px solid #ddd;
+    word-break: keep-all;
 }
 
 table td a,

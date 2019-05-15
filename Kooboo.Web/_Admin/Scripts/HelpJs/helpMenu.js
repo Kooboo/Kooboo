@@ -16,10 +16,10 @@ $(function() {
     });
 
     
-    var iframe= document.getElementById("iframe");
-    iframe.onload=function(){
-        document.getElementById("iframe").height=0;
-        var height=document.getElementById("iframe").contentWindow.document.body.scrollHeight+10;
-        document.getElementById("iframe").height=height;
-    }
+        // var iframe= document.getElementById("iframe");
+        // iframe.onload=function(){
+        //     document.getElementById("iframe").height=0;
+        //     var height=document.getElementById("iframe").contentWindow.document.body.scrollHeight+10;
+        //     document.getElementById("iframe").height=height;
+        // }
 });
