@@ -269,12 +269,12 @@ namespace Kooboo.Sites.Repository
 
         public bool CanStartDownload(string relativeUrl)
         {
-
-            if (string.IsNullOrEmpty(relativeUrl))
+            // site self resource cant download
+            if (string.IsNullOrEmpty(relativeUrl)||relativeUrl.StartsWith("/"))
             {
-                relativeUrl = "/";
+                return false;
             }
-
+            
             if (!this.ContinueDownloading.ContainsKey(relativeUrl))
             {
                 // if not download yet, start download. 
