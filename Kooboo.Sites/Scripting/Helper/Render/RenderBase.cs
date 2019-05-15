@@ -171,9 +171,7 @@ namespace Kooboo.Sites.Scripting
         {
             StringBuilder builder = new StringBuilder();
             var path = GetHelpPath();
-            builder.AppendFormat("<style>{0}</style>", File.ReadAllText(Path.Combine(path, "help.css")));
             builder.AppendFormat("<style>{0}</style>", File.ReadAllText(Path.Combine(path, "prism.css")));
-            //builder.AppendFormat("<script>{0}</script>", File.ReadAllText(Path.Combine(GetJqueryPath(), "jquery.min.js")));
             builder.AppendFormat("<script>{0}</script>", File.ReadAllText(Path.Combine(path, "prism.js")));
             builder.AppendFormat("<script>{0}</script>", File.ReadAllText(Path.Combine(path, "prismfill.js")));
 
