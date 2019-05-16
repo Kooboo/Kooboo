@@ -55,8 +55,8 @@ namespace Kooboo.Sites.Service
             }
             return urls;
         }
-         
-    
+
+
         public static string GetLinkOrSrc(Element item)
         {
             string href = null;
@@ -218,12 +218,32 @@ namespace Kooboo.Sites.Service
         {
             if (string.IsNullOrWhiteSpace(link))
             {
-                return false; 
+                return false;
             }
 
             string lower = link.ToLower().Trim();
 
-            return (lower.StartsWith("http://") || lower.StartsWith("https://") || lower == "#" || lower.StartsWith("mailto:") || lower.StartsWith("file://")); 
+            if  (lower.StartsWith("http://") || lower.StartsWith("https://"))
+
+            {
+                return true; 
+            } 
+            return IsSpecialUrl(lower);  
+        }
+
+        public static bool IsSpecialUrl(string url)
+        {
+            if (url == null)
+            {
+                return true;
+            }
+
+            url = url.ToLower();
+            if (url.StartsWith("#") || url.StartsWith("mailto:") || url.StartsWith("javascript:") || url.StartsWith("file://") || url.StartsWith("ftp://") )
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

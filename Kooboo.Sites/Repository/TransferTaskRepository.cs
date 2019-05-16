@@ -7,6 +7,8 @@ using System.Linq;
 using Kooboo.IndexedDB;
 using Kooboo.Lib.Helper;
 using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Repository
 {
@@ -267,12 +269,12 @@ namespace Kooboo.Sites.Repository
 
         public Dictionary<string, DownloadingTask> ContinueDownloading { get; set; }
 
-        public bool CanStartDownload(string relativeUrl)
+        public async Task<bool> CanStartDownload(string relativeUrl)
         {
             // site self resource cant download
-            if (string.IsNullOrEmpty(relativeUrl)||relativeUrl.StartsWith("/"))
+            if (string.IsNullOrEmpty(relativeUrl))
             {
-                return false;
+                relativeUrl = "/"; 
             }
             
             if (!this.ContinueDownloading.ContainsKey(relativeUrl))
@@ -284,36 +286,36 @@ namespace Kooboo.Sites.Repository
             else
             {
                 // if downlaoding, try wait..
-                return EnterWait(relativeUrl); 
+                return await EnterWait(relativeUrl); 
             }
         }
 
         public void ReleaseDownload(string relativeUrl)
         {
-            DownloadingTask lasttime;
-            if (this.ContinueDownloading.TryGetValue(relativeUrl, out lasttime))
+            DownloadingTask last;
+            if (this.ContinueDownloading.TryGetValue(relativeUrl, out last))
             {
-                lasttime.IsFinished = true;  
+                last.IsCompleted = true;  
             }
         }
 
-        private bool EnterWait(string relativeUrl)
+        private async Task<bool> EnterWait(string relativeUrl)
         {
-            DownloadingTask lasttime;
-            if (this.ContinueDownloading.TryGetValue(relativeUrl, out lasttime))
+            DownloadingTask lastdownload;
+            if (this.ContinueDownloading.TryGetValue(relativeUrl, out lastdownload))
             {
                 int sleepCounter = 0;
-                while (!lasttime.IsFinished && lasttime.StartTime > DateTime.Now.AddMinutes(-3))
+                while (!lastdownload.IsCompleted && lastdownload.StartTime > DateTime.Now.AddMinutes(-3))
                 {
                     sleepCounter += 1;
-                    System.Threading.Thread.Sleep(3000);
-                    if (sleepCounter > 10)
+                    await System.Threading.Tasks.Task.Delay(5000);  
+                    if (sleepCounter > 4)
                     {
                         break;
                     }
                 }
 
-                if (lasttime.IsFinished)
+                if (lastdownload.IsCompleted)
                 {
                     return false;
                 }
@@ -330,7 +332,7 @@ namespace Kooboo.Sites.Repository
         {
             public DateTime StartTime { get; set; }
 
-            public bool IsFinished { get; set; }
+            public bool IsCompleted { get; set; }
         }
 
     }

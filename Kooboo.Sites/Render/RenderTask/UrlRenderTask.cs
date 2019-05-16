@@ -17,6 +17,9 @@ namespace Kooboo.Sites.Render
 
         private bool IsExternalLink { get; set; }
 
+        // special, no change. 
+        private bool IsSpecial { get; set; }
+
         public bool ClearBefore
         {
             get
@@ -29,15 +32,21 @@ namespace Kooboo.Sites.Render
         {
             this.Url = Url;
 
-            if (Functions.FunctionHelper.IsFunction(this.Url))
-            {
-                /// might be a function. 
-                this.RenderUrlValueTask = new ValueRenderTask(this.Url);
-            }
+          this.IsSpecial = Kooboo.Sites.Service.DomUrlService.IsSpecialUrl(Url);
 
-            if (Service.DomUrlService.IsExternalLink(Url) || Url == "#")
+            if (!IsSpecial)
             {
-                this.IsExternalLink = true;
+                if (Functions.FunctionHelper.IsFunction(this.Url))
+                {
+                    /// might be a function.  
+                    this.RenderUrlValueTask = new ValueRenderTask(this.Url);
+
+                }
+
+                if (Service.DomUrlService.IsExternalLink(Url) || Url == "#")
+                {
+                    this.IsExternalLink = true;
+                }
             }
         }
 
@@ -52,7 +61,12 @@ namespace Kooboo.Sites.Render
         {
             string result = string.Empty;
 
-            if (this.RenderUrlValueTask != null)
+            if (IsSpecial)
+            {
+                return this.Url;
+            }
+
+            else if (this.RenderUrlValueTask != null)
             {
                 result = RenderUrlValueTask.Render(context);
             }
@@ -69,7 +83,7 @@ namespace Kooboo.Sites.Render
                     if (route != null)
                     {
                         if (route.DestinationConstType == ConstObjectType.KoobooSystem)
-                        { 
+                        {
                             result = RenderSystemLink(context, route);
                         }
                         else
@@ -117,18 +131,18 @@ namespace Kooboo.Sites.Render
                 {
                     if (context.WebSite.EnableSitePath)
                     {
-                        string path = context.Request.SitePath; 
+                        string path = context.Request.SitePath;
                         if (string.IsNullOrEmpty(path))
                         {
-                            path = context.Culture; 
+                            path = context.Culture;
                         }
 
                         if (string.IsNullOrEmpty(path))
                         {
-                            path = context.WebSite.DefaultCulture; 
+                            path = context.WebSite.DefaultCulture;
                         }
 
-                        return "/" + path + result;      
+                        return "/" + path + result;
                     }
                     else
                     {
@@ -137,9 +151,9 @@ namespace Kooboo.Sites.Render
                         {
                             return Lib.Helper.UrlHelper.AppendQueryString(result, "lang", culture);
                         }
-                    }  
-                }       
-             
+                    }
+                }
+
             }
 
             return result;
@@ -206,15 +220,15 @@ namespace Kooboo.Sites.Render
                             if (DataSources.ParameterBinder.IsValueBinding(paravalue))
                             {
                                 Parameters[item.Key] = value;
-                            }  
+                            }
                         }
                     }
                     else
                     {
-                       // if (!Parameters.ContainsKey(item.Key))
+                        // if (!Parameters.ContainsKey(item.Key))
                         //{
-                            Parameters[item.Key] = item.Value;
-                       // }
+                        Parameters[item.Key] = item.Value;
+                        // }
                     }
 
                 }
@@ -239,7 +253,7 @@ namespace Kooboo.Sites.Render
         {
             if (result == null)
             {
-                return null; 
+                return null;
             }
             int start = result.IndexOf("{");
             if (start == -1)
@@ -279,7 +293,6 @@ namespace Kooboo.Sites.Render
                 return result;
             }
         }
-
 
 
         public string RenderSystemLink(RenderContext context, Routing.Route route)
@@ -343,5 +356,7 @@ namespace Kooboo.Sites.Render
         {
             result.Add(new RenderResult() { Value = Render(context) });
         }
+
+
     }
 }

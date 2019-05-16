@@ -108,8 +108,10 @@ namespace Kooboo.Sites.SiteTransfer
         {
             if (!siteDb.WebSite.ContinueDownload)
             { return null;  }
-             
-            if (!siteDb.TransferTasks.CanStartDownload(RelativeUrl))
+
+            var oktoDownload = await siteDb.TransferTasks.CanStartDownload(RelativeUrl); 
+
+            if (!oktoDownload)
             {
                 return null; 
             }

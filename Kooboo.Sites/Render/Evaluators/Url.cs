@@ -60,6 +60,12 @@ namespace Kooboo.Sites.Render
 
             if (!string.IsNullOrEmpty(url))
             {
+
+                if (Kooboo.Sites.Service.DomUrlService.IsSpecialUrl(url))
+                {
+                    return null; 
+                }
+
                 var response = new EvaluatorResponse();
                 List<IRenderTask> result = new List<IRenderTask>();
                 result.Add(new ContentRenderTask(" href=\""));

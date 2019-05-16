@@ -105,6 +105,8 @@ namespace Kooboo.Data.Models
          
         public string  TempRedirectUrl { get; set; }
 
+        public int TempServerId { get; set; }
+
         private DateTime _registerdate; 
 
         public DateTime RegistrationDate {

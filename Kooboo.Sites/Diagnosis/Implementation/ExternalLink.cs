@@ -104,6 +104,10 @@ namespace Kooboo.Sites.Diagnosis.Implementation
             {
                 return false;
             }
+            if (fullurl.StartsWith("javascript:"))
+            {
+                return false; 
+            }
             if (fullurl.StartsWith("#"))
             {
                 return false;
