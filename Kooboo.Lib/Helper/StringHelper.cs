@@ -158,11 +158,19 @@ namespace Kooboo.Lib.Helper
                 return _space;
             }
         }
-
+         
+        /// <summary>
+        /// The space characters, for the purposes of this specification, are
+        /// U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), and "CR" (U+000D).
+        /// </summary>
+        /// <param name="chr"></param>
+        /// <returns></returns>
         public static bool isSpaceCharacters(char chr)
         {
             return (chr == '\u0020' || chr == '\u0009' || chr == '\u000a' || chr == '\u000c' || chr == '\u000d');
-        } 
+        }
+
+
         public static string SementicSubString(string input, int start, int count)
         {
             int len = input.Length;
@@ -170,6 +178,18 @@ namespace Kooboo.Lib.Helper
             if (start > len - 1)
             {
                 return null;
+            }
+
+            var currentchar = input[start];
+            while (isSpaceCharacters(currentchar))
+            {
+                start = start + 1; 
+               
+                if (start > len -1)
+                {
+                    return null; 
+                }
+                currentchar = input[start]; 
             }
 
             if (start + count >= len - 1)
