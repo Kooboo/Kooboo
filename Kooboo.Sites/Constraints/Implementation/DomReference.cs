@@ -64,19 +64,17 @@ namespace Kooboo.Sites.Constraints
                     CheckAndAddChange(updates, item, itemsrc, ObjectRelativeUrl);
                 }
             }
+             
+            var imgurls = Kooboo.Sites.Service.DomUrlService.GetImageSrcs(dom);
 
-            foreach (var item in dom.images.item)
+            foreach (var item in imgurls)
             {
-                string itemsrc = DomUrlService.GetLinkOrSrc(item);
-
-                if (!string.IsNullOrEmpty(itemsrc) && !Kooboo.Lib.Utilities.DataUriService.isDataUri(itemsrc))
-                {
-
-                    CheckAndAddChange(updates, item, itemsrc, ObjectRelativeUrl);
-
+                if (!string.IsNullOrEmpty(item.Value) && !Kooboo.Lib.Utilities.DataUriService.isDataUri(item.Value))
+                { 
+                    CheckAndAddChange(updates, item.Key, item.Value, ObjectRelativeUrl);
                 }
             }
-
+              
             HTMLCollection scripts = dom.getElementsByTagName("script");
 
             foreach (var item in scripts.item)
