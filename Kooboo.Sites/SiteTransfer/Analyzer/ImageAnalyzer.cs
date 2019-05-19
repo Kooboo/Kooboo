@@ -1,14 +1,9 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Sites.Models;
-using Kooboo.Sites.Service;
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Kooboo.Lib.Helper;
-using Kooboo.Sites.Routing;
 using Kooboo.Extensions;
-using Kooboo.Sites.Repository;
 
 namespace Kooboo.Sites.SiteTransfer
 {
@@ -16,7 +11,7 @@ namespace Kooboo.Sites.SiteTransfer
     {
         public void Execute(AnalyzerContext Context)
         {
-            var imgurls = GetImageUrls(Context.Dom.images.item); 
+            var imgurls = Kooboo.Sites.Service.DomUrlService.GetImageSrcs(Context.Dom); 
            
             foreach (var item in imgurls)
             {
@@ -59,14 +54,12 @@ namespace Kooboo.Sites.SiteTransfer
                                     EndIndex = item.Key.location.openTokenEndIndex,
                                     NewValue = newstring
                                 });
-
-
+                                 
                             }
                             else
                             {
                                 // TODO: other encoding not implemented yet. 
-                            }
-
+                            } 
                         }
 
                         continue;
@@ -115,8 +108,7 @@ namespace Kooboo.Sites.SiteTransfer
                 return null;
             }
 
-            return System.Net.WebUtility.UrlDecode(relativeUrl); 
-
+            return System.Net.WebUtility.UrlDecode(relativeUrl);  
             //if (relativeUrl.IndexOf("?") > -1)
             //{
             //    return relativeUrl.Replace("?", "/");
@@ -126,103 +118,6 @@ namespace Kooboo.Sites.SiteTransfer
             //    return relativeUrl;
             //}
         }
-
-        public Dictionary<Kooboo.Dom.Element, string> GetImageUrls(List<Kooboo.Dom.Element> imagetags)
-        {
-            Dictionary<Kooboo.Dom.Element, string> result = new Dictionary<Dom.Element, string>();
-
-            foreach (var item in imagetags)
-            {
-                var url = item.getAttribute("src");
-
-                if (string.IsNullOrWhiteSpace(url))
-                {
-                    url = GetNonSrcUrl(item);
-                }
-
-                if (!string.IsNullOrWhiteSpace(url))
-                {
-                    result.Add(item, url);
-                }
-            }
-
-            return EnsurePossibleNonSrc(result);
-        }
-
-
-        public Dictionary<Kooboo.Dom.Element, string> EnsurePossibleNonSrc(Dictionary<Kooboo.Dom.Element, string> orgResult)
-        {
-            // when all values are the same, possible non-src is the right value. 
-
-            if (orgResult.Count >= 2)
-            {
-                if (IsSameValue(orgResult.Values))
-                {
-                    Dictionary<Kooboo.Dom.Element, string> newresult = new Dictionary<Dom.Element, string>();
-
-                    foreach (var item in orgResult)
-                    {
-                        var value = GetNonSrcUrl(item.Key); 
-                        if (!string.IsNullOrWhiteSpace(value) && !Lib.Helper.StringHelper.IsSameValue(value, item.Value))
-                        {
-                            newresult[item.Key] = value; 
-                        }
-                        else
-                        {
-                            newresult[item.Key] = item.Value; 
-                        }
-                    } 
-                    return newresult; 
-                }
-            }
-
-            return orgResult; 
-        }
-
-
-        public bool IsSameValue(IEnumerable<string> values)
-        {
-            bool issame = true;
-            string value = null;
-            foreach (var item in values)
-            {
-                if (value == null)
-                {
-                    value = item;
-                }
-                else
-                {   
-                    if (!Lib.Helper.StringHelper.IsSameValue(value, item))
-                    {
-                        return false; 
-                    } 
-                }
-            }
-
-            return issame;
-        }
-         
-        public string GetNonSrcUrl(Kooboo.Dom.Element imagetag)
-        {
-            if (imagetag == null)
-            {
-                return null; 
-            }
-
-            foreach (var item in imagetag.attributes)
-            {
-                if (item != null && item.name != null)
-                {
-                    string name = item.name.Trim().ToLower();
-                    if (name != "src" && name.Contains("src"))
-                    {
-                        return item.value;
-                    }
-                }
-            }
-            return null;
-        } 
-    }
-
-
+     
+    } 
 }

@@ -23,17 +23,17 @@ namespace Kooboo.Sites.Service
         /// <returns></returns>
         public static List<string> GetImages(Document dom)
         {
-            List<string> imgurls = new List<string>();
+            var imageurls = GetImageSrcs(dom);
 
-            foreach (var item in dom.images.item)
-            {
-                string itemsrc = DomUrlService.GetLinkOrSrc(item);
+            List<string> imgurls = new List<string>(); 
 
-                if (!string.IsNullOrEmpty(itemsrc))
+            foreach (var item in imageurls)
+            { 
+                if (!string.IsNullOrEmpty(item.Value))
                 {
-                    if (!Kooboo.Lib.Utilities.DataUriService.isDataUri(itemsrc))
+                    if (!Kooboo.Lib.Utilities.DataUriService.isDataUri(item.Value))
                     {
-                        imgurls.Add(itemsrc);
+                        imgurls.Add(item.Value);
                     }
                 }
             }
@@ -245,5 +245,99 @@ namespace Kooboo.Sites.Service
             }
             return false;
         }
+
+         
+
+        private static Dictionary<Kooboo.Dom.Element, string> EnsureImageNonSrcUrl(Dictionary<Kooboo.Dom.Element, string> orgResult)
+        {
+            // when all values are the same, possible non-src is the right value. 
+            Dictionary<Element, string> newvalue = new Dictionary<Element, string>(); 
+
+            if (orgResult.Count >= 2)
+            {
+                List<string> sameurls = new List<string>();
+
+                foreach (var group in orgResult.GroupBy(o=>o.Value))
+                {
+                    if (group.Count()>1 && AllHasNonSrc(group.ToList()))
+                    {
+                        foreach (var item in group)
+                        {
+                           newvalue[item.Key]  = GetImageNonSrcUrl(item.Key); 
+                        }
+                    }
+                } 
+            }
+
+            if (newvalue.Any())
+            {
+                foreach (var item in newvalue)
+                {
+                    orgResult[item.Key] = item.Value; 
+                }
+            }
+             
+
+            return orgResult;
+        }
+
+        private static bool AllHasNonSrc(List<KeyValuePair<Element, string>> group)
+        {
+            foreach (var item in group)
+            {
+                if (GetImageNonSrcUrl(item.Key) == null)
+                {
+                    return false; 
+                }
+            }
+            return true; 
+        }
+     
+    
+        public static string GetImageNonSrcUrl(Kooboo.Dom.Element imagetag)
+        {
+            if (imagetag == null)
+            {
+                return null;
+            }
+
+            foreach (var item in imagetag.attributes)
+            {
+                if (item != null && item.name != null)
+                {
+                    string name = item.name.Trim().ToLower();
+                    if (name != "src" && name.Contains("src"))
+                    {
+                        return item.value;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public static Dictionary<Kooboo.Dom.Element, string> GetImageSrcs(Document doc)
+        {
+            var imagetags = doc.images.item; 
+
+            Dictionary<Kooboo.Dom.Element, string> result = new Dictionary<Dom.Element, string>();
+
+            foreach (var item in imagetags)
+            {
+                var url = item.getAttribute("src");
+
+                if (string.IsNullOrWhiteSpace(url))
+                {
+                    url = GetImageNonSrcUrl(item);
+                }
+
+                if (!string.IsNullOrWhiteSpace(url))
+                {
+                    result.Add(item, url);
+                }
+            }
+
+            return EnsureImageNonSrcUrl(result);
+        }
+
     }
 }

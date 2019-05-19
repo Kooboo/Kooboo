@@ -6,6 +6,8 @@ using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Routing;
 using System.Collections.Generic;
 using System;
+using Kooboo.Sites.Relation;
+using Kooboo.Sites.Models;
 
 namespace Kooboo.Sites.Render
 {
@@ -39,8 +41,7 @@ namespace Kooboo.Sites.Render
                 if (Functions.FunctionHelper.IsFunction(this.Url))
                 {
                     /// might be a function.  
-                    this.RenderUrlValueTask = new ValueRenderTask(this.Url);
-
+                    this.RenderUrlValueTask = new ValueRenderTask(this.Url); 
                 }
 
                 if (Service.DomUrlService.IsExternalLink(Url) || Url == "#")
@@ -314,8 +315,8 @@ namespace Kooboo.Sites.Render
                 var view = context.WebSite.SiteDb().Views.GetByNameOrId(id);
 
                 if (view != null)
-                {
-                    var relation = context.WebSite.SiteDb().Relations.GetReferredBy(view, ConstObjectType.Page);
+                { 
+                    var relation = GetViewPageRelation(context, view, context.WebSite.SiteDb().Log.Store.LastKey);
 
                     if (relation != null && relation.Count > 0)
                     {
@@ -357,6 +358,29 @@ namespace Kooboo.Sites.Render
             result.Add(new RenderResult() { Value = Render(context) });
         }
 
+
+        // relation cache... 
+        private long lastLog { get; set; } = 0; 
+        public List<ObjectRelation> GetViewPageRelation(RenderContext context, View view, long LastChange)
+        {
+            if (LastChange != lastLog)
+            {
+                ViewPageRelationCache = new Dictionary<Guid, List<ObjectRelation>>(); 
+            }
+
+            if (!ViewPageRelationCache.ContainsKey(view.Id))
+            {
+                var relation = context.WebSite.SiteDb().Relations.GetReferredBy(view, ConstObjectType.Page);
+                ViewPageRelationCache[view.Id] = relation;
+                return relation; 
+            }
+            else
+            {
+                return ViewPageRelationCache[view.Id]; 
+            }
+        }
+
+        public Dictionary<Guid, List<ObjectRelation>> ViewPageRelationCache { get; set; } = new Dictionary<Guid, List<ObjectRelation>>(); 
 
     }
 }

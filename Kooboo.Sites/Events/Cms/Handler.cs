@@ -99,8 +99,7 @@ namespace Kooboo.Sites.Events
             {
                 // delete an route.. 
                 Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb).Del(ChangeEvent.Value.Name);
-                Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb, ChangeEvent.Value.DestinationConstType).Del(ChangeEvent.Value.Name);
-
+                Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb, ChangeEvent.Value.DestinationConstType).Del(ChangeEvent.Value.Name); 
             }
         }
 
