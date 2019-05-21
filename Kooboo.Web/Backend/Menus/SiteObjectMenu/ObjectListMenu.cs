@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kooboo.Web.Backend.CmsMenus.ObjectMenu
+namespace Kooboo.Web.Backend.Menus.ObjectMenu
 {
   public  class ObjectListMenu
-    {
-
+    { 
         public string Name { get; set; }
          
-
         public string Url {
             get
             {

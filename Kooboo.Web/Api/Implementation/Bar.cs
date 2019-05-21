@@ -9,8 +9,7 @@ using Kooboo.Web.ViewModel;
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
 using Kooboo.Data.Language;
-using Kooboo.Sites.ViewModel;
-using Kooboo.Web.CmsMenu;
+using Kooboo.Web.Menus;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -94,7 +93,7 @@ namespace Kooboo.Web.Api.Implementation
             });
 
             // additional menu for the extension. 
-            var sitemenus = Kooboo.Web.CmsMenu.MenuContainer.SubMenus(typeof(ISiteMenu));
+            var sitemenus = MenuContainer.SubMenus(typeof(ISideBarMenu));
             var oldmenues = sitemenus.Select(o => MenuHelper.ConvertToOld(o, call.Context)).ToList();
 
             if (oldmenues != null && oldmenues.Any())
