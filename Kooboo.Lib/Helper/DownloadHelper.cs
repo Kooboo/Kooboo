@@ -9,6 +9,8 @@ using System.Net.Http;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Http.Headers;
+using System.IO.Compression;
+using System.Collections.Generic;
 
 namespace Kooboo.Lib.Helper
 {
@@ -164,11 +166,9 @@ namespace Kooboo.Lib.Helper
             }
             return null;
         }
-         
-        private static async Task<DownloadContent> ProcessResponse1(HttpResponseMessage response)
-        {
-            byte[] databytes = await response.Content.ReadAsByteArrayAsync();
 
+        internal static async Task<DownloadContent> ProcessResponse1(HttpResponseMessage response)
+        {
             DownloadContent downcontent = new DownloadContent();
 
             downcontent.ResponseHeader = response.Headers; 
@@ -189,19 +189,21 @@ namespace Kooboo.Lib.Helper
             {
                 downcontent.ContentType = contentType.ToLower();
             }
-
-            downcontent.DataBytes = databytes;
-
+            
             if (string.IsNullOrEmpty(downcontent.ContentType) || IOHelper.IsStringType(downcontent.ContentType))
             {
                 downcontent.isString = true;
 
+                var databytes =await GetDataBytes(response);
+                if (databytes == null) return downcontent;
+                downcontent.DataBytes = databytes;
+
                 var encoding = EncodingDetector.GetEncoding(ref databytes, contentType);
-                if (encoding != null)
-                {
-                    downcontent.ContentString = encoding.GetString(databytes);
-                    downcontent.Encoding = encoding.WebName;
-                }
+                if (encoding == null) return downcontent;
+
+                downcontent.ContentString = encoding.GetString(databytes);
+                downcontent.Encoding = encoding.WebName;
+
             }
             else
             { 
@@ -209,6 +211,41 @@ namespace Kooboo.Lib.Helper
             }
 
             return downcontent;
+        }
+
+        private static async Task<byte[]> GetDataBytes(HttpResponseMessage response)
+        {
+            var responseStream = await response.Content.ReadAsStreamAsync();
+            Stream stream = responseStream;
+            try
+            {
+                //support common compression methods:gzip and deflate
+                if (response.Content.Headers.ContentEncoding.Contains("gzip"))
+                {
+                    stream = new GZipStream(responseStream, CompressionMode.Decompress);
+                }
+                else if (response.Content.Headers.ContentEncoding.Contains("deflate"))
+                {
+                    stream = new DeflateStream(responseStream, CompressionMode.Decompress);
+                }
+                using (var memory=new MemoryStream())
+                {
+                    await stream.CopyToAsync(memory);
+                    return memory.ToArray();
+                }
+            }
+            catch
+            {
+
+            }
+            finally
+            {
+                stream.Close();
+                responseStream.Close();
+            }
+
+            return null;
+            
         }
 
         private static DownloadContent ProcessResponse(HttpWebResponse httpWebResponse)
