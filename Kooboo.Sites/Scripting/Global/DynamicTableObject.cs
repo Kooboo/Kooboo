@@ -3,11 +3,13 @@ using Kooboo.IndexedDB.Dynamic;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
+using Kooboo.Sites.Scripting.Helper;
 using System.Collections.Generic;
 using System.Linq; 
 
 namespace Kooboo.Sites.Scripting.Global
 {
+    [Newtonsoft.Json.JsonConverter(typeof(JsonConverterDynamicObject))]
     public class DynamicTableObject : Kooboo.Data.Interface.IDynamic
     {
         public IDictionary<string, object> obj { get; set; }
