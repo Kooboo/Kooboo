@@ -4,7 +4,7 @@ using Kooboo.Data.Context;
 using System.Collections.Generic;
 
 
-namespace Kooboo.Web.CmsMenu
+namespace Kooboo.Web.Menus
 { 
 
     public class Sites : ITopMenu
@@ -21,15 +21,15 @@ namespace Kooboo.Web.CmsMenu
         public string Icon { get; set; }
         public string Url { get; set; }
 
-        private List<IMenu> _items;
+        private List<ICmsMenu> _items;
 
-        public List<IMenu> Items
+        public List<ICmsMenu> Items
         {
             get
             {
                 if (_items == null)
                 {
-                    _items = new List<IMenu>();
+                    _items = new List<ICmsMenu>();
                 }
                 return _items;
             }

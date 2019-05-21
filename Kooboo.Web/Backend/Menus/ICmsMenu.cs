@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Web.CmsMenu
+namespace Kooboo.Web.Menus
 {
-    public interface IMenu
+    public interface ICmsMenu
     {
         string Name { get;  }
 
@@ -24,7 +24,7 @@ namespace Kooboo.Web.CmsMenu
 
         bool CanShow(RenderContext context);
 
-        List<IMenu> Items
+        List<ICmsMenu> Items
         {
             get; set;
         }

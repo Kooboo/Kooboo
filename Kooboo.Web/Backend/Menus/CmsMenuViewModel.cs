@@ -7,11 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Web.CmsMenu
+namespace Kooboo.Web.Menus
 {
     public class CmsMenuViewModel
     {
-        public CmsMenuViewModel(IMenu menu, RenderContext context)
+        public CmsMenuViewModel(ICmsMenu menu, RenderContext context)
         {
             if (menu != null)
             {

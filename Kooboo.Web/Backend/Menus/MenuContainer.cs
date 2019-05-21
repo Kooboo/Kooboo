@@ -6,13 +6,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Web.CmsMenu
+namespace Kooboo.Web.Menus
 {
     public static class MenuContainer
     {
         private static object _locker = new object();
-        private static List<IMenu> _items; 
-        public static List<IMenu> Items
+        private static List<ICmsMenu> _items; 
+        public static List<ICmsMenu> Items
         {
             get
             {
@@ -22,11 +22,11 @@ namespace Kooboo.Web.CmsMenu
                     {
                         if (_items == null)
                         {
-                            _items = new List<IMenu>();
-                            var alltypes = Kooboo.Lib.Reflection.AssemblyLoader.LoadTypeByInterface(typeof(IMenu));
+                            _items = new List<ICmsMenu>();
+                            var alltypes = Kooboo.Lib.Reflection.AssemblyLoader.LoadTypeByInterface(typeof(ICmsMenu));
                             foreach (var item in alltypes)
                             {
-                                var instance = Activator.CreateInstance(item) as IMenu;
+                                var instance = Activator.CreateInstance(item) as ICmsMenu;
                                 if (instance !=null)
                                 {
                                     _items.Add(instance);
@@ -40,7 +40,7 @@ namespace Kooboo.Web.CmsMenu
             } 
         }
           
-        public static IMenu GetMenu(Type type)
+        public static ICmsMenu GetMenu(Type type)
         {
             // TODO: also do the submenu. 
             foreach (var item in Items)
@@ -53,14 +53,14 @@ namespace Kooboo.Web.CmsMenu
             return null; 
         }
 
-        public static List<IMenu> SubMenus(Type type)
+        public static List<ICmsMenu> SubMenus(Type type)
         {
             if (type.IsInterface)
             {
                 return SubMenusByInterface(type); 
             }
 
-            List<IMenu> result = new List<IMenu>(); 
+            List<ICmsMenu> result = new List<ICmsMenu>(); 
 
             foreach (var item in Items)
             {
@@ -81,13 +81,13 @@ namespace Kooboo.Web.CmsMenu
         }
 
 
-        public static List<IMenu> SubMenusByInterface(Type type)
+        public static List<ICmsMenu> SubMenusByInterface(Type type)
         {
             if (!type.IsInterface)
             {
                 return SubMenus(type); 
             }
-            List<IMenu> result = new List<IMenu>();
+            List<ICmsMenu> result = new List<ICmsMenu>();
 
             foreach (var item in Items)
             {

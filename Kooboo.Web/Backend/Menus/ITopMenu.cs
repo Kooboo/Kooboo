@@ -6,10 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Web.CmsMenu
+namespace Kooboo.Web.Menus
 {
-  public interface IFeatureMenu : IMenu
-    {
 
+    // the top square navigation... 
+  public  interface ITopMenu : ICmsMenu
+    { 
+       string BadgeIcon { get; set; }
     }
 }

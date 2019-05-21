@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kooboo.Web.CmsMenu
+namespace Kooboo.Web.Menus
 {
     public static class MenuHelper
     {
@@ -29,7 +29,7 @@ namespace Kooboo.Web.CmsMenu
             return Kooboo.Lib.Helper.UrlHelper.AppendQueryString("/_Admin/" + relativeUrl, para);
         }
 
-        internal static MenuItem ConvertToOld(IMenu menu, RenderContext Context)
+        internal static MenuItem ConvertToOld(ICmsMenu menu, RenderContext Context)
         {
             Guid siteid = default(Guid);
             if (Context.WebSite != null)
