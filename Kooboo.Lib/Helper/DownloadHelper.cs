@@ -189,14 +189,14 @@ namespace Kooboo.Lib.Helper
             {
                 downcontent.ContentType = contentType.ToLower();
             }
-            
+
+            var databytes = await GetDataBytes(response);
+            if (databytes == null) return downcontent;
+            downcontent.DataBytes = databytes;
+
             if (string.IsNullOrEmpty(downcontent.ContentType) || IOHelper.IsStringType(downcontent.ContentType))
             {
                 downcontent.isString = true;
-
-                var databytes =await GetDataBytes(response);
-                if (databytes == null) return downcontent;
-                downcontent.DataBytes = databytes;
 
                 var encoding = EncodingDetector.GetEncoding(ref databytes, contentType);
                 if (encoding == null) return downcontent;
@@ -220,14 +220,18 @@ namespace Kooboo.Lib.Helper
             try
             {
                 //support common compression methods:gzip and deflate
-                if (response.Content.Headers.ContentEncoding.Contains("gzip"))
+                if(response.Content.Headers.ContentEncoding!=null)
                 {
-                    stream = new GZipStream(responseStream, CompressionMode.Decompress);
+                    if (response.Content.Headers.ContentEncoding.Contains("gzip"))
+                    {
+                        stream = new GZipStream(responseStream, CompressionMode.Decompress);
+                    }
+                    else if (response.Content.Headers.ContentEncoding.Contains("deflate"))
+                    {
+                        stream = new DeflateStream(responseStream, CompressionMode.Decompress);
+                    }
                 }
-                else if (response.Content.Headers.ContentEncoding.Contains("deflate"))
-                {
-                    stream = new DeflateStream(responseStream, CompressionMode.Decompress);
-                }
+                
                 using (var memory=new MemoryStream())
                 {
                     await stream.CopyToAsync(memory);
