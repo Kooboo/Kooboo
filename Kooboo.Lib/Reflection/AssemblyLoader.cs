@@ -48,7 +48,7 @@ namespace Kooboo.Lib.Reflection
 
                 if (dllname.StartsWith("Kooboo.") && dllname.EndsWith(".dll"))
                 {
-                    var index = dllname.IndexOf(".", 8);
+                    var index = dllname.LastIndexOf(".");
                     if (index > -1)
                     {
                         string koobooname = dllname.Substring(0, index);
