@@ -53,6 +53,8 @@ namespace Kooboo.Web.Menus
             return null; 
         }
 
+         
+        // Subitem, should use load by interface.... 
         public static List<ICmsMenu> SubMenus(Type type)
         {
             if (type.IsInterface)

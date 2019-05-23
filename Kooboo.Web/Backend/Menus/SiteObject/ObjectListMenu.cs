@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kooboo.Web.Backend.Menus.ObjectMenu
+namespace Kooboo.Web.Menus.ObjectMenu
 {
   public  class ObjectListMenu
     { 
@@ -14,8 +14,10 @@ namespace Kooboo.Web.Backend.Menus.ObjectMenu
                 // TODO: generate the URL. 
                 return null; 
             }
-        }
-         
+        } 
+
+        public Dictionary<string, string> Para { get; set; }
+
         public bool AcceptMultipleSelection { get; set; } = false; 
 
         public bool AcceptionSingleSelection { get; set; } = true; 
