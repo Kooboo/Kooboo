@@ -6,8 +6,11 @@ using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using Kooboo.Lib;
 
 namespace Kooboo.Web.Menus
 {
@@ -73,5 +76,34 @@ namespace Kooboo.Web.Menus
 
         }
 
+        public static string ApiUrl<TApi>(string methodname) where TApi: Kooboo.Api.IApi
+        {
+            var modelname = GetApiName(typeof(TApi));
+            return "/_api/" + modelname + "/" + methodname;  
+        }
+
+        private static string GetApiName(Type ApiType)
+        {
+            var method = ApiType.GetProperty("ModelName").GetGetMethod();
+            var dynamicMethod = new DynamicMethod("meide", typeof(string),
+                                                  Type.EmptyTypes);
+            var generator = dynamicMethod.GetILGenerator();
+            generator.Emit(OpCodes.Ldnull);
+            generator.Emit(OpCodes.Call, method);
+            generator.Emit(OpCodes.Ret);
+            var silly = (Func<string>)dynamicMethod.CreateDelegate(
+                           typeof(Func<string>));
+            return silly();
+        }
+
+        //public WhereFilter<TKey, TValue> OrderByAscending()
+        //{
+        //    string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(expression); 
+        //    if (!string.IsNullOrEmpty(fieldname))
+        //    {
+        //        return OrderByAscending(fieldname);
+        //    } 
+        //    return this;
+        //} 
     }
 }

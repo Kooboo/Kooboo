@@ -60,13 +60,7 @@ namespace Kooboo.Data
             {
                 if (_domains == null)
                 {
-                    lock (_lock)
-                    {
-                        if (_domains == null)
-                        {
-                           _domains = new LocalDomainRepository();   
-                        }
-                    }
+                    _domains = Lib.IOC.Service.GetSingleTon<IDomainRepository>(typeof(LocalDomainRepository)); 
                 }
                 return _domains;
             }

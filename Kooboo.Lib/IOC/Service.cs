@@ -41,7 +41,23 @@ namespace Kooboo.Lib.IOC
             {
                 return (T)result;
             }
-        }  
+        }
+
+        // get the Singleton instance. 
+        public static T GetSingleTon<T>(Type DefaultImplementation)
+        {
+            var result = GetSingleTon(typeof(T), false);
+            if (result == null)
+            {
+                var newinstance = (T)Activator.CreateInstance(DefaultImplementation);
+                AddSingleton<T>(newinstance);
+                return newinstance;  
+            }
+            else
+            {
+                return (T)result; 
+            } 
+        }
 
         public static Object GetSingleTon(Type objType, bool SearchImplementation)
         {
@@ -79,6 +95,9 @@ namespace Kooboo.Lib.IOC
 
             return SingleTons[name];
         }
+          
+
+   
 
         public static void AddSingleton<T>(T instance)
         {
