@@ -66,30 +66,7 @@
         </div>
     </div>
 </div>
-<div class="row" id="waterfall">
-    <!-- ko foreach: { data: panels, afterRender: afterRender }-->
-    <div class="col-md-4 block-dashboard-stat">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title" data-bind="text: $data.title"></h4>
-                <div class="panel-actions">
-                    <a class="btn btn-xs btn-link" data-bind="attr: { href: $data.showMoreUrl }"><i class="fa fa-chevron-circle-right"></i></a>
-                </div>
-            </div>
-            <table class="table">
-                <tbody data-bind="foreach:{ data: $data.list, as: 'doc' }">
-                    <tr>
-                        <td>
-                            <a data-bind='attr: { href: doc.url }, text: doc.title'></a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-    </div>
-    <!-- /ko -->
-</div>
+ 
 <data-center-modal params="isShow: showDataCenterModal, available: availableDataCenters"></data-center-modal>
 <user-verify-modal params='isShow: showUserVerifyModal, email: userEmail'></user-verify-modal>
 
