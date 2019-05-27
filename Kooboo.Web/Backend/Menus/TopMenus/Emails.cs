@@ -46,6 +46,8 @@ namespace Kooboo.Web.Menus
 
         public int Order => 5;
 
+        public ICmsMenu ParentMenu { get; set; }
+
         public string GetDisplayName(RenderContext Context)
         {
             return Data.Language.Hardcoded.GetValue("Emails", Context);

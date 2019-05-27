@@ -120,15 +120,10 @@ namespace Kooboo.Web.Api.Implementation
 
                     return menus;
                 }
-            }
-
+            } 
         }
 
-        private void AppendImplementation(List<MenuItem> menus)
-        {
-
-        }
-
+       
         private void CheckRights(List<MenuItem> menus, Sites.Authorization.EnumUserRole role)
         {
             foreach (var item in menus)

@@ -39,6 +39,7 @@ namespace Kooboo.Web.Menus
 
         public string BadgeIcon { get; set; }
         public int Order { get => 1;  }
+        public ICmsMenu ParentMenu { get; set; }
 
         public string GetDisplayName(RenderContext Context)
         {

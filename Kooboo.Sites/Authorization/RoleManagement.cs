@@ -57,8 +57,7 @@ namespace Kooboo.Sites.Authorization
             }
 
         }
-        
-        
+         
         public static bool HasRights(uint actionRights, EnumUserRole role)
         {
             if (roleActions.ContainsKey(role))
@@ -73,7 +72,6 @@ namespace Kooboo.Sites.Authorization
 
             return false; 
         }
- 
-         
+  
     }
 }

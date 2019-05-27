@@ -22,11 +22,8 @@ namespace Kooboo.Web.Menus
 
         int Order { get;   }
 
-        bool CanShow(RenderContext context);
-
-        List<ICmsMenu> Items
-        {
-            get; set;
-        }
+        bool CanShow(RenderContext context); 
+        // the parent menu. 
+       // Type ParentMenu { get; set; }
     }
 }

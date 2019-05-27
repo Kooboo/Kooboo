@@ -12,13 +12,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Lib;
 using System.Reflection;
-using Kooboo.Web.Backend.Menus.SiteObjectMenu;
+using Kooboo.Web.Menus;
 
 namespace Kooboo.Web.Menus
 {
     public static class MenuHelper
-    {
-
+    { 
         public static string AdminUrl(string relativeUrl)
         {
             return "/_Admin/" + relativeUrl;
@@ -60,17 +59,17 @@ namespace Kooboo.Web.Menus
                     result.Url = Kooboo.Lib.Helper.UrlHelper.AppendQueryString(menu.Url, para); 
                 } 
 
-                if (menu.Items != null && menu.Items.Any())
-                {
-                    foreach (var item in menu.Items)
-                    {
-                        var menuitem = ConvertToOld(item, Context);
-                        if (menuitem != null)
-                        {
-                            result.Items.Add(menuitem);
-                        }
-                    }
-                }
+                //if (menu.Items != null && menu.Items.Any())
+                //{
+                //    foreach (var item in menu.Items)
+                //    {
+                //        var menuitem = ConvertToOld(item, Context);
+                //        if (menuitem != null)
+                //        {
+                //            result.Items.Add(menuitem);
+                //        }
+                //    }
+                //}
                 return result;
             }
 
@@ -81,7 +80,28 @@ namespace Kooboo.Web.Menus
         public static string ApiUrl<TApi>(string methodname) where TApi: Kooboo.Api.IApi
         {
             var modelname = GetApiName(typeof(TApi));
-            return "/_api/" + modelname + "/" + methodname;  
+            return ApiUrl(modelname, methodname); 
+        } 
+
+        public static string ApiUrl(string modelname, string methodname)
+        { 
+            return "/_api/" + modelname + "/" + methodname;
+        }
+
+        public static string SiteObjectApiUrl<TSiteModel>(string methodname) where TSiteModel : Kooboo.Data.Interface.ISiteObject
+        {
+            var apiprovider = Web.SystemStart.CurrentApiProvider;
+
+            var modelname = typeof(TSiteModel).Name; 
+
+            foreach (var item in apiprovider.List)
+            {
+               if (item.Value.ModelName == modelname)
+                {
+                    return ApiUrl(modelname, methodname); 
+                }
+            }
+            return null; 
         }
 
         private static string GetApiName(Type ApiType)
@@ -96,19 +116,7 @@ namespace Kooboo.Web.Menus
             var silly = (Func<string>)dynamicMethod.CreateDelegate(
                            typeof(Func<string>));
             return silly();
-        }
-
-        //public WhereFilter<TKey, TValue> OrderByAscending()
-        //{
-        //    string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(expression); 
-        //    if (!string.IsNullOrEmpty(fieldname))
-        //    {
-        //        return OrderByAscending(fieldname);
-        //    } 
-        //    return this;
-        //} 
-
-
+        } 
 
     }
 }

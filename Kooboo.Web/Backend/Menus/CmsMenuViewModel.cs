@@ -20,16 +20,7 @@ namespace Kooboo.Web.Menus
                 this.Icon = menu.Icon;
                 this.Url = menu.Url;
                 this.DisplayName = menu.GetDisplayName(context);
-
-                if (menu.Items != null)
-                {
-                    foreach (var item in menu.Items)
-                    {
-                        CmsMenuViewModel itemmodel = new CmsMenuViewModel(item, context);
-                        this.Items.Add(itemmodel);
-                    }
-                }
-
+                  
                 if (menu is ITopMenu)
                 {
                     var topmenu = menu as ITopMenu;

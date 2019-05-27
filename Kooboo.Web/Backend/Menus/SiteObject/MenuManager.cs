@@ -9,11 +9,10 @@ namespace Kooboo.Web.Menus.ObjectMenu
     public static class MenuManager
     { 
         // Menu for the table list.... 
-        public static List<ObjectListMenu> GetSiteObjectMenu<T>() where T: ISiteObject
-        { 
-
-            return null; 
-        } 
+        //public static List<Menu> GetSiteObjectMenu<T>() where T: ISiteObject
+        //{   
+              
+        //} 
 
         public static List<Kooboo.Api.ApiMethod> GetSiteMenuApiMethodByType(Type SiteObjectType)
         {
