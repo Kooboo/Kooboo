@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Web.Menus
 {
-    public class Domain : ITopMenu 
+    public class Domain : IHeaderMenu 
     {
         public Domain()
         {
@@ -25,7 +25,8 @@ namespace Kooboo.Web.Menus
   
         private List<ICmsMenu> _items; 
 
-        public List<ICmsMenu> Items {
+        public List<ICmsMenu> SubItems
+        {
             get
             {
                 if (_items == null)
@@ -39,20 +40,11 @@ namespace Kooboo.Web.Menus
 
         public string BadgeIcon { get; set; }
         public int Order { get => 1;  }
-        public ICmsMenu ParentMenu { get; set; }
+        public ICmsMenu ParentMenu { get; set; } 
 
         public string GetDisplayName(RenderContext Context)
         {
             return Data.Language.Hardcoded.GetValue("Domain", Context); 
-        }
-
-        public bool CanShow(RenderContext context)
-        {
-            if (context.User !=null && context.User.IsAdmin)
-            {
-                return true; 
-            }
-            return false; 
-        }
+        } 
     }
 }

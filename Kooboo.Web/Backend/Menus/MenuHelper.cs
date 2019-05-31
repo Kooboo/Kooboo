@@ -21,7 +21,7 @@ namespace Kooboo.Web.Menus
         public static string AdminUrl(string relativeUrl)
         {
             return "/_Admin/" + relativeUrl;
-        }
+        } 
 
         public static string AdminUrl(string relativeUrl, SiteDb siteDb)
         {
@@ -41,7 +41,7 @@ namespace Kooboo.Web.Menus
                 siteid = Context.WebSite.Id;
             }
 
-            if (menu != null && menu.CanShow(Context))
+            if (menu != null && CanShow(menu, Context))
             {
                 MenuItem result = new MenuItem();
                 result.Icon = menu.Icon;
@@ -75,6 +75,11 @@ namespace Kooboo.Web.Menus
 
             return null;
 
+        }
+
+        public static bool CanShow(ICmsMenu menu, RenderContext context)
+        {
+            return true;
         }
 
         public static string ApiUrl<TApi>(string methodname) where TApi: Kooboo.Api.IApi

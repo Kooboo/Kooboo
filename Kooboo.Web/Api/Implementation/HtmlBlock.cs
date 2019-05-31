@@ -1,6 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Api;
+using Kooboo.Sites.Authorization;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Web.ViewModel;
@@ -12,8 +13,10 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
-    public class HtmlBlockApi : SiteObjectApi<HtmlBlock>
-    {  
+    public class HtmlBlockApi : SiteObjectApi<HtmlBlock>, IApiPermission
+    {
+        public string PermissionTree => "Content/HtmlBlock"; 
+
         [Kooboo.Attributes.RequireParameters("id", "values")]
         public override Guid Post(ApiCall apiCall)
         { 

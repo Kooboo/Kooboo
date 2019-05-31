@@ -53,7 +53,7 @@ namespace Kooboo.Web.Api.Implementation
             var user = call.Context.User;
             HeaderMenu header = new HeaderMenu();
 
-            var menus = MenuContainer.SubMenus(typeof(ITopMenu));
+            var menus = MenuContainer.SubMenus(typeof(IHeaderMenu));
 
             foreach (var item in menus)
             {
@@ -94,6 +94,7 @@ namespace Kooboo.Web.Api.Implementation
 
             // additional menu for the extension. 
             var sitemenus = MenuContainer.SubMenus(typeof(ISideBarMenu));
+
             var oldmenues = sitemenus.Select(o => MenuHelper.ConvertToOld(o, call.Context)).ToList();
 
             if (oldmenues != null && oldmenues.Any())

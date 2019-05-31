@@ -7,10 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Web.Menus
-{
-
+{ 
     // the top square navigation... 
-  public  interface ITopMenu : ICmsMenu
+  public  interface IHeaderMenu : ICmsMenu
     { 
        string BadgeIcon { get; set; }
     }

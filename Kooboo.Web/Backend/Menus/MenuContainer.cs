@@ -68,9 +68,9 @@ namespace Kooboo.Web.Menus
             {
                 if (item.GetType()== type)
                 {
-                    if (item.Items !=null)
+                    if (item.SubItems !=null)
                     {
-                        result.InsertRange(0, item.Items); 
+                        result.InsertRange(0, item.SubItems); 
                     }
                 }  
 

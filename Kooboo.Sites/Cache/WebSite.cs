@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Routing;
+using Kooboo.Sites.Authorization.Model;
 
 namespace Kooboo.Sites.Cache
 {
@@ -148,6 +149,7 @@ namespace Kooboo.Sites.Cache
                 || TValueType == typeof(Code)
                 || TValueType == typeof(KConfig)
                 || TValueType == typeof(TableRelation)
+                || TValueType == typeof(RolePermission)
                 )
             {
                 return true;

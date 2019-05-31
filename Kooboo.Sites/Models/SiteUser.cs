@@ -34,10 +34,11 @@ namespace Kooboo.Sites.Models
         [JsonConverter(typeof(StringEnumConverter))]
         public  Kooboo.Sites.Authorization.EnumUserRole Role { get; set; }
 
+        public Guid RoldId { get; set; }
+
         public override int GetHashCode()
         {
             return (int)Role; 
-        }
-
+        } 
     }
 }

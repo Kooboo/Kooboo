@@ -4,9 +4,10 @@ using System.Text;
 
 namespace Kooboo.Web.Backend.Menus.Hooker
 {
-    interface ITopMenu
-    {
+   public interface ISideBarMenu
+    { 
 
-        
     }
+
+    
 }

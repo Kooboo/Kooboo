@@ -59,6 +59,8 @@ namespace Kooboo
 
         public const byte FormSetting = 50;
 
+        public const byte RolePermission = 51;
+
         public const byte TransferTask = 53;
         public const byte TransferPage = 54;
 

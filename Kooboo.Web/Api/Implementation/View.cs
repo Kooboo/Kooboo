@@ -154,7 +154,9 @@ namespace Kooboo.Web.Api.Implementation
 
             return view.Id;
         }
-                                            
+                     
+        
+        [SiteObjectmenu(multipe)]
         public Dictionary<string, ComparerModel[]> CompareType(ApiCall call)
         {
             var types = Data.Helper.DataTypeHelper.GetDataTypeCompareModel();

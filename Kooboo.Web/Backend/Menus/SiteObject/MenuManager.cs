@@ -10,8 +10,7 @@ namespace Kooboo.Web.Menus.ObjectMenu
     { 
         // Menu for the table list.... 
         //public static List<Menu> GetSiteObjectMenu<T>() where T: ISiteObject
-        //{   
-              
+        //{ 
         //} 
 
         public static List<Kooboo.Api.ApiMethod> GetSiteMenuApiMethodByType(Type SiteObjectType)
@@ -31,9 +30,7 @@ namespace Kooboo.Web.Menus.ObjectMenu
                     {
 
                     }
-                }
-
-
+                } 
             }
             return null;
 
@@ -45,10 +42,8 @@ namespace Kooboo.Web.Menus.ObjectMenu
             {
                 if (item is Kooboo.Api.ApiMiddleware)
                 {
-                    var apimiddle = item as Kooboo.Api.ApiMiddleware;
-
-                    return apimiddle.ApiProvider;
-
+                    var apimiddle = item as Kooboo.Api.ApiMiddleware; 
+                    return apimiddle.ApiProvider; 
                 }
             }
             return null;
@@ -58,9 +53,7 @@ namespace Kooboo.Web.Menus.ObjectMenu
         public static bool IsMenu(MethodInfo method)
         {
             return method.IsDefined(typeof(SiteObjectMenu));
-        }
-
-
+        } 
 
     }
 }

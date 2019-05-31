@@ -1,6 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Api;
+using Kooboo.Sites.Authorization;
 using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
-    public class DataBaseApi : IApi
+    public class DataBaseApi : IApi, IApiPermission
     {
         public string ModelName
         {
@@ -26,6 +27,8 @@ namespace Kooboo.Web.Api.Implementation
         {
             get { return true; }
         }
+
+        public string PermissionTree { get => "Database";  }
 
         public List<string> Tables(ApiCall call)
         {

@@ -8,6 +8,7 @@ namespace Kooboo.Web.Menus
     public class SiteObjectMenu : Attribute
     {
 
+        public SiteObjectMenu(string )
     } 
 
 }

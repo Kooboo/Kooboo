@@ -20,10 +20,9 @@ namespace Kooboo.Web.Menus
 
         string Url { get;  }
 
-        int Order { get;   }
+        int Order { get;   } 
 
-        bool CanShow(RenderContext context); 
-        // the parent menu. 
-       // Type ParentMenu { get; set; }
+        List<ICmsMenu> SubItems { get; set; }
+
     }
 }

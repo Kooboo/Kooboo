@@ -21,9 +21,9 @@ namespace Kooboo.Web.Menus
                 this.Url = menu.Url;
                 this.DisplayName = menu.GetDisplayName(context);
                   
-                if (menu is ITopMenu)
+                if (menu is IHeaderMenu)
                 {
-                    var topmenu = menu as ITopMenu;
+                    var topmenu = menu as IHeaderMenu;
                     this.BadgeIcon = topmenu.BadgeIcon;
                     this.Name = this.DisplayName;
                 }
@@ -39,6 +39,8 @@ namespace Kooboo.Web.Menus
         public string Icon { get; set; }
 
         public string Url { get; set; }
+
+        public int Order { get; set; }
 
         private List<CmsMenuViewModel> _items; 
         public List<CmsMenuViewModel> Items
