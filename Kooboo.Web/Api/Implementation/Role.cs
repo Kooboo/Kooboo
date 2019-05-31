@@ -57,9 +57,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public void Post(ApiCall call, Sites.Authorization.Model.PermissionViewModel model)
         { 
-            // save into it..... 
-            
-
+            // save into it.....  
 
 
         }

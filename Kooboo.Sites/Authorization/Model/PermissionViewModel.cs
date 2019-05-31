@@ -10,6 +10,8 @@ namespace Kooboo.Sites.Authorization.Model
 
         public bool Selected { get; set; }
 
-        public List<PermissionViewModel> SubItems { get; set; } 
+        public List<PermissionViewModel> SubItems { get; set; }
+
+        //development/view , layout /sublayout.
     }
 }
