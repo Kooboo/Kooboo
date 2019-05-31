@@ -8,6 +8,8 @@ namespace Kooboo.Sites.Authorization.Model
     {
         public string Name { get; set; }
 
+        public Guid Id { get; set; }
+
         public bool Selected { get; set; }
         
 

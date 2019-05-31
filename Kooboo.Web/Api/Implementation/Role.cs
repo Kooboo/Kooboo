@@ -56,8 +56,14 @@ namespace Kooboo.Web.Api.Implementation
 
 
         public void Post(ApiCall call, Sites.Authorization.Model.PermissionViewModel model)
-        { 
-            // save into it..... 
+        {
+            var permission = Kooboo.Sites.Authorization.PermissionTreeHelper.ExtractFromModel(model);
+            Kooboo.Sites.Authorization.Model.RolePermission role = new Sites.Authorization.Model.RolePermission();
+            role.Name = model.Name;
+            role.Permission = permission;
+
+            var sitedb = call.WebSite.SiteDb();
+            sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().AddOrUpdate(role);  
         }
          
         public bool IsUniqueName(ApiCall call, string name)
@@ -73,5 +79,32 @@ namespace Kooboo.Web.Api.Implementation
 
             return item == null; 
         }
+         
+
+        public   bool Deletes(ApiCall call)
+        {
+            var sitedb = call.WebSite.SiteDb();
+            var repo = sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>();
+
+            string json = call.GetValue("ids");
+            if (string.IsNullOrEmpty(json))
+            {
+                json = call.Context.Request.Body;
+            }
+            List<Guid> ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(json);
+
+            if (ids != null && ids.Count() > 0)
+            {
+                foreach (var item in ids)
+                {
+                    repo.Delete(item, call.Context.User.Id);
+                }
+                return true;
+            }
+            return false;
+        }
+
+
+
     }
 }

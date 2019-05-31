@@ -104,16 +104,17 @@ namespace Kooboo.Sites.Authorization
             var spe = "/\\".ToCharArray();
 
             PermissionViewModel result = Kooboo.Sites.Authorization.ApiPermission.MasterTemplate();
-            result.Name = permission.Name; 
+            result.Name = permission.Name;
+            result.Id = permission.Id;
+
             foreach (var item in permission.Permission)
             {
                 var rights = item.Split(spe, StringSplitOptions.RemoveEmptyEntries);
                 AppendToModel(result, rights.ToList());
-            } 
+            }
             return result;
         }
 
-         
 
 
 
@@ -150,22 +151,32 @@ namespace Kooboo.Sites.Authorization
         }
 
 
+        public static List<string> ExtractFromModel(PermissionViewModel model)
+        {
+            return GetSubStrings(model.SubItems);
+        }
 
-        //public static List<string> ExtractFromModel(PermissionViewModel model)
-        //{
-             
-        //}
+        public static List<string> GetSubStrings(List<PermissionViewModel> SubModels)
+        {
+            List<string> result = new List<string>();
 
-        //public static List<string> GetSubStrings(List<PermissionViewModel> SubModels)
-        //{
+            foreach (var item in SubModels)
+            {
+                string root = item.Name;
 
-        //    List<string> result = new List<string>(); 
+                if (item.SubItems != null && item.SubItems.Any())
+                {
+                    var substrings = GetSubStrings(item.SubItems);
+                    foreach (var str in substrings)
+                    {
+                        string rootsub = root + "/" + str;
+                        result.Add(rootsub);
+                    }
+                }
+            }
 
-        //    foreach (var item in SubModels)
-        //    {
-        //        item.Name
-        //    }
-        //}
+            return result;
+        }
 
     }
 }
