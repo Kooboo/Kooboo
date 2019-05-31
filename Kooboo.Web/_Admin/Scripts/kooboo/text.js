@@ -132,7 +132,8 @@
       SiteUser: "Site user",
       KConfig: "Kooboo Config",
       TableRelation: "Table Relation",
-      TransferTask:"Transfer Task",
+      TransferTask: "Transfer Task",
+      Roles: "Roles",
 
       Demands: "Demands",
       Demand: "Demand",
@@ -511,12 +512,12 @@
     },
 
     component: {
-        tableRelation: {
-            tableA: "Table A",
-            fieldA: "Field A",
-            tableB: "Table B",
-            fieldB: "Field B"
-        },
+      tableRelation: {
+        tableA: "Table A",
+        fieldA: "Field A",
+        tableB: "Table B",
+        fieldB: "Field B"
+      },
       event: {
         noCondition: "No condition",
         noActivity: "No activity",

@@ -270,6 +270,8 @@ namespace Kooboo.Web.Api.Implementation
                     new MenuItem{ Name = Hardcoded.GetValue("Disk", context),Url = AdminUrl("System/Disk", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Disk },
                     new MenuItem{ Name = Hardcoded.GetValue("Jobs", context), Url = AdminUrl("System/Jobs", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Jobs },
                     new MenuItem{ Name = Hardcoded.GetValue("SiteUser", context), Url = AdminUrl("System/SiteUser", siteDb), ActionRights = Sites.Authorization.Actions.Systems.SiteUser },
+                    // TODO change the ActionRights below ¡ý
+                    new MenuItem{ Name = Hardcoded.GetValue("Roles", context), Url = AdminUrl("System/Roles", siteDb), ActionRights = Sites.Authorization.Actions.Systems.Domains },
 
                 }
             };

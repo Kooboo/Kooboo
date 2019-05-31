@@ -1727,6 +1727,11 @@
   }
   extend(TransferTask, BaseModel);
 
+  function Role() {
+    this.name = "Role";
+  }
+  extend(Role, BaseModel);
+
   wind.Kooboo = {
     APIGeneration: new APIGeneration(),
     Bar: new Bar(),
@@ -1777,6 +1782,7 @@
     ProductCategory: new ProductCategory(),
     Profile: new Profile(),
     Publish: new Publish(),
+    Role: new Role(),
     Search: new Search(),
     Script: new Script(),
     Site: new Site(),
