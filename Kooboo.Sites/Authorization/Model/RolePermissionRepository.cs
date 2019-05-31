@@ -46,8 +46,8 @@ namespace Kooboo.Sites.Authorization.Model
         }
 
 
-        private RolePermission _master;
-        public RolePermission Master
+        private static RolePermission _master;
+        public static RolePermission Master
         {
             get
             {
@@ -64,8 +64,8 @@ namespace Kooboo.Sites.Authorization.Model
             } 
         }
 
-        private RolePermission _developer;
-        public RolePermission Developer
+        private static RolePermission _developer;
+        public static RolePermission Developer
         {
             get
             {
@@ -81,8 +81,8 @@ namespace Kooboo.Sites.Authorization.Model
             }
         }
           
-        private RolePermission _contentmanager;
-        public RolePermission ContentManager
+        private static RolePermission _contentmanager;
+        public static RolePermission ContentManager
         {
             get
             {

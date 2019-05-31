@@ -7,7 +7,6 @@ namespace Kooboo.Web.Backend.Menus.Hooker
    public interface ISideBarMenu
     { 
 
-    }
-
+    } 
     
 }
