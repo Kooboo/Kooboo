@@ -113,6 +113,10 @@ namespace Kooboo.Sites.Authorization
             return result;
         }
 
+         
+
+
+
         // single rights without \\ 
         public static void AppendToModel(PermissionViewModel model, List<string> SingleRights)
         {

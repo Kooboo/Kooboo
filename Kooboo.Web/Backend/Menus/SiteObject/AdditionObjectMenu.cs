@@ -12,9 +12,9 @@ namespace Kooboo.Web.Backend.Menus.SiteObject
         // add(view, "Create", "_admin/view/new"); 
 
 
-        public List<ICmsMenu> GetAdditional<T>()
-        {
+        //public List<ICmsMenu> GetAdditional<T>()
+        //{
 
-        }
+        //}
     }
 }

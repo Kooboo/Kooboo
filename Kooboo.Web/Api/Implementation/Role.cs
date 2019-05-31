@@ -57,13 +57,21 @@ namespace Kooboo.Web.Api.Implementation
 
         public void Post(ApiCall call, Sites.Authorization.Model.PermissionViewModel model)
         { 
-            // save into it.....  
-
-
+            // save into it..... 
         }
+         
+        public bool IsUniqueName(ApiCall call, string name)
+        {
+            name = name.ToLower(); 
+            if (name == "master" || name == "developer" || name == "contentmanager")
+            {
+                return false;  
+            }
 
+            var sitedb = call.WebSite.SiteDb();
+            var item = sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().Get(name);
 
-
-
+            return item == null; 
+        }
     }
 }
