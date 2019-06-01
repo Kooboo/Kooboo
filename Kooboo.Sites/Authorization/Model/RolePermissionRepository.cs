@@ -17,14 +17,67 @@ namespace Kooboo.Sites.Authorization.Model
                 para.SetPrimaryKeyField<RolePermission>(o => o.Id);
                 return para;
             }
+        } 
+
+        public override RolePermission Get(Guid id, bool getColumnDataOnly = false)
+        {
+            var item = base.Get(id, getColumnDataOnly);
+            if (item !=null)
+            {
+                return item; 
+            }
+            else
+            {
+                return DefaultData.GetDefault(id); 
+            }
         }
+
+        public override RolePermission Get(string nameorid)
+        {
+            return GetByNameOrId(nameorid); 
+        }
+
+        public override RolePermission GetByNameOrId(string NameOrGuid)
+        {
+
+            Guid key;
+            bool parseok = Guid.TryParse(NameOrGuid, out key);
+
+            if (!parseok)
+            {
+                byte consttype = ConstTypeContainer.GetConstType(typeof(RolePermission));
+
+                key = Data.IDGenerator.Generate(NameOrGuid, consttype);
+            }
+            return Get(key, false);
+        }
+
+        public override List<RolePermission> All()
+        {
+            var list =  base.All();
+            list.Add(DefaultData.Master);
+            list.Add(DefaultData.Developer);
+            list.Add(DefaultData.ContentManager);
+            return list; 
+        }
+
+        public override RolePermission GetFromCache(Guid id)
+        {
+            var item =  base.GetFromCache(id);
+            if (item !=null)
+            {
+                return item; 
+            }
+            return DefaultData.GetDefault(id); 
+        }
+         
 
         public override List<RolePermission> List(bool UseColumnData = false)
         {
             var list = base.List(UseColumnData);
-            list.Add(Master);
-            list.Add(Developer);
-            list.Add(ContentManager); 
+            list.Add(DefaultData.Master);
+            list.Add(DefaultData.Developer);
+            list.Add(DefaultData.ContentManager);
             return list;  
         }
 
@@ -44,59 +97,9 @@ namespace Kooboo.Sites.Authorization.Model
         {
             return AddOrUpdate(value, default(Guid));
         }
-
-
-        private static RolePermission _master;
-        public static RolePermission Master
-        {
-            get
-            {
-                if (_master == null)
-                { 
-                    _master = new RolePermission();
-                    _master.Name = "master";
-                    _master.Permission.Add("Development");
-                    _master.Permission.Add("System");
-                    _master.Permission.Add("Content");
-                    _master.Permission.Add("database");  
-                }
-                return _master; 
-            } 
-        }
-
-        private static RolePermission _developer;
-        public static RolePermission Developer
-        {
-            get
-            {
-                if (_developer == null)
-                {
-                    _developer = new RolePermission();
-                    _developer.Name = "developer";
-                    _developer.Permission.Add("Development"); 
-                    _developer.Permission.Add("Content");
-                    _developer.Permission.Add("database");
-                }
-                return _developer;
-            }
-        }
-          
-        private static RolePermission _contentmanager;
-        public static RolePermission ContentManager
-        {
-            get
-            {
-                if (_contentmanager == null)
-                {
-                    _contentmanager = new RolePermission();
-                    _contentmanager.Name = "contentmanager"; 
-                    _contentmanager.Permission.Add("Content");
-                    _contentmanager.Permission.Add("database");
-                }
-                return _contentmanager;
-            }
-        }
-
+         
+    
+       
     }
 
 

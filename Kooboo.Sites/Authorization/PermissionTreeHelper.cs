@@ -92,10 +92,7 @@ namespace Kooboo.Sites.Authorization
 
             return tree.RootAccess;
         }
-
-
-
-
+         
 
 
         // root/sub/subtwo

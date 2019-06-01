@@ -3,7 +3,8 @@ using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Linq; 
+using System.Linq;
+using Kooboo.Sites.Authorization.Model;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -13,45 +14,55 @@ namespace Kooboo.Web.Api.Implementation
 
         public bool RequireSite => true;
 
-        public bool RequireUser => true; 
+        public bool RequireUser => true;
 
 
         public List<Kooboo.Sites.Authorization.Model.PermissionViewModel> List(ApiCall call)
         {
-
             var db = call.WebSite.SiteDb();
 
             var items = db.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().All();
-            items.Add(Kooboo.Sites.Authorization.Model.RolePermissionRepository.Master);
-            items.Add(Kooboo.Sites.Authorization.Model.RolePermissionRepository.Developer);
-            items.Add(Kooboo.Sites.Authorization.Model.RolePermissionRepository.ContentManager);
 
-            return items.Select(o => Sites.Authorization.PermissionTreeHelper.ToViewModel(o)).ToList(); 
+            return items.Select(o => Sites.Authorization.PermissionTreeHelper.ToViewModel(o)).ToList();
         }
 
 
         public Kooboo.Sites.Authorization.Model.PermissionViewModel GetEdit(ApiCall call)
         {
-            string name = call.GetValue("name"); 
-            if (string.IsNullOrWhiteSpace(name))
+            RolePermission permission=null;
+            var db = call.WebSite.SiteDb();
+            var repo = db.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>();
+
+            string name = call.GetValue("name");
+            if (!string.IsNullOrWhiteSpace(name))
             {
-                return Kooboo.Sites.Authorization.ApiPermission.MasterTemplate(); 
+                permission = repo.Get(name);
             }
             else
             {
-                var db = call.WebSite.SiteDb();
-
-                var item = db.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().Get(name); 
-                
-                if (item !=null)
+                if (call.ObjectId != default(Guid))
                 {
-                    return Kooboo.Sites.Authorization.PermissionTreeHelper.ToViewModel(item); 
+                    permission = repo.Get(call.ObjectId);
                 }
                 else
                 {
-                    return Kooboo.Sites.Authorization.ApiPermission.MasterTemplate();
-                } 
+                    var id = call.GetValue<Guid>("id");
+                    if (id != default(Guid))
+                    {
+                        permission = repo.Get(id);
+                    }
+                }
             }
+
+
+            if (permission != null)
+            {
+                return Kooboo.Sites.Authorization.PermissionTreeHelper.ToViewModel(permission);
+            }
+            else
+            {
+                return Kooboo.Sites.Authorization.ApiPermission.MasterTemplate();
+            } 
         }
 
 
@@ -63,25 +74,25 @@ namespace Kooboo.Web.Api.Implementation
             role.Permission = permission;
 
             var sitedb = call.WebSite.SiteDb();
-            sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().AddOrUpdate(role);  
+            sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().AddOrUpdate(role);
         }
-         
+
         public bool IsUniqueName(ApiCall call, string name)
         {
-            name = name.ToLower(); 
+            name = name.ToLower();
             if (name == "master" || name == "developer" || name == "contentmanager")
             {
-                return false;  
+                return false;
             }
 
             var sitedb = call.WebSite.SiteDb();
             var item = sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().Get(name);
 
-            return item == null; 
+            return item == null;
         }
-         
 
-        public   bool Deletes(ApiCall call)
+
+        public bool Deletes(ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
             var repo = sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>();
@@ -103,7 +114,6 @@ namespace Kooboo.Web.Api.Implementation
             }
             return false;
         }
-
 
 
     }
