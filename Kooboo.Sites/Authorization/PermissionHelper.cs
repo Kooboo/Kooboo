@@ -6,7 +6,7 @@ using Kooboo.Sites.Authorization.Model;
 
 namespace Kooboo.Sites.Authorization
 {
-    public static class PermissionTreeHelper
+    public static class PermissionHelper
     {
         // fullrighgts like string[] of :
         // root/sub/sub
@@ -92,15 +92,13 @@ namespace Kooboo.Sites.Authorization
 
             return tree.RootAccess;
         }
-         
-
-
+          
         // root/sub/subtwo
         public static PermissionViewModel ToViewModel(RolePermission permission)
         {
             var spe = "/\\".ToCharArray();
 
-            PermissionViewModel result = Kooboo.Sites.Authorization.ApiPermission.MasterTemplate();
+            PermissionViewModel result = Kooboo.Sites.Authorization.DefaultData.Available;
             result.Name = permission.Name;
             result.Id = permission.Id;
 
@@ -111,10 +109,7 @@ namespace Kooboo.Sites.Authorization
             }
             return result;
         }
-
-
-
-
+         
         // single rights without \\ 
         public static void AppendToModel(PermissionViewModel model, List<string> SingleRights)
         {
@@ -130,15 +125,12 @@ namespace Kooboo.Sites.Authorization
                     continue;
                 }
 
-                var find = model.SubItems.Find(o => o.Name == item);
+                var find = model.SubItems.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, item));
 
 
                 if (find == null)
                 {
-                    find = new PermissionViewModel();
-                    model.SubItems.Add(find);
-
-                    find.Name = item;
+                    return; 
                 }
 
                 model = find;
@@ -148,12 +140,12 @@ namespace Kooboo.Sites.Authorization
         }
 
 
-        public static List<string> ExtractFromModel(PermissionViewModel model)
+        public static List<string> ExtractPermissionFromModel(PermissionViewModel model)
         {
             return GetSubStrings(model.SubItems);
         }
 
-        public static List<string> GetSubStrings(List<PermissionViewModel> SubModels)
+        private static List<string> GetSubStrings(List<PermissionViewModel> SubModels)
         {
             List<string> result = new List<string>();
 
@@ -161,15 +153,22 @@ namespace Kooboo.Sites.Authorization
             {
                 string root = item.Name;
 
-                if (item.SubItems != null && item.SubItems.Any())
+                if (item.Selected)
                 {
-                    var substrings = GetSubStrings(item.SubItems);
-                    foreach (var str in substrings)
-                    {
-                        string rootsub = root + "/" + str;
-                        result.Add(rootsub);
-                    }
+                    result.Add(root); 
                 }
+                else
+                {
+                    if (item.SubItems != null && item.SubItems.Any())
+                    {
+                        var substrings = GetSubStrings(item.SubItems);
+                        foreach (var str in substrings)
+                        {
+                            string rootsub = root + "/" + str;
+                            result.Add(rootsub);
+                        }
+                    }
+                }  
             }
 
             return result;

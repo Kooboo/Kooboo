@@ -5,8 +5,7 @@ using System.Text;
 namespace Kooboo.Sites.Authorization
 {
     public class PermissionTree
-    { 
-        
+    {  
         // not required, only for visualization... 
         public string Name { get; set; }
 

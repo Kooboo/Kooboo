@@ -16,7 +16,7 @@ namespace Kooboo.Sites.Repository
 {
     public class SiteRepositoryBase<TValue> : ISiteRepositoryBase, IRepository, IRepository<TValue> where TValue : class, ISiteObject
     {
-        private object _locker = new object();
+        protected object _locker = new object();
 
         private SiteDb _sitedb;
         public virtual SiteDb SiteDb

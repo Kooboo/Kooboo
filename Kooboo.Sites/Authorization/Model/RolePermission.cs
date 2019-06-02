@@ -10,8 +10,7 @@ namespace Kooboo.Sites.Authorization.Model
         public RolePermission()
         {
             this.ConstType = ConstObjectType.RolePermission;
-        }
-
+        } 
 
         private List<string> _permission;  
         // In the format of development/view.
@@ -41,7 +40,7 @@ namespace Kooboo.Sites.Authorization.Model
                 {
                     if (_permission != null && _permission.Any())
                     {
-                        _tree = PermissionTreeHelper.GenerateTree(_permission); 
+                        _tree = PermissionHelper.GenerateTree(_permission); 
                     } 
                 }
                 return _tree; 

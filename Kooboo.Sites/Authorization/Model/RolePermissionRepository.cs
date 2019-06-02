@@ -5,10 +5,10 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Sites.Authorization.Model
-{ 
+{
 
     public class RolePermissionRepository : SiteRepositoryBase<RolePermission>
-    { 
+    {
         public override ObjectStoreParameters StoreParameters
         {
             get
@@ -17,24 +17,24 @@ namespace Kooboo.Sites.Authorization.Model
                 para.SetPrimaryKeyField<RolePermission>(o => o.Id);
                 return para;
             }
-        } 
+        }
 
         public override RolePermission Get(Guid id, bool getColumnDataOnly = false)
         {
             var item = base.Get(id, getColumnDataOnly);
-            if (item !=null)
+            if (item != null)
             {
-                return item; 
+                return item;
             }
             else
             {
-                return DefaultData.GetDefault(id); 
+                return DefaultData.GetDefault(id);
             }
         }
 
         public override RolePermission Get(string nameorid)
         {
-            return GetByNameOrId(nameorid); 
+            return GetByNameOrId(nameorid);
         }
 
         public override RolePermission GetByNameOrId(string NameOrGuid)
@@ -54,23 +54,41 @@ namespace Kooboo.Sites.Authorization.Model
 
         public override List<RolePermission> All()
         {
-            var list =  base.All();
-            list.Add(DefaultData.Master);
-            list.Add(DefaultData.Developer);
-            list.Add(DefaultData.ContentManager);
-            return list; 
+            var list = base.All();
+            AppendDefault(list);
+            return list;
+        }
+
+
+        public void AppendDefault(List<RolePermission> current)
+        {
+            if (current.Find(o => o.Id == DefaultData.Master.Id) == null)
+            {
+                current.Add(DefaultData.Master);
+            }
+
+            if (current.Find(o => o.Id == DefaultData.Developer.Id) == null)
+            {
+                current.Add(DefaultData.Developer);
+            }
+
+            if (current.Find(o => o.Id == DefaultData.ContentManager.Id) == null)
+            {
+                current.Add(DefaultData.ContentManager);
+            }
+
         }
 
         public override RolePermission GetFromCache(Guid id)
         {
-            var item =  base.GetFromCache(id);
-            if (item !=null)
+            var item = base.GetFromCache(id);
+            if (item != null)
             {
-                return item; 
+                return item;
             }
-            return DefaultData.GetDefault(id); 
+            return DefaultData.GetDefault(id);
         }
-         
+
 
         public override List<RolePermission> List(bool UseColumnData = false)
         {
@@ -78,28 +96,77 @@ namespace Kooboo.Sites.Authorization.Model
             list.Add(DefaultData.Master);
             list.Add(DefaultData.Developer);
             list.Add(DefaultData.ContentManager);
-            return list;  
+            return list;
         }
 
         public override bool AddOrUpdate(RolePermission value, Guid UserId)
         {
             if (string.IsNullOrWhiteSpace(value.Name))
             {
-                return false; 
+                return false;
             }
 
-            var name = value.Name.ToLower(); 
 
-            return base.AddOrUpdate(value, UserId);
+            //  return base.AddOrUpdate(value, UserId);
+
+            lock (_locker)
+            {
+                var old = this.Store.get(value.Id);
+                if (old == null)
+                {
+                    RaiseBeforeEvent(value, ChangeType.Add);
+                    Store.CurrentUserId = UserId;
+                    Store.add(value.Id, value);
+                    RaiseEvent(value, ChangeType.Add);
+                    return true;
+                }
+                else
+                {
+                    if (!IsEqual(old, value))
+                    {
+                        value.LastModified = DateTime.UtcNow;
+                        RaiseBeforeEvent(value, ChangeType.Add);
+                        Store.CurrentUserId = UserId;
+                        Store.update(value.Id, value);
+                        RaiseEvent(value, ChangeType.Update, old);
+                        return true;
+                    }
+                }
+                return false;
+            }
+
         }
+         
+
 
         public override bool AddOrUpdate(RolePermission value)
         {
             return AddOrUpdate(value, default(Guid));
         }
-         
-    
-       
+
+
+
+        public override void Delete(Guid id)
+        {
+            this.Delete(id, default(Guid));
+        }
+
+        public override void Delete(Guid id, Guid UserId)
+        {
+            if (id==DefaultData.Master.Id || id == DefaultData.Developer.Id || id == DefaultData.ContentManager.Id)
+            {
+                throw new Exception("default role can not be deleted"); 
+            }
+            var old = this.Store.get(id);
+            if (old != null)
+            {
+                RaiseBeforeEvent(old, ChangeType.Delete);
+                this.Store.CurrentUserId = UserId;
+                Store.delete(id);
+            }
+            RaiseEvent(old, ChangeType.Delete);
+        }
+
     }
 
 

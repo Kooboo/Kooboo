@@ -23,7 +23,7 @@ namespace Kooboo.Web.Api.Implementation
 
             var items = db.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().All();
 
-            return items.Select(o => Sites.Authorization.PermissionTreeHelper.ToViewModel(o)).ToList();
+            return items.Select(o => Sites.Authorization.PermissionHelper.ToViewModel(o)).ToList();
         }
 
 
@@ -57,24 +57,23 @@ namespace Kooboo.Web.Api.Implementation
 
             if (permission != null)
             {
-                return Kooboo.Sites.Authorization.PermissionTreeHelper.ToViewModel(permission);
+                return Kooboo.Sites.Authorization.PermissionHelper.ToViewModel(permission);
             }
             else
             {
-                return Kooboo.Sites.Authorization.ApiPermission.MasterTemplate();
+                return Kooboo.Sites.Authorization.DefaultData.Available;
             } 
         }
-
-
+         
         public void Post(ApiCall call, Sites.Authorization.Model.PermissionViewModel model)
         {
-            var permission = Kooboo.Sites.Authorization.PermissionTreeHelper.ExtractFromModel(model);
+            var permission = Kooboo.Sites.Authorization.PermissionHelper.ExtractPermissionFromModel(model);
             Kooboo.Sites.Authorization.Model.RolePermission role = new Sites.Authorization.Model.RolePermission();
             role.Name = model.Name;
             role.Permission = permission;
 
             var sitedb = call.WebSite.SiteDb();
-            sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().AddOrUpdate(role);
+            sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().AddOrUpdate(role, call.Context.User.Id);
         }
 
         public bool IsUniqueName(ApiCall call, string name)
