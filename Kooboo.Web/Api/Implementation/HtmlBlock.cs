@@ -15,7 +15,7 @@ namespace Kooboo.Web.Api.Implementation
 {
     public class HtmlBlockApi : SiteObjectApi<HtmlBlock>, IApiPermission
     {
-        public string PermissionTree => "Content/HtmlBlock"; 
+        public string Permission => "Content/HtmlBlock"; 
 
         [Kooboo.Attributes.RequireParameters("id", "values")]
         public override Guid Post(ApiCall apiCall)

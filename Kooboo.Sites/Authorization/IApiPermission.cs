@@ -8,6 +8,6 @@ namespace Kooboo.Sites.Authorization
     { 
         // linked permission tree. 
         // developement/view
-        string PermissionTree { get; }
+        string Permission { get; }
     }
 }

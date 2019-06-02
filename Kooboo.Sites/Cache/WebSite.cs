@@ -150,6 +150,7 @@ namespace Kooboo.Sites.Cache
                 || TValueType == typeof(KConfig)
                 || TValueType == typeof(TableRelation)
                 || TValueType == typeof(RolePermission)
+                || TValueType == typeof(SiteUser)
                 )
             {
                 return true;

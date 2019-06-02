@@ -28,7 +28,7 @@ namespace Kooboo.Web.Api.Implementation
             get { return true; }
         }
 
-        public string PermissionTree { get => "Database";  }
+        public string Permission { get => "Database";  }
 
         public List<string> Tables(ApiCall call)
         {

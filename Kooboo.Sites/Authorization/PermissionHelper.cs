@@ -62,16 +62,11 @@ namespace Kooboo.Sites.Authorization
         }
 
         public static bool HasPermission(PermissionTree tree, params string[] HierarchyRights)
-        {
-            List<string> rights = new List<string>();
-            foreach (var item in HierarchyRights)
-            {
-                rights.Add(item);
-            }
-            return HasPermission(tree, rights);
+        { 
+            return HasPermission(HierarchyRights, tree);
         }
 
-        public static bool HasPermission(PermissionTree tree, List<string> HierarchyRights)
+        public static bool HasPermission(string[] HierarchyRights, PermissionTree tree)
         {
             foreach (var item in HierarchyRights)
             {
@@ -92,7 +87,18 @@ namespace Kooboo.Sites.Authorization
 
             return tree.RootAccess;
         }
-          
+
+        public static bool HasPermission(string permissionstring, PermissionTree tree)
+        {
+            var spe = "/\\".ToCharArray();
+
+            var paras = permissionstring.Split(spe, StringSplitOptions.RemoveEmptyEntries);
+
+            return HasPermission(paras, tree); 
+        }
+
+
+
         // root/sub/subtwo
         public static PermissionViewModel ToViewModel(RolePermission permission)
         {

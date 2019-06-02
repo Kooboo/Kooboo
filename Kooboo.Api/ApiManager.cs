@@ -35,6 +35,16 @@ namespace Kooboo.Api
                 return result;
             }
               
+            // check permission
+            if (apiProvider.CheckAccess !=null)
+            {
+                if (!apiProvider.CheckAccess(call.Context, apimethod))
+                {
+                    var result = new JsonResponse() { Success = false }; 
+                    result.Messages.Add(Hardcoded.GetValue("Unauthorized access", call.Context));
+                    return result;
+                }
+            }
 
             if (call.IsFake)
             {
