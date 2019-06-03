@@ -14,7 +14,7 @@ namespace Kooboo.Web.Menus
         public Domain()
         {
             this.Name = "Domains";
-            this.Url = MenuHelper.AdminUrl("Domains");
+            this.Url = "Domains";
             this.Icon = "fa fa-at";
             this.BadgeIcon = "badge-info"; 
         }

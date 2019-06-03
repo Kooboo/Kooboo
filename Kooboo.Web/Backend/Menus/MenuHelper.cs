@@ -122,6 +122,7 @@ namespace Kooboo.Web.Menus
                            typeof(Func<string>));
             return silly();
         } 
+         
 
     }
 }

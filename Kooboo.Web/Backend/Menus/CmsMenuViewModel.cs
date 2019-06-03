@@ -1,33 +1,90 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data.Context;
+using Kooboo.Web.Backend.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+ 
 
 namespace Kooboo.Web.Menus
 {
     public class CmsMenuViewModel
     {
+        internal  ICmsMenu CmsMenu { get; set; }
+        bool Hide { get; set; }
+
         public CmsMenuViewModel(ICmsMenu menu, RenderContext context)
         {
-            if (menu != null)
-            {
+            this.CmsMenu = menu; 
 
+            if (menu != null)
+            { 
                 this.Name = menu.Name;
                 this.Icon = menu.Icon;
                 this.Url = menu.Url;
                 this.DisplayName = menu.GetDisplayName(context);
-                  
+
+                Guid WebSiteId = default(Guid); 
                 if (menu is IHeaderMenu)
                 {
                     var topmenu = menu as IHeaderMenu;
                     this.BadgeIcon = topmenu.BadgeIcon;
-                    this.Name = this.DisplayName;
+                    this.Name = this.DisplayName; 
+                } 
+                else
+                { 
+                    if (context.WebSite !=null)
+                    {
+                        WebSiteId = context.WebSite.Id; 
+                    }
+                }
+
+                this.Url = appendSiteId(this.Url, WebSiteId);
+
+                List<ICmsMenu> subitems =null; 
+                if (menu is IDynamicMenu)
+                {
+                    var dynamic = menu as IDynamicMenu;
+                    if (!dynamic.Show(context))
+                    {
+                        this.Hide = true; 
+                    }
+                    else
+                    {
+                        subitems = dynamic.ShowSubItems(context);
+                    } 
+                }
+                else
+                {
+                    subitems = menu.SubItems; 
+                }
+
+                if (subitems !=null && subitems.Any())
+                {
+                    foreach (var item in subitems)
+                    {
+                        var model = new CmsMenuViewModel(item, context);
+                        this.Items.Add(model); 
+                    } 
                 }
             }
+        }
+
+        public  CmsMenuViewModel(string name)
+        {
+            this.Name = name;
+            this.DisplayName = name; 
+        }
+
+        private  string appendSiteId(string relativeUrl, Guid SiteId)
+        {
+            Dictionary<string, string> para = new Dictionary<string, string>();
+            if (SiteId != default(Guid))
+            {
+                para.Add("SiteId", SiteId.ToString());
+            }
+            return Kooboo.Lib.Helper.UrlHelper.AppendQueryString("/_Admin/" + relativeUrl, para);
         }
 
         public string BadgeIcon { get; set; }

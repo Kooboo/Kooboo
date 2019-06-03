@@ -92,7 +92,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Backend\Menus\SiteBarMenu\" />
+    <Folder Include="Backend\Menus\SideBarMenu\Contents\" />
   </ItemGroup>
 
 </Project>

@@ -18,7 +18,7 @@ namespace Kooboo.Web.Menus
         public Emails()
         {
             this.Name = "Emails";
-            this.Url = MenuHelper.AdminUrl("Emails/Inbox");
+            this.Url = "Emails/Inbox";
             this.Icon = "fa fa-envelope";
             this.BadgeIcon = "badge-primary";
         }

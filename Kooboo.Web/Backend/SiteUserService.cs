@@ -7,15 +7,13 @@ using System.Text;
 namespace Kooboo.Web.Backend
 {
    public static  class SiteUserService
-    {
-
+    { 
 
         public static Kooboo.Sites.Models.SiteUser GetSiteUser(RenderContext context)
         { 
             var sitedb = context.WebSite.SiteDb();
 
-            return sitedb.SiteUser.Get(context.User.Id);
-
+            return sitedb.SiteUser.Get(context.User.Id); 
         }
 
         public static Kooboo.Sites.Authorization.Model.RolePermission GetRolePermission(RenderContext context)

@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using Kooboo.Data.Context;
+using Kooboo.Web.Backend.Menus;
 using Kooboo.Web.Menus;
 
-namespace Kooboo.Web.Backend.Menus.FeatureMenus
+namespace Kooboo.Web.Menus.FeatureMenus
 {
     public class MediaMenu : IFeatureMenu
     {
@@ -12,7 +13,7 @@ namespace Kooboo.Web.Backend.Menus.FeatureMenus
 
         public string Icon => "icon icon-picture";
 
-        public string Url => MenuHelper.AdminUrl("Contents/Images");
+        public string Url => "Contents/Images";
          
         public int Order => 1;
 

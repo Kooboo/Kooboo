@@ -1,26 +1,27 @@
 ﻿using Kooboo.Data.Context;
+using Kooboo.Web.Backend.Menus;
 using Kooboo.Web.Menus;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kooboo.Web.Backend.Menus.FeatureMenus
+namespace Kooboo.Web.Menus.FeatureMenus
 {
-    public class PageMenu : IFeatureMenu
+    public class Diagnosis : IFeatureMenu
     {
-        public string Name => "Pages";
+        public string Name => "Diagnosis";
 
         public string Icon => "icon icon-picture";
 
-        public string Url => Web.Menus.MenuHelper.AdminUrl("Pages");
+        public string Url => "Sites/Diagnosis";
 
         public int Order => 1;
 
         public List<ICmsMenu> SubItems { get; set; }
-         
+
         public string GetDisplayName(RenderContext Context)
         {
-            return Kooboo.Data.Language.Hardcoded.GetValue("Pages", Context);
+            return Kooboo.Data.Language.Hardcoded.GetValue("Diagnosis", Context);
         }
     }
 }

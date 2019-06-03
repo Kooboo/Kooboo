@@ -12,7 +12,7 @@ namespace Kooboo.Web.Menus
         public Sites()
         {
             this.Name = "Sites";
-            this.Url = MenuHelper.AdminUrl("Sites");
+            this.Url = "Sites";
             this.Icon = "fa fa-sitemap";
             this.BadgeIcon = "badge-success";
         }

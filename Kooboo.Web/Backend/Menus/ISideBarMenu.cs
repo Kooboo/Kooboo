@@ -10,13 +10,12 @@ namespace Kooboo.Web.Menus
 {
   public interface ISideBarMenu : ICmsMenu
     {
-       EnumSideBarParent Parent { get; set; }
+       EnumSideBarParent Parent { get;  }
     }
 
     public enum EnumSideBarParent
     {
-        Root = 0,
-        Feature=1, 
+        Root = 0, 
         System = 2,
         Development = 3,
         Contents = 4,

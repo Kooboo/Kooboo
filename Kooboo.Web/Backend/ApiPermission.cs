@@ -11,6 +11,19 @@ namespace Kooboo.Web.Backend
 
         public static bool IsAllow(RenderContext context, Kooboo.Api.ApiMethod method)
         {
+            if (context.User == null)
+            {
+                if (method.ClassInstance == null || !(method.ClassInstance is IApiPermission))
+                {
+                    return true; 
+                }
+                else
+                {
+                    return false; 
+                }
+            }
+
+
             if (context.User.IsAdmin)
             {
                 return true;

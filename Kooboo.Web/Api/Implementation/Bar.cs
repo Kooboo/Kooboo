@@ -10,6 +10,7 @@ using Kooboo.Api;
 using Kooboo.Sites.Extensions;
 using Kooboo.Data.Language;
 using Kooboo.Web.Menus;
+using Kooboo.Data.Context;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -69,62 +70,107 @@ namespace Kooboo.Web.Api.Implementation
             return header;
         }
 
-        public List<MenuItem> SiteMenu(ApiCall call)
+        public List<CmsMenuViewModel> SiteMenu(ApiCall call)
         {
             var user = call.Context.User;
 
             if (call.WebSite == null)
             {
-                return new List<MenuItem>();
+                return new List<CmsMenuViewModel>();
             }
 
-            List<MenuItem> menus = new List<MenuItem>();
+            List<CmsMenuViewModel> menus = new List<CmsMenuViewModel>();
 
-            menus.Add(new MenuItem
-            {
-                Name = Hardcoded.GetValue("Feature", call.Context),
-                Items = SiteMenu_Feature(call)
-            });
+            var feature = new CmsMenuViewModel(Hardcoded.GetValue("Feature", call.Context));
 
-            menus.Add(new MenuItem
-            {
-                Name = Hardcoded.GetValue("Advance", call.Context),
-                Items = SiteMenu_Advance(call)
-            });
+            feature.Items = MenuContainer.FeatureMenus.Select(o => new CmsMenuViewModel(o, call.Context)).ToList();
+
+            menus.Add(feature); 
+
+            menus.Add(SiteBarAdvancedMenu(call));
 
             // additional menu for the extension. 
-            var sitemenus = MenuContainer.SubMenus(typeof(ISideBarMenu));
+            //var sitemenus = MenuContainer.SubMenus(typeof(ISideBarMenu));
 
-            var oldmenues = sitemenus.Select(o => MenuHelper.ConvertToOld(o, call.Context)).ToList();
+            //var oldmenues = sitemenus.Select(o => MenuHelper.ConvertToOld(o, call.Context)).ToList();
 
-            if (oldmenues != null && oldmenues.Any())
-            {
-                menus.AddRange(oldmenues);
-            }
-             
-            if (user.IsAdmin)
-            {
-                return menus;
-            }
-            else
-            {
-                var sitedb = call.Context.WebSite.SiteDb();
-                var siteuser = sitedb.SiteUser.Get(call.Context.User.Id);
+            //if (oldmenues != null && oldmenues.Any())
+            //{
+            //    menus.AddRange(oldmenues);
+            //}
 
-                if (siteuser == null)
-                {
-                    return null;
-                }
-                else
-                {
-                    CheckRights(menus, siteuser.Role);
+            //if (user.IsAdmin)
+            //{
+            //    return menus;
+            //}
+            //else
+            //{
+            //    var sitedb = call.Context.WebSite.SiteDb();
+            //    var siteuser = sitedb.SiteUser.Get(call.Context.User.Id);
 
-                    return menus;
-                }
-            } 
+            //    if (siteuser == null)
+            //    {
+            //        return null;
+            //    }
+            //    else
+            //    {
+            //        CheckRights(menus, siteuser.Role);
+
+            //        return menus;
+            //    }
+            //}  
+            //TODO: check user rights...
+            return menus;
         }
 
-       
+
+        private CmsMenuViewModel SiteBarAdvancedMenu(ApiCall call)
+        {
+            var context = call.Context;
+            var advance = new CmsMenuViewModel(Hardcoded.GetValue("Advance", context));
+
+            var system = new CmsMenuViewModel(Hardcoded.GetValue("System", context)) { Icon = "icon icon-settings" };
+            var development = new CmsMenuViewModel(Hardcoded.GetValue("Development", context)) { Icon = "icon fa fa-code" };
+            var content = new CmsMenuViewModel(Hardcoded.GetValue("Contents", context)) { Icon = "icon fa fa-files-o" };
+            var database = new CmsMenuViewModel(Hardcoded.GetValue("Database", context)) { Icon = "icon fa fa-database" };
+
+            advance.Items.Add(system);
+            advance.Items.Add(development);
+            advance.Items.Add(content);
+            advance.Items.Add(database);
+
+            var sitebarmenus = MenuContainer.SideBarMenus;
+
+            foreach (var item in sitebarmenus)
+            {
+                if (item.Parent == EnumSideBarParent.Root)
+                {
+                    advance.Items.Add(new CmsMenuViewModel(item, context));
+                }
+                else if (item.Parent == EnumSideBarParent.System)
+                {
+                    system.Items.Add(new CmsMenuViewModel(item, context));
+                }
+                else if (item.Parent == EnumSideBarParent.Development)
+                {
+                    development.Items.Add(new CmsMenuViewModel(item, context));
+                }
+                else if (item.Parent == EnumSideBarParent.Contents)
+                {
+                    content.Items.Add(new CmsMenuViewModel(item, context));
+                }
+                else if (item.Parent == EnumSideBarParent.Database)
+                {
+                    database.Items.Add(new CmsMenuViewModel(item, context));
+                }
+            }
+
+            return advance;
+        }
+
+
+
+
         private void CheckRights(List<MenuItem> menus, Sites.Authorization.EnumUserRole role)
         {
             foreach (var item in menus)
@@ -231,19 +277,6 @@ namespace Kooboo.Web.Api.Implementation
             return menus;
         }
 
-        private List<MenuItem> SiteMenu_Feature(ApiCall call)
-        {
-            User user = call.Context.User;
-            SiteDb siteDb = call.WebSite.SiteDb();
-            var context = call.Context;
-
-            return new List<MenuItem>
-            {
-                new MenuItem { Name = Hardcoded.GetValue("Media library", context), Icon="icon icon-picture", Url = AdminUrl("Contents/Images", siteDb) },
-                new MenuItem { Name = Hardcoded.GetValue("Pages", context), Icon = "icon icon-layers", Url = AdminUrl("Pages", siteDb) },
-                new MenuItem{ Name = Hardcoded.GetValue("Diagnosis", context), Icon = "icon icon-support", Url = AdminUrl("Sites/Diagnosis", siteDb) },
-            };
-        }
 
         protected virtual List<MenuItem> SiteMenu_Advance(ApiCall call)
         {
@@ -288,7 +321,6 @@ namespace Kooboo.Web.Api.Implementation
             items.Add(sysmenu);
 
 
-
             items.Add(new MenuItem
             {
                 Name = Hardcoded.GetValue("Development", context),
@@ -327,22 +359,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
             });
 
-            //items.Add(new MenuItem
-            //{
-            //    Name = Hardcoded.GetValue("E-Commerce", context),
-            //    Icon = "icon fa fa-shopping-cart",
-            //    Items =
-            //    {
-            //        new MenuItem { Name = Hardcoded.GetValue("Products management", context), Url = AdminUrl("ECommerce/Products", siteDb) },
-            //        new MenuItem { Name = Hardcoded.GetValue("Product types", context), Url = AdminUrl("ECommerce/Product/Types", siteDb) },
-            //        new MenuItem { Name = Hardcoded.GetValue("Product categories", context), Url = AdminUrl("ECommerce/Product/Categories", siteDb) },
-            //        new MenuItem { Name = Hardcoded.GetValue("Customers", context), Url = AdminUrl("ECommerce/Product/Categories1", siteDb) },
-            //        new MenuItem { Name = Hardcoded.GetValue("Orders", context), Url = AdminUrl("ECommerce/Product/Categories2", siteDb) },
-            //        new MenuItem { Name = Hardcoded.GetValue("Marketing", context), Url = AdminUrl("ECommerce/Product/Categories3", siteDb) },
-            //        new MenuItem { Name = Hardcoded.GetValue("Reports", context), Url = AdminUrl("ECommerce/Product/Categories4", siteDb) },
-            //        new MenuItem { Name = Hardcoded.GetValue("Settings", context), Url = AdminUrl("ECommerce/Product/Categories5", siteDb) }                    
-            //    }
-            //});
+
 
             items.Add(new MenuItem
             {
