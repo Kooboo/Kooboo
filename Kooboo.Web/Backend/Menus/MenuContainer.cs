@@ -106,6 +106,18 @@ namespace Kooboo.Web.Menus
             }
             return result.OrderBy(o=>o.Order).ToList();
         }
-        
+
+
+
+        private static List<ICmsMenu> _featuremenu; 
+        public static List<ICmsMenu> FeatureMenus
+        {
+            get
+            {
+                return null; 
+            }
+        }
+
+
     }
 }

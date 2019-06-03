@@ -15,10 +15,11 @@ namespace Kooboo.Web.Menus
         string Name { get;  }
 
         string GetDisplayName(RenderContext Context);
-
+         
         string Icon { get;  }
 
         string Url { get;  }
+ 
 
         int Order { get;   } 
 

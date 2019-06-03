@@ -16,9 +16,10 @@ namespace Kooboo.Web.Menus
     public enum EnumSideBarParent
     {
         Root = 0,
-        System = 1,
-        Development = 2,
-        Contents = 3,
-        Database = 4
+        Feature=1, 
+        System = 2,
+        Development = 3,
+        Contents = 4,
+        Database =5
     }
 }
