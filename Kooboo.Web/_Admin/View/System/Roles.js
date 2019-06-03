@@ -55,6 +55,7 @@
           subItems: permissions
         }).then(function(res) {
           window.info.done(Kooboo.text.info.save.success);
+          self.getList();
           self.onModalHide();
         });
       }
