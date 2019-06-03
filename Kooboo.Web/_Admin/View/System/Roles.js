@@ -159,22 +159,16 @@
     });
 
     this.renderTree = function(treeData) {
-      $("#permission-area")
-        .jstree({
-          plugins: ["wholerow", "checkbox"],
-          checkbox: {
-            keep_selected_style: false
-          },
-          core: {
-            strings: { "Loading ...": Kooboo.text.common.loading + " ..." },
-            data: treeData
-          }
-        })
-        .on("loaded.jstree", function(event, data) {
-          $("#permission-area")
-            .jstree()
-            .open_all();
-        });
+      $("#permission-area").jstree({
+        plugins: ["wholerow", "checkbox"],
+        checkbox: {
+          keep_selected_style: false
+        },
+        core: {
+          strings: { "Loading ...": Kooboo.text.common.loading + " ..." },
+          data: treeData
+        }
+      });
     };
   };
 
