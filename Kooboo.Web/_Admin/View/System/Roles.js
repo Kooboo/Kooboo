@@ -5,8 +5,14 @@
     this.showError = ko.observable(false);
 
     this.onCreate = function() {
-      this.currentRole(null);
-      this.showEditModal(true);
+      Kooboo.Role.getEdit().then(function(res) {
+        if (res.success) {
+          self.currentRole(null);
+          self.showEditModal(true);
+          var treeData = self.getPermissionTree(res.model.subItems);
+          self.renderTree(treeData);
+        }
+      });
     };
 
     this.roleName = ko.validateField({
@@ -74,9 +80,9 @@
         if (res.success) {
           self.cacheData(res.model);
           self.tableData({
-            docs: res.model.map(function(item, idx) {
+            docs: res.model.map(function(item) {
               return {
-                id: idx,
+                id: item.id,
                 name: {
                   class: "label-sm blue",
                   text: item.name
@@ -100,8 +106,7 @@
                 type: "communication-btn"
               }
             ],
-            kbType: Kooboo.Role.name,
-            unselectable: true
+            kbType: Kooboo.Role.name
           });
         }
       });
@@ -140,13 +145,19 @@
     };
 
     Kooboo.EventBus.subscribe("kb/setting/role/edit", function(data) {
-      let idx = data.id;
+      let currentRole = self.cacheData().find(function(item) {
+        return item.id == data.id;
+      });
 
-      self.currentRole(self.cacheData()[idx]);
-      self.roleName(self.currentRole().name);
+      self.currentRole(currentRole);
+      self.roleName(currentRole.name);
 
-      console.log(self.getPermissionTree(self.currentRole().subItems));
-      var treeData = self.getPermissionTree(self.currentRole().subItems);
+      var treeData = self.getPermissionTree(currentRole.subItems);
+      self.renderTree(treeData);
+      self.showEditModal(true);
+    });
+
+    this.renderTree = function(treeData) {
       $("#permission-area")
         .jstree({
           plugins: ["wholerow", "checkbox"],
@@ -163,8 +174,7 @@
             .jstree()
             .open_all();
         });
-      self.showEditModal(true);
-    });
+    };
   };
 
   Roles.prototype = new Kooboo.tableModel(Kooboo.Role.name);
