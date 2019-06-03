@@ -6,6 +6,7 @@ import {
 class Context {
   lastSelectedDomEventArgs: SelectedDomEventArgs | undefined;
   domChangeEvent: SelectedDomEvent = new SelectedDomEvent();
+  editing: boolean = false;
 }
 
 export default new Context();

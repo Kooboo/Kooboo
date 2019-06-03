@@ -17,7 +17,6 @@ export default (document: Document) => {
     args.lastSelectedDomEventArgs = context.lastSelectedDomEventArgs;
     context.domChangeEvent.emit(args);
     context.lastSelectedDomEventArgs = args;
-    console.log(args);
     e.stopPropagation();
     e.preventDefault();
   });
