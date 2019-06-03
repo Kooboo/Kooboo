@@ -1,9 +1,11 @@
 import context from "../context";
 import elementAnalyze from "./elementAnalyze";
-import { SelectedDomEventArgs } from "../models/selectedDomEvent";
+import { SelectedDomEventArgs } from "../events/selectedDomEvent";
 
 export default (document: Document) => {
   document.body.addEventListener("mousemove", e => {
+    e.stopPropagation();
+    e.preventDefault();
     let el = e.target as HTMLElement;
 
     if (
@@ -17,7 +19,5 @@ export default (document: Document) => {
     args.lastSelectedDomEventArgs = context.lastSelectedDomEventArgs;
     context.domChangeEvent.emit(args);
     context.lastSelectedDomEventArgs = args;
-    e.stopPropagation();
-    e.preventDefault();
   });
 };

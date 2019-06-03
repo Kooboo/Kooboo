@@ -1,18 +1,28 @@
-class HoverBorder {
+export class HoverBorder {
   private readonly _borderWidth = 3;
   private _sourceElement!: HTMLElement;
   private _top!: HTMLElement;
   private _left!: HTMLElement;
   private _right!: HTMLElement;
   private _bottom!: HTMLElement;
+  private _document: Document;
+
+  /**
+   *
+   */
+  constructor(document: Document) {
+    this._document = document;
+  }
 
   get lines() {
     return [this.top, this.left, this.right, this.bottom];
   }
 
   get top() {
-    if (!this._top) this._top = document.createElement("div");
-    this.applyStyle(this._top.style);
+    if (!this._top) {
+      this._top = document.createElement("div");
+      this.applyStyle(this._top.style);
+    }
     this._top.style.top = this.sourceRect.top - this.bodyRect.top + "px";
     this._top.style.left =
       this.sourceRect.left - this.bodyRect.left + this._borderWidth + "px";
@@ -22,8 +32,10 @@ class HoverBorder {
   }
 
   get left() {
-    if (!this._left) this._left = document.createElement("div");
-    this.applyStyle(this._left.style);
+    if (!this._left) {
+      this._left = document.createElement("div");
+      this.applyStyle(this._left.style);
+    }
     this._left.style.top = this.sourceRect.top - this.bodyRect.top + "px";
     this._left.style.left = this.sourceRect.left - this.bodyRect.left + "px";
     this._left.style.height = this._sourceElement.offsetHeight + "px";
@@ -31,8 +43,10 @@ class HoverBorder {
   }
 
   get right() {
-    if (!this._right) this._right = document.createElement("div");
-    this.applyStyle(this._right.style);
+    if (!this._right) {
+      this._right = document.createElement("div");
+      this.applyStyle(this._right.style);
+    }
     this._right.style.top = this.sourceRect.top - this.bodyRect.top + "px";
     this._right.style.left =
       this.sourceRect.left -
@@ -45,8 +59,10 @@ class HoverBorder {
   }
 
   get bottom() {
-    if (!this._bottom) this._bottom = document.createElement("div");
-    this.applyStyle(this._bottom.style);
+    if (!this._bottom) {
+      this._bottom = document.createElement("div");
+      this.applyStyle(this._bottom.style);
+    }
     this._bottom.style.top =
       this.sourceRect.top -
       this.bodyRect.top +
@@ -62,15 +78,13 @@ class HoverBorder {
   }
 
   get bodyRect() {
-    return this._sourceElement.ownerDocument!.body.getBoundingClientRect();
+    return this._document.body.getBoundingClientRect();
   }
 
   updateSource(source: HTMLElement) {
-    console.dir(source);
-    if (!source || !source.ownerDocument) return;
-    console.log(source);
+    if (!source) return;
     this._sourceElement = source;
-    this.lines.forEach(i => source.ownerDocument!.body.appendChild(i));
+    this.lines.forEach(i => this._document.body.appendChild(i));
   }
 
   private applyStyle(css: CSSStyleDeclaration) {
@@ -82,6 +96,12 @@ class HoverBorder {
     css.height = this._borderWidth + "px";
     css.zIndex = "999";
   }
-}
 
-export default new HoverBorder();
+  clear(document: Document) {
+    this.lines.forEach(i => {
+      if (i.parentElement) {
+        this._document.body.removeChild(i);
+      }
+    });
+  }
+}

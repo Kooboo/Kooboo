@@ -1,5 +1,7 @@
-import tinymce, { EditorManager } from "tinymce";
+import tinymce, { EditorManager, Settings, Editor } from "tinymce";
 import "tinymce/themes/silver";
+import "tinymce/plugins/save";
+import context from "../context";
 
 export async function inlineSimple(selector: Element) {
   if ((selector as any)._tinymceeditor) return;
@@ -12,7 +14,7 @@ export async function inlineSimple(selector: Element) {
   let liContentBackup = null;
   if (selector.tagName == "LI") liContentBackup = selector.innerHTML;
 
-  let editor = await EditorManager.init({
+  const settings = {
     target: selector,
     inline: true,
     hidden_input: false,
@@ -30,12 +32,30 @@ export async function inlineSimple(selector: Element) {
     forced_root_block: "",
     valid_elements: "*[*]",
     valid_children: "*[*]",
-    valid_styles: "*[*]"
-  });
+    valid_styles: "*[*]",
+    plugins: ["save"],
+    toolbar:
+      "save cancel | bold italic forecolor fontselect fontsizeselect | image link unlink",
+    init_instance_callback: e => {
+      context.editing = true;
+      context.tinymceEvent.emit(context.editing);
+    },
+    setup: e => {
+      e.on("Blur", () => {
+        context.editing = false;
+        context.tinymceEvent.emit(context.editing);
+      });
+    }
+  } as Settings;
+  (settings as any).save_oncancelcallback = (e: Editor) => {
+    e.hide();
+  };
+  let editor = await EditorManager.init(settings);
   if (liContentBackup) selector.innerHTML = liContentBackup;
   if (editor instanceof Array) editor = editor[0];
   let container = editor.getContainer();
-  if (container instanceof HTMLElement) container.style.zIndex = "999";
+  console.dir(container);
+  if (container instanceof HTMLElement) container.style.zIndex = "9999";
   (selector as any)._tinymceeditor = editor;
   if (selector instanceof HTMLElement) selector.focus();
 }

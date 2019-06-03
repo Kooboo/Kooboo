@@ -3,5 +3,5 @@ import clickEdit from "./effects/clickEdit";
 import listenSelectDomChange from "./dom/listenSelectDomChange";
 
 listenSelectDomChange(document);
-hoverShowBorder();
+hoverShowBorder(document);
 clickEdit(document);

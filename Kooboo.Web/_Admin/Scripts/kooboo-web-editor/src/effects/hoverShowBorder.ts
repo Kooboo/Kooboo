@@ -1,15 +1,18 @@
 import context from "../context";
-import { SelectedDomEventArgs } from "../models/selectedDomEvent";
-import hoverBorder from "../models/hoverBorder";
+import { SelectedDomEventArgs } from "../events/selectedDomEvent";
+import { HoverBorder } from "../models/hoverBorder";
 
-const hoverShowBorderHandler = (e: SelectedDomEventArgs) => {
-  if (!context.editing) {
+export default (document: Document) => {
+  const hoverBorder = new HoverBorder(document);
+
+  context.domChangeEvent.addEventListener((e: SelectedDomEventArgs) => {
+    if (context.editing) return;
     hoverBorder.updateSource(e.closeElement);
-  }
-};
+  });
 
-export default () => {
-  if (context.domChangeEvent.handlers.some(s => s == hoverShowBorderHandler))
-    return;
-  context.domChangeEvent.addEventListener(hoverShowBorderHandler);
+  context.tinymceEvent.addEventListener(e => {
+    if (e) {
+      hoverBorder.clear(document);
+    }
+  });
 };
