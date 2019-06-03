@@ -19,7 +19,8 @@ namespace Kooboo.Web.Menus
             this.CmsMenu = menu; 
 
             if (menu != null)
-            { 
+            {
+                this.Order = menu.Order; 
                 this.Name = menu.Name;
                 this.Icon = menu.Icon;
                 this.Url = menu.Url;
@@ -79,6 +80,11 @@ namespace Kooboo.Web.Menus
 
         private  string appendSiteId(string relativeUrl, Guid SiteId)
         {
+            if (string.IsNullOrWhiteSpace(relativeUrl))
+            {
+                return null; 
+            }
+
             Dictionary<string, string> para = new Dictionary<string, string>();
             if (SiteId != default(Guid))
             {

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kooboo.Web.Backend.Menus
+namespace Kooboo.Web.Menus
 {
     // When a menu is show based on certain conditions. 
     // Like Events... show when enable.. 
