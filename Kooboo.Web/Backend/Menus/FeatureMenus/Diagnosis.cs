@@ -11,7 +11,7 @@ namespace Kooboo.Web.Menus.FeatureMenus
     {
         public string Name => "Diagnosis";
 
-        public string Icon => "icon icon-picture";
+        public string Icon => "icon icon-support";
 
         public string Url => "Sites/Diagnosis";
 

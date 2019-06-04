@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
-    public class DataBaseApi : IApi, IApiPermission
+    public class DataBaseApi : IApi
     {
         public string ModelName
         {
@@ -27,8 +27,6 @@ namespace Kooboo.Web.Api.Implementation
         {
             get { return true; }
         }
-
-        public string Permission { get => "Database";  }
 
         public List<string> Tables(ApiCall call)
         {

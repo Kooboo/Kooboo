@@ -115,6 +115,8 @@ namespace Kooboo.Sites.Cache
             Cache.SiteObjectCache<KConfig>.RemoveSiteDb(sitedb.Id);
             Cache.SiteObjectCache<Code>.RemoveSiteDb(sitedb.Id);
 
+
+
             //    || TValueType == typeof(ContentCategory)
             //    || TValueType == typeof(SiteCluster)
             //    || TValueType == typeof(Code)

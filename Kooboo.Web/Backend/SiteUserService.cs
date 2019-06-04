@@ -27,7 +27,7 @@ namespace Kooboo.Web.Backend
                 return null; 
             }
 
-            var role = sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().Get(user.RoleId);
+            var role = sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().Get(user.SiteRole);
 
             return role; 
         }

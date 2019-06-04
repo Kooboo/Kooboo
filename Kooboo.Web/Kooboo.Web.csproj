@@ -34,6 +34,13 @@
   <ItemGroup>
     <Compile Remove="Api\Implementation\Download.cs" />
     <Compile Remove="Api\Implementation\Payment.cs" />
+    <Compile Remove="Backend\Menus\ICmsMenu.cs" />
+    <Compile Remove="Backend\Menus\IDynamicMenu.cs" />
+    <Compile Remove="Backend\Menus\IFeatureMenu.cs" />
+    <Compile Remove="Backend\Menus\IHeaderMenu.cs" />
+    <Compile Remove="Backend\Menus\ISideBarMenu.cs" />
+    <Compile Remove="Backend\Menus\ISitePermissionMenu.cs" />
+    <Compile Remove="Backend\Menus\SideBarSection.cs" />
     <Compile Remove="Payment\PaymentRequest.cs" />
   </ItemGroup>
 

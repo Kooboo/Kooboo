@@ -12,6 +12,8 @@ namespace Kooboo.Lib.IOC
             InterfaceTypes = new Dictionary<string, List<Type>>();
             SingleTons = new Dictionary<string, object>();
             Transients = new Dictionary<string, Type>();
+            Instances = new Dictionary<string, List<object>>();
+            ImplementationType = new Dictionary<Type, Type>();
             _lock = new object();
         }
 

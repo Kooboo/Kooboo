@@ -13,9 +13,8 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
-    public class HtmlBlockApi : SiteObjectApi<HtmlBlock>, IApiPermission
+    public class HtmlBlockApi : SiteObjectApi<HtmlBlock>
     {
-        public string Permission => "Content/HtmlBlock"; 
 
         [Kooboo.Attributes.RequireParameters("id", "values")]
         public override Guid Post(ApiCall apiCall)

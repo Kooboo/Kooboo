@@ -11,9 +11,9 @@ namespace Kooboo.Web.Menus.FeatureMenus
     {
         public string Name => "Pages";
 
-        public string Icon => "icon icon-picture";
+        public string Icon => "icon icon-layers";
 
-        public string Url => Web.Menus.MenuHelper.AdminUrl("Pages");
+        public string Url => "Pages";
 
         public int Order => 1;
 

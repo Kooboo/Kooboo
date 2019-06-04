@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kooboo.Web.Backend.Menus
+namespace Kooboo.Web.Menus
 {
-    public interface IFeatureMenu : ICmsMenu
+    public interface IFeatureMenu : ISitePermissionMenu
     {
     }
 }

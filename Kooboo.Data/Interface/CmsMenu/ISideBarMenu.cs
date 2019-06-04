@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Web.Menus
 {
-  public interface ISideBarMenu : ICmsMenu
+  public interface ISideBarMenu : ISitePermissionMenu
     {
        SideBarSection Parent { get;  }
-    } 
-  
+    }  
 }

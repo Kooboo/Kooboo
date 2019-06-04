@@ -40,7 +40,7 @@ namespace Kooboo.Sites.Authorization.Model
                 {
                     if (_permission != null && _permission.Any())
                     {
-                        _tree = PermissionHelper.GenerateTree(_permission); 
+                        _tree = TreeHelper.GenerateTree(_permission); 
                     } 
                 }
                 return _tree; 

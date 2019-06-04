@@ -1,7 +1,7 @@
 ﻿using Kooboo.Sites.Authorization.Model;
+using Kooboo.Web.Menus;
 using System;
-using System.Collections.Generic;
-using System.Text;
+ 
 
 namespace Kooboo.Sites.Authorization
 {
@@ -21,66 +21,83 @@ namespace Kooboo.Sites.Authorization
                     lock (_locker)
                     {
                         if (_availableData == null)
-                        { 
-
-                            _availableData = new PermissionViewModel();
-
-                            PermissionViewModel system = new PermissionViewModel() { Name = "System" };
-                            system.SubItems.Add(new PermissionViewModel() { Name = "Settings" });
-                            system.SubItems.Add(new PermissionViewModel() { Name = "TransferTask" });
-                            system.SubItems.Add(new PermissionViewModel() { Name = "Config" });
-                            system.SubItems.Add(new PermissionViewModel() { Name = "Text" });
-                            system.SubItems.Add(new PermissionViewModel() { Name = "Domains" });
-                            system.SubItems.Add(new PermissionViewModel() { Name = "Sync" });
-                            system.SubItems.Add(new PermissionViewModel() { Name = "SiteLogs" });
-                            system.SubItems.Add(new PermissionViewModel() { Name = "VisitorLogs" });
-                            system.SubItems.Add(new PermissionViewModel() { Name = "Disk" });
-                            system.SubItems.Add(new PermissionViewModel() { Name = "Jobs" });
-                            system.SubItems.Add(new PermissionViewModel() { Name = "SiteUser" });
-                            system.SubItems.Add(new PermissionViewModel() { Name = "Roles" });
-                            system.SubItems.Add(new PermissionViewModel() { Name = "Events" });
-
-                            _availableData.SubItems.Add(system);
-
-                            PermissionViewModel development = new PermissionViewModel() { Name = "Development" };
-                            development.SubItems.Add(new PermissionViewModel() { Name = "Layouts" });
-                            development.SubItems.Add(new PermissionViewModel() { Name = "Views" });
-                            development.SubItems.Add(new PermissionViewModel() { Name = "Forms" });
-                            development.SubItems.Add(new PermissionViewModel() { Name = "Menus" });
-                            development.SubItems.Add(new PermissionViewModel() { Name = "Scripts" });
-                            development.SubItems.Add(new PermissionViewModel() { Name = "Styles" });
-                            development.SubItems.Add(new PermissionViewModel() { Name = "Code" });
-                            development.SubItems.Add(new PermissionViewModel() { Name = "Urls" });
-                            development.SubItems.Add(new PermissionViewModel() { Name = "Search" });
-                            development.SubItems.Add(new PermissionViewModel() { Name = "DataSource" });
-
-                            _availableData.SubItems.Add(development);
-
-                            PermissionViewModel contents = new PermissionViewModel() { Name = "Contents" };
-                            contents.SubItems.Add(new PermissionViewModel() { Name = "Contents" });
-                            contents.SubItems.Add(new PermissionViewModel() { Name = "ContentTypes" });
-                            contents.SubItems.Add(new PermissionViewModel() { Name = "Labels" });
-                            contents.SubItems.Add(new PermissionViewModel() { Name = "HtmlBlocks" });
-                            contents.SubItems.Add(new PermissionViewModel() { Name = "Files" });
-
-                            _availableData.SubItems.Add(contents);
-
-                            PermissionViewModel database = new PermissionViewModel() { Name = "Database" };
-                            database.SubItems.Add(new PermissionViewModel() { Name = "Table" });
-                            database.SubItems.Add(new PermissionViewModel() { Name = "TableRelation" });
-                            database.SubItems.Add(new PermissionViewModel() { Name = "Key-Value" });
-
-
-                            _availableData.SubItems.Add(database);
+                        {
+                            _availableData = GetDefaultAvailable(); 
                         }
                     }
                 }
 
-                return _availableData.Clone(); 
+                return _availableData.Clone();
+            } 
+        }
+
+
+        public static PermissionViewModel GetDefaultAvailable()
+        {
+            PermissionViewModel result = new PermissionViewModel();
+
+            var allmenus = Lib.IOC.Service.GetInstances<ICmsMenu>();
+
+            foreach (var item in allmenus)
+            {
+                string permission = GetPermissionString(item);
+                if (!string.IsNullOrWhiteSpace(permission))
+                {
+                    AppendPermission(result, permission);
+                }
+            }
+            return result;
+        }
+
+        private static void AppendPermission(PermissionViewModel result, string permission)
+        {
+            var sep = "/\\".ToCharArray();
+
+            string[] parts = permission.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var item in parts)
+            {
+                var find = result.SubItems.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, item));
+                if (find == null)
+                {
+                    find = new PermissionViewModel() { Name = item };
+                    result.SubItems.Add(find);
+                }
+                result = find;
+            }
+        }
+
+
+        private static string GetPermissionString(ICmsMenu menu)
+        {
+            if (menu == null)
+            {
+                return null;
+            }
+            if (menu is ISideBarMenu)
+            {
+                var sidebarmenu = menu as ISideBarMenu;
+                if (sidebarmenu.Parent == SideBarSection.Root)
+                {
+                    return sidebarmenu.Name;
+                }
+                else
+                {
+                    return sidebarmenu.Parent.ToString() + "/" + sidebarmenu.Name;
+                }
             }
 
+            else if (menu is IFeatureMenu)
+            {
+                return "feature/" + menu.Name;
+            }
+
+            return null;
+
         }
-          
+
+
+
         private static RolePermission _master;
         public static RolePermission Master
         {
@@ -173,6 +190,7 @@ namespace Kooboo.Sites.Authorization
             }
             return null;
         }
-         
+
+
     }
 }

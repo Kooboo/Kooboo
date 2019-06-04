@@ -23,16 +23,7 @@ namespace Kooboo.Web.Menus
                     {
                         if (_items == null)
                         {
-                            _items = new List<ICmsMenu>();
-                            var alltypes = Kooboo.Lib.Reflection.AssemblyLoader.LoadTypeByInterface(typeof(ICmsMenu));
-                            foreach (var item in alltypes)
-                            {
-                                var instance = Activator.CreateInstance(item) as ICmsMenu;
-                                if (instance != null)
-                                {
-                                    _items.Add(instance);
-                                }
-                            }
+                            _items = Kooboo.Lib.IOC.Service.GetInstances<ICmsMenu>(); 
                         }
                     }
                 }
@@ -107,8 +98,7 @@ namespace Kooboo.Web.Menus
             }
             return result.OrderBy(o => o.Order).ToList();
         }
-
-
+         
 
         private static List<ICmsMenu> _featuremenu;
         public static List<ICmsMenu> FeatureMenus

@@ -85,6 +85,11 @@ namespace Kooboo.Web.Menus
                 return null; 
             }
 
+            if (relativeUrl.StartsWith("/") || relativeUrl.StartsWith("\\"))
+            {
+                relativeUrl = relativeUrl.Substring(1); 
+            }
+
             Dictionary<string, string> para = new Dictionary<string, string>();
             if (SiteId != default(Guid))
             {

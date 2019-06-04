@@ -73,7 +73,7 @@ namespace Kooboo.Web.Backend
                 }
                 else
                 {
-                    return Kooboo.Sites.Authorization.PermissionHelper.HasPermission(PermissionString, role.Tree);
+                    return Kooboo.Sites.Authorization.PermissionService.HasPermission(PermissionString, role.Tree);
                 }
 
             }
