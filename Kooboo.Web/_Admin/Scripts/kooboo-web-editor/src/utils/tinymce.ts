@@ -35,7 +35,6 @@ export async function inlineSimple(selector: Element) {
       "save cancel | undo redo | bold italic forecolor fontselect fontsizeselect | image link unlink",
     init_instance_callback: e => {
       context.editing = true;
-      context.tinymceEvent.emit(context.editing);
     },
     setup: editor => {
       editor.on("Blur", () => false);
@@ -60,7 +59,6 @@ export async function inlineSimple(selector: Element) {
     e.setContent((e as any)._content);
     e.remove();
     context.editing = false;
-    context.tinymceEvent.emit(context.editing);
   };
   let editor = await EditorManager.init(settings);
   if (editor instanceof Array) editor = editor[0];

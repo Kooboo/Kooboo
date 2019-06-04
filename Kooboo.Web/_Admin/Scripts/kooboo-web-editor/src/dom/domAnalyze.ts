@@ -1,5 +1,4 @@
 import { KoobooComment } from "../models/koobooComment";
-import { classBody } from "@babel/types";
 
 export function getKoobooComment(el: HTMLElement) {
   let node: Node | null = el as Node;
