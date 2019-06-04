@@ -12,7 +12,7 @@ namespace Kooboo.Web.Menus.SideBarMenu.System
 {
     public class Events : ISideBarMenu, IDynamicMenu
     {
-        public EnumSideBarParent Parent => EnumSideBarParent.System;
+        public SideBarSection Parent => SideBarSection.System;
 
         public string Name => "Events";
 
@@ -30,14 +30,10 @@ namespace Kooboo.Web.Menus.SideBarMenu.System
         }
 
         public List<ICmsMenu> ShowSubItems(RenderContext context)
-        {  
-            User user = context.User;
-            SiteDb siteDb = context.WebSite.SiteDb();
-
+        {   
             List<ICmsMenu> Result = new List<ICmsMenu>();
 
-            Result.Add(new GeneralMenu() { Name = Hardcoded.GetValue("Overview", context), Url = "Events" }); 
-             
+            Result.Add(new GeneralMenu() { Name = Hardcoded.GetValue("Overview", context), Url = "Events" });  
 
             var names = Enum.GetNames(typeof(Kooboo.Sites.FrontEvent.enumEventType));
 
@@ -48,13 +44,11 @@ namespace Kooboo.Web.Menus.SideBarMenu.System
                 eventname.name = item;
                 eventname.group = GetEventGroup(item);
                 groupnames.Add(eventname);
-            }
-
+            } 
 
             foreach (var group in groupnames.GroupBy(o => o.group))
             {
-                var item = new GeneralMenu { Name = group.Key };
-
+                var item = new GeneralMenu { Name = group.Key }; 
                 foreach (var oneevent in group.ToList())
                 {
                     item.SubItems.Add(new GeneralMenu
@@ -62,23 +56,18 @@ namespace Kooboo.Web.Menus.SideBarMenu.System
                         Name = oneevent.name,
                         Url = "Events/Event?name=" + oneevent.name.ToString()
                     });
-                }
-
+                } 
                 Result.Add(item);
-            }
-
-            return Result;  
-
+            } 
+            return Result; 
         }
 
         public bool Show(RenderContext context)
-        {
-
+        { 
             if (context.WebSite != null && context.WebSite.EnableFrontEvents)
             {
                 return true;
-            }
-
+            } 
             return false;
         }
          

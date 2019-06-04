@@ -8,7 +8,7 @@ namespace Kooboo.Web.Menus.SideBarMenu.Development
 {
     public class Menus : ISideBarMenu
     {
-        public EnumSideBarParent Parent => EnumSideBarParent.Development; 
+        public SideBarSection Parent => SideBarSection.Development; 
 
         public string Name => "Menus";
 

@@ -91,8 +91,4 @@
     <ProjectReference Include="..\Kooboo.Sites\Kooboo.Sites.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Backend\Menus\SideBarMenu\Contents\" />
-  </ItemGroup>
-
 </Project>

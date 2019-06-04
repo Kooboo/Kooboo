@@ -9,7 +9,7 @@ namespace Kooboo.Web.Menus.SideBarMenu.System
 {
     public class Settings  : ISideBarMenu
     {
-        public EnumSideBarParent Parent => EnumSideBarParent.System; 
+        public SideBarSection Parent => SideBarSection.System; 
 
         public string Name => "System";
 
