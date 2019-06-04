@@ -6,7 +6,7 @@ export default (document: Document) => {
     if (context.editing) return;
     if (context.lastSelectedDomEventArgs) {
       let selectedDom = context.lastSelectedDomEventArgs.closeElement;
-      if (selectedDom.innerHTML.indexOf("kooboo-id") != -1) return;
+      // if (selectedDom.innerHTML.indexOf("kooboo-id") != -1) return;
       inlineSimple(selectedDom);
     }
   });

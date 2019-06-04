@@ -10,10 +10,6 @@ export async function inlineSimple(selector: Element) {
     i.remove();
   });
 
-  //fix tinymce known issue https://github.com/tinymce/tinymce/issues/2453
-  let liContentBackup = null;
-  if (selector.tagName == "LI") liContentBackup = selector.innerHTML;
-
   const settings = {
     target: selector,
     inline: true,
@@ -36,26 +32,47 @@ export async function inlineSimple(selector: Element) {
     valid_styles: "*[*]",
     plugins: ["save"],
     toolbar:
-      "save cancel | bold italic forecolor fontselect fontsizeselect | image link unlink",
+      "save cancel | undo redo | bold italic forecolor fontselect fontsizeselect | image link unlink",
     init_instance_callback: e => {
       context.editing = true;
       context.tinymceEvent.emit(context.editing);
     },
-    setup: e => {
-      e.on("Blur", () => {
-        context.editing = false;
-        context.tinymceEvent.emit(context.editing);
+    setup: editor => {
+      editor.on("Blur", () => false);
+      editor.once("SetContent", e => (e.target._content = e.content));
+      editor.on("Remove", e => (e.target.getElement()._tinymceeditor = null));
+      editor.on("BeforeSetContent", function(e) {
+        //fix tinymce known issue https://github.com/tinymce/tinymce/issues/2453
+        var targetElm = e.target.targetElm;
+        if (targetElm.tagName.toLowerCase() == "li") {
+          if (targetElm.children.length == 0) {
+            e.content = targetElm.textContent;
+          } else if (e.content === 0) {
+            e.content = targetElm.innerHTML;
+          }
+        }
+        e.format = "raw";
       });
     }
   } as Settings;
+  (settings as any).save_enablewhendirty = false;
   (settings as any).save_oncancelcallback = (e: Editor) => {
-    e.hide();
+    e.setContent((e as any)._content);
+    e.remove();
+    context.editing = false;
+    context.tinymceEvent.emit(context.editing);
   };
   let editor = await EditorManager.init(settings);
-  if (liContentBackup) selector.innerHTML = liContentBackup;
   if (editor instanceof Array) editor = editor[0];
   let container = editor.getContainer();
-  if (container instanceof HTMLElement) container.style.zIndex = "9999";
+  if (container instanceof HTMLElement) {
+    container.style.zIndex = "10000001";
+    setTimeout(() => {
+      if (container.nextElementSibling instanceof HTMLElement) {
+        container.nextElementSibling.style.zIndex = "10000002";
+      }
+    }, 500);
+  }
   (selector as any)._tinymceeditor = editor;
   if (selector instanceof HTMLElement) selector.focus();
 }

@@ -1,5 +1,5 @@
 import context from "../context";
-import elementAnalyze from "./elementAnalyze";
+import { getKoobooComment } from "./domAnalyze";
 import { SelectedDomEventArgs } from "../events/selectedDomEvent";
 
 export default (document: Document) => {
@@ -13,7 +13,7 @@ export default (document: Document) => {
     )
       return;
 
-    let { koobooComment, koobooId, closeEl } = elementAnalyze(el);
+    let { koobooComment, koobooId, closeEl } = getKoobooComment(el);
     var args = new SelectedDomEventArgs(el, closeEl, koobooId, koobooComment);
     args.lastSelectedDomEventArgs = context.lastSelectedDomEventArgs;
     context.domChangeEvent.emit(args);

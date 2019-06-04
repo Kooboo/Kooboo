@@ -1,6 +1,7 @@
 import { KoobooComment } from "../models/koobooComment";
+import { classBody } from "@babel/types";
 
-export default (el: HTMLElement) => {
+export function getKoobooComment(el: HTMLElement) {
   let node: Node | null = el as Node;
   let closeElement = el;
 
@@ -35,4 +36,17 @@ export default (el: HTMLElement) => {
     closeEl: closeElement,
     koobooId: koobooId
   };
-};
+}
+
+export function getMaxHeight(document: Document) {
+  var body = document.body,
+    html = document.documentElement;
+
+  return Math.max(
+    body.scrollHeight,
+    body.offsetHeight,
+    html.clientHeight,
+    html.scrollHeight,
+    html.offsetHeight
+  );
+}

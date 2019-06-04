@@ -9,7 +9,7 @@
   <body>
     <iframe
       id="iframe"
-      src="http://test.kooboo/Index?koobooInline=design"
+      src="http://test2.kooboo/Index2?koobooInline=design"
     ></iframe>
   </body>
 </html>
@@ -33,6 +33,7 @@
   script.src = "\\_Admin\\Scripts\\kooboo-web-editor\\kooboo-web-editor.min.js";
   var iframe = document.getElementById("iframe");
   iframe.onload = function() {
+    console.dir(iframe)
     iframe.contentDocument.body.appendChild(script);
   };
 </script>
