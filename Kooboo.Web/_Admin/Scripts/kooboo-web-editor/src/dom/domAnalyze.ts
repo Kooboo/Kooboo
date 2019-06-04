@@ -1,4 +1,5 @@
 import { KoobooComment } from "../models/koobooComment";
+import { HOVER_BORDER_SKIP } from "../constants";
 
 export function getKoobooComment(el: HTMLElement) {
   let node: Node | null = el as Node;
@@ -48,4 +49,13 @@ export function getMaxHeight(document: Document) {
     html.scrollHeight,
     html.offsetHeight
   );
+}
+
+export function isSkipHover(e: MouseEvent) {
+  return ((e as any).path as Array<HTMLElement>).some(s => {
+    if (s instanceof HTMLElement)
+      return s.classList.contains(HOVER_BORDER_SKIP);
+
+    return false;
+  });
 }

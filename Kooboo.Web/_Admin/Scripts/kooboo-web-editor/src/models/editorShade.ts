@@ -1,4 +1,5 @@
 import { getMaxHeight } from "../dom/domAnalyze";
+import { EDITOR_SHADE_COLOR, STANDARD_Z_INDEX } from "../constants";
 
 export class EditorShade {
   private _sourceElement!: HTMLElement;
@@ -90,8 +91,8 @@ export class EditorShade {
     let css = element.style;
     css.position = "absolute";
     css.display = "block";
-    css.backgroundColor = "rgba(0,0,0,0.5)";
-    css.zIndex = "10000000";
+    css.backgroundColor = EDITOR_SHADE_COLOR;
+    css.zIndex = STANDARD_Z_INDEX + "";
     css.cursor = "not-allowed";
 
     element.onclick = e => {

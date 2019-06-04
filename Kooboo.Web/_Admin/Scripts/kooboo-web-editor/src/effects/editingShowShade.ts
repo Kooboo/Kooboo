@@ -1,19 +1,21 @@
 import context from "../context";
-import { SelectedDomEventArgs } from "../events/selectedDomEvent";
 import { EditorShade } from "../models/editorShade";
 
+let editorShade: EditorShade | undefined;
+
 export default (document: Document) => {
-  const editorShade = new EditorShade(document);
+  if (editorShade) return;
+  editorShade = new EditorShade(document);
 
   context.tinymceDisplayEvent.addEventListener(display => {
     if (display) {
-      editorShade.updateSource(context.lastSelectedDomEventArgs!.closeElement);
+      editorShade!.updateSource(context.lastSelectedDomEventArgs!.closeElement);
     } else {
-      editorShade.clear(document);
+      editorShade!.clear(document);
     }
   });
 
   context.tinymceInputEvent.addEventListener(() => {
-    editorShade.updateSource(context.lastSelectedDomEventArgs!.closeElement);
+    editorShade!.updateSource(context.lastSelectedDomEventArgs!.closeElement);
   });
 };

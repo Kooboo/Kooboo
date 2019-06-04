@@ -4,8 +4,9 @@ import "tinymce/plugins/save";
 import "tinymce/plugins/link";
 import "tinymce/plugins/image";
 import context from "../context";
+import { STANDARD_Z_INDEX } from "../constants";
 
-export async function inlineSimple(selector: Element) {
+export async function setInlineEditor(selector: Element) {
   if ((selector as any)._tinymceeditor) return;
   EditorManager.editors.forEach(i => {
     (i.getElement() as any)._tinymceeditor = null;
@@ -68,10 +69,10 @@ export async function inlineSimple(selector: Element) {
   if (editor instanceof Array) editor = editor[0];
   let container = editor.getContainer();
   if (container instanceof HTMLElement) {
-    container.style.zIndex = "10000001";
+    container.style.zIndex = STANDARD_Z_INDEX + 1 + "";
     setTimeout(() => {
       if (container.nextElementSibling instanceof HTMLElement) {
-        container.nextElementSibling.style.zIndex = "10000002";
+        container.nextElementSibling.style.zIndex = STANDARD_Z_INDEX + 2 + "";
       }
     }, 500);
   }

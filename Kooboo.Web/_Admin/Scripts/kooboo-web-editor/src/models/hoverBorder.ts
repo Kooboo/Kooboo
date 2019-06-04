@@ -1,5 +1,6 @@
+import { HOVER_BORDER_WIDTH } from "../constants";
+
 export class HoverBorder {
-  private readonly _borderWidth = 2;
   private _sourceElement!: HTMLElement;
   private _top!: HTMLElement;
   private _left!: HTMLElement;
@@ -25,9 +26,9 @@ export class HoverBorder {
     }
     this._top.style.top = this.sourceRect.top - this.bodyRect.top + "px";
     this._top.style.left =
-      this.sourceRect.left - this.bodyRect.left + this._borderWidth + "px";
+      this.sourceRect.left - this.bodyRect.left + HOVER_BORDER_WIDTH + "px";
     this._top.style.width =
-      this._sourceElement.offsetWidth - this._borderWidth * 2 + "px";
+      this._sourceElement.offsetWidth - HOVER_BORDER_WIDTH * 2 + "px";
     return this._top;
   }
 
@@ -51,7 +52,7 @@ export class HoverBorder {
     this._right.style.left =
       this.sourceRect.left -
       this.bodyRect.left -
-      this._borderWidth +
+      HOVER_BORDER_WIDTH +
       this._sourceElement.offsetWidth +
       "px";
     this._right.style.height = this._sourceElement.offsetHeight + "px";
@@ -67,12 +68,12 @@ export class HoverBorder {
       this.sourceRect.top -
       this.bodyRect.top +
       this._sourceElement.offsetHeight -
-      this._borderWidth +
+      HOVER_BORDER_WIDTH +
       "px";
     this._bottom.style.left =
-      this.sourceRect.left - this.bodyRect.left + this._borderWidth + "px";
+      this.sourceRect.left - this.bodyRect.left + HOVER_BORDER_WIDTH + "px";
     this._bottom.style.width =
-      this._sourceElement.offsetWidth - this._borderWidth * 2 + "px";
+      this._sourceElement.offsetWidth - HOVER_BORDER_WIDTH * 2 + "px";
     return this._bottom;
   }
 
@@ -95,8 +96,8 @@ export class HoverBorder {
     css.display = "block";
     css.pointerEvents = "none";
     css.backgroundColor = "#1fb5f6a3";
-    css.width = this._borderWidth + "px";
-    css.height = this._borderWidth + "px";
+    css.width = HOVER_BORDER_WIDTH + "px";
+    css.height = HOVER_BORDER_WIDTH + "px";
     css.zIndex = "10000000";
   }
 

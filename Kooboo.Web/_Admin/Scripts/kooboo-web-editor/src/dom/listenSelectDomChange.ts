@@ -1,10 +1,13 @@
 import context from "../context";
-import { getKoobooComment } from "./domAnalyze";
+import { getKoobooComment, isSkipHover } from "./domAnalyze";
 import { SelectedDomEventArgs } from "../events/selectedDomEvent";
 
 export default (document: Document) => {
   document.body.addEventListener("mouseover", e => {
     e.stopPropagation();
+
+    if (isSkipHover(e)) return;
+
     let el = e.target as HTMLElement;
 
     if (
