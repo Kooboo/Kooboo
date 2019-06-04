@@ -12,7 +12,7 @@ namespace Kooboo.Web.Menus
     public class CmsMenuViewModel
     {
         internal  ICmsMenu CmsMenu { get; set; }
-        bool Hide { get; set; }
+       public bool Hide { get; set; }
 
         public CmsMenuViewModel(ICmsMenu menu, RenderContext context)
         {
@@ -72,7 +72,7 @@ namespace Kooboo.Web.Menus
             }
         }
 
-        public  CmsMenuViewModel(string name)
+        public  CmsMenuViewModel(string name, string displayname)
         {
             this.Name = name;
             this.DisplayName = name; 
@@ -124,6 +124,19 @@ namespace Kooboo.Web.Menus
             set
             {
                 _items = value; 
+            }
+        }
+
+        public bool HasSubItem
+        {
+            get
+            {
+                if (_items ==null)
+                {
+                    return false; 
+                }
+
+                return _items.Any(); 
             }
         }
     }

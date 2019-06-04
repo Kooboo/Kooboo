@@ -40,7 +40,7 @@ namespace Kooboo.Sites.Authorization
 
             foreach (var item in allmenus)
             {
-                string permission = GetPermissionString(item);
+                string permission = MenuService.GetPermissionString(item);
                 if (!string.IsNullOrWhiteSpace(permission))
                 {
                     AppendPermission(result, permission);
@@ -68,34 +68,7 @@ namespace Kooboo.Sites.Authorization
         }
 
 
-        private static string GetPermissionString(ICmsMenu menu)
-        {
-            if (menu == null)
-            {
-                return null;
-            }
-            if (menu is ISideBarMenu)
-            {
-                var sidebarmenu = menu as ISideBarMenu;
-                if (sidebarmenu.Parent == SideBarSection.Root)
-                {
-                    return sidebarmenu.Name;
-                }
-                else
-                {
-                    return sidebarmenu.Parent.ToString() + "/" + sidebarmenu.Name;
-                }
-            }
-
-            else if (menu is IFeatureMenu)
-            {
-                return "feature/" + menu.Name;
-            }
-
-            return null;
-
-        }
-
+ 
 
 
         private static RolePermission _master;

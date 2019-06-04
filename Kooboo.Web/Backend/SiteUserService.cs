@@ -18,6 +18,10 @@ namespace Kooboo.Web.Backend
 
         public static Kooboo.Sites.Authorization.Model.RolePermission GetRolePermission(RenderContext context)
         {
+            if (context.User == null)
+            {
+                return null; 
+            }
             var sitedb = context.WebSite.SiteDb();
 
             var user = sitedb.SiteUser.Get(context.User.Id); 

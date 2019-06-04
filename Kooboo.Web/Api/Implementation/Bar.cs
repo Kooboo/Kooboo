@@ -84,6 +84,8 @@ namespace Kooboo.Web.Api.Implementation
 
             feature.Items = MenuContainer.FeatureMenus.Select(o => new CmsMenuViewModel(o, call.Context)).ToList();
 
+            MenuManager.VerifySortSideBar(feature.Items, call.Context); 
+
             menus.Add(feature); 
 
             menus.Add(SiteBarAdvancedMenu(call));
@@ -126,12 +128,18 @@ namespace Kooboo.Web.Api.Implementation
         private CmsMenuViewModel SiteBarAdvancedMenu(ApiCall call)
         {
             var context = call.Context;
-            var advance = new CmsMenuViewModel(Hardcoded.GetValue("Advance", context));
+            var advanceheadline = Hardcoded.GetValue("Advance", context); 
+            var advance = new CmsMenuViewModel(advanceheadline, advanceheadline);
 
-            var system = new CmsMenuViewModel(Hardcoded.GetValue("System", context)) { Icon = "icon icon-settings" };
-            var development = new CmsMenuViewModel(Hardcoded.GetValue("Development", context)) { Icon = "icon fa fa-code" };
-            var content = new CmsMenuViewModel(Hardcoded.GetValue("Contents", context)) { Icon = "icon fa fa-files-o" };
-            var database = new CmsMenuViewModel(Hardcoded.GetValue("Database", context)) { Icon = "icon fa fa-database" };
+            //Hardcoded.GetValue("System", context)
+            //Hardcoded.GetValue("Development", context)
+            //Hardcoded.GetValue("Contents", context)
+            //Hardcoded.GetValue("Database", context)
+
+            var system = new CmsMenuViewModel(SideBarSection.System.ToString(), Hardcoded.GetValue("System", context)) { Icon = "icon icon-settings" };
+            var development = new CmsMenuViewModel(Hardcoded.GetValue(SideBarSection.Development.ToString(), context)) { Icon = "icon fa fa-code" };
+            var content = new CmsMenuViewModel(Hardcoded.GetValue(SideBarSection.Contents.ToString(), context)) { Icon = "icon fa fa-files-o" };
+            var database = new CmsMenuViewModel(Hardcoded.GetValue(SideBarSection.Database.ToString(), context)) { Icon = "icon fa fa-database" };
 
             advance.Items.Add(system);
             advance.Items.Add(development);
@@ -163,8 +171,11 @@ namespace Kooboo.Web.Api.Implementation
                     database.Items.Add(new CmsMenuViewModel(item, context));
                 }
             }
+             
+            MenuManager.VerifySortSideBar(advance.Items, call.Context); 
 
-            return advance;
+            return advance; 
+
         }
 
 

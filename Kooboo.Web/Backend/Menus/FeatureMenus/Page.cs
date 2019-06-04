@@ -15,7 +15,7 @@ namespace Kooboo.Web.Menus.FeatureMenus
 
         public string Url => "Pages";
 
-        public int Order => 1;
+        public int Order => 2;
 
         public List<ICmsMenu> SubItems { get; set; }
          

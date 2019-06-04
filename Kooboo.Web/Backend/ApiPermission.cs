@@ -30,12 +30,7 @@ namespace Kooboo.Web.Backend
             }
             else
             {
-                var role = SiteUserService.GetRolePermission(context);
-
-                if (role == null)
-                {
-                    return false;
-                }
+               
 
                 string PermissionString = null;
 
@@ -48,7 +43,7 @@ namespace Kooboo.Web.Backend
                         {
                             PermissionString = permissionclass.Permission;
                         }
-                    }
+                    } 
                 }
                 else
                 {
@@ -73,6 +68,12 @@ namespace Kooboo.Web.Backend
                 }
                 else
                 {
+                    var role = SiteUserService.GetRolePermission(context);
+
+                    if (role == null)
+                    {
+                        return false;
+                    }
                     return Kooboo.Sites.Authorization.PermissionService.HasPermission(PermissionString, role.Tree);
                 }
 

@@ -15,7 +15,7 @@ namespace Kooboo.Web.Menus.FeatureMenus
 
         public string Url => "Sites/Diagnosis";
 
-        public int Order => 1;
+        public int Order => 3;
 
         public List<ICmsMenu> SubItems { get; set; }
 
