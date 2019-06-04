@@ -1,6 +1,7 @@
 import tinymce, { EditorManager, Settings, Editor } from "tinymce";
 import "tinymce/themes/silver";
 import "tinymce/plugins/save";
+import "tinymce/plugins/link";
 import context from "../context";
 
 export async function inlineSimple(selector: Element) {
@@ -30,7 +31,7 @@ export async function inlineSimple(selector: Element) {
     valid_elements: "*[*]",
     valid_children: "*[*]",
     valid_styles: "*[*]",
-    plugins: ["save"],
+    plugins: ["save", "link"],
     toolbar:
       "save cancel | undo redo | bold italic forecolor fontselect fontsizeselect | image link unlink",
     init_instance_callback: e => {
@@ -40,6 +41,8 @@ export async function inlineSimple(selector: Element) {
       editor.on("Blur", () => false);
       editor.once("SetContent", e => (e.target._content = e.content));
       editor.on("Remove", e => (e.target.getElement()._tinymceeditor = null));
+      editor.on("Change", e => context.tinymceInputEvent.emit());
+      editor.on("KeyUp", e => context.tinymceInputEvent.emit());
       editor.on("BeforeSetContent", function(e) {
         //fix tinymce known issue https://github.com/tinymce/tinymce/issues/2453
         var targetElm = e.target.targetElm;

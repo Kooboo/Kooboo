@@ -2,13 +2,13 @@ import {
   SelectedDomEventArgs,
   SelectedDomEvent
 } from "./events/selectedDomEvent";
-import { TinymceEvent } from "./events/tinymceEvent";
+import { TinymceDisplayEvent, TinymceInputEvent } from "./events/tinymceEvent";
 
 class Context {
   private _editing: boolean = false;
   set editing(value: boolean) {
     this._editing = value;
-    this.tinymceEvent.emit(value);
+    this.tinymceDisplayEvent.emit(value);
   }
   get editing() {
     return this._editing;
@@ -16,7 +16,8 @@ class Context {
 
   lastSelectedDomEventArgs: SelectedDomEventArgs | undefined;
   domChangeEvent: SelectedDomEvent = new SelectedDomEvent();
-  tinymceEvent: TinymceEvent = new TinymceEvent();
+  tinymceDisplayEvent: TinymceDisplayEvent = new TinymceDisplayEvent();
+  tinymceInputEvent: TinymceInputEvent = new TinymceInputEvent();
 }
 
 export default new Context();
