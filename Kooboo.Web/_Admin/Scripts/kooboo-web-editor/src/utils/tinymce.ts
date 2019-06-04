@@ -29,6 +29,7 @@ export async function inlineSimple(selector: Element) {
     allow_unsafe_link_target: true,
     convert_fonts_to_spans: false,
     remove_trailing_brs: false,
+    browser_spellcheck: false,
     forced_root_block: "",
     valid_elements: "*[*]",
     valid_children: "*[*]",
@@ -54,7 +55,6 @@ export async function inlineSimple(selector: Element) {
   if (liContentBackup) selector.innerHTML = liContentBackup;
   if (editor instanceof Array) editor = editor[0];
   let container = editor.getContainer();
-  console.dir(container);
   if (container instanceof HTMLElement) container.style.zIndex = "9999";
   (selector as any)._tinymceeditor = editor;
   if (selector instanceof HTMLElement) selector.focus();

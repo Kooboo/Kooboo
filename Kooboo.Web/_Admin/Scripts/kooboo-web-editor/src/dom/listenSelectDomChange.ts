@@ -3,9 +3,8 @@ import elementAnalyze from "./elementAnalyze";
 import { SelectedDomEventArgs } from "../events/selectedDomEvent";
 
 export default (document: Document) => {
-  document.body.addEventListener("mousemove", e => {
+  document.body.addEventListener("mouseover", e => {
     e.stopPropagation();
-    e.preventDefault();
     let el = e.target as HTMLElement;
 
     if (
