@@ -1,6 +1,12 @@
 import { BaseEvent } from "./baseEvent";
-export class TinymceEvent extends BaseEvent<boolean> {
+export class TinymceDisplayEvent extends BaseEvent<boolean> {
   constructor() {
-    super("TinymceEvent");
+    super("TinymceDisplayEvent");
+  }
+}
+
+export class TinymceInputEvent extends BaseEvent<void> {
+  constructor() {
+    super("TinymceInputEvent");
   }
 }
