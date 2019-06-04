@@ -1,5 +1,5 @@
 export class HoverBorder {
-  private readonly _borderWidth = 3;
+  private readonly _borderWidth = 2;
   private _sourceElement!: HTMLElement;
   private _top!: HTMLElement;
   private _left!: HTMLElement;
@@ -66,10 +66,13 @@ export class HoverBorder {
     this._bottom.style.top =
       this.sourceRect.top -
       this.bodyRect.top +
-      this._sourceElement.offsetHeight +
+      this._sourceElement.offsetHeight -
+      this._borderWidth +
       "px";
-    this._bottom.style.left = this.sourceRect.left - this.bodyRect.left + "px";
-    this._bottom.style.width = this._sourceElement.offsetWidth + "px";
+    this._bottom.style.left =
+      this.sourceRect.left - this.bodyRect.left + this._borderWidth + "px";
+    this._bottom.style.width =
+      this._sourceElement.offsetWidth - this._borderWidth * 2 + "px";
     return this._bottom;
   }
 

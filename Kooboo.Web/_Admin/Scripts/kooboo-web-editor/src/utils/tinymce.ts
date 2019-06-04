@@ -2,6 +2,7 @@ import tinymce, { EditorManager, Settings, Editor } from "tinymce";
 import "tinymce/themes/silver";
 import "tinymce/plugins/save";
 import "tinymce/plugins/link";
+import "tinymce/plugins/image";
 import context from "../context";
 
 export async function inlineSimple(selector: Element) {
@@ -31,7 +32,7 @@ export async function inlineSimple(selector: Element) {
     valid_elements: "*[*]",
     valid_children: "*[*]",
     valid_styles: "*[*]",
-    plugins: ["save", "link"],
+    plugins: ["save", "link", "image"],
     toolbar:
       "save cancel | undo redo | bold italic forecolor fontselect fontsizeselect | image link unlink",
     init_instance_callback: e => {

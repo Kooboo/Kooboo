@@ -94,7 +94,6 @@ export class EditorShade {
     css.zIndex = "10000000";
     css.cursor = "not-allowed";
 
-    element.classList.add("__kbeditorshadle");
     element.onclick = e => {
       e.stopPropagation();
     };
