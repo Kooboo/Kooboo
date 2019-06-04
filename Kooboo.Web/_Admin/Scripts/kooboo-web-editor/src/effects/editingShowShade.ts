@@ -5,8 +5,8 @@ import { EditorShade } from "../models/editorShade";
 export default (document: Document) => {
   const editorShade = new EditorShade(document);
 
-  context.tinymceDisplayEvent.addEventListener(e => {
-    if (e) {
+  context.tinymceDisplayEvent.addEventListener(display => {
+    if (display) {
       editorShade.updateSource(context.lastSelectedDomEventArgs!.closeElement);
     } else {
       editorShade.clear(document);
