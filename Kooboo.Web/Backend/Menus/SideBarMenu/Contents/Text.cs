@@ -8,7 +8,7 @@ namespace Kooboo.Web.Menus.SideBarMenu.System
 {
     public class Text : ISideBarMenu
     {
-        public SideBarSection Parent => SideBarSection.System;
+        public SideBarSection Parent => SideBarSection.Contents;
 
         public string Name => "Text";
 
@@ -16,7 +16,7 @@ namespace Kooboo.Web.Menus.SideBarMenu.System
 
         public string Url => "System/KConfig";
 
-        public int Order => 3;
+        public int Order => 8;
 
         public List<ICmsMenu> SubItems { get; set; }
 

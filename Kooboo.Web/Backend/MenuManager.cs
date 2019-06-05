@@ -67,9 +67,13 @@ namespace Kooboo.Web.Menus
                    if (item.HasSubItem)
                     {
                         bool HasNonHideItem = false; 
-                        foreach (var submenu in menus)
+                        foreach (var submenu in item.Items)
                         {
                             var subPermission = GetPermissionString(submenu);
+                            if (string.IsNullOrEmpty(subPermission))
+                            {
+                                continue; 
+                            }
                             var subHasPermission = Kooboo.Sites.Authorization.PermissionService.HasPermission(subPermission, role.Tree); 
                             if (subHasPermission)
                             {
@@ -78,12 +82,12 @@ namespace Kooboo.Web.Menus
                             else
                             {
                                 submenu.Hide = true; 
-                            }
-
-                            if (!HasNonHideItem)
-                            {
-                                item.Hide = true; 
-                            }
+                            } 
+                        }
+                         
+                        if (!HasNonHideItem)
+                        {
+                            item.Hide = true;
                         }
                     }
                    else

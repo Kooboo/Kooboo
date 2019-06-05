@@ -75,7 +75,7 @@ namespace Kooboo.Web.Menus
         public  CmsMenuViewModel(string name, string displayname)
         {
             this.Name = name;
-            this.DisplayName = name; 
+            this.DisplayName = displayname; 
         }
 
         private  string appendSiteId(string relativeUrl, Guid SiteId)
