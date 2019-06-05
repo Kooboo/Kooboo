@@ -1,5 +1,5 @@
 import context from "../context";
-import { SelectedDomEventArgs } from "../events/selectedDomEvent";
+import { SelectedDomEventArgs } from "../events/SelectedDomEvent";
 import { HoverBorder } from "../models/HoverBorder";
 
 let hoverBorder: HoverBorder | undefined;
@@ -14,7 +14,7 @@ export default (document: Document) => {
   });
 
   context.tinymceDisplayEvent.addEventListener(e => {
-    if (context.lastSelectedDomEventArgs && e) {
+    if (e) {
       hoverBorder!.clear();
     }
   });

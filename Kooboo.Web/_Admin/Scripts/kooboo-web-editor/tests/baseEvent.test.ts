@@ -1,4 +1,4 @@
-import { BaseEvent } from "../src/events/baseEvent";
+import { BaseEvent } from "../src/events/BaseEvent";
 
 test("init event", () => {
   let event = new BaseEvent<void>("baseEvent");

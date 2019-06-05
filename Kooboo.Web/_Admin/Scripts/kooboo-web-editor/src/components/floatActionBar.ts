@@ -13,6 +13,7 @@ function createButton(document: Document, icon: any) {
   btn.style.borderRadius = "50%";
   btn.style.backgroundColor = "rgba(255,255,255,0.9)";
   btn.style.boxShadow = "0 0 5px rgba(0,0,0,0.5)";
+  btn.style.position = "relative";
   let img = document.createElement("img");
   img.style.width = "50%";
   img.style.marginLeft = "25%";
@@ -42,12 +43,30 @@ function createBlank(document: Document) {
   return blank;
 }
 
+function createNotice(document: Document) {
+  let notice = document.createElement("div");
+  notice.style.backgroundColor = "red";
+  notice.style.width = "20px";
+  notice.style.height = "20px";
+  notice.style.borderRadius = "10px";
+  notice.style.position = "absolute";
+  notice.style.top = "0";
+  notice.style.left = "0";
+  notice.style.color = "#fff";
+  notice.style.fontSize = "15px";
+  notice.style.textAlign = "center";
+  notice.style.lineHeight = "20px";
+  notice.style.opacity = "0.8";
+  notice.style.visibility = "hidden";
+  return notice;
+}
+
 function initMoveButton(element: HTMLElement, container: HTMLElement) {
   element.draggable = true;
 
   element.ondragstart = e => {
-    context.editing = true;
     context.lastSelectedDomEventArgs = undefined;
+    context.editing = true;
   };
 
   element.ondrag = e => {
@@ -72,16 +91,28 @@ export function createActionBar(document: Document) {
 
   var preBtn = createButton(document, preIcon);
   preBtn.onclick = () => OperationManager.previous();
+  var preNotice = createNotice(document);
+  preBtn.appendChild(preNotice);
   container.appendChild(preBtn);
 
   container.appendChild(createBlank(document));
 
   var nextBtn = createButton(document, nextIcon);
   nextBtn.onclick = () => OperationManager.next();
+  var nextNotice = createNotice(document);
+  nextBtn.appendChild(nextNotice);
   container.appendChild(nextBtn);
 
   container.appendChild(createBlank(document));
 
   var saveBtn = createButton(document, saveIcon);
   container.appendChild(saveBtn);
+
+  context.operationEvent.addEventListener(e => {
+    preNotice.innerHTML = e.operationCount + "";
+    preNotice.style.visibility = e.operationCount > 0 ? "visible" : "hidden";
+    nextNotice.innerHTML = e.backupOperationCount + "";
+    nextNotice.style.visibility =
+      e.backupOperationCount > 0 ? "visible" : "hidden";
+  });
 }

@@ -1,6 +1,6 @@
 import context from "../context";
 import { getKoobooComment, isSkipHover } from "./domAnalyze";
-import { SelectedDomEventArgs } from "../events/selectedDomEvent";
+import { SelectedDomEventArgs } from "../events/SelectedDomEvent";
 
 export default (document: Document) => {
   document.body.addEventListener("mouseover", e => {

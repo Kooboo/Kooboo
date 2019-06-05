@@ -1,8 +1,9 @@
 import {
   SelectedDomEventArgs,
   SelectedDomEvent
-} from "./events/selectedDomEvent";
-import { TinymceDisplayEvent, TinymceInputEvent } from "./events/tinymceEvent";
+} from "./events/SelectedDomEvent";
+import { TinymceDisplayEvent, TinymceInputEvent } from "./events/TinymceEvent";
+import { OperationEvent } from "./events/OperationEvent";
 
 class Context {
   private _editing: boolean = false;
@@ -18,6 +19,7 @@ class Context {
   domChangeEvent: SelectedDomEvent = new SelectedDomEvent();
   tinymceDisplayEvent: TinymceDisplayEvent = new TinymceDisplayEvent();
   tinymceInputEvent: TinymceInputEvent = new TinymceInputEvent();
+  operationEvent: OperationEvent = new OperationEvent();
 }
 
 export default new Context();
