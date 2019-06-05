@@ -5,6 +5,8 @@ import "tinymce/plugins/link";
 import "tinymce/plugins/image";
 import context from "../context";
 import { STANDARD_Z_INDEX } from "../constants";
+import OperationManager from "../OperationManager";
+import { Operation } from "../models/Operation";
 
 export async function setInlineEditor(selector: Element) {
   if ((selector as any)._tinymceeditor) return;
@@ -65,6 +67,25 @@ export async function setInlineEditor(selector: Element) {
     e.remove();
     context.editing = false;
   };
+
+  (settings as any).save_onsavecallback = (e: Editor) => {
+    let startContent = (e as any)._content;
+    let endContent = e.getContent();
+    let element = e.getElement() as HTMLElement;
+    let comment = context.lastSelectedDomEventArgs!.koobooComment;
+    let koobooId = context.lastSelectedDomEventArgs!.koobooId;
+    let operation = new Operation(
+      element,
+      startContent,
+      endContent,
+      comment,
+      koobooId
+    );
+    OperationManager.add(operation);
+    e.remove();
+    context.editing = false;
+  };
+
   let editor = await EditorManager.init(settings);
   if (editor instanceof Array) editor = editor[0];
   let container = editor.getContainer();

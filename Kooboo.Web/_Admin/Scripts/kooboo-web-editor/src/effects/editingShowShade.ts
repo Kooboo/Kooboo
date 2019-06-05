@@ -1,5 +1,5 @@
 import context from "../context";
-import { EditorShade } from "../models/editorShade";
+import { EditorShade } from "../models/EditorShade";
 
 let editorShade: EditorShade | undefined;
 
@@ -8,14 +8,17 @@ export default (document: Document) => {
   editorShade = new EditorShade(document);
 
   context.tinymceDisplayEvent.addEventListener(display => {
+    if (!context.lastSelectedDomEventArgs) return;
+
     if (display) {
-      editorShade!.updateSource(context.lastSelectedDomEventArgs!.closeElement);
+      editorShade!.updateSource(context.lastSelectedDomEventArgs.closeElement);
     } else {
-      editorShade!.clear(document);
+      editorShade!.clear();
     }
   });
 
   context.tinymceInputEvent.addEventListener(() => {
-    editorShade!.updateSource(context.lastSelectedDomEventArgs!.closeElement);
+    if (!context.lastSelectedDomEventArgs) return;
+    editorShade!.updateSource(context.lastSelectedDomEventArgs.closeElement);
   });
 };

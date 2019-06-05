@@ -101,9 +101,9 @@ export class HoverBorder {
     css.zIndex = "10000000";
   }
 
-  clear(document: Document) {
+  clear() {
     this.lines.forEach(i => {
-      if (i.parentElement) {
+      if (i && i.parentElement) {
         this._document.body.removeChild(i);
       }
     });

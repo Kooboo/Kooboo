@@ -1,4 +1,4 @@
-import { KoobooComment } from "../models/koobooComment";
+import { KoobooComment } from "../models/KoobooComment";
 import { HOVER_BORDER_SKIP } from "../constants";
 
 export function getKoobooComment(el: HTMLElement) {

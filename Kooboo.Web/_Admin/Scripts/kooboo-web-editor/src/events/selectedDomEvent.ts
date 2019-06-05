@@ -1,4 +1,4 @@
-import { KoobooComment } from "../models/koobooComment";
+import { KoobooComment } from "../models/KoobooComment";
 import { BaseEvent } from "./baseEvent";
 
 export class SelectedDomEventArgs {
