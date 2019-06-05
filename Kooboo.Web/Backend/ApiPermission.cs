@@ -4,6 +4,7 @@ using Kooboo.Web.Authorization;
 using Kooboo.Web.Menus;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Kooboo.Web.Backend
@@ -39,7 +40,7 @@ namespace Kooboo.Web.Backend
                 if (method.ClassInstance != null)
                 {
                     if (method.ClassInstance is IPermissionControl)
-                    { 
+                    {
 
                         if (method.ClassInstance is IApiPermissionString)
                         {
@@ -52,20 +53,18 @@ namespace Kooboo.Web.Backend
                         else
                         {
                             var instancetype = method.ClassInstance.GetType();
-                            if (Lib.Reflection.TypeHelper.HasGenericInterface(instancetype, PermissionLinkType))
+
+                            var type = GetPerminssionLinkUndertype(instancetype);
+
+                            if (type != null)
                             {
-                                var type = Lib.Reflection.TypeHelper.GetGenericType(instancetype);
-
-                                if (type != null)
+                                var menuinstance = Activator.CreateInstance(type) as ICmsMenu;
+                                if (menuinstance != null)
                                 {
-                                    var menuinstance = Activator.CreateInstance(type) as ICmsMenu;
-                                    if (menuinstance != null)
-                                    {
-                                        PermissionString = MenuManager.GetPermissionString(menuinstance);
-                                    }
+                                    PermissionString = MenuManager.GetPermissionString(menuinstance);
                                 }
-
                             }
+
                         }
                     }
                 }
@@ -104,6 +103,19 @@ namespace Kooboo.Web.Backend
             }
         }
 
+
+        public static Type GetPerminssionLinkUndertype(Type ApiClassType)
+        {
+            var interfaces = ApiClassType.GetInterfaces().Where(o => o.IsGenericType && o.GetGenericTypeDefinition() == PermissionLinkType);
+
+            if (interfaces.Any())
+            {
+                return interfaces.First().GetGenericArguments().First();
+
+            }
+
+            return null;
+        }
     }
 
 }

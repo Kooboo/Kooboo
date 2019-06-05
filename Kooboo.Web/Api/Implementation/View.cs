@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
-    public class ViewApi : SiteObjectApi<View>, Kooboo.Web.Authorization.IApiPermissionLink<Kooboo.Web.Menus.SideBarMenu.Development.Views>
+    public class ViewApi : SiteObjectApi<View>, Authorization.IApiPermissionLink<Menus.SideBarMenu.Development.Views>
     {
         public override object Get(ApiCall call)
         {

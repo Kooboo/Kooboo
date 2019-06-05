@@ -31,7 +31,8 @@
 
     this.showEditModal = ko.observable(false);
 
-    this.onSaveRole = function() {
+    this.onSaveRole = function () {
+        debugger;
       var permissions = self.getTreePermission(
         $("#permission-area")
           .jstree(true)
@@ -118,12 +119,15 @@
     this.getPermissionTree = function(items) {
       if (items && items.length) {
         return items.map(function(item) {
-          return {
-            text: item.name,
-            state: {
-              selected: item.selected
-            },
-            children: self.getPermissionTree(item.subItems)
+            return {
+                text: item.displayName || item.name,
+                data: {
+                    value: item.name
+                },
+                state: {
+                  selected: item.selected
+                },
+                children: self.getPermissionTree(item.subItems)
           };
         });
       } else {
@@ -133,9 +137,9 @@
 
     this.getTreePermission = function(items) {
       if (items && items.length) {
-        return items.map(function(item) {
+          return items.map(function (item) {
           return {
-            name: item.text,
+            name: item.data.value,
             selected: item.state.selected,
             subItems: self.getTreePermission(item.children)
           };
