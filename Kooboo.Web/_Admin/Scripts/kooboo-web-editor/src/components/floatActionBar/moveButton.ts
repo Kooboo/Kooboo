@@ -5,6 +5,7 @@ import context from "../../context";
 export function createMoveButton(document: Document, container: HTMLElement) {
   var btn = createButton(document, moveIcon);
   btn.draggable = true;
+  btn.style.cursor = "move";
 
   btn.ondragstart = e => {
     context.lastSelectedDomEventArgs = undefined;

@@ -1,5 +1,6 @@
 import { createButton } from "./button";
 import nextIcon from "../../assets/icons/xiayibu.svg";
+import nextEnableIcon from "../../assets/icons/xiayibu_enable.svg";
 import OperationManager from "../../OperationManager";
 import { createNotice } from "./Notice";
 import context from "../../context";
@@ -11,6 +12,7 @@ export function createNextButton(document: Document) {
   nextBtn.appendChild(nextNotice);
   context.operationEvent.addEventListener(e => {
     nextNotice.setCount(e.backupOperationCount);
+    nextBtn.changeIcon(e.backupOperationCount > 0 ? nextEnableIcon : nextIcon);
   });
   return nextBtn;
 }
