@@ -1,6 +1,4 @@
 $(function() {
-  Kooboo.loadJS(["/_Admin/Scripts/components/kb-media-dialog.js"]);
-
   var configViewModel = function() {
     var self = this;
 
@@ -27,6 +25,21 @@ $(function() {
           name: {
             title: item.name,
             description: firstKey + ": " + item.binding[firstKey]
+          },
+          thumbnail: {
+            src:
+              firstKey == "src"
+                ? item.binding[firstKey] +
+                  "?SiteId=" +
+                  Kooboo.getQueryString("siteid")
+                : "",
+            previewUrl:
+              firstKey == "src"
+                ? item.binding[firstKey] +
+                  "?SiteId=" +
+                  Kooboo.getQueryString("siteid")
+                : "",
+            newWindow: true
           },
           tagName: {
             text: "<" + item.tagName + ">",
@@ -63,14 +76,19 @@ $(function() {
             type: "summary"
           },
           {
-            displayName: Kooboo.text.common.usedBy,
-            fieldName: "relations",
-            type: "communication-refer"
+            displayName: Kooboo.text.common.preview,
+            fieldName: "thumbnail",
+            type: "thumbnail"
           },
           {
             displayName: "tagName",
             fieldName: "tagName",
             type: "label"
+          },
+          {
+            displayName: Kooboo.text.common.usedBy,
+            fieldName: "relations",
+            type: "communication-refer"
           },
           {
             displayName: Kooboo.text.common.lastModified,
@@ -118,7 +136,9 @@ $(function() {
                       binding: {
                         src: selected.url
                       }
-                    }).then(function(res) {});
+                    }).then(function(res) {
+                      self.getList();
+                    });
                   };
                   self.mediaDialogData(res.model);
                 }
@@ -127,6 +147,10 @@ $(function() {
           }
         }
       });
+    });
+
+    Kooboo.EventBus.subscribe("kb/config/attribute/update", function() {
+      self.getList();
     });
   };
 

@@ -1,35 +1,44 @@
 <!-- #layout name=blank-->
 <div class="page-header">
-    <h1 class="title">Kooboo Config</h1>
+  <h1 class="title">Kooboo Config</h1>
 </div>
-<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+<div
+  data-bind="component: { name: 'kb-breadcrumb', params:[{
     name: 'SITES'
 },{
     name: 'DASHBOARD'
 },{
     name: Kooboo.text.common.KConfig
-}] }"></div>
+}] }"
+></div>
 <div class="navbar navbar-default">
-    <div class="container-fluid">
-        <a data-bind="visible: showDeleteBtn, click: onDelete" class="btn red navbar-btn">Delete</a>
-    </div>
+  <div class="container-fluid">
+    <a
+      data-bind="visible: showDeleteBtn, click: onDelete"
+      class="btn red navbar-btn"
+      >Delete</a
+    >
+  </div>
 </div>
 
 <div data-bind="component: { name: 'kb-table', params: tableData }"></div>
 <div data-bind="component: { name: 'kb-relation-modal' }"></div>
 
-<kb-config-modal params='isShow: showConfigModal, rawData: configItem'></kb-config-modal>
+<kb-config-modal
+  params="isShow: showConfigModal, rawData: configItem"
+></kb-config-modal>
 <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/tableModel.js",
-            "/_Admin/Scripts/components/kbTable.js",
-            "/_Admin/Scripts/components/kbBreadcrumb.js",
-            "/_Admin/Scripts/components/kbRelationModal.js",
-            "/_Admin/Scripts/components/KConfig/kbConfigModal.js",
-            "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/tableModel.js",
+      "/_Admin/Scripts/components/kbTable.js",
+      "/_Admin/Scripts/components/kbBreadcrumb.js",
+      "/_Admin/Scripts/components/kbRelationModal.js",
+      "/_Admin/Scripts/components/KConfig/kbConfigModal.js",
+      "/_Admin/Scripts/components/kb-media-dialog.js",
+      "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/System/KConfig.js"></script>

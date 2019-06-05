@@ -56,12 +56,17 @@
 
                 <!-- ko if: col.type == 'thumbnail' -->
                 <td class="table-thumbnail">
+                    <!-- ko if: doc[col.fieldName].src -->
                     <a data-bind="click: $component.linkTo.bind(doc, doc[col.fieldName].previewUrl(), doc[col.fieldName]['newWindow']), clickBubble: false" style="cursor: pointer">
                         <div class="thumbnail-fixed">
                             <div class="img-wrap"></div>
                             <img data-bind="attr: { src: doc[col.fieldName].src }">
                         </div>
                     </a>
+                    <!-- /ko -->
+                    <!-- ko if: !doc[col.fieldName].src() -->
+                    <div style="text-align: center">-</div>
+                    <!-- /ko -->
                 </td>
                 <!-- /ko -->
 
