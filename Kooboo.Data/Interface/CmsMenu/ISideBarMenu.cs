@@ -1,5 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
+//All rights reserved. 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Web.Menus
 {
-
-    // the top square navigation... 
-  public  interface ITopMenu : ICmsMenu
-    { 
-       string BadgeIcon { get; set; }
-    }
+  public interface ISideBarMenu : ISitePermissionMenu
+    {
+       SideBarSection Parent { get;  }
+    }  
 }

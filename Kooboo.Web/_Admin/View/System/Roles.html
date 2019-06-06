@@ -1,0 +1,96 @@
+<!-- #layout name=blank-->
+<style>
+  #permission-area {
+    border-radius: 2px;
+    border: 1px solid #e5e5e5;
+  }
+</style>
+<div class="page-header">
+  <h1 class="title">Roles</h1>
+</div>
+<div
+  data-bind="component: { name: 'kb-breadcrumb', params:[{
+  name: 'SITES'
+},{
+  name: 'DASHBOARD'
+},{
+  name: Kooboo.text.common.Roles
+}] }"
+></div>
+<div class="navbar navbar-default">
+  <div class="container-fluid">
+    <a
+      href="javascript:;"
+      class="btn green navbar-btn"
+      data-bind="click: onCreate"
+      >Create</a
+    >
+    <a
+      data-bind="visible: showDeleteBtn, click: onDelete"
+      class="btn red navbar-btn"
+      >Delete</a
+    >
+  </div>
+</div>
+
+<div data-bind="component: { name: 'kb-table', params: tableData }"></div>
+
+<div
+  class="modal fade"
+  data-bind="modal: showEditModal"
+  data-keyboard="false"
+  data-backdrop="static"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-bind="click: onModalHide">
+          <i class="fa fa-close"></i>
+        </button>
+        <h4 class="modal-title">Edit</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label class="col-md-3 control-label">Role name</label>
+            <div class="col-md-9">
+              <!-- ko if: !currentRole() -->
+              <input
+                type="text"
+                class="form-control"
+                data-bind="value: roleName, error: roleName"
+              />
+              <!-- /ko -->
+              <!-- ko if: currentRole() -->
+              <p class="form-control-static" data-bind="text: roleName"></p>
+              <!-- /ko -->
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-md-3 control-label">Permission</label>
+            <div class="col-md-9" id="area">
+              <div id="permission-area"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn green" data-bind="click: onSaveRole">Save</button>
+        <button class="btn gray" data-bind="click: onModalHide">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/tableModel.js",
+      "/_Admin/Scripts/components/kbTable.js",
+      "/_Admin/Scripts/components/kbBreadcrumb.js",
+      "/_Admin/Scripts/lib/jstree.min.js"
+    ]);
+    Kooboo.loadCSS(["/_Admin/Styles/jstree/style.min.css"]);
+  })();
+</script>
+<script src="/_Admin/View/System/Roles.js"></script>

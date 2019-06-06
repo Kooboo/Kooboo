@@ -1,6 +1,5 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
-using Kooboo.Api;
+//All rights reserved. 
 using Kooboo.Data.Context;
 using System;
 using System.Collections.Generic;
@@ -15,18 +14,15 @@ namespace Kooboo.Web.Menus
         string Name { get;  }
 
         string GetDisplayName(RenderContext Context);
-
+         
         string Icon { get;  }
 
         string Url { get;  }
+ 
 
-        int Order { get;   }
+        int Order { get;   } 
 
-        bool CanShow(RenderContext context);
+        List<ICmsMenu> SubItems { get; set; }
 
-        List<ICmsMenu> Items
-        {
-            get; set;
-        }
     }
 }

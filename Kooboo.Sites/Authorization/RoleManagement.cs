@@ -2,9 +2,7 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+ 
 
 namespace Kooboo.Sites.Authorization
 {
@@ -57,8 +55,7 @@ namespace Kooboo.Sites.Authorization
             }
 
         }
-        
-        
+         
         public static bool HasRights(uint actionRights, EnumUserRole role)
         {
             if (roleActions.ContainsKey(role))
@@ -73,7 +70,6 @@ namespace Kooboo.Sites.Authorization
 
             return false; 
         }
- 
-         
+  
     }
 }

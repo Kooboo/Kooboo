@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
-    public class ViewApi : SiteObjectApi<View>
+    public class ViewApi : SiteObjectApi<View>, Authorization.IApiPermissionLink<Menus.SideBarMenu.Development.Views>
     {
         public override object Get(ApiCall call)
         {
@@ -154,7 +154,9 @@ namespace Kooboo.Web.Api.Implementation
 
             return view.Id;
         }
-                                            
+                     
+        
+        
         public Dictionary<string, ComparerModel[]> CompareType(ApiCall call)
         {
             var types = Data.Helper.DataTypeHelper.GetDataTypeCompareModel();

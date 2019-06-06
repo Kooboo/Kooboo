@@ -11,18 +11,21 @@
     <Compile Remove="Api\Implementation\Ecommerce\**" />
     <Compile Remove="AppData\**" />
     <Compile Remove="Areas\**" />
+    <Compile Remove="Backend\Menus\Hooker\**" />
     <Compile Remove="KoobooData\**" />
     <Compile Remove="upgradePackage\**" />
     <Compile Remove="_Admin\**" />
     <EmbeddedResource Remove="Api\Implementation\Ecommerce\**" />
     <EmbeddedResource Remove="AppData\**" />
     <EmbeddedResource Remove="Areas\**" />
+    <EmbeddedResource Remove="Backend\Menus\Hooker\**" />
     <EmbeddedResource Remove="KoobooData\**" />
     <EmbeddedResource Remove="upgradePackage\**" />
     <EmbeddedResource Remove="_Admin\**" />
     <None Remove="Api\Implementation\Ecommerce\**" />
     <None Remove="AppData\**" />
     <None Remove="Areas\**" />
+    <None Remove="Backend\Menus\Hooker\**" />
     <None Remove="KoobooData\**" />
     <None Remove="upgradePackage\**" />
     <None Remove="_Admin\**" />
@@ -31,6 +34,13 @@
   <ItemGroup>
     <Compile Remove="Api\Implementation\Download.cs" />
     <Compile Remove="Api\Implementation\Payment.cs" />
+    <Compile Remove="Backend\Menus\ICmsMenu.cs" />
+    <Compile Remove="Backend\Menus\IDynamicMenu.cs" />
+    <Compile Remove="Backend\Menus\IFeatureMenu.cs" />
+    <Compile Remove="Backend\Menus\IHeaderMenu.cs" />
+    <Compile Remove="Backend\Menus\ISideBarMenu.cs" />
+    <Compile Remove="Backend\Menus\ISitePermissionMenu.cs" />
+    <Compile Remove="Backend\Menus\SideBarSection.cs" />
     <Compile Remove="Payment\PaymentRequest.cs" />
   </ItemGroup>
 

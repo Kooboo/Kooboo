@@ -13,12 +13,12 @@ namespace Kooboo.Web.Menus
 
     ///  header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Emails", context), Url = AdminUrl("Emails/Inbox"), Icon = "fa fa-envelope", Count = 0, BadgeIcon = "badge-primary" });
 
-    public class Emails : ITopMenu
+    public class Emails : IHeaderMenu
     {
         public Emails()
         {
             this.Name = "Emails";
-            this.Url = MenuHelper.AdminUrl("Emails/Inbox");
+            this.Url = "Emails/Inbox";
             this.Icon = "fa fa-envelope";
             this.BadgeIcon = "badge-primary";
         }
@@ -29,7 +29,7 @@ namespace Kooboo.Web.Menus
 
         private List<ICmsMenu> _items;
 
-        public List<ICmsMenu> Items
+        public List<ICmsMenu> SubItems
         {
             get
             {
@@ -46,15 +46,13 @@ namespace Kooboo.Web.Menus
 
         public int Order => 5;
 
+        public ICmsMenu ParentMenu { get; set; }
+
         public string GetDisplayName(RenderContext Context)
         {
             return Data.Language.Hardcoded.GetValue("Emails", Context);
         }
-
-        public bool CanShow(RenderContext context)
-        {
-            return true;
-        }
+         
     }
 
 

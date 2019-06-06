@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Routing;
+using Kooboo.Sites.Authorization.Model;
 
 namespace Kooboo.Sites.Cache
 {
@@ -114,6 +115,8 @@ namespace Kooboo.Sites.Cache
             Cache.SiteObjectCache<KConfig>.RemoveSiteDb(sitedb.Id);
             Cache.SiteObjectCache<Code>.RemoveSiteDb(sitedb.Id);
 
+
+
             //    || TValueType == typeof(ContentCategory)
             //    || TValueType == typeof(SiteCluster)
             //    || TValueType == typeof(Code)
@@ -148,6 +151,8 @@ namespace Kooboo.Sites.Cache
                 || TValueType == typeof(Code)
                 || TValueType == typeof(KConfig)
                 || TValueType == typeof(TableRelation)
+                || TValueType == typeof(RolePermission)
+                || TValueType == typeof(SiteUser)
                 )
             {
                 return true;

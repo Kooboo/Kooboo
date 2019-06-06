@@ -6,6 +6,7 @@ using Kooboo.Sites.Models;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Lib.Reflection;
 using Kooboo.Api;
+using Kooboo.Data.Context;
 
 namespace Kooboo.Web.Api
 {
@@ -14,6 +15,7 @@ namespace Kooboo.Web.Api
         public SiteApiProvider()
         {
             List = DefaultList();
+            CheckAccess = Kooboo.Web.Backend.ApiPermission.IsAllow; 
         }
 
         private Dictionary<string, IApi> DefaultList()
@@ -55,6 +57,8 @@ namespace Kooboo.Web.Api
 
             }
         }
+
+        public Func<RenderContext, ApiMethod, bool> CheckAccess { get; set; }
 
         public ApiMethod  getmethod(ApiCall call)
         {

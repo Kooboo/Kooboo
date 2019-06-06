@@ -29,8 +29,7 @@ namespace Kooboo.Web
                 System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
             };
 
-            // ensure that WindowsHost is working .  
-
+            // ensure that WindowsHost is working .   
             //foreach (var item in Data.GlobalDb.Dlls.All())
             //{
             //    AppDomain.CurrentDomain.Load(item.Content);
@@ -256,11 +255,9 @@ namespace Kooboo.Web
             return option;
         }
 
-
-
-        private static Kooboo.Api.IApiProvider _apiprovider;
-        public static Kooboo.Api.IApiProvider CurrentApiProvider
-        {
+        private static Kooboo.Api.IApiProvider _apiprovider; 
+        public static Kooboo.Api.IApiProvider CurrentApiProvider 
+        { 
             get
             {
                 if (_apiprovider == null)
@@ -271,14 +268,13 @@ namespace Kooboo.Web
                         {
                             var apimiddle = item as Kooboo.Api.ApiMiddleware;
 
-                            _apiprovider = apimiddle.ApiProvider;
+                            _apiprovider =  apimiddle.ApiProvider;  
                         }
-                    }
-                }
-                return _apiprovider;
-            }
-        }
-
+                    } 
+                } 
+                return _apiprovider;  
+            } 
+        } 
     }
 
     public class CmsLanguage

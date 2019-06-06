@@ -116,7 +116,7 @@ namespace Kooboo.Sites.Repository
         
         public DataMethodSettingRepository DataMethodSettings => GetSiteRepository<DataMethodSettingRepository, DataMethodSetting>(); 
   
-        public SiteRepositoryBase<SyncSetting> SyncSettings => GetSiteRepository<SiteRepositoryBase<SyncSetting>, SyncSetting>(); 
+        public SyncSettingRepository SyncSettings => GetSiteRepository<SyncSettingRepository, SyncSetting>(); 
      
         private StorePool<Image> _imagepool;
         public StorePool<Image> ImagePool
@@ -350,10 +350,10 @@ namespace Kooboo.Sites.Repository
          
         public ViewDataMethodRepository ViewDataMethods => GetSiteRepository<ViewDataMethodRepository, ViewDataMethod>();  
 
-        public SiteRepositoryBase<DownloadFailTrack> DownloadFailedLog => GetSiteRepository<SiteRepositoryBase<DownloadFailTrack>, DownloadFailTrack>();
+        public DownloadFailTrackRepository DownloadFailedLog => GetSiteRepository<DownloadFailTrackRepository, DownloadFailTrack>();
       
 
-        public SiteRepositoryBase<SiteUser> SiteUser => GetSiteRepository<SiteRepositoryBase<SiteUser>, SiteUser>();
+        public SiteUserRepository SiteUser => GetSiteRepository<SiteUserRepository, SiteUser>();
         
         public PathTree RouteTree(byte ConstType = 0)
         {
