@@ -1,4 +1,4 @@
-import { HOVER_BORDER_WIDTH } from "../constants";
+import { HOVER_BORDER_WIDTH } from "../../constants";
 
 export class HoverBorder {
   private _sourceElement!: HTMLElement;

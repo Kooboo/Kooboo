@@ -1,11 +1,11 @@
-import hoverShowBorder from "./effects/hoverShowBorder";
-import clickEdit from "./effects/clickEdit";
+import hoverShowBorder from "./components/selectorBorder";
 import listenSelectDomChange from "./dom/listenSelectDomChange";
-import editingShowShade from "./effects/editingShowShade";
+import { registerEditorShade } from "./components/editorShade";
 import { createActionBar } from "./components/floatActionBar";
+import { registerInlineEditor } from "./components/richEditor";
 
 createActionBar(document);
 listenSelectDomChange(document);
 hoverShowBorder(document);
-editingShowShade(document);
-clickEdit(document);
+registerEditorShade(document);
+registerInlineEditor(document);

@@ -1,12 +1,12 @@
-import tinymce, { EditorManager, Settings, Editor } from "tinymce";
+import { EditorManager, Settings, Editor } from "tinymce";
 import "tinymce/themes/silver";
 import "tinymce/plugins/save";
 import "tinymce/plugins/link";
 import "tinymce/plugins/image";
-import context from "../context";
-import { STANDARD_Z_INDEX } from "../constants";
-import OperationManager from "../OperationManager";
-import { Operation } from "../models/Operation";
+import context from "../../context";
+import { STANDARD_Z_INDEX } from "../../constants";
+import OperationManager from "../../OperationManager";
+import { Operation } from "../../models/Operation";
 
 export async function setInlineEditor(selector: Element) {
   if ((selector as any)._tinymceeditor) return;
@@ -24,6 +24,7 @@ export async function setInlineEditor(selector: Element) {
     element_format: "html",
     allow_script_urls: true,
     style_formats_merge: false,
+    
     style_formats_autohide: false,
     allow_conditional_comments: true,
     allow_html_in_named_anchor: true,

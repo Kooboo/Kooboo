@@ -25,12 +25,10 @@ export class Operation {
   }
 
   undo() {
-    this.dom.scrollIntoView();
     this.dom.innerHTML = this.oldInnerHTML;
   }
 
   redo() {
-    this.dom.scrollIntoView();
     this.dom.innerHTML = this.newInnerHTML;
   }
 }

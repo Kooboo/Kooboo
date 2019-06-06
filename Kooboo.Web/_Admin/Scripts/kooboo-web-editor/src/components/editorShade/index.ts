@@ -1,9 +1,9 @@
-import context from "../context";
-import { EditorShade } from "../models/EditorShade";
+import context from "../../context";
+import { EditorShade } from "./EditorShade";
 
 let editorShade: EditorShade | undefined;
 
-export default (document: Document) => {
+export function registerEditorShade(document: Document) {
   if (editorShade) return;
   editorShade = new EditorShade(document);
 
@@ -21,4 +21,4 @@ export default (document: Document) => {
     if (!context.lastSelectedDomEventArgs) return;
     editorShade!.updateSource(context.lastSelectedDomEventArgs.closeElement);
   });
-};
+}

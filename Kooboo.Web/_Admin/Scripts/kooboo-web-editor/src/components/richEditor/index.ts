@@ -1,8 +1,8 @@
-import context from "../context";
-import { setInlineEditor } from "../components/tinymceEditor";
-import { isSkipHover } from "../dom/domAnalyze";
+import context from "../../context";
+import { setInlineEditor } from "./tinymce";
+import { isSkipHover } from "../../dom/domAnalyze";
 
-export default (document: Document) => {
+export function registerInlineEditor(document: Document) {
   document.body.addEventListener("click", e => {
     if (context.editing || isSkipHover(e)) return;
     if (context.lastSelectedDomEventArgs) {
@@ -11,4 +11,4 @@ export default (document: Document) => {
       setInlineEditor(selectedDom);
     }
   });
-};
+}

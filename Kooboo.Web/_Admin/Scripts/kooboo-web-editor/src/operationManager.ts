@@ -8,6 +8,7 @@ class OperationManager {
   previous() {
     let operation = this.operations.pop();
     if (operation) {
+      operation.dom.scrollIntoView();
       operation.undo();
       this.backupOperations.push(operation);
       this.emit();
@@ -17,6 +18,7 @@ class OperationManager {
   next() {
     let operation = this.backupOperations.pop();
     if (operation) {
+      operation.dom.scrollIntoView();
       operation.redo();
       this.operations.push(operation);
       this.emit();
