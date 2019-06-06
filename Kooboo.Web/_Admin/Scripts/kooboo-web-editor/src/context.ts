@@ -2,22 +2,26 @@ import {
   SelectedDomEventArgs,
   SelectedDomEvent
 } from "./events/SelectedDomEvent";
-import { TinymceDisplayEvent, TinymceInputEvent } from "./events/TinymceEvent";
+import { TinymceInputEvent } from "./events/TinymceEvent";
 import { OperationEvent } from "./events/OperationEvent";
+import { EditableEvent } from "./events/EditableEvent";
+import { OperationManager } from "./models/OperationManager";
 
 class Context {
   private _editing: boolean = false;
   set editing(value: boolean) {
     this._editing = value;
-    this.tinymceDisplayEvent.emit(value);
+    this.editableEvent.emit(value);
   }
   get editing() {
     return this._editing;
   }
 
+  operationManager: OperationManager = new OperationManager();
   lastSelectedDomEventArgs: SelectedDomEventArgs | undefined;
+
   domChangeEvent: SelectedDomEvent = new SelectedDomEvent();
-  tinymceDisplayEvent: TinymceDisplayEvent = new TinymceDisplayEvent();
+  editableEvent: EditableEvent = new EditableEvent();
   tinymceInputEvent: TinymceInputEvent = new TinymceInputEvent();
   operationEvent: OperationEvent = new OperationEvent();
 }

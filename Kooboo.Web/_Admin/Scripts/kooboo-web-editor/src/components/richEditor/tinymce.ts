@@ -5,7 +5,6 @@ import "tinymce/plugins/link";
 import "tinymce/plugins/image";
 import context from "../../context";
 import { STANDARD_Z_INDEX } from "../../constants";
-import OperationManager from "../../OperationManager";
 import { Operation } from "../../models/Operation";
 
 export async function setInlineEditor(selector: Element) {
@@ -24,7 +23,6 @@ export async function setInlineEditor(selector: Element) {
     element_format: "html",
     allow_script_urls: true,
     style_formats_merge: false,
-    
     style_formats_autohide: false,
     allow_conditional_comments: true,
     allow_html_in_named_anchor: true,
@@ -82,7 +80,7 @@ export async function setInlineEditor(selector: Element) {
       comment,
       koobooId
     );
-    OperationManager.add(operation);
+    context.operationManager.add(operation);
     e.remove();
     context.editing = false;
   };

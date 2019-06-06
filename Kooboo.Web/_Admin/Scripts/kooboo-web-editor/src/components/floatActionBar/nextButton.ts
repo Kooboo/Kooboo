@@ -1,13 +1,12 @@
 import { createButton } from "./button";
 import nextIcon from "../../assets/icons/xiayibu.svg";
 import nextEnableIcon from "../../assets/icons/xiayibu_enable.svg";
-import OperationManager from "../../OperationManager";
 import { createNotice } from "./Notice";
 import context from "../../context";
 
 export function createNextButton(document: Document) {
   var nextBtn = createButton(document, nextIcon);
-  nextBtn.onclick = () => OperationManager.next();
+  nextBtn.onclick = () => context.operationManager.next();
   var nextNotice = createNotice(document);
   nextBtn.appendChild(nextNotice);
   context.operationEvent.addEventListener(e => {

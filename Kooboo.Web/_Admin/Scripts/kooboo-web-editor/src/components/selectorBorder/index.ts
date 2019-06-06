@@ -13,7 +13,7 @@ export default (document: Document) => {
     hoverBorder!.updateSource(e.closeElement);
   });
 
-  context.tinymceDisplayEvent.addEventListener(e => {
+  context.editableEvent.addEventListener(e => {
     if (e) {
       hoverBorder!.clear();
     }

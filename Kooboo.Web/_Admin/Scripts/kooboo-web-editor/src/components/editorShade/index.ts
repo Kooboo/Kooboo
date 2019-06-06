@@ -7,7 +7,7 @@ export function registerEditorShade(document: Document) {
   if (editorShade) return;
   editorShade = new EditorShade(document);
 
-  context.tinymceDisplayEvent.addEventListener(display => {
+  context.editableEvent.addEventListener(display => {
     if (!context.lastSelectedDomEventArgs) return;
 
     if (display) {

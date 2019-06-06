@@ -1,13 +1,12 @@
 import { createButton } from "./button";
 import preIcon from "../../assets/icons/shangyibu.svg";
 import preEnableIcon from "../../assets/icons/shangyibu_enable.svg";
-import OperationManager from "../../OperationManager";
 import { createNotice } from "./Notice";
 import context from "../../context";
 
 export function createPreviousButton(document: Document) {
   var preBtn = createButton(document, preIcon);
-  preBtn.onclick = () => OperationManager.previous();
+  preBtn.onclick = () => context.operationManager.previous();
   var preNotice = createNotice(document);
   preBtn.appendChild(preNotice);
   context.operationEvent.addEventListener(e => {

@@ -1,14 +1,13 @@
-import { Operation } from "./models/Operation";
-import context from "./context";
-import { OperationEventArgs } from "./events/OperationEvent";
-class OperationManager {
+import { Operation } from "./Operation";
+import context from "../context";
+import { OperationEventArgs } from "../events/OperationEvent";
+export class OperationManager {
   readonly operations: Array<Operation> = [];
   readonly backupOperations: Array<Operation> = [];
 
   previous() {
     let operation = this.operations.pop();
     if (operation) {
-      operation.dom.scrollIntoView();
       operation.undo();
       this.backupOperations.push(operation);
       this.emit();
@@ -18,7 +17,6 @@ class OperationManager {
   next() {
     let operation = this.backupOperations.pop();
     if (operation) {
-      operation.dom.scrollIntoView();
       operation.redo();
       this.operations.push(operation);
       this.emit();
@@ -39,5 +37,3 @@ class OperationManager {
     context.operationEvent.emit(args);
   }
 }
-
-export default new OperationManager();
