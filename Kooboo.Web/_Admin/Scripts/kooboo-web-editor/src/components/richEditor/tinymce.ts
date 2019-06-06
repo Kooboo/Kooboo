@@ -6,6 +6,7 @@ import "tinymce/plugins/image";
 import context from "../../context";
 import { STANDARD_Z_INDEX } from "../../constants";
 import { Operation } from "../../models/Operation";
+import { lang } from "../../lang";
 
 export async function setInlineEditor(selector: Element) {
   if ((selector as any)._tinymceeditor) return;
@@ -60,7 +61,16 @@ export async function setInlineEditor(selector: Element) {
       });
     }
   } as Settings;
+
+  if (lang == "zh") {
+    settings.language = "zh_CN";
+    settings.language_url = `_Admin\\Scripts\\kooboo-web-editor\\dist\\${
+      settings.language
+    }.js`;
+  }
+
   (settings as any).save_enablewhendirty = false;
+
   (settings as any).save_oncancelcallback = (e: Editor) => {
     e.setContent((e as any)._content);
     e.remove();

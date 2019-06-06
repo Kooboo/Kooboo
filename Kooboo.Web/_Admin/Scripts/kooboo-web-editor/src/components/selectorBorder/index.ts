@@ -2,7 +2,7 @@ import context from "../../context";
 import { SelectedDomEventArgs } from "../../events/SelectedDomEvent";
 import { HoverBorder } from "./HoverBorder";
 
-let hoverBorder: HoverBorder | undefined;
+let hoverBorder: HoverBorder;
 
 export default (document: Document) => {
   if (hoverBorder) return;
@@ -10,12 +10,12 @@ export default (document: Document) => {
 
   context.domChangeEvent.addEventListener((e: SelectedDomEventArgs) => {
     if (context.editing) return;
-    hoverBorder!.updateSource(e.closeElement);
+    hoverBorder.updateSource(e.closeElement);
   });
 
   context.editableEvent.addEventListener(e => {
     if (e) {
-      hoverBorder!.clear();
+      hoverBorder.clear();
     }
   });
 };

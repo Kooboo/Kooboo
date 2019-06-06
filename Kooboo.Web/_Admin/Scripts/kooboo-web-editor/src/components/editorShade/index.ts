@@ -1,7 +1,7 @@
 import context from "../../context";
 import { EditorShade } from "./EditorShade";
 
-let editorShade: EditorShade | undefined;
+let editorShade: EditorShade;
 
 export function registerEditorShade(document: Document) {
   if (editorShade) return;
@@ -11,14 +11,14 @@ export function registerEditorShade(document: Document) {
     if (!context.lastSelectedDomEventArgs) return;
 
     if (display) {
-      editorShade!.updateSource(context.lastSelectedDomEventArgs.closeElement);
+      editorShade.updateSource(context.lastSelectedDomEventArgs.closeElement);
     } else {
-      editorShade!.clear();
+      editorShade.clear();
     }
   });
 
   context.tinymceInputEvent.addEventListener(() => {
     if (!context.lastSelectedDomEventArgs) return;
-    editorShade!.updateSource(context.lastSelectedDomEventArgs.closeElement);
+    editorShade.updateSource(context.lastSelectedDomEventArgs.closeElement);
   });
 }
