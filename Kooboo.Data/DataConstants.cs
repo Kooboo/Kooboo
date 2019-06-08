@@ -18,7 +18,8 @@ namespace Kooboo
         
         public const string SiteId = "SiteId";
   
-        public const string UserApiSessionKey = "_kooboo_api_user"; 
+        public const string UserApiSessionKey = "_kooboo_api_user";
+        public const string UserServerIp = "KoobooServerIp"; 
          
         public const string DefaultDiagnosticsGroupName = "BuiltIn";
           

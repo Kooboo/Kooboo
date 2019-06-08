@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using Kooboo.Sites.Authorization.Model;
+using Kooboo.Data.Context;
 
 namespace Kooboo.Sites.Authorization
 {
@@ -46,7 +47,7 @@ namespace Kooboo.Sites.Authorization
         }
          
         // root/sub/subtwo
-        public static PermissionViewModel ToViewModel(RolePermission permission)
+        public static PermissionViewModel ToViewModel(RolePermission permission, RenderContext context)
         {
             var spe = "/\\".ToCharArray();
 
@@ -54,12 +55,29 @@ namespace Kooboo.Sites.Authorization
             result.Name = permission.Name;
             result.Id = permission.Id;
 
+            //result.DisplayName = Kooboo.Data.Language.LanguageProvider.GetValue(result.Name, context); 
+            
             foreach (var item in permission.Permission)
             {
                 var rights = item.Split(spe, StringSplitOptions.RemoveEmptyEntries);
                 AppendToModel(result, rights.ToList());
             }
+
+            SetDisplayName(result.SubItems, context); 
             return result;
+        }
+
+        private static void SetDisplayName(List<PermissionViewModel> Subitems, RenderContext context)
+        {
+            foreach (var item in Subitems)
+            {
+                item.DisplayName = Data.Language.LanguageProvider.GetValue(item.Name, context); 
+
+                if (item.SubItems.Any())
+                {
+                    SetDisplayName(item.SubItems, context); 
+                }
+            }
         }
          
         // single rights without \\ 

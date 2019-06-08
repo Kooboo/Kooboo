@@ -10,7 +10,7 @@ namespace Kooboo.Web.Menus.SideBarMenu.Database
     {
         public SideBarSection Parent =>  SideBarSection.Database;
 
-        public string Name => "TableRelation";
+        public string Name => "Table Relation";
 
         public string Icon => "";
 

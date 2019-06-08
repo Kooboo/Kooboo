@@ -104,8 +104,8 @@ namespace Kooboo.Data.Models
         public string RegisterIp { get; set; }
          
         public string  TempRedirectUrl { get; set; }
-
-        public int TempServerId { get; set; }
+         
+        public string TempServerIp { get; set; }
 
         private DateTime _registerdate; 
 

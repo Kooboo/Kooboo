@@ -23,7 +23,7 @@ namespace Kooboo.Web.Api.Implementation
 
             var items = db.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>().All();
 
-            return items.Select(o => Sites.Authorization.PermissionService.ToViewModel(o)).ToList();
+            return items.Select(o => Sites.Authorization.PermissionService.ToViewModel(o, call.Context)).ToList();
         }
 
 
@@ -57,7 +57,7 @@ namespace Kooboo.Web.Api.Implementation
 
             if (permission != null)
             {
-                return Kooboo.Sites.Authorization.PermissionService.ToViewModel(permission);
+                return Kooboo.Sites.Authorization.PermissionService.ToViewModel(permission, call.Context);
             }
             else
             {
