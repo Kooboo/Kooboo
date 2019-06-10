@@ -18,11 +18,7 @@ export class FloatMenu {
     this._container.innerHTML = "";
     this._container.appendChild(createTitle(document));
     this._container.appendChild(
-      new EditItem(
-        document,
-        context.lastSelectedDomEventArgs!.koobooComment,
-        context.lastSelectedDomEventArgs!.koobooId
-      ).el
+      new EditItem(document, context.lastSelectedDomEventArgs).el
     );
     document.body.appendChild(this._container);
   }

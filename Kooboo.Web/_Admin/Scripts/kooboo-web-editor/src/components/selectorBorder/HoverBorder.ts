@@ -1,4 +1,4 @@
-import { HOVER_BORDER_WIDTH } from "../../constants";
+import { HOVER_BORDER_WIDTH, STANDARD_Z_INDEX } from "../../constants";
 
 export class HoverBorder {
   private _sourceElement!: HTMLElement;
@@ -98,7 +98,7 @@ export class HoverBorder {
     css.backgroundColor = "#1fb5f6a3";
     css.width = HOVER_BORDER_WIDTH + "px";
     css.height = HOVER_BORDER_WIDTH + "px";
-    css.zIndex = "10000000";
+    css.zIndex = STANDARD_Z_INDEX - 2 + "";
   }
 
   clear() {

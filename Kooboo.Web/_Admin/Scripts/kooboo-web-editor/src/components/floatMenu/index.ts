@@ -12,12 +12,13 @@ export function registerMenu(document: Document) {
     e.preventDefault();
     e.stopPropagation();
     if (context.editing || isSkipHover(e)) return;
+    console.log(context.lastSelectedDomEventArgs);
     if (context.lastSelectedDomEventArgs) {
       floatMenu.update(e.pageX, e.pageY);
     }
   });
 
-  context.domChangeEvent.addEventListener(e => floatMenu.clear());
+  context.domChangeEvent.addEventListener(() => floatMenu.clear());
 
-  context.floatMenuClickEvent.addEventListener(e => floatMenu.clear());
+  context.floatMenuClickEvent.addEventListener(() => floatMenu.clear());
 }

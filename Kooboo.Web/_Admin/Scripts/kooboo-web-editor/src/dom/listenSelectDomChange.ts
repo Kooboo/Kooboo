@@ -6,7 +6,7 @@ export default (document: Document) => {
   document.body.addEventListener("mouseover", e => {
     e.stopPropagation();
 
-    if (isSkipHover(e)) return;
+    if (isSkipHover(e) || context.editing) return;
 
     let el = e.target as HTMLElement;
 
