@@ -1,4 +1,4 @@
-import { KoobooComment } from "../src/models/KoobooComment";
+import { KoobooComment } from "../../src/models/KoobooComment";
 
 test("init booboo info", () => {
   let comment = "#kooboo--objecttype='view'--nameorid='Home'--boundary='627'";

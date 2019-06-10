@@ -1,6 +1,6 @@
-import { OperationManager } from "../src/models/operationManager";
-import { Operation } from "../src/models/Operation";
-import { KoobooComment } from "../src/models/KoobooComment";
+import { OperationManager } from "../../src/models/operationManager";
+import { Operation } from "../../src/models/Operation";
+import { KoobooComment } from "../../src/models/KoobooComment";
 
 describe("OperationManager", () => {
   const operationManager = new OperationManager();

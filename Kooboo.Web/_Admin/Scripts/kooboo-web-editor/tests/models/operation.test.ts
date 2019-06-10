@@ -1,5 +1,5 @@
-import { Operation } from "../src/models/Operation";
-import { KoobooComment } from "../src/models/KoobooComment";
+import { Operation } from "../../src/models/Operation";
+import { KoobooComment } from "../../src/models/KoobooComment";
 
 describe("operation", () => {
   let dom = document.createElement("div");
