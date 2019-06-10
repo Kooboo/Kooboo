@@ -1,4 +1,4 @@
-import { TEXT } from "../../lang";
+import { TEXT } from "../../../lang";
 
 export function createTitle(document: Document) {
   const el = document.createElement("div");

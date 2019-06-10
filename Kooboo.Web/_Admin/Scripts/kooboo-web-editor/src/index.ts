@@ -9,5 +9,5 @@ createActionBar(document);
 listenSelectDomChange(document);
 registerHoverBorder(document);
 registerEditorShade(document);
-// registerInlineEditor(document);
+registerInlineEditor();
 registerMenu(document);

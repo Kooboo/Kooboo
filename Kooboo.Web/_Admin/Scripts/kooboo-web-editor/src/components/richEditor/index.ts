@@ -1,13 +1,12 @@
 import context from "../../context";
 import { setInlineEditor } from "./tinymce";
-import { isSkipHover } from "../../dom/domAnalyze";
+import { MenuActions } from "../../events/FloatMenuClickEvent";
 
-export function registerInlineEditor(document: Document) {
-  document.body.addEventListener("click", e => {
-    if (context.editing || isSkipHover(e)) return;
+export function registerInlineEditor() {
+  context.floatMenuClickEvent.addEventListener(e => {
+    if (context.editing && e == MenuActions.edit) return;
     if (context.lastSelectedDomEventArgs) {
       let selectedDom = context.lastSelectedDomEventArgs.closeElement;
-      // if (selectedDom.innerHTML.indexOf("kooboo-id") != -1) return;
       setInlineEditor(selectedDom);
     }
   });

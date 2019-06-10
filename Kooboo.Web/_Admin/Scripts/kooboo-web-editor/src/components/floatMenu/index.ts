@@ -13,12 +13,11 @@ export function registerMenu(document: Document) {
     e.stopPropagation();
     if (context.editing || isSkipHover(e)) return;
     if (context.lastSelectedDomEventArgs) {
-      let selectedDom = context.lastSelectedDomEventArgs.closeElement;
       floatMenu.update(e.pageX, e.pageY);
     }
   });
 
-  context.domChangeEvent.addEventListener(e => {
-    floatMenu.clear();
-  });
+  context.domChangeEvent.addEventListener(e => floatMenu.clear());
+
+  context.floatMenuClickEvent.addEventListener(e => floatMenu.clear());
 }
