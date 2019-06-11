@@ -7,7 +7,7 @@ import context from "../../context";
 import { STANDARD_Z_INDEX, ACTION_TYPE, OBJECT_TYPE } from "../../constants";
 import { Operation } from "../../models/Operation";
 import { lang } from "../../lang";
-import { getAllElement } from "../../dom/domAnalyze";
+import { getAllElement } from "../../helpers/domAnalyze";
 
 export async function setInlineEditor(selector: Element) {
   if ((selector as any)._tinymceeditor) return;

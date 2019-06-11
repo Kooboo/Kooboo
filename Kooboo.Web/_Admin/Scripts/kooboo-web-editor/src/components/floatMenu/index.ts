@@ -1,5 +1,5 @@
 import context from "../../context";
-import { isSkipHover } from "../../dom/domAnalyze";
+import { isSkipHover } from "../../helpers/domAnalyze";
 import { FloatMenu } from "./FloatMenu";
 
 let floatMenu: FloatMenu;

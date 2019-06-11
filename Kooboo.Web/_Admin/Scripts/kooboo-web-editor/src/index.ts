@@ -1,12 +1,12 @@
 import registerHoverBorder from "./components/selectorBorder";
-import listenSelectDomChange from "./dom/listenSelectDomChange";
 import { registerEditorShade } from "./components/editorShade";
 import { createActionBar } from "./components/floatActionBar";
 import { registerInlineEditor } from "./components/richEditor";
 import { registerMenu } from "./components/floatMenu";
+import { registerDomSelector } from "./components/domSelector";
 
 createActionBar(document);
-listenSelectDomChange(document);
+registerDomSelector(document);
 registerHoverBorder(document);
 registerEditorShade(document);
 registerInlineEditor();

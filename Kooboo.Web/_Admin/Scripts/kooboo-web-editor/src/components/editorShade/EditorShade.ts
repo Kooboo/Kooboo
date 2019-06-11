@@ -1,4 +1,4 @@
-import { getMaxHeight } from "../../dom/domAnalyze";
+import { getMaxHeight } from "../../helpers/domAnalyze";
 import { EDITOR_SHADE_COLOR, STANDARD_Z_INDEX } from "../../constants";
 
 export class EditorShade {

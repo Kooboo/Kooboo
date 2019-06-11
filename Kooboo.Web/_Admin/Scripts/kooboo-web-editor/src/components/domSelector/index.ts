@@ -1,8 +1,8 @@
-import context from "../context";
-import { getKoobooInfo, isSkipHover } from "./domAnalyze";
-import { SelectedDomEventArgs } from "../events/SelectedDomEvent";
+import { isSkipHover, getKoobooInfo } from "../../helpers/domAnalyze";
+import context from "../../context";
+import { SelectedDomEventArgs } from "../../events/SelectedDomEvent";
 
-export default (document: Document) => {
+export function registerDomSelector(document: Document) {
   document.body.addEventListener("mouseover", e => {
     e.stopPropagation();
 
@@ -21,4 +21,4 @@ export default (document: Document) => {
     context.domChangeEvent.emit(args);
     context.lastSelectedDomEventArgs = args;
   });
-};
+}

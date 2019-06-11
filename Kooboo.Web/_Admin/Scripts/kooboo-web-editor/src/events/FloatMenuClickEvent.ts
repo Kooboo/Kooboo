@@ -2,7 +2,8 @@ import { BaseEvent } from "./BaseEvent";
 
 export enum MenuActions {
   close,
-  edit
+  edit,
+  copy
 }
 
 export class FloatMenuClickEvent extends BaseEvent<MenuActions> {

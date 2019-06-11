@@ -4,12 +4,14 @@ export const lang = kbLang;
 
 const en = {
   MENU: "menu",
-  EDIT: "edit"
+  EDIT: "edit",
+  COPY: "copy"
 };
 
 const zh = {
   MENU: "菜单",
-  EDIT: "编辑"
+  EDIT: "编辑",
+  COPY: "复制"
 } as typeof en;
 
 var langPackages = { en, zh };
