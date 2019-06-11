@@ -1,40 +1,35 @@
 import { KoobooComment } from "../models/KoobooComment";
 import { HOVER_BORDER_SKIP } from "../constants";
 
-export function getKoobooComment(el: HTMLElement) {
+export function getKoobooInfo(el: HTMLElement) {
   let node: Node | null = el as Node;
-  let closeElement = el;
-
+  let closeElement: HTMLElement | null = null;
+  let koobooId: string | null = null;
+  let comments: KoobooComment[] = [];
   while (true) {
     if (!node) break;
+    if (!closeElement && node instanceof HTMLElement) {
+      koobooId = node.getAttribute("kooboo-id");
+      if (koobooId) closeElement = node;
+    }
 
     if (
       node.nodeName == "#comment" &&
       node.nodeValue &&
       node.nodeValue.startsWith("#kooboo")
     ) {
-      break;
-    }
-
-    if (node.previousSibling) {
-      node = node.previousSibling;
+      comments.push(new KoobooComment(node.nodeValue));
+      node = node.parentElement;
       continue;
     }
-
-    if (node.parentElement) {
-      if (!closeElement.attributes.getNamedItem("kooboo-id"))
-        closeElement = node.parentElement;
-      node = node.parentNode;
-    }
+    node = node.previousSibling ? node.previousSibling : node.parentElement;
   }
 
-  let koobooId = closeElement ? closeElement.getAttribute("kooboo-id") : null;
-  let comment = node ? node.nodeValue : null;
-  let koobooComment = new KoobooComment(comment);
+  if (!closeElement) closeElement = el;
   return {
-    koobooComment: koobooComment,
-    closeEl: closeElement,
-    koobooId: koobooId
+    comments,
+    closeElement,
+    koobooId
   };
 }
 

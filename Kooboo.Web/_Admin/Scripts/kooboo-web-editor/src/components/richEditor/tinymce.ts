@@ -4,7 +4,7 @@ import "tinymce/plugins/save";
 import "tinymce/plugins/link";
 import "tinymce/plugins/image";
 import context from "../../context";
-import { STANDARD_Z_INDEX, ACTION_TYPE } from "../../constants";
+import { STANDARD_Z_INDEX, ACTION_TYPE, OBJECT_TYPE } from "../../constants";
 import { Operation } from "../../models/Operation";
 import { lang } from "../../lang";
 import { getAllElement } from "../../dom/domAnalyze";
@@ -88,17 +88,21 @@ export async function setInlineEditor(selector: Element) {
   };
 
   (settings as any).save_onsavecallback = (e: Editor) => {
+    let args = context.lastSelectedDomEventArgs;
+    if (!args) return;
     let startContent = (e as any)._content;
     let endContent = e.getContent();
     let element = e.getElement() as HTMLElement;
-    let comment = context.lastSelectedDomEventArgs!.koobooComment;
-    let koobooId = context.lastSelectedDomEventArgs!.koobooId;
+    let comment = args.koobooComments.find(
+      f => f.objecttype != OBJECT_TYPE.contentrepeater
+    );
+    if (!comment) return;
     let operation = new Operation(
       element,
       startContent,
       endContent,
       comment,
-      koobooId,
+      args.koobooId,
       ACTION_TYPE.update
     );
     context.operationManager.add(operation);

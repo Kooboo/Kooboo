@@ -11,12 +11,12 @@ export class EditItem extends BaseItem {
   canShow(selectedDomEventArgs: SelectedDomEventArgs | undefined): boolean {
     if (
       !selectedDomEventArgs ||
-      !selectedDomEventArgs.koobooComment ||
+      selectedDomEventArgs.koobooComments.length == 0 ||
       !selectedDomEventArgs.closeElement
     ) {
       return false;
     }
-    let comment = selectedDomEventArgs.koobooComment;
+    let comment = selectedDomEventArgs.koobooComments[0];
     let el = selectedDomEventArgs.closeElement;
     let id = selectedDomEventArgs.koobooId;
 

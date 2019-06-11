@@ -1,5 +1,5 @@
 import context from "../context";
-import { getKoobooComment, isSkipHover } from "./domAnalyze";
+import { getKoobooInfo, isSkipHover } from "./domAnalyze";
 import { SelectedDomEventArgs } from "../events/SelectedDomEvent";
 
 export default (document: Document) => {
@@ -16,9 +16,8 @@ export default (document: Document) => {
     )
       return;
 
-    let { koobooComment, koobooId, closeEl } = getKoobooComment(el);
-    var args = new SelectedDomEventArgs(el, closeEl, koobooId, koobooComment);
-    args.lastSelectedDomEventArgs = context.lastSelectedDomEventArgs;
+    let { comments, koobooId, closeElement } = getKoobooInfo(el);
+    var args = new SelectedDomEventArgs(el, closeElement, koobooId, comments);
     context.domChangeEvent.emit(args);
     context.lastSelectedDomEventArgs = args;
   });
