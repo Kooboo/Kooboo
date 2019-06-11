@@ -1,5 +1,5 @@
 import { KoobooComment } from "../models/KoobooComment";
-import { HOVER_BORDER_SKIP } from "../constants";
+import { HOVER_BORDER_SKIP, OBJECT_TYPE } from "../constants";
 
 export function getKoobooInfo(el: HTMLElement) {
   let node: Node | null = el as Node;
@@ -74,4 +74,15 @@ export function getAllElement(el: HTMLElement) {
 
   getChildren(el);
   return elements;
+}
+
+export function containDynamicContent(el: HTMLElement) {
+  for (const k in OBJECT_TYPE) {
+    if (OBJECT_TYPE.hasOwnProperty(k)) {
+      const i = OBJECT_TYPE[k as keyof typeof OBJECT_TYPE];
+      if (el.innerHTML.toLowerCase().indexOf(`objecttype='${i}'`) > -1)
+        return true;
+    }
+  }
+  return false;
 }

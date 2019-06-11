@@ -3,6 +3,7 @@ import { BaseItem } from "./base";
 import { MenuActions } from "../../../events/FloatMenuClickEvent";
 import { SelectedDomEventArgs } from "../../../events/SelectedDomEvent";
 import { OBJECT_TYPE } from "../../../constants";
+import { containDynamicContent } from "../../../helpers/domAnalyze";
 
 export class EditItem extends BaseItem {
   type: MenuActions;
@@ -49,15 +50,7 @@ export class EditItem extends BaseItem {
       return false;
     }
 
-    for (const k in OBJECT_TYPE) {
-      if (OBJECT_TYPE.hasOwnProperty(k)) {
-        const i = OBJECT_TYPE[k as keyof typeof OBJECT_TYPE];
-        if (el.innerHTML.toLowerCase().indexOf(`objecttype='${i}'`) > -1)
-          return false;
-      }
-    }
-
-    return true;
+    return !containDynamicContent(el);
   }
 
   constructor(

@@ -58,6 +58,7 @@ export async function setInlineEditor(selector: Element) {
         var targetElm = e.target.targetElm as HTMLElement;
         let elements = getAllElement(targetElm);
         elements.push(targetElm);
+
         elements.forEach(element => {
           if (
             element.tagName.toLowerCase() == "i" &&
@@ -66,7 +67,15 @@ export async function setInlineEditor(selector: Element) {
             element.innerHTML += "<!--i-->";
           }
         });
-        e.content = targetElm.innerHTML;
+
+        if (targetElm.tagName.toLowerCase() == "li") {
+          if (targetElm.children.length == 0) {
+            e.content = targetElm.textContent;
+          } else if (e.content === 0) {
+            e.content = targetElm.innerHTML;
+          }
+        }
+
         e.format = "raw";
       });
     }
@@ -111,7 +120,6 @@ export async function setInlineEditor(selector: Element) {
     e.remove();
     context.editing = false;
   };
-
   let editor = await EditorManager.init(settings);
   if (editor instanceof Array) editor = editor[0];
   let container = editor.getContainer();

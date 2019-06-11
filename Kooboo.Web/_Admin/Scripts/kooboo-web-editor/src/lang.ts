@@ -11,7 +11,7 @@ const en = {
 const zh = {
   MENU: "菜单",
   EDIT: "编辑",
-  COPY: "复制"
+  COPY: "复制这块"
 } as typeof en;
 
 var langPackages = { en, zh };

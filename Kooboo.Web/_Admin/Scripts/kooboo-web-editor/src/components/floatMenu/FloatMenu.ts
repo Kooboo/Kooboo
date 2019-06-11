@@ -2,6 +2,7 @@ import { createContainer } from "./container";
 import { createTitle } from "./menuItems/title";
 import { EditItem } from "./menuItems/edit";
 import context from "../../context";
+import { CopyItem } from "./menuItems/copy";
 
 export class FloatMenu {
   private _container: HTMLDivElement;
@@ -17,9 +18,14 @@ export class FloatMenu {
     this._container.style.left = x + "px";
     this._container.innerHTML = "";
     this._container.appendChild(createTitle(document));
+
     this._container.appendChild(
       new EditItem(document, context.lastSelectedDomEventArgs).el
     );
+    this._container.appendChild(
+      new CopyItem(document, context.lastSelectedDomEventArgs).el
+    );
+
     document.body.appendChild(this._container);
   }
 
