@@ -22,7 +22,13 @@ export function getKoobooInfo(el: HTMLElement) {
       node = node.parentElement;
       continue;
     }
-    node = node.previousSibling ? node.previousSibling : node.parentElement;
+
+    if (!node.previousSibling || node.previousSibling instanceof HTMLElement) {
+      node = node.parentElement;
+      continue;
+    }
+
+    node = node.previousSibling;
   }
 
   if (!closeElement) closeElement = el;

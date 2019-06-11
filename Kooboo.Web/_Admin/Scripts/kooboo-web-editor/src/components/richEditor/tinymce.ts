@@ -94,7 +94,9 @@ export async function setInlineEditor(selector: Element) {
     let endContent = e.getContent();
     let element = e.getElement() as HTMLElement;
     let comment = args.koobooComments.find(
-      f => f.objecttype != OBJECT_TYPE.contentrepeater
+      f =>
+        f.objecttype != OBJECT_TYPE.contentrepeater &&
+        f.objecttype != OBJECT_TYPE.attribute
     );
     if (!comment) return;
     let operation = new Operation(
