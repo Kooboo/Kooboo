@@ -30,6 +30,12 @@ export class KoobooComment {
   get boundary() {
     return this.getValue("boundary");
   }
+  get fieldname() {
+    return this.getValue("fieldname");
+  }
+  get koobooid() {
+    return this.getValue("koobooid");
+  }
 
   private getValue(key: string) {
     var item = this._infos.find(f => f.startsWith(key));

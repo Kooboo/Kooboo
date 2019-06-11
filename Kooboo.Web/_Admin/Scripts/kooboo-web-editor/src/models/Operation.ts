@@ -6,7 +6,7 @@ export class Operation {
   newInnerHTML: string;
   koobooComment: KoobooComment;
   koobooId: string | null;
-
+  actionType: string;
   /**
    *
    */
@@ -15,13 +15,15 @@ export class Operation {
     oldInnerHTML: string,
     newInnerHTML: string,
     koobooComment: KoobooComment,
-    koobooId: string | null
+    koobooId: string | null,
+    actionType: string
   ) {
     this.dom = dom;
     this.oldInnerHTML = oldInnerHTML;
     this.newInnerHTML = newInnerHTML;
     this.koobooComment = koobooComment;
     this.koobooId = koobooId;
+    this.actionType = actionType;
   }
 
   undo() {

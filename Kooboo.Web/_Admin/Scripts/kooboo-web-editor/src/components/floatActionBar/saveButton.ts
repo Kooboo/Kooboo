@@ -4,6 +4,7 @@ import { createButton } from "./button";
 import context from "../../context";
 import { OperationLogItem } from "../../models/OperationLog";
 import updateOperation from "../../api/updateOperation";
+import { OBJECT_TYPE } from "../../constants";
 
 export function createSaveButton(document: Document) {
   var saveBtn = createButton(document, saveIcon);
@@ -11,20 +12,31 @@ export function createSaveButton(document: Document) {
     saveBtn.changeIcon(e.operationCount > 0 ? saveEnableIcon : saveIcon);
   });
   saveBtn.onclick = async () => {
-    console.log("aa'");
     let operations = context.operationManager.operations;
     if (operations.length == 0) return;
     let logs = operations.map(m => {
+      let types = [OBJECT_TYPE.label, OBJECT_TYPE.content];
+      let objecttype = m.koobooComment.objecttype;
+      if (objecttype && types.some(s => s == objecttype!.toLowerCase())) {
+        objecttype = objecttype.toLowerCase();
+      } else {
+        objecttype = OBJECT_TYPE.dom;
+      }
+
+      let nameOrId = m.koobooComment.nameorid
+        ? m.koobooComment.nameorid
+        : m.koobooComment.bindingvalue;
+
       let log = new OperationLogItem();
-      log.action = "update";
-      log.editorType = "dom";
+      log.action = m.actionType;
+      log.editorType = objecttype;
       log.koobooId = m.koobooId ? m.koobooId : "";
-      log.nameOrId = m.koobooComment.nameorid!;
+      log.nameOrId = nameOrId!;
       log.objectType = m.koobooComment.objecttype!;
       log.value = m.newInnerHTML;
+      log.fieldName = m.koobooComment.fieldname!;
       return log;
     });
-    console.log(context.operationManager, logs);
     await updateOperation(logs);
     parent.location.reload();
   };

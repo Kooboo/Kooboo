@@ -20,5 +20,7 @@ export function registerMenu(document: Document) {
 
   context.domChangeEvent.addEventListener(() => floatMenu.clear());
 
-  context.floatMenuClickEvent.addEventListener(() => floatMenu.clear());
+  context.floatMenuClickEvent.addEventListener(() =>
+    setTimeout(() => floatMenu.clear(), 300)
+  );
 }

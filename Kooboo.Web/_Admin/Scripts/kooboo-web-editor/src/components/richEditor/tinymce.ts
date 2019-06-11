@@ -4,9 +4,10 @@ import "tinymce/plugins/save";
 import "tinymce/plugins/link";
 import "tinymce/plugins/image";
 import context from "../../context";
-import { STANDARD_Z_INDEX } from "../../constants";
+import { STANDARD_Z_INDEX, ACTION_TYPE } from "../../constants";
 import { Operation } from "../../models/Operation";
 import { lang } from "../../lang";
+import { getAllElement } from "../../dom/domAnalyze";
 
 export async function setInlineEditor(selector: Element) {
   if ((selector as any)._tinymceeditor) return;
@@ -29,7 +30,7 @@ export async function setInlineEditor(selector: Element) {
     allow_html_in_named_anchor: true,
     allow_unsafe_link_target: true,
     convert_fonts_to_spans: false,
-    remove_trailing_brs: false,
+    remove_trailing_brs: true,
     browser_spellcheck: false,
     forced_root_block: "",
     valid_elements: "*[*]",
@@ -47,16 +48,25 @@ export async function setInlineEditor(selector: Element) {
       editor.on("Remove", e => (e.target.getElement()._tinymceeditor = null));
       editor.on("Change", e => context.tinymceInputEvent.emit());
       editor.on("KeyUp", e => context.tinymceInputEvent.emit());
+      editor.on("KeyDown", e => {
+        var targetElm = e.target as HTMLElement;
+        if (e.code == "Backspace" && targetElm.innerHTML == "<!--i-->")
+          return false;
+      });
       editor.on("BeforeSetContent", function(e) {
         //fix tinymce known issue https://github.com/tinymce/tinymce/issues/2453
-        var targetElm = e.target.targetElm;
-        if (targetElm.tagName.toLowerCase() == "li") {
-          if (targetElm.children.length == 0) {
-            e.content = targetElm.textContent;
-          } else if (e.content === 0) {
-            e.content = targetElm.innerHTML;
+        var targetElm = e.target.targetElm as HTMLElement;
+        let elements = getAllElement(targetElm);
+        elements.push(targetElm);
+        elements.forEach(element => {
+          if (
+            element.tagName.toLowerCase() == "i" &&
+            element.innerHTML.indexOf("<!--i-->") == -1
+          ) {
+            element.innerHTML += "<!--i-->";
           }
-        }
+        });
+        e.content = targetElm.innerHTML;
         e.format = "raw";
       });
     }
@@ -88,7 +98,8 @@ export async function setInlineEditor(selector: Element) {
       startContent,
       endContent,
       comment,
-      koobooId
+      koobooId,
+      ACTION_TYPE.update
     );
     context.operationManager.add(operation);
     e.remove();

@@ -52,7 +52,8 @@ export class EditItem extends BaseItem {
     for (const k in OBJECT_TYPE) {
       if (OBJECT_TYPE.hasOwnProperty(k)) {
         const i = OBJECT_TYPE[k as keyof typeof OBJECT_TYPE];
-        if (el.innerHTML.indexOf(`objecttype='${i}'`) > -1) return false;
+        if (el.innerHTML.toLowerCase().indexOf(`objecttype='${i}'`) > -1)
+          return false;
       }
     }
 

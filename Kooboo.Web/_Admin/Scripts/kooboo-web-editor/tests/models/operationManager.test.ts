@@ -1,6 +1,7 @@
 import { OperationManager } from "../../src/models/operationManager";
 import { Operation } from "../../src/models/Operation";
 import { KoobooComment } from "../../src/models/KoobooComment";
+import { ACTION_TYPE } from "../../src/constants";
 
 describe("OperationManager", () => {
   const operationManager = new OperationManager();
@@ -13,7 +14,8 @@ describe("OperationManager", () => {
         new KoobooComment(
           "#kooboo--objecttype='view'--nameorid='Home'--boundary='627'"
         ),
-        "123"
+        "123",
+        ACTION_TYPE.update
       )
     );
   });

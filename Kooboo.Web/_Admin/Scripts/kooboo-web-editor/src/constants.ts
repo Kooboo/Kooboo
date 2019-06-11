@@ -17,3 +17,20 @@ export const OBJECT_TYPE = {
   layout: "layout",
   form: "form"
 };
+
+export const ACTION_TYPE = {
+  add: "add",
+  update: "update",
+  delete: "delete",
+  copy: "copy"
+};
+
+export const EDITOR_TYPE = {
+  dom: "dom",
+  htmlblock: "htmlblock",
+  label: "label",
+  content: "content",
+  attribute: "attribute",
+  style: "style",
+  converter: "converter"
+};

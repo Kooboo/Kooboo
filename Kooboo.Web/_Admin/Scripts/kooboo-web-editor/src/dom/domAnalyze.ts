@@ -28,11 +28,11 @@ export function getKoobooComment(el: HTMLElement) {
     }
   }
 
-  var koobooId = closeElement ? closeElement.getAttribute("kooboo-id") : null;
-  var comment = node ? node.nodeValue : null;
-
+  let koobooId = closeElement ? closeElement.getAttribute("kooboo-id") : null;
+  let comment = node ? node.nodeValue : null;
+  let koobooComment = new KoobooComment(comment);
   return {
-    koobooComment: new KoobooComment(comment),
+    koobooComment: koobooComment,
     closeEl: closeElement,
     koobooId: koobooId
   };
@@ -58,4 +58,19 @@ export function isSkipHover(e: MouseEvent) {
 
     return false;
   });
+}
+
+export function getAllElement(el: HTMLElement) {
+  let elements: Element[] = [];
+
+  function getChildren(el: Element) {
+    for (let i = 0; i < el.children.length; i++) {
+      const element = el.children[i];
+      elements.push(element);
+      getChildren(element);
+    }
+  }
+
+  getChildren(el);
+  return elements;
 }
