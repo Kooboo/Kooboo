@@ -1,13 +1,7 @@
 import { BaseEvent } from "../../src/events/BaseEvent";
 
-test("init event", () => {
-  let event = new BaseEvent<void>("baseEvent");
-
-  expect(event.name).toBe("baseEvent");
-});
-
 test("add event listener", () => {
-  let event = new BaseEvent<void>("baseEvent");
+  let event = new BaseEvent<void>();
 
   event.addEventListener(() => null);
   expect(event.handlers.length).toBe(1);
@@ -18,7 +12,7 @@ test("add event listener", () => {
 });
 
 test("emit event", () => {
-  let event = new BaseEvent<void>("baseEvent");
+  let event = new BaseEvent<void>();
   let value: string = "";
   event.addEventListener(() => (value = "hello"));
 

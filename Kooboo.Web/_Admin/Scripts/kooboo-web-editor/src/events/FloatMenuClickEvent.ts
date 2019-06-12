@@ -6,11 +6,4 @@ export enum MenuActions {
   copy
 }
 
-export class FloatMenuClickEvent extends BaseEvent<MenuActions> {
-  /**
-   *
-   */
-  constructor() {
-    super("FloatMenuClickEvent");
-  }
-}
+export class FloatMenuClickEvent extends BaseEvent<MenuActions> {}

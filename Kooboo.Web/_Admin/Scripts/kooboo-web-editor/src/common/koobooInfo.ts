@@ -1,5 +1,6 @@
 import { getAllNode, containDynamicContent } from "./dom";
 import { KoobooComment } from "../models/KoobooComment";
+import { KoobooId } from "../models/KoobooId";
 
 export function cleanKoobooInfo(domString: string) {
   let el = document.createElement("div");
@@ -80,4 +81,42 @@ export function getCloseElement(el: HTMLElement) {
       el = el.parentElement as HTMLElement;
     }
   }
+}
+
+export function getMaxKoobooId(el: HTMLElement) {
+  let id = el.getAttribute("kooboo-id")!;
+  var koobooId = new KoobooId(id);
+  let nextTemp = el;
+  while (true) {
+    if (
+      !nextTemp.nextElementSibling ||
+      !nextTemp.nextElementSibling.hasAttribute("kooboo-id")
+    ) {
+      break;
+    }
+
+    let nextId = nextTemp.nextElementSibling.getAttribute("kooboo-id");
+    let nextKoobooId = new KoobooId(nextId!);
+    if (nextKoobooId.value > koobooId.value) koobooId = nextKoobooId;
+    nextTemp = nextTemp.nextElementSibling as HTMLElement;
+  }
+
+  let previousTemp = el;
+  while (true) {
+    if (
+      !previousTemp.previousElementSibling ||
+      !previousTemp.previousElementSibling.hasAttribute("kooboo-id")
+    ) {
+      break;
+    }
+
+    let previousId = previousTemp.previousElementSibling.getAttribute(
+      "kooboo-id"
+    );
+    let previousKoobooId = new KoobooId(previousId!);
+    if (previousKoobooId.value > koobooId.value) koobooId = previousKoobooId;
+    previousTemp = previousTemp.previousElementSibling as HTMLElement;
+  }
+
+  return koobooId.next;
 }

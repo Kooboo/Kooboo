@@ -14,8 +14,4 @@ export class OperationEventArgs {
   }
 }
 
-export class OperationEvent extends BaseEvent<OperationEventArgs> {
-  constructor() {
-    super("OperationEvent");
-  }
-}
+export class OperationEvent extends BaseEvent<OperationEventArgs> {}

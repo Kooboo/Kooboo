@@ -1,9 +1,11 @@
 import { BaseItem } from "./base";
 import { TEXT } from "../../../lang";
 import { MenuActions } from "../../../events/FloatMenuClickEvent";
-import { containDynamicContent, getAllElement } from "../../../common/dom";
+import { containDynamicContent } from "../../../common/dom";
 import context from "../../../context";
 import { Operation } from "../../../models/Operation";
+import { ACTION_TYPE } from "../../../constants";
+import { cleanKoobooInfo, getMaxKoobooId } from "../../../common/koobooInfo";
 
 export class CopyItem extends BaseItem {
   text: string = TEXT.COPY;
@@ -19,13 +21,24 @@ export class CopyItem extends BaseItem {
     return !containDynamicContent(el);
   }
 
-  click(e: MouseEvent) {
+  click() {
     let args = context.lastSelectedDomEventArgs;
-    if (!args || !args.closeParent) return false;
-    // getAllElement(args.closeParent);
-    // let operationLog = new Operation(
-    //   args.closeParent,
-    //   args.closeParent.innerHTML
-    // );
+    if (!args || !args.element.parentElement) return false;
+    let startContent = args.closeParent!.innerHTML;
+    var nextkoobooId = getMaxKoobooId(args.element);
+    let cloneElement = args.element.cloneNode(true) as HTMLElement;
+    cloneElement.setAttribute("kooboo-id", nextkoobooId);
+    args.closeParent!.insertBefore(cloneElement, args.element);
+    var endContent = args.closeParent!.innerHTML;
+    let operation = new Operation(
+      args.parentKoobooId!,
+      startContent,
+      endContent,
+      args.editComment!,
+      args.parentKoobooId,
+      ACTION_TYPE.update,
+      cleanKoobooInfo(args.closeParent!.innerHTML)
+    );
+    context.operationManager.add(operation);
   }
 }

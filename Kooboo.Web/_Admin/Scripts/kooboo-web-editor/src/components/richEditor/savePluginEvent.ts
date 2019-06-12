@@ -17,20 +17,14 @@ export function save_onsavecallback(e: Editor) {
   let element = e.getElement() as HTMLElement;
   e.remove();
 
-  let comment = args.koobooComments.find(
-    f =>
-      f.objecttype != OBJECT_TYPE.contentrepeater &&
-      f.objecttype != OBJECT_TYPE.attribute
-  );
-
   let koobooId = args.parentKoobooId ? args.parentKoobooId : args.koobooId;
   let commit = args.closeParent ? args.closeParent.innerHTML : endContent;
 
   let operation = new Operation(
-    element,
+    element.getAttribute("kooboo-id")!,
     startContent,
     endContent,
-    comment!,
+    args.editComment!,
     koobooId,
     ACTION_TYPE.update,
     commit

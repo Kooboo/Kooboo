@@ -1,23 +1,26 @@
 import { Operation } from "./Operation";
 import context from "../context";
 import { OperationEventArgs } from "../events/OperationEvent";
+import { cleanKoobooInfo } from "../common/koobooInfo";
+import { OperationLogItem } from "./OperationLog";
+import { OBJECT_TYPE } from "../constants";
 export class OperationManager {
   readonly operations: Array<Operation> = [];
   readonly backupOperations: Array<Operation> = [];
 
-  previous() {
+  previous(document: Document) {
     let operation = this.operations.pop();
     if (operation) {
-      operation.undo();
+      operation.undo(document);
       this.backupOperations.push(operation);
       this.emit();
     }
   }
 
-  next() {
+  next(document: Document) {
     let operation = this.backupOperations.pop();
     if (operation) {
-      operation.redo();
+      operation.redo(document);
       this.operations.push(operation);
       this.emit();
     }
@@ -34,6 +37,48 @@ export class OperationManager {
       this.operations.length,
       this.backupOperations.length
     );
+    console.log(this.operations, this.backupOperations);
     context.operationEvent.emit(args);
+  }
+
+  get operationLogs() {
+    var logs = this.getMargedOperations().map(m => {
+      let types = [OBJECT_TYPE.label, OBJECT_TYPE.content];
+      let objecttype = m.koobooComment.objecttype;
+      if (objecttype && types.some(s => s == objecttype!.toLowerCase())) {
+        objecttype = objecttype.toLowerCase();
+      } else {
+        objecttype = OBJECT_TYPE.dom;
+      }
+
+      let nameOrId = m.koobooComment.nameorid
+        ? m.koobooComment.nameorid
+        : m.koobooComment.bindingvalue;
+
+      let log = new OperationLogItem();
+      log.action = m.actionType;
+      log.editorType = objecttype;
+      log.koobooId = m.commitKoobooId!;
+      log.nameOrId = nameOrId!;
+      log.objectType = m.koobooComment.objecttype!;
+      log.value = cleanKoobooInfo(m.commit);
+      log.fieldName = m.koobooComment.fieldname!;
+      return log;
+    });
+
+    return logs;
+  }
+
+  private getMargedOperations() {
+    let result: Array<Operation> = [];
+    this.operations.reverse().forEach(o => {
+      var exist = result.some(
+        f =>
+          f.actionType == o.actionType && f.commitKoobooId == o.commitKoobooId
+      );
+      if (!exist) result.push(o);
+    });
+
+    return result;
   }
 }

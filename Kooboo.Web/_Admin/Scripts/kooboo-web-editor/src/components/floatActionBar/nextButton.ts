@@ -6,7 +6,7 @@ import context from "../../context";
 
 export function createNextButton(document: Document) {
   var nextBtn = createButton(document, nextIcon);
-  nextBtn.onclick = () => context.operationManager.next();
+  nextBtn.onclick = () => context.operationManager.next(document);
   var nextNotice = createNotice(document);
   nextBtn.appendChild(nextNotice);
   context.operationEvent.addEventListener(e => {

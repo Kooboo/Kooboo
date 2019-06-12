@@ -7,8 +7,4 @@ export class HoverDomEventArgs {
   ) {}
 }
 
-export class HoverDomEvent extends BaseEvent<HoverDomEventArgs> {
-  constructor() {
-    super("HoverDomEvent");
-  }
-}
+export class HoverDomEvent extends BaseEvent<HoverDomEventArgs> {}

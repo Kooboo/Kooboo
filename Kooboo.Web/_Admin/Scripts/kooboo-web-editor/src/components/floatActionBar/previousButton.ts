@@ -6,7 +6,7 @@ import context from "../../context";
 
 export function createPreviousButton(document: Document) {
   var preBtn = createButton(document, preIcon);
-  preBtn.onclick = () => context.operationManager.previous();
+  preBtn.onclick = () => context.operationManager.previous(document);
   var preNotice = createNotice(document);
   preBtn.appendChild(preNotice);
   context.operationEvent.addEventListener(e => {

@@ -1,5 +1,6 @@
 import { KoobooComment } from "../models/KoobooComment";
 import { BaseEvent } from "./BaseEvent";
+import { OBJECT_TYPE } from "../constants";
 
 export class SelectedDomEventArgs {
   constructor(
@@ -10,10 +11,14 @@ export class SelectedDomEventArgs {
     public koobooComments: KoobooComment[],
     public mouseEvent: MouseEvent
   ) {}
-}
 
-export class SelectedDomEvent extends BaseEvent<SelectedDomEventArgs> {
-  constructor() {
-    super("SelectedDomEvent");
+  get editComment() {
+    return this.koobooComments.find(
+      f =>
+        f.objecttype != OBJECT_TYPE.contentrepeater &&
+        f.objecttype != OBJECT_TYPE.attribute
+    );
   }
 }
+
+export class SelectedDomEvent extends BaseEvent<SelectedDomEventArgs> {}

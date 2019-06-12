@@ -8,7 +8,7 @@ describe("OperationManager", () => {
   beforeAll(() => {
     operationManager.add(
       new Operation(
-        document.createElement("div"),
+        "1-1",
         "1",
         "2",
         new KoobooComment(
@@ -27,15 +27,15 @@ describe("OperationManager", () => {
   });
 
   test("previous operation", () => {
-    operationManager.previous();
+    operationManager.previous(document);
 
     expect(operationManager.operations.length).toBe(0);
     expect(operationManager.backupOperations.length).toBe(1);
   });
 
   test("next operation", () => {
-    operationManager.previous();
-    operationManager.next();
+    operationManager.previous(document);
+    operationManager.next(document);
 
     expect(operationManager.operations.length).toBe(1);
     expect(operationManager.backupOperations.length).toBe(0);

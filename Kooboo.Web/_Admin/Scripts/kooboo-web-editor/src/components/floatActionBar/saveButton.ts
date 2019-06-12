@@ -13,31 +13,8 @@ export function createSaveButton(document: Document) {
     saveBtn.changeIcon(e.operationCount > 0 ? saveEnableIcon : saveIcon);
   });
   saveBtn.onclick = async () => {
-    let operations = context.operationManager.operations;
-    if (operations.length == 0) return;
-    let logs = operations.map(m => {
-      let types = [OBJECT_TYPE.label, OBJECT_TYPE.content];
-      let objecttype = m.koobooComment.objecttype;
-      if (objecttype && types.some(s => s == objecttype!.toLowerCase())) {
-        objecttype = objecttype.toLowerCase();
-      } else {
-        objecttype = OBJECT_TYPE.dom;
-      }
-
-      let nameOrId = m.koobooComment.nameorid
-        ? m.koobooComment.nameorid
-        : m.koobooComment.bindingvalue;
-
-      let log = new OperationLogItem();
-      log.action = m.actionType;
-      log.editorType = objecttype;
-      log.koobooId = m.koobooId!;
-      log.nameOrId = nameOrId!;
-      log.objectType = m.koobooComment.objecttype!;
-      log.value = cleanKoobooInfo(m.commit);
-      log.fieldName = m.koobooComment.fieldname!;
-      return log;
-    });
+    let logs = context.operationManager.operationLogs;
+    if (logs.length == 0) return;
     await updateOperation(logs);
     parent.location.reload();
   };
