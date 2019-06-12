@@ -42,6 +42,9 @@ namespace Kooboo.Data.Models
             get;set;
         } 
 
+        // intranet ip. 
+        public string InternalIP { get; set; }
+
         public int SubMask { get; set; }
  
         public string Secondary
@@ -95,6 +98,7 @@ namespace Kooboo.Data.Models
             }
         }
         
+        // The agency name.....
         public string PrivateOrgName { get; set; }
 
         public int DesignOrgNumber { get; set; } = 999;
@@ -173,9 +177,8 @@ namespace Kooboo.Data.Models
             unique += this.Name + this.NameServer + this.OnlineDataCenterId.ToString();
             unique += this.OrgCount.ToString() + this.PrimaryIp.ToString() + this.PTR + this.Secondary;
             unique += this.SubMask + this.Type.ToString();
-
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
-
+            unique += this.PrivateOrgName;  
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);  
         }
     }
 
@@ -188,8 +191,9 @@ namespace Kooboo.Data.Models
         DnsOnly = 5,
         PrivateWeb = 6, 
         TBD = 9,
-        Root=16
-        //0 = normal, 1= template, 2= accountDns, 4= wwwhost. 
+        Root=16, 
+        Nginx = 32
+        //0 = normal, 1= template, 2= accountDns, 4= wwwhost.  5. Nginx = front end proxy server. 
     }
     
 }

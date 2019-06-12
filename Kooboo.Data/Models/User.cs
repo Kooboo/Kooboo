@@ -50,8 +50,39 @@ namespace Kooboo.Data.Models
                 _id = default(Guid);
             }
         }
-        
-        public string EmailAddress {get;set; }
+
+        private string _emailaddress; 
+        public string EmailAddress {
+            get
+            {
+                return _emailaddress; 
+            }
+            set
+            {
+                _emailaddress = value;
+                _emailId = default(Guid); 
+            }
+
+        }
+
+        private Guid _emailId; 
+        public Guid EmailId
+        {
+            get {
+                if (_emailId == default(Guid))
+                {
+                    if (!string.IsNullOrWhiteSpace(EmailAddress))
+                    {
+                        _emailId = Lib.Security.Hash.ComputeGuidIgnoreCase(EmailAddress); 
+                    }
+                }
+                return _emailId; 
+            }
+            set
+            {
+                _emailId = value; 
+            }
+        }
 
         public bool IsEmailVerified { get; set; }
         
@@ -129,7 +160,8 @@ namespace Kooboo.Data.Models
             string unique =  this.CurrentOrgId.ToString() + this.CurrentOrgName;
             unique += this.EmailAddress + this.FirstName + this.LastName + this.Language;
             unique += this.Password + this.PasswordHash.ToString();
-            unique += this.IsEmailVerified.ToString(); 
+            unique += this.IsEmailVerified.ToString();
+            unique += this.EmailId.ToString(); 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);  
         }
     }

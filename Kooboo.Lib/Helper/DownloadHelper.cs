@@ -20,14 +20,10 @@ namespace Kooboo.Lib.Helper
         {
             // ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult;
             //turn on tls12 and tls11,default is ssl3 and tls
-            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11; 
+            HttpHelper.SetCustomSslChecker(); 
         }
-
-        private static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
-        {
-            //make self signed cert ,so not validate cert in client
-            return true;
-        }
+ 
 
         public static byte[] DownloadFile(string absoluteUrl, string containsContentType = null)
         {

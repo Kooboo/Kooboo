@@ -46,6 +46,9 @@ namespace Kooboo.Data.Models
 
         public string Introduction { get; set; }
 
+        // This is an user that belongs to one agency.. 
+        public Guid AgencyOrgId { get; set; }
+
         public bool IsBanned { get; set; }
 
         public override int GetHashCode()
@@ -53,8 +56,8 @@ namespace Kooboo.Data.Models
             string unique = this.DisplayName;
             unique += this.ServerId.ToString() + this.ServiceLevel.ToString();
             unique += this.AdminUser.ToString() + this.IsBanned.ToString();
-            unique += this.Introduction; 
-
+            unique += this.Introduction;
+            unique += this.AgencyOrgId.ToString(); 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
         }
     }

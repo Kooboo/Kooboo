@@ -11,7 +11,7 @@ namespace Kooboo.Web.Menus.SideBarMenu.System
     {
         public SideBarSection Parent => SideBarSection.System; 
 
-        public string Name => "System";
+        public string Name => "Settings";
 
         public string Icon => "";
 

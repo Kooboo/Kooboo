@@ -137,6 +137,11 @@ namespace Kooboo.Lib.Helper
                 return (Guid)key;
             }
             string strkey = key.ToString();
+            return GetOrParseKey(strkey);
+        }
+
+        public static Guid GetOrParseKey(string strkey)
+        {
             Guid guidkey;
             if (System.Guid.TryParse(strkey, out guidkey))
             {
@@ -147,7 +152,5 @@ namespace Kooboo.Lib.Helper
                 return Lib.Security.Hash.ComputeGuidIgnoreCase(strkey);
             }
         }
-
-
     }
 }
