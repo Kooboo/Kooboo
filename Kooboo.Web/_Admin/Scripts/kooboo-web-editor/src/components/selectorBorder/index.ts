@@ -8,8 +8,11 @@ export default (document: Document) => {
   if (hoverBorder) return;
   hoverBorder = new HoverBorder(document);
 
-  context.domChangeEvent.addEventListener((e: SelectedDomEventArgs) => {
-    if (context.editing) return;
+  context.hoverDomEvent.addEventListener(e => {
+    if (!e.closeElement || context.editing) {
+      hoverBorder.clear();
+      return;
+    }
     hoverBorder.updateSource(e.closeElement);
   });
 

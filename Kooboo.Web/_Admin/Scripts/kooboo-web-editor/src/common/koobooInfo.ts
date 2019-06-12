@@ -1,0 +1,83 @@
+import { getAllNode, containDynamicContent } from "./dom";
+import { KoobooComment } from "../models/KoobooComment";
+
+export function cleanKoobooInfo(domString: string) {
+  let el = document.createElement("div");
+  el.innerHTML = domString;
+  let nodes = getAllNode(el);
+  for (const i of nodes) {
+    if (i instanceof HTMLElement) {
+      if (i.getAttribute("kooboo-id"))
+        i.attributes.removeNamedItem("kooboo-id");
+    }
+
+    if (
+      i instanceof Comment &&
+      i.nodeValue &&
+      i.nodeValue.startsWith("#kooboo")
+    ) {
+      i.parentNode!.removeChild(i);
+    }
+  }
+  return el.innerHTML;
+}
+
+export function getKoobooInfo(el: HTMLElement) {
+  let koobooId = el.getAttribute("kooboo-id")!;
+  let node: Node | null = el as Node;
+  let closeParent: HTMLElement | null = null;
+  let parentKoobooId: string | null = null;
+  let comments: KoobooComment[] = [];
+  let parentLayerFlag = false;
+
+  while (true) {
+    if (!node) break;
+    if (
+      parentLayerFlag &&
+      !closeParent &&
+      comments.length == 0 &&
+      node instanceof HTMLElement &&
+      !containDynamicContent(node)
+    ) {
+      parentKoobooId = node.getAttribute("kooboo-id");
+      if (parentKoobooId) closeParent = node;
+    }
+
+    if (
+      node.nodeName == "#comment" &&
+      node.nodeValue &&
+      node.nodeValue.startsWith("#kooboo")
+    ) {
+      comments.push(new KoobooComment(node.nodeValue));
+      node = node.parentElement;
+      continue;
+    }
+
+    if (!node.previousSibling || node.previousSibling instanceof HTMLElement) {
+      node = node.parentElement;
+      parentLayerFlag = true;
+      continue;
+    }
+
+    node = node.previousSibling;
+  }
+
+  return {
+    comments,
+    koobooId,
+    closeParent,
+    parentKoobooId
+  };
+}
+
+export function getCloseElement(el: HTMLElement) {
+  while (true) {
+    if (!el) break;
+    let koobooId = el.getAttribute("kooboo-id");
+    if (koobooId) {
+      return el;
+    } else {
+      el = el.parentElement as HTMLElement;
+    }
+  }
+}

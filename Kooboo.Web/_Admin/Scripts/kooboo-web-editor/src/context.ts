@@ -7,6 +7,7 @@ import { OperationEvent } from "./events/OperationEvent";
 import { EditableEvent } from "./events/EditableEvent";
 import { OperationManager } from "./models/OperationManager";
 import { FloatMenuClickEvent } from "./events/FloatMenuClickEvent";
+import { HoverDomEvent, HoverDomEventArgs } from "./events/HoverDomEvent";
 
 class Context {
   private _editing: boolean = false;
@@ -20,12 +21,14 @@ class Context {
 
   operationManager: OperationManager = new OperationManager();
   lastSelectedDomEventArgs: SelectedDomEventArgs | undefined;
+  lastHoverDomEventArgs: HoverDomEventArgs | undefined;
 
   domChangeEvent: SelectedDomEvent = new SelectedDomEvent();
   editableEvent: EditableEvent = new EditableEvent();
   tinymceInputEvent: TinymceInputEvent = new TinymceInputEvent();
   operationEvent: OperationEvent = new OperationEvent();
   floatMenuClickEvent: FloatMenuClickEvent = new FloatMenuClickEvent();
+  hoverDomEvent: HoverDomEvent = new HoverDomEvent();
 }
 
 export default new Context();

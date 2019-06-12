@@ -1,17 +1,12 @@
 import context from "../../../context";
 import { MenuActions } from "../../../events/FloatMenuClickEvent";
-import { SelectedDomEventArgs } from "../../../events/SelectedDomEvent";
 
 export abstract class BaseItem {
   abstract text: string;
   abstract type: MenuActions;
-  constructor(
-    readonly document: Document,
-    readonly selectedDomEventArgs: SelectedDomEventArgs | undefined
-  ) {}
-  abstract canShow(
-    selectedDomEventArgs: SelectedDomEventArgs | undefined
-  ): boolean;
+  constructor(readonly document: Document) {}
+  abstract canShow(): boolean;
+  click(e: MouseEvent) {}
   get el() {
     let el = this.document.createElement("div");
     el.style.padding = "5px 10px";
@@ -20,11 +15,11 @@ export abstract class BaseItem {
     el.style.cursor = "default";
     el.innerHTML = this.text;
 
-    el.style.display = this.canShow(this.selectedDomEventArgs)
-      ? "block"
-      : "none";
-
-    el.onclick = () => context.floatMenuClickEvent.emit(this.type);
+    el.style.display = this.canShow() ? "block" : "none";
+    el.onclick = e => {
+      this.click(e);
+      context.floatMenuClickEvent.emit(this.type);
+    };
     return el;
   }
 }

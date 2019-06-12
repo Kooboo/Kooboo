@@ -1,19 +1,31 @@
 import { BaseItem } from "./base";
 import { TEXT } from "../../../lang";
 import { MenuActions } from "../../../events/FloatMenuClickEvent";
-import { SelectedDomEventArgs } from "../../../events/SelectedDomEvent";
-import { containDynamicContent } from "../../../helpers/domAnalyze";
+import { containDynamicContent, getAllElement } from "../../../common/dom";
+import context from "../../../context";
+import { Operation } from "../../../models/Operation";
 
 export class CopyItem extends BaseItem {
   text: string = TEXT.COPY;
   type: MenuActions = MenuActions.copy;
-  canShow(selectedDomEventArgs: SelectedDomEventArgs | undefined): boolean {
-    if (!selectedDomEventArgs) return false;
-    let el = selectedDomEventArgs.closeElement;
+  canShow(): boolean {
+    let args = context.lastSelectedDomEventArgs;
+    if (!args) return false;
+    let el = args.element;
 
     if (el.tagName.toLowerCase() == "body") return false;
-    if (!selectedDomEventArgs.koobooId) return false;
+    if (!args.parentKoobooId) return false;
 
     return !containDynamicContent(el);
+  }
+
+  click(e: MouseEvent) {
+    let args = context.lastSelectedDomEventArgs;
+    if (!args || !args.closeParent) return false;
+    // getAllElement(args.closeParent);
+    // let operationLog = new Operation(
+    //   args.closeParent,
+    //   args.closeParent.innerHTML
+    // );
   }
 }

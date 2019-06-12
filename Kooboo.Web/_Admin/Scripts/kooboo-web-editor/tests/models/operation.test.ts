@@ -13,7 +13,8 @@ describe("operation", () => {
       "#kooboo--objecttype='view'--nameorid='Home'--boundary='627'"
     ),
     "123",
-    ACTION_TYPE.update
+    ACTION_TYPE.update,
+    ""
   );
 
   test("undo", () => {

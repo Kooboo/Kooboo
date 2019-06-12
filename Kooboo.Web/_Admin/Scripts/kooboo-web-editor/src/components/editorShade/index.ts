@@ -11,7 +11,7 @@ export function registerEditorShade(document: Document) {
     if (!context.lastSelectedDomEventArgs) return;
 
     if (display) {
-      editorShade.updateSource(context.lastSelectedDomEventArgs.closeElement);
+      editorShade.updateSource(context.lastSelectedDomEventArgs.element);
     } else {
       editorShade.clear();
     }
@@ -19,6 +19,6 @@ export function registerEditorShade(document: Document) {
 
   context.tinymceInputEvent.addEventListener(() => {
     if (!context.lastSelectedDomEventArgs) return;
-    editorShade.updateSource(context.lastSelectedDomEventArgs.closeElement);
+    editorShade.updateSource(context.lastSelectedDomEventArgs.element);
   });
 }

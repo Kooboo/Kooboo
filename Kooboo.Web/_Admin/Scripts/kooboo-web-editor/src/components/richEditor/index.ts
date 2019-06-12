@@ -6,7 +6,7 @@ export function registerInlineEditor() {
   context.floatMenuClickEvent.addEventListener(e => {
     if (context.editing || e != MenuActions.edit) return;
     if (context.lastSelectedDomEventArgs) {
-      let selectedDom = context.lastSelectedDomEventArgs.closeElement;
+      let selectedDom = context.lastSelectedDomEventArgs.element;
       setInlineEditor(selectedDom);
     }
   });

@@ -1,25 +1,22 @@
 import { TEXT } from "../../../lang";
 import { BaseItem } from "./base";
 import { MenuActions } from "../../../events/FloatMenuClickEvent";
-import { SelectedDomEventArgs } from "../../../events/SelectedDomEvent";
 import { OBJECT_TYPE } from "../../../constants";
-import { containDynamicContent } from "../../../helpers/domAnalyze";
+import { containDynamicContent } from "../../../common/dom";
+import context from "../../../context";
 
 export class EditItem extends BaseItem {
-  type: MenuActions;
-  text: string;
+  type: MenuActions = MenuActions.edit;
+  text: string = TEXT.EDIT;
 
-  canShow(selectedDomEventArgs: SelectedDomEventArgs | undefined): boolean {
-    if (
-      !selectedDomEventArgs ||
-      selectedDomEventArgs.koobooComments.length == 0 ||
-      !selectedDomEventArgs.closeElement
-    ) {
+  canShow(): boolean {
+    let args = context.lastSelectedDomEventArgs;
+    if (!args || args.koobooComments.length == 0 || !args.element) {
       return false;
     }
-    let comment = selectedDomEventArgs.koobooComments[0];
-    let el = selectedDomEventArgs.closeElement;
-    let id = selectedDomEventArgs.koobooId;
+    let comment = args.koobooComments[0];
+    let el = args.element;
+    let id = args.koobooId;
 
     if (
       !id &&
@@ -51,14 +48,5 @@ export class EditItem extends BaseItem {
     }
 
     return !containDynamicContent(el);
-  }
-
-  constructor(
-    readonly document: Document,
-    readonly selectedDomEventArgs: SelectedDomEventArgs | undefined
-  ) {
-    super(document, selectedDomEventArgs);
-    this.text = TEXT.EDIT;
-    this.type = MenuActions.edit;
   }
 }

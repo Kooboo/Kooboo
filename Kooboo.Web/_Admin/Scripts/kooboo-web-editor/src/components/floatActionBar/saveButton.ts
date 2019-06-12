@@ -5,6 +5,7 @@ import context from "../../context";
 import { OperationLogItem } from "../../models/OperationLog";
 import updateOperation from "../../api/updateOperation";
 import { OBJECT_TYPE } from "../../constants";
+import { cleanKoobooInfo } from "../../common/koobooInfo";
 
 export function createSaveButton(document: Document) {
   var saveBtn = createButton(document, saveIcon);
@@ -30,10 +31,10 @@ export function createSaveButton(document: Document) {
       let log = new OperationLogItem();
       log.action = m.actionType;
       log.editorType = objecttype;
-      log.koobooId = m.koobooId ? m.koobooId : "";
+      log.koobooId = m.koobooId!;
       log.nameOrId = nameOrId!;
       log.objectType = m.koobooComment.objecttype!;
-      log.value = m.newInnerHTML;
+      log.value = cleanKoobooInfo(m.commit);
       log.fieldName = m.koobooComment.fieldname!;
       return log;
     });
