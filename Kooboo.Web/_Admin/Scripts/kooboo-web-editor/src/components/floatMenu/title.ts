@@ -1,7 +1,7 @@
-import { TEXT } from "../../../lang";
-import closeIcon from "../../../assets/icons/guanbi.svg";
-import context from "../../../context";
-import { MenuActions } from "../../../events/FloatMenuClickEvent";
+import closeIcon from "../../assets/icons/guanbi.svg";
+import { TEXT } from "../../lang";
+import context from "../../context";
+import { MenuActions } from "../../events/FloatMenuClickEvent";
 
 export function createTitle(document: Document) {
   const el = document.createElement("div");

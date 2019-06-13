@@ -1,11 +1,11 @@
-import { BaseItem } from "./base";
-import { TEXT } from "../../../lang";
-import { MenuActions } from "../../../events/FloatMenuClickEvent";
-import { containDynamicContent } from "../../../common/dom";
-import context from "../../../context";
-import { Operation } from "../../../models/Operation";
-import { ACTION_TYPE } from "../../../constants";
-import { cleanKoobooInfo, getMaxKoobooId } from "../../../common/koobooInfo";
+import { BaseItem } from "./BaseItem";
+import { TEXT } from "../../lang";
+import { MenuActions } from "../../events/FloatMenuClickEvent";
+import { containDynamicContent } from "../../common/dom";
+import context from "../../context";
+import { Operation } from "../../models/Operation";
+import { ACTION_TYPE, KOOBOO_ID } from "../../constants";
+import { cleanKoobooInfo, getMaxKoobooId } from "../../common/koobooInfo";
 
 export class CopyItem extends BaseItem {
   text: string = TEXT.COPY;
@@ -26,7 +26,7 @@ export class CopyItem extends BaseItem {
     let startContent = args.closeParent!.innerHTML;
     var nextkoobooId = getMaxKoobooId(args.element);
     let cloneElement = args.element.cloneNode(true) as HTMLElement;
-    cloneElement.setAttribute("kooboo-id", nextkoobooId);
+    cloneElement.setAttribute(KOOBOO_ID, nextkoobooId);
     args.closeParent!.insertBefore(cloneElement, args.element);
     var endContent = args.closeParent!.innerHTML;
     let operation = new Operation(

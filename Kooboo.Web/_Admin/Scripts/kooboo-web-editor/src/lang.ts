@@ -5,13 +5,15 @@ export const lang = kbLang;
 const en = {
   MENU: "menu",
   EDIT: "edit",
-  COPY: "copy"
+  COPY: "copy",
+  DELETE: "delete"
 };
 
 const zh = {
   MENU: "菜单",
   EDIT: "编辑",
-  COPY: "复制这块"
+  COPY: "复制这块",
+  DELETE: "删除"
 } as typeof en;
 
 var langPackages = { en, zh };

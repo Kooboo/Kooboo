@@ -1,9 +1,9 @@
-import { TEXT } from "../../../lang";
-import { BaseItem } from "./base";
-import { MenuActions } from "../../../events/FloatMenuClickEvent";
-import { OBJECT_TYPE } from "../../../constants";
-import { containDynamicContent } from "../../../common/dom";
-import context from "../../../context";
+import { TEXT } from "../../lang";
+import { BaseItem } from "./BaseItem";
+import { MenuActions } from "../../events/FloatMenuClickEvent";
+import { OBJECT_TYPE } from "../../constants";
+import { containDynamicContent } from "../../common/dom";
+import context from "../../context";
 
 export class EditItem extends BaseItem {
   type: MenuActions = MenuActions.edit;

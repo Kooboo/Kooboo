@@ -1,4 +1,5 @@
 import { getKoobooInfo, cleanKoobooInfo } from "../../src/common/koobooInfo";
+import { KOOBOO_ID } from "../../src/constants";
 
 describe("domAnalyze", () => {
   test("getKoobooInfo", () => {
@@ -70,7 +71,7 @@ describe("domAnalyze", () => {
       `;
     let result = cleanKoobooInfo(dom);
 
-    expect(result.indexOf("kooboo-id")).toEqual(-1);
+    expect(result.indexOf(KOOBOO_ID)).toEqual(-1);
     expect(result.indexOf("#kooboo")).toEqual(-1);
     expect(result.indexOf("<!--")).toEqual(-1);
   });

@@ -1,8 +1,8 @@
 import { createContainer } from "./container";
-import { createTitle } from "./menuItems/title";
-import { EditItem } from "./menuItems/edit";
-import { CopyItem } from "./menuItems/copy";
-import { BaseItem } from "./menuItems/base";
+import { createTitle } from "./title";
+import { EditItem } from "./EditItem";
+import { CopyItem } from "./CopyItem";
+import { BaseItem } from "./BaseItem";
 
 export class FloatMenu {
   private _container: HTMLDivElement;

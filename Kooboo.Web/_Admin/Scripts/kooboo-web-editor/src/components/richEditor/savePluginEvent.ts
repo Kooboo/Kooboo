@@ -1,6 +1,6 @@
 import { Editor } from "tinymce";
 import context from "../../context";
-import { ACTION_TYPE, OBJECT_TYPE } from "../../constants";
+import { ACTION_TYPE, OBJECT_TYPE, KOOBOO_ID } from "../../constants";
 import { Operation } from "../../models/Operation";
 
 export function save_oncancelcallback(e: Editor) {
@@ -21,7 +21,7 @@ export function save_onsavecallback(e: Editor) {
   let commit = args.closeParent ? args.closeParent.innerHTML : endContent;
 
   let operation = new Operation(
-    element.getAttribute("kooboo-id")!,
+    element.getAttribute(KOOBOO_ID)!,
     startContent,
     endContent,
     args.editComment!,

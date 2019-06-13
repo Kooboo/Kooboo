@@ -1,6 +1,7 @@
 import { getAllNode, containDynamicContent } from "./dom";
 import { KoobooComment } from "../models/KoobooComment";
 import { KoobooId } from "../models/KoobooId";
+import { KOOBOO_ID } from "../constants";
 
 export function cleanKoobooInfo(domString: string) {
   let el = document.createElement("div");
@@ -8,8 +9,7 @@ export function cleanKoobooInfo(domString: string) {
   let nodes = getAllNode(el);
   for (const i of nodes) {
     if (i instanceof HTMLElement) {
-      if (i.getAttribute("kooboo-id"))
-        i.attributes.removeNamedItem("kooboo-id");
+      if (i.getAttribute(KOOBOO_ID)) i.attributes.removeNamedItem(KOOBOO_ID);
     }
 
     if (
@@ -24,7 +24,7 @@ export function cleanKoobooInfo(domString: string) {
 }
 
 export function getKoobooInfo(el: HTMLElement) {
-  let koobooId = el.getAttribute("kooboo-id");
+  let koobooId = el.getAttribute(KOOBOO_ID);
   let node = el as Node | null;
   let closeParent: HTMLElement | null = null;
   let parentKoobooId: string | null = null;
@@ -40,7 +40,7 @@ export function getKoobooInfo(el: HTMLElement) {
       node instanceof HTMLElement &&
       !containDynamicContent(node)
     ) {
-      parentKoobooId = node.getAttribute("kooboo-id");
+      parentKoobooId = node.getAttribute(KOOBOO_ID);
       if (parentKoobooId) closeParent = node;
     }
 
@@ -78,13 +78,13 @@ export function getCloseElement(el: HTMLElement) {
     if (!node) break;
     if (node instanceof HTMLElement) {
       closeElement = node;
-      if (el.hasAttribute("kooboo-id")) break;
+      if (el.hasAttribute(KOOBOO_ID)) break;
     }
 
     if (
       node.nodeName == "#comment" &&
       node.nodeValue &&
-      node.nodeValue.startsWith("#kooboo")
+      node.nodeValue.startsWith(KOOBOO_ID)
     ) {
       break;
     }
@@ -96,18 +96,18 @@ export function getCloseElement(el: HTMLElement) {
 }
 
 export function getMaxKoobooId(el: HTMLElement) {
-  let id = el.getAttribute("kooboo-id")!;
+  let id = el.getAttribute(KOOBOO_ID)!;
   var koobooId = new KoobooId(id);
   let nextTemp = el;
   while (true) {
     if (
       !nextTemp.nextElementSibling ||
-      !nextTemp.nextElementSibling.hasAttribute("kooboo-id")
+      !nextTemp.nextElementSibling.hasAttribute(KOOBOO_ID)
     ) {
       break;
     }
 
-    let nextId = nextTemp.nextElementSibling.getAttribute("kooboo-id");
+    let nextId = nextTemp.nextElementSibling.getAttribute(KOOBOO_ID);
     let nextKoobooId = new KoobooId(nextId!);
     if (nextKoobooId.value > koobooId.value) koobooId = nextKoobooId;
     nextTemp = nextTemp.nextElementSibling as HTMLElement;
@@ -117,13 +117,13 @@ export function getMaxKoobooId(el: HTMLElement) {
   while (true) {
     if (
       !previousTemp.previousElementSibling ||
-      !previousTemp.previousElementSibling.hasAttribute("kooboo-id")
+      !previousTemp.previousElementSibling.hasAttribute(KOOBOO_ID)
     ) {
       break;
     }
 
     let previousId = previousTemp.previousElementSibling.getAttribute(
-      "kooboo-id"
+      KOOBOO_ID
     );
     let previousKoobooId = new KoobooId(previousId!);
     if (previousKoobooId.value > koobooId.value) koobooId = previousKoobooId;

@@ -1,5 +1,5 @@
-import context from "../../../context";
-import { MenuActions } from "../../../events/FloatMenuClickEvent";
+import { MenuActions } from "../../events/FloatMenuClickEvent";
+import context from "../../context";
 
 export abstract class BaseItem {
   abstract text: string;
