@@ -1,8 +1,8 @@
 import { Editor } from "tinymce";
 import context from "../../context";
-import { ACTION_TYPE, KOOBOO_DIRTY, KOOBOO_GUID } from "../../constants";
+import { ACTION_TYPE, KOOBOO_GUID } from "../../constants";
 import { Operation } from "../../models/Operation";
-import { getAllElement } from "../../common/dom";
+import { markDirty, setGuid } from "../../common/koobooInfo";
 
 export function save_oncancelcallback(e: Editor) {
   let element = e.getElement() as HTMLElement;
@@ -26,20 +26,14 @@ export function save_onsavecallback(e: Editor) {
   }
 
   if (startContent != element.innerHTML) {
-    for (const i of getAllElement(element, true)) {
-      i.setAttribute(KOOBOO_DIRTY, "");
-    }
+    markDirty(element, true);
 
     let koobooId = args.parentKoobooId ? args.parentKoobooId : args.koobooId;
     let commit = args.closeParent
       ? args.closeParent.innerHTML
       : element.innerHTML;
 
-    console.log(commit);
-
-    if (!element.hasAttribute(KOOBOO_GUID)) {
-      element.setAttribute(KOOBOO_GUID, Math.random().toString());
-    }
+    setGuid(element);
 
     let operation = new Operation(
       element.getAttribute(KOOBOO_GUID)!,

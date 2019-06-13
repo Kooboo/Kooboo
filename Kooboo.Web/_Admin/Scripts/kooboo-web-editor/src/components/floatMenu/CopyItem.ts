@@ -1,11 +1,11 @@
 import { BaseItem } from "./BaseItem";
 import { TEXT } from "../../lang";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
-import { containDynamicContent, getAllElement } from "../../common/dom";
+import { containDynamicContent } from "../../common/dom";
 import context from "../../context";
 import { Operation } from "../../models/Operation";
-import { ACTION_TYPE, KOOBOO_DIRTY, KOOBOO_GUID } from "../../constants";
-import { cleanKoobooInfo } from "../../common/koobooInfo";
+import { ACTION_TYPE, KOOBOO_GUID } from "../../constants";
+import { cleanKoobooInfo, markDirty, setGuid } from "../../common/koobooInfo";
 
 export class CopyItem extends BaseItem {
   text: string = TEXT.COPY;
@@ -23,18 +23,11 @@ export class CopyItem extends BaseItem {
   click() {
     let args = context.lastSelectedDomEventArgs;
     if (!args || !args.closeParent) return false;
-
-    if (!args.closeParent.hasAttribute(KOOBOO_GUID)) {
-      args.closeParent.setAttribute(KOOBOO_GUID, Math.random().toString());
-    }
-
+    setGuid(args.closeParent);
     let startContent = args.closeParent.innerHTML;
     let cloneElement = args.element.cloneNode(true) as HTMLElement;
     args.closeParent.insertBefore(cloneElement, args.element);
-
-    for (const i of getAllElement(args.closeParent)) {
-      i.setAttribute(KOOBOO_DIRTY, "");
-    }
+    markDirty(args.closeParent);
 
     var endContent = args.closeParent!.innerHTML;
     let operation = new Operation(

@@ -21,7 +21,7 @@ describe("operation", () => {
 
   test("undo", () => {
     operation.undo(document);
-    expect(document.body.children.item(0)!.innerHTML).toEqual("1");
+    expect(document.body.children.item(0)!.innerHTML).toEqual("2");
   });
 
   test("redo", () => {

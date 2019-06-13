@@ -1,4 +1,4 @@
-import { getAllNode, containDynamicContent } from "./dom";
+import { getAllNode, containDynamicContent, getAllElement } from "./dom";
 import { KoobooComment } from "../models/KoobooComment";
 import { KoobooId } from "../models/KoobooId";
 import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID } from "../constants";
@@ -138,4 +138,16 @@ export function getMaxKoobooId(el: HTMLElement) {
   }
 
   return koobooId.next;
+}
+
+export function markDirty(el: HTMLElement, self: boolean = false) {
+  for (const i of getAllElement(el, self)) {
+    i.setAttribute(KOOBOO_DIRTY, "");
+  }
+}
+
+export function setGuid(el: HTMLElement) {
+  if (!el.hasAttribute(KOOBOO_GUID)) {
+    el.setAttribute(KOOBOO_GUID, Math.random().toString());
+  }
 }
