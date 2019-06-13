@@ -39,7 +39,7 @@ export function save_onsavecallback(e: Editor) {
       element.getAttribute(KOOBOO_GUID)!,
       startContent,
       element.innerHTML,
-      args.editComment!,
+      args.editableComment!,
       koobooId,
       ACTION_TYPE.update,
       commit

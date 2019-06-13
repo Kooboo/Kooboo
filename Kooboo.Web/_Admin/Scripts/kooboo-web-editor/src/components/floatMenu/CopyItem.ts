@@ -16,7 +16,7 @@ export class CopyItem extends BaseItem {
 
     if (args.element.tagName.toLowerCase() == "body") return false;
     if (!args.parentKoobooId || !args.koobooId) return false;
-
+    if (!args.editableComment) return false;
     return !containDynamicContent(args.element);
   }
 
@@ -34,7 +34,7 @@ export class CopyItem extends BaseItem {
       args.closeParent.getAttribute(KOOBOO_GUID)!,
       startContent,
       endContent,
-      args.editComment!,
+      args.editableComment!,
       args.parentKoobooId,
       ACTION_TYPE.update,
       cleanKoobooInfo(args.closeParent!.innerHTML)

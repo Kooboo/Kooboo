@@ -42,6 +42,8 @@ export class EditItem extends BaseItem {
       return false;
     }
 
+    if (!args.editableComment) return false;
+
     var reExcept = /^img|button|input|textarea|br$/i;
     if (reExcept.test(el.tagName)) {
       return false;

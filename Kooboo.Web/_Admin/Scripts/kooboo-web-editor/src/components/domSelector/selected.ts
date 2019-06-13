@@ -33,5 +33,6 @@ export function domSelected(document: Document) {
     );
     context.lastSelectedDomEventArgs = args;
     context.domChangeEvent.emit(args);
+    console.log(args);
   });
 }

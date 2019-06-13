@@ -12,12 +12,35 @@ export class SelectedDomEventArgs {
     public mouseEvent: MouseEvent
   ) {}
 
-  get editComment() {
-    return this.koobooComments.find(
-      f =>
-        f.objecttype != OBJECT_TYPE.contentrepeater &&
-        f.objecttype != OBJECT_TYPE.attribute
-    );
+  get editableComment() {
+    return this.koobooComments.find(f => {
+      if (!f.objecttype) return false;
+      var objecttype = f.objecttype.toLowerCase();
+
+      return (
+        objecttype != OBJECT_TYPE.contentrepeater &&
+        objecttype != OBJECT_TYPE.attribute
+      );
+    });
+  }
+
+  get deletableComment() {
+    if (
+      this.koobooComments.some(s => s.objecttype == OBJECT_TYPE.contentrepeater)
+    ) {
+      return undefined;
+    }
+
+    return this.koobooComments.find(f => {
+      if (!f.objecttype) return false;
+      var objecttype = f.objecttype.toLowerCase();
+
+      return (
+        objecttype != OBJECT_TYPE.contentrepeater &&
+        objecttype != OBJECT_TYPE.attribute &&
+        objecttype != OBJECT_TYPE.label
+      );
+    });
   }
 }
 
