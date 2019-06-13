@@ -355,7 +355,7 @@ namespace Kooboo.IndexedDB
             {
                 foreach (var item in currentStore.ItemCollection())
                 {
-                    newstore.add(item);
+                    newstore.add(item, false);
                 }
 
                 string oldfolder = currentStore.ObjectFolder;

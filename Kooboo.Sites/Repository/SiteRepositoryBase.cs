@@ -160,7 +160,7 @@ namespace Kooboo.Sites.Repository
                 return _store;
             }
         }
-
+          
         public virtual bool AddOrUpdate(TValue value, Guid UserId)
         {
             lock (_locker)
@@ -904,6 +904,11 @@ namespace Kooboo.Sites.Repository
 
         }
 
+        public void Reuild()
+        {
+            this.Store.OwnerDatabase.RebuildObjectStore<Guid, TValue>(this.Store, this.StoreParameters); 
+        }
+
         public class ExclLogItem : IEquatable<ExclLogItem>
         {
             public Guid Id { get; set; }
@@ -929,5 +934,7 @@ namespace Kooboo.Sites.Repository
     {
         SiteDb SiteDb { get; set; }
         void init();
+
+        void Reuild(); 
     }
 }

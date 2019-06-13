@@ -946,6 +946,11 @@ namespace Kooboo.IndexedDB
             }
         }
 
+        public int getLength(long blockposition)
+        {
+            return this.BlockFile.GetLength(blockposition); 
+        }
+
         public TValue GetFromColumns(TKey key)
         {
             Int64 blockposition;
