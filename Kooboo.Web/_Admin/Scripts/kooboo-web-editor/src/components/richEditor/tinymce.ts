@@ -6,7 +6,7 @@ import "tinymce/plugins/image";
 import { STANDARD_Z_INDEX } from "../../constants";
 import { createSettings } from "./settings";
 
-export async function setInlineEditor(selector: Element) {
+export async function setInlineEditor(selector: HTMLElement) {
   if ((selector as any)._tinymceeditor) return;
   EditorManager.editors.forEach(i => {
     (i.getElement() as any)._tinymceeditor = null;
@@ -14,6 +14,8 @@ export async function setInlineEditor(selector: Element) {
   });
 
   let settings = createSettings(selector);
+  //fix https://github.com/tinymce/tinymce/issues/1828
+  (selector as any)._isRelative = selector.style.position == "relative";
   let editor = await EditorManager.init(settings);
   if (editor instanceof Array) editor = editor[0];
   let container = editor.getContainer();

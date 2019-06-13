@@ -3,6 +3,8 @@ export const STANDARD_Z_INDEX = 10000000;
 export const HOVER_BORDER_WIDTH = 2;
 export const HOVER_BORDER_SKIP = "__HOVER_BORDER_SKIP";
 export const KOOBOO_ID = "kooboo-id";
+export const KOOBOO_DIRTY = "kooboo-dirty";
+export const KOOBOO_GUID = "kooboo-guid";
 
 export const OBJECT_TYPE = {
   content: "content",

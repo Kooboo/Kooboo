@@ -58,7 +58,7 @@ export class OperationManager {
       let log = new OperationLogItem();
       log.action = m.actionType;
       log.editorType = objecttype;
-      log.koobooId = m.commitKoobooId!;
+      log.koobooId = m.koobooId!;
       log.nameOrId = nameOrId!;
       log.objectType = m.koobooComment.objecttype!;
       log.value = cleanKoobooInfo(m.commit);
@@ -71,12 +71,18 @@ export class OperationManager {
 
   private getMargedOperations() {
     let result: Array<Operation> = [];
-    this.operations.reverse().forEach(o => {
-      var exist = result.some(
+    this.operations.forEach(o => {
+      var exist = result.filter(
         f =>
-          f.actionType == o.actionType && f.commitKoobooId == o.commitKoobooId
+          f.actionType == o.actionType &&
+          f.koobooId &&
+          o.koobooId &&
+          f.koobooId.startsWith(o.koobooId)
       );
-      if (!exist) result.push(o);
+      if (exist.length > 0) {
+        result = result.filter(f => exist.some(s => s != f));
+      }
+      result.push(o);
     });
 
     return result;

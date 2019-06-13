@@ -1,7 +1,7 @@
 import { getAllNode, containDynamicContent } from "./dom";
 import { KoobooComment } from "../models/KoobooComment";
 import { KoobooId } from "../models/KoobooId";
-import { KOOBOO_ID } from "../constants";
+import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID } from "../constants";
 
 export function cleanKoobooInfo(domString: string) {
   let el = document.createElement("div");
@@ -9,7 +9,13 @@ export function cleanKoobooInfo(domString: string) {
   let nodes = getAllNode(el);
   for (const i of nodes) {
     if (i instanceof HTMLElement) {
-      if (i.getAttribute(KOOBOO_ID)) i.attributes.removeNamedItem(KOOBOO_ID);
+      if (i.hasAttribute(KOOBOO_ID)) i.attributes.removeNamedItem(KOOBOO_ID);
+
+      if (i.hasAttribute(KOOBOO_DIRTY))
+        i.attributes.removeNamedItem(KOOBOO_DIRTY);
+
+      if (i.hasAttribute(KOOBOO_GUID))
+        i.attributes.removeNamedItem(KOOBOO_GUID);
     }
 
     if (
@@ -38,6 +44,7 @@ export function getKoobooInfo(el: HTMLElement) {
       !closeParent &&
       comments.length == 0 &&
       node instanceof HTMLElement &&
+      !node.hasAttribute(KOOBOO_DIRTY) &&
       !containDynamicContent(node)
     ) {
       parentKoobooId = node.getAttribute(KOOBOO_ID);
