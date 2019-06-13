@@ -13,12 +13,11 @@ export class CopyItem extends BaseItem {
   canShow(): boolean {
     let args = context.lastSelectedDomEventArgs;
     if (!args) return false;
-    let el = args.element;
 
-    if (el.tagName.toLowerCase() == "body") return false;
-    if (!args.parentKoobooId) return false;
+    if (args.element.tagName.toLowerCase() == "body") return false;
+    if (!args.parentKoobooId || !args.koobooId) return false;
 
-    return !containDynamicContent(el);
+    return !containDynamicContent(args.element);
   }
 
   click() {

@@ -7,6 +7,7 @@ export function domSelected(document: Document) {
   document.body.addEventListener("click", e => {
     e.preventDefault();
     e.stopPropagation();
+
     if (
       context.editing ||
       isSkipHover(e) ||

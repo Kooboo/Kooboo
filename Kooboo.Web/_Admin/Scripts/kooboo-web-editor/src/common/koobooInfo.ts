@@ -24,8 +24,8 @@ export function cleanKoobooInfo(domString: string) {
 }
 
 export function getKoobooInfo(el: HTMLElement) {
-  let koobooId = el.getAttribute("kooboo-id")!;
-  let node: Node | null = el as Node;
+  let koobooId = el.getAttribute("kooboo-id");
+  let node = el as Node | null;
   let closeParent: HTMLElement | null = null;
   let parentKoobooId: string | null = null;
   let comments: KoobooComment[] = [];

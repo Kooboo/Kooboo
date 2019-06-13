@@ -2,6 +2,7 @@ import { createContainer } from "./container";
 import { createTitle } from "./menuItems/title";
 import { EditItem } from "./menuItems/edit";
 import { CopyItem } from "./menuItems/copy";
+import { BaseItem } from "./menuItems/base";
 
 export class FloatMenu {
   private _container: HTMLDivElement;
@@ -17,11 +18,18 @@ export class FloatMenu {
     this._container.style.left = x + "px";
     this._container.innerHTML = "";
     this._container.appendChild(createTitle(document));
+    this.addItem(new EditItem(document));
+    this.addItem(new CopyItem(document));
 
-    this._container.appendChild(new EditItem(document).el);
-    this._container.appendChild(new CopyItem(document).el);
-
-    document.body.appendChild(this._container);
+    if (this._container.children.length > 1) {
+      document.body.appendChild(this._container);
+    }
+  }
+  private addItem(item: BaseItem) {
+    var el = item.el;
+    if (el) {
+      this._container.appendChild(el);
+    }
   }
 
   clear() {

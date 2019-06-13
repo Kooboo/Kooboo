@@ -5,7 +5,7 @@ import { OBJECT_TYPE } from "../constants";
 export class SelectedDomEventArgs {
   constructor(
     public element: HTMLElement,
-    public koobooId: string,
+    public koobooId: string | null,
     public closeParent: HTMLElement | null,
     public parentKoobooId: string | null,
     public koobooComments: KoobooComment[],
