@@ -1392,6 +1392,10 @@
     this.CleanLog = function(para) {
       return this.executePost("CleanLog", para);
     };
+
+    this.getSize = function(para) {
+      return this.executeGet("GetSize", para);
+    };
   }
   extend(Disk, BaseModel);
 

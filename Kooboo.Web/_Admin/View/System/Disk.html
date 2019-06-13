@@ -1,28 +1,30 @@
 <!-- #layout name=blank -->
 <div class="page-header">
-    <h1 class="title">Disk</h1>
+  <h1 class="title">Disk</h1>
 </div>
-<div data-bind="component: { name: 'kb-breadcrumb', params:[{
+<div
+  data-bind="component: { name: 'kb-breadcrumb', params:[{
     name: 'SITES'
 },{
     name: 'DASHBOARD'
 },{
     name: Kooboo.text.common.Disk
-}] }"></div>
+}] }"
+></div>
 <div class="row block-dashboard-stat">
-    <div class="col-sm-12 col-md-3">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Total size</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div class="item">
-                            <div class="number">
-                                <!-- ko text: totalSize -->
-                                <!-- /ko -->
-                                <!-- <div class="btn-group pull-right">
+  <div class="col-sm-12 col-md-3">
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3 class="panel-title">Total size</h3>
+          </div>
+          <div class="panel-body">
+            <div class="item">
+              <div class="number">
+                <!-- ko text: totalSize -->
+                <!-- /ko -->
+                <!-- <div class="btn-group pull-right">
                                     <button type="button" class="btn btn-info" data-bind="click: clearLogs">Clear logs</button>
                                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><i class="fa fa-angle-down"></i></button>
                                     <ul class="dropdown-menu" role="menu">
@@ -30,62 +32,108 @@
                                         <li><a href="javascript:;" data-bind="click: clearVistorLog">Clear vistor log</a></li>
                                     </ul>
                                 </div> -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
-            <div class="col-sm-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Top 5</h3>
-                    </div>
-                    <div class="panel-body">
-                        <!-- ko foreach: topThreeArray -->
-                        <div class="item">
-                            <div class="number" data-bind="text: $data.size"></div>
-                            <small class="text-muted" data-bind="text: $data.name"></small>
-                        </div>
-                        <hr data-bind="visible: $index() !== $parent.topThreeArray().length - 1">
-                        <!-- /ko -->
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    </div>
-    <div class="col-md-9 hidden-xs hidden-sm">
+      </div>
+      <div class="col-sm-12">
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Chart</h3>
+          <div class="panel-heading">
+            <h3 class="panel-title">Top 5</h3>
+          </div>
+          <div class="panel-body">
+            <!-- ko foreach: topThreeArray -->
+            <div class="item">
+              <div class="number" data-bind="text: $data.size"></div>
+              <small class="text-muted" data-bind="text: $data.name"></small>
             </div>
-            <div class="panel-body">
-                <div class="item">
-                    <div class="row" id="chart" style="height: 510px;"></div>
-                </div>
-            </div>
+            <hr
+              data-bind="visible: $index() !== $parent.topThreeArray().length - 1"
+            />
+            <!-- /ko -->
+          </div>
         </div>
+      </div>
     </div>
+  </div>
+  <div class="col-md-9 hidden-xs hidden-sm">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Chart</h3>
+      </div>
+      <div class="panel-body">
+        <div class="item">
+          <div class="row" id="chart" style="height: 510px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">Detail</h3>
+  <div class="panel-heading">
+    <h3 class="panel-title">Detail</h3>
+  </div>
+  <div class="panel-body">
+    <div class="row item" style="margin-top: -15px;">
+      <div
+        data-bind="component: { name: 'kb-table', params: tableData }"
+        style="margin-bottom: -30px;"
+      ></div>
     </div>
-    <div class="panel-body">
-        <div class="row item" style="margin-top: -15px;">
-            <div data-bind="component: { name: 'kb-table', params: tableData }" style="margin-bottom: -30px;"></div>
-        </div>
+  </div>
+</div>
+<div
+  class="modal fade"
+  data-bind="modal: showLogModal"
+  data-backdrop="static"
+  data-keyboard="false"
+>
+  <div class="modal-dialog" data-bind="if: logData">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button class="close" data-bind="click: onHideLogModal">
+          <i class="fa fa-close"></i>
+        </button>
+        <h4 class="modal-title" data-bind="text: logData().name"></h4>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped" style="margin-bottom: 0;">
+          <tr>
+            <th>Disk size</th>
+            <th>Item size</th>
+            <th>Item count</th>
+            <th>Log count</th>
+          </tr>
+          <tr>
+            <td data-bind="text: logData().diskSize"></td>
+            <td data-bind="text: logData().itemSize"></td>
+            <td data-bind="text: logData().itemCount"></td>
+            <td data-bind="text: logData().logCount"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn gray" data-bind="click: onHideLogModal">
+          Cancel
+        </button>
+        <!-- ko if: logData().canClean -->
+        <button class="btn green" data-bind="click: onCleanLog">Clean</button>
+        <!-- /ko -->
+      </div>
     </div>
+  </div>
 </div>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/lib/echarts.min.js",
-            "/_Admin/Scripts/kobindings.sortable.js",
-            "/_Admin/Scripts/components/kbTable.js",
-            "/_Admin/Scripts/components/kbBreadcrumb.js",
-            "/_Admin/Scripts/lib/jquery-ui-customized.js",
-            "/_Admin/Scripts/tableModel.js"
-        ])
-    })()
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/lib/echarts.min.js",
+      "/_Admin/Scripts/kobindings.sortable.js",
+      "/_Admin/Scripts/components/kbTable.js",
+      "/_Admin/Scripts/components/kbBreadcrumb.js",
+      "/_Admin/Scripts/lib/jquery-ui-customized.js",
+      "/_Admin/Scripts/tableModel.js"
+    ]);
+  })();
 </script>
 <script src="/_Admin/View/System/Disk.js"></script>
