@@ -13,6 +13,8 @@ namespace Kooboo.Data.Models
 
         public int SmtpPort { get; set; }
 
+        public int OnlineDataCenterId { get; set; }
+
         public int ServerId { get; set; }
 
         // in case that this is a an Dns server. 

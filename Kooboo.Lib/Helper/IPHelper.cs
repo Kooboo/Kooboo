@@ -10,6 +10,21 @@ namespace Kooboo.Lib.Helper
 {
     public static class IPHelper
     {
+
+        static IPHelper()
+        {
+            InternalIpPrefix = new List<string>();
+            InternalIpPrefix.Add("127.");
+            InternalIpPrefix.Add("10.");
+            InternalIpPrefix.Add("169.254.");
+            InternalIpPrefix.Add("192.0.2.");
+            InternalIpPrefix.Add("192.88.99.");
+            InternalIpPrefix.Add("192.168.");
+            InternalIpPrefix.Add("198.51.100");
+        }
+
+        private static List<string> InternalIpPrefix { get; set; }
+
         private static long part1 { get; set; } = 256 * 256 * 256;
         private static long part2 { get; set; } = 256 * 256;
         private static long part3 { get; set; } = 256; 
@@ -86,28 +101,17 @@ namespace Kooboo.Lib.Helper
         }
          
         public static bool IsLocalIp(string Ip)
-        {
-            // TODO: improve it. 
-            List<string> prefix = new List<string>();
-            prefix.Add("127.");
-            prefix.Add("10.");
-            prefix.Add("169.254.");
-            prefix.Add("192.0.2.");
-            prefix.Add("192.88.99."); 
-            prefix.Add("192.168.");
-            prefix.Add("198.51.100");
-
-            foreach (var item in prefix)
+        {  
+            //TODO: improve it.  
+            foreach (var item in InternalIpPrefix)
             {
                 if (Ip.StartsWith(item))
                 {
-                    return true; 
+                    return true;
                 }
             }
-
             return false; 
-        }
-         
+        } 
     }
 }
 

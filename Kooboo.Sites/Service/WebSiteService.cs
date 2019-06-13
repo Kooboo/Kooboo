@@ -38,7 +38,9 @@ namespace Kooboo.Sites.Service
                 {
                     clsmanager.PushQueue.Clear();
                     clsmanager = null;
-                } 
+                }
+
+                sitedb.ImagePool.ClearAll(); 
                 //website.Locked = true; 
                 website.EnableDiskSync = false;
                 website.EnableFrontEvents = false;

@@ -41,9 +41,12 @@ namespace Kooboo.Web.Api.Implementation
             return call.WebSite.SiteDb().GetSize();
         }
 
-        public void CleanRepository(ApiCall call)
+        public void CleanRepo(string repo, ApiCall call)
         {
-            // 
+            var sitedb = call.Context.WebSite.SiteDb();
+
+            var repository = sitedb.GetRepository(repo); 
+  
         }
 
         public void CleanLog(ApiCall call)
