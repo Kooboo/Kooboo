@@ -91,7 +91,7 @@ export function getCloseElement(el: HTMLElement) {
     if (
       node.nodeName == "#comment" &&
       node.nodeValue &&
-      node.nodeValue.startsWith(KOOBOO_ID)
+      node.nodeValue.startsWith("#kooboo")
     ) {
       break;
     }
