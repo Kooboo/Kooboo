@@ -72,15 +72,27 @@ export function getKoobooInfo(el: HTMLElement) {
 }
 
 export function getCloseElement(el: HTMLElement) {
+  let node = el as Node | null;
+  let closeElement: HTMLElement | null = null;
   while (true) {
-    if (!el) break;
-    let koobooId = el.getAttribute("kooboo-id");
-    if (koobooId) {
-      return el;
-    } else {
-      el = el.parentElement as HTMLElement;
+    if (!node) break;
+    if (node instanceof HTMLElement) {
+      closeElement = node;
+      if (el.hasAttribute("kooboo-id")) break;
     }
+
+    if (
+      node.nodeName == "#comment" &&
+      node.nodeValue &&
+      node.nodeValue.startsWith("#kooboo")
+    ) {
+      break;
+    }
+
+    node = node.previousSibling ? node.previousSibling : node.parentElement;
   }
+
+  return closeElement;
 }
 
 export function getMaxKoobooId(el: HTMLElement) {

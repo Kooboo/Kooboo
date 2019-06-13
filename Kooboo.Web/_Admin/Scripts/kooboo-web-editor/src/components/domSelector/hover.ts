@@ -20,6 +20,7 @@ export function domHover(document: Document) {
     }
 
     let closeElement = getCloseElement(el);
+    if (closeElement == null) return;
     var args = new HoverDomEventArgs(el, closeElement);
     context.lastHoverDomEventArgs = args;
     context.hoverDomEvent.emit(args);

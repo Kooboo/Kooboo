@@ -17,8 +17,6 @@ export default (document: Document) => {
   });
 
   context.editableEvent.addEventListener(e => {
-    if (e) {
-      hoverBorder.clear();
-    }
+    if (e) hoverBorder.clear();
   });
 };
