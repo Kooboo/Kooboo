@@ -38,7 +38,8 @@ export function createSettings(selector: Element) {
         var targetElm = e.target.targetElm as HTMLElement;
         for (const element of getAllElement(targetElm, true)) {
           if (
-            element.tagName.toLowerCase() == "i" &&
+            (element.tagName.toLowerCase() == "i" ||
+              element.tagName.toLowerCase() == "a") &&
             element.innerHTML.indexOf("<!--i-->") == -1
           ) {
             element.innerHTML += "<!--i-->";
@@ -46,7 +47,20 @@ export function createSettings(selector: Element) {
           }
         }
       });
-      editor.on("Remove", e => (e.target.getElement()._tinymceeditor = null));
+      editor.on("Remove", e => {
+        let element = e.target.getElement();
+        element._tinymceeditor = null;
+
+        if (!element._isRelative) {
+          element.style.position = "";
+        }
+
+        if (element instanceof HTMLElement) {
+          if (element.id.startsWith("mce_")) element.removeAttribute("id");
+          if (element.getAttribute("style") == "")
+            element.removeAttribute("style");
+        }
+      });
       editor.on("Change", () => context.tinymceInputEvent.emit());
       editor.on("KeyUp", () => context.tinymceInputEvent.emit());
       editor.on("KeyDown", e => {

@@ -26,7 +26,7 @@ export class CopyItem extends BaseItem {
     setGuid(args.closeParent);
     let startContent = args.closeParent.innerHTML;
     let cloneElement = args.element.cloneNode(true) as HTMLElement;
-    args.closeParent.insertBefore(cloneElement, args.element);
+    args.closeParent.insertBefore(cloneElement, args.element.nextSibling);
     markDirty(args.closeParent);
 
     var endContent = args.closeParent!.innerHTML;

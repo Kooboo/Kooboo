@@ -6,9 +6,9 @@ import { markDirty, setGuid } from "../../common/koobooInfo";
 
 export function save_oncancelcallback(e: Editor) {
   let element = e.getElement() as HTMLElement;
-  if (!(element as any)._isRelative) {
-    element.style.position = "";
-  }
+  // if (!(element as any)._isRelative) {
+  //   element.style.position = "";
+  // }
   e.setContent((e as any)._content);
   e.remove();
   context.editing = false;
@@ -21,9 +21,9 @@ export function save_onsavecallback(e: Editor) {
   let element = e.getElement() as HTMLElement;
   e.remove();
 
-  if (!(element as any)._isRelative) {
-    element.style.position = "";
-  }
+  // if (!(element as any)._isRelative) {
+  //   element.style.position = "";
+  // }
 
   if (startContent != element.innerHTML) {
     markDirty(element, true);
