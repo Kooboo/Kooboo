@@ -81,6 +81,11 @@ export function createSettings(selector: Element) {
 
         e.format = "raw";
       });
+    },
+    file_picker_callback(callback, value, meta: any) {
+      if (meta.filetype == "image") {
+        callback("myimage.jpg", { alt: "My alt text" });
+      }
     }
   } as Settings;
 
