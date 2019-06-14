@@ -177,7 +177,8 @@ namespace Kooboo.Data.Models
             unique += this.Name + this.NameServer + this.OnlineDataCenterId.ToString();
             unique += this.OrgCount.ToString() + this.PrimaryIp.ToString() + this.PTR + this.Secondary;
             unique += this.SubMask + this.Type.ToString();
-            unique += this.PrivateOrgName;  
+            unique += this.PrivateOrgName;
+            unique += this.InternalIP;
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);  
         }
     }
