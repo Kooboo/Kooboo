@@ -34,10 +34,10 @@
     <div id="main">
       <div class="block-fullscreen">
         <div class="block-visual-editor vertical">
-          <div
+          <!-- <div
             id="kbActionMenu"
             data-bind="component: { name: 'KoobooActionMenu',params:actionMenuConfig}"
-          ></div>
+          ></div> -->
 
           <iframe id="iframe" class="kb-iframe" src="about:blank"></iframe>
         </div>
@@ -114,18 +114,7 @@
     return url;
   }
   $(function() {
-    // ko.components.register("KoobooActionMenu", {
-    //   viewModel: Kooboo.actionMenu.KoobooActionMenu,
-    //   template: Kooboo.actionMenu.KoobooActionMenuHtml
-    // });
-    // var jsArr = [
-    //   "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
-    //   "/_Admin/Scripts/inlineEditor/methods/KoobooTinymceEditor.js",
-    //   "/_Admin/Scripts/inlineEditor/KoobooIframe.js"
-    // ];
-    // var siteEditor = Kooboo.KoobooSiteEditor("iframe", jsArr);
-    // siteEditor.start();
-
+    var mediaDialogData=ko.observable();
     var script = document.createElement("script");
     script.src =
       "\\_Admin\\Scripts\\kooboo-web-editor\\dist\\kooboo-web-editor.min.js";
@@ -136,8 +125,11 @@
     pageUrl += "koobooInline=design";
     iframe.setAttribute("src", pageUrl);
     iframe.onload = function() {
+      iframe.contentDocument.Kooboo=Kooboo;
+      iframe.contentDocument.mediaDialogData=mediaDialogData;
       iframe.contentDocument.body.appendChild(script);
       $(".page-loading").hide();
+      ko.applyBindings({mediaDialogData}, document.getElementById("main"));
     };
   });
 </script>
