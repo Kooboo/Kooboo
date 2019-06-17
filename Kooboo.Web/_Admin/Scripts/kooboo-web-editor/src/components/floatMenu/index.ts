@@ -1,6 +1,6 @@
 import context from "../../context";
-import { isSkipHover } from "../../common/dom";
 import { FloatMenu } from "./FloatMenu";
+import { MenuActions } from "../../events/FloatMenuClickEvent";
 
 let floatMenu: FloatMenu;
 
@@ -14,7 +14,11 @@ export function registerMenu(document: Document) {
 
   context.hoverDomEvent.addEventListener(() => floatMenu.clear());
 
-  context.floatMenuClickEvent.addEventListener(() =>
-    setTimeout(() => floatMenu.clear(), 300)
-  );
+  context.floatMenuClickEvent.addEventListener(e => {
+    if (e == MenuActions.close) {
+      floatMenu.clear();
+    } else {
+      setTimeout(() => floatMenu.clear(), 100);
+    }
+  });
 }

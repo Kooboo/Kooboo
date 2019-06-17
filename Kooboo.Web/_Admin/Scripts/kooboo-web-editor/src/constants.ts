@@ -5,6 +5,7 @@ export const HOVER_BORDER_SKIP = "__HOVER_BORDER_SKIP";
 export const KOOBOO_ID = "kooboo-id";
 export const KOOBOO_DIRTY = "kooboo-dirty";
 export const KOOBOO_GUID = "kooboo-guid";
+export const EMPTY_COMMENT = "<!--empty-->";
 
 export const OBJECT_TYPE = {
   content: "content",

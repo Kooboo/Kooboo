@@ -1,11 +1,18 @@
-import { save_onsavecallback, save_oncancelcallback } from "./savePluginEvent";
-import { Settings } from "tinymce";
-import { lang } from "../../lang";
+import { Settings, Editor } from "tinymce";
 import context from "../../context";
 import { pickImg } from "../../common/koobooInterfaces";
-import { onEditorSetup } from "./onEditorSetup";
+import {
+  setLang,
+  save_oncancelcallback,
+  save_onsavecallback,
+  onBlur,
+  onSetContent,
+  onRemove,
+  onKeyDown,
+  onBeforeSetContent
+} from "./editorUtils";
 
-export function createSettings(selector: Element) {
+export function createSettings(selector: HTMLElement) {
   const settings = {
     target: selector,
     inline: true,
@@ -32,25 +39,36 @@ export function createSettings(selector: Element) {
     init_instance_callback: e => {
       context.editing = true;
     },
-    setup: onEditorSetup,
+    setup(editor: Editor) {
+      editor.on("Blur", onBlur);
+      editor.once("SetContent", onSetContent);
+      editor.on("Remove", onRemove);
+      editor.on("Change", () => context.tinymceInputEvent.emit());
+      editor.on("KeyUp", () => context.tinymceInputEvent.emit());
+      editor.on("KeyDown", onKeyDown);
+      editor.on("BeforeSetContent", onBeforeSetContent);
+    },
     file_picker_callback(callback, value, meta: any) {
       if (meta.filetype == "image") {
-        pickImg((selected: any) => {
-          callback(selected.thumbnail, { alt: "" });
+        pickImg(path => {
+          callback(path, { alt: "" });
         });
       }
     }
   } as Settings;
-
-  if (lang == "zh") {
-    settings.language = "zh_CN";
-    settings.language_url = `_Admin\\Scripts\\kooboo-web-editor\\dist\\${
-      settings.language
-    }.js`;
-  }
-
+  //fix https://github.com/tinymce/tinymce/issues/1828
+  (selector as any)._isRelative = selector.style.position == "relative";
+  setLang(settings);
   (settings as any).save_enablewhendirty = false;
   (settings as any).save_oncancelcallback = save_oncancelcallback;
   (settings as any).save_onsavecallback = save_onsavecallback;
   return settings;
+}
+
+export function createImgSettings(selector: HTMLElement) {
+  let setting = createSettings(selector);
+  setting.plugins = ["save", "image"];
+  setting.toolbar = "save cancel | image";
+
+  return setting;
 }

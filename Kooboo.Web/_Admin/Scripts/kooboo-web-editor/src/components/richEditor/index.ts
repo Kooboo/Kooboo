@@ -1,5 +1,5 @@
 import context from "../../context";
-import { setInlineEditor } from "./tinymce";
+import { setInlineEditor, setImgEditor } from "./tinymce";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
 
 export function registerInlineEditor() {
@@ -8,6 +8,14 @@ export function registerInlineEditor() {
     if (context.lastSelectedDomEventArgs) {
       let selectedDom = context.lastSelectedDomEventArgs.element;
       setInlineEditor(selectedDom);
+    }
+  });
+
+  context.floatMenuClickEvent.addEventListener(e => {
+    if (context.editing || e != MenuActions.replaceToImage) return;
+    if (context.lastSelectedDomEventArgs) {
+      let selectedDom = context.lastSelectedDomEventArgs.element;
+      setImgEditor(selectedDom);
     }
   });
 }

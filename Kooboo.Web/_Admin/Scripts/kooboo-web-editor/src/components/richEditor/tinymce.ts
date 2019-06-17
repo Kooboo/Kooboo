@@ -1,32 +1,39 @@
-import { EditorManager } from "tinymce";
+import { EditorManager, Settings } from "tinymce";
 import "tinymce/themes/silver";
 import "tinymce/plugins/save";
 import "tinymce/plugins/link";
 import "tinymce/plugins/image";
-import { STANDARD_Z_INDEX } from "../../constants";
-import { createSettings } from "./settings";
+import { createSettings, createImgSettings } from "./settings";
+import { setZIndex } from "./editorUtils";
+import { EMPTY_COMMENT } from "../../constants";
 
-export async function setInlineEditor(selector: HTMLElement) {
-  if ((selector as any)._tinymceeditor) return;
-  EditorManager.editors.forEach(i => {
-    (i.getElement() as any)._tinymceeditor = null;
-    i.remove();
-  });
-
-  let settings = createSettings(selector);
-  //fix https://github.com/tinymce/tinymce/issues/1828
-  (selector as any)._isRelative = selector.style.position == "relative";
+async function createEditor(settings: Settings) {
+  let selector = settings.target as HTMLElement;
   let editor = await EditorManager.init(settings);
   if (editor instanceof Array) editor = editor[0];
-  let container = editor.getContainer();
-  if (container instanceof HTMLElement) {
-    container.style.zIndex = STANDARD_Z_INDEX + 1 + "";
-    setTimeout(() => {
-      if (container.nextElementSibling instanceof HTMLElement) {
-        container.nextElementSibling.style.zIndex = STANDARD_Z_INDEX + 2 + "";
-      }
-    }, 500);
-  }
-  (selector as any)._tinymceeditor = editor;
+  setZIndex(editor);
   if (selector instanceof HTMLElement) selector.focus();
+  return editor;
+}
+
+export async function setInlineEditor(selector: HTMLElement) {
+  let settings = createSettings(selector);
+  await createEditor(settings);
+}
+
+export async function setImgEditor(selector: HTMLElement) {
+  (selector as any)._display = selector.style.display;
+  selector.style.display = "block";
+
+  let settings = createImgSettings(selector);
+  let editor = await createEditor(settings);
+  editor.setContent(EMPTY_COMMENT);
+  editor.execCommand("mceImage");
+  (editor as any)._onremove = () => {
+    console.dir(selector);
+    if ((selector as any)._display != undefined) {
+      selector.style.display = (selector as any)._display;
+      (selector as any)._display = undefined;
+    }
+  };
 }

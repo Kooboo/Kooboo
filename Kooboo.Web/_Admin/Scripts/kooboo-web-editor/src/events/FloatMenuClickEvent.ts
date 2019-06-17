@@ -4,7 +4,8 @@ export enum MenuActions {
   close,
   edit,
   copy,
-  delete
+  delete,
+  replaceToImage
 }
 
 export class FloatMenuClickEvent extends BaseEvent<MenuActions> {}
