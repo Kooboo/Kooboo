@@ -12,7 +12,7 @@ export function registerInlineEditor() {
   });
 
   context.floatMenuClickEvent.addEventListener(e => {
-    if (context.editing || e != MenuActions.replaceToImage) return;
+    if (context.editing || e != MenuActions.editImage) return;
     if (context.lastSelectedDomEventArgs) {
       let selectedDom = context.lastSelectedDomEventArgs.element;
       setImgEditor(selectedDom);

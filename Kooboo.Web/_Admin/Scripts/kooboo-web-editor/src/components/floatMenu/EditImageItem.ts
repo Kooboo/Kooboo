@@ -4,9 +4,9 @@ import { MenuActions } from "../../events/FloatMenuClickEvent";
 import context from "../../context";
 import { containDynamicContent } from "../../common/dom";
 
-export class ReplaceToImageItem extends BaseItem {
+export class EditImageItem extends BaseItem {
   text: string = TEXT.TO_IMAGE;
-  type: MenuActions = MenuActions.replaceToImage;
+  type: MenuActions = MenuActions.editImage;
   canShow(): boolean {
     let args = context.lastSelectedDomEventArgs;
     if (!args) return false;

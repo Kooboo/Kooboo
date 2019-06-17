@@ -19,6 +19,11 @@ export function setZIndex(editor: Editor) {
       if (container.nextElementSibling instanceof HTMLElement) {
         container.nextElementSibling.style.zIndex = STANDARD_Z_INDEX + 2 + "";
       }
+      var el = editor.getElement();
+      let rect = el.getBoundingClientRect();
+      if (rect.top < 40) {
+        (container as HTMLElement).style.top = rect.height + 20 + "px";
+      }
     }, 100);
   }
 }

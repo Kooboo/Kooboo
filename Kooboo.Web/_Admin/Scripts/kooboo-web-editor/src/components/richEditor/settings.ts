@@ -36,9 +36,7 @@ export function createSettings(selector: HTMLElement) {
     plugins: ["save", "link", "image"],
     toolbar:
       "save cancel | undo redo | bold italic forecolor fontselect fontsizeselect | image link unlink",
-    init_instance_callback: e => {
-      context.editing = true;
-    },
+    init_instance_callback: e => (context.editing = true),
     setup(editor: Editor) {
       editor.on("Blur", onBlur);
       editor.once("SetContent", onSetContent);
