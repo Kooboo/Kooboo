@@ -28,11 +28,9 @@ export function domSelected(document: Document) {
       koobooId,
       closeParent,
       parentKoobooId,
-      comments,
-      e
+      comments
     );
-    context.lastSelectedDomEventArgs = args;
+    context.lastMouseEventArg = e;
     context.domChangeEvent.emit(args);
-    console.log(args);
   });
 }

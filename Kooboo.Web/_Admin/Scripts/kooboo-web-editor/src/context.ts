@@ -22,6 +22,7 @@ class Context {
   operationManager: OperationManager = new OperationManager();
   lastSelectedDomEventArgs: SelectedDomEventArgs | undefined;
   lastHoverDomEventArgs: HoverDomEventArgs | undefined;
+  lastMouseEventArg: MouseEvent | undefined;
 
   domChangeEvent: SelectedDomEvent = new SelectedDomEvent();
   editableEvent: EditableEvent = new EditableEvent();

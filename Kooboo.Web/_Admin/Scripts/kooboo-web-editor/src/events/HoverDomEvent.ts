@@ -1,4 +1,5 @@
 import { BaseEvent } from "./BaseEvent";
+import context from "../context";
 
 export class HoverDomEventArgs {
   constructor(
@@ -7,4 +8,9 @@ export class HoverDomEventArgs {
   ) {}
 }
 
-export class HoverDomEvent extends BaseEvent<HoverDomEventArgs> {}
+export class HoverDomEvent extends BaseEvent<HoverDomEventArgs> {
+  emit(arg: HoverDomEventArgs) {
+    context.lastHoverDomEventArgs = arg;
+    super.emit(arg);
+  }
+}

@@ -1,4 +1,5 @@
 import closeIcon from "../../assets/icons/guanbi.svg";
+import expandIcon from "../../assets/icons/fangda.svg";
 import { TEXT } from "../../lang";
 import context from "../../context";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
@@ -18,5 +19,14 @@ export function createTitle(document: Document) {
   closeBtn.style.cssFloat = "right";
   closeBtn.onclick = () => context.floatMenuClickEvent.emit(MenuActions.close);
   el.appendChild(closeBtn);
+
+  const expandBtn = document.createElement("img");
+  expandBtn.src = expandIcon;
+  expandBtn.style.height = "16px";
+  expandBtn.style.cssFloat = "right";
+  expandBtn.style.marginRight = "8px";
+  expandBtn.onclick = () =>
+    context.floatMenuClickEvent.emit(MenuActions.expand);
+  el.appendChild(expandBtn);
   return el;
 }

@@ -2,6 +2,7 @@ import { BaseEvent } from "./BaseEvent";
 
 export enum MenuActions {
   close,
+  expand,
   edit,
   copy,
   delete,

@@ -20,7 +20,7 @@ function hover(e: MouseEvent) {
   let closeElement = getCloseElement(el);
   if (closeElement == null) return;
   var args = new HoverDomEventArgs(el, closeElement);
-  context.lastHoverDomEventArgs = args;
+  context.lastMouseEventArg = e;
   context.hoverDomEvent.emit(args);
 }
 

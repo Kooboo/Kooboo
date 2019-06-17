@@ -1,6 +1,7 @@
 import { KoobooComment } from "../models/KoobooComment";
 import { BaseEvent } from "./BaseEvent";
 import { OBJECT_TYPE } from "../constants";
+import context from "../context";
 
 export class SelectedDomEventArgs {
   constructor(
@@ -8,8 +9,7 @@ export class SelectedDomEventArgs {
     public koobooId: string | null,
     public closeParent: HTMLElement | null,
     public parentKoobooId: string | null,
-    public koobooComments: KoobooComment[],
-    public mouseEvent: MouseEvent
+    public koobooComments: KoobooComment[]
   ) {}
 
   get editableComment() {
@@ -44,4 +44,9 @@ export class SelectedDomEventArgs {
   }
 }
 
-export class SelectedDomEvent extends BaseEvent<SelectedDomEventArgs> {}
+export class SelectedDomEvent extends BaseEvent<SelectedDomEventArgs> {
+  emit(args: SelectedDomEventArgs) {
+    context.lastSelectedDomEventArgs = args;
+    super.emit(args);
+  }
+}
