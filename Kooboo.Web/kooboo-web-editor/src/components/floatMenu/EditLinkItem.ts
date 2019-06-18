@@ -3,7 +3,7 @@ import { TEXT } from "../../lang";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
 import context from "../../context";
 import { containDynamicContent } from "../../common/dom";
-import { pickLink } from "../../common/koobooInterfaces";
+import { pickLink } from "../../common/OutsideInterfaces";
 import { Operation } from "../../models/Operation";
 import { KOOBOO_GUID, ACTION_TYPE } from "../../constants";
 import { setGuid, cleanKoobooInfo } from "../../common/koobooInfo";

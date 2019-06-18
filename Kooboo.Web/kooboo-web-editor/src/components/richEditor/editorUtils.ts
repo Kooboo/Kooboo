@@ -10,7 +10,7 @@ import context from "../../context";
 import { markDirty, setGuid } from "../../common/koobooInfo";
 import { Operation } from "../../models/Operation";
 import { getAllElement } from "../../common/dom";
-import delay from "../../common/delay";
+import { delay } from "../../common/utils";
 
 export async function impoveEditorUI(editor: Editor) {
   let container = editor.getContainer();

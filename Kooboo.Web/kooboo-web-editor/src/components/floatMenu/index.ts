@@ -4,7 +4,7 @@ import { MenuActions } from "../../events/FloatMenuClickEvent";
 import { getKoobooInfo, getCloseElement } from "../../common/koobooInfo";
 import { SelectedDomEventArgs } from "../../events/SelectedDomEvent";
 import { HoverDomEventArgs } from "../../events/HoverDomEvent";
-import delay from "../../common/delay";
+import { delay } from "../../common/utils";
 
 let floatMenu: FloatMenu;
 

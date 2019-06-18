@@ -1,6 +1,6 @@
 import { Settings, Editor } from "tinymce";
 import context from "../../context";
-import { pickImg, pickLink } from "../../common/koobooInterfaces";
+import { pickImg, pickLink } from "../../common/OutsideInterfaces";
 import {
   setLang,
   save_oncancelcallback,
