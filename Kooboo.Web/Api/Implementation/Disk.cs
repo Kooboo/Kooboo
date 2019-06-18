@@ -85,14 +85,14 @@ namespace Kooboo.Web.Api.Implementation
                     blockposition = item.OldBlockPosition;
                     DeletedBlock.Add(blockposition);
 
-                    storesize.CanClean = true; 
+                    storesize.CanClean = true;
                 }
                 else
                 {
                     blockposition = item.NewBlockPosition;
-                    if (item.EditType == IndexedDB.EditType.Update && item.OldBlockPosition >0)
+                    if (item.EditType == IndexedDB.EditType.Update && item.OldBlockPosition > 0)
                     {
-                        storesize.CanClean = true; 
+                        storesize.CanClean = true;
                     }
                 }
 
@@ -143,14 +143,21 @@ namespace Kooboo.Web.Api.Implementation
 
         public bool CanClean
         {
-            get;set;
+            get; set;
         }
 
         public string DiskSize
         {
             get
             {
-                return Lib.Utilities.CalculateUtility.GetSizeString(this.Disk);
+                if (this.Disk > 0)
+                {
+                    return Lib.Utilities.CalculateUtility.GetSizeString(this.Disk);
+                }
+                else
+                {
+                    return "N/A";
+                }
             }
         }
 
@@ -158,7 +165,15 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return Lib.Utilities.CalculateUtility.GetSizeString(this.ItemLength);
+                if (this.ItemLength > 0)
+                {
+                    return Lib.Utilities.CalculateUtility.GetSizeString(this.ItemLength);
+                }
+                else
+                {
+                    return "N/A";
+                }
+
             }
         }
     }
