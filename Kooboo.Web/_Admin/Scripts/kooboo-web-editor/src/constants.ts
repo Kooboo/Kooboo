@@ -19,7 +19,8 @@ export const OBJECT_TYPE = {
   dom: "dom", //update image-obsolete
   attribute: "attribute",
   layout: "layout",
-  form: "form"
+  form: "form",
+  url: "url"
 };
 
 export const ACTION_TYPE = {
@@ -27,14 +28,4 @@ export const ACTION_TYPE = {
   update: "update",
   delete: "delete",
   copy: "copy"
-};
-
-export const EDITOR_TYPE = {
-  dom: "dom",
-  htmlblock: "htmlblock",
-  label: "label",
-  content: "content",
-  attribute: "attribute",
-  style: "style",
-  converter: "converter"
 };

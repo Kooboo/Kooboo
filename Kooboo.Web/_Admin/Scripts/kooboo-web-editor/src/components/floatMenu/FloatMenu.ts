@@ -5,6 +5,7 @@ import { CopyItem } from "./CopyItem";
 import { BaseItem } from "./BaseItem";
 import { DeleteItem } from "./DeleteItem";
 import { EditImageItem } from "./EditImageItem";
+import { EditLinkItem } from "./EditLinkItem";
 
 export class FloatMenu {
   private _container: HTMLDivElement;
@@ -24,6 +25,7 @@ export class FloatMenu {
     this.addItem(new CopyItem(document));
     this.addItem(new DeleteItem(document));
     this.addItem(new EditImageItem(document));
+    this.addItem(new EditLinkItem(document));
 
     if (this._container.children.length > 1) {
       document.body.appendChild(this._container);

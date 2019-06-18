@@ -19,7 +19,8 @@ export class SelectedDomEventArgs {
 
       return (
         objecttype != OBJECT_TYPE.contentrepeater &&
-        objecttype != OBJECT_TYPE.attribute
+        objecttype != OBJECT_TYPE.attribute &&
+        objecttype != OBJECT_TYPE.url
       );
     });
   }

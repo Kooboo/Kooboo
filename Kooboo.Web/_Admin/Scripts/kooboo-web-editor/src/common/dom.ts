@@ -48,6 +48,7 @@ export function* getAllNode(parentNode: Node, containSelf = false) {
 
 export function containDynamicContent(el: HTMLElement) {
   for (const k in OBJECT_TYPE) {
+    if (k == OBJECT_TYPE.url) continue;
     if (OBJECT_TYPE.hasOwnProperty(k)) {
       const i = OBJECT_TYPE[k as keyof typeof OBJECT_TYPE];
       if (el.innerHTML.toLowerCase().indexOf(`objecttype='${i}'`) > -1)
@@ -55,4 +56,8 @@ export function containDynamicContent(el: HTMLElement) {
     }
   }
   return false;
+}
+
+export function isBody(el: HTMLElement) {
+  return el.tagName.toLowerCase() == "body";
 }

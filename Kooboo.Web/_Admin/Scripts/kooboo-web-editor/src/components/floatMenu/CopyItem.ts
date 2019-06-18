@@ -1,7 +1,7 @@
 import { BaseItem } from "./BaseItem";
 import { TEXT } from "../../lang";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
-import { containDynamicContent } from "../../common/dom";
+import { containDynamicContent, isBody } from "../../common/dom";
 import context from "../../context";
 import { Operation } from "../../models/Operation";
 import { ACTION_TYPE, KOOBOO_GUID } from "../../constants";
@@ -14,7 +14,7 @@ export class CopyItem extends BaseItem {
     let args = context.lastSelectedDomEventArgs;
     if (!args) return false;
 
-    if (args.element.tagName.toLowerCase() == "body") return false;
+    if (isBody(args.element)) return false;
     if (!args.parentKoobooId || !args.koobooId) return false;
     if (!args.editableComment) return false;
     return !containDynamicContent(args.element);

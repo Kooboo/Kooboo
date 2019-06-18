@@ -63,9 +63,9 @@ export class OperationManager {
       log.objectType = m.koobooComment.objecttype!;
       log.value = cleanKoobooInfo(m.commit);
       log.fieldName = m.koobooComment.fieldname!;
+      log.attributeName = m.koobooComment.attributename!;
       return log;
     });
-
     return logs;
   }
 

@@ -6,6 +6,7 @@ export class OperationLogItem {
   nameOrId!: string;
   objectType!: string;
   fieldName!: string;
+  attributeName!: string;
 }
 
 export class OperationLog {
