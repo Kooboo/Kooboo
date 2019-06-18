@@ -3,7 +3,7 @@ import path from "path";
 export default {
   entry: "./src/index.ts",
   output: {
-    path: path.resolve("./dist"),
+    path: path.resolve("../_Admin/Scripts/kooboo-web-editor"),
     filename: "kooboo-web-editor.min.js"
   },
   watch: process.env.NODE_ENV == "development",
