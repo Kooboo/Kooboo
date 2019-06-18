@@ -4,6 +4,7 @@ import { MenuActions } from "../../events/FloatMenuClickEvent";
 import { getKoobooInfo, getCloseElement } from "../../common/koobooInfo";
 import { SelectedDomEventArgs } from "../../events/SelectedDomEvent";
 import { HoverDomEventArgs } from "../../events/HoverDomEvent";
+import delay from "../../common/delay";
 
 let floatMenu: FloatMenu;
 
@@ -20,29 +21,30 @@ export function registerMenu(document: Document) {
 
   context.hoverDomEvent.addEventListener(() => floatMenu.clear());
 
-  context.floatMenuClickEvent.addEventListener(e => {
+  context.floatMenuClickEvent.addEventListener(async e => {
     if (e == MenuActions.close) {
       floatMenu.clear();
     } else if (e != MenuActions.expand) {
-      setTimeout(() => floatMenu.clear(), 100);
+      await delay(100);
+      floatMenu.clear();
     }
   });
 
-  context.floatMenuClickEvent.addEventListener(e => {
-    if (e != MenuActions.expand) return;
-    let el = context.lastHoverDomEventArgs!.closeElement!.parentElement;
-    if (!el) return;
-    let closeElement = getCloseElement(el);
+  context.floatMenuClickEvent.addEventListener(async e => {
+    if (context.editing || e != MenuActions.expand) return;
+    let el = context.lastHoverDomEventArgs!.closeElement;
+    if (!el || !el.parentElement) return;
+    let closeElement = getCloseElement(el.parentElement);
     if (closeElement == null) return;
-    context.hoverDomEvent.emit(new HoverDomEventArgs(el, closeElement));
-    let { comments, koobooId, closeParent, parentKoobooId } = getKoobooInfo(
-      context.lastHoverDomEventArgs!.closeElement!
+
+    context.hoverDomEvent.emit(
+      new HoverDomEventArgs(el.parentElement, closeElement)
     );
 
+    let { comments, koobooId, closeParent, parentKoobooId } = getKoobooInfo(el);
     if (comments.length == 0) return;
-
     var args = new SelectedDomEventArgs(
-      context.lastHoverDomEventArgs!.closeElement!,
+      closeElement,
       koobooId,
       closeParent,
       parentKoobooId,

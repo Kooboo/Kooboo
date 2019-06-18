@@ -32,5 +32,6 @@ export function domSelected(document: Document) {
     );
     context.lastMouseEventArg = e;
     context.domChangeEvent.emit(args);
+    console.log(args);
   });
 }

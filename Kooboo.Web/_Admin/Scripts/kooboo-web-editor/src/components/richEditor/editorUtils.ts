@@ -10,21 +10,21 @@ import context from "../../context";
 import { markDirty, setGuid } from "../../common/koobooInfo";
 import { Operation } from "../../models/Operation";
 import { getAllElement } from "../../common/dom";
+import delay from "../../common/delay";
 
-export function setZIndex(editor: Editor) {
+export async function impoveEditorUI(editor: Editor) {
   let container = editor.getContainer();
   if (container instanceof HTMLElement) {
     container.style.zIndex = STANDARD_Z_INDEX + 1 + "";
-    setTimeout(() => {
-      if (container.nextElementSibling instanceof HTMLElement) {
-        container.nextElementSibling.style.zIndex = STANDARD_Z_INDEX + 2 + "";
-      }
-      var el = editor.getElement();
-      let rect = el.getBoundingClientRect();
-      if (rect.top < 40) {
-        (container as HTMLElement).style.top = rect.height + 20 + "px";
-      }
-    }, 100);
+    await delay(100);
+    if (container.nextElementSibling instanceof HTMLElement) {
+      container.nextElementSibling.style.zIndex = STANDARD_Z_INDEX + 2 + "";
+    }
+    var el = editor.getElement();
+    let rect = el.getBoundingClientRect();
+    if (rect.top < 40) {
+      (container as HTMLElement).style.top = rect.height + 20 + "px";
+    }
   }
 }
 
@@ -104,6 +104,8 @@ export function onRemove(e: any) {
     if (element.id.startsWith("mce_")) element.removeAttribute("id");
     if (element.getAttribute("style") == "") element.removeAttribute("style");
   }
+
+  if (e.target._onremove) e.target._onremove();
 
   EditorManager.editors.forEach(i => {
     i.remove();

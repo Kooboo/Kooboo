@@ -6,9 +6,24 @@ export function pickImg(callBack: (path: string) => void) {
     if (res.success) {
       res.model["show"] = true;
       res.model["onAdd"] = (selected: any) => {
-        callBack(selected.thumbnail);
+        callBack(selected.url);
       };
     }
     mediaDialogData(res.model);
   });
+}
+
+export function pickLink(callBack: (path: string) => void, oldValue: string) {
+  Kooboo.plugins.EditLink.dialogSetting.beforeSave = function() {
+    var url = Kooboo.plugins.EditLink.getLinkUrl();
+    if (callBack) {
+      callBack(url);
+    }
+  };
+  Kooboo.PluginManager.click(Kooboo.plugins.EditLink, {});
+  if (oldValue) {
+    Kooboo.plugins.EditLink.setLinkUrl(oldValue);
+  } else {
+    Kooboo.plugins.EditLink.setLinkUrl("");
+  }
 }

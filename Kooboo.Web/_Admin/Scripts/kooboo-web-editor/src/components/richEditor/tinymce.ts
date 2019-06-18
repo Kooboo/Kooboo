@@ -4,14 +4,13 @@ import "tinymce/plugins/save";
 import "tinymce/plugins/link";
 import "tinymce/plugins/image";
 import { createSettings, createImgSettings } from "./settings";
-import { setZIndex } from "./editorUtils";
-import { EMPTY_COMMENT } from "../../constants";
+import { impoveEditorUI } from "./editorUtils";
 
 async function createEditor(settings: Settings) {
   let selector = settings.target as HTMLElement;
   let editor = await EditorManager.init(settings);
   if (editor instanceof Array) editor = editor[0];
-  setZIndex(editor);
+  impoveEditorUI(editor);
   if (selector instanceof HTMLElement) selector.focus();
   return editor;
 }
@@ -27,10 +26,7 @@ export async function setImgEditor(selector: HTMLElement) {
 
   let settings = createImgSettings(selector);
   let editor = await createEditor(settings);
-  editor.setContent(EMPTY_COMMENT);
-  editor.execCommand("mceImage");
   (editor as any)._onremove = () => {
-    console.dir(selector);
     if ((selector as any)._display != undefined) {
       selector.style.display = (selector as any)._display;
       (selector as any)._display = undefined;

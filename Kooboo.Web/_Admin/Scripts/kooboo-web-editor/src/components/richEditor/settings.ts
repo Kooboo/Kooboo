@@ -1,6 +1,6 @@
 import { Settings, Editor } from "tinymce";
 import context from "../../context";
-import { pickImg } from "../../common/koobooInterfaces";
+import { pickImg, pickLink } from "../../common/koobooInterfaces";
 import {
   setLang,
   save_oncancelcallback,
@@ -49,8 +49,12 @@ export function createSettings(selector: HTMLElement) {
     file_picker_callback(callback, value, meta: any) {
       if (meta.filetype == "image") {
         pickImg(path => {
-          callback(path, { alt: "" });
+          callback(path, {});
         });
+      } else {
+        pickLink(url => {
+          callback(url, {});
+        }, value);
       }
     }
   } as Settings;

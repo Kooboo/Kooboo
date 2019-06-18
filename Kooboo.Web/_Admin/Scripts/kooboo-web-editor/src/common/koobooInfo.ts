@@ -85,7 +85,7 @@ export function getCloseElement(el: HTMLElement) {
     if (!node) break;
     if (node instanceof HTMLElement) {
       closeElement = node;
-      if (el.hasAttribute(KOOBOO_ID)) break;
+      if (node.hasAttribute(KOOBOO_ID)) break;
     }
 
     if (
