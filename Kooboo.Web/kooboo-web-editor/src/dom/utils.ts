@@ -60,3 +60,8 @@ export function isImg(el: HTMLElement) {
 export function isLink(el: HTMLElement) {
   return el.tagName.toLowerCase() == "a";
 }
+
+export function canJump(el: HTMLElement) {
+  let href = el.getAttribute("href");
+  return el.tagName.toLowerCase() == "a" && href && !href.startsWith("#");
+}

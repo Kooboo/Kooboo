@@ -4,6 +4,7 @@ import { createDeleteItem } from "./items/delete";
 import { createEditItem } from "./items/edit";
 import { createEditImageItem } from "./items/editImage";
 import { createEditLinkItem } from "./items/editLink";
+import { createJumpLinkItem } from "./items/jumpLink";
 
 export function createMenu() {
   const container = createContainer();
@@ -12,7 +13,8 @@ export function createMenu() {
     createCopyItem(),
     createDeleteItem(),
     createEditImageItem(),
-    createEditLinkItem()
+    createEditLinkItem(),
+    createJumpLinkItem()
   ];
 
   for (const i of items) {

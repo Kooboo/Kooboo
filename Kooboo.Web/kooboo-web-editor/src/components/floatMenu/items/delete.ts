@@ -3,7 +3,6 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { KOOBOO_GUID, ACTION_TYPE } from "@/common/constants";
-import { isBody } from "@/dom/utils";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import {
   setGuid,
@@ -13,6 +12,7 @@ import {
 } from "@/common/koobooInfo";
 import { Operation } from "@/models/Operation";
 import { getEditComment } from "../utils";
+import { isBody } from "@/dom/utils";
 
 export function createDeleteItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);

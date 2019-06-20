@@ -145,3 +145,13 @@ export function onBeforeSetContent(e: any) {
 
   e.format = "raw";
 }
+
+export function getToolbar(el: HTMLElement) {
+  let items =
+    "save cancel | undo redo | bold italic forecolor fontselect fontsizeselect | image ";
+  if (el.tagName.toLowerCase() != "a") {
+    items += "| link unlink";
+  }
+
+  return items;
+}

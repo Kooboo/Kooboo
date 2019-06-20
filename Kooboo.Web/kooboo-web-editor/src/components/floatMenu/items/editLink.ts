@@ -20,7 +20,7 @@ export function createEditLinkItem(): MenuItem {
     let visiable = true;
     let args = context.lastSelectedDomEventArgs;
 
-    if (isLink(args.element)) visiable = false;
+    if (!isLink(args.element)) visiable = false;
     if (!args.closeParent || !args.parentKoobooId) visiable = false;
     if (!getEditComment(args.koobooComments)) visiable = false;
     if (isDynamicContent(args.element)) visiable = false;

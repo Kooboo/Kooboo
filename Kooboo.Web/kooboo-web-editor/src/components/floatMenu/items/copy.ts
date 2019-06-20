@@ -1,6 +1,5 @@
 import { createItem, MenuItem } from "../basic";
 import context from "@/common/context";
-import { isBody } from "@/dom/utils";
 import {
   setGuid,
   markDirty,
@@ -12,6 +11,7 @@ import { KOOBOO_GUID, ACTION_TYPE } from "@/common/constants";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import { TEXT } from "@/common/lang";
 import { getEditComment } from "../utils";
+import { isBody } from "@/dom/utils";
 
 export function createCopyItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.COPY, MenuActions.copy);

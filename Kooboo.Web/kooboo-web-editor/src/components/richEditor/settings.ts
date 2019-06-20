@@ -9,7 +9,8 @@ import {
   onSetContent,
   onRemove,
   onKeyDown,
-  onBeforeSetContent
+  onBeforeSetContent,
+  getToolbar
 } from "./editorUtils";
 
 export function createSettings(selector: HTMLElement) {
@@ -34,8 +35,7 @@ export function createSettings(selector: HTMLElement) {
     valid_children: "*[*]",
     valid_styles: "*[*]",
     plugins: ["save", "link", "image"],
-    toolbar:
-      "save cancel | undo redo | bold italic forecolor fontselect fontsizeselect | image link unlink",
+    toolbar: getToolbar(selector),
     init_instance_callback: e => (context.editing = true),
     setup(editor: Editor) {
       editor.on("Blur", onBlur);

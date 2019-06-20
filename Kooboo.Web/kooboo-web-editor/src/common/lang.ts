@@ -8,7 +8,8 @@ const en = {
   COPY: "copy",
   DELETE: "delete",
   EDIT_IMAGE: "edit image",
-  EDIT_LINK: "edit link"
+  EDIT_LINK: "edit link",
+  JUMP_LINK: "jump link"
 };
 
 const zh = {
@@ -17,7 +18,8 @@ const zh = {
   COPY: "复制这块",
   DELETE: "删除",
   EDIT_IMAGE: "编辑图片",
-  EDIT_LINK: "编辑链接"
+  EDIT_LINK: "编辑链接",
+  JUMP_LINK: "跳转链接"
 } as typeof en;
 
 var langPackages = { en, zh };

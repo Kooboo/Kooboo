@@ -7,7 +7,10 @@ import { getEditComment } from "../utils";
 import { isDynamicContent } from "@/common/koobooInfo";
 
 export function createEditImageItem(): MenuItem {
-  const { el, setVisiable } = createItem(TEXT.COPY, MenuActions.copy);
+  const { el, setVisiable } = createItem(
+    TEXT.EDIT_IMAGE,
+    MenuActions.editImage
+  );
   const update = () => {
     let visiable = true;
     let args = context.lastSelectedDomEventArgs;

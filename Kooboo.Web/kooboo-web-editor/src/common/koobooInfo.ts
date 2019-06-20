@@ -1,4 +1,4 @@
-import { getAllNode, getAllElement } from "../dom/utils";
+import { getAllNode, getAllElement, isBody } from "../dom/utils";
 import { KoobooComment } from "../models/KoobooComment";
 import { KoobooId } from "../models/KoobooId";
 import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID, OBJECT_TYPE } from "./constants";
@@ -44,6 +44,7 @@ export function getKoobooInfo(el: HTMLElement) {
       !closeParent &&
       comments.length == 0 &&
       node instanceof HTMLElement &&
+      !isBody(node) &&
       !node.hasAttribute(KOOBOO_DIRTY) &&
       !isDynamicContent(node)
     ) {
@@ -52,7 +53,7 @@ export function getKoobooInfo(el: HTMLElement) {
     }
 
     if (
-      node.nodeName == "#comment" &&
+      node.nodeType == Node.COMMENT_NODE &&
       node.nodeValue &&
       node.nodeValue.startsWith("#kooboo")
     ) {
@@ -90,7 +91,7 @@ export function getCloseElement(el: HTMLElement) {
     }
 
     if (
-      node.nodeName == "#comment" &&
+      node.nodeType == Node.COMMENT_NODE &&
       node.nodeValue &&
       node.nodeValue.startsWith("#kooboo")
     ) {
@@ -163,4 +164,24 @@ export function isDynamicContent(el: HTMLElement) {
     }
   }
   return false;
+}
+
+export function getPageId() {
+  let pageid!: string;
+
+  for (const i of getAllNode(document)) {
+    if (
+      i.nodeType == Node.COMMENT_NODE &&
+      i.nodeValue &&
+      i.nodeValue.startsWith("#kooboo")
+    ) {
+      let comment = new KoobooComment(i.nodeValue);
+      if (comment.objecttype == OBJECT_TYPE.page) {
+        pageid = comment.nameorid!;
+        break;
+      }
+    }
+  }
+
+  return pageid;
 }
