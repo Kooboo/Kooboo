@@ -9,7 +9,7 @@ import { lang } from "../../common/lang";
 import context from "../../common/context";
 import { markDirty, setGuid } from "../../common/koobooInfo";
 import { Operation } from "../../models/Operation";
-import { getAllElement, getMaxHeight } from "../../dom/utils";
+import { getAllElement } from "../../dom/utils";
 import { delay } from "../../common/utils";
 import { getEditComment } from "../floatMenu/utils";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";
@@ -34,9 +34,11 @@ export async function impoveEditorUI(editor: Editor) {
     toolbar.insertBefore(moveBtn, toolbar.children.item(0));
     container.draggable = true;
     container.ondrag = e => {
+      if (!(container instanceof HTMLElement)) return;
+      container.style.position = "fixed";
       if (e.x == 0 || e.y == 0) return;
-      (container as HTMLElement).style.top = e.y - 15 + "px";
-      (container as HTMLElement).style.left = e.x - 15 + "px";
+      container.style.top = e.y - 15 + "px";
+      container.style.left = e.x - 15 + "px";
     };
   }
 }

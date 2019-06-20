@@ -4,7 +4,7 @@ import "tinymce/plugins/save";
 import "tinymce/plugins/link";
 import "tinymce/plugins/image";
 import { createSettings, createImgSettings } from "./settings";
-import { impoveEditorUI } from "./editorUtils";
+import { impoveEditorUI } from "./utils";
 
 async function createEditor(settings: Settings) {
   let selector = settings.target as HTMLElement;

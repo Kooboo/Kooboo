@@ -11,7 +11,7 @@ import {
   onKeyDown,
   onBeforeSetContent,
   getToolbar
-} from "./editorUtils";
+} from "./utils";
 
 export function createSettings(selector: HTMLElement) {
   const settings = {

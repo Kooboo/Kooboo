@@ -3,7 +3,7 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { MenuItem, createItem } from "../basic";
 import { isDynamicContent } from "@/common/koobooInfo";
-import { getEditComment, isInMenu, isInForm } from "../utils";
+import { getEditComment, isInMenu, isInForm, isHtmlBlock } from "../utils";
 import { isBody } from "@/dom/utils";
 
 export function createEditItem(): MenuItem {
@@ -14,6 +14,7 @@ export function createEditItem(): MenuItem {
     if (isBody(args.element)) visiable = false;
     if (isInMenu(args.koobooComments)) visiable = false;
     if (isInForm(args.koobooComments)) visiable = false;
+    if (isHtmlBlock(args.koobooComments)) visiable = false;
     if (!getEditComment(args.koobooComments)) visiable = false;
     var reExcept = /^img|button|input|textarea|br$/i;
     let el = args.element;
