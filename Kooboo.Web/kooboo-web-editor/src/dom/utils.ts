@@ -1,6 +1,6 @@
-import { HOVER_BORDER_SKIP, OBJECT_TYPE } from "../constants";
+import { HOVER_BORDER_SKIP, OBJECT_TYPE } from "../common/constants";
 
-export function getMaxHeight(document: Document) {
+export function getMaxHeight() {
   var body = document.body,
     html = document.documentElement;
 
@@ -13,13 +13,16 @@ export function getMaxHeight(document: Document) {
   );
 }
 
-export function isSkipHover(e: MouseEvent) {
+export function isInEditorContainer(e: MouseEvent) {
   return ((e as any).path as Array<HTMLElement>).some(s => {
-    if (s instanceof HTMLElement)
-      return s.classList.contains(HOVER_BORDER_SKIP);
+    if (s instanceof HTMLElement) return s.id == HOVER_BORDER_SKIP;
 
     return false;
   });
+}
+
+export function getEditorContainer(doc: Document) {
+  return doc.getElementById(HOVER_BORDER_SKIP)!;
 }
 
 export function* getAllElement(parentEl: HTMLElement, containSelf = false) {
@@ -46,18 +49,14 @@ export function* getAllNode(parentNode: Node, containSelf = false) {
   yield* getChildren(parentNode);
 }
 
-export function containDynamicContent(el: HTMLElement) {
-  for (const k in OBJECT_TYPE) {
-    if (k == OBJECT_TYPE.url) continue;
-    if (OBJECT_TYPE.hasOwnProperty(k)) {
-      const i = OBJECT_TYPE[k as keyof typeof OBJECT_TYPE];
-      if (el.innerHTML.toLowerCase().indexOf(`objecttype='${i}'`) > -1)
-        return true;
-    }
-  }
-  return false;
-}
-
 export function isBody(el: HTMLElement) {
   return el.tagName.toLowerCase() == "body";
+}
+
+export function isImg(el: HTMLElement) {
+  return el.tagName.toLowerCase() == "img";
+}
+
+export function isLink(el: HTMLElement) {
+  return el.tagName.toLowerCase() == "a";
 }

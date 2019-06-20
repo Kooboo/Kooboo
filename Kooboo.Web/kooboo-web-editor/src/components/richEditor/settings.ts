@@ -1,6 +1,6 @@
 import { Settings, Editor } from "tinymce";
-import context from "../../context";
-import { pickImg, pickLink } from "../../common/OutsideInterfaces";
+import context from "../../common/context";
+import { pickImg, pickLink } from "../../common/outsideInterfaces";
 import {
   setLang,
   save_oncancelcallback,

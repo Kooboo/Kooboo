@@ -1,13 +1,13 @@
 import {
   SelectedDomEventArgs,
   SelectedDomEvent
-} from "./events/SelectedDomEvent";
-import { TinymceInputEvent } from "./events/TinymceEvent";
-import { OperationEvent } from "./events/OperationEvent";
-import { EditableEvent } from "./events/EditableEvent";
-import { OperationManager } from "./models/OperationManager";
-import { FloatMenuClickEvent } from "./events/FloatMenuClickEvent";
-import { HoverDomEvent, HoverDomEventArgs } from "./events/HoverDomEvent";
+} from "../events/SelectedDomEvent";
+import { TinymceInputEvent } from "../events/TinymceEvent";
+import { OperationEvent } from "../events/OperationEvent";
+import { EditableEvent } from "../events/EditableEvent";
+import { OperationManager } from "../models/OperationManager";
+import { FloatMenuClickEvent } from "../events/FloatMenuClickEvent";
+import { HoverDomEvent, HoverDomEventArgs } from "../events/HoverDomEvent";
 
 class Context {
   private _editing: boolean = false;
@@ -20,9 +20,9 @@ class Context {
   }
 
   operationManager: OperationManager = new OperationManager();
-  lastSelectedDomEventArgs: SelectedDomEventArgs | undefined;
-  lastHoverDomEventArgs: HoverDomEventArgs | undefined;
-  lastMouseEventArg: MouseEvent | undefined;
+  lastSelectedDomEventArgs!: SelectedDomEventArgs;
+  lastHoverDomEventArgs!: HoverDomEventArgs;
+  lastMouseEventArg!: MouseEvent;
 
   domChangeEvent: SelectedDomEvent = new SelectedDomEvent();
   editableEvent: EditableEvent = new EditableEvent();

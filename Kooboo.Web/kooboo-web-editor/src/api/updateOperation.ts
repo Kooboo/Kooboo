@@ -1,6 +1,6 @@
 import qs from "query-string";
+import { OperationLogItem, OperationLog } from "@/models/OperationLog";
 import request from "./request";
-import { OperationLogItem, OperationLog } from "../models/OperationLog";
 
 export default async (operationLogItems: Array<OperationLogItem>) => {
   let parsed = qs.parse(parent.location.search);

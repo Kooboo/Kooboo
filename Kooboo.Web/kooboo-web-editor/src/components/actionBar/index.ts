@@ -4,6 +4,7 @@ import { createMoveButton } from "./moveButton";
 import { createPreviousButton } from "./previousButton";
 import { createNextButton } from "./nextButton";
 import { createSaveButton } from "./saveButton";
+import { getEditorContainer } from "../../dom/utils";
 
 export function createActionBar(document: Document) {
   let container = createContainer(document);
@@ -14,5 +15,5 @@ export function createActionBar(document: Document) {
   container.appendChild(createNextButton(document));
   container.appendChild(createBlank(document));
   container.appendChild(createSaveButton(document));
-  document.body.appendChild(container);
+  getEditorContainer(document).appendChild(container);
 }

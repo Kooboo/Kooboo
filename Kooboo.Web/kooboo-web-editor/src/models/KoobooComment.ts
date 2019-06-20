@@ -1,13 +1,11 @@
 export class KoobooComment {
   private _infos!: string[];
-  private _comment!: string;
 
   /**
    * dom kooboo info
    */
   constructor(comment: string | null) {
     if (comment) {
-      this._comment = comment;
       this._infos = comment.split("--").map(m => m.replace(/'/g, ""));
     }
   }

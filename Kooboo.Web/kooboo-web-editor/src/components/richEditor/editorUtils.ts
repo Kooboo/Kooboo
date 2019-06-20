@@ -4,13 +4,15 @@ import {
   KOOBOO_GUID,
   ACTION_TYPE,
   EMPTY_COMMENT
-} from "../../constants";
-import { lang } from "../../lang";
-import context from "../../context";
+} from "../../common/constants";
+import { lang } from "../../common/lang";
+import context from "../../common/context";
 import { markDirty, setGuid } from "../../common/koobooInfo";
 import { Operation } from "../../models/Operation";
-import { getAllElement } from "../../common/dom";
+import { getAllElement, getMaxHeight } from "../../dom/utils";
 import { delay } from "../../common/utils";
+import { getEditComment } from "../floatMenu/utils";
+import moveIcon from "@/assets/icons/drag-move--fill.svg";
 
 export async function impoveEditorUI(editor: Editor) {
   let container = editor.getContainer();
@@ -20,18 +22,29 @@ export async function impoveEditorUI(editor: Editor) {
     if (container.nextElementSibling instanceof HTMLElement) {
       container.nextElementSibling.style.zIndex = STANDARD_Z_INDEX + 2 + "";
     }
-    var el = editor.getElement();
-    let rect = el.getBoundingClientRect();
-    if (rect.top < 40) {
-      (container as HTMLElement).style.top = rect.height + 20 + "px";
-    }
+    let toolbar = container
+      .getElementsByClassName("tox-toolbar")
+      .item(0) as HTMLElement;
+    var moveBtn = document.createElement("img");
+    moveBtn.draggable = true;
+    moveBtn.style.cursor = "move";
+    moveBtn.src = moveIcon;
+    moveBtn.style.height = "28px";
+    moveBtn.style.margin = "4px";
+    toolbar.insertBefore(moveBtn, toolbar.children.item(0));
+    container.draggable = true;
+    container.ondrag = e => {
+      if (e.x == 0 || e.y == 0) return;
+      (container as HTMLElement).style.top = e.y - 15 + "px";
+      (container as HTMLElement).style.left = e.x - 15 + "px";
+    };
   }
 }
 
 export function setLang(settings: Settings) {
   if (lang == "zh") {
     settings.language = "zh_CN";
-    settings.language_url = `_Admin\\Scripts\\kooboo-web-editor\\dist\\${
+    settings.language_url = `_Admin\\Scripts\\kooboo-web-editor\\${
       settings.language
     }.js`;
   }
@@ -50,9 +63,10 @@ export function save_onsavecallback(e: Editor) {
   let element = e.getElement() as HTMLElement;
   e.remove();
   if (startContent != element.innerHTML) {
-    markDirty(element, true);
-
+    let dirtyEl = args.closeParent ? args.closeParent : element;
+    markDirty(dirtyEl, true);
     let koobooId = args.parentKoobooId ? args.parentKoobooId : args.koobooId;
+
     let commit = args.closeParent
       ? args.closeParent.innerHTML
       : element.innerHTML;
@@ -63,7 +77,7 @@ export function save_onsavecallback(e: Editor) {
       element.getAttribute(KOOBOO_GUID)!,
       startContent,
       element.innerHTML,
-      args.editableComment!,
+      getEditComment(args.koobooComments)!,
       koobooId,
       ACTION_TYPE.update,
       commit

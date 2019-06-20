@@ -1,4 +1,4 @@
-import { getAllElement } from "../../src/common/dom";
+import { getAllElement } from "../../src/dom/utils";
 
 describe("domAnalyze", () => {
   test("getAllElement", () => {

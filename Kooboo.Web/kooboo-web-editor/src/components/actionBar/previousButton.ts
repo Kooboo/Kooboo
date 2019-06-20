@@ -2,7 +2,7 @@ import { createButton } from "./button";
 import preIcon from "../../assets/icons/shangyibu.svg";
 import preEnableIcon from "../../assets/icons/shangyibu_enable.svg";
 import { createNotice } from "./Notice";
-import context from "../../context";
+import context from "../../common/context";
 
 export function createPreviousButton(document: Document) {
   var preBtn = createButton(document, preIcon);

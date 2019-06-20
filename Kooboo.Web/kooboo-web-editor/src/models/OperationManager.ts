@@ -1,9 +1,9 @@
 import { Operation } from "./Operation";
-import context from "../context";
+import context from "../common/context";
 import { OperationEventArgs } from "../events/OperationEvent";
 import { cleanKoobooInfo } from "../common/koobooInfo";
 import { OperationLogItem } from "./OperationLog";
-import { OBJECT_TYPE } from "../constants";
+import { OBJECT_TYPE } from "../common/constants";
 export class OperationManager {
   readonly operations: Array<Operation> = [];
   readonly backupOperations: Array<Operation> = [];

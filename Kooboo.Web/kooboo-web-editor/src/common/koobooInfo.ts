@@ -1,7 +1,7 @@
-import { getAllNode, containDynamicContent, getAllElement } from "./dom";
+import { getAllNode, getAllElement } from "../dom/utils";
 import { KoobooComment } from "../models/KoobooComment";
 import { KoobooId } from "../models/KoobooId";
-import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID } from "../constants";
+import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID, OBJECT_TYPE } from "./constants";
 
 export function cleanKoobooInfo(domString: string) {
   let el = document.createElement("div");
@@ -45,7 +45,7 @@ export function getKoobooInfo(el: HTMLElement) {
       comments.length == 0 &&
       node instanceof HTMLElement &&
       !node.hasAttribute(KOOBOO_DIRTY) &&
-      !containDynamicContent(node)
+      !isDynamicContent(node)
     ) {
       parentKoobooId = node.getAttribute(KOOBOO_ID);
       if (parentKoobooId) closeParent = node;
@@ -151,4 +151,16 @@ export function setGuid(el: HTMLElement) {
   if (!el.hasAttribute(KOOBOO_GUID)) {
     el.setAttribute(KOOBOO_GUID, Math.random().toString());
   }
+}
+
+export function isDynamicContent(el: HTMLElement) {
+  for (const k in OBJECT_TYPE) {
+    if (k == OBJECT_TYPE.url) continue;
+    if (OBJECT_TYPE.hasOwnProperty(k)) {
+      const i = OBJECT_TYPE[k as keyof typeof OBJECT_TYPE];
+      if (el.innerHTML.toLowerCase().indexOf(`objecttype='${i}'`) > -1)
+        return true;
+    }
+  }
+  return false;
 }

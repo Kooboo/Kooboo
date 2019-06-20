@@ -1,4 +1,4 @@
-import { HOVER_BORDER_SKIP, STANDARD_Z_INDEX } from "../../constants";
+import { HOVER_BORDER_SKIP, STANDARD_Z_INDEX } from "../../common/constants";
 
 export function createContainer(document: Document) {
   let container = document.createElement("div");

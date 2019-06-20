@@ -1,24 +1,23 @@
-import context from "../../context";
-import { EditorShade } from "./EditorShade";
+import context from "../../common/context";
+import { createShade } from "./shade";
 
-let editorShade: EditorShade;
-
-export function registerEditorShade(document: Document) {
-  if (editorShade) return;
-  editorShade = new EditorShade(document);
+export function createEditorShade() {
+  let { el, hidden, updatePosition } = createShade();
 
   context.editableEvent.addEventListener(display => {
     if (!context.lastSelectedDomEventArgs) return;
 
     if (display) {
-      editorShade.updateSource(context.lastSelectedDomEventArgs.element);
+      updatePosition(context.lastSelectedDomEventArgs.element);
     } else {
-      editorShade.clear();
+      hidden();
     }
   });
 
   context.tinymceInputEvent.addEventListener(() => {
     if (!context.lastSelectedDomEventArgs) return;
-    editorShade.updateSource(context.lastSelectedDomEventArgs.element);
+    updatePosition(context.lastSelectedDomEventArgs.element);
   });
+
+  return el;
 }

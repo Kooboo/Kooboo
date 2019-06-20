@@ -1,13 +1,17 @@
-import registerHoverBorder from "./components/selectorBorder";
-import { registerEditorShade } from "./components/editorShade";
-import { createActionBar } from "./components/floatActionBar";
+import { createActionBar } from "./components/actionBar";
 import { registerInlineEditor } from "./components/richEditor";
-import { registerMenu } from "./components/floatMenu";
-import { registerDomSelector } from "./components/domSelector";
+import { createFloatMenu } from "./components/floatMenu";
+import { createHoverBorder } from "./components/selectorBorder";
+import { createContainer } from "./components/container";
+import { listenDomEvents } from "./dom/listeners";
+import { createEditorShade } from "./components/editorShade";
+
+listenDomEvents();
+
+const container = createContainer();
+container.appendChild(createHoverBorder());
+container.appendChild(createFloatMenu());
+container.appendChild(createEditorShade());
 
 createActionBar(document);
-registerDomSelector(document);
-registerHoverBorder(document);
-registerEditorShade(document);
 registerInlineEditor();
-registerMenu(document);

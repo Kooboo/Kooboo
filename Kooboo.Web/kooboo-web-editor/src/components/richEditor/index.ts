@@ -1,4 +1,4 @@
-import context from "../../context";
+import context from "../../common/context";
 import { setInlineEditor, setImgEditor } from "./tinymce";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
 import { delay } from "../../common/utils";

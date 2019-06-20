@@ -1,32 +1,28 @@
-import context from "../../context";
-import { FloatMenu } from "./FloatMenu";
+import context from "../../common/context";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
 import { getKoobooInfo, getCloseElement } from "../../common/koobooInfo";
 import { SelectedDomEventArgs } from "../../events/SelectedDomEvent";
 import { HoverDomEventArgs } from "../../events/HoverDomEvent";
 import { delay } from "../../common/utils";
+import { createMenu } from "./menu";
 
-let floatMenu: FloatMenu;
-
-export function registerMenu(document: Document) {
-  if (floatMenu) return;
-  floatMenu = new FloatMenu(document);
-
+export function createFloatMenu() {
+  const menu = createMenu();
   context.domChangeEvent.addEventListener(e => {
-    floatMenu.update(
+    menu.update(
       context.lastMouseEventArg!.pageX,
       context.lastMouseEventArg!.pageY
     );
   });
 
-  context.hoverDomEvent.addEventListener(() => floatMenu.clear());
+  context.hoverDomEvent.addEventListener(() => menu.hidden());
 
   context.floatMenuClickEvent.addEventListener(async e => {
     if (e == MenuActions.close) {
-      floatMenu.clear();
+      menu.hidden();
     } else if (e != MenuActions.expand) {
       await delay(100);
-      floatMenu.clear();
+      menu.hidden();
     }
   });
 
@@ -52,4 +48,6 @@ export function registerMenu(document: Document) {
     );
     context.domChangeEvent.emit(args);
   });
+
+  return menu.el;
 }

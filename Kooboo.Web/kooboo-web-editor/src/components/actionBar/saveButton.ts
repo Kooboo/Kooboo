@@ -1,10 +1,10 @@
 import saveIcon from "../../assets/icons/baocun.svg";
 import saveEnableIcon from "../../assets/icons/baocun_enable.svg";
 import { createButton } from "./button";
-import context from "../../context";
+import context from "../../common/context";
 import { OperationLogItem } from "../../models/OperationLog";
 import updateOperation from "../../api/updateOperation";
-import { OBJECT_TYPE } from "../../constants";
+import { OBJECT_TYPE } from "../../common/constants";
 import { cleanKoobooInfo } from "../../common/koobooInfo";
 
 export function createSaveButton(document: Document) {

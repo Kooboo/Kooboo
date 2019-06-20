@@ -1,6 +1,6 @@
 import { Operation } from "../../src/models/Operation";
 import { KoobooComment } from "../../src/models/KoobooComment";
-import { ACTION_TYPE } from "../../src/constants";
+import { ACTION_TYPE } from "../../src/common/constants";
 
 describe("operation", () => {
   let dom = document.createElement("div");

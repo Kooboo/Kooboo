@@ -9,7 +9,10 @@ export default {
   watch: process.env.NODE_ENV == "development",
   mode: process.env.NODE_ENV,
   resolve: {
-    extensions: [".ts", ".tsx", ".js"]
+    extensions: [".ts", ".tsx", ".js"],
+    alias: {
+      "@": path.resolve(__dirname, "./src")
+    }
   },
   module: {
     rules: [

@@ -1,6 +1,6 @@
 import { KoobooComment } from "./koobooComment";
-import { getAllElement } from "../common/dom";
-import { KOOBOO_GUID } from "../constants";
+import { getAllElement } from "../dom/utils";
+import { KOOBOO_GUID } from "../common/constants";
 
 export class Operation {
   constructor(

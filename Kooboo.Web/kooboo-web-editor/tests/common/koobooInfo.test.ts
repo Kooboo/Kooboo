@@ -1,5 +1,5 @@
 import { getKoobooInfo, cleanKoobooInfo } from "../../src/common/koobooInfo";
-import { KOOBOO_ID } from "../../src/constants";
+import { KOOBOO_ID } from "../../src/common/constants";
 
 describe("domAnalyze", () => {
   test("getKoobooInfo", () => {

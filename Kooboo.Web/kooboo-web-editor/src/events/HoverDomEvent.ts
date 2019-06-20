@@ -1,11 +1,8 @@
 import { BaseEvent } from "./BaseEvent";
-import context from "../context";
+import context from "../common/context";
 
 export class HoverDomEventArgs {
-  constructor(
-    public element: HTMLElement,
-    public closeElement: HTMLElement | undefined
-  ) {}
+  constructor(public element: HTMLElement, public closeElement: HTMLElement) {}
 }
 
 export class HoverDomEvent extends BaseEvent<HoverDomEventArgs> {
