@@ -29,7 +29,7 @@ export function createEditHtmlBlockItem(): MenuItem {
   el.addEventListener("click", e => {
     let args = context.lastSelectedDomEventArgs;
     let nameorid = args.koobooComments[0].nameorid;
-    editHtmlBlock(nameorid!, () => true);
+    editHtmlBlock(nameorid!, result => console.log(result));
   });
 
   return { el, update };

@@ -5,8 +5,9 @@ export function createContainer() {
   let win = createWindow();
   el.appendChild(win);
   applyStyle(el.style);
-  el.ontouchmove = e => e.stopPropagation();
-  return { el, win };
+  let result: [HTMLElement, (el: HTMLElement) => void];
+  result = [el, (e: HTMLElement) => win.appendChild(e)];
+  return result;
 }
 
 function applyStyle(style: CSSStyleDeclaration) {

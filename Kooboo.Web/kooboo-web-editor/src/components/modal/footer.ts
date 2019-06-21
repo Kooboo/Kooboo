@@ -1,6 +1,6 @@
 import { TEXT } from "@/common/lang";
 
-export function createFooter(okAction: () => void, cancelAction: () => void) {
+export function createFooter() {
   let el = document.createElement("div");
   el.style.borderTop = "1px solid #ccc";
   el.style.padding = "16px";
@@ -12,12 +12,18 @@ export function createFooter(okAction: () => void, cancelAction: () => void) {
   let ok = createButton(TEXT.OK);
   ok.style.backgroundColor = "#207ab7";
   ok.style.color = "#fff";
-  ok.onclick = okAction;
   let cancel = createButton(TEXT.CANCEL);
-  cancel.onclick = cancelAction;
   el.appendChild(ok);
   el.appendChild(cancel);
-  return el;
+
+  const setOkHandler = (handler: () => void) => (ok.onclick = handler);
+  const setCancelHandler = (handler: () => void) => (cancel.onclick = handler);
+
+  return [el, setOkHandler, setCancelHandler] as [
+    HTMLElement,
+    typeof setOkHandler,
+    typeof setCancelHandler
+  ];
 }
 
 function createButton(text: string) {

@@ -3,6 +3,7 @@ import { createIframe } from "@/dom/utils";
 const Kooboo = (document as any).Kooboo;
 const mediaDialogData = (document as any).mediaDialogData;
 const parentBody = (document as any).parentBody as HTMLBodyElement;
+const gl = (document as any).__gl;
 
 export function pickImg(callBack: (path: string) => void) {
   Kooboo.Media.getList().then(function(res: any) {
@@ -31,15 +32,15 @@ export function pickLink(callBack: (path: string) => void, oldValue: string) {
   }
 }
 
-export function editHtmlBlock(nameOrId: string, save: () => {}) {
+export function editHtmlBlock(
+  nameOrId: string,
+  saveCallback: (result: string) => void
+) {
   let url = Kooboo.Route.Get(Kooboo.Route.HtmlBlock.DialogPage, {
     nameOrId: nameOrId
   });
-
+  gl.saveHtmlblockFinish = saveCallback;
   let iframe = createIframe(url);
-  let modal = createModal({
-    body: iframe,
-    title: "编辑html"
-  });
+  let modal = createModal("编辑html", iframe.outerHTML);
   parentBody.appendChild(modal);
 }
