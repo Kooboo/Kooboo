@@ -10,7 +10,6 @@
     <script src="/_Admin/Scripts/Kooboo.BrowserInfo.js"></script>
     <script src="/_Admin/Scripts/lib/knockout.min.js"></script>
     <script src="/_Admin/Scripts/kooboo/text.js"></script>
-    <script src="/_Admin/Scripts/inlineEditor/kooboobase.js"></script>
     <link href="/_Admin/Styles/styles.css" rel="stylesheet" />
     <link href="/_Admin/Styles/custom.css" rel="stylesheet" />
 
@@ -127,6 +126,7 @@
     iframe.onload = function() {
       iframe.contentDocument.Kooboo=Kooboo;
       iframe.contentDocument.mediaDialogData=mediaDialogData;
+      iframe.contentDocument.parentBody=document.body;
       iframe.contentDocument.body.appendChild(script);
       $(".page-loading").hide();
       ko.applyBindings({mediaDialogData}, document.getElementById("main"));

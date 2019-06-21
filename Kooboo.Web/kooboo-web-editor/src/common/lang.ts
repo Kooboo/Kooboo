@@ -9,7 +9,10 @@ const en = {
   DELETE: "delete",
   EDIT_IMAGE: "edit image",
   EDIT_LINK: "edit link",
-  JUMP_LINK: "jump link"
+  JUMP_LINK: "jump link",
+  EDIT_HTML_BLOCK: "edit html blick",
+  OK: "ok",
+  CANCEL: "cancel"
 };
 
 const zh = {
@@ -19,7 +22,10 @@ const zh = {
   DELETE: "删除",
   EDIT_IMAGE: "编辑图片",
   EDIT_LINK: "编辑链接",
-  JUMP_LINK: "跳转链接"
+  JUMP_LINK: "跳转链接",
+  EDIT_HTML_BLOCK: "编辑HTML代码块",
+  CANCEL: "取消",
+  OK: "确定"
 } as typeof en;
 
 var langPackages = { en, zh };

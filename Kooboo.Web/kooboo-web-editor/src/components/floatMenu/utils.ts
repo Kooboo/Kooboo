@@ -30,4 +30,4 @@ export const isInForm = (comments: KoobooComment[]) =>
   isObjectType(comments, OBJECT_TYPE.form);
 
 export const isHtmlBlock = (comments: KoobooComment[]) =>
-  isObjectType(comments, OBJECT_TYPE.menu);
+  isObjectType(comments, OBJECT_TYPE.htmlblock);

@@ -1,10 +1,11 @@
-import { createContainer } from "./basic";
+import { createContainer, MenuItem } from "./basic";
 import { createCopyItem } from "./items/copy";
 import { createDeleteItem } from "./items/delete";
 import { createEditItem } from "./items/edit";
 import { createEditImageItem } from "./items/editImage";
 import { createEditLinkItem } from "./items/editLink";
 import { createJumpLinkItem } from "./items/jumpLink";
+import { createEditHtmlBlockItem } from "./items/editHtmlBlock";
 
 export function createMenu() {
   const container = createContainer();
@@ -14,8 +15,9 @@ export function createMenu() {
     createDeleteItem(),
     createEditImageItem(),
     createEditLinkItem(),
-    createJumpLinkItem()
-  ];
+    createJumpLinkItem(),
+    createEditHtmlBlockItem()
+  ] as MenuItem[];
 
   for (const i of items) {
     container.el.appendChild(i.el);
