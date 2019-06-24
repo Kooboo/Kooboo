@@ -12,6 +12,7 @@ import { Operation } from "@/models/Operation";
 import { KOOBOO_GUID, ACTION_TYPE } from "@/common/constants";
 import { isLink } from "@/dom/utils";
 import { getEditComment } from "../utils";
+import { createLinkPicker } from "@/components/linkPicker";
 
 export function createEditLinkItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_LINK, MenuActions.editLink);
@@ -28,24 +29,25 @@ export function createEditLinkItem(): MenuItem {
   };
 
   el.addEventListener("click", e => {
-    let args = context.lastSelectedDomEventArgs;
-    if (!args.closeParent) return false;
-    setGuid(args.closeParent);
-    let startContent = args.closeParent.innerHTML;
-    let href = args.element.getAttribute("href")!;
-    pickLink(url => {
-      args!.element.setAttribute("href", url);
-      let operation = new Operation(
-        args.closeParent!.getAttribute(KOOBOO_GUID)!,
-        startContent,
-        args.closeParent!.innerHTML,
-        getEditComment(args.koobooComments)!,
-        args!.parentKoobooId,
-        ACTION_TYPE.update,
-        cleanKoobooInfo(args!.closeParent!.innerHTML)
-      );
-      context.operationManager.add(operation);
-    }, href);
+    createLinkPicker();
+    // let args = context.lastSelectedDomEventArgs;
+    // if (!args.closeParent) return false;
+    // setGuid(args.closeParent);
+    // let startContent = args.closeParent.innerHTML;
+    // let href = args.element.getAttribute("href")!;
+    // pickLink(url => {
+    //   args!.element.setAttribute("href", url);
+    //   let operation = new Operation(
+    //     args.closeParent!.getAttribute(KOOBOO_GUID)!,
+    //     startContent,
+    //     args.closeParent!.innerHTML,
+    //     getEditComment(args.koobooComments)!,
+    //     args!.parentKoobooId,
+    //     ACTION_TYPE.update,
+    //     cleanKoobooInfo(args!.closeParent!.innerHTML)
+    //   );
+    //   context.operationManager.add(operation);
+    // }, href);
   });
 
   return { el, update };

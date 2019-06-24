@@ -3,12 +3,17 @@ import { createHeader } from "./header";
 import { createFooter } from "./footer";
 import { createBody } from "./body";
 
-export function createModal(title: string, content: string, width?: string) {
+export function createModal(
+  title: string,
+  content: string,
+  width?: string,
+  height?: string
+) {
   document.body.style.overflow = "hidden";
   const [body, setBodyContent] = createBody();
   const { footer, ok, cancel } = createFooter();
   setBodyContent(content);
-  let [container, addContainerItem] = createContainer(width);
+  let [container, addContainerItem] = createContainer(width, height);
   const recovery = () => {
     document.body.style.overflow = "auto";
     container.parentElement!.removeChild(container);
@@ -20,7 +25,7 @@ export function createModal(title: string, content: string, width?: string) {
   addContainerItem(footer);
 
   return {
-    container,
+    modal: container,
     setOkHandler: (h: () => Promise<void>) => {
       ok.onclick = async () => {
         await h();

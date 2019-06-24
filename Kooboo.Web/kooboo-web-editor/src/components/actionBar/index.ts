@@ -15,5 +15,5 @@ export function createActionBar(document: Document) {
   container.appendChild(createNextButton(document));
   container.appendChild(createBlank(document));
   container.appendChild(createSaveButton(document));
-  getEditorContainer(document).appendChild(container);
+  getEditorContainer().appendChild(container);
 }

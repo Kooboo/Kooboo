@@ -41,7 +41,7 @@ export function editHtmlBlock(
     nameOrId: nameOrId
   });
   let iframe = createIframe(url);
-  const { container: modal, setOkHandler } = createModal(
+  const { modal, setOkHandler } = createModal(
     TEXT.EDIT_HTML_BLOCK,
     iframe.outerHTML
   );

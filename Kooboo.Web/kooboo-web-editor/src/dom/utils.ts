@@ -21,8 +21,8 @@ export function isInEditorContainer(e: MouseEvent) {
   });
 }
 
-export function getEditorContainer(doc: Document) {
-  return doc.getElementById(HOVER_BORDER_SKIP)!;
+export function getEditorContainer() {
+  return document.getElementById(HOVER_BORDER_SKIP)!;
 }
 
 export function* getAllElement(parentEl: HTMLElement, containSelf = false) {
