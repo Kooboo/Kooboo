@@ -3,19 +3,35 @@ import { createHeader } from "./header";
 import { createFooter } from "./footer";
 import { createBody } from "./body";
 
-export function createModal(title: string, content: string) {
+export function createModal(title: string, content: string, width?: string) {
   document.body.style.overflow = "hidden";
   const [body, setBodyContent] = createBody();
-  const [footer, setOkHandler, setCancelHandler] = createFooter();
+  const { footer, ok, cancel } = createFooter();
   setBodyContent(content);
-  let [container, addContainerItem] = createContainer();
+  let [container, addContainerItem] = createContainer(width);
   const recovery = () => {
     document.body.style.overflow = "auto";
     container.parentElement!.removeChild(container);
   };
+  ok.onclick = recovery;
+  cancel.onclick = recovery;
   addContainerItem(createHeader(title));
   addContainerItem(body);
   addContainerItem(footer);
 
-  return container;
+  return {
+    container,
+    setOkHandler: (h: () => Promise<void>) => {
+      ok.onclick = async () => {
+        await h();
+        recovery();
+      };
+    },
+    setCancelHandler: async (h: () => Promise<void>) => {
+      cancel.onclick = async () => {
+        await h();
+        recovery();
+      };
+    }
+  };
 }

@@ -1,5 +1,6 @@
 import { createModal } from "@/components/modal";
 import { createIframe } from "@/dom/utils";
+import { TEXT } from "./lang";
 const Kooboo = (document as any).Kooboo;
 const mediaDialogData = (document as any).mediaDialogData;
 const parentBody = (document as any).parentBody as HTMLBodyElement;
@@ -39,8 +40,21 @@ export function editHtmlBlock(
   let url = Kooboo.Route.Get(Kooboo.Route.HtmlBlock.DialogPage, {
     nameOrId: nameOrId
   });
-  gl.saveHtmlblockFinish = saveCallback;
   let iframe = createIframe(url);
-  let modal = createModal("编辑html", iframe.outerHTML);
+  const { container: modal, setOkHandler } = createModal(
+    TEXT.EDIT_HTML_BLOCK,
+    iframe.outerHTML
+  );
+  setOkHandler(
+    () =>
+      new Promise((rs, rj) => {
+        gl.saveHtmlblockFinish = (content: string) => {
+          saveCallback(content);
+          rs();
+        };
+        gl.saveHtmlblock();
+      })
+  );
+
   parentBody.appendChild(modal);
 }

@@ -16,7 +16,7 @@ export function createEditItem(): MenuItem {
     if (isInForm(args.koobooComments)) visiable = false;
     if (isHtmlBlock(args.koobooComments)) visiable = false;
     if (!getEditComment(args.koobooComments)) visiable = false;
-    var reExcept = /^img|button|input|textarea|br$/i;
+    var reExcept = /^img|button|input|textarea|br|hr$/i;
     let el = args.element;
     if (reExcept.test(el.tagName)) visiable = false;
     if (isDynamicContent(args.element)) visiable = false;

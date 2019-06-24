@@ -16,14 +16,7 @@ export function createFooter() {
   el.appendChild(ok);
   el.appendChild(cancel);
 
-  const setOkHandler = (handler: () => void) => (ok.onclick = handler);
-  const setCancelHandler = (handler: () => void) => (cancel.onclick = handler);
-
-  return [el, setOkHandler, setCancelHandler] as [
-    HTMLElement,
-    typeof setOkHandler,
-    typeof setCancelHandler
-  ];
+  return { footer: el, ok, cancel };
 }
 
 function createButton(text: string) {
