@@ -12,7 +12,9 @@ const en = {
   JUMP_LINK: "jump link",
   EDIT_HTML_BLOCK: "edit html blick",
   OK: "ok",
-  CANCEL: "cancel"
+  CANCEL: "cancel",
+  PAGE_LINK: "page link",
+  OUT_LINK: " out lint"
 };
 
 const zh = {
@@ -25,7 +27,9 @@ const zh = {
   JUMP_LINK: "跳转链接",
   EDIT_HTML_BLOCK: "编辑HTML代码块",
   CANCEL: "取消",
-  OK: "确定"
+  OK: "确定",
+  PAGE_LINK: "页面链接",
+  OUT_LINK: "外部链接"
 } as typeof en;
 
 var langPackages = { en, zh };

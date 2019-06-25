@@ -19,6 +19,7 @@ function applyStyle(style: CSSStyleDeclaration) {
   style.bottom = "0px";
   style.left = "0px";
   style.right = "0px";
+  style.overflowY = "auto";
   style.zIndex = STANDARD_Z_INDEX + 4 + "";
 }
 
@@ -34,13 +35,7 @@ function applyWindowStyle(style: CSSStyleDeclaration) {
   style.borderRadius = "3px";
   style.boxShadow = "0 0 10px 1px rgba(34,47,62,.15)";
   style.width = "60%";
-  style.maxHeight = "60%";
-  style.position = "absolute";
-  style.margin = "auto";
-  style.top = "0px";
-  style.bottom = "0px";
-  style.left = "0px";
-  style.right = "0px";
+  style.position = "relative";
   style.padding = "16px";
-  style.overflowY = "hidden";
+  style.margin = "30px auto";
 }

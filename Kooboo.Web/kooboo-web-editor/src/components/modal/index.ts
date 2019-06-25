@@ -5,7 +5,7 @@ import { createBody } from "./body";
 
 export function createModal(
   title: string,
-  content: string,
+  content: string | HTMLElement,
   width?: string,
   height?: string
 ) {

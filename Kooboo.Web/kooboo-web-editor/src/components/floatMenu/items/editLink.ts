@@ -28,26 +28,24 @@ export function createEditLinkItem(): MenuItem {
     setVisiable(visiable);
   };
 
-  el.addEventListener("click", e => {
-    createLinkPicker();
-    // let args = context.lastSelectedDomEventArgs;
-    // if (!args.closeParent) return false;
-    // setGuid(args.closeParent);
-    // let startContent = args.closeParent.innerHTML;
-    // let href = args.element.getAttribute("href")!;
-    // pickLink(url => {
-    //   args!.element.setAttribute("href", url);
-    //   let operation = new Operation(
-    //     args.closeParent!.getAttribute(KOOBOO_GUID)!,
-    //     startContent,
-    //     args.closeParent!.innerHTML,
-    //     getEditComment(args.koobooComments)!,
-    //     args!.parentKoobooId,
-    //     ACTION_TYPE.update,
-    //     cleanKoobooInfo(args!.closeParent!.innerHTML)
-    //   );
-    //   context.operationManager.add(operation);
-    // }, href);
+  el.addEventListener("click", async () => {
+    let args = context.lastSelectedDomEventArgs;
+    if (!args.closeParent) return false;
+    setGuid(args.closeParent);
+    let startContent = args.closeParent.innerHTML;
+    let href = args.element.getAttribute("href")!;
+    let url = await createLinkPicker(href);
+    args!.element.setAttribute("href", url);
+    let operation = new Operation(
+      args.closeParent!.getAttribute(KOOBOO_GUID)!,
+      startContent,
+      args.closeParent!.innerHTML,
+      getEditComment(args.koobooComments)!,
+      args!.parentKoobooId,
+      ACTION_TYPE.update,
+      cleanKoobooInfo(args!.closeParent!.innerHTML)
+    );
+    context.operationManager.add(operation);
   });
 
   return { el, update };

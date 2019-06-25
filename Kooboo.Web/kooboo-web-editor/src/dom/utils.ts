@@ -65,12 +65,3 @@ export function canJump(el: HTMLElement) {
   let href = el.getAttribute("href");
   return el.tagName.toLowerCase() == "a" && href && !href.startsWith("#");
 }
-
-export function createIframe(url: string) {
-  let el = document.createElement("iframe");
-  el.style.width = "100%";
-  el.style.height = "100%";
-  el.style.border = "none";
-  el.src = url;
-  return el;
-}

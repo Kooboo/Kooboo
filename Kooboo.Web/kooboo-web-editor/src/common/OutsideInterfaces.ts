@@ -1,6 +1,6 @@
 import { createModal } from "@/components/modal";
-import { createIframe } from "@/dom/utils";
 import { TEXT } from "./lang";
+import { createIframe } from "@/dom/Iframe";
 const Kooboo = (document as any).Kooboo;
 const mediaDialogData = (document as any).mediaDialogData;
 const parentBody = (document as any).parentBody as HTMLBodyElement;
@@ -41,6 +41,7 @@ export function editHtmlBlock(
     nameOrId: nameOrId
   });
   let iframe = createIframe(url);
+  iframe.style.height = "600px";
   const { modal, setOkHandler } = createModal(
     TEXT.EDIT_HTML_BLOCK,
     iframe.outerHTML
@@ -57,4 +58,12 @@ export function editHtmlBlock(
   );
 
   parentBody.appendChild(modal);
+}
+
+export async function getPageUrls() {
+  return new Promise<string[]>((rs, rj) => {
+    Kooboo.Link.SyncAll().then((data: any) => {
+      rs(data.model.pages.map((m: any) => m.url));
+    });
+  });
 }
