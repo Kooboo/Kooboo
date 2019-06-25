@@ -65,3 +65,7 @@ export function canJump(el: HTMLElement) {
   let href = el.getAttribute("href");
   return el.tagName.toLowerCase() == "a" && href && !href.startsWith("#");
 }
+
+export function reload() {
+  parent.location.reload();
+}

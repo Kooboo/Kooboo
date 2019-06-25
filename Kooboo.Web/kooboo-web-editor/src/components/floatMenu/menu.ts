@@ -6,6 +6,7 @@ import { createEditImageItem } from "./items/editImage";
 import { createEditLinkItem } from "./items/editLink";
 import { createJumpLinkItem } from "./items/jumpLink";
 import { createEditHtmlBlockItem } from "./items/editHtmlBlock";
+import { createEditRepeatItem } from "./items/editRepeat";
 
 export function createMenu() {
   const container = createContainer();
@@ -16,7 +17,8 @@ export function createMenu() {
     createEditImageItem(),
     createEditLinkItem(),
     createJumpLinkItem(),
-    createEditHtmlBlockItem()
+    createEditHtmlBlockItem(),
+    createEditRepeatItem()
   ] as MenuItem[];
 
   for (const i of items) {

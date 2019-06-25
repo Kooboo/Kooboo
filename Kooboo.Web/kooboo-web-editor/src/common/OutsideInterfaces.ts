@@ -33,31 +33,50 @@ export function pickLink(callBack: (path: string) => void, oldValue: string) {
   }
 }
 
-export function editHtmlBlock(
-  nameOrId: string,
-  saveCallback: (result: string) => void
-) {
+export async function editHtmlBlock(nameOrId: string) {
   let url = Kooboo.Route.Get(Kooboo.Route.HtmlBlock.DialogPage, {
     nameOrId: nameOrId
   });
   let iframe = createIframe(url);
   iframe.style.height = "600px";
-  const { modal, setOkHandler } = createModal(
+  const { modal, setOkHandler, close } = createModal(
     TEXT.EDIT_HTML_BLOCK,
     iframe.outerHTML
   );
-  setOkHandler(
-    () =>
-      new Promise((rs, rj) => {
-        gl.saveHtmlblockFinish = (content: string) => {
-          saveCallback(content);
-          rs();
-        };
-        gl.saveHtmlblock();
-      })
-  );
-
   parentBody.appendChild(modal);
+  return new Promise<string>(rs => {
+    setOkHandler(async () => {
+      gl.saveHtmlblockFinish = (content: string) => {
+        rs(content);
+        close();
+      };
+      gl.saveHtmlblock();
+    });
+  });
+}
+
+export function editRepeat(nameOrId: string, folderId: string) {
+  let url = Kooboo.Route.Get(Kooboo.Route.TextContent.DialogPage, {
+    id: nameOrId,
+    folder: folderId
+  });
+
+  let iframe = createIframe(url);
+  iframe.style.height = "600px";
+  const { modal, setOkHandler, close } = createModal(
+    TEXT.EDIT_REPEAT,
+    iframe.outerHTML
+  );
+  parentBody.appendChild(modal);
+  return new Promise<any>(rs => {
+    setOkHandler(() => {
+      gl.saveContentFinish = (content: any) => {
+        rs(content);
+        close();
+      };
+      gl.saveContent();
+    });
+  });
 }
 
 export async function getPageUrls() {

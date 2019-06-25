@@ -26,17 +26,8 @@ export function createModal(
 
   return {
     modal: container,
-    setOkHandler: (h: () => Promise<void>) => {
-      ok.onclick = async () => {
-        await h();
-        recovery();
-      };
-    },
-    setCancelHandler: async (h: () => Promise<void>) => {
-      cancel.onclick = async () => {
-        await h();
-        recovery();
-      };
-    }
+    setOkHandler: (h: () => void) => (ok.onclick = h),
+    setCancelHandler: (h: () => void) => (cancel.onclick = h),
+    close: recovery
   };
 }

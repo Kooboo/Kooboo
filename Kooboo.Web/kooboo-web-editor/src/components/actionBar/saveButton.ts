@@ -6,6 +6,7 @@ import { OperationLogItem } from "../../models/OperationLog";
 import updateOperation from "../../api/updateOperation";
 import { OBJECT_TYPE } from "../../common/constants";
 import { cleanKoobooInfo } from "../../common/koobooInfo";
+import { reload } from "@/dom/utils";
 
 export function createSaveButton(document: Document) {
   var saveBtn = createButton(document, saveIcon);
@@ -16,7 +17,7 @@ export function createSaveButton(document: Document) {
     let logs = context.operationManager.operationLogs;
     if (logs.length == 0) return;
     await updateOperation(logs);
-    parent.location.reload();
+    reload();
   };
   return saveBtn;
 }

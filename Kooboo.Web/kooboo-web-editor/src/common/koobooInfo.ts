@@ -58,9 +58,13 @@ export function getKoobooInfo(el: HTMLElement) {
       node.nodeValue.startsWith("#kooboo")
     ) {
       let comment = new KoobooComment(node.nodeValue);
+
+      if (comment.end) {
+        node = node.parentElement;
+        continue;
+      }
+
       if (comment.objecttype != "Url") comments.push(comment);
-      node = node.parentElement;
-      continue;
     }
 
     if (!node.previousSibling || node.previousSibling instanceof HTMLElement) {

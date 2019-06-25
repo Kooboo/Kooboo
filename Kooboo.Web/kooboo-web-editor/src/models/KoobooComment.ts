@@ -39,6 +39,10 @@ export class KoobooComment {
     return this.getValue("attributename");
   }
 
+  get end() {
+    return this.getValue("end");
+  }
+
   private getValue(key: string) {
     var item = this._infos.find(f => f.startsWith(key));
     if (item && item.indexOf("=") != -1) {

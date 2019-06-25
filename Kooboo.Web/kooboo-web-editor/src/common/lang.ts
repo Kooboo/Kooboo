@@ -14,7 +14,8 @@ const en = {
   OK: "ok",
   CANCEL: "cancel",
   PAGE_LINK: "page link",
-  OUT_LINK: " out lint"
+  OUT_LINK: " out lint",
+  EDIT_REPEAT: "edit repeat item"
 };
 
 const zh = {
@@ -29,7 +30,8 @@ const zh = {
   CANCEL: "取消",
   OK: "确定",
   PAGE_LINK: "页面链接",
-  OUT_LINK: "外部链接"
+  OUT_LINK: "外部链接",
+  EDIT_REPEAT: "编辑项目"
 } as typeof en;
 
 var langPackages = { en, zh };
