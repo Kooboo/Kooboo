@@ -18,21 +18,6 @@ export function pickImg(callBack: (path: string) => void) {
   });
 }
 
-export function pickLink(callBack: (path: string) => void, oldValue: string) {
-  Kooboo.plugins.EditLink.dialogSetting.beforeSave = function() {
-    var url = Kooboo.plugins.EditLink.getLinkUrl();
-    if (callBack) {
-      callBack(url);
-    }
-  };
-  Kooboo.PluginManager.click(Kooboo.plugins.EditLink, {});
-  if (oldValue) {
-    Kooboo.plugins.EditLink.setLinkUrl(oldValue);
-  } else {
-    Kooboo.plugins.EditLink.setLinkUrl("");
-  }
-}
-
 export async function editHtmlBlock(nameOrId: string) {
   let url = Kooboo.Route.Get(Kooboo.Route.HtmlBlock.DialogPage, {
     nameOrId: nameOrId

@@ -1,7 +1,7 @@
 import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
 import { getEditorContainer } from "@/dom/utils";
-import { createTabs } from "../../dom/tabs";
+import { createTabs } from "./tabs";
 import { createOutLinkPanel } from "./outLinkPanel";
 import { createPageLinkPanel } from "./pageLinkPanel";
 
@@ -32,19 +32,20 @@ export async function createLinkPicker(oldValue: string) {
       getContent: getOutLinkContent
     }
   ];
-  console.log(oldValue);
   setContent(oldValue);
   el.appendChild(createTabs(options));
   let container = getEditorContainer();
-  let { modal, setOkHandler } = createModal(TEXT.EDIT_LINK, el, "400px");
+  let { modal, setOkHandler, close } = createModal(TEXT.EDIT_LINK, el, "400px");
   container.appendChild(modal);
 
-  return new Promise<string>(rs => {
+  return new Promise<string>((rs, rj) => {
     setOkHandler(async () => {
+      let result = "";
       let option = options.find(f => f.selected);
-      if (option) {
-        rs(option.getContent());
-      } else rs("");
+      if (option) result = option.getContent();
+      if (result && result != oldValue) rs(result);
+      else rj();
+      close();
     });
   });
 }

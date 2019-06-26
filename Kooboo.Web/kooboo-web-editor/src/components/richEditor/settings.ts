@@ -1,6 +1,6 @@
 import { Settings, Editor } from "tinymce";
 import context from "../../common/context";
-import { pickImg, pickLink } from "../../common/outsideInterfaces";
+import { pickImg } from "../../common/outsideInterfaces";
 import {
   setLang,
   save_oncancelcallback,
@@ -12,6 +12,7 @@ import {
   onBeforeSetContent,
   getToolbar
 } from "./utils";
+import { createLinkPicker } from "../linkPicker";
 
 export function createSettings(selector: HTMLElement) {
   const settings = {
@@ -46,15 +47,16 @@ export function createSettings(selector: HTMLElement) {
       editor.on("KeyDown", onKeyDown);
       editor.on("BeforeSetContent", onBeforeSetContent);
     },
-    file_picker_callback(callback, value, meta: any) {
+    async file_picker_callback(callback, value, meta: any) {
       if (meta.filetype == "image") {
         pickImg(path => {
           callback(path, {});
         });
       } else {
-        pickLink(url => {
-          callback(url, {});
-        }, value);
+        try {
+          let newValue = await createLinkPicker(value);
+          callback(newValue, {});
+        } catch (error) {}
       }
     }
   } as Settings;

@@ -7,7 +7,6 @@ import {
   cleanKoobooInfo,
   isDynamicContent
 } from "@/common/koobooInfo";
-import { pickLink } from "@/common/outsideInterfaces";
 import { Operation } from "@/models/Operation";
 import { KOOBOO_GUID, ACTION_TYPE } from "@/common/constants";
 import { isLink } from "@/dom/utils";
@@ -34,18 +33,21 @@ export function createEditLinkItem(): MenuItem {
     setGuid(args.closeParent);
     let startContent = args.closeParent.innerHTML;
     let href = args.element.getAttribute("href")!;
-    let url = await createLinkPicker(href);
-    args!.element.setAttribute("href", url);
-    let operation = new Operation(
-      args.closeParent!.getAttribute(KOOBOO_GUID)!,
-      startContent,
-      args.closeParent!.innerHTML,
-      getEditComment(args.koobooComments)!,
-      args!.parentKoobooId,
-      ACTION_TYPE.update,
-      cleanKoobooInfo(args!.closeParent!.innerHTML)
-    );
-    context.operationManager.add(operation);
+
+    try {
+      let url = await createLinkPicker(href);
+      args!.element.setAttribute("href", url);
+      let operation = new Operation(
+        args.closeParent!.getAttribute(KOOBOO_GUID)!,
+        startContent,
+        args.closeParent!.innerHTML,
+        getEditComment(args.koobooComments)!,
+        args!.parentKoobooId,
+        ACTION_TYPE.update,
+        cleanKoobooInfo(args!.closeParent!.innerHTML)
+      );
+      context.operationManager.add(operation);
+    } catch (error) {}
   });
 
   return { el, update };
