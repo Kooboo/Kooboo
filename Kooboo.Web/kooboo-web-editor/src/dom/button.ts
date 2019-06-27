@@ -5,7 +5,7 @@ export function createButton(text: string) {
   el.style.borderRadius = "3px";
   el.style.fontSize = "14px";
   el.style.lineHeight = "24px";
-  el.style.marginLeft = "8px";
+  el.style.margin = "4px";
   el.style.padding = "4px 16px";
   el.style.outline = "none";
   el.style.backgroundColor = "#f0f0f0";

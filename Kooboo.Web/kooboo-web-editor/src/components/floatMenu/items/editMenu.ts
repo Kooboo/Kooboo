@@ -21,7 +21,6 @@ export function createEditMenuItem() {
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
     let comment = getMenu(args.koobooComments)!;
-    console.log(args.element);
     editMenu(comment.nameorid!, c => {
       let aa = document.createElement("div");
       aa.innerHTML = c;

@@ -17,7 +17,11 @@ const en = {
   OUT_LINK: " out lint",
   EDIT_REPEAT: "edit repeat item",
   EDIT_MENU: "edit menu",
-  EDIT_STYLE: "edit style"
+  EDIT_STYLE: "edit style",
+  ALT: "alt",
+  TITLE: "title",
+  WIDTH: "width",
+  HEIGHT: "height"
 };
 
 const zh = {
@@ -35,7 +39,11 @@ const zh = {
   OUT_LINK: "外部链接",
   EDIT_REPEAT: "编辑项目",
   EDIT_MENU: "编辑菜单",
-  EDIT_STYLE: "编辑样式"
+  EDIT_STYLE: "编辑样式",
+  ALT: "替代文本",
+  HEIGHT: "高度",
+  TITLE: "标题",
+  WIDTH: "宽度"
 } as typeof en;
 
 var langPackages = { en, zh };

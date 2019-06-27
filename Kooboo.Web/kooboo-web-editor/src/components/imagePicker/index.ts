@@ -8,7 +8,7 @@ import { pickImg } from "@/common/outsideInterfaces";
 export function createImagePicker(img: HTMLImageElement) {
   let container = document.createElement("div");
   let { imagePreview, setImage } = createImgPreview();
-  imagePreview.style.margin = "16px auto";
+  imagePreview.style.margin = "0 auto 16px auto";
   imagePreview.style.cursor = "pointer";
   setImage(img.src);
   imagePreview.onclick = () => {
@@ -19,15 +19,15 @@ export function createImagePicker(img: HTMLImageElement) {
   };
   container.appendChild(imagePreview);
 
-  let alt = createLabelInput("替代文本", 80, 320);
+  let alt = createLabelInput(TEXT.ALT, 80, 320);
   alt.setContent(img.alt);
   container.appendChild(alt.input);
 
-  let title = createLabelInput("标题", 80, 320);
+  let title = createLabelInput(TEXT.TITLE, 80, 320);
   title.setContent(img.title);
   container.appendChild(title.input);
 
-  let width = createLabelInput("宽度", 80, 120);
+  let width = createLabelInput(TEXT.WIDTH, 80, 120);
   width.setInputHandler(e => {
     if (e.target instanceof HTMLInputElement) {
       let value = Number(e.target.value);
@@ -37,7 +37,7 @@ export function createImagePicker(img: HTMLImageElement) {
   width.setContent(img.width + "");
   container.appendChild(width.input);
 
-  let height = createLabelInput("高度", 80, 120);
+  let height = createLabelInput(TEXT.HEIGHT, 80, 120);
   height.setInputHandler(e => {
     if (e.target instanceof HTMLInputElement) {
       let value = Number(e.target.value);

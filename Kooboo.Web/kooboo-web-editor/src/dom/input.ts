@@ -19,6 +19,7 @@ export function createLabelInput(
   let label = createLabel(text);
   let input = createInput();
   label.style.textAlign = "right";
+  label.style.margin = "5px 0";
   if (labelWidth != undefined) label.style.width = labelWidth + "px";
   if (inputWidth != undefined) input.style.width = inputWidth + "px";
   label.style.display = "inline-block";
