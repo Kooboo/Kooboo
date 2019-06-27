@@ -1,7 +1,8 @@
 export function createBody() {
   let el = document.createElement("div");
-  el.style.padding = "20px 0";
+  el.style.margin = "0 20px";
   el.style.maxHeight = "80%";
+
   type setContent = (content: string | HTMLElement) => void;
   let result: [HTMLElement, setContent] = [
     el,

@@ -10,24 +10,28 @@ export function createModal(
   height?: string
 ) {
   document.body.style.overflow = "hidden";
+  let { shade, win } = createContainer(width, height);
   const [body, setBodyContent] = createBody();
   const { footer, ok, cancel } = createFooter();
+  const header = createHeader(title, win);
   setBodyContent(content);
-  let [container, addContainerItem] = createContainer(width, height);
+
   const recovery = () => {
     document.body.style.overflow = "auto";
-    container.parentElement!.removeChild(container);
+    shade.parentElement!.removeChild(shade);
   };
+
   ok.onclick = recovery;
   cancel.onclick = recovery;
-  addContainerItem(createHeader(title));
-  addContainerItem(body);
-  addContainerItem(footer);
+  win.appendChild(header);
+  win.appendChild(body);
+  win.appendChild(footer);
 
   return {
-    modal: container,
+    modal: shade,
     setOkHandler: (h: () => void) => (ok.onclick = h),
     setCancelHandler: (h: () => void) => (cancel.onclick = h),
-    close: recovery
+    close: recovery,
+    hideCancel: () => (cancel.hidden = true)
   };
 }

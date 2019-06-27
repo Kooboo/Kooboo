@@ -1,4 +1,4 @@
-export function createHeader(title: string) {
+export function createHeader(title: string, parent: HTMLElement) {
   var el = document.createElement("div");
   el.innerText = title;
   applyStyle(el.style);
@@ -6,9 +6,9 @@ export function createHeader(title: string) {
 }
 
 function applyStyle(style: CSSStyleDeclaration) {
-  style.fontFamily = `BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif`;
   style.fontSize = "20px";
   style.fontWeight = "400";
   style.lineHeight = "1.3";
   style.fontStyle = "normal";
+  style.padding = "20px 20px";
 }

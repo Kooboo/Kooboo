@@ -3,7 +3,7 @@ import "tinymce/themes/silver";
 import "tinymce/plugins/save";
 import "tinymce/plugins/link";
 import "tinymce/plugins/image";
-import { createSettings, createImgSettings } from "./settings";
+import { createSettings } from "./settings";
 import { impoveEditorUI } from "./utils";
 
 async function createEditor(settings: Settings) {
@@ -18,18 +18,4 @@ async function createEditor(settings: Settings) {
 export async function setInlineEditor(selector: HTMLElement) {
   let settings = createSettings(selector);
   await createEditor(settings);
-}
-
-export async function setImgEditor(selector: HTMLElement) {
-  (selector as any)._display = selector.style.display;
-  selector.style.display = "block";
-
-  let settings = createImgSettings(selector);
-  let editor = await createEditor(settings);
-  (editor as any)._onremove = () => {
-    if ((selector as any)._display != undefined) {
-      selector.style.display = (selector as any)._display;
-      (selector as any)._display = undefined;
-    }
-  };
 }

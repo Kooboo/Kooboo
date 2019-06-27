@@ -4,8 +4,15 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
 import { getEditComment } from "../utils";
-import { isDynamicContent } from "@/common/koobooInfo";
-
+import {
+  isDynamicContent,
+  setGuid,
+  markDirty,
+  cleanKoobooInfo
+} from "@/common/koobooInfo";
+import { createImagePicker } from "@/components/imagePicker";
+import { Operation } from "@/models/Operation";
+import { KOOBOO_GUID, ACTION_TYPE } from "@/common/constants";
 export function createEditImageItem(): MenuItem {
   const { el, setVisiable } = createItem(
     TEXT.EDIT_IMAGE,
@@ -21,8 +28,28 @@ export function createEditImageItem(): MenuItem {
     setVisiable(visiable);
   };
 
-  el.addEventListener("click", e => {
-    context.floatMenuClickEvent.emit(MenuActions.expand);
+  el.addEventListener("click", async () => {
+    let args = context.lastSelectedDomEventArgs;
+    if (!args.closeParent) return false;
+    setGuid(args.closeParent);
+    let startContent = args.closeParent.innerHTML;
+    try {
+      await createImagePicker(args.element as HTMLImageElement);
+      markDirty(args.closeParent);
+      var endContent = args.closeParent!.innerHTML;
+      let operation = new Operation(
+        args.closeParent.getAttribute(KOOBOO_GUID)!,
+        startContent,
+        endContent,
+        getEditComment(args.koobooComments)!,
+        args.parentKoobooId,
+        ACTION_TYPE.update,
+        cleanKoobooInfo(args.closeParent!.innerHTML)
+      );
+      context.operationManager.add(operation);
+    } catch (error) {
+      args.closeParent.innerHTML = startContent;
+    }
   });
 
   return { el, update };

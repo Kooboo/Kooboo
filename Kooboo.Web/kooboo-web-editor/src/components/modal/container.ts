@@ -7,9 +7,10 @@ export function createContainer(width?: string, height?: string) {
   if (height != undefined) win.style.height = height;
   el.appendChild(win);
   applyStyle(el.style);
-  let result: [HTMLElement, (el: HTMLElement) => void];
-  result = [el, (e: HTMLElement) => win.appendChild(e)];
-  return result;
+  return {
+    shade: el,
+    win
+  };
 }
 
 function applyStyle(style: CSSStyleDeclaration) {
@@ -36,6 +37,5 @@ function applyWindowStyle(style: CSSStyleDeclaration) {
   style.boxShadow = "0 0 10px 1px rgba(34,47,62,.15)";
   style.width = "60%";
   style.position = "relative";
-  style.padding = "16px";
   style.margin = "30px auto";
 }

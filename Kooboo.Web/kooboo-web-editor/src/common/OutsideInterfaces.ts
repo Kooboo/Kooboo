@@ -64,6 +64,21 @@ export function editRepeat(nameOrId: string, folderId: string) {
   });
 }
 
+export function editMenu(
+  nameOrId: string,
+  callback: (content: string) => void
+) {
+  var url = Kooboo.Route.Get(Kooboo.Route.Menu.DialogPage, {
+    nameOrId: nameOrId
+  });
+  let iframe = createIframe(url);
+  iframe.style.height = "600px";
+  const { modal, hideCancel } = createModal(TEXT.EDIT_MENU, iframe.outerHTML);
+  hideCancel();
+  gl.saveMenuFinish = callback;
+  parentBody.appendChild(modal);
+}
+
 export async function getPageUrls() {
   return new Promise<string[]>((rs, rj) => {
     Kooboo.Link.SyncAll().then((data: any) => {

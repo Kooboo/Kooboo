@@ -68,11 +68,3 @@ export function createSettings(selector: HTMLElement) {
   (settings as any).save_onsavecallback = save_onsavecallback;
   return settings;
 }
-
-export function createImgSettings(selector: HTMLElement) {
-  let setting = createSettings(selector);
-  setting.plugins = ["save", "image"];
-  setting.toolbar = "save cancel | image";
-
-  return setting;
-}

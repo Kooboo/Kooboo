@@ -3,7 +3,7 @@ export function createButton(text: string) {
   el.innerText = text;
   el.style.fontWeight = "700";
   el.style.borderRadius = "3px";
-  el.style.fontSize = "16px";
+  el.style.fontSize = "14px";
   el.style.lineHeight = "24px";
   el.style.marginLeft = "8px";
   el.style.padding = "4px 16px";

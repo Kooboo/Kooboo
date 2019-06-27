@@ -10,15 +10,14 @@ export function createJumpLinkItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.JUMP_LINK, MenuActions.jumpLink);
 
   const update = () => {
-    let args = context.lastSelectedDomEventArgs;
+    let args = context.lastHoverDomEventArgs;
     let visiable = true;
     if (!canJump(args.element)) visiable = false;
     setVisiable(visiable);
   };
 
   el.addEventListener("click", e => {
-    let args = context.lastSelectedDomEventArgs;
-    let url = args.element.getAttribute("href")!;
+    let url = context.lastHoverDomEventArgs.element.getAttribute("href")!;
     let pageId = getPageId();
     let parsed = qs.parse(parent.location.search);
     let query = {
