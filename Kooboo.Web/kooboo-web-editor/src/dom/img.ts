@@ -7,8 +7,14 @@ export function createImgPreview() {
   el.style.backgroundPosition = "center";
   el.style.backgroundRepeat = "no-repeat";
   el.style.backgroundSize = "contain";
+
+  const setImage = (src: string) => {
+    if (src.indexOf("url(") > -1) el.style.backgroundImage = src;
+    else el.style.backgroundImage = `url('${src}')`;
+  };
+
   return {
     imagePreview: el,
-    setImage: (src: string) => (el.style.backgroundImage = `url('${src}')`)
+    setImage
   };
 }

@@ -1,6 +1,19 @@
 export function createHeader(title: string, parent: HTMLElement) {
   var el = document.createElement("div");
   el.innerText = title;
+  el.style.cursor = "move";
+  el.draggable = true;
+  let temp: { x: number; y: number };
+  el.ondragstart = (e: DragEvent) => {
+    let rect = parent.getBoundingClientRect();
+    temp = { x: e.x - rect.left, y: e.y - rect.top };
+  };
+
+  el.ondrag = e => {
+    if (e.x == 0 || e.y == 0) return;
+    parent.style.marginLeft = e.x - temp.x + "px";
+    parent.style.marginTop = e.y - temp.y + "px";
+  };
   applyStyle(el.style);
   return el;
 }

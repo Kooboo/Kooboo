@@ -9,7 +9,13 @@ export function createModal(
   width?: string,
   height?: string
 ) {
-  document.body.style.overflow = "hidden";
+  let style = document.createElement("style");
+  // style.innerHTML = `
+  // body,html{
+  //   overflow: hidden;
+  // }
+  // `;
+  document.head.appendChild(style);
   let { shade, win } = createContainer(width, height);
   const [body, setBodyContent] = createBody();
   const { footer, ok, cancel } = createFooter();
@@ -17,7 +23,7 @@ export function createModal(
   setBodyContent(content);
 
   const recovery = () => {
-    document.body.style.overflow = "auto";
+    // document.head.removeChild(style);
     shade.parentElement!.removeChild(shade);
   };
 

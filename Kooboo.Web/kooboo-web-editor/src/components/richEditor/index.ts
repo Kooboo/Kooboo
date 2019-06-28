@@ -1,7 +1,6 @@
 import context from "../../common/context";
 import { setInlineEditor } from "./tinymce";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
-import { delay } from "../../common/utils";
 
 export function registerInlineEditor() {
   context.floatMenuClickEvent.addEventListener(e => {

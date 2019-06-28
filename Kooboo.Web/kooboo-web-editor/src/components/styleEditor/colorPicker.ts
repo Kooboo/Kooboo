@@ -36,7 +36,6 @@ export function createColorPicker(text: string, old: string, onsave: ononsave) {
       }
     });
     pickr.on("init", (e: any) => {
-      console.log(e);
       let app = e._root.app as HTMLElement;
       let root = e._root.root as HTMLElement;
       let button = e._root.button as HTMLElement;

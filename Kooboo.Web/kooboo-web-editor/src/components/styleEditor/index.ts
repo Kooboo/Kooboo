@@ -6,12 +6,14 @@ import { createImgPreview } from "@/dom/img";
 import { createButton } from "@/dom/button";
 import { createColorPicker } from "./colorPicker";
 import { createLabelInput } from "@/dom/input";
+import { pickImg } from "@/common/outsideInterfaces";
 
 export function createStyleEditor(el: HTMLElement) {
   const container = document.createElement("div");
   addImg(container, el);
   addColor(container, el);
   addFont(container, el);
+
   const { modal, setOkHandler, setCancelHandler, close } = createModal(
     TEXT.EDIT_STYLE,
     container,
@@ -19,6 +21,17 @@ export function createStyleEditor(el: HTMLElement) {
   );
 
   getEditorContainer().appendChild(modal);
+
+  return new Promise<void>((rs, rj) => {
+    setOkHandler(() => {
+      rs();
+      close();
+    });
+    setCancelHandler(() => {
+      rj();
+      close();
+    });
+  });
 }
 
 function addImg(container: HTMLElement, el: HTMLElement) {
@@ -29,10 +42,22 @@ function addImg(container: HTMLElement, el: HTMLElement) {
   imagePreview.style.marginLeft = "auto";
   imagePreview.style.marginRight = "auto";
   container.appendChild(imagePreview);
-  const pickImg = createButton("选择图片");
-  const removeImg = createButton("移除");
-  container.appendChild(pickImg);
-  container.appendChild(removeImg);
+  let style = getComputedStyle(el);
+  if (style.backgroundImage) setImage(style.backgroundImage);
+  const pickImgButton = createButton("选择图片");
+  const removeImgButton = createButton("移除");
+  pickImgButton.onclick = () => {
+    pickImg(path => {
+      el.style.backgroundImage = `url(${path})`;
+      setImage(path);
+    });
+  };
+  removeImgButton.onclick = () => {
+    el.style.backgroundImage = "";
+    setImage("");
+  };
+  container.appendChild(pickImgButton);
+  container.appendChild(removeImgButton);
 }
 
 function addColor(container: HTMLElement, el: HTMLElement) {
@@ -55,10 +80,23 @@ function addColor(container: HTMLElement, el: HTMLElement) {
 
 function addFont(container: HTMLElement, el: HTMLElement) {
   container.appendChild(createSpliter("字体"));
+  let style = getComputedStyle(el);
   let size = createLabelInput("字体大小", 80, 120);
+  size.setContent(style.fontSize!);
+  size.setInputHandler(content => {
+    el.style.fontSize = (content.target! as HTMLInputElement).value;
+  });
   container.appendChild(size.input);
   let weight = createLabelInput("字体重量", 80, 120);
+  weight.setContent(style.fontWeight!);
+  weight.setInputHandler(content => {
+    el.style.fontWeight = (content.target! as HTMLInputElement).value;
+  });
   container.appendChild(weight.input);
   let family = createLabelInput("字体风格", 80, 320);
+  family.setContent(style.fontFamily!);
+  family.setInputHandler(content => {
+    el.style.fontFamily = (content.target! as HTMLInputElement).value;
+  });
   container.appendChild(family.input);
 }
