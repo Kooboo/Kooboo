@@ -1,7 +1,7 @@
 import { getPageUrls } from "@/common/outsideInterfaces";
 import { createRadioInput } from "@/dom/input";
 
-export async function createPageLinkPanel() {
+export async function createPageLinkPanel(oldValue: string) {
   let urls = await getPageUrls();
   let el = document.createElement("div");
   let selectedItem!: string;
@@ -12,6 +12,7 @@ export async function createPageLinkPanel() {
       i.setChecked(true);
       selectedItem = i.getContent();
     };
+    if (i.getContent() == oldValue) i.setChecked(true);
     el.appendChild(i.radio);
   });
   return {

@@ -41,6 +41,7 @@ export function createRadioInput(label: string) {
   let radio = document.createElement("input");
   radio.type = "radio";
   radio.style.margin = "0 5px";
+  radio.style.pointerEvents = "none";
   el.appendChild(radio);
   el.appendChild(document.createTextNode(label));
   el.style.width = "100%";

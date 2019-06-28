@@ -7,7 +7,7 @@ import {
   isDynamicContent
 } from "@/common/koobooInfo";
 import { Operation } from "@/models/Operation";
-import { KOOBOO_GUID, ACTION_TYPE } from "@/common/constants";
+import { KOOBOO_GUID, ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import { TEXT } from "@/common/lang";
 import { getEditComment } from "../utils";
@@ -45,7 +45,8 @@ export function createCopyItem(): MenuItem {
       args.koobooComments[0],
       args.parentKoobooId,
       ACTION_TYPE.update,
-      cleanKoobooInfo(args.closeParent!.innerHTML)
+      cleanKoobooInfo(args.closeParent!.innerHTML),
+      EDITOR_TYPE.dom
     );
     context.operationManager.add(operation);
   });

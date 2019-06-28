@@ -11,7 +11,7 @@ export const OBJECT_TYPE = {
   content: "content",
   contentrepeater: "contentrepeater",
   htmlblock: "htmlblock",
-  label: "label",
+  label: "Label",
   view: "view",
   menu: "menu",
   page: "page",
@@ -28,4 +28,14 @@ export const ACTION_TYPE = {
   update: "update",
   delete: "delete",
   copy: "copy"
+};
+
+export const EDITOR_TYPE = {
+  dom: "dom",
+  htmlblock: "htmlblock",
+  label: "label",
+  content: "content",
+  attribute: "attribute",
+  style: "style",
+  converter: "converter"
 };

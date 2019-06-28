@@ -7,14 +7,19 @@ import { editRepeat, editMenu } from "@/common/outsideInterfaces";
 import { reload } from "@/dom/utils";
 
 export function createEditMenuItem() {
-  const { el, setVisiable } = createItem(TEXT.EDIT_MENU, MenuActions.editMenu);
+  const { el, setVisiable, setReadonly } = createItem(
+    TEXT.EDIT_MENU,
+    MenuActions.editMenu
+  );
 
   const update = () => {
     let args = context.lastSelectedDomEventArgs;
     let visiable = true;
 
     if (!getMenu(args.koobooComments)) visiable = false;
-    if (hasOperation(context.operationManager)) visiable = false;
+    if (hasOperation(context.operationManager)) {
+      setReadonly();
+    }
     setVisiable(visiable);
   };
 

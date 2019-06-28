@@ -7,7 +7,7 @@ import { editRepeat } from "@/common/outsideInterfaces";
 import { reload } from "@/dom/utils";
 
 export function createEditRepeatItem() {
-  const { el, setVisiable } = createItem(
+  const { el, setVisiable, setReadonly } = createItem(
     TEXT.EDIT_REPEAT,
     MenuActions.editRepeat
   );
@@ -17,7 +17,7 @@ export function createEditRepeatItem() {
     let visiable = true;
 
     if (!getRepeat(args.koobooComments)) visiable = false;
-    if (hasOperation(context.operationManager)) visiable = false;
+    if (hasOperation(context.operationManager)) setReadonly();
     setVisiable(visiable);
   };
 

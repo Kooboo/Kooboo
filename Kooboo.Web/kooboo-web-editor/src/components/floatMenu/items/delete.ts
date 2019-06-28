@@ -2,7 +2,7 @@ import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { KOOBOO_GUID, ACTION_TYPE } from "@/common/constants";
+import { KOOBOO_GUID, ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import {
   setGuid,
@@ -54,7 +54,8 @@ const updateDom = (args: SelectedDomEventArgs) => {
     args.koobooComments[0],
     args.parentKoobooId,
     ACTION_TYPE.update,
-    cleanKoobooInfo(args.closeParent!.innerHTML)
+    cleanKoobooInfo(args.closeParent!.innerHTML),
+    EDITOR_TYPE.dom
   );
   context.operationManager.add(operation);
 };
@@ -72,7 +73,8 @@ const deleteDom = (args: SelectedDomEventArgs) => {
     getEditComment(args.koobooComments)!,
     args.koobooId,
     ACTION_TYPE.delete,
-    ""
+    "",
+    EDITOR_TYPE.dom
   );
   context.operationManager.add(operation);
 };

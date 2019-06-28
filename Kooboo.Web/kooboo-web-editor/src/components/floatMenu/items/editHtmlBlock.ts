@@ -7,7 +7,7 @@ import { editHtmlBlock } from "@/common/outsideInterfaces";
 import { reload } from "@/dom/utils";
 
 export function createEditHtmlBlockItem(): MenuItem {
-  const { el, setVisiable } = createItem(
+  const { el, setVisiable, setReadonly } = createItem(
     TEXT.EDIT_HTML_BLOCK,
     MenuActions.editHtmlBlock
   );
@@ -17,7 +17,9 @@ export function createEditHtmlBlockItem(): MenuItem {
     let visiable = true;
 
     if (!getHtmlBlock(args.koobooComments)) visiable = false;
-    if (hasOperation(context.operationManager)) visiable = false;
+    if (hasOperation(context.operationManager)) {
+      setReadonly();
+    }
 
     setVisiable(visiable);
   };
@@ -25,7 +27,7 @@ export function createEditHtmlBlockItem(): MenuItem {
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
     let nameorid = args.koobooComments[0].nameorid;
-    let result = await editHtmlBlock(nameorid!);
+    await editHtmlBlock(nameorid!);
     reload();
   });
 

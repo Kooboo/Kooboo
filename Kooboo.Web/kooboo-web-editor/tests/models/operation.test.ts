@@ -1,6 +1,6 @@
 import { Operation } from "../../src/models/Operation";
 import { KoobooComment } from "../../src/models/KoobooComment";
-import { ACTION_TYPE } from "../../src/common/constants";
+import { ACTION_TYPE, EDITOR_TYPE } from "../../src/common/constants";
 
 describe("operation", () => {
   let dom = document.createElement("div");
@@ -16,7 +16,8 @@ describe("operation", () => {
     ),
     "123",
     ACTION_TYPE.update,
-    ""
+    "",
+    EDITOR_TYPE.dom
   );
 
   test("undo", () => {

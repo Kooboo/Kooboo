@@ -3,7 +3,8 @@ import {
   STANDARD_Z_INDEX,
   KOOBOO_GUID,
   ACTION_TYPE,
-  EMPTY_COMMENT
+  EMPTY_COMMENT,
+  EDITOR_TYPE
 } from "../../common/constants";
 import { lang } from "../../common/lang";
 import context from "../../common/context";
@@ -82,7 +83,8 @@ export function save_onsavecallback(e: Editor) {
       getEditComment(args.koobooComments)!,
       koobooId,
       ACTION_TYPE.update,
-      commit
+      commit,
+      EDITOR_TYPE.dom
     );
     context.operationManager.add(operation);
   }

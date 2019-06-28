@@ -8,7 +8,7 @@ import {
   isDynamicContent
 } from "@/common/koobooInfo";
 import { Operation } from "@/models/Operation";
-import { KOOBOO_GUID, ACTION_TYPE } from "@/common/constants";
+import { KOOBOO_GUID, ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
 import { isLink } from "@/dom/utils";
 import { getEditComment } from "../utils";
 import { createLinkPicker } from "@/components/linkPicker";
@@ -44,7 +44,8 @@ export function createEditLinkItem(): MenuItem {
         getEditComment(args.koobooComments)!,
         args!.parentKoobooId,
         ACTION_TYPE.update,
-        cleanKoobooInfo(args!.closeParent!.innerHTML)
+        cleanKoobooInfo(args!.closeParent!.innerHTML),
+        EDITOR_TYPE.dom
       );
       context.operationManager.add(operation);
     } catch (error) {}

@@ -13,8 +13,7 @@ export function getEditComment(comments: KoobooComment[]) {
   ];
 
   for (const i of comments) {
-    if (i.objecttype && editTypes.some(s => s == i.objecttype!.toLowerCase()))
-      return i;
+    if (i.objecttype && editTypes.some(s => s == i.objecttype)) return i;
   }
 }
 

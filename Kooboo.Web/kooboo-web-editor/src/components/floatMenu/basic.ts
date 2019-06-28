@@ -12,20 +12,29 @@ export interface MenuItem {
 
 export function createItem(text: string, type: MenuActions) {
   let el = document.createElement("div");
+  let readonly = false;
   el.style.padding = "5px 10px";
   el.style.color = "#000";
   el.style.borderBottom = "1px solid #eee";
   el.style.cursor = "default";
-  el.innerHTML = text;
+  el.append(text);
   el.addEventListener("click", () => context.floatMenuClickEvent.emit(type));
 
   const setVisiable = (visiable: boolean) => {
     el.style.display = visiable ? "block" : "none";
   };
 
+  const setReadonly = () => {
+    if (readonly) return;
+    readonly = true;
+    el.style.color = "#ccc";
+    el.appendChild(createWarn());
+  };
+
   return {
     el,
-    setVisiable
+    setVisiable,
+    setReadonly
   };
 }
 
@@ -83,5 +92,26 @@ function createExpandButton() {
   el.style.cssFloat = "right";
   el.style.marginRight = "8px";
   el.onclick = () => context.floatMenuClickEvent.emit(MenuActions.expand);
+  return el;
+}
+
+function createWarn() {
+  let el = document.createElement("span");
+  el.innerText = "!";
+  el.style.width = "18px";
+  el.style.height = "18px";
+  el.style.color = "#fff";
+  el.style.backgroundColor = "rgba(252, 56, 56, 0.74)";
+  el.style.textAlign = "center";
+  el.style.fontSize = "15px";
+  el.style.fontWeight = "600";
+  el.style.lineHeight = "18px";
+  el.style.display = "inline-block";
+  el.style.borderRadius = "9px";
+  el.style.cssFloat = "right";
+  el.title = "请保存后再进行此操作";
+  el.onclick = e => {
+    e.stopPropagation();
+  };
   return el;
 }

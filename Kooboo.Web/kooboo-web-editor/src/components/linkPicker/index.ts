@@ -9,15 +9,15 @@ export async function createLinkPicker(oldValue: string) {
   let el = document.createElement("div");
 
   const {
+    pageLinkPanel,
+    getContent: getPageLinkContent
+  } = await createPageLinkPanel(oldValue);
+
+  const {
     outLinkPanel,
     getContent: getOutLinkContent,
     setContent
   } = createOutLinkPanel();
-
-  const {
-    pageLinkPanel,
-    getContent: getPageLinkContent
-  } = await createPageLinkPanel();
 
   const options = [
     {

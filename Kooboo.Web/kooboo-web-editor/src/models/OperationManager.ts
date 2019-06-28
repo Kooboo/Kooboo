@@ -3,7 +3,7 @@ import context from "../common/context";
 import { OperationEventArgs } from "../events/OperationEvent";
 import { cleanKoobooInfo } from "../common/koobooInfo";
 import { OperationLogItem } from "./OperationLog";
-import { OBJECT_TYPE } from "../common/constants";
+import { OBJECT_TYPE, EDITOR_TYPE } from "../common/constants";
 export class OperationManager {
   readonly operations: Array<Operation> = [];
   readonly backupOperations: Array<Operation> = [];
@@ -43,12 +43,15 @@ export class OperationManager {
 
   get operationLogs() {
     var logs = this.getMargedOperations().map(m => {
-      let types = [OBJECT_TYPE.label, OBJECT_TYPE.content];
+      let editorType = m.editorType;
       let objecttype = m.koobooComment.objecttype;
-      if (objecttype && types.some(s => s == objecttype!.toLowerCase())) {
-        objecttype = objecttype.toLowerCase();
-      } else {
-        objecttype = OBJECT_TYPE.dom;
+
+      if (objecttype && objecttype == OBJECT_TYPE.label) {
+        editorType = EDITOR_TYPE.label;
+      } else if (objecttype && objecttype == OBJECT_TYPE.content) {
+        editorType = EDITOR_TYPE.content;
+      } else if (objecttype && objecttype == OBJECT_TYPE.style) {
+        editorType = EDITOR_TYPE.attribute;
       }
 
       let nameOrId = m.koobooComment.nameorid
@@ -57,10 +60,10 @@ export class OperationManager {
 
       let log = new OperationLogItem();
       log.action = m.actionType;
-      log.editorType = objecttype;
+      log.editorType = editorType;
       log.koobooId = m.koobooId!;
       log.nameOrId = nameOrId!;
-      log.objectType = m.koobooComment.objecttype!;
+      log.objectType = objecttype!;
       log.value = cleanKoobooInfo(m.commit);
       log.fieldName = m.koobooComment.fieldname!;
       log.attributeName = m.koobooComment.attributename!;
