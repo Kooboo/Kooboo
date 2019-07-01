@@ -69,3 +69,37 @@ export function canJump(el: HTMLElement) {
 export function reload() {
   parent.location.reload();
 }
+
+export function* previousNodes(
+  node: Node,
+  containSelf = false,
+  includeParent = false
+) {
+  if (containSelf) yield node;
+
+  while (true) {
+    if (node.previousSibling) {
+      node = node.previousSibling;
+    } else if (includeParent && node.parentNode) {
+      node = node.parentNode;
+    } else break;
+    yield node;
+  }
+}
+
+export function* nextNodes(
+  node: Node,
+  containSelf = false,
+  includeParent = false
+) {
+  if (containSelf) yield node;
+
+  while (true) {
+    if (node.nextSibling) {
+      node = node.nextSibling;
+    } else if (includeParent && node.parentNode) {
+      node = node.parentNode;
+    } else break;
+    yield node;
+  }
+}

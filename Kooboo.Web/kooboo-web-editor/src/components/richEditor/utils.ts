@@ -8,7 +8,7 @@ import {
 } from "../../common/constants";
 import { lang } from "../../common/lang";
 import context from "../../common/context";
-import { markDirty, setGuid } from "../../common/koobooInfo";
+import { markDirty, setGuid } from "../../common/koobooUtils";
 import { Operation } from "../../models/Operation";
 import { getAllElement } from "../../dom/utils";
 import { delay } from "../../common/utils";

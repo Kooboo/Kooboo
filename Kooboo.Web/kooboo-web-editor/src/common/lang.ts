@@ -21,7 +21,10 @@ const en = {
   ALT: "alt",
   TITLE: "title",
   WIDTH: "width",
-  HEIGHT: "height"
+  HEIGHT: "height",
+  PLEASE_EDIT_AFTER_SAVE: "please edit after save",
+  COPY_REPEAT: "copy repeat item",
+  DELETE_REPEAR: "delete repeat item"
 };
 
 const zh = {
@@ -43,7 +46,10 @@ const zh = {
   ALT: "替代文本",
   HEIGHT: "高度",
   TITLE: "标题",
-  WIDTH: "宽度"
+  WIDTH: "宽度",
+  PLEASE_EDIT_AFTER_SAVE: "请保存后再编辑",
+  COPY_REPEAT: "复制项目",
+  DELETE_REPEAR: "删除项目"
 } as typeof en;
 
 var langPackages = { en, zh };

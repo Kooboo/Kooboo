@@ -12,7 +12,9 @@ export enum MenuActions {
   editHtmlBlock,
   editRepeat,
   editMenu,
-  editStyle
+  editStyle,
+  copyRepeat,
+  deleteRepeat
 }
 
 export class FloatMenuClickEvent extends BaseEvent<MenuActions> {}

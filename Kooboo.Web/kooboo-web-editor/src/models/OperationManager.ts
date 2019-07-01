@@ -1,7 +1,7 @@
 import { Operation } from "./Operation";
 import context from "../common/context";
 import { OperationEventArgs } from "../events/OperationEvent";
-import { cleanKoobooInfo } from "../common/koobooInfo";
+import { cleanKoobooInfo } from "../common/koobooUtils";
 import { OperationLogItem } from "./OperationLog";
 import { OBJECT_TYPE, EDITOR_TYPE } from "../common/constants";
 export class OperationManager {

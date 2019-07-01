@@ -109,7 +109,7 @@ function createWarn() {
   el.style.display = "inline-block";
   el.style.borderRadius = "9px";
   el.style.cssFloat = "right";
-  el.title = "请保存后再进行此操作";
+  el.title = TEXT.PLEASE_EDIT_AFTER_SAVE;
   el.onclick = e => {
     e.stopPropagation();
   };

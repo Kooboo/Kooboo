@@ -9,7 +9,7 @@ import {
   markDirty,
   cleanKoobooInfo,
   isDynamicContent
-} from "@/common/koobooInfo";
+} from "@/common/koobooUtils";
 import { Operation } from "@/models/Operation";
 import { getEditComment } from "../utils";
 import { isBody } from "@/dom/utils";

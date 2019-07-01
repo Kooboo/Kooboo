@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import { canJump } from "@/dom/utils";
 import context from "@/common/context";
-import { getPageId } from "@/common/koobooInfo";
+import { getPageId } from "@/common/koobooUtils";
 import qs from "query-string";
 
 export function createJumpLinkItem(): MenuItem {

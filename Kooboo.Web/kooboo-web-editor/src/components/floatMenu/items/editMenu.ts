@@ -5,6 +5,8 @@ import context from "@/common/context";
 import { hasOperation, getMenu } from "../utils";
 import { editRepeat, editMenu } from "@/common/outsideInterfaces";
 import { reload } from "@/dom/utils";
+import { getWrapDom } from "@/common/koobooUtils";
+import { OBJECT_TYPE } from "@/common/constants";
 
 export function createEditMenuItem() {
   const { el, setVisiable, setReadonly } = createItem(
@@ -15,24 +17,28 @@ export function createEditMenuItem() {
   const update = () => {
     let args = context.lastSelectedDomEventArgs;
     let visiable = true;
-
     if (!getMenu(args.koobooComments)) visiable = false;
-    if (hasOperation(context.operationManager)) {
-      setReadonly();
-    }
     setVisiable(visiable);
   };
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
     let comment = getMenu(args.koobooComments)!;
+    var { startNode, endNode } = getWrapDom(args.element, OBJECT_TYPE.menu);
+    if (!startNode || !endNode) return;
     editMenu(comment.nameorid!, c => {
-      let aa = document.createElement("div");
-      aa.innerHTML = c;
-      args.element.innerHTML = aa.children.item(0)!.innerHTML;
-    });
+      let temp = document.createElement("div");
 
-    // reload();
+      while (true) {
+        if (startNode!.nextSibling == endNode) {
+          startNode!.parentElement!.insertBefore(temp, endNode!);
+          break;
+        }
+        startNode!.parentElement!.removeChild(startNode!.nextSibling!);
+      }
+
+      temp.outerHTML = c;
+    });
   });
 
   return { el, update };

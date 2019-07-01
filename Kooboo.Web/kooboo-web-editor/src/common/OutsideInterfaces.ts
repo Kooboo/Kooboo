@@ -86,3 +86,7 @@ export async function getPageUrls() {
     });
   });
 }
+
+export function newGuid(): string {
+  return Kooboo.Guid.NewGuid();
+}

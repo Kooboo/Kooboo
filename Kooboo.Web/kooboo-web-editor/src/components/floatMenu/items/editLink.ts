@@ -6,7 +6,7 @@ import {
   setGuid,
   cleanKoobooInfo,
   isDynamicContent
-} from "@/common/koobooInfo";
+} from "@/common/koobooUtils";
 import { Operation } from "@/models/Operation";
 import { KOOBOO_GUID, ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
 import { isLink } from "@/dom/utils";

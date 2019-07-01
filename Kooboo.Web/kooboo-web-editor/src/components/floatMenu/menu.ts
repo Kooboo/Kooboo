@@ -9,6 +9,8 @@ import { createEditHtmlBlockItem } from "./items/editHtmlBlock";
 import { createEditRepeatItem } from "./items/editRepeat";
 import { createEditMenuItem } from "./items/editMenu";
 import { createEditStyleItem } from "./items/editStyle";
+import { createCopyRepeatItem } from "./items/copyRepeat";
+import { createDeleteRepeatItem } from "./items/deleteRepeat";
 
 export function createMenu() {
   const container = createContainer();
@@ -21,6 +23,8 @@ export function createMenu() {
     createJumpLinkItem(),
     createEditHtmlBlockItem(),
     createEditRepeatItem(),
+    createCopyRepeatItem(),
+    createDeleteRepeatItem(),
     createEditMenuItem(),
     createEditStyleItem()
   ] as MenuItem[];

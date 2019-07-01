@@ -5,7 +5,7 @@ import context from "../../common/context";
 import { OperationLogItem } from "../../models/OperationLog";
 import updateOperation from "../../api/updateOperation";
 import { OBJECT_TYPE } from "../../common/constants";
-import { cleanKoobooInfo } from "../../common/koobooInfo";
+import { cleanKoobooInfo } from "../../common/koobooUtils";
 import { reload } from "@/dom/utils";
 
 export function createSaveButton(document: Document) {

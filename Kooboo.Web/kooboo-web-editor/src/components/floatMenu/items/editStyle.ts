@@ -1,15 +1,15 @@
 import { TEXT } from "@/common/lang";
-import { createItem } from "../basic";
+import { createItem, MenuItem } from "../basic";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { getEditComment, getMenu, getForm, getHtmlBlock } from "../utils";
 import { createStyleEditor } from "@/components/styleEditor";
 import { isBody } from "@/dom/utils";
 import { Operation } from "@/models/Operation";
-import { setGuid, cleanKoobooInfo } from "@/common/koobooInfo";
+import { setGuid, cleanKoobooInfo } from "@/common/koobooUtils";
 import { KOOBOO_GUID, ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
 
-export function createEditStyleItem() {
+export function createEditStyleItem(): MenuItem {
   const { el, setVisiable } = createItem(
     TEXT.EDIT_STYLE,
     MenuActions.editStyle

@@ -4,9 +4,17 @@ export class KoobooComment {
   /**
    * dom kooboo info
    */
-  constructor(comment: string | null) {
+  constructor(comment: string | Node | null) {
+    let str = "";
+
+    if (comment instanceof Node) {
+      str = comment.nodeValue!;
+    } else if (comment) {
+      str = comment;
+    }
+
     if (comment) {
-      this._infos = comment.split("--").map(m => m.replace(/'/g, ""));
+      this._infos = str.split("--").map(m => m.replace(/'/g, ""));
     }
   }
 
@@ -40,7 +48,7 @@ export class KoobooComment {
   }
 
   get end() {
-    return this.getValue("end");
+    return Boolean(this.getValue("end"));
   }
 
   private getValue(key: string) {
@@ -48,5 +56,13 @@ export class KoobooComment {
     if (item && item.indexOf("=") != -1) {
       return item.split("=")[1];
     }
+  }
+
+  static isKoobooComment(node: Node) {
+    return (
+      node.nodeType == Node.COMMENT_NODE &&
+      node.nodeValue &&
+      node.nodeValue.startsWith("#kooboo")
+    );
   }
 }

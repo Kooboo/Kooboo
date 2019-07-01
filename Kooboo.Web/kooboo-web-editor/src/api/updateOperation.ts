@@ -1,6 +1,6 @@
 import { OperationLogItem, OperationLog } from "@/models/OperationLog";
 import request from "./request";
-import { getPageId } from "@/common/koobooInfo";
+import { getPageId } from "@/common/koobooUtils";
 import qs from "query-string";
 
 export default async (operationLogItems: Array<OperationLogItem>) => {

@@ -1,7 +1,14 @@
-import { getAllNode, getAllElement, isBody } from "../dom/utils";
+import {
+  getAllNode,
+  getAllElement,
+  isBody,
+  previousNodes,
+  nextNodes
+} from "../dom/utils";
 import { KoobooComment } from "../models/KoobooComment";
 import { KoobooId } from "../models/KoobooId";
 import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID, OBJECT_TYPE } from "./constants";
+import { newGuid } from "./outsideInterfaces";
 
 export function cleanKoobooInfo(domString: string) {
   let el = document.createElement("div");
@@ -18,11 +25,7 @@ export function cleanKoobooInfo(domString: string) {
         i.attributes.removeNamedItem(KOOBOO_GUID);
     }
 
-    if (
-      i instanceof Comment &&
-      i.nodeValue &&
-      i.nodeValue.startsWith("#kooboo")
-    ) {
+    if (KoobooComment.isKoobooComment(i)) {
       i.parentNode!.removeChild(i);
     }
   }
@@ -52,11 +55,7 @@ export function getKoobooInfo(el: HTMLElement) {
       if (parentKoobooId) closeParent = node;
     }
 
-    if (
-      node.nodeType == Node.COMMENT_NODE &&
-      node.nodeValue &&
-      node.nodeValue.startsWith("#kooboo")
-    ) {
+    if (KoobooComment.isKoobooComment(node)) {
       let comment = new KoobooComment(node.nodeValue);
 
       if (comment.end) {
@@ -87,20 +86,16 @@ export function getKoobooInfo(el: HTMLElement) {
 export function getCloseElement(el: HTMLElement) {
   let node = el as Node | null;
   let closeElement: HTMLElement | null = null;
+
   while (true) {
     if (!node) break;
+
     if (node instanceof HTMLElement) {
       closeElement = node;
       if (node.hasAttribute(KOOBOO_ID)) break;
     }
 
-    if (
-      node.nodeType == Node.COMMENT_NODE &&
-      node.nodeValue &&
-      node.nodeValue.startsWith("#kooboo")
-    ) {
-      break;
-    }
+    if (KoobooComment.isKoobooComment(node)) break;
 
     node = node.previousSibling ? node.previousSibling : node.parentElement;
   }
@@ -112,6 +107,7 @@ export function getMaxKoobooId(el: HTMLElement) {
   let id = el.getAttribute(KOOBOO_ID)!;
   var koobooId = new KoobooId(id);
   let nextTemp = el;
+
   while (true) {
     if (
       !nextTemp.nextElementSibling ||
@@ -127,6 +123,7 @@ export function getMaxKoobooId(el: HTMLElement) {
   }
 
   let previousTemp = el;
+
   while (true) {
     if (
       !previousTemp.previousElementSibling ||
@@ -154,7 +151,7 @@ export function markDirty(el: HTMLElement, self: boolean = false) {
 
 export function setGuid(el: HTMLElement) {
   if (!el.hasAttribute(KOOBOO_GUID)) {
-    el.setAttribute(KOOBOO_GUID, Math.random().toString());
+    el.setAttribute(KOOBOO_GUID, newGuid());
   }
 }
 
@@ -174,11 +171,7 @@ export function getPageId() {
   let pageid!: string;
 
   for (const i of getAllNode(document)) {
-    if (
-      i.nodeType == Node.COMMENT_NODE &&
-      i.nodeValue &&
-      i.nodeValue.startsWith("#kooboo")
-    ) {
+    if (KoobooComment.isKoobooComment(i)) {
       let comment = new KoobooComment(i.nodeValue);
       if (comment.objecttype == OBJECT_TYPE.page) {
         pageid = comment.nameorid!;
@@ -188,4 +181,47 @@ export function getPageId() {
   }
 
   return pageid;
+}
+
+export function getWrapDom(el: HTMLElement, objectType: string) {
+  let startNode: Node | undefined;
+  let boundary;
+  let endNode: Node | undefined;
+  let nodes: Node[] = [];
+
+  for (const node of previousNodes(el, false, true)) {
+    if (KoobooComment.isKoobooComment(node)) {
+      let comment = new KoobooComment(node);
+      if (comment.objecttype == objectType && !comment.end) {
+        startNode = node;
+        boundary = comment.boundary;
+        break;
+      }
+    }
+  }
+
+  if (startNode) {
+    for (const node of nextNodes(startNode, true, false)) {
+      nodes.push(node);
+
+      if (KoobooComment.isKoobooComment(node)) {
+        let comment = new KoobooComment(node);
+
+        if (
+          comment.objecttype == objectType &&
+          comment.end &&
+          comment.boundary == boundary
+        ) {
+          endNode = node;
+          break;
+        }
+      }
+    }
+  }
+
+  return {
+    nodes,
+    startNode,
+    endNode
+  };
 }
