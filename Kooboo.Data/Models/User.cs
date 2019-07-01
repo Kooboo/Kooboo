@@ -136,7 +136,7 @@ namespace Kooboo.Data.Models
          
         public string  TempRedirectUrl { get; set; }
          
-        public string TempServerIp { get; set; }
+       // public string TempServerIp { get; set; }
 
         private DateTime _registerdate; 
 

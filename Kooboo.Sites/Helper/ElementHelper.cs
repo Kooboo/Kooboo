@@ -141,6 +141,11 @@ namespace Kooboo.Sites.Helper
 
         public static Element FindSameElement(Element sourceElement, Document TargetDom)
         {
+            if (TargetDom == null)
+            {
+                return null; 
+            }
+
             var targets = FindElementsByDepth(TargetDom, sourceElement.depth);
 
             if (targets.Count() == 0)
