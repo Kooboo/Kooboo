@@ -58,14 +58,27 @@ namespace Kooboo.Mail.Utility
           
             SendSetting setting = new SendSetting();
 
-            if (IsOnlineServer && !serverSetting.CanDirectSendEmail)
+            if (IsOnlineServer)
             { 
-                setting.UseKooboo = true;
-                setting.KoobooServerIp = serverSetting.SmtpServerIP;
-                setting.Port = serverSetting.SmtpPort;
-                setting.HostName = System.Net.Dns.GetHostName();
-                setting.LocalIp = System.Net.IPAddress.Any;
-                setting.OkToSend = true;  
+                if (!string.IsNullOrEmpty(serverSetting.SmtpServerIP))
+                {
+                    setting.UseKooboo = true;
+                    setting.KoobooServerIp = serverSetting.SmtpServerIP;
+                    setting.Port = serverSetting.SmtpPort;
+                    if (setting.Port <= 0)
+                    {
+                        setting.Port = 587; 
+                    }
+                    setting.HostName = System.Net.Dns.GetHostName();
+                    setting.LocalIp = System.Net.IPAddress.Any;
+                    setting.OkToSend = true;
+                }
+                else
+                {
+                    setting.OkToSend = false;
+                    setting.ErrorMessage = "Email Sending is prevented"; 
+                }
+            
             }
            else
             { 

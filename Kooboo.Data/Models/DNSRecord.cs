@@ -16,7 +16,9 @@ namespace Kooboo.Data.Models
             get {
                 if (_id == default(Guid))
                 {
-                    _id = Guid.NewGuid(); 
+                    string unique = this.Domain + this.Host + this.Priority.ToString() + this.Type;
+                    _id = Lib.Security.Hash.ComputeGuidIgnoreCase(unique);  
+                   // _id = Guid.NewGuid(); 
                 }
                 return _id; 
             }

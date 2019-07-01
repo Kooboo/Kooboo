@@ -178,7 +178,8 @@ namespace Kooboo.Data.Models
             unique += this.OrgCount.ToString() + this.PrimaryIp.ToString() + this.PTR + this.Secondary;
             unique += this.SubMask + this.Type.ToString();
             unique += this.PrivateOrgName;
-            unique += this.InternalIP;
+            unique += this.InternalIP;  
+ 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);  
         }
     }

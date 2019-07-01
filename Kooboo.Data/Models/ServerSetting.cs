@@ -6,12 +6,10 @@ using System.Collections.Generic;
 namespace Kooboo.Data.Models
 {
    public class ServerSetting
-    {
-        public bool CanDirectSendEmail { get; set; } = true; 
-
+    {  
         public string HostDomain { get; set; }
 
-        public int SmtpPort { get; set; }
+        public int SmtpPort { get; set; } = 587; 
 
         public int OnlineDataCenterId { get; set; }
 
