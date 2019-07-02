@@ -3,23 +3,26 @@ import context from "@/common/context";
 import {
   setGuid,
   markDirty,
-  cleanKoobooInfo,
-  isDynamicContent
-} from "@/common/koobooUtils";
-import { Operation } from "@/models/Operation";
-import { KOOBOO_GUID, ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
+  clearKoobooInfo,
+  isDynamicContent,
+  getGuidComment
+} from "@/kooboo/koobooUtils";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import { TEXT } from "@/common/lang";
 import { getEditComment } from "../utils";
 import { isBody } from "@/dom/utils";
+import { operationRecord } from "@/operation/Record";
+import { CopyUnit } from "@/operation/recordUnits/CopyUnit";
+import { InnerHtmlLog } from "@/operation/recordLogs/InnerHtmlLog";
 
 export function createCopyItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.COPY, MenuActions.copy);
+
   const update = () => {
     var visiable = true;
     let args = context.lastSelectedDomEventArgs;
     if (isBody(args.element)) visiable = false;
-    if (!args.parentKoobooId || !args.closeParent) visiable = false;
+    if (!args.closeParent || !args.parentKoobooId) visiable = false;
     if (!getEditComment(args.koobooComments)) visiable = false;
     if (isDynamicContent(args.element)) visiable = false;
     setVisiable(visiable);
@@ -27,27 +30,23 @@ export function createCopyItem(): MenuItem {
 
   el.addEventListener("click", e => {
     let args = context.lastSelectedDomEventArgs;
-    if (!args.closeParent) return false;
-    setGuid(args.closeParent);
-    let startContent = args.closeParent.innerHTML;
+
     let cloneElement = args.element.cloneNode(true) as HTMLElement;
+    let guid = setGuid(cloneElement, true);
     args.element.parentElement!.insertBefore(
       cloneElement,
       args.element.nextSibling
     );
-    markDirty(args.closeParent);
 
-    var endContent = args.closeParent!.innerHTML;
-    let operation = new Operation(
-      args.closeParent.getAttribute(KOOBOO_GUID)!,
-      startContent,
-      endContent,
-      args.koobooComments[0],
-      args.parentKoobooId,
-      ACTION_TYPE.update,
-      cleanKoobooInfo(args.closeParent!.innerHTML),
-      EDITOR_TYPE.dom
-    );
+    markDirty(args.closeParent!);
+
+    let units = [new CopyUnit(getGuidComment(guid))];
+    let comment = getEditComment(args.koobooComments)!;
+    let logs = [
+      new InnerHtmlLog(comment, args.parentKoobooId!, args.closeParent!)
+    ];
+
+    let operation = new operationRecord(units, logs, guid);
     context.operationManager.add(operation);
   });
 

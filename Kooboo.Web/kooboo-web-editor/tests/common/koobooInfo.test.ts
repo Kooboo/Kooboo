@@ -1,4 +1,4 @@
-import { getKoobooInfo, cleanKoobooInfo } from "../../src/common/koobooUtils";
+import { getKoobooInfo, clearKoobooInfo } from "../../src/kooboo/koobooUtils";
 import { KOOBOO_ID } from "../../src/common/constants";
 
 describe("domAnalyze", () => {
@@ -69,7 +69,7 @@ describe("domAnalyze", () => {
                 </h3>
               </div>
       `;
-    let result = cleanKoobooInfo(dom);
+    let result = clearKoobooInfo(dom);
 
     expect(result.indexOf(KOOBOO_ID)).toEqual(-1);
     expect(result.indexOf("#kooboo")).toEqual(-1);

@@ -1,19 +1,15 @@
 import { Editor, Settings, EditorManager } from "tinymce";
-import {
-  STANDARD_Z_INDEX,
-  KOOBOO_GUID,
-  ACTION_TYPE,
-  EMPTY_COMMENT,
-  EDITOR_TYPE
-} from "../../common/constants";
+import { STANDARD_Z_INDEX, EMPTY_COMMENT } from "../../common/constants";
 import { lang } from "../../common/lang";
 import context from "../../common/context";
-import { markDirty, setGuid } from "../../common/koobooUtils";
-import { Operation } from "../../models/Operation";
+import { markDirty, setGuid } from "../../kooboo/koobooUtils";
 import { getAllElement } from "../../dom/utils";
 import { delay } from "../../common/utils";
-import { getEditComment } from "../floatMenu/utils";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";
+import { operationRecord } from "@/operation/Record";
+import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
+import { InnerHtmlLog } from "@/operation/recordLogs/InnerHtmlLog";
+import { getEditComment } from "../floatMenu/utils";
 
 export async function impoveEditorUI(editor: Editor) {
   let container = editor.getContainer();
@@ -65,27 +61,19 @@ export function save_onsavecallback(e: Editor) {
   let startContent = (e as any)._content;
   let element = e.getElement() as HTMLElement;
   e.remove();
+
   if (startContent != element.innerHTML) {
     let dirtyEl = args.closeParent ? args.closeParent : element;
-    markDirty(dirtyEl, true);
+    markDirty(dirtyEl);
     let koobooId = args.parentKoobooId ? args.parentKoobooId : args.koobooId;
 
-    let commit = args.closeParent
-      ? args.closeParent.innerHTML
-      : element.innerHTML;
+    let guid = setGuid(element);
+    let units = [new InnerHtmlUnit(startContent)];
+    let logs = [
+      new InnerHtmlLog(getEditComment(args.koobooComments)!, koobooId!, dirtyEl)
+    ];
 
-    setGuid(element);
-
-    let operation = new Operation(
-      element.getAttribute(KOOBOO_GUID)!,
-      startContent,
-      element.innerHTML,
-      getEditComment(args.koobooComments)!,
-      koobooId,
-      ACTION_TYPE.update,
-      commit,
-      EDITOR_TYPE.dom
-    );
+    let operation = new operationRecord(units, logs, guid);
     context.operationManager.add(operation);
   }
 

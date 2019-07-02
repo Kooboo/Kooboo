@@ -3,8 +3,8 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { getHtmlBlock, hasOperation } from "../utils";
-import { editHtmlBlock } from "@/common/outsideInterfaces";
 import { reload } from "@/dom/utils";
+import { editHtmlBlock } from "@/kooboo/outsideInterfaces";
 
 export function createEditHtmlBlockItem(): MenuItem {
   const { el, setVisiable, setReadonly } = createItem(

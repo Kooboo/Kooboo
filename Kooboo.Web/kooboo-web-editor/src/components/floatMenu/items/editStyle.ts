@@ -5,8 +5,7 @@ import context from "@/common/context";
 import { getEditComment, getMenu, getForm, getHtmlBlock } from "../utils";
 import { createStyleEditor } from "@/components/styleEditor";
 import { isBody } from "@/dom/utils";
-import { Operation } from "@/models/Operation";
-import { setGuid, cleanKoobooInfo } from "@/common/koobooUtils";
+import { setGuid, clearKoobooInfo } from "@/kooboo/koobooUtils";
 import { KOOBOO_GUID, ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
 
 export function createEditStyleItem(): MenuItem {
@@ -32,17 +31,17 @@ export function createEditStyleItem(): MenuItem {
     setGuid(args.element);
     try {
       await createStyleEditor(args.element);
-      let operation = new Operation(
-        args.element!.getAttribute(KOOBOO_GUID)!,
-        startContent!,
-        args.element.getAttribute("style")!,
-        getEditComment(args.koobooComments)!,
-        args.koobooId,
-        ACTION_TYPE.update,
-        args.element.getAttribute("style")!,
-        EDITOR_TYPE.style
-      );
-      context.operationManager.add(operation);
+      // let operation = new Operation(
+      //   args.element!.getAttribute(KOOBOO_GUID)!,
+      //   startContent!,
+      //   args.element.getAttribute("style")!,
+      //   getEditComment(args.koobooComments)!,
+      //   args.koobooId,
+      //   ACTION_TYPE.update,
+      //   args.element.getAttribute("style")!,
+      //   EDITOR_TYPE.style
+      // );
+      // context.operationManager.add(operation);
     } catch (error) {
       if (startContent) args.element.setAttribute("style", startContent);
     }

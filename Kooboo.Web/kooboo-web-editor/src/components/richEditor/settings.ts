@@ -1,6 +1,5 @@
 import { Settings, Editor } from "tinymce";
 import context from "../../common/context";
-import { pickImg } from "../../common/outsideInterfaces";
 import {
   setLang,
   save_oncancelcallback,
@@ -13,6 +12,7 @@ import {
   getToolbar
 } from "./utils";
 import { createLinkPicker } from "../linkPicker";
+import { pickImg } from "@/kooboo/outsideInterfaces";
 
 export function createSettings(selector: HTMLElement) {
   const settings = {

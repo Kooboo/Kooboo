@@ -6,7 +6,7 @@ import { createImgPreview } from "@/dom/img";
 import { createButton } from "@/dom/button";
 import { createColorPicker } from "./colorPicker";
 import { createLabelInput } from "@/dom/input";
-import { pickImg } from "@/common/outsideInterfaces";
+import { pickImg } from "@/kooboo/outsideInterfaces";
 
 export function createStyleEditor(el: HTMLElement) {
   const container = document.createElement("div");

@@ -5,9 +5,9 @@ import {
 import { TinymceInputEvent } from "../events/TinymceEvent";
 import { OperationEvent } from "../events/OperationEvent";
 import { EditableEvent } from "../events/EditableEvent";
-import { OperationManager } from "../models/OperationManager";
 import { FloatMenuClickEvent } from "../events/FloatMenuClickEvent";
 import { HoverDomEvent, HoverDomEventArgs } from "../events/HoverDomEvent";
+import { operationManager } from "@/operation/Manager";
 
 class Context {
   private _editing: boolean = false;
@@ -19,7 +19,7 @@ class Context {
     return this._editing;
   }
 
-  operationManager: OperationManager = new OperationManager();
+  operationManager: operationManager = new operationManager();
   lastSelectedDomEventArgs!: SelectedDomEventArgs;
   lastHoverDomEventArgs!: HoverDomEventArgs;
   lastMouseEventArg!: MouseEvent;

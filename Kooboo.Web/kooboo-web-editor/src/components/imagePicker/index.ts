@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { createLabelInput } from "@/dom/input";
 import { getEditorContainer } from "@/dom/utils";
 import { createImgPreview } from "@/dom/img";
-import { pickImg } from "@/common/outsideInterfaces";
+import { pickImg } from "@/kooboo/outsideInterfaces";
 
 export function createImagePicker(img: HTMLImageElement) {
   let container = document.createElement("div");

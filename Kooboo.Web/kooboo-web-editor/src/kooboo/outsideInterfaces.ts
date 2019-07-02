@@ -1,6 +1,6 @@
 import { createModal } from "@/components/modal";
-import { TEXT } from "./lang";
 import { createIframe } from "@/dom/Iframe";
+import { TEXT } from "@/common/lang";
 const Kooboo = (document as any).Kooboo;
 const mediaDialogData = (document as any).mediaDialogData;
 const parentBody = (document as any).parentBody as HTMLBodyElement;

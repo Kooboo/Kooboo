@@ -7,12 +7,17 @@ import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import {
   setGuid,
   markDirty,
-  cleanKoobooInfo,
-  isDynamicContent
-} from "@/common/koobooUtils";
-import { Operation } from "@/models/Operation";
-import { getEditComment } from "../utils";
+  clearKoobooInfo,
+  isDynamicContent,
+  getGuidComment
+} from "@/kooboo/koobooUtils";
+import { getEditComment, getDeleteComment } from "../utils";
 import { isBody } from "@/dom/utils";
+import { operationRecord } from "@/operation/Record";
+import { DeleteUnit } from "@/operation/recordUnits/DeleteUnit";
+import { InnerHtmlLog } from "@/operation/recordLogs/InnerHtmlLog";
+import { Log } from "@/operation/recordLogs/Log";
+import { deleteLog } from "@/operation/recordLogs/deleteLog";
 
 export function createDeleteItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
@@ -20,7 +25,6 @@ export function createDeleteItem(): MenuItem {
     let visiable = true;
     let args = context.lastSelectedDomEventArgs;
     if (isBody(args.element)) visiable = false;
-    if (!args.parentKoobooId || !args.closeParent) visiable = false;
     if (!getEditComment(args.koobooComments)) visiable = false;
     if (isDynamicContent(args.element)) visiable = false;
     setVisiable(visiable);
@@ -28,11 +32,34 @@ export function createDeleteItem(): MenuItem {
 
   el.addEventListener("click", () => {
     let args = context.lastSelectedDomEventArgs;
+    let guid = setGuid(args.element);
+    let guidComment = getGuidComment(guid);
+    let startContent = args.element.outerHTML;
+    let temp = document.createElement("div");
+    args.element.parentNode!.replaceChild(temp, args.element);
+    temp.outerHTML = guidComment;
+
+    let log: Log;
     if (args.closeParent) {
-      updateDom(args);
-    } else if (args.element.parentElement) {
-      deleteDom(args);
+      let comment = getEditComment(args.koobooComments);
+      log = new InnerHtmlLog(comment!, args.parentKoobooId!, args.closeParent!);
+    } else {
+      let comment = getDeleteComment(args.koobooComments);
+      log = new deleteLog(comment!, args.koobooId!, args.element);
     }
+
+    let operation = new operationRecord(
+      [new DeleteUnit(startContent)],
+      [log],
+      guid
+    );
+
+    context.operationManager.add(operation);
+    // if (args.closeParent) {
+    //   updateDom(args);
+    // } else if (args.element.parentElement) {
+    //   deleteDom(args);
+    // }
   });
 
   return {
@@ -41,40 +68,40 @@ export function createDeleteItem(): MenuItem {
   };
 }
 
-const updateDom = (args: SelectedDomEventArgs) => {
-  setGuid(args.closeParent!);
-  let startContent = args.closeParent!.innerHTML;
-  args.element.parentElement!.removeChild(args.element);
-  markDirty(args.closeParent!);
-  let endContent = args.closeParent!.innerHTML;
-  let operation = new Operation(
-    args.closeParent!.getAttribute(KOOBOO_GUID)!,
-    startContent,
-    endContent,
-    args.koobooComments[0],
-    args.parentKoobooId,
-    ACTION_TYPE.update,
-    cleanKoobooInfo(args.closeParent!.innerHTML),
-    EDITOR_TYPE.dom
-  );
-  context.operationManager.add(operation);
-};
+// const updateDom = (args: SelectedDomEventArgs) => {
+//   setGuid(args.closeParent!);
+//   let startContent = args.closeParent!.innerHTML;
+//   args.element.parentElement!.removeChild(args.element);
+//   markDirty(args.closeParent!);
+//   let endContent = args.closeParent!.innerHTML;
+//   let operation = new Operation(
+//     args.closeParent!.getAttribute(KOOBOO_GUID)!,
+//     startContent,
+//     endContent,
+//     args.koobooComments[0],
+//     args.parentKoobooId,
+//     ACTION_TYPE.update,
+//     clearKoobooInfo(args.closeParent!.innerHTML),
+//     EDITOR_TYPE.dom
+//   );
+//   context.operationManager.add(operation);
+// };
 
-const deleteDom = (args: SelectedDomEventArgs) => {
-  let parentElement = args.element.parentElement!;
-  setGuid(parentElement);
-  let startContent = parentElement.innerHTML;
-  parentElement.removeChild(args.element);
-  let endContent = parentElement.innerHTML;
-  let operation = new Operation(
-    parentElement.getAttribute(KOOBOO_GUID)!,
-    startContent,
-    endContent,
-    getEditComment(args.koobooComments)!,
-    args.koobooId,
-    ACTION_TYPE.delete,
-    "",
-    EDITOR_TYPE.dom
-  );
-  context.operationManager.add(operation);
-};
+// const deleteDom = (args: SelectedDomEventArgs) => {
+//   let parentElement = args.element.parentElement!;
+//   setGuid(parentElement);
+//   let startContent = parentElement.innerHTML;
+//   parentElement.removeChild(args.element);
+//   let endContent = parentElement.innerHTML;
+//   let operation = new Operation(
+//     parentElement.getAttribute(KOOBOO_GUID)!,
+//     startContent,
+//     endContent,
+//     getEditComment(args.koobooComments)!,
+//     args.koobooId,
+//     ACTION_TYPE.delete,
+//     "",
+//     EDITOR_TYPE.dom
+//   );
+//   context.operationManager.add(operation);
+// };

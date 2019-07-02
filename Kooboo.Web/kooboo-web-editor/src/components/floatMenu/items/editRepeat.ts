@@ -3,8 +3,8 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { getRepeat, hasOperation } from "../utils";
-import { editRepeat } from "@/common/outsideInterfaces";
 import { reload } from "@/dom/utils";
+import { editRepeat } from "@/kooboo/outsideInterfaces";
 
 export function createEditRepeatItem() {
   const { el, setVisiable, setReadonly } = createItem(

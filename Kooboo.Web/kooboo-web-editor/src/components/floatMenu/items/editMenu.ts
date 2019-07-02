@@ -3,10 +3,10 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { hasOperation, getMenu } from "../utils";
-import { editRepeat, editMenu } from "@/common/outsideInterfaces";
 import { reload } from "@/dom/utils";
-import { getWrapDom } from "@/common/koobooUtils";
+import { getWrapDom } from "@/kooboo/koobooUtils";
 import { OBJECT_TYPE } from "@/common/constants";
+import { editMenu } from "@/kooboo/outsideInterfaces";
 
 export function createEditMenuItem() {
   const { el, setVisiable, setReadonly } = createItem(

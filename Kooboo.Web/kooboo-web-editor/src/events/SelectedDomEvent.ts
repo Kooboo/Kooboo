@@ -1,6 +1,5 @@
-import { KoobooComment } from "../models/KoobooComment";
+import { KoobooComment } from "../kooboo/KoobooComment";
 import { BaseEvent } from "./BaseEvent";
-import { OBJECT_TYPE } from "../common/constants";
 import context from "../common/context";
 
 export class SelectedDomEventArgs {

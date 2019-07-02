@@ -1,6 +1,6 @@
 import { isInEditorContainer } from "./utils";
 import context from "@/common/context";
-import { getCloseElement, getKoobooInfo } from "@/common/koobooUtils";
+import { getCloseElement, getKoobooInfo } from "@/kooboo/koobooUtils";
 import { HoverDomEventArgs } from "@/events/HoverDomEvent";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 
@@ -45,6 +45,7 @@ function listenClick() {
       parentKoobooId,
       comments
     );
+
     context.lastMouseEventArg = e;
     context.domChangeEvent.emit(args);
   });

@@ -1,7 +1,6 @@
 import { OBJECT_TYPE } from "@/common/constants";
-import { KoobooComment } from "@/models/KoobooComment";
-import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
-import { OperationManager } from "@/models/OperationManager";
+import { KoobooComment } from "@/kooboo/KoobooComment";
+import { operationManager } from "@/operation/Manager";
 
 export function getEditComment(comments: KoobooComment[]) {
   const editTypes = [
@@ -17,16 +16,24 @@ export function getEditComment(comments: KoobooComment[]) {
   }
 }
 
+export function getDeleteComment(comments: KoobooComment[]) {
+  const editTypes = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout];
+
+  for (const i of comments) {
+    if (i.objecttype && editTypes.some(s => s == i.objecttype)) return i;
+  }
+}
+
 function getObjectType(comments: KoobooComment[], type: string) {
   for (const i of comments) {
     if (i.objecttype && i.objecttype.toLowerCase() == type) return i;
   }
 }
 
-export function hasOperation(operationManager: OperationManager) {
+export function hasOperation(operationManager: operationManager) {
   return (
-    operationManager.backupOperations.length > 0 ||
-    operationManager.operations.length > 0
+    operationManager.previousRecords.length > 0 ||
+    operationManager.nextRecords.length > 0
   );
 }
 

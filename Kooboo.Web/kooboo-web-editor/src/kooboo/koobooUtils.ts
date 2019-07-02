@@ -5,12 +5,17 @@ import {
   previousNodes,
   nextNodes
 } from "../dom/utils";
-import { KoobooComment } from "../models/KoobooComment";
-import { KoobooId } from "../models/KoobooId";
-import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID, OBJECT_TYPE } from "./constants";
+import { KoobooComment } from "./KoobooComment";
+import { KoobooId } from "./KoobooId";
+import {
+  KOOBOO_ID,
+  KOOBOO_DIRTY,
+  KOOBOO_GUID,
+  OBJECT_TYPE
+} from "../common/constants";
 import { newGuid } from "./outsideInterfaces";
 
-export function cleanKoobooInfo(domString: string) {
+export function clearKoobooInfo(domString: string) {
   let el = document.createElement("div");
   el.innerHTML = domString;
   let nodes = getAllNode(el);
@@ -23,6 +28,14 @@ export function cleanKoobooInfo(domString: string) {
 
       if (i.hasAttribute(KOOBOO_GUID))
         i.attributes.removeNamedItem(KOOBOO_GUID);
+    }
+
+    if (
+      i.nodeType == Node.COMMENT_NODE &&
+      i.nodeValue &&
+      i.nodeValue.startsWith(KOOBOO_GUID)
+    ) {
+      i.parentNode!.removeChild(i);
     }
 
     if (KoobooComment.isKoobooComment(i)) {
@@ -42,6 +55,7 @@ export function getKoobooInfo(el: HTMLElement) {
 
   while (true) {
     if (!node) break;
+
     if (
       parentLayerFlag &&
       !closeParent &&
@@ -149,10 +163,19 @@ export function markDirty(el: HTMLElement, self: boolean = false) {
   }
 }
 
-export function setGuid(el: HTMLElement) {
-  if (!el.hasAttribute(KOOBOO_GUID)) {
-    el.setAttribute(KOOBOO_GUID, newGuid());
+export function setGuid(el: HTMLElement, relpase: boolean = false) {
+  let guid = el.getAttribute(KOOBOO_GUID);
+
+  if (!guid || relpase) {
+    guid = newGuid();
   }
+
+  el.setAttribute(KOOBOO_GUID, guid);
+  return guid;
+}
+
+export function getGuidComment(guid: string) {
+  return `<!--${KOOBOO_GUID} ${guid}-->`;
 }
 
 export function isDynamicContent(el: HTMLElement) {

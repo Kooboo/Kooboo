@@ -8,10 +8,9 @@ import {
   isDynamicContent,
   setGuid,
   markDirty,
-  cleanKoobooInfo
-} from "@/common/koobooUtils";
+  clearKoobooInfo
+} from "@/kooboo/koobooUtils";
 import { createImagePicker } from "@/components/imagePicker";
-import { Operation } from "@/models/Operation";
 import { KOOBOO_GUID, ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
 
 export function createEditImageItem(): MenuItem {
@@ -38,17 +37,17 @@ export function createEditImageItem(): MenuItem {
       await createImagePicker(args.element as HTMLImageElement);
       markDirty(args.closeParent);
       var endContent = args.closeParent!.innerHTML;
-      let operation = new Operation(
-        args.closeParent.getAttribute(KOOBOO_GUID)!,
-        startContent,
-        endContent,
-        getEditComment(args.koobooComments)!,
-        args.parentKoobooId,
-        ACTION_TYPE.update,
-        cleanKoobooInfo(args.closeParent!.innerHTML),
-        EDITOR_TYPE.dom
-      );
-      context.operationManager.add(operation);
+      // let operation = new Operation(
+      //   args.closeParent.getAttribute(KOOBOO_GUID)!,
+      //   startContent,
+      //   endContent,
+      //   getEditComment(args.koobooComments)!,
+      //   args.parentKoobooId,
+      //   ACTION_TYPE.update,
+      //   clearKoobooInfo(args.closeParent!.innerHTML),
+      //   EDITOR_TYPE.dom
+      // );
+      // context.operationManager.add(operation);
     } catch (error) {
       args.closeParent.innerHTML = startContent;
     }

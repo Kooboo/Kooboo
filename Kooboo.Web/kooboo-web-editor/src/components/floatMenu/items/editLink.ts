@@ -4,10 +4,9 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import {
   setGuid,
-  cleanKoobooInfo,
+  clearKoobooInfo,
   isDynamicContent
-} from "@/common/koobooUtils";
-import { Operation } from "@/models/Operation";
+} from "@/kooboo/koobooUtils";
 import { KOOBOO_GUID, ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
 import { isLink } from "@/dom/utils";
 import { getEditComment } from "../utils";
@@ -37,17 +36,17 @@ export function createEditLinkItem(): MenuItem {
     try {
       let url = await createLinkPicker(href);
       args!.element.setAttribute("href", url);
-      let operation = new Operation(
-        args.closeParent!.getAttribute(KOOBOO_GUID)!,
-        startContent,
-        args.closeParent!.innerHTML,
-        getEditComment(args.koobooComments)!,
-        args!.parentKoobooId,
-        ACTION_TYPE.update,
-        cleanKoobooInfo(args!.closeParent!.innerHTML),
-        EDITOR_TYPE.dom
-      );
-      context.operationManager.add(operation);
+      // let operation = new Operation(
+      //   args.closeParent!.getAttribute(KOOBOO_GUID)!,
+      //   startContent,
+      //   args.closeParent!.innerHTML,
+      //   getEditComment(args.koobooComments)!,
+      //   args!.parentKoobooId,
+      //   ACTION_TYPE.update,
+      //   clearKoobooInfo(args!.closeParent!.innerHTML),
+      //   EDITOR_TYPE.dom
+      // );
+      // context.operationManager.add(operation);
     } catch (error) {}
   });
 

@@ -2,7 +2,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { MenuItem, createItem } from "../basic";
-import { isDynamicContent } from "@/common/koobooUtils";
+import { isDynamicContent } from "@/kooboo/koobooUtils";
 import { getEditComment, getMenu, getForm, getHtmlBlock } from "../utils";
 import { isBody } from "@/dom/utils";
 
@@ -20,7 +20,6 @@ export function createEditItem(): MenuItem {
     let el = args.element;
     if (reExcept.test(el.tagName)) visiable = false;
     if (isDynamicContent(args.element)) visiable = false;
-    console.log(args, visiable);
     setVisiable(visiable);
   };
 

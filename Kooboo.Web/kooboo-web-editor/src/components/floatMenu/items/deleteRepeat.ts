@@ -4,7 +4,7 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isBody } from "@/dom/utils";
 import { getRepeat } from "../utils";
-import { getWrapDom } from "@/common/koobooUtils";
+import { getWrapDom } from "@/kooboo/koobooUtils";
 import { OBJECT_TYPE } from "@/common/constants";
 
 export function createDeleteRepeatItem(): MenuItem {
