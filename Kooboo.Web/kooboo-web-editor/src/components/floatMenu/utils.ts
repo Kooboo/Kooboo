@@ -1,6 +1,7 @@
 import { OBJECT_TYPE } from "@/common/constants";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { operationManager } from "@/operation/Manager";
+import { getAllNode } from "@/dom/utils";
 
 export function getEditComment(comments: KoobooComment[]) {
   const editTypes = [
@@ -48,3 +49,17 @@ export const getHtmlBlock = (comments: KoobooComment[]) =>
 
 export const getRepeat = (comments: KoobooComment[]) =>
   getObjectType(comments, OBJECT_TYPE.contentrepeater);
+
+export function changeGuid(node: Node, guid: string) {
+  if (KoobooComment.isKoobooComment(node)) {
+    node.nodeValue = node.nodeValue!.replace(
+      /--nameorid='.{36}'/,
+      `--nameorid='${guid}'`
+    );
+  }
+  if (node instanceof HTMLElement) {
+    for (const iterator of getAllNode(node)) {
+      changeGuid(iterator, guid);
+    }
+  }
+}

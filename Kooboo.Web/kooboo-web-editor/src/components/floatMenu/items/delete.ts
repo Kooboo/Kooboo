@@ -45,7 +45,7 @@ export function createDeleteItem(): MenuItem {
       log = new InnerHtmlLog(comment!, args.parentKoobooId!, args.closeParent!);
     } else {
       let comment = getDeleteComment(args.koobooComments);
-      log = new DeleteLog(comment!, args.koobooId!, args.element);
+      log = new DeleteLog(comment!, args.koobooId!);
     }
 
     let operation = new operationRecord(

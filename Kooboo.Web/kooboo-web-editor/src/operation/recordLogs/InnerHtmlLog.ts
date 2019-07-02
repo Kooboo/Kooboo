@@ -1,8 +1,17 @@
 import { Log } from "./Log";
 import { ACTION_TYPE, EDITOR_TYPE, OBJECT_TYPE } from "@/common/constants";
 import { clearKoobooInfo } from "@/kooboo/utils";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export class InnerHtmlLog extends Log {
+  constructor(
+    public comment: KoobooComment,
+    public koobooId: string,
+    public element: HTMLElement
+  ) {
+    super(comment, koobooId);
+  }
+
   getCommitObject(): object {
     let result: any = {};
 

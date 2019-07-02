@@ -2,13 +2,12 @@ import { createItem, MenuItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { isBody, getAllNode } from "@/dom/utils";
-import { getRepeat } from "../utils";
-import { getWrapDom, getGuidComment, setGuid } from "@/kooboo/utils";
+import { isBody } from "@/dom/utils";
+import { getRepeat, changeGuid } from "../utils";
+import { getWrapDom, getGuidComment } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
 import { newGuid } from "@/kooboo/outsideInterfaces";
-import { KoobooComment } from "@/kooboo/KoobooComment";
-import { CopyRepeatUnit } from "@/operation/recordUnits/copyRepeatUnit";
+import { CopyRepeatUnit } from "@/operation/recordUnits/CopyRepeatUnit";
 import { CopyRepeatLog } from "@/operation/recordLogs/CopyRepeatLog";
 import { operationRecord } from "@/operation/Record";
 
@@ -40,27 +39,11 @@ export function createCopyRepeatItem(): MenuItem {
     }
 
     let units = [new CopyRepeatUnit(getGuidComment(guid))];
-    let logs = [
-      new CopyRepeatLog(getRepeat(args.koobooComments)!, guid, args.koobooId!)
-    ];
+    let logs = [new CopyRepeatLog(getRepeat(args.koobooComments)!, guid)];
 
     let operation = new operationRecord(units, logs, guid);
     context.operationManager.add(operation);
   });
 
   return { el, update };
-}
-
-function changeGuid(node: Node, guid: string) {
-  if (KoobooComment.isKoobooComment(node)) {
-    node.nodeValue = node.nodeValue!.replace(
-      /--nameorid='.{36}'/,
-      `--nameorid='${guid}'`
-    );
-  }
-  if (node instanceof HTMLElement) {
-    for (const iterator of getAllNode(node)) {
-      changeGuid(iterator, guid);
-    }
-  }
 }
