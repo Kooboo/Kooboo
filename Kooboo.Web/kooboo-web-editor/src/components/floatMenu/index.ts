@@ -1,6 +1,6 @@
 import context from "../../common/context";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
-import { getKoobooInfo, getCloseElement } from "../../kooboo/koobooUtils";
+import { getKoobooInfo, getCloseElement } from "../../kooboo/utils";
 import { SelectedDomEventArgs } from "../../events/SelectedDomEvent";
 import { HoverDomEventArgs } from "../../events/HoverDomEvent";
 import { delay } from "../../common/utils";

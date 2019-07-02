@@ -2,7 +2,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { MenuItem, createItem } from "../basic";
-import { isDynamicContent } from "@/kooboo/koobooUtils";
+import { isDynamicContent } from "@/kooboo/utils";
 import { getEditComment, getMenu, getForm, getHtmlBlock } from "../utils";
 import { isBody } from "@/dom/utils";
 

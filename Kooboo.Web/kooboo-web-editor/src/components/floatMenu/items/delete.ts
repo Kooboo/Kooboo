@@ -10,14 +10,14 @@ import {
   clearKoobooInfo,
   isDynamicContent,
   getGuidComment
-} from "@/kooboo/koobooUtils";
+} from "@/kooboo/utils";
 import { getEditComment, getDeleteComment } from "../utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { DeleteUnit } from "@/operation/recordUnits/DeleteUnit";
 import { InnerHtmlLog } from "@/operation/recordLogs/InnerHtmlLog";
 import { Log } from "@/operation/recordLogs/Log";
-import { deleteLog } from "@/operation/recordLogs/deleteLog";
+import { DeleteLog } from "@/operation/recordLogs/DeleteLog";
 
 export function createDeleteItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
@@ -45,7 +45,7 @@ export function createDeleteItem(): MenuItem {
       log = new InnerHtmlLog(comment!, args.parentKoobooId!, args.closeParent!);
     } else {
       let comment = getDeleteComment(args.koobooComments);
-      log = new deleteLog(comment!, args.koobooId!, args.element);
+      log = new DeleteLog(comment!, args.koobooId!, args.element);
     }
 
     let operation = new operationRecord(

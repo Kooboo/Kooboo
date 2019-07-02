@@ -31,7 +31,6 @@ export class operationRecord {
       if (
         node.nodeType == Node.COMMENT_NODE &&
         node.nodeValue &&
-        node.nodeValue.startsWith(KOOBOO_GUID) &&
         node.nodeValue.indexOf(guid) > -1
       ) {
         return node;

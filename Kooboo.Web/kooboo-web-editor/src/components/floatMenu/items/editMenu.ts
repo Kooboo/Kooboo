@@ -4,7 +4,7 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { hasOperation, getMenu } from "../utils";
 import { reload } from "@/dom/utils";
-import { getWrapDom } from "@/kooboo/koobooUtils";
+import { getWrapDom } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
 import { editMenu } from "@/kooboo/outsideInterfaces";
 

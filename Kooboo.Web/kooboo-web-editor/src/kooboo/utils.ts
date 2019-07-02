@@ -163,13 +163,10 @@ export function markDirty(el: HTMLElement, self: boolean = false) {
   }
 }
 
-export function setGuid(el: HTMLElement, relpase: boolean = false) {
+export function setGuid(el: HTMLElement, relpase: string = "") {
   let guid = el.getAttribute(KOOBOO_GUID);
-
-  if (!guid || relpase) {
-    guid = newGuid();
-  }
-
+  if (relpase) guid = relpase;
+  else if (!guid) guid = newGuid();
   el.setAttribute(KOOBOO_GUID, guid);
   return guid;
 }
@@ -206,13 +203,13 @@ export function getPageId() {
   return pageid;
 }
 
-export function getWrapDom(el: HTMLElement, objectType: string) {
+export function getWrapDom(el: Node, objectType: string) {
   let startNode: Node | undefined;
   let boundary;
   let endNode: Node | undefined;
   let nodes: Node[] = [];
 
-  for (const node of previousNodes(el, false, true)) {
+  for (const node of previousNodes(el, true, true)) {
     if (KoobooComment.isKoobooComment(node)) {
       let comment = new KoobooComment(node);
       if (comment.objecttype == objectType && !comment.end) {
@@ -224,8 +221,15 @@ export function getWrapDom(el: HTMLElement, objectType: string) {
   }
 
   if (startNode) {
+    let isSingle = isSingleCommentWrap(startNode);
+
     for (const node of nextNodes(startNode, true, false)) {
       nodes.push(node);
+
+      if (isSingle && node instanceof HTMLElement) {
+        endNode = node;
+        break;
+      }
 
       if (KoobooComment.isKoobooComment(node)) {
         let comment = new KoobooComment(node);
@@ -247,4 +251,17 @@ export function getWrapDom(el: HTMLElement, objectType: string) {
     startNode,
     endNode
   };
+}
+
+function isSingleCommentWrap(node: Node) {
+  let singleCommentWrap = [
+    OBJECT_TYPE.attribute,
+    OBJECT_TYPE.content,
+    OBJECT_TYPE.label,
+    OBJECT_TYPE.style,
+    OBJECT_TYPE.url
+  ];
+
+  let comment = new KoobooComment(node);
+  return singleCommentWrap.some(s => s == comment.objecttype);
 }

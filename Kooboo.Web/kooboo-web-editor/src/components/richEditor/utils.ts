@@ -2,7 +2,7 @@ import { Editor, Settings, EditorManager } from "tinymce";
 import { STANDARD_Z_INDEX, EMPTY_COMMENT } from "../../common/constants";
 import { lang } from "../../common/lang";
 import context from "../../common/context";
-import { markDirty, setGuid } from "../../kooboo/koobooUtils";
+import { markDirty, setGuid } from "../../kooboo/utils";
 import { getAllElement } from "../../dom/utils";
 import { delay } from "../../common/utils";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";

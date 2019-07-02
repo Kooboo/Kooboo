@@ -20,7 +20,7 @@ export const OBJECT_TYPE = {
   attribute: "attribute",
   layout: "layout",
   form: "form",
-  url: "url"
+  url: "Url"
 };
 
 export const ACTION_TYPE = {

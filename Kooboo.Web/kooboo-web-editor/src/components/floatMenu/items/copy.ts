@@ -6,7 +6,7 @@ import {
   clearKoobooInfo,
   isDynamicContent,
   getGuidComment
-} from "@/kooboo/koobooUtils";
+} from "@/kooboo/utils";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import { TEXT } from "@/common/lang";
 import { getEditComment } from "../utils";
@@ -14,6 +14,7 @@ import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { CopyUnit } from "@/operation/recordUnits/CopyUnit";
 import { InnerHtmlLog } from "@/operation/recordLogs/InnerHtmlLog";
+import { newGuid } from "@/kooboo/outsideInterfaces";
 
 export function createCopyItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.COPY, MenuActions.copy);
@@ -32,7 +33,7 @@ export function createCopyItem(): MenuItem {
     let args = context.lastSelectedDomEventArgs;
 
     let cloneElement = args.element.cloneNode(true) as HTMLElement;
-    let guid = setGuid(cloneElement, true);
+    let guid = setGuid(cloneElement, newGuid());
     args.element.parentElement!.insertBefore(
       cloneElement,
       args.element.nextSibling

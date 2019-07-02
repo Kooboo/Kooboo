@@ -1,6 +1,6 @@
 import { isInEditorContainer } from "./utils";
 import context from "@/common/context";
-import { getCloseElement, getKoobooInfo } from "@/kooboo/koobooUtils";
+import { getCloseElement, getKoobooInfo } from "@/kooboo/utils";
 import { HoverDomEventArgs } from "@/events/HoverDomEvent";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 

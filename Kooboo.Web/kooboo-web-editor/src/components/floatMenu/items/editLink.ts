@@ -2,11 +2,7 @@ import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import {
-  setGuid,
-  clearKoobooInfo,
-  isDynamicContent
-} from "@/kooboo/koobooUtils";
+import { setGuid, clearKoobooInfo, isDynamicContent } from "@/kooboo/utils";
 import { KOOBOO_GUID, ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
 import { isLink } from "@/dom/utils";
 import { getEditComment } from "../utils";

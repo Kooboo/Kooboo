@@ -9,7 +9,7 @@ import {
   setGuid,
   markDirty,
   clearKoobooInfo
-} from "@/kooboo/koobooUtils";
+} from "@/kooboo/utils";
 import { createImagePicker } from "@/components/imagePicker";
 import { KOOBOO_GUID, ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
 

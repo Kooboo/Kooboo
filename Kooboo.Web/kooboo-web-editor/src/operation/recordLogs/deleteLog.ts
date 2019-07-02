@@ -1,7 +1,7 @@
 import { Log } from "./Log";
 import { ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
 
-export class deleteLog extends Log {
+export class DeleteLog extends Log {
   getCommitObject(): object {
     let result: any = {};
 

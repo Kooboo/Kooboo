@@ -1,6 +1,6 @@
 import { Log } from "./Log";
 import { ACTION_TYPE, EDITOR_TYPE, OBJECT_TYPE } from "@/common/constants";
-import { clearKoobooInfo } from "@/kooboo/koobooUtils";
+import { clearKoobooInfo } from "@/kooboo/utils";
 
 export class InnerHtmlLog extends Log {
   getCommitObject(): object {
@@ -19,6 +19,7 @@ export class InnerHtmlLog extends Log {
     result.value = clearKoobooInfo(this.element.innerHTML);
     result.nameOrId = this.comment.nameorid;
     result.objectType = this.comment.objecttype;
+    result.fieldName = this.comment.fieldname;
 
     return result;
   }

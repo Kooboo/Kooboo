@@ -1,5 +1,5 @@
 import request from "./request";
-import { getPageId } from "@/kooboo/koobooUtils";
+import { getPageId } from "@/kooboo/utils";
 import qs from "query-string";
 
 export default async (operationLogs: Array<any>) => {

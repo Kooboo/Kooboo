@@ -1,4 +1,4 @@
-import { getKoobooInfo, clearKoobooInfo } from "../../src/kooboo/koobooUtils";
+import { getKoobooInfo, clearKoobooInfo } from "../../src/kooboo/utils";
 import { KOOBOO_ID } from "../../src/common/constants";
 
 describe("domAnalyze", () => {
