@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isBody } from "@/dom/utils";
-import { getRepeat, changeGuid } from "../utils";
+import { getRepeat, changeNameOrId } from "../utils";
 import { getWrapDom, getGuidComment } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
 import { newGuid } from "@/kooboo/outsideInterfaces";
@@ -31,10 +31,10 @@ export function createCopyRepeatItem(): MenuItem {
     if (!nodes || nodes.length == 0) return;
     let anchor: Node = nodes[nodes.length - 1];
     let parent = anchor.parentNode!;
-    let guid = newGuid();
+    let guid = newGuid() + "_name";
     for (const node of nodes.reverse()) {
       let insertNode = node.cloneNode(true);
-      changeGuid(insertNode, guid);
+      changeNameOrId(insertNode, guid);
       parent.insertBefore(insertNode, anchor.nextSibling);
     }
 

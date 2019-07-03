@@ -50,16 +50,16 @@ export const getHtmlBlock = (comments: KoobooComment[]) =>
 export const getRepeat = (comments: KoobooComment[]) =>
   getObjectType(comments, OBJECT_TYPE.contentrepeater);
 
-export function changeGuid(node: Node, guid: string) {
+export function changeNameOrId(node: Node, guid: string) {
   if (KoobooComment.isKoobooComment(node)) {
     node.nodeValue = node.nodeValue!.replace(
-      /--nameorid='.{36}'/,
+      /--nameorid='.{36,50}?'/,
       `--nameorid='${guid}'`
     );
   }
   if (node instanceof HTMLElement) {
     for (const iterator of getAllNode(node)) {
-      changeGuid(iterator, guid);
+      changeNameOrId(iterator, guid);
     }
   }
 }
