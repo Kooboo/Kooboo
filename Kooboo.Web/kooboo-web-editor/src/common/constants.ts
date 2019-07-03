@@ -23,13 +23,6 @@ export const OBJECT_TYPE = {
   url: "Url"
 };
 
-export const ACTION_TYPE = {
-  add: "add",
-  update: "update",
-  delete: "delete",
-  copy: "copy"
-};
-
 export const EDITOR_TYPE = {
   dom: "dom",
   htmlblock: "htmlblock",

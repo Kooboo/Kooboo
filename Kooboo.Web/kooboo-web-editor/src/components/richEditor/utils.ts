@@ -1,15 +1,22 @@
 import { Editor, Settings, EditorManager } from "tinymce";
-import { STANDARD_Z_INDEX, EMPTY_COMMENT } from "../../common/constants";
+import {
+  STANDARD_Z_INDEX,
+  EMPTY_COMMENT,
+  OBJECT_TYPE
+} from "../../common/constants";
 import { lang } from "../../common/lang";
 import context from "../../common/context";
-import { markDirty, setGuid } from "../../kooboo/utils";
+import { markDirty, setGuid, clearKoobooInfo } from "../../kooboo/utils";
 import { getAllElement } from "../../dom/utils";
 import { delay } from "../../common/utils";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";
 import { operationRecord } from "@/operation/Record";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
-import { InnerHtmlLog } from "@/operation/recordLogs/InnerHtmlLog";
 import { getEditComment } from "../floatMenu/utils";
+import { Log } from "@/operation/recordLogs/Log";
+import { ContentLog } from "@/operation/recordLogs/ContentLog";
+import { DomLog } from "@/operation/recordLogs/DomLog";
+import { LabelLog } from "@/operation/recordLogs/LabelLog";
 
 export async function impoveEditorUI(editor: Editor) {
   let container = editor.getContainer();
@@ -66,14 +73,34 @@ export function save_onsavecallback(e: Editor) {
     let dirtyEl = args.closeParent ? args.closeParent : element;
     markDirty(dirtyEl);
     let koobooId = args.parentKoobooId ? args.parentKoobooId : args.koobooId;
-
     let guid = setGuid(element);
     let units = [new InnerHtmlUnit(startContent)];
-    let logs = [
-      new InnerHtmlLog(getEditComment(args.koobooComments)!, koobooId!, dirtyEl)
-    ];
+    let comment = getEditComment(args.koobooComments)!;
+    let value = clearKoobooInfo(dirtyEl.innerHTML);
+    let log: Log;
 
-    let operation = new operationRecord(units, logs, guid);
+    if (comment.objecttype == OBJECT_TYPE.content) {
+      log = ContentLog.createUpdate(
+        comment.nameorid!,
+        comment.fieldname!,
+        value
+      );
+    } else if (comment.objecttype == OBJECT_TYPE.label) {
+      log = LabelLog.createUpdate(
+        comment.bindingvalue!,
+        comment.objecttype,
+        value
+      );
+    } else {
+      log = DomLog.createUpdate(
+        comment.nameorid!,
+        value,
+        koobooId!,
+        comment.objecttype!
+      );
+    }
+
+    let operation = new operationRecord(units, [log], guid);
     context.operationManager.add(operation);
   }
 

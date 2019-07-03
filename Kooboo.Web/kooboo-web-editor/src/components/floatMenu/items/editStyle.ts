@@ -6,7 +6,7 @@ import { getEditComment, getMenu, getForm, getHtmlBlock } from "../utils";
 import { createStyleEditor } from "@/components/styleEditor";
 import { isBody } from "@/dom/utils";
 import { setGuid, clearKoobooInfo } from "@/kooboo/utils";
-import { KOOBOO_GUID, ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
+import { KOOBOO_GUID, EDITOR_TYPE } from "@/common/constants";
 
 export function createEditStyleItem(): MenuItem {
   const { el, setVisiable } = createItem(

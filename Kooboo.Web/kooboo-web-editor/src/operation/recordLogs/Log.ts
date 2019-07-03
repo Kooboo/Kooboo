@@ -1,6 +1,6 @@
-import { KoobooComment } from "@/kooboo/KoobooComment";
+import { ActionType } from "../actionType";
 
 export abstract class Log {
-  constructor(public comment: KoobooComment, public koobooId: string) {}
-  abstract getCommitObject(): object;
+  action!: ActionType;
+  nameOrId!: string;
 }

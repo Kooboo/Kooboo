@@ -5,7 +5,6 @@ import context from "../../common/context";
 import updateOperation from "../../api/updateOperation";
 import { reload } from "@/dom/utils";
 import { Log } from "@/operation/recordLogs/Log";
-import { getMargedLogs } from "@/operation/untils";
 
 export function createSaveButton(document: Document) {
   var saveBtn = createButton(document, saveIcon);
@@ -14,12 +13,12 @@ export function createSaveButton(document: Document) {
   });
   saveBtn.onclick = async () => {
     let logs: Log[] = [];
-    context.operationManager.previousRecords.forEach(i => {
-      logs.push(...i.logs);
-    });
-    logs = getMargedLogs(logs);
-    if (logs.length == 0) return;
-    await updateOperation(logs.map(m => m.getCommitObject()));
+
+    for (const iterator of context.operationManager.previousRecords) {
+      logs.push(...iterator.logs);
+    }
+
+    await updateOperation(logs);
     reload();
   };
   return saveBtn;

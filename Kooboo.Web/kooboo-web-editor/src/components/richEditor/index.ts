@@ -1,13 +1,21 @@
-import context from "../../common/context";
-import { setInlineEditor } from "./tinymce";
-import { MenuActions } from "../../events/FloatMenuClickEvent";
+import { EditorManager, Settings } from "tinymce";
+import "tinymce/themes/silver";
+import "tinymce/plugins/save";
+import "tinymce/plugins/link";
+import "tinymce/plugins/image";
+import { createSettings } from "./settings";
+import { impoveEditorUI } from "./utils";
 
-export function registerInlineEditor() {
-  context.floatMenuClickEvent.addEventListener(e => {
-    if (context.editing || e != MenuActions.edit) return;
-    if (context.lastSelectedDomEventArgs) {
-      let selectedDom = context.lastSelectedDomEventArgs.element;
-      setInlineEditor(selectedDom);
-    }
-  });
+async function createEditor(settings: Settings) {
+  let selector = settings.target as HTMLElement;
+  let editor = await EditorManager.init(settings);
+  if (editor instanceof Array) editor = editor[0];
+  impoveEditorUI(editor);
+  if (selector instanceof HTMLElement) selector.focus();
+  return editor;
+}
+
+export async function setInlineEditor(selector: HTMLElement) {
+  let settings = createSettings(selector);
+  await createEditor(settings);
 }

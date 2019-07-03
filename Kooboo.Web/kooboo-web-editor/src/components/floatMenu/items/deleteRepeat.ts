@@ -8,8 +8,8 @@ import { getWrapDom, getGuidComment } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { operationRecord } from "@/operation/Record";
-import { DeleteRepeatLog } from "@/operation/recordLogs/DeleteRepeatLog";
 import { DeleteRepeatUnit } from "@/operation/recordUnits/DeleteRepeatUnit";
+import { ContentLog } from "@/operation/recordLogs/ContentLog";
 
 export function createDeleteRepeatItem(): MenuItem {
   const { el, setVisiable } = createItem(
@@ -43,7 +43,7 @@ export function createDeleteRepeatItem(): MenuItem {
     temp.outerHTML = guidComment;
 
     let units = [new DeleteRepeatUnit(oldValue)];
-    let logs = [new DeleteRepeatLog(getRepeat(args.koobooComments)!, guid)];
+    let logs = [ContentLog.createDelete(guid)];
 
     let operation = new operationRecord(units, logs, guid);
     context.operationManager.add(operation);

@@ -8,8 +8,8 @@ import { getWrapDom, getGuidComment } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
 import { newGuid } from "@/kooboo/outsideInterfaces";
 import { CopyRepeatUnit } from "@/operation/recordUnits/CopyRepeatUnit";
-import { CopyRepeatLog } from "@/operation/recordLogs/CopyRepeatLog";
 import { operationRecord } from "@/operation/Record";
+import { ContentLog } from "@/operation/recordLogs/ContentLog";
 
 export function createCopyRepeatItem(): MenuItem {
   const { el, setVisiable } = createItem(
@@ -37,9 +37,9 @@ export function createCopyRepeatItem(): MenuItem {
       changeNameOrId(insertNode, guid);
       parent.insertBefore(insertNode, anchor.nextSibling);
     }
-
+    let comment = getRepeat(args.koobooComments);
     let units = [new CopyRepeatUnit(getGuidComment(guid))];
-    let logs = [new CopyRepeatLog(getRepeat(args.koobooComments)!, guid)];
+    let logs = [ContentLog.createCopy(guid, comment!.nameorid!)];
 
     let operation = new operationRecord(units, logs, guid);
     context.operationManager.add(operation);

@@ -5,6 +5,7 @@ import { MenuItem, createItem } from "../basic";
 import { isDynamicContent } from "@/kooboo/utils";
 import { getEditComment, getMenu, getForm, getHtmlBlock } from "../utils";
 import { isBody } from "@/dom/utils";
+import { setInlineEditor } from "@/components/richEditor";
 
 export function createEditItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT, MenuActions.edit);
@@ -22,6 +23,11 @@ export function createEditItem(): MenuItem {
     if (isDynamicContent(args.element)) visiable = false;
     setVisiable(visiable);
   };
+
+  el.addEventListener("click", () => {
+    let args = context.lastSelectedDomEventArgs;
+    setInlineEditor(args.element);
+  });
 
   return { el, update };
 }

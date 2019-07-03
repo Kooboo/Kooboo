@@ -13,8 +13,9 @@ import { getEditComment } from "../utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { CopyUnit } from "@/operation/recordUnits/CopyUnit";
-import { InnerHtmlLog } from "@/operation/recordLogs/InnerHtmlLog";
 import { newGuid } from "@/kooboo/outsideInterfaces";
+import { ContentLog } from "@/operation/recordLogs/ContentLog";
+import { DomLog } from "@/operation/recordLogs/DomLog";
 
 export function createCopyItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.COPY, MenuActions.copy);
@@ -40,14 +41,17 @@ export function createCopyItem(): MenuItem {
     );
 
     markDirty(args.closeParent!);
-
+    let value = clearKoobooInfo(args.closeParent!.innerHTML);
     let units = [new CopyUnit(getGuidComment(guid))];
     let comment = getEditComment(args.koobooComments)!;
-    let logs = [
-      new InnerHtmlLog(comment, args.parentKoobooId!, args.closeParent!)
-    ];
+    let log = DomLog.createUpdate(
+      comment.nameorid!,
+      value,
+      args.parentKoobooId!,
+      comment.objecttype!
+    );
 
-    let operation = new operationRecord(units, logs, guid);
+    let operation = new operationRecord(units, [log], guid);
     context.operationManager.add(operation);
   });
 

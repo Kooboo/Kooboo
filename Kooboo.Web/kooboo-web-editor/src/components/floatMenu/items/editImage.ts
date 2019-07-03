@@ -11,7 +11,7 @@ import {
   clearKoobooInfo
 } from "@/kooboo/utils";
 import { createImagePicker } from "@/components/imagePicker";
-import { KOOBOO_GUID, ACTION_TYPE, EDITOR_TYPE } from "@/common/constants";
+import { KOOBOO_GUID, EDITOR_TYPE } from "@/common/constants";
 
 export function createEditImageItem(): MenuItem {
   const { el, setVisiable } = createItem(
