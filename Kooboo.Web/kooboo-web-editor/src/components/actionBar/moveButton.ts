@@ -1,12 +1,13 @@
 import { createButton } from "./button";
 import moveIcon from "../../assets/icons/drag-move--fill.svg";
 import context from "../../common/context";
+import { emitHoverEvent } from "@/dom/events";
 
 export function createMoveButton(document: Document, container: HTMLElement) {
   var btn = createButton(document, moveIcon);
   btn.draggable = true;
   btn.style.cursor = "move";
-
+  emitHoverEvent(document.createElement("div"));
   btn.ondragstart = e => {
     context.editing = true;
   };
