@@ -10,15 +10,17 @@ import {
   markDirty,
   clearKoobooInfo
 } from "@/kooboo/utils";
-import { createImagePicker } from "@/components/imagePicker";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { operationRecord } from "@/operation/Record";
 import { DomLog } from "@/operation/recordLogs/DomLog";
+import { setInlineEditor } from "@/components/richEditor";
+import { KOOBOO_ID } from "@/common/constants";
+import { emitSelectedEvent, emitHoverEvent } from "@/dom/events";
 
-export function createEditImageItem(): MenuItem {
+export function createReplaceToTextItem(): MenuItem {
   const { el, setVisiable } = createItem(
-    TEXT.EDIT_IMAGE,
-    MenuActions.editImage
+    TEXT.REPLACE_TO_TEXT,
+    MenuActions.replaceToText
   );
   const update = () => {
     let visiable = true;
@@ -36,20 +38,15 @@ export function createEditImageItem(): MenuItem {
     setGuid(args.closeParent);
     let startContent = args.closeParent.innerHTML;
     try {
-      await createImagePicker(args.element as HTMLImageElement);
-      markDirty(args.closeParent);
-      let guid = setGuid(args.closeParent);
-      let value = clearKoobooInfo(args.closeParent!.innerHTML);
-      let comment = getEditComment(args.koobooComments)!;
-      let unit = new InnerHtmlUnit(startContent);
-      let log = DomLog.createUpdate(
-        comment.nameorid!,
-        value,
-        args.parentKoobooId!,
-        comment.objecttype!
-      );
-      let record = new operationRecord([unit], [log], guid);
-      context.operationManager.add(record);
+      let style = getComputedStyle(args.element);
+      let text = document.createElement("p");
+      text.setAttribute(KOOBOO_ID, args.koobooId!);
+      text.style.width = style.width;
+      text.style.height = style.height;
+      args.element.parentElement!.replaceChild(text, args.element);
+      emitHoverEvent(text);
+      emitSelectedEvent(text);
+      await setInlineEditor(text);
     } catch (error) {
       args.closeParent.innerHTML = startContent;
     }

@@ -17,7 +17,7 @@ function hover(e: MouseEvent) {
   context.hoverDomEvent.emit(args);
 }
 
-function listenHover() {
+export function listenHover() {
   document.body.addEventListener("mouseover", hover);
   const mouseenter = (e: MouseEvent) => {
     hover(e);
@@ -26,7 +26,7 @@ function listenHover() {
   document.body.addEventListener("mousemove", mouseenter);
 }
 
-function listenClick() {
+export function listenClick() {
   document.body.addEventListener("click", e => {
     e.preventDefault();
     e.stopPropagation();
@@ -51,7 +51,21 @@ function listenClick() {
   });
 }
 
-export function listenDomEvents() {
-  listenHover();
-  listenClick();
+export function emitHoverEvent(el: HTMLElement) {
+  let closeElement = getCloseElement(el);
+  if (closeElement == null) return;
+  context.hoverDomEvent.emit(new HoverDomEventArgs(el, closeElement));
+}
+
+export function emitSelectedEvent(el: HTMLElement) {
+  let { comments, koobooId, closeParent, parentKoobooId } = getKoobooInfo(el);
+  if (comments.length == 0) return;
+  var args = new SelectedDomEventArgs(
+    context.lastHoverDomEventArgs.closeElement,
+    koobooId,
+    closeParent,
+    parentKoobooId,
+    comments
+  );
+  context.domChangeEvent.emit(args);
 }

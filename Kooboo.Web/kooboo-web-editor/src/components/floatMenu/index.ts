@@ -5,6 +5,7 @@ import { SelectedDomEventArgs } from "../../events/SelectedDomEvent";
 import { HoverDomEventArgs } from "../../events/HoverDomEvent";
 import { delay } from "../../common/utils";
 import { createMenu } from "./menu";
+import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
 
 export function createFloatMenu() {
   const menu = createMenu();
@@ -30,23 +31,8 @@ export function createFloatMenu() {
     if (context.editing || e != MenuActions.expand) return;
     let el = context.lastHoverDomEventArgs!.closeElement;
     if (!el || !el.parentElement) return;
-    let closeElement = getCloseElement(el.parentElement);
-    if (closeElement == null) return;
-
-    context.hoverDomEvent.emit(
-      new HoverDomEventArgs(el.parentElement, closeElement)
-    );
-
-    let { comments, koobooId, closeParent, parentKoobooId } = getKoobooInfo(el);
-    if (comments.length == 0) return;
-    var args = new SelectedDomEventArgs(
-      closeElement,
-      koobooId,
-      closeParent,
-      parentKoobooId,
-      comments
-    );
-    context.domChangeEvent.emit(args);
+    emitHoverEvent(el.parentElement);
+    emitSelectedEvent(el);
   });
 
   return menu.el;

@@ -3,10 +3,12 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { setGuid, clearKoobooInfo, isDynamicContent } from "@/kooboo/utils";
-import { KOOBOO_GUID, EDITOR_TYPE } from "@/common/constants";
 import { isLink } from "@/dom/utils";
 import { getEditComment } from "../utils";
 import { createLinkPicker } from "@/components/linkPicker";
+import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
+import { DomLog } from "@/operation/recordLogs/DomLog";
+import { operationRecord } from "@/operation/Record";
 
 export function createEditLinkItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_LINK, MenuActions.editLink);
@@ -32,18 +34,21 @@ export function createEditLinkItem(): MenuItem {
     try {
       let url = await createLinkPicker(href);
       args!.element.setAttribute("href", url);
-      // let operation = new Operation(
-      //   args.closeParent!.getAttribute(KOOBOO_GUID)!,
-      //   startContent,
-      //   args.closeParent!.innerHTML,
-      //   getEditComment(args.koobooComments)!,
-      //   args!.parentKoobooId,
-      //   ACTION_TYPE.update,
-      //   clearKoobooInfo(args!.closeParent!.innerHTML),
-      //   EDITOR_TYPE.dom
-      // );
-      // context.operationManager.add(operation);
-    } catch (error) {}
+      let guid = setGuid(args.closeParent);
+      let value = clearKoobooInfo(args.closeParent!.innerHTML);
+      let comment = getEditComment(args.koobooComments)!;
+      let unit = new InnerHtmlUnit(startContent);
+      let log = DomLog.createUpdate(
+        comment.nameorid!,
+        value,
+        args.parentKoobooId!,
+        comment.objecttype!
+      );
+      let record = new operationRecord([unit], [log], guid);
+      context.operationManager.add(record);
+    } catch (error) {
+      args.closeParent.innerHTML = startContent;
+    }
   });
 
   return { el, update };

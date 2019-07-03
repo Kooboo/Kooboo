@@ -11,6 +11,8 @@ import { createEditMenuItem } from "./items/editMenu";
 import { createEditStyleItem } from "./items/editStyle";
 import { createCopyRepeatItem } from "./items/copyRepeat";
 import { createDeleteRepeatItem } from "./items/deleteRepeat";
+import { createReplaceToImgItem } from "./items/replaceToImg";
+import { createReplaceToTextItem } from "./items/replaceToText";
 
 export function createMenu() {
   const container = createContainer();
@@ -26,7 +28,9 @@ export function createMenu() {
     createCopyRepeatItem(),
     createDeleteRepeatItem(),
     createEditMenuItem(),
-    createEditStyleItem()
+    createEditStyleItem(),
+    createReplaceToImgItem(),
+    createReplaceToTextItem()
   ] as MenuItem[];
 
   for (const i of items) {

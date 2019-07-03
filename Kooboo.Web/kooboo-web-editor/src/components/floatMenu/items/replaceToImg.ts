@@ -14,16 +14,17 @@ import { createImagePicker } from "@/components/imagePicker";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { operationRecord } from "@/operation/Record";
 import { DomLog } from "@/operation/recordLogs/DomLog";
+import { KOOBOO_ID } from "@/common/constants";
 
-export function createEditImageItem(): MenuItem {
+export function createReplaceToImgItem(): MenuItem {
   const { el, setVisiable } = createItem(
-    TEXT.EDIT_IMAGE,
-    MenuActions.editImage
+    TEXT.REPLACE_TO_IMG,
+    MenuActions.replaceToImg
   );
   const update = () => {
     let visiable = true;
     let args = context.lastSelectedDomEventArgs;
-    if (!isImg(args.element)) visiable = false;
+    if (isImg(args.element)) visiable = false;
     if (!args.closeParent || !args.parentKoobooId) visiable = false;
     if (!getEditComment(args.koobooComments)) visiable = false;
     if (isDynamicContent(args.element)) visiable = false;
@@ -36,7 +37,13 @@ export function createEditImageItem(): MenuItem {
     setGuid(args.closeParent);
     let startContent = args.closeParent.innerHTML;
     try {
-      await createImagePicker(args.element as HTMLImageElement);
+      let style = getComputedStyle(args.element);
+      let img = document.createElement("img");
+      img.setAttribute(KOOBOO_ID, args.koobooId!);
+      img.style.width = style.width;
+      img.style.height = style.height;
+      args.element.parentElement!.replaceChild(img, args.element);
+      await createImagePicker(img);
       markDirty(args.closeParent);
       let guid = setGuid(args.closeParent);
       let value = clearKoobooInfo(args.closeParent!.innerHTML);

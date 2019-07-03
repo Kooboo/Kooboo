@@ -56,13 +56,14 @@ export function setLang(settings: Settings) {
   }
 }
 
-export function save_oncancelcallback(e: Editor) {
+export function save_oncancelcallback(e: Editor, callBack: () => void) {
   e.setContent((e as any)._content);
   e.remove();
   context.editing = false;
+  callBack();
 }
 
-export function save_onsavecallback(e: Editor) {
+export function save_onsavecallback(e: Editor, callBack: () => void) {
   let args = context.lastSelectedDomEventArgs;
   if (!args) return;
   let startContent = (e as any)._content;
@@ -105,6 +106,7 @@ export function save_onsavecallback(e: Editor) {
   }
 
   context.editing = false;
+  callBack();
 }
 
 export function onBlur() {

@@ -2,10 +2,11 @@ import { createActionBar } from "./components/actionBar";
 import { createFloatMenu } from "./components/floatMenu";
 import { createHoverBorder } from "./components/selectorBorder";
 import { createContainer } from "./components/container";
-import { listenDomEvents } from "./dom/listeners";
 import { createEditorShade } from "./components/editorShade";
+import { listenHover, listenClick } from "./dom/events";
 
-listenDomEvents();
+listenHover();
+listenClick();
 
 const container = createContainer();
 container.appendChild(createHoverBorder());

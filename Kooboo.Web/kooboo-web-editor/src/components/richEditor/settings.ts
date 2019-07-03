@@ -14,7 +14,11 @@ import {
 import { createLinkPicker } from "../linkPicker";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 
-export function createSettings(selector: HTMLElement) {
+export function createSettings(
+  selector: HTMLElement,
+  onCancel: () => void,
+  onSave: () => void
+) {
   const settings = {
     target: selector,
     inline: true,
@@ -64,7 +68,9 @@ export function createSettings(selector: HTMLElement) {
   (selector as any)._isRelative = selector.style.position == "relative";
   setLang(settings);
   (settings as any).save_enablewhendirty = false;
-  (settings as any).save_oncancelcallback = save_oncancelcallback;
-  (settings as any).save_onsavecallback = save_onsavecallback;
+  (settings as any).save_oncancelcallback = (e: Editor) =>
+    save_oncancelcallback(e, onCancel);
+  (settings as any).save_onsavecallback = (e: Editor) =>
+    save_onsavecallback(e, onSave);
   return settings;
 }

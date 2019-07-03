@@ -17,7 +17,7 @@ export function createSaveButton(document: Document) {
     for (const iterator of context.operationManager.previousRecords) {
       logs.push(...iterator.logs);
     }
-
+    if (logs.length == 0) return;
     await updateOperation(logs);
     reload();
   };

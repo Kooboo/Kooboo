@@ -24,7 +24,9 @@ const en = {
   HEIGHT: "height",
   PLEASE_EDIT_AFTER_SAVE: "please edit after save",
   COPY_REPEAT: "copy repeat item",
-  DELETE_REPEAR: "delete repeat item"
+  DELETE_REPEAR: "delete repeat item",
+  REPLACE_TO_IMG: "replace to image",
+  REPLACE_TO_TEXT: "replace to Text"
 };
 
 const zh = {
@@ -49,7 +51,9 @@ const zh = {
   WIDTH: "宽度",
   PLEASE_EDIT_AFTER_SAVE: "请保存后再编辑",
   COPY_REPEAT: "复制项目",
-  DELETE_REPEAR: "删除项目"
+  DELETE_REPEAR: "删除项目",
+  REPLACE_TO_IMG: "替换为图片",
+  REPLACE_TO_TEXT: "替换为文字"
 } as typeof en;
 
 var langPackages = { en, zh };
