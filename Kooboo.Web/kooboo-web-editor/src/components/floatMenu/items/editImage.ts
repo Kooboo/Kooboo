@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
-import { getEditComment } from "../utils";
+import { getEditComment, getRepeatAttributeComment } from "../utils";
 import {
   isDynamicContent,
   setGuid,

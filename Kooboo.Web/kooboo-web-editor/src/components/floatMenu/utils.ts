@@ -25,6 +25,13 @@ export function getDeleteComment(comments: KoobooComment[]) {
   }
 }
 
+export function getRepeatAttributeComment(comments: KoobooComment[]) {
+  let comment = comments[0];
+  if (comment && comment.objecttype == OBJECT_TYPE.attribute) {
+    return comment;
+  }
+}
+
 function getObjectType(comments: KoobooComment[], type: string) {
   for (const i of comments) {
     if (i.objecttype && i.objecttype.toLowerCase() == type) return i;

@@ -37,7 +37,12 @@ export class KoobooComment {
     return this.getValue("boundary");
   }
   get fieldname() {
-    return this.getValue("fieldname");
+    let result = this.getValue("fieldname");
+    if (!result && this.bindingvalue && this.bindingvalue.indexOf(".") > -1) {
+      result = this.bindingvalue.split(".").pop();
+      result = result!.replace("}", "");
+    }
+    return result;
   }
   get koobooid() {
     return this.getValue("koobooid");

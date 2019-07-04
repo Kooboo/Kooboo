@@ -13,6 +13,8 @@ import { createCopyRepeatItem } from "./items/copyRepeat";
 import { createDeleteRepeatItem } from "./items/deleteRepeat";
 import { createReplaceToImgItem } from "./items/replaceToImg";
 import { createReplaceToTextItem } from "./items/replaceToText";
+import { createEditRepeatImageItem } from "./items/editRepeatImage";
+import { createEditRepeatLinkItem } from "./items/editRepeatIink";
 
 export function createMenu() {
   const container = createContainer();
@@ -30,7 +32,9 @@ export function createMenu() {
     createEditMenuItem(),
     createEditStyleItem(),
     createReplaceToImgItem(),
-    createReplaceToTextItem()
+    createReplaceToTextItem(),
+    createEditRepeatImageItem(),
+    createEditRepeatLinkItem()
   ] as MenuItem[];
 
   for (const i of items) {
