@@ -77,7 +77,7 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
     if (comment.objecttype == OBJECT_TYPE.content) {
       log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, value);
     } else if (comment.objecttype == OBJECT_TYPE.label) {
-      log = LabelLog.createUpdate(comment.bindingvalue!, comment.objecttype, value);
+      log = LabelLog.createUpdate(comment.bindingvalue!, value);
     } else {
       log = DomLog.createUpdate(comment.nameorid!, value, koobooId!, comment.objecttype!);
     }

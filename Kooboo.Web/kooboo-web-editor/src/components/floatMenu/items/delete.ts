@@ -45,7 +45,7 @@ export function createDeleteItem(): MenuItem {
       if (comment.objecttype == OBJECT_TYPE.content) {
         log = ContentLog.createDelete(comment.nameorid!);
       } else if (comment.objecttype == OBJECT_TYPE.label) {
-        log = LabelLog.createDelete(comment.bindingvalue!, comment.objecttype!);
+        log = LabelLog.createDelete(comment.bindingvalue!);
       }
     }
 
