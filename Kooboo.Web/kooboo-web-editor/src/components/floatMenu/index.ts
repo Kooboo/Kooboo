@@ -32,7 +32,7 @@ export function createFloatMenu() {
     let el = context.lastHoverDomEventArgs!.closeElement;
     if (!el || !el.parentElement) return;
     emitHoverEvent(el.parentElement);
-    emitSelectedEvent(el);
+    emitSelectedEvent(context.lastHoverDomEventArgs.closeElement);
   });
 
   return menu.el;
