@@ -4,6 +4,7 @@ import context from "../../common/context";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
 import expandIcon from "@/assets/icons/fangda.svg";
 import { STANDARD_Z_INDEX } from "@/common/constants";
+import { getMaxHeight } from "@/dom/utils";
 
 export interface MenuItem {
   el: HTMLElement;
@@ -52,7 +53,21 @@ export function createContainer() {
   el.style.zIndex = STANDARD_Z_INDEX + 1 + "";
   el.append(createTitle());
 
-  const updatePosition = (x: number, y: number) => {
+  const updatePosition = (
+    x: number,
+    y: number,
+    pageHeight: number,
+    pageWidth: number
+  ) => {
+    let rect = el.getBoundingClientRect();
+
+    if (x + rect.width > pageWidth) {
+      x -= rect.width;
+    }
+
+    if (y + rect.height > pageHeight) {
+      y -= rect.height;
+    }
     el.style.top = y + "px";
     el.style.left = x + "px";
   };

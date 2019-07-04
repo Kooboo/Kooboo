@@ -15,6 +15,7 @@ import { createReplaceToImgItem } from "./items/replaceToImg";
 import { createReplaceToTextItem } from "./items/replaceToText";
 import { createEditRepeatImageItem } from "./items/editRepeatImage";
 import { createEditRepeatLinkItem } from "./items/editRepeatIink";
+import { getMaxHeight, getMaxWidth } from "@/dom/utils";
 
 export function createMenu() {
   const container = createContainer();
@@ -42,11 +43,15 @@ export function createMenu() {
   }
 
   const update = (x: number, y: number) => {
+    let pageHeight = getMaxHeight();
+    let pagewidth = getMaxWidth();
     container.el.style.display = "block";
-    container.updatePosition(x, y);
+
     for (const i of items) {
       i.update();
     }
+
+    container.updatePosition(x, y, pageHeight, pagewidth);
   };
 
   const hidden = () => {

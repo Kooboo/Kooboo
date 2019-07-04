@@ -13,6 +13,19 @@ export function getMaxHeight() {
   );
 }
 
+export function getMaxWidth() {
+  var body = document.body,
+    html = document.documentElement;
+
+  return Math.max(
+    body.scrollWidth,
+    body.offsetWidth,
+    html.clientWidth,
+    html.scrollWidth,
+    html.offsetWidth
+  );
+}
+
 export function isInEditorContainer(e: MouseEvent) {
   return ((e as any).path as Array<HTMLElement>).some(s => {
     if (s instanceof HTMLElement) return s.id == HOVER_BORDER_SKIP;
