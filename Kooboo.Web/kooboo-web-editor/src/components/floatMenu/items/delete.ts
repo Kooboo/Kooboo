@@ -8,7 +8,13 @@ import {
   isDynamicContent,
   getGuidComment
 } from "@/kooboo/utils";
-import { getEditComment, getDeleteComment } from "../utils";
+import {
+  getEditComment,
+  getDelete,
+  getMenu,
+  getForm,
+  getHtmlBlock
+} from "../utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { DeleteUnit } from "@/operation/recordUnits/DeleteUnit";
@@ -24,6 +30,9 @@ export function createDeleteItem(): MenuItem {
     let visiable = true;
     let args = context.lastSelectedDomEventArgs;
     if (isBody(args.element)) visiable = false;
+    if (getMenu(args.koobooComments)) visiable = false;
+    if (getForm(args.koobooComments)) visiable = false;
+    if (getHtmlBlock(args.koobooComments)) visiable = false;
     if (!getEditComment(args.koobooComments)) visiable = false;
     if (isDynamicContent(args.element)) visiable = false;
     setVisiable(visiable);
@@ -40,7 +49,7 @@ export function createDeleteItem(): MenuItem {
 
     let log!: Log;
     if (args.closeParent) {
-      let comment = getDeleteComment(args.koobooComments)!;
+      let comment = getDelete(args.koobooComments)!;
       log = DomLog.createUpdate(
         comment.nameorid!,
         clearKoobooInfo(args.closeParent.innerHTML),

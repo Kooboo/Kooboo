@@ -38,26 +38,22 @@ function addImg(container: HTMLElement, el: HTMLElement) {
   const spliter = createSpliter("背景图片");
   spliter.style.margin = "-10px 0 15px 0";
   container.appendChild(spliter);
-  const { imagePreview, setImage } = createImgPreview();
+  const { imagePreview, setImage } = createImgPreview(
+    true,
+    () => (el.style.backgroundImage = "")
+  );
   imagePreview.style.marginLeft = "auto";
   imagePreview.style.marginRight = "auto";
+  imagePreview.style.marginBottom = "15px";
   container.appendChild(imagePreview);
   let style = getComputedStyle(el);
   if (style.backgroundImage) setImage(style.backgroundImage);
-  const pickImgButton = createButton("选择图片");
-  const removeImgButton = createButton("移除");
-  pickImgButton.onclick = () => {
+  imagePreview.onclick = () => {
     pickImg(path => {
-      el.style.backgroundImage = `url(${path})`;
+      el.style.backgroundImage = `url('${path}')`;
       setImage(path);
     });
   };
-  removeImgButton.onclick = () => {
-    el.style.backgroundImage = "";
-    setImage("");
-  };
-  container.appendChild(pickImgButton);
-  container.appendChild(removeImgButton);
 }
 
 function addColor(container: HTMLElement, el: HTMLElement) {

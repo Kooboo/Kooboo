@@ -20,8 +20,10 @@ import { LabelLog } from "@/operation/recordLogs/LabelLog";
 
 export async function impoveEditorUI(editor: Editor) {
   let container = editor.getContainer();
+  console.log(container);
   if (container instanceof HTMLElement) {
     container.style.zIndex = STANDARD_Z_INDEX + 1 + "";
+    container.style.width = "auto";
     await delay(100);
     if (container.nextElementSibling instanceof HTMLElement) {
       container.nextElementSibling.style.zIndex = STANDARD_Z_INDEX + 2 + "";

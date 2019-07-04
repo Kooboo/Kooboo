@@ -39,7 +39,11 @@ export function createReplaceToTextItem(): MenuItem {
     let startContent = args.closeParent.innerHTML;
     try {
       let text = document.createElement("p");
+      let style = getComputedStyle(args.element);
       text.setAttribute(KOOBOO_ID, args.koobooId!);
+      text.style.width = style.width;
+      text.style.height = style.height;
+      text.style.display = style.display;
       args.element.parentElement!.replaceChild(text, args.element);
       emitHoverEvent(text);
       emitSelectedEvent(text);

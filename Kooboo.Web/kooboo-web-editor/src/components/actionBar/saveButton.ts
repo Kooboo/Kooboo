@@ -18,8 +18,12 @@ export function createSaveButton(document: Document) {
       logs.push(...iterator.logs);
     }
     if (logs.length == 0) return;
-    await updateOperation(logs);
-    reload();
+    try {
+      await updateOperation(logs);
+      reload();
+    } catch (error) {
+      alert("save error!");
+    }
   };
   return saveBtn;
 }

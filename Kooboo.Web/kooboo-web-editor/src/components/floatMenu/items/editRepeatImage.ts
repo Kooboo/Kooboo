@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
-import { getRepeatAttributeComment } from "../utils";
+import { getRepeatAttribute } from "../utils";
 import { isDynamicContent, setGuid } from "@/kooboo/utils";
 import { operationRecord } from "@/operation/Record";
 import { pickImg } from "@/kooboo/outsideInterfaces";
@@ -19,7 +19,7 @@ export function createEditRepeatImageItem(): MenuItem {
     let visiable = true;
     let args = context.lastSelectedDomEventArgs;
     if (!isImg(args.element)) visiable = false;
-    let comment = getRepeatAttributeComment(args.koobooComments);
+    let comment = getRepeatAttribute(args.koobooComments);
     if (!comment || !comment.fieldname || comment.attributename != "src") {
       visiable = false;
     }
@@ -29,7 +29,7 @@ export function createEditRepeatImageItem(): MenuItem {
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
-    let comment = getRepeatAttributeComment(args.koobooComments)!;
+    let comment = getRepeatAttribute(args.koobooComments)!;
     let img = args.element as HTMLImageElement;
     let startContent = img.src;
     pickImg(path => {

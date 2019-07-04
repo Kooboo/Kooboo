@@ -17,7 +17,7 @@ export function getEditComment(comments: KoobooComment[]) {
   }
 }
 
-export function getDeleteComment(comments: KoobooComment[]) {
+export function getDelete(comments: KoobooComment[]) {
   const editTypes = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout];
 
   for (const i of comments) {
@@ -25,7 +25,7 @@ export function getDeleteComment(comments: KoobooComment[]) {
   }
 }
 
-export function getRepeatAttributeComment(comments: KoobooComment[]) {
+export function getRepeatAttribute(comments: KoobooComment[]) {
   let comment = comments[0];
   if (comment && comment.objecttype == OBJECT_TYPE.attribute) {
     return comment;

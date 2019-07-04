@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isLink } from "@/dom/utils";
-import { getRepeatAttributeComment } from "../utils";
+import { getRepeatAttribute } from "../utils";
 import { isDynamicContent, setGuid } from "@/kooboo/utils";
 import { operationRecord } from "@/operation/Record";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
@@ -16,7 +16,7 @@ export function createEditRepeatLinkItem(): MenuItem {
     let visiable = true;
     let args = context.lastSelectedDomEventArgs;
     if (!isLink(args.element)) visiable = false;
-    let comment = getRepeatAttributeComment(args.koobooComments);
+    let comment = getRepeatAttribute(args.koobooComments);
     if (!comment || !comment.fieldname || comment.attributename != "href") {
       visiable = false;
     }
@@ -26,7 +26,7 @@ export function createEditRepeatLinkItem(): MenuItem {
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
-    let comment = getRepeatAttributeComment(args.koobooComments)!;
+    let comment = getRepeatAttribute(args.koobooComments)!;
     let link = args.element as HTMLLinkElement;
     let startContent = link.href;
     try {

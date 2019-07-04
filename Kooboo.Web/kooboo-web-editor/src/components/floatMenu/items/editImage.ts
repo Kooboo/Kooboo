@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
-import { getEditComment, getRepeatAttributeComment } from "../utils";
+import { getEditComment, getRepeatAttribute } from "../utils";
 import {
   isDynamicContent,
   setGuid,
@@ -37,6 +37,7 @@ export function createEditImageItem(): MenuItem {
     let startContent = args.closeParent.innerHTML;
     try {
       await createImagePicker(args.element as HTMLImageElement);
+      if (startContent == args.closeParent.innerHTML) return;
       markDirty(args.closeParent);
       let guid = setGuid(args.closeParent);
       let value = clearKoobooInfo(args.closeParent!.innerHTML);
