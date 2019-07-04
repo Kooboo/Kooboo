@@ -56,11 +56,7 @@ export function createImagePicker(img: HTMLImageElement) {
   height.setContent(style.height!);
   container.appendChild(height.input);
 
-  const { modal, setOkHandler, setCancelHandler, close } = createModal(
-    TEXT.EDIT_IMAGE,
-    container,
-    "450px"
-  );
+  const { modal, setOkHandler, setCancelHandler, close } = createModal(TEXT.EDIT_IMAGE, container, "450px");
   getEditorContainer().appendChild(modal);
 
   return new Promise((rs, rj) => {

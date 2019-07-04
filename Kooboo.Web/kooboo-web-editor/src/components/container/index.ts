@@ -1,4 +1,4 @@
-import { HOVER_BORDER_SKIP } from "../../common/constants";
+import { HOVER_BORDER_SKIP } from "@/common/constants";
 
 export function createContainer() {
   let el = document.createElement("div");

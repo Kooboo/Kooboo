@@ -11,10 +11,7 @@ import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
 
 export function createEditRepeatImageItem(): MenuItem {
-  const { el, setVisiable } = createItem(
-    TEXT.EDIT_IMAGE,
-    MenuActions.editImage
-  );
+  const { el, setVisiable } = createItem(TEXT.EDIT_IMAGE, MenuActions.editImage);
   const update = () => {
     let visiable = true;
     let args = context.lastSelectedDomEventArgs;
@@ -37,11 +34,7 @@ export function createEditRepeatImageItem(): MenuItem {
       let guid = setGuid(img);
       let value = img.src;
       let unit = new AttributeUnit(startContent, "src");
-      let log = ContentLog.createUpdate(
-        comment.nameorid!,
-        comment.fieldname!,
-        value
-      );
+      let log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, value);
       let record = new operationRecord([unit], [log], guid);
       context.operationManager.add(record);
     });

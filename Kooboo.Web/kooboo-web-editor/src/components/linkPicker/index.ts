@@ -8,16 +8,9 @@ import { createPageLinkPanel } from "./pageLinkPanel";
 export async function createLinkPicker(oldValue: string) {
   let el = document.createElement("div");
 
-  const {
-    pageLinkPanel,
-    getContent: getPageLinkContent
-  } = await createPageLinkPanel(oldValue);
+  const { pageLinkPanel, getContent: getPageLinkContent } = await createPageLinkPanel(oldValue);
 
-  const {
-    outLinkPanel,
-    getContent: getOutLinkContent,
-    setContent
-  } = createOutLinkPanel();
+  const { outLinkPanel, getContent: getOutLinkContent, setContent } = createOutLinkPanel();
 
   const options = [
     {

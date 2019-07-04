@@ -1,8 +1,8 @@
-import saveIcon from "../../assets/icons/baocun.svg";
-import saveEnableIcon from "../../assets/icons/baocun_enable.svg";
+import saveIcon from "@/assets/icons/baocun.svg";
+import saveEnableIcon from "@/assets/icons/baocun_enable.svg";
 import { createButton } from "./button";
-import context from "../../common/context";
-import updateOperation from "../../api/updateOperation";
+import context from "@/common/context";
+import updateOperation from "@/api/updateOperation";
 import { reload } from "@/dom/utils";
 import { Log } from "@/operation/recordLogs/Log";
 

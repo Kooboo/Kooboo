@@ -1,8 +1,8 @@
 import { createButton } from "./button";
-import nextIcon from "../../assets/icons/xiayibu.svg";
-import nextEnableIcon from "../../assets/icons/xiayibu_enable.svg";
+import nextIcon from "@/assets/icons/xiayibu.svg";
+import nextEnableIcon from "@/assets/icons/xiayibu_enable.svg";
 import { createNotice } from "./Notice";
-import context from "../../common/context";
+import context from "@/common/context";
 
 export function createNextButton(document: Document) {
   var nextBtn = createButton(document, nextIcon);

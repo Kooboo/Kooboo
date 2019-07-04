@@ -1,7 +1,5 @@
 import { createButton } from "./button";
-import moveIcon from "../../assets/icons/drag-move--fill.svg";
-import context from "../../common/context";
-import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
+import moveIcon from "@/assets/icons/drag-move--fill.svg";
 
 export function createMoveButton(document: Document, container: HTMLElement) {
   var btn = createButton(document, moveIcon);

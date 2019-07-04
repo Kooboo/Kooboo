@@ -7,10 +7,7 @@ import { reload } from "@/dom/utils";
 import { editHtmlBlock } from "@/kooboo/outsideInterfaces";
 
 export function createEditHtmlBlockItem(): MenuItem {
-  const { el, setVisiable, setReadonly } = createItem(
-    TEXT.EDIT_HTML_BLOCK,
-    MenuActions.editHtmlBlock
-  );
+  const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_HTML_BLOCK, MenuActions.editHtmlBlock);
 
   const update = () => {
     let args = context.lastSelectedDomEventArgs;

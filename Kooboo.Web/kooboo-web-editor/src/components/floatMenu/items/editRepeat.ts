@@ -7,10 +7,7 @@ import { reload } from "@/dom/utils";
 import { editRepeat } from "@/kooboo/outsideInterfaces";
 
 export function createEditRepeatItem() {
-  const { el, setVisiable, setReadonly } = createItem(
-    TEXT.EDIT_REPEAT,
-    MenuActions.editRepeat
-  );
+  const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_REPEAT, MenuActions.editRepeat);
 
   const update = () => {
     let args = context.lastSelectedDomEventArgs;

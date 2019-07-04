@@ -27,11 +27,7 @@ export function createJumpLinkItem(): MenuItem {
       pageUrl: url
     };
 
-    parent.location.href =
-      parent.location.origin +
-      parent.location.pathname +
-      "?" +
-      qs.stringify(query);
+    parent.location.href = parent.location.origin + parent.location.pathname + "?" + qs.stringify(query);
   });
 
   return {

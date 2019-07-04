@@ -1,18 +1,7 @@
-import {
-  getAllNode,
-  getAllElement,
-  isBody,
-  previousNodes,
-  nextNodes
-} from "../dom/utils";
+import { getAllNode, getAllElement, isBody, previousNodes, nextNodes } from "../dom/utils";
 import { KoobooComment } from "./KoobooComment";
 import { KoobooId } from "./KoobooId";
-import {
-  KOOBOO_ID,
-  KOOBOO_DIRTY,
-  KOOBOO_GUID,
-  OBJECT_TYPE
-} from "../common/constants";
+import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID, OBJECT_TYPE } from "../common/constants";
 import { newGuid } from "./outsideInterfaces";
 
 export function clearKoobooInfo(domString: string) {
@@ -23,18 +12,12 @@ export function clearKoobooInfo(domString: string) {
     if (i instanceof HTMLElement) {
       if (i.hasAttribute(KOOBOO_ID)) i.attributes.removeNamedItem(KOOBOO_ID);
 
-      if (i.hasAttribute(KOOBOO_DIRTY))
-        i.attributes.removeNamedItem(KOOBOO_DIRTY);
+      if (i.hasAttribute(KOOBOO_DIRTY)) i.attributes.removeNamedItem(KOOBOO_DIRTY);
 
-      if (i.hasAttribute(KOOBOO_GUID))
-        i.attributes.removeNamedItem(KOOBOO_GUID);
+      if (i.hasAttribute(KOOBOO_GUID)) i.attributes.removeNamedItem(KOOBOO_GUID);
     }
 
-    if (
-      i.nodeType == Node.COMMENT_NODE &&
-      i.nodeValue &&
-      i.nodeValue.startsWith(KOOBOO_GUID)
-    ) {
+    if (i.nodeType == Node.COMMENT_NODE && i.nodeValue && i.nodeValue.startsWith(KOOBOO_GUID)) {
       i.parentNode!.removeChild(i);
     }
 
@@ -123,10 +106,7 @@ export function getMaxKoobooId(el: HTMLElement) {
   let nextTemp = el;
 
   while (true) {
-    if (
-      !nextTemp.nextElementSibling ||
-      !nextTemp.nextElementSibling.hasAttribute(KOOBOO_ID)
-    ) {
+    if (!nextTemp.nextElementSibling || !nextTemp.nextElementSibling.hasAttribute(KOOBOO_ID)) {
       break;
     }
 
@@ -139,16 +119,11 @@ export function getMaxKoobooId(el: HTMLElement) {
   let previousTemp = el;
 
   while (true) {
-    if (
-      !previousTemp.previousElementSibling ||
-      !previousTemp.previousElementSibling.hasAttribute(KOOBOO_ID)
-    ) {
+    if (!previousTemp.previousElementSibling || !previousTemp.previousElementSibling.hasAttribute(KOOBOO_ID)) {
       break;
     }
 
-    let previousId = previousTemp.previousElementSibling.getAttribute(
-      KOOBOO_ID
-    );
+    let previousId = previousTemp.previousElementSibling.getAttribute(KOOBOO_ID);
     let previousKoobooId = new KoobooId(previousId!);
     if (previousKoobooId.value > koobooId.value) koobooId = previousKoobooId;
     previousTemp = previousTemp.previousElementSibling as HTMLElement;
@@ -180,8 +155,7 @@ export function isDynamicContent(el: HTMLElement) {
     if (k == OBJECT_TYPE.url) continue;
     if (OBJECT_TYPE.hasOwnProperty(k)) {
       const i = OBJECT_TYPE[k as keyof typeof OBJECT_TYPE];
-      if (el.innerHTML.toLowerCase().indexOf(`objecttype='${i}'`) > -1)
-        return true;
+      if (el.innerHTML.toLowerCase().indexOf(`objecttype='${i}'`) > -1) return true;
     }
   }
   return false;
@@ -234,11 +208,7 @@ export function getWrapDom(el: Node, objectType: string) {
       if (KoobooComment.isKoobooComment(node)) {
         let comment = new KoobooComment(node);
 
-        if (
-          comment.objecttype == objectType &&
-          comment.end &&
-          comment.boundary == boundary
-        ) {
+        if (comment.objecttype == objectType && comment.end && comment.boundary == boundary) {
           endNode = node;
           break;
         }
@@ -254,13 +224,7 @@ export function getWrapDom(el: Node, objectType: string) {
 }
 
 function isSingleCommentWrap(node: Node) {
-  let singleCommentWrap = [
-    OBJECT_TYPE.attribute,
-    OBJECT_TYPE.content,
-    OBJECT_TYPE.label,
-    OBJECT_TYPE.style,
-    OBJECT_TYPE.url
-  ];
+  let singleCommentWrap = [OBJECT_TYPE.attribute, OBJECT_TYPE.content, OBJECT_TYPE.label, OBJECT_TYPE.style, OBJECT_TYPE.url];
 
   let comment = new KoobooComment(node);
   return singleCommentWrap.some(s => s == comment.objecttype);

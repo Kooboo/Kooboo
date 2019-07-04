@@ -28,11 +28,7 @@ export class operationRecord {
         let attr = node.getAttribute(KOOBOO_GUID);
         if (attr && attr == guid) return node;
       }
-      if (
-        node.nodeType == Node.COMMENT_NODE &&
-        node.nodeValue &&
-        node.nodeValue.indexOf(guid) > -1
-      ) {
+      if (node.nodeType == Node.COMMENT_NODE && node.nodeValue && node.nodeValue.indexOf(guid) > -1) {
         return node;
       }
     }

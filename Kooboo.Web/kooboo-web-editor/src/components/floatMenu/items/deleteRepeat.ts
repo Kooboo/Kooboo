@@ -12,10 +12,7 @@ import { DeleteRepeatUnit } from "@/operation/recordUnits/DeleteRepeatUnit";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
 
 export function createDeleteRepeatItem(): MenuItem {
-  const { el, setVisiable } = createItem(
-    TEXT.DELETE_REPEAR,
-    MenuActions.deleteRepeat
-  );
+  const { el, setVisiable } = createItem(TEXT.DELETE_REPEAR, MenuActions.deleteRepeat);
 
   const update = () => {
     var visiable = true;
@@ -27,10 +24,7 @@ export function createDeleteRepeatItem(): MenuItem {
 
   el.addEventListener("click", () => {
     let args = context.lastSelectedDomEventArgs;
-    let { nodes, startNode } = getWrapDom(
-      args.element,
-      OBJECT_TYPE.contentrepeater
-    );
+    let { nodes, startNode } = getWrapDom(args.element, OBJECT_TYPE.contentrepeater);
     if (!nodes || nodes.length == 0 || !startNode) return;
 
     let comment = new KoobooComment(startNode);

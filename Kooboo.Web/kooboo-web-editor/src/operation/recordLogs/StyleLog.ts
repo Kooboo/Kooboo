@@ -15,13 +15,7 @@ export class StyleLog extends Log {
   KoobooId!: string;
   readonly editorType: string = EDITOR_TYPE.style;
 
-  static createUpdate(
-    nameOrId: string,
-    objectType: string,
-    value: string,
-    property: string,
-    koobooId: string
-  ) {
+  static createUpdate(nameOrId: string, objectType: string, value: string, property: string, koobooId: string) {
     let log = new StyleLog();
     log.action = ActionType.update;
     log.nameOrId = nameOrId;

@@ -3,23 +3,15 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
-import { getEditComment, getRepeatAttribute } from "../utils";
-import {
-  isDynamicContent,
-  setGuid,
-  markDirty,
-  clearKoobooInfo
-} from "@/kooboo/utils";
+import { getEditComment } from "../utils";
+import { isDynamicContent, setGuid, markDirty, clearKoobooInfo } from "@/kooboo/utils";
 import { createImagePicker } from "@/components/imagePicker";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { operationRecord } from "@/operation/Record";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 
 export function createEditImageItem(): MenuItem {
-  const { el, setVisiable } = createItem(
-    TEXT.EDIT_IMAGE,
-    MenuActions.editImage
-  );
+  const { el, setVisiable } = createItem(TEXT.EDIT_IMAGE, MenuActions.editImage);
   const update = () => {
     let visiable = true;
     let args = context.lastSelectedDomEventArgs;
@@ -43,12 +35,7 @@ export function createEditImageItem(): MenuItem {
       let value = clearKoobooInfo(args.closeParent!.innerHTML);
       let comment = getEditComment(args.koobooComments)!;
       let unit = new InnerHtmlUnit(startContent);
-      let log = DomLog.createUpdate(
-        comment.nameorid!,
-        value,
-        args.parentKoobooId!,
-        comment.objecttype!
-      );
+      let log = DomLog.createUpdate(comment.nameorid!, value, args.parentKoobooId!, comment.objecttype!);
       let record = new operationRecord([unit], [log], guid);
       context.operationManager.add(record);
     } catch (error) {

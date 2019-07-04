@@ -4,24 +4,13 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
 import { getEditComment } from "../utils";
-import {
-  isDynamicContent,
-  setGuid,
-  markDirty,
-  clearKoobooInfo
-} from "@/kooboo/utils";
-import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
-import { operationRecord } from "@/operation/Record";
-import { DomLog } from "@/operation/recordLogs/DomLog";
+import { isDynamicContent, setGuid } from "@/kooboo/utils";
 import { setInlineEditor } from "@/components/richEditor";
 import { KOOBOO_ID } from "@/common/constants";
 import { emitSelectedEvent, emitHoverEvent } from "@/dom/events";
 
 export function createReplaceToTextItem(): MenuItem {
-  const { el, setVisiable } = createItem(
-    TEXT.REPLACE_TO_TEXT,
-    MenuActions.replaceToText
-  );
+  const { el, setVisiable } = createItem(TEXT.REPLACE_TO_TEXT, MenuActions.replaceToText);
   const update = () => {
     let visiable = true;
     let args = context.lastSelectedDomEventArgs;

@@ -9,13 +9,7 @@ export class DomLog extends Log {
   attributeName!: string;
   readonly editorType: string = EDITOR_TYPE.dom;
 
-  static createUpdate(
-    nameOrId: string,
-    value: string,
-    koobooId: string,
-    objectType: string,
-    attributeName: string = ""
-  ) {
+  static createUpdate(nameOrId: string, value: string, koobooId: string, objectType: string, attributeName: string = "") {
     let log = new DomLog();
     log.action = ActionType.update;
     log.nameOrId = nameOrId;

@@ -1,9 +1,5 @@
 import { Editor, Settings, EditorManager } from "tinymce";
-import {
-  STANDARD_Z_INDEX,
-  EMPTY_COMMENT,
-  OBJECT_TYPE
-} from "../../common/constants";
+import { STANDARD_Z_INDEX, EMPTY_COMMENT, OBJECT_TYPE } from "../../common/constants";
 import { lang } from "../../common/lang";
 import context from "../../common/context";
 import { markDirty, setGuid, clearKoobooInfo } from "../../kooboo/utils";
@@ -28,9 +24,7 @@ export async function impoveEditorUI(editor: Editor) {
     if (container.nextElementSibling instanceof HTMLElement) {
       container.nextElementSibling.style.zIndex = STANDARD_Z_INDEX + 2 + "";
     }
-    let toolbar = container
-      .getElementsByClassName("tox-toolbar")
-      .item(0) as HTMLElement;
+    let toolbar = container.getElementsByClassName("tox-toolbar").item(0) as HTMLElement;
     var moveBtn = document.createElement("img");
     moveBtn.draggable = true;
     moveBtn.style.cursor = "move";
@@ -52,9 +46,7 @@ export async function impoveEditorUI(editor: Editor) {
 export function setLang(settings: Settings) {
   if (lang == "zh") {
     settings.language = "zh_CN";
-    settings.language_url = `_Admin\\Scripts\\kooboo-web-editor\\${
-      settings.language
-    }.js`;
+    settings.language_url = `_Admin\\Scripts\\kooboo-web-editor\\${settings.language}.js`;
   }
 }
 
@@ -83,24 +75,11 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
     let log: Log;
 
     if (comment.objecttype == OBJECT_TYPE.content) {
-      log = ContentLog.createUpdate(
-        comment.nameorid!,
-        comment.fieldname!,
-        value
-      );
+      log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, value);
     } else if (comment.objecttype == OBJECT_TYPE.label) {
-      log = LabelLog.createUpdate(
-        comment.bindingvalue!,
-        comment.objecttype,
-        value
-      );
+      log = LabelLog.createUpdate(comment.bindingvalue!, comment.objecttype, value);
     } else {
-      log = DomLog.createUpdate(
-        comment.nameorid!,
-        value,
-        koobooId!,
-        comment.objecttype!
-      );
+      log = DomLog.createUpdate(comment.nameorid!, value, koobooId!, comment.objecttype!);
     }
 
     let operation = new operationRecord(units, [log], guid);
@@ -119,11 +98,7 @@ export function onSetContent(e: any) {
   e.target._content = e.content;
   var targetElm = e.target.targetElm as HTMLElement;
   for (const element of getAllElement(targetElm, true)) {
-    if (
-      (element.tagName.toLowerCase() == "i" ||
-        element.tagName.toLowerCase() == "a") &&
-      element.innerHTML.indexOf(EMPTY_COMMENT) == -1
-    ) {
+    if ((element.tagName.toLowerCase() == "i" || element.tagName.toLowerCase() == "a") && element.innerHTML.indexOf(EMPTY_COMMENT) == -1) {
       element.innerHTML += EMPTY_COMMENT;
     }
   }
@@ -151,8 +126,7 @@ export function onRemove(e: any) {
 
 export function onKeyDown(e: KeyboardEvent) {
   var targetElm = e.target as HTMLElement;
-  if (e.code == "Backspace" && targetElm.innerHTML == EMPTY_COMMENT)
-    return false;
+  if (e.code == "Backspace" && targetElm.innerHTML == EMPTY_COMMENT) return false;
 }
 
 export function onBeforeSetContent(e: any) {
@@ -170,8 +144,7 @@ export function onBeforeSetContent(e: any) {
 }
 
 export function getToolbar(el: HTMLElement) {
-  let items =
-    "save cancel | undo redo | bold italic forecolor fontselect fontsizeselect | image ";
+  let items = "save cancel | undo redo | bold italic forecolor fontselect fontsizeselect | image ";
   if (el.tagName.toLowerCase() != "a") {
     items += "| link unlink";
   }

@@ -1,29 +1,17 @@
-import { HOVER_BORDER_SKIP, OBJECT_TYPE } from "../common/constants";
+import { HOVER_BORDER_SKIP } from "../common/constants";
 
 export function getMaxHeight() {
   var body = document.body,
     html = document.documentElement;
 
-  return Math.max(
-    body.scrollHeight,
-    body.offsetHeight,
-    html.clientHeight,
-    html.scrollHeight,
-    html.offsetHeight
-  );
+  return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
 }
 
 export function getMaxWidth() {
   var body = document.body,
     html = document.documentElement;
 
-  return Math.max(
-    body.scrollWidth,
-    body.offsetWidth,
-    html.clientWidth,
-    html.scrollWidth,
-    html.offsetWidth
-  );
+  return Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
 }
 
 export function isInEditorContainer(e: MouseEvent) {
@@ -83,11 +71,7 @@ export function reload() {
   parent.location.reload();
 }
 
-export function* previousNodes(
-  node: Node,
-  containSelf = false,
-  includeParent = false
-) {
+export function* previousNodes(node: Node, containSelf = false, includeParent = false) {
   if (containSelf) yield node;
 
   while (true) {
@@ -100,11 +84,7 @@ export function* previousNodes(
   }
 }
 
-export function* nextNodes(
-  node: Node,
-  containSelf = false,
-  includeParent = false
-) {
+export function* nextNodes(node: Node, containSelf = false, includeParent = false) {
   if (containSelf) yield node;
 
   while (true) {

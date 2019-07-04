@@ -31,10 +31,7 @@ export class operationManager {
   }
 
   private emit() {
-    let args = new OperationEventArgs(
-      this.previousRecords.length,
-      this.nextRecords.length
-    );
+    let args = new OperationEventArgs(this.previousRecords.length, this.nextRecords.length);
     console.log(this.previousRecords, this.nextRecords);
     context.operationEvent.emit(args);
   }

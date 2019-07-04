@@ -1,4 +1,4 @@
-import context from "../../common/context";
+import context from "@/common/context";
 import { createRect } from "./rect";
 
 export function createHoverBorder() {

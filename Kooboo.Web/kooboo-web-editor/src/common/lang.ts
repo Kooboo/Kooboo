@@ -57,6 +57,4 @@ const zh = {
 } as typeof en;
 
 var langPackages = { en, zh };
-export const TEXT = langPackages[
-  lang as keyof typeof langPackages
-] as typeof en;
+export const TEXT = langPackages[lang as keyof typeof langPackages] as typeof en;

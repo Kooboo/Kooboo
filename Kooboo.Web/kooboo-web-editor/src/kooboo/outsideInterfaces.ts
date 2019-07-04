@@ -24,10 +24,7 @@ export async function editHtmlBlock(nameOrId: string) {
   });
   let iframe = createIframe(url);
   iframe.style.height = "600px";
-  const { modal, setOkHandler, close } = createModal(
-    TEXT.EDIT_HTML_BLOCK,
-    iframe.outerHTML
-  );
+  const { modal, setOkHandler, close } = createModal(TEXT.EDIT_HTML_BLOCK, iframe.outerHTML);
   parentBody.appendChild(modal);
   return new Promise<string>(rs => {
     setOkHandler(async () => {
@@ -48,10 +45,7 @@ export function editRepeat(nameOrId: string, folderId: string) {
 
   let iframe = createIframe(url);
   iframe.style.height = "600px";
-  const { modal, setOkHandler, close } = createModal(
-    TEXT.EDIT_REPEAT,
-    iframe.outerHTML
-  );
+  const { modal, setOkHandler, close } = createModal(TEXT.EDIT_REPEAT, iframe.outerHTML);
   parentBody.appendChild(modal);
   return new Promise<any>(rs => {
     setOkHandler(() => {
@@ -64,10 +58,7 @@ export function editRepeat(nameOrId: string, folderId: string) {
   });
 }
 
-export function editMenu(
-  nameOrId: string,
-  callback: (content: string) => void
-) {
+export function editMenu(nameOrId: string, callback: (content: string) => void) {
   var url = Kooboo.Route.Get(Kooboo.Route.Menu.DialogPage, {
     nameOrId: nameOrId
   });

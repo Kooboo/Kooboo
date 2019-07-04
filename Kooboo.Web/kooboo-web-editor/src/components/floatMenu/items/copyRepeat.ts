@@ -12,10 +12,7 @@ import { operationRecord } from "@/operation/Record";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
 
 export function createCopyRepeatItem(): MenuItem {
-  const { el, setVisiable } = createItem(
-    TEXT.COPY_REPEAT,
-    MenuActions.copyRepeat
-  );
+  const { el, setVisiable } = createItem(TEXT.COPY_REPEAT, MenuActions.copyRepeat);
 
   const update = () => {
     var visiable = true;

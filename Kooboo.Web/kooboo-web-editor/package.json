@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack",
-    "build": "cross-env NODE_ENV=production webpack"
+    "build": "cross-env NODE_ENV=production webpack",
+    "lint":"eslint --fix src/**.ts"
   },
   "keywords": [],
   "author": "",
@@ -67,5 +68,8 @@
     "parserOptions": {
       "sourceType": "module"
     }
+  },
+  "prettier":{
+    "printWidth":150
   }
 }

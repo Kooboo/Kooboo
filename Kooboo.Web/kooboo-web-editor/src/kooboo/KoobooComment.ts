@@ -64,10 +64,6 @@ export class KoobooComment {
   }
 
   static isKoobooComment(node: Node) {
-    return (
-      node.nodeType == Node.COMMENT_NODE &&
-      node.nodeValue &&
-      node.nodeValue.startsWith("#kooboo")
-    );
+    return node.nodeType == Node.COMMENT_NODE && node.nodeValue && node.nodeValue.startsWith("#kooboo");
   }
 }

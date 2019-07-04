@@ -1,19 +1,13 @@
-import context from "../../common/context";
-import { MenuActions } from "../../events/FloatMenuClickEvent";
-import { getKoobooInfo, getCloseElement } from "../../kooboo/utils";
-import { SelectedDomEventArgs } from "../../events/SelectedDomEvent";
-import { HoverDomEventArgs } from "../../events/HoverDomEvent";
-import { delay } from "../../common/utils";
+import context from "@/common/context";
+import { MenuActions } from "@/events/FloatMenuClickEvent";
+import { delay } from "@/common/utils";
 import { createMenu } from "./menu";
 import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
 
 export function createFloatMenu() {
   const menu = createMenu();
   context.domChangeEvent.addEventListener(e => {
-    menu.update(
-      context.lastMouseEventArg!.pageX,
-      context.lastMouseEventArg!.pageY
-    );
+    menu.update(context.lastMouseEventArg!.pageX, context.lastMouseEventArg!.pageY);
   });
 
   context.hoverDomEvent.addEventListener(() => menu.hidden());

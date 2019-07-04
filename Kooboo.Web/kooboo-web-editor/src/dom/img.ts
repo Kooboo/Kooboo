@@ -1,10 +1,7 @@
 import { createButton } from "./button";
 import { TEXT } from "@/common/lang";
 
-export function createImgPreview(
-  showDeleteBtn: boolean = false,
-  onDelete?: () => void
-) {
+export function createImgPreview(showDeleteBtn: boolean = false, onDelete?: () => void) {
   let el = document.createElement("div");
   el.style.outline = "5px solid #eee";
   el.style.margin = "5px";

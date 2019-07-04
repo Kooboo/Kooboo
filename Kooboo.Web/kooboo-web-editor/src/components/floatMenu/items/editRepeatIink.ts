@@ -34,11 +34,7 @@ export function createEditRepeatLinkItem(): MenuItem {
       let guid = setGuid(link);
       let value = link.href;
       let unit = new AttributeUnit(startContent, "href");
-      let log = ContentLog.createUpdate(
-        comment.nameorid!,
-        comment.fieldname!,
-        value
-      );
+      let log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, value);
       let record = new operationRecord([unit], [log], guid);
       context.operationManager.add(record);
     } catch (error) {

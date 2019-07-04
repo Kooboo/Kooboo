@@ -10,11 +10,7 @@ export function createInput() {
   return el;
 }
 
-export function createLabelInput(
-  text: string,
-  labelWidth?: number,
-  inputWidth?: number
-) {
+export function createLabelInput(text: string, labelWidth?: number, inputWidth?: number) {
   let el = document.createElement("lable");
   let label = createLabel(text);
   let input = createInput();

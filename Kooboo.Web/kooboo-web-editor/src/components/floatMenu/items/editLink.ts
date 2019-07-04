@@ -38,12 +38,7 @@ export function createEditLinkItem(): MenuItem {
       let value = clearKoobooInfo(args.closeParent!.innerHTML);
       let comment = getEditComment(args.koobooComments)!;
       let unit = new InnerHtmlUnit(startContent);
-      let log = DomLog.createUpdate(
-        comment.nameorid!,
-        value,
-        args.parentKoobooId!,
-        comment.objecttype!
-      );
+      let log = DomLog.createUpdate(comment.nameorid!, value, args.parentKoobooId!, comment.objecttype!);
       let record = new operationRecord([unit], [log], guid);
       context.operationManager.add(record);
     } catch (error) {

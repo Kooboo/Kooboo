@@ -2,17 +2,13 @@ import { createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { hasOperation, getMenu } from "../utils";
-import { reload } from "@/dom/utils";
+import { getMenu } from "../utils";
 import { getWrapDom } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
 import { editMenu } from "@/kooboo/outsideInterfaces";
 
 export function createEditMenuItem() {
-  const { el, setVisiable, setReadonly } = createItem(
-    TEXT.EDIT_MENU,
-    MenuActions.editMenu
-  );
+  const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_MENU, MenuActions.editMenu);
 
   const update = () => {
     let args = context.lastSelectedDomEventArgs;

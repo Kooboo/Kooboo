@@ -3,7 +3,6 @@ import { TEXT } from "@/common/lang";
 import { getEditorContainer } from "@/dom/utils";
 import { createSpliter } from "./spliter";
 import { createImgPreview } from "@/dom/img";
-import { createButton } from "@/dom/button";
 import { createColorPicker } from "./colorPicker";
 import { createLabelInput } from "@/dom/input";
 import { pickImg } from "@/kooboo/outsideInterfaces";
@@ -14,11 +13,7 @@ export function createStyleEditor(el: HTMLElement) {
   addColor(container, el);
   addFont(container, el);
 
-  const { modal, setOkHandler, setCancelHandler, close } = createModal(
-    TEXT.EDIT_STYLE,
-    container,
-    "450px"
-  );
+  const { modal, setOkHandler, setCancelHandler, close } = createModal(TEXT.EDIT_STYLE, container, "450px");
 
   getEditorContainer().appendChild(modal);
 
@@ -38,10 +33,7 @@ function addImg(container: HTMLElement, el: HTMLElement) {
   const spliter = createSpliter("背景图片");
   spliter.style.margin = "-10px 0 15px 0";
   container.appendChild(spliter);
-  const { imagePreview, setImage } = createImgPreview(
-    true,
-    () => (el.style.backgroundImage = "")
-  );
+  const { imagePreview, setImage } = createImgPreview(true, () => (el.style.backgroundImage = ""));
   imagePreview.style.marginLeft = "auto";
   imagePreview.style.marginRight = "auto";
   imagePreview.style.marginBottom = "15px";
@@ -59,18 +51,10 @@ function addImg(container: HTMLElement, el: HTMLElement) {
 function addColor(container: HTMLElement, el: HTMLElement) {
   container.appendChild(createSpliter("颜色"));
   let style = getComputedStyle(el);
-  let bgPicker = createColorPicker(
-    "背景颜色",
-    style.backgroundColor!,
-    e => (el.style.backgroundColor = e)
-  );
+  let bgPicker = createColorPicker("背景颜色", style.backgroundColor!, e => (el.style.backgroundColor = e));
   container.appendChild(bgPicker);
 
-  let frontPicker = createColorPicker(
-    "前景颜色",
-    style.color!,
-    e => (el.style.color = e)
-  );
+  let frontPicker = createColorPicker("前景颜色", style.color!, e => (el.style.color = e));
   container.appendChild(frontPicker);
 }
 

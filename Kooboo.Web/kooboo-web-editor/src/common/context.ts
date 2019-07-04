@@ -1,13 +1,10 @@
-import {
-  SelectedDomEventArgs,
-  SelectedDomEvent
-} from "../events/SelectedDomEvent";
-import { TinymceInputEvent } from "../events/TinymceEvent";
-import { OperationEvent } from "../events/OperationEvent";
-import { EditableEvent } from "../events/EditableEvent";
-import { FloatMenuClickEvent } from "../events/FloatMenuClickEvent";
-import { HoverDomEvent, HoverDomEventArgs } from "../events/HoverDomEvent";
 import { operationManager } from "@/operation/Manager";
+import { SelectedDomEventArgs, SelectedDomEvent } from "@/events/SelectedDomEvent";
+import { HoverDomEventArgs, HoverDomEvent } from "@/events/HoverDomEvent";
+import { EditableEvent } from "@/events/EditableEvent";
+import { TinymceInputEvent } from "@/events/TinymceEvent";
+import { OperationEvent } from "@/events/OperationEvent";
+import { FloatMenuClickEvent } from "@/events/FloatMenuClickEvent";
 
 class Context {
   private _editing: boolean = false;

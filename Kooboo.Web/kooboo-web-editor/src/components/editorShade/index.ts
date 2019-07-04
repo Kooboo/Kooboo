@@ -1,4 +1,4 @@
-import context from "../../common/context";
+import context from "@/common/context";
 import { createShade } from "./shade";
 
 export function createEditorShade() {

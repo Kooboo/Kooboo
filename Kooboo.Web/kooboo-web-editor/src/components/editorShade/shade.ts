@@ -30,9 +30,7 @@ export const createShade = () => {
       top: referenceRect.top - bodyRect.top + referenceRect.height,
       left: 0,
       right: 0,
-      height:
-        getMaxHeight() -
-        (referenceRect.top + bodyRect.top + referenceRect.height)
+      height: getMaxHeight() - (referenceRect.top + bodyRect.top + referenceRect.height)
     });
 
     left.update({

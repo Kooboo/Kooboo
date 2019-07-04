@@ -3,18 +3,8 @@ import { createHeader } from "./header";
 import { createFooter } from "./footer";
 import { createBody } from "./body";
 
-export function createModal(
-  title: string,
-  content: string | HTMLElement,
-  width?: string,
-  height?: string
-) {
+export function createModal(title: string, content: string | HTMLElement, width?: string, height?: string) {
   let style = document.createElement("style");
-  // style.innerHTML = `
-  // body,html{
-  //   overflow: hidden;
-  // }
-  // `;
   document.head.appendChild(style);
   let { shade, win } = createContainer(width, height);
   const [body, setBodyContent] = createBody();
@@ -23,7 +13,6 @@ export function createModal(
   setBodyContent(content);
 
   const recovery = () => {
-    // document.head.removeChild(style);
     shade.parentElement!.removeChild(shade);
   };
 

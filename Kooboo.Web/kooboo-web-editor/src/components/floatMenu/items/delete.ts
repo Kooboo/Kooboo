@@ -2,19 +2,8 @@ import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import {
-  setGuid,
-  clearKoobooInfo,
-  isDynamicContent,
-  getGuidComment
-} from "@/kooboo/utils";
-import {
-  getEditComment,
-  getDelete,
-  getMenu,
-  getForm,
-  getHtmlBlock
-} from "../utils";
+import { setGuid, clearKoobooInfo, isDynamicContent, getGuidComment } from "@/kooboo/utils";
+import { getEditComment, getDelete, getMenu, getForm, getHtmlBlock } from "../utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { DeleteUnit } from "@/operation/recordUnits/DeleteUnit";
@@ -50,12 +39,7 @@ export function createDeleteItem(): MenuItem {
     let log!: Log;
     if (args.closeParent) {
       let comment = getDelete(args.koobooComments)!;
-      log = DomLog.createUpdate(
-        comment.nameorid!,
-        clearKoobooInfo(args.closeParent.innerHTML),
-        args.parentKoobooId!,
-        comment.objecttype!
-      );
+      log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(args.closeParent.innerHTML), args.parentKoobooId!, comment.objecttype!);
     } else {
       let comment = getEditComment(args.koobooComments)!;
       if (comment.objecttype == OBJECT_TYPE.content) {
@@ -65,11 +49,7 @@ export function createDeleteItem(): MenuItem {
       }
     }
 
-    let operation = new operationRecord(
-      [new DeleteUnit(startContent)],
-      [log],
-      guid
-    );
+    let operation = new operationRecord([new DeleteUnit(startContent)], [log], guid);
 
     context.operationManager.add(operation);
   });
