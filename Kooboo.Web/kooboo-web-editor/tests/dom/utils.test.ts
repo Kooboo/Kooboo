@@ -1,6 +1,6 @@
 import { getAllElement } from "../../src/dom/utils";
 
-describe("domAnalyze", () => {
+describe("utils", () => {
   test("getAllElement", () => {
     var el = document.createElement("div");
     el.innerHTML = `
