@@ -22,7 +22,7 @@ export function createStyleImagePanel() {
       if (!comment || !koobooId) continue;
       let { imagePreview, setImage } = createImagePreview(false, () => (element.style.backgroundImage = ""));
       setImagePreview(imagePreview, element);
-      setImage(element.style.backgroundImage!);
+      setImage(style.backgroundImage!);
       imagePreview.onclick = () => {
         let startContent = element.getAttribute("style");
         pickImg(path => {
