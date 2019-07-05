@@ -1,5 +1,5 @@
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
-import { ActionType } from "@/operation/actionType";
+import { ActionType } from "@/operation/ActionType";
 import { EDITOR_TYPE } from "@/common/constants";
 
 describe("ContentLog", () => {

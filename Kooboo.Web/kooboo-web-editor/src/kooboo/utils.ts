@@ -11,9 +11,7 @@ export function clearKoobooInfo(domString: string) {
   for (const i of nodes) {
     if (i instanceof HTMLElement) {
       if (i.hasAttribute(KOOBOO_ID)) i.attributes.removeNamedItem(KOOBOO_ID);
-
       if (i.hasAttribute(KOOBOO_DIRTY)) i.attributes.removeNamedItem(KOOBOO_DIRTY);
-
       if (i.hasAttribute(KOOBOO_GUID)) i.attributes.removeNamedItem(KOOBOO_GUID);
     }
 
@@ -72,12 +70,7 @@ export function getKoobooInfo(el: HTMLElement) {
     node = node.previousSibling;
   }
 
-  return {
-    comments,
-    koobooId,
-    closeParent,
-    parentKoobooId
-  };
+  return { comments, koobooId, closeParent, parentKoobooId };
 }
 
 export function getCloseElement(el: HTMLElement) {
@@ -93,7 +86,6 @@ export function getCloseElement(el: HTMLElement) {
     }
 
     if (KoobooComment.isKoobooComment(node)) break;
-
     node = node.previousSibling ? node.previousSibling : node.parentElement;
   }
 
@@ -158,6 +150,7 @@ export function isDynamicContent(el: HTMLElement) {
       if (el.innerHTML.toLowerCase().indexOf(`objecttype='${i}'`) > -1) return true;
     }
   }
+
   return false;
 }
 
@@ -225,7 +218,6 @@ export function getWrapDom(el: Node, objectType: string) {
 
 function isSingleCommentWrap(node: Node) {
   let singleCommentWrap = [OBJECT_TYPE.attribute, OBJECT_TYPE.content, OBJECT_TYPE.label, OBJECT_TYPE.style, OBJECT_TYPE.url];
-
   let comment = new KoobooComment(node);
   return singleCommentWrap.some(s => s == comment.objecttype);
 }

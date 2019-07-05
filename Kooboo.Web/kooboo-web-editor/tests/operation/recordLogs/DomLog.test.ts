@@ -1,4 +1,4 @@
-import { ActionType } from "@/operation/actionType";
+import { ActionType } from "@/operation/ActionType";
 import { EDITOR_TYPE, OBJECT_TYPE } from "@/common/constants";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 

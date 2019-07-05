@@ -1,5 +1,5 @@
 import { EDITOR_TYPE } from "@/common/constants";
-import { ActionType } from "../actionType";
+import { ActionType } from "../ActionType";
 import { Log } from "./Log";
 
 export class StyleLog extends Log {

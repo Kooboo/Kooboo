@@ -9,6 +9,7 @@ export class operationRecord {
   undo() {
     let node = this.getOperationNode(this.guid);
     if (!node) return;
+
     for (const unit of this.units) {
       unit.undo(node);
     }
@@ -17,6 +18,7 @@ export class operationRecord {
   redo() {
     let node = this.getOperationNode(this.guid);
     if (!node) return;
+
     for (const unit of this.units) {
       unit.redo(node);
     }
@@ -28,6 +30,7 @@ export class operationRecord {
         let attr = node.getAttribute(KOOBOO_GUID);
         if (attr && attr == guid) return node;
       }
+
       if (node.nodeType == Node.COMMENT_NODE && node.nodeValue && node.nodeValue.indexOf(guid) > -1) {
         return node;
       }
