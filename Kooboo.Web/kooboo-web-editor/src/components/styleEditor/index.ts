@@ -2,7 +2,7 @@ import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
 import { getEditorContainer } from "@/dom/utils";
 import { createSpliter } from "./spliter";
-import { createImgPreview } from "@/dom/img";
+import { createImagePreview } from "@/components/common/imagePreview";
 import { createColorPicker } from "./colorPicker";
 import { createLabelInput } from "@/dom/input";
 import { pickImg } from "@/kooboo/outsideInterfaces";
@@ -33,7 +33,7 @@ function addImg(container: HTMLElement, el: HTMLElement) {
   const spliter = createSpliter("背景图片");
   spliter.style.margin = "-10px 0 15px 0";
   container.appendChild(spliter);
-  const { imagePreview, setImage } = createImgPreview(true, () => (el.style.backgroundImage = ""));
+  const { imagePreview, setImage } = createImagePreview(true, () => (el.style.backgroundImage = ""));
   imagePreview.style.marginLeft = "auto";
   imagePreview.style.marginRight = "auto";
   imagePreview.style.marginBottom = "15px";

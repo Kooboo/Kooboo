@@ -1,7 +1,7 @@
 import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
 import { getEditorContainer } from "@/dom/utils";
-import { createTabs } from "./tabs";
+import { createTabs } from "../common/tabs";
 import { createOutLinkPanel } from "./outLinkPanel";
 import { createPageLinkPanel } from "./pageLinkPanel";
 

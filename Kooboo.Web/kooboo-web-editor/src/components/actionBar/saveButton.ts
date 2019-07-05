@@ -5,9 +5,10 @@ import context from "@/common/context";
 import updateOperation from "@/api/updateOperation";
 import { reload } from "@/dom/utils";
 import { Log } from "@/operation/recordLogs/Log";
+import { TEXT } from "@/common/lang";
 
 export function createSaveButton(document: Document) {
-  var saveBtn = createButton(document, saveIcon);
+  var saveBtn = createButton(document, saveIcon, TEXT.SAVE);
   context.operationEvent.addEventListener(e => {
     saveBtn.changeIcon(e.operationCount > 0 ? saveEnableIcon : saveIcon);
   });

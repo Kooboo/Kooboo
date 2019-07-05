@@ -3,11 +3,11 @@ import { TEXT } from "@/common/lang";
 import { createLabelInput } from "@/dom/input";
 import { getEditorContainer } from "@/dom/utils";
 import { pickImg } from "@/kooboo/outsideInterfaces";
-import { createImgPreview } from "@/dom/img";
+import { createImagePreview } from "@/components/common/imagePreview";
 
 export function createImagePicker(img: HTMLImageElement) {
   let container = document.createElement("div");
-  let { imagePreview, setImage } = createImgPreview();
+  let { imagePreview, setImage } = createImagePreview();
   imagePreview.style.margin = "0 auto 16px auto";
 
   setImage(img.src);

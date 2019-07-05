@@ -21,7 +21,6 @@ export function createEditStyleItem(): MenuItem {
     if (getForm(args.koobooComments)) visiable = false;
     if (getHtmlBlock(args.koobooComments)) visiable = false;
     if (!getDelete(args.koobooComments)) visiable = false;
-    // if (getRepeat(args.koobooComments)) visiable = false;
     setVisiable(visiable);
   };
 
@@ -44,9 +43,7 @@ export function createEditStyleItem(): MenuItem {
       };
 
       tryAddLog(beforeStyle.backgroundImage!, afterStyle.backgroundImage!, "background-image");
-
       tryAddLog(beforeStyle.backgroundColor!, afterStyle.backgroundColor!, "background-color");
-
       tryAddLog(beforeStyle.color!, afterStyle.color!, "color");
       tryAddLog(beforeStyle.font!, afterStyle.font!, "font");
 

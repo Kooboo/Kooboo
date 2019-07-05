@@ -3,9 +3,10 @@ import preIcon from "@/assets/icons/shangyibu.svg";
 import preEnableIcon from "@/assets/icons/shangyibu_enable.svg";
 import { createNotice } from "./Notice";
 import context from "@/common/context";
+import { TEXT } from "@/common/lang";
 
 export function createPreviousButton(document: Document) {
-  var preBtn = createButton(document, preIcon);
+  var preBtn = createButton(document, preIcon, TEXT.PREVIOUS);
   preBtn.onclick = () => context.operationManager.previous();
   var preNotice = createNotice(document);
   preBtn.appendChild(preNotice);

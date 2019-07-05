@@ -14,7 +14,7 @@ export function createContainer(width?: string, height?: string) {
 }
 
 function applyStyle(style: CSSStyleDeclaration) {
-  style.backgroundColor = "rgba(255,255,255,.75)";
+  style.backgroundColor = "rgba(255,255,255,.3)";
   style.position = "fixed";
   style.top = "0px";
   style.bottom = "0px";

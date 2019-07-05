@@ -26,7 +26,14 @@ const en = {
   COPY_REPEAT: "copy repeat item",
   DELETE_REPEAR: "delete repeat item",
   REPLACE_TO_IMG: "replace to image",
-  REPLACE_TO_TEXT: "replace to Text"
+  REPLACE_TO_TEXT: "replace to Text",
+  MOVE: "move",
+  PREVIOUS: "previous",
+  NEXT: "next",
+  SAVE: "save",
+  CONTENT_IMAGE: "content image",
+  STYLE_IMAGE: "style image",
+  DOM_IMAGE: "DOM image"
 };
 
 const zh = {
@@ -53,7 +60,14 @@ const zh = {
   COPY_REPEAT: "复制项目",
   DELETE_REPEAR: "删除项目",
   REPLACE_TO_IMG: "替换为图片",
-  REPLACE_TO_TEXT: "替换为文字"
+  REPLACE_TO_TEXT: "替换为文字",
+  MOVE: "移动",
+  NEXT: "下一步",
+  PREVIOUS: "上一步",
+  SAVE: "保存",
+  CONTENT_IMAGE: "内容图片",
+  STYLE_IMAGE: "样式图片",
+  DOM_IMAGE: "DOM 图片"
 } as typeof en;
 
 var langPackages = { en, zh };

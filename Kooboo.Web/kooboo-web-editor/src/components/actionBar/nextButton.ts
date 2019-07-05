@@ -3,9 +3,10 @@ import nextIcon from "@/assets/icons/xiayibu.svg";
 import nextEnableIcon from "@/assets/icons/xiayibu_enable.svg";
 import { createNotice } from "./Notice";
 import context from "@/common/context";
+import { TEXT } from "@/common/lang";
 
 export function createNextButton(document: Document) {
-  var nextBtn = createButton(document, nextIcon);
+  var nextBtn = createButton(document, nextIcon, TEXT.NEXT);
   nextBtn.onclick = () => context.operationManager.next();
   var nextNotice = createNotice(document);
   nextBtn.appendChild(nextNotice);

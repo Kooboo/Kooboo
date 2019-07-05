@@ -2,7 +2,7 @@ interface ActionButton extends HTMLDivElement {
   changeIcon(icon: any): void;
 }
 
-export function createButton(document: Document, icon: any) {
+export function createButton(document: Document, icon: any, title: string) {
   let el = document.createElement("div");
   el.style.width = "60px";
   el.style.height = "60px";
@@ -10,6 +10,8 @@ export function createButton(document: Document, icon: any) {
   el.style.backgroundColor = "rgba(255,255,255,0.9)";
   el.style.boxShadow = "0 0 5px rgba(0,0,0,0.5)";
   el.style.position = "relative";
+  el.style.marginBottom = "10px";
+  el.title = title;
   let img = document.createElement("img");
   img.style.width = "50%";
   img.style.marginLeft = "25%";
