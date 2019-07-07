@@ -299,6 +299,18 @@ namespace Kooboo.Data.Models
             unique += this.Name + this.DisplayName + this.OrganizationId;
             unique += this.ContinueConvert.ToString() + this.ContinueDownload.ToString() + this.EnableCache.ToString() + this.EnableCluster.ToString() + this.EnableConstraintChecker.ToString() + this.EnableConstraintFixOnSave.ToString() + this.EnableDiskSync.ToString() + this.EnableFrontEvents.ToString() + this.EnableMultilingual.ToString() + this.EnableSitePath.ToString() + this.EnableVisitorLog.ToString() + this.EnableFullTextSearch.ToString();
 
+            unique += this.EnableSystemRoute.ToString();
+
+            unique += this.EnableECommerce.ToString();
+
+            unique += this.EnableFileIOUrl.ToString();  
+
+         //public bool EnableECommerce { get; set; } 
+         //Enable direct access to view, htmlblock etc, via system routes. 
+         //public bool EnableSystemRoute { get; set; }
+         //public bool EnableFileIOUrl { get; set; } = true;
+
+
             unique += this.LocalRootPath + this.MirrorWebSiteBaseUrl + this._LocalDiskSyncFolder;
 
             unique += this.DefaultCulture + this.AutoDetectCulture.ToString();
@@ -332,7 +344,8 @@ namespace Kooboo.Data.Models
 
             unique += this.Published.ToString();
             unique += this.SiteType.ToString();
-            unique += this.IsApp.ToString(); 
+            unique += this.IsApp.ToString();
+            unique += this.ForceSSL.ToString();  
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }
