@@ -6,7 +6,6 @@ export function createContainer(document: Document) {
   container.style.width = "60px";
   container.style.top = "60px";
   container.style.left = document.body.scrollWidth - 120 + "px";
-  container.classList.add(HOVER_BORDER_SKIP);
   container.style.zIndex = STANDARD_Z_INDEX - 1 + "";
   return container;
 }

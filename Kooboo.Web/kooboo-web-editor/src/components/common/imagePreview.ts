@@ -9,6 +9,7 @@ export function createImagePreview(showDeleteBtn: boolean = false, onDelete?: ()
   el.style.height = "300px";
   el.style.width = "400px";
   el.style.backgroundImage = `url(${rect})`;
+  el.style.position = "relative";
 
   let preview = document.createElement("div");
   preview.style.width = "100%";
@@ -16,7 +17,6 @@ export function createImagePreview(showDeleteBtn: boolean = false, onDelete?: ()
   preview.style.backgroundPosition = "center";
   preview.style.backgroundRepeat = "no-repeat";
   preview.style.backgroundSize = "contain";
-  preview.style.position = "relative";
   preview.style.cursor = "pointer";
   el.appendChild(preview);
 
@@ -31,7 +31,7 @@ export function createImagePreview(showDeleteBtn: boolean = false, onDelete?: ()
   el.appendChild(button);
 
   button.onclick = e => {
-    el.style.backgroundImage = "";
+    preview.style.backgroundImage = "";
     if (onDelete) onDelete();
     e.stopPropagation();
   };

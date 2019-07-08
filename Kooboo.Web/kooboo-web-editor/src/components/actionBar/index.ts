@@ -11,7 +11,7 @@ export function createActionBar(document: Document) {
   let container = createContainer(document);
   container.appendChild(createMoveButton(document, container));
   container.appendChild(createImageButton(document));
-  //container.appendChild(createLinkButton(document));
+  container.appendChild(createLinkButton(document));
   container.appendChild(createPreviousButton(document));
   container.appendChild(createNextButton(document));
   container.appendChild(createSaveButton(document));

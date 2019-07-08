@@ -33,7 +33,9 @@ const en = {
   SAVE: "save",
   CONTENT_IMAGE: "content image",
   STYLE_IMAGE: "style image",
-  DOM_IMAGE: "DOM image"
+  DOM_IMAGE: "DOM image",
+  CONTENT_LINK: "content link",
+  DOM_LINK: "DOM link"
 };
 
 const zh = {
@@ -67,7 +69,9 @@ const zh = {
   SAVE: "保存",
   CONTENT_IMAGE: "内容图片",
   STYLE_IMAGE: "样式图片",
-  DOM_IMAGE: "DOM 图片"
+  DOM_IMAGE: "DOM 图片",
+  CONTENT_LINK: "内容链接",
+  DOM_LINK: "DOM 链接"
 } as typeof en;
 
 var langPackages = { en, zh };

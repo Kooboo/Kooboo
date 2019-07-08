@@ -4,7 +4,7 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { setGuid, clearKoobooInfo, isDynamicContent } from "@/kooboo/utils";
 import { isLink } from "@/dom/utils";
-import { getEditComment } from "../utils";
+import { getEditComment, getDelete } from "../utils";
 import { createLinkPicker } from "@/components/linkPicker";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { DomLog } from "@/operation/recordLogs/DomLog";
@@ -19,7 +19,7 @@ export function createEditLinkItem(): MenuItem {
 
     if (!isLink(args.element)) visiable = false;
     if (!args.closeParent || !args.parentKoobooId) visiable = false;
-    if (!getEditComment(args.koobooComments)) visiable = false;
+    if (!getDelete(args.koobooComments)) visiable = false;
     if (isDynamicContent(args.element)) visiable = false;
     setVisiable(visiable);
   };
