@@ -1,7 +1,9 @@
-export function createBody() {
+export function createBody(height?: string) {
   let el = document.createElement("div");
   el.style.margin = "0 20px";
   el.style.maxHeight = "80%";
+  el.style.overflowY = "auto";
+  if (height != undefined) el.style.height = height;
 
   type setContent = (content: string | HTMLElement) => void;
   let result: [HTMLElement, setContent] = [

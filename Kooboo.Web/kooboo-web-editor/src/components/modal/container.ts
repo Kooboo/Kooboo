@@ -1,10 +1,9 @@
 import { STANDARD_Z_INDEX } from "@/common/constants";
 
-export function createContainer(width?: string, height?: string) {
+export function createContainer(width?: string) {
   let el = document.createElement("div");
   let win = createWindow();
   if (width != undefined) win.style.width = width;
-  if (height != undefined) win.style.height = height;
   el.appendChild(win);
   applyStyle(el.style);
   return {
