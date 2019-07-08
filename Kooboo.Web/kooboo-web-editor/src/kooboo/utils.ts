@@ -76,16 +76,18 @@ export function getKoobooInfo(el: HTMLElement) {
 export function getCloseElement(el: HTMLElement) {
   let node = el as Node | null;
   let closeElement: HTMLElement | null = null;
+  let parentElement: HTMLElement | null = null;
 
   while (true) {
     if (!node) break;
 
-    if (node instanceof HTMLElement) {
+    if (node instanceof HTMLElement && parentElement != node.parentElement) {
       closeElement = node;
       if (node.hasAttribute(KOOBOO_ID)) break;
     }
 
     if (KoobooComment.isKoobooComment(node)) break;
+    parentElement = node.parentElement;
     node = node.previousSibling ? node.previousSibling : node.parentElement;
   }
 
@@ -147,7 +149,7 @@ export function isDynamicContent(el: HTMLElement) {
     if (k == OBJECT_TYPE.url) continue;
     if (OBJECT_TYPE.hasOwnProperty(k)) {
       const i = OBJECT_TYPE[k as keyof typeof OBJECT_TYPE];
-      if (el.innerHTML.toLowerCase().indexOf(`objecttype='${i}'`) > -1) return true;
+      if (el.innerHTML.indexOf(`objecttype='${i}'`) > -1) return true;
     }
   }
 
