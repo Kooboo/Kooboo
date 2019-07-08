@@ -111,12 +111,6 @@ describe("utils", () => {
     }
   });
 
-  test("setGuid", () => {
-    let el = document.createElement("div");
-    setGuid(el);
-    expect(el.getAttribute(KOOBOO_GUID)).toBeTruthy();
-  });
-
   test("setGuid replase", () => {
     let el = document.createElement("div");
     setGuid(el, "aa");
