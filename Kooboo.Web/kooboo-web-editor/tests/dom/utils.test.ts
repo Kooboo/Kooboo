@@ -1,17 +1,4 @@
-import {
-  getMaxHeight,
-  getMaxWidth,
-  getEditorContainer,
-  getAllElement,
-  getAllNode,
-  isBody,
-  isImg,
-  isLink,
-  canJump,
-  reload,
-  previousNodes,
-  nextNodes
-} from "@/dom/utils";
+import { getEditorContainer, getAllElement, getAllNode, isBody, isImg, isLink, canJump, previousNodes, nextNodes } from "@/dom/utils";
 import { HOVER_BORDER_SKIP } from "@/common/constants";
 
 describe("utils", () => {
