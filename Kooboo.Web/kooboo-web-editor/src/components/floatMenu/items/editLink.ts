@@ -29,8 +29,8 @@ export function createEditLinkItem(): MenuItem {
     let args = context.lastSelectedDomEventArgs;
     let urlComment = getUrlComment(args.koobooComments);
     let viewComment = getViewComment(args.koobooComments)!;
-    if (args.closeParent) {
-      updateDomLink(args.closeParent, args.parentKoobooId!, args.element, viewComment);
+    if (args.cleanElement) {
+      updateDomLink(args.cleanElement, args.cleanKoobooId!, args.element, viewComment);
     } else if (urlComment) {
       updateUrlLink(args.element, args.koobooId!, urlComment, viewComment);
     } else {

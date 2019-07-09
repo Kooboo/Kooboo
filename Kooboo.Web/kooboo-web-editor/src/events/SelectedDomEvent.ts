@@ -6,8 +6,8 @@ export class SelectedDomEventArgs {
   constructor(
     public element: HTMLElement,
     public koobooId: string | null,
-    public closeParent: HTMLElement | null,
-    public parentKoobooId: string | null,
+    public cleanElement: HTMLElement | null,
+    public cleanKoobooId: string | null,
     public koobooComments: KoobooComment[]
   ) {}
 }

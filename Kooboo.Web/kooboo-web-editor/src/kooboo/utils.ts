@@ -29,8 +29,8 @@ export function clearKoobooInfo(domString: string) {
 export function getKoobooInfo(el: HTMLElement) {
   let koobooId = el.getAttribute(KOOBOO_ID);
   let node = el as Node | null;
-  let closeParent: HTMLElement | null = null;
-  let parentKoobooId: string | null = null;
+  let cleanElement: HTMLElement | null = null;
+  let cleanKoobooId: string | null = null;
   let comments: KoobooComment[] = [];
   let isdirty = el.hasAttribute(KOOBOO_DIRTY);
 
@@ -39,15 +39,15 @@ export function getKoobooInfo(el: HTMLElement) {
 
     if (
       isdirty &&
-      !closeParent &&
+      !cleanElement &&
       comments.length == 0 &&
       node instanceof HTMLElement &&
       !isBody(node) &&
       !node.hasAttribute(KOOBOO_DIRTY) &&
       !isDynamicContent(node)
     ) {
-      parentKoobooId = node.getAttribute(KOOBOO_ID);
-      if (parentKoobooId) closeParent = node;
+      cleanKoobooId = node.getAttribute(KOOBOO_ID);
+      if (cleanKoobooId) cleanElement = node;
     }
 
     if (KoobooComment.isKoobooComment(node)) {
@@ -68,7 +68,7 @@ export function getKoobooInfo(el: HTMLElement) {
     node = node.previousSibling;
   }
 
-  return { comments, koobooId, closeParent, parentKoobooId };
+  return { comments, koobooId, cleanElement, cleanKoobooId };
 }
 
 export function getCloseElement(el: HTMLElement) {

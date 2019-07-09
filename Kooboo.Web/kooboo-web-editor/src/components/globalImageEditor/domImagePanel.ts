@@ -9,7 +9,7 @@ export function createDomImagePanel() {
 
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLImageElement) {
-      let { comments, closeParent, parentKoobooId, koobooId } = getKoobooInfo(element);
+      let { comments, cleanElement, cleanKoobooId, koobooId } = getKoobooInfo(element);
       if (getRepeatAttribute(comments)) continue;
       let comment = getViewComment(comments);
       if (!koobooId) continue;
@@ -19,8 +19,8 @@ export function createDomImagePanel() {
 
       imagePreview.onclick = async () => {
         let src: string | undefined;
-        if (closeParent) {
-          src = await updateDomImage(element, closeParent, parentKoobooId!, comment!);
+        if (cleanElement) {
+          src = await updateDomImage(element, cleanElement, cleanKoobooId!, comment!);
         } else {
           src = await updateAttributeImage(element, koobooId!, comment!);
         }

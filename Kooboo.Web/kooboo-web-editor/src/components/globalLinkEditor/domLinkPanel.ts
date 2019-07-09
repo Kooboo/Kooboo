@@ -18,7 +18,7 @@ export function createDomLinkPanel() {
 
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLElement && isLink(element)) {
-      let { comments, closeParent, parentKoobooId, koobooId } = getKoobooInfo(element);
+      let { comments, cleanElement, cleanKoobooId, koobooId } = getKoobooInfo(element);
       if (getMenuComment(comments)) continue;
       if (getFormComment(comments)) continue;
       if (getHtmlBlockComment(comments)) continue;
@@ -28,8 +28,8 @@ export function createDomLinkPanel() {
 
       let { item, setLabel } = createLinkItem(element, async () => {
         let url: string | undefined;
-        if (closeParent) {
-          url = await updateDomLink(closeParent, parentKoobooId!, element, viewComment);
+        if (cleanElement) {
+          url = await updateDomLink(cleanElement, cleanKoobooId!, element, viewComment);
         } else if (urlComment) {
           url = await updateUrlLink(element, koobooId!, urlComment, viewComment);
         } else {

@@ -33,12 +33,12 @@ describe("utils", () => {
     `;
 
     let el = temp.querySelector("h3")!;
-    let { closeParent, comments, koobooId, parentKoobooId } = getKoobooInfo(el);
+    let { cleanElement, comments, koobooId, cleanKoobooId } = getKoobooInfo(el);
 
-    expect(closeParent).toBeFalsy();
+    expect(cleanElement).toBeFalsy();
     expect(comments.length).toEqual(1);
     expect(koobooId).toEqual("1-0-1-1-1-3-1-1");
-    expect(parentKoobooId).toBeFalsy();
+    expect(cleanKoobooId).toBeFalsy();
   });
 
   test("getCloseElement have koobooId", () => {

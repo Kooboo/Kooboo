@@ -4,9 +4,9 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
 import { getEditComment } from "../utils";
-import { isDynamicContent, setGuid } from "@/kooboo/utils";
+import { isDynamicContent, setGuid, getCloseElement } from "@/kooboo/utils";
 import { setInlineEditor } from "@/components/richEditor";
-import { KOOBOO_ID } from "@/common/constants";
+import { KOOBOO_ID, KOOBOO_DIRTY } from "@/common/constants";
 import { emitSelectedEvent, emitHoverEvent } from "@/dom/events";
 
 export function createReplaceToTextItem(): MenuItem {
@@ -15,7 +15,9 @@ export function createReplaceToTextItem(): MenuItem {
     let visiable = true;
     let args = context.lastSelectedDomEventArgs;
     if (!isImg(args.element)) visiable = false;
-    if (!args.closeParent || !args.parentKoobooId) visiable = false;
+    let closeParent = getCloseElement(args.element.parentElement!)!;
+    let koobooId = closeParent.getAttribute(KOOBOO_ID);
+    if (!closeParent || !koobooId) visiable = false;
     if (!getEditComment(args.koobooComments)) visiable = false;
     if (isDynamicContent(args.element)) visiable = false;
     setVisiable(visiable);
@@ -23,13 +25,15 @@ export function createReplaceToTextItem(): MenuItem {
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
-    if (!args.closeParent) return false;
-    setGuid(args.closeParent);
-    let startContent = args.closeParent.innerHTML;
+    let closeParent = getCloseElement(args.element.parentElement!)!;
+    let element = args.cleanElement ? args.cleanElement : closeParent;
+    setGuid(element);
+    let startContent = element.innerHTML;
     try {
       let text = document.createElement("p");
       let style = getComputedStyle(args.element);
       text.setAttribute(KOOBOO_ID, args.koobooId!);
+      text.setAttribute(KOOBOO_DIRTY, "");
       text.style.width = style.width;
       text.style.height = style.height;
       text.style.display = style.display;
@@ -38,7 +42,7 @@ export function createReplaceToTextItem(): MenuItem {
       emitSelectedEvent(text);
       await setInlineEditor(text);
     } catch (error) {
-      args.closeParent.innerHTML = startContent;
+      element.innerHTML = startContent;
     }
   });
 

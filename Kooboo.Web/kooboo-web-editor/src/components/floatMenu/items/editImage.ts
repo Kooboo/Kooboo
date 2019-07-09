@@ -21,8 +21,8 @@ export function createEditImageItem(): MenuItem {
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
     let el = args.element as HTMLImageElement;
-    if (args.closeParent) {
-      updateDomImage(el, args.closeParent, args.parentKoobooId!, getViewComment(args.koobooComments)!);
+    if (args.cleanElement) {
+      updateDomImage(el, args.cleanElement, args.cleanKoobooId!, getViewComment(args.koobooComments)!);
     } else {
       updateAttributeImage(el, args.koobooId!, getEditComment(args.koobooComments)!);
     }

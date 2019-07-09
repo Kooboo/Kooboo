@@ -35,17 +35,18 @@ export function createDeleteItem(): MenuItem {
     let temp = document.createElement("div");
     args.element.parentNode!.replaceChild(temp, args.element);
     temp.outerHTML = guidComment;
-
     let log!: Log;
-    if (args.closeParent) {
+    if (args.cleanElement) {
       let comment = getViewComment(args.koobooComments)!;
-      log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(args.closeParent.innerHTML), args.parentKoobooId!, comment.objecttype!);
+      log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(args.cleanElement.innerHTML), args.cleanKoobooId!, comment.objecttype!);
     } else {
       let comment = getEditComment(args.koobooComments)!;
       if (comment.objecttype == OBJECT_TYPE.content) {
         log = ContentLog.createDelete(comment.nameorid!);
       } else if (comment.objecttype == OBJECT_TYPE.Label) {
         log = LabelLog.createDelete(comment.bindingvalue!);
+      } else {
+        log = DomLog.createDelete(comment.nameorid!, args.koobooId!, comment.objecttype!);
       }
     }
 

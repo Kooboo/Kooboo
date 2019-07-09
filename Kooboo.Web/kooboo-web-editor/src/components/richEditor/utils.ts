@@ -64,9 +64,9 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
   e.remove();
 
   if (startContent != element.innerHTML) {
-    let dirtyEl = args.closeParent ? args.closeParent : element;
+    let dirtyEl = args.cleanElement ? args.cleanElement : element;
     markDirty(dirtyEl);
-    let koobooId = args.parentKoobooId ? args.parentKoobooId : args.koobooId;
+    let koobooId = args.cleanKoobooId ? args.cleanKoobooId : args.koobooId;
     let guid = setGuid(element);
     let units = [new InnerHtmlUnit(startContent)];
     let comment = getEditComment(args.koobooComments)!;
