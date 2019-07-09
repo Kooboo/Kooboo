@@ -188,3 +188,8 @@ export function isViewComment(comments: KoobooComment) {
   const types = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout];
   return types.some(s => s == comments.objecttype);
 }
+
+export function isEditComment(comments: KoobooComment) {
+  const types = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label];
+  return types.some(s => s == comments.objecttype);
+}
