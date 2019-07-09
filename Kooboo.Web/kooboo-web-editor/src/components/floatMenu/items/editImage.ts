@@ -9,13 +9,12 @@ import { isDynamicContent } from "@/kooboo/utils";
 export function createEditImageItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_IMAGE, MenuActions.editImage);
   const update = () => {
-    let visiable = true;
+    setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    if (!isImg(args.element)) visiable = false;
-    if (getRepeatAttribute(args.koobooComments)) visiable = false;
-    if (!getEditComment(args.koobooComments)) visiable = false;
-    if (isDynamicContent(args.element)) visiable = false;
-    setVisiable(visiable);
+    if (!isImg(args.element)) setVisiable(false);
+    if (getRepeatAttribute(args.koobooComments)) setVisiable(false);
+    if (!getViewComment(args.koobooComments)) setVisiable(false);
+    if (isDynamicContent(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", async () => {

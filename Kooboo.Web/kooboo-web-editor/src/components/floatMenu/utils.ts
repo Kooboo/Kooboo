@@ -176,3 +176,15 @@ export async function updateUrlLink(element: HTMLElement, koobooId: string, urlC
     element.setAttribute("href", startContent);
   }
 }
+
+export function getFirstComment(comments: KoobooComment[]) {
+  for (const iterator of comments) {
+    if (iterator.objecttype == OBJECT_TYPE.Url) continue;
+    return iterator;
+  }
+}
+
+export function isViewComment(comments: KoobooComment) {
+  const types = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout];
+  return types.some(s => s == comments.objecttype);
+}

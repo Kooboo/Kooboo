@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
-import { getEditComment } from "../utils";
+import { getViewComment, isViewComment, getFirstComment } from "../utils";
 import { isDynamicContent, setGuid, markDirty, clearKoobooInfo, getCloseElement } from "@/kooboo/utils";
 import { createImagePicker } from "@/components/imagePicker";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
@@ -14,15 +14,17 @@ import { KOOBOO_ID } from "@/common/constants";
 export function createReplaceToImgItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.REPLACE_TO_IMG, MenuActions.replaceToImg);
   const update = () => {
-    let visiable = true;
+    setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
+    let firstComment = getFirstComment(args.koobooComments);
+    if (!firstComment || !isViewComment(firstComment)) setVisiable(false);
+
     let closeParent = getCloseElement(args.element.parentElement!)!;
     let koobooId = closeParent.getAttribute(KOOBOO_ID);
-    if (!closeParent || !koobooId) visiable = false;
-    if (isImg(args.element)) visiable = false;
-    if (!getEditComment(args.koobooComments)) visiable = false;
-    if (isDynamicContent(args.element)) visiable = false;
-    setVisiable(visiable);
+    if (!closeParent || !koobooId) setVisiable(false);
+
+    if (isImg(args.element)) setVisiable(false);
+    if (isDynamicContent(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", async () => {
@@ -45,7 +47,7 @@ export function createReplaceToImgItem(): MenuItem {
       markDirty(element);
       let guid = setGuid(element);
       let value = clearKoobooInfo(element.innerHTML);
-      let comment = getEditComment(args.koobooComments)!;
+      let comment = getViewComment(args.koobooComments)!;
       let unit = new InnerHtmlUnit(startContent);
       let log = DomLog.createUpdate(comment.nameorid!, value, koobooId!, comment.objecttype!);
       let record = new operationRecord([unit], [log], guid);

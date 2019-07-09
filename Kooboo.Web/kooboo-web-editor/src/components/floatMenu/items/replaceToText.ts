@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
-import { getEditComment } from "../utils";
+import { getFirstComment, isViewComment } from "../utils";
 import { isDynamicContent, setGuid, getCloseElement } from "@/kooboo/utils";
 import { setInlineEditor } from "@/components/richEditor";
 import { KOOBOO_ID, KOOBOO_DIRTY } from "@/common/constants";
@@ -12,15 +12,18 @@ import { emitSelectedEvent, emitHoverEvent } from "@/dom/events";
 export function createReplaceToTextItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.REPLACE_TO_TEXT, MenuActions.replaceToText);
   const update = () => {
-    let visiable = true;
+    setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    if (!isImg(args.element)) visiable = false;
+
+    let firstComment = getFirstComment(args.koobooComments);
+    if (!firstComment || !isViewComment(firstComment)) setVisiable(false);
+
     let closeParent = getCloseElement(args.element.parentElement!)!;
     let koobooId = closeParent.getAttribute(KOOBOO_ID);
-    if (!closeParent || !koobooId) visiable = false;
-    if (!getEditComment(args.koobooComments)) visiable = false;
-    if (isDynamicContent(args.element)) visiable = false;
-    setVisiable(visiable);
+    if (!closeParent || !koobooId) setVisiable(false);
+
+    if (!isImg(args.element)) setVisiable(false);
+    if (isDynamicContent(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", async () => {

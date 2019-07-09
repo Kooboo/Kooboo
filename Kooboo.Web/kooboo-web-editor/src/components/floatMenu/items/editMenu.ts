@@ -11,10 +11,9 @@ export function createEditMenuItem() {
   const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_MENU, MenuActions.editMenu);
 
   const update = () => {
+    setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let visiable = true;
-    if (!getMenuComment(args.koobooComments)) visiable = false;
-    setVisiable(visiable);
+    if (!getMenuComment(args.koobooComments)) setVisiable(false);
   };
 
   el.addEventListener("click", async () => {

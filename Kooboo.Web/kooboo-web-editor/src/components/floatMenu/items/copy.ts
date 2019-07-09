@@ -3,7 +3,7 @@ import context from "@/common/context";
 import { setGuid, markDirty, clearKoobooInfo, isDynamicContent, getGuidComment, getCloseElement } from "@/kooboo/utils";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import { TEXT } from "@/common/lang";
-import { getEditComment } from "../utils";
+import { getEditComment, getFirstComment, isViewComment } from "../utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { CopyUnit } from "@/operation/recordUnits/CopyUnit";
@@ -15,15 +15,17 @@ export function createCopyItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.COPY, MenuActions.copy);
 
   const update = () => {
-    var visiable = true;
+    setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
+    let firstComment = getFirstComment(args.koobooComments);
+    if (!firstComment || !isViewComment(firstComment)) setVisiable(false);
+
     let closeParent = getCloseElement(args.element.parentElement!)!;
     let koobooId = closeParent.getAttribute(KOOBOO_ID);
-    if (isBody(args.element)) visiable = false;
-    if (!closeParent || !koobooId) visiable = false;
-    if (!getEditComment(args.koobooComments)) visiable = false;
-    if (isDynamicContent(args.element)) visiable = false;
-    setVisiable(visiable);
+    if (!closeParent || !koobooId) setVisiable(false);
+
+    if (isBody(args.element)) setVisiable(false);
+    if (isDynamicContent(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", e => {

@@ -10,10 +10,9 @@ export function createJumpLinkItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.JUMP_LINK, MenuActions.jumpLink);
 
   const update = () => {
+    setVisiable(true);
     let args = context.lastHoverDomEventArgs;
-    let visiable = true;
-    if (!canJump(args.element)) visiable = false;
-    setVisiable(visiable);
+    if (!canJump(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", e => {

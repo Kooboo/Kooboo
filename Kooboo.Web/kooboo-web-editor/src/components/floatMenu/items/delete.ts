@@ -2,29 +2,27 @@ import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { setGuid, clearKoobooInfo, isDynamicContent, getGuidComment } from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, isDynamicContent, getGuidComment, getCloseElement } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { DeleteUnit } from "@/operation/recordUnits/DeleteUnit";
 import { Log } from "@/operation/recordLogs/Log";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { DomLog } from "@/operation/recordLogs/DomLog";
-import { OBJECT_TYPE } from "@/common/constants";
+import { OBJECT_TYPE, KOOBOO_ID } from "@/common/constants";
 import { LabelLog } from "@/operation/recordLogs/LabelLog";
-import { getMenuComment, getFormComment, getHtmlBlockComment, getEditComment, getViewComment } from "../utils";
+import { getEditComment, getViewComment, getFirstComment, isViewComment } from "../utils";
 
 export function createDeleteItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
   const update = () => {
-    let visiable = true;
+    setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    if (isBody(args.element)) visiable = false;
-    if (getMenuComment(args.koobooComments)) visiable = false;
-    if (getFormComment(args.koobooComments)) visiable = false;
-    if (getHtmlBlockComment(args.koobooComments)) visiable = false;
-    if (!getEditComment(args.koobooComments)) visiable = false;
-    if (isDynamicContent(args.element)) visiable = false;
-    setVisiable(visiable);
+    let firstComment = getFirstComment(args.koobooComments);
+    if (!firstComment || !isViewComment(firstComment)) setVisiable(false);
+
+    if (isBody(args.element)) setVisiable(false);
+    if (isDynamicContent(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", () => {
