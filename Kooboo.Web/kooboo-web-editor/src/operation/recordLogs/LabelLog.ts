@@ -4,7 +4,7 @@ import { Log } from "./Log";
 
 export class LabelLog extends Log {
   value!: string;
-  readonly objectType: string = OBJECT_TYPE.label;
+  readonly objectType: string = OBJECT_TYPE.Label;
   readonly editorType: string = EDITOR_TYPE.label;
 
   static createDelete(nameOrId: string) {

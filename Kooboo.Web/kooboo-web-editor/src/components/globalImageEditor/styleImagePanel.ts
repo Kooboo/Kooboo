@@ -1,6 +1,6 @@
 import { getAllElement } from "@/dom/utils";
 import { getKoobooInfo, setGuid } from "@/kooboo/utils";
-import { getDelete } from "../floatMenu/utils";
+import { getViewComment } from "../floatMenu/utils";
 import { KOOBOO_ID } from "@/common/constants";
 import { createImagePreview } from "../common/imagePreview";
 import { setImagePreview } from "./utils";
@@ -18,7 +18,7 @@ export function createStyleImagePanel() {
     if (style.backgroundImage != "none" && element instanceof HTMLElement) {
       let koobooId = element.getAttribute(KOOBOO_ID);
       let { comments } = getKoobooInfo(element);
-      let comment = getDelete(comments);
+      let comment = getViewComment(comments);
       if (!comment || !koobooId) continue;
       let { imagePreview, setImage } = createImagePreview(false, () => (element.style.backgroundImage = ""));
       setImagePreview(imagePreview, element);

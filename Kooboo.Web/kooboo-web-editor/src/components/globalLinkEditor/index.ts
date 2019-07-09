@@ -18,7 +18,7 @@ export function createGlobalLinkEditor() {
     }
   ];
   let tabs = createTabs(options);
-  const { modal, hideCancel } = createModal(TEXT.EDIT_LINK, tabs, "500px");
+  const { modal, hideCancel } = createModal(TEXT.EDIT_LINK, tabs, "500px", "500px");
   hideCancel();
   getEditorContainer().appendChild(modal);
 }

@@ -2,7 +2,7 @@ import { createItem, MenuItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { getHtmlBlock, hasOperation } from "../utils";
+import { getHtmlBlockComment, hasOperation } from "../utils";
 import { reload } from "@/dom/utils";
 import { editHtmlBlock } from "@/kooboo/outsideInterfaces";
 
@@ -13,7 +13,7 @@ export function createEditHtmlBlockItem(): MenuItem {
     let args = context.lastSelectedDomEventArgs;
     let visiable = true;
 
-    if (!getHtmlBlock(args.koobooComments)) visiable = false;
+    if (!getHtmlBlockComment(args.koobooComments)) visiable = false;
     if (hasOperation(context.operationManager)) {
       setReadonly();
     }

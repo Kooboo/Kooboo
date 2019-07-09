@@ -16,7 +16,7 @@ export function createContentLinkPanel() {
       let { comments } = getKoobooInfo(element);
       let comment = getRepeatAttribute(comments);
       if (!comment || !comment.fieldname || comment.attributename != "href") continue;
-      let item = createLinkItem(element, async () => {
+      let { item, setLabel } = createLinkItem(element, async () => {
         let startContent = element.getAttribute("href")!;
         try {
           let newValue = await createLinkPicker(startContent);
@@ -27,6 +27,7 @@ export function createContentLinkPanel() {
           let log = ContentLog.createUpdate(comment!.nameorid!, comment!.fieldname!, value);
           let record = new operationRecord([unit], [log], guid);
           context.operationManager.add(record);
+          setLabel(newValue);
         } catch (error) {
           element.setAttribute("href", startContent);
         }

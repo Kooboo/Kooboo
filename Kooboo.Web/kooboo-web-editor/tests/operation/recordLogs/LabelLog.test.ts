@@ -9,7 +9,7 @@ describe("LabelLog", () => {
     expect(log.action).toEqual(ActionType.delete);
     expect(log.editorType).toEqual(EDITOR_TYPE.label);
     expect(log.value).toBeFalsy();
-    expect(log.objectType).toEqual(OBJECT_TYPE.label);
+    expect(log.objectType).toEqual(OBJECT_TYPE.Label);
     expect(log.value).toBeFalsy();
   });
 
@@ -19,6 +19,6 @@ describe("LabelLog", () => {
     expect(log.action).toEqual(ActionType.update);
     expect(log.editorType).toEqual(EDITOR_TYPE.label);
     expect(log.value).toEqual("a");
-    expect(log.objectType).toEqual(OBJECT_TYPE.label);
+    expect(log.objectType).toEqual(OBJECT_TYPE.Label);
   });
 });

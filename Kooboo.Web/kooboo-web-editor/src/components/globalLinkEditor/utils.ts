@@ -19,5 +19,8 @@ export function createLinkItem(el: HTMLElement, onEdit: () => void) {
   button.style.borderRadius = "24px";
   item.appendChild(label);
   item.appendChild(button);
-  return item;
+  return {
+    item,
+    setLabel: (s: string) => (label.innerText = s)
+  };
 }

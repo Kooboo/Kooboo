@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isBody } from "@/dom/utils";
-import { getRepeat } from "../utils";
+import { getRepeatComment } from "../utils";
 import { getWrapDom, getGuidComment } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
 import { KoobooComment } from "@/kooboo/KoobooComment";
@@ -18,7 +18,7 @@ export function createDeleteRepeatItem(): MenuItem {
     var visiable = true;
     let args = context.lastSelectedDomEventArgs;
     if (isBody(args.element)) visiable = false;
-    if (!getRepeat(args.koobooComments)) visiable = false;
+    if (!getRepeatComment(args.koobooComments)) visiable = false;
     setVisiable(visiable);
   };
 

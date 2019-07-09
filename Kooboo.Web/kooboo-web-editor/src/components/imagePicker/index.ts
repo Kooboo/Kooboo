@@ -9,11 +9,14 @@ export function createImagePicker(img: HTMLImageElement) {
   let container = document.createElement("div");
   let { imagePreview, setImage } = createImagePreview();
   imagePreview.style.margin = "0 auto 16px auto";
+  let style = getComputedStyle(img);
 
   setImage(img.src);
   imagePreview.onclick = () => {
     pickImg(path => {
       img.src = path;
+      img.style.width = style.width;
+      img.style.height = style.height;
       setImage(path);
     });
   };
@@ -37,7 +40,6 @@ export function createImagePicker(img: HTMLImageElement) {
     }
   });
 
-  let style = getComputedStyle(img);
   let width = createLabelInput(TEXT.WIDTH, 80, 120);
   width.setInputHandler(e => {
     if (e.target instanceof HTMLInputElement) {

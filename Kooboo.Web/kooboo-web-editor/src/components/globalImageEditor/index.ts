@@ -23,7 +23,7 @@ export function createGlobalImageEditor() {
     }
   ];
   let tabs = createTabs(options);
-  const { modal, hideCancel } = createModal(TEXT.EDIT_IMAGE, tabs, "600px");
+  const { modal, hideCancel } = createModal(TEXT.EDIT_IMAGE, tabs, "600px", "500px");
   hideCancel();
   getEditorContainer().appendChild(modal);
 }

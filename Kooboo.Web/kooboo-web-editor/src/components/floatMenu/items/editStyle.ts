@@ -2,13 +2,13 @@ import { TEXT } from "@/common/lang";
 import { createItem, MenuItem } from "../basic";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { getMenu, getForm, getHtmlBlock, getDelete } from "../utils";
 import { createStyleEditor } from "@/components/styleEditor";
 import { isBody } from "@/dom/utils";
 import { setGuid } from "@/kooboo/utils";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { operationRecord } from "@/operation/Record";
 import { StyleLog } from "@/operation/recordLogs/StyleLog";
+import { getMenuComment, getFormComment, getHtmlBlockComment, getViewComment } from "../utils";
 
 export function createEditStyleItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_STYLE, MenuActions.editStyle);
@@ -17,17 +17,17 @@ export function createEditStyleItem(): MenuItem {
     let args = context.lastSelectedDomEventArgs;
     let visiable = true;
     if (isBody(args.element)) visiable = false;
-    if (getMenu(args.koobooComments)) visiable = false;
-    if (getForm(args.koobooComments)) visiable = false;
-    if (getHtmlBlock(args.koobooComments)) visiable = false;
-    if (!getDelete(args.koobooComments)) visiable = false;
+    if (getMenuComment(args.koobooComments)) visiable = false;
+    if (getFormComment(args.koobooComments)) visiable = false;
+    if (getHtmlBlockComment(args.koobooComments)) visiable = false;
+    if (!getViewComment(args.koobooComments)) visiable = false;
     setVisiable(visiable);
   };
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
     const startContent = args.element.getAttribute("style");
-    let comment = getDelete(args.koobooComments)!;
+    let comment = getViewComment(args.koobooComments)!;
     try {
       let beforeStyle = JSON.parse(JSON.stringify(getComputedStyle(args.element))) as CSSStyleDeclaration;
       await createStyleEditor(args.element);

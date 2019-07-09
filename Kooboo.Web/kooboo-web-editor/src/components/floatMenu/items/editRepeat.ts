@@ -2,7 +2,7 @@ import { createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { getRepeat, hasOperation } from "../utils";
+import { getRepeatComment, hasOperation } from "../utils";
 import { reload } from "@/dom/utils";
 import { editRepeat } from "@/kooboo/outsideInterfaces";
 
@@ -13,14 +13,14 @@ export function createEditRepeatItem() {
     let args = context.lastSelectedDomEventArgs;
     let visiable = true;
 
-    if (!getRepeat(args.koobooComments)) visiable = false;
+    if (!getRepeatComment(args.koobooComments)) visiable = false;
     if (hasOperation(context.operationManager)) setReadonly();
     setVisiable(visiable);
   };
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
-    let comment = getRepeat(args.koobooComments)!;
+    let comment = getRepeatComment(args.koobooComments)!;
     await editRepeat(comment.nameorid!, comment.folderid!);
     reload();
   });

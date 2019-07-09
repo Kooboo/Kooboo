@@ -3,9 +3,9 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { MenuItem, createItem } from "../basic";
 import { isDynamicContent } from "@/kooboo/utils";
-import { getEditComment, getMenu, getForm, getHtmlBlock } from "../utils";
 import { isBody } from "@/dom/utils";
 import { setInlineEditor } from "@/components/richEditor";
+import { getMenuComment, getFormComment, getHtmlBlockComment, getEditComment } from "../utils";
 
 export function createEditItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT, MenuActions.edit);
@@ -13,9 +13,9 @@ export function createEditItem(): MenuItem {
     let visiable = true;
     let args = context.lastSelectedDomEventArgs;
     if (isBody(args.element)) visiable = false;
-    if (getMenu(args.koobooComments)) visiable = false;
-    if (getForm(args.koobooComments)) visiable = false;
-    if (getHtmlBlock(args.koobooComments)) visiable = false;
+    if (getMenuComment(args.koobooComments)) visiable = false;
+    if (getFormComment(args.koobooComments)) visiable = false;
+    if (getHtmlBlockComment(args.koobooComments)) visiable = false;
     if (!getEditComment(args.koobooComments)) visiable = false;
     var reExcept = /^img|button|input|textarea|br|hr$/i;
     let el = args.element;

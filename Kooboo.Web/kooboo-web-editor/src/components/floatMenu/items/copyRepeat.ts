@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isBody } from "@/dom/utils";
-import { getRepeat, changeNameOrId } from "../utils";
+import { getRepeatComment, changeNameOrId } from "../utils";
 import { getWrapDom, getGuidComment } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
 import { newGuid } from "@/kooboo/outsideInterfaces";
@@ -18,7 +18,7 @@ export function createCopyRepeatItem(): MenuItem {
     var visiable = true;
     let args = context.lastSelectedDomEventArgs;
     if (isBody(args.element)) visiable = false;
-    if (!getRepeat(args.koobooComments)) visiable = false;
+    if (!getRepeatComment(args.koobooComments)) visiable = false;
     setVisiable(visiable);
   };
 
@@ -34,7 +34,7 @@ export function createCopyRepeatItem(): MenuItem {
       changeNameOrId(insertNode, guid);
       parent.insertBefore(insertNode, anchor.nextSibling);
     }
-    let comment = getRepeat(args.koobooComments);
+    let comment = getRepeatComment(args.koobooComments);
     let units = [new CopyRepeatUnit(getGuidComment(guid))];
     let logs = [ContentLog.createCopy(guid, comment!.nameorid!)];
 

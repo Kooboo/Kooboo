@@ -15,7 +15,7 @@ export function clearKoobooInfo(domString: string) {
       if (i.hasAttribute(KOOBOO_GUID)) i.attributes.removeNamedItem(KOOBOO_GUID);
     }
 
-    if (i.nodeType == Node.COMMENT_NODE && i.nodeValue && i.nodeValue.startsWith(KOOBOO_GUID)) {
+    if (i.nodeType == Node.COMMENT_NODE && i.nodeValue && (i.nodeValue.startsWith(KOOBOO_GUID) || i.nodeValue == "empty")) {
       i.parentNode!.removeChild(i);
     }
 
@@ -32,13 +32,13 @@ export function getKoobooInfo(el: HTMLElement) {
   let closeParent: HTMLElement | null = null;
   let parentKoobooId: string | null = null;
   let comments: KoobooComment[] = [];
-  let parentLayerFlag = false;
+  let isdirty = el.hasAttribute(KOOBOO_DIRTY);
 
   while (true) {
     if (!node) break;
 
     if (
-      parentLayerFlag &&
+      isdirty &&
       !closeParent &&
       comments.length == 0 &&
       node instanceof HTMLElement &&
@@ -57,13 +57,11 @@ export function getKoobooInfo(el: HTMLElement) {
         node = node.parentElement;
         continue;
       }
-
-      if (comment.objecttype != "Url") comments.push(comment);
+      comments.push(comment);
     }
 
     if (!node.previousSibling || node.previousSibling instanceof HTMLElement) {
       node = node.parentElement;
-      parentLayerFlag = true;
       continue;
     }
 
@@ -146,7 +144,7 @@ export function getGuidComment(guid: string) {
 
 export function isDynamicContent(el: HTMLElement) {
   for (const k in OBJECT_TYPE) {
-    if (k == OBJECT_TYPE.url) continue;
+    if (k == OBJECT_TYPE.Url) continue;
     if (OBJECT_TYPE.hasOwnProperty(k)) {
       const i = OBJECT_TYPE[k as keyof typeof OBJECT_TYPE];
       if (el.innerHTML.indexOf(`objecttype='${i}'`) > -1) return true;
@@ -219,7 +217,7 @@ export function getWrapDom(el: Node, objectType: string) {
 }
 
 function isSingleCommentWrap(node: Node) {
-  let singleCommentWrap = [OBJECT_TYPE.attribute, OBJECT_TYPE.content, OBJECT_TYPE.label, OBJECT_TYPE.style, OBJECT_TYPE.url];
+  let singleCommentWrap = [OBJECT_TYPE.attribute, OBJECT_TYPE.content, OBJECT_TYPE.Label, OBJECT_TYPE.style, OBJECT_TYPE.Url];
   let comment = new KoobooComment(node);
   return singleCommentWrap.some(s => s == comment.objecttype);
 }

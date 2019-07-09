@@ -4,11 +4,13 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { setGuid, clearKoobooInfo, isDynamicContent } from "@/kooboo/utils";
 import { isLink } from "@/dom/utils";
-import { getEditComment, getDelete } from "../utils";
+import { getViewComment, getUrlComment, updateDomLink, updateUrlLink, updateAttributeLink } from "../utils";
 import { createLinkPicker } from "@/components/linkPicker";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { operationRecord } from "@/operation/Record";
+import { KoobooComment } from "@/kooboo/KoobooComment";
+import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 
 export function createEditLinkItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_LINK, MenuActions.editLink);
@@ -18,31 +20,21 @@ export function createEditLinkItem(): MenuItem {
     let args = context.lastSelectedDomEventArgs;
 
     if (!isLink(args.element)) visiable = false;
-    if (!args.closeParent || !args.parentKoobooId) visiable = false;
-    if (!getDelete(args.koobooComments)) visiable = false;
+    if (!getViewComment(args.koobooComments)) visiable = false;
     if (isDynamicContent(args.element)) visiable = false;
     setVisiable(visiable);
   };
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
-    if (!args.closeParent) return false;
-    setGuid(args.closeParent);
-    let startContent = args.closeParent.innerHTML;
-    let href = args.element.getAttribute("href")!;
-
-    try {
-      let url = await createLinkPicker(href);
-      args!.element.setAttribute("href", url);
-      let guid = setGuid(args.closeParent);
-      let value = clearKoobooInfo(args.closeParent!.innerHTML);
-      let comment = getEditComment(args.koobooComments)!;
-      let unit = new InnerHtmlUnit(startContent);
-      let log = DomLog.createUpdate(comment.nameorid!, value, args.parentKoobooId!, comment.objecttype!);
-      let record = new operationRecord([unit], [log], guid);
-      context.operationManager.add(record);
-    } catch (error) {
-      args.closeParent.innerHTML = startContent;
+    let urlComment = getUrlComment(args.koobooComments);
+    let viewComment = getViewComment(args.koobooComments)!;
+    if (args.closeParent) {
+      updateDomLink(args.closeParent, args.parentKoobooId!, args.element, viewComment);
+    } else if (urlComment) {
+      updateUrlLink(args.element, args.koobooId!, urlComment, viewComment);
+    } else {
+      updateAttributeLink(args.element, args.koobooId!, viewComment);
     }
   });
 

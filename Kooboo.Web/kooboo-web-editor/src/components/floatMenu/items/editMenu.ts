@@ -2,7 +2,7 @@ import { createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { getMenu } from "../utils";
+import { getMenuComment } from "../utils";
 import { getWrapDom } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
 import { editMenu } from "@/kooboo/outsideInterfaces";
@@ -13,13 +13,13 @@ export function createEditMenuItem() {
   const update = () => {
     let args = context.lastSelectedDomEventArgs;
     let visiable = true;
-    if (!getMenu(args.koobooComments)) visiable = false;
+    if (!getMenuComment(args.koobooComments)) visiable = false;
     setVisiable(visiable);
   };
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
-    let comment = getMenu(args.koobooComments)!;
+    let comment = getMenuComment(args.koobooComments)!;
     var { startNode, endNode } = getWrapDom(args.element, OBJECT_TYPE.menu);
     if (!startNode || !endNode) return;
     editMenu(comment.nameorid!, c => {

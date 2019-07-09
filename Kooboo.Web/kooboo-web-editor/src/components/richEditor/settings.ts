@@ -34,7 +34,8 @@ export function createSettings(selector: HTMLElement, onCancel: () => void, onSa
     forced_root_block: "",
     valid_elements: "*[*]",
     valid_children: "*[*]",
-    valid_styles: "*[*]",
+    valid_styles:
+      "width,height,color,font-size,font-family,background,background-color,background-image,font-weight,font-style,text-decoration,float,margin,margin-top,margin-right,margin-bottom,margin-left,display,text-align",
     plugins: ["save", "link", "image"],
     toolbar: getToolbar(selector),
     init_instance_callback: e => (context.editing = true),

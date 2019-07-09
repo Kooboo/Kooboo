@@ -16,7 +16,7 @@ export class DomLog extends Log {
     log.value = value;
     log.koobooId = koobooId;
     log.objectType = objectType;
-    if (attributeName) attributeName = attributeName;
+    if (attributeName) log.attributeName = attributeName;
     return log;
   }
 

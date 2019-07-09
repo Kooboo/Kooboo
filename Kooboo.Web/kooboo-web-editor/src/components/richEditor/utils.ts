@@ -16,7 +16,6 @@ import { LabelLog } from "@/operation/recordLogs/LabelLog";
 
 export async function impoveEditorUI(editor: Editor) {
   let container = editor.getContainer();
-  console.log(container);
   if (container instanceof HTMLElement) {
     container.style.zIndex = STANDARD_Z_INDEX + 1 + "";
     container.style.width = "auto";
@@ -76,7 +75,7 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
 
     if (comment.objecttype == OBJECT_TYPE.content) {
       log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, value);
-    } else if (comment.objecttype == OBJECT_TYPE.label) {
+    } else if (comment.objecttype == OBJECT_TYPE.Label) {
       log = LabelLog.createUpdate(comment.bindingvalue!, value);
     } else {
       log = DomLog.createUpdate(comment.nameorid!, value, koobooId!, comment.objecttype!);
@@ -116,8 +115,6 @@ export function onRemove(e: any) {
     if (element.id.startsWith("mce_")) element.removeAttribute("id");
     if (element.getAttribute("style") == "") element.removeAttribute("style");
   }
-
-  if (e.target._onremove) e.target._onremove();
 
   EditorManager.editors.forEach(i => {
     i.remove();

@@ -3,7 +3,6 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { setGuid, clearKoobooInfo, isDynamicContent, getGuidComment } from "@/kooboo/utils";
-import { getEditComment, getDelete, getMenu, getForm, getHtmlBlock } from "../utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { DeleteUnit } from "@/operation/recordUnits/DeleteUnit";
@@ -12,6 +11,7 @@ import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { OBJECT_TYPE } from "@/common/constants";
 import { LabelLog } from "@/operation/recordLogs/LabelLog";
+import { getMenuComment, getFormComment, getHtmlBlockComment, getEditComment, getViewComment } from "../utils";
 
 export function createDeleteItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
@@ -19,9 +19,9 @@ export function createDeleteItem(): MenuItem {
     let visiable = true;
     let args = context.lastSelectedDomEventArgs;
     if (isBody(args.element)) visiable = false;
-    if (getMenu(args.koobooComments)) visiable = false;
-    if (getForm(args.koobooComments)) visiable = false;
-    if (getHtmlBlock(args.koobooComments)) visiable = false;
+    if (getMenuComment(args.koobooComments)) visiable = false;
+    if (getFormComment(args.koobooComments)) visiable = false;
+    if (getHtmlBlockComment(args.koobooComments)) visiable = false;
     if (!getEditComment(args.koobooComments)) visiable = false;
     if (isDynamicContent(args.element)) visiable = false;
     setVisiable(visiable);
@@ -38,13 +38,13 @@ export function createDeleteItem(): MenuItem {
 
     let log!: Log;
     if (args.closeParent) {
-      let comment = getDelete(args.koobooComments)!;
+      let comment = getViewComment(args.koobooComments)!;
       log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(args.closeParent.innerHTML), args.parentKoobooId!, comment.objecttype!);
     } else {
       let comment = getEditComment(args.koobooComments)!;
       if (comment.objecttype == OBJECT_TYPE.content) {
         log = ContentLog.createDelete(comment.nameorid!);
-      } else if (comment.objecttype == OBJECT_TYPE.label) {
+      } else if (comment.objecttype == OBJECT_TYPE.Label) {
         log = LabelLog.createDelete(comment.bindingvalue!);
       }
     }
