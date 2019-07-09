@@ -14,7 +14,6 @@ export function createItem(text: string, type: MenuActions) {
   let el = document.createElement("div");
   let readonly = false;
   el.style.padding = "5px 10px";
-  el.style.color = "#000";
   el.style.borderBottom = "1px solid #eee";
   el.style.cursor = "default";
   el.append(text);

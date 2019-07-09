@@ -97,7 +97,7 @@ export function onSetContent(e: any) {
   e.target._content = e.content;
   var targetElm = e.target.targetElm as HTMLElement;
   for (const element of getAllElement(targetElm, true)) {
-    if ((element.tagName.toLowerCase() == "i" || element.tagName.toLowerCase() == "a") && element.innerHTML.indexOf(EMPTY_COMMENT) == -1) {
+    if (element.innerHTML.indexOf(EMPTY_COMMENT) == -1) {
       element.innerHTML += EMPTY_COMMENT;
     }
   }
@@ -123,6 +123,10 @@ export function onRemove(e: any) {
 
 export function onKeyDown(e: KeyboardEvent) {
   var targetElm = e.target as HTMLElement;
+  if (e.code == "Backspace") {
+    let content = targetElm.innerHTML;
+    if (content.indexOf(EMPTY_COMMENT) == -1) targetElm.innerHTML += EMPTY_COMMENT;
+  }
   if (e.code == "Backspace" && targetElm.innerHTML == EMPTY_COMMENT) return false;
 }
 
