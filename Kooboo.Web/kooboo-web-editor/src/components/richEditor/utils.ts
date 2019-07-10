@@ -73,15 +73,14 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
     let guid = setGuid(element);
     let units = [new InnerHtmlUnit(startContent)];
     let comment = getEditComment(comments)!;
-    let value = clearKoobooInfo(dirtyEl.innerHTML);
     let log: Log;
 
     if (comment.objecttype == OBJECT_TYPE.content) {
-      log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, value);
+      log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, clearKoobooInfo(element.innerHTML));
     } else if (comment.objecttype == OBJECT_TYPE.Label) {
-      log = LabelLog.createUpdate(comment.bindingvalue!, value);
+      log = LabelLog.createUpdate(comment.bindingvalue!, clearKoobooInfo(element.innerHTML));
     } else {
-      log = DomLog.createUpdate(comment.nameorid!, value, koobooId!, comment.objecttype!);
+      log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(dirtyEl.innerHTML), koobooId!, comment.objecttype!);
     }
 
     let operation = new operationRecord(units, [log], guid);
