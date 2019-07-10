@@ -5,22 +5,23 @@ import context from "@/common/context";
 import { getRepeatComment, hasOperation } from "../utils";
 import { reload } from "@/dom/utils";
 import { editRepeat } from "@/kooboo/outsideInterfaces";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function createEditRepeatItem() {
   const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_REPEAT, MenuActions.editRepeat);
 
   const update = () => {
+    setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let visiable = true;
-
-    if (!getRepeatComment(args.koobooComments)) visiable = false;
+    let comments = KoobooComment.getComments(args.element);
+    if (!getRepeatComment(comments)) setVisiable(false);
     if (hasOperation(context.operationManager)) setReadonly();
-    setVisiable(visiable);
   };
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
-    let comment = getRepeatComment(args.koobooComments)!;
+    let comments = KoobooComment.getComments(args.element);
+    let comment = getRepeatComment(comments)!;
     await editRepeat(comment.nameorid!, comment.folderid!);
     reload();
   });

@@ -2,9 +2,10 @@ import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { isDynamicContent } from "@/kooboo/utils";
+import { isDynamicContent, getCleanParent } from "@/kooboo/utils";
 import { isLink } from "@/dom/utils";
 import { getViewComment, getUrlComment, updateDomLink, updateUrlLink, updateAttributeLink } from "../utils";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function createEditLinkItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_LINK, MenuActions.editLink);
@@ -12,18 +13,20 @@ export function createEditLinkItem(): MenuItem {
   const update = () => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-
+    let comments = KoobooComment.getComments(args.element);
     if (!isLink(args.element)) setVisiable(false);
-    if (!getViewComment(args.koobooComments)) setVisiable(false);
+    if (!getViewComment(comments)) setVisiable(false);
     if (isDynamicContent(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
-    let urlComment = getUrlComment(args.koobooComments);
-    let viewComment = getViewComment(args.koobooComments)!;
-    if (args.cleanElement) {
-      updateDomLink(args.cleanElement, args.cleanKoobooId!, args.element, viewComment);
+    let comments = KoobooComment.getComments(args.element);
+    let urlComment = getUrlComment(comments);
+    let viewComment = getViewComment(comments)!;
+    let { koobooId, parent } = getCleanParent(args.element);
+    if (parent) {
+      updateDomLink(parent, koobooId!, args.element, viewComment);
     } else if (urlComment) {
       updateUrlLink(args.element, args.koobooId!, urlComment, viewComment);
     } else {

@@ -9,24 +9,26 @@ import { operationRecord } from "@/operation/Record";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { createLinkPicker } from "@/components/linkPicker";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function createEditRepeatLinkItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_LINK, MenuActions.editLink);
   const update = () => {
-    let visiable = true;
+    setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    if (!isLink(args.element)) visiable = false;
-    let comment = getRepeatAttribute(args.koobooComments);
+    let comments = KoobooComment.getComments(args.element);
+    if (!isLink(args.element)) setVisiable(false);
+    let comment = getRepeatAttribute(comments);
     if (!comment || !comment.fieldname || comment.attributename != "href") {
-      visiable = false;
+      setVisiable(false);
     }
-    if (isDynamicContent(args.element)) visiable = false;
-    setVisiable(visiable);
+    if (isDynamicContent(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
-    let comment = getRepeatAttribute(args.koobooComments)!;
+    let comments = KoobooComment.getComments(args.element);
+    let comment = getRepeatAttribute(comments)!;
     let link = args.element as HTMLLinkElement;
     let startContent = link.href;
     try {

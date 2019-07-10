@@ -32,11 +32,11 @@ export function listenClick() {
     e.stopPropagation();
     if (context.editing || isInEditorContainer(e)) return;
 
-    let { comments, koobooId, cleanElement, cleanKoobooId } = getKoobooInfo(context.lastHoverDomEventArgs.closeElement);
+    let { comments, koobooId } = getKoobooInfo(context.lastHoverDomEventArgs.closeElement);
 
     if (comments.length == 0) return;
 
-    var args = new SelectedDomEventArgs(context.lastHoverDomEventArgs.closeElement, koobooId, cleanElement, cleanKoobooId, comments);
+    var args = new SelectedDomEventArgs(context.lastHoverDomEventArgs.closeElement, koobooId);
 
     context.lastMouseEventArg = e;
     context.domChangeEvent.emit(args);
@@ -51,8 +51,8 @@ export function emitHoverEvent(el: HTMLElement) {
 }
 
 export function emitSelectedEvent(el: HTMLElement) {
-  let { comments, koobooId, cleanElement, cleanKoobooId } = getKoobooInfo(el);
+  let { comments, koobooId } = getKoobooInfo(el);
   if (comments.length == 0) return;
-  var args = new SelectedDomEventArgs(context.lastHoverDomEventArgs.closeElement, koobooId, cleanElement, cleanKoobooId, comments);
+  var args = new SelectedDomEventArgs(context.lastHoverDomEventArgs.closeElement, koobooId);
   context.domChangeEvent.emit(args);
 }

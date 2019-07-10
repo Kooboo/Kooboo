@@ -9,25 +9,27 @@ import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { operationRecord } from "@/operation/Record";
 import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { getMenuComment, getFormComment, getHtmlBlockComment, getViewComment } from "../utils";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function createEditStyleItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_STYLE, MenuActions.editStyle);
 
   const update = () => {
+    setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let visiable = true;
-    if (isBody(args.element)) visiable = false;
-    if (getMenuComment(args.koobooComments)) visiable = false;
-    if (getFormComment(args.koobooComments)) visiable = false;
-    if (getHtmlBlockComment(args.koobooComments)) visiable = false;
-    if (!getViewComment(args.koobooComments)) visiable = false;
-    setVisiable(visiable);
+    let comments = KoobooComment.getComments(args.element);
+    if (isBody(args.element)) setVisiable(false);
+    if (getMenuComment(comments)) setVisiable(false);
+    if (getFormComment(comments)) setVisiable(false);
+    if (getHtmlBlockComment(comments)) setVisiable(false);
+    if (!getViewComment(comments)) setVisiable(false);
   };
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
+    let comments = KoobooComment.getComments(args.element);
     const startContent = args.element.getAttribute("style");
-    let comment = getViewComment(args.koobooComments)!;
+    let comment = getViewComment(comments)!;
     try {
       let beforeStyle = JSON.parse(JSON.stringify(getComputedStyle(args.element))) as CSSStyleDeclaration;
       await createStyleEditor(args.element);

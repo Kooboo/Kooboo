@@ -6,22 +6,23 @@ import { isDynamicContent } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { setInlineEditor } from "@/components/richEditor";
 import { getMenuComment, getFormComment, getHtmlBlockComment, getEditComment } from "../utils";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function createEditItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT, MenuActions.edit);
   const update = () => {
-    let visiable = true;
+    setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    if (isBody(args.element)) visiable = false;
-    if (getMenuComment(args.koobooComments)) visiable = false;
-    if (getFormComment(args.koobooComments)) visiable = false;
-    if (getHtmlBlockComment(args.koobooComments)) visiable = false;
-    if (!getEditComment(args.koobooComments)) visiable = false;
+    let comments = KoobooComment.getComments(args.element);
+    if (isBody(args.element)) setVisiable(false);
+    if (getMenuComment(comments)) setVisiable(false);
+    if (getFormComment(comments)) setVisiable(false);
+    if (getHtmlBlockComment(comments)) setVisiable(false);
+    if (!getEditComment(comments)) setVisiable(false);
     var reExcept = /^img|button|input|textarea|br|hr$/i;
     let el = args.element;
-    if (reExcept.test(el.tagName)) visiable = false;
-    if (isDynamicContent(args.element)) visiable = false;
-    setVisiable(visiable);
+    if (reExcept.test(el.tagName)) setVisiable(false);
+    if (isDynamicContent(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", () => {

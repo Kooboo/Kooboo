@@ -9,24 +9,26 @@ import { operationRecord } from "@/operation/Record";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function createEditRepeatImageItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_IMAGE, MenuActions.editImage);
   const update = () => {
-    let visiable = true;
+    setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    if (!isImg(args.element)) visiable = false;
-    let comment = getRepeatAttribute(args.koobooComments);
+    let comments = KoobooComment.getComments(args.element);
+    if (!isImg(args.element)) setVisiable(false);
+    let comment = getRepeatAttribute(comments);
     if (!comment || !comment.fieldname || comment.attributename != "src") {
-      visiable = false;
+      setVisiable(false);
     }
-    if (isDynamicContent(args.element)) visiable = false;
-    setVisiable(visiable);
+    if (isDynamicContent(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
-    let comment = getRepeatAttribute(args.koobooComments)!;
+    let comments = KoobooComment.getComments(args.element);
+    let comment = getRepeatAttribute(comments)!;
     let img = args.element as HTMLImageElement;
     let startContent = img.src;
     pickImg(path => {

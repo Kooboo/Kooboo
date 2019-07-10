@@ -6,7 +6,8 @@ import {
   markDirty,
   setGuid,
   getGuidComment,
-  isDynamicContent
+  isDynamicContent,
+  getCleanParent
 } from "@/kooboo/utils";
 import { getAllElement } from "@/dom/utils";
 import { KOOBOO_DIRTY, KOOBOO_GUID } from "@/common/constants";
@@ -139,5 +140,27 @@ describe("utils", () => {
 				</div>
     `;
     expect(isDynamicContent(temp)).toBeTruthy();
+  });
+
+  test("getCleanParent", () => {
+    let temp = document.createElement("div");
+    temp.innerHTML = `
+    <div class="col-md-12 section-heading text-center" kooboo-id="1-0-1-1-1">
+					
+<!--#kooboo--objecttype='Label'--attributename='k-label'--bindingvalue='ExploreTitle'--koobooid='1-0-1-1-1-1'-->
+<h2 class="to-animate fadeInUp animated" k-label="ExploreTitle" kooboo-id="1-0-1-1-1-1">Explore Our Products</h2>
+					<div class="row" kooboo-id="1-0-1-1-1-3">
+						<div class="col-md-8 col-md-offset-2 subtext to-animate fadeInUp animated" kooboo-id="1-0-1-1-1-3-1">
+							
+<!--#kooboo--objecttype='Label'--attributename='k-label'--bindingvalue='ExploreText'--koobooid='1-0-1-1-1-3-1-1'-->
+<h3 k-label="ExploreText" kooboo-id="1-0-1-1-1-3-1-1">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</h3>
+						</div>
+					</div>
+				</div>
+    `;
+    let el = temp.querySelector("[kooboo-id='1-0-1-1-1-3-1-1']") as HTMLElement;
+    let { parent, koobooId } = getCleanParent(el);
+    expect(parent).toBeTruthy();
+    expect(koobooId).toEqual("1-0-1-1-1-3-1");
   });
 });

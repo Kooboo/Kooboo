@@ -1,4 +1,15 @@
-import { getEditorContainer, getAllElement, getAllNode, isBody, isImg, isLink, canJump, previousNodes, nextNodes } from "@/dom/utils";
+import {
+  getEditorContainer,
+  getAllElement,
+  getAllNode,
+  isBody,
+  isImg,
+  isLink,
+  canJump,
+  previousNodes,
+  nextNodes,
+  previousComment
+} from "@/dom/utils";
 import { HOVER_BORDER_SKIP } from "@/common/constants";
 
 describe("utils", () => {
@@ -180,5 +191,28 @@ describe("utils", () => {
     let nextNode = iter.next().value;
 
     expect(nextNode.textContent).toEqual("Text");
+  });
+
+  test("previousComment", () => {
+    let temp = document.createElement("div");
+    temp.innerHTML = `
+    <div class="testimonial-thumb" kooboo-id="1-0-1-1-1-1-1-1">
+                                    
+      <!--#kooboo--objecttype='attribute'--nameorid='fbdc6f3b-19ea-565e-84f6-a174b9cfb8f0'--attributename='src'--bindingvalue='{List_Item.Icon}'--koobooid='1-0-1-1-1-1-1-1-1'-->
+
+      <!--#kooboo--objecttype='attribute'--nameorid='fbdc6f3b-19ea-565e-84f6-a174b9cfb8f0'--attributename='alt'--bindingvalue='{List_Item.Name}'--koobooid='1-0-1-1-1-1-1-1-1'-->
+
+      <img k-attributes="src {List_Item.Icon};alt {List_Item.Name};" kooboo-id="1-0-1-1-1-1-1-1-1" src="/moban41-template/assets/img/testimonial_img3.png" alt="Name 3">
+      
+    </div>
+    `;
+
+    let img = temp.querySelector("[kooboo-id='1-0-1-1-1-1-1-1-1']")!;
+    let comment = previousComment(img);
+
+    expect(comment instanceof Comment).toBeTruthy();
+    expect((comment as Comment).nodeValue).toEqual(
+      "#kooboo--objecttype='attribute'--nameorid='fbdc6f3b-19ea-565e-84f6-a174b9cfb8f0'--attributename='alt'--bindingvalue='{List_Item.Name}'--koobooid='1-0-1-1-1-1-1-1-1'"
+    );
   });
 });

@@ -1,15 +1,8 @@
-import { KoobooComment } from "../kooboo/KoobooComment";
 import { BaseEvent } from "./BaseEvent";
 import context from "../common/context";
 
 export class SelectedDomEventArgs {
-  constructor(
-    public element: HTMLElement,
-    public koobooId: string | null,
-    public cleanElement: HTMLElement | null,
-    public cleanKoobooId: string | null,
-    public koobooComments: KoobooComment[]
-  ) {}
+  constructor(public element: HTMLElement, public koobooId: string | null) {}
 }
 
 export class SelectedDomEvent extends BaseEvent<SelectedDomEventArgs> {

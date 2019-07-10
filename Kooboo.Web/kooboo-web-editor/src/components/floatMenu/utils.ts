@@ -57,7 +57,7 @@ export const getRepeatComment = (comments: KoobooComment[]) => getObjectType(com
 export const getUrlComment = (comments: KoobooComment[]) => getObjectType(comments, OBJECT_TYPE.Url);
 
 export function changeNameOrId(node: Node, guid: string) {
-  if (KoobooComment.isKoobooComment(node)) {
+  if (KoobooComment.isComment(node)) {
     node.nodeValue = node.nodeValue!.replace(/--nameorid='.{36,50}?'/, `--nameorid='${guid}'`);
   }
   if (node instanceof HTMLElement) {

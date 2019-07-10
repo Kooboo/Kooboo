@@ -103,3 +103,10 @@ export function* nextNodes(node: Node, containSelf = false, includeParent = fals
     yield node;
   }
 }
+
+export function previousComment(node: Node) {
+  for (const i of previousNodes(node)) {
+    if (i instanceof Comment) return i;
+    if (i instanceof HTMLElement) break;
+  }
+}
