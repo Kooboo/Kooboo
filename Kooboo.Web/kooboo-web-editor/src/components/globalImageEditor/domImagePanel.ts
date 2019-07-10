@@ -1,16 +1,19 @@
 import { getAllElement } from "@/dom/utils";
-import { getKoobooInfo } from "@/kooboo/utils";
 import { createImagePreview } from "@/components/common/imagePreview";
-import { getViewComment, updateDomImage, updateAttributeImage, getRepeatAttribute } from "../floatMenu/utils";
+import { getViewComment, updateDomImage, updateAttributeImage, getAttributeComment } from "../floatMenu/utils";
 import { setImagePreview } from "./utils";
+import { KoobooComment } from "@/kooboo/KoobooComment";
+import { KOOBOO_ID } from "@/common/constants";
+import { getCleanParent } from "@/kooboo/utils";
 
 export function createDomImagePanel() {
   let contiainer = document.createElement("div");
 
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLImageElement) {
-      let { comments, cleanElement, cleanKoobooId, koobooId } = getKoobooInfo(element);
-      if (getRepeatAttribute(comments)) continue;
+      let comments = KoobooComment.getComments(element);
+      let koobooId = element.getAttribute(KOOBOO_ID);
+      if (getAttributeComment(comments)) continue;
       let comment = getViewComment(comments);
       if (!koobooId) continue;
       let { imagePreview, setImage } = createImagePreview(false, () => (element.src = ""));
@@ -19,8 +22,9 @@ export function createDomImagePanel() {
 
       imagePreview.onclick = async () => {
         let src: string | undefined;
-        if (cleanElement) {
-          src = await updateDomImage(element, cleanElement, cleanKoobooId!, comment!);
+        let { koobooId: parentKoobooId, parent } = getCleanParent(element);
+        if (parent) {
+          src = await updateDomImage(element, parent, parentKoobooId!, comment!);
         } else {
           src = await updateAttributeImage(element, koobooId!, comment!);
         }

@@ -1,6 +1,5 @@
 import {
   clearKoobooInfo,
-  getKoobooInfo,
   getCloseElement,
   getMaxKoobooId,
   markDirty,
@@ -24,22 +23,6 @@ describe("utils", () => {
     expect(cleanDomString.indexOf("kooboo-guid")).toBe(-1);
     expect(cleanDomString.indexOf("kooboo-dirty")).toBe(-1);
     expect(cleanDomString.indexOf("<!--kooboo-guid aaf3d051-6693-45b9-92fc-b63ecd12db98-->")).toBe(-1);
-  });
-
-  test("getKoobooInfo", () => {
-    let temp = document.createElement("div");
-    temp.innerHTML = `
-    <div class="col-md-8 col-md-offset-2 subtext to-animate fadeInUp animated" kooboo-id="1-0-1-1-1-3-1"><!--#kooboo--objecttype='Label'--attributename='k-label'--bindingvalue='ExploreText'--koobooid='1-0-1-1-1-3-1-1'-->
-<h3 k-label="ExploreText" kooboo-id="1-0-1-1-1-3-1-1">Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.</h3></div>
-    `;
-
-    let el = temp.querySelector("h3")!;
-    let { cleanElement, comments, koobooId, cleanKoobooId } = getKoobooInfo(el);
-
-    expect(cleanElement).toBeFalsy();
-    expect(comments.length).toEqual(1);
-    expect(koobooId).toEqual("1-0-1-1-1-3-1-1");
-    expect(cleanKoobooId).toBeFalsy();
   });
 
   test("getCloseElement have koobooId", () => {

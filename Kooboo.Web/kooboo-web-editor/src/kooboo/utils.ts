@@ -26,51 +26,6 @@ export function clearKoobooInfo(domString: string) {
   return el.innerHTML;
 }
 
-export function getKoobooInfo(el: HTMLElement) {
-  let koobooId = el.getAttribute(KOOBOO_ID);
-  let node = el as Node | null;
-  let cleanElement: HTMLElement | null = null;
-  let cleanKoobooId: string | null = null;
-  let comments: KoobooComment[] = [];
-  let isdirty = el.hasAttribute(KOOBOO_DIRTY);
-
-  while (true) {
-    if (!node) break;
-
-    if (
-      isdirty &&
-      !cleanElement &&
-      comments.length == 0 &&
-      node instanceof HTMLElement &&
-      !isBody(node) &&
-      !node.hasAttribute(KOOBOO_DIRTY) &&
-      !isDynamicContent(node)
-    ) {
-      cleanKoobooId = node.getAttribute(KOOBOO_ID);
-      if (cleanKoobooId) cleanElement = node;
-    }
-
-    if (KoobooComment.isComment(node)) {
-      let comment = new KoobooComment(node.nodeValue);
-
-      if (comment.end) {
-        node = node.parentElement;
-        continue;
-      }
-      comments.push(comment);
-    }
-
-    if (!node.previousSibling || node.previousSibling instanceof HTMLElement) {
-      node = node.parentElement;
-      continue;
-    }
-
-    node = node.previousSibling;
-  }
-
-  return { comments, koobooId, cleanElement, cleanKoobooId };
-}
-
 export function getCloseElement(el: HTMLElement) {
   let node = el as Node | null;
   let closeElement: HTMLElement | null = null;

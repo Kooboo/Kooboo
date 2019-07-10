@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
-import { getRepeatAttribute } from "../utils";
+import { getAttributeComment } from "../utils";
 import { isDynamicContent, setGuid } from "@/kooboo/utils";
 import { operationRecord } from "@/operation/Record";
 import { pickImg } from "@/kooboo/outsideInterfaces";
@@ -18,23 +18,21 @@ export function createEditRepeatImageItem(): MenuItem {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
     if (!isImg(args.element)) setVisiable(false);
-    let comment = getRepeatAttribute(comments);
-    if (!comment || !comment.fieldname || comment.attributename != "src") {
-      setVisiable(false);
-    }
+    let comment = getAttributeComment(comments, "src");
+    if (!comment || !comment.fieldname) setVisiable(false);
     if (isDynamicContent(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    let comment = getRepeatAttribute(comments)!;
+    let comment = getAttributeComment(comments, "src")!;
     let img = args.element as HTMLImageElement;
-    let startContent = img.src;
+    let startContent = img.getAttribute("src")!;
     pickImg(path => {
       img.src = path;
       let guid = setGuid(img);
-      let value = img.src;
+      let value = img.getAttribute("src")!;
       let unit = new AttributeUnit(startContent, "src");
       let log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, value);
       let record = new operationRecord([unit], [log], guid);

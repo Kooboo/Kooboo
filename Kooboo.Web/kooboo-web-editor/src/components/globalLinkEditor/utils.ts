@@ -14,6 +14,7 @@ export function createLinkItem(el: HTMLElement, onEdit: () => void) {
   let label = createLabel(href);
   label.style.wordBreak = "break-all";
   label.style.width = "84%";
+  label.style.display = "inline-block";
   let button = createButton(TEXT.EDIT);
   button.onclick = onEdit;
   button.style.borderRadius = "24px";

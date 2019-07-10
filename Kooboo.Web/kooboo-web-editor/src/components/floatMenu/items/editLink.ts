@@ -4,7 +4,7 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isDynamicContent, getCleanParent } from "@/kooboo/utils";
 import { isLink } from "@/dom/utils";
-import { getViewComment, getUrlComment, updateDomLink, updateUrlLink, updateAttributeLink } from "../utils";
+import { getViewComment, getUrlComment, updateDomLink, updateUrlLink, updateAttributeLink, getAttributeComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function createEditLinkItem(): MenuItem {
@@ -15,6 +15,7 @@ export function createEditLinkItem(): MenuItem {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
     if (!isLink(args.element)) setVisiable(false);
+    if (getAttributeComment(comments)) setVisiable(false);
     if (!getViewComment(comments)) setVisiable(false);
     if (isDynamicContent(args.element)) setVisiable(false);
   };

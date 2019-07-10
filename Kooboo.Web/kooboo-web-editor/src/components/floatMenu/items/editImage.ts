@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
-import { getEditComment, getViewComment, updateAttributeImage, updateDomImage, getRepeatAttribute } from "../utils";
+import { getEditComment, getViewComment, updateAttributeImage, updateDomImage, getAttributeComment } from "../utils";
 import { isDynamicContent, getCleanParent } from "@/kooboo/utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 
@@ -14,7 +14,7 @@ export function createEditImageItem(): MenuItem {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
     if (!isImg(args.element)) setVisiable(false);
-    if (getRepeatAttribute(comments)) setVisiable(false);
+    if (getAttributeComment(comments)) setVisiable(false);
     if (!getViewComment(comments)) setVisiable(false);
     if (isDynamicContent(args.element)) setVisiable(false);
   };
