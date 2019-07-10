@@ -1,5 +1,6 @@
 import { HOVER_BORDER_WIDTH, STANDARD_Z_INDEX } from "../../common/constants";
 import { Position, updatePositon } from "@/common/Position";
+import { isBody } from "@/dom/utils";
 
 const applyStyle = (css: CSSStyleDeclaration) => {
   css.position = "absolute";
@@ -9,6 +10,8 @@ const applyStyle = (css: CSSStyleDeclaration) => {
   css.width = HOVER_BORDER_WIDTH + "px";
   css.height = HOVER_BORDER_WIDTH + "px";
   css.zIndex = STANDARD_Z_INDEX - 2 + "";
+  let bodyStyle = getComputedStyle(document.body);
+  css.margin = bodyStyle.margin;
 };
 
 export const createLine = () => {

@@ -79,13 +79,13 @@ export class KoobooComment {
     }
 
     do {
-      if (!el.parentElement) break;
-      el = el.parentElement;
       comment = previousComment(el);
       if (comment && this.isComment(comment)) {
         comments.push(comment);
       }
-    } while (el && !isBody(el));
+      if (!el.parentElement) break;
+      el = el.parentElement;
+    } while (el);
 
     return comments.map(m => new KoobooComment(m));
   }

@@ -48,6 +48,7 @@ export function createContainer() {
   el.style.overflow = "hidden";
   el.style.boxShadow = "0 0 3px #ddd";
   el.style.backgroundColor = "#fff";
+  el.style.display = "none";
   el.style.zIndex = STANDARD_Z_INDEX + 1 + "";
   el.append(createTitle());
 
