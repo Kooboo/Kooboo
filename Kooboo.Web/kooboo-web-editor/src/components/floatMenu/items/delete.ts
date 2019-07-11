@@ -23,7 +23,6 @@ export function createDeleteItem(): MenuItem {
     if (!firstComment || !isEditComment(firstComment)) setVisiable(false);
     if (getRepeatComment(comments)) setVisiable(false);
     if (isBody(args.element)) setVisiable(false);
-    if (isDynamicContent(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", () => {
