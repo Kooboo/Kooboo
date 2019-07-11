@@ -8,9 +8,10 @@ import { operationRecord } from "@/operation/Record";
 import { DeleteUnit } from "@/operation/recordUnits/DeleteUnit";
 import { Log } from "@/operation/recordLogs/Log";
 import { DomLog } from "@/operation/recordLogs/DomLog";
-import { getViewComment, getFirstComment, isEditComment, getRepeatComment } from "../utils";
+import { getViewComment, getFirstComment, isEditComment, getRepeatComment, getHtmlBlockComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import createDiv from "@/dom/div";
+import { HtmlblockLog } from "@/operation/recordLogs/HtmlblockLog";
 
 export function createDeleteItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
@@ -20,7 +21,6 @@ export function createDeleteItem(): MenuItem {
     let comments = KoobooComment.getComments(args.element);
     let firstComment = getFirstComment(comments);
     if (!firstComment || !isEditComment(firstComment)) setVisiable(false);
-
     if (getRepeatComment(comments)) setVisiable(false);
     if (isBody(args.element)) setVisiable(false);
     if (isDynamicContent(args.element)) setVisiable(false);
@@ -38,7 +38,10 @@ export function createDeleteItem(): MenuItem {
     temp.outerHTML = guidComment;
     let log!: Log;
 
-    if (parent) {
+    let htmlblockComment = getHtmlBlockComment(comments);
+    if (htmlblockComment) {
+      log = HtmlblockLog.createDelete(htmlblockComment.nameorid!);
+    } else if (parent) {
       let comment = getViewComment(comments)!;
       log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(parent.innerHTML), koobooId!, comment.objecttype!);
     } else {

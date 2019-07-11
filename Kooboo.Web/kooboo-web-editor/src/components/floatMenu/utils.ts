@@ -15,7 +15,7 @@ import { createLinkPicker } from "../linkPicker";
 import createDiv from "@/dom/div";
 
 export function getEditComment(comments: KoobooComment[]) {
-  const editTypes = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label];
+  const editTypes = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label, OBJECT_TYPE.htmlblock];
 
   for (const i of comments) {
     if (i.objecttype && editTypes.some(s => s == i.objecttype)) return i;
@@ -192,6 +192,6 @@ export function isViewComment(comments: KoobooComment) {
 }
 
 export function isEditComment(comments: KoobooComment) {
-  const types = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label];
+  const types = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label, OBJECT_TYPE.htmlblock];
   return types.some(s => s == comments.objecttype);
 }

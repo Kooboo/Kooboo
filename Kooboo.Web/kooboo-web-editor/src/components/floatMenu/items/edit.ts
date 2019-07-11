@@ -17,7 +17,6 @@ export function createEditItem(): MenuItem {
     if (isBody(args.element)) setVisiable(false);
     if (getMenuComment(comments)) setVisiable(false);
     if (getFormComment(comments)) setVisiable(false);
-    if (getHtmlBlockComment(comments)) setVisiable(false);
     if (!getEditComment(comments)) setVisiable(false);
     var reExcept = /^img|button|input|textarea|br|hr$/i;
     let el = args.element;

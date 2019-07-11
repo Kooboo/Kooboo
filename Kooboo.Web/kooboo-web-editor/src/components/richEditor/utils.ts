@@ -14,6 +14,7 @@ import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { LabelLog } from "@/operation/recordLogs/LabelLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import { HtmlblockLog } from "@/operation/recordLogs/HtmlblockLog";
 
 export async function impoveEditorUI(editor: Editor) {
   let container = editor.getContainer();
@@ -79,6 +80,8 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
       log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, clearKoobooInfo(element.innerHTML));
     } else if (comment.objecttype == OBJECT_TYPE.Label) {
       log = LabelLog.createUpdate(comment.bindingvalue!, clearKoobooInfo(element.innerHTML));
+    } else if (comment.objecttype == OBJECT_TYPE.htmlblock) {
+      log = HtmlblockLog.createUpdate(comment.nameorid!, clearKoobooInfo(element.outerHTML));
     } else {
       log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(dirtyEl.innerHTML), koobooId!, comment.objecttype!);
     }
