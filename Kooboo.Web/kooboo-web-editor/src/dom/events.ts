@@ -35,7 +35,6 @@ export function listenClick() {
     var args = new SelectedDomEventArgs(element);
     context.lastMouseEventArg = e;
     context.domChangeEvent.emit(args);
-    console.log(args);
   });
 }
 
