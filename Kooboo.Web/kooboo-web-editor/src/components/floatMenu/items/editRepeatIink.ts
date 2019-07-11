@@ -20,7 +20,6 @@ export function createEditRepeatLinkItem(): MenuItem {
     if (!isLink(args.element)) setVisiable(false);
     let comment = getAttributeComment(comments, "href");
     if (!comment || !comment.fieldname) setVisiable(false);
-    if (isDynamicContent(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", async () => {

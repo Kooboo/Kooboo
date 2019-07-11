@@ -20,7 +20,6 @@ export function createEditRepeatImageItem(): MenuItem {
     if (!isImg(args.element)) setVisiable(false);
     let comment = getAttributeComment(comments, "src");
     if (!comment || !comment.fieldname) setVisiable(false);
-    if (isDynamicContent(args.element)) setVisiable(false);
   };
 
   el.addEventListener("click", async () => {
