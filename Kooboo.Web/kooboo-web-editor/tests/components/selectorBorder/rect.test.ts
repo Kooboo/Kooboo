@@ -3,7 +3,7 @@ import { createRect } from "@/components/selectorBorder/rect";
 describe("create border rect", () => {
   test("hidden", () => {
     let rect = createRect();
-    expect(rect.el.style.display).toEqual("");
+    expect(rect.el.style.display).toEqual("block");
     rect.hidden();
     expect(rect.el.style.display).toEqual("none");
   });

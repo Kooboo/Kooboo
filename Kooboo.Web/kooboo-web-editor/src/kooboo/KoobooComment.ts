@@ -70,6 +70,10 @@ export class KoobooComment {
     return node.nodeType == Node.COMMENT_NODE && node.nodeValue && node.nodeValue.startsWith("#kooboo");
   }
 
+  static isEndComment(node: Node) {
+    return this.isComment(node) && node.nodeValue!.indexOf("--end") > -1;
+  }
+
   static getComments(el: HTMLElement) {
     let comments: Comment[] = [];
     let comment = previousComment(el);
@@ -80,7 +84,7 @@ export class KoobooComment {
 
     do {
       comment = previousComment(el);
-      if (comment && this.isComment(comment) && !isSingleCommentWrap(comment)) {
+      if (comment && this.isComment(comment) && !isSingleCommentWrap(comment) && !this.isEndComment(comment)) {
         comments.push(comment);
       }
       if (!el.parentElement) break;
