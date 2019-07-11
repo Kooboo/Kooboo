@@ -80,7 +80,7 @@ export class KoobooComment {
 
     do {
       comment = previousComment(el);
-      if (comment && this.isComment(comment)) {
+      if (comment && this.isComment(comment) && !isSingleCommentWrap(comment)) {
         comments.push(comment);
       }
       if (!el.parentElement) break;
