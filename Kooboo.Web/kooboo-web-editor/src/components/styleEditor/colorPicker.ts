@@ -5,15 +5,17 @@ import { createLabel } from "@/dom/label";
 import { getEditorContainer } from "@/dom/utils";
 import Color from "color-string";
 import { TEXT } from "@/common/lang";
+import createDiv from "@/dom/div";
+import createSpan from "@/dom/span";
 
 type ononsave = (color: string) => void;
 
 export function createColorPicker(text: string, old: string, onsave: ononsave) {
   old = Color.to.hex(Color.get(old)!.value);
-  let el = document.createElement("div");
+  let el = createDiv();
   let label = createLabel(text);
   label.style.marginRight = "5px";
-  let picker = document.createElement("span");
+  let picker = createSpan();
   el.appendChild(label);
   el.appendChild(picker);
   setTimeout(() => {

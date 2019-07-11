@@ -1,5 +1,7 @@
+import createDiv from "@/dom/div";
+
 export function createHeader(title: string, parent: HTMLElement) {
-  var el = document.createElement("div");
+  var el = createDiv();
   el.innerText = title;
   el.style.cursor = "move";
   el.draggable = true;

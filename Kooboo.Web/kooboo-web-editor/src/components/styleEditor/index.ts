@@ -6,9 +6,10 @@ import { createImagePreview } from "@/components/common/imagePreview";
 import { createColorPicker } from "./colorPicker";
 import { createLabelInput } from "@/dom/input";
 import { pickImg } from "@/kooboo/outsideInterfaces";
+import createDiv from "@/dom/div";
 
 export function createStyleEditor(el: HTMLElement) {
-  const container = document.createElement("div");
+  const container = createDiv();
   addImg(container, el);
   addColor(container, el);
   addFont(container, el);

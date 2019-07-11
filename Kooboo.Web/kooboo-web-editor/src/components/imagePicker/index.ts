@@ -4,9 +4,10 @@ import { createLabelInput } from "@/dom/input";
 import { getEditorContainer } from "@/dom/utils";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 import { createImagePreview } from "@/components/common/imagePreview";
+import createDiv from "@/dom/div";
 
 export function createImagePicker(img: HTMLImageElement) {
-  let container = document.createElement("div");
+  let container = createDiv();
   let { imagePreview, setImage } = createImagePreview();
   imagePreview.style.margin = "8px auto 16px auto";
   let style = getComputedStyle(img);

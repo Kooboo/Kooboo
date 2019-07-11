@@ -4,6 +4,8 @@ import context from "../../common/context";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
 import expandIcon from "@/assets/icons/fangda.svg";
 import { STANDARD_Z_INDEX } from "@/common/constants";
+import createDiv from "@/dom/div";
+import createSpan from "@/dom/span";
 
 export interface MenuItem {
   el: HTMLElement;
@@ -11,7 +13,7 @@ export interface MenuItem {
 }
 
 export function createItem(text: string, type: MenuActions) {
-  let el = document.createElement("div");
+  let el = createDiv();
   let readonly = false;
   el.style.padding = "5px 10px";
   el.style.borderBottom = "1px solid #eee";
@@ -38,7 +40,7 @@ export function createItem(text: string, type: MenuActions) {
 }
 
 export function createContainer() {
-  let el = document.createElement("div");
+  let el = createDiv();
   el.style.position = "absolute";
   el.style.width = "150px";
   el.style.minHeight = "50px";
@@ -73,11 +75,12 @@ export function createContainer() {
 }
 
 function createTitle() {
-  const el = document.createElement("div");
+  const el = createDiv();
   el.style.padding = "5px 10px";
   el.style.color = "#fff";
   el.style.backgroundColor = "rgb(2, 154, 214)";
-  const text = document.createElement("span");
+  const text = createSpan();
+  text.style.color = "#fff";
   text.innerText = TEXT.MENU;
   el.appendChild(text);
   el.appendChild(createCloseButton());
@@ -105,7 +108,7 @@ function createExpandButton() {
 }
 
 function createWarn() {
-  let el = document.createElement("span");
+  let el = createSpan();
   el.innerText = "!";
   el.style.width = "18px";
   el.style.height = "18px";
@@ -115,7 +118,6 @@ function createWarn() {
   el.style.fontSize = "15px";
   el.style.fontWeight = "600";
   el.style.lineHeight = "18px";
-  el.style.display = "inline-block";
   el.style.borderRadius = "9px";
   el.style.cssFloat = "right";
   el.title = TEXT.PLEASE_EDIT_AFTER_SAVE;

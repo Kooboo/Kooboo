@@ -10,6 +10,7 @@ import { Log } from "@/operation/recordLogs/Log";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { getViewComment, getFirstComment, isEditComment, getRepeatComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import createDiv from "@/dom/div";
 
 export function createDeleteItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
@@ -32,7 +33,7 @@ export function createDeleteItem(): MenuItem {
     let guid = setGuid(args.element);
     let guidComment = getGuidComment(guid);
     let startContent = args.element.outerHTML;
-    let temp = document.createElement("div");
+    let temp = createDiv();
     args.element.parentNode!.replaceChild(temp, args.element);
     temp.outerHTML = guidComment;
     let log!: Log;

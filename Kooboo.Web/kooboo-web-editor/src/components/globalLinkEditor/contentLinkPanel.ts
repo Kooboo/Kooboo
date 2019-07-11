@@ -8,9 +8,10 @@ import { operationRecord } from "@/operation/Record";
 import context from "@/common/context";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { getAttributeComment } from "../floatMenu/utils";
+import createDiv from "@/dom/div";
 
 export function createContentLinkPanel() {
-  let contiainer = document.createElement("div");
+  let contiainer = createDiv();
 
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLElement && isLink(element)) {

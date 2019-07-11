@@ -4,8 +4,6 @@ import { createFooter } from "./footer";
 import { createBody } from "./body";
 
 export function createModal(title: string, content: string | HTMLElement, width?: string, height?: string) {
-  let style = document.createElement("style");
-  document.head.appendChild(style);
   let { shade, win } = createContainer(width);
   const [body, setBodyContent] = createBody(height);
   const { footer, ok, cancel } = createFooter();

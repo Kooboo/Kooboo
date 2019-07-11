@@ -1,3 +1,5 @@
+import createDiv from "@/dom/div";
+
 const border = "2px solid rgb(32, 122, 183)";
 
 interface tabOptions {
@@ -7,10 +9,10 @@ interface tabOptions {
 }
 
 export function createTabs(options: tabOptions[]) {
-  let el = document.createElement("div");
-  let bar = document.createElement("div");
+  let el = createDiv();
+  let bar = createDiv();
   bar.style.marginBottom = "15px";
-  let body = document.createElement("div");
+  let body = createDiv();
   options.forEach(i => {
     let tab = createTab(i.title);
     tab.style.width = 100 / options.length + "%";
@@ -44,12 +46,12 @@ function switchPanel(body: HTMLElement, panel: HTMLElement) {
 }
 
 function createTab(label: string) {
-  let el = document.createElement("div");
+  let el = createDiv();
   el.style.height = "32px";
   el.style.textAlign = "center";
   el.innerText = label;
   el.style.display = "inline-block";
-  el.style.fontSize = "14px";
+  el.style.fontSize = "15px";
   el.style.cursor = "pointer";
   return el;
 }

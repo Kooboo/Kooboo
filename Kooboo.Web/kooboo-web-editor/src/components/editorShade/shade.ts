@@ -1,9 +1,10 @@
 import { createBlock } from "./block";
 import { getMaxHeight } from "@/dom/utils";
+import createDiv from "@/dom/div";
 
 export const createShade = () => {
   const blocks = [createBlock(), createBlock(), createBlock(), createBlock()];
-  const el = document.createElement("div");
+  const el = createDiv();
   blocks.forEach(i => el.appendChild(i.el));
 
   const updatePosition = (referenceEl: HTMLElement) => {

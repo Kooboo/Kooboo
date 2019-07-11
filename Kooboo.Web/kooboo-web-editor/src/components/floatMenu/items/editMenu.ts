@@ -7,6 +7,7 @@ import { getWrapDom } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
 import { editMenu } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import createDiv from "@/dom/div";
 
 export function createEditMenuItem() {
   const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_MENU, MenuActions.editMenu);
@@ -25,7 +26,7 @@ export function createEditMenuItem() {
     var { startNode, endNode } = getWrapDom(args.element, OBJECT_TYPE.menu);
     if (!startNode || !endNode) return;
     editMenu(comment.nameorid!, c => {
-      let temp = document.createElement("div");
+      let temp = createDiv();
 
       while (true) {
         if (startNode!.nextSibling == endNode) {

@@ -1,8 +1,9 @@
 import { TEXT } from "@/common/lang";
 import { createButton, createPrimaryButton } from "@/dom/button";
+import createDiv from "@/dom/div";
 
 export function createFooter() {
-  let el = document.createElement("div");
+  let el = createDiv();
   el.style.borderTop = "1px solid #eee";
   el.style.marginTop = "16px";
   el.style.padding = "16px 26px";

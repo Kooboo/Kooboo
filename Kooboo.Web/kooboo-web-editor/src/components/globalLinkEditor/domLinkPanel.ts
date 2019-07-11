@@ -14,9 +14,10 @@ import {
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { KOOBOO_ID } from "@/common/constants";
 import { getCleanParent } from "@/kooboo/utils";
+import createDiv from "@/dom/div";
 
 export function createDomLinkPanel() {
-  let contiainer = document.createElement("div");
+  let contiainer = createDiv();
 
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLElement && isLink(element)) {

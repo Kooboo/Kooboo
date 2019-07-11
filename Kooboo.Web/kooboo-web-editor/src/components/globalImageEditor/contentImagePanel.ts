@@ -9,9 +9,10 @@ import { operationRecord } from "@/operation/Record";
 import { createImagePreview } from "../common/imagePreview";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { getAttributeComment } from "../floatMenu/utils";
+import createDiv from "@/dom/div";
 
 export function createContentImagePanel() {
-  let contiainer = document.createElement("div");
+  let contiainer = createDiv();
 
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLImageElement) {

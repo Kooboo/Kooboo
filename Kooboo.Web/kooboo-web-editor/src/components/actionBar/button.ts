@@ -1,9 +1,11 @@
+import createDiv from "@/dom/div";
+
 interface ActionButton extends HTMLDivElement {
   changeIcon(icon: any): void;
 }
 
 export function createButton(document: Document, icon: any, title: string) {
-  let el = document.createElement("div");
+  let el = createDiv();
   el.style.width = "60px";
   el.style.height = "60px";
   el.style.borderRadius = "50%";

@@ -1,5 +1,7 @@
+import createDiv from "@/dom/div";
+
 export function createSpliter(text: string) {
-  let el = document.createElement("div");
+  let el = createDiv();
   el.innerText = text;
   el.style.padding = "5px 0";
   el.style.margin = "5px 0";

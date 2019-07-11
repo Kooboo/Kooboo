@@ -3,9 +3,10 @@ import { KoobooComment } from "./KoobooComment";
 import { KoobooId } from "./KoobooId";
 import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID, OBJECT_TYPE } from "../common/constants";
 import { newGuid } from "./outsideInterfaces";
+import createDiv from "@/dom/div";
 
 export function clearKoobooInfo(domString: string) {
-  let el = document.createElement("div");
+  let el = createDiv();
   el.innerHTML = domString;
   let nodes = getAllNode(el);
   for (const i of nodes) {

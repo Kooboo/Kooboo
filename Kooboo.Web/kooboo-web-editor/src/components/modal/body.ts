@@ -1,5 +1,7 @@
+import createDiv from "@/dom/div";
+
 export function createBody(height?: string) {
-  let el = document.createElement("div");
+  let el = createDiv();
   el.style.margin = "0 20px";
   el.style.maxHeight = "80%";
   el.style.overflowY = "auto";

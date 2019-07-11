@@ -1,7 +1,8 @@
 import { STANDARD_Z_INDEX } from "@/common/constants";
+import createDiv from "@/dom/div";
 
 export function createContainer(width?: string) {
-  let el = document.createElement("div");
+  let el = createDiv();
   let win = createWindow();
   if (width != undefined) win.style.width = width;
   el.appendChild(win);
@@ -24,7 +25,7 @@ function applyStyle(style: CSSStyleDeclaration) {
 }
 
 export function createWindow() {
-  let el = document.createElement("div");
+  let el = createDiv();
   applyWindowStyle(el.style);
   return el;
 }

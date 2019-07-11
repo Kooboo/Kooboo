@@ -1,9 +1,11 @@
+import createDiv from "@/dom/div";
+
 interface Notice extends HTMLDivElement {
   setCount(count: number): void;
 }
 
 export function createNotice(document: Document) {
-  let el = document.createElement("div");
+  let el = createDiv();
   el.style.backgroundColor = "red";
   el.style.width = "20px";
   el.style.height = "20px";

@@ -1,6 +1,7 @@
 import { HOVER_BORDER_WIDTH, STANDARD_Z_INDEX } from "../../common/constants";
 import { Position, updatePositon } from "@/common/Position";
 import { isBody } from "@/dom/utils";
+import createDiv from "@/dom/div";
 
 const applyStyle = (css: CSSStyleDeclaration) => {
   css.position = "absolute";
@@ -15,7 +16,7 @@ const applyStyle = (css: CSSStyleDeclaration) => {
 };
 
 export const createLine = () => {
-  let el = document.createElement("div");
+  let el = createDiv();
   applyStyle(el.style);
 
   const update = (position: Position) => updatePositon(position, el);

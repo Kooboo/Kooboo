@@ -110,3 +110,5 @@ export function previousComment(node: Node) {
     if (i instanceof HTMLElement) break;
   }
 }
+
+export const FONT_FAMILY = `"Segoe UI,BlinkMacSystemFont,Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif"`;

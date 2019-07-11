@@ -1,7 +1,8 @@
-import { HOVER_BORDER_SKIP, STANDARD_Z_INDEX } from "@/common/constants";
+import { STANDARD_Z_INDEX } from "@/common/constants";
+import createDiv from "@/dom/div";
 
 export function createContainer(document: Document) {
-  let container = document.createElement("div");
+  let container = createDiv();
   container.style.position = "fixed";
   container.style.width = "60px";
   container.style.top = "60px";

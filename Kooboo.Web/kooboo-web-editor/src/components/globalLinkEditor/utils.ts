@@ -2,9 +2,10 @@ import { createLabel } from "@/dom/label";
 import { createButton } from "@/dom/button";
 import { TEXT } from "@/common/lang";
 import { emitHoverEvent } from "@/dom/events";
+import createDiv from "@/dom/div";
 
 export function createLinkItem(el: HTMLElement, onEdit: () => void) {
-  let item = document.createElement("div");
+  let item = createDiv();
   item.style.borderBottom = "1px solid #eee";
   item.onmouseover = () => {
     el.scrollIntoView();

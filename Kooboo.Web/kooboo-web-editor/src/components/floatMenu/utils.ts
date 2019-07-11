@@ -12,6 +12,7 @@ import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { StyleUnit } from "@/operation/recordUnits/StyleUnit";
 import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { createLinkPicker } from "../linkPicker";
+import createDiv from "@/dom/div";
 
 export function getEditComment(comments: KoobooComment[]) {
   const editTypes = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label];
@@ -89,7 +90,7 @@ export async function updateDomImage(element: HTMLImageElement, closeParent: HTM
 
 export async function updateAttributeImage(element: HTMLImageElement, koobooId: string, comment: KoobooComment) {
   let startContent = element.cloneNode(true) as HTMLImageElement;
-  let temp = document.createElement("div");
+  let temp = createDiv();
   temp.appendChild(startContent);
   try {
     await createImagePicker(element);

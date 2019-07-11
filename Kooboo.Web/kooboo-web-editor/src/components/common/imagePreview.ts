@@ -1,9 +1,10 @@
 import { createButton } from "../../dom/button";
 import { TEXT } from "@/common/lang";
 import rect from "@/assets/img/transparent.png";
+import createDiv from "@/dom/div";
 
 export function createImagePreview(showDeleteBtn: boolean = false, onDelete?: () => void) {
-  let el = document.createElement("div");
+  let el = createDiv();
   el.style.outline = "5px solid #eee";
   el.style.margin = "5px";
   el.style.height = "300px";
@@ -11,7 +12,7 @@ export function createImagePreview(showDeleteBtn: boolean = false, onDelete?: ()
   el.style.backgroundImage = `url(${rect})`;
   el.style.position = "relative";
 
-  let preview = document.createElement("div");
+  let preview = createDiv();
   preview.style.width = "100%";
   preview.style.height = "100%";
   preview.style.backgroundPosition = "center";
