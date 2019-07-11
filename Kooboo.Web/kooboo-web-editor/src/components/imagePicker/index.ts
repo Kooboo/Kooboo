@@ -8,7 +8,7 @@ import { createImagePreview } from "@/components/common/imagePreview";
 export function createImagePicker(img: HTMLImageElement) {
   let container = document.createElement("div");
   let { imagePreview, setImage } = createImagePreview();
-  imagePreview.style.margin = "0 auto 16px auto";
+  imagePreview.style.margin = "8px auto 16px auto";
   let style = getComputedStyle(img);
 
   setImage(img.src);

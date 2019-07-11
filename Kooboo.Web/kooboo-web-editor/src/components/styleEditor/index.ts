@@ -31,7 +31,7 @@ export function createStyleEditor(el: HTMLElement) {
 
 function addImg(container: HTMLElement, el: HTMLElement) {
   const spliter = createSpliter("背景图片");
-  spliter.style.margin = "-10px 0 15px 0";
+  spliter.style.margin = "0 0 15px 0";
   container.appendChild(spliter);
   const { imagePreview, setImage } = createImagePreview(true, () => (el.style.backgroundImage = ""));
   imagePreview.style.marginLeft = "auto";
