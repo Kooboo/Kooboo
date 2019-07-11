@@ -3,7 +3,6 @@ import context from "@/common/context";
 import { getCloseElement } from "@/kooboo/utils";
 import { HoverDomEventArgs } from "@/events/HoverDomEvent";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
-import { KOOBOO_ID } from "@/common/constants";
 
 function hover(e: MouseEvent) {
   e.stopPropagation();
@@ -33,8 +32,7 @@ export function listenClick() {
     e.stopPropagation();
     if (context.editing || isInEditorContainer(e)) return;
     let element = context.lastHoverDomEventArgs.closeElement;
-    let koobooId = element.getAttribute(KOOBOO_ID);
-    var args = new SelectedDomEventArgs(element, koobooId);
+    var args = new SelectedDomEventArgs(element);
     context.lastMouseEventArg = e;
     context.domChangeEvent.emit(args);
     console.log(args);
@@ -47,9 +45,8 @@ export function emitHoverEvent(el: HTMLElement) {
   context.hoverDomEvent.emit(new HoverDomEventArgs(el, closeElement));
 }
 
-export function emitSelectedEvent(el: HTMLElement) {
+export function emitSelectedEvent() {
   let element = context.lastHoverDomEventArgs.closeElement;
-  let koobooId = element.getAttribute(KOOBOO_ID);
-  var args = new SelectedDomEventArgs(element, koobooId);
+  var args = new SelectedDomEventArgs(element);
   context.domChangeEvent.emit(args);
 }

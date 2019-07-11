@@ -4,7 +4,7 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
 import { getFirstComment, isViewComment } from "../utils";
-import { isDynamicContent, setGuid, getCloseElement, getCleanParent } from "@/kooboo/utils";
+import { isDynamicContent, setGuid, getCleanParent } from "@/kooboo/utils";
 import { setInlineEditor } from "@/components/richEditor";
 import { KOOBOO_ID, KOOBOO_DIRTY } from "@/common/constants";
 import { emitSelectedEvent, emitHoverEvent } from "@/dom/events";
@@ -39,7 +39,7 @@ export function createReplaceToTextItem(): MenuItem {
       text.style.display = style.display;
       args.element.parentElement!.replaceChild(text, args.element);
       emitHoverEvent(text);
-      emitSelectedEvent(text);
+      emitSelectedEvent();
       await setInlineEditor(text);
     } catch (error) {
       parent!.innerHTML = startContent;

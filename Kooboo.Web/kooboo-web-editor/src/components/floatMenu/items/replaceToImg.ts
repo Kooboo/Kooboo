@@ -35,7 +35,6 @@ export function createReplaceToImgItem(): MenuItem {
     try {
       let style = getComputedStyle(args.element);
       let img = document.createElement("img");
-
       img.setAttribute(KOOBOO_ID, args.koobooId!);
       img.style.width = style.width;
       img.style.height = style.height;
