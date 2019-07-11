@@ -1,8 +1,9 @@
 import { EDITOR_SHADE_COLOR, STANDARD_Z_INDEX } from "@/common/constants";
 import { Position, updatePositon } from "@/common/Position";
+import createDiv from "@/dom/div";
 
 export const createBlock = () => {
-  const el = document.createElement("div");
+  const el = createDiv();
   applyStyle(el.style);
   el.onclick = e => e.stopPropagation();
   const update = (position: Position) => updatePositon(position, el);
@@ -15,4 +16,6 @@ const applyStyle = (css: CSSStyleDeclaration) => {
   css.backgroundColor = EDITOR_SHADE_COLOR;
   css.zIndex = STANDARD_Z_INDEX + "";
   css.cursor = "not-allowed";
+  let bodyStyle = getComputedStyle(document.body);
+  css.marginTop = bodyStyle.marginTop;
 };

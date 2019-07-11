@@ -4,9 +4,10 @@ import { getEditorContainer } from "@/dom/utils";
 import { createTabs } from "../common/tabs";
 import { createOutLinkPanel } from "./outLinkPanel";
 import { createPageLinkPanel } from "./pageLinkPanel";
+import createDiv from "@/dom/div";
 
 export async function createLinkPicker(oldValue: string) {
-  let el = document.createElement("div");
+  let el = createDiv();
 
   const { pageLinkPanel, getContent: getPageLinkContent } = await createPageLinkPanel(oldValue);
 

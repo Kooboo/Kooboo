@@ -1,9 +1,10 @@
 import { createLine } from "./line";
 import { HOVER_BORDER_WIDTH } from "../../common/constants";
+import createDiv from "@/dom/div";
 
 export const createRect = () => {
   const lines = [createLine(), createLine(), createLine(), createLine()];
-  const el = document.createElement("div");
+  const el = createDiv();
   lines.forEach(i => el.appendChild(i.el));
 
   const updatePosition = (referenceEl: HTMLElement) => {

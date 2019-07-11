@@ -5,25 +5,26 @@ import context from "@/common/context";
 import { getHtmlBlockComment, hasOperation } from "../utils";
 import { reload } from "@/dom/utils";
 import { editHtmlBlock } from "@/kooboo/outsideInterfaces";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function createEditHtmlBlockItem(): MenuItem {
   const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_HTML_BLOCK, MenuActions.editHtmlBlock);
 
   const update = () => {
+    setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let visiable = true;
-
-    if (!getHtmlBlockComment(args.koobooComments)) visiable = false;
+    let comments = KoobooComment.getComments(args.element);
+    if (!getHtmlBlockComment(comments)) setVisiable(false);
     if (hasOperation(context.operationManager)) {
       setReadonly();
     }
-
-    setVisiable(visiable);
   };
 
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
-    let nameorid = args.koobooComments[0].nameorid;
+    let comments = KoobooComment.getComments(args.element);
+    let comment = getHtmlBlockComment(comments)!;
+    let nameorid = comment.nameorid;
     await editHtmlBlock(nameorid!);
     reload();
   });

@@ -1,5 +1,5 @@
 import { getAllElement } from "@/dom/utils";
-import { getKoobooInfo, setGuid } from "@/kooboo/utils";
+import { setGuid } from "@/kooboo/utils";
 import { getViewComment } from "../floatMenu/utils";
 import { KOOBOO_ID } from "@/common/constants";
 import { createImagePreview } from "../common/imagePreview";
@@ -9,15 +9,17 @@ import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { operationRecord } from "@/operation/Record";
 import context from "@/common/context";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
+import { KoobooComment } from "@/kooboo/KoobooComment";
+import createDiv from "@/dom/div";
 
 export function createStyleImagePanel() {
-  let contiainer = document.createElement("div");
+  let contiainer = createDiv();
 
   for (const element of getAllElement(document.body)) {
     let style = getComputedStyle(element);
     if (style.backgroundImage != "none" && element instanceof HTMLElement) {
       let koobooId = element.getAttribute(KOOBOO_ID);
-      let { comments } = getKoobooInfo(element);
+      let comments = KoobooComment.getComments(element);
       let comment = getViewComment(comments);
       if (!comment || !koobooId) continue;
       let { imagePreview, setImage } = createImagePreview(false, () => (element.style.backgroundImage = ""));

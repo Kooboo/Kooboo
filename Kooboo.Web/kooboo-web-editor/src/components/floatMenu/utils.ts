@@ -12,6 +12,7 @@ import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { StyleUnit } from "@/operation/recordUnits/StyleUnit";
 import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { createLinkPicker } from "../linkPicker";
+import createDiv from "@/dom/div";
 
 export function getEditComment(comments: KoobooComment[]) {
   const editTypes = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label];
@@ -29,10 +30,11 @@ export function getViewComment(comments: KoobooComment[]) {
   }
 }
 
-export function getRepeatAttribute(comments: KoobooComment[]) {
-  let comment = comments[0];
-  if (comment && comment.objecttype == OBJECT_TYPE.attribute) {
-    return comment;
+export function getAttributeComment(comments: KoobooComment[], name: string = "") {
+  for (const i of comments) {
+    if (i.objecttype && i.objecttype == OBJECT_TYPE.attribute && (!name || i.attributename == name)) {
+      return i;
+    }
   }
 }
 
@@ -57,7 +59,7 @@ export const getRepeatComment = (comments: KoobooComment[]) => getObjectType(com
 export const getUrlComment = (comments: KoobooComment[]) => getObjectType(comments, OBJECT_TYPE.Url);
 
 export function changeNameOrId(node: Node, guid: string) {
-  if (KoobooComment.isKoobooComment(node)) {
+  if (KoobooComment.isComment(node)) {
     node.nodeValue = node.nodeValue!.replace(/--nameorid='.{36,50}?'/, `--nameorid='${guid}'`);
   }
   if (node instanceof HTMLElement) {
@@ -88,7 +90,7 @@ export async function updateDomImage(element: HTMLImageElement, closeParent: HTM
 
 export async function updateAttributeImage(element: HTMLImageElement, koobooId: string, comment: KoobooComment) {
   let startContent = element.cloneNode(true) as HTMLImageElement;
-  let temp = document.createElement("div");
+  let temp = createDiv();
   temp.appendChild(startContent);
   try {
     await createImagePicker(element);

@@ -1,9 +1,10 @@
 import { createRadioInput } from "@/dom/input";
 import { getPageUrls } from "@/kooboo/outsideInterfaces";
+import createDiv from "@/dom/div";
 
 export async function createPageLinkPanel(oldValue: string) {
   let urls = await getPageUrls();
-  let el = document.createElement("div");
+  let el = createDiv();
   let selectedItem!: string;
   let radios = urls.map(m => createRadioInput(m));
   radios.forEach(i => {

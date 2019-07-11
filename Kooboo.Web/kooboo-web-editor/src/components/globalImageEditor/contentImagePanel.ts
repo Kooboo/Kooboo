@@ -1,6 +1,5 @@
 import { getAllElement } from "@/dom/utils";
-import { getKoobooInfo, setGuid } from "@/kooboo/utils";
-import { getRepeatAttribute } from "../floatMenu/utils";
+import { setGuid } from "@/kooboo/utils";
 import { setImagePreview } from "./utils";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
@@ -8,15 +7,18 @@ import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import context from "@/common/context";
 import { operationRecord } from "@/operation/Record";
 import { createImagePreview } from "../common/imagePreview";
+import { KoobooComment } from "@/kooboo/KoobooComment";
+import { getAttributeComment } from "../floatMenu/utils";
+import createDiv from "@/dom/div";
 
 export function createContentImagePanel() {
-  let contiainer = document.createElement("div");
+  let contiainer = createDiv();
 
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLImageElement) {
-      let { comments } = getKoobooInfo(element);
-      let comment = getRepeatAttribute(comments);
-      if (!comment || !comment.fieldname || comment.attributename != "src") continue;
+      let comments = KoobooComment.getComments(element);
+      let comment = getAttributeComment(comments, "src");
+      if (!comment || !comment.fieldname) continue;
       let { imagePreview, setImage } = createImagePreview(false, () => (element.src = ""));
       setImagePreview(imagePreview, element);
       setImage(element.src);

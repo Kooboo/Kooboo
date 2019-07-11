@@ -1,11 +1,12 @@
-import { getAllNode, getAllElement, isBody, previousNodes, nextNodes } from "../dom/utils";
+import { getAllNode, getAllElement, isBody, previousNodes, nextNodes, previousComment } from "../dom/utils";
 import { KoobooComment } from "./KoobooComment";
 import { KoobooId } from "./KoobooId";
 import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID, OBJECT_TYPE } from "../common/constants";
 import { newGuid } from "./outsideInterfaces";
+import createDiv from "@/dom/div";
 
 export function clearKoobooInfo(domString: string) {
-  let el = document.createElement("div");
+  let el = createDiv();
   el.innerHTML = domString;
   let nodes = getAllNode(el);
   for (const i of nodes) {
@@ -19,56 +20,11 @@ export function clearKoobooInfo(domString: string) {
       i.parentNode!.removeChild(i);
     }
 
-    if (KoobooComment.isKoobooComment(i)) {
+    if (KoobooComment.isComment(i)) {
       i.parentNode!.removeChild(i);
     }
   }
   return el.innerHTML;
-}
-
-export function getKoobooInfo(el: HTMLElement) {
-  let koobooId = el.getAttribute(KOOBOO_ID);
-  let node = el as Node | null;
-  let cleanElement: HTMLElement | null = null;
-  let cleanKoobooId: string | null = null;
-  let comments: KoobooComment[] = [];
-  let isdirty = el.hasAttribute(KOOBOO_DIRTY);
-
-  while (true) {
-    if (!node) break;
-
-    if (
-      isdirty &&
-      !cleanElement &&
-      comments.length == 0 &&
-      node instanceof HTMLElement &&
-      !isBody(node) &&
-      !node.hasAttribute(KOOBOO_DIRTY) &&
-      !isDynamicContent(node)
-    ) {
-      cleanKoobooId = node.getAttribute(KOOBOO_ID);
-      if (cleanKoobooId) cleanElement = node;
-    }
-
-    if (KoobooComment.isKoobooComment(node)) {
-      let comment = new KoobooComment(node.nodeValue);
-
-      if (comment.end) {
-        node = node.parentElement;
-        continue;
-      }
-      comments.push(comment);
-    }
-
-    if (!node.previousSibling || node.previousSibling instanceof HTMLElement) {
-      node = node.parentElement;
-      continue;
-    }
-
-    node = node.previousSibling;
-  }
-
-  return { comments, koobooId, cleanElement, cleanKoobooId };
 }
 
 export function getCloseElement(el: HTMLElement) {
@@ -84,7 +40,7 @@ export function getCloseElement(el: HTMLElement) {
       if (node.hasAttribute(KOOBOO_ID)) break;
     }
 
-    if (KoobooComment.isKoobooComment(node)) break;
+    if (KoobooComment.isComment(node)) break;
     parentElement = node.parentElement;
     node = node.previousSibling ? node.previousSibling : node.parentElement;
   }
@@ -130,6 +86,10 @@ export function markDirty(el: HTMLElement, self: boolean = false) {
   }
 }
 
+export function isDirty(el: HTMLElement) {
+  return el.hasAttribute(KOOBOO_DIRTY);
+}
+
 export function setGuid(el: HTMLElement, relpase: string = "") {
   let guid = el.getAttribute(KOOBOO_GUID);
   if (relpase) guid = relpase;
@@ -158,7 +118,7 @@ export function getPageId() {
   let pageid!: string;
 
   for (const i of getAllNode(document)) {
-    if (KoobooComment.isKoobooComment(i)) {
+    if (KoobooComment.isComment(i)) {
       let comment = new KoobooComment(i.nodeValue);
       if (comment.objecttype == OBJECT_TYPE.page) {
         pageid = comment.nameorid!;
@@ -177,7 +137,7 @@ export function getWrapDom(el: Node, objectType: string) {
   let nodes: Node[] = [];
 
   for (const node of previousNodes(el, true, true)) {
-    if (KoobooComment.isKoobooComment(node)) {
+    if (KoobooComment.isComment(node)) {
       let comment = new KoobooComment(node);
       if (comment.objecttype == objectType && !comment.end) {
         startNode = node;
@@ -198,7 +158,7 @@ export function getWrapDom(el: Node, objectType: string) {
         break;
       }
 
-      if (KoobooComment.isKoobooComment(node)) {
+      if (KoobooComment.isComment(node)) {
         let comment = new KoobooComment(node);
 
         if (comment.objecttype == objectType && comment.end && comment.boundary == boundary) {
@@ -216,8 +176,28 @@ export function getWrapDom(el: Node, objectType: string) {
   };
 }
 
-function isSingleCommentWrap(node: Node) {
+export function isSingleCommentWrap(node: Node) {
   let singleCommentWrap = [OBJECT_TYPE.attribute, OBJECT_TYPE.content, OBJECT_TYPE.Label, OBJECT_TYPE.style, OBJECT_TYPE.Url];
   let comment = new KoobooComment(node);
   return singleCommentWrap.some(s => s == comment.objecttype);
+}
+
+export function getCleanParent(el: HTMLElement) {
+  let isParentFlag = false;
+  while (true) {
+    let comment = previousComment(el);
+    let dirty = el.hasAttribute(KOOBOO_DIRTY);
+    let koobooId = el.getAttribute(KOOBOO_ID);
+    if (!dirty && isParentFlag && koobooId) {
+      return {
+        parent: el,
+        koobooId: koobooId
+      };
+    } else if (!el.parentElement || isBody(el.parentElement) || (comment && !isSingleCommentWrap(comment))) {
+      return { parent: null, koobooId: null };
+    } else {
+      el = el.parentElement;
+      isParentFlag = true;
+    }
+  }
 }

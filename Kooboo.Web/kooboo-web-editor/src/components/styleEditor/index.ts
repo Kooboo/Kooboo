@@ -6,9 +6,10 @@ import { createImagePreview } from "@/components/common/imagePreview";
 import { createColorPicker } from "./colorPicker";
 import { createLabelInput } from "@/dom/input";
 import { pickImg } from "@/kooboo/outsideInterfaces";
+import createDiv from "@/dom/div";
 
 export function createStyleEditor(el: HTMLElement) {
-  const container = document.createElement("div");
+  const container = createDiv();
   addImg(container, el);
   addColor(container, el);
   addFont(container, el);
@@ -31,7 +32,7 @@ export function createStyleEditor(el: HTMLElement) {
 
 function addImg(container: HTMLElement, el: HTMLElement) {
   const spliter = createSpliter("背景图片");
-  spliter.style.margin = "-10px 0 15px 0";
+  spliter.style.margin = "0 0 15px 0";
   container.appendChild(spliter);
   const { imagePreview, setImage } = createImagePreview(true, () => (el.style.backgroundImage = ""));
   imagePreview.style.marginLeft = "auto";

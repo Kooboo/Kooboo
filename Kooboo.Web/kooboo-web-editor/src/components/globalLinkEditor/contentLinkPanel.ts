@@ -1,20 +1,22 @@
 import { getAllElement, isLink } from "@/dom/utils";
-import { getKoobooInfo, setGuid } from "@/kooboo/utils";
-import { getRepeatAttribute } from "../floatMenu/utils";
+import { setGuid } from "@/kooboo/utils";
 import { createLinkItem } from "./utils";
 import { createLinkPicker } from "../linkPicker";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { operationRecord } from "@/operation/Record";
 import context from "@/common/context";
+import { KoobooComment } from "@/kooboo/KoobooComment";
+import { getAttributeComment } from "../floatMenu/utils";
+import createDiv from "@/dom/div";
 
 export function createContentLinkPanel() {
-  let contiainer = document.createElement("div");
+  let contiainer = createDiv();
 
   for (const element of getAllElement(document.body)) {
     if (element instanceof HTMLElement && isLink(element)) {
-      let { comments } = getKoobooInfo(element);
-      let comment = getRepeatAttribute(comments);
+      let comments = KoobooComment.getComments(element);
+      let comment = getAttributeComment(comments, "href");
       if (!comment || !comment.fieldname || comment.attributename != "href") continue;
       let { item, setLabel } = createLinkItem(element, async () => {
         let startContent = element.getAttribute("href")!;

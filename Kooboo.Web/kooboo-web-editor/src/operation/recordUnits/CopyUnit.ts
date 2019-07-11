@@ -1,4 +1,5 @@
 import { Unit } from "./Unit";
+import createDiv from "@/dom/div";
 
 export class CopyUnit extends Unit {
   undo(node: Node): void {
@@ -7,7 +8,7 @@ export class CopyUnit extends Unit {
     el.outerHTML = this.oldValue;
   }
   redo(node: Node): void {
-    let temp = document.createElement("div");
+    let temp = createDiv();
     node.parentNode!.replaceChild(temp, node);
     temp.outerHTML = this.newValue;
   }

@@ -1,3 +1,6 @@
+import { previousComment, isBody } from "@/dom/utils";
+import { isSingleCommentWrap } from "./utils";
+
 export class KoobooComment {
   private _infos!: string[];
 
@@ -63,7 +66,27 @@ export class KoobooComment {
     }
   }
 
-  static isKoobooComment(node: Node) {
+  static isComment(node: Node) {
     return node.nodeType == Node.COMMENT_NODE && node.nodeValue && node.nodeValue.startsWith("#kooboo");
+  }
+
+  static getComments(el: HTMLElement) {
+    let comments: Comment[] = [];
+    let comment = previousComment(el);
+    while (comment && this.isComment(comment) && isSingleCommentWrap(comment)) {
+      comments.push(comment);
+      comment = previousComment(comment);
+    }
+
+    do {
+      comment = previousComment(el);
+      if (comment && this.isComment(comment) && !isSingleCommentWrap(comment)) {
+        comments.push(comment);
+      }
+      if (!el.parentElement) break;
+      el = el.parentElement;
+    } while (el);
+
+    return comments.map(m => new KoobooComment(m));
   }
 }

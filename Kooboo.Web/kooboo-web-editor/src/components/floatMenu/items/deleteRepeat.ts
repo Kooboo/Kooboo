@@ -10,16 +10,17 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 import { operationRecord } from "@/operation/Record";
 import { DeleteRepeatUnit } from "@/operation/recordUnits/DeleteRepeatUnit";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
+import createDiv from "@/dom/div";
 
 export function createDeleteRepeatItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE_REPEAR, MenuActions.deleteRepeat);
 
   const update = () => {
-    var visiable = true;
+    setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    if (isBody(args.element)) visiable = false;
-    if (!getRepeatComment(args.koobooComments)) visiable = false;
-    setVisiable(visiable);
+    let comments = KoobooComment.getComments(args.element);
+    if (isBody(args.element)) setVisiable(false);
+    if (!getRepeatComment(comments)) setVisiable(false);
   };
 
   el.addEventListener("click", () => {
@@ -30,7 +31,7 @@ export function createDeleteRepeatItem(): MenuItem {
     let comment = new KoobooComment(startNode);
     let guid = comment.nameorid!;
     let guidComment = getGuidComment(guid);
-    let temp = document.createElement("div");
+    let temp = createDiv();
     startNode!.parentNode!.insertBefore(temp, startNode!);
     nodes.forEach(i => temp.appendChild(i));
     let oldValue = temp.innerHTML;

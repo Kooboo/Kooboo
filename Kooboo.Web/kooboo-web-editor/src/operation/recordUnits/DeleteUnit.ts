@@ -1,9 +1,10 @@
 import { Unit } from "./Unit";
+import createDiv from "@/dom/div";
 
 export class DeleteUnit extends Unit {
   undo(node: Node): void {
     this.newValue = `<!--${node.nodeValue}-->`;
-    let temp = document.createElement("div");
+    let temp = createDiv();
     node.parentNode!.replaceChild(temp, node);
     temp.outerHTML = this.oldValue;
   }
