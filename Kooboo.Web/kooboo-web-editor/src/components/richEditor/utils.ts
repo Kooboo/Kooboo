@@ -2,7 +2,7 @@ import { Editor, Settings, EditorManager } from "tinymce";
 import { STANDARD_Z_INDEX, EMPTY_COMMENT, OBJECT_TYPE } from "../../common/constants";
 import { lang } from "../../common/lang";
 import context from "../../common/context";
-import { markDirty, setGuid, clearKoobooInfo, getCleanParent } from "../../kooboo/utils";
+import { markDirty, setGuid, clearKoobooInfo, getCleanParent, getWrapDom } from "../../kooboo/utils";
 import { getAllElement } from "../../dom/utils";
 import { delay } from "../../common/utils";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";
@@ -15,6 +15,7 @@ import { DomLog } from "@/operation/recordLogs/DomLog";
 import { LabelLog } from "@/operation/recordLogs/LabelLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { HtmlblockLog } from "@/operation/recordLogs/HtmlblockLog";
+import createDiv from "@/dom/div";
 
 export async function impoveEditorUI(editor: Editor) {
   let container = editor.getContainer();
@@ -81,7 +82,10 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
     } else if (comment.objecttype == OBJECT_TYPE.Label) {
       log = LabelLog.createUpdate(comment.bindingvalue!, clearKoobooInfo(element.innerHTML));
     } else if (comment.objecttype == OBJECT_TYPE.htmlblock) {
-      log = HtmlblockLog.createUpdate(comment.nameorid!, clearKoobooInfo(element.outerHTML));
+      let { nodes } = getWrapDom(element, OBJECT_TYPE.htmlblock);
+      let temp = createDiv();
+      nodes.forEach(i => temp.appendChild(i.cloneNode(true)));
+      log = HtmlblockLog.createUpdate(comment.nameorid!, clearKoobooInfo(temp.innerHTML));
     } else {
       log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(dirtyEl.innerHTML), koobooId!, comment.objecttype!);
     }

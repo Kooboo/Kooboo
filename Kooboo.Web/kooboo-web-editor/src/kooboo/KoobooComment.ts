@@ -73,7 +73,7 @@ export class KoobooComment {
     return this.isComment(node) && node.nodeValue!.indexOf("--end") > -1;
   }
 
-  static getComments(el: HTMLElement) {
+  static getComments(el: Element) {
     let comments: Comment[] = [];
     let comment = previousComment(el);
     while (comment && this.isComment(comment) && isSingleCommentWrap(comment)) {
@@ -85,9 +85,10 @@ export class KoobooComment {
       comment = previousComment(el);
       if (comment && this.isComment(comment) && !isSingleCommentWrap(comment) && !this.isEndComment(comment)) {
         comments.push(comment);
+        el = el.parentElement!;
+      } else {
+        el = el.previousElementSibling ? el.previousElementSibling! : el.parentElement!;
       }
-      if (!el.parentElement) break;
-      el = el.parentElement;
     } while (el);
 
     return comments.map(m => new KoobooComment(m));

@@ -2,7 +2,7 @@ import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { setGuid, clearKoobooInfo, isDynamicContent, getGuidComment, getCleanParent } from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, isDynamicContent, getGuidComment, getCleanParent, getWrapDom } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { DeleteUnit } from "@/operation/recordUnits/DeleteUnit";
@@ -12,6 +12,7 @@ import { getViewComment, getFirstComment, isEditComment, getRepeatComment, getHt
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import createDiv from "@/dom/div";
 import { HtmlblockLog } from "@/operation/recordLogs/HtmlblockLog";
+import { OBJECT_TYPE } from "@/common/constants";
 
 export function createDeleteItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
@@ -32,6 +33,7 @@ export function createDeleteItem(): MenuItem {
     let guid = setGuid(args.element);
     let guidComment = getGuidComment(guid);
     let startContent = args.element.outerHTML;
+    let { nodes } = getWrapDom(args.element, OBJECT_TYPE.htmlblock);
     let temp = createDiv();
     args.element.parentNode!.replaceChild(temp, args.element);
     temp.outerHTML = guidComment;
@@ -39,7 +41,14 @@ export function createDeleteItem(): MenuItem {
 
     let htmlblockComment = getHtmlBlockComment(comments);
     if (htmlblockComment) {
-      log = HtmlblockLog.createDelete(htmlblockComment.nameorid!);
+      nodes = nodes.filter(f => f != args.element);
+      if (nodes.some(s => s instanceof HTMLElement)) {
+        let temp = createDiv();
+        nodes.forEach(i => temp.appendChild(i.cloneNode(true)));
+        log = HtmlblockLog.createUpdate(htmlblockComment.nameorid!, clearKoobooInfo(temp.outerHTML));
+      } else {
+        log = HtmlblockLog.createDelete(htmlblockComment.nameorid!);
+      }
     } else if (parent) {
       let comment = getViewComment(comments)!;
       log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(parent.innerHTML), koobooId!, comment.objecttype!);
