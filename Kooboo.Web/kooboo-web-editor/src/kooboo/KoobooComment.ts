@@ -1,5 +1,4 @@
-import { previousComment, isBody } from "@/dom/utils";
-import { isSingleCommentWrap } from "./utils";
+import { isSingleCommentWrap, previousComment } from "./utils";
 
 export class KoobooComment {
   private _infos!: string[];

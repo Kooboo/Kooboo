@@ -1,4 +1,5 @@
 import { HOVER_BORDER_SKIP } from "../common/constants";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function getMaxHeight() {
   var body = document.body,
@@ -101,13 +102,6 @@ export function* nextNodes(node: Node, containSelf = false, includeParent = fals
       node = node.parentNode;
     } else break;
     yield node;
-  }
-}
-
-export function previousComment(node: Node) {
-  for (const i of previousNodes(node)) {
-    if (i instanceof Comment) return i;
-    if (i instanceof HTMLElement) break;
   }
 }
 

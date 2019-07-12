@@ -1,4 +1,4 @@
-import { getAllNode, getAllElement, isBody, previousNodes, nextNodes, previousComment } from "../dom/utils";
+import { getAllNode, getAllElement, isBody, previousNodes, nextNodes } from "../dom/utils";
 import { KoobooComment } from "./KoobooComment";
 import { KoobooId } from "./KoobooId";
 import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID, OBJECT_TYPE } from "../common/constants";
@@ -199,5 +199,16 @@ export function getCleanParent(el: HTMLElement) {
       el = el.parentElement;
       isParentFlag = true;
     }
+  }
+}
+
+export function previousComment(node: Node) {
+  for (const i of previousNodes(node)) {
+    if (i instanceof Comment && KoobooComment.isComment(i)) {
+      if (KoobooComment.isEndComment(i)) break;
+      return i;
+    }
+
+    if (i instanceof HTMLElement) break;
   }
 }

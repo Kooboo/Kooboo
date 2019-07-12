@@ -1,16 +1,6 @@
-import {
-  getEditorContainer,
-  getAllElement,
-  getAllNode,
-  isBody,
-  isImg,
-  isLink,
-  canJump,
-  previousNodes,
-  nextNodes,
-  previousComment
-} from "@/dom/utils";
+import { getEditorContainer, getAllElement, getAllNode, isBody, isImg, isLink, canJump, previousNodes, nextNodes } from "@/dom/utils";
 import { HOVER_BORDER_SKIP } from "@/common/constants";
+import { previousComment } from "@/kooboo/utils";
 
 describe("utils", () => {
   test("getEditorContainer", () => {

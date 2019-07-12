@@ -22,7 +22,7 @@ export function createStyleImagePanel() {
       let comments = KoobooComment.getComments(element);
       let comment = getViewComment(comments);
       if (!comment || !koobooId) continue;
-      let { imagePreview, setImage } = createImagePreview(false, () => (element.style.backgroundImage = ""));
+      let { imagePreview, setImage } = createImagePreview(false, () => (element.style.backgroundImage = "none"));
       setImagePreview(imagePreview, element);
       setImage(style.backgroundImage!);
       imagePreview.onclick = () => {

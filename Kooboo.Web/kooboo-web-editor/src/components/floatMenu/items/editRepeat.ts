@@ -3,11 +3,11 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { getRepeatComment, hasOperation } from "../utils";
-import { reload, getAllNode, previousComment } from "@/dom/utils";
+import { reload, getAllNode } from "@/dom/utils";
 import { editRepeat } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { OBJECT_TYPE } from "@/common/constants";
-import { isSingleCommentWrap } from "@/kooboo/utils";
+import { isSingleCommentWrap, previousComment } from "@/kooboo/utils";
 
 export function createEditRepeatItem() {
   const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_REPEAT, MenuActions.editRepeat);
