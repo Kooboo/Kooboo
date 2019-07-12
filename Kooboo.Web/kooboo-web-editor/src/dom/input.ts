@@ -41,6 +41,15 @@ export function createLabelInput(text: string, labelWidth?: number, inputWidth?:
 
 export function createRadioInput(label: string) {
   let el = createDiv();
+  el.style.width = "100%";
+  el.style.lineHeight = "24px";
+  el.style.padding = "5px 4.75px";
+  el.style.fontSize = "16px";
+  el.style.wordWrap = "break-word";
+  el.style.display = "flex";
+  el.style.margin = "0";
+  el.style.cursor = "pointer";
+  el.style.borderBottom = "1px rgb(238, 238, 238) solid";
   let radio = createInput();
   radio.type = "radio";
   radio.style.margin = "0 5px";
@@ -54,12 +63,6 @@ export function createRadioInput(label: string) {
   text.style.fontSize = "16px";
   text.style.display = "inline-block";
   el.appendChild(text);
-  el.style.width = "100%";
-  el.style.lineHeight = "24px";
-  el.style.padding = "5px 4.75px";
-  el.style.fontSize = "16px";
-  el.style.wordWrap = "break-word";
-  el.style.display = "flex";
   return {
     radio: el,
     setChecked: (checked: boolean) => (radio.checked = checked),
