@@ -17,6 +17,7 @@ export function createInput() {
 export function createLabelInput(text: string, labelWidth?: number, inputWidth?: number) {
   let el = createDiv();
   el.style.display = "inline-block";
+  el.style.margin = "5px 0";
   let label = createDiv();
   label.innerText = text;
   label.style.display = "inline-block";
