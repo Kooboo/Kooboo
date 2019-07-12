@@ -19,7 +19,7 @@ export function createSettings(selector: HTMLElement, onCancel: () => void, onSa
     target: selector,
     inline: true,
     hidden_input: false,
-    skin_url: "_Admin\\Styles\\kooboo-web-editor\\tinymce\\ui\\oxide",
+    skin_url: `${location.origin}\\_Admin\\Styles\\kooboo-web-editor\\tinymce\\ui\\oxide`,
     menubar: false,
     element_format: "html",
     allow_script_urls: true,

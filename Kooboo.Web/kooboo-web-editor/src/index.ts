@@ -10,6 +10,7 @@ listenHover();
 listenClick();
 stopLinkElementClick();
 
+console.log(location);
 const container = createContainer();
 container.appendChild(createHoverBorder());
 container.appendChild(createFloatMenu());

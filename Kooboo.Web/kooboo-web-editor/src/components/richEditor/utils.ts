@@ -48,7 +48,7 @@ export async function impoveEditorUI(editor: Editor) {
 export function setLang(settings: Settings) {
   if (lang == "zh") {
     settings.language = "zh_CN";
-    settings.language_url = `_Admin\\Scripts\\kooboo-web-editor\\${settings.language}.js`;
+    settings.language_url = `${location.origin}\\_Admin\\Scripts\\kooboo-web-editor\\${settings.language}.js`;
   }
 }
 

@@ -45,7 +45,7 @@ export function createDeleteItem(): MenuItem {
       if (nodes.some(s => s instanceof HTMLElement)) {
         let temp = createDiv();
         nodes.forEach(i => temp.appendChild(i.cloneNode(true)));
-        log = HtmlblockLog.createUpdate(htmlblockComment.nameorid!, clearKoobooInfo(temp.outerHTML));
+        log = HtmlblockLog.createUpdate(htmlblockComment.nameorid!, clearKoobooInfo(temp.innerHTML));
       } else {
         log = HtmlblockLog.createDelete(htmlblockComment.nameorid!);
       }
