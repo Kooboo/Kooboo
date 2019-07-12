@@ -217,6 +217,9 @@ namespace Kooboo.Web.Api.Implementation
             user.UserName = newuser.UserName;
             user.Language = newuser.Language;
             user.EmailAddress = newuser.EmailAddress;
+
+            var localuser = Kooboo.Data.GlobalDb.Users.Get(newuser.Id); 
+
             if (GlobalDb.Users.AddOrUpdate(user))
             {
                 call.Context.User = user;
