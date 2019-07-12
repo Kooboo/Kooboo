@@ -18,7 +18,6 @@ export function createEditStyleItem(): MenuItem {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    if (isBody(args.element)) setVisiable(false);
     if (getMenuComment(comments)) setVisiable(false);
     if (getFormComment(comments)) setVisiable(false);
     if (getHtmlBlockComment(comments)) setVisiable(false);
