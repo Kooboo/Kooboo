@@ -27,7 +27,6 @@ export function createReplaceToTextItem(): MenuItem {
   el.addEventListener("click", async () => {
     let args = context.lastSelectedDomEventArgs;
     let { parent } = getCleanParent(args.element);
-    setGuid(parent!);
     let startContent = parent!.innerHTML;
     try {
       let text = document.createElement("p");

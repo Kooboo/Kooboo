@@ -63,6 +63,7 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
   let args = context.lastSelectedDomEventArgs;
   if (!args) return;
   let startContent = (e as any)._content;
+  let isRelpace = (e as any)._isReplace;
   let element = e.getElement() as HTMLElement;
   e.remove();
 
@@ -72,7 +73,7 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
     let dirtyEl = parent ? parent : element;
     markDirty(dirtyEl);
     koobooId = koobooId ? koobooId : args.koobooId;
-    let guid = setGuid(element);
+    let guid = setGuid(isRelpace ? parent! : element);
     let units = [new InnerHtmlUnit(startContent)];
     let comment = getEditComment(comments)!;
     let log: Log;

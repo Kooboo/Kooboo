@@ -19,7 +19,10 @@ export async function setInlineEditor(selector: HTMLElement, startContent?: stri
   return new Promise((rs, rj) => {
     let settings = createSettings(selector, rj, rs);
     createEditor(settings).then(e => {
-      (e as any)._content = startContent;
+      if (startContent) {
+        (e as any)._content = startContent;
+        (e as any)._isReplace = true;
+      }
     });
   });
 }
