@@ -5,7 +5,6 @@ import { MenuActions } from "../../events/FloatMenuClickEvent";
 import expandIcon from "@/assets/icons/fangda.svg";
 import { STANDARD_Z_INDEX } from "@/common/constants";
 import createDiv from "@/dom/div";
-import createSpan from "@/dom/span";
 
 export interface MenuItem {
   el: HTMLElement;
@@ -18,6 +17,7 @@ export function createItem(text: string, type: MenuActions) {
   el.style.padding = "5px 10px";
   el.style.borderBottom = "1px solid #eee";
   el.style.cursor = "default";
+  el.style.fontSize = "12px";
   el.append(text);
   el.addEventListener("click", () => context.floatMenuClickEvent.emit(type));
 
@@ -79,8 +79,10 @@ function createTitle() {
   el.style.padding = "5px 10px";
   el.style.color = "#fff";
   el.style.backgroundColor = "rgb(2, 154, 214)";
-  const text = createSpan();
+  const text = createDiv();
   text.style.color = "#fff";
+  text.style.display = "inline-block";
+  text.style.fontSize = "12px";
   text.innerText = TEXT.MENU;
   el.appendChild(text);
   el.appendChild(createCloseButton());
@@ -108,8 +110,9 @@ function createExpandButton() {
 }
 
 function createWarn() {
-  let el = createSpan();
+  let el = createDiv();
   el.innerText = "!";
+  el.style.display = "inline-block";
   el.style.width = "18px";
   el.style.height = "18px";
   el.style.color = "#fff";

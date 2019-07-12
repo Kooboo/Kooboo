@@ -1,4 +1,3 @@
-import { createLabel } from "./label";
 import { FONT_FAMILY } from "./utils";
 import createDiv from "./div";
 
@@ -9,6 +8,8 @@ export function createInput() {
   el.style.lineHeight = "24px";
   el.style.padding = "5px 4.75px";
   el.style.fontSize = "16px";
+  el.style.boxSizing = "border-box";
+  el.style.height = "36px";
   el.style.fontFamily = FONT_FAMILY;
   return el;
 }
@@ -16,10 +17,12 @@ export function createInput() {
 export function createLabelInput(text: string, labelWidth?: number, inputWidth?: number) {
   let el = createDiv();
   el.style.display = "inline-block";
-  let label = createLabel(text);
+  let label = createDiv();
+  label.innerText = text;
+  label.style.display = "inline-block";
   let input = createInput();
   label.style.textAlign = "right";
-  label.style.margin = "5px 0";
+  label.style.padding = "5px";
   if (labelWidth != undefined) label.style.width = labelWidth + "px";
   if (inputWidth != undefined) input.style.width = inputWidth + "px";
   input.style.display = "inline-block";
@@ -37,17 +40,25 @@ export function createLabelInput(text: string, labelWidth?: number, inputWidth?:
 
 export function createRadioInput(label: string) {
   let el = createDiv();
-  let radio = document.createElement("input");
+  let radio = createInput();
   radio.type = "radio";
   radio.style.margin = "0 5px";
   radio.style.pointerEvents = "none";
+  radio.style.position = "static";
+  radio.style.opacity = "1";
   el.appendChild(radio);
-  el.appendChild(document.createTextNode(label));
+  let text = createDiv();
+  text.innerText = label;
+  text.style.lineHeight = "36px";
+  text.style.fontSize = "16px";
+  text.style.display = "inline-block";
+  el.appendChild(text);
   el.style.width = "100%";
   el.style.lineHeight = "24px";
   el.style.padding = "5px 4.75px";
   el.style.fontSize = "16px";
   el.style.wordWrap = "break-word";
+  el.style.display = "flex";
   return {
     radio: el,
     setChecked: (checked: boolean) => (radio.checked = checked),

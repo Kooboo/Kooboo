@@ -111,4 +111,4 @@ export function previousComment(node: Node) {
   }
 }
 
-export const FONT_FAMILY = `"Segoe UI,BlinkMacSystemFont,Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif"`;
+export const FONT_FAMILY = "Segoe UI,BlinkMacSystemFont,Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif";

@@ -1,4 +1,3 @@
-import { createLabel } from "@/dom/label";
 import { createButton } from "@/dom/button";
 import { TEXT } from "@/common/lang";
 import { emitHoverEvent } from "@/dom/events";
@@ -11,9 +10,10 @@ export function createLinkItem(el: HTMLElement, onEdit: () => void) {
     el.scrollIntoView();
     emitHoverEvent(el);
   };
-  let href = el.getAttribute("href")!;
-  let label = createLabel(href);
+  let label = createDiv();
+  label.innerText = el.getAttribute("href")!;
   label.style.wordBreak = "break-all";
+  label.style.fontSize = "16px";
   label.style.width = "84%";
   label.style.display = "inline-block";
   let button = createButton(TEXT.EDIT);

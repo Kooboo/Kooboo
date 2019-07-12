@@ -1,21 +1,22 @@
 import "@simonwep/pickr/dist/themes/nano.min.css";
 import Pickr from "@simonwep/pickr/dist/pickr.min";
 import { STANDARD_Z_INDEX } from "@/common/constants";
-import { createLabel } from "@/dom/label";
 import { getEditorContainer } from "@/dom/utils";
 import Color from "color-string";
 import { TEXT } from "@/common/lang";
 import createDiv from "@/dom/div";
-import createSpan from "@/dom/span";
 
 type ononsave = (color: string) => void;
 
 export function createColorPicker(text: string, old: string, onsave: ononsave) {
   old = Color.to.hex(Color.get(old)!.value);
   let el = createDiv();
-  let label = createLabel(text);
-  label.style.marginRight = "5px";
-  let picker = createSpan();
+  let label = createDiv();
+  label.innerText = text;
+  label.style.display = "inline-block";
+  label.style.padding = "5px";
+  let picker = createDiv();
+  picker.style.display = "inline-block";
   el.appendChild(label);
   el.appendChild(picker);
   setTimeout(() => {
