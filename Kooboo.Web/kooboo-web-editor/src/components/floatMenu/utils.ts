@@ -13,6 +13,8 @@ import { StyleUnit } from "@/operation/recordUnits/StyleUnit";
 import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { createLinkPicker } from "../linkPicker";
 import createDiv from "@/dom/div";
+import { Log } from "@/operation/recordLogs/Log";
+import { ContentLog } from "@/operation/recordLogs/ContentLog";
 
 export function getEditComment(comments: KoobooComment[]) {
   const editTypes = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label, OBJECT_TYPE.htmlblock];
@@ -152,7 +154,14 @@ export async function updateAttributeLink(element: HTMLElement, koobooId: string
     element.setAttribute("href", url);
     let guid = setGuid(element);
     let unit = new AttributeUnit(startContent, "href");
-    let log = DomLog.createUpdate(comment.nameorid!, url, koobooId, comment.objecttype!, "href");
+    let log: Log;
+
+    if (isViewComment(comment)) {
+      log = DomLog.createUpdate(comment.nameorid!, url, koobooId, comment.objecttype!, "href");
+    } else {
+      log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, url);
+    }
+
     let record = new operationRecord([unit], [log], guid);
     context.operationManager.add(record);
     return url;

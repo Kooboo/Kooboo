@@ -14,7 +14,7 @@ import { createDeleteRepeatItem } from "./items/deleteRepeat";
 import { createReplaceToImgItem } from "./items/replaceToImg";
 import { createReplaceToTextItem } from "./items/replaceToText";
 import { createEditRepeatImageItem } from "./items/editRepeatImage";
-import { createEditRepeatLinkItem } from "./items/editRepeatIink";
+import { createEditRepeatLinkItem } from "./items/editRepeatLink";
 import { getMaxHeight, getMaxWidth } from "@/dom/utils";
 
 export function createMenu() {

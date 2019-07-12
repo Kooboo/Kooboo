@@ -13,7 +13,7 @@ import {
 } from "../floatMenu/utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { KOOBOO_ID } from "@/common/constants";
-import { getCleanParent } from "@/kooboo/utils";
+import { getCleanParent, isDirty } from "@/kooboo/utils";
 import createDiv from "@/dom/div";
 
 export function createDomLinkPanel() {
@@ -34,7 +34,7 @@ export function createDomLinkPanel() {
       let { item, setLabel } = createLinkItem(element, async () => {
         let url: string | undefined;
         let { koobooId: parentKoobooId, parent } = getCleanParent(element);
-        if (parent) {
+        if (isDirty(element) && parent) {
           url = await updateDomLink(parent, parentKoobooId!, element, viewComment);
         } else if (urlComment) {
           url = await updateUrlLink(element, koobooId!, urlComment, viewComment);
