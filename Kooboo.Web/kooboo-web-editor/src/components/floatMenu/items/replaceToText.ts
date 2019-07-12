@@ -40,7 +40,7 @@ export function createReplaceToTextItem(): MenuItem {
       args.element.parentElement!.replaceChild(text, args.element);
       emitHoverEvent(text);
       emitSelectedEvent();
-      await setInlineEditor(text);
+      await setInlineEditor(text, startContent);
     } catch (error) {
       parent!.innerHTML = startContent;
     }

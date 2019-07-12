@@ -15,9 +15,11 @@ async function createEditor(settings: Settings) {
   return editor;
 }
 
-export async function setInlineEditor(selector: HTMLElement) {
+export async function setInlineEditor(selector: HTMLElement, startContent?: string) {
   return new Promise((rs, rj) => {
     let settings = createSettings(selector, rj, rs);
-    createEditor(settings);
+    createEditor(settings).then(e => {
+      (e as any)._content = startContent;
+    });
   });
 }
