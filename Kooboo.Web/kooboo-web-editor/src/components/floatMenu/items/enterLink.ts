@@ -6,8 +6,8 @@ import context from "@/common/context";
 import { getPageId } from "@/kooboo/utils";
 import qs from "query-string";
 
-export function createJumpLinkItem(): MenuItem {
-  const { el, setVisiable } = createItem(TEXT.JUMP_LINK, MenuActions.jumpLink);
+export function createEnterLinkItem(): MenuItem {
+  const { el, setVisiable } = createItem(TEXT.ENTER_LINK, MenuActions.enterLink);
 
   const update = () => {
     setVisiable(true);

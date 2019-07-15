@@ -72,7 +72,7 @@ export function isLink(el: HTMLElement) {
 
 export function canJump(el: HTMLElement) {
   let href = el.getAttribute("href");
-  return el.tagName.toLowerCase() == "a" && href && !href.startsWith("#");
+  return el.tagName.toLowerCase() == "a" && href && !href.startsWith("#") && !href.startsWith("http");
 }
 
 export function reload() {

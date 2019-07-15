@@ -4,7 +4,7 @@ import { createDeleteItem } from "./items/delete";
 import { createEditItem } from "./items/edit";
 import { createEditImageItem } from "./items/editImage";
 import { createEditLinkItem } from "./items/editLink";
-import { createJumpLinkItem } from "./items/jumpLink";
+import { createEnterLinkItem } from "./items/enterLink";
 import { createEditHtmlBlockItem } from "./items/editHtmlBlock";
 import { createEditRepeatItem } from "./items/editRepeat";
 import { createEditMenuItem } from "./items/editMenu";
@@ -25,7 +25,7 @@ export function createMenu() {
     createDeleteItem(),
     createEditImageItem(),
     createEditLinkItem(),
-    createJumpLinkItem(),
+    createEnterLinkItem(),
     createEditHtmlBlockItem(),
     createEditRepeatItem(),
     createCopyRepeatItem(),

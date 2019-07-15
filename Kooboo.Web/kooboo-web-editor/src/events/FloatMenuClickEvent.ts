@@ -8,7 +8,7 @@ export enum MenuActions {
   delete,
   editImage,
   editLink,
-  jumpLink,
+  enterLink,
   editHtmlBlock,
   editRepeat,
   editMenu,
