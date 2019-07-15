@@ -11,31 +11,31 @@ export const createShade = () => {
     el.style.display = "block";
     let [top, right, bottom, left] = blocks;
     let referenceRect = referenceEl.getBoundingClientRect();
-    let bodyRect = document.body.getBoundingClientRect();
+    let htmlRect = document.documentElement.getBoundingClientRect();
 
     top.update({
       top: 0,
       left: 0,
       right: 0,
-      height: referenceRect.top - bodyRect.top
+      height: referenceRect.top - htmlRect.top
     });
 
     right.update({
-      top: referenceRect.top - bodyRect.top,
+      top: referenceRect.top - htmlRect.top,
       left: referenceRect.left + referenceRect.width,
       right: 0,
       height: referenceRect.height
     });
 
     bottom.update({
-      top: referenceRect.top - bodyRect.top + referenceRect.height,
+      top: referenceRect.top - htmlRect.top + referenceRect.height,
       left: 0,
       right: 0,
-      height: getMaxHeight() - (referenceRect.top + bodyRect.top + referenceRect.height)
+      height: getMaxHeight() - (referenceRect.top + htmlRect.top + referenceRect.height)
     });
 
     left.update({
-      top: referenceRect.top - bodyRect.top,
+      top: referenceRect.top - htmlRect.top,
       left: 0,
       width: referenceRect.left,
       height: referenceRect.height

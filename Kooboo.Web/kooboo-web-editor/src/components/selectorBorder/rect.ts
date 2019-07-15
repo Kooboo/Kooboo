@@ -13,34 +13,34 @@ export const createRect = () => {
     let [top, right, bottom, left] = lines;
 
     let referenceRect = referenceEl.getBoundingClientRect();
-    let bodyRect = document.body.getBoundingClientRect();
+    let htmlRect = document.documentElement.getBoundingClientRect();
 
     top.update({
-      top: referenceRect.top - bodyRect.top,
+      top: referenceRect.top - htmlRect.top,
 
-      left: referenceRect.left - bodyRect.left + HOVER_BORDER_WIDTH,
+      left: referenceRect.left - htmlRect.left + HOVER_BORDER_WIDTH,
 
       width: referenceEl.offsetWidth - HOVER_BORDER_WIDTH * 2
     });
 
     right.update({
-      top: referenceRect.top - bodyRect.top,
+      top: referenceRect.top - htmlRect.top,
 
-      left: referenceRect.left - bodyRect.left - HOVER_BORDER_WIDTH + referenceEl.offsetWidth,
+      left: referenceRect.left - htmlRect.left - HOVER_BORDER_WIDTH + referenceEl.offsetWidth,
 
       height: referenceEl.offsetHeight
     });
 
     bottom.update({
-      top: referenceRect.top - bodyRect.top + referenceEl.offsetHeight - HOVER_BORDER_WIDTH,
-      left: referenceRect.left - bodyRect.left + HOVER_BORDER_WIDTH,
+      top: referenceRect.top - htmlRect.top + referenceEl.offsetHeight - HOVER_BORDER_WIDTH,
+      left: referenceRect.left - htmlRect.left + HOVER_BORDER_WIDTH,
       width: referenceEl.offsetWidth - HOVER_BORDER_WIDTH * 2
     });
 
     left.update({
-      top: referenceRect.top - bodyRect.top,
+      top: referenceRect.top - htmlRect.top,
 
-      left: referenceRect.left - bodyRect.left,
+      left: referenceRect.left - htmlRect.left,
 
       height: referenceEl.offsetHeight
     });

@@ -16,6 +16,4 @@ const applyStyle = (css: CSSStyleDeclaration) => {
   css.backgroundColor = EDITOR_SHADE_COLOR;
   css.zIndex = STANDARD_Z_INDEX + "";
   css.cursor = "not-allowed";
-  let bodyStyle = getComputedStyle(document.body);
-  css.marginTop = bodyStyle.marginTop;
 };
