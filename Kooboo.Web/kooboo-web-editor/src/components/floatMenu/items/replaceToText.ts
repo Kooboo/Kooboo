@@ -21,7 +21,7 @@ export function createReplaceToTextItem(): MenuItem {
     let { koobooId, parent } = getCleanParent(args.element);
     if (!parent && !koobooId) setVisiable(false);
     if (!isImg(args.element)) setVisiable(false);
-    if (isDynamicContent(parent!)) setVisiable(false);
+    if (parent && isDynamicContent(parent)) setVisiable(false);
   };
 
   el.addEventListener("click", async () => {

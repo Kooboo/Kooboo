@@ -20,11 +20,10 @@ export function createCopyItem(): MenuItem {
     let comments = KoobooComment.getComments(args.element);
     let firstComment = getFirstComment(comments);
     if (!firstComment || !isViewComment(firstComment)) setVisiable(false);
-
     let { koobooId, parent } = getCleanParent(args.element);
     if (!parent && !koobooId) setVisiable(false);
     if (isBody(args.element)) setVisiable(false);
-    if (isDynamicContent(parent!)) setVisiable(false);
+    if (parent && isDynamicContent(parent)) setVisiable(false);
   };
 
   el.addEventListener("click", e => {

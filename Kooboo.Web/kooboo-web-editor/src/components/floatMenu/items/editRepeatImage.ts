@@ -4,7 +4,7 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
 import { getAttributeComment } from "../utils";
-import { isDynamicContent, setGuid } from "@/kooboo/utils";
+import { setGuid } from "@/kooboo/utils";
 import { operationRecord } from "@/operation/Record";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
