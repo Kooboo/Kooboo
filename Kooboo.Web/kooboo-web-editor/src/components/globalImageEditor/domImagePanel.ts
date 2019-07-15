@@ -4,7 +4,7 @@ import { getViewComment, updateDomImage, updateAttributeImage, getAttributeComme
 import { setImagePreview } from "./utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { KOOBOO_ID } from "@/common/constants";
-import { getCleanParent } from "@/kooboo/utils";
+import { getCleanParent, isDirty } from "@/kooboo/utils";
 import createDiv from "@/dom/div";
 
 export function createDomImagePanel() {
@@ -24,7 +24,7 @@ export function createDomImagePanel() {
       imagePreview.onclick = async () => {
         let src: string | undefined;
         let { koobooId: parentKoobooId, parent } = getCleanParent(element);
-        if (parent) {
+        if (isDirty(element) && parent) {
           src = await updateDomImage(element, parent, parentKoobooId!, comment!);
         } else {
           src = await updateAttributeImage(element, koobooId!, comment!);
