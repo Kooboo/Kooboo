@@ -4,7 +4,7 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
 import { getEditComment, getViewComment, updateAttributeImage, updateDomImage, getAttributeComment } from "../utils";
-import { isDynamicContent, getCleanParent } from "@/kooboo/utils";
+import { isDynamicContent, getCleanParent, isDirty } from "@/kooboo/utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function createEditImageItem(): MenuItem {
@@ -24,7 +24,7 @@ export function createEditImageItem(): MenuItem {
     let comments = KoobooComment.getComments(args.element);
     let el = args.element as HTMLImageElement;
     let { koobooId, parent } = getCleanParent(args.element);
-    if (parent) {
+    if (isDirty(args.element) && parent) {
       updateDomImage(el, parent, koobooId!, getViewComment(comments)!);
     } else {
       updateAttributeImage(el, args.koobooId!, getEditComment(comments)!);
