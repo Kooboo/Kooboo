@@ -2,7 +2,7 @@ import { Editor, Settings, EditorManager } from "tinymce";
 import { STANDARD_Z_INDEX, EMPTY_COMMENT, OBJECT_TYPE } from "../../common/constants";
 import { lang } from "../../common/lang";
 import context from "../../common/context";
-import { markDirty, setGuid, clearKoobooInfo, getCleanParent, getWrapDom } from "../../kooboo/utils";
+import { markDirty, setGuid, clearKoobooInfo, getCleanParent, getWrapDom, isDirty } from "../../kooboo/utils";
 import { getAllElement } from "../../dom/utils";
 import { delay } from "../../common/utils";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";
@@ -70,9 +70,9 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
   if (startContent != element.innerHTML) {
     let { koobooId, parent } = getCleanParent(args.element);
     let comments = KoobooComment.getComments(args.element);
-    let dirtyEl = parent ? parent : element;
+    let dirtyEl = parent && isDirty(args.element) ? parent : element;
     markDirty(dirtyEl);
-    koobooId = koobooId ? koobooId : args.koobooId;
+    koobooId = koobooId && isDirty(args.element) ? koobooId : args.koobooId;
     let guid = setGuid(isRelpace ? parent! : element);
     let units = [new InnerHtmlUnit(startContent)];
     let comment = getEditComment(comments)!;

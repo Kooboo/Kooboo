@@ -2,7 +2,7 @@ import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { setGuid, clearKoobooInfo, isDynamicContent, getGuidComment, getCleanParent, getWrapDom } from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, isDynamicContent, getGuidComment, getCleanParent, getWrapDom, isDirty } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { DeleteUnit } from "@/operation/recordUnits/DeleteUnit";
@@ -49,7 +49,7 @@ export function createDeleteItem(): MenuItem {
       } else {
         log = HtmlblockLog.createDelete(htmlblockComment.nameorid!);
       }
-    } else if (parent) {
+    } else if (isDirty(args.element) && parent) {
       let comment = getViewComment(comments)!;
       log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(parent.innerHTML), koobooId!, comment.objecttype!);
     } else {
