@@ -35,7 +35,15 @@ const en = {
   STYLE_IMAGE: "style image",
   DOM_IMAGE: "DOM image",
   CONTENT_LINK: "content link",
-  DOM_LINK: "DOM link"
+  DOM_LINK: "DOM link",
+  BACKGROUND_IMAGE: "background image",
+  COLOR: "color",
+  BACKGROUND_COLOR: "background color",
+  FONT: "font",
+  FONT_SIZE: "font size",
+  FONT_WEIGHT: "font weight",
+  FONT_FAMILY: "font family",
+  SIZE: "size"
 };
 
 const zh = {
@@ -71,7 +79,15 @@ const zh = {
   STYLE_IMAGE: "样式图片",
   DOM_IMAGE: "DOM 图片",
   CONTENT_LINK: "内容链接",
-  DOM_LINK: "DOM 链接"
+  DOM_LINK: "DOM 链接",
+  BACKGROUND_COLOR: "背景颜色",
+  BACKGROUND_IMAGE: "背景图片",
+  COLOR: "颜色",
+  FONT: "字体",
+  FONT_FAMILY: "字体风格",
+  FONT_SIZE: "字体大小",
+  FONT_WEIGHT: "字体重量",
+  SIZE: "大小"
 } as typeof en;
 
 var langPackages = { en, zh };

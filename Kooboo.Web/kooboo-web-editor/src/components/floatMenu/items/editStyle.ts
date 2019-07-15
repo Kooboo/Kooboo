@@ -46,6 +46,8 @@ export function createEditStyleItem(): MenuItem {
       tryAddLog(beforeStyle.backgroundImage!, afterStyle.backgroundImage!, "background-image");
       tryAddLog(beforeStyle.backgroundColor!, afterStyle.backgroundColor!, "background-color");
       tryAddLog(beforeStyle.color!, afterStyle.color!, "color");
+      tryAddLog(beforeStyle.width!, afterStyle.width!, "width");
+      tryAddLog(beforeStyle.height!, afterStyle.height!, "height");
       tryAddLog(beforeStyle.font!, afterStyle.font!, "font");
 
       if (logs.length == 0) return;
