@@ -21,13 +21,10 @@ export function createCopyItem(): MenuItem {
     let firstComment = getFirstComment(comments);
     if (!firstComment || !isViewComment(firstComment)) setVisiable(false);
 
-    if (isDirty(args.element)) {
-      let { koobooId, parent } = getCleanParent(args.element);
-      if (!parent || !koobooId) setVisiable(false);
-    }
-
+    let { koobooId, parent } = getCleanParent(args.element);
+    if (!parent && !koobooId) setVisiable(false);
     if (isBody(args.element)) setVisiable(false);
-    if (isDynamicContent(args.element)) setVisiable(false);
+    if (isDynamicContent(parent!)) setVisiable(false);
   };
 
   el.addEventListener("click", e => {

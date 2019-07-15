@@ -19,9 +19,9 @@ export function createReplaceToTextItem(): MenuItem {
     let firstComment = getFirstComment(comments);
     if (!firstComment || !isViewComment(firstComment)) setVisiable(false);
     let { koobooId, parent } = getCleanParent(args.element);
-    if (!parent || !koobooId) setVisiable(false);
+    if (!parent && !koobooId) setVisiable(false);
     if (!isImg(args.element)) setVisiable(false);
-    if (isDynamicContent(args.element)) setVisiable(false);
+    if (isDynamicContent(parent!)) setVisiable(false);
   };
 
   el.addEventListener("click", async () => {
