@@ -75,21 +75,20 @@ export class KoobooComment {
 
   static getComments(el: Element) {
     let comments: Comment[] = [];
-    let comment = previousComment(el);
-    while (comment && this.isComment(comment) && isSingleCommentWrap(comment)) {
-      comments.push(comment);
-      comment = previousComment(comment);
-    }
+    let comment: Comment | undefined;
+    let parentFlag: boolean = false;
 
-    do {
+    while (el) {
       comment = previousComment(el);
-      if (comment && this.isComment(comment) && !isSingleCommentWrap(comment) && !this.isEndComment(comment)) {
-        comments.push(comment);
-        el = el.parentElement!;
-      } else {
-        el = el.previousElementSibling ? el.previousElementSibling! : el.parentElement!;
+      while (comment) {
+        if (!parentFlag || !isSingleCommentWrap(comment)) {
+          comments.push(comment);
+        }
+        comment = previousComment(comment);
       }
-    } while (el);
+      el = el.parentElement!;
+      parentFlag = true;
+    }
 
     return comments.map(m => new KoobooComment(m));
   }
