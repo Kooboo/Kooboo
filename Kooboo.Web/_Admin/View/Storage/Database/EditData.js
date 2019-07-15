@@ -88,7 +88,7 @@ $(function() {
       data.controlType &&
       data.controlType.toLowerCase() == "datetime"
     ) {
-      if (data.value.indexOf(".") > -1) {
+      if (data.value && data.value.indexOf(".") > -1) {
         data.value = data.value.split(".")[0];
       }
       this.value = ko.observable(data.value);
