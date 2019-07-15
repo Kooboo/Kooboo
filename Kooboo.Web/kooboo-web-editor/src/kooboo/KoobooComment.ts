@@ -1,4 +1,5 @@
-import { isSingleCommentWrap, previousComment } from "./utils";
+import { isSingleCommentWrap, previousComment, getWrapDom } from "./utils";
+import { getAllNode } from "@/dom/utils";
 
 export class KoobooComment {
   private _infos!: string[];
@@ -74,22 +75,42 @@ export class KoobooComment {
   }
 
   static getComments(el: Element) {
-    let comments: Comment[] = [];
+    let self = el;
+    let comments: Comment[] = this.getSingleWrapComment(el);
     let comment: Comment | undefined;
-    let parentFlag: boolean = false;
 
     while (el) {
       comment = previousComment(el);
       while (comment) {
-        if (!parentFlag || !isSingleCommentWrap(comment)) {
+        if (!isSingleCommentWrap(comment) && this.isInWrap(comment, self)) {
           comments.push(comment);
         }
         comment = previousComment(comment);
       }
-      el = el.parentElement!;
-      parentFlag = true;
+      el = el.previousElementSibling ? el.previousElementSibling : el.parentElement!;
     }
 
     return comments.map(m => new KoobooComment(m));
+  }
+
+  private static getSingleWrapComment(el: Element) {
+    let comments: Comment[] = [];
+    let comment: Comment | undefined;
+    comment = previousComment(el);
+    while (comment && isSingleCommentWrap(comment)) {
+      comments.push(comment);
+      comment = previousComment(comment);
+    }
+    return comments;
+  }
+
+  private static isInWrap(comment: Comment, self: Element) {
+    let koobooComment = new KoobooComment(comment);
+    let { nodes } = getWrapDom(comment, koobooComment.objecttype!);
+    return nodes.some(s => {
+      for (const i of getAllNode(s, true)) {
+        if (i == self) return true;
+      }
+    });
   }
 }
