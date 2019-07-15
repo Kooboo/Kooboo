@@ -13,7 +13,7 @@ export interface MenuItem {
 
 export function createItem(text: string, type: MenuActions) {
   let el = createDiv();
-  let readonly = false;
+  let isReadonly = false;
   el.style.padding = "5px 10px";
   el.style.borderBottom = "1px solid #eee";
   el.style.cursor = "default";
@@ -26,8 +26,8 @@ export function createItem(text: string, type: MenuActions) {
   };
 
   const setReadonly = () => {
-    if (readonly) return;
-    readonly = true;
+    if (isReadonly) return;
+    isReadonly = true;
     el.style.color = "#ccc";
     el.appendChild(createWarn());
   };
