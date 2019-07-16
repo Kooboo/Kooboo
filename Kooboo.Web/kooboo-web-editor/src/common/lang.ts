@@ -43,7 +43,8 @@ const en = {
   FONT_SIZE: "font size",
   FONT_WEIGHT: "font weight",
   FONT_FAMILY: "font family",
-  SIZE: "size"
+  SIZE: "size",
+  CLICK: "click"
 };
 
 const zh = {
@@ -87,7 +88,8 @@ const zh = {
   FONT_FAMILY: "字体风格",
   FONT_SIZE: "字体大小",
   FONT_WEIGHT: "字体重量",
-  SIZE: "大小"
+  SIZE: "大小",
+  CLICK: "点击"
 } as typeof en;
 
 var langPackages = { en, zh };

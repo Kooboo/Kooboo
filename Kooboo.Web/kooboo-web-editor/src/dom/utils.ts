@@ -1,5 +1,4 @@
 import { HOVER_BORDER_SKIP } from "../common/constants";
-import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function getMaxHeight() {
   var body = document.body,

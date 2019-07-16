@@ -7,6 +7,7 @@ import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
 export function createFloatMenu() {
   const menu = createMenu();
   context.domChangeEvent.addEventListener(e => {
+    if (!context.lastMouseEventArg.isTrusted) return;
     menu.update(context.lastMouseEventArg!.pageX, context.lastMouseEventArg!.pageY);
   });
 

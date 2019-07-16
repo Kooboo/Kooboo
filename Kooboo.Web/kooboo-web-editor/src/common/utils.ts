@@ -10,6 +10,7 @@ export function stopLinkElementClick() {
   for (const iterator of getAllElement(document.body)) {
     if (iterator instanceof HTMLElement && isLink(iterator)) {
       let a = iterator.cloneNode(true);
+      (a as any)._a = iterator;
       iterator.parentElement!.replaceChild(a, iterator);
     }
   }
