@@ -86,7 +86,7 @@ describe("utils", () => {
     var el = document.createElement("a");
     el.setAttribute("href", "https://abc");
 
-    expect(canJump(el)).toEqual(true);
+    expect(canJump(el)).toEqual(false);
   });
 
   test("canJump_otherElement", () => {

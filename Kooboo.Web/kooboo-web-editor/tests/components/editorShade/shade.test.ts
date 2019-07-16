@@ -3,7 +3,7 @@ import { createShade } from "@/components/editorShade/shade";
 describe("shade", () => {
   test("hidden", () => {
     let shade = createShade();
-    expect(shade.el.style.display).toEqual("block");
+    expect(shade.el.style.display).toEqual("");
     shade.hidden();
     expect(shade.el.style.display).toEqual("none");
   });
