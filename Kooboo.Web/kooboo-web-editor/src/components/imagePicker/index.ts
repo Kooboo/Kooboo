@@ -1,10 +1,8 @@
 import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
-import { createLabelInput } from "@/dom/input";
 import { getEditorContainer } from "@/dom/utils";
 import { pickImg } from "@/kooboo/outsideInterfaces";
-import { createImagePreview } from "@/components/common/imagePreview";
-import createDiv from "@/dom/div";
+import { createDiv, createLabelInput, createImagePreview } from "@/dom/element";
 
 export function createImagePicker(img: HTMLImageElement) {
   let container = createDiv();
@@ -23,7 +21,7 @@ export function createImagePicker(img: HTMLImageElement) {
   };
   container.appendChild(imagePreview);
 
-  let alt = createLabelInput(TEXT.ALT, 80, 320);
+  let alt = createLabelInput(TEXT.ALT, 75, 325);
   alt.setContent(img.alt);
   container.appendChild(alt.input);
   alt.setInputHandler(e => {
@@ -32,7 +30,7 @@ export function createImagePicker(img: HTMLImageElement) {
     }
   });
 
-  let title = createLabelInput(TEXT.TITLE, 80, 320);
+  let title = createLabelInput(TEXT.TITLE, 75, 325);
   title.setContent(img.title);
   container.appendChild(title.input);
   title.setInputHandler(e => {
@@ -41,7 +39,7 @@ export function createImagePicker(img: HTMLImageElement) {
     }
   });
 
-  let width = createLabelInput(TEXT.WIDTH, 80, 120);
+  let width = createLabelInput(TEXT.WIDTH, 75, 120);
   width.setInputHandler(e => {
     if (e.target instanceof HTMLInputElement) {
       img.style.width = e.target.value;
@@ -50,7 +48,7 @@ export function createImagePicker(img: HTMLImageElement) {
   width.setContent(style.width!);
   container.appendChild(width.input);
 
-  let height = createLabelInput(TEXT.HEIGHT, 80, 120);
+  let height = createLabelInput(TEXT.HEIGHT, 75, 120);
   height.setInputHandler(e => {
     if (e.target instanceof HTMLInputElement) {
       img.style.height = e.target.value;

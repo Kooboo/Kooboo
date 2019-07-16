@@ -1,6 +1,6 @@
 import { createBlock } from "./block";
 import { getMaxHeight } from "@/dom/utils";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export const createShade = () => {
   const blocks = [createBlock(), createBlock(), createBlock(), createBlock()];

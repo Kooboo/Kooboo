@@ -1,6 +1,6 @@
 import { createModal } from "@/components/modal";
-import { createIframe } from "@/dom/Iframe";
 import { TEXT } from "@/common/lang";
+import { createIframe } from "@/dom/element";
 const Kooboo = (document as any).Kooboo;
 const mediaDialogData = (document as any).mediaDialogData;
 const parentBody = (document as any).parentBody as HTMLBodyElement;
@@ -80,4 +80,14 @@ export async function getPageUrls() {
 
 export function newGuid(): string {
   return Kooboo.Guid.NewGuid();
+}
+
+export function addParentStyle() {
+  for (let i = 0; i < document.styleSheets.length; i++) {
+    let style = document.styleSheets.item(i)!;
+    if (style.ownerNode instanceof HTMLElement && style.ownerNode.innerHTML.indexOf("kb_web_editor") > -1) {
+      let styleNode = style.ownerNode.cloneNode(true);
+      parentBody.appendChild(styleNode);
+    }
+  }
 }

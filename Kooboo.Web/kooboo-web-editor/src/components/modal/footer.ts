@@ -1,6 +1,5 @@
 import { TEXT } from "@/common/lang";
-import { createButton, createPrimaryButton } from "@/dom/button";
-import createDiv from "@/dom/div";
+import { createPrimaryButton, createButton, createDiv } from "@/dom/element";
 
 export function createFooter() {
   let el = createDiv();

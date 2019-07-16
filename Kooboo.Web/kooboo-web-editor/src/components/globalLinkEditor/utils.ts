@@ -1,7 +1,6 @@
-import { createButton } from "@/dom/button";
 import { TEXT } from "@/common/lang";
 import { emitHoverEvent } from "@/dom/events";
-import createDiv from "@/dom/div";
+import { createButton, createDiv } from "@/dom/element";
 
 export function createLinkItem(el: HTMLElement, onEdit: () => void) {
   let item = createDiv();

@@ -7,7 +7,7 @@ import { getWrapDom } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
 import { editMenu } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export function createEditMenuItem() {
   const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_MENU, MenuActions.editMenu);

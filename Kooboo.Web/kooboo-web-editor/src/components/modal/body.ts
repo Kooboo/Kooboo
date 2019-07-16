@@ -1,4 +1,4 @@
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export function createBody(height?: string) {
   let el = createDiv();

@@ -1,6 +1,5 @@
-import { createRadioInput } from "@/dom/input";
 import { getPageUrls } from "@/kooboo/outsideInterfaces";
-import createDiv from "@/dom/div";
+import { createDiv, createRadioInput } from "@/dom/element";
 
 export async function createPageLinkPanel(oldValue: string) {
   let urls = await getPageUrls();

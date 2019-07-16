@@ -1,4 +1,4 @@
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 const border = "2px solid rgb(32, 122, 183)";
 

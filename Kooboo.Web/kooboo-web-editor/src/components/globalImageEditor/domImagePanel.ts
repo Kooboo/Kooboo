@@ -1,11 +1,10 @@
 import { getAllElement } from "@/dom/utils";
-import { createImagePreview } from "@/components/common/imagePreview";
 import { getViewComment, updateDomImage, updateAttributeImage, getAttributeComment } from "../floatMenu/utils";
 import { setImagePreview } from "./utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { KOOBOO_ID } from "@/common/constants";
 import { getCleanParent, isDirty } from "@/kooboo/utils";
-import createDiv from "@/dom/div";
+import { createDiv, createImagePreview } from "@/dom/element";
 
 export function createDomImagePanel() {
   let contiainer = createDiv();

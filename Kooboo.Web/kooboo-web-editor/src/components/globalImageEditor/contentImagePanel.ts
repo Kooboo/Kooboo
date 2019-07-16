@@ -6,10 +6,9 @@ import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import context from "@/common/context";
 import { operationRecord } from "@/operation/Record";
-import { createImagePreview } from "../common/imagePreview";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { getAttributeComment } from "../floatMenu/utils";
-import createDiv from "@/dom/div";
+import { createDiv, createImagePreview } from "@/dom/element";
 
 export function createContentImagePanel() {
   let contiainer = createDiv();

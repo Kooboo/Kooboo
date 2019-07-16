@@ -10,7 +10,7 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 import { operationRecord } from "@/operation/Record";
 import { DeleteRepeatUnit } from "@/operation/recordUnits/DeleteRepeatUnit";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export function createDeleteRepeatItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE_REPEAR, MenuActions.deleteRepeat);

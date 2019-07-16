@@ -1,4 +1,4 @@
-import { createInput } from "@/dom/input";
+import { createInput } from "@/dom/element";
 
 export function createOutLinkPanel() {
   let el = createInput();

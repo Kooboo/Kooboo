@@ -1,7 +1,7 @@
 import { Unit } from "./Unit";
 import { getWrapDom } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export class CopyRepeatUnit extends Unit {
   undo(node: Node): void {

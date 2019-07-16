@@ -1,5 +1,5 @@
 import { STANDARD_Z_INDEX } from "@/common/constants";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export function createContainer(document: Document) {
   let container = createDiv();

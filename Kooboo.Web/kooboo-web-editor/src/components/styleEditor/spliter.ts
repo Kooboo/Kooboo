@@ -1,4 +1,4 @@
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export function createSpliter(text: string) {
   let el = createDiv();

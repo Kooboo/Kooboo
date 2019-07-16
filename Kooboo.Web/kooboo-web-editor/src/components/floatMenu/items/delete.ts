@@ -10,9 +10,9 @@ import { Log } from "@/operation/recordLogs/Log";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { getViewComment, getFirstComment, isEditComment, getRepeatComment, getHtmlBlockComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import createDiv from "@/dom/div";
 import { HtmlblockLog } from "@/operation/recordLogs/HtmlblockLog";
 import { OBJECT_TYPE } from "@/common/constants";
+import { createDiv } from "@/dom/element";
 
 export function createDeleteItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);

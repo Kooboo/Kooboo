@@ -3,7 +3,7 @@ import { KoobooComment } from "./KoobooComment";
 import { KoobooId } from "./KoobooId";
 import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID, OBJECT_TYPE } from "../common/constants";
 import { newGuid } from "./outsideInterfaces";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export function clearKoobooInfo(domString: string) {
   let el = createDiv();

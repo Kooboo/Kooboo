@@ -4,7 +4,7 @@ import context from "../../common/context";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
 import expandIcon from "@/assets/icons/fangda.svg";
 import { STANDARD_Z_INDEX } from "@/common/constants";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export interface MenuItem {
   el: HTMLElement;
@@ -13,6 +13,7 @@ export interface MenuItem {
 
 export function createItem(text: string, type: MenuActions) {
   let el = createDiv();
+  el.classList.add("kb_web_editor_menu_item");
   let isReadonly = false;
   el.style.padding = "5px 10px";
   el.style.borderBottom = "1px solid #eee";

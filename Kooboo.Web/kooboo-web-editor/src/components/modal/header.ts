@@ -1,4 +1,4 @@
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export function createHeader(title: string, parent: HTMLElement) {
   var el = createDiv();

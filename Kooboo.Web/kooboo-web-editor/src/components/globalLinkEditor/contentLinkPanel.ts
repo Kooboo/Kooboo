@@ -8,7 +8,7 @@ import { operationRecord } from "@/operation/Record";
 import context from "@/common/context";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { getAttributeComment } from "../floatMenu/utils";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export function createContentLinkPanel() {
   let contiainer = createDiv();

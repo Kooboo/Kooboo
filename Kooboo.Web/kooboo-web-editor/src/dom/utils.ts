@@ -104,5 +104,3 @@ export function* nextNodes(node: Node, containSelf = false, includeParent = fals
     yield node;
   }
 }
-
-export const FONT_FAMILY = "Segoe UI,BlinkMacSystemFont,Roboto,Oxygen-Sans,Ubuntu,Cantarell,'Helvetica Neue',sans-serif";

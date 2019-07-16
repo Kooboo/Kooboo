@@ -1,6 +1,6 @@
 import { createLine } from "./line";
 import { HOVER_BORDER_WIDTH } from "../../common/constants";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export const createRect = () => {
   const lines = [createLine(), createLine(), createLine(), createLine()];

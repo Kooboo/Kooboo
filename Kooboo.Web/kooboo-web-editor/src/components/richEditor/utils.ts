@@ -15,7 +15,7 @@ import { DomLog } from "@/operation/recordLogs/DomLog";
 import { LabelLog } from "@/operation/recordLogs/LabelLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { HtmlblockLog } from "@/operation/recordLogs/HtmlblockLog";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export async function impoveEditorUI(editor: Editor) {
   let container = editor.getContainer();

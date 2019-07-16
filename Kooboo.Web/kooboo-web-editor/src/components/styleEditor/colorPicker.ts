@@ -4,7 +4,7 @@ import { STANDARD_Z_INDEX } from "@/common/constants";
 import { getEditorContainer } from "@/dom/utils";
 import Color from "color-string";
 import { TEXT } from "@/common/lang";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 type ononsave = (color: string) => void;
 

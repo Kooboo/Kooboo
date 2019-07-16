@@ -1,5 +1,5 @@
 import { Unit } from "./Unit";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export class DeleteUnit extends Unit {
   undo(node: Node): void {

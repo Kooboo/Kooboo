@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isLink } from "@/dom/utils";
-import { getAttributeComment, getUrlComment, updateUrlLink, getViewComment, updateAttributeLink } from "../utils";
+import { getAttributeComment, getViewComment, updateAttributeLink } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function createEditRepeatLinkItem(): MenuItem {

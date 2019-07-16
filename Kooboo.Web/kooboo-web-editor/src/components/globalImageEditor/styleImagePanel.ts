@@ -2,7 +2,6 @@ import { getAllElement } from "@/dom/utils";
 import { setGuid } from "@/kooboo/utils";
 import { getViewComment } from "../floatMenu/utils";
 import { KOOBOO_ID } from "@/common/constants";
-import { createImagePreview } from "../common/imagePreview";
 import { setImagePreview } from "./utils";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 import { StyleLog } from "@/operation/recordLogs/StyleLog";
@@ -10,7 +9,7 @@ import { operationRecord } from "@/operation/Record";
 import context from "@/common/context";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import createDiv from "@/dom/div";
+import { createDiv, createImagePreview } from "@/dom/element";
 
 export function createStyleImagePanel() {
   let contiainer = createDiv();

@@ -1,4 +1,4 @@
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 interface ActionButton extends HTMLDivElement {
   changeIcon(icon: any): void;
@@ -6,13 +6,7 @@ interface ActionButton extends HTMLDivElement {
 
 export function createButton(document: Document, icon: any, title: string) {
   let el = createDiv();
-  el.style.width = "60px";
-  el.style.height = "60px";
-  el.style.borderRadius = "50%";
-  el.style.backgroundColor = "rgba(255,255,255,0.9)";
-  el.style.boxShadow = "0 0 5px rgba(0,0,0,0.5)";
-  el.style.position = "relative";
-  el.style.marginBottom = "10px";
+  el.classList.add("kb_action_bar_btn");
   el.title = title;
   let img = document.createElement("img");
   img.style.width = "50%";

@@ -1,6 +1,6 @@
 import { EDITOR_SHADE_COLOR, STANDARD_Z_INDEX } from "@/common/constants";
 import { Position, updatePositon } from "@/common/Position";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export const createBlock = () => {
   const el = createDiv();

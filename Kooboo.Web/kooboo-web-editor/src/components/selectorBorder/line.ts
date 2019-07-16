@@ -1,6 +1,6 @@
 import { HOVER_BORDER_WIDTH, STANDARD_Z_INDEX } from "../../common/constants";
 import { Position, updatePositon } from "@/common/Position";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 const applyStyle = (css: CSSStyleDeclaration) => {
   css.position = "absolute";

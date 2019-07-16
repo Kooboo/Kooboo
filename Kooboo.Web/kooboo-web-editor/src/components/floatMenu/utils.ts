@@ -12,9 +12,9 @@ import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { StyleUnit } from "@/operation/recordUnits/StyleUnit";
 import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { createLinkPicker } from "../linkPicker";
-import createDiv from "@/dom/div";
 import { Log } from "@/operation/recordLogs/Log";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
+import { createDiv } from "@/dom/element";
 
 export function getEditComment(comments: KoobooComment[]) {
   const editTypes = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label, OBJECT_TYPE.htmlblock];

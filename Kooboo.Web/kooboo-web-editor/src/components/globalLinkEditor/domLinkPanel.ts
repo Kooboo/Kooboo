@@ -14,7 +14,7 @@ import {
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { KOOBOO_ID } from "@/common/constants";
 import { getCleanParent, isDirty } from "@/kooboo/utils";
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 export function createDomLinkPanel() {
   let contiainer = createDiv();

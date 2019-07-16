@@ -1,4 +1,4 @@
-import createDiv from "@/dom/div";
+import { createDiv } from "@/dom/element";
 
 interface Notice extends HTMLDivElement {
   setCount(count: number): void;

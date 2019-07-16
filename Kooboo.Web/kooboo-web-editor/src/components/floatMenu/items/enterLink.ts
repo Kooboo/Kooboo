@@ -15,7 +15,7 @@ export function createEnterLinkItem(): MenuItem {
     if (!canJump(args.element)) setVisiable(false);
   };
 
-  el.addEventListener("click", e => {
+  el.addEventListener("click", () => {
     let url = context.lastHoverDomEventArgs.element.getAttribute("href")!;
     let pageId = getPageId();
     let parsed = qs.parse(parent.location.search);
