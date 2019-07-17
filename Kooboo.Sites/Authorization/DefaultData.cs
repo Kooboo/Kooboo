@@ -80,6 +80,7 @@ namespace Kooboo.Sites.Authorization
                 {
                     _master = new RolePermission();
                     _master.Name = "master";
+                    _master.Permission.Add("feature");
                     _master.Permission.Add("Development");
                     _master.Permission.Add("System");
                     _master.Permission.Add("Contents");
@@ -98,6 +99,7 @@ namespace Kooboo.Sites.Authorization
                 {
                     _developer = new RolePermission();
                     _developer.Name = "developer";
+                    _developer.Permission.Add("feature");
                     _developer.Permission.Add("Development");
                     _developer.Permission.Add("Contents");
                     _developer.Permission.Add("Database");

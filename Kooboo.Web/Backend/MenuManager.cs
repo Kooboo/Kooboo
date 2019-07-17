@@ -16,7 +16,7 @@ namespace Kooboo.Web.Menus
         public static void VerifySortSideBar(List<CmsMenuViewModel> menus, RenderContext context)
         {
             var user = context.User;
-            var sitedb = context.WebSite.SiteDb(); 
+            var sitedb = context.WebSite.SiteDb();
 
             if (user == null)
             {
@@ -26,73 +26,74 @@ namespace Kooboo.Web.Menus
             else
             {
                 if (!user.IsAdmin)
-                {
-                    var siteuser = sitedb.GetSiteRepository<SiteUserRepository>().Get(user.Id); 
+                { 
+                    var siteuser = sitedb.GetSiteRepository<SiteUserRepository>().Get(user.Id);
                     if (siteuser == null)
                     {
-                        menus.RemoveAll(o=>true); 
+                        menus.RemoveAll(o => true);
                     }
                     else
                     {
                         var repo = sitedb.GetSiteRepository<RolePermissionRepository>();
                         var role = repo.Get(siteuser.SiteRole);
-                        AccessControl(menus, role); 
-                    } 
+                        AccessControl(menus, role);
+                    }
+
                 }
             }
 
 
-            RemoveItems(menus); 
+            RemoveItems(menus);
 
             if (menus.Any())
             {
-                Sort(menus);  
-            } 
+                Sort(menus);
+            }
         }
 
 
         public static void AccessControl(List<CmsMenuViewModel> menus, RolePermission role)
         {
             foreach (var item in menus)
-            { 
+            {
                 var permission = GetPermissionString(item);
                 //var permission 
-                var haspermission = Kooboo.Sites.Authorization.PermissionService.HasPermission(permission, role.Tree); 
+                var haspermission = Kooboo.Sites.Authorization.PermissionService.HasPermission(permission, role.Tree);
                 if (haspermission)
                 {
-                    continue; 
+                    continue;
                 }
                 else
                 {
-                   if (item.HasSubItem)
+                    if (item.HasSubItem)
                     {
-                        bool HasNonHideItem = false; 
+                        bool HasNonHideItem = false;
                         foreach (var submenu in item.Items)
                         {
                             var subPermission = GetPermissionString(submenu);
                             if (string.IsNullOrEmpty(subPermission))
                             {
-                                continue; 
+                                continue;
                             }
-                            var subHasPermission = Kooboo.Sites.Authorization.PermissionService.HasPermission(subPermission, role.Tree); 
+                            var subHasPermission = Kooboo.Sites.Authorization.PermissionService.HasPermission(subPermission, role.Tree);
                             if (subHasPermission)
                             {
-                                HasNonHideItem = true; 
+                                HasNonHideItem = true;
                             }
                             else
                             {
-                                submenu.Hide = true; 
-                            } 
+                                submenu.Hide = true;
+                            }
                         }
-                         
+
                         if (!HasNonHideItem)
                         {
                             item.Hide = true;
                         }
                     }
-                   else
+                    else
                     {
-                        item.Hide = true; 
+                        item.Hide = true;
                     }
                 }
             }
@@ -130,16 +131,16 @@ namespace Kooboo.Web.Menus
         {
             if (menu == null)
             {
-                return null; 
+                return null;
             }
 
-            if (menu.CmsMenu !=null)
+            if (menu.CmsMenu != null)
             {
-                return Kooboo.Sites.Authorization.MenuService.GetPermissionString(menu.CmsMenu);  
+                return Kooboo.Sites.Authorization.MenuService.GetPermissionString(menu.CmsMenu);
             }
             else
             {
-                return menu.Name; 
+                return menu.Name;
             }
         }
 
