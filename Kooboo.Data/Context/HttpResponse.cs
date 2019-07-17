@@ -27,10 +27,44 @@ namespace Kooboo.Data.Context
                 return _contenttype; 
             }
             set
-            { _contenttype = value;  }
+            { _contenttype = value;  } 
         }
 
-        public byte[] Body { get; set; }
+         
+        public void AppendString(string output)
+        {
+            var bytes = System.Text.Encoding.UTF8.GetBytes(output);
+            Body = bytes; 
+        }
+
+        private byte[] _body; 
+        // this is actually only for text body... for binary... file..this will break.. 
+        public byte[] Body {
+
+            get
+            {
+                return _body; 
+            }
+            set
+            {
+                if (_body == null)
+                {
+                    _body = value; 
+                }
+                else
+                {
+                    // append directly. 
+                    int newlen = value.Length;
+                    int oldlen = _body.Length;
+                    byte[] newvalue = new byte[newlen + oldlen];
+
+                    System.Buffer.BlockCopy(_body, 0, newvalue, 0, _body.Length);
+                    System.Buffer.BlockCopy(value, 0, newvalue, _body.Length, value.Length); 
+                    _body = newvalue;  
+                }
+            }
+ 
+        }
 
         public System.IO.Stream Stream { get; set; }
 

@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using Kooboo.Lib;
+using Kooboo.Sites.Render;
+using Kooboo.Sites.Extensions;
 
 namespace Kooboo.Sites.Scripting.Global
 {
@@ -81,7 +83,7 @@ namespace Kooboo.Sites.Scripting.Global
         public void redirect(string url)
         {
             this.context.Response.Redirect(302, url);
-        }
+        } 
 
         public void Json(object value)
         {
@@ -89,6 +91,63 @@ namespace Kooboo.Sites.Scripting.Global
             write(value);
         }
 
-       
+        public void StatusCode(int code)
+        {
+            this.context.Response.StatusCode = code; 
+        }
+         
+        public void Execute(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                return; 
+            }
+
+            string value = null; 
+
+            if (url.ToLower().StartsWith("https://") || url.ToLower().StartsWith("http://"))
+            {
+                Curl curl = new Curl();
+                value =   curl.get(url); 
+            }
+
+            else
+            {
+                var route = Kooboo.Sites.Routing.ObjectRoute.GetRoute(context.WebSite.SiteDb(), url);
+                if (route != null)
+                {
+                    RenderContext newcontext = new RenderContext();
+                    newcontext.Request = context.Request;
+                    newcontext.User = context.User;
+                    newcontext.WebSite = context.WebSite;
+                    newcontext.Culture = context.Culture; 
+                     
+                    FrontContext kooboocontext = new FrontContext();
+                    newcontext.SetItem<FrontContext>(kooboocontext);
+                    kooboocontext.RenderContext = newcontext;
+
+                    kooboocontext.Route = route;
+
+                    Kooboo.Sites.Render.RouteRenderers.RenderAsync(kooboocontext);
+
+                    if (newcontext.Response.Body != null && newcontext.Response.Body.Length > 0)
+                    {
+                        value = System.Text.Encoding.UTF8.GetString(newcontext.Response.Body);
+                    }
+                }
+            } 
+
+
+            var item = this.context.GetItem<string>(Constants.OutputName);
+            if (item == null)
+            {
+                this.context.SetItem<string>(value, Constants.OutputName);
+            }
+            else
+            {
+                item += value;
+                this.context.SetItem<string>(item, Constants.OutputName);
+            }
+        }
     }
 }

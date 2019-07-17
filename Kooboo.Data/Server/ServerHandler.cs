@@ -325,12 +325,8 @@ namespace Kooboo.Data.Server
                     {
                         response.Stream.CopyTo(context.Features.Response.Body);
                     }
-                    else if (response.ContentType != null && response.ContentType.ToLower().Contains("javascript"))
-                    {
-                        // TODO:???? what is this???? 
-                    }
-                    else
-
+        
+                    else 
                     {
                         // 404.   
                         string filename = Lib.Helper.IOHelper.CombinePath(AppSettings.RootPath, Kooboo.DataConstants.Default404Page) + ".html";

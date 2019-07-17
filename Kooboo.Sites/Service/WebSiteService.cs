@@ -279,6 +279,11 @@ namespace Kooboo.Sites.Service
                 return null; 
             }
 
+            if (context.RenderContext.Response.Body !=null && context.RenderContext.Response.Body.Length >0)
+            {
+                return null; 
+            }
+
             var url = GetCustomErrorUrl(context.WebSite, statusCode);
             return await RenderCustomErrorPage(context, url);  
         }

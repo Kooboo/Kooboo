@@ -150,10 +150,12 @@ namespace Kooboo.Sites.FrontEvent
                     {
                         kcontext.config = CopySetting(item.Setting);
 
-                        Kooboo.Sites.Scripting.Manager.ExecuteCode(kcontext.RenderContext, code.Body, code.Id); 
-                        //TODO.... Get the debugger to work...
-                        //engine.Execute(code.Body); 
-
+                        var outputstring = Kooboo.Sites.Scripting.Manager.ExecuteCode(kcontext.RenderContext, code.Body, code.Id); 
+                        
+                        if (!string.IsNullOrEmpty(outputstring))
+                        {
+                            kcontext.RenderContext.Response.AppendString(outputstring); 
+                        }
                         kcontext.config = null;
                     }
                 }

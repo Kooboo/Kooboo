@@ -90,7 +90,7 @@ namespace Kooboo.Sites.Scripting.Global
         public UploadFile[] files
         {
             get
-            { 
+            {
                 if (_files == null)
                 {
                     var fileList = new List<UploadFile>();
@@ -99,11 +99,14 @@ namespace Kooboo.Sites.Scripting.Global
                     {
                         foreach (var item in this.context.Request.Files)
                         {
-                            UploadFile uploadfile = new UploadFile(this.context);
-                            uploadfile.FileName = item.FileName;
-                            uploadfile.ContentType = item.ContentType;
-                            uploadfile.Bytes = item.Bytes;
-                            fileList.Add(uploadfile);
+                            if (!string.IsNullOrWhiteSpace(item.FileName) && item.Bytes != null)
+                            { 
+                                UploadFile uploadfile = new UploadFile(this.context);
+                                uploadfile.FileName = item.FileName;
+                                uploadfile.ContentType = item.ContentType;
+                                uploadfile.Bytes = item.Bytes;
+                                fileList.Add(uploadfile);
+                            }
                         }
                     }
                     _files = fileList.ToArray();
@@ -119,11 +122,11 @@ namespace Kooboo.Sites.Scripting.Global
         {
             get
             {
-                return this.context.Request.Body; 
+                return this.context.Request.Body;
             }
 
         }
-     
+
 
 
         public string method

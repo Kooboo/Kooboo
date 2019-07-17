@@ -20,6 +20,7 @@ namespace Kooboo.Web.FrontRequest
         }
         public async Task Invoke(RenderContext context)
         {
+
             FrontContext kooboocontext = new FrontContext();
             context.SetItem<FrontContext>(kooboocontext);
             kooboocontext.RenderContext = context;
