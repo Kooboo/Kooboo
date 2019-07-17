@@ -17,6 +17,7 @@ import { createEditRepeatImageItem } from "./items/editRepeatImage";
 import { createEditRepeatLinkItem } from "./items/editRepeatLink";
 import { getMaxHeight, getMaxWidth } from "@/dom/utils";
 import { createClickItem } from "./items/click";
+import { createDeleteHtmlBlockItem } from "./items/deleteHtmlBlock";
 
 export function createMenu() {
   const container = createContainer();
@@ -37,7 +38,8 @@ export function createMenu() {
     createReplaceToTextItem(),
     createEditRepeatImageItem(),
     createEditRepeatLinkItem(),
-    createClickItem()
+    createClickItem(),
+    createDeleteHtmlBlockItem()
   ] as MenuItem[];
 
   for (const i of items) {
