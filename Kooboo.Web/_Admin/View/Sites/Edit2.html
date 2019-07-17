@@ -33,16 +33,10 @@
     <div id="main">
       <div class="block-fullscreen">
         <div class="block-visual-editor vertical">
-          <!-- <div
-            id="kbActionMenu"
-            data-bind="component: { name: 'KoobooActionMenu',params:actionMenuConfig}"
-          ></div> -->
-
           <iframe id="iframe" class="kb-iframe" src="about:blank"></iframe>
         </div>
       </div>
       <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog>
-      <!--<div id="kbMediaGrid" data-kb-type="widgets/MediaGrid/MediaGrid" data-kb-option="_mediagridOption"></div>-->
       <div
         id="kbPagesPicker"
         data-kb-type="widgets/PagesPicker/PagesPicker"
@@ -97,6 +91,11 @@
   })();
 </script>
 <script type="text/javascript">
+  $.ajax("/_api/User/getLanguage?SiteId=" + getQueryString("SiteId")).then(
+    function(rsp) {
+      localStorage.setItem("lang", rsp.model);
+    }
+  );
   function getQueryString(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
     var r = window.location.search.substr(1).match(reg);
@@ -112,25 +111,26 @@
     url += koobooInlineParam;
     return url;
   }
+
   $(function() {
-    var mediaDialogData=ko.observable();
+    var mediaDialogData = ko.observable();
     var script = document.createElement("script");
     script.src =
       "\\_Admin\\Scripts\\kooboo-web-editor\\kooboo-web-editor.min.js";
     var iframe = document.getElementById("iframe");
-    var pageUrl=getQueryString("PageUrl");
+    var pageUrl = getQueryString("PageUrl");
     if (pageUrl.indexOf("?") > -1) pageUrl += "&";
     else pageUrl += "?";
     pageUrl += "koobooInline=design";
     iframe.setAttribute("src", pageUrl);
     iframe.onload = function() {
-      iframe.contentDocument.Kooboo=Kooboo;
-      iframe.contentDocument.mediaDialogData=mediaDialogData;
-      iframe.contentDocument.parentBody=document.body;
-      iframe.contentDocument.__gl=__gl={};
+      iframe.contentDocument.Kooboo = Kooboo;
+      iframe.contentDocument.mediaDialogData = mediaDialogData;
+      iframe.contentDocument.parentBody = document.body;
+      iframe.contentDocument.__gl = __gl = {};
       iframe.contentDocument.body.appendChild(script);
       $(".page-loading").hide();
-      ko.applyBindings({mediaDialogData}, document.getElementById("main"));
+      ko.applyBindings({ mediaDialogData }, document.getElementById("main"));
     };
   });
 </script>
