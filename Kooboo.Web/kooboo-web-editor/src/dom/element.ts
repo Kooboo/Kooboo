@@ -26,16 +26,18 @@ export function createInput() {
   return el;
 }
 
-export function createLabelInput(text: string, labelWidth?: number, inputWidth?: number) {
+export function createLabelInput(text: string, labelWidth?: string) {
   let el = createDiv();
   el.classList.add("kb_web_editor_label_input");
   let label = createDiv();
   label.innerText = text;
+  let inputContainer = createDiv();
   let input = createInput();
-  if (labelWidth != undefined) label.style.width = labelWidth + "px";
-  if (inputWidth != undefined) input.style.width = inputWidth + "px";
+  inputContainer.appendChild(input);
+  if (labelWidth != undefined) label.style.width = labelWidth;
+  if (labelWidth != undefined) inputContainer.style.left = labelWidth;
   el.appendChild(label);
-  el.appendChild(input);
+  el.appendChild(inputContainer);
   type inputHandler = (input: Event) => void;
   return {
     input: el,

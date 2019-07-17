@@ -47,5 +47,10 @@ export function createDomLinkPanel() {
     }
   }
 
+  if (contiainer.children.length > 0) {
+    let el = contiainer.children.item(contiainer.children.length - 1) as HTMLElement;
+    el.style.borderBottom = "none";
+  }
+
   return contiainer;
 }

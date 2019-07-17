@@ -67,7 +67,9 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
   let element = e.getElement() as HTMLElement;
   e.remove();
 
-  if (startContent != element.innerHTML) {
+  let clearContent = (c: string) => clearKoobooInfo(c).replace(/\s/g, "");
+
+  if (clearContent(startContent) != clearContent(element.innerHTML)) {
     let { koobooId, parent } = getCleanParent(args.element);
     let comments = KoobooComment.getComments(args.element);
     let dirtyEl = parent && isDirty(args.element) ? parent : element;

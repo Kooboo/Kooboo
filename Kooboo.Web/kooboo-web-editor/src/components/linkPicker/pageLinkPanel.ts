@@ -15,6 +15,7 @@ export async function createPageLinkPanel(oldValue: string) {
     if (i.getContent() == oldValue) i.setChecked(true);
     el.appendChild(i.radio);
   });
+  if (radios.length > 0) radios[radios.length - 1].radio.style.borderBottom = "none";
   return {
     pageLinkPanel: el,
     getContent: () => selectedItem

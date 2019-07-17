@@ -61,19 +61,21 @@ function addColor(container: HTMLElement, el: HTMLElement) {
 function addFont(container: HTMLElement, el: HTMLElement) {
   container.appendChild(createSpliter(TEXT.FONT));
   let style = getComputedStyle(el);
-  let size = createLabelInput(TEXT.FONT_SIZE, 75, 120);
+  let size = createLabelInput(TEXT.FONT_SIZE, "80px");
+  size.input.style.width = "50%";
   size.setContent(style.fontSize!);
   size.setInputHandler(content => {
     el.style.fontSize = (content.target! as HTMLInputElement).value;
   });
   container.appendChild(size.input);
-  let weight = createLabelInput(TEXT.FONT_WEIGHT, 75, 120);
+  let weight = createLabelInput(TEXT.FONT_WEIGHT, "80px");
+  weight.input.style.width = "50%";
   weight.setContent(style.fontWeight!);
   weight.setInputHandler(content => {
     el.style.fontWeight = (content.target! as HTMLInputElement).value;
   });
   container.appendChild(weight.input);
-  let family = createLabelInput(TEXT.FONT_FAMILY, 75, 325);
+  let family = createLabelInput(TEXT.FONT_FAMILY, "80px");
   family.setContent(style.fontFamily!);
   family.setInputHandler(content => {
     el.style.fontFamily = (content.target! as HTMLInputElement).value;
@@ -85,14 +87,16 @@ function addSize(container: HTMLElement, el: HTMLElement) {
   container.appendChild(createSpliter(TEXT.SIZE));
   let style = getComputedStyle(el);
 
-  let width = createLabelInput(TEXT.WIDTH, 75, 120);
+  let width = createLabelInput(TEXT.WIDTH, "80px");
+  width.input.style.width = "50%";
   width.setContent(style.width!);
   width.setInputHandler(content => {
     el.style.width = (content.target! as HTMLInputElement).value;
   });
   container.appendChild(width.input);
 
-  let height = createLabelInput(TEXT.HEIGHT, 75, 120);
+  let height = createLabelInput(TEXT.HEIGHT, "80px");
+  height.input.style.width = "50%";
   height.setContent(style.height!);
   height.setInputHandler(content => {
     el.style.height = (content.target! as HTMLInputElement).value;

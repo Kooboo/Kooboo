@@ -2,9 +2,7 @@ import { createDiv } from "@/dom/element";
 
 export function createBody(height?: string) {
   let el = createDiv();
-  el.style.margin = "0 20px";
-  el.style.maxHeight = "80%";
-  el.style.overflowY = "auto";
+  el.classList.add("kb_web_editor_modal_body");
   if (height != undefined) el.style.height = height;
 
   type setContent = (content: string | HTMLElement) => void;
