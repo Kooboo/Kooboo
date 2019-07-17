@@ -475,7 +475,6 @@ $(function() {
 
     function generatePageTableData(pages) {
         var _pages = [];
-
         pages.forEach(function(page) {
             var date = new Date(page.lastModified);
             var model = {
@@ -522,16 +521,25 @@ $(function() {
                     url: page.inlineUrl,
                     newWindow: true,
                     class: "btn-primary hidden-xs"
+                },
+                design2: {
+                    text: Kooboo.text.site.page.design+"(new)",
+                    url: page.inlineUrl+"&new=true",
+                    newWindow: true,
+                    class: "btn-primary hidden-xs"
                 }
             };
             _pages.push(model);
         })
-
+        
         var tableActions = [{
             fieldName: "setting",
             type: "link-btn"
         }, {
             fieldName: "design",
+            type: "link-btn"
+        }, {
+            fieldName: "design2",
             type: "link-btn"
         }];
 

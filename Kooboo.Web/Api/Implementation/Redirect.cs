@@ -61,6 +61,7 @@ namespace Kooboo.Web.Api.Implementation
 
             var sitedb = call.Context.WebSite.SiteDb();
             var siteid = call.GetValue<Guid>("SiteId");
+            var isNewEditor = call.GetValue<bool>("new");
             var pageid = call.GetValue<Guid>("PageId");
             var isMobile = call.GetValue<bool>("isMobile");//for test using browser
             var route = sitedb.Routes.GetByObjectId(pageid);
@@ -80,6 +81,9 @@ namespace Kooboo.Web.Api.Implementation
             if (IsMobile(call)|| isMobile)
             {
                 url = "/_Admin/Phone/Index";
+            }
+            else if(isNewEditor){
+                url = "/_Admin/Sites/Edit2";
             }
             else
             {
