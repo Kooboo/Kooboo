@@ -171,7 +171,7 @@ namespace Kooboo.Data.Models
 
         public bool AutoDetectCulture { get; set; }
 
-        public bool ContinueDownload { get; set; } = true;
+        public bool ContinueDownload { get; set; } = false;
 
         public bool Published { get; set; } = true;
 
