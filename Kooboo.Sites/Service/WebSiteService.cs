@@ -274,6 +274,11 @@ namespace Kooboo.Sites.Service
 
         public static async Task<string> RenderCustomError(FrontContext context, int statusCode)
         {
+            if (!string.IsNullOrEmpty(context.RenderContext.Response.RedirectLocation))
+            {
+                return null; 
+            }
+
             var url = GetCustomErrorUrl(context.WebSite, statusCode);
             return await RenderCustomErrorPage(context, url);  
         }
