@@ -6,7 +6,7 @@ import { createEditorShade } from "./components/editorShade";
 import { listenHover, listenClick } from "./dom/events";
 import { stopLinkElementClick } from "./common/utils";
 import { addParentStyle } from "./kooboo/outsideInterfaces";
-import { createContainer } from "./components/common";
+import { createContainer } from "./components/common/editorContainer";
 import { createElementNav } from "./components/elementNav";
 
 addParentStyle();

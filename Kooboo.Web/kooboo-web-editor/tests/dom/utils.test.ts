@@ -1,8 +1,21 @@
-import { getEditorContainer, getAllElement, getAllNode, isBody, isImg, isLink, canJump, previousNodes, nextNodes } from "@/dom/utils";
+import {
+  getEditorContainer,
+  getAllElement,
+  getAllNode,
+  isBody,
+  isImg,
+  isLink,
+  canJump,
+  previousNodes,
+  nextNodes,
+  getParentElements
+} from "@/dom/utils";
 import { HOVER_BORDER_SKIP } from "@/common/constants";
 import { previousComment } from "@/kooboo/utils";
 
 describe("utils", () => {
+  beforeEach(() => (document.body.innerHTML = ""));
+
   test("getEditorContainer", () => {
     let div = document.createElement("div");
     div.id = HOVER_BORDER_SKIP;
@@ -204,5 +217,21 @@ describe("utils", () => {
     expect((comment as Comment).nodeValue).toEqual(
       "#kooboo--objecttype='attribute'--nameorid='fbdc6f3b-19ea-565e-84f6-a174b9cfb8f0'--attributename='alt'--bindingvalue='{List_Item.Name}'--koobooid='1-0-1-1-1-1-1-1-1'"
     );
+  });
+
+  test("getParentElements", () => {
+    document.body.innerHTML = `
+      <div>
+        <p>
+          <i></i>
+        </p>
+      </div>
+    `;
+
+    let el = document.querySelector("i")!;
+    let elements = getParentElements(el);
+    let elements2 = getParentElements(el, false);
+    expect(elements.length).toBe(5);
+    expect(elements2.length).toBe(4);
   });
 });
