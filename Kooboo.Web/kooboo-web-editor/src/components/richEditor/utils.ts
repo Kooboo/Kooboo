@@ -15,7 +15,7 @@ import { DomLog } from "@/operation/recordLogs/DomLog";
 import { LabelLog } from "@/operation/recordLogs/LabelLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { HtmlblockLog } from "@/operation/recordLogs/HtmlblockLog";
-import { createDiv } from "@/dom/element";
+import { createDiv, createImg } from "@/dom/element";
 
 export async function impoveEditorUI(editor: Editor) {
   let container = editor.getContainer();
@@ -27,7 +27,7 @@ export async function impoveEditorUI(editor: Editor) {
       container.nextElementSibling.style.zIndex = STANDARD_Z_INDEX + 2 + "";
     }
     let toolbar = container.getElementsByClassName("tox-toolbar").item(0) as HTMLElement;
-    var moveBtn = document.createElement("img");
+    var moveBtn = createImg();
     moveBtn.draggable = true;
     moveBtn.style.cursor = "move";
     moveBtn.src = moveIcon;

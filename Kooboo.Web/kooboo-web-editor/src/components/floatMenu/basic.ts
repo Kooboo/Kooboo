@@ -4,7 +4,7 @@ import context from "../../common/context";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
 import expandIcon from "@/assets/icons/fangda.svg";
 import { STANDARD_Z_INDEX } from "@/common/constants";
-import { createDiv } from "@/dom/element";
+import { createDiv, createImg } from "@/dom/element";
 
 export interface MenuItem {
   el: HTMLElement;
@@ -92,7 +92,7 @@ function createTitle() {
 }
 
 function createCloseButton() {
-  const el = document.createElement("img");
+  const el = createImg();
   el.src = closeIcon;
   el.style.height = "16px";
   el.style.cssFloat = "right";
@@ -101,7 +101,7 @@ function createCloseButton() {
 }
 
 function createExpandButton() {
-  const el = document.createElement("img");
+  const el = createImg();
   el.src = expandIcon;
   el.style.height = "16px";
   el.style.cssFloat = "right";

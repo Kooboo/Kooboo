@@ -14,6 +14,7 @@ export default {
       "@": path.resolve(__dirname, "./src")
     }
   },
+  devtool: process.env.NODE_ENV == "development" ? "inline-source-map" : "",
   module: {
     rules: [
       { test: /\.tsx?$/, loader: "ts-loader" },

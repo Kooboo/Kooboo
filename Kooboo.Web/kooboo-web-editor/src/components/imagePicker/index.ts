@@ -2,7 +2,8 @@ import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
 import { getEditorContainer } from "@/dom/utils";
 import { pickImg } from "@/kooboo/outsideInterfaces";
-import { createDiv, createLabelInput, createImagePreview } from "@/dom/element";
+import { createDiv, createLabelInput } from "@/dom/element";
+import { createImagePreview } from "../common/imagePreview";
 
 export function createImagePicker(img: HTMLImageElement) {
   let container = createDiv();

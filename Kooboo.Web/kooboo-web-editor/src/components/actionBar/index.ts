@@ -7,13 +7,13 @@ import { getEditorContainer } from "@/dom/utils";
 import { createImageButton } from "./ImageButton";
 import { createLinkButton } from "./linkButton";
 
-export function createActionBar(document: Document) {
-  let container = createContainer(document);
-  container.appendChild(createMoveButton(document, container));
-  container.appendChild(createImageButton(document));
-  container.appendChild(createLinkButton(document));
-  container.appendChild(createPreviousButton(document));
-  container.appendChild(createNextButton(document));
-  container.appendChild(createSaveButton(document));
-  getEditorContainer().appendChild(container);
+export function createActionBar() {
+  let container = createContainer();
+  container.appendChild(createMoveButton(container));
+  container.appendChild(createImageButton());
+  container.appendChild(createLinkButton());
+  container.appendChild(createPreviousButton());
+  container.appendChild(createNextButton());
+  container.appendChild(createSaveButton());
+  return container;
 }

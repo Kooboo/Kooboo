@@ -2,8 +2,8 @@ import { createButton } from "./button";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";
 import { TEXT } from "@/common/lang";
 
-export function createMoveButton(document: Document, container: HTMLElement) {
-  var btn = createButton(document, moveIcon, TEXT.MOVE);
+export function createMoveButton(container: HTMLElement) {
+  var btn = createButton(moveIcon, TEXT.MOVE);
   btn.draggable = true;
   btn.style.cursor = "move";
 

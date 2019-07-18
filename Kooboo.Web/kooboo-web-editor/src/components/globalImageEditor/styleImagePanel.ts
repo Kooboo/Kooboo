@@ -9,7 +9,8 @@ import { operationRecord } from "@/operation/Record";
 import context from "@/common/context";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import { createDiv, createImagePreview } from "@/dom/element";
+import { createDiv } from "@/dom/element";
+import { createImagePreview } from "../common/imagePreview";
 
 export function createStyleImagePanel() {
   let contiainer = createDiv();

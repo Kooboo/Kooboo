@@ -4,7 +4,8 @@ import { setImagePreview } from "./utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { KOOBOO_ID } from "@/common/constants";
 import { getCleanParent, isDirty } from "@/kooboo/utils";
-import { createDiv, createImagePreview } from "@/dom/element";
+import { createDiv } from "@/dom/element";
+import { createImagePreview } from "../common/imagePreview";
 
 export function createDomImagePanel() {
   let contiainer = createDiv();

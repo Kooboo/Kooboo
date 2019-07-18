@@ -11,6 +11,7 @@ import { operationRecord } from "@/operation/Record";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { KOOBOO_ID } from "@/common/constants";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import { createImg } from "@/dom/element";
 
 export function createReplaceToImgItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.REPLACE_TO_IMG, MenuActions.replaceToImg);
@@ -34,7 +35,7 @@ export function createReplaceToImgItem(): MenuItem {
     let startContent = parent!.innerHTML;
     try {
       let style = getComputedStyle(args.element);
-      let img = document.createElement("img");
+      let img = createImg();
       img.setAttribute(KOOBOO_ID, args.koobooId!);
       img.style.width = style.width;
       img.style.height = style.height;

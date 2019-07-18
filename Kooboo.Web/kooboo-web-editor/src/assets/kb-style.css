@@ -123,6 +123,13 @@
   margin-bottom: 10px;
 }
 
+.kb_action_bar_btn>img{
+  width: 50%;
+  margin-left: 25%;
+  height: 50%;
+  margin-top: 25%;
+}
+
 .kb_action_bar_btn:hover {
   background-color: #eee;
 }

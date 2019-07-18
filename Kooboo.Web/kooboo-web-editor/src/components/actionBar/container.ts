@@ -1,7 +1,7 @@
 import { STANDARD_Z_INDEX } from "@/common/constants";
 import { createDiv } from "@/dom/element";
 
-export function createContainer(document: Document) {
+export function createContainer() {
   let container = createDiv();
   container.style.position = "fixed";
   container.style.width = "60px";

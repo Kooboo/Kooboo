@@ -8,7 +8,8 @@ import context from "@/common/context";
 import { operationRecord } from "@/operation/Record";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { getAttributeComment } from "../floatMenu/utils";
-import { createDiv, createImagePreview } from "@/dom/element";
+import { createDiv } from "@/dom/element";
+import { createImagePreview } from "../common/imagePreview";
 
 export function createContentImagePanel() {
   let contiainer = createDiv();

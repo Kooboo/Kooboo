@@ -22,7 +22,8 @@ export async function editHtmlBlock(nameOrId: string) {
   let url = Kooboo.Route.Get(Kooboo.Route.HtmlBlock.DialogPage, {
     nameOrId: nameOrId
   });
-  let iframe = createIframe(url);
+  let iframe = createIframe();
+  iframe.src = url;
   iframe.style.height = "600px";
   const { modal, setOkHandler, close } = createModal(TEXT.EDIT_HTML_BLOCK, iframe.outerHTML);
   parentBody.appendChild(modal);
@@ -43,7 +44,8 @@ export function editRepeat(nameOrId: string, folderId: string) {
     folder: folderId
   });
 
-  let iframe = createIframe(url);
+  let iframe = createIframe();
+  iframe.src = url;
   iframe.style.height = "600px";
   const { modal, setOkHandler, close } = createModal(TEXT.EDIT_REPEAT, iframe.outerHTML);
   parentBody.appendChild(modal);
@@ -62,7 +64,8 @@ export function editMenu(nameOrId: string, callback: (content: string) => void) 
   var url = Kooboo.Route.Get(Kooboo.Route.Menu.DialogPage, {
     nameOrId: nameOrId
   });
-  let iframe = createIframe(url);
+  let iframe = createIframe();
+  iframe.src = url;
   iframe.style.height = "600px";
   const { modal, hideCancel } = createModal(TEXT.EDIT_MENU, iframe.outerHTML);
   hideCancel();

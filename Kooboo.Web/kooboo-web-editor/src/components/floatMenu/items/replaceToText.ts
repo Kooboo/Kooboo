@@ -4,11 +4,12 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
 import { getFirstComment, isViewComment } from "../utils";
-import { isDynamicContent, setGuid, getCleanParent } from "@/kooboo/utils";
+import { isDynamicContent, getCleanParent } from "@/kooboo/utils";
 import { setInlineEditor } from "@/components/richEditor";
 import { KOOBOO_ID, KOOBOO_DIRTY } from "@/common/constants";
 import { emitSelectedEvent, emitHoverEvent } from "@/dom/events";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import { createP } from "@/dom/element";
 
 export function createReplaceToTextItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.REPLACE_TO_TEXT, MenuActions.replaceToText);
@@ -29,7 +30,7 @@ export function createReplaceToTextItem(): MenuItem {
     let { parent } = getCleanParent(args.element);
     let startContent = parent!.innerHTML;
     try {
-      let text = document.createElement("p");
+      let text = createP();
       let style = getComputedStyle(args.element);
       text.setAttribute(KOOBOO_ID, args.koobooId!);
       text.setAttribute(KOOBOO_DIRTY, "");

@@ -5,8 +5,8 @@ import { createNotice } from "./Notice";
 import context from "@/common/context";
 import { TEXT } from "@/common/lang";
 
-export function createNextButton(document: Document) {
-  var nextBtn = createButton(document, nextIcon, TEXT.NEXT);
+export function createNextButton() {
+  var nextBtn = createButton(nextIcon, TEXT.NEXT);
   nextBtn.onclick = () => context.operationManager.next();
   var nextNotice = createNotice(document);
   nextBtn.appendChild(nextNotice);
