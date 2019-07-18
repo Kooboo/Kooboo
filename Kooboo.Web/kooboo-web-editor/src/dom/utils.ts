@@ -15,7 +15,7 @@ export function getMaxWidth() {
 }
 
 export function isInEditorContainer(e: MouseEvent) {
-  return ((e as any).path as Array<HTMLElement>).some(s => {
+  return getParentElements(e.target as HTMLElement).some(s => {
     if (s instanceof HTMLElement) return s.id == HOVER_BORDER_SKIP;
     return false;
   });
@@ -102,4 +102,14 @@ export function* nextNodes(node: Node, containSelf = false, includeParent = fals
     } else break;
     yield node;
   }
+}
+
+export function getParentElements(el: HTMLElement, includeSelf: boolean = true) {
+  let elements: HTMLElement[] = [];
+  if (includeSelf) elements.push(el);
+  while (el) {
+    el = el.parentElement!;
+    if (el) elements.push(el);
+  }
+  return elements;
 }

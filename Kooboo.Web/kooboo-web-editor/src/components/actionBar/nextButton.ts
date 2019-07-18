@@ -8,7 +8,7 @@ import { TEXT } from "@/common/lang";
 export function createNextButton() {
   var nextBtn = createButton(nextIcon, TEXT.NEXT);
   nextBtn.onclick = () => context.operationManager.next();
-  var nextNotice = createNotice(document);
+  var nextNotice = createNotice();
   nextBtn.appendChild(nextNotice);
   context.operationEvent.addEventListener(e => {
     nextNotice.setCount(e.backupOperationCount);

@@ -1,20 +1,16 @@
-import { HOVER_BORDER_WIDTH, STANDARD_Z_INDEX } from "../../common/constants";
+import { STANDARD_Z_INDEX } from "../../common/constants";
 import { Position, updatePositon } from "@/common/Position";
 import { createDiv } from "@/dom/element";
 
-const applyStyle = (css: CSSStyleDeclaration) => {
-  css.position = "absolute";
-  css.display = "block";
-  css.pointerEvents = "none";
-  css.backgroundColor = "#1fb5f6a3";
-  css.width = HOVER_BORDER_WIDTH + "px";
-  css.height = HOVER_BORDER_WIDTH + "px";
-  css.zIndex = STANDARD_Z_INDEX - 2 + "";
-};
-
-export const createLine = () => {
+export const createLine = (width: number, color: string) => {
   let el = createDiv();
-  applyStyle(el.style);
+  el.style.position = "absolute";
+  el.style.display = "block";
+  el.style.pointerEvents = "none";
+  el.style.backgroundColor = color;
+  el.style.width = width + "px";
+  el.style.height = width + "px";
+  el.style.zIndex = STANDARD_Z_INDEX - 2 + "";
 
   const update = (position: Position) => updatePositon(position, el);
 

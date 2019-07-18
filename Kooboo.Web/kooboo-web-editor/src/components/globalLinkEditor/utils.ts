@@ -1,5 +1,5 @@
 import { TEXT } from "@/common/lang";
-import { emitHoverEvent } from "@/dom/events";
+import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
 import { createButton, createDiv } from "@/dom/element";
 
 export function createLinkItem(el: HTMLElement, onEdit: () => void) {
@@ -8,6 +8,7 @@ export function createLinkItem(el: HTMLElement, onEdit: () => void) {
   item.onmouseover = () => {
     el.scrollIntoView();
     emitHoverEvent(el);
+    emitSelectedEvent();
   };
   let label = createDiv();
   label.innerText = el.getAttribute("href")!;

@@ -1,4 +1,4 @@
-import { emitHoverEvent } from "@/dom/events";
+import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
 
 export function setImagePreview(preview: HTMLDivElement, el: HTMLElement) {
   preview.style.width = "150px";
@@ -9,5 +9,6 @@ export function setImagePreview(preview: HTMLDivElement, el: HTMLElement) {
   preview.onmouseover = () => {
     el.scrollIntoView();
     emitHoverEvent(el);
+    emitSelectedEvent();
   };
 }

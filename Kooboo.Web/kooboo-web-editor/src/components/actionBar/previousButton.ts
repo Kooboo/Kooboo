@@ -8,7 +8,7 @@ import { TEXT } from "@/common/lang";
 export function createPreviousButton() {
   var preBtn = createButton(preIcon, TEXT.PREVIOUS);
   preBtn.onclick = () => context.operationManager.previous();
-  var preNotice = createNotice(document);
+  var preNotice = createNotice();
   preBtn.appendChild(preNotice);
   context.operationEvent.addEventListener(e => {
     preNotice.setCount(e.operationCount);
