@@ -213,7 +213,16 @@ namespace Kooboo.Data.Server
                 Microsoft.Extensions.Primitives.StringValues host;
                 req.Headers.TryGetValue("Host", out host);
 
-                httprequest.Host = host.First().ToString();
+
+                string domainhost = host.First().ToString();
+                int delimiterIndex = domainhost.IndexOf(":");
+                if (delimiterIndex > 0)
+                {
+                    domainhost = domainhost.Substring(0, delimiterIndex);
+                }
+
+                httprequest.Host = domainhost;
+  
 
                 foreach (var item in req.Headers)
                 {
