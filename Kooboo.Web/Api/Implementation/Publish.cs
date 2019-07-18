@@ -282,6 +282,13 @@ namespace Kooboo.Web.Api.Implementation
             bool hasqueue = false;
             Kooboo.Sites.TaskQueue.TaskExecutor.PostSyncObjectTask executor = new Sites.TaskQueue.TaskExecutor.PostSyncObjectTask();
 
+            string username = call.Context.User.UserName;
+            string password = call.Context.User.Password; 
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                password = call.Context.User.PasswordHash.ToString(); 
+            }
+
             foreach (var item in ids)
             {
                 var eachsync = SyncService.Prepare(sitedb, item);
@@ -289,8 +296,8 @@ namespace Kooboo.Web.Api.Implementation
                 postobject.SyncObject = eachsync;
                 postobject.RemoteSiteId = setting.RemoteWebSiteId;
                 postobject.RemoteUrl = serveapiurl;
-                postobject.UserName = call.Context.User.UserName; 
-                postobject.Password = call.Context.User.PasswordHash.ToString();
+                postobject.UserName = username; 
+                postobject.Password = password;
                 postobject.RemoteSiteId = setting.RemoteWebSiteId;
 
                 if (DirectSubmit)
