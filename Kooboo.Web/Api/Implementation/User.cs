@@ -173,7 +173,7 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             var user = call.Context.User; 
-            if (string.IsNullOrWhiteSpace(user.Password) && user.PasswordHash == default(Guid))
+            if (string.IsNullOrWhiteSpace(Data.Service.UserLoginService.GetUserPassword(user)))
             {
                 var dbuser = GlobalDb.Users.Get(user.Id); 
                 if (dbuser !=null)

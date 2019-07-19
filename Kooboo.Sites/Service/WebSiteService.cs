@@ -40,7 +40,7 @@ namespace Kooboo.Sites.Service
                     clsmanager = null;
                 }
 
-                sitedb.ImagePool.ClearAll(); 
+                sitedb.ImagePool.ClearAll();
                 //website.Locked = true; 
                 website.EnableDiskSync = false;
                 website.EnableFrontEvents = false;
@@ -61,15 +61,15 @@ namespace Kooboo.Sites.Service
                 sitedb.ImageLog.DelSelf();
                 sitedb.ErrorLog.DelSelf();
                 sitedb.DatabaseDb.Close();
- 
+
                 sitedb.DatabaseDb.deleteDatabase();
 
                 if (Kooboo.Data.DB.HasKDatabase(website))
                 {
                     var kdb = Kooboo.Data.DB.GetKDatabase(website);
-                    kdb.deleteDatabase(); 
+                    kdb.deleteDatabase();
                 }
-                 
+
                 Thread.Sleep(20);
 
                 Cache.WebSiteCache.RemoveWebSitePlan(website.Id);
@@ -208,16 +208,16 @@ namespace Kooboo.Sites.Service
                 }
                 else if (statusCode == 403)
                 {
-                    return DataConstants.Default403Page; 
+                    return DataConstants.Default403Page;
                 }
                 else if (statusCode == 407)
                 {
-                    return DataConstants.Default407Page; 
+                    return DataConstants.Default407Page;
                 }
 
                 else if (statusCode == 402)
                 {
-                    return DataConstants.Default402Page; 
+                    return DataConstants.Default402Page;
                 }
 
                 return DataConstants.DefaultError;
@@ -228,69 +228,87 @@ namespace Kooboo.Sites.Service
 
         public static List<WebSite> ListByUser(User user)
         {
-            var sites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(user.CurrentOrgId);  
+            var sites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(user.CurrentOrgId);
 
             if (user.IsAdmin)
             {
-                return sites; 
+                return sites;
             }
 
             List<WebSite> ownsites = new List<WebSite>();
             foreach (var item in sites)
             {
 
-                var sitedb = item.SiteDb(); 
-                if (sitedb.SiteUser.All().Find(o=>o.UserId == user.Id) !=null)
+                var sitedb = item.SiteDb();
+                if (sitedb.SiteUser.All().Find(o => o.UserId == user.Id) != null)
                 {
-                    ownsites.Add(item); 
+                    ownsites.Add(item);
                 }
-
             }
-
-            return ownsites; 
-
+            return ownsites;
         }
 
-        public static WebSite AddNewSite(Guid organizationId, string SiteName,string FullDomain, Guid UserId)
+        public static List<WebSite> RemoteListByUser(Guid UserId, Guid OrgId)
+        {
+            List<WebSite> sites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(OrgId);
+
+            if (UserId == OrgId)
+            {
+                return sites;
+            }
+
+            List<WebSite> ownsites = new List<WebSite>();
+            foreach (var item in sites)
+            {
+                var sitedb = item.SiteDb();
+                if (sitedb.SiteUser.All().Find(o => o.UserId == UserId) != null)
+                {
+                    ownsites.Add(item);
+                }
+            }
+            return ownsites;
+        }
+
+        public static WebSite AddNewSite(Guid organizationId, string SiteName, string FullDomain, Guid UserId)
         {
             var newsite = GlobalDb.WebSites.AddNewWebSite(organizationId, SiteName, FullDomain);
-            
+
             if (!GlobalDb.Users.IsAdmin(organizationId, UserId))
             {
-                string name = null; 
+                string name = null;
 
-                var user = GlobalDb.Users.Get(UserId); 
-                 if(user !=null)
+                var user = GlobalDb.Users.Get(UserId);
+                if (user != null)
                 {
-                    name = user.UserName; 
+                    name = user.UserName;
                 }
 
                 var sitedb = newsite.SiteDb();
-                sitedb.SiteUser.AddOrUpdate(new Models.SiteUser() { Id = UserId, UserId = UserId, Role = Authorization.EnumUserRole.SiteMaster, Name = name });  
+                sitedb.SiteUser.AddOrUpdate(new Models.SiteUser() { Id = UserId, UserId = UserId, Role = Authorization.EnumUserRole.SiteMaster, Name = name });
             }
 
-            return newsite; 
+            return newsite;
         }
 
         public static async Task<string> RenderCustomError(FrontContext context, int statusCode)
         {
             if (!string.IsNullOrEmpty(context.RenderContext.Response.RedirectLocation))
             {
-                return null; 
+                return null;
             }
 
-            if (context.RenderContext.Response.Body !=null && context.RenderContext.Response.Body.Length >0)
+            if (context.RenderContext.Response.Body != null && context.RenderContext.Response.Body.Length > 0)
             {
-                return null; 
+                return null;
             }
 
             var url = GetCustomErrorUrl(context.WebSite, statusCode);
-            return await RenderCustomErrorPage(context, url);  
+            return await RenderCustomErrorPage(context, url);
         }
 
         public static async Task<string> RenderCustomErrorPage(FrontContext context, string relativeUrl)
         {
-            string rawcontent = null; 
+            string rawcontent = null;
 
             if (relativeUrl == DataConstants.Default403Page || relativeUrl == DataConstants.Default407Page || relativeUrl == DataConstants.Default404Page || relativeUrl == DataConstants.Default402Page || relativeUrl == DataConstants.Default500Page || relativeUrl == DataConstants.DefaultError)
             {
@@ -302,10 +320,10 @@ namespace Kooboo.Sites.Service
                 }
                 if (System.IO.File.Exists(filename))
                 {
-                    return System.IO.File.ReadAllText(filename); 
+                    return System.IO.File.ReadAllText(filename);
                 }
             }
-            else 
+            else
             {
                 var route = Kooboo.Sites.Routing.ObjectRoute.GetRoute(context.SiteDb, relativeUrl);
                 if (route != null)
@@ -322,13 +340,13 @@ namespace Kooboo.Sites.Service
                 {
                     string baseurl = context.RenderContext.WebSite.BaseUrl(relativeUrl);
                     string result = Kooboo.Sites.Service.HtmlHeadService.SetBaseHref(rawcontent, baseurl);
-                    return result; 
+                    return result;
                 }
             }
-             
-            return "Internal Server Error"; 
+
+            return "Internal Server Error";
         }
- 
+
 
     }
 }
