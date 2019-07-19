@@ -1,5 +1,7 @@
 import { createDiv } from "@/dom/element";
 import { STANDARD_Z_INDEX } from "@/common/constants";
+import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
+import context from "@/common/context";
 
 export function createNavBar() {
   const el = createDiv();
@@ -22,6 +24,14 @@ export function createNavBar() {
     el.style.display = "inline-block";
     for (const i of elements) {
       let item = createDiv();
+      if (i.tagName != "HTML") {
+        item.onclick = e => {
+          context.lastMouseEventArg = e;
+          emitHoverEvent(i);
+          emitSelectedEvent();
+          e.stopPropagation();
+        };
+      }
       item.innerText = i.tagName;
       el.appendChild(item);
       if (i != elements[elements.length - 1]) el.appendChild(document.createTextNode("<"));

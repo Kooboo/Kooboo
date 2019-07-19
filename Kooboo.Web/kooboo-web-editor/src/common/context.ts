@@ -27,6 +27,7 @@ class Context {
   operationEvent: OperationEvent = new OperationEvent();
   floatMenuClickEvent: FloatMenuClickEvent = new FloatMenuClickEvent();
   hoverDomEvent: HoverDomEvent = new HoverDomEvent();
+  floatMenuClosing: boolean = false;
 }
 
 export default new Context();

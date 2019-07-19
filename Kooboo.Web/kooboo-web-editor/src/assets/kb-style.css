@@ -255,6 +255,8 @@
   color: #fff;
   display: inline-block;
   padding: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
 .kb_web_editor_action_bar_notice {

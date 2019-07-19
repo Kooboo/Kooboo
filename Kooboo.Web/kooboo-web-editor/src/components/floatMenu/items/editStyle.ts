@@ -60,7 +60,7 @@ export function createEditStyleItem(): MenuItem {
       let record = new operationRecord([unit], logs, guid);
       context.operationManager.add(record);
     } catch (error) {
-      if (startContent) args.element.setAttribute("style", startContent);
+      args.element.setAttribute("style", startContent!);
     }
   });
 
