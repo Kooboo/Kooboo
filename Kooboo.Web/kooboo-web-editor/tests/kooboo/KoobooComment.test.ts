@@ -112,50 +112,28 @@ describe("KoobooComment", () => {
     temp.innerHTML = `
     <!--#kooboo--objecttype='view'--nameorid='Testimony'--boundary='330'-->
     <section id="fh5co-testimony" data-section="testimony" kooboo-id="1-0">
+      <!--#kooboo--objecttype='attribute'--nameorid='2'--attributename='src'--bindingvalue='{List_Item.Icon}'--koobooid='1-0-1-1-1-1-1-1-1'-->
       <div class="container" kooboo-id="1-0-1">
-        <div class="row" kooboo-id="1-0-1-1">
-          <div class="col-md-12 to-animate" kooboo-id="1-0-1-1-1">
-            <div class="wrap-testimony" kooboo-id="1-0-1-1-1-1">
-              <div class="owl-carousel-fullwidth" kooboo-id="1-0-1-1-1-1-1">
-                <!--#kooboo--objecttype='contentrepeater'--nameorid='26571c99-dad5-cb9c-80a5-5858eb3aff04'--folderid='5e6ffc4d-a01b-d0c2-b416-f09f810d0094'--bindingvalue='ListTestimony_Item'--boundary='341'-->
-                <div class="item" kooboo-id="1-0-1-1-1-1-1-1">
-                  <!--#kooboo--objecttype='attribute'--nameorid='fbdc6f3b-19ea-565e-84f6-a174b9cfb8f0'--attributename='src'--bindingvalue='{List_Item.Icon}'--koobooid='1-0-1-1-1-1-1-1-1'-->
-                  <p>aaa</p>
-                  <!--#kooboo--objecttype='attribute'--nameorid='2'--attributename='src'--bindingvalue='{List_Item.Icon}'--koobooid='1-0-1-1-1-1-1-1-1'-->
-    
-                  <!--#kooboo--objecttype='attribute'--nameorid='1'--attributename='alt'--bindingvalue='{List_Item.Name}'--koobooid='1-0-1-1-1-1-1-1-1'-->
-                  <div
-                    class="testimony-slide active text-center"
-                    kooboo-id="1-0-1-1-1-1-1-1-1"
-                  >
-                    <figure kooboo-id="1-0-1-1-1-1-1-1-1-1">
-                      <!--#kooboo--objecttype='attribute'--nameorid='26571c99-dad5-cb9c-80a5-5858eb3aff04'--attributename='src'--bindingvalue='{ListTestimony_Item.TestimonyIcon}'--koobooid='1-0-1-1-1-1-1-1-1-1-1'-->
-                      <img
-                        alt="user"
-                        k-attributes="src {ListTestimony_Item.TestimonyIcon};"
-                        kooboo-id="1-0-1-1-1-1-1-1-1-1-1"
-                        src="/moban14-union/images/person4.jpg"
-                      />
-                    </figure>
-                    <blockquote kooboo-id="1-0-1-1-1-1-1-1-1-3"></blockquote>
-    
-                    <!--#kooboo--objecttype='content'--nameorid='26571c99-dad5-cb9c-80a5-5858eb3aff04'--bindingvalue='ListTestimony_Item.TestimonyName'--fieldname='TestimonyName'--koobooid='1-0-1-1-1-1-1-1-1-5'-->
-                    <span kooboo-id="1-0-1-1-1-1-1-1-1-5">name2</span> via
-                    <!--#kooboo--objecttype='content'--nameorid='26571c99-dad5-cb9c-80a5-5858eb3aff04'--bindingvalue='ListTestimony_Item.TestimonyFrom'--fieldname='TestimonyFrom'--koobooid='1-0-1-1-1-1-1-1-1-7'-->
-                    <a href="#" class="twitter" kooboo-id="1-0-1-1-1-1-1-1-1-7"
-                      >qq</a
-                    >
-                  </div>
-                </div>
-                <!--#kooboo--end=true--objecttype='contentrepeater'--boundary='341'-->
-              </div>
-            </div>
+        <div class="owl-carousel-fullwidth" kooboo-id="1-0-1-1-1-1-1">
+          <!--#kooboo--objecttype='contentrepeater'--nameorid='26571c99-dad5-cb9c-80a5-5858eb3aff04'--folderid='5e6ffc4d-a01b-d0c2-b416-f09f810d0094'--bindingvalue='ListTestimony_Item'--boundary='341'-->
+          <p>ccc</p>
+          <!--#kooboo--end=true--objecttype='contentrepeater'--boundary='341'-->
+          <!--#kooboo--objecttype='contentrepeater'--nameorid='26571c99-dad5-cb9c-80a5-5858eb3aff04'--folderid='5e6ffc4d-a01b-d0c2-b416-f09f810d0094'--bindingvalue='ListTestimony_Item'--boundary='341'-->
+          <div class="item" kooboo-id="1-0-1-1-1-1-1-1">
+            <!--#kooboo--objecttype='attribute'--nameorid='fbdc6f3b-19ea-565e-84f6-a174b9cfb8f0'--attributename='src'--bindingvalue='{List_Item.Icon}'--koobooid='1-0-1-1-1-1-1-1-1'-->
+            <p>aaa</p>
+            <!--#kooboo--objecttype='attribute'--nameorid='2'--attributename='src'--bindingvalue='{List_Item.Icon}'--koobooid='1-0-1-1-1-1-1-1-1'-->
+            <!--#kooboo--objecttype='attribute'--nameorid='1'--attributename='alt'--bindingvalue='{List_Item.Name}'--koobooid='1-0-1-1-1-1-1-1-1'-->
+            <div
+              class="testimony-slide active text-center"
+              kooboo-id="1-0-1-1-1-1-1-1-1"
+            ></div>
           </div>
+          <!--#kooboo--end=true--objecttype='contentrepeater'--boundary='341'-->
         </div>
       </div>
     </section>
     <!--#kooboo--end='true'--objecttype='view'--boundary='330'-->
-    
     `;
 
     let el = temp.querySelector("[kooboo-id='1-0-1-1-1-1-1-1-1']") as HTMLElement;

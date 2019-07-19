@@ -4,9 +4,6 @@ import { getAllNode } from "@/dom/utils";
 export class KoobooComment {
   private _infos!: string[];
 
-  /**
-   * dom kooboo info
-   */
   constructor(comment: string | Node | null) {
     let str = "";
 

@@ -9,5 +9,9 @@ export function createElementNav() {
     update(elements);
   });
 
+  context.editableEvent.addEventListener(e => {
+    if (e) el.style.display = "none";
+  });
+
   return el;
 }
