@@ -1,6 +1,5 @@
 import { getAllNode, getAllElement, isBody, previousNodes, nextNodes } from "../dom/utils";
 import { KoobooComment } from "./KoobooComment";
-import { KoobooId } from "./KoobooId";
 import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID, OBJECT_TYPE } from "../common/constants";
 import { newGuid } from "./outsideInterfaces";
 import { createDiv } from "@/dom/element";
@@ -48,37 +47,37 @@ export function getCloseElement(el: HTMLElement) {
   return closeElement;
 }
 
-export function getMaxKoobooId(el: HTMLElement) {
-  let id = el.getAttribute(KOOBOO_ID)!;
-  var koobooId = new KoobooId(id);
-  let nextTemp = el;
+// export function getMaxKoobooId(el: HTMLElement) {
+//   let id = el.getAttribute(KOOBOO_ID)!;
+//   var koobooId = new KoobooId(id);
+//   let nextTemp = el;
 
-  while (true) {
-    if (!nextTemp.nextElementSibling || !nextTemp.nextElementSibling.hasAttribute(KOOBOO_ID)) {
-      break;
-    }
+//   while (true) {
+//     if (!nextTemp.nextElementSibling || !nextTemp.nextElementSibling.hasAttribute(KOOBOO_ID)) {
+//       break;
+//     }
 
-    let nextId = nextTemp.nextElementSibling.getAttribute(KOOBOO_ID);
-    let nextKoobooId = new KoobooId(nextId!);
-    if (nextKoobooId.value > koobooId.value) koobooId = nextKoobooId;
-    nextTemp = nextTemp.nextElementSibling as HTMLElement;
-  }
+//     let nextId = nextTemp.nextElementSibling.getAttribute(KOOBOO_ID);
+//     let nextKoobooId = new KoobooId(nextId!);
+//     if (nextKoobooId.value > koobooId.value) koobooId = nextKoobooId;
+//     nextTemp = nextTemp.nextElementSibling as HTMLElement;
+//   }
 
-  let previousTemp = el;
+//   let previousTemp = el;
 
-  while (true) {
-    if (!previousTemp.previousElementSibling || !previousTemp.previousElementSibling.hasAttribute(KOOBOO_ID)) {
-      break;
-    }
+//   while (true) {
+//     if (!previousTemp.previousElementSibling || !previousTemp.previousElementSibling.hasAttribute(KOOBOO_ID)) {
+//       break;
+//     }
 
-    let previousId = previousTemp.previousElementSibling.getAttribute(KOOBOO_ID);
-    let previousKoobooId = new KoobooId(previousId!);
-    if (previousKoobooId.value > koobooId.value) koobooId = previousKoobooId;
-    previousTemp = previousTemp.previousElementSibling as HTMLElement;
-  }
+//     let previousId = previousTemp.previousElementSibling.getAttribute(KOOBOO_ID);
+//     let previousKoobooId = new KoobooId(previousId!);
+//     if (previousKoobooId.value > koobooId.value) koobooId = previousKoobooId;
+//     previousTemp = previousTemp.previousElementSibling as HTMLElement;
+//   }
 
-  return koobooId.next;
-}
+//   return koobooId.next;
+// }
 
 export function markDirty(el: HTMLElement, self: boolean = false) {
   for (const i of getAllElement(el, self)) {
