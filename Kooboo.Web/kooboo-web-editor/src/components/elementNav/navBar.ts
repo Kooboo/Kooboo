@@ -27,8 +27,12 @@ export function createNavBar() {
       if (i.tagName != "HTML") {
         item.onclick = e => {
           context.lastMouseEventArg = e;
-          emitHoverEvent(i);
           emitSelectedEvent();
+          e.stopPropagation();
+        };
+
+        item.onmouseover = e => {
+          emitHoverEvent(i);
           e.stopPropagation();
         };
       }

@@ -9,15 +9,15 @@ export function createImagePicker(img: HTMLImageElement) {
   let container = createDiv();
   let { imagePreview, setImage } = createImagePreview();
   imagePreview.style.margin = "8px auto 16px auto";
-  let style = getComputedStyle(img);
+  let style = JSON.parse(JSON.stringify(getComputedStyle(img)));
 
   setImage(img.src);
   imagePreview.onclick = () => {
     pickImg(path => {
+      setImage(path);
       img.src = path;
       img.style.width = style.width;
       img.style.height = style.height;
-      setImage(path);
     });
   };
   container.appendChild(imagePreview);
