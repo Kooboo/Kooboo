@@ -12,7 +12,12 @@ export async function createPageLinkPanel(oldValue: string) {
       i.setChecked(true);
       selectedItem = i.getContent();
     };
-    if (i.getContent() == oldValue) i.setChecked(true);
+
+    if (i.getContent() == oldValue) {
+      i.setChecked(true);
+      selectedItem = oldValue;
+    }
+
     el.appendChild(i.radio);
   });
   if (radios.length > 0) radios[radios.length - 1].radio.style.borderBottom = "none";

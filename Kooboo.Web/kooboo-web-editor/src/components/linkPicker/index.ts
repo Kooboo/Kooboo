@@ -17,11 +17,12 @@ export async function createLinkPicker(oldValue: string) {
     {
       title: TEXT.PAGE_LINK,
       panel: pageLinkPanel,
+      selected: !!getPageLinkContent(),
       getContent: getPageLinkContent
     },
     {
       title: TEXT.OUT_LINK,
-      selected: true,
+      selected: !getPageLinkContent(),
       panel: outLinkPanel,
       getContent: getOutLinkContent
     }
