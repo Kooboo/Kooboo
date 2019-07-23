@@ -14,7 +14,7 @@ export function createEditHtmlBlockItem(): MenuItem {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    if (!getHtmlBlockComment(comments)) setVisiable(false);
+    if (!getHtmlBlockComment(comments)) return setVisiable(false);
     if (hasOperation(context.operationManager)) {
       setReadonly();
     }

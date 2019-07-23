@@ -17,9 +17,9 @@ export function createEditRepeatImageItem(): MenuItem {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    if (!isImg(args.element)) setVisiable(false);
+    if (!isImg(args.element)) return setVisiable(false);
     let comment = getAttributeComment(comments, "src");
-    if (!comment || !comment.fieldname) setVisiable(false);
+    if (!comment || !comment.fieldname) return setVisiable(false);
   };
 
   el.addEventListener("click", async () => {

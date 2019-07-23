@@ -13,10 +13,10 @@ export function createEditImageItem(): MenuItem {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    if (!isImg(args.element)) setVisiable(false);
-    if (getAttributeComment(comments)) setVisiable(false);
-    if (!getViewComment(comments)) setVisiable(false);
-    if (isDynamicContent(args.element)) setVisiable(false);
+    if (!isImg(args.element)) return setVisiable(false);
+    if (getAttributeComment(comments)) return setVisiable(false);
+    if (!getViewComment(comments)) return setVisiable(false);
+    if (isDynamicContent(args.element)) return setVisiable(false);
   };
 
   el.addEventListener("click", async () => {

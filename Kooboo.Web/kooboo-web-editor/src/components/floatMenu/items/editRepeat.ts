@@ -16,8 +16,8 @@ export function createEditRepeatItem() {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    if (!getRepeatComment(comments) && !getRelatedRepeatComment(args.element)) setVisiable(false);
-    if (hasOperation(context.operationManager)) setReadonly();
+    if (!getRepeatComment(comments) && !getRelatedRepeatComment(args.element)) return setVisiable(false);
+    if (hasOperation(context.operationManager)) return setReadonly();
   };
 
   el.addEventListener("click", async () => {

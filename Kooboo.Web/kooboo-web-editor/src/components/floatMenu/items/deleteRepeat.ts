@@ -19,8 +19,8 @@ export function createDeleteRepeatItem(): MenuItem {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    if (isBody(args.element)) setVisiable(false);
-    if (!getRepeatComment(comments)) setVisiable(false);
+    if (isBody(args.element)) return setVisiable(false);
+    if (!getRepeatComment(comments)) return setVisiable(false);
   };
 
   el.addEventListener("click", () => {

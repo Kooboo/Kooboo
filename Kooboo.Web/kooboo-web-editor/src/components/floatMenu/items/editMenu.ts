@@ -16,7 +16,7 @@ export function createEditMenuItem() {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    if (!getMenuComment(comments)) setVisiable(false);
+    if (!getMenuComment(comments)) return setVisiable(false);
   };
 
   el.addEventListener("click", async () => {

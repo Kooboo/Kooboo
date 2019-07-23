@@ -22,11 +22,11 @@ export function createDeleteItem(): MenuItem {
     let comments = KoobooComment.getComments(args.element);
     let { parent } = getCleanParent(args.element);
     let firstComment = getFirstComment(comments);
-    if (!firstComment || !isEditComment(firstComment)) setVisiable(false);
-    if (getRepeatComment(comments)) setVisiable(false);
-    if (getHtmlBlockComment(comments)) setVisiable(false);
-    if (isViewComment(firstComment!) && parent && isDynamicContent(parent)) setVisiable(false);
-    if (isBody(args.element)) setVisiable(false);
+    if (!firstComment || !isEditComment(firstComment)) return setVisiable(false);
+    if (getRepeatComment(comments)) return setVisiable(false);
+    if (getHtmlBlockComment(comments)) return setVisiable(false);
+    if (isViewComment(firstComment!) && parent && isDynamicContent(parent)) return setVisiable(false);
+    if (isBody(args.element)) return setVisiable(false);
   };
 
   el.addEventListener("click", () => {

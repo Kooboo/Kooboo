@@ -18,7 +18,7 @@ export function createDeleteHtmlBlockItem(): MenuItem {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    if (!getHtmlBlockComment(comments)) setVisiable(false);
+    if (!getHtmlBlockComment(comments)) return setVisiable(false);
   };
 
   el.addEventListener("click", () => {

@@ -12,7 +12,7 @@ export function createEnterLinkItem(): MenuItem {
   const update = () => {
     setVisiable(true);
     let args = context.lastHoverDomEventArgs;
-    if (!canJump(args.element)) setVisiable(false);
+    if (!canJump(args.element)) return setVisiable(false);
   };
 
   el.addEventListener("click", () => {

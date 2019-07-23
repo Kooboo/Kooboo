@@ -12,7 +12,6 @@ export function createClickItem(): MenuItem {
 
   el.addEventListener("click", () => {
     let element = context.lastHoverDomEventArgs.element;
-    console.log(element);
     if ((element as any)._a) (element as any)._a.click();
     else element.click();
   });

@@ -14,12 +14,12 @@ export function createEditLinkItem(): MenuItem {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    if (getAttributeComment(comments)) setVisiable(false);
-    if (getRepeatComment(comments)) setVisiable(false);
-    if (getUrlComment(comments)) setVisiable(true);
-    if (!isLink(args.element)) setVisiable(false);
-    if (!getViewComment(comments)) setVisiable(false);
-    if (isDynamicContent(args.element)) setVisiable(false);
+    if (getAttributeComment(comments)) return setVisiable(false);
+    if (getRepeatComment(comments)) return setVisiable(false);
+    if (getUrlComment(comments)) return setVisiable(true);
+    if (!isLink(args.element)) return setVisiable(false);
+    if (!getViewComment(comments)) return setVisiable(false);
+    if (isDynamicContent(args.element)) return setVisiable(false);
   };
 
   el.addEventListener("click", async () => {

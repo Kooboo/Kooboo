@@ -14,14 +14,14 @@ export function createEditItem(): MenuItem {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    if (isBody(args.element)) setVisiable(false);
-    if (getMenuComment(comments)) setVisiable(false);
-    if (getFormComment(comments)) setVisiable(false);
-    if (!getEditComment(comments)) setVisiable(false);
+    if (isBody(args.element)) return setVisiable(false);
+    if (getMenuComment(comments)) return setVisiable(false);
+    if (getFormComment(comments)) return setVisiable(false);
+    if (!getEditComment(comments)) return setVisiable(false);
     var reExcept = /^img|button|input|textarea|br|hr$/i;
     let el = args.element;
-    if (reExcept.test(el.tagName)) setVisiable(false);
-    if (isDynamicContent(args.element)) setVisiable(false);
+    if (reExcept.test(el.tagName)) return setVisiable(false);
+    if (isDynamicContent(args.element)) return setVisiable(false);
   };
 
   el.addEventListener("click", () => {

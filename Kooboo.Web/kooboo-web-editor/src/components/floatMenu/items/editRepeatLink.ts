@@ -12,10 +12,10 @@ export function createEditRepeatLinkItem(): MenuItem {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    if (!isLink(args.element)) setVisiable(false);
-    if (!getViewComment(comments)) setVisiable(false);
+    if (!isLink(args.element)) return setVisiable(false);
+    if (!getViewComment(comments)) return setVisiable(false);
     let comment = getAttributeComment(comments, "href");
-    if (!comment || !comment.fieldname) setVisiable(false);
+    if (!comment || !comment.fieldname) return setVisiable(false);
   };
 
   el.addEventListener("click", async () => {

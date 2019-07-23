@@ -19,10 +19,10 @@ export function createEditStyleItem(): MenuItem {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
-    if (getMenuComment(comments)) setVisiable(false);
-    if (getFormComment(comments)) setVisiable(false);
-    if (getHtmlBlockComment(comments)) setVisiable(false);
-    if (!getViewComment(comments)) setVisiable(false);
+    if (getMenuComment(comments)) return setVisiable(false);
+    if (getFormComment(comments)) return setVisiable(false);
+    if (getHtmlBlockComment(comments)) return setVisiable(false);
+    if (!getViewComment(comments)) return setVisiable(false);
   };
 
   el.addEventListener("click", async () => {
