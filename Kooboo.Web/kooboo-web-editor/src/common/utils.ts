@@ -9,26 +9,29 @@ export function delay(time: number) {
 }
 
 export function setElementClick() {
-  for (const i of getAllElement(document.body)) {
+  for (const i of getAllElement(document.body, true)) {
     if (i instanceof HTMLElement) {
       if (isLink(i)) {
         let a = i.cloneNode(true);
         (a as any)._a = i;
         i.parentElement!.replaceChild(a, i);
-      } else {
-        i.onclick = e => {
-          if (e.isTrusted) {
-            e.stopPropagation();
-            e.preventDefault();
-          }
-
-          if (context.editing || isInEditorContainer(e)) return;
-          let element = context.lastHoverDomEventArgs.closeElement;
-          var args = new SelectedDomEventArgs(element);
-          context.lastMouseEventArg = e;
-          context.domChangeEvent.emit(args);
-        };
       }
+      holdUpClick(i);
     }
   }
+}
+
+export function holdUpClick(el: HTMLElement) {
+  el.onclick = e => {
+    if (e.isTrusted) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
+    if (context.editing || isInEditorContainer(e)) return;
+    let element = context.lastHoverDomEventArgs.closeElement;
+    var args = new SelectedDomEventArgs(element);
+    context.lastMouseEventArg = e;
+    context.domChangeEvent.emit(args);
+  };
 }
