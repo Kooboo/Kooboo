@@ -1,20 +1,21 @@
 import webpack from "webpack";
 import path from "path";
-export default {
+
+export default (env: any): webpack.Configuration => ({
   entry: "./src/index.ts",
   output: {
     path: path.resolve("../_Admin/Scripts/kooboo-web-editor"),
     filename: "kooboo-web-editor.min.js"
   },
-  watch: process.env.NODE_ENV == "development",
-  mode: process.env.NODE_ENV,
+  watch: env.NODE_ENV == "development",
+  mode: env.NODE_ENV,
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
     alias: {
       "@": path.resolve(__dirname, "./src")
     }
   },
-  devtool: process.env.NODE_ENV == "development" ? "inline-source-map" : "",
+  devtool: env.NODE_ENV == "development" ? "inline-source-map" : undefined,
   module: {
     rules: [
       { test: /\.tsx?$/, loader: "ts-loader" },
@@ -43,4 +44,4 @@ export default {
       }
     ]
   }
-} as webpack.Configuration;
+});

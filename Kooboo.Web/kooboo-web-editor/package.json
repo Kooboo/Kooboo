@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack",
-    "build": "cross-env NODE_ENV=production webpack",
-    "lint":"eslint --fix src/**.ts"
+    "start": "webpack --env.NODE_ENV=development",
+    "build": "webpack --env.NODE_ENV=production",
+    "lint": "eslint --fix src/**.ts"
   },
   "keywords": [],
   "author": "",
@@ -26,7 +26,6 @@
     "@types/webpack": "^4.4.32",
     "@typescript-eslint/eslint-plugin": "^1.9.0",
     "@typescript-eslint/parser": "^1.9.0",
-    "cross-env": "^5.2.0",
     "css-loader": "^3.0.0",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.3.0",
@@ -70,7 +69,7 @@
       "sourceType": "module"
     }
   },
-  "prettier":{
-    "printWidth":150
+  "prettier": {
+    "printWidth": 150
   }
 }
