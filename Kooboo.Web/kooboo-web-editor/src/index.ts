@@ -3,16 +3,15 @@ import { createActionBar } from "./components/actionBar";
 import { createFloatMenu } from "./components/floatMenu";
 import { createHoverBorder, createSelectedBorder } from "./components/selectorBorder";
 import { createEditorShade } from "./components/editorShade";
-import { listenHover, listenClick } from "./dom/events";
-import { stopLinkElementClick } from "./common/utils";
+import { listenHover } from "./dom/events";
+import { setElementClick } from "./common/utils";
 import { addParentStyle } from "./kooboo/outsideInterfaces";
 import { createContainer } from "./components/common/editorContainer";
 import { createElementNav } from "./components/elementNav";
 
 addParentStyle();
 listenHover();
-listenClick();
-stopLinkElementClick();
+setElementClick();
 
 const container = createContainer();
 container.appendChild(createHoverBorder());

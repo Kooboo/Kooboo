@@ -26,18 +26,6 @@ export function listenHover() {
   document.body.addEventListener("mousemove", mouseenter);
 }
 
-export function listenClick() {
-  document.body.addEventListener("click", e => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (context.editing || isInEditorContainer(e)) return;
-    let element = context.lastHoverDomEventArgs.closeElement;
-    var args = new SelectedDomEventArgs(element);
-    context.lastMouseEventArg = e;
-    context.domChangeEvent.emit(args);
-  });
-}
-
 export function emitHoverEvent(el: HTMLElement) {
   let closeElement = getCloseElement(el);
   if (closeElement == null) return;
