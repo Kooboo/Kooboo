@@ -210,6 +210,12 @@ namespace Kooboo.Data.Server
                 httprequest.Port = connection.LocalPort;
                 httprequest.IP = connection.RemoteIpAddress.ToString();
 
+                Microsoft.Extensions.Primitives.StringValues forwardip;
+                if (req.Headers.TryGetValue("X-Forwarded-For", out forwardip))
+                {
+                    httprequest.IP = forwardip.First(); 
+                }
+                 
                 Microsoft.Extensions.Primitives.StringValues host;
                 req.Headers.TryGetValue("Host", out host);
 

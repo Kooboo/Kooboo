@@ -6,7 +6,7 @@
 
 using System;
 using Kooboo.Data.Context;
-using Kooboo.HttpServer; 
+using Kooboo.HttpServer;
 using System.Threading.Tasks;
 using System.Linq;
 using System.IO;
@@ -18,7 +18,7 @@ using Kooboo.Lib.Helper;
 
 namespace Kooboo.Data.Server
 {
-     
+
     public class ServerHandler : IHttpHandler
     {
         public Func<RenderContext, Task> _handle;
@@ -41,9 +41,9 @@ namespace Kooboo.Data.Server
                 renderContext.Response.StatusCode = 500;
                 renderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(ex.Message);
                 await SetResponse(context, renderContext);
-            } 
+            }
         }
-         
+
 
         public static async Task<RenderContext> GetRenderContext(HttpContext httpContext)
         {
@@ -80,6 +80,8 @@ namespace Kooboo.Data.Server
             httprequest.RawRelativeUrl = url;
             httprequest.Method = context.Features.Request.Method.ToUpper();
             httprequest.IP = context.Features.Connection.RemoteEndPoint.Address.ToString();
+
+
             httprequest.Port = context.Features.Connection.LocalEndPoint.Port;
             httprequest.Scheme = context.Features.Request.Scheme;
 
@@ -87,6 +89,14 @@ namespace Kooboo.Data.Server
             {
                 httprequest.Headers.Add(item.Key, item.Value);
             }
+
+            var headerip = httprequest.Headers.Get("X-Forwarded-For");
+
+            if (!string.IsNullOrWhiteSpace(headerip))
+            {
+                httprequest.IP = headerip;
+            }
+
 
             foreach (var item in context.Features.Request.Query)
             {
@@ -233,7 +243,7 @@ namespace Kooboo.Data.Server
             }
             return cookies;
         }
-         
+
         public static async Task SetResponse(HttpContext context, RenderContext renderContext)
         {
             var response = renderContext.Response;
@@ -325,8 +335,8 @@ namespace Kooboo.Data.Server
                     {
                         response.Stream.CopyTo(context.Features.Response.Body);
                     }
-        
-                    else 
+
+                    else
                     {
                         // 404.   
                         string filename = Lib.Helper.IOHelper.CombinePath(AppSettings.RootPath, Kooboo.DataConstants.Default404Page) + ".html";
@@ -473,7 +483,7 @@ namespace Kooboo.Data.Server
             Log(renderContext);
             context = null;
         }
-         
+
         internal static string GetEncodedLocation(string location)
         {
             if (string.IsNullOrEmpty(location))
@@ -531,7 +541,7 @@ namespace Kooboo.Data.Server
         }
 
     }
-     
+
 }
 
 
