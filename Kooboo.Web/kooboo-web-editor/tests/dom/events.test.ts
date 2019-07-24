@@ -42,23 +42,6 @@ describe("events", () => {
         expect(hoverArg.closeElement.id).toEqual("test")
     })
 
-    test("listenHover_NoExistKoobooId", () => {
-        let hoverArg!: HoverDomEventArgs;
-        listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
-            hoverArg = arg;
-        })
-
-        document.body.innerHTML = '<h2 id="test">Kooboo CMS</h2>';
-        let element = document.body.children[0];
-
-        let event = document.createEvent("MouseEvent");
-        event.initEvent("mouseover", true)
-
-        element.dispatchEvent(event)
-
-        expect(hoverArg).toEqual(undefined)
-    })
-
     test("listenHover_hoverChild", () => {
         let hoverArg!: HoverDomEventArgs;
         listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
