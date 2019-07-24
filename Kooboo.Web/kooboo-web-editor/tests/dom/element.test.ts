@@ -1,93 +1,92 @@
 import {
-    createButton,
-    createDiv,
-    createInput,
-    createIframe,
-    createImg,
-    createP,
-    createPrimaryButton,
-    createLabelInput,
-    createRadioInput
-} from '@/dom/element'
+  createButton,
+  createDiv,
+  createInput,
+  createIframe,
+  createImg,
+  createP,
+  createPrimaryButton,
+  createLabelInput,
+  createRadioInput
+} from "@/dom/element";
 
-function getChildElementsForTagName(element: Element, tagName: string) : Array<Element>
-{
-    let elements = []
-    if(element.tagName.toLowerCase() == tagName){
-        elements.push(element)
-    }
+function getChildElementsForTagName(element: Element, tagName: string): Array<Element> {
+  let elements = [];
+  if (element.tagName.toLowerCase() == tagName) {
+    elements.push(element);
+  }
 
-    for(let n = 0; n < element.children.length; n++){
-        let childElements = getChildElementsForTagName(element.children[n], tagName)
-        elements = elements.concat(childElements)
-    }
-    
-    return elements;
+  for (let n = 0; n < element.children.length; n++) {
+    let childElements = getChildElementsForTagName(element.children[n], tagName);
+    elements = elements.concat(childElements);
+  }
+
+  return elements;
 }
 
-describe("element", ()=>{
-    beforeEach(()=>document.body.innerHTML = "")
+describe("element", () => {
+  beforeEach(() => (document.body.innerHTML = ""));
 
-    test("createButton", ()=>{
-        let element = createButton("testbtn");
+  test("createButton", () => {
+    let element = createButton("testbtn");
 
-        expect(element.tagName.toLowerCase()).toEqual("button")
-        expect(element.innerText).toEqual("testbtn")
-    })
+    expect(element.tagName.toLowerCase()).toEqual("button");
+    expect(element.innerText).toEqual("testbtn");
+  });
 
-    test("createDiv", ()=>{
-        let element = createDiv();
+  test("createDiv", () => {
+    let element = createDiv();
 
-        expect(element.tagName.toLowerCase()).toEqual("div")
-    })
+    expect(element.tagName.toLowerCase()).toEqual("div");
+  });
 
-    test("createInput", ()=>{
-        let element = createInput();
+  test("createInput", () => {
+    let element = createInput();
 
-        expect(element.tagName.toLowerCase()).toEqual("input")
-    })
+    expect(element.tagName.toLowerCase()).toEqual("input");
+  });
 
-    test("createIframe", ()=>{
-        let element = createIframe();
+  test("createIframe", () => {
+    let element = createIframe();
 
-        expect(element.tagName.toLowerCase()).toEqual("iframe")
-    })
+    expect(element.tagName.toLowerCase()).toEqual("iframe");
+  });
 
-    test("createImg", ()=>{
-        let element = createImg();
+  test("createImg", () => {
+    let element = createImg();
 
-        expect(element.tagName.toLowerCase()).toEqual("img")
-    })
+    expect(element.tagName.toLowerCase()).toEqual("img");
+  });
 
-    test("createP", ()=>{
-        let element = createP();
+  test("createP", () => {
+    let element = createP();
 
-        expect(element.tagName.toLowerCase()).toEqual("p")
-    })
+    expect(element.tagName.toLowerCase()).toEqual("p");
+  });
 
-    test("createPrimaryButton", ()=>{
-        let element = createPrimaryButton("testbtn");
+  test("createPrimaryButton", () => {
+    let element = createPrimaryButton("testbtn");
 
-        expect(element.tagName.toLowerCase()).toEqual("button")
-        expect(element.innerText).toEqual("testbtn")
-    })
+    expect(element.tagName.toLowerCase()).toEqual("button");
+    expect(element.innerText).toEqual("testbtn");
+  });
 
-    test("createLabelInput", ()=>{
-        let elementObject = createLabelInput("testInput", "100px");
-        elementObject.setContent("test")
+  test("createLabelInput", () => {
+    let elementObject = createLabelInput("testInput", "100px");
+    elementObject.setContent("test");
 
-        let input = getChildElementsForTagName(elementObject.input, "input")[0] as HTMLInputElement
-        expect(input.value).toEqual("test")
+    let input = getChildElementsForTagName(elementObject.input, "input")[0] as HTMLInputElement;
+    expect(input.value).toEqual("test");
 
-        let content = elementObject.getContent();
-        expect(content).toEqual("test")
-    })
+    let content = elementObject.getContent();
+    expect(content).toEqual("test");
+  });
 
-    test("createRadioInput", ()=>{
-        let elementObject = createRadioInput("testInput");
-        elementObject.setChecked(true)
+  test("createRadioInput", () => {
+    let elementObject = createRadioInput("testInput");
+    elementObject.setChecked(true);
 
-        let input = getChildElementsForTagName(elementObject.radio, "input")[0] as HTMLInputElement
-        expect(input.checked).toEqual(true)
-    })
-})
+    let input = getChildElementsForTagName(elementObject.radio, "input")[0] as HTMLInputElement;
+    expect(input.checked).toEqual(true);
+  });
+});

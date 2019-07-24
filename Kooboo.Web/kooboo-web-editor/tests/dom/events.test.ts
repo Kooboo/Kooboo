@@ -1,100 +1,96 @@
-import {
-    listenHover,
-    emitHoverEvent,
-    emitSelectedEvent
-} from '@/dom/events'
-import context from '@/common/context';
-import { HoverDomEventArgs } from '@/events/HoverDomEvent';
-import { SelectedDomEventArgs } from '@/events/SelectedDomEvent';
+import { listenHover, emitHoverEvent, emitSelectedEvent } from "@/dom/events";
+import context from "@/common/context";
+import { HoverDomEventArgs } from "@/events/HoverDomEvent";
+import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 
-function listenHoverAndSetEventHandle(handle: (e: HoverDomEventArgs) => void){
-    listenHover();
-    context.hoverDomEvent.addEventListener(handle);
+function listenHoverAndSetEventHandle(handle: (e: HoverDomEventArgs) => void) {
+  listenHover();
+  context.hoverDomEvent.addEventListener(handle);
 }
 
-function listenClickAndSetEventHandle(handle: (e: SelectedDomEventArgs) => void){
-    listenHover();
-    context.domChangeEvent.addEventListener(handle);
+function listenClickAndSetEventHandle(handle: (e: SelectedDomEventArgs) => void) {
+  listenHover();
+  context.domChangeEvent.addEventListener(handle);
 }
 
 describe("events", () => {
-    beforeEach(() => {
-        document.body.innerHTML = "";
-        context.hoverDomEvent.handlers
-        context.lastHoverDomEventArgs = undefined!
-    })
+  beforeEach(() => {
+    document.body.innerHTML = "";
+    context.hoverDomEvent.handlers;
+    context.lastHoverDomEventArgs = undefined!;
+  });
 
-    test("listenHover", () => {
-        let hoverArg!: HoverDomEventArgs;
-        listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
-            hoverArg = arg;
-        })
+  test("listenHover", () => {
+    let hoverArg!: HoverDomEventArgs;
+    listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
+      hoverArg = arg;
+    });
 
-        document.body.innerHTML = '<h2 id="test" kooboo-id="1-0-1-1-1-1-3">Kooboo CMS</h2>';
-        let element = document.body.children[0];
+    document.body.innerHTML = '<h2 id="test" kooboo-id="1-0-1-1-1-1-3">Kooboo CMS</h2>';
+    let element = document.body.children[0];
 
-        let event = document.createEvent("MouseEvent");
-        event.initEvent("mouseover", true)
+    let event = document.createEvent("MouseEvent");
+    event.initEvent("mouseover", true);
 
-        element.dispatchEvent(event)
+    element.dispatchEvent(event);
 
-        expect(hoverArg.element.id).toEqual("test")
-        expect(hoverArg.closeElement.id).toEqual("test")
-    })
+    expect(hoverArg.element.id).toEqual("test");
+    expect(hoverArg.closeElement.id).toEqual("test");
+  });
 
-    test("listenHover_hoverChild", () => {
-        let hoverArg!: HoverDomEventArgs;
-        listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
-            hoverArg = arg;
-        })
+  test("listenHover_hoverChild", () => {
+    let hoverArg!: HoverDomEventArgs;
+    listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
+      hoverArg = arg;
+    });
 
-        document.body.innerHTML = `
+    document.body.innerHTML = `
         <ul id="test" class="menu" kooboo-id="1-0-1-1-1-1-3">
             <li id="testli" class="className"></li>
         </ul>
         `;
-        let element = document.body.children[0].children[0];
+    let element = document.body.children[0].children[0];
 
-        let event = document.createEvent("MouseEvent");
-        event.initEvent("mouseover", true)
+    let event = document.createEvent("MouseEvent");
+    event.initEvent("mouseover", true);
 
-        element.dispatchEvent(event)
+    element.dispatchEvent(event);
 
-        expect(hoverArg.element.id).toEqual("testli")
-        expect(hoverArg.closeElement.id).toEqual("test")
-    })
+    expect(hoverArg.element.id).toEqual("testli");
+    expect(hoverArg.closeElement.id).toEqual("test");
+  });
 
-    test("listenHover_ExistKoobooComment", () => {
-        let hoverArg!: HoverDomEventArgs;
-        listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
-            hoverArg = arg;
-        })
+  test("listenHover_ExistKoobooComment", () => {
+    let hoverArg!: HoverDomEventArgs;
+    listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
+      hoverArg = arg;
+    });
 
-        document.body.innerHTML = `
+    document.body.innerHTML = `
         <!--#kooboo--objecttype='menu'--nameorid='headerMenu'--boundary='101'-->
         <ul id="test" class="menu">
             <li class="className"></li>
         </ul>
         <!--#kooboo--end='true'--objecttype='menu'--boundary='101'-->
         `;
-        let element = document.body.children[0];
+    let element = document.body.children[0];
 
-        let event = document.createEvent("MouseEvent");
-        event.initEvent("mouseover", true)
+    let event = document.createEvent("MouseEvent");
+    event.initEvent("mouseover", true);
 
-        element.dispatchEvent(event)
+    element.dispatchEvent(event);
 
-        expect(hoverArg.element.id).toEqual("test")
-        expect(hoverArg.closeElement.id).toEqual("test")
-    })
+    expect(hoverArg.element.id).toEqual("test");
+    expect(hoverArg.closeElement.id).toEqual("test");
+  });
 
-    test("listenHover_ExistOtherComment", () => {
-        let hoverArg!: HoverDomEventArgs;
-        listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
-            hoverArg = arg;
-        })
+  test("listenHover_ExistOtherComment", () => {
+    let hoverArg!: HoverDomEventArgs;
+    listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
+      hoverArg = arg;
+    });
 
-        document.body.innerHTML = `
+    document.body.innerHTML = `
         <!--#kooboo--objecttype='menu'--nameorid='headerMenu'--boundary='101'-->
         <!-- test comment -->
         <ul id="test" class="menu">
@@ -102,65 +98,65 @@ describe("events", () => {
         </ul>
         <!--#kooboo--end='true'--objecttype='menu'--boundary='101'-->
         `;
-        let element = document.body.children[0];
+    let element = document.body.children[0];
 
-        let event = document.createEvent("MouseEvent");
-        event.initEvent("mouseover", true)
+    let event = document.createEvent("MouseEvent");
+    event.initEvent("mouseover", true);
 
-        element.dispatchEvent(event)
+    element.dispatchEvent(event);
 
-        expect(hoverArg.element.id).toEqual("test")
-        expect(hoverArg.closeElement.id).toEqual("test")
-    })
+    expect(hoverArg.element.id).toEqual("test");
+    expect(hoverArg.closeElement.id).toEqual("test");
+  });
 
-    test("emitHoverEvent", ()=>{
-        let hoverArg!: HoverDomEventArgs;
-        listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
-            hoverArg = arg;
-        })
+  test("emitHoverEvent", () => {
+    let hoverArg!: HoverDomEventArgs;
+    listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
+      hoverArg = arg;
+    });
 
-        document.body.innerHTML = '<h2 id="test" kooboo-id="1-0-1-1-1-1-3">Kooboo CMS</h2>';
-        let element = document.body.children[0] as HTMLElement;
+    document.body.innerHTML = '<h2 id="test" kooboo-id="1-0-1-1-1-1-3">Kooboo CMS</h2>';
+    let element = document.body.children[0] as HTMLElement;
 
-        emitHoverEvent(element)
+    emitHoverEvent(element);
 
-        expect(hoverArg.element.id).toEqual("test")
-        expect(hoverArg.closeElement.id).toEqual("test")
-    })
+    expect(hoverArg.element.id).toEqual("test");
+    expect(hoverArg.closeElement.id).toEqual("test");
+  });
 
-    test("emitHoverEvent_emitChild", ()=>{
-        let hoverArg!: HoverDomEventArgs;
-        listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
-            hoverArg = arg;
-        })
+  test("emitHoverEvent_emitChild", () => {
+    let hoverArg!: HoverDomEventArgs;
+    listenHoverAndSetEventHandle((arg: HoverDomEventArgs) => {
+      hoverArg = arg;
+    });
 
-        document.body.innerHTML = `
+    document.body.innerHTML = `
         <ul id="test" class="menu" kooboo-id="1-0-1-1-1-1-3">
             <li id="testli" class="className"></li>
         </ul>
         `;
-        let element = document.body.children[0].children[0] as HTMLElement;
+    let element = document.body.children[0].children[0] as HTMLElement;
 
-        emitHoverEvent(element)
+    emitHoverEvent(element);
 
-        expect(hoverArg.element.id).toEqual("testli")
-        expect(hoverArg.closeElement.id).toEqual("test")
-    })
+    expect(hoverArg.element.id).toEqual("testli");
+    expect(hoverArg.closeElement.id).toEqual("test");
+  });
 
-    // 发射选择事件会使最后的Hover事件参数的Element
-    test("emitSelectedEvent", ()=>{
-        let hoverArg!: SelectedDomEventArgs;
-        listenClickAndSetEventHandle((arg: SelectedDomEventArgs) => {
-            hoverArg = arg;
-        })
+  // 发射选择事件会使最后的Hover事件参数的Element
+  test("emitSelectedEvent", () => {
+    let hoverArg!: SelectedDomEventArgs;
+    listenClickAndSetEventHandle((arg: SelectedDomEventArgs) => {
+      hoverArg = arg;
+    });
 
-        document.body.innerHTML = '<h2 id="test" kooboo-id="1-0-1-1-1-1-3">Kooboo CMS</h2>';
-        let element = document.body.children[0] as HTMLElement;
+    document.body.innerHTML = '<h2 id="test" kooboo-id="1-0-1-1-1-1-3">Kooboo CMS</h2>';
+    let element = document.body.children[0] as HTMLElement;
 
-        context.lastHoverDomEventArgs = new HoverDomEventArgs(element, element);
+    context.lastHoverDomEventArgs = new HoverDomEventArgs(element, element);
 
-        emitSelectedEvent()
+    emitSelectedEvent();
 
-        expect(hoverArg.element.id).toEqual("test")
-    })
-})
+    expect(hoverArg.element.id).toEqual("test");
+  });
+});
