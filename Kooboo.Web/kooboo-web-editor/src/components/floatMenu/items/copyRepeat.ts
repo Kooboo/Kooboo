@@ -31,9 +31,10 @@ export function createCopyRepeatItem(): MenuItem {
     let anchor: Node = nodes[nodes.length - 1];
     let parent = anchor.parentNode!;
     let guid = newGuid() + "_name";
+    let oldGuid = getRepeatComment(comments)!.nameorid!;
     for (const node of nodes.reverse()) {
       let insertNode = node.cloneNode(true);
-      changeNameOrId(insertNode, guid);
+      changeNameOrId(insertNode, guid, oldGuid);
       parent.insertBefore(insertNode, anchor.nextSibling);
     }
     let comment = getRepeatComment(comments);

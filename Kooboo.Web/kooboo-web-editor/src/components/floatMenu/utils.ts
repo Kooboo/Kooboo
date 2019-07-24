@@ -60,13 +60,13 @@ export const getRepeatComment = (comments: KoobooComment[]) => getObjectType(com
 
 export const getUrlComment = (comments: KoobooComment[]) => getObjectType(comments, OBJECT_TYPE.Url);
 
-export function changeNameOrId(node: Node, guid: string) {
-  if (KoobooComment.isComment(node)) {
+export function changeNameOrId(node: Node, guid: string, oldGuid: string) {
+  if (KoobooComment.isComment(node) && node.nodeValue!.indexOf(oldGuid) > -1) {
     node.nodeValue = node.nodeValue!.replace(/--nameorid='.{36,50}?'/, `--nameorid='${guid}'`);
   }
   if (node instanceof HTMLElement) {
     for (const iterator of getAllNode(node)) {
-      changeNameOrId(iterator, guid);
+      changeNameOrId(iterator, guid, oldGuid);
     }
   }
 }
