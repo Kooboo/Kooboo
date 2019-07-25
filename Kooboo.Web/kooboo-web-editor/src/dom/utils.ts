@@ -69,6 +69,14 @@ export function isLink(el: HTMLElement) {
   return el.tagName.toLowerCase() == "a";
 }
 
+export function isTextArea(el: Element) {
+  return el instanceof HTMLTextAreaElement;
+}
+
+export function isForm(el: Element) {
+  return el instanceof HTMLFormElement;
+}
+
 export function canJump(el: HTMLElement) {
   let href = el.getAttribute("href");
   return el.tagName.toLowerCase() == "a" && href && !href.startsWith("#") && !href.startsWith("http");

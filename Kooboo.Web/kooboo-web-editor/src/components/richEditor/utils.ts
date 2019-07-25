@@ -3,7 +3,7 @@ import { STANDARD_Z_INDEX, EMPTY_COMMENT, OBJECT_TYPE } from "../../common/const
 import { lang } from "../../common/lang";
 import context from "../../common/context";
 import { markDirty, setGuid, clearKoobooInfo, getCleanParent, getWrapDom, isDirty } from "../../kooboo/utils";
-import { getAllElement } from "../../dom/utils";
+import { getAllElement, isTextArea } from "../../dom/utils";
 import { delay } from "../../common/utils";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";
 import { operationRecord } from "@/operation/Record";
@@ -109,7 +109,7 @@ export function onSetContent(e: any) {
   e.target._content = e.content;
   var targetElm = e.target.targetElm as HTMLElement;
   for (const element of getAllElement(targetElm, true)) {
-    if (element.innerHTML.indexOf(EMPTY_COMMENT) == -1) {
+    if (element.innerHTML.indexOf(EMPTY_COMMENT) == -1 && !isTextArea(element)) {
       element.innerHTML += EMPTY_COMMENT;
     }
   }
@@ -137,7 +137,7 @@ export function onKeyDown(e: KeyboardEvent) {
   var targetElm = e.target as HTMLElement;
   if (e.code == "Backspace") {
     let content = targetElm.innerHTML;
-    if (content.indexOf(EMPTY_COMMENT) == -1) targetElm.innerHTML += EMPTY_COMMENT;
+    if (content.indexOf(EMPTY_COMMENT) == -1 && !isTextArea(targetElm)) targetElm.innerHTML += EMPTY_COMMENT;
   }
   if (e.code == "Backspace" && targetElm.innerHTML == EMPTY_COMMENT) return false;
 }

@@ -201,6 +201,6 @@ export function isViewComment(comments: KoobooComment) {
 }
 
 export function isEditComment(comments: KoobooComment) {
-  const types = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label, OBJECT_TYPE.htmlblock];
+  const types = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label];
   return types.some(s => s == comments.objecttype);
 }

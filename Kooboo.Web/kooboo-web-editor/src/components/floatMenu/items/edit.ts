@@ -5,7 +5,7 @@ import { MenuItem, createItem } from "../basic";
 import { isDynamicContent } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { setInlineEditor } from "@/components/richEditor";
-import { getMenuComment, getFormComment, getHtmlBlockComment, getEditComment } from "../utils";
+import { getMenuComment, getEditComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function createEditItem(): MenuItem {
@@ -16,7 +16,6 @@ export function createEditItem(): MenuItem {
     let comments = KoobooComment.getComments(args.element);
     if (isBody(args.element)) return setVisiable(false);
     if (getMenuComment(comments)) return setVisiable(false);
-    if (getFormComment(comments)) return setVisiable(false);
     if (!getEditComment(comments)) return setVisiable(false);
     var reExcept = /^img|button|input|textarea|br|hr$/i;
     let el = args.element;
