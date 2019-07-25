@@ -425,12 +425,12 @@ namespace Kooboo.Data.Server
                 res.Headers.Add("server", "http://www.kooboo.com");
                 res.StatusCode = response.StatusCode;
                 res.Headers.Add("Content-Type", response.ContentType);
+
                 foreach (var item in response.Headers)
-                {
+                { 
                     res.Headers[item.Key] = item.Value;
                 }
-
-
+                 
                 #region cookie
 
                 if (response.DeletedCookieNames.Any() || response.AppendedCookies.Any())
@@ -532,7 +532,7 @@ namespace Kooboo.Data.Server
 
                     if (!string.IsNullOrEmpty(location))
                     {
-                        location = GetEncodedLocation(location);
+                        location =ServerService.GetEncodedLocation(location);
 
                         var host = renderContext.Request.Port == 80 || renderContext.Request.Port == 443
                             ? renderContext.Request.Host
@@ -549,13 +549,17 @@ namespace Kooboo.Data.Server
                             res.StatusCode = StatusCodes.Status302Found;
                         }
 
-                        res.Headers["Content-Location"] = newUrl;
+                        res.Headers["location"] = newUrl;
 
                         res.Body.Dispose();
 
                         Log(renderContext);
                         return;
                     }
+
+
+
+
 
                     if (response.Body != null && response.Body.Length > 0)
                     {
@@ -623,53 +627,9 @@ namespace Kooboo.Data.Server
                 Log(renderContext);
                 res = null;
             }
+             
 
-            internal static string GetEncodedLocation(string location)
-            {
-                if (string.IsNullOrEmpty(location))
-                    return location;
-                var builder = new StringBuilder();
-                Uri uri;
-                // /admin/sites will be parse to uri.schema= file in linux
-                if (Uri.TryCreate(location, UriKind.Absolute, out uri))
-                {
-                    if (!string.IsNullOrEmpty(uri.Scheme) &&
-                        (uri.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) ||
-                        uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase)))
-                    {
-                        var baseUrl = uri.Scheme + "://" + uri.Authority;
-                        builder.Append(baseUrl);
-                        location = location.Replace(baseUrl, "");
-                    }
-                }
 
-                var queryString = string.Empty;
-
-                int questionmark = location.IndexOf("?");
-                if (questionmark > -1)
-                {
-                    queryString = location.Substring(questionmark);
-                    location = location.Substring(0, questionmark);
-
-                }
-                var segments = location.Split('/');
-
-                for (var i = 0; i < segments.Length; i++)
-                {
-                    var seg = segments[i];
-                    builder.Append(System.Net.WebUtility.UrlEncode(seg));
-                    if (segments.Length - 1 != i)
-                    {
-                        builder.Append("/");
-                    }
-
-                }
-                if (!string.IsNullOrEmpty(queryString))
-                {
-                    builder.Append(queryString);
-                }
-                return builder.ToString();
-            }
             public static void Log(RenderContext context)
             {
                 if (Data.AppSettings.Global.EnableLog)
