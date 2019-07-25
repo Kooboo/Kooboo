@@ -392,8 +392,7 @@ namespace Kooboo.Data.Server
 
                 if (!string.IsNullOrEmpty(location))
                 {
-                    location = GetEncodedLocation(location);
-
+                
                     var host = renderContext.Request.Port == 80 || renderContext.Request.Port == 443
                         ? renderContext.Request.Host
                         : string.Format("{0}:{1}", renderContext.Request.Host, renderContext.Request.Port);
@@ -484,52 +483,7 @@ namespace Kooboo.Data.Server
             context = null;
         }
 
-        internal static string GetEncodedLocation(string location)
-        {
-            if (string.IsNullOrEmpty(location))
-                return location;
-            var builder = new StringBuilder();
-            Uri uri;
-            // /admin/sites will be parse to uri.schema= file in linux
-            if (Uri.TryCreate(location, UriKind.Absolute, out uri))
-            {
-                if (!string.IsNullOrEmpty(uri.Scheme) &&
-                    (uri.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) ||
-                    uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase)))
-                {
-                    var baseUrl = uri.Scheme + "://" + uri.Authority;
-                    builder.Append(baseUrl);
-                    location = location.Replace(baseUrl, "");
-                }
-            }
-
-            var queryString = string.Empty;
-
-            int questionmark = location.IndexOf("?");
-            if (questionmark > -1)
-            {
-                queryString = location.Substring(questionmark);
-                location = location.Substring(0, questionmark);
-
-            }
-            var segments = location.Split('/');
-
-            for (var i = 0; i < segments.Length; i++)
-            {
-                var seg = segments[i];
-                builder.Append(System.Net.WebUtility.UrlEncode(seg));
-                if (segments.Length - 1 != i)
-                {
-                    builder.Append("/");
-                }
-
-            }
-            if (!string.IsNullOrEmpty(queryString))
-            {
-                builder.Append(queryString);
-            }
-            return builder.ToString();
-        }
+ 
         public static void Log(RenderContext context)
         {
             if (Data.AppSettings.Global.EnableLog)

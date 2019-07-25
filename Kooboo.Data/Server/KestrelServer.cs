@@ -531,9 +531,7 @@ namespace Kooboo.Data.Server
                     string location = response.RedirectLocation;
 
                     if (!string.IsNullOrEmpty(location))
-                    {
-                        location =ServerService.GetEncodedLocation(location);
-
+                    {  
                         var host = renderContext.Request.Port == 80 || renderContext.Request.Port == 443
                             ? renderContext.Request.Host
                             : string.Format("{0}:{1}", renderContext.Request.Host, renderContext.Request.Port);
