@@ -12,24 +12,17 @@
     <script src="/_Admin/Scripts/kooboo/text.js"></script>
     <link href="/_Admin/Styles/styles.css" rel="stylesheet" />
     <link href="/_Admin/Styles/custom.css" rel="stylesheet" />
-
-    <!--<link href="/_Admin/Styles/jstree/style.min.css" rel="stylesheet">-->
-
     <link rel="Shortcut Icon" href="/_Admin/Images/favicon.ico" />
     <meta charset="UTF-8" />
   </head>
 
   <body style="overflow: hidden;">
-    <style type="text/css">
-      .mce-primary button {
-        background-color: #206ea1;
-      }
-    </style>
     <div class="page-loading">
       <div class="content">
         <p><i class="fa fa-spinner fa-spin"></i>Loading...</p>
       </div>
     </div>
+
     <div id="main">
       <div class="block-fullscreen">
         <div class="block-visual-editor vertical">
@@ -37,13 +30,8 @@
         </div>
       </div>
       <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog>
-      <div
-        id="kbPagesPicker"
-        data-kb-type="widgets/PagesPicker/PagesPicker"
-        data-kb-option="_actionMenuOption"
-      ></div>
-      <kb-label-dialog></kb-label-dialog>
     </div>
+
   </body>
 </html>
 <script>
@@ -51,14 +39,7 @@
     Kooboo.loadJS([
       "/_Admin/Scripts/lib/lodash.min.js",
       "/_Admin/Scripts/lib/toastr.min.js",
-      "/_Admin/Scripts/lib/jstree.min.js",
       "/_Admin/Scripts/lib/bootstrap.min.js",
-      "/_Admin/Scripts/lib/codemirror/lib/codemirror.js",
-      "/_Admin/Scripts/lib/codemirror/mode/xml/xml.js",
-      "/_Admin/Scripts/lib/codemirror/mode/css/css.js",
-      "/_Admin/Scripts/lib/codemirror/mode/javascript/javascript.js",
-      "/_Admin/Scripts/lib/codemirror/mode/htmlmixed/htmlmixed.js",
-      "/_Admin/Scripts/kobindings.codemirror.js",
       "/_Admin/Scripts/DataCache.js",
       "/_Admin/Scripts/app.js",
       "/_Admin/Scripts/kobindingsOverride.js",
@@ -70,46 +51,27 @@
       "/_Admin/Scripts/kooboo/LanguageManager.js",
       "/_Admin/Scripts/kooboo/DateExtend.js",
       "/_Admin/Scripts/lib/knockout.mapping.min.js",
-      "/_Admin/Scripts/lib/spectrum/spectrum-custom.js",
-      "/_Admin/Scripts/lib/select2.min.js",
-      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
-      "/_Admin/Scripts/lib/touchspin/jquery.bootstrap-touchspin.min.js",
       "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
       "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
       "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
       "/_Admin/Scripts/components/kb-media-dialog.js",
       "/_Admin/Scripts/components/kbLabelDialog.js"
     ]);
-    Kooboo.loadCSS([
-      "/_Admin/Scripts/lib/spectrum/spectrum.css",
-      "/_Admin/Styles/select2/select2.css",
-      "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css",
-      "/_Admin/Scripts/lib/touchspin/jquery.bootstrap-touchspin.min.css",
-      "/_Admin/Scripts/lib/codemirror/lib/codemirror.css",
-      "/_Admin/Styles/jstree/style.min.css"
-    ]);
   })();
 </script>
 <script type="text/javascript">
+
   $.ajax("/_api/User/getLanguage?SiteId=" + getQueryString("SiteId")).then(
     function(rsp) {
-      localStorage.setItem("lang", rsp.model);
+      Kooboo.LanguageManager.setLang(rsp.model)
     }
   );
+
   function getQueryString(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
     var r = window.location.search.substr(1).match(reg);
     if (r != null) return unescape(r[2]);
     return null;
-  }
-
-  function addKoobooInlineToUrl(url) {
-    url = decodeURIComponent(url);
-    var koobooInlineParam = "koobooInline=design";
-    if (url.indexOf("?") > -1) url += "&";
-    else url += "?";
-    url += koobooInlineParam;
-    return url;
   }
 
   $(function() {

@@ -26,7 +26,7 @@ export function createEditItem(): MenuItem {
 
   el.addEventListener("click", () => {
     let args = context.lastSelectedDomEventArgs;
-    setInlineEditor(args.element);
+    setInlineEditor(args.element).catch(() => {});
   });
 
   return { el, update };
