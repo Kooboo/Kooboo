@@ -7,7 +7,7 @@ import { setGuid, isDirty, clearKoobooInfo, getCleanParent } from "@/kooboo/util
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { operationRecord } from "@/operation/Record";
 import { StyleLog } from "@/operation/recordLogs/StyleLog";
-import { getMenuComment, getFormComment, getHtmlBlockComment, getViewComment } from "../utils";
+import { getMenuComment, getFormComment, getHtmlBlockComment, getViewComment, getFirstComment, isRepeatComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { Log } from "@/operation/recordLogs/Log";
@@ -19,10 +19,12 @@ export function createEditStyleItem(): MenuItem {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
+    let firstComment = getFirstComment(comments);
     if (getMenuComment(comments)) return setVisiable(false);
     if (getFormComment(comments)) return setVisiable(false);
     if (getHtmlBlockComment(comments)) return setVisiable(false);
     if (!getViewComment(comments)) return setVisiable(false);
+    if (firstComment && isRepeatComment(firstComment)) return setVisiable(false);
   };
 
   el.addEventListener("click", async () => {

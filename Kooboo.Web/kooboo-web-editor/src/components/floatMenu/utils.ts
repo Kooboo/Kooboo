@@ -195,12 +195,16 @@ export function getFirstComment(comments: KoobooComment[]) {
   }
 }
 
-export function isViewComment(comments: KoobooComment) {
+export function isViewComment(comment: KoobooComment) {
   const types = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout];
-  return types.some(s => s == comments.objecttype);
+  return types.some(s => s == comment.objecttype);
 }
 
-export function isEditComment(comments: KoobooComment) {
+export function isEditComment(comment: KoobooComment) {
   const types = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label];
-  return types.some(s => s == comments.objecttype);
+  return types.some(s => s == comment.objecttype);
+}
+
+export function isRepeatComment(comment: KoobooComment) {
+  return comment.objecttype == OBJECT_TYPE.contentrepeater;
 }
