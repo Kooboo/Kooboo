@@ -211,3 +211,18 @@ export function previousComment(node: Node) {
     if (i instanceof HTMLElement) break;
   }
 }
+
+export function getRelatedRepeatComment(el: HTMLElement) {
+  let comment = previousComment(el);
+  if (!comment || !KoobooComment.isComment(comment) || !isSingleCommentWrap(comment)) return;
+  let koobooComment = new KoobooComment(comment);
+  if (koobooComment.end) return;
+  for (const i of getAllNode(document.body)) {
+    if (i instanceof Comment && KoobooComment.isComment(i) && !KoobooComment.isEndComment(i)) {
+      let c = new KoobooComment(i);
+      if (c.objecttype == OBJECT_TYPE.contentrepeater && c.nameorid == koobooComment.nameorid) {
+        return c;
+      }
+    }
+  }
+}

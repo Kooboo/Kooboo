@@ -17,12 +17,12 @@ export function createEditStyleItem(): MenuItem {
 
   const update = (comments: KoobooComment[]) => {
     setVisiable(true);
-    let firstComment = getFirstComment(comments);
+    let args = context.lastSelectedDomEventArgs;
     if (getMenuComment(comments)) return setVisiable(false);
     if (getFormComment(comments)) return setVisiable(false);
     if (getHtmlBlockComment(comments)) return setVisiable(false);
     if (!getViewComment(comments)) return setVisiable(false);
-    if (firstComment && isRepeatComment(firstComment)) return setVisiable(false);
+    if (!args.koobooId) return setVisiable(false);
   };
 
   el.addEventListener("click", async () => {
