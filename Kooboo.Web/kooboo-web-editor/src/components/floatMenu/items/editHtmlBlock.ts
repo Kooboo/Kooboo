@@ -10,10 +10,8 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 export function createEditHtmlBlockItem(): MenuItem {
   const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_HTML_BLOCK, MenuActions.editHtmlBlock);
 
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
     if (!getHtmlBlockComment(comments)) return setVisiable(false);
     if (hasOperation(context.operationManager)) {
       setReadonly();

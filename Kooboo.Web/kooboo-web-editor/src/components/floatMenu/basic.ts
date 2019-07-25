@@ -5,20 +5,17 @@ import { MenuActions } from "../../events/FloatMenuClickEvent";
 import expandIcon from "@/assets/icons/fangda.svg";
 import { STANDARD_Z_INDEX } from "@/common/constants";
 import { createDiv, createImg } from "@/dom/element";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export interface MenuItem {
   el: HTMLElement;
-  update(): void;
+  update(comments: KoobooComment[]): void;
 }
 
 export function createItem(text: string, type: MenuActions) {
   let el = createDiv();
   el.classList.add("kb_web_editor_menu_item");
   let isReadonly = false;
-  el.style.padding = "5px 10px";
-  el.style.borderBottom = "1px solid #eee";
-  el.style.cursor = "default";
-  el.style.fontSize = "12px";
   el.append(text);
   el.addEventListener("click", () => context.floatMenuClickEvent.emit(type));
 
@@ -42,53 +39,44 @@ export function createItem(text: string, type: MenuActions) {
 
 export function createContainer() {
   let el = createDiv();
-  el.style.position = "absolute";
-  el.style.width = "150px";
-  el.style.minHeight = "50px";
-  el.style.borderRadius = "3px";
-  el.style.fontSize = "12px";
-  el.style.opacity = "0.9";
-  el.style.overflow = "hidden";
-  el.style.boxShadow = "0 0 3px #ddd";
-  el.style.backgroundColor = "#fff";
-  el.style.display = "none";
+  el.classList.add("kb_web_editor_menu");
   el.style.zIndex = STANDARD_Z_INDEX + 1 + "";
-  el.append(createTitle());
+  let { setExpandBtnVisiable, title } = createTitle();
+  el.append(title);
 
   const updatePosition = (x: number, y: number, pageHeight: number, pageWidth: number) => {
     let rect = el.getBoundingClientRect();
 
     if (x + rect.width > pageWidth) {
-      x -= rect.width;
+      x = x - rect.width + 3;
     }
 
     if (y + rect.height > pageHeight) {
-      y -= rect.height;
+      y = y - rect.height + 3;
     }
+
     el.style.top = y + "px";
     el.style.left = x + "px";
   };
 
   return {
-    el,
-    updatePosition
+    container: el,
+    updatePosition,
+    setExpandBtnVisiable
   };
 }
 
 function createTitle() {
   const el = createDiv();
-  el.style.padding = "5px 10px";
-  el.style.color = "#fff";
-  el.style.backgroundColor = "rgb(2, 154, 214)";
-  const text = createDiv();
-  text.style.color = "#fff";
-  text.style.display = "inline-block";
-  text.style.fontSize = "12px";
-  text.innerText = TEXT.MENU;
-  el.appendChild(text);
+  el.classList.add("kb_web_editor_menu_title");
+  el.appendChild(document.createTextNode(TEXT.MENU));
   el.appendChild(createCloseButton());
-  el.appendChild(createExpandButton());
-  return el;
+  let expandButton = createExpandButton();
+  el.appendChild(expandButton);
+  const setExpandBtnVisiable = (visiable: boolean) => {
+    expandButton.style.display = visiable ? "block" : "none";
+  };
+  return { title: el, setExpandBtnVisiable };
 }
 
 function createCloseButton() {
@@ -103,6 +91,7 @@ function createCloseButton() {
 function createExpandButton() {
   const el = createImg();
   el.src = expandIcon;
+  el.title = TEXT.EXPAND_SELECTION;
   el.style.height = "16px";
   el.style.cssFloat = "right";
   el.style.marginRight = "8px";

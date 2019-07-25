@@ -134,6 +134,32 @@
   background-color: #eee;
 }
 
+.kb_web_editor_menu {
+  position: absolute;
+  width: 150px;
+  min-height: 50px;
+  border-radius: 3px;
+  font-size: 12px;
+  opacity: 0.9;
+  overflow: hidden;
+  box-shadow: 0 0 3px #ddd;
+  background-color: #fff;
+  display: none;
+}
+
+.kb_web_editor_menu_title {
+  padding: 5px 10px;
+  color: #fff;
+  background-color: rgb(2, 154, 214);
+}
+
+.kb_web_editor_menu_item {
+  padding: 5px 10px;
+  border-bottom: 1px solid #eee;
+  cursor: default;
+  font-size: 12px;
+}
+
 .kb_web_editor_menu_item:hover {
   background-color: #eee;
 }
@@ -214,6 +240,17 @@
   font-style: normal;
   padding: 25px 25px 15px 25px;
   cursor: move;
+  position: relative;
+}
+.kb_web_editor_modal_header > div {
+  position: absolute;
+  background-repeat: no-repeat;
+  right: 15px;
+  top: 15px;
+  height: 20px;
+  width: 20px;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 .kb_web_editor_global_link_editor_item {

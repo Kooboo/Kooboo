@@ -4,7 +4,7 @@ import { TEXT } from "@/common/lang";
 import { createGlobalImageEditor } from "../globalImageEditor";
 
 export function createImageButton() {
-  var btn = createButton(moveIcon, TEXT.EDIT_IMAGE);
+  var btn = createButton(moveIcon, TEXT.EDIT_IMAGES);
   btn.onclick = createGlobalImageEditor;
   return btn;
 }

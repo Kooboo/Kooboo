@@ -15,10 +15,8 @@ import { Log } from "@/operation/recordLogs/Log";
 export function createEditStyleItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_STYLE, MenuActions.editStyle);
 
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
     let firstComment = getFirstComment(comments);
     if (getMenuComment(comments)) return setVisiable(false);
     if (getFormComment(comments)) return setVisiable(false);

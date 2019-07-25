@@ -15,10 +15,9 @@ import { createDiv } from "@/dom/element";
 export function createDeleteRepeatItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE_REPEAR, MenuActions.deleteRepeat);
 
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
     if (isBody(args.element)) return setVisiable(false);
     if (!getRepeatComment(comments)) return setVisiable(false);
   };

@@ -1,9 +1,12 @@
 import { createDiv } from "@/dom/element";
-
+import closeIcon from "@/assets/icons/guanbi-gray.svg";
 export function createHeader(title: string, parent: HTMLElement) {
   var el = createDiv();
   el.classList.add("kb_web_editor_modal_header");
-  el.innerText = title;
+  el.appendChild(document.createTextNode(title));
+  let closeBtn = createDiv();
+  closeBtn.style.backgroundImage = `url(${closeIcon})`;
+  el.appendChild(closeBtn);
   el.draggable = true;
   let temp: { x: number; y: number };
   el.ondragstart = (e: DragEvent) => {
@@ -16,5 +19,5 @@ export function createHeader(title: string, parent: HTMLElement) {
     parent.style.marginLeft = e.x - temp.x + "px";
     parent.style.marginTop = e.y - temp.y + "px";
   };
-  return el;
+  return { header: el, close: closeBtn };
 }

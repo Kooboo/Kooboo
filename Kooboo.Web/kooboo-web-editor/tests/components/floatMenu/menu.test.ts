@@ -9,9 +9,9 @@ describe("menu", () => {
   });
 
   test("createMenu", () => {
-    let element = createMenu();
+    let { container } = createMenu();
 
-    expect(element.el.style.display).toEqual("none");
+    expect(container.style.display).toEqual("");
   });
 
   // 显示浮动菜单，需要知道最后选择的元素
@@ -25,19 +25,18 @@ describe("menu", () => {
     context.lastHoverDomEventArgs = new HoverDomEventArgs(selectedElement, selectedElement);
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let { el, hidden, update } = createMenu();
-    document.body.appendChild(el);
+    let { container, update } = createMenu();
+    document.body.appendChild(container);
 
     update(100, 200);
-    expect(el.style.display).toEqual("block");
-    expect(el.style.top).toEqual("200px");
-    expect(el.style.left).toEqual("100px");
+    expect(container.style.display).toEqual("block");
+    expect(container.style.top).toEqual("203px");
+    expect(container.style.left).toEqual("103px");
   });
 
   test("createMenu_hidden", () => {
-    let element = createMenu();
-
-    element.hidden();
-    expect(element.el.style.display).toEqual("none");
+    let { container, hidden } = createMenu();
+    hidden();
+    expect(container.style.display).toEqual("none");
   });
 });

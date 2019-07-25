@@ -15,10 +15,9 @@ import { createImg } from "@/dom/element";
 
 export function createReplaceToImgItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.REPLACE_TO_IMG, MenuActions.replaceToImg);
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
     let firstComment = getFirstComment(comments);
     if (!firstComment || !isViewComment(firstComment)) return setVisiable(false);
     let { koobooId, parent } = getCleanParent(args.element);

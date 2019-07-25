@@ -13,10 +13,9 @@ import { DomLog } from "@/operation/recordLogs/DomLog";
 
 export function createDeleteFormItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
     if (!getFormComment(comments)) return setVisiable(false);
     if (!getViewComment(comments)) return setVisiable(false);
     if (!args.koobooId) return setVisiable(false);

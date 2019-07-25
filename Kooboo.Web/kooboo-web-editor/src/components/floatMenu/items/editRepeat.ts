@@ -12,10 +12,9 @@ import { isSingleCommentWrap, previousComment } from "@/kooboo/utils";
 export function createEditRepeatItem() {
   const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_REPEAT, MenuActions.editRepeat);
 
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
     if (!getRepeatComment(comments) && !getRelatedRepeatComment(args.element)) return setVisiable(false);
     if (hasOperation(context.operationManager)) return setReadonly();
   };

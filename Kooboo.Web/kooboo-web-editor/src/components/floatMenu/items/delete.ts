@@ -14,10 +14,9 @@ import { createDiv } from "@/dom/element";
 
 export function createDeleteItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
     let { parent } = getCleanParent(args.element);
     let firstComment = getFirstComment(comments);
     if (!firstComment || !isEditComment(firstComment)) return setVisiable(false);
