@@ -51,14 +51,12 @@ namespace Kooboo.Jobs
         public static List<IJob> JobList
         {
             get; set;
-        }
-
+        } 
 
         public static List<IBackgroundWorker> BackgroundWorkers
         {
             get; set;
         }
     }
-
-
+     
 }
