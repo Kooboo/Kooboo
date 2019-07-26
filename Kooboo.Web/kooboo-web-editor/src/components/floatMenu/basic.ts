@@ -54,6 +54,11 @@ export function createContainer() {
 
     if (y + rect.height > pageHeight) {
       y = y - rect.height + 3;
+      context.lastMouseEventArg = {
+        isTrusted: true,
+        pageX: x,
+        pageY: y
+      } as MouseEvent;
     }
 
     el.style.top = y + "px";
