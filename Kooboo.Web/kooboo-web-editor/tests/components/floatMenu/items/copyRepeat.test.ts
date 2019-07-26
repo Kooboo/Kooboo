@@ -1,6 +1,7 @@
 import context from "@/common/context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import { createCopyRepeatItem } from "@/components/floatMenu/items/copyRepeat";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 describe("copyRepeat", ()=>{
     beforeEach(()=>{
@@ -27,7 +28,8 @@ describe("copyRepeat", ()=>{
         let elementObject = createCopyRepeatItem();
         expect(elementObject.el.style.display).toEqual("");
 
-        elementObject.update();
+        let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
+        elementObject.update(comments);
         expect(elementObject.el.style.display).toEqual("block");
     })
 
@@ -51,7 +53,8 @@ describe("copyRepeat", ()=>{
         let elementObject = createCopyRepeatItem();
         expect(elementObject.el.style.display).toEqual("");
 
-        elementObject.update();
+        let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
+        elementObject.update(comments);
         expect(elementObject.el.style.display).toEqual("none");
     })
 })

@@ -1,6 +1,7 @@
 import context from "@/common/context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import { createEditRepeatImageItem } from "@/components/floatMenu/items/editRepeatImage";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 describe("editRepeatImage", ()=>{
     beforeEach(()=>{
@@ -25,11 +26,13 @@ describe("editRepeatImage", ()=>{
 
         // 不能是body元素
         context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body as HTMLElement);
-        elementObject.update();
+        let comments = KoobooComment.getComments(document.body);
+        elementObject.update(comments);
         expect(elementObject.el.style.display).toEqual("none");
 
         context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body.children[0].children[0].children[0] as HTMLElement);
-        elementObject.update();
+        comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
+        elementObject.update(comments);
         expect(elementObject.el.style.display).toEqual("block");
     })
 
@@ -52,7 +55,8 @@ describe("editRepeatImage", ()=>{
         let elementObject = createEditRepeatImageItem();
         expect(elementObject.el.style.display).toEqual("");
 
-        elementObject.update();
+        let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
+        elementObject.update(comments);
         expect(elementObject.el.style.display).toEqual("none");
     })
 })

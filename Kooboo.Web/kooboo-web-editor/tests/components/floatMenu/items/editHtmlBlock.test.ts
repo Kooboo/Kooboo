@@ -1,6 +1,7 @@
 import context from "@/common/context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import { createEditHtmlBlockItem } from "@/components/floatMenu/items/editHtmlBlock";
+import { KoobooComment } from "@/kooboo/KoobooComment";
 
 describe("editHtmlBlock", ()=>{
     beforeEach(()=>{
@@ -26,11 +27,13 @@ describe("editHtmlBlock", ()=>{
 
         // 不能是body元素
         context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body as HTMLElement);
-        elementObject.update();
+        let comments = KoobooComment.getComments(document.body);
+        elementObject.update(comments);
         expect(elementObject.el.style.display).toEqual("none");
 
         context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body.children[0].children[0].children[0] as HTMLElement);
-        elementObject.update();
+        comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
+        elementObject.update(comments);
         expect(elementObject.el.style.display).toEqual("block");
     })
 
@@ -53,7 +56,8 @@ describe("editHtmlBlock", ()=>{
         let elementObject = createEditHtmlBlockItem();
         expect(elementObject.el.style.display).toEqual("");
 
-        elementObject.update();
+        let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
+        elementObject.update(comments);
         expect(elementObject.el.style.display).toEqual("none");
     })
 })
