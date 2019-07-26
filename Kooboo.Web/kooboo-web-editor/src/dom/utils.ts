@@ -124,9 +124,8 @@ export function getParentElements(el: HTMLElement, includeSelf: boolean = true) 
 }
 
 export function getBackgroundImage(el: HTMLElement) {
-  let image: string | null = null;
+  let image: string | undefined = undefined;
   let imageInBackground = false;
-
   if (el.style.background) {
     let background = new Background(el.style.background);
     image = background.image;
@@ -135,11 +134,11 @@ export function getBackgroundImage(el: HTMLElement) {
   if (image) {
     imageInBackground = true;
   } else {
-    image = el.style.backgroundImage;
+    image = el.style.backgroundImage!;
   }
 
   if (!image) {
-    image = getComputedStyle(el).backgroundImage;
+    image = getComputedStyle(el).backgroundImage!;
   }
 
   return { image, imageInBackground };
@@ -148,9 +147,31 @@ export function getBackgroundImage(el: HTMLElement) {
 export function clearBackgroundImage(el: HTMLElement, imageInBackground: boolean) {
   if (imageInBackground) {
     let background = new Background(el.style.background!);
-    background.clearImage();
-    el.style.background = background.value;
+    background.image = "url(none)";
+    el.style.background = background.toString();
   } else {
     el.style.backgroundImage = "none";
   }
+}
+
+export function getBackgroundColor(el: HTMLElement) {
+  let color: string | undefined = undefined;
+  let colorInBackground = false;
+
+  if (el.style.background) {
+    let background = new Background(el.style.background);
+    color = background.color;
+  }
+
+  if (color) {
+    colorInBackground = true;
+  } else {
+    color = el.style.backgroundColor!;
+  }
+
+  if (!color) {
+    color = getComputedStyle(el).backgroundColor!;
+  }
+
+  return { color, colorInBackground };
 }

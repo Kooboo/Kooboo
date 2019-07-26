@@ -46,8 +46,8 @@ function addImg(container: HTMLElement, el: HTMLElement) {
     pickImg(path => {
       if (imageInBackground) {
         let background = new Background(el.style.background!);
-        background.image = path;
-        el.style.background = background.value;
+        background.image = `url('${path}')`;
+        el.style.background = background.toString();
       } else {
         el.style.backgroundImage = `url('${path}')`;
       }
