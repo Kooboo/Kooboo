@@ -204,4 +204,14 @@ namespace Kooboo.Sites.ViewModel
         public string Alias { get; set; }
 
     }
+
+
+    public class EmbeddedBy
+    {
+        public string FolderName { get; set; }
+
+        public Guid FolderId { get; set; }
+    }
+
+ 
 }

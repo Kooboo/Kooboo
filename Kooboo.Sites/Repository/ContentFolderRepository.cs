@@ -4,6 +4,7 @@ using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Models;
+using Kooboo.Sites.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,9 +91,9 @@ namespace Kooboo.Sites.Repository
 
             foreach (var item in result)
             {
-                var viewmethod = GetViewDataMethods(item.ObjectId); 
+                var viewmethod = GetViewDataMethods(item.ObjectId);
 
-                if (viewmethod != null && viewmethod.Count() >0)
+                if (viewmethod != null && viewmethod.Count() > 0)
                 {
                     foreach (var viewm in viewmethod)
                     {
@@ -112,18 +113,18 @@ namespace Kooboo.Sites.Repository
 
         public List<ViewDataMethod> GetViewDataMethods(Guid methodId)
         {
-            List<ViewDataMethod> result = new List<ViewDataMethod>(); 
+            List<ViewDataMethod> result = new List<ViewDataMethod>();
 
             var all = this.SiteDb.ViewDataMethods.List();
             foreach (var item in all)
             {
-               if (HasMethod(item, methodId))
+                if (HasMethod(item, methodId))
                 {
-                    result.Add(item); 
+                    result.Add(item);
                 }
             }
 
-            return result; 
+            return result;
         }
 
         private bool HasMethod(ViewDataMethod datamethod, Guid methodid)
@@ -157,6 +158,28 @@ namespace Kooboo.Sites.Repository
 
         }
 
+
+        public List<EmbeddedBy> GetEmbeddedBy(Guid FolderId)
+        {
+            List<EmbeddedBy> result = new List<EmbeddedBy>();
+
+            var allfolder = List();
+
+            foreach (var item in allfolder)
+            {
+                var find = item.Embedded.Find(o => o.FolderId == FolderId);
+                if (find != null)
+                {
+                    EmbeddedBy model = new EmbeddedBy();
+                    model.FolderId = item.Id;
+                    model.FolderName = item.Name;
+                    result.Add(model);
+                }
+            }
+
+            return result;
+        }
+ 
 
     }
 }
