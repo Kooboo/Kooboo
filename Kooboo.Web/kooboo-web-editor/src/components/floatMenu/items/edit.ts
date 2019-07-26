@@ -10,15 +10,13 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function createEditItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT, MenuActions.edit);
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
-    let firstComment = getFirstComment(comments);
     if (isBody(args.element)) return setVisiable(false);
     if (getMenuComment(comments)) return setVisiable(false);
     if (!getEditComment(comments)) return setVisiable(false);
-    if (firstComment && isRepeatComment(firstComment)) return setVisiable(false);
+    if (!args.koobooId) return setVisiable(false);
     var reExcept = /^img|button|input|textarea|br|hr$/i;
     let el = args.element;
     if (reExcept.test(el.tagName)) return setVisiable(false);

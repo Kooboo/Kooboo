@@ -7,7 +7,7 @@ export function createModal(title: string, content: string | HTMLElement, width?
   let { shade, win } = createContainer(width);
   const [body, setBodyContent] = createBody(height);
   const { footer, ok, cancel } = createFooter();
-  const header = createHeader(title, win);
+  const { header, close } = createHeader(title, win);
   setBodyContent(content);
 
   const recovery = () => {
@@ -16,6 +16,7 @@ export function createModal(title: string, content: string | HTMLElement, width?
 
   ok.onclick = recovery;
   cancel.onclick = recovery;
+  close.onclick = recovery;
   win.appendChild(header);
   win.appendChild(body);
   win.appendChild(footer);
@@ -23,7 +24,10 @@ export function createModal(title: string, content: string | HTMLElement, width?
   return {
     modal: shade,
     setOkHandler: (h: () => void) => (ok.onclick = h),
-    setCancelHandler: (h: () => void) => (cancel.onclick = h),
+    setCancelHandler: (h: () => void) => {
+      cancel.onclick = h;
+      close.onclick = h;
+    },
     close: recovery,
     hideCancel: () => (cancel.hidden = true)
   };

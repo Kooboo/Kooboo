@@ -2,7 +2,16 @@ import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { setGuid, clearKoobooInfo, isDynamicContent, getGuidComment, getCleanParent, getWrapDom, isDirty, markDirty } from "@/kooboo/utils";
+import {
+  setGuid,
+  clearKoobooInfo,
+  isDynamicContent,
+  getGuidComment,
+  getCleanParent,
+  isDirty,
+  markDirty,
+  getRelatedRepeatComment
+} from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { DeleteUnit } from "@/operation/recordUnits/DeleteUnit";
@@ -14,14 +23,15 @@ import { createDiv } from "@/dom/element";
 
 export function createDeleteItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
     let { parent } = getCleanParent(args.element);
     let firstComment = getFirstComment(comments);
     if (!firstComment || !isEditComment(firstComment)) return setVisiable(false);
     if (getRepeatComment(comments)) return setVisiable(false);
+    if (!args.koobooId) return setVisiable(false);
+    if (getRelatedRepeatComment(args.element)) return setVisiable(false);
     if (isViewComment(firstComment!) && parent && isDynamicContent(parent)) return setVisiable(false);
     if (isBody(args.element)) return setVisiable(false);
   };

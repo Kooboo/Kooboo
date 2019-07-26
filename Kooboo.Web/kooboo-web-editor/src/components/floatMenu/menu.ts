@@ -15,13 +15,15 @@ import { createReplaceToImgItem } from "./items/replaceToImg";
 import { createReplaceToTextItem } from "./items/replaceToText";
 import { createEditRepeatImageItem } from "./items/editRepeatImage";
 import { createEditRepeatLinkItem } from "./items/editRepeatLink";
-import { getMaxHeight, getMaxWidth } from "@/dom/utils";
+import { getMaxHeight, getMaxWidth, getParentElements } from "@/dom/utils";
 import { createClickItem } from "./items/click";
 import { createDeleteHtmlBlockItem } from "./items/deleteHtmlBlock";
 import { createDeleteFormItem } from "./items/deleteForm";
+import { KoobooComment } from "@/kooboo/KoobooComment";
+import context from "@/common/context";
 
 export function createMenu() {
-  const container = createContainer();
+  const { container, setExpandBtnVisiable, updatePosition } = createContainer();
   const items = [
     createEditItem(),
     createCopyItem(),
@@ -45,27 +47,31 @@ export function createMenu() {
   ] as MenuItem[];
 
   for (const i of items) {
-    container.el.appendChild(i.el);
+    container.appendChild(i.el);
   }
 
   const update = (x: number, y: number) => {
     let pageHeight = getMaxHeight();
     let pagewidth = getMaxWidth();
-    container.el.style.display = "block";
-
+    container.style.display = "block";
+    let args = context.lastSelectedDomEventArgs;
+    let comments = KoobooComment.getComments(args.element);
+    let elements = getParentElements(args.element);
+    let canExpand = elements.findIndex(f => f instanceof HTMLBodyElement) != 0;
+    setExpandBtnVisiable(canExpand);
     for (const i of items) {
-      i.update();
+      i.update(comments);
     }
 
-    container.updatePosition(x, y, pageHeight, pagewidth);
+    updatePosition(x, y, pageHeight, pagewidth);
   };
 
   const hidden = () => {
-    container.el.style.display = "none";
+    container.style.display = "none";
   };
 
   return {
-    el: container.el,
+    container,
     update,
     hidden
   };

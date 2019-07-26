@@ -12,10 +12,8 @@ import { createDiv } from "@/dom/element";
 export function createEditMenuItem() {
   const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_MENU, MenuActions.editMenu);
 
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
     if (!getMenuComment(comments)) return setVisiable(false);
   };
 

@@ -14,10 +14,8 @@ import { createDiv } from "@/dom/element";
 
 export function createDeleteHtmlBlockItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
     if (!getHtmlBlockComment(comments)) return setVisiable(false);
   };
 

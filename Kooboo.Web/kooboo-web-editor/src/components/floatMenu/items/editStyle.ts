@@ -11,20 +11,19 @@ import { getMenuComment, getFormComment, getHtmlBlockComment, getViewComment, ge
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { Log } from "@/operation/recordLogs/Log";
+import { getBackgroundImage } from "@/dom/utils";
 
 export function createEditStyleItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_STYLE, MenuActions.editStyle);
 
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
-    let firstComment = getFirstComment(comments);
     if (getMenuComment(comments)) return setVisiable(false);
     if (getFormComment(comments)) return setVisiable(false);
     if (getHtmlBlockComment(comments)) return setVisiable(false);
     if (!getViewComment(comments)) return setVisiable(false);
-    if (firstComment && isRepeatComment(firstComment)) return setVisiable(false);
+    if (!args.koobooId) return setVisiable(false);
   };
 
   el.addEventListener("click", async () => {
@@ -34,13 +33,13 @@ export function createEditStyleItem(): MenuItem {
     const startContent = args.element.getAttribute("style");
     let comment = getViewComment(comments)!;
     try {
-      let beforeStyle = JSON.parse(JSON.stringify(getComputedStyle(args.element))) as CSSStyleDeclaration;
+      let beforeStyle = JSON.parse(JSON.stringify(args.element.style)) as CSSStyleDeclaration;
+      let { imageInBackground } = getBackgroundImage(args.element);
       await createStyleEditor(args.element);
-      let afterStyle = getComputedStyle(args.element);
+      let afterStyle = args.element.style;
       let guid = setGuid(args.element);
       let unit = new AttributeUnit(startContent!, "style");
       let logs: Log[] = [];
-
       if (isDirty(args.element)) {
         logs.push(DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(parent!.innerHTML), koobooId!, comment.objecttype!));
       } else {
@@ -50,7 +49,12 @@ export function createEditStyleItem(): MenuItem {
           }
         };
 
-        tryAddLog(beforeStyle.backgroundImage!, afterStyle.backgroundImage!, "background-image");
+        if (imageInBackground) {
+          tryAddLog(beforeStyle.background!, afterStyle.background!, "background");
+        } else {
+          tryAddLog(beforeStyle.backgroundImage!, afterStyle.backgroundImage!, "background-image");
+        }
+
         tryAddLog(beforeStyle.backgroundColor!, afterStyle.backgroundColor!, "background-color");
         tryAddLog(beforeStyle.color!, afterStyle.color!, "color");
         tryAddLog(beforeStyle.width!, afterStyle.width!, "width");

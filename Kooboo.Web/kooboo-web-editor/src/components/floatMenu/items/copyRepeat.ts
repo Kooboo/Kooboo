@@ -15,10 +15,9 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 export function createCopyRepeatItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.COPY_REPEAT, MenuActions.copyRepeat);
 
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
     if (isBody(args.element)) return setVisiable(false);
     if (!getRepeatComment(comments)) return setVisiable(false);
   };

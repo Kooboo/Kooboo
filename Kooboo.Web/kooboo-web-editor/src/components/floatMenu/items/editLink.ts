@@ -10,10 +10,9 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 export function createEditLinkItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_LINK, MenuActions.editLink);
 
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
     if (getAttributeComment(comments)) return setVisiable(false);
     if (getRepeatComment(comments)) return setVisiable(false);
     if (getUrlComment(comments)) return setVisiable(true);

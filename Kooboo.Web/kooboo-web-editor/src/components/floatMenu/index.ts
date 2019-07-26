@@ -5,27 +5,27 @@ import { createMenu } from "./menu";
 import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
 
 export function createFloatMenu() {
-  const menu = createMenu();
-  menu.el.onmouseenter = () => (context.floatMenuClosing = false);
+  const { container, hidden, update } = createMenu();
+  container.onmouseenter = () => (context.floatMenuClosing = false);
 
   context.domChangeEvent.addEventListener(e => {
     if (!context.lastMouseEventArg.isTrusted) return;
     context.floatMenuClosing = false;
-    menu.update(context.lastMouseEventArg!.pageX, context.lastMouseEventArg!.pageY);
+    update(context.lastMouseEventArg!.pageX, context.lastMouseEventArg!.pageY);
   });
 
   context.hoverDomEvent.addEventListener(async () => {
     context.floatMenuClosing = true;
     await delay(200);
-    if (context.floatMenuClosing) menu.hidden();
+    if (context.floatMenuClosing) hidden();
   });
 
   context.floatMenuClickEvent.addEventListener(async e => {
     if (e == MenuActions.close) {
-      menu.hidden();
+      hidden();
     } else if (e != MenuActions.expand) {
       await delay(100);
-      menu.hidden();
+      hidden();
     }
   });
 
@@ -37,5 +37,5 @@ export function createFloatMenu() {
     emitSelectedEvent();
   });
 
-  return menu.el;
+  return container;
 }

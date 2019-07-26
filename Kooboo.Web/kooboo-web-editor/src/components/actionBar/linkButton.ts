@@ -4,7 +4,7 @@ import { TEXT } from "@/common/lang";
 import { createGlobalLinkEditor } from "../globalLinkEditor";
 
 export function createLinkButton() {
-  var btn = createButton(moveIcon, TEXT.EDIT_LINK);
+  var btn = createButton(moveIcon, TEXT.EDIT_LINKS);
   btn.onclick = createGlobalLinkEditor;
   return btn;
 }

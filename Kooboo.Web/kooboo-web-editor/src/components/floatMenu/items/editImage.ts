@@ -9,10 +9,9 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export function createEditImageItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_IMAGE, MenuActions.editImage);
-  const update = () => {
+  const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let comments = KoobooComment.getComments(args.element);
     if (!isImg(args.element)) return setVisiable(false);
     if (getAttributeComment(comments)) return setVisiable(false);
     if (!getViewComment(comments)) return setVisiable(false);
