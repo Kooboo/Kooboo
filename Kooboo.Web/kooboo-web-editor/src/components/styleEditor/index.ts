@@ -1,11 +1,12 @@
 import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
-import { getEditorContainer } from "@/dom/utils";
+import { getEditorContainer, getBackgroundImage, clearBackgroundImage } from "@/dom/utils";
 import { createSpliter } from "./spliter";
 import { createColorPicker } from "./colorPicker";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 import { createDiv, createLabelInput } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
+import { Background } from "@/dom/Background";
 
 export function createStyleEditor(el: HTMLElement) {
   const container = createDiv();
@@ -34,16 +35,22 @@ function addImg(container: HTMLElement, el: HTMLElement) {
   const spliter = createSpliter(TEXT.BACKGROUND_IMAGE);
   spliter.style.margin = "0 0 15px 0";
   container.appendChild(spliter);
-  const { imagePreview, setImage } = createImagePreview(true, () => (el.style.backgroundImage = "none"));
+  let { image, imageInBackground } = getBackgroundImage(el);
+  const { imagePreview, setImage } = createImagePreview(true, () => clearBackgroundImage(el, imageInBackground));
   imagePreview.style.marginLeft = "auto";
   imagePreview.style.marginRight = "auto";
   imagePreview.style.marginBottom = "15px";
   container.appendChild(imagePreview);
-  let style = getComputedStyle(el);
-  if (style.backgroundImage) setImage(style.backgroundImage);
+  if (image) setImage(image);
   imagePreview.onclick = () => {
     pickImg(path => {
-      el.style.backgroundImage = `url('${path}')`;
+      if (imageInBackground) {
+        let background = new Background(el.style.background!);
+        background.image = path;
+        el.style.background = background.value;
+      } else {
+        el.style.backgroundImage = `url('${path}')`;
+      }
       setImage(path);
     });
   };
