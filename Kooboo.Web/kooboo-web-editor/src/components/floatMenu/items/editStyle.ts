@@ -11,7 +11,7 @@ import { getMenuComment, getFormComment, getHtmlBlockComment, getViewComment, ge
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { Log } from "@/operation/recordLogs/Log";
-import { getBackgroundImage } from "@/dom/utils";
+import { getBackgroundImage, isImg, getBackgroundColor } from "@/dom/utils";
 
 export function createEditStyleItem(): MenuItem {
   const { el, setVisiable } = createItem(TEXT.EDIT_STYLE, MenuActions.editStyle);
@@ -19,6 +19,7 @@ export function createEditStyleItem(): MenuItem {
   const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
+    if (isImg(args.element)) return setVisiable(false);
     if (getMenuComment(comments)) return setVisiable(false);
     if (getFormComment(comments)) return setVisiable(false);
     if (getHtmlBlockComment(comments)) return setVisiable(false);
@@ -35,6 +36,7 @@ export function createEditStyleItem(): MenuItem {
     try {
       let beforeStyle = JSON.parse(JSON.stringify(args.element.style)) as CSSStyleDeclaration;
       let { imageInBackground } = getBackgroundImage(args.element);
+      let { colorInBackground } = getBackgroundColor(args.element);
       await createStyleEditor(args.element);
       let afterStyle = args.element.style;
       let guid = setGuid(args.element);
@@ -55,7 +57,12 @@ export function createEditStyleItem(): MenuItem {
           tryAddLog(beforeStyle.backgroundImage!, afterStyle.backgroundImage!, "background-image");
         }
 
-        tryAddLog(beforeStyle.backgroundColor!, afterStyle.backgroundColor!, "background-color");
+        if (colorInBackground) {
+          tryAddLog(beforeStyle.background!, afterStyle.background!, "background");
+        } else {
+          tryAddLog(beforeStyle.backgroundColor!, afterStyle.backgroundColor!, "background-color");
+        }
+
         tryAddLog(beforeStyle.color!, afterStyle.color!, "color");
         tryAddLog(beforeStyle.width!, afterStyle.width!, "width");
         tryAddLog(beforeStyle.height!, afterStyle.height!, "height");

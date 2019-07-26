@@ -32,8 +32,8 @@ export function createStyleImagePanel() {
       pickImg(path => {
         if (imageInBackground) {
           let background = new Background(element.style.background!);
-          background.image = path;
-          element.style.background = background.value;
+          background.image = `url('${path}')`;
+          element.style.background = background.toString();
         } else {
           element.style.backgroundImage = `url('${path}')`;
         }

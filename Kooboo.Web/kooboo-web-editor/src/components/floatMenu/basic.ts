@@ -27,6 +27,7 @@ export function createItem(text: string, type: MenuActions) {
     if (isReadonly) return;
     isReadonly = true;
     el.style.color = "#ccc";
+    el.style.pointerEvents = "none";
     el.appendChild(createWarn());
   };
 
@@ -113,6 +114,7 @@ function createWarn() {
   el.style.lineHeight = "18px";
   el.style.borderRadius = "9px";
   el.style.cssFloat = "right";
+  el.style.pointerEvents = "painted";
   el.title = TEXT.PLEASE_EDIT_AFTER_SAVE;
   el.onclick = e => {
     e.stopPropagation();
