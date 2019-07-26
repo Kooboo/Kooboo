@@ -1,11 +1,13 @@
 import { TEXT } from "@/common/lang";
 import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
 import { createButton, createDiv } from "@/dom/element";
+import context from "@/common/context";
 
 export function createLinkItem(el: HTMLElement, onEdit: () => void) {
   let item = createDiv();
   item.classList.add("kb_web_editor_global_link_editor_item");
   item.onmouseover = () => {
+    context.lastMouseEventArg = new MouseEvent("");
     el.scrollIntoView();
     emitHoverEvent(el);
     emitSelectedEvent();
