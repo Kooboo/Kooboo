@@ -150,6 +150,10 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }
             }
 
+
+            //
+
+
             this.TextContent.SetValue(FieldName, Value, this.Culture);
         }
 

@@ -155,45 +155,44 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                         siteDb.ContentCategories.AddOrUpdate(new ContentCategory() { ContentId = content.Id, CategoryFolder = category.FolderId, CategoryId = ValueId });
                     }
                     else
-                    {
-
-                        TextContent ParentContent = null;
-
+                    {  
                         var by = GetBY();
 
                         if (by.Any())
-                        { 
+                        {  
+                            var beEmbedded = by.Find(o => Lib.Helper.StringHelper.IsSameValue(o.FolderName, item.Key));
 
-                            var beEmbedded = GetBY().Find(o => Lib.Helper.StringHelper.IsSameValue(o.FolderName, item.Key));
-
-                            if (beEmbedded == null && item.Key.ToLower() == "parent" || item.Key.ToLower() == "parentid")
+                            if (beEmbedded == null && (item.Key.ToLower() == "parent" || item.Key.ToLower() == "parentid"))
                             {
                                 beEmbedded = by.First();
-                            }
-
-
+                            } 
                             if (beEmbedded != null)
                             {
-                                var partentcontent = siteDb.TextContent.Get(ValueId);
-                                if (partentcontent != null)
+                                var parentcontent = siteDb.TextContent.Get(ValueId);
+                                if (parentcontent != null)
                                 {
-                                    if (partentcontent.Embedded.ContainsKey(beEmbedded.FolderId))
+                                    if (parentcontent.Embedded.ContainsKey(folder.Id))
                                     {
-
+                                        var list = parentcontent.Embedded[folder.Id]; 
+                                        if (!list.Contains(content.Id))
+                                        {
+                                            list.Add(content.Id); 
+                                        }
                                     }
+                                    else
+                                    {
+                                        List<Guid> ids = new List<Guid>();
+                                        ids.Add(content.Id);
+                                        parentcontent.Embedded[folder.Id] = ids; 
+                                    }
+
+                                    siteDb.TextContent.AddOrUpdate(parentcontent); 
                                 }
-                            }
-
-
-                        }
-
-                    }
-
-
-
+                            }  
+                        } 
+                    }  
                 }
-            }
-
+            } 
 
             List<EmbeddedBy> GetBY()
             {
@@ -202,8 +201,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                     embeddedby = siteDb.ContentFolders.GetEmbeddedBy(folder.Id);
                 }
                 return embeddedby;
-            }
-
+            } 
         }
 
         public void Update(object SiteObject)
