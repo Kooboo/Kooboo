@@ -2,7 +2,8 @@
 <KScriptSetting>
   <Name>Kooboo JavaScript Extension</Name>
   <Description>kScript is a server side JavaScript engine that support full ES5 syntax, with an additional k object. Kooboo use kScript to write extensions like Job, Event Activity, Database operation, etc. You may embed KScript in your html file(view, layout, page) with a script engine=kscript tag,  or create external kScript file</Description>
-  <Example><![CDATA[
+  <Example>
+      <![CDATA[
     
     <script engine="kscript">
     // hello world.
@@ -17,9 +18,8 @@
     // insert data into dynamic table. 
     // all object can be accessible by kview engine. 
     var obj = {name:"mynae", email: "test@koobootemp.com"}; 
-      
-    var table = k.database.getTable("tablename"); 
-    table.add(obj); 
+    
+    k.database.tablename.add(obj); 
    
     </script>
     
