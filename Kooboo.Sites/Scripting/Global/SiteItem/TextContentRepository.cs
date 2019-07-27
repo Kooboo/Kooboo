@@ -311,26 +311,35 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                         }
                         if (beEmbedded != null)
                         {
-                            var parentcontent = siteDb.TextContent.Get(ValueId);
-                            if (parentcontent != null)
-                            {
-                                if (parentcontent.Embedded.ContainsKey(folder.Id))
+                            if (ValueId != default(Guid))
+                            { 
+                                var parentcontent = siteDb.TextContent.Get(ValueId);
+                                if (parentcontent != null)
                                 {
-                                    var list = parentcontent.Embedded[folder.Id];
-
-                                    if (!list.Contains(content.Id))
+                                    if (parentcontent.Embedded.ContainsKey(folder.Id))
                                     {
-                                        list.Add(content.Id);
-                                    }
-                                }
-                                else
-                                {
-                                    List<Guid> ids = new List<Guid>();
-                                    ids.Add(content.Id);
-                                    parentcontent.Embedded[folder.Id] = ids;
-                                }
+                                        var list = parentcontent.Embedded[folder.Id];
 
-                                siteDb.TextContent.AddOrUpdate(parentcontent);
+                                        if (!list.Contains(content.Id))
+                                        {
+                                            list.Add(content.Id);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        List<Guid> ids = new List<Guid>();
+                                        ids.Add(content.Id);
+                                        parentcontent.Embedded[folder.Id] = ids;
+                                    }
+
+                                    siteDb.TextContent.AddOrUpdate(parentcontent);
+                                }
+                            }
+                            else
+                            {
+                                // TODO: 
+                                // this is to remove one item from the embedded...This is not happening often.
+                                // only we need to find out which item embed this one which is not easy... as we need to check every items. 
                             }
                         }
                     }
@@ -396,7 +405,6 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             {
                 this.context.WebSite.SiteDb().TextContent.Delete(content.Id);
             }
-
         }
 
 
