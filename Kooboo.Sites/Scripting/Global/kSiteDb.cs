@@ -98,6 +98,15 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
+        public SiteItem.TextContentObjectRepository TextContent
+        {
+            get
+            {
+                return this.TextContents; 
+            }
+        }
+
+
 
         private SiteItem.MultilingualRepository _htmlblock;
 
