@@ -911,6 +911,11 @@ namespace Kooboo.Sites.Scripting
             return Data.GlobalDb.Users.Get(UserName) != null; 
         }
 
+        public bool ExistEmail(string email)
+        {
+            return Data.GlobalDb.Users.GetByEmail(email) != null;
+        }
+
         public void Logout()
         {
             // log user out. 
