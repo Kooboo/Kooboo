@@ -164,7 +164,20 @@ namespace Kooboo.Sites.Scripting
                 } 
                 return _user; 
             }  
-        } 
+        }
+
+        private Template _template;
+        public Template Template
+        {
+            get
+            {
+                if (_template == null)
+                {
+                    _template = new Template(this.RenderContext);
+                }
+                return _template;
+            }
+        }
 
         public class InfoModel
         {
@@ -921,5 +934,93 @@ namespace Kooboo.Sites.Scripting
             // log user out. 
             context.Response.DeleteCookie(DataConstants.UserApiSessionKey);   
         } 
+    }
+
+    public class Template
+    {
+        public RenderContext _context;
+        public Template(RenderContext context)
+        {
+            _context = context;
+        }
+        public Dictionary<string, object> Upload(string domain,string data)
+        {
+            var dic = new Dictionary<string, object>();
+            var bytes = System.Text.Encoding.UTF8.GetBytes(data);
+            var formResult = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(bytes);
+
+            if (formResult.FormData.ContainsKey("title"))
+            {
+                dic["name"] = formResult.FormData["title"];
+            }
+
+            if (formResult.FormData.ContainsKey("link"))
+            {
+                dic["link"] = formResult.FormData["link"];
+            }
+            if (formResult.FormData.ContainsKey("description"))
+            {
+                dic["description"] = formResult.FormData["description"];
+            }
+            if (formResult.FormData.ContainsKey("tags"))
+            {
+                dic["tags"] = formResult.FormData["tags"];
+            }
+
+            dic["lastModified"] = DateTime.UtcNow;
+            dic["lastModifiedTimeStamp"] = DateTime.UtcNow.Ticks;
+            dic["downloadCount"] = 0;
+            dic["score"] = 0;
+
+            #region for tet
+            dic["filePath"] = "";
+            dic["pageCount"] = 0;
+            dic["contentCount"] = 0;
+            dic["imageCount"] = 1;
+            dic["layoutCount"] = 0;
+            dic["viewCount"] = 0;
+            dic["menuCount"] = 0;
+            //image from screenshot
+            dic["images"] = new string[] { };
+            dic["thumbNail"] = "";
+            #endregion
+
+            if (formResult.Files.Count() > 0)
+            {
+                var file = formResult.Files[0];
+                var filename =System.IO.Path.Combine(Guid.NewGuid().ToString(),file.FileName);
+                var uploadFile = new UploadFile(_context)
+                {
+                    Bytes = file.Bytes
+                };
+                uploadFile.Save(filename);
+                dic["size"] = file.Bytes.Length;
+                dic["filePath"] = filename;
+            }
+            
+            
+
+            #region todo implementation
+            //1.todo save file for download
+            //dic["filePath"] = "";
+
+            //2.create site for preview
+            //Kooboo.Sites.Repository.SiteDb sitedb = new Kooboo.Sites.Repository.SiteDb();
+            //dic["siteId"]="";
+            //dic["siteName"]="";
+            //dic["pageCount"] = sitedb.Pages.Count();
+            //dic["contentCount"] = sitedb.TextContent.Count();
+            //dic["imageCount"] = sitedb.Images.Count();
+            //dic["layoutCount"] = sitedb.Layouts.Count();
+            //dic["viewCount"] = sitedb.Views.Count();
+            //dic["menuCount"] = sitedb.Menus.Count();
+            //dic["previewUrl"]=""
+            //image from screenshot
+            //dic["images"] =  new string[] { };
+            //dic["thumbNail"] = "";
+            #endregion
+            return dic;
+
+        }
     }
 }
