@@ -36,7 +36,7 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public MetaResponse Login(string UserName, string Password, ApiCall apiCall)
+        public virtual MetaResponse Login(string UserName, string Password, ApiCall apiCall)
         {
 
             if (!Kooboo.Data.Service.UserLoginProtection.CanTryLogin(UserName, apiCall.Context.Request.IP))

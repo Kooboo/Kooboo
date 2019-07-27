@@ -924,7 +924,13 @@ namespace Kooboo.Sites.Scripting
             return Data.GlobalDb.Users.Get(UserName) != null; 
         }
 
+        [Obsolete]
         public bool ExistEmail(string email)
+        {
+            return Data.GlobalDb.Users.GetByEmail(email) != null;
+        }
+
+        public bool EmailExists(string email)
         {
             return Data.GlobalDb.Users.GetByEmail(email) != null;
         }
