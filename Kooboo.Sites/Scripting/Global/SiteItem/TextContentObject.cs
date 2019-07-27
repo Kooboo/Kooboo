@@ -100,7 +100,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             {
                 var view = Kooboo.Sites.Helper.ContentHelper.ToView(this.TextContent, this.Culture, contenttype.Properties);
 
-                var obj = view.GetValue(key);
+                var obj = view.GetValue(key, context);
                 if (obj != null)
                 {
                     return obj.ToString();

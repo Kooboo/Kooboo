@@ -20,7 +20,7 @@ namespace Kooboo.Sites.Repository
                 paras.AddColumn<TextContent>(it => it.ParentId);
                 paras.AddColumn<TextContent>(it => it.FolderId);
                 paras.AddColumn<TextContent>(it => it.ContentTypeId);
-                paras.AddColumn<TextContent>(it => it.Online); 
+                paras.AddColumn<TextContent>(it => it.Online);
                 paras.AddColumn<TextContent>(it => it.LastModified);
                 paras.SetPrimaryKeyField<TextContent>(o => o.Id);
                 return paras;
@@ -28,23 +28,29 @@ namespace Kooboo.Sites.Repository
         }
 
         public override TextContent GetByNameOrId(string NameOrGuid)
-        {    
+        {
             Guid key;
             bool parseok = Guid.TryParse(NameOrGuid, out key);
 
             if (!parseok)
             {
-                key = Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(NameOrGuid); 
+                key = Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(NameOrGuid);
             }
-            return Get(key);                     
+            return Get(key);
+        }
+
+        public void EnsureUserKey(TextContent content)
+        {
+            if (string.IsNullOrWhiteSpace(content.UserKey))
+            {
+                content.UserKey = this.GenerateUserKey(content);
+            }
         }
 
         public override bool AddOrUpdate(TextContent textContent, Guid UserId = default(Guid))
         {
-            if (string.IsNullOrWhiteSpace(textContent.UserKey))
-            {
-                textContent.UserKey = this.GenerateUserKey(textContent);
-            }
+            EnsureUserKey(textContent);  
+
             return base.AddOrUpdate(textContent, UserId);
         }
 
@@ -62,7 +68,7 @@ namespace Kooboo.Sites.Repository
             }
             return null;
         }
-         
+
         // get the default content item...search for all possible text repositories..
         public TextContentViewModel GetDefaultContentFromFolder(Guid FolderId, string CurrentCulture = null)
         {
@@ -178,7 +184,7 @@ namespace Kooboo.Sites.Repository
             Guid id = Lib.Security.Hash.ComputeGuidIgnoreCase(userKey);
             return this.Get(id) != null;
         }
-         
+
         public void EusureNonLangContent(TextContent content, ContentType contenttype = null)
         {
             if (contenttype == null)
@@ -186,13 +192,13 @@ namespace Kooboo.Sites.Repository
                 contenttype = this.SiteDb.ContentTypes.Get(content.ContentTypeId);
             }
 
-   
+
             string defaultculture = this.SiteDb.WebSite.DefaultCulture;
 
-            var NoSysNoMul = contenttype.Properties.Where(o => o.IsSystemField == false && o.MultipleLanguage == false).ToList(); 
+            var NoSysNoMul = contenttype.Properties.Where(o => o.IsSystemField == false && o.MultipleLanguage == false).ToList();
 
             foreach (var item in NoSysNoMul)
-            { 
+            {
                 string value = null;
                 var langstore = content.GetContentStore(defaultculture);
                 if (langstore != null && langstore.FieldValues.ContainsKey(item.Name))
@@ -218,15 +224,15 @@ namespace Kooboo.Sites.Repository
                 {
                     if (citem.Lang != defaultculture)
                     {
-                        citem.FieldValues.Remove(item.Name); 
+                        citem.FieldValues.Remove(item.Name);
                     }
                     else
                     {
                         citem.FieldValues[item.Name] = value;
-                        valueset = true; 
+                        valueset = true;
                     }
                 }
-                  
+
                 if (!valueset)
                 {
                     content.SetValue(item.Name, value, defaultculture);
