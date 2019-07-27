@@ -1007,10 +1007,7 @@ namespace Kooboo.Sites.Scripting
             
 
             #region todo implementation
-            //1.todo save file for download
-            //dic["filePath"] = "";
-
-            //2.create site for preview
+            //1.create site for preview
             //Kooboo.Sites.Repository.SiteDb sitedb = new Kooboo.Sites.Repository.SiteDb();
             //dic["siteId"]="";
             //dic["siteName"]="";
@@ -1021,7 +1018,7 @@ namespace Kooboo.Sites.Scripting
             //dic["viewCount"] = sitedb.Views.Count();
             //dic["menuCount"] = sitedb.Menus.Count();
             //dic["previewUrl"]=""
-            //image from screenshot
+            //2.image from screenshot
             //dic["images"] =  new string[] { };
             //dic["thumbNail"] = "";
             #endregion
