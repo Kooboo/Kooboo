@@ -17,7 +17,7 @@ import { operationRecord } from "@/operation/Record";
 import { DeleteUnit } from "@/operation/recordUnits/DeleteUnit";
 import { Log } from "@/operation/recordLogs/Log";
 import { DomLog } from "@/operation/recordLogs/DomLog";
-import { getViewComment, getFirstComment, isEditComment, getRepeatComment, isViewComment, getEditComment } from "../utils";
+import { getViewComment, getRepeatComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createDiv } from "@/dom/element";
 
@@ -28,11 +28,11 @@ export function createDeleteItem(): MenuItem {
     let args = context.lastSelectedDomEventArgs;
     let { parent } = getCleanParent(args.element);
     if (!args.koobooId) return setVisiable(false);
-    let comment = getEditComment(comments);
+    let comment = getViewComment(comments);
     if (!comment) return setVisiable(false);
     if (getRepeatComment(comments)) return setVisiable(false);
     if (getRelatedRepeatComment(args.element)) return setVisiable(false);
-    if (isViewComment(comment!) && parent && isDynamicContent(parent)) return setVisiable(false);
+    if (isDirty(args.element) && parent && isDynamicContent(parent)) return setVisiable(false);
     if (isBody(args.element)) return setVisiable(false);
   };
 
@@ -40,19 +40,18 @@ export function createDeleteItem(): MenuItem {
     let args = context.lastSelectedDomEventArgs;
     let { koobooId, parent } = getCleanParent(args.element);
     let comments = KoobooComment.getComments(args.element);
+    let comment = getViewComment(comments)!;
     let guid = setGuid(args.element);
     let guidComment = getGuidComment(guid);
     let startContent = args.element.outerHTML;
-    markDirty(args.element.parentElement!);
     let temp = createDiv();
     args.element.parentNode!.replaceChild(temp, args.element);
     temp.outerHTML = guidComment;
     let log!: Log;
     if (isDirty(args.element) && parent) {
-      let comment = getViewComment(comments)!;
+      markDirty(parent);
       log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(parent.innerHTML), koobooId!, comment.objecttype!);
     } else {
-      let comment = getViewComment(comments)!;
       log = DomLog.createDelete(comment.nameorid!, args.koobooId!, comment.objecttype!);
     }
     let operation = new operationRecord([new DeleteUnit(startContent)], [log], guid);

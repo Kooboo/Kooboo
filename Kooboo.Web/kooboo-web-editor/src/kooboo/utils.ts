@@ -2,10 +2,9 @@ import { getAllNode, getAllElement, isBody, previousNodes, nextNodes } from "../
 import { KoobooComment } from "./KoobooComment";
 import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID, OBJECT_TYPE } from "../common/constants";
 import { newGuid } from "./outsideInterfaces";
-import { createDiv } from "@/dom/element";
 
 export function clearKoobooInfo(domString: string) {
-  const exp = RegExp(`(${KOOBOO_ID}=".*?")|(${KOOBOO_DIRTY}(="")?)|(${KOOBOO_GUID}=".*?")|(<!--kooboo.*?-->)|(<!--empty-->)`, "g");
+  const exp = RegExp(`(${KOOBOO_ID}=".*?")|(${KOOBOO_DIRTY}(="")?)|(${KOOBOO_GUID}=".*?")|(<!--#?kooboo.*?-->)|(<!--empty-->)`, "g");
   return domString.replace(exp, "");
 }
 

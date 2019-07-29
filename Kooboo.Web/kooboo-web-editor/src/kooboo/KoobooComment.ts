@@ -1,5 +1,6 @@
 import { isSingleCommentWrap, previousComment, getWrapDom } from "./utils";
 import { getAllNode } from "@/dom/utils";
+import { KOOBOO_GUID } from "@/common/constants";
 
 export class KoobooComment {
   private _infos!: string[];
@@ -71,6 +72,10 @@ export class KoobooComment {
     return this.isComment(node) && node.nodeValue!.indexOf("--end") > -1;
   }
 
+  static isGuidComment(node: Node) {
+    return this.isComment(node) && node.nodeValue!.indexOf(KOOBOO_GUID) > -1;
+  }
+
   static getComments(el: Element) {
     let self = el;
     let comments: Comment[] = this.getSingleWrapComment(el);
@@ -79,6 +84,7 @@ export class KoobooComment {
     while (el) {
       comment = previousComment(el);
       while (comment) {
+        if (this.isEndComment(comment) || this.isGuidComment(comment)) break;
         if (!isSingleCommentWrap(comment) && this.isInWrap(comment, self)) {
           comments.push(comment);
         }
