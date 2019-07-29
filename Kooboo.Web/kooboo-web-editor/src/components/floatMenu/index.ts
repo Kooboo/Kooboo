@@ -11,6 +11,7 @@ export function createFloatMenu() {
   context.domChangeEvent.addEventListener(e => {
     if (!context.lastMouseEventArg.isTrusted) return;
     context.floatMenuClosing = false;
+    console.dir(context.lastSelectedDomEventArgs.element);
     update(context.lastMouseEventArg!.pageX, context.lastMouseEventArg!.pageY);
   });
 

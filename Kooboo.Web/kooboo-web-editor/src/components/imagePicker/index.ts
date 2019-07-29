@@ -9,15 +9,12 @@ export function createImagePicker(img: HTMLImageElement) {
   let container = createDiv();
   let { imagePreview, setImage } = createImagePreview();
   imagePreview.style.margin = "8px auto 16px auto";
-  let style = JSON.parse(JSON.stringify(getComputedStyle(img)));
 
   setImage(img.src);
   imagePreview.onclick = () => {
     pickImg(path => {
       setImage(path);
       img.src = path;
-      img.style.width = style.width;
-      img.style.height = style.height;
     });
   };
   container.appendChild(imagePreview);
@@ -47,7 +44,7 @@ export function createImagePicker(img: HTMLImageElement) {
       img.style.width = e.target.value;
     }
   });
-  width.setContent(style.width!);
+  width.setContent(img.style.width!);
   container.appendChild(width.input);
 
   let height = createLabelInput(TEXT.HEIGHT, "80px");
@@ -57,7 +54,7 @@ export function createImagePicker(img: HTMLImageElement) {
       img.style.height = e.target.value;
     }
   });
-  height.setContent(style.height!);
+  height.setContent(img.style.height!);
   container.appendChild(height.input);
 
   const { modal, setOkHandler, setCancelHandler, close } = createModal(TEXT.EDIT_IMAGE, container, "450px");

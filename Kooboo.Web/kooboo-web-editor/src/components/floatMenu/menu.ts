@@ -18,7 +18,6 @@ import { createEditRepeatLinkItem } from "./items/editRepeatLink";
 import { getMaxHeight, getMaxWidth, getParentElements } from "@/dom/utils";
 import { createClickItem } from "./items/click";
 import { createDeleteHtmlBlockItem } from "./items/deleteHtmlBlock";
-import { createDeleteFormItem } from "./items/deleteForm";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import context from "@/common/context";
 
@@ -42,8 +41,7 @@ export function createMenu() {
     createEditRepeatImageItem(),
     createEditRepeatLinkItem(),
     createClickItem(),
-    createDeleteHtmlBlockItem(),
-    createDeleteFormItem()
+    createDeleteHtmlBlockItem()
   ] as MenuItem[];
 
   for (const i of items) {

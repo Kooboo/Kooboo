@@ -3,8 +3,8 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
-import { getFirstComment, isViewComment } from "../utils";
-import { isDynamicContent, getCleanParent } from "@/kooboo/utils";
+import { getRepeatComment, getViewComment } from "../utils";
+import { isDynamicContent, getCleanParent, getRelatedRepeatComment } from "@/kooboo/utils";
 import { setInlineEditor } from "@/components/richEditor";
 import { KOOBOO_ID, KOOBOO_DIRTY } from "@/common/constants";
 import { emitSelectedEvent, emitHoverEvent } from "@/dom/events";
@@ -16,8 +16,9 @@ export function createReplaceToTextItem(): MenuItem {
   const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let firstComment = getFirstComment(comments);
-    if (!firstComment || !isViewComment(firstComment)) return setVisiable(false);
+    if (getRepeatComment(comments)) return setVisiable(false);
+    if (getRelatedRepeatComment(args.element)) return setVisiable(false);
+    if (!getViewComment(comments)) return setVisiable(false);
     let { koobooId, parent } = getCleanParent(args.element);
     if (!parent && !koobooId) return setVisiable(false);
     if (!isImg(args.element)) return setVisiable(false);
@@ -30,12 +31,12 @@ export function createReplaceToTextItem(): MenuItem {
     let startContent = parent!.innerHTML;
     try {
       let text = createP();
-      let style = getComputedStyle(args.element);
+      let style = JSON.parse(JSON.stringify(getComputedStyle(args.element)));
       text.setAttribute(KOOBOO_ID, args.koobooId!);
       text.setAttribute(KOOBOO_DIRTY, "");
       text.style.width = style.width;
       text.style.height = style.height;
-      text.style.display = style.display;
+      text.style.display = "block";
       args.element.parentElement!.replaceChild(text, args.element);
       emitHoverEvent(text);
       emitSelectedEvent();

@@ -1,9 +1,9 @@
 import { createItem, MenuItem } from "../basic";
 import context from "@/common/context";
-import { setGuid, markDirty, clearKoobooInfo, isDynamicContent, getGuidComment, isDirty, getCleanParent } from "@/kooboo/utils";
+import { setGuid, markDirty, clearKoobooInfo, isDynamicContent, getGuidComment, getCleanParent, getRelatedRepeatComment } from "@/kooboo/utils";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import { TEXT } from "@/common/lang";
-import { getEditComment, getFirstComment, isViewComment } from "../utils";
+import { getEditComment, getRepeatComment, getViewComment } from "../utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
 import { CopyUnit } from "@/operation/recordUnits/CopyUnit";
@@ -17,8 +17,9 @@ export function createCopyItem(): MenuItem {
   const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let firstComment = getFirstComment(comments);
-    if (!firstComment || !isViewComment(firstComment)) return setVisiable(false);
+    if (getRepeatComment(comments)) return setVisiable(false);
+    if (getRelatedRepeatComment(args.element)) return setVisiable(false);
+    if (!getViewComment(comments)) return setVisiable(false);
     let { koobooId, parent } = getCleanParent(args.element);
     if (!parent && !koobooId) return setVisiable(false);
     if (isBody(args.element)) return setVisiable(false);

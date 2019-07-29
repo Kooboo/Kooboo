@@ -3,8 +3,8 @@ import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
-import { getViewComment, isViewComment, getFirstComment } from "../utils";
-import { isDynamicContent, setGuid, markDirty, clearKoobooInfo, getCleanParent } from "@/kooboo/utils";
+import { getViewComment, getRepeatComment } from "../utils";
+import { isDynamicContent, setGuid, markDirty, clearKoobooInfo, getCleanParent, getRelatedRepeatComment } from "@/kooboo/utils";
 import { createImagePicker } from "@/components/imagePicker";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { operationRecord } from "@/operation/Record";
@@ -18,8 +18,9 @@ export function createReplaceToImgItem(): MenuItem {
   const update = (comments: KoobooComment[]) => {
     setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    let firstComment = getFirstComment(comments);
-    if (!firstComment || !isViewComment(firstComment)) return setVisiable(false);
+    if (getRepeatComment(comments)) return setVisiable(false);
+    if (getRelatedRepeatComment(args.element)) return setVisiable(false);
+    if (!getViewComment(comments)) return setVisiable(false);
     let { koobooId, parent } = getCleanParent(args.element);
     if (!parent && !koobooId) return setVisiable(false);
     if (isImg(args.element)) return setVisiable(false);
@@ -33,12 +34,13 @@ export function createReplaceToImgItem(): MenuItem {
     setGuid(parent!);
     let startContent = parent!.innerHTML;
     try {
-      let style = getComputedStyle(args.element);
+      let style = JSON.parse(JSON.stringify(getComputedStyle(args.element)));
       let img = createImg();
       img.setAttribute(KOOBOO_ID, args.koobooId!);
+      args.element.parentElement!.replaceChild(img, args.element);
       img.style.width = style.width;
       img.style.height = style.height;
-      args.element.parentElement!.replaceChild(img, args.element);
+      img.style.display = style.display;
       await createImagePicker(img);
       markDirty(parent!);
       let guid = setGuid(parent!);

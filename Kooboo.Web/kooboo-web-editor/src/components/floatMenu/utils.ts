@@ -17,7 +17,7 @@ import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { createDiv } from "@/dom/element";
 
 export function getEditComment(comments: KoobooComment[]) {
-  const editTypes = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label, OBJECT_TYPE.htmlblock];
+  const editTypes = [OBJECT_TYPE.view, OBJECT_TYPE.page, OBJECT_TYPE.layout, OBJECT_TYPE.content, OBJECT_TYPE.Label];
 
   for (const i of comments) {
     if (i.objecttype && editTypes.some(s => s == i.objecttype)) return i;
@@ -73,20 +73,24 @@ export function changeNameOrId(node: Node, guid: string, oldGuid: string) {
 
 export async function updateDomImage(element: HTMLImageElement, closeParent: HTMLElement, parentKoobooId: string, comment: KoobooComment) {
   setGuid(closeParent);
-  let startContent = closeParent.innerHTML;
+  let startContent = element.cloneNode(true) as HTMLImageElement;
   try {
     await createImagePicker(element as HTMLImageElement);
-    if (startContent == closeParent.innerHTML) return;
+    if (startContent.outerHTML == element.outerHTML) return;
     markDirty(closeParent);
     let guid = setGuid(closeParent);
     let value = clearKoobooInfo(closeParent!.innerHTML);
-    let unit = new InnerHtmlUnit(startContent);
+    let oldSrc = startContent.getAttribute("src");
+    let unit = new AttributeUnit(oldSrc!, "src");
     let log = DomLog.createUpdate(comment.nameorid!, value, parentKoobooId!, comment.objecttype!);
     let record = new operationRecord([unit], [log], guid);
     context.operationManager.add(record);
     return element.getAttribute("src")!;
   } catch (error) {
-    closeParent.innerHTML = startContent;
+    element.setAttribute("src", startContent.getAttribute("src")!);
+    element.setAttribute("style", startContent.getAttribute("style")!);
+    element.title = startContent.title;
+    element.alt = startContent.alt;
   }
 }
 
@@ -121,7 +125,10 @@ export async function updateAttributeImage(element: HTMLImageElement, koobooId: 
     context.operationManager.add(record);
     return newSrc;
   } catch (error) {
-    element.parentElement!.replaceChild(startContent, element);
+    element.setAttribute("src", startContent.getAttribute("src")!);
+    element.setAttribute("style", startContent.getAttribute("style")!);
+    element.title = startContent.title;
+    element.alt = startContent.alt;
   }
 }
 

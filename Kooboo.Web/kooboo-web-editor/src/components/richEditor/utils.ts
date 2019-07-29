@@ -8,7 +8,7 @@ import { delay } from "../../common/utils";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";
 import { operationRecord } from "@/operation/Record";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
-import { getEditComment } from "../floatMenu/utils";
+import { getEditComment, getHtmlBlockComment } from "../floatMenu/utils";
 import { Log } from "@/operation/recordLogs/Log";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { DomLog } from "@/operation/recordLogs/DomLog";
@@ -36,7 +36,6 @@ export async function impoveEditorUI(editor: Editor) {
     toolbar.insertBefore(moveBtn, toolbar.children.item(0));
     container.draggable = true;
     container.ondrag = e => {
-      e.stopPropagation();
       if (!(container instanceof HTMLElement)) return;
       container.style.position = "fixed";
       if (e.x == 0 || e.y == 0) return;
@@ -78,6 +77,7 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
     koobooId = koobooId && isDirty(args.element) ? koobooId : args.koobooId;
     let guid = setGuid(isRelpace ? parent! : element);
     let units = [new InnerHtmlUnit(startContent)];
+    let htmlBlockcomment = getHtmlBlockComment(comments);
     let comment = getEditComment(comments)!;
     let log: Log;
 
@@ -85,11 +85,11 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
       log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, clearKoobooInfo(element.innerHTML));
     } else if (comment.objecttype == OBJECT_TYPE.Label) {
       log = LabelLog.createUpdate(comment.bindingvalue!, clearKoobooInfo(element.innerHTML));
-    } else if (comment.objecttype == OBJECT_TYPE.htmlblock) {
+    } else if (htmlBlockcomment) {
       let { nodes } = getWrapDom(element, OBJECT_TYPE.htmlblock);
       let temp = createDiv();
       nodes.forEach(i => temp.appendChild(i.cloneNode(true)));
-      log = HtmlblockLog.createUpdate(comment.nameorid!, clearKoobooInfo(temp.innerHTML));
+      log = HtmlblockLog.createUpdate(htmlBlockcomment.nameorid!, clearKoobooInfo(temp.innerHTML));
     } else {
       log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(dirtyEl.innerHTML), koobooId!, comment.objecttype!);
     }
