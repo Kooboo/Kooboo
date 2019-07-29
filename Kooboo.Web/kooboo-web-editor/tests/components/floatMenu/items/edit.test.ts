@@ -93,7 +93,7 @@ describe("edit", () => {
         <div class="widget widget-intro" kooboo-id="1-0">
             <article class="content" kooboo-id="1-0-1-1-1-1">
                 <!--#kooboo--objecttype='htmlblock'--nameorid='test1'--boundary='155'-->
-                <button class="title" kooboo-id="1-0-1-1-1-1-1">平等，责任</button>
+                <area class="title" kooboo-id="1-0-1-1-1-1-1">平等，责任</area>
                 <!--#kooboo--end='true'--objecttype='htmlblock'--boundary='155'-->
                 <p kooboo-id="1-0-1-1-1-1-5">大数据与人工智能是未来主要研发方向。</p>
             </article>
