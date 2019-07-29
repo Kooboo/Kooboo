@@ -2,7 +2,7 @@ import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { isImg } from "@/dom/utils";
+import { isImg, isInTable } from "@/dom/utils";
 import { getRepeatComment, getViewComment } from "../utils";
 import { isDynamicContent, getCleanParent, getRelatedRepeatComment } from "@/kooboo/utils";
 import { setInlineEditor } from "@/components/richEditor";
@@ -18,6 +18,7 @@ export function createReplaceToTextItem(): MenuItem {
     let args = context.lastSelectedDomEventArgs;
     if (getRepeatComment(comments)) return setVisiable(false);
     if (getRelatedRepeatComment(args.element)) return setVisiable(false);
+    if (isInTable(args.element)) return setVisiable(false);
     if (!getViewComment(comments)) return setVisiable(false);
     let { koobooId, parent } = getCleanParent(args.element);
     if (!parent && !koobooId) return setVisiable(false);

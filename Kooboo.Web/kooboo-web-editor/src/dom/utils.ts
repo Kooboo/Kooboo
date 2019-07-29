@@ -175,3 +175,8 @@ export function getBackgroundColor(el: HTMLElement) {
 
   return { color, colorInBackground };
 }
+
+export function isInTable(el: HTMLElement) {
+  var reExcept = /^thead|tbody|tfoot|th|tr|td$/i;
+  return reExcept.test(el.tagName);
+}

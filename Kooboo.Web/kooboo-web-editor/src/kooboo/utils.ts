@@ -5,25 +5,8 @@ import { newGuid } from "./outsideInterfaces";
 import { createDiv } from "@/dom/element";
 
 export function clearKoobooInfo(domString: string) {
-  let el = createDiv();
-  el.innerHTML = domString;
-  let nodes = getAllNode(el);
-  for (const i of nodes) {
-    if (i instanceof HTMLElement) {
-      if (i.hasAttribute(KOOBOO_ID)) i.attributes.removeNamedItem(KOOBOO_ID);
-      if (i.hasAttribute(KOOBOO_DIRTY)) i.attributes.removeNamedItem(KOOBOO_DIRTY);
-      if (i.hasAttribute(KOOBOO_GUID)) i.attributes.removeNamedItem(KOOBOO_GUID);
-    }
-
-    if (i.nodeType == Node.COMMENT_NODE && i.nodeValue && (i.nodeValue.startsWith(KOOBOO_GUID) || i.nodeValue == "empty")) {
-      i.parentNode!.removeChild(i);
-    }
-
-    if (KoobooComment.isComment(i)) {
-      i.parentNode!.removeChild(i);
-    }
-  }
-  return el.innerHTML;
+  const exp = RegExp(`(${KOOBOO_ID}=".*?")|(${KOOBOO_DIRTY}(="")?)|(${KOOBOO_GUID}=".*?")|(<!--kooboo.*?-->)|(<!--empty-->)`, "g");
+  return domString.replace(exp, "");
 }
 
 export function getCloseElement(el: HTMLElement) {

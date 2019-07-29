@@ -2,7 +2,7 @@ import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { isImg } from "@/dom/utils";
+import { isImg, isInTable } from "@/dom/utils";
 import { getViewComment, getRepeatComment } from "../utils";
 import { isDynamicContent, setGuid, markDirty, clearKoobooInfo, getCleanParent, getRelatedRepeatComment } from "@/kooboo/utils";
 import { createImagePicker } from "@/components/imagePicker";
@@ -21,6 +21,7 @@ export function createReplaceToImgItem(): MenuItem {
     if (getRepeatComment(comments)) return setVisiable(false);
     if (getRelatedRepeatComment(args.element)) return setVisiable(false);
     if (!getViewComment(comments)) return setVisiable(false);
+    if (isInTable(args.element)) return setVisiable(false);
     let { koobooId, parent } = getCleanParent(args.element);
     if (!parent && !koobooId) return setVisiable(false);
     if (isImg(args.element)) return setVisiable(false);
