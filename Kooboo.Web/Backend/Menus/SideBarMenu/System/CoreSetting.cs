@@ -18,7 +18,7 @@ namespace Kooboo.Web.Backend.Menus.SideBarMenu.System
 
         public string Url => "System/CoreSettings";
 
-        public int Order => 10;
+        public int Order => 2;
 
         public List<ICmsMenu> SubItems { get; set; }
 
