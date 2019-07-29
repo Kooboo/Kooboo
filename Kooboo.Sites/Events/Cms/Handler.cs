@@ -37,6 +37,8 @@ namespace Kooboo.Sites.Events
             AddHandler<Image>(HandleImageChange);
             AddHandler<ObjectRelation>(HandleObjectRelationChange);
 
+            AddHandler<Code>(HandleCodeChange); 
+
             AddHandler<TransferTask>(HandleTransferTask);
         }
 
@@ -501,6 +503,24 @@ namespace Kooboo.Sites.Events
 
             ImageEvent.SiteDb.Thumbnails.DeleteByImageId(imageid);
         }
+
+
+        private static void HandleCodeChange(Kooboo.Events.Cms.SiteObjectEvent<Code> CodeEvent)
+        {
+            if (CodeEvent.ChangeType == ChangeType.Delete)
+            {
+                if(CodeEvent.Value.CodeType == CodeType.Api && CodeEvent.Value !=null)
+                {
+                    // for api, also need to remove the url. 
+                    var route = CodeEvent.SiteDb.Routes.GetByObjectId(CodeEvent.Value.Id); 
+                    if (route !=null)
+                    {
+                        CodeEvent.SiteDb.Routes.Delete(route.Id); 
+                    }
+                }
+            } 
+        }
+
 
         private static void HandleObjectRelationChange(SiteObjectEvent<ObjectRelation> relationEvent)
         {

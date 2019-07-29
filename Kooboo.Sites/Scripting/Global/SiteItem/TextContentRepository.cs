@@ -188,6 +188,10 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                                 if (parentcontent.Embedded.ContainsKey(folder.Id))
                                 {
                                     var list = parentcontent.Embedded[folder.Id];
+                                    if (list == null)
+                                    {
+                                        list = new List<Guid>();
+                                    }
                                     if (!list.Contains(content.Id))
                                     {
                                         list.Add(content.Id);
@@ -278,7 +282,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
                 var category = GetCatFolder(item.Key);
                 if (category != null)
-                { 
+                {
                     if (ValueId == default(Guid))
                     {
                         //To remove item..
@@ -312,14 +316,17 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                         if (beEmbedded != null)
                         {
                             if (ValueId != default(Guid))
-                            { 
+                            {
                                 var parentcontent = siteDb.TextContent.Get(ValueId);
                                 if (parentcontent != null)
                                 {
                                     if (parentcontent.Embedded.ContainsKey(folder.Id))
                                     {
                                         var list = parentcontent.Embedded[folder.Id];
-
+                                        if (list == null)
+                                        {
+                                            list = new List<Guid>();
+                                        }
                                         if (!list.Contains(content.Id))
                                         {
                                             list.Add(content.Id);

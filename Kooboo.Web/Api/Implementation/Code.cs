@@ -184,7 +184,25 @@ namespace Kooboo.Web.Api.Implementation
             {
                 if (!string.IsNullOrEmpty(model.Url) && !sitedb.Routes.Validate(model.Url, model.Id))
                 {
-                    throw new Exception(Data.Language.Hardcoded.GetValue("Url occupied", call.Context));
+                    // one more verify. 
+                    var route = sitedb.Routes.Get(model.Url); 
+                    if (route !=null && route.objectId != default(Guid))
+                    {
+                        var siteobjecttype = Kooboo.ConstTypeContainer.GetModelType(route.DestinationConstType); 
+                        if (siteobjecttype !=null)
+                        {
+                            var repo = sitedb.GetSiteRepositoryByModelType(siteobjecttype); 
+                            if (repo !=null)
+                            {
+                                var obj = repo.Get(route.objectId); 
+                                if (obj !=null)
+                                {
+                                    throw new Exception(Data.Language.Hardcoded.GetValue("Url occupied", call.Context));
+                                }
+                            }
+                        }
+                    } 
+                
                 }
 
                 // check if it only return Json... 
