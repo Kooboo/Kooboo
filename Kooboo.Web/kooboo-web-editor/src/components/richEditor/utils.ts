@@ -36,6 +36,7 @@ export async function impoveEditorUI(editor: Editor) {
     toolbar.insertBefore(moveBtn, toolbar.children.item(0));
     container.draggable = true;
     container.ondrag = e => {
+      e.stopPropagation();
       if (!(container instanceof HTMLElement)) return;
       container.style.position = "fixed";
       if (e.x == 0 || e.y == 0) return;

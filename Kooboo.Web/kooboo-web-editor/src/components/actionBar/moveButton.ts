@@ -8,6 +8,7 @@ export function createMoveButton(container: HTMLElement) {
   btn.style.cursor = "move";
 
   btn.ondrag = e => {
+    e.stopPropagation();
     if (e.x == 0 || e.y == 0) return;
     container.style.top = e.y - 25 + "px";
     container.style.left = e.x - 25 + "px";
