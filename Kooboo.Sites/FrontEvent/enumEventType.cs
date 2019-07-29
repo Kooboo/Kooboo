@@ -19,7 +19,7 @@ namespace Kooboo.Sites.FrontEvent
         ViewNotFound = 5,
 
         PageFinding = 6,
-        PageNotFound = 7,
+       // PageNotFound = 7,
         PageFound = 8
     }
 }

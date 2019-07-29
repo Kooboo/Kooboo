@@ -22,14 +22,17 @@ namespace Kooboo.Sites.Routing
                 if (foundroute == null)
                 {
                     foundroute = GetRoute(context, context.RenderContext.Request.RelativeUrl);
-                    if (foundroute != null)
+                    if (foundroute != null && foundroute.objectId != default(Guid))
+                    // if (foundroute != null)
                     {
                         var foundRouteEventResult = FrontEvent.Manager.RaiseRouteEvent(FrontEvent.enumEventType.RouteFound, context.RenderContext, foundroute);
+
 
                         if (foundRouteEventResult != null && foundRouteEventResult.objectId != default(Guid))
                         {
                             foundroute = foundRouteEventResult;
                         }
+
                     }
                     else
                     {
@@ -250,7 +253,7 @@ namespace Kooboo.Sites.Routing
                 string nameorid = null;
 
                 if (byte.TryParse(start, out output))
-                { 
+                {
                     if (ConstTypeContainer.ByteTypes.ContainsKey(output))
                     {
                         if (sitedb != null)

@@ -65,12 +65,12 @@ namespace Kooboo.Sites.FrontEvent
                     }
                 }
             }
-            else if (eventtype == enumEventType.RouteNotFound)
-            {
-                PageNotFound notfound = new PageNotFound(context);
-                RaiseEvent(context, notfound);
-                return notfound.Page;
-            }
+            //else if (eventtype == enumEventType.)
+            //{
+            //    PageNotFound notfound = new PageNotFound(context);
+            //    RaiseEvent(context, notfound);
+            //    return notfound.Page;
+            //}
             return null;
         }
 
