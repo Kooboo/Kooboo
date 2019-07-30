@@ -7,7 +7,7 @@ import { setGuid, isDirty, clearKoobooInfo, getCleanParent } from "@/kooboo/util
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { operationRecord } from "@/operation/Record";
 import { StyleLog } from "@/operation/recordLogs/StyleLog";
-import { getMenuComment, getFormComment, getHtmlBlockComment, getViewComment, getFirstComment, isRepeatComment } from "../utils";
+import { getMenuComment, getHtmlBlockComment, getViewComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { Log } from "@/operation/recordLogs/Log";
@@ -21,7 +21,6 @@ export function createEditStyleItem(): MenuItem {
     let args = context.lastSelectedDomEventArgs;
     if (isImg(args.element)) return setVisiable(false);
     if (getMenuComment(comments)) return setVisiable(false);
-    if (getFormComment(comments)) return setVisiable(false);
     if (getHtmlBlockComment(comments)) return setVisiable(false);
     if (!getViewComment(comments)) return setVisiable(false);
     if (!args.koobooId) return setVisiable(false);
