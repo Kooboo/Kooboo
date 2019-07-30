@@ -54,6 +54,7 @@ export function setLang(settings: Settings) {
 
 export function save_oncancelcallback(e: Editor, callBack: () => void) {
   e.setContent((e as any)._content);
+  e.save = () => ""; //fix loss element when tinymce editor removed
   e.remove();
   context.editing = false;
   callBack();
@@ -65,6 +66,7 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
   let startContent = (e as any)._content;
   let isRelpace = (e as any)._isReplace;
   let element = e.getElement() as HTMLElement;
+  e.save = () => ""; //fix loss element when tinymce editor removed
   e.remove();
 
   let clearContent = (c: string) => clearKoobooInfo(c).replace(/\s/g, "");
@@ -119,7 +121,6 @@ export function onSetContent(e: any) {
 export function onRemove(e: any) {
   let element = e.target.getElement();
   element._tinymceeditor = null;
-
   if (!element._isRelative) {
     element.style.position = "";
   }
