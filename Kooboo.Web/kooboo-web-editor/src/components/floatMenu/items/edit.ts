@@ -17,7 +17,7 @@ export function createEditItem(): MenuItem {
     if (getMenuComment(comments)) return setVisiable(false);
     if (!getEditComment(comments)) return setVisiable(false);
     if (!args.koobooId) return setVisiable(false);
-    var reExcept = /^(img|input|textarea|hr|area|canvas|meter|progress|select)$/i;
+    var reExcept = /^(img|button|input|textarea|hr|area|canvas|meter|progress|select|tr|td|tbody|thead|tfoot|th)$/i;
     let el = args.element;
     if (reExcept.test(el.tagName)) return setVisiable(false);
     if (isDynamicContent(args.element)) return setVisiable(false);
