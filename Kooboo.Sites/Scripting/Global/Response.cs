@@ -87,6 +87,12 @@ namespace Kooboo.Sites.Scripting.Global
             write(value);
         }
 
+        public void binary(string contentType,byte[] bytes)
+        {
+            this.context.Response.ContentType = contentType;
+            this.context.Response.Body = bytes;
+        }
+
         public void StatusCode(int code)
         {
             this.context.Response.StatusCode = code; 
