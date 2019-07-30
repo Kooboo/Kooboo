@@ -127,6 +127,14 @@ namespace Kooboo.Sites.Scripting.Global
 
         }
 
+        public byte[] postData
+        {
+            get
+            {
+                return this.context.Request.PostData;
+            }
+        }
+
 
 
         public string method
