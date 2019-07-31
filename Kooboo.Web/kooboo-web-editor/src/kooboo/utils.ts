@@ -86,6 +86,7 @@ export function getGuidComment(guid: string) {
 export function isDynamicContent(el: HTMLElement) {
   for (const k in OBJECT_TYPE) {
     if (k == OBJECT_TYPE.Url) continue;
+    if (k == OBJECT_TYPE.form) continue;
     if (OBJECT_TYPE.hasOwnProperty(k)) {
       const i = OBJECT_TYPE[k as keyof typeof OBJECT_TYPE];
       if (el.innerHTML.indexOf(`objecttype='${i}'`) > -1) return true;
