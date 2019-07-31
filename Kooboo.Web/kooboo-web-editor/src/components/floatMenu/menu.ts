@@ -20,6 +20,7 @@ import { createClickItem } from "./items/click";
 import { createDeleteHtmlBlockItem } from "./items/deleteHtmlBlock";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import context from "@/common/context";
+import { createConvert } from "./items/convert";
 
 export function createMenu() {
   const { container, setExpandBtnVisiable, updatePosition } = createContainer();
@@ -41,7 +42,8 @@ export function createMenu() {
     createEditRepeatImageItem(),
     createEditRepeatLinkItem(),
     createClickItem(),
-    createDeleteHtmlBlockItem()
+    createDeleteHtmlBlockItem(),
+    createConvert()
   ] as MenuItem[];
 
   for (const i of items) {
@@ -52,6 +54,7 @@ export function createMenu() {
     let pageHeight = getMaxHeight();
     let pagewidth = getMaxWidth();
     container.style.display = "block";
+    container.style.overflow = "visible";
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
     let elements = getParentElements(args.element);
