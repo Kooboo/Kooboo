@@ -506,7 +506,7 @@ namespace Kooboo.Sites.Sync
             }
 
             var setting = GetSiteSetting(SiteDb.WebSite);
-            var json = JsonHelper.Serialize(setting);
+            var json = JsonHelper.SerializeCaseSensitive(setting);
             string settingfile = System.IO.Path.Combine(DiskPath, KoobooSettingFileName);
             File.WriteAllText(settingfile, json);
 
@@ -519,7 +519,7 @@ namespace Kooboo.Sites.Sync
         {
             var db = Kooboo.Data.DB.GetKDatabase(website);
             var tablesetting = Kooboo.IndexedDB.Dynamic.Sync.GetTableSetting(db);
-            var json = JsonHelper.Serialize(tablesetting);
+            var json = JsonHelper.SerializeCaseSensitive(tablesetting);
 
             string settingfile = System.IO.Path.Combine(diskpath, TableSettingFileName);
             File.WriteAllText(settingfile, json);
@@ -552,7 +552,7 @@ namespace Kooboo.Sites.Sync
 
                     foreach (var data in all)
                     {
-                        var jsondata = Kooboo.Lib.Helper.JsonHelper.Serialize(data);
+                        var jsondata = Kooboo.Lib.Helper.JsonHelper.SerializeCaseSensitive(data);
 
                         if (data.ContainsKey("_id"))
                         {

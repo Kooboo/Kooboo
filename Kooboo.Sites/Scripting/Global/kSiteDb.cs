@@ -38,6 +38,9 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
 
+
+
+
         SiteItem.TextRepository _views;
 
         public SiteItem.TextRepository Views
