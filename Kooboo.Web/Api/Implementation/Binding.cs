@@ -197,9 +197,8 @@ namespace Kooboo.Web.Api.Implementation
             {
                 fullname = Subdomain + "." + rootDomain;
             }
-
-            return true;  // for now. 
-             //  return Kooboo.Web.ssl.SslService.Verify(fullname); 
+             
+            return Kooboo.Web.SSL.SslService.EnsureCanGenerate(fullname); 
         }
 
         public void SetSsl(string rootDomain, string Subdomain, ApiCall call)
@@ -227,10 +226,8 @@ namespace Kooboo.Web.Api.Implementation
                     Orgid = call.Context.User.CurrentOrgId;
                 }
             }
-
-            // does not really do it now. 
-
-            // Kooboo.Web.ssl.SslService.SetSsl(rootDomain, Orgid); 
+             
+             SSL.SslService.SetSsl(rootDomain, Orgid); 
         }
 
 
