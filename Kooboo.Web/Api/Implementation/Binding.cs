@@ -199,7 +199,7 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             return true;  // for now. 
-                          //  return Kooboo.Web.ssl.SslService.Verify(fullname); 
+             //  return Kooboo.Web.ssl.SslService.Verify(fullname); 
         }
 
         public void SetSsl(string rootDomain, string Subdomain, ApiCall call)
