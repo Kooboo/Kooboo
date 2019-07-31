@@ -32,7 +32,7 @@ namespace Kooboo.ServerData.Ssl
                 if (string.IsNullOrWhiteSpace(validate))
                 {
                     // this is for real... not for validation check. 
-                    string token = Kooboo.Web.ssl.Sslvalidation.GetToken(host);
+                    string token = Kooboo.Web.ssl.SslService.GetToken(host);
                     if (!string.IsNullOrWhiteSpace(token))
                     { 
                         context.Response.Body = System.Text.Encoding.UTF8.GetBytes(token);
@@ -42,7 +42,7 @@ namespace Kooboo.ServerData.Ssl
                 }
                 else
                 {
-                    var checkok = Kooboo.Web.ssl.Sslvalidation.Verify(host, validate);
+                    var checkok = Kooboo.Web.ssl.SslService.Verify(host, validate);
 
                     if (checkok)
                     {
