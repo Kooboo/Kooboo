@@ -65,6 +65,8 @@
       confirm: "Confirm",
       detail: "Detail",
       balance: "Balance",
+      enable: "Enable",
+      enabled: "Enabled",
 
       API: "API",
       Code: "Code",
@@ -1049,7 +1051,8 @@
         year: "year",
         email: "Email",
         records: "Records",
-        expires: "Expires"
+        expires: "Expires",
+        sslEnabled: "SSL enabled"
       },
       assembly: {
         name: "Assembly",

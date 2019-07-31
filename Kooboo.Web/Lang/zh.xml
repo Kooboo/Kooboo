@@ -555,6 +555,9 @@
   <key id="Top 5">最大5项</key>
   <key id="Chart">图表</key>
   <key id="Detail">详情</key>
+  <key id="Item size">Item size</key>
+  <key id="Item count">Item count</key>
+  <key id="Log count">Log count</key>
   <key id="Jobs">任务</key>
   <key id="Add a job">新建任务</key>
   <key id="Run">运行</key>
@@ -675,6 +678,7 @@
   <key id="Author">作者</key>
   <key id="Use">使用</key>
   <key id="Confirm">确定</key>
+  <key id="Enabled">已启用</key>
   <key id="API">API</key>
   <key id="HTML">HTML</key>
   <key id="Types">类型</key>
@@ -1128,6 +1132,7 @@
   <key id="Read only">只读</key>
   <key id="Records">记录</key>
   <key id="Expires">有效期</key>
+  <key id="SSL enabled">SSL 已启用</key>
   <key id="Assembly">配置</key>
   <key id="No description">暂无描述</key>
   <key id="No tag">无标签</key>
@@ -1251,9 +1256,9 @@
   <key id="Delete label">删除标签</key>
   <key id="Domain has been taken">域名已被使用</key>
   <key id="Domain must use Kooboo DNS server">域名必须使用 Kooboo 的 DNS 服务器</key>
+  <key id="SSL generation failed">SSL 生成失败</key>
   <key id="user or ip temporarily lockout">user or ip temporarily lockout</key>
   <key id="Old and New Password are the same">新旧密码相同</key>
-  <key id="Kooboo online">Kooboo 在线</key>
   <key id="is in use">正在使用</key>
   <key id="Invalid coupon code">无效的优惠卷</key>
   <key id="Bandwidth">带宽</key>

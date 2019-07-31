@@ -957,6 +957,12 @@
     this.SiteBinding = function(para) {
       return this.executeGet("SiteBinding", para);
     };
+    this.verifySSL = function(para) {
+      return this.executeGet("verifySSL", para);
+    };
+    this.setSSL = function(para) {
+      return this.executePost("setSSL", para);
+    };
   }
   extend(Binding, BaseModel);
 

@@ -555,6 +555,9 @@
   <key id="Top 5">Top 5</key>
   <key id="Chart">Chart</key>
   <key id="Detail">Detail</key>
+  <key id="Item size">Item size</key>
+  <key id="Item count">Item count</key>
+  <key id="Log count">Log count</key>
   <key id="Jobs">Jobs</key>
   <key id="Add a job">Add a job</key>
   <key id="Run">Run</key>
@@ -675,6 +678,7 @@
   <key id="Author">Author</key>
   <key id="Use">Use</key>
   <key id="Confirm">Confirm</key>
+  <key id="Enabled">Enabled</key>
   <key id="API">API</key>
   <key id="HTML">HTML</key>
   <key id="Types">Types</key>
@@ -1128,6 +1132,7 @@
   <key id="Read only">Read only</key>
   <key id="Records">Records</key>
   <key id="Expires">Expires</key>
+  <key id="SSL enabled">SSL enabled</key>
   <key id="Assembly">Assembly</key>
   <key id="No description">No description</key>
   <key id="No tag">No tag</key>
@@ -1251,9 +1256,9 @@
   <key id="Delete label">Delete label</key>
   <key id="Domain has been taken">Domain has been taken</key>
   <key id="Domain must use Kooboo DNS server">Domain must use Kooboo DNS server</key>
+  <key id="SSL generation failed">SSL generation failed</key>
   <key id="user or ip temporarily lockout">user or ip temporarily lockout</key>
   <key id="Old and New Password are the same">Old and New Password are the same</key>
-  <key id="Kooboo online">Kooboo online</key>
   <key id="is in use">is in use</key>
   <key id="Invalid coupon code">Invalid coupon code</key>
   <key id="Bandwidth">Bandwidth</key>

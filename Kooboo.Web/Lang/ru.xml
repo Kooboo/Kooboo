@@ -555,6 +555,9 @@
   <key id="Top 5">Максимум 5 записей</key>
   <key id="Chart">Диаграммы</key>
   <key id="Detail">Подробности</key>
+  <key id="Item size">Item size</key>
+  <key id="Item count">Item count</key>
+  <key id="Log count">Log count</key>
   <key id="Jobs">Миссия</key>
   <key id="Add a job">Новая задача</key>
   <key id="Run">Бег</key>
@@ -675,6 +678,7 @@
   <key id="Author">Автор</key>
   <key id="Use">Использование</key>
   <key id="Confirm">Точно.</key>
+  <key id="Enabled">Enabled</key>
   <key id="API">API</key>
   <key id="HTML">HTML</key>
   <key id="Types">Тип</key>
@@ -1128,6 +1132,7 @@
   <key id="Read only">Только чтение</key>
   <key id="Records">Запись</key>
   <key id="Expires">Срок действия</key>
+  <key id="SSL enabled">SSL enabled</key>
   <key id="Assembly">Настройка</key>
   <key id="No description">Описание отсутствует</key>
   <key id="No tag">Отсутствие ярлыка</key>
@@ -1251,9 +1256,9 @@
   <key id="Delete label">Удаление меток</key>
   <key id="Domain has been taken">Доменное имя используется</key>
   <key id="Domain must use Kooboo DNS server">Доменное имя должно использовать DNS-сервер Kooboo</key>
+  <key id="SSL generation failed">SSL generation failed</key>
   <key id="user or ip temporarily lockout">user or ip temporarily lockout</key>
   <key id="Old and New Password are the same">Тот же старый и новый пароль</key>
-  <key id="Kooboo online">Kooboo онлайн</key>
   <key id="is in use">Используется</key>
   <key id="Invalid coupon code">Недействительный объем предложения</key>
   <key id="Bandwidth">Пропускная способность</key>
