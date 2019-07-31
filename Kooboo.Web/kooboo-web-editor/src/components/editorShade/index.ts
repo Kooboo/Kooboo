@@ -19,5 +19,11 @@ export function createEditorShade() {
     updatePosition(context.lastSelectedDomEventArgs.element);
   });
 
+  document.addEventListener("scroll", () => {
+    if (context.editing) {
+      updatePosition(context.lastSelectedDomEventArgs.element);
+    }
+  });
+
   return el;
 }

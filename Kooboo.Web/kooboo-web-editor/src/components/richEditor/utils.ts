@@ -43,24 +43,13 @@ export function setLang(settings: Settings) {
   }
 }
 
-export function save_oncancelcallback(e: Editor, callBack: () => void) {
-  e.save = () => ""; //fix loss element when tinymce editor removed
-  e.remove();
-  callBack();
-}
-
-export function save_onsavecallback(e: Editor, callBack: () => void) {
-  e.save = () => ""; //fix loss element when tinymce editor removed
-  e.remove();
-  callBack();
-}
-
 export function onBlur() {
   return false;
 }
 
 export function onSetContent(e: any) {
   var targetElm = e.target.targetElm as HTMLElement;
+  targetElm.style.position = (targetElm as any)._position;
   for (const element of getAllElement(targetElm, true)) {
     if (element.innerHTML.indexOf(EMPTY_COMMENT) == -1 && !isTextArea(element)) {
       element.innerHTML += EMPTY_COMMENT;
@@ -70,10 +59,6 @@ export function onSetContent(e: any) {
 
 export function onRemove(e: any) {
   let element = e.target.getElement();
-  if (!element._isRelative) {
-    element.style.position = "";
-  }
-
   if (element instanceof HTMLElement) {
     if (element.id.startsWith("mce_")) element.removeAttribute("id");
     if (element.getAttribute("style") == "") element.removeAttribute("style");
@@ -120,4 +105,10 @@ export function initInstanceCallback(e: Editor) {
     e.execCommand("mcecancel");
     context.closeEditingEvent.handlers = [];
   });
+}
+
+export function savePluginCallback(e: Editor, callBack: () => void) {
+  e.save = () => ""; //fix loss element when tinymce editor removed
+  e.remove();
+  callBack();
 }
