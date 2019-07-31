@@ -3,7 +3,7 @@ import "tinymce/themes/silver";
 import "tinymce/plugins/save";
 import "tinymce/plugins/link";
 import "tinymce/plugins/image";
-import { createSettings } from "./settings";
+import { createSettings, SetInlineEditorArgs } from "./settings";
 
 async function createEditor(settings: Settings) {
   let selector = settings.target as HTMLElement;
@@ -11,14 +11,7 @@ async function createEditor(settings: Settings) {
   if (selector instanceof HTMLElement) selector.focus();
 }
 
-export async function setInlineEditor(selector: HTMLElement, startContent?: string) {
-  return new Promise((rs, rj) => {
-    let settings = createSettings(selector, rj, rs);
-    createEditor(settings).then(e => {
-      if (startContent) {
-        (e as any)._content = startContent;
-        (e as any)._isReplace = true;
-      }
-    });
-  });
+export async function setInlineEditor(args: SetInlineEditorArgs) {
+  let settings = createSettings(args);
+  createEditor(settings);
 }

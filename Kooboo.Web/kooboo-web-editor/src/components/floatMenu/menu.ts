@@ -21,6 +21,7 @@ import { createDeleteHtmlBlockItem } from "./items/deleteHtmlBlock";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import context from "@/common/context";
 import { createConvert } from "./items/convert";
+import { createInlineEditHtmlBlockItem } from "./items/inlineEditHtmlBlock";
 
 export function createMenu() {
   const { container, setExpandBtnVisiable, updatePosition } = createContainer();
@@ -43,7 +44,8 @@ export function createMenu() {
     createEditRepeatLinkItem(),
     createClickItem(),
     createDeleteHtmlBlockItem(),
-    createConvert()
+    createConvert(),
+    createInlineEditHtmlBlockItem()
   ] as MenuItem[];
 
   for (const i of items) {

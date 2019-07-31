@@ -1,23 +1,14 @@
-import { Editor, Settings, EditorManager } from "tinymce";
-import { STANDARD_Z_INDEX, EMPTY_COMMENT, OBJECT_TYPE } from "../../common/constants";
+import { Editor, Settings } from "tinymce";
+import { STANDARD_Z_INDEX, EMPTY_COMMENT } from "../../common/constants";
 import { lang } from "../../common/lang";
 import context from "../../common/context";
-import { markDirty, setGuid, clearKoobooInfo, getCleanParent, getWrapDom, isDirty } from "../../kooboo/utils";
 import { getAllElement, isTextArea } from "../../dom/utils";
 import { delay } from "../../common/utils";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";
-import { operationRecord } from "@/operation/Record";
-import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
-import { getEditComment, getHtmlBlockComment } from "../floatMenu/utils";
-import { Log } from "@/operation/recordLogs/Log";
-import { ContentLog } from "@/operation/recordLogs/ContentLog";
-import { DomLog } from "@/operation/recordLogs/DomLog";
-import { LabelLog } from "@/operation/recordLogs/LabelLog";
-import { KoobooComment } from "@/kooboo/KoobooComment";
-import { HtmlblockLog } from "@/operation/recordLogs/HtmlblockLog";
-import { createDiv, createImg } from "@/dom/element";
+import { createImg } from "@/dom/element";
 
 export async function impoveEditorUI(editor: Editor) {
+  editor.focus(false);
   let container = editor.getContainer();
   if (container instanceof HTMLElement) {
     container.style.zIndex = STANDARD_Z_INDEX + 1 + "";
@@ -53,52 +44,14 @@ export function setLang(settings: Settings) {
 }
 
 export function save_oncancelcallback(e: Editor, callBack: () => void) {
-  e.setContent((e as any)._content);
   e.save = () => ""; //fix loss element when tinymce editor removed
   e.remove();
   callBack();
 }
 
 export function save_onsavecallback(e: Editor, callBack: () => void) {
-  let args = context.lastSelectedDomEventArgs;
-  if (!args) return;
-  let startContent = (e as any)._content;
-  let isRelpace = (e as any)._isReplace;
-  let element = e.getElement() as HTMLElement;
   e.save = () => ""; //fix loss element when tinymce editor removed
   e.remove();
-
-  let clearContent = (c: string) => clearKoobooInfo(c).replace(/\s/g, "");
-
-  if (clearContent(startContent) != clearContent(element.innerHTML)) {
-    let { koobooId, parent } = getCleanParent(args.element);
-    let comments = KoobooComment.getComments(args.element);
-    let dirtyEl = parent && isDirty(args.element) ? parent : element;
-    markDirty(dirtyEl);
-    koobooId = koobooId && isDirty(args.element) ? koobooId : args.koobooId;
-    let guid = setGuid(isRelpace ? parent! : element);
-    let units = [new InnerHtmlUnit(startContent)];
-    let htmlBlockcomment = getHtmlBlockComment(comments);
-    let comment = getEditComment(comments)!;
-    let log: Log;
-
-    if (comment.objecttype == OBJECT_TYPE.content) {
-      log = ContentLog.createUpdate(comment.nameorid!, comment.fieldname!, clearKoobooInfo(element.innerHTML));
-    } else if (comment.objecttype == OBJECT_TYPE.Label) {
-      log = LabelLog.createUpdate(comment.bindingvalue!, clearKoobooInfo(element.innerHTML));
-    } else if (htmlBlockcomment) {
-      let { nodes } = getWrapDom(element, OBJECT_TYPE.htmlblock);
-      let temp = createDiv();
-      nodes.forEach(i => temp.appendChild(i.cloneNode(true)));
-      log = HtmlblockLog.createUpdate(htmlBlockcomment.nameorid!, clearKoobooInfo(temp.innerHTML));
-    } else {
-      log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(dirtyEl.innerHTML), koobooId!, comment.objecttype!);
-    }
-
-    let operation = new operationRecord(units, [log], guid);
-    context.operationManager.add(operation);
-  }
-
   callBack();
 }
 
@@ -107,7 +60,6 @@ export function onBlur() {
 }
 
 export function onSetContent(e: any) {
-  e.target._content = e.content;
   var targetElm = e.target.targetElm as HTMLElement;
   for (const element of getAllElement(targetElm, true)) {
     if (element.innerHTML.indexOf(EMPTY_COMMENT) == -1 && !isTextArea(element)) {

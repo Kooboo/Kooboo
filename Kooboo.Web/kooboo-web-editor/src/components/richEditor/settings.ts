@@ -10,13 +10,19 @@ import {
   onKeyDown,
   onBeforeSetContent,
   getToolbar,
-  impoveEditorUI,
   initInstanceCallback
 } from "./utils";
 import { createLinkPicker } from "../linkPicker";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 
-export function createSettings(selector: HTMLElement, onCancel: () => void, onSave: () => void) {
+export interface SetInlineEditorArgs {
+  selector: HTMLElement;
+  onSave: () => void;
+  onCancel: () => void;
+}
+
+export function createSettings(args: SetInlineEditorArgs) {
+  const { selector, onSave, onCancel } = args;
   const settings = {
     target: selector,
     inline: true,
@@ -67,7 +73,7 @@ export function createSettings(selector: HTMLElement, onCancel: () => void, onSa
   (selector as any)._isRelative = selector.style.position == "relative";
   setLang(settings);
   (settings as any).save_enablewhendirty = false;
-  (settings as any).save_oncancelcallback = (e: Editor) => save_oncancelcallback(e, onCancel);
   (settings as any).save_onsavecallback = (e: Editor) => save_onsavecallback(e, onSave);
+  (settings as any).save_oncancelcallback = (e: Editor) => save_oncancelcallback(e, onCancel);
   return settings;
 }

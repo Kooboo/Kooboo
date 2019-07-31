@@ -215,3 +215,5 @@ export function isEditComment(comment: KoobooComment) {
 export function isRepeatComment(comment: KoobooComment) {
   return comment.objecttype == OBJECT_TYPE.contentrepeater;
 }
+
+export const clearContent = (c: string) => clearKoobooInfo(c).replace(/\s/g, "");

@@ -9,10 +9,12 @@ export const createShade = () => {
   const blocks = [createBlock(), createBlock(), createBlock(), createBlock()];
   const el = createDiv();
   blocks.forEach(i => el.appendChild(i.el));
-  el.appendChild(createCloseBtn());
+  let closeBtn = createCloseBtn();
+  el.appendChild(closeBtn);
 
   const updatePosition = (referenceEl: HTMLElement) => {
     el.style.display = "block";
+    closeBtn.style.display = "block";
     let [top, right, bottom, left] = blocks;
     let referenceRect = referenceEl.getBoundingClientRect();
     let htmlRect = document.documentElement.getBoundingClientRect();
@@ -48,6 +50,7 @@ export const createShade = () => {
 
   const hidden = () => {
     el.style.display = "none";
+    closeBtn.style.display = "none";
   };
 
   return {
