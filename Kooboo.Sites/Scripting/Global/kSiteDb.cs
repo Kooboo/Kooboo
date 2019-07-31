@@ -237,6 +237,27 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
+        SiteItem.FormValuesRepository _formValues;
+
+        public SiteItem.FormValuesRepository FormValues
+        {
+            get
+            {
+                if (_formValues == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_formValues == null)
+                        {
+                            _formValues = new SiteItem.FormValuesRepository(this.context.WebSite.SiteDb().FormValues, this.context);
+                        }
+                    }
+                }
+                return _formValues;
+            }
+        }
+
+
     }
 
 }
