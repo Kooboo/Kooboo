@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Kooboo.Data.Server;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
-namespace Kooboo.Web.ssl
+namespace Kooboo.Web.SSL
 {
     
     public static  class SslService
@@ -51,6 +53,26 @@ namespace Kooboo.Web.ssl
                 var orgbytes = Convert.FromBase64String(certbytes.Base64String); 
                 Kooboo.Data.GlobalDb.SslCertificate.AddCert(Organizationid, domain, orgbytes, false); 
             } 
+        }
+
+
+
+        public static void AddSslMiddleWare(List<IKoobooMiddleWare> MiddleWareList)
+        {
+            if (MiddleWareList == null)
+            {
+                return;
+            }
+
+            int len = MiddleWareList.Count();
+
+            var pos = len - 1;
+            if (pos <= 0)
+            {
+                pos = 0;
+            }
+
+            MiddleWareList.Insert(pos, new SslCertMiddleWare());
         }
 
 

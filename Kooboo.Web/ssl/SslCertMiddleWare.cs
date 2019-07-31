@@ -1,9 +1,8 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Data.Server;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Kooboo.ServerData.Ssl
+namespace Kooboo.Web.SSL
 {
     public class SslCertMiddleWare : IKoobooMiddleWare
     {
@@ -32,7 +31,7 @@ namespace Kooboo.ServerData.Ssl
                 if (string.IsNullOrWhiteSpace(validate))
                 {
                     // this is for real... not for validation check. 
-                    string token = Kooboo.Web.ssl.SslService.GetToken(host);
+                    string token = SslService.GetToken(host);
                     if (!string.IsNullOrWhiteSpace(token))
                     { 
                         context.Response.Body = System.Text.Encoding.UTF8.GetBytes(token);
@@ -42,7 +41,7 @@ namespace Kooboo.ServerData.Ssl
                 }
                 else
                 {
-                    var checkok = Kooboo.Web.ssl.SslService.Verify(host, validate);
+                    var checkok =  SslService.Verify(host, validate);
 
                     if (checkok)
                     {
@@ -57,8 +56,7 @@ namespace Kooboo.ServerData.Ssl
                         context.Response.ContentType = "text/html;charset=utf-8; ";
                         context.Response.End = true;
                     }
-                }
-
+                } 
             }
             else
             {
