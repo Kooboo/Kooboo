@@ -9,7 +9,9 @@ import {
   onRemove,
   onKeyDown,
   onBeforeSetContent,
-  getToolbar
+  getToolbar,
+  impoveEditorUI,
+  initInstanceCallback
 } from "./utils";
 import { createLinkPicker } from "../linkPicker";
 import { pickImg } from "@/kooboo/outsideInterfaces";
@@ -38,7 +40,7 @@ export function createSettings(selector: HTMLElement, onCancel: () => void, onSa
       "width,height,color,font-size,font-family,background,background-color,background-image,font-weight,font-style,text-decoration,float,margin,margin-top,margin-right,margin-bottom,margin-left,display,text-align",
     plugins: ["save", "link", "image"],
     toolbar: getToolbar(selector),
-    init_instance_callback: e => (context.editing = true),
+    init_instance_callback: initInstanceCallback,
     setup(editor: Editor) {
       editor.on("Blur", onBlur);
       editor.once("SetContent", onSetContent);

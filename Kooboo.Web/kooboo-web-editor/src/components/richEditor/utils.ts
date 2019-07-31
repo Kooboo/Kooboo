@@ -56,7 +56,6 @@ export function save_oncancelcallback(e: Editor, callBack: () => void) {
   e.setContent((e as any)._content);
   e.save = () => ""; //fix loss element when tinymce editor removed
   e.remove();
-  context.editing = false;
   callBack();
 }
 
@@ -100,7 +99,6 @@ export function save_onsavecallback(e: Editor, callBack: () => void) {
     context.operationManager.add(operation);
   }
 
-  context.editing = false;
   callBack();
 }
 
@@ -120,7 +118,6 @@ export function onSetContent(e: any) {
 
 export function onRemove(e: any) {
   let element = e.target.getElement();
-  element._tinymceeditor = null;
   if (!element._isRelative) {
     element.style.position = "";
   }
@@ -129,10 +126,7 @@ export function onRemove(e: any) {
     if (element.id.startsWith("mce_")) element.removeAttribute("id");
     if (element.getAttribute("style") == "") element.removeAttribute("style");
   }
-
-  EditorManager.editors.forEach(i => {
-    i.remove();
-  });
+  context.editing = false;
 }
 
 export function onKeyDown(e: KeyboardEvent) {
@@ -165,4 +159,13 @@ export function getToolbar(el: HTMLElement) {
   }
 
   return items;
+}
+
+export function initInstanceCallback(e: Editor) {
+  context.editing = true;
+  impoveEditorUI(e);
+  context.closeEditingEvent.addEventListener(() => {
+    e.execCommand("mcecancel");
+    context.closeEditingEvent.handlers = [];
+  });
 }

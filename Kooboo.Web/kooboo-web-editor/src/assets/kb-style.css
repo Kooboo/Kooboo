@@ -310,3 +310,14 @@
   opacity: 0.8;
   visibility: hidden;
 }
+
+.kb_web_editor_shade_close_btn{
+  position: fixed;
+  top:25px;
+  right: 25px;
+  height: 30px;
+  width: 30px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}

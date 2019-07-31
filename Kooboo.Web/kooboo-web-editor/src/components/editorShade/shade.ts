@@ -1,11 +1,15 @@
 import { createBlock } from "./block";
 import { getMaxHeight } from "@/dom/utils";
 import { createDiv } from "@/dom/element";
+import closeIcon from "@/assets/icons/guanbi.svg";
+import { STANDARD_Z_INDEX } from "@/common/constants";
+import context from "@/common/context";
 
 export const createShade = () => {
   const blocks = [createBlock(), createBlock(), createBlock(), createBlock()];
   const el = createDiv();
   blocks.forEach(i => el.appendChild(i.el));
+  el.appendChild(createCloseBtn());
 
   const updatePosition = (referenceEl: HTMLElement) => {
     el.style.display = "block";
@@ -52,3 +56,12 @@ export const createShade = () => {
     hidden
   };
 };
+
+function createCloseBtn() {
+  let btn = createDiv();
+  btn.classList.add("kb_web_editor_shade_close_btn");
+  btn.style.backgroundImage = `url(${closeIcon})`;
+  btn.style.zIndex = STANDARD_Z_INDEX + "";
+  btn.onclick = () => context.closeEditingEvent.emit();
+  return btn;
+}
