@@ -21,6 +21,7 @@ export function createFloatMenu() {
   });
 
   context.floatMenuClickEvent.addEventListener(async e => {
+    if(e==MenuActions.convert) return;
     if (e == MenuActions.close) {
       hidden();
     } else if (e != MenuActions.expand) {
