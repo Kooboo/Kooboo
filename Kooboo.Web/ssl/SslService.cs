@@ -56,11 +56,10 @@ namespace Kooboo.Web.SSL
             if (certbytes != null && certbytes.Validate())
             {
                 var orgbytes = Convert.FromBase64String(certbytes.Base64String); 
-                Kooboo.Data.GlobalDb.SslCertificate.AddCert(Organizationid, domain, orgbytes, false); 
+                Kooboo.Data.GlobalDb.SslCertificate.AddCert(Organizationid, domain, orgbytes); 
             } 
         }
-
-
+         
 
         public static void AddSslMiddleWare(List<IKoobooMiddleWare> MiddleWareList)
         {

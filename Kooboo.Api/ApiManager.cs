@@ -89,7 +89,7 @@ namespace Kooboo.Api
                 var result = new JsonResponse() { Success = false };
                 result.Messages.Add(ex.Message);
 
-                Kooboo.Data.Log.ExceptionLog.Write(ex.Message + "\r\n" + ex.StackTrace + "\r\n" + ex.Source);
+                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace + "\r\n" + ex.Source);
 
                 return result;
             } 

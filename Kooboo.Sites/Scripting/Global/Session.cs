@@ -269,11 +269,7 @@ namespace Kooboo.Sites.Scripting.Global
             var existing = data[cookie];
 
             existing.LastModified = DateTime.Now;
-            // TODO: check the size of this object. if too big, throw.
-            //if (value. > 2000)
-            //{
-            //    value = value.Substring(0, 2000);
-            //}
+  
 
             if (existing.Values.Count() <= 50)
             {

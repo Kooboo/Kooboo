@@ -46,7 +46,15 @@ namespace Kooboo.Sites.Scripting.Global
          
         public void set(string name, string value)
         {
-            this.context.Response.AppendCookie(name, value, 1);
+            if(string.IsNullOrWhiteSpace(value))
+            {
+                this.context.Response.DeleteCookie(name); 
+            }
+            else
+            {
+                this.context.Response.AppendCookie(name, value, 1);
+            }
+            
         }
 
         public string get(string Name)

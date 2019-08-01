@@ -10,8 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Scripting.Global.SiteItem
-{
- 
+{ 
 
     public class RepositoryBase
     {

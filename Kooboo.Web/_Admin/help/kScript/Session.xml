@@ -2,14 +2,21 @@
 <KScriptSetting>
   <Name>session</Name>
   <Description>a temporary storage for small interactive information. Session does not persist</Description>
-  <Example><![CDATA[
+  <Example>
+       <![CDATA[
     <script engine="kscript">
-
+      
     var obj = {clientid: 123, name: "firstname"};
+    
+    k.session.key = obj; 
+     
+    // get the value during session period. 
+    var backvalue = k.session.key;
+     
+     // Or use full syntax of set and get  
     k.session.set("key", obj);
 
-    var back = k.session.get("key");
-    k.response.write(back.name); 
+    var back = k.session.get("key"); 
     
     </script>
 	]]></Example>

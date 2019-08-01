@@ -133,8 +133,8 @@ namespace Kooboo.Mail.Smtp
             catch (Exception ex)
             {
                 exception = ex;
-                Kooboo.Data.Log.ExceptionLog.Write(ex.Message + "\r\n" + ex.StackTrace +"\r\n" +ex.Source);    
-                 //  Log.LogError(ex);    
+                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace +"\r\n" +ex.Source);    
+ 
             }
 
             if (exception != null)

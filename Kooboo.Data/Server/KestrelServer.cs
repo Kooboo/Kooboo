@@ -634,7 +634,7 @@ namespace Kooboo.Data.Server
                 {
                     string log = context.Response.StatusCode.ToString() + " " + context.Request.IP + ": " + DateTime.Now.ToLongTimeString() + " " + context.Request.Host + " " + context.Request.Method + " " + context.Request.Url;
 
-                    Kooboo.Data.Log.HttpLog.Write(log);
+                    Kooboo.Data.Log.Instance.Http.Write(log);
                 }
             }
             
