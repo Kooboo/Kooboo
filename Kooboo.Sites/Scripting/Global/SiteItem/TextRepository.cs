@@ -23,6 +23,39 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             var domitem = item as ITextObject;
             domitem.Body = newbody;
             this.repo.AddOrUpdate(item); 
-        }   
+        }
+         
+
+        public object this[string key]
+        {
+
+            get
+            {
+                return Get(key);
+
+            }
+            set
+            {
+                this.AddOrUpdate(key, value);
+            }
+        }
+
+
+        protected virtual void AddOrUpdate(string key, object value)
+        {
+            if (value is ISiteObject)
+            {
+                var sitevalue = value as ISiteObject;
+                sitevalue.Name = key;
+                this.Update(value);
+            }
+            else
+            {
+                this.Add(value);
+            }
+        }
+
+
+
     }
 }

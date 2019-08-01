@@ -2,21 +2,25 @@
 <KScriptSetting>
   <Name>TextRepository</Name>
   <Description>The repository that contains Text Objects such as Layout and View</Description>
-  <Example> <![CDATA[
+  <Example>
+    <![CDATA[
   <script engine="kscript">
 
       var view = k.site.views.get("viewname");
       
       var layout = k.site.layouts.get("layoutname"); 
       
-      //...... 
+     //For site object that use name as the key like view & layout, you may also use syntax below:  
+     var view = k.site.views.viewname;   
+     view.body = "newtext";  
+     k.site.views.viewname = view; 
 
     </script>
 	]]>
 
   </Example>
   <Props />
-  <Methods> 
+  <Methods>
     <Method>
       <Name>all</Name>
       <Description>Return an array of the SiteObjects</Description>
@@ -29,7 +33,7 @@
 
     </script>
 	]]>
-      
+
       </Example>
       <Params />
       <ReturnType>array</ReturnType>
@@ -37,15 +41,21 @@
     <Method>
       <Name>updateBody</Name>
       <Description>Update the text value of the body property</Description>
-      <Example> 
+      <Example>
         <![CDATA[
   <script engine="kscript">
 
+     var view = k.site.views.viewname;   
+     view.body = "newtext";  
+     k.site.views.viewname = view; 
+     
+     // or 
+     
       var view = k.site.views.get("viewname");
       k.site.views.updateBody(view.name, "new page body");
-
+    
     </script>
-	]]> 
+	]]>
       </Example>
       <Params>
         <Param>
@@ -63,11 +73,15 @@
     <Method>
       <Name>get</Name>
       <Description>Get an item based on Name or Id</Description>
-      <Example> 
+      <Example>
         <![CDATA[
 <script engine="kscript">
-     
-   var view = k.site.views.get("viewname"); 
+    
+    var view = k.site.views.viewname; 
+    
+     // or     
+    
+    var view = k.site.views.get("viewname"); 
   
 </script> 
 	]]>
@@ -95,7 +109,7 @@
     k.site.views.update(view);   
     
 </script> 
-	]]> 
+	]]>
       </Example>
       <Params>
         <Param>
@@ -103,9 +117,9 @@
           <Description>Update the SiteOject property values</Description>
           <Type>SiteObject</Type>
         </Param>
-      </Params> 
-    </Method>  
-    
+      </Params>
+    </Method>
+
     <Method>
       <Name>delete</Name>
       <Description>Delete an item</Description>
@@ -127,7 +141,7 @@
           <Description>nameOrId</Description>
           <Type>object</Type>
         </Param>
-      </Params> 
+      </Params>
     </Method>
 
 
@@ -154,9 +168,9 @@
         </Param>
       </Params>
     </Method>
-    
-    
-    
+
+
+
   </Methods>
 </KScriptSetting>
 

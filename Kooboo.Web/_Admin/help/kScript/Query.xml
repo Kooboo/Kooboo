@@ -6,7 +6,7 @@
   <Example> <![CDATA[ 
         <script engine="kscript">
 
-        var table = k.database.getTable("tablename");
+        var table = k.database.tablename;
   
         // find items with field "name" value of "matchedvalue".
         var item = table.findAll("name=='matchedvalue'");

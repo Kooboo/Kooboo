@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Scripting.Global.SiteItem
-{ 
+{
 
     public class RepositoryBase
     {
@@ -19,7 +19,8 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             this.repo = repo;
             this.context = context;
         }
-
+         
+         
         protected IRepository repo { get; set; }
 
         internal RenderContext context { get; set; }
@@ -37,7 +38,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
             return result;
         }
-                                                           
+
         public virtual void Update(object SiteObject)
         {
             this.repo.AddOrUpdate(SiteObject);
@@ -59,11 +60,15 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         public virtual void Add(object SiteObject)
         {
-            var rightobject = kHelper.PrepareData(SiteObject, this.repo.ModelType); 
-            this.repo.AddOrUpdate(rightobject);  
-        }  
-                                        
+            var rightobject = kHelper.PrepareData(SiteObject, this.repo.ModelType);
+            this.repo.AddOrUpdate(rightobject);
+        }
+
+
+
+
+
     }
-        
+
 
 }
