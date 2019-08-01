@@ -5,7 +5,7 @@ import context from "../../common/context";
 import { getAllElement, isTextArea } from "../../dom/utils";
 import { delay } from "../../common/utils";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";
-import { createImg } from "@/dom/element";
+import { createDiv } from "@/dom/element";
 
 export async function impoveEditorUI(editor: Editor) {
   editor.focus(false);
@@ -18,12 +18,16 @@ export async function impoveEditorUI(editor: Editor) {
       container.nextElementSibling.style.zIndex = STANDARD_Z_INDEX + 2 + "";
     }
     let toolbar = container.getElementsByClassName("tox-toolbar").item(0) as HTMLElement;
-    var moveBtn = createImg();
+    var moveBtn = createDiv();
     moveBtn.draggable = true;
     moveBtn.style.cursor = "move";
-    moveBtn.src = moveIcon;
-    moveBtn.style.height = "28px";
-    moveBtn.style.margin = "4px";
+    moveBtn.style.backgroundImage = `url(${moveIcon})`;
+    moveBtn.style.backgroundPosition = `center`;
+    moveBtn.style.backgroundRepeat = `no-repeat`;
+    moveBtn.style.backgroundSize = `contain`;
+    moveBtn.style.height = "26px";
+    moveBtn.style.width = "26px";
+    moveBtn.style.margin = "6px 0 6px 6px";
     toolbar.insertBefore(moveBtn, toolbar.children.item(0));
     container.draggable = true;
     container.ondrag = e => {

@@ -1,10 +1,10 @@
 .kb_web_editor_div {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 14px;
-  color: #5f5f5f;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif ;
+  font-size: 14px ;
+  color: #5f5f5f ;
   border: none;
-  outline: none;
-  display: block;
+  outline: none ;
+  display: block ;
   position: static;
   background-color: rgba(255, 255, 255, 0);
   font-weight: 400;
@@ -121,13 +121,9 @@
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
   position: relative;
   margin-bottom: 10px;
-}
-
-.kb_action_bar_btn > img {
-  width: 50%;
-  margin-left: 25%;
-  height: 50%;
-  margin-top: 25%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 30px 30px;
 }
 
 .kb_action_bar_btn:hover {
@@ -151,6 +147,16 @@
   padding: 5px 10px;
   color: #fff;
   background-color: rgb(2, 154, 214);
+}
+
+.kb_web_editor_menu_title > div {
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 18px;
+  width: 18px;
+  float: right;
+  margin-left: 8px;
 }
 
 .kb_web_editor_menu_item {

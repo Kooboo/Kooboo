@@ -4,7 +4,7 @@ import context from "../../common/context";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
 import expandIcon from "@/assets/icons/fangda.svg";
 import { STANDARD_Z_INDEX } from "@/common/constants";
-import { createDiv, createImg } from "@/dom/element";
+import { createDiv } from "@/dom/element";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 
 export interface MenuItem {
@@ -86,21 +86,16 @@ function createTitle() {
 }
 
 function createCloseButton() {
-  const el = createImg();
-  el.src = closeIcon;
-  el.style.height = "16px";
-  el.style.cssFloat = "right";
+  const el = createDiv();
+  el.style.backgroundImage = `url(${closeIcon})`;
   el.onclick = () => context.floatMenuClickEvent.emit(MenuActions.close);
   return el;
 }
 
 function createExpandButton() {
-  const el = createImg();
-  el.src = expandIcon;
+  const el = createDiv();
+  el.style.backgroundImage = `url(${expandIcon})`;
   el.title = TEXT.EXPAND_SELECTION;
-  el.style.height = "16px";
-  el.style.cssFloat = "right";
-  el.style.marginRight = "8px";
   el.onclick = () => context.floatMenuClickEvent.emit(MenuActions.expand);
   return el;
 }
