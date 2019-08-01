@@ -29,8 +29,5 @@ export function createEnterLinkItem(): MenuItem {
     parent.location.href = parent.location.origin + parent.location.pathname + "?" + qs.stringify(query);
   });
 
-  return {
-    el,
-    update
-  };
+  return { el, update };
 }
