@@ -6,7 +6,7 @@ function createElement<K extends keyof HTMLElementTagNameMap>(options: { tagName
   return el;
 }
 
-export const createButton = (text: string) => createElement({ tagName: "button", className: "kb_web_editor_btn", innerText: text });
+export const createButton = (text: string) => createElement({ tagName: "div", className: "kb_web_editor_btn", innerText: text });
 export const createDiv = () => createElement({ tagName: "div", className: "kb_web_editor_div" });
 export const createInput = () => createElement({ tagName: "input", className: "kb_web_editor_input" });
 export const createIframe = () => createElement({ tagName: "iframe", className: "kb_web_editor_iframe" });
