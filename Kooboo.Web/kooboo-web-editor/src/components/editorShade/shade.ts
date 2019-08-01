@@ -20,21 +20,21 @@ export const createShade = () => {
     top.update({
       top: 0,
       left: referenceRect.left,
-      right: referenceRect.right - referenceRect.width,
+      width: referenceRect.width,
       height: referenceRect.top < 0 ? 0 : referenceRect.top
     });
 
     right.update({
       top: 0,
       right: 0,
-      width: referenceRect.left,
+      left: referenceRect.left + referenceRect.width,
       bottom: 0
     });
 
     bottom.update({
       top: referenceRect.bottom < 0 ? 0 : referenceRect.bottom,
       left: referenceRect.left,
-      right: referenceRect.right - referenceRect.width,
+      width: referenceRect.width,
       bottom: 0
     });
 
