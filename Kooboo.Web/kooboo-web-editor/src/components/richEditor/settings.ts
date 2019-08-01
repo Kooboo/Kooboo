@@ -39,6 +39,7 @@ export function createSettings(args: SetInlineEditorArgs) {
     remove_trailing_brs: true,
     browser_spellcheck: false,
     forced_root_block: "",
+    visual_anchor_class: "no-anchor",
     valid_elements: "*[*]",
     valid_children: "*[*]",
     valid_styles:
