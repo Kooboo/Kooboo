@@ -1,10 +1,12 @@
-import "@simonwep/pickr/dist/themes/nano.min.css";
-import Pickr from "@simonwep/pickr/dist/pickr.min";
+// import "@simonwep/pickr/dist/themes/nano.min.css";
+// import Pickr from "@simonwep/pickr/dist/pickr.min";
 import { STANDARD_Z_INDEX } from "@/common/constants";
-import { getEditorContainer } from "@/dom/utils";
 import Color from "color-string";
 import { TEXT } from "@/common/lang";
 import { createDiv } from "@/dom/element";
+import { parentBody } from "@/kooboo/outsideInterfaces";
+import "@/components/colorPicker/nano.min.css";
+import { Pickr } from "@/components/colorPicker/pickr";
 
 type ononsave = (color: string) => void;
 
@@ -43,7 +45,7 @@ export function createColorPicker(text: string, old: string, onsave: ononsave) {
       let root = e._root.root as HTMLElement;
       let button = e._root.button as HTMLElement;
       app.style.zIndex = STANDARD_Z_INDEX + 5 + "";
-      getEditorContainer().appendChild(app);
+      //parentBody.appendChild(app);
       root.style.display = "inline-block";
       root.parentElement!.style.display = "inline-block";
       button.style.border = "1px solid #ccc";

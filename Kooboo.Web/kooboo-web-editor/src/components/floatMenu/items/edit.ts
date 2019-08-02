@@ -14,23 +14,37 @@ import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { LabelLog } from "@/operation/recordLogs/LabelLog";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { operationRecord } from "@/operation/Record";
+import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createEditItem(): MenuItem {
-  const { el, setVisiable } = createItem(TEXT.EDIT, MenuActions.edit);
-  const update = (comments: KoobooComment[]) => {
-    setVisiable(true);
+export default class EditItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
+
+    const { el, setVisiable } = createItem(TEXT.EDIT, MenuActions.edit);
+    this.el = el;
+    this.el.addEventListener("click", this.click);
+    this.setVisiable = setVisiable;
+  }
+
+  el: HTMLElement;
+
+  setVisiable: (visiable: boolean) => void;
+
+  update(comments: KoobooComment[]): void {
+    this.setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    if (isBody(args.element)) return setVisiable(false);
-    if (getMenuComment(comments)) return setVisiable(false);
-    if (!getEditComment(comments)) return setVisiable(false);
-    if (!args.koobooId) return setVisiable(false);
+    if (isBody(args.element)) return this.setVisiable(false);
+    if (getMenuComment(comments)) return this.setVisiable(false);
+    if (!getEditComment(comments)) return this.setVisiable(false);
+    if (!args.koobooId) return this.setVisiable(false);
     var reExcept = /^(img|button|input|textarea|hr|area|canvas|meter|progress|select|tr|td|tbody|thead|tfoot|th|table)$/i;
     let el = args.element;
-    if (reExcept.test(el.tagName)) return setVisiable(false);
-    if (isDynamicContent(args.element)) return setVisiable(false);
-  };
+    if (reExcept.test(el.tagName)) return this.setVisiable(false);
+    if (isDynamicContent(args.element)) return this.setVisiable(false);
+  }
 
-  el.addEventListener("click", () => {
+  click() {
     let { element, koobooId } = context.lastSelectedDomEventArgs;
     let startContent = element.innerHTML;
     const onSave = () => {
@@ -61,7 +75,5 @@ export function createEditItem(): MenuItem {
       element.innerHTML = startContent;
     };
     setInlineEditor({ selector: element, onSave, onCancel });
-  });
-
-  return { el, update };
+  }
 }

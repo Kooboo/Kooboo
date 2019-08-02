@@ -1,10 +1,10 @@
 import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
-import { getEditorContainer } from "@/dom/utils";
 import { createTabs } from "../common/tabs";
 import { createOutLinkPanel } from "./outLinkPanel";
 import { createPageLinkPanel } from "./pageLinkPanel";
 import { createDiv } from "@/dom/element";
+import { parentBody } from "@/kooboo/outsideInterfaces";
 
 export async function createLinkPicker(oldValue: string) {
   let el = createDiv();
@@ -29,9 +29,8 @@ export async function createLinkPicker(oldValue: string) {
   ];
   setContent(oldValue);
   el.appendChild(createTabs(options));
-  let container = getEditorContainer();
   let { modal, setOkHandler, close } = createModal(TEXT.EDIT_LINK, el, "400px");
-  container.appendChild(modal);
+  parentBody.appendChild(modal);
 
   return new Promise<string>((rs, rj) => {
     setOkHandler(async () => {

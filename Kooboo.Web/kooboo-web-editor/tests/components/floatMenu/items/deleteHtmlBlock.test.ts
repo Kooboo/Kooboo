@@ -1,15 +1,16 @@
 import context from "@/common/context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
-import { createDeleteHtmlBlockItem } from "@/components/floatMenu/items/deleteHtmlBlock";
+import DeleteHtmlBlockItem from "@/components/floatMenu/items/deleteHtmlBlock";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import { Menu } from "@/components/floatMenu/menu";
 
-describe("deleteHtmlBlock", ()=>{
-    beforeEach(()=>{
-        document.body.innerHTML = "";
-    })
+describe("deleteHtmlBlock", () => {
+  beforeEach(() => {
+    document.body.innerHTML = "";
+  });
 
-    test("createDeleteHtmlBlockItem_update", ()=>{
-        document.body.innerHTML = `
+  test("DeleteHtmlBlockItem_update", () => {
+    document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
             <article class="content" kooboo-id="1-0-1-1-1-1">
@@ -22,23 +23,23 @@ describe("deleteHtmlBlock", ()=>{
         <!--#kooboo--end='true'--objecttype='view'--boundary='154'-->
         `;
 
-        let elementObject = createDeleteHtmlBlockItem();
-        expect(elementObject.el.style.display).toEqual("");
+    let elementObject = new DeleteHtmlBlockItem(new Menu());
+    expect(elementObject.el.style.display).toEqual("");
 
-        // 不能是body元素
-        context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body as HTMLElement);
-        let comments = KoobooComment.getComments(document.body);
-        elementObject.update(comments);
-        expect(elementObject.el.style.display).toEqual("none");
+    // 不能是body元素
+    context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body as HTMLElement);
+    let comments = KoobooComment.getComments(document.body);
+    elementObject.update(comments);
+    expect(elementObject.el.style.display).toEqual("none");
 
-        context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body.children[0].children[0].children[0] as HTMLElement);
-        comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
-        elementObject.update(comments);
-        expect(elementObject.el.style.display).toEqual("block");
-    })
+    context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body.children[0].children[0].children[0] as HTMLElement);
+    comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
+    elementObject.update(comments);
+    expect(elementObject.el.style.display).toEqual("block");
+  });
 
-    test("createDeleteHtmlBlockItem_update_noExistInHtmlblock", ()=>{
-        document.body.innerHTML = `
+  test("DeleteHtmlBlockItem_update_noExistInHtmlblock", () => {
+    document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
             <article class="content" kooboo-id="1-0-1-1-1-1">
@@ -49,15 +50,15 @@ describe("deleteHtmlBlock", ()=>{
         <!--#kooboo--end='true'--objecttype='view'--boundary='154'-->
         `;
 
-        let selectedElement = document.body.children[0].children[0].children[0] as HTMLElement;
+    let selectedElement = document.body.children[0].children[0].children[0] as HTMLElement;
 
-        context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
+    context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-        let elementObject = createDeleteHtmlBlockItem();
-        expect(elementObject.el.style.display).toEqual("");
+    let elementObject = new DeleteHtmlBlockItem(new Menu());
+    expect(elementObject.el.style.display).toEqual("");
 
-        let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
-        elementObject.update(comments);
-        expect(elementObject.el.style.display).toEqual("none");
-    })
-})
+    let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
+    elementObject.update(comments);
+    expect(elementObject.el.style.display).toEqual("none");
+  });
+});
