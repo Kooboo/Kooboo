@@ -5,23 +5,38 @@ import context from "@/common/context";
 import { isLink } from "@/dom/utils";
 import { getAttributeComment, updateAttributeLink } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import BaseMenuItem from "./BaseMenuItem";
 
 export function createEditRepeatLinkItem(): MenuItem {
-  const { el, setVisiable } = createItem(TEXT.EDIT_LINK, MenuActions.editLink);
-  const update = (comments: KoobooComment[]) => {
-    setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    if (!isLink(args.element)) return setVisiable(false);
-    let comment = getAttributeComment(comments, "href");
-    if (!comment || !comment.fieldname) return setVisiable(false);
-  };
+  return new EditRepeatLinkItem();
+}
 
-  el.addEventListener("click", async () => {
+class EditRepeatLinkItem extends BaseMenuItem {
+  constructor() {
+    super();
+
+    const { el, setVisiable } = createItem(TEXT.EDIT_LINK, MenuActions.editLink);
+    this.el = el;
+    this.el.addEventListener("click", this.click);
+    this.setVisiable = setVisiable;
+  }
+
+  el: HTMLElement;
+
+  setVisiable: (visiable: boolean) => void;
+
+  update(comments: KoobooComment[]): void {
+    this.setVisiable(true);
+    let args = context.lastSelectedDomEventArgs;
+    if (!isLink(args.element)) return this.setVisiable(false);
+    let comment = getAttributeComment(comments, "href");
+    if (!comment || !comment.fieldname) return this.setVisiable(false);
+  }
+
+  click() {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
     let comment = getAttributeComment(comments, "href");
     updateAttributeLink(args.element, args.koobooId!, comment!);
-  });
-
-  return { el, update };
+  }
 }

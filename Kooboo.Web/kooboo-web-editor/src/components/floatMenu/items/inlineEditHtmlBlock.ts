@@ -11,15 +11,32 @@ import { createDiv } from "@/dom/element";
 import { HtmlblockLog } from "@/operation/recordLogs/HtmlblockLog";
 import { operationRecord } from "@/operation/Record";
 import { getHtmlBlockComment, clearContent } from "../utils";
+import BaseMenuItem from "./BaseMenuItem";
 
 export function createInlineEditHtmlBlockItem(): MenuItem {
-  const { el, setVisiable } = createItem(TEXT.EDIT, MenuActions.edit);
-  const update = (comments: KoobooComment[]) => {
-    setVisiable(true);
-    if (!getHtmlBlockComment(comments)) return setVisiable(false);
-  };
+  return new InlineEditHtmlBlockItem();
+}
 
-  el.addEventListener("click", () => {
+class InlineEditHtmlBlockItem extends BaseMenuItem {
+  constructor() {
+    super();
+
+    const { el, setVisiable } = createItem(TEXT.EDIT, MenuActions.edit);
+    this.el = el;
+    this.el.addEventListener("click", this.click);
+    this.setVisiable = setVisiable;
+  }
+
+  el: HTMLElement;
+
+  setVisiable: (visiable: boolean) => void;
+
+  update(comments: KoobooComment[]): void {
+    this.setVisiable(true);
+    if (!getHtmlBlockComment(comments)) return this.setVisiable(false);
+  }
+
+  click() {
     let { element } = context.lastSelectedDomEventArgs;
     let startContent = element.innerHTML;
     const onSave = () => {
@@ -41,7 +58,5 @@ export function createInlineEditHtmlBlockItem(): MenuItem {
       element.innerHTML = startContent;
     };
     setInlineEditor({ selector: element, onSave, onCancel });
-  });
-
-  return { el, update };
+  }
 }

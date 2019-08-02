@@ -10,18 +10,35 @@ import { pickImg } from "@/kooboo/outsideInterfaces";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import BaseMenuItem from "./BaseMenuItem";
 
 export function createEditRepeatImageItem(): MenuItem {
-  const { el, setVisiable } = createItem(TEXT.EDIT_IMAGE, MenuActions.editImage);
-  const update = (comments: KoobooComment[]) => {
-    setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    if (!isImg(args.element)) return setVisiable(false);
-    let comment = getAttributeComment(comments, "src");
-    if (!comment || !comment.fieldname) return setVisiable(false);
-  };
+  return new EditRepeatImageItem();
+}
 
-  el.addEventListener("click", async () => {
+class EditRepeatImageItem extends BaseMenuItem {
+  constructor() {
+    super();
+
+    const { el, setVisiable } = createItem(TEXT.EDIT_IMAGE, MenuActions.editImage);
+    this.el = el;
+    this.el.addEventListener("click", this.click);
+    this.setVisiable = setVisiable;
+  }
+
+  el: HTMLElement;
+
+  setVisiable: (visiable: boolean) => void;
+
+  update(comments: KoobooComment[]): void {
+    this.setVisiable(true);
+    let args = context.lastSelectedDomEventArgs;
+    if (!isImg(args.element)) return this.setVisiable(false);
+    let comment = getAttributeComment(comments, "src");
+    if (!comment || !comment.fieldname) return this.setVisiable(false);
+  }
+
+  click() {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
     let comment = getAttributeComment(comments, "src")!;
@@ -36,7 +53,5 @@ export function createEditRepeatImageItem(): MenuItem {
       let record = new operationRecord([unit], [log], guid);
       context.operationManager.add(record);
     });
-  });
-
-  return { el, update };
+  }
 }

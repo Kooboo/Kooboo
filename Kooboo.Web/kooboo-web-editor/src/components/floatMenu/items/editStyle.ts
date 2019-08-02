@@ -12,21 +12,37 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { Log } from "@/operation/recordLogs/Log";
 import { getBackgroundImage, isImg, getBackgroundColor } from "@/dom/utils";
+import BaseMenuItem from "./BaseMenuItem";
 
 export function createEditStyleItem(): MenuItem {
-  const { el, setVisiable } = createItem(TEXT.EDIT_STYLE, MenuActions.editStyle);
+  return new EditStyleItem();
+}
 
-  const update = (comments: KoobooComment[]) => {
-    setVisiable(true);
+class EditStyleItem extends BaseMenuItem {
+  constructor() {
+    super();
+
+    const { el, setVisiable } = createItem(TEXT.EDIT_STYLE, MenuActions.editStyle);
+    this.el = el;
+    this.el.addEventListener("click", this.click);
+    this.setVisiable = setVisiable;
+  }
+
+  el: HTMLElement;
+
+  setVisiable: (visiable: boolean) => void;
+
+  update(comments: KoobooComment[]): void {
+    this.setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    if (isImg(args.element)) return setVisiable(false);
-    if (getMenuComment(comments)) return setVisiable(false);
-    if (getHtmlBlockComment(comments)) return setVisiable(false);
-    if (!getViewComment(comments)) return setVisiable(false);
-    if (!args.koobooId) return setVisiable(false);
-  };
+    if (isImg(args.element)) return this.setVisiable(false);
+    if (getMenuComment(comments)) return this.setVisiable(false);
+    if (getHtmlBlockComment(comments)) return this.setVisiable(false);
+    if (!getViewComment(comments)) return this.setVisiable(false);
+    if (!args.koobooId) return this.setVisiable(false);
+  }
 
-  el.addEventListener("click", async () => {
+  async click() {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
     let { koobooId, parent } = getCleanParent(args.element);
@@ -74,7 +90,5 @@ export function createEditStyleItem(): MenuItem {
     } catch (error) {
       args.element.setAttribute("style", startContent!);
     }
-  });
-
-  return { el, update };
+  }
 }

@@ -12,23 +12,40 @@ import { DomLog } from "@/operation/recordLogs/DomLog";
 import { KOOBOO_ID } from "@/common/constants";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createImg } from "@/dom/element";
+import BaseMenuItem from "./BaseMenuItem";
 
 export function createReplaceToImgItem(): MenuItem {
-  const { el, setVisiable } = createItem(TEXT.REPLACE_TO_IMG, MenuActions.replaceToImg);
-  const update = (comments: KoobooComment[]) => {
-    setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    if (getRepeatComment(comments)) return setVisiable(false);
-    if (getRelatedRepeatComment(args.element)) return setVisiable(false);
-    if (!getViewComment(comments)) return setVisiable(false);
-    if (isInTable(args.element)) return setVisiable(false);
-    let { koobooId, parent } = getCleanParent(args.element);
-    if (!parent && !koobooId) return setVisiable(false);
-    if (isImg(args.element)) return setVisiable(false);
-    if (parent && isDynamicContent(parent)) return setVisiable(false);
-  };
+  return new ReplaceToImgItem();
+}
 
-  el.addEventListener("click", async () => {
+class ReplaceToImgItem extends BaseMenuItem {
+  constructor() {
+    super();
+
+    const { el, setVisiable } = createItem(TEXT.REPLACE_TO_IMG, MenuActions.replaceToImg);
+    this.el = el;
+    this.el.addEventListener("click", this.click);
+    this.setVisiable = setVisiable;
+  }
+
+  el: HTMLElement;
+
+  setVisiable: (visiable: boolean) => void;
+
+  update(comments: KoobooComment[]): void {
+    this.setVisiable(true);
+    let args = context.lastSelectedDomEventArgs;
+    if (getRepeatComment(comments)) return this.setVisiable(false);
+    if (getRelatedRepeatComment(args.element)) return this.setVisiable(false);
+    if (!getViewComment(comments)) return this.setVisiable(false);
+    if (isInTable(args.element)) return this.setVisiable(false);
+    let { koobooId, parent } = getCleanParent(args.element);
+    if (!parent && !koobooId) return this.setVisiable(false);
+    if (isImg(args.element)) return this.setVisiable(false);
+    if (parent && isDynamicContent(parent)) return this.setVisiable(false);
+  }
+
+  async click() {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
     let { koobooId, parent } = getCleanParent(args.element);
@@ -54,7 +71,5 @@ export function createReplaceToImgItem(): MenuItem {
     } catch (error) {
       parent!.innerHTML = startContent;
     }
-  });
-
-  return { el, update };
+  }
 }

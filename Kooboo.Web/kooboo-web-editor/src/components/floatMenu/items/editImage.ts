@@ -6,19 +6,36 @@ import { isImg } from "@/dom/utils";
 import { getEditComment, getViewComment, updateAttributeImage, updateDomImage, getAttributeComment } from "../utils";
 import { isDynamicContent, getCleanParent, isDirty } from "@/kooboo/utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import BaseMenuItem from "./BaseMenuItem";
 
 export function createEditImageItem(): MenuItem {
-  const { el, setVisiable } = createItem(TEXT.EDIT_IMAGE, MenuActions.editImage);
-  const update = (comments: KoobooComment[]) => {
-    setVisiable(true);
-    let args = context.lastSelectedDomEventArgs;
-    if (!isImg(args.element)) return setVisiable(false);
-    if (getAttributeComment(comments)) return setVisiable(false);
-    if (!getViewComment(comments)) return setVisiable(false);
-    if (isDynamicContent(args.element)) return setVisiable(false);
-  };
+  return new EditImageItem();
+}
 
-  el.addEventListener("click", async () => {
+class EditImageItem extends BaseMenuItem {
+  constructor() {
+    super();
+
+    const { el, setVisiable } = createItem(TEXT.EDIT_IMAGE, MenuActions.editImage);
+    this.el = el;
+    this.el.addEventListener("click", this.click);
+    this.setVisiable = setVisiable;
+  }
+
+  el: HTMLElement;
+
+  setVisiable: (visiable: boolean) => void;
+
+  update(comments: KoobooComment[]): void {
+    this.setVisiable(true);
+    let args = context.lastSelectedDomEventArgs;
+    if (!isImg(args.element)) return this.setVisiable(false);
+    if (getAttributeComment(comments)) return this.setVisiable(false);
+    if (!getViewComment(comments)) return this.setVisiable(false);
+    if (isDynamicContent(args.element)) return this.setVisiable(false);
+  }
+
+  click() {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
     let el = args.element as HTMLImageElement;
@@ -28,7 +45,5 @@ export function createEditImageItem(): MenuItem {
     } else {
       updateAttributeImage(el, args.koobooId!, getEditComment(comments)!);
     }
-  });
-
-  return { el, update };
+  }
 }

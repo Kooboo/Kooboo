@@ -11,18 +11,34 @@ import { CopyRepeatUnit } from "@/operation/recordUnits/CopyRepeatUnit";
 import { operationRecord } from "@/operation/Record";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import BaseMenuItem from "./BaseMenuItem";
 
 export function createCopyRepeatItem(): MenuItem {
-  const { el, setVisiable } = createItem(TEXT.COPY_REPEAT, MenuActions.copyRepeat);
+  return new CopyRepeatItem();
+}
 
-  const update = (comments: KoobooComment[]) => {
-    setVisiable(true);
+class CopyRepeatItem extends BaseMenuItem {
+  constructor() {
+    super();
+
+    const { el, setVisiable } = createItem(TEXT.COPY_REPEAT, MenuActions.copyRepeat);
+    this.el = el;
+    this.el.addEventListener("click", this.click);
+    this.setVisiable = setVisiable;
+  }
+
+  el: HTMLElement;
+
+  setVisiable: (visiable: boolean) => void;
+
+  update(comments: KoobooComment[]): void {
+    this.setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
-    if (isBody(args.element)) return setVisiable(false);
-    if (!getRepeatComment(comments)) return setVisiable(false);
-  };
+    if (isBody(args.element)) return this.setVisiable(false);
+    if (!getRepeatComment(comments)) return this.setVisiable(false);
+  }
 
-  el.addEventListener("click", () => {
+  click() {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
     let { nodes } = getWrapDom(args.element, OBJECT_TYPE.contentrepeater);
@@ -42,7 +58,5 @@ export function createCopyRepeatItem(): MenuItem {
 
     let operation = new operationRecord(units, logs, guid);
     context.operationManager.add(operation);
-  });
-
-  return { el, update };
+  }
 }

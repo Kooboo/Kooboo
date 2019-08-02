@@ -8,16 +8,32 @@ import { OBJECT_TYPE } from "@/common/constants";
 import { editMenu } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createDiv } from "@/dom/element";
+import BaseMenuItem from "./BaseMenuItem";
 
 export function createEditMenuItem() {
-  const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_MENU, MenuActions.editMenu);
+  return new EditMenuItem();
+}
 
-  const update = (comments: KoobooComment[]) => {
-    setVisiable(true);
-    if (!getMenuComment(comments)) return setVisiable(false);
-  };
+class EditMenuItem extends BaseMenuItem {
+  constructor() {
+    super();
 
-  el.addEventListener("click", async () => {
+    const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_MENU, MenuActions.editMenu);
+    this.el = el;
+    this.el.addEventListener("click", this.click);
+    this.setVisiable = setVisiable;
+  }
+
+  el: HTMLElement;
+
+  setVisiable: (visiable: boolean) => void;
+
+  update(comments: KoobooComment[]): void {
+    this.setVisiable(true);
+    if (!getMenuComment(comments)) return this.setVisiable(false);
+  }
+
+  click() {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
     let comment = getMenuComment(comments)!;
@@ -36,7 +52,5 @@ export function createEditMenuItem() {
 
       temp.outerHTML = c;
     });
-  });
-
-  return { el, update };
+  }
 }

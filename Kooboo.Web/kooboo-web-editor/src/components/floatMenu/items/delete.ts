@@ -20,23 +20,40 @@ import { DomLog } from "@/operation/recordLogs/DomLog";
 import { getViewComment, getRepeatComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createDiv } from "@/dom/element";
+import BaseMenuItem from "./BaseMenuItem";
 
 export function createDeleteItem(): MenuItem {
-  const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
-  const update = (comments: KoobooComment[]) => {
-    setVisiable(true);
+  return new DeleteItem();
+}
+
+class DeleteItem extends BaseMenuItem {
+  constructor() {
+    super();
+
+    const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
+    this.el = el;
+    this.el.addEventListener("click", this.click);
+    this.setVisiable = setVisiable;
+  }
+
+  el: HTMLElement;
+
+  setVisiable: (visiable: boolean) => void;
+
+  update(comments: KoobooComment[]): void {
+    this.setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     let { parent } = getCleanParent(args.element);
-    if (!args.koobooId) return setVisiable(false);
+    if (!args.koobooId) return this.setVisiable(false);
     let comment = getViewComment(comments);
-    if (!comment) return setVisiable(false);
-    if (getRepeatComment(comments)) return setVisiable(false);
-    if (getRelatedRepeatComment(args.element)) return setVisiable(false);
-    if (isDirty(args.element) && parent && isDynamicContent(parent)) return setVisiable(false);
-    if (isBody(args.element)) return setVisiable(false);
-  };
+    if (!comment) return this.setVisiable(false);
+    if (getRepeatComment(comments)) return this.setVisiable(false);
+    if (getRelatedRepeatComment(args.element)) return this.setVisiable(false);
+    if (isDirty(args.element) && parent && isDynamicContent(parent)) return this.setVisiable(false);
+    if (isBody(args.element)) return this.setVisiable(false);
+  }
 
-  el.addEventListener("click", () => {
+  click() {
     let args = context.lastSelectedDomEventArgs;
     let { koobooId, parent } = getCleanParent(args.element);
     let comments = KoobooComment.getComments(args.element);
@@ -56,7 +73,5 @@ export function createDeleteItem(): MenuItem {
     }
     let operation = new operationRecord([new DeleteUnit(startContent)], [log], guid);
     context.operationManager.add(operation);
-  });
-
-  return { el, update };
+  }
 }
