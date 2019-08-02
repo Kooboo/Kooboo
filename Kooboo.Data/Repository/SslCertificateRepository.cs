@@ -32,6 +32,11 @@ namespace Kooboo.Data.Repository
             }
              
             var certificate = new X509Certificate2(cert, "kooboo");
+
+            if (certificate.Subject.Contains("*"))
+            {
+                iswildcard = true; 
+            }
             
             SslCertificate ssl = new SslCertificate();
             ssl.Domain = domain;
