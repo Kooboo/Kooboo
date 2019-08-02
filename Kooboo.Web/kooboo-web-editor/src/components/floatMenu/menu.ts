@@ -24,8 +24,23 @@ import context from "@/common/context";
 import { createInlineEditHtmlBlockItem } from "./items/inlineEditHtmlBlock";
 
 export function createMenu() {
-  const { container, setExpandBtnVisiable, updatePosition } = createContainer();
-  const items = [
+  return new Menu();
+}
+
+class Menu {
+  constructor(){
+    const { container, setExpandBtnVisiable, updatePosition } = createContainer();
+
+    for (const i of this.items) {
+      container.appendChild(i.el);
+    }
+
+    this.container = container;
+    this.setExpandBtnVisiable = setExpandBtnVisiable;
+    this.updatePosition = updatePosition;
+  }
+
+  items = [
     createEditItem(),
     createCopyItem(),
     createDeleteItem(),
@@ -48,34 +63,30 @@ export function createMenu() {
     createInlineEditHtmlBlockItem()
   ] as MenuItem[];
 
-  for (const i of items) {
-    container.appendChild(i.el);
-  }
+  container:HTMLDivElement;
 
-  const update = (x: number, y: number) => {
+  setExpandBtnVisiable:(visiable: boolean)=>void;
+
+  updatePosition:(x: number, y: number, pageHeight:number, pageWidth:number)=>void;
+
+  update = (x: number, y: number) => {
     let pageHeight = getMaxHeight();
     let pagewidth = getMaxWidth();
-    container.style.display = "block";
-    container.style.overflow = "visible";
+    this.container.style.display = "block";
+    this.container.style.overflow = "visible";
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
     let elements = getParentElements(args.element);
     let canExpand = elements.findIndex(f => f instanceof HTMLBodyElement) != 0;
-    setExpandBtnVisiable(canExpand);
-    for (const i of items) {
+    this.setExpandBtnVisiable(canExpand);
+    for (const i of this.items) {
       i.update(comments);
     }
 
-    updatePosition(x, y, pageHeight, pagewidth);
+    this.updatePosition(x, y, pageHeight, pagewidth);
   };
 
-  const hidden = () => {
-    container.style.display = "none";
-  };
-
-  return {
-    container,
-    update,
-    hidden
+  hidden = () => {
+    this.container.style.display = "none";
   };
 }
