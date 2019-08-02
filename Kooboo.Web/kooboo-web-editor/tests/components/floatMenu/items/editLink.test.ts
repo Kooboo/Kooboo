@@ -3,13 +3,13 @@ import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import { createEditLinkItem } from "@/components/floatMenu/items/editLink";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 
-describe("edit", ()=>{
-    beforeEach(()=>{
-        document.body.innerHTML = "";
-    })
+describe("edit", () => {
+  beforeEach(() => {
+    document.body.innerHTML = "";
+  });
 
-    test("createEditLinkItem_update", ()=>{
-        document.body.innerHTML = `
+  test("createEditLinkItem_update", () => {
+    document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
             <article class="content" kooboo-id="1-0-1-1-1-1">
@@ -20,23 +20,23 @@ describe("edit", ()=>{
         <!--#kooboo--end='true'--objecttype='view'--boundary='154'-->
         `;
 
-        let elementObject = createEditLinkItem();
-        expect(elementObject.el.style.display).toEqual("");
+    let elementObject = createEditLinkItem();
+    expect(elementObject.el.style.display).toEqual("");
 
-        // 不能是body元素
-        context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body as HTMLElement);
-        let comments = KoobooComment.getComments(document.body);
-        elementObject.update(comments);
-        expect(elementObject.el.style.display).toEqual("none");
+    // 不能是body元素
+    context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body as HTMLElement);
+    let comments = KoobooComment.getComments(document.body);
+    elementObject.update(comments);
+    expect(elementObject.el.style.display).toEqual("none");
 
-        context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body.children[0].children[0].children[0] as HTMLElement);
-        comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
-        elementObject.update(comments);
-        expect(elementObject.el.style.display).toEqual("block");
-    })
+    context.lastSelectedDomEventArgs = new SelectedDomEventArgs(document.body.children[0].children[0].children[0] as HTMLElement);
+    comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
+    elementObject.update(comments);
+    expect(elementObject.el.style.display).toEqual("block");
+  });
 
-    test("createEditLinkItem_update_noExistInView", ()=>{
-        document.body.innerHTML = `
+  test("createEditLinkItem_update_noExistInView", () => {
+    document.body.innerHTML = `
         <!--#kooboo--objecttype='contentrepeater'--nameorid='6a883ab8-435c-cd7c-9ac1-5473fd6f1788'--folderid='ffa232c4-ca49-9c07-8b43-fd30d5ec5e8b'--bindingvalue='List_Item'--boundary='171'-->
         <div class="widget widget-intro" kooboo-id="1-0">
             <article class="content" kooboo-id="1-0-1-1-1-1">
@@ -47,20 +47,20 @@ describe("edit", ()=>{
         <!--#kooboo--end=true--objecttype='contentrepeater'--boundary='171'-->
         `;
 
-        let selectedElement = document.body.children[0].children[0].children[0] as HTMLElement;
+    let selectedElement = document.body.children[0].children[0].children[0] as HTMLElement;
 
-        context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
+    context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-        let elementObject = createEditLinkItem();
-        expect(elementObject.el.style.display).toEqual("");
+    let elementObject = createEditLinkItem();
+    expect(elementObject.el.style.display).toEqual("");
 
-        let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
-        elementObject.update(comments);
-        expect(elementObject.el.style.display).toEqual("none");
-    })
+    let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
+    elementObject.update(comments);
+    expect(elementObject.el.style.display).toEqual("none");
+  });
 
-    test("createEditLinkItem_update_hasAttrComment", ()=>{
-        document.body.innerHTML = `
+  test("createEditLinkItem_update_hasAttrComment", () => {
+    document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
             <article class="content" kooboo-id="1-0-1-1-1-1">
@@ -72,15 +72,15 @@ describe("edit", ()=>{
         <!--#kooboo--end='true'--objecttype='view'--boundary='154'-->
         `;
 
-        let selectedElement = document.body.children[0].children[0].children[0] as HTMLElement;
+    let selectedElement = document.body.children[0].children[0].children[0] as HTMLElement;
 
-        context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
+    context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-        let elementObject = createEditLinkItem();
-        expect(elementObject.el.style.display).toEqual("");
+    let elementObject = createEditLinkItem();
+    expect(elementObject.el.style.display).toEqual("");
 
-        let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
-        elementObject.update(comments);
-        expect(elementObject.el.style.display).toEqual("none");
-    })
-})
+    let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
+    elementObject.update(comments);
+    expect(elementObject.el.style.display).toEqual("none");
+  });
+});

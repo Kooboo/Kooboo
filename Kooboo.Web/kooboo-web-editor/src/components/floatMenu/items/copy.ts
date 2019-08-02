@@ -16,8 +16,8 @@ export function createCopyItem(): MenuItem {
   return new CopyItem();
 }
 
-class CopyItem extends BaseMenuItem{
-  constructor(){
+class CopyItem extends BaseMenuItem {
+  constructor() {
     super();
 
     const { el, setVisiable } = createItem(TEXT.COPY, MenuActions.copy);
@@ -25,7 +25,7 @@ class CopyItem extends BaseMenuItem{
     this.el.addEventListener("click", this.click);
     this.setVisiable = setVisiable;
   }
-  
+
   el: HTMLElement;
 
   setVisiable: (visiable: boolean) => void;
@@ -42,7 +42,7 @@ class CopyItem extends BaseMenuItem{
     if (parent && isDynamicContent(parent)) return this.setVisiable(false);
   }
 
-  click(){
+  click() {
     let args = context.lastSelectedDomEventArgs;
     let comments = KoobooComment.getComments(args.element);
     let { koobooId, parent } = getCleanParent(args.element);

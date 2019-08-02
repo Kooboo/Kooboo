@@ -28,7 +28,7 @@ export function createMenu() {
 }
 
 class Menu {
-  constructor(){
+  constructor() {
     const { container, setExpandBtnVisiable, updatePosition } = createContainer();
 
     for (const i of this.items) {
@@ -63,11 +63,11 @@ class Menu {
     createInlineEditHtmlBlockItem()
   ] as MenuItem[];
 
-  container:HTMLDivElement;
+  container: HTMLDivElement;
 
-  setExpandBtnVisiable:(visiable: boolean)=>void;
+  setExpandBtnVisiable: (visiable: boolean) => void;
 
-  updatePosition:(x: number, y: number, pageHeight:number, pageWidth:number)=>void;
+  updatePosition: (x: number, y: number, pageHeight: number, pageWidth: number) => void;
 
   update = (x: number, y: number) => {
     let pageHeight = getMaxHeight();

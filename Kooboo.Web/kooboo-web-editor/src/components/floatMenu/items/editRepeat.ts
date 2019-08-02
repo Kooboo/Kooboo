@@ -28,7 +28,7 @@ class EditRepeatItem extends BaseMenuItem {
 
   setVisiable: (visiable: boolean) => void;
 
-  setReadonly: ()=>void;
+  setReadonly: () => void;
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
