@@ -63,7 +63,7 @@ export class Menu {
     this.updatePosition = updatePosition;
   }
 
-  addItem(item: BaseMenuItem){
+  addItem(item: BaseMenuItem) {
     this.container.appendChild(item.el);
     this.items.push(item);
   }

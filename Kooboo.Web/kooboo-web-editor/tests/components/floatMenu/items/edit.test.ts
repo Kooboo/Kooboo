@@ -23,7 +23,7 @@ describe("edit", () => {
         <!--#kooboo--end='true'--objecttype='view'--boundary='154'-->
         `;
 
-    let elementObject = new EditItem(new Menu);
+    let elementObject = new EditItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     // 不能是body元素
@@ -54,7 +54,7 @@ describe("edit", () => {
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let elementObject = new EditItem(new Menu);
+    let elementObject = new EditItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
@@ -80,7 +80,7 @@ describe("edit", () => {
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let elementObject = new EditItem(new Menu);
+    let elementObject = new EditItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
@@ -106,7 +106,7 @@ describe("edit", () => {
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let elementObject = new EditItem(new Menu);
+    let elementObject = new EditItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
@@ -137,7 +137,7 @@ describe("edit", () => {
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let elementObject = new EditItem(new Menu);
+    let elementObject = new EditItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
