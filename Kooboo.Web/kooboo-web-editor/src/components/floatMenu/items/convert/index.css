@@ -49,3 +49,19 @@
 .floatmenu-convert-childscontainer-hover>div {
     display: block;
 }
+
+.floatmenu-convert-shade{
+    position: absolute;
+
+    background-color: #dad7d780;;
+    z-index: 9999;
+}
+
+.floatmenu-convert-shade-btns{
+    float: right;
+    padding: 5px 10px;
+}
+
+.floatmenu-convert-shade-btns>button{
+    cursor:pointer
+}
