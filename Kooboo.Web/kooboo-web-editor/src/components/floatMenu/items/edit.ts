@@ -15,14 +15,11 @@ import { LabelLog } from "@/operation/recordLogs/LabelLog";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { operationRecord } from "@/operation/Record";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createEditItem(): MenuItem {
-  return new EditItem();
-}
-
-class EditItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class EditItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.EDIT, MenuActions.edit);
     this.el = el;

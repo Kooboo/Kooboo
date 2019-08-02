@@ -12,14 +12,11 @@ import { operationRecord } from "@/operation/Record";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createCopyRepeatItem(): MenuItem {
-  return new CopyRepeatItem();
-}
-
-class CopyRepeatItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class CopyRepeatItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.COPY_REPEAT, MenuActions.copyRepeat);
     this.el = el;

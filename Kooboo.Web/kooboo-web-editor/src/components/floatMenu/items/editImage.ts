@@ -7,14 +7,11 @@ import { getEditComment, getViewComment, updateAttributeImage, updateDomImage, g
 import { isDynamicContent, getCleanParent, isDirty } from "@/kooboo/utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createEditImageItem(): MenuItem {
-  return new EditImageItem();
-}
-
-class EditImageItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class EditImageItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.EDIT_IMAGE, MenuActions.editImage);
     this.el = el;

@@ -1,14 +1,15 @@
 import context from "@/common/context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
-import { createEditItem } from "@/components/floatMenu/items/edit";
+import EditItem from "@/components/floatMenu/items/edit";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import { Menu } from "@/components/floatMenu/menu";
 
 describe("edit", () => {
   beforeEach(() => {
     document.body.innerHTML = "";
   });
 
-  test("createEditItem_update", () => {
+  test("EditItem_update", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -22,7 +23,7 @@ describe("edit", () => {
         <!--#kooboo--end='true'--objecttype='view'--boundary='154'-->
         `;
 
-    let elementObject = createEditItem();
+    let elementObject = new EditItem(new Menu);
     expect(elementObject.el.style.display).toEqual("");
 
     // 不能是body元素
@@ -37,7 +38,7 @@ describe("edit", () => {
     expect(elementObject.el.style.display).toEqual("block");
   });
 
-  test("createEditItem_update_noExistInEditType", () => {
+  test("EditItem_update_noExistInEditType", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='contentrepeater'--nameorid='6a883ab8-435c-cd7c-9ac1-5473fd6f1788'--folderid='ffa232c4-ca49-9c07-8b43-fd30d5ec5e8b'--bindingvalue='List_Item'--boundary='171'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -53,7 +54,7 @@ describe("edit", () => {
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let elementObject = createEditItem();
+    let elementObject = new EditItem(new Menu);
     expect(elementObject.el.style.display).toEqual("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
@@ -61,7 +62,7 @@ describe("edit", () => {
     expect(elementObject.el.style.display).toEqual("none");
   });
 
-  test("createEditItem_update_existInRepeatType", () => {
+  test("EditItem_update_existInRepeatType", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -79,7 +80,7 @@ describe("edit", () => {
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let elementObject = createEditItem();
+    let elementObject = new EditItem(new Menu);
     expect(elementObject.el.style.display).toEqual("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
@@ -87,7 +88,7 @@ describe("edit", () => {
     expect(elementObject.el.style.display).toEqual("block");
   });
 
-  test("createEditItem_update_noEditElement", () => {
+  test("EditItem_update_noEditElement", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -105,7 +106,7 @@ describe("edit", () => {
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let elementObject = createEditItem();
+    let elementObject = new EditItem(new Menu);
     expect(elementObject.el.style.display).toEqual("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
@@ -113,7 +114,7 @@ describe("edit", () => {
     expect(elementObject.el.style.display).toEqual("none");
   });
 
-  test("createEditItem_update_existOtherElement", () => {
+  test("EditItem_update_existOtherElement", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -136,7 +137,7 @@ describe("edit", () => {
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let elementObject = createEditItem();
+    let elementObject = new EditItem(new Menu);
     expect(elementObject.el.style.display).toEqual("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);

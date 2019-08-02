@@ -21,14 +21,11 @@ import { getViewComment, getRepeatComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createDiv } from "@/dom/element";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createDeleteItem(): MenuItem {
-  return new DeleteItem();
-}
-
-class DeleteItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class DeleteItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
     this.el = el;

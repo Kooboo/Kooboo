@@ -6,14 +6,11 @@ import { isLink } from "@/dom/utils";
 import { getAttributeComment, updateAttributeLink } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createEditRepeatLinkItem(): MenuItem {
-  return new EditRepeatLinkItem();
-}
-
-class EditRepeatLinkItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class EditRepeatLinkItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.EDIT_LINK, MenuActions.editLink);
     this.el = el;

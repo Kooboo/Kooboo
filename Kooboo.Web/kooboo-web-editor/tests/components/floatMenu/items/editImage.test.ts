@@ -1,14 +1,15 @@
 import context from "@/common/context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
-import { createEditImageItem } from "@/components/floatMenu/items/editImage";
+import EditImageItem from "@/components/floatMenu/items/editImage";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import { Menu } from "@/components/floatMenu/menu";
 
 describe("editImage", ()=>{
     beforeEach(()=>{
         document.body.innerHTML = "";
     })
 
-    test("createEditImageItem_update", ()=>{
+    test("EditImageItem_update", ()=>{
         document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -20,7 +21,7 @@ describe("editImage", ()=>{
         <!--#kooboo--end='true'--objecttype='view'--boundary='154'-->
         `;
 
-        let elementObject = createEditImageItem();
+        let elementObject = new EditImageItem(new Menu());
         expect(elementObject.el.style.display).toEqual("");
 
         // 不能是body元素
@@ -35,7 +36,7 @@ describe("editImage", ()=>{
         expect(elementObject.el.style.display).toEqual("block");
     })
 
-    test("createEditImageItem_update_noImgElement", ()=>{
+    test("EditImageItem_update_noImgElement", ()=>{
         document.body.innerHTML = `
         <!--#kooboo--objecttype='contentrepeater'--nameorid='6a883ab8-435c-cd7c-9ac1-5473fd6f1788'--folderid='ffa232c4-ca49-9c07-8b43-fd30d5ec5e8b'--bindingvalue='List_Item'--boundary='171'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -51,7 +52,7 @@ describe("editImage", ()=>{
 
         context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-        let elementObject = createEditImageItem();
+        let elementObject = new EditImageItem(new Menu());
         expect(elementObject.el.style.display).toEqual("");
 
         let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
@@ -60,7 +61,7 @@ describe("editImage", ()=>{
     })
 
     // 存在attribute类型，说明img使用的是content的数据类型，不能直接编辑
-    test("createEditImageItem_update_existAttrType", ()=>{
+    test("EditImageItem_update_existAttrType", ()=>{
         document.body.innerHTML = `
         <!--#kooboo--objecttype='contentrepeater'--nameorid='6a883ab8-435c-cd7c-9ac1-5473fd6f1788'--folderid='ffa232c4-ca49-9c07-8b43-fd30d5ec5e8b'--bindingvalue='List_Item'--boundary='171'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -77,7 +78,7 @@ describe("editImage", ()=>{
 
         context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-        let elementObject = createEditImageItem();
+        let elementObject = new EditImageItem(new Menu());
         expect(elementObject.el.style.display).toEqual("");
 
         let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
@@ -85,7 +86,7 @@ describe("editImage", ()=>{
         expect(elementObject.el.style.display).toEqual("none");
     })
 
-    test("createEditImageItem_update_noExistInView", ()=>{
+    test("EditImageItem_update_noExistInView", ()=>{
         document.body.innerHTML = `
         <!--#kooboo--objecttype='contentrepeater'--nameorid='6a883ab8-435c-cd7c-9ac1-5473fd6f1788'--folderid='ffa232c4-ca49-9c07-8b43-fd30d5ec5e8b'--bindingvalue='List_Item'--boundary='171'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -101,7 +102,7 @@ describe("editImage", ()=>{
 
         context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-        let elementObject = createEditImageItem();
+        let elementObject = new EditImageItem(new Menu());
         expect(elementObject.el.style.display).toEqual("");
 
         let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);

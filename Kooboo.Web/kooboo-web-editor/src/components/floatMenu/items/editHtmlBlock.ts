@@ -7,14 +7,11 @@ import { reload } from "@/dom/utils";
 import { editHtmlBlock } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createEditHtmlBlockItem(): MenuItem {
-  return new EditHtmlBlockItem();
-}
-
-class EditHtmlBlockItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class EditHtmlBlockItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_HTML_BLOCK, MenuActions.editHtmlBlock);
     this.el = el;

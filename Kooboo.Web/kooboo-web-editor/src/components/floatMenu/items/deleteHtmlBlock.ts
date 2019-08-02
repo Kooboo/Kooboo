@@ -12,14 +12,11 @@ import { HtmlblockLog } from "@/operation/recordLogs/HtmlblockLog";
 import { OBJECT_TYPE } from "@/common/constants";
 import { createDiv } from "@/dom/element";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createDeleteHtmlBlockItem(): MenuItem {
-  return new DeleteHtmlBlockItem();
-}
-
-class DeleteHtmlBlockItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class DeleteHtmlBlockItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
     this.el = el;

@@ -11,14 +11,11 @@ import { newGuid } from "@/kooboo/outsideInterfaces";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createCopyItem(): MenuItem {
-  return new CopyItem();
-}
-
-class CopyItem extends BaseMenuItem{
-  constructor(){
-    super();
+export default class CopyItem extends BaseMenuItem{
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.COPY, MenuActions.copy);
     this.el = el;
