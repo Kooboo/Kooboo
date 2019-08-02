@@ -18,7 +18,7 @@ export default (env: any): webpack.Configuration => ({
   devtool: env.NODE_ENV == "development" ? "inline-source-map" : undefined,
   module: {
     rules: [
-      { test: /\.tsx?$/, loader: "ts-loader" },
+      { test: /\.(tsx?)|(js)$/, loader: "ts-loader" },
       {
         test: /\.js$/,
         loader: "eslint-loader",
