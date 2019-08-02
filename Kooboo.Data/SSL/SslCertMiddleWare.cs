@@ -2,7 +2,7 @@
 using Kooboo.Data.Server;
 using System.Threading.Tasks;
 
-namespace Kooboo.Web.SSL
+namespace Kooboo.Data.SSL
 {
     public class SslCertMiddleWare : IKoobooMiddleWare
     {
@@ -16,16 +16,7 @@ namespace Kooboo.Web.SSL
             if (context.Request.RelativeUrl != null && context.Request.RelativeUrl.ToLower().StartsWith("/.well-known/acme-challenge"))
             {
                 var host = context.Request.Host;
-
-                //var ssltoke = SslTokenService.GetUseDomain(host);
-                //if (!string.IsNullOrEmpty(ssltoke))
-                //{
-                //    context.Response.Body = System.Text.Encoding.UTF8.GetBytes(ssltoke);
-                //    context.Response.ContentType = "text/html;charset=utf-8; ";
-                //    context.Response.End = true;
-                //    return;
-                //}
-
+  
                 string validate = context.Request.QueryString.Get("validate");
 
                 if (string.IsNullOrWhiteSpace(validate))
