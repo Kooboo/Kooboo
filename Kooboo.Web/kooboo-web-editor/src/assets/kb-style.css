@@ -273,6 +273,7 @@
   word-break: break-all;
   font-size: 16px;
   line-height: 40px;
+  min-height: 40px;
   padding-right: 80px;
 }
 
