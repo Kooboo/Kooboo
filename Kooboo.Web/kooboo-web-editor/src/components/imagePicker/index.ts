@@ -1,7 +1,7 @@
 import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
 import { getEditorContainer } from "@/dom/utils";
-import { pickImg } from "@/kooboo/outsideInterfaces";
+import { pickImg, parentBody } from "@/kooboo/outsideInterfaces";
 import { createDiv, createLabelInput } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
 
@@ -58,7 +58,7 @@ export function createImagePicker(img: HTMLImageElement) {
   container.appendChild(height.input);
 
   const { modal, setOkHandler, setCancelHandler, close } = createModal(TEXT.EDIT_IMAGE, container, "450px");
-  getEditorContainer().appendChild(modal);
+  parentBody.appendChild(modal);
 
   return new Promise((rs, rj) => {
     setOkHandler(() => {

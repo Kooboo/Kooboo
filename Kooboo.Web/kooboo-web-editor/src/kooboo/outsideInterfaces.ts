@@ -3,8 +3,9 @@ import { TEXT } from "@/common/lang";
 import { createIframe } from "@/dom/element";
 const Kooboo = (document as any).Kooboo;
 const mediaDialogData = (document as any).mediaDialogData;
-const parentBody = (document as any).parentBody as HTMLBodyElement;
 const gl = (document as any).__gl;
+
+export const parentBody = (document as any).parentBody as HTMLBodyElement;
 
 export function pickImg(callBack: (path: string) => void) {
   Kooboo.Media.getList().then(function(res: any) {
@@ -86,9 +87,11 @@ export function newGuid(): string {
 }
 
 export function addParentStyle() {
+  let keywords = ["/*! Pickr 1.1.2 MIT | https://github.com/Simonwep/pickr */", "/* kb_web_editor */"];
   for (let i = 0; i < document.styleSheets.length; i++) {
     let style = document.styleSheets.item(i)!;
-    if (style.ownerNode instanceof HTMLElement && style.ownerNode.innerHTML.indexOf("kb_web_editor") > -1) {
+    if (!(style.ownerNode instanceof HTMLElement)) return;
+    if (keywords.some(s => (style.ownerNode as HTMLElement).innerHTML.startsWith(s))) {
       let styleNode = style.ownerNode.cloneNode(true);
       parentBody.appendChild(styleNode);
     }

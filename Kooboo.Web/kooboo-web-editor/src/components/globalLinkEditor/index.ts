@@ -1,9 +1,9 @@
 import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
-import { getEditorContainer } from "@/dom/utils";
 import { createTabs } from "../common/tabs";
 import { createDomLinkPanel } from "./domLinkPanel";
 import { createContentLinkPanel } from "./contentLinkPanel";
+import { parentBody } from "@/kooboo/outsideInterfaces";
 
 export function createGlobalLinkEditor() {
   const options = [
@@ -20,5 +20,5 @@ export function createGlobalLinkEditor() {
   let tabs = createTabs(options);
   const { modal, hideCancel } = createModal(TEXT.EDIT_LINKS, tabs, "500px", "500px");
   hideCancel();
-  getEditorContainer().appendChild(modal);
+  parentBody.appendChild(modal);
 }

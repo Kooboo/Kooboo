@@ -1,10 +1,10 @@
 import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
-import { getEditorContainer } from "@/dom/utils";
 import { createTabs } from "../common/tabs";
 import { createContentImagePanel } from "./contentImagePanel";
 import { createStyleImagePanel } from "./styleImagePanel";
 import { createDomImagePanel } from "./domImagePanel";
+import { parentBody } from "@/kooboo/outsideInterfaces";
 
 export function createGlobalImageEditor() {
   const options = [
@@ -25,5 +25,5 @@ export function createGlobalImageEditor() {
   let tabs = createTabs(options);
   const { modal, hideCancel } = createModal(TEXT.EDIT_IMAGES, tabs, "600px", "500px");
   hideCancel();
-  getEditorContainer().appendChild(modal);
+  parentBody.appendChild(modal);
 }
