@@ -3,18 +3,12 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import { TEXT } from "@/common/lang";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import context from "@/common/context";
-import { isDynamicContent, isDirty, setGuid, clearKoobooInfo } from "@/kooboo/utils";
+import { isDynamicContent, isDirty } from "@/kooboo/utils";
 import { OBJECT_TYPE, KOOBOO_ID } from "@/common/constants";
 
 import "./index.css"
-import { clearContent } from "../../utils";
-import { operationRecord } from "@/operation/Record";
-import { ConverterLog } from "@/operation/recordLogs/ConverterLog";
-import { setInlineEditor } from "@/components/richEditor";
-import { ConvertUnit } from "@/operation/recordUnits/ConvertUnit";
-import { newGuid } from "@/kooboo/outsideInterfaces";
 import { isBody } from "@/dom/utils";
-import { addDisableEditShade } from "./disableEditShade";
+import { createConvertToView } from "./convertToView";
 
 export function createConvert(): MenuItem {
     const convertItem = createItem(TEXT.CONVERT, MenuActions.convert);
@@ -84,45 +78,6 @@ function createConvertToHtmlBlock() {
     const item = createItem(`${TEXT.CONVERTTOHTMLBLOCK}`, MenuActions.convertToHtmlBlock);
 
     item.el.addEventListener("click", () => {
-    });
-
-    return item;
-}
-
-function createConvertToView() {
-    const item = createItem(`${TEXT.CONVERTTOVIEW}`, MenuActions.convertToView);
-
-    item.el.addEventListener("click", () => {
-        let { element, koobooId } = context.lastSelectedDomEventArgs;
-        let guid = setGuid(element);
-        let startContent = element.outerHTML;
-        const onSave = () => 
-        {
-            let viewNameorid = `${(new Date()).valueOf()}`;  // 以时间戳作为naneorid
-            // 生成log
-            let convertResult = {
-                convertToType: "View",
-                name: viewNameorid,
-                koobooId: element.getAttribute(KOOBOO_ID),
-                htmlBody: clearKoobooInfo(element.outerHTML)
-            };
-            let log = ConverterLog.create(JSON.stringify(convertResult));
-            console.log(log);
-
-            // 生成unit
-            let units = [ConvertUnit.CreateViewConvertUnit(startContent)];
-
-            // 为元素添加禁止编辑遮罩
-            addDisableEditShade(element, (e) => {});
-
-            let operation = new operationRecord(units, [log], guid);
-            context.operationManager.add(operation);
-        };
-
-        const onCancel = () => {
-            element.innerHTML = startContent;
-        };
-        setInlineEditor({ selector: element, onSave, onCancel });
     });
 
     return item;

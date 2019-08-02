@@ -3,7 +3,7 @@ import { getWrapDom } from "@/kooboo/utils";
 import { OBJECT_TYPE } from "@/common/constants";
 
 export class ConvertUnit extends Unit {
-    constructor(oldValue: string, public objectType: string)
+    constructor(oldValue: string, public objectType: string, private redoBackCall : (el:HTMLElement)=>void)
     {
         super(oldValue);
     }
@@ -21,6 +21,8 @@ export class ConvertUnit extends Unit {
 
         let oldNode = this.createNodesForString(this.newValue)[0];
         el.parentElement!.replaceChild(oldNode, el);
+
+        this.redoBackCall(oldNode as HTMLElement);
     }
 
     createNodesForString(htmlStr:string){
@@ -30,7 +32,7 @@ export class ConvertUnit extends Unit {
         return div.childNodes;
     }
 
-    static CreateViewConvertUnit(oldValue: string) {
-        return new ConvertUnit(oldValue, OBJECT_TYPE.view);
+    static CreateViewConvertUnit(oldValue: string, redoBackCall: ((el:HTMLElement) => void) = (el)=>{}) {
+        return new ConvertUnit(oldValue, OBJECT_TYPE.view, redoBackCall);
     }
 }

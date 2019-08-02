@@ -33,7 +33,7 @@ export function addDisableEditShade(element: HTMLElement, editBtnClick: (e:Mouse
 export function removeDisableEditShade(element: Element) {
     for (let n = 0; n < element.children.length; n++) {
         if (element.children[n].getAttribute(shadeAttrName) != null) {
-            element.remove();
+            element.children[n].remove();
             break;
         }
     }

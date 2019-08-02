@@ -20,7 +20,7 @@ import { createClickItem } from "./items/click";
 import { createDeleteHtmlBlockItem } from "./items/deleteHtmlBlock";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import context from "@/common/context";
-import { createConvert } from "./items/convert";
+// import { createConvert } from "./items/convert";
 import { createInlineEditHtmlBlockItem } from "./items/inlineEditHtmlBlock";
 
 export function createMenu() {
@@ -44,7 +44,7 @@ export function createMenu() {
     createEditRepeatLinkItem(),
     createClickItem(),
     createDeleteHtmlBlockItem(),
-    createConvert(),
+    // createConvert(),
     createInlineEditHtmlBlockItem()
   ] as MenuItem[];
 
