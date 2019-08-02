@@ -1,9 +1,9 @@
 import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
-import { getEditorContainer, getBackgroundImage, clearBackgroundImage } from "@/dom/utils";
+import { getBackgroundImage, clearBackgroundImage } from "@/dom/utils";
 import { createSpliter } from "./spliter";
 import { createColorPicker } from "./colorPicker";
-import { pickImg } from "@/kooboo/outsideInterfaces";
+import { pickImg, parentBody } from "@/kooboo/outsideInterfaces";
 import { createDiv, createLabelInput } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
 import { Background } from "@/dom/Background";
@@ -17,7 +17,7 @@ export function createStyleEditor(el: HTMLElement) {
 
   const { modal, setOkHandler, setCancelHandler, close } = createModal(TEXT.EDIT_STYLE, container, "450px");
 
-  getEditorContainer().appendChild(modal);
+  parentBody.appendChild(modal);
 
   return new Promise<void>((rs, rj) => {
     setOkHandler(() => {
