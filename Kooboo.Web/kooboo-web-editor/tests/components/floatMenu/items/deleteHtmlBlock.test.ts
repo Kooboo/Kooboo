@@ -1,14 +1,15 @@
 import context from "@/common/context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
-import { createDeleteHtmlBlockItem } from "@/components/floatMenu/items/deleteHtmlBlock";
+import DeleteHtmlBlockItem from "@/components/floatMenu/items/deleteHtmlBlock";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import { Menu } from "@/components/floatMenu/menu";
 
 describe("deleteHtmlBlock", () => {
   beforeEach(() => {
     document.body.innerHTML = "";
   });
 
-  test("createDeleteHtmlBlockItem_update", () => {
+  test("DeleteHtmlBlockItem_update", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -22,7 +23,7 @@ describe("deleteHtmlBlock", () => {
         <!--#kooboo--end='true'--objecttype='view'--boundary='154'-->
         `;
 
-    let elementObject = createDeleteHtmlBlockItem();
+    let elementObject = new DeleteHtmlBlockItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     // 不能是body元素
@@ -37,7 +38,7 @@ describe("deleteHtmlBlock", () => {
     expect(elementObject.el.style.display).toEqual("block");
   });
 
-  test("createDeleteHtmlBlockItem_update_noExistInHtmlblock", () => {
+  test("DeleteHtmlBlockItem_update_noExistInHtmlblock", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -53,7 +54,7 @@ describe("deleteHtmlBlock", () => {
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let elementObject = createDeleteHtmlBlockItem();
+    let elementObject = new DeleteHtmlBlockItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);

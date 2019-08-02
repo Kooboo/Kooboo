@@ -14,14 +14,11 @@ import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { operationRecord } from "@/operation/Record";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createReplaceToTextItem(): MenuItem {
-  return new ReplaceToTextItem();
-}
-
-class ReplaceToTextItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class ReplaceToTextItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.REPLACE_TO_TEXT, MenuActions.replaceToText);
     this.el = el;

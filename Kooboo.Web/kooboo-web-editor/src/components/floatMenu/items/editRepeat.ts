@@ -8,14 +8,11 @@ import { editRepeat } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { getRelatedRepeatComment } from "@/kooboo/utils";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createEditRepeatItem() {
-  return new EditRepeatItem();
-}
-
-class EditRepeatItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class EditRepeatItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_REPEAT, MenuActions.editRepeat);
     this.el = el;

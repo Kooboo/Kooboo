@@ -12,14 +12,11 @@ import { HtmlblockLog } from "@/operation/recordLogs/HtmlblockLog";
 import { operationRecord } from "@/operation/Record";
 import { getHtmlBlockComment, clearContent } from "../utils";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createInlineEditHtmlBlockItem(): MenuItem {
-  return new InlineEditHtmlBlockItem();
-}
-
-class InlineEditHtmlBlockItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class InlineEditHtmlBlockItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.EDIT, MenuActions.edit);
     this.el = el;

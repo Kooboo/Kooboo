@@ -7,14 +7,11 @@ import { getPageId } from "@/kooboo/utils";
 import qs from "query-string";
 import BaseMenuItem from "./BaseMenuItem";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import { Menu } from "../menu";
 
-export function createEnterLinkItem(): MenuItem {
-  return new EnterLinkItem();
-}
-
-class EnterLinkItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class EnterLinkItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.ENTER_LINK, MenuActions.enterLink);
     this.el = el;

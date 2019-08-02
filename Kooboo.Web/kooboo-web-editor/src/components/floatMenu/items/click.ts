@@ -4,14 +4,11 @@ import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import BaseMenuItem from "./BaseMenuItem";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import { Menu } from "../menu";
 
-export function createClickItem(): MenuItem {
-  return new ClickItem();
-}
-
-class ClickItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class ClickItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.CLICK, MenuActions.click);
     this.el = el;

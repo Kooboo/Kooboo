@@ -9,14 +9,11 @@ import { editMenu } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createDiv } from "@/dom/element";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createEditMenuItem() {
-  return new EditMenuItem();
-}
-
-class EditMenuItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class EditMenuItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_MENU, MenuActions.editMenu);
     this.el = el;

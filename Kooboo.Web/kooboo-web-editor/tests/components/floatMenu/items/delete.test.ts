@@ -1,14 +1,15 @@
 import context from "@/common/context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
-import { createDeleteItem } from "@/components/floatMenu/items/delete";
+import DeleteItem from "@/components/floatMenu/items/delete";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import { Menu } from "@/components/floatMenu/menu";
 
 describe("delete", () => {
   beforeEach(() => {
     document.body.innerHTML = "";
   });
 
-  test("createDeleteItem_update", () => {
+  test("DeleteItem_update", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -20,7 +21,7 @@ describe("delete", () => {
         <!--#kooboo--end='true'--objecttype='view'--boundary='154'-->
         `;
 
-    let elementObject = createDeleteItem();
+    let elementObject = new DeleteItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     // 不能是body元素
@@ -36,7 +37,7 @@ describe("delete", () => {
   });
 
   //   // 第一个注释必须是可编辑的类型(逻辑变更)
-  //   test("createDeleteItem_update_noEditType", () => {
+  //   test("DeleteItem_update_noEditType", () => {
   //     document.body.innerHTML = `
   //         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
   //         <div class="widget widget-intro" kooboo-id="1-0">
@@ -53,7 +54,7 @@ describe("delete", () => {
 
   //     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-  //     let elementObject = createDeleteItem();
+  //     let elementObject = DeleteItem();
   //     expect(elementObject.el.style.display).toEqual("");
 
   //     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
@@ -62,7 +63,7 @@ describe("delete", () => {
   //   });
 
   // 不能存在于repeat中
-  test("createDeleteItem_update_existInRepeat", () => {
+  test("DeleteItem_update_existInRepeat", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='contentrepeater'--nameorid='6a883ab8-435c-cd7c-9ac1-5473fd6f1788'--folderid='ffa232c4-ca49-9c07-8b43-fd30d5ec5e8b'--bindingvalue='List_Item'--boundary='171'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -79,7 +80,7 @@ describe("delete", () => {
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let elementObject = createDeleteItem();
+    let elementObject = new DeleteItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
@@ -108,7 +109,7 @@ describe("delete", () => {
 
   //     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-  //     let elementObject = createDeleteItem();
+  //     let elementObject = DeleteItem();
   //     expect(elementObject.el.style.display).toEqual("");
 
   //     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);

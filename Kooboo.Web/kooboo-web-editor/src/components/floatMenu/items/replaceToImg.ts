@@ -13,14 +13,11 @@ import { KOOBOO_ID } from "@/common/constants";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createImg } from "@/dom/element";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createReplaceToImgItem(): MenuItem {
-  return new ReplaceToImgItem();
-}
-
-class ReplaceToImgItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class ReplaceToImgItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.REPLACE_TO_IMG, MenuActions.replaceToImg);
     this.el = el;

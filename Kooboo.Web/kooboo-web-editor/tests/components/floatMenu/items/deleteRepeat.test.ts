@@ -1,14 +1,15 @@
 import context from "@/common/context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
-import { createDeleteRepeatItem } from "@/components/floatMenu/items/deleteRepeat";
+import DeleteRepeatItem from "@/components/floatMenu/items/deleteRepeat";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import { Menu } from "@/components/floatMenu/menu";
 
 describe("deleteRepeat", () => {
   beforeEach(() => {
     document.body.innerHTML = "";
   });
 
-  test("createDeleteRepeatItem_update", () => {
+  test("DeleteRepeatItem_update", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='contentrepeater'--nameorid='6a883ab8-435c-cd7c-9ac1-5473fd6f1788'--folderid='ffa232c4-ca49-9c07-8b43-fd30d5ec5e8b'--bindingvalue='List_Item'--boundary='171'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -20,7 +21,7 @@ describe("deleteRepeat", () => {
         <!--#kooboo--end=true--objecttype='contentrepeater'--boundary='171'-->
         `;
 
-    let elementObject = createDeleteRepeatItem();
+    let elementObject = new DeleteRepeatItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     // 不能是body元素
@@ -35,7 +36,7 @@ describe("deleteRepeat", () => {
     expect(elementObject.el.style.display).toEqual("block");
   });
 
-  test("createDeleteRepeatItem_update_noExistInRepeat", () => {
+  test("DeleteRepeatItem_update_noExistInRepeat", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -51,7 +52,7 @@ describe("deleteRepeat", () => {
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let elementObject = createDeleteRepeatItem();
+    let elementObject = new DeleteRepeatItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);

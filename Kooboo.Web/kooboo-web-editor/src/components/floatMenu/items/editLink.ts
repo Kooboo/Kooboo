@@ -7,14 +7,11 @@ import { isLink } from "@/dom/utils";
 import { getViewComment, getUrlComment, updateDomLink, updateUrlLink, updateAttributeLink, getAttributeComment, getRepeatComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createEditLinkItem(): MenuItem {
-  return new EditLinkItem();
-}
-
-class EditLinkItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class EditLinkItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.EDIT_LINK, MenuActions.editLink);
     this.el = el;

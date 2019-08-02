@@ -1,7 +1,8 @@
-import { createCopyItem } from "@/components/floatMenu/items/copy";
+import CopyItem from "@/components/floatMenu/items/copy";
 import context from "@/common/context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import { KoobooComment } from "@/kooboo/KoobooComment";
+import { Menu } from "@/components/floatMenu/menu";
 
 describe("copy", () => {
   beforeEach(() => {
@@ -9,7 +10,7 @@ describe("copy", () => {
     context.lastSelectedDomEventArgs = undefined!;
   });
 
-  test("createCopyItem_update", () => {
+  test("CopyItem_update", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='member'--boundary='154'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -21,7 +22,7 @@ describe("copy", () => {
         <!--#kooboo--end='true'--objecttype='view'--boundary='154'-->
         `;
 
-    let elementObject = createCopyItem();
+    let elementObject = new CopyItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     // 不能是body元素
@@ -37,7 +38,7 @@ describe("copy", () => {
   });
 
   // 选择的元素需要存在于view类型中
-  test("createCopyItem_update_noExistInView", () => {
+  test("CopyItem_update_noExistInView", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='contentrepeater'--nameorid='6a883ab8-435c-cd7c-9ac1-5473fd6f1788'--folderid='ffa232c4-ca49-9c07-8b43-fd30d5ec5e8b'--bindingvalue='List_Item'--boundary='171'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -53,7 +54,7 @@ describe("copy", () => {
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let elementObject = createCopyItem();
+    let elementObject = new CopyItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);
@@ -62,7 +63,7 @@ describe("copy", () => {
   });
 
   // 选择的元素的父元素不能存在其他类型类型中
-  test("createCopyItem_update_existOtherType", () => {
+  test("CopyItem_update_existOtherType", () => {
     document.body.innerHTML = `
         <!--#kooboo--objecttype='view'--nameorid='6a883ab8-435c-cd7c-9ac1-5473fd6f1788'--folderid='ffa232c4-ca49-9c07-8b43-fd30d5ec5e8b'--bindingvalue='List_Item'--boundary='171'-->
         <div class="widget widget-intro" kooboo-id="1-0">
@@ -82,7 +83,7 @@ describe("copy", () => {
 
     context.lastSelectedDomEventArgs = new SelectedDomEventArgs(selectedElement);
 
-    let elementObject = createCopyItem();
+    let elementObject = new CopyItem(new Menu());
     expect(elementObject.el.style.display).toEqual("");
 
     let comments = KoobooComment.getComments(document.body.children[0].children[0].children[0]);

@@ -13,14 +13,11 @@ import { DomLog } from "@/operation/recordLogs/DomLog";
 import { Log } from "@/operation/recordLogs/Log";
 import { getBackgroundImage, isImg, getBackgroundColor } from "@/dom/utils";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createEditStyleItem(): MenuItem {
-  return new EditStyleItem();
-}
-
-class EditStyleItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class EditStyleItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.EDIT_STYLE, MenuActions.editStyle);
     this.el = el;

@@ -11,14 +11,11 @@ import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createEditRepeatImageItem(): MenuItem {
-  return new EditRepeatImageItem();
-}
-
-class EditRepeatImageItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class EditRepeatImageItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.EDIT_IMAGE, MenuActions.editImage);
     this.el = el;

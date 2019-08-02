@@ -12,14 +12,11 @@ import { DeleteRepeatUnit } from "@/operation/recordUnits/DeleteRepeatUnit";
 import { ContentLog } from "@/operation/recordLogs/ContentLog";
 import { createDiv } from "@/dom/element";
 import BaseMenuItem from "./BaseMenuItem";
+import { Menu } from "../menu";
 
-export function createDeleteRepeatItem(): MenuItem {
-  return new DeleteRepeatItem();
-}
-
-class DeleteRepeatItem extends BaseMenuItem {
-  constructor() {
-    super();
+export default class DeleteRepeatItem extends BaseMenuItem {
+  constructor(parentMenu: Menu) {
+    super(parentMenu);
 
     const { el, setVisiable } = createItem(TEXT.CLICK, MenuActions.click);
     this.el = el;
