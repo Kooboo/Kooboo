@@ -1,5 +1,4 @@
 import { createBlock } from "./block";
-import { getMaxHeight } from "@/dom/utils";
 import { createDiv } from "@/dom/element";
 import closeIcon from "@/assets/icons/guanbi.svg";
 import { STANDARD_Z_INDEX } from "@/common/constants";
@@ -17,34 +16,33 @@ export const createShade = () => {
     closeBtn.style.display = "block";
     let [top, right, bottom, left] = blocks;
     let referenceRect = referenceEl.getBoundingClientRect();
-    let htmlRect = document.documentElement.getBoundingClientRect();
-
+    console.log(referenceRect);
     top.update({
       top: 0,
-      left: 0,
-      right: 0,
-      height: referenceRect.top - htmlRect.top
+      left: referenceRect.left,
+      width: referenceRect.width,
+      height: referenceRect.top < 0 ? 0 : referenceRect.top
     });
 
     right.update({
-      top: referenceRect.top - htmlRect.top,
-      left: referenceRect.left + referenceRect.width,
+      top: 0,
       right: 0,
-      height: referenceRect.height
+      left: referenceRect.left + referenceRect.width,
+      bottom: 0
     });
 
     bottom.update({
-      top: referenceRect.top - htmlRect.top + referenceRect.height,
-      left: 0,
-      right: 0,
-      height: getMaxHeight() - (referenceRect.top + htmlRect.top + referenceRect.height)
+      top: referenceRect.bottom < 0 ? 0 : referenceRect.bottom,
+      left: referenceRect.left,
+      width: referenceRect.width,
+      bottom: 0
     });
 
     left.update({
-      top: referenceRect.top - htmlRect.top,
+      top: 0,
       left: 0,
       width: referenceRect.left,
-      height: referenceRect.height
+      bottom: 0
     });
   };
 

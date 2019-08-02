@@ -11,7 +11,7 @@ export const createBlock = () => {
 };
 
 const applyStyle = (css: CSSStyleDeclaration) => {
-  css.position = "absolute";
+  css.position = "fixed";
   css.display = "block";
   css.backgroundColor = EDITOR_SHADE_COLOR;
   css.zIndex = STANDARD_Z_INDEX + "";

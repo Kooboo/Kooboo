@@ -9,7 +9,7 @@ describe("block", () => {
     expect(block.el.style.left).toEqual("2px");
     expect(block.el.style.width).toEqual("3px");
     expect(block.el.style.height).toEqual("4px");
-    expect(block.el.style.position).toEqual("absolute");
+    expect(block.el.style.position).toEqual("fixed");
     expect(block.el.style.display).toEqual("block");
     let backgroundColor = block.el.style.backgroundColor;
     // @ts-ignore

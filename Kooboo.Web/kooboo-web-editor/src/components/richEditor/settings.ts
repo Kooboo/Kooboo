@@ -2,15 +2,14 @@ import { Settings, Editor } from "tinymce";
 import context from "../../common/context";
 import {
   setLang,
-  save_oncancelcallback,
-  save_onsavecallback,
   onBlur,
   onSetContent,
   onRemove,
   onKeyDown,
   onBeforeSetContent,
   getToolbar,
-  initInstanceCallback
+  initInstanceCallback,
+  savePluginCallback
 } from "./utils";
 import { createLinkPicker } from "../linkPicker";
 import { pickImg } from "@/kooboo/outsideInterfaces";
@@ -40,6 +39,7 @@ export function createSettings(args: SetInlineEditorArgs) {
     remove_trailing_brs: true,
     browser_spellcheck: false,
     forced_root_block: "",
+    visual_anchor_class: "no-anchor",
     valid_elements: "*[*]",
     valid_children: "*[*]",
     valid_styles:
@@ -70,10 +70,10 @@ export function createSettings(args: SetInlineEditorArgs) {
     }
   } as Settings;
   //fix https://github.com/tinymce/tinymce/issues/1828
-  (selector as any)._isRelative = selector.style.position == "relative";
+  (selector as any)._position = selector.style.position;
   setLang(settings);
   (settings as any).save_enablewhendirty = false;
-  (settings as any).save_onsavecallback = (e: Editor) => save_onsavecallback(e, onSave);
-  (settings as any).save_oncancelcallback = (e: Editor) => save_oncancelcallback(e, onCancel);
+  (settings as any).save_onsavecallback = (e: Editor) => savePluginCallback(e, onSave);
+  (settings as any).save_oncancelcallback = (e: Editor) => savePluginCallback(e, onCancel);
   return settings;
 }

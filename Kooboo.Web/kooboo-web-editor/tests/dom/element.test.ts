@@ -30,7 +30,7 @@ describe("element", () => {
   test("createButton", () => {
     let element = createButton("testbtn");
 
-    expect(element.tagName.toLowerCase()).toEqual("button");
+    expect(element.tagName.toLowerCase()).toEqual("div");
     expect(element.innerText).toEqual("testbtn");
   });
 
@@ -67,7 +67,7 @@ describe("element", () => {
   test("createPrimaryButton", () => {
     let element = createPrimaryButton("testbtn");
 
-    expect(element.tagName.toLowerCase()).toEqual("button");
+    expect(element.tagName.toLowerCase()).toEqual("div");
     expect(element.innerText).toEqual("testbtn");
   });
 

@@ -4,6 +4,7 @@ import { Unit } from "./recordUnits/Unit";
 import { Log } from "./recordLogs/Log";
 
 export class operationRecord {
+  id?: number;
   constructor(public units: Unit[], public logs: Log[], public guid: string) {}
 
   undo() {

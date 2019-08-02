@@ -5,7 +5,7 @@ import context from "../../common/context";
 import { getAllElement, isTextArea } from "../../dom/utils";
 import { delay } from "../../common/utils";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";
-import { createImg } from "@/dom/element";
+import { createDiv } from "@/dom/element";
 
 export async function impoveEditorUI(editor: Editor) {
   editor.focus(false);
@@ -18,12 +18,16 @@ export async function impoveEditorUI(editor: Editor) {
       container.nextElementSibling.style.zIndex = STANDARD_Z_INDEX + 2 + "";
     }
     let toolbar = container.getElementsByClassName("tox-toolbar").item(0) as HTMLElement;
-    var moveBtn = createImg();
+    var moveBtn = createDiv();
     moveBtn.draggable = true;
     moveBtn.style.cursor = "move";
-    moveBtn.src = moveIcon;
-    moveBtn.style.height = "28px";
-    moveBtn.style.margin = "4px";
+    moveBtn.style.backgroundImage = `url(${moveIcon})`;
+    moveBtn.style.backgroundPosition = `center`;
+    moveBtn.style.backgroundRepeat = `no-repeat`;
+    moveBtn.style.backgroundSize = `contain`;
+    moveBtn.style.height = "26px";
+    moveBtn.style.width = "26px";
+    moveBtn.style.margin = "6px 0 6px 6px";
     toolbar.insertBefore(moveBtn, toolbar.children.item(0));
     container.draggable = true;
     container.ondrag = e => {
@@ -43,24 +47,13 @@ export function setLang(settings: Settings) {
   }
 }
 
-export function save_oncancelcallback(e: Editor, callBack: () => void) {
-  e.save = () => ""; //fix loss element when tinymce editor removed
-  e.remove();
-  callBack();
-}
-
-export function save_onsavecallback(e: Editor, callBack: () => void) {
-  e.save = () => ""; //fix loss element when tinymce editor removed
-  e.remove();
-  callBack();
-}
-
 export function onBlur() {
   return false;
 }
 
 export function onSetContent(e: any) {
   var targetElm = e.target.targetElm as HTMLElement;
+  targetElm.style.position = (targetElm as any)._position;
   for (const element of getAllElement(targetElm, true)) {
     if (element.innerHTML.indexOf(EMPTY_COMMENT) == -1 && !isTextArea(element)) {
       element.innerHTML += EMPTY_COMMENT;
@@ -70,10 +63,6 @@ export function onSetContent(e: any) {
 
 export function onRemove(e: any) {
   let element = e.target.getElement();
-  if (!element._isRelative) {
-    element.style.position = "";
-  }
-
   if (element instanceof HTMLElement) {
     if (element.id.startsWith("mce_")) element.removeAttribute("id");
     if (element.getAttribute("style") == "") element.removeAttribute("style");
@@ -120,4 +109,10 @@ export function initInstanceCallback(e: Editor) {
     e.execCommand("mcecancel");
     context.closeEditingEvent.handlers = [];
   });
+}
+
+export function savePluginCallback(e: Editor, callBack: () => void) {
+  e.save = () => ""; //fix loss element when tinymce editor removed
+  e.remove();
+  callBack();
 }

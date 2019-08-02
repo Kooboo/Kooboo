@@ -5,6 +5,7 @@ import context from "@/common/context";
 export class operationManager {
   readonly previousRecords: operationRecord[] = [];
   readonly nextRecords: operationRecord[] = [];
+  idCounter: number = 0;
 
   previous() {
     let operation = this.previousRecords.pop();
@@ -25,8 +26,19 @@ export class operationManager {
   }
 
   add(operation: operationRecord) {
+    operation.id = ++this.idCounter;
     this.previousRecords.push(operation);
     this.nextRecords.splice(0, this.nextRecords.length);
+    this.emit();
+    return operation.id;
+  }
+
+  remove(id: number) {
+    let item = this.previousRecords.find(f => f.id == id);
+    if (!item) return;
+    item.undo();
+    let index = this.previousRecords.indexOf(item);
+    this.previousRecords.splice(index, 1);
     this.emit();
   }
 
