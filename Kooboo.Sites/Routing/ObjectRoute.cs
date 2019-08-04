@@ -15,6 +15,7 @@ namespace Kooboo.Sites.Routing
         {
             Route foundroute = null;
 
+            var nameOrId = string.Empty;
             if (context.RenderContext.WebSite.EnableFrontEvents && context.RenderContext.IsSiteBinding)
             {
                 foundroute = FrontEvent.Manager.RaiseRouteEvent(FrontEvent.enumEventType.RouteFinding, context.RenderContext);
@@ -22,6 +23,23 @@ namespace Kooboo.Sites.Routing
                 if (foundroute == null)
                 {
                     foundroute = GetRoute(context, context.RenderContext.Request.RelativeUrl);
+                    if (foundroute == null)
+                    {
+                        var relativeUrl = context.RenderContext.Request.RelativeUrl;
+                        int questionMarkIndex = relativeUrl.IndexOf("?");
+                        if (questionMarkIndex>0)
+                        {
+                            relativeUrl = relativeUrl.Substring(0, questionMarkIndex);
+                        }
+                        var lastSlashIndex= relativeUrl.LastIndexOf("/");
+                        if (lastSlashIndex > -1)
+                        {
+                            var url = relativeUrl.Substring(0, lastSlashIndex);
+                            nameOrId = relativeUrl.Substring(lastSlashIndex + 1);
+                            foundroute = GetRoute(context, url);
+                        }
+                        
+                    }
                     if (foundroute != null && foundroute.objectId != default(Guid))
                     // if (foundroute != null)
                     {
@@ -61,7 +79,10 @@ namespace Kooboo.Sites.Routing
             var newroute = CopyRouteWithoutParameter(foundroute);
 
             newroute.Parameters = ParseParameters(foundroute, context.RenderContext.Request.RelativeUrl);
-
+            if (!string.IsNullOrEmpty(nameOrId))
+            {
+                newroute.Parameters.Add("nameOrId", nameOrId);
+            }
             context.Route = newroute;
             context.Log.ConstType = foundroute.DestinationConstType;
             context.Log.ObjectId = foundroute.objectId;

@@ -23,7 +23,7 @@ namespace Kooboo.Sites.Render
                     result = Scripting.Manager.ExecuteCode(context.RenderContext, code.Body, code.Id);
                 } 
                  
-                context.RenderContext.Response.ContentType = "application/javascript";
+                //context.RenderContext.Response.ContentType = "application/javascript";
 
                 if (code.Cors)
                 {

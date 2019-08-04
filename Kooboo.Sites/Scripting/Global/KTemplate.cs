@@ -15,6 +15,8 @@ using Kooboo.Sites.Sync;
 using Kooboo.Sites.Routing;
 using Kooboo.Lib.Compatible;
 using Kooboo.Lib.Helper;
+using Kooboo.Data.Template;
+using System.Linq;
 
 namespace Kooboo.Sites.Scripting.Global
 {
@@ -25,6 +27,151 @@ namespace Kooboo.Sites.Scripting.Global
         public KTemplate(RenderContext context)
         {
             _context = context;
+        }
+
+        public string GetTemplateId(byte[] postData)
+        {
+            IndexedDB.Serializer.Simple.SimpleConverter<TemplateUpdateModel> converter = new IndexedDB.Serializer.Simple.SimpleConverter<TemplateUpdateModel>();
+            var model = converter.FromBytes(postData);
+            return model != null ? model.Id.ToString() : "";
+        }
+        public Dictionary<string,object> UpdateTemplate(string domain,byte[] postData, DynamicTableObject obj)
+        {
+            var oldTemplate = obj.Values;
+            IndexedDB.Serializer.Simple.SimpleConverter<TemplateUpdateModel> converter = new IndexedDB.Serializer.Simple.SimpleConverter<TemplateUpdateModel>();
+            var model = converter.FromBytes(postData);
+            var hash = Lib.Security.Hash.ComputeGuid(model.Bytes);
+
+            var userId = oldTemplate["userId"];
+            if (hash != model.ByteHash ||
+                model.UserId.ToString() != userId.ToString())
+            {
+                return null;
+            }
+
+            oldTemplate["link"] = model.Link;
+            oldTemplate["description"] = model.Description;
+            oldTemplate["tags"] = model.Tags;
+            oldTemplate["lastModified"] = DateTime.UtcNow;
+            oldTemplate["lastModifiedTimeStamp"] = DateTime.UtcNow.Ticks;
+
+            var existImages = new List<string>();
+            if (oldTemplate["images"] != null && !string.IsNullOrEmpty(oldTemplate["images"].ToString()))
+            {
+                var oldlist = Kooboo.Lib.Helper.JsonHelper.Deserialize<List<string>>(oldTemplate["images"].ToString());
+                var newlist = JsonHelper.Deserialize<List<string>>(model.Images);
+                existImages = clearImagePath(oldlist, newlist);
+            }
+
+            var images = new List<ScreenshotImage>();
+            if (model.Bytes!=null && model.Bytes.Length > 0)
+            {
+                Guid oldsiteid = model.Id;
+                // there is a change of zip.
+                File.WriteAllBytes(GetFilePath(model.Id.ToString()), model.Bytes);
+                oldTemplate["size"] = model.Bytes.Length;
+                // update to preview sites.
+                var siteDb= ImportBinary(domain,model.Bytes, oldTemplate);
+
+                if (model.NewImages.Count == 0 && existImages.Count()==0)
+                {
+                    images = GetScreenshotImages(siteDb);
+                }
+                // remove the old site. 
+                Sites.Service.WebSiteService.Delete(oldsiteid);
+            }
+            foreach (var image in model.NewImages)
+            {
+                images.Add(new ScreenshotImage
+                {
+                    Base64 = image.Base64,
+                    FileName = Guid.NewGuid().ToString().Replace("-", "") + Kooboo.Lib.Helper.UrlHelper.FileExtension(image.FileName)
+                });
+            }
+
+            var imagelist = new List<string>();
+            foreach (var image in images)
+            {
+                string relativeurl = image.FileName;
+                var filepath = GetImagePath(relativeurl);
+
+                File.WriteAllBytes(filepath, image.Bytes);
+                imagelist.Add(relativeurl);
+            }
+            existImages.AddRange(imagelist);
+            oldTemplate["images"] = existImages.ToArray();
+            oldTemplate["thumbNail"] = existImages.Count > 0 ? existImages[0] : "";
+
+            return oldTemplate;
+
+        }
+
+        public Dictionary<string,object> UploadOldFormat(string domain,byte[] postData)
+        {
+            IndexedDB.Serializer.Simple.SimpleConverter<TemplateDataModel> converter = new IndexedDB.Serializer.Simple.SimpleConverter<TemplateDataModel>();
+            var model = converter.FromBytes(postData);
+            var hash = Lib.Security.Hash.ComputeGuid(model.Bytes);
+            if (hash != model.ByteHash||
+                model.UserId == default(Guid)|| model.Bytes.Length==0)
+            {
+                return null;
+            }
+
+            var dic = new Dictionary<string, object>();
+            dic["name"] = model.Name;
+            dic["link"] = model.Link;
+            dic["description"] = model.Description;
+            dic["tags"] = model.Tags;
+            dic["userId"] = model.UserId;
+            var user = Data.GlobalDb.Users.Get(model.UserId);
+            if (user != null)
+            {
+                dic["userName"] = user.FullName;
+            }
+
+            dic["lastModified"] = DateTime.UtcNow;
+            dic["lastModifiedTimeStamp"] = DateTime.UtcNow.Ticks;
+            dic["downloadCount"] = 0;
+            dic["score"] = 0;
+            dic["id"] = Guid.NewGuid().ToString();
+
+            var filePath = GetFilePath(dic["id"].ToString());
+            File.WriteAllBytes(filePath, model.Bytes);
+            dic["size"] = model.Bytes.Length;
+
+            var siteDb = ImportBinary(domain, model.Bytes, dic);
+            Lib.Helper.IOHelper.EnsureDirectoryExists(ImagePath);
+
+            var images = new List<ScreenshotImage>();
+            if (model.Images.Count() == 0)
+            {
+                images = GetScreenshotImages(siteDb);
+            }
+            else
+            {
+                foreach (var image in model.Images)
+                {
+                    images.Add(new ScreenshotImage
+                    {
+                        Base64 = image.Base64,
+                        FileName = Guid.NewGuid().ToString().Replace("-", "") + Kooboo.Lib.Helper.UrlHelper.FileExtension(image.FileName)
+                    });
+                }
+            }
+
+            var imagelist = new List<string>();
+            foreach (var image in images)
+            {
+                string relativeurl = image.FileName;
+                var filepath = GetImagePath(relativeurl);
+
+                File.WriteAllBytes(filepath, image.Bytes);
+                imagelist.Add(relativeurl);
+            }
+            dic["images"] = imagelist.ToArray();
+            dic["thumbNail"] = imagelist.Count > 0 ? imagelist[0] : "";
+
+            return dic;
         }
         public Dictionary<string, object> Upload(string domain, byte[] postdata)
         {
@@ -104,6 +251,27 @@ namespace Kooboo.Sites.Scripting.Global
             return dic;
         }
 
+        public void DeleteTemplate(DynamicTableObject obj)
+        {
+            var oldtemplate = obj.Values;
+            var filePath = GetFilePath(oldtemplate["id"].ToString());
+            if (System.IO.File.Exists(filePath))
+            {
+                System.IO.File.Delete(filePath);
+            }
+            var images = JsonHelper.Deserialize<List<string>>(oldtemplate["images"].ToString());
+
+            foreach (var item in images)
+            {
+                string fullimagefile = System.IO.Path.Combine(ImagePath, item);
+                if (System.IO.File.Exists(fullimagefile))
+                {
+                    System.IO.File.Delete(fullimagefile);
+                }
+            }
+
+            Sites.Service.WebSiteService.Delete(Guid.Parse(oldtemplate["siteId"].ToString()));
+        }
         private List<ScreenshotImage> GetScreenshotImages(SiteDb siteDb)
         {
             var pageids = GetPageIds(siteDb);
@@ -138,6 +306,21 @@ namespace Kooboo.Sites.Scripting.Global
             return images;
         }
 
+        private static List<string> clearImagePath(List<string> oldlist, List<string> newlist)
+        {
+            List<string> result = new List<string>();
+
+            foreach(var item in oldlist)
+            {
+                var exist = newlist.Exists(i => i.IndexOf(item) > -1);
+                if (exist)
+                {
+                    result.Add(item);
+                }
+            }
+
+            return result;
+        }
         private string GetScreenShot(string url, int width = 600, int height = 450)
         {
             var screenshoturl = "http://sslgenerator.com/_api/screenshot/get";

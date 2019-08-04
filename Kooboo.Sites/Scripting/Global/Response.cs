@@ -61,7 +61,7 @@ namespace Kooboo.Sites.Scripting.Global
                 //}
                 //else
                 //{
-                    output = Lib.Helper.JsonHelper.SerializeCaseSensitive(value);
+                output = Lib.Helper.JsonHelper.SerializeCaseSensitive(value,new Kooboo.Lib.Helper.IntJsonConvert());
                 //}
             }
             else
