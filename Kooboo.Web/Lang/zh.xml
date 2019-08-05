@@ -99,7 +99,7 @@
   <key id="Ok">OK</key>
   <key id="Sub domain">子域名</key>
   <key id="Event">事件</key>
-  <key id="xxxxvalue">xxxxvalue</key>
+  <key id="Text">文本</key>
   <key id="Email">邮件</key>
   <key id="Email address">邮箱地址</key>
   <key id="After submiting your request, we will send you a verification mail, please check in time">提交后，我们将发送一封验证邮件，请及时查收。</key>
@@ -256,7 +256,7 @@
   <key id="KScripts">KScripts</key>
   <key id="Create KScript">创建KScript</key>
   <key id="Documentation">文档</key>
-  <key id="Debugger">Debugger</key>
+  <key id="Debugger">调试器</key>
   <key id="Layout">布局</key>
   <key id="Action">操作</key>
   <key id="Convert to position">转成占位区</key>
@@ -555,9 +555,9 @@
   <key id="Top 5">最大5项</key>
   <key id="Chart">图表</key>
   <key id="Detail">详情</key>
-  <key id="Item size">Item size</key>
-  <key id="Item count">Item count</key>
-  <key id="Log count">Log count</key>
+  <key id="Item size">项目大小</key>
+  <key id="Item count">项目数</key>
+  <key id="Log count">日志数</key>
   <key id="Jobs">任务</key>
   <key id="Add a job">新建任务</key>
   <key id="Run">运行</key>
@@ -1270,9 +1270,7 @@
   <key id="port in use">端口被占用</key>
   <key id="Domain does not owned by current user">用户没有域名权限</key>
   <key id="Your certificate already exists">证书已经存在</key>
-  <key id="You can only submit request for the same domain one time per hour">同一个域名一小时内只能提交一次</key>
-  <key id="You have reached the max number of free certificates">你的免费证书已经达到最大数</key>
-  <key id="your certificates is being generated, it normally will take 1-2 mins">你的证书正在生成， 通常会需要一到两分钟</key>
+  <key id="Your ssl has been generated">Your ssl has been generated</key>
   <key id="Unexpected error">未知错误</key>
   <key id="Target Url is Protected">目标地址被保护</key>
   <key id="user not found">没有找到用户</key>
@@ -1389,10 +1387,10 @@
   <key id="Storage">存储</key>
   <key id="You have no changes">没有更新s</key>
   <key id="User does not own website">该网站不归该用户所有</key>
-  <key id="OneOne">OneOne</key>
-  <key id="OneMany">OneMany</key>
-  <key id="ManyMany">ManyMany</key>
-  <key id="ManyOne">ManyOne</key>
+  <key id="OneOne">一对一</key>
+  <key id="OneMany">一对多</key>
+  <key id="ManyMany">多对多</key>
+  <key id="ManyOne">多对一</key>
   <key id="Exceed max template size">超过最大的模板大小</key>
   <key id="Share template failed">分享站点失败</key>
   <key id="Invalid package id">无效ID</key>
@@ -1413,7 +1411,6 @@
   <key id="you have no enough credit to send emails">邮件发送信誉值不够</key>
   <key id="HtmlBlocks">HTML 代码块</key>
   <key id="ContentTypes">数据类型</key>
-  <key id="Text">文本</key>
   <key id="Key-Value">键值存储</key>
   <key id="Table">表格</key>
   <key id="Overview">概览</key>

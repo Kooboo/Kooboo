@@ -99,7 +99,7 @@
   <key id="Ok">OK</key>
   <key id="Sub domain">Имя поддомена</key>
   <key id="Event">События</key>
-  <key id="xxxxvalue">xxxxvalue</key>
+  <key id="Text">текст</key>
   <key id="Email">Почта</key>
   <key id="Email address">Адрес электронной почты</key>
   <key id="After submiting your request, we will send you a verification mail, please check in time">После отправки, мы отправим письмо проверки, пожалуйста проверим своевременное</key>
@@ -1270,9 +1270,7 @@
   <key id="port in use">Порт занят</key>
   <key id="Domain does not owned by current user">У пользователя нет прав на доменное имя</key>
   <key id="Your certificate already exists">Сертификат уже существует</key>
-  <key id="You can only submit request for the same domain one time per hour">Одно и то же доменное имя может быть отправлено только один раз в час</key>
-  <key id="You have reached the max number of free certificates">Ваш бесплатный сертификат достиг максимального числа</key>
-  <key id="your certificates is being generated, it normally will take 1-2 mins">Ваш сертификат генерируется и обычно занимает от одной до двух минут</key>
+  <key id="Your ssl has been generated">Your ssl has been generated</key>
   <key id="Unexpected error">Неизвестная ошибка</key>
   <key id="Target Url is Protected">Адрес назначения защищен.</key>
   <key id="user not found">Пользователь не найден</key>
@@ -1413,7 +1411,6 @@
   <key id="you have no enough credit to send emails">Значение репутации отправки почты недостаточно</key>
   <key id="HtmlBlocks">Блок кода HTML</key>
   <key id="ContentTypes">Тип данных</key>
-  <key id="Text">текст</key>
   <key id="Key-Value">Хранилище ключей</key>
   <key id="Table">Формы</key>
   <key id="Overview">Обзор</key>

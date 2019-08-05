@@ -6,6 +6,7 @@ using Kooboo.Data.Context;
 using Kooboo.Data.Server;
 using Kooboo.Jobs;
 using Kooboo.Render;
+using Kooboo.Sites.Extensions;
 using Kooboo.Web.Api;
 using Kooboo.Web.Frontend;
 using Kooboo.Web.JsTest;
@@ -114,31 +115,28 @@ namespace Kooboo.Web
             }
         }
 
+
+        // only call this before shut down the server. 
         public static void Stop(int port = 0)
         {
-            //if (port == 0)
-            //{
-            //    foreach (var item in servers)
-            //    {
-            //        item.Value.Stop();
-            //        item.Value.Dispose();
-            //    }
-            //    servers.Clear();
-            //}
-            //else
-            //{
-            //    if (servers.ContainsKey(port))
-            //    {
-            //        var server = servers[port];
-            //        if (server != null)
-            //        {
-            //            server.Stop();
-            //            server.Dispose();
-            //        }
+            // stop all web servers. 
+            foreach (var item in WebServers)
+            { 
+                item.Value.Stop(); 
+            }
 
-            //        servers.Remove(port);
-            //    }
-            //}
+            // close all database. 
+            foreach (var item in Kooboo.Data.GlobalDb.WebSites.AllSites)
+            {
+                item.Value.Published = false; // set to false in the memory only..
+            }
+
+            foreach (var item in Kooboo.Data.GlobalDb.WebSites.AllSites)
+            {
+                item.Value.SiteDb().DatabaseDb.Close(); 
+            }
+
+
         }
 
         private static RenderOption KoobooBackEndViewOption()

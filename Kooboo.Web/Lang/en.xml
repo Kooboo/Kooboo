@@ -99,7 +99,7 @@
   <key id="Ok">OK</key>
   <key id="Sub domain">Sub domain</key>
   <key id="Event">Event</key>
-  <key id="xxxxvalue">xxxxvalue</key>
+  <key id="Text">Text</key>
   <key id="Email">Email</key>
   <key id="Email address">Email Address</key>
   <key id="After submiting your request, we will send you a verification mail, please check in time">After submiting your request, we will send you a verification mail, please check in time</key>
@@ -1270,9 +1270,7 @@
   <key id="port in use">port in use</key>
   <key id="Domain does not owned by current user">Domain does not owned by current user</key>
   <key id="Your certificate already exists">Your certificate already exists</key>
-  <key id="You can only submit request for the same domain one time per hour">You can only submit request for the same domain one time per hour</key>
-  <key id="You have reached the max number of free certificates">You have reached the max number of free certificates</key>
-  <key id="your certificates is being generated, it normally will take 1-2 mins">your certificates is being generated, it normally will take 1-2 mins</key>
+  <key id="Your ssl has been generated">Your ssl has been generated</key>
   <key id="Unexpected error">Unexpected error</key>
   <key id="Target Url is Protected">Target Url is Protected</key>
   <key id="user not found">user not found</key>
@@ -1413,7 +1411,6 @@
   <key id="you have no enough credit to send emails">you have no enough credit to send emails</key>
   <key id="HtmlBlocks">HtmlBlocks</key>
   <key id="ContentTypes">ContentTypes</key>
-  <key id="Text">Text</key>
   <key id="Key-Value">Key-Value</key>
   <key id="Table">Table</key>
   <key id="Overview">Overview</key>
