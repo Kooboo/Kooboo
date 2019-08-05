@@ -1416,7 +1416,7 @@
   <key id="Overview">概览</key>
   <key id="SiteLogs">站点日志</key>
   <key id="SiteUser">站点用户</key>
-  <key id="TransferTask">导入任务</key>
+  <key id="TransferTask">迁移任务</key>
   <key id="VisitorLogs">访客日志</key>
   <key id="Emails">邮件</key>
   <key id="Visitor">访客</key>
