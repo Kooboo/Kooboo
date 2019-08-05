@@ -290,7 +290,7 @@ describe("utils", () => {
         #test{
           height: 500px;
           width: 500px;
-          background: background: rgb(255, 255, 255) url(http://iph.href.lu/200x300?text=test) no-repeat fixed top"
+          background: rgb(255, 255, 255) url(http://iph.href.lu/200x300?text=test) no-repeat fixed top
         }
 
       </style>
@@ -338,12 +338,12 @@ describe("utils", () => {
         #test{
           height: 500px;
           width: 500px;
-          background: background: rgb(255, 255, 255) url(http://iph.href.lu/200x300?text=test) no-repeat fixed top"
+          background:  rgb(255, 255, 255) url(http://iph.href.lu/200x300?text=test) no-repeat fixed top
         }
 
       </style>
       <div>
-        <img id = 'test' style="background:  url(none) no-repeat fixed top"/>
+        <img id = 'test'/>
       </div>
     `;
     let el = document.getElementById("test") as HTMLImageElement;
