@@ -1,7 +1,6 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { getHtmlBlockComment, hasOperation } from "../utils";
-import { reload } from "@/dom/utils";
 import { editHtmlBlock } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
@@ -35,11 +34,10 @@ export default class EditHtmlBlockItem extends BaseMenuItem {
   async click() {
     let args = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-    
+
     let comments = KoobooComment.getComments(args.element);
     let comment = getHtmlBlockComment(comments)!;
     let nameorid = comment.nameorid;
     await editHtmlBlock(nameorid!);
-    reload();
   }
 }

@@ -28,6 +28,7 @@ import { TEXT } from "@/common/lang";
 import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
 import closeIcon from "@/assets/icons/guanbi.svg";
 import expandIcon from "@/assets/icons/fangda.svg";
+import EditColorItem from "./items/editColor";
 
 export function createMenu() {
   let menu = new Menu();
@@ -51,6 +52,7 @@ export function createMenu() {
   menu.addItem(new ClickItem(menu));
   menu.addItem(new DeleteHtmlBlockItem(menu));
   menu.addItem(new InlineEditHtmlBlockItem(menu));
+  menu.addItem(new EditColorItem(menu));
 
   return menu;
 }

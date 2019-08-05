@@ -18,8 +18,8 @@ interface cssRule {
   rule: CSSStyleRule;
 }
 
-export function getElementCssRules(el: HTMLElement) {
-  let rules: cssRule[] = [];
+export function* getElementCssRules(el: HTMLElement) {
+  //var cantMatchedPseudoes = [":visited", ":hover", ":active", ":focus"];
   for (const style of getStyles()) {
     if (!style || !(style instanceof CSSStyleSheet) || !(style.ownerNode instanceof HTMLElement)) continue;
     let koobooId = style.ownerNode.getAttribute(KOOBOO_ID);
@@ -28,14 +28,14 @@ export function getElementCssRules(el: HTMLElement) {
     if (href && href.startsWith("http")) continue;
     for (const rule of getRules(style)) {
       if (!rule || !(rule instanceof CSSStyleRule)) continue;
-      if (el.matches(rule.selectorText)) {
-        rules.push({
+      let matched = el.matches(rule.selectorText);
+      if (matched) {
+        yield {
           koobooId,
           url: href,
           rule
-        });
+        } as cssRule;
       }
     }
   }
-  return rules;
 }
