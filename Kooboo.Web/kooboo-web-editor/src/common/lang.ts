@@ -51,7 +51,8 @@ const en = {
   SIZE: "Size",
   CLICK: "Click",
   EDIT_FORM: "Edit form",
-  EXPAND_SELECTION: "Expand selection"
+  EXPAND_SELECTION: "Expand selection",
+  GLOBAL_UPDATE: "Global Update"
 };
 
 const zh = {
@@ -103,7 +104,8 @@ const zh = {
   SIZE: "大小",
   CLICK: "点击",
   EDIT_FORM: "编辑表单",
-  EXPAND_SELECTION: "扩大选区"
+  EXPAND_SELECTION: "扩大选区",
+  GLOBAL_UPDATE: "全局更新"
 } as typeof en;
 
 var langPackages = { en, zh };

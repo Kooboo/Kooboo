@@ -15,11 +15,11 @@ function* getRules(style: CSSStyleSheet) {
 interface cssRule {
   url: string;
   koobooId: string;
-  selector: string;
-  text: string;
+  rule: CSSStyleRule;
 }
 
 export function getElementCssRules(el: HTMLElement) {
+  let rules: cssRule[] = [];
   for (const style of getStyles()) {
     if (!style || !(style instanceof CSSStyleSheet) || !(style.ownerNode instanceof HTMLElement)) continue;
     let koobooId = style.ownerNode.getAttribute(KOOBOO_ID);
@@ -29,9 +29,13 @@ export function getElementCssRules(el: HTMLElement) {
     for (const rule of getRules(style)) {
       if (!rule || !(rule instanceof CSSStyleRule)) continue;
       if (el.matches(rule.selectorText)) {
-        if (!rule.style.color) continue;
-        console.log(rule, koobooId, href);
+        rules.push({
+          koobooId,
+          url: href!,
+          rule
+        });
       }
     }
   }
+  return rules;
 }
