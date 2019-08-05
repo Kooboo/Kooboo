@@ -36,6 +36,8 @@ export default class EditRepeatItem extends BaseMenuItem {
 
   async click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let comment = getRepeatComment(comments);
     if (!comment) comment = getRelatedRepeatComment(args.element);

@@ -32,6 +32,8 @@ export default class EditMenuItem extends BaseMenuItem {
 
   click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let comment = getMenuComment(comments)!;
     var { startNode, endNode } = getWrapDom(args.element, OBJECT_TYPE.menu);

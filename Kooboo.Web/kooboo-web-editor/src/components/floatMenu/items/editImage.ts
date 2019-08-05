@@ -34,6 +34,8 @@ export default class EditImageItem extends BaseMenuItem {
 
   click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let el = args.element as HTMLImageElement;
     let { koobooId, parent } = getCleanParent(args.element);

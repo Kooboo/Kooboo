@@ -36,6 +36,8 @@ export default class EditHtmlBlockItem extends BaseMenuItem {
 
   async click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let comment = getHtmlBlockComment(comments)!;
     let nameorid = comment.nameorid;

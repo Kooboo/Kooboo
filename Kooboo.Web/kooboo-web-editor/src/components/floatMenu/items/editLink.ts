@@ -36,6 +36,8 @@ export default class EditLinkItem extends BaseMenuItem {
 
   click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let urlComment = getUrlComment(comments);
     let viewComment = getViewComment(comments)!;

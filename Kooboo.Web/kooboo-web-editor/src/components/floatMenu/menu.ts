@@ -1,4 +1,3 @@
-import { createContainer } from "./basic";
 import CopyItem from "./items/copy";
 import DeleteItem from "./items/delete";
 import EditItem from "./items/edit";
@@ -23,6 +22,13 @@ import context from "@/common/context";
 // import { createConvert } from "./items/convert";
 import InlineEditHtmlBlockItem from "./items/inlineEditHtmlBlock";
 import BaseMenuItem from "./items/BaseMenuItem";
+import { createDiv } from "@/dom/element";
+import { STANDARD_Z_INDEX } from "@/common/constants";
+import { TEXT } from "@/common/lang";
+import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
+import closeIcon from "@/assets/icons/guanbi.svg";
+import expandIcon from "@/assets/icons/fangda.svg";
+
 
 export function createMenu() {
   let menu = new Menu();
@@ -52,7 +58,7 @@ export function createMenu() {
 
 export class Menu {
   constructor() {
-    const { container, setExpandBtnVisiable, updatePosition } = createContainer();
+    const { container, setExpandBtnVisiable, updatePosition } = this.createContainer();
 
     for (const i of this.items) {
       container.appendChild(i.el);
@@ -96,4 +102,76 @@ export class Menu {
   hidden = () => {
     this.container.style.display = "none";
   };
+
+  // 生成容器
+  private createContainer() {
+    let el = createDiv();
+    el.classList.add("kb_web_editor_menu");
+    el.style.zIndex = STANDARD_Z_INDEX + 1 + "";
+    let { setExpandBtnVisiable, title } = this.createTitle();
+    el.append(title);
+
+    const updatePosition = (x: number, y: number, pageHeight: number, pageWidth: number) => {
+      let rect = el.getBoundingClientRect();
+
+      if (x + rect.width > pageWidth) {
+        x = x - rect.width + 3;
+      }
+
+      if (y + rect.height > pageHeight) {
+        y = y - rect.height + 3;
+        context.lastMouseEventArg = {
+          isTrusted: true,
+          pageX: x,
+          pageY: y
+        } as MouseEvent;
+      }
+
+      el.style.top = y + "px";
+      el.style.left = x + "px";
+    };
+
+    return {
+      container: el,
+      updatePosition,
+      setExpandBtnVisiable
+    };
+  }
+
+  // 生成标题栏
+  private createTitle() {
+    const el = createDiv();
+    el.classList.add("kb_web_editor_menu_title");
+    el.appendChild(document.createTextNode(TEXT.MENU));
+    el.appendChild(this.createCloseButton());
+    let expandButton = this.createExpandButton();
+    el.appendChild(expandButton);
+    const setExpandBtnVisiable = (visiable: boolean) => {
+      expandButton.style.display = visiable ? "block" : "none";
+    };
+    return { title: el, setExpandBtnVisiable };
+  }
+
+  // 生成关闭按钮
+  private createCloseButton() {
+    const el = createDiv();
+    el.style.backgroundImage = `url(${closeIcon})`;
+    el.onclick = () => this.hidden();
+    return el;
+  }
+
+  // 生成扩大按钮
+  private createExpandButton() {
+    const el = createDiv();
+    el.style.backgroundImage = `url(${expandIcon})`;
+    el.title = TEXT.EXPAND_SELECTION;
+    el.onclick = () => {
+      if (context.editing) return;
+      let el = context.lastHoverDomEventArgs!.closeElement;
+      if (!el || !el.parentElement) return;
+      emitHoverEvent(el.parentElement);
+      emitSelectedEvent();
+    };
+    return el;
+  }
 }

@@ -35,6 +35,8 @@ export default class DeleteHtmlBlockItem extends BaseMenuItem {
 
   click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let guid = setGuid(args.element);
     let guidComment = getGuidComment(guid);

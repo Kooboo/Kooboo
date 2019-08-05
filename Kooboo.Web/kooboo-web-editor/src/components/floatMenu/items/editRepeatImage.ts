@@ -37,6 +37,8 @@ export default class EditRepeatImageItem extends BaseMenuItem {
 
   click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let comment = getAttributeComment(comments, "src")!;
     let img = args.element as HTMLImageElement;

@@ -41,6 +41,8 @@ export default class CopyItem extends BaseMenuItem {
 
   click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let { koobooId, parent } = getCleanParent(args.element);
     let cloneElement = args.element.cloneNode(true) as HTMLElement;

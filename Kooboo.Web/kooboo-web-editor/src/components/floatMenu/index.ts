@@ -20,23 +20,5 @@ export function createFloatMenu() {
     if (context.floatMenuClosing) hidden();
   });
 
-  context.floatMenuClickEvent.addEventListener(async e => {
-    if (e == MenuActions.convert) return;
-    if (e == MenuActions.close) {
-      hidden();
-    } else if (e != MenuActions.expand) {
-      await delay(100);
-      hidden();
-    }
-  });
-
-  context.floatMenuClickEvent.addEventListener(async e => {
-    if (context.editing || e != MenuActions.expand) return;
-    let el = context.lastHoverDomEventArgs!.closeElement;
-    if (!el || !el.parentElement) return;
-    emitHoverEvent(el.parentElement);
-    emitSelectedEvent();
-  });
-
   return container;
 }

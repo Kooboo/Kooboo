@@ -1,9 +1,5 @@
 import { TEXT } from "../../common/lang";
-import closeIcon from "../../assets/icons/guanbi.svg";
-import context from "../../common/context";
 import { MenuActions } from "../../events/FloatMenuClickEvent";
-import expandIcon from "@/assets/icons/fangda.svg";
-import { STANDARD_Z_INDEX } from "@/common/constants";
 import { createDiv } from "@/dom/element";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 
@@ -17,7 +13,6 @@ export function createItem(text: string, type: MenuActions) {
   el.classList.add("kb_web_editor_menu_item");
   let isReadonly = false;
   el.append(text);
-  el.addEventListener("click", () => context.floatMenuClickEvent.emit(type));
 
   const setVisiable = (visiable: boolean) => {
     el.style.display = visiable ? "block" : "none";
@@ -36,68 +31,6 @@ export function createItem(text: string, type: MenuActions) {
     setVisiable,
     setReadonly
   };
-}
-
-export function createContainer() {
-  let el = createDiv();
-  el.classList.add("kb_web_editor_menu");
-  el.style.zIndex = STANDARD_Z_INDEX + 1 + "";
-  let { setExpandBtnVisiable, title } = createTitle();
-  el.append(title);
-
-  const updatePosition = (x: number, y: number, pageHeight: number, pageWidth: number) => {
-    let rect = el.getBoundingClientRect();
-
-    if (x + rect.width > pageWidth) {
-      x = x - rect.width + 3;
-    }
-
-    if (y + rect.height > pageHeight) {
-      y = y - rect.height + 3;
-      context.lastMouseEventArg = {
-        isTrusted: true,
-        pageX: x,
-        pageY: y
-      } as MouseEvent;
-    }
-
-    el.style.top = y + "px";
-    el.style.left = x + "px";
-  };
-
-  return {
-    container: el,
-    updatePosition,
-    setExpandBtnVisiable
-  };
-}
-
-function createTitle() {
-  const el = createDiv();
-  el.classList.add("kb_web_editor_menu_title");
-  el.appendChild(document.createTextNode(TEXT.MENU));
-  el.appendChild(createCloseButton());
-  let expandButton = createExpandButton();
-  el.appendChild(expandButton);
-  const setExpandBtnVisiable = (visiable: boolean) => {
-    expandButton.style.display = visiable ? "block" : "none";
-  };
-  return { title: el, setExpandBtnVisiable };
-}
-
-function createCloseButton() {
-  const el = createDiv();
-  el.style.backgroundImage = `url(${closeIcon})`;
-  el.onclick = () => context.floatMenuClickEvent.emit(MenuActions.close);
-  return el;
-}
-
-function createExpandButton() {
-  const el = createDiv();
-  el.style.backgroundImage = `url(${expandIcon})`;
-  el.title = TEXT.EXPAND_SELECTION;
-  el.onclick = () => context.floatMenuClickEvent.emit(MenuActions.expand);
-  return el;
 }
 
 function createWarn() {

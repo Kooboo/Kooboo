@@ -26,6 +26,8 @@ export default class ClickItem extends BaseMenuItem {
 
   click() {
     let element = context.lastHoverDomEventArgs.element;
+    this.parentMenu.hidden();
+
     if ((element as any)._a) (element as any)._a.click();
     else element.click();
   }

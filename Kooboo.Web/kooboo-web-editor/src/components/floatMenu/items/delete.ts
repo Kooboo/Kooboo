@@ -52,6 +52,8 @@ export default class DeleteItem extends BaseMenuItem {
 
   click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let { koobooId, parent } = getCleanParent(args.element);
     let comments = KoobooComment.getComments(args.element);
     let comment = getViewComment(comments)!;

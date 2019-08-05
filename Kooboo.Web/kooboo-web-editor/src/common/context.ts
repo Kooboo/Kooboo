@@ -27,7 +27,6 @@ class Context {
   editableEvent: EditableEvent = new EditableEvent();
   tinymceInputEvent: TinymceInputEvent = new TinymceInputEvent();
   operationEvent: OperationEvent = new OperationEvent();
-  floatMenuClickEvent: FloatMenuClickEvent = new FloatMenuClickEvent();
   hoverDomEvent: HoverDomEvent = new HoverDomEvent();
   closeEditingEvent: CloseEditingEvent = new CloseEditingEvent();
 }
