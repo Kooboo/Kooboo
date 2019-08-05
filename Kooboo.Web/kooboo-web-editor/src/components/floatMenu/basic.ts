@@ -1,5 +1,4 @@
 import { TEXT } from "../../common/lang";
-import { MenuActions } from "../../events/FloatMenuClickEvent";
 import { createDiv } from "@/dom/element";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 
@@ -8,7 +7,7 @@ export interface MenuItem {
   update(comments: KoobooComment[]): void;
 }
 
-export function createItem(text: string, type: MenuActions) {
+export function createItem(text: string) {
   let el = createDiv();
   el.classList.add("kb_web_editor_menu_item");
   let isReadonly = false;

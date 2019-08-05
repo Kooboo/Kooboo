@@ -1,6 +1,5 @@
 import { createItem, MenuItem } from "../basic";
 import { TEXT } from "@/common/lang";
-import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isBody } from "@/dom/utils";
 import { getRepeatComment, changeNameOrId } from "../utils";
@@ -18,7 +17,7 @@ export default class CopyRepeatItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.COPY_REPEAT, MenuActions.copyRepeat);
+    const { el, setVisiable } = createItem(TEXT.COPY_REPEAT);
     this.el = el;
     this.el.addEventListener("click", this.click);
     this.setVisiable = setVisiable;

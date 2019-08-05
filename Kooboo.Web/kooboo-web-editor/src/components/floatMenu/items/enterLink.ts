@@ -1,6 +1,5 @@
 import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
-import { MenuActions } from "@/events/FloatMenuClickEvent";
 import { canJump } from "@/dom/utils";
 import context from "@/common/context";
 import { getPageId } from "@/kooboo/utils";
@@ -13,7 +12,7 @@ export default class EnterLinkItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.ENTER_LINK, MenuActions.enterLink);
+    const { el, setVisiable } = createItem(TEXT.ENTER_LINK);
     this.el = el;
     this.el.addEventListener("click", this.click);
     this.setVisiable = setVisiable;
