@@ -2,7 +2,7 @@ import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
-import { createColorEditor } from "@/components/colorEditor";
+// import { createColorEditor } from "@/components/colorEditor";
 
 export default class EditColorItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -29,7 +29,7 @@ export default class EditColorItem extends BaseMenuItem {
 
   async click() {
     let args = context.lastHoverDomEventArgs;
-    createColorEditor(args.element);
+    //createColorEditor(args.element);
     this.parentMenu.hidden();
   }
 }
