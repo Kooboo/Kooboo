@@ -4,7 +4,7 @@ import { createDiv } from "@/dom/element";
 import { TEXT } from "@/common/lang";
 
 export default abstract class BaseMenuItem implements MenuItem {
-  constructor(public parentMenu: Menu) {}
+  constructor(protected parentMenu: Menu) {}
 
   abstract el: HTMLElement;
 

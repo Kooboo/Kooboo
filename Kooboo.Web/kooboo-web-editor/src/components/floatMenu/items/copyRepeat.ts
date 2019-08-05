@@ -18,7 +18,7 @@ export default class CopyRepeatItem extends BaseMenuItem {
 
     const { el, setVisiable } = this.createItem(TEXT.COPY_REPEAT);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 

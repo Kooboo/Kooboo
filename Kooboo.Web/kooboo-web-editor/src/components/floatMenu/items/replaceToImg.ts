@@ -19,7 +19,7 @@ export default class ReplaceToImgItem extends BaseMenuItem {
 
     const { el, setVisiable } = this.createItem(TEXT.REPLACE_TO_IMG);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 

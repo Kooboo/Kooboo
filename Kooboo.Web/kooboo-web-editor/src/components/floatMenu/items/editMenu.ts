@@ -15,7 +15,7 @@ export default class EditMenuItem extends BaseMenuItem {
 
     const { el, setVisiable, setReadonly } = this.createItem(TEXT.EDIT_MENU);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 

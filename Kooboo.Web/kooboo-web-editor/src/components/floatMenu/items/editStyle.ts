@@ -19,7 +19,7 @@ export default class EditStyleItem extends BaseMenuItem {
 
     const { el, setVisiable } = this.createItem(TEXT.EDIT_STYLE);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 

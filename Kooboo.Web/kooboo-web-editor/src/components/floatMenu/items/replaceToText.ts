@@ -20,7 +20,7 @@ export default class ReplaceToTextItem extends BaseMenuItem {
 
     const { el, setVisiable } = this.createItem(TEXT.REPLACE_TO_TEXT);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 

@@ -14,7 +14,7 @@ export default class EditRepeatItem extends BaseMenuItem {
 
     const { el, setVisiable, setReadonly } = this.createItem(TEXT.EDIT_REPEAT);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
     this.setReadonly = setReadonly;
   }

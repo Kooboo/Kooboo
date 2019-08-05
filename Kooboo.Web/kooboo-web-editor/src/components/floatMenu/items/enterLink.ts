@@ -13,7 +13,7 @@ export default class EnterLinkItem extends BaseMenuItem {
 
     const { el, setVisiable } = this.createItem(TEXT.ENTER_LINK);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 
