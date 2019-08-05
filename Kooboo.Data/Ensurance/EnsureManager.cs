@@ -6,14 +6,14 @@ namespace Kooboo.Data.Ensurance
 {
     public static class EnsureManager
     {
-        private static Log.Logging _logging;  
-        private static Kooboo.Data.Log.Logging LoggingIn {
+        private static Log.LogWriter _logging;  
+        private static Kooboo.Data.Log.LogWriter LoggingIn {
             get {
                 if (_logging== null)
                 {
                     lock(_locker)
                     {
-                        _logging = new Log.Logging("Ensurance_in"); 
+                        _logging = new Log.LogWriter("Ensurance_in"); 
                     }
                 }
                 return _logging; 
@@ -23,8 +23,8 @@ namespace Kooboo.Data.Ensurance
             }
         }
 
-        private static Log.Logging _logging_out;
-        private static Kooboo.Data.Log.Logging LoggingOut
+        private static Log.LogWriter _logging_out;
+        private static Kooboo.Data.Log.LogWriter LoggingOut
         {
             get
             {
@@ -32,7 +32,7 @@ namespace Kooboo.Data.Ensurance
                 {
                     lock (_locker)
                     {
-                        _logging_out = new Log.Logging("Ensurance_out");
+                        _logging_out = new Log.LogWriter("Ensurance_out");
                     }
                 }
                 return _logging_out;
