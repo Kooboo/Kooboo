@@ -42,7 +42,7 @@
     "webpack-cli": "^3.3.2"
   },
   "jest": {
-    "preset": "ts-jest",
+    "preset": "ts-jest/presets/js-with-ts",
     "transformIgnorePatterns": [
       "/node_modules/"
     ],
