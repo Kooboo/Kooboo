@@ -1,10 +1,12 @@
 import { createDiv } from "@/dom/element";
 import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
 import context from "@/common/context";
+import { STANDARD_Z_INDEX } from "@/common/constants";
 
 export function createNavBar() {
   const el = createDiv();
   el.classList.add("kb_web_editor_element_nav_bar");
+  el.style.zIndex = STANDARD_Z_INDEX + "";
   el.draggable = true;
   let temp: { x: number; y: number };
   el.ondragstart = (e: DragEvent) => {

@@ -51,13 +51,14 @@ export default class DeleteItem extends BaseMenuItem {
   click() {
     let args = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-    
+
     let { koobooId, parent } = getCleanParent(args.element);
     let comments = KoobooComment.getComments(args.element);
     let comment = getViewComment(comments)!;
     let guid = setGuid(args.element);
     let guidComment = getGuidComment(guid);
     let startContent = args.element.outerHTML;
+    let parentElement = args.element.parentElement;
     let temp = createDiv();
     args.element.parentNode!.replaceChild(temp, args.element);
     temp.outerHTML = guidComment;
@@ -66,6 +67,7 @@ export default class DeleteItem extends BaseMenuItem {
       markDirty(parent);
       log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(parent.innerHTML), koobooId!, comment.objecttype!);
     } else {
+      if (parentElement) markDirty(parentElement);
       log = DomLog.createDelete(comment.nameorid!, args.koobooId!, comment.objecttype!);
     }
     let operation = new operationRecord([new DeleteUnit(startContent)], [log], guid);

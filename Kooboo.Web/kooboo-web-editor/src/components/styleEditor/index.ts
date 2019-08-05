@@ -2,7 +2,7 @@ import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
 import { getBackgroundImage, clearBackgroundImage } from "@/dom/utils";
 import { createSpliter } from "./spliter";
-import { createColorPicker } from "./colorPicker";
+import { createColorPicker } from "../common/colorPicker";
 import { pickImg, parentBody } from "@/kooboo/outsideInterfaces";
 import { createDiv, createLabelInput } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";

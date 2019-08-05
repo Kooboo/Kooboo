@@ -13,7 +13,7 @@ function* getRules(style: CSSStyleSheet) {
 }
 
 interface cssRule {
-  url: string;
+  url: string | null;
   koobooId: string;
   rule: CSSStyleRule;
 }
@@ -31,7 +31,7 @@ export function getElementCssRules(el: HTMLElement) {
       if (el.matches(rule.selectorText)) {
         rules.push({
           koobooId,
-          url: href!,
+          url: href,
           rule
         });
       }

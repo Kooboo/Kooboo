@@ -1,6 +1,7 @@
 import { getAllElement, isLink, isInEditorContainer } from "@/dom/utils";
 import context from "./context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
+import { getElementCssRules } from "@/dom/style";
 
 export function delay(time: number) {
   return new Promise(rs => {
@@ -33,5 +34,6 @@ export function holdUpClick(el: HTMLElement) {
     var args = new SelectedDomEventArgs(element);
     context.lastMouseEventArg = e;
     context.domChangeEvent.emit(args);
+    console.log(getElementCssRules(element));
   };
 }

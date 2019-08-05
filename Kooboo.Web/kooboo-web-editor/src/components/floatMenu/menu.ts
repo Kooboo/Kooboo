@@ -29,7 +29,6 @@ import { emitHoverEvent, emitSelectedEvent } from "@/dom/events";
 import closeIcon from "@/assets/icons/guanbi.svg";
 import expandIcon from "@/assets/icons/fangda.svg";
 
-
 export function createMenu() {
   let menu = new Menu();
 

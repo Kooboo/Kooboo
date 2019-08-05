@@ -5,7 +5,7 @@ import { createHoverBorder, createSelectedBorder } from "./components/selectorBo
 import { createEditorShade } from "./components/editorShade";
 import { listenHover, emitHoverEvent } from "./dom/events";
 import { setElementClick } from "./common/utils";
-import { addParentStyle, parentBody } from "./kooboo/outsideInterfaces";
+import { addParentStyle } from "./kooboo/outsideInterfaces";
 import { createContainer } from "./components/common/editorContainer";
 import { createElementNav } from "./components/elementNav";
 
@@ -18,7 +18,7 @@ container.appendChild(createHoverBorder());
 container.appendChild(createSelectedBorder());
 container.appendChild(createFloatMenu());
 container.appendChild(createEditorShade());
-parentBody.appendChild(createActionBar());
-parentBody.appendChild(createElementNav());
+container.appendChild(createActionBar());
+container.appendChild(createElementNav());
 
 if (document.body) emitHoverEvent(document.body);
