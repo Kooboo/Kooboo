@@ -1,4 +1,3 @@
-import { createItem, MenuItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isBody } from "@/dom/utils";
@@ -17,7 +16,7 @@ export default class DeleteRepeatItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.CLICK);
+    const { el, setVisiable } = this.createItem(TEXT.CLICK);
     this.el = el;
     this.el.addEventListener("click", this.click);
     this.setVisiable = setVisiable;

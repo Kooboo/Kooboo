@@ -1,4 +1,3 @@
-import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { isLink } from "@/dom/utils";
@@ -11,7 +10,7 @@ export default class EditRepeatLinkItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.EDIT_LINK);
+    const { el, setVisiable } = this.createItem(TEXT.EDIT_LINK);
     this.el = el;
     this.el.addEventListener("click", this.click);
     this.setVisiable = setVisiable;

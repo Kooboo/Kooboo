@@ -1,4 +1,3 @@
-import { createItem, MenuItem } from "../basic";
 import context from "@/common/context";
 import { setGuid, markDirty, clearKoobooInfo, isDynamicContent, getGuidComment, getCleanParent, getRelatedRepeatComment } from "@/kooboo/utils";
 import { TEXT } from "@/common/lang";
@@ -16,7 +15,7 @@ export default class CopyItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.COPY);
+    const { el, setVisiable } = this.createItem(TEXT.COPY);
     this.el = el;
     this.el.addEventListener("click", this.click);
     this.setVisiable = setVisiable;

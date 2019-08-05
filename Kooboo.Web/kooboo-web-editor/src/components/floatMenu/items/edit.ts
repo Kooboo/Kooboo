@@ -1,6 +1,5 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { MenuItem, createItem } from "../basic";
 import { isDynamicContent, clearKoobooInfo, getCleanParent, isDirty, markDirty, setGuid } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { setInlineEditor } from "@/components/richEditor";
@@ -20,7 +19,7 @@ export default class EditItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.EDIT);
+    const { el, setVisiable } = this.createItem(TEXT.EDIT);
     this.el = el;
     this.el.addEventListener("click", this.click);
     this.setVisiable = setVisiable;

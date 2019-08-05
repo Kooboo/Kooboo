@@ -1,4 +1,3 @@
-import { createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import { getRepeatComment, hasOperation } from "../utils";
@@ -13,7 +12,7 @@ export default class EditRepeatItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_REPEAT);
+    const { el, setVisiable, setReadonly } = this.createItem(TEXT.EDIT_REPEAT);
     this.el = el;
     this.el.addEventListener("click", this.click);
     this.setVisiable = setVisiable;

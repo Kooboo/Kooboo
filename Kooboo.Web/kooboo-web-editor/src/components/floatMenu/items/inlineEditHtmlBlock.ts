@@ -1,6 +1,5 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import { MenuItem, createItem } from "../basic";
 import { clearKoobooInfo, markDirty, setGuid, getWrapDom } from "@/kooboo/utils";
 import { setInlineEditor } from "@/components/richEditor";
 import { KoobooComment } from "@/kooboo/KoobooComment";
@@ -17,7 +16,7 @@ export default class InlineEditHtmlBlockItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.EDIT);
+    const { el, setVisiable } = this.createItem(TEXT.EDIT);
     this.el = el;
     this.el.addEventListener("click", this.click);
     this.setVisiable = setVisiable;

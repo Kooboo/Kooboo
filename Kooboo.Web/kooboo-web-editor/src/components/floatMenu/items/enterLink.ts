@@ -1,4 +1,3 @@
-import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
 import { canJump } from "@/dom/utils";
 import context from "@/common/context";
@@ -12,7 +11,7 @@ export default class EnterLinkItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.ENTER_LINK);
+    const { el, setVisiable } = this.createItem(TEXT.ENTER_LINK);
     this.el = el;
     this.el.addEventListener("click", this.click);
     this.setVisiable = setVisiable;
