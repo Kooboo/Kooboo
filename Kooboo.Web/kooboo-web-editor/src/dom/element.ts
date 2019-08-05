@@ -55,3 +55,19 @@ export function createRadioInput(label: string) {
     getContent: () => label
   };
 }
+
+export function createCheckboxInput(label: string) {
+  let el = createDiv();
+  el.classList.add("kb_web_editor_checkobx_input");
+  let checkbox = createInput();
+  checkbox.type = "checkbox";
+  el.appendChild(checkbox);
+  let text = createDiv();
+  text.innerText = label;
+  el.appendChild(text);
+  return {
+    checkbox: el,
+    setChecked: (checked: boolean) => (checkbox.checked = checked),
+    getContent: () => label
+  };
+}

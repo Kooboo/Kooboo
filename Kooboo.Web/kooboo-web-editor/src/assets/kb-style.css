@@ -1,11 +1,11 @@
 /* kb_web_editor */
 .kb_web_editor_div {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif ;
-  font-size: 14px ;
-  color: #5f5f5f ;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  color: #5f5f5f;
   border: none;
-  outline: none ;
-  display: block ;
+  outline: none;
+  display: block;
   position: static;
   background-color: rgba(255, 255, 255, 0);
   font-weight: 400;
@@ -322,9 +322,9 @@
   visibility: hidden;
 }
 
-.kb_web_editor_shade_close_btn{
+.kb_web_editor_shade_close_btn {
   position: fixed;
-  top:25px;
+  top: 25px;
   right: 25px;
   height: 30px;
   width: 30px;
@@ -332,4 +332,17 @@
   background-repeat: no-repeat;
   background-size: contain;
   display: none;
+}
+
+.kb_web_editor_checkobx_input {
+  display: flex;
+  align-items: center;
+}
+
+.kb_web_editor_color_picker {
+  display: inline-flex;
+  align-items: center;
+}
+.kb_web_editor_color_picker > * {
+  padding-right: 5px;
 }

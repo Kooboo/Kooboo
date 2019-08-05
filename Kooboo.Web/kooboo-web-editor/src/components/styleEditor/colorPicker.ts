@@ -1,26 +1,22 @@
-// import "@simonwep/pickr/dist/themes/nano.min.css";
-// import Pickr from "@simonwep/pickr/dist/pickr.min";
 import { STANDARD_Z_INDEX } from "@/common/constants";
 import Color from "color-string";
 import { TEXT } from "@/common/lang";
 import { createDiv } from "@/dom/element";
-import { parentBody } from "@/kooboo/outsideInterfaces";
 import "@/components/colorPicker/nano.min.css";
 import { Pickr } from "@/components/colorPicker/pickr";
 
-type ononsave = (color: string) => void;
-
-export function createColorPicker(text: string, old: string, onsave: ononsave) {
+export function createColorPicker(text: string, old: string, onsave: (color: string) => void) {
   old = Color.to.hex(Color.get(old)!.value);
   let el = createDiv();
+  el.classList.add("kb_web_editor_color_picker");
+
   let label = createDiv();
   label.innerText = text;
-  label.style.display = "inline-block";
-  label.style.padding = "5px";
-  let picker = createDiv();
-  picker.style.display = "inline-block";
   el.appendChild(label);
+
+  let picker = createDiv();
   el.appendChild(picker);
+
   setTimeout(() => {
     const pickr = new Pickr({
       el: picker,
@@ -42,12 +38,8 @@ export function createColorPicker(text: string, old: string, onsave: ononsave) {
     });
     pickr.on("init", (e: any) => {
       let app = e._root.app as HTMLElement;
-      let root = e._root.root as HTMLElement;
       let button = e._root.button as HTMLElement;
       app.style.zIndex = STANDARD_Z_INDEX + 5 + "";
-      //parentBody.appendChild(app);
-      root.style.display = "inline-block";
-      root.parentElement!.style.display = "inline-block";
       button.style.border = "1px solid #ccc";
     });
     pickr.on("save", (e: any) => {
