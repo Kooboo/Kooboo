@@ -3,8 +3,7 @@ using System.IO;
 namespace Kooboo.Data.Log
 {
     public class LogWriter
-    {
-
+    { 
         private string Folder { get; set; }
 
         public LogWriter(string FolderName)
