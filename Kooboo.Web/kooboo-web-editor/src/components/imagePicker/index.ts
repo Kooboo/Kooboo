@@ -9,6 +9,8 @@ export function createImagePicker(img: HTMLImageElement) {
   let { imagePreview, setImage } = createImagePreview();
   imagePreview.style.margin = "8px auto 16px auto";
   let style = JSON.parse(JSON.stringify(getComputedStyle(img)));
+  style.width = style.width == "0px" ? "auto" : style.width;
+  style.height = style.height == "0px" ? "auto" : style.height;
 
   setImage(img.src);
   imagePreview.onclick = () => {
