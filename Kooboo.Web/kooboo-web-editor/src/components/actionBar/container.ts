@@ -7,7 +7,7 @@ export function createContainer() {
   container.style.position = "fixed";
   container.style.width = "60px";
   container.style.top = "60px";
-  container.style.left = document.body.scrollWidth - 120 + "px";
+  container.style.right = "60px";
   container.style.zIndex = STANDARD_Z_INDEX + "";
   context.editableEvent.addEventListener(e => {
     container.style.display = e ? "none" : "block";

@@ -43,7 +43,7 @@ export default class ReplaceToImgItem extends BaseMenuItem {
   async click() {
     let args = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-    
+
     let comments = KoobooComment.getComments(args.element);
     let { koobooId, parent } = getCleanParent(args.element);
     setGuid(parent!);

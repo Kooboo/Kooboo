@@ -40,17 +40,17 @@ export default class EditStyleItem extends BaseMenuItem {
   async click() {
     let args = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-    
+
     let comments = KoobooComment.getComments(args.element);
     let { koobooId, parent } = getCleanParent(args.element);
     const startContent = args.element.getAttribute("style");
     let comment = getViewComment(comments)!;
     try {
-      let beforeStyle = JSON.parse(JSON.stringify(args.element.style)) as CSSStyleDeclaration;
+      let beforeStyle = JSON.parse(JSON.stringify(getComputedStyle(args.element))) as CSSStyleDeclaration;
       let { imageInBackground } = getBackgroundImage(args.element);
       let { colorInBackground } = getBackgroundColor(args.element);
       await createStyleEditor(args.element);
-      let afterStyle = args.element.style;
+      let afterStyle = getComputedStyle(args.element);
       let guid = setGuid(args.element);
       let unit = new AttributeUnit(startContent!, "style");
       let logs: Log[] = [];
