@@ -16,7 +16,7 @@ export default class DeleteRepeatItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = this.createItem(TEXT.CLICK);
+    const { el, setVisiable } = this.createItem(TEXT.DELETE_REPEAR);
     this.el = el;
     this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
