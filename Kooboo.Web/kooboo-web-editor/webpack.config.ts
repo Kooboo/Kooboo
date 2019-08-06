@@ -15,7 +15,7 @@ export default (env: any): webpack.Configuration => ({
       "@": path.resolve(__dirname, "./src")
     }
   },
-  devtool: env.NODE_ENV == "development" ? "inline-source-map" : undefined,
+  // devtool: env.NODE_ENV == "development" ? "inline-source-map" : undefined,
   module: {
     rules: [
       { test: /\.(tsx?)|(js)$/, loader: "ts-loader" },

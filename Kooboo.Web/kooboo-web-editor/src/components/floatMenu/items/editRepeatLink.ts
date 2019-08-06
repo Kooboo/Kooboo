@@ -1,6 +1,4 @@
-import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
-import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isLink } from "@/dom/utils";
 import { getAttributeComment, updateAttributeLink } from "../utils";
@@ -12,9 +10,9 @@ export default class EditRepeatLinkItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.EDIT_LINK, MenuActions.editLink);
+    const { el, setVisiable } = this.createItem(TEXT.EDIT_LINK);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 
@@ -32,6 +30,8 @@ export default class EditRepeatLinkItem extends BaseMenuItem {
 
   click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let comment = getAttributeComment(comments, "href");
     updateAttributeLink(args.element, args.koobooId!, comment!);

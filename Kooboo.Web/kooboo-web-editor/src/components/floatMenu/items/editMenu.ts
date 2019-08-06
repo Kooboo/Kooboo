@@ -1,6 +1,4 @@
-import { createItem } from "../basic";
 import { TEXT } from "@/common/lang";
-import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { getMenuComment } from "../utils";
 import { getWrapDom } from "@/kooboo/utils";
@@ -15,9 +13,9 @@ export default class EditMenuItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_MENU, MenuActions.editMenu);
+    const { el, setVisiable, setReadonly } = this.createItem(TEXT.EDIT_MENU);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 
@@ -32,6 +30,8 @@ export default class EditMenuItem extends BaseMenuItem {
 
   click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let comment = getMenuComment(comments)!;
     var { startNode, endNode } = getWrapDom(args.element, OBJECT_TYPE.menu);

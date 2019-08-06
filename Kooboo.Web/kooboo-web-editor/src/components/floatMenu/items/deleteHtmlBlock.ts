@@ -1,6 +1,4 @@
-import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
-import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { setGuid, clearKoobooInfo, getGuidComment, getWrapDom } from "@/kooboo/utils";
 import { operationRecord } from "@/operation/Record";
@@ -18,9 +16,9 @@ export default class DeleteHtmlBlockItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.DELETE, MenuActions.delete);
+    const { el, setVisiable } = this.createItem(TEXT.DELETE);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 
@@ -35,6 +33,8 @@ export default class DeleteHtmlBlockItem extends BaseMenuItem {
 
   click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let guid = setGuid(args.element);
     let guidComment = getGuidComment(guid);

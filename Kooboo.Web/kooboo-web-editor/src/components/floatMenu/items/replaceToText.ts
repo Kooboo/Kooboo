@@ -1,6 +1,4 @@
-import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
-import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg, isInTable } from "@/dom/utils";
 import { getRepeatComment, getViewComment, getEditComment, clearContent } from "../utils";
@@ -20,9 +18,9 @@ export default class ReplaceToTextItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.REPLACE_TO_TEXT, MenuActions.replaceToText);
+    const { el, setVisiable } = this.createItem(TEXT.REPLACE_TO_TEXT);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 
@@ -45,6 +43,8 @@ export default class ReplaceToTextItem extends BaseMenuItem {
 
   async click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let { parent, koobooId } = getCleanParent(args.element);
     let startContent = parent!.innerHTML;
     let text = createP();

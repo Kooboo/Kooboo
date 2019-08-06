@@ -1,7 +1,5 @@
 import { TEXT } from "@/common/lang";
-import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
-import { MenuItem, createItem } from "../basic";
 import { isDynamicContent, clearKoobooInfo, getCleanParent, isDirty, markDirty, setGuid } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { setInlineEditor } from "@/components/richEditor";
@@ -21,9 +19,9 @@ export default class EditItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.EDIT, MenuActions.edit);
+    const { el, setVisiable } = this.createItem(TEXT.EDIT);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 
@@ -46,6 +44,8 @@ export default class EditItem extends BaseMenuItem {
 
   click() {
     let { element, koobooId } = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let startContent = element.innerHTML;
     const onSave = () => {
       if (clearContent(startContent) == clearContent(element.innerHTML)) return;

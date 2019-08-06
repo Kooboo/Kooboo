@@ -1,9 +1,6 @@
-import { createItem, MenuItem } from "../basic";
 import { TEXT } from "@/common/lang";
-import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { getHtmlBlockComment, hasOperation } from "../utils";
-import { reload } from "@/dom/utils";
 import { editHtmlBlock } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
@@ -13,9 +10,9 @@ export default class EditHtmlBlockItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable, setReadonly } = createItem(TEXT.EDIT_HTML_BLOCK, MenuActions.editHtmlBlock);
+    const { el, setVisiable, setReadonly } = this.createItem(TEXT.EDIT_HTML_BLOCK);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
     this.setReadonly = setReadonly;
   }
@@ -36,10 +33,11 @@ export default class EditHtmlBlockItem extends BaseMenuItem {
 
   async click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+
     let comments = KoobooComment.getComments(args.element);
     let comment = getHtmlBlockComment(comments)!;
     let nameorid = comment.nameorid;
     await editHtmlBlock(nameorid!);
-    reload();
   }
 }

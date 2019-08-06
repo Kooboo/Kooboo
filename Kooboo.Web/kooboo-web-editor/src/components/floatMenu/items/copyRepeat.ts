@@ -1,6 +1,4 @@
-import { createItem, MenuItem } from "../basic";
 import { TEXT } from "@/common/lang";
-import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isBody } from "@/dom/utils";
 import { getRepeatComment, changeNameOrId } from "../utils";
@@ -18,9 +16,9 @@ export default class CopyRepeatItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.COPY_REPEAT, MenuActions.copyRepeat);
+    const { el, setVisiable } = this.createItem(TEXT.COPY_REPEAT);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 
@@ -37,6 +35,8 @@ export default class CopyRepeatItem extends BaseMenuItem {
 
   click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let { nodes } = getWrapDom(args.element, OBJECT_TYPE.contentrepeater);
     if (!nodes || nodes.length == 0) return;

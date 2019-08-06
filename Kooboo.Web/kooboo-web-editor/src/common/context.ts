@@ -4,7 +4,6 @@ import { HoverDomEventArgs, HoverDomEvent } from "@/events/HoverDomEvent";
 import { EditableEvent } from "@/events/EditableEvent";
 import { TinymceInputEvent } from "@/events/TinymceEvent";
 import { OperationEvent } from "@/events/OperationEvent";
-import { FloatMenuClickEvent } from "@/events/FloatMenuClickEvent";
 import { CloseEditingEvent } from "@/events/CloseEditingEvent";
 
 class Context {
@@ -27,7 +26,6 @@ class Context {
   editableEvent: EditableEvent = new EditableEvent();
   tinymceInputEvent: TinymceInputEvent = new TinymceInputEvent();
   operationEvent: OperationEvent = new OperationEvent();
-  floatMenuClickEvent: FloatMenuClickEvent = new FloatMenuClickEvent();
   hoverDomEvent: HoverDomEvent = new HoverDomEvent();
   closeEditingEvent: CloseEditingEvent = new CloseEditingEvent();
 }

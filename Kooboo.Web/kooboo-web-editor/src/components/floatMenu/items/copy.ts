@@ -1,7 +1,5 @@
-import { createItem, MenuItem } from "../basic";
 import context from "@/common/context";
 import { setGuid, markDirty, clearKoobooInfo, isDynamicContent, getGuidComment, getCleanParent, getRelatedRepeatComment } from "@/kooboo/utils";
-import { MenuActions } from "@/events/FloatMenuClickEvent";
 import { TEXT } from "@/common/lang";
 import { getEditComment, getRepeatComment, getViewComment } from "../utils";
 import { isBody } from "@/dom/utils";
@@ -17,9 +15,9 @@ export default class CopyItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.COPY, MenuActions.copy);
+    const { el, setVisiable } = this.createItem(TEXT.COPY);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 
@@ -41,6 +39,8 @@ export default class CopyItem extends BaseMenuItem {
 
   click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let { koobooId, parent } = getCleanParent(args.element);
     let cloneElement = args.element.cloneNode(true) as HTMLElement;

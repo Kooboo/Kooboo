@@ -1,6 +1,4 @@
-import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
-import { MenuActions } from "@/events/FloatMenuClickEvent";
 import context from "@/common/context";
 import { isImg } from "@/dom/utils";
 import { getAttributeComment } from "../utils";
@@ -17,9 +15,9 @@ export default class EditRepeatImageItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.EDIT_IMAGE, MenuActions.editImage);
+    const { el, setVisiable } = this.createItem(TEXT.EDIT_IMAGE);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 
@@ -37,6 +35,8 @@ export default class EditRepeatImageItem extends BaseMenuItem {
 
   click() {
     let args = context.lastSelectedDomEventArgs;
+    this.parentMenu.hidden();
+    
     let comments = KoobooComment.getComments(args.element);
     let comment = getAttributeComment(comments, "src")!;
     let img = args.element as HTMLImageElement;

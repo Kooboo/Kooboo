@@ -1,6 +1,4 @@
-import { MenuItem, createItem } from "../basic";
 import { TEXT } from "@/common/lang";
-import { MenuActions } from "@/events/FloatMenuClickEvent";
 import { canJump } from "@/dom/utils";
 import context from "@/common/context";
 import { getPageId } from "@/kooboo/utils";
@@ -13,9 +11,9 @@ export default class EnterLinkItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
     super(parentMenu);
 
-    const { el, setVisiable } = createItem(TEXT.ENTER_LINK, MenuActions.enterLink);
+    const { el, setVisiable } = this.createItem(TEXT.ENTER_LINK);
     this.el = el;
-    this.el.addEventListener("click", this.click);
+    this.el.addEventListener("click", this.click.bind(this));
     this.setVisiable = setVisiable;
   }
 
@@ -31,6 +29,8 @@ export default class EnterLinkItem extends BaseMenuItem {
 
   click() {
     let url = context.lastHoverDomEventArgs.element.getAttribute("href")!;
+    this.parentMenu.hidden();
+    
     let pageId = getPageId();
     let parsed = qs.parse(parent.location.search);
     let query = {
