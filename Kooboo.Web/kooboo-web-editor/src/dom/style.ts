@@ -1,6 +1,7 @@
 import { KOOBOO_ID } from "@/common/constants";
+import { colorProps, ColorProp } from "./colorProps";
+import { sortStylePriority } from "./stylePriority";
 
-const colorProps = ["color", "background-color", "background", "box-shadow", "border", "boder-color", "outline", "outline-color"];
 const pseudoes = ["visited", "hover", "active", "focus"];
 // var cantMatchedPseudoes = [":+\\s*visited$", ":+\\s*hover$", ":+\\s*active$", ":+\\s*focus$"];
 
@@ -36,8 +37,8 @@ export function* getCssRules() {
   }
 }
 
-interface CssColor {
-  prop: string;
+export interface CssColor {
+  prop: ColorProp;
   value: string;
   styleSequence: number;
   important: boolean;
@@ -48,7 +49,33 @@ interface CssColor {
   koobooId: string;
   pseudo: string | null;
   cssStyleRule: CSSStyleRule | null;
-  childProp: boolean;
+}
+
+interface CssColorGroup {
+  prop: string;
+  pseudo: string | null;
+  cssColors: CssColor[];
+}
+
+export function getMatchedColorGroups(el: HTMLElement) {
+  let group: CssColorGroup[] = [];
+  let colors = getMatchedColors(el);
+  for (const i of colors) {
+    let item = group.find(f => f.prop == i.prop.parent && f.pseudo == i.pseudo);
+    if (item) {
+      item.cssColors.push(i);
+    } else {
+      group.push({
+        prop: i.prop.parent,
+        cssColors: [i],
+        pseudo: i.pseudo
+      });
+    }
+  }
+  for (const i of group) {
+    i.cssColors = sortStylePriority(i.cssColors).reverse();
+  }
+  return group;
 }
 
 export function getMatchedColors(el: HTMLElement) {
@@ -72,8 +99,7 @@ function addInlineMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
       url: "",
       value: i.value,
       pseudo: "",
-      cssStyleRule: null,
-      childProp: i.childProp
+      cssStyleRule: null
     });
   }
 }
@@ -96,8 +122,7 @@ function addStyleMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
         url: i.url,
         value: color.value,
         pseudo: matched.pseudo,
-        cssStyleRule: i.rule,
-        childProp: color.childProp
+        cssStyleRule: i.rule
       });
     }
   }
@@ -106,13 +131,12 @@ function addStyleMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
 function getCssColors(style: CSSStyleDeclaration) {
   let colors = [];
   for (const i of colorProps) {
-    let value = style.getPropertyValue(i);
+    let value = style.getPropertyValue(i.prop);
     if (!value) continue;
     colors.push({
       prop: i,
       value,
-      important: !!style.getPropertyPriority(i),
-      childProp: i.indexOf("-") > 0
+      important: !!style.getPropertyPriority(i.prop)
     });
   }
   return colors;

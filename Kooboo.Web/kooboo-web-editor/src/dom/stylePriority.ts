@@ -1,10 +1,6 @@
-export interface StyleSelector {
-  selector: String;
-  important?: boolean;
-  inline?: boolean;
-  styleSequence?: number;
-}
-export const getStylePriority = function(styleSelector: StyleSelector) {
+import { CssColor } from "./style";
+
+export const getStylePriority = function(styleSelector: CssColor) {
   const TOKEN_ID = /(#[\w-]+)/g;
   const TOKEN_CLASS = /(\.[\w-]+)/g;
   const TOKEN_ATTR = /(\[[^[\]]+])/g;
@@ -20,7 +16,7 @@ export const getStylePriority = function(styleSelector: StyleSelector) {
   let inline = styleSelector.inline ? 1 : 0;
   let styleSequence = styleSelector.styleSequence || 0;
   let priority = [important, inline, 0, 0, 0, styleSequence];
-  let selector = styleSelector.selector;
+  let selector = styleSelector.targetSelector;
   selector = selector.replace(/(::?)([\w-]+)/g, function(total, left, elem) {
     if (PSEUDO_ELEMS.indexOf(elem) >= 0) {
       if (left === ":") {
@@ -58,7 +54,7 @@ export const compareStylePriority = function(a: Array<number>, b: Array<number>)
   return 0;
 };
 
-export const sortStylePriority = function(styleSelectorList: StyleSelector[]) {
+export const sortStylePriority = function(styleSelectorList: CssColor[]) {
   styleSelectorList.sort((a, b) => {
     let priorityA = getStylePriority(a);
     let priorityB = getStylePriority(b);
