@@ -66,6 +66,11 @@ export function onRemove(e: any) {
   if (element instanceof HTMLElement) {
     if (element.id.startsWith("mce_")) element.removeAttribute("id");
     if (element.getAttribute("style") == "") element.removeAttribute("style");
+    for (const i of getAllElement(element, true)) {
+      if (i.classList.contains("mce-item-table")) {
+        i.classList.remove("mce-item-table");
+      }
+    }
   }
   context.editing = false;
 }
