@@ -56,18 +56,19 @@ export function createRadioInput(label: string) {
   };
 }
 
-export function createCheckboxInput(label: string) {
+export function createCheckboxInput(label: string, checked: boolean, onChecked: (checked: boolean) => void) {
   let el = createDiv();
   el.classList.add("kb_web_editor_checkobx_input");
   let checkbox = createInput();
   checkbox.type = "checkbox";
+  checkbox.oninput = () => onChecked(checkbox.checked);
   el.appendChild(checkbox);
   let text = createDiv();
   text.innerText = label;
+  checkbox.checked = checked;
   el.appendChild(text);
   return {
     checkbox: el,
-    setChecked: (checked: boolean) => (checkbox.checked = checked),
-    getContent: () => label
+    setChecked: (checked: boolean) => (checkbox.checked = checked)
   };
 }

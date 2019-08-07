@@ -51,7 +51,7 @@ export interface CssColor {
   cssStyleRule: CSSStyleRule | null;
 }
 
-interface CssColorGroup {
+export interface CssColorGroup {
   prop: string;
   pseudo: string | null;
   cssColors: CssColor[];
@@ -75,6 +75,7 @@ export function getMatchedColorGroups(el: HTMLElement) {
   for (const i of group) {
     i.cssColors = sortStylePriority(i.cssColors).reverse();
   }
+
   return group;
 }
 
@@ -133,6 +134,8 @@ function getCssColors(style: CSSStyleDeclaration) {
   for (const i of colorProps) {
     let value = style.getPropertyValue(i.prop);
     if (!value) continue;
+    let color = i.getColor(value);
+    if (!color || color == "initial" || color.indexOf("-") > -1) continue;
     colors.push({
       prop: i,
       value,

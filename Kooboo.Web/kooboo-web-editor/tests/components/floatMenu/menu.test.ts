@@ -30,8 +30,8 @@ describe("menu", () => {
 
     update(100, 200);
     expect(container.style.display).toEqual("block");
-    expect(container.style.top).toEqual("203px");
-    expect(container.style.left).toEqual("103px");
+    expect(container.style.top).toEqual("200px");
+    expect(container.style.left).toEqual("100px");
   });
 
   test("createMenu_hidden", () => {
