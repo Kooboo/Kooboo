@@ -9,9 +9,9 @@ export class StyleLog extends Log {
   styleId!: string;
   property!: string;
   selector!: string;
-  important!: string;
-  StyleSheetUrl!: string;
-  StyleTagKoobooId!: string;
+  important!: boolean;
+  styleSheetUrl!: string;
+  styleTagKoobooId!: string;
   KoobooId!: string;
   readonly editorType: string = EDITOR_TYPE.style;
 
@@ -23,6 +23,18 @@ export class StyleLog extends Log {
     log.objectType = objectType;
     log.property = property;
     log.KoobooId = koobooId;
+    return log;
+  }
+
+  static createCssUpdate(value: string, property: string, selector: string, styleTagKoobooId: string, url: string, important: boolean) {
+    let log = new StyleLog();
+    log.action = ActionType.update;
+    log.value = value;
+    log.property = property;
+    log.styleTagKoobooId = styleTagKoobooId;
+    log.styleSheetUrl = url;
+    log.selector = selector;
+    log.important = important;
     return log;
   }
 }

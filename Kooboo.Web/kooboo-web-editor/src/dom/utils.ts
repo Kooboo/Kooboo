@@ -1,6 +1,12 @@
 import { HOVER_BORDER_SKIP } from "../common/constants";
 import { Background } from "./Background";
 
+export function getScrollTop() {
+  return document.documentElement.scrollTop;
+}
+export function getScrollLeft() {
+  return document.documentElement.scrollLeft;
+}
 export function getMaxHeight() {
   var body = document.body,
     html = document.documentElement;
