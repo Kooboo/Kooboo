@@ -34,7 +34,7 @@ export default class InlineEditHtmlBlockItem extends BaseMenuItem {
   click() {
     let { element } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-    
+
     let startContent = element.innerHTML;
     const onSave = () => {
       if (clearContent(startContent) == clearContent(element.innerHTML)) return;

@@ -30,7 +30,7 @@ export default class EnterLinkItem extends BaseMenuItem {
   click() {
     let url = context.lastHoverDomEventArgs.element.getAttribute("href")!;
     this.parentMenu.hidden();
-    
+
     let pageId = getPageId();
     let parsed = qs.parse(parent.location.search);
     let query = {

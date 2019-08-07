@@ -45,7 +45,7 @@ export default class EditItem extends BaseMenuItem {
   click() {
     let { element, koobooId } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-    
+
     let startContent = element.innerHTML;
     const onSave = () => {
       if (clearContent(startContent) == clearContent(element.innerHTML)) return;
