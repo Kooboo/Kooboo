@@ -4,17 +4,29 @@ import { getMatchedColorGroups, CssColorGroup } from "@/dom/style";
 import { parentBody } from "@/kooboo/outsideInterfaces";
 import { createDiv, createCheckboxInput } from "@/dom/element";
 import { createColorPicker } from "../common/colorPicker";
+import EditElement from "./EditElement";
 
 export function createColorEditor(el: HTMLElement) {
-  var groups = getMatchedColorGroups(el);
-  let container = createDiv();
-  for (const i of groups) {
-    let item = createItem(i, el);
-    container.appendChild(item);
-  }
+  console.log(getMatchedColorGroups(el));
 
-  let { modal } = createModal(TEXT.EDIT_COLOR, container, "600px");
-  parentBody.appendChild(modal);
+  let editElement = new EditElement(el);
+
+  let modal = createModal(TEXT.EDIT_COLOR, editElement.render(), "600px");
+
+  parentBody.appendChild(modal.modal);
+
+  return new Promise<void>((rs, rj) => {
+    modal.setOkHandler(() => {
+      rs();
+      editElement.ok();
+      modal.close();
+    });
+    modal.setCancelHandler(() => {
+      editElement.cancel();
+      rj();
+      modal.close();
+    });
+  })
 }
 
 function createItem(cssColorGroup: CssColorGroup, el: HTMLElement) {
