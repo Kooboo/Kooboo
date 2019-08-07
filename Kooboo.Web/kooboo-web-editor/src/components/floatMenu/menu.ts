@@ -114,12 +114,13 @@ export class Menu {
 
     const updatePosition = (x: number, y: number, pageHeight: number, pageWidth: number) => {
       let rect = el.getBoundingClientRect();
-
-      if (x + rect.width > pageWidth) {
+      let screenWidth = window.innerWidth;
+      let screenHeight = window.innerHeight;
+      if (x + rect.width > screenWidth) {
         x = x - rect.width + 3;
       }
 
-      if (y + rect.height > pageHeight) {
+      if (y + rect.height > screenHeight) {
         y = y - rect.height + 3;
         context.lastMouseEventArg = {
           isTrusted: true,
