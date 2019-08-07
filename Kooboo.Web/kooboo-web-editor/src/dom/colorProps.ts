@@ -8,6 +8,7 @@ export interface ColorProp {
   isChild: boolean;
   parent: string;
   replaceColor: (oldValue: string, newColor: string) => string;
+  getColor: (value: string) => string;
 }
 
 export const colorProps: ColorProp[] = [
@@ -15,13 +16,15 @@ export const colorProps: ColorProp[] = [
     prop: "color",
     isChild: false,
     parent: "color",
-    replaceColor: (o, n) => n
+    replaceColor: (o, n) => n,
+    getColor: o => o
   },
   {
     prop: "background-color",
     isChild: true,
     parent: "background",
-    replaceColor: (o, n) => n
+    replaceColor: (o, n) => n,
+    getColor: o => o
   },
   {
     prop: "background",
@@ -31,7 +34,8 @@ export const colorProps: ColorProp[] = [
       let obj = new Background(o);
       obj.color = n;
       return obj.toString();
-    }
+    },
+    getColor: o => new Background(o).color!
   },
   {
     prop: "box-shadow",
@@ -41,7 +45,8 @@ export const colorProps: ColorProp[] = [
       let obj = new BoxShadow(o);
       obj.color = n;
       return obj.toString();
-    }
+    },
+    getColor: o => new BoxShadow(o).color
   },
   {
     prop: "border",
@@ -51,13 +56,15 @@ export const colorProps: ColorProp[] = [
       let obj = new Border(o);
       obj.color = n;
       return obj.toString();
-    }
+    },
+    getColor: o => new Border(o).color!
   },
   {
     prop: "boder-color",
     isChild: true,
     parent: "border",
-    replaceColor: (o, n) => n
+    replaceColor: (o, n) => n,
+    getColor: o => o
   },
   {
     prop: "outline",
@@ -67,12 +74,14 @@ export const colorProps: ColorProp[] = [
       let obj = new Outline(o);
       obj.color = n;
       return obj.toString();
-    }
+    },
+    getColor: o => new Outline(o).color
   },
   {
     prop: "outline-color",
     isChild: false,
     parent: "outline",
-    replaceColor: (o, n) => n
+    replaceColor: (o, n) => n,
+    getColor: o => o
   }
 ];

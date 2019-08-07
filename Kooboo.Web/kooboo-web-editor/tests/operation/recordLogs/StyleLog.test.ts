@@ -11,8 +11,8 @@ describe("StyleLog", () => {
     expect(log.value).toEqual("a");
     expect(log.objectType).toEqual(OBJECT_TYPE.dom);
     expect(log.KoobooId).toEqual("koobooId");
-    expect(log.StyleSheetUrl).toBeFalsy();
-    expect(log.StyleTagKoobooId).toBeFalsy();
+    expect(log.styleSheetUrl).toBeFalsy();
+    expect(log.styleTagKoobooId).toBeFalsy();
     expect(log.important).toBeFalsy();
     expect(log.property).toEqual("color");
     expect(log.ruleId).toBeFalsy();
