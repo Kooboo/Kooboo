@@ -17,11 +17,11 @@ export default abstract class BaseMenuItem implements MenuItem {
     el.classList.add("kb_web_editor_menu_item");
     let isReadonly = false;
     el.append(text);
-  
+
     const setVisiable = (visiable: boolean) => {
       el.style.display = visiable ? "block" : "none";
     };
-  
+
     const setReadonly = () => {
       if (isReadonly) return;
       isReadonly = true;
@@ -29,14 +29,14 @@ export default abstract class BaseMenuItem implements MenuItem {
       el.style.pointerEvents = "none";
       el.appendChild(this.createWarn());
     };
-  
+
     return {
       el,
       setVisiable,
       setReadonly
     };
   }
-  
+
   createWarn() {
     let el = createDiv();
     el.innerText = "!";

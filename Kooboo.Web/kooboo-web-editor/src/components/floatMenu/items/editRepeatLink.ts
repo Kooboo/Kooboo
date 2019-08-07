@@ -31,7 +31,7 @@ export default class EditRepeatLinkItem extends BaseMenuItem {
   click() {
     let args = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-    
+
     let comments = KoobooComment.getComments(args.element);
     let comment = getAttributeComment(comments, "href");
     updateAttributeLink(args.element, args.koobooId!, comment!);

@@ -36,7 +36,7 @@ export default class CopyRepeatItem extends BaseMenuItem {
   click() {
     let args = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-    
+
     let comments = KoobooComment.getComments(args.element);
     let { nodes } = getWrapDom(args.element, OBJECT_TYPE.contentrepeater);
     if (!nodes || nodes.length == 0) return;
