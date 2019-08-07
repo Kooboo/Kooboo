@@ -51,7 +51,7 @@ export interface CssColor {
   cssStyleRule: CSSStyleRule | null;
 }
 
-interface CssColorGroup {
+export interface CssColorGroup {
   prop: string;
   pseudo: string | null;
   cssColors: CssColor[];
