@@ -30,6 +30,15 @@ export async function impoveEditorUI(editor: Editor) {
     moveBtn.style.margin = "6px 0 6px 6px";
     toolbar.insertBefore(moveBtn, toolbar.children.item(0));
     container.draggable = true;
+    const correctPositon = () => {
+      let rect = container.getBoundingClientRect();
+      if (rect.left < 0) (container as HTMLElement).style.left = "0px";
+      if (rect.top < 0) (container as HTMLElement).style.top = "0px";
+    };
+    correctPositon();
+    editor.on("MouseDown", correctPositon);
+    editor.on("MouseUp", correctPositon);
+    editor.on("KeyUp", correctPositon);
     container.ondrag = e => {
       if (!(container instanceof HTMLElement)) return;
       container.style.position = "fixed";
@@ -64,13 +73,15 @@ export function onSetContent(e: any) {
 export function onRemove(e: any) {
   let element = e.target.getElement();
   if (element instanceof HTMLElement) {
-    if (element.id.startsWith("mce_")) element.removeAttribute("id");
-    if (element.getAttribute("style") == "") element.removeAttribute("style");
-    for (const i of getAllElement(element, true)) {
-      if (i.classList.contains("mce-item-table")) {
-        i.classList.remove("mce-item-table");
+    setTimeout(() => {
+      if (element.id.startsWith("mce_")) element.removeAttribute("id");
+      if (element.getAttribute("style") == "") element.removeAttribute("style");
+      for (const i of getAllElement(element, true)) {
+        if (i.classList.contains("mce-item-table")) {
+          i.classList.remove("mce-item-table");
+        }
       }
-    }
+    });
   }
   context.editing = false;
 }

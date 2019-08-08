@@ -43,8 +43,6 @@ export default class ReplaceToTextItem extends BaseMenuItem {
 
   async click() {
     let args = context.lastSelectedDomEventArgs;
-    this.parentMenu.hidden();
-
     let { parent, koobooId } = getCleanParent(args.element);
     let startContent = parent!.innerHTML;
     let text = createP();
@@ -74,5 +72,6 @@ export default class ReplaceToTextItem extends BaseMenuItem {
     };
 
     await setInlineEditor({ selector: text, onSave, onCancel });
+    this.parentMenu.hidden();
   }
 }

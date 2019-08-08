@@ -16,7 +16,6 @@ export const createShade = () => {
     closeBtn.style.display = "block";
     let [top, right, bottom, left] = blocks;
     let referenceRect = referenceEl.getBoundingClientRect();
-    console.log(referenceRect);
     top.update({
       top: 0,
       left: referenceRect.left,
