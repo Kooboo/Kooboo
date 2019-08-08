@@ -1,17 +1,26 @@
 import { Unit } from "./Unit";
+import { CssColorGroup } from "@/dom/style";
 
 export class CssUnit extends Unit {
-  constructor(public oldValue: string, public prop: string, public rule: CSSStyleRule) {
+  constructor(public oldValue: string, public groups: CssColorGroup[]) {
     super(oldValue);
   }
 
   undo(node: Node): void {
-    this.newValue = this.rule.style.getPropertyValue(this.prop);
-    this.rule.style.setProperty(this.prop, this.oldValue);
+    for (const group of this.groups) {
+      for (const color of group.cssColors) {
+        if (color.inline) continue;
+        color.cssStyleRule!.style.setProperty(color.prop.prop, color.value, color.important ? "important" : "");
+      }
+    }
   }
 
   redo(node: Node): void {
-    this.oldValue = this.rule.style.getPropertyValue(this.prop);
-    this.rule.style.setProperty(this.prop, this.newValue);
+    for (const group of this.groups) {
+      for (const color of group.cssColors) {
+        if (color.inline || !color.newValue || color.newImportant === undefined) continue;
+        color.cssStyleRule!.style.setProperty(color.prop.prop, color.newValue, color.newImportant ? "important" : "");
+      }
+    }
   }
 }

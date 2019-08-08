@@ -4,73 +4,95 @@ import { getMatchedColorGroups, CssColorGroup } from "@/dom/style";
 import { parentBody } from "@/kooboo/outsideInterfaces";
 import { createDiv, createCheckboxInput } from "@/dom/element";
 import { createColorPicker } from "../common/colorPicker";
-import EditElement from "./EditElement";
+import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
+import { CssUnit } from "@/operation/recordUnits/CssUnit";
+import { operationRecord } from "@/operation/Record";
+import context from "@/common/context";
+import { setGuid } from "@/kooboo/utils";
 
 export function createColorEditor(el: HTMLElement) {
-  console.log(getMatchedColorGroups(el));
+  var startStyle = el.getAttribute("style");
+  var groups = getMatchedColorGroups(el);
+  let container = createDiv();
+  for (const i of groups) {
+    let row = createItem(i, el);
+    container.appendChild(row);
+  }
 
-  let editElement = new EditElement(el);
+  const getUnits = () => [new AttributeUnit(startStyle || "", "style"), new CssUnit("", groups)];
 
-  let modal = createModal(TEXT.EDIT_COLOR, editElement.render(), "600px");
+  let { modal, close, setCancelHandler, setOkHandler } = createModal(TEXT.EDIT_COLOR, container, "600px");
+  setCancelHandler(() => {
+    getUnits().map(m => m.undo(el));
+    close();
+  });
 
-  parentBody.appendChild(modal.modal);
-
-  return new Promise<EditElement>((rs, rj) => {
-    modal.setOkHandler(() => {
-      editElement.ok();
-      rs(editElement);
-      modal.close();
-    });
-    modal.setCancelHandler(() => {
-      editElement.cancel();
-      rj();
-      modal.close();
-    });
-  })
+  setOkHandler(() => {
+    let guid = setGuid(el);
+    let operation = new operationRecord(getUnits(), [], guid);
+    context.operationManager.add(operation);
+    close();
+  });
+  parentBody.appendChild(modal);
 }
 
-function createItem(cssColorGroup: CssColorGroup, el: HTMLElement) {
+function createItem(colorGroup: CssColorGroup, el: HTMLElement) {
   let container = createDiv();
   container.style.display = "flex";
-  let color = cssColorGroup.cssColors[0];
+  let color = colorGroup.cssColors[0];
   let globalUpdate = !color.inline;
-  let label = cssColorGroup.prop + cssColorGroup.pseudo;
+  let inlineColor = colorGroup.cssColors.find(f => f.inline);
+  let cssColor = colorGroup.cssColors.find(f => !f.inline);
+  let updateColor = inlineColor || color;
+  let label = colorGroup.prop + colorGroup.pseudo;
   let oldValue = color.prop.getColor(color.value);
   let picker = createColorPicker(label, oldValue, s => {
     if (globalUpdate) {
-      let notInlineColor = cssColorGroup.cssColors.find(f => !f.inline)!;
-      let important = notInlineColor.cssStyleRule!.style.getPropertyPriority(color.prop.prop);
-      let value = notInlineColor.prop.replaceColor(notInlineColor.value, s);
-      notInlineColor.cssStyleRule!.style.setProperty(notInlineColor.prop.prop, value, important);
+      if (!cssColor) return;
+      let important = cssColor.cssStyleRule!.style.getPropertyPriority(cssColor.prop.prop);
+      let value = cssColor.prop.replaceColor(cssColor.value, s);
+      cssColor.cssStyleRule!.style.setProperty(cssColor.prop.prop, value, important);
+      cssColor.newValue = value;
+      cssColor.newImportant = important;
     } else {
-      let value = el.style.getPropertyValue(color.prop.prop);
-      let important = el.style.getPropertyPriority(color.prop.prop);
-      value = color.prop.replaceColor(value, s);
-      el.style.setProperty(color.prop.prop, value, important);
+      let value = el.style.getPropertyValue(updateColor.prop.prop);
+      let important = el.style.getPropertyPriority(updateColor.prop.prop);
+      value = updateColor.prop.replaceColor(value, s);
+      el.style.setProperty(updateColor.prop.prop, value, important);
     }
   });
   picker.style.width = "200px";
   container.appendChild(picker);
+
   const onChecked = (checked: boolean) => {
-    let notInlineColor = cssColorGroup.cssColors.find(f => !f.inline)!;
+    if (!cssColor) return;
     if (checked) {
-      let value = el.style.getPropertyValue(color.prop.prop);
-      let important = el.style.getPropertyPriority(color.prop.prop);
-      notInlineColor.cssStyleRule!.style.setProperty(notInlineColor.prop.prop, value, important);
-      el.style.removeProperty(color.prop.prop);
+      let value = el.style.getPropertyValue(updateColor.prop.prop);
+      value = updateColor.prop.getColor(value);
+      let important = el.style.getPropertyPriority(updateColor.prop.prop);
+      value = cssColor.prop.replaceColor(cssColor.value, value);
+      cssColor.cssStyleRule!.style.setProperty(cssColor.prop.prop, value, important);
+      cssColor.newValue = value;
+      cssColor.newImportant = important;
+      el.style.removeProperty(updateColor.prop.prop);
       globalUpdate = true;
     } else {
-      let value = notInlineColor.cssStyleRule!.style.getPropertyValue(color.prop.prop);
-      let important = notInlineColor.cssStyleRule!.style.getPropertyPriority(color.prop.prop);
-      el.style.setProperty(color.prop.prop, value, important);
-      notInlineColor.cssStyleRule!.style.removeProperty(notInlineColor.prop.prop);
+      let important = cssColor.cssStyleRule!.style.getPropertyPriority(cssColor.prop.prop);
+      let value = cssColor.cssStyleRule!.style.getPropertyValue(cssColor.prop.prop);
+      value = cssColor.prop.getColor(value);
+      value = updateColor.prop.replaceColor(updateColor.value, value);
+      el.style.setProperty(updateColor.prop.prop, value, important);
+      cssColor.cssStyleRule!.style.setProperty(cssColor.prop.prop, cssColor.value, cssColor.important ? "important" : "");
+      cssColor.newValue = undefined;
+      cssColor.newImportant = undefined;
       globalUpdate = false;
     }
   };
   let { checkbox } = createCheckboxInput(TEXT.GLOBAL_UPDATE, !color.inline, onChecked);
-  if (cssColorGroup.cssColors.every(e => e.inline) || cssColorGroup.pseudo) {
+  if (!cssColor || colorGroup.pseudo) {
     checkbox.style.display = "none";
   }
   container.appendChild(checkbox);
+
   return container;
 }
