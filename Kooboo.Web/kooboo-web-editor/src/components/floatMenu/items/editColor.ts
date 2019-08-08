@@ -10,6 +10,7 @@ import { operationRecord } from "@/operation/Record";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { getViewComment } from "../utils";
 import { ColorEditLog } from "@/operation/recordLogs/ColorEditLog";
+import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 
 export default class EditColorItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -37,50 +38,54 @@ export default class EditColorItem extends BaseMenuItem {
   async click() {
     let args = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
-    let editElement = await createColorEditor(args.element);
-
-    let guid = setGuid(args.element);
-    let colorEditUnit = new ColorEditUnit("", editElement);
-
-    let comments = KoobooComment.getComments(args.element);
-    let comment = getViewComment(comments)!;
-    let nameorid = comment.nameorid!;
-    let objectType = comment.objecttype!;
-    let koobooId = args.koobooId!;
-    let logs: Log[] = [];
-    editElement.getEditItems().forEach(item=>{
-      if(item.localEditData != null){
-        let colorEditLog = new ColorEditLog();
-        colorEditLog.nameOrId = nameorid;
-        colorEditLog.objectType = objectType;
-        colorEditLog.KoobooId = koobooId;
-        colorEditLog.property = item.localEditData.propName;
-        colorEditLog.value = item.localEditData.value;
-        colorEditLog.pseudo = "";
-        colorEditLog.selector = null;
-  
-        logs.push(colorEditLog);
-      }
-
-      if(item.globalEditData != null){
-        let colorEditLog = new ColorEditLog();
-        colorEditLog.nameOrId = nameorid;
-        colorEditLog.objectType = objectType;
-        // colorEditLog.KoobooId = koobooId;    // 全局更新不能全koobooid不然服务器会以为局部更新
-        colorEditLog.property = item.globalEditData.propName;
-        colorEditLog.value = item.globalEditData.value;
-        colorEditLog.pseudo = item.globalEditData.pseudo;
-        colorEditLog.selector = item.globalEditData.selector == "" ? null : item.globalEditData.selector;
-        colorEditLog.styleTagKoobooId = item.globalEditData.styleTagKoobooId;
-        colorEditLog.styleSheetUrl = item.globalEditData.styleSheetUrl;
-  
-        logs.push(colorEditLog);
-      }
-    });
-
-    console.log(logs);
-
-    let record = new operationRecord([colorEditUnit], logs, guid);
-    context.operationManager.add(record);
+    
   }
 }
+
+// async function useEditElementEditColor(args: SelectedDomEventArgs){
+//   let editElement = await createColorEditor(args.element);
+
+//     let guid = setGuid(args.element);
+//     let colorEditUnit = new ColorEditUnit("", editElement);
+
+//     let comments = KoobooComment.getComments(args.element);
+//     let comment = getViewComment(comments)!;
+//     let nameorid = comment.nameorid!;
+//     let objectType = comment.objecttype!;
+//     let koobooId = args.koobooId!;
+//     let logs: Log[] = [];
+//     editElement.getEditItems().forEach(item=>{
+//       if(item.localEditData != null){
+//         let colorEditLog = new ColorEditLog();
+//         colorEditLog.nameOrId = nameorid;
+//         colorEditLog.objectType = objectType;
+//         colorEditLog.KoobooId = koobooId;
+//         colorEditLog.property = item.localEditData.propName;
+//         colorEditLog.value = item.localEditData.value;
+//         colorEditLog.pseudo = "";
+//         colorEditLog.selector = null;
+  
+//         logs.push(colorEditLog);
+//       }
+
+//       if(item.globalEditData != null){
+//         let colorEditLog = new ColorEditLog();
+//         colorEditLog.nameOrId = nameorid;
+//         colorEditLog.objectType = objectType;
+//         // colorEditLog.KoobooId = koobooId;    // 全局更新不能全koobooid不然服务器会以为局部更新
+//         colorEditLog.property = item.globalEditData.propName;
+//         colorEditLog.value = item.globalEditData.value;
+//         colorEditLog.pseudo = item.globalEditData.pseudo;
+//         colorEditLog.selector = item.globalEditData.selector == "" ? null : item.globalEditData.selector;
+//         colorEditLog.styleTagKoobooId = item.globalEditData.styleTagKoobooId;
+//         colorEditLog.styleSheetUrl = item.globalEditData.styleSheetUrl;
+  
+//         logs.push(colorEditLog);
+//       }
+//     });
+
+//     console.log(logs);
+
+//     let record = new operationRecord([colorEditUnit], logs, guid);
+//     context.operationManager.add(record);
+// }
