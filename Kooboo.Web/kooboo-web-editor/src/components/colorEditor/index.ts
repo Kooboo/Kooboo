@@ -15,10 +15,10 @@ export function createColorEditor(el: HTMLElement) {
 
   parentBody.appendChild(modal.modal);
 
-  return new Promise<void>((rs, rj) => {
+  return new Promise<EditElement>((rs, rj) => {
     modal.setOkHandler(() => {
-      rs();
       editElement.ok();
+      rs(editElement);
       modal.close();
     });
     modal.setCancelHandler(() => {
