@@ -1,6 +1,7 @@
 import { KOOBOO_ID } from "@/common/constants";
 import { colorProps, ColorProp } from "./colorProps";
 import { sortStylePriority } from "./stylePriority";
+import { colorEnum } from "./colorEnum";
 
 const pseudoes = ["visited", "hover", "active", "focus"];
 // var cantMatchedPseudoes = [":+\\s*visited$", ":+\\s*hover$", ":+\\s*active$", ":+\\s*focus$"];
@@ -40,6 +41,8 @@ export function* getCssRules() {
 export interface CssColor {
   prop: ColorProp;
   value: string;
+  newValue?: string;
+  newImportant?: string;
   styleSequence: number;
   important: boolean;
   inline: boolean;
@@ -58,25 +61,28 @@ export interface CssColorGroup {
 }
 
 export function getMatchedColorGroups(el: HTMLElement) {
-  let group: CssColorGroup[] = [];
+  let groups: CssColorGroup[] = [];
   let colors = getMatchedColors(el);
   for (const i of colors) {
-    let item = group.find(f => f.prop == i.prop.parent && f.pseudo == i.pseudo);
+    let item = groups.find(f => f.prop == i.prop.parent && f.pseudo == i.pseudo);
     if (item) {
       item.cssColors.push(i);
     } else {
-      group.push({
+      groups.push({
         prop: i.prop.parent,
         cssColors: [i],
         pseudo: i.pseudo
       });
     }
   }
-  for (const i of group) {
+  for (const i of groups) {
     i.cssColors = sortStylePriority(i.cssColors).reverse();
   }
 
-  return group;
+  let style = getComputedStyle(el);
+  addDefaultColor(groups, "color", style.color!);
+  addDefaultColor(groups, "background-color", style.backgroundColor!);
+  return groups;
 }
 
 export function getMatchedColors(el: HTMLElement) {
@@ -135,7 +141,7 @@ function getCssColors(style: CSSStyleDeclaration) {
     let value = style.getPropertyValue(i.prop);
     if (!value) continue;
     let color = i.getColor(value);
-    if (!color || color == "initial" || color.indexOf("-") > -1) continue;
+    if (!isColor(color)) continue;
     colors.push({
       prop: i,
       value,
@@ -143,6 +149,15 @@ function getCssColors(style: CSSStyleDeclaration) {
     });
   }
   return colors;
+}
+
+function isColor(color: string) {
+  color = color.trim().toLowerCase();
+  if (color.startsWith("#")) return true;
+  if (color.startsWith("rgb")) return true;
+  for (const key in colorEnum) {
+    if (key == color) return true;
+  }
 }
 
 function splitPseudo(selector: string) {
@@ -171,5 +186,30 @@ function matchSelector(el: HTMLElement, selector: string) {
         pseudo: ""
       };
     }
+  }
+}
+
+function addDefaultColor(groups: CssColorGroup[], prop: string, value: string) {
+  let colorProp = colorProps.find(f => f.prop == prop)!;
+  if (!groups.some(e => e.prop == colorProp.parent && !e.pseudo)) {
+    groups.push({
+      pseudo: "",
+      prop: colorProp.parent,
+      cssColors: [
+        {
+          inline: true,
+          prop: colorProp,
+          cssStyleRule: null,
+          important: false,
+          koobooId: "",
+          pseudo: "",
+          rawSelector: "",
+          styleSequence: 0,
+          targetSelector: "",
+          url: "",
+          value: value
+        }
+      ]
+    });
   }
 }
