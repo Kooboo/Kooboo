@@ -20,7 +20,7 @@ namespace Kooboo.Data.Log
 
         public void Write(string line)
         {
-            Writer.Write(line);
+            Writer.WriteLine(line);
         }
 
         private StreamWriter Writer
