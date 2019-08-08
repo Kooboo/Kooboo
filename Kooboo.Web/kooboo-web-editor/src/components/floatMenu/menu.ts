@@ -14,7 +14,7 @@ import ReplaceToImgItem from "./items/replaceToImg";
 import ReplaceToTextItem from "./items/replaceToText";
 import EditRepeatImageItem from "./items/editRepeatImage";
 import EditRepeatLinkItem from "./items/editRepeatLink";
-import { getMaxHeight, getMaxWidth, getParentElements } from "@/dom/utils";
+import { getMaxHeight, getMaxWidth, getParentElements, getScrollLeft, getScrollTop } from "@/dom/utils";
 import ClickItem from "./items/click";
 import DeleteHtmlBlockItem from "./items/deleteHtmlBlock";
 import { KoobooComment } from "@/kooboo/KoobooComment";
@@ -114,13 +114,15 @@ export class Menu {
 
     const updatePosition = (x: number, y: number, pageHeight: number, pageWidth: number) => {
       let rect = el.getBoundingClientRect();
-      let screenWidth = window.innerWidth;
-      let screenHeight = window.innerHeight;
-      if (x + rect.width > screenWidth) {
+      let scrollLeft = getScrollLeft();
+      let scrollTop = getScrollTop();
+      let limitWidth = window.innerWidth + scrollLeft;
+      let limitHeight = window.innerHeight + scrollTop;
+      if (x + rect.width > limitWidth) {
         x = x - rect.width + 3;
       }
 
-      if (y + rect.height > screenHeight) {
+      if (y + rect.height > limitHeight) {
         y = y - rect.height + 3;
         context.lastMouseEventArg = {
           isTrusted: true,
