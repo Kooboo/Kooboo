@@ -2,15 +2,9 @@ import { TEXT } from "@/common/lang";
 import context from "@/common/context";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
-import { createColorEditor } from "@/components/colorEditor";
-import { ColorEditUnit } from "@/operation/recordUnits/ColorEditUnit";
-import { setGuid } from "@/kooboo/utils";
-import { Log } from "@/operation/recordLogs/Log";
-import { operationRecord } from "@/operation/Record";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { getViewComment } from "../utils";
-import { ColorEditLog } from "@/operation/recordLogs/ColorEditLog";
-import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
+import { createColorEditor } from "@/components/colorEditor";
 
 export default class EditColorItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -29,16 +23,18 @@ export default class EditColorItem extends BaseMenuItem {
 
   setReadonly: () => void;
 
-  update(): void {
+  update(comments: KoobooComment[]): void {
     this.setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
+    if (!getViewComment(comments)) return this.setVisiable(false);
     if (!args.koobooId) return this.setVisiable(false);
   }
 
   async click() {
     let args = context.lastSelectedDomEventArgs;
+    let comments = KoobooComment.getComments(args.element);
+    createColorEditor(args.element, getViewComment(comments)!, args.koobooId!);
     this.parentMenu.hidden();
-    
   }
 }
 
@@ -64,7 +60,7 @@ export default class EditColorItem extends BaseMenuItem {
 //         colorEditLog.value = item.localEditData.value;
 //         colorEditLog.pseudo = "";
 //         colorEditLog.selector = null;
-  
+
 //         logs.push(colorEditLog);
 //       }
 
@@ -79,7 +75,7 @@ export default class EditColorItem extends BaseMenuItem {
 //         colorEditLog.selector = item.globalEditData.selector == "" ? null : item.globalEditData.selector;
 //         colorEditLog.styleTagKoobooId = item.globalEditData.styleTagKoobooId;
 //         colorEditLog.styleSheetUrl = item.globalEditData.styleSheetUrl;
-  
+
 //         logs.push(colorEditLog);
 //       }
 //     });
