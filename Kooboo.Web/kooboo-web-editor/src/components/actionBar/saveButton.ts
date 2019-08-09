@@ -20,6 +20,7 @@ export function createSaveButton() {
     }
     if (logs.length == 0) return;
     try {
+      console.log(logs);
       await updateOperation(logs);
       reload();
     } catch (error) {

@@ -98,3 +98,9 @@ export function shareStyle() {
     }
   }
 }
+
+export function Update(data: any) {
+  return new Promise<any>((rs, rj) => {
+    Kooboo.Editor.Update(data).then(rs);
+  });
+}

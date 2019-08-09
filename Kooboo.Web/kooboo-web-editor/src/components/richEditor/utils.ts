@@ -76,7 +76,7 @@ export function onRemove(e: any) {
     setTimeout(() => {
       if (element.id.startsWith("mce_")) element.removeAttribute("id");
       if (element.getAttribute("style") == "") element.removeAttribute("style");
-      for (const i of getAllElement(element, true)) {
+      for (const i of getAllElement(document.body)) {
         if (i.classList.contains("mce-item-table")) {
           i.classList.remove("mce-item-table");
         }
