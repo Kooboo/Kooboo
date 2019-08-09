@@ -72,7 +72,7 @@ describe("element", () => {
   });
 
   test("createLabelInput", () => {
-    let elementObject = createLabelInput("testInput", "100px");
+    let elementObject = createLabelInput("testInput", 100);
     elementObject.setContent("test");
 
     let input = getChildElementsForTagName(elementObject.input, "input")[0] as HTMLInputElement;

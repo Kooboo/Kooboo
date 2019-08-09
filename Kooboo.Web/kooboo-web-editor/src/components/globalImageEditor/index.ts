@@ -4,7 +4,7 @@ import { createTabs } from "../common/tabs";
 import { createContentImagePanel } from "./contentImagePanel";
 import { createStyleImagePanel } from "./styleImagePanel";
 import { createDomImagePanel } from "./domImagePanel";
-import { parentBody } from "@/kooboo/outsideInterfaces";
+import context from "@/common/context";
 
 export function createGlobalImageEditor() {
   const options = [
@@ -23,7 +23,7 @@ export function createGlobalImageEditor() {
     }
   ];
   let tabs = createTabs(options);
-  const { modal, hideCancel } = createModal(TEXT.EDIT_IMAGES, tabs, "600px");
+  const { modal, hideCancel } = createModal(TEXT.EDIT_IMAGES, tabs, "600px", "500px");
   hideCancel();
-  parentBody.appendChild(modal);
+  context.container.appendChild(modal);
 }

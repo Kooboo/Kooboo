@@ -2,8 +2,8 @@ import { STANDARD_Z_INDEX } from "@/common/constants";
 import Color from "color-string";
 import { TEXT } from "@/common/lang";
 import { createDiv } from "@/dom/element";
-import "@/components/colorPicker/nano.min.css";
-import { Pickr } from "@/components/colorPicker/pickr";
+import Pickr from "@simonwep/pickr";
+import context from "@/common/context";
 
 export function createColorPicker(text: string, old: string, onsave: (color: string) => void) {
   old = Color.to.hex(Color.get(old)!.value);
@@ -40,6 +40,7 @@ export function createColorPicker(text: string, old: string, onsave: (color: str
       let app = e._root.app as HTMLElement;
       let button = e._root.button as HTMLElement;
       app.style.zIndex = STANDARD_Z_INDEX + 5 + "";
+      context.container.appendChild(app);
       button.style.border = "1px solid #ccc";
     });
     pickr.on("save", (e: any) => {

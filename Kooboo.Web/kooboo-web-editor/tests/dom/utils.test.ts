@@ -1,5 +1,4 @@
 import {
-  getEditorContainer,
   getAllElement,
   getAllNode,
   isBody,
@@ -17,6 +16,7 @@ import {
 } from "@/dom/utils";
 import { HOVER_BORDER_SKIP } from "@/common/constants";
 import { previousComment } from "@/kooboo/utils";
+import context from "@/common/context";
 
 describe("utils", () => {
   beforeEach(
@@ -29,7 +29,7 @@ describe("utils", () => {
     div.id = HOVER_BORDER_SKIP;
     div.setAttribute("editorContainer", "true");
     document.body.append(div);
-    let editorContainer = getEditorContainer();
+    let editorContainer = context.container;
     editorContainer.addEventListener("click", e => {
       expect(isInEditorContainer(e)).toEqual(true);
       //id 不等于 HOVER_BORDER_SKIP时返回false
@@ -43,7 +43,7 @@ describe("utils", () => {
     div.id = HOVER_BORDER_SKIP;
     div.setAttribute("editorContainer", "true");
     document.body.append(div);
-    let editorContainer = getEditorContainer();
+    let editorContainer = context.container;
     expect(editorContainer.getAttribute("editorContainer")).toEqual("true");
   });
 

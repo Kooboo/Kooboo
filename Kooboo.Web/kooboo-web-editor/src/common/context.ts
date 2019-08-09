@@ -5,6 +5,7 @@ import { EditableEvent } from "@/events/EditableEvent";
 import { TinymceInputEvent } from "@/events/TinymceEvent";
 import { OperationEvent } from "@/events/OperationEvent";
 import { CloseEditingEvent } from "@/events/CloseEditingEvent";
+import { createContainer } from "./utils";
 
 class Context {
   private _editing: boolean = false;
@@ -17,6 +18,7 @@ class Context {
   }
 
   operationManager: operationManager = new operationManager();
+  container: HTMLElement = createContainer();
   lastSelectedDomEventArgs!: SelectedDomEventArgs;
   lastHoverDomEventArgs!: HoverDomEventArgs;
   lastMouseEventArg!: MouseEvent;
