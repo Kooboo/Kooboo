@@ -189,27 +189,31 @@ $(function() {
           return domain.id == find.domainId;
         });
 
-        var rootDomain = domain.domainName,
-          subDomain = find.subDomain;
+        if (domain) {
+          var rootDomain = domain.domainName,
+            subDomain = find.subDomain;
 
-        Kooboo.Binding.verifySSL({
-          rootDomain: rootDomain,
-          subDomain: subDomain
-        }).then(function(res) {
-          if (res.success) {
-            Kooboo.Binding.setSSL({
-              rootDomain: rootDomain,
-              subDomain: subDomain
-            }).then(function(resp) {
-              if (resp.success) {
-                getList();
-                window.info.done(Kooboo.text.info.enable.success);
-              } else {
-                window.info.fail(Kooboo.text.info.enable.failed);
-              }
-            });
-          }
-        });
+          Kooboo.Binding.verifySSL({
+            rootDomain: rootDomain,
+            subDomain: subDomain
+          }).then(function(res) {
+            if (res.success) {
+              Kooboo.Binding.setSSL({
+                rootDomain: rootDomain,
+                subDomain: subDomain
+              }).then(function(resp) {
+                if (resp.success) {
+                  getList();
+                  window.info.done(Kooboo.text.info.enable.success);
+                } else {
+                  window.info.fail(Kooboo.text.info.enable.failed);
+                }
+              });
+            }
+          });
+        }else{
+          window.info.fail(Kooboo.text.info.domainMissing)
+        }
       }
     });
   }
