@@ -3,7 +3,7 @@ import { TEXT } from "@/common/lang";
 import { createTabs } from "../common/tabs";
 import { createDomLinkPanel } from "./domLinkPanel";
 import { createContentLinkPanel } from "./contentLinkPanel";
-import { parentBody } from "@/kooboo/outsideInterfaces";
+import context from "@/common/context";
 
 export function createGlobalLinkEditor() {
   const options = [
@@ -18,7 +18,7 @@ export function createGlobalLinkEditor() {
     }
   ];
   let tabs = createTabs(options);
-  const { modal, hideCancel } = createModal(TEXT.EDIT_LINKS, tabs, "500px");
+  const { modal, hideCancel } = createModal(TEXT.EDIT_LINKS, tabs, "500px", "500px");
   hideCancel();
-  parentBody.appendChild(modal);
+  context.container.appendChild(modal);
 }

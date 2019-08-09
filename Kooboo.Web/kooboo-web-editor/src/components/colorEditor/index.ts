@@ -1,7 +1,6 @@
 import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
 import { getMatchedColorGroups, CssColorGroup } from "@/dom/style";
-import { parentBody } from "@/kooboo/outsideInterfaces";
 import { createDiv, createCheckboxInput } from "@/dom/element";
 import { createColorPicker } from "../common/colorPicker";
 import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
@@ -42,7 +41,7 @@ export function createColorEditor(el: HTMLElement, comment: KoobooComment, koobo
     context.operationManager.add(operation);
     close();
   });
-  parentBody.appendChild(modal);
+  context.container.appendChild(modal);
 }
 
 function createItem(colorGroup: CssColorGroup, el: HTMLElement, comment: KoobooComment, koobooId: string) {

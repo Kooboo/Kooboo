@@ -3,7 +3,7 @@ import { createDiv } from "@/dom/element";
 export function createBody(height?: string) {
   let el = createDiv();
   el.classList.add("kb_web_editor_modal_body");
-  if (height != undefined) el.style.height = height;
+  if (height != undefined) el.style.maxHeight = height;
 
   type setContent = (content: string | HTMLElement) => void;
   let result: [HTMLElement, setContent] = [

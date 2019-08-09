@@ -19,7 +19,7 @@ export function createPrimaryButton(text: string) {
   return el;
 }
 
-export function createLabelInput(text: string, labelWidth?: string) {
+export function createLabelInput(text: string, labelWidth?: number) {
   let el = createDiv();
   el.classList.add("kb_web_editor_label_input");
   let label = createDiv();
@@ -27,8 +27,8 @@ export function createLabelInput(text: string, labelWidth?: string) {
   let inputContainer = createDiv();
   let input = createInput();
   inputContainer.appendChild(input);
-  if (labelWidth != undefined) label.style.width = labelWidth;
-  if (labelWidth != undefined) inputContainer.style.left = labelWidth;
+  if (labelWidth != undefined) label.style.width = labelWidth + "px";
+  if (labelWidth != undefined) inputContainer.style.left = labelWidth + 5 + "px";
   el.appendChild(label);
   el.appendChild(inputContainer);
   type inputHandler = (input: Event) => void;

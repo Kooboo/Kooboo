@@ -1,11 +1,12 @@
 import { createModal } from "@/components/modal";
 import { TEXT } from "@/common/lang";
 import { createIframe } from "@/dom/element";
+import context from "@/common/context";
 const Kooboo = (document as any).Kooboo;
 const mediaDialogData = (document as any).mediaDialogData;
 const gl = (document as any).__gl;
 
-export const parentBody = (document as any).parentBody as HTMLBodyElement;
+const parentBody = (document as any).parentBody as HTMLBodyElement;
 
 export function pickImg(callBack: (path: string) => void) {
   Kooboo.Media.getList().then(function(res: any) {
@@ -86,14 +87,14 @@ export function newGuid(): string {
   return Kooboo.Guid.NewGuid();
 }
 
-export function addParentStyle() {
-  let keywords = ["/*! Pickr 1.1.2 MIT | https://github.com/Simonwep/pickr */", "/* kb_web_editor */"];
+export function shareStyle() {
+  let keywords = ["/*! Pickr", "/* kb_web_editor */"];
   for (let i = 0; i < document.styleSheets.length; i++) {
     let style = document.styleSheets.item(i)!;
     if (!(style.ownerNode instanceof HTMLElement)) return;
     if (keywords.some(s => (style.ownerNode as HTMLElement).innerHTML.startsWith(s))) {
-      let styleNode = style.ownerNode.cloneNode(true);
-      parentBody.appendChild(styleNode);
+      parentBody.appendChild(style.ownerNode.cloneNode(true));
+      context.container.appendChild(style.ownerNode.cloneNode(true));
     }
   }
 }

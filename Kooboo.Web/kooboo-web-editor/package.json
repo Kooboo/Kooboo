@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@simonwep/pickr": "^1.2.7",
+    "@webcomponents/shadydom": "^1.6.0",
     "axios": "^0.19.0",
     "color-string": "^1.5.3",
     "query-string": "^6.7.0",

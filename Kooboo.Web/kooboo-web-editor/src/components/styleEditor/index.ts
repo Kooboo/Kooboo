@@ -3,10 +3,11 @@ import { TEXT } from "@/common/lang";
 import { getBackgroundImage, clearBackgroundImage } from "@/dom/utils";
 import { createSpliter } from "./spliter";
 import { createColorPicker } from "../common/colorPicker";
-import { pickImg, parentBody } from "@/kooboo/outsideInterfaces";
+import { pickImg } from "@/kooboo/outsideInterfaces";
 import { createDiv, createLabelInput } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
 import { Background } from "@/dom/Background";
+import context from "@/common/context";
 
 export function createStyleEditor(el: HTMLElement) {
   const container = createDiv();
@@ -17,7 +18,7 @@ export function createStyleEditor(el: HTMLElement) {
 
   const { modal, setOkHandler, setCancelHandler, close } = createModal(TEXT.EDIT_STYLE, container, "450px");
 
-  parentBody.appendChild(modal);
+  context.container.appendChild(modal);
 
   return new Promise<void>((rs, rj) => {
     setOkHandler(() => {
@@ -69,21 +70,21 @@ function addColor(container: HTMLElement, el: HTMLElement) {
 function addFont(container: HTMLElement, el: HTMLElement) {
   container.appendChild(createSpliter(TEXT.FONT));
   let style = getComputedStyle(el);
-  let size = createLabelInput(TEXT.FONT_SIZE, "90px");
+  let size = createLabelInput(TEXT.FONT_SIZE, 90);
   size.input.style.width = "50%";
   size.setContent(style.fontSize!);
   size.setInputHandler(content => {
     el.style.fontSize = (content.target! as HTMLInputElement).value;
   });
   container.appendChild(size.input);
-  let weight = createLabelInput(TEXT.FONT_WEIGHT, "90px");
+  let weight = createLabelInput(TEXT.FONT_WEIGHT, 90);
   weight.input.style.width = "50%";
   weight.setContent(style.fontWeight!);
   weight.setInputHandler(content => {
     el.style.fontWeight = (content.target! as HTMLInputElement).value;
   });
   container.appendChild(weight.input);
-  let family = createLabelInput(TEXT.FONT_FAMILY, "90px");
+  let family = createLabelInput(TEXT.FONT_FAMILY, 90);
   family.setContent(style.fontFamily!);
   family.setInputHandler(content => {
     el.style.fontFamily = (content.target! as HTMLInputElement).value;
@@ -95,7 +96,7 @@ function addSize(container: HTMLElement, el: HTMLElement) {
   container.appendChild(createSpliter(TEXT.SIZE));
   let style = getComputedStyle(el);
 
-  let width = createLabelInput(TEXT.WIDTH, "90px");
+  let width = createLabelInput(TEXT.WIDTH, 90);
   width.input.style.width = "50%";
   width.setContent(style.width!);
   width.setInputHandler(content => {
@@ -103,7 +104,7 @@ function addSize(container: HTMLElement, el: HTMLElement) {
   });
   container.appendChild(width.input);
 
-  let height = createLabelInput(TEXT.HEIGHT, "90px");
+  let height = createLabelInput(TEXT.HEIGHT, 90);
   height.input.style.width = "50%";
   height.setContent(style.height!);
   height.setInputHandler(content => {

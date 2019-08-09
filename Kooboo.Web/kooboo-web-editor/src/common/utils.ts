@@ -1,6 +1,8 @@
 import { getAllElement, isLink, isInEditorContainer } from "@/dom/utils";
 import context from "./context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
+import { HOVER_BORDER_SKIP } from "./constants";
+import "@webcomponents/shadydom";
 
 export function delay(time: number) {
   return new Promise(rs => {
@@ -34,4 +36,15 @@ export function holdUpClick(el: HTMLElement) {
     context.lastMouseEventArg = e;
     context.domChangeEvent.emit(args);
   };
+}
+
+export function createContainer() {
+  let el = document.createElement("div");
+  el.style.cssText = "all:unset !important";
+  document.documentElement.appendChild(el);
+  let shadow = el.attachShadow({ mode: "open" });
+  let root = document.createElement("div");
+  root.id = HOVER_BORDER_SKIP;
+  shadow.appendChild(root);
+  return root;
 }

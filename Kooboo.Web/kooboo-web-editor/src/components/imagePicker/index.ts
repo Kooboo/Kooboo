@@ -1,8 +1,9 @@
 import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
-import { pickImg, parentBody } from "@/kooboo/outsideInterfaces";
+import { pickImg } from "@/kooboo/outsideInterfaces";
 import { createDiv, createLabelInput } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
+import context from "@/common/context";
 
 export function createImagePicker(img: HTMLImageElement) {
   let container = createDiv();
@@ -23,7 +24,7 @@ export function createImagePicker(img: HTMLImageElement) {
   };
   container.appendChild(imagePreview);
 
-  let alt = createLabelInput(TEXT.ALT, "80px");
+  let alt = createLabelInput(TEXT.ALT);
   alt.setContent(img.alt);
   container.appendChild(alt.input);
   alt.setInputHandler(e => {
@@ -32,7 +33,7 @@ export function createImagePicker(img: HTMLImageElement) {
     }
   });
 
-  let title = createLabelInput(TEXT.TITLE, "80px");
+  let title = createLabelInput(TEXT.TITLE);
   title.setContent(img.title);
   container.appendChild(title.input);
   title.setInputHandler(e => {
@@ -41,7 +42,7 @@ export function createImagePicker(img: HTMLImageElement) {
     }
   });
 
-  let width = createLabelInput(TEXT.WIDTH, "80px");
+  let width = createLabelInput(TEXT.WIDTH);
   width.input.style.width = "50%";
   width.setInputHandler(e => {
     if (e.target instanceof HTMLInputElement) {
@@ -52,7 +53,7 @@ export function createImagePicker(img: HTMLImageElement) {
   width.setContent(style.width!);
   container.appendChild(width.input);
 
-  let height = createLabelInput(TEXT.HEIGHT, "80px");
+  let height = createLabelInput(TEXT.HEIGHT);
   height.input.style.width = "50%";
   height.setInputHandler(e => {
     if (e.target instanceof HTMLInputElement) {
@@ -64,7 +65,7 @@ export function createImagePicker(img: HTMLImageElement) {
   container.appendChild(height.input);
 
   const { modal, setOkHandler, setCancelHandler, close } = createModal(TEXT.EDIT_IMAGE, container, "450px");
-  parentBody.appendChild(modal);
+  context.container.appendChild(modal);
 
   return new Promise((rs, rj) => {
     setOkHandler(() => {

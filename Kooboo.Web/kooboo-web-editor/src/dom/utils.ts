@@ -28,10 +28,6 @@ export function isInEditorContainer(e: MouseEvent) {
   });
 }
 
-export function getEditorContainer() {
-  return document.getElementById(HOVER_BORDER_SKIP)!;
-}
-
 export function* getAllElement(parentEl: HTMLElement, containSelf = false) {
   if (containSelf) yield parentEl;
 
