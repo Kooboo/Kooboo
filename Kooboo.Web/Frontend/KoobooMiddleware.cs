@@ -138,7 +138,7 @@ namespace Kooboo.Web.FrontRequest
                 relativeUrl.StartsWith("/_admin/") ||
                 relativeUrl.StartsWith("/_spa/") ||
                  relativeUrl.StartsWith("/_thumbnail/") ||
-                 relativeUrl.StartsWith("/.well-known/acme-challenge/")
+                 relativeUrl.StartsWith("/.well-known/acme-challenge")
                 )
             {
                 return true;
