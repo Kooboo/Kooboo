@@ -226,7 +226,7 @@ namespace Kooboo.Lib.Helper
                     return ProcessApiResponse<T>(backstring);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                  
             }
