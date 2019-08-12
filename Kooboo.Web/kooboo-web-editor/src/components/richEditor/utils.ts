@@ -77,9 +77,10 @@ export function onRemove(e: any) {
       if (element.id.startsWith("mce_")) element.removeAttribute("id");
       if (element.getAttribute("style") == "") element.removeAttribute("style");
       for (const i of getAllElement(document.body)) {
-        if (i.classList.contains("mce-item-table")) {
-          i.classList.remove("mce-item-table");
-        }
+        if (i.classList.contains("mce-item-table")) i.classList.remove("mce-item-table");
+        if (i.hasAttribute("data-mce-style")) i.removeAttribute("data-mce-style");
+        if (i.hasAttribute("data-mce-selected")) i.removeAttribute("data-mce-selected");
+        if (i.hasAttribute("data-mce-href")) i.removeAttribute("data-mce-href");
       }
     });
   }

@@ -87,7 +87,7 @@ export function canJump(el: HTMLElement) {
   for (const prefix of prefixs) {
     if (href!.trim().startsWith(prefix)) return false;
   }
-  if (!href.startsWith("#") || href.startsWith("http")) return false;
+  if (href.startsWith("#") || href.startsWith("http")) return false;
   return true;
 }
 export function reload() {
