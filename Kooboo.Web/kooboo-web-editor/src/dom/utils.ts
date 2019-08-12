@@ -83,6 +83,9 @@ export function isForm(el: Element) {
 export function canJump(el: HTMLElement) {
   const prefixs = ["mailto:", "tel:", "sms:", "market", "geopoint:"];
   let href = el.getAttribute("href");
+  if(!href){
+    return false;
+  }
   let includePrefixs: boolean;
   prefixs.map(prefix => {
     if (href!.trim().startsWith(prefix)) includePrefixs = true;

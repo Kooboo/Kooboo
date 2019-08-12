@@ -41,6 +41,7 @@ export function holdUpClick(el: HTMLElement) {
 export function createContainer() {
   let el = document.createElement("div");
   el.style.cssText = "all:unset !important";
+  el.style.fontSize="16px";
   document.documentElement.appendChild(el);
   let shadow = el.attachShadow({ mode: "open" });
   let root = document.createElement("div");
