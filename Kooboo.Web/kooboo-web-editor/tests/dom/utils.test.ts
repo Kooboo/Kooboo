@@ -38,14 +38,6 @@ describe("utils", () => {
     });
     editorContainer.click();
   });
-  test("getEditorContainer", () => {
-    let div = document.createElement("div");
-    div.id = HOVER_BORDER_SKIP;
-    div.setAttribute("editorContainer", "true");
-    document.body.append(div);
-    let editorContainer = context.container;
-    expect(editorContainer.getAttribute("editorContainer")).toEqual("true");
-  });
 
   test("getAllElement", () => {
     var el = document.createElement("div");

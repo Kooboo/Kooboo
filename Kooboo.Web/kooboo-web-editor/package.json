@@ -32,6 +32,7 @@
     "eslint-loader": "^2.1.2",
     "eslint-plugin-prettier": "^3.1.0",
     "jest": "^24.8.0",
+    "jest-environment-jsdom-thirteen": "^1.0.1",
     "prettier": "^1.17.1",
     "style-loader": "^0.23.1",
     "ts-jest": "^24.0.2",
@@ -47,6 +48,7 @@
     "transformIgnorePatterns": [
       "/node_modules/"
     ],
+    "testEnvironment": "jest-environment-jsdom-thirteen",
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.ts",
       "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.ts",
