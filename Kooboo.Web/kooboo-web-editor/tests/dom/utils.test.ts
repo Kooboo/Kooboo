@@ -128,6 +128,12 @@ describe("utils", () => {
 
     expect(canJump(el)).toEqual(false);
   });
+  test("canJump_href_mail", () => {
+    var el = document.createElement("a");
+    el.setAttribute("href", "mailto:test@test.com");
+
+    expect(canJump(el)).toEqual(false);
+  });
 
   test("previousNodes", () => {
     let el = document.createElement("div");
