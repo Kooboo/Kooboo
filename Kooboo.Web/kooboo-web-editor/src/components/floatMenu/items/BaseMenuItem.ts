@@ -15,19 +15,24 @@ export default abstract class BaseMenuItem implements MenuItem {
   createItem(text: string) {
     let el = createDiv();
     el.classList.add("kb_web_editor_menu_item");
-    let isReadonly = false;
     el.append(text);
+    let warn: HTMLDivElement;
 
     const setVisiable = (visiable: boolean) => {
       el.style.display = visiable ? "block" : "none";
     };
 
-    const setReadonly = () => {
-      if (isReadonly) return;
-      isReadonly = true;
-      el.style.color = "#ccc";
-      el.style.pointerEvents = "none";
-      el.appendChild(this.createWarn());
+    const setReadonly = (readonly?: boolean) => {
+      if (!warn) warn = this.createWarn();
+      if (readonly) {
+        el.style.color = "#ccc";
+        el.style.pointerEvents = "none";
+        el.appendChild(warn);
+      } else {
+        el.style.removeProperty("color");
+        el.style.removeProperty("pointer-events");
+        if (el.contains(warn)) el.removeChild(warn);
+      }
     };
 
     return {

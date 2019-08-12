@@ -5,6 +5,7 @@ import { Menu } from "../menu";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { getViewComment } from "../utils";
 import { createColorEditor } from "@/components/colorEditor";
+import { isDirty } from "@/kooboo/utils";
 
 export default class EditColorItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -21,11 +22,12 @@ export default class EditColorItem extends BaseMenuItem {
 
   setVisiable: (visiable: boolean) => void;
 
-  setReadonly: () => void;
+  setReadonly: (readonly: boolean) => void;
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
+    this.setReadonly(isDirty(args.element));
     if (!getViewComment(comments)) return this.setVisiable(false);
     if (!args.koobooId) return this.setVisiable(false);
   }
