@@ -151,7 +151,7 @@ namespace Kooboo.Lib.Helper
                     return ProcessApiResponse<T>(Encoding.UTF8.GetString(responseData));
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 //TODO: log exception
             }

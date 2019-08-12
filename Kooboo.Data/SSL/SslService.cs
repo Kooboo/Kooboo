@@ -89,8 +89,7 @@ namespace Kooboo.Data.SSL
             MiddleWareList.Insert(pos, new SslCertMiddleWare());
         }
 
-
-
+         
         public static void EnsureServerHostDomain()
         {
             if (!Data.AppSettings.IsOnlineServer)
@@ -107,9 +106,7 @@ namespace Kooboo.Data.SSL
                     SslService.SetSsl(domain, default(Guid));
                 }
             }
-        }
-
-
+        }  
     }
 
 }

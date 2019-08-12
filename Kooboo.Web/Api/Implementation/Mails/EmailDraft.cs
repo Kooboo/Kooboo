@@ -39,9 +39,9 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public List<TargetAddress> TargetAddresses(ApiCall apiCall)
         {
-            // TODO: Return all potential suggestion address.. 
-            //  var uc = apiCall.UserContext(); 
-            //  return uc.MailDb.TargetAddresses.All().ToList(); 
+            //TODO: Return all potential suggestion address.. 
+            //var uc = apiCall.UserContext(); 
+            //return uc.MailDb.TargetAddresses.All().ToList(); 
             return new List<TargetAddress>();
         }
 

@@ -20,8 +20,6 @@ namespace Kooboo.Data.Server
             DefaultCert = cert;
         }
              
-        public static X509Certificate2 DefaultCert { get; set; }
-                              
- 
+        public static X509Certificate2 DefaultCert { get; set; } 
     }
 }
