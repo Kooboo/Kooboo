@@ -22,6 +22,7 @@ export function createColorPicker(text: string, old: string, onsave: (color: str
       el: picker,
       theme: "nano",
       default: old,
+      autoReposition: false,
       components: {
         preview: true,
         opacity: true,

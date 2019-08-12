@@ -83,18 +83,12 @@ export function isForm(el: Element) {
 export function canJump(el: HTMLElement) {
   const prefixs = ["mailto:", "tel:", "sms:", "market", "geopoint:"];
   let href = el.getAttribute("href");
-  if (!href) {
-    return false;
+  if (!href) return false;
+  for (const prefix of prefixs) {
+    if (href!.trim().startsWith(prefix)) return false;
   }
-  let includePrefixs: boolean;
-  prefixs.map(prefix => {
-    if (href!.trim().startsWith(prefix)) includePrefixs = true;
-  });
-  let isExtralLick: boolean;
-  if (el.tagName.toLowerCase() == "a" && href && !href.startsWith("#") && !href.startsWith("http")) isExtralLick = true;
-  if (includePrefixs!) return false;
-  if (isExtralLick!) return true;
-  return false;
+  if (!href.startsWith("#") || href.startsWith("http")) return false;
+  return true;
 }
 export function reload() {
   parent.location.reload();
