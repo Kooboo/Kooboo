@@ -3,13 +3,13 @@ import { ActionType } from "../ActionType";
 import { Log } from "./Log";
 
 export class ColorEditLog extends Log {
-  constructor(){
-      super();
+  constructor() {
+    super();
 
-      this.action = ActionType.update;
+    this.action = ActionType.update;
   }
   readonly editorType: string = EDITOR_TYPE.style;
-  
+
   objectType!: string;
   property!: string;
   value!: string;
