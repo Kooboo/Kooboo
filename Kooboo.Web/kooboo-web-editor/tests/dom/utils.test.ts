@@ -38,14 +38,6 @@ describe("utils", () => {
     });
     editorContainer.click();
   });
-  test("getEditorContainer", () => {
-    let div = document.createElement("div");
-    div.id = HOVER_BORDER_SKIP;
-    div.setAttribute("editorContainer", "true");
-    document.body.append(div);
-    let editorContainer = context.container;
-    expect(editorContainer.getAttribute("editorContainer")).toEqual("true");
-  });
 
   test("getAllElement", () => {
     var el = document.createElement("div");
@@ -133,6 +125,12 @@ describe("utils", () => {
   test("canJump_href#", () => {
     var el = document.createElement("a");
     el.setAttribute("href", "#abc");
+
+    expect(canJump(el)).toEqual(false);
+  });
+  test("canJump_href_mail", () => {
+    var el = document.createElement("a");
+    el.setAttribute("href", "mailto:test@test.com");
 
     expect(canJump(el)).toEqual(false);
   });
