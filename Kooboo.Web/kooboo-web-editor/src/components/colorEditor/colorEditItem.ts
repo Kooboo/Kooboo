@@ -33,7 +33,7 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
   let updateColor = inlineCssColor || firstCssColor;
   colorTextSpan.innerText = firstCssColor.prop.getColor(firstCssColor.value);
   let picker = createColorPicker(colorGroup.prop + colorGroup.pseudo, firstCssColor.prop.getColor(firstCssColor.value), s => {
-    colorTextSpan.innerText = toInt(s);
+    colorTextSpan.innerText = s;
     if (isGlobalUpdate) {
       if (!classCssColor) return;
 
@@ -133,8 +133,4 @@ function updateInlineCss(inlineCssColor: CssColor, color: string, el: HTMLElemen
   el.style.setProperty(inlineCssColor.prop.prop, value, important);
 
   return value;
-}
-
-function toInt(color: string) {
-  return color.replace(/\..*?,/g, ",");
 }

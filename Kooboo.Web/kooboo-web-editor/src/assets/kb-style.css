@@ -24,10 +24,6 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.kb_web_editor_input:focus {
-  outline: #207ab7 1px solid;
-}
-
 .kb_web_editor_label_input {
   display: inline-block;
   width: 100%;
@@ -233,7 +229,7 @@
 }
 
 .kb_web_editor_modal_body {
-  padding: 0 16px;
+  padding: 3px 16px;
   max-height: 80%;
   overflow: auto;
 }

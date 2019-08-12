@@ -79,6 +79,78 @@ export const colorProps: ColorProp[] = [
     getColor: o => o
   },
   {
+    prop: "border-left",
+    isChild: false,
+    parent: "border-left",
+    replaceColor: (o, n) => {
+      let obj = new Border(o);
+      obj.color = n;
+      return obj.toString();
+    },
+    getColor: o => new Border(o).color!
+  },
+  {
+    prop: "boder-left-color",
+    isChild: true,
+    parent: "border-left",
+    replaceColor: (o, n) => n,
+    getColor: o => o
+  },
+  {
+    prop: "border-top",
+    isChild: false,
+    parent: "border-top",
+    replaceColor: (o, n) => {
+      let obj = new Border(o);
+      obj.color = n;
+      return obj.toString();
+    },
+    getColor: o => new Border(o).color!
+  },
+  {
+    prop: "boder-top-color",
+    isChild: true,
+    parent: "border-top",
+    replaceColor: (o, n) => n,
+    getColor: o => o
+  },
+  {
+    prop: "border-right",
+    isChild: false,
+    parent: "border-right",
+    replaceColor: (o, n) => {
+      let obj = new Border(o);
+      obj.color = n;
+      return obj.toString();
+    },
+    getColor: o => new Border(o).color!
+  },
+  {
+    prop: "boder-right-color",
+    isChild: true,
+    parent: "border-right",
+    replaceColor: (o, n) => n,
+    getColor: o => o
+  },
+  {
+    prop: "border-bottom",
+    isChild: false,
+    parent: "border-bottom",
+    replaceColor: (o, n) => {
+      let obj = new Border(o);
+      obj.color = n;
+      return obj.toString();
+    },
+    getColor: o => new Border(o).color!
+  },
+  {
+    prop: "boder-bottom-color",
+    isChild: true,
+    parent: "border-bottom",
+    replaceColor: (o, n) => n,
+    getColor: o => o
+  },
+  {
     prop: "outline",
     isChild: false,
     parent: "outline",
