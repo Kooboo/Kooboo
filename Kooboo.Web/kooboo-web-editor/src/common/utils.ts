@@ -46,6 +46,10 @@ export function createContainer() {
   let shadow = el.attachShadow({ mode: "open" });
   let root = document.createElement("div");
   root.id = HOVER_BORDER_SKIP;
+  root.style.wordBreak = "break-all";
+  root.style.fontFamily = `"Times New Roman",Times,serif`;
+  root.style.fontStyle = "normal";
+  root.style.fontVariant = "normal";
   shadow.appendChild(root);
   return root;
 }
