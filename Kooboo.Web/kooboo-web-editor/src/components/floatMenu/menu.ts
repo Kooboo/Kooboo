@@ -16,7 +16,6 @@ import EditRepeatImageItem from "./items/editRepeatImage";
 import EditRepeatLinkItem from "./items/editRepeatLink";
 import { getMaxHeight, getMaxWidth, getParentElements, getScrollLeft, getScrollTop } from "@/dom/utils";
 import ClickItem from "./items/click";
-import DeleteHtmlBlockItem from "./items/deleteHtmlBlock";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import context from "@/common/context";
 // import { createConvert } from "./items/convert";
@@ -50,7 +49,6 @@ export function createMenu() {
   menu.addItem(new EditRepeatImageItem(menu));
   menu.addItem(new EditRepeatLinkItem(menu));
   menu.addItem(new ClickItem(menu));
-  menu.addItem(new DeleteHtmlBlockItem(menu));
   menu.addItem(new InlineEditHtmlBlockItem(menu));
   menu.addItem(new EditColorItem(menu));
 
