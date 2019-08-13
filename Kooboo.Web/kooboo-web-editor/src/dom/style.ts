@@ -139,7 +139,7 @@ function getCssColors(style: CSSStyleDeclaration) {
   let colors = [];
   for (const i of colorProps) {
     let value = style.getPropertyValue(i.prop);
-    if (!value) continue;
+    if (!value || style.cssText.indexOf(i.prop) == -1) continue;
     let color = i.getColor(value);
     if (!isColor(color)) continue;
     colors.push({

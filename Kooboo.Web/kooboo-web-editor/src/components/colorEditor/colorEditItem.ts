@@ -42,7 +42,7 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
         value,
         classCssColor.prop.prop,
         classCssColor.rawSelector,
-        classCssColor.koobooId,
+        classCssColor.url ? "" : classCssColor.koobooId,
         classCssColor.url!,
         !!classCssColor.newImportant
       );
@@ -72,7 +72,7 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
         value,
         classCssColor.prop.prop,
         classCssColor.rawSelector,
-        classCssColor.koobooId,
+        classCssColor.url ? "" : classCssColor.koobooId,
         classCssColor.url!,
         !!classCssColor.newImportant
       );

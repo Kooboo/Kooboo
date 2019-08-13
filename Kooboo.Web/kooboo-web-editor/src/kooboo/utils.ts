@@ -4,7 +4,10 @@ import { KOOBOO_ID, KOOBOO_DIRTY, KOOBOO_GUID, OBJECT_TYPE } from "../common/con
 import { newGuid } from "./outsideInterfaces";
 
 export function clearKoobooInfo(domString: string) {
-  const exp = RegExp(`(${KOOBOO_ID}=".*?")|(${KOOBOO_DIRTY}(="")?)|(${KOOBOO_GUID}=".*?")|(<!--#?kooboo.*?-->)|(<!--empty-->)`, "g");
+  const exp = RegExp(
+    `(data-mce-selected=".*?")|(data-mce-href=".*?")|(data-mce-style=".*?")|(${KOOBOO_ID}=".*?")|(${KOOBOO_DIRTY}(="")?)|(${KOOBOO_GUID}=".*?")|(<!--#?kooboo.*?-->)|(<!--empty-->)`,
+    "g"
+  );
   return domString.replace(exp, "");
 }
 
@@ -28,38 +31,6 @@ export function getCloseElement(el: HTMLElement) {
 
   return closeElement;
 }
-
-// export function getMaxKoobooId(el: HTMLElement) {
-//   let id = el.getAttribute(KOOBOO_ID)!;
-//   var koobooId = new KoobooId(id);
-//   let nextTemp = el;
-
-//   while (true) {
-//     if (!nextTemp.nextElementSibling || !nextTemp.nextElementSibling.hasAttribute(KOOBOO_ID)) {
-//       break;
-//     }
-
-//     let nextId = nextTemp.nextElementSibling.getAttribute(KOOBOO_ID);
-//     let nextKoobooId = new KoobooId(nextId!);
-//     if (nextKoobooId.value > koobooId.value) koobooId = nextKoobooId;
-//     nextTemp = nextTemp.nextElementSibling as HTMLElement;
-//   }
-
-//   let previousTemp = el;
-
-//   while (true) {
-//     if (!previousTemp.previousElementSibling || !previousTemp.previousElementSibling.hasAttribute(KOOBOO_ID)) {
-//       break;
-//     }
-
-//     let previousId = previousTemp.previousElementSibling.getAttribute(KOOBOO_ID);
-//     let previousKoobooId = new KoobooId(previousId!);
-//     if (previousKoobooId.value > koobooId.value) koobooId = previousKoobooId;
-//     previousTemp = previousTemp.previousElementSibling as HTMLElement;
-//   }
-
-//   return koobooId.next;
-// }
 
 export function markDirty(el: HTMLElement, self: boolean = false) {
   for (const i of getAllElement(el, self)) {
