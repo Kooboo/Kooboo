@@ -11,7 +11,7 @@ export class StyleLog extends Log {
   selector!: string;
   important!: boolean;
   styleSheetUrl!: string;
-  styleTagKoobooId!: string;
+  styleTagKoobooId!: string | null;
   KoobooId!: string;
   readonly editorType: string = EDITOR_TYPE.style;
 
@@ -30,7 +30,7 @@ export class StyleLog extends Log {
     value: string,
     property: string,
     selector: string,
-    styleTagKoobooId: string,
+    styleTagKoobooId: string | null,
     url: string,
     important: boolean,
     nameOrId: string,

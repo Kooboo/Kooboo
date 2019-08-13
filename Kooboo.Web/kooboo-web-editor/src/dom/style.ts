@@ -29,8 +29,7 @@ export function* getCssRules() {
     if (!comment) continue;
     let koobooId = style.ownerNode.getAttribute(KOOBOO_ID);
     let href = style.ownerNode.getAttribute("href");
-    if (!koobooId) continue;
-    if (href && href.startsWith("http")) continue;
+    if ((!koobooId && !href) || (href && href.startsWith("http"))) continue;
     for (const rule of getRules(style)) {
       if (!rule || !(rule instanceof CSSStyleRule)) continue;
       yield {
@@ -58,7 +57,7 @@ export interface CssColor {
   nameorid: string | undefined;
   objecttype: string | undefined;
   url: string | null;
-  koobooId: string;
+  koobooId: string | null;
   pseudo: string | null;
   cssStyleRule: CSSStyleRule | null;
 }
