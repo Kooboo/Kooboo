@@ -84,10 +84,12 @@ export function canJump(el: HTMLElement) {
   const prefixs = ["mailto:", "tel:", "sms:", "market", "geopoint:"];
   let href = el.getAttribute("href");
   if (!href) return false;
+  href = href.trim().toLowerCase();
   for (const prefix of prefixs) {
     if (href!.trim().startsWith(prefix)) return false;
   }
-  if (href.startsWith("#") || href.startsWith("http")) return false;
+  if (href.startsWith("#")) return false;
+  if (href.startsWith("http") && !href.startsWith(window.location.origin.toLowerCase())) return false;
   return true;
 }
 export function reload() {
