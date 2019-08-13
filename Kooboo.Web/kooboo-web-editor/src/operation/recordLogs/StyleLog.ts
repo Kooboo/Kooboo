@@ -26,7 +26,16 @@ export class StyleLog extends Log {
     return log;
   }
 
-  static createCssUpdate(value: string, property: string, selector: string, styleTagKoobooId: string, url: string, important: boolean) {
+  static createCssUpdate(
+    value: string,
+    property: string,
+    selector: string,
+    styleTagKoobooId: string,
+    url: string,
+    important: boolean,
+    nameOrId: string,
+    objectType: string
+  ) {
     let log = new StyleLog();
     log.action = ActionType.update;
     log.value = value;
@@ -35,6 +44,8 @@ export class StyleLog extends Log {
     log.styleSheetUrl = url;
     log.selector = selector;
     log.important = important;
+    log.nameOrId = nameOrId;
+    log.objectType = objectType;
     return log;
   }
 }

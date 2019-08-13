@@ -2,6 +2,8 @@ import { KOOBOO_ID } from "@/common/constants";
 import { colorProps, ColorProp } from "./colorProps";
 import { sortStylePriority } from "./stylePriority";
 import { colorEnum } from "./colorEnum";
+import { KoobooComment } from "@/kooboo/KoobooComment";
+import { getViewComment } from "@/components/floatMenu/utils";
 
 const pseudoes = ["visited", "hover", "active", "focus"];
 // var cantMatchedPseudoes = [":+\\s*visited$", ":+\\s*hover$", ":+\\s*active$", ":+\\s*focus$"];
@@ -22,6 +24,9 @@ export function* getCssRules() {
   let styleSequence = 0;
   for (const style of getStyles()) {
     if (!style || !(style instanceof CSSStyleSheet) || !(style.ownerNode instanceof HTMLElement)) continue;
+    let comments = KoobooComment.getComments(style.ownerNode);
+    let comment = getViewComment(comments);
+    if (!comment) continue;
     let koobooId = style.ownerNode.getAttribute(KOOBOO_ID);
     let href = style.ownerNode.getAttribute("href");
     if (!koobooId) continue;
@@ -32,7 +37,9 @@ export function* getCssRules() {
         styleSequence: ++styleSequence,
         koobooId,
         url: href,
-        rule
+        rule,
+        nameorid: comment.nameorid,
+        objecttype: comment.objecttype
       };
     }
   }
@@ -48,6 +55,8 @@ export interface CssColor {
   inline: boolean;
   rawSelector: string;
   targetSelector: string;
+  nameorid: string | undefined;
+  objecttype: string | undefined;
   url: string | null;
   koobooId: string;
   pseudo: string | null;
@@ -103,6 +112,8 @@ function addInlineMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
       koobooId: "",
       rawSelector: "",
       targetSelector: "",
+      nameorid: undefined,
+      objecttype: undefined,
       url: "",
       value: i.value,
       pseudo: "",
@@ -129,7 +140,9 @@ function addStyleMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
         url: i.url,
         value: color.value,
         pseudo: matched.pseudo,
-        cssStyleRule: i.rule
+        cssStyleRule: i.rule,
+        nameorid: i.nameorid,
+        objecttype: i.objecttype
       });
     }
   }
@@ -207,7 +220,9 @@ function addDefaultColor(groups: CssColorGroup[], prop: string, value: string) {
           styleSequence: 0,
           targetSelector: "",
           url: "",
-          value: value
+          value: value,
+          nameorid: undefined,
+          objecttype: undefined
         }
       ]
     });

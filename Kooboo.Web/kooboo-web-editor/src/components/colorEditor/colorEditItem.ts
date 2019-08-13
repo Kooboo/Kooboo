@@ -44,7 +44,9 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
         classCssColor.rawSelector,
         classCssColor.url ? "" : classCssColor.koobooId,
         classCssColor.url!,
-        !!classCssColor.newImportant
+        !!classCssColor.newImportant,
+        classCssColor.nameorid!,
+        classCssColor.objecttype!
       );
     } else {
       let value = updateInlineCss(updateColor, s, el);
@@ -74,7 +76,9 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
         classCssColor.rawSelector,
         classCssColor.url ? "" : classCssColor.koobooId,
         classCssColor.url!,
-        !!classCssColor.newImportant
+        !!classCssColor.newImportant,
+        classCssColor.nameorid!,
+        classCssColor.objecttype!
       );
       isGlobalUpdate = true;
     } else {
