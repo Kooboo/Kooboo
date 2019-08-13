@@ -24,7 +24,7 @@ export class Background {
   toString() {
     let result = "";
     if (this.color && this.color != "initial") result += `${this.color} `;
-    if (this.image && this.image != "initial") result += `${this.image} `;
+    if (this.image && this.image != "initial") result += `${this.image.replace(/"/g, "'")} `;
     if (this.position && this.position != "initial") result += `${this.position} `;
     if (this.size && this.size != "initial") result += `${this.size} `;
     if (this.repeat && this.repeat != "initial") result += `${this.repeat} `;
