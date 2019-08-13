@@ -36,7 +36,6 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
     colorTextSpan.innerText = s;
     if (isGlobalUpdate) {
       if (!classCssColor) return;
-
       let value = updateClassCss(classCssColor, s);
       classCssLog = StyleLog.createCssUpdate(
         value,

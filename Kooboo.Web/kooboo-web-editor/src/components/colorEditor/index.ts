@@ -36,8 +36,10 @@ export function createColorEditor(el: HTMLElement, comment: KoobooComment, koobo
     for (const i of logGetters) {
       logs.push(...i());
     }
-    let operation = new operationRecord(getUnits(), logs, guid);
-    context.operationManager.add(operation);
+    if (logs.length != 0) {
+      let operation = new operationRecord(getUnits(), logs, guid);
+      context.operationManager.add(operation);
+    }
     close();
   });
   context.container.appendChild(modal);
