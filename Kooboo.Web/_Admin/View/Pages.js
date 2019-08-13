@@ -397,6 +397,12 @@ $(function() {
                                 url: page.inlineUrl,
                                 newWindow: true,
                                 class: "btn-primary"
+                            },
+                            design2: {
+                                text: Kooboo.text.site.page.design+"(new)",
+                                url: page.inlineUrl+"&new=true",
+                                newWindow: true,
+                                class: "btn-primary hidden-xs"
                             }
                         })
 
