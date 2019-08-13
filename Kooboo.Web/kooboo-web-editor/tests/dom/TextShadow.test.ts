@@ -14,6 +14,24 @@ describe("TextShadow class test", () => {
     expect(styleObject.vShadow).toEqual("2px");
     expect(styleObject.blur).toEqual("3px");
     expect(styleObject.color).toEqual("#fff");
+
+    styleObject = new TextShadow("#fff 1px 2px 3px");
+    expect(styleObject.hShadow).toEqual("1px");
+    expect(styleObject.vShadow).toEqual("2px");
+    expect(styleObject.blur).toEqual("3px");
+    expect(styleObject.color).toEqual("#fff");
+
+    styleObject = new TextShadow("gray 1px 2px 3px");
+    expect(styleObject.hShadow).toEqual("1px");
+    expect(styleObject.vShadow).toEqual("2px");
+    expect(styleObject.blur).toEqual("3px");
+    expect(styleObject.color).toEqual("gray");
+
+    styleObject = new TextShadow("rgba(250, 250, 0, 1.0) 1px 2px 3px");
+    expect(styleObject.hShadow).toEqual("1px");
+    expect(styleObject.vShadow).toEqual("2px");
+    expect(styleObject.blur).toEqual("3px");
+    expect(styleObject.color).toEqual("rgba(250,250,0,1.0)");
   });
 
   test("TextShadow toString", () => {
