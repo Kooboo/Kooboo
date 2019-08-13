@@ -3,6 +3,7 @@ import { BoxShadow } from "./BoxShadow";
 import { Border } from "./Border";
 import { Outline } from "./Outline";
 import { TextShadow } from "./TextShadow";
+import { ColumnRule } from "./ColumnRule";
 
 export interface ColorProp {
   prop: string;
@@ -72,7 +73,7 @@ export const colorProps: ColorProp[] = [
     getColor: o => new Border(o).color!
   },
   {
-    prop: "boder-color",
+    prop: "border-color",
     isChild: true,
     parent: "border",
     replaceColor: (o, n) => n,
@@ -90,7 +91,7 @@ export const colorProps: ColorProp[] = [
     getColor: o => new Border(o).color!
   },
   {
-    prop: "boder-left-color",
+    prop: "border-left-color",
     isChild: true,
     parent: "border-left",
     replaceColor: (o, n) => n,
@@ -108,7 +109,7 @@ export const colorProps: ColorProp[] = [
     getColor: o => new Border(o).color!
   },
   {
-    prop: "boder-top-color",
+    prop: "border-top-color",
     isChild: true,
     parent: "border-top",
     replaceColor: (o, n) => n,
@@ -126,7 +127,7 @@ export const colorProps: ColorProp[] = [
     getColor: o => new Border(o).color!
   },
   {
-    prop: "boder-right-color",
+    prop: "border-right-color",
     isChild: true,
     parent: "border-right",
     replaceColor: (o, n) => n,
@@ -144,7 +145,7 @@ export const colorProps: ColorProp[] = [
     getColor: o => new Border(o).color!
   },
   {
-    prop: "boder-bottom-color",
+    prop: "border-bottom-color",
     isChild: true,
     parent: "border-bottom",
     replaceColor: (o, n) => n,
@@ -167,5 +168,16 @@ export const colorProps: ColorProp[] = [
     parent: "outline",
     replaceColor: (o, n) => n,
     getColor: o => o
+  },
+  {
+    prop: "column-rule",
+    isChild: false,
+    parent: "column-rule",
+    replaceColor: (o, n) => {
+      let obj = new ColumnRule(o);
+      obj.color = n;
+      return obj.toString();
+    },
+    getColor: o => new ColumnRule(o).color
   }
 ];
