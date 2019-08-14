@@ -105,7 +105,7 @@ namespace Kooboo.Lib.Helper
             }
             return default(T);
         }
-      
+
         public static byte[] ConvertKooboo(string url, byte[] data, Dictionary<string, string> headers, string UserName = null, string Password = null)
         {
             try
@@ -267,6 +267,11 @@ namespace Kooboo.Lib.Helper
 
         public static bool PostData(string url, Dictionary<string, string> Headers, byte[] PostBytes, string UserName = null, string Password = null)
         {
+            return Post<bool>(url, Headers, PostBytes, UserName, Password);
+        }
+         
+        public static T Post<T>(string url, Dictionary<string, string> Headers, byte[] postBytes, string UserName = null, string Password = null)
+        {
             if (!string.IsNullOrEmpty(UserName))
             {
                 if (Headers == null)
@@ -288,22 +293,18 @@ namespace Kooboo.Lib.Helper
                     }
                 }
 
-                bool success = false;
                 try
                 {
-                    var responseData = client.UploadData(url, "POST", PostBytes);
+                    var responseData = client.UploadData(url, "POST", postBytes);
 
-                    var ok = ProcessApiResponse<bool>(Encoding.UTF8.GetString(responseData));
-
-                    success = ok;
+                    return ProcessApiResponse<T>(Encoding.UTF8.GetString(responseData));
                 }
                 catch (Exception ex)
                 {
-                    success = false;
+                    
                 }
-                return success;
+                return default(T);
             }
         }
-         
     } 
 }
