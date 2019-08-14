@@ -225,9 +225,8 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     Orgid = call.Context.User.CurrentOrgId;
                 }
-            }
-             
-             Kooboo.Data.SSL.SslService.SetSsl(rootDomain, Orgid); 
+            } 
+            Kooboo.Data.SSL.SslService.SetSsl(rootDomain, Orgid); 
         }
 
 
