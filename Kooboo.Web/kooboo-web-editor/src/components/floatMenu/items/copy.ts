@@ -4,12 +4,11 @@ import { TEXT } from "@/common/lang";
 import { getEditComment, getRepeatComment, getViewComment } from "../utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
-import { CopyUnit } from "@/operation/recordUnits/CopyUnit";
-import { newGuid } from "@/kooboo/outsideInterfaces";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
+import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 
 export default class CopyItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -44,16 +43,16 @@ export default class CopyItem extends BaseMenuItem {
     let comments = KoobooComment.getComments(args.element);
     let { koobooId, parent } = getCleanParent(args.element);
     let cloneElement = args.element.cloneNode(true) as HTMLElement;
-    let guid = setGuid(cloneElement, newGuid());
+    let guid = setGuid(parent!);
+    let oldValue = parent!.innerHTML;
     args.element.parentElement!.insertBefore(cloneElement, args.element.nextSibling);
-
     markDirty(parent!);
     let value = clearKoobooInfo(parent!.innerHTML);
-    let units = [new CopyUnit(getGuidComment(guid))];
+    let unit = new InnerHtmlUnit(oldValue);
     let comment = getEditComment(comments)!;
     let log = DomLog.createUpdate(comment.nameorid!, value, koobooId!, comment.objecttype!);
 
-    let operation = new operationRecord(units, [log], guid);
+    let operation = new operationRecord([unit], [log], guid);
     context.operationManager.add(operation);
   }
 }

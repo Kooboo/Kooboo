@@ -37,8 +37,9 @@ export default class EditItem extends BaseMenuItem {
     if (!getEditComment(comments)) return this.setVisiable(false);
     if (!args.koobooId) return this.setVisiable(false);
     var reExcept = /^(img|button|input|textarea|hr|area|canvas|meter|progress|select|tr|td|tbody|thead|tfoot|th|table)$/i;
-    let el = args.element;
-    if (reExcept.test(el.tagName)) return this.setVisiable(false);
+    if (reExcept.test(args.element.tagName)) return this.setVisiable(false);
+    let { parent } = getCleanParent(args.element);
+    if (isDirty(args.element) && parent && isDynamicContent(parent)) return this.setVisiable(false);
     if (isDynamicContent(args.element)) return this.setVisiable(false);
   }
 

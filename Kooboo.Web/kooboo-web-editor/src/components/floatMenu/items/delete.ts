@@ -1,25 +1,15 @@
 import { TEXT } from "@/common/lang";
 import context from "@/common/context";
-import {
-  setGuid,
-  clearKoobooInfo,
-  isDynamicContent,
-  getGuidComment,
-  getCleanParent,
-  isDirty,
-  markDirty,
-  getRelatedRepeatComment
-} from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, isDynamicContent, getCleanParent, isDirty, markDirty, getRelatedRepeatComment } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { operationRecord } from "@/operation/Record";
-import { DeleteUnit } from "@/operation/recordUnits/DeleteUnit";
 import { Log } from "@/operation/recordLogs/Log";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { getViewComment, getRepeatComment } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
-import { createDiv } from "@/dom/element";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
+import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 
 export default class DeleteItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -55,22 +45,18 @@ export default class DeleteItem extends BaseMenuItem {
     let { koobooId, parent } = getCleanParent(args.element);
     let comments = KoobooComment.getComments(args.element);
     let comment = getViewComment(comments)!;
-    let guid = setGuid(args.element);
-    let guidComment = getGuidComment(guid);
-    let startContent = args.element.outerHTML;
-    let parentElement = args.element.parentElement;
-    let temp = createDiv();
-    args.element.parentNode!.replaceChild(temp, args.element);
-    temp.outerHTML = guidComment;
+    parent = parent || args.element.parentElement!;
+    let oldValue = parent.innerHTML;
+    let guid = setGuid(parent);
+    args.element.parentElement!.removeChild(args.element);
     let log!: Log;
+    markDirty(parent);
     if (isDirty(args.element) && parent) {
-      markDirty(parent);
       log = DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(parent.innerHTML), koobooId!, comment.objecttype!);
     } else {
-      if (parentElement) markDirty(parentElement);
       log = DomLog.createDelete(comment.nameorid!, args.koobooId!, comment.objecttype!);
     }
-    let operation = new operationRecord([new DeleteUnit(startContent)], [log], guid);
+    let operation = new operationRecord([new InnerHtmlUnit(oldValue)], [log], guid);
     context.operationManager.add(operation);
   }
 }
