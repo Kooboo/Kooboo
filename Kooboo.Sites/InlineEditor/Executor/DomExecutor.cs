@@ -112,7 +112,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                 {
                     var currentel = Kooboo.Sites.Service.DomService.GetElementByKoobooId(CurrentPage.Dom, update.KoobooId) as Element;
 
-                    if (currentel != null)
+                    if (currentel != null && item.Dom != null)
                     {
                         var sameel = Helper.ElementHelper.FindSameElement(currentel, item.Dom);
                         if (sameel != null)
