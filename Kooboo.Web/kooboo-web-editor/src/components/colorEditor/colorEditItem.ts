@@ -64,9 +64,7 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
     if (checked) {
       let value = el.style.getPropertyValue(updateColor.prop.prop);
       value = updateColor.prop.getColor(value);
-
-      updateClassCss(classCssColor, value);
-
+      value = updateClassCss(classCssColor, value);
       el.style.removeProperty(updateColor.prop.prop);
       inlineCssLog = StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, "", updateColor.prop.prop, koobooId);
       classCssLog = StyleLog.createCssUpdate(
