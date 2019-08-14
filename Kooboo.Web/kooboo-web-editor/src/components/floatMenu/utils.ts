@@ -47,7 +47,7 @@ function getObjectType(comments: KoobooComment[], type: string) {
 }
 
 export function hasOperation(operationManager: operationManager) {
-  return operationManager.previousRecords.length > 0 || operationManager.nextRecords.length > 0;
+  return operationManager.previousRecords.length > 0;
 }
 
 export const getMenuComment = (comments: KoobooComment[]) => getObjectType(comments, OBJECT_TYPE.menu);

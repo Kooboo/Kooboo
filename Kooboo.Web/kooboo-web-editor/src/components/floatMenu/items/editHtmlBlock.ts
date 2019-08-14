@@ -21,14 +21,11 @@ export default class EditHtmlBlockItem extends BaseMenuItem {
 
   setVisiable: (visiable: boolean) => void;
 
-  setReadonly: () => void;
+  setReadonly: (readonly: boolean) => void;
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
     if (!getHtmlBlockComment(comments)) return this.setVisiable(false);
-    if (hasOperation(context.operationManager)) {
-      this.setReadonly();
-    }
   }
 
   async click() {

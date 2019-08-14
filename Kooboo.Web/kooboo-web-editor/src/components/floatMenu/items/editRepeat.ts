@@ -23,13 +23,13 @@ export default class EditRepeatItem extends BaseMenuItem {
 
   setVisiable: (visiable: boolean) => void;
 
-  setReadonly: () => void;
+  setReadonly: (readonly: boolean) => void;
 
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     if (!getRepeatComment(comments) && !getRelatedRepeatComment(args.element)) return this.setVisiable(false);
-    if (hasOperation(context.operationManager)) return this.setReadonly();
+    if (hasOperation(context.operationManager)) return this.setReadonly(true);
   }
 
   async click() {
