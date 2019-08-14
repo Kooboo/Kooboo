@@ -105,7 +105,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             // optional type.  
             string baseurl = call.Context.WebSite.BaseUrl();
-
+            baseurl = Kooboo.Data.Service.WebSiteService.EnsureHttpsBaseUrlOnServer(baseurl, call.Context.WebSite);  
             Guid PageId = call.ObjectId;
             var sitedb = call.WebSite.SiteDb();
 
