@@ -2,7 +2,10 @@ import { getAllElement, isLink, isInEditorContainer } from "@/dom/utils";
 import context from "./context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import { HOVER_BORDER_SKIP } from "./constants";
-import "@webcomponents/shadydom";
+
+try {
+  require("@webcomponents/shadydom");
+} catch (error) {}
 
 export function delay(time: number) {
   return new Promise(rs => {
