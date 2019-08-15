@@ -87,6 +87,20 @@ export function getMatchedColorGroups(el: HTMLElement) {
     i.cssColors = sortStylePriority(i.cssColors).reverse();
   }
 
+  // 如果优先级最高的cssColor没有明确指定颜色则移除
+  for(const item of [...groups]){
+    let color = item.cssColors[0].prop.getColor(item.cssColors[0].value);
+    if(isColor(color)){
+      continue;
+    }
+
+    let index = groups.findIndex(i=>i==item);
+    if(index < 0){
+      continue;
+    }
+    groups = groups.filter((gi, gindex) => gindex != index);
+  }
+
   let style = getComputedStyle(el);
   addDefaultColor(groups, "color", style.color!);
   addDefaultColor(groups, "background-color", style.backgroundColor!);
@@ -152,8 +166,8 @@ function getCssColors(style: CSSStyleDeclaration) {
   for (const i of colorProps) {
     let value = style.getPropertyValue(i.prop);
     if (!value || style.cssText.indexOf(i.prop) == -1) continue;
-    let color = i.getColor(value);
-    if (!isColor(color)) continue;
+    // let color = i.getColor(value);
+    // if (!isColor(color)) continue;
     colors.push({
       prop: i,
       value,
