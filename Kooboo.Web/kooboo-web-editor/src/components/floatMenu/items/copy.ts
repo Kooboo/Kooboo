@@ -31,7 +31,7 @@ export default class CopyItem extends BaseMenuItem {
     if (getRelatedRepeatComment(args.element)) return this.setVisiable(false);
     if (!getViewComment(comments)) return this.setVisiable(false);
     let { koobooId, parent } = getCleanParent(args.element);
-    if (!parent && !koobooId) return this.setVisiable(false);
+    if (!parent || !koobooId) return this.setVisiable(false);
     if (isBody(args.element)) return this.setVisiable(false);
     if (parent && isDynamicContent(parent)) return this.setVisiable(false);
   }

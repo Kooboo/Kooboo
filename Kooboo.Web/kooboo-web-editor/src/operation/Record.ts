@@ -26,7 +26,7 @@ export class operationRecord {
   }
 
   private getOperationNode(guid: string) {
-    for (const node of getAllNode(document.body)) {
+    for (const node of getAllNode(document.body, true)) {
       if (node instanceof HTMLElement) {
         let attr = node.getAttribute(KOOBOO_GUID);
         if (attr && attr == guid) return node;

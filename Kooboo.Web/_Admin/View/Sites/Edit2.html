@@ -90,7 +90,7 @@
       iframe.contentDocument.mediaDialogData = mediaDialogData;
       iframe.contentDocument.parentBody = document.body;
       iframe.contentDocument.__gl = __gl = {};
-      iframe.contentDocument.body.appendChild(script);
+      iframe.contentDocument.documentElement.appendChild(script);
       $(".page-loading").hide();
       ko.applyBindings({ mediaDialogData }, document.getElementById("main"));
     };

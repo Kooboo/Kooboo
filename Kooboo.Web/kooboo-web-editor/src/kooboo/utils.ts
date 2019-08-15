@@ -145,7 +145,7 @@ export function getCleanParent(el: HTMLElement) {
         parent: el,
         koobooId: koobooId
       };
-    } else if (!el.parentElement || isBody(el.parentElement) || (comment && !isSingleCommentWrap(comment))) {
+    } else if (!el.parentElement || el.parentElement instanceof HTMLHtmlElement || (comment && !isSingleCommentWrap(comment))) {
       return { parent: null, koobooId: null };
     } else {
       el = el.parentElement;
