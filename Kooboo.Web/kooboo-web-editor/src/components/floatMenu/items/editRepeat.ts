@@ -29,7 +29,7 @@ export default class EditRepeatItem extends BaseMenuItem {
     this.setVisiable(true);
     let args = context.lastSelectedDomEventArgs;
     if (!getRepeatComment(comments) && !getRelatedRepeatComment(args.element)) return this.setVisiable(false);
-    if (hasOperation(context.operationManager)) return this.setReadonly(true);
+    this.setReadonly(hasOperation(context.operationManager));
   }
 
   async click() {
