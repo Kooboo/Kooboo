@@ -16,7 +16,13 @@ function* getStyles() {
 
 function* getRules(style: CSSStyleSheet) {
   for (let i = 0; i < style.rules.length; i++) {
-    yield style.rules.item(i);
+    let rule = style.rules.item(i);
+    if (rule instanceof CSSStyleRule) yield rule;
+    if (rule instanceof CSSMediaRule) {
+      for (let j = 0; j < rule.cssRules.length; j++) {
+        yield rule.cssRules.item(j);
+      }
+    }
   }
 }
 
