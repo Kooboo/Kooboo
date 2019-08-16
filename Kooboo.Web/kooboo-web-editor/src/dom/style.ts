@@ -90,7 +90,7 @@ export function getMatchedColorGroups(el: HTMLElement) {
   // 如果优先级最高的cssColor没有明确指定颜色则移除
   for (const item of [...groups]) {
     let color = item.cssColors[0].prop.getColor(item.cssColors[0].value);
-    if (isColor(color)) {
+    if (isOneColor(color)) {
       continue;
     }
 
@@ -175,10 +175,10 @@ function getCssColors(style: CSSStyleDeclaration) {
   return colors;
 }
 
-// 是否是个颜色
-function isColor(color: string) {
+// 是否是单个颜色（有的时候color是 #fff #fff 多个颜色组成）
+function isOneColor(color: string) {
   color = color.trim().toLowerCase();
-  if (/^(#|rgb).*$/g.test(color)) return true;
+  if (/^(#|rgb)((?!(#|rgb)).)*$/g.test(color)) return true;
   for (const key in colorEnum) {
     if (key == color) return true;
   }
