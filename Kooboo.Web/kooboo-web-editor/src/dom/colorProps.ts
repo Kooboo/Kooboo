@@ -1,5 +1,6 @@
 import { BoxShadow } from "./BoxShadow";
 import { TextShadow } from "./TextShadow";
+import { Border } from "./Border";
 
 export interface ColorProp {
   prop: string;
@@ -45,6 +46,17 @@ export const colorProps: ColorProp[] = [
       return obj.toString();
     },
     getColor: o => new TextShadow(o).color
+  },
+  {
+    prop: "border",
+    isChild: false,
+    parent: "border",
+    replaceColor: (o, n) => {
+      let obj = new Border(o);
+      obj.color = n;
+      return obj.toString();
+    },
+    getColor: o => new Border(o).color!
   },
   {
     prop: "border-left-color",

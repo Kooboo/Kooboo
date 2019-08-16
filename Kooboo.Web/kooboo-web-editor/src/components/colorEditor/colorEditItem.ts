@@ -105,7 +105,12 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
   const getLogs = () => {
     let logs: Log[] = [];
     if (inlineCssLog) logs.push(inlineCssLog);
-    if (classCssLog) logs.push(classCssLog);
+    if (classCssLog) {
+      let del = JSON.parse(JSON.stringify(classCssLog));
+      del.value = "";
+      logs.push(del);
+      logs.push(classCssLog);
+    }
     return logs;
   };
 
