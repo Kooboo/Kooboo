@@ -48,15 +48,11 @@ export const colorProps: ColorProp[] = [
     getColor: o => new TextShadow(o).color
   },
   {
-    prop: "border",
-    isChild: false,
+    prop: "border-color",
+    isChild: true,
     parent: "border",
-    replaceColor: (o, n) => {
-      let obj = new Border(o);
-      obj.color = n;
-      return obj.toString();
-    },
-    getColor: o => new Border(o).color!
+    replaceColor: (o, n) => n,
+    getColor: o => o
   },
   {
     prop: "border-left-color",
