@@ -23,6 +23,7 @@ function* getRules(style: CSSStyleSheet) {
 export function* getCssRules() {
   let styleSequence = 0;
   for (const style of getStyles()) {
+    debugger;
     if (!style || !(style instanceof CSSStyleSheet) || !(style.ownerNode instanceof HTMLElement)) continue;
     let comments = KoobooComment.getComments(style.ownerNode);
     let comment = getViewComment(comments);
@@ -88,14 +89,14 @@ export function getMatchedColorGroups(el: HTMLElement) {
   }
 
   // 如果优先级最高的cssColor没有明确指定颜色则移除
-  for(const item of [...groups]){
+  for (const item of [...groups]) {
     let color = item.cssColors[0].prop.getColor(item.cssColors[0].value);
-    if(isOneColor(color)){
+    if (isOneColor(color)) {
       continue;
     }
 
-    let index = groups.findIndex(i=>i==item);
-    if(index < 0){
+    let index = groups.findIndex(i => i == item);
+    if (index < 0) {
       continue;
     }
     groups = groups.filter((gi, gindex) => gindex != index);
@@ -165,9 +166,7 @@ function getCssColors(style: CSSStyleDeclaration) {
   let colors = [];
   for (const i of colorProps) {
     let value = style.getPropertyValue(i.prop);
-    if (!value || style.cssText.indexOf(i.prop) == -1) continue;
-    // let color = i.getColor(value);
-    // if (!isColor(color)) continue;
+    if (!value) continue;
     colors.push({
       prop: i,
       value,
@@ -180,7 +179,7 @@ function getCssColors(style: CSSStyleDeclaration) {
 // 是否是单个颜色（有的时候color是 #fff #fff 多个颜色组成）
 function isOneColor(color: string) {
   color = color.trim().toLowerCase();
-  if(/^(#|rgb)((?!(#|rgb)).)*$/g.test(color)) return true;
+  if (/^(#|rgb)((?!(#|rgb)).)*$/g.test(color)) return true;
   for (const key in colorEnum) {
     if (key == color) return true;
   }

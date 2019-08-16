@@ -6,7 +6,7 @@ export class TextShadow {
     value = value.replace(";", "");
 
     value = value.replace(/\s+/g, " ");
-    value = value.replace(/,\s+/g, ",");     // rgb(0, 0, 0) 移除其中的空格
+    value = value.replace(/,\s+/g, ","); // rgb(0, 0, 0) 移除其中的空格
     let values = value.trim().split(" ");
     if (values.length < 3 || values.length > 4) {
       return;
@@ -14,13 +14,12 @@ export class TextShadow {
 
     // 判断是否以颜色开头
     let colorpos, hShadowpos, vShadowpos, blurpos;
-    if(/^([a-zA-Z#]|rgb)/.test(values[0])){
+    if (/^([a-zA-Z#]|rgb)/.test(values[0])) {
       colorpos = 0;
       hShadowpos = 1;
       vShadowpos = 2;
       blurpos = 3;
-    }
-    else{
+    } else {
       colorpos = values.length - 1;
       hShadowpos = 0;
       vShadowpos = 1;
