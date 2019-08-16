@@ -93,7 +93,8 @@ export function canJump(el: HTMLElement) {
   return true;
 }
 export function reload() {
-  parent.location.reload();
+  window.top.location.reload();
+  // parent.location.reload();
 }
 
 export function* previousNodes(node: Node, containSelf = false, includeParent = false) {
