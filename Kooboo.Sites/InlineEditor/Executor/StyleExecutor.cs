@@ -9,6 +9,7 @@ using Kooboo.Sites.Models;
 using Kooboo.Extensions;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.InlineEditor.Model;
+using Kooboo.Mail.Imap.Commands;
 
 namespace Kooboo.Sites.InlineEditor.Executor
 {
@@ -463,6 +464,11 @@ namespace Kooboo.Sites.InlineEditor.Executor
                     if (!string.IsNullOrEmpty(item.Value))
                     {
                         current.Declarations.setProperty(item.Property, item.Value, item.Important);
+                        var prop= current.Declarations.item.FirstOrDefault(f => f.propertyname == item.Property);
+                        if (prop != null) {
+                            current.Declarations.item.Remove(prop);
+                            current.Declarations.item.Add(prop);
+                        }
                     }
                     else
                     {
