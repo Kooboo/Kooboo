@@ -26,16 +26,7 @@ namespace Kooboo.Data.SSL
             string vefiryurl = tokenurl + "/_api/validator/SelfCheck";
             return Lib.Helper.HttpHelper.TryGet<bool>(vefiryurl, para);
         }
-
-        public static bool EnsureCanGenerate(string domain)
-        {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("domain", domain);
-            string vefiryurl = tokenurl + "/_api/validator/EnsureCheck";
-            return Lib.Helper.HttpHelper.TryGet<bool>(vefiryurl, para);
-        }
-
-
+          
         public static string GetToken(string domain)
         {
             Dictionary<string, string> para = new Dictionary<string, string>();

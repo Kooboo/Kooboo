@@ -165,6 +165,19 @@ namespace Kooboo.Api
                 }
             }
 
+
+           if (apiobject is ISecureApi)
+            {
+                var secureobj = apiobject as ISecureApi; 
+                if (secureobj !=null)
+                {
+                    if (!secureobj.AccessCheck(command, context))
+                    {
+                        return false; 
+                    }
+                }
+            }
+
             return true;
         }
                              
@@ -224,7 +237,6 @@ namespace Kooboo.Api
                         }
                     }
                 }
-
             }
             return IsSuccess;
         }
