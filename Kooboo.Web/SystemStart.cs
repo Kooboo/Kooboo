@@ -37,8 +37,7 @@ namespace Kooboo.Web
             //}
 
             Sites.DataSources.DataSourceHelper.InitIDataSource();
-
-
+             
             Kooboo.Data.Events.EventBus.Raise(new Data.Events.Global.ApplicationStartUp());
 
             Data.GlobalDb.Bindings.EnsureLocalBinding();
@@ -128,15 +127,13 @@ namespace Kooboo.Web
             // close all database. 
             foreach (var item in Kooboo.Data.GlobalDb.WebSites.AllSites)
             {
-                item.Value.Published = false; // set to false in the memory only..
+                item.Value.Published = false; //set to false in the memory only..
             }
 
             foreach (var item in Kooboo.Data.GlobalDb.WebSites.AllSites)
             {
                 item.Value.SiteDb().DatabaseDb.Close(); 
-            }
-
-
+            } 
         }
 
         private static RenderOption KoobooBackEndViewOption()

@@ -207,8 +207,12 @@ namespace Kooboo.Data.Context
         public static WebSite GetWebSite(RenderContext context)
         {
             var siteid = _GetSiteIdByUrl(context.Request);
+              
+            if (siteid == default(Guid))
+            {
+                siteid = Kooboo.Data.Service.WebSiteService.GetTempUrlSiteId(context.Request.Host); 
+            }
              
-
             if (siteid == default(Guid))
             {   
                 siteid = _GetSiteIdBySiteIdQuery(context.Request);

@@ -144,10 +144,10 @@ namespace Kooboo.Web.Api.Implementation
             foreach (var item in list)
             {
                 BindingViewModel model = new BindingViewModel(item);
-                model.EnableSsl = HasSsl(model.FullName); 
+                model.EnableSsl = HasSsl(model.FullName);
                 result.Add(model);
             }
-             
+
             return result;
         }
 
@@ -197,8 +197,10 @@ namespace Kooboo.Web.Api.Implementation
             {
                 fullname = Subdomain + "." + rootDomain;
             }
-             
-            return Kooboo.Data.SSL.SslService.EnsureCanGenerate(fullname); 
+
+            return true;
+
+            //  return Kooboo.Data.SSL.SslService.EnsureCanGenerate(fullname); 
         }
 
         public void SetSsl(string rootDomain, string Subdomain, ApiCall call)
@@ -225,8 +227,8 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     Orgid = call.Context.User.CurrentOrgId;
                 }
-            } 
-            Kooboo.Data.SSL.SslService.SetSsl(rootDomain, Orgid); 
+            }
+            Kooboo.Data.SSL.SslService.SetSsl(rootDomain, Orgid);
         }
 
 
