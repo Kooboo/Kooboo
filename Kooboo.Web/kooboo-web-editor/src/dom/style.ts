@@ -6,7 +6,6 @@ import { KoobooComment } from "@/kooboo/KoobooComment";
 import { getViewComment } from "@/components/floatMenu/utils";
 
 const pseudoes = ["visited", "hover", "active", "focus"];
-// var cantMatchedPseudoes = [":+\\s*visited$", ":+\\s*hover$", ":+\\s*active$", ":+\\s*focus$"];
 
 function* getStyles() {
   for (let i = 0; i < document.styleSheets.length; i++) {
@@ -18,7 +17,7 @@ function* getRules(style: CSSStyleSheet) {
   for (let i = 0; i < style.rules.length; i++) {
     let rule = style.rules.item(i);
     if (rule instanceof CSSStyleRule) yield rule;
-    if (rule instanceof CSSMediaRule) {
+    if (rule instanceof CSSMediaRule && matchMedia(rule.conditionText).matches) {
       for (let j = 0; j < rule.cssRules.length; j++) {
         yield rule.cssRules.item(j);
       }
@@ -146,7 +145,7 @@ function addStyleMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
     let matched = matchSelector(el, i.rule.selectorText);
     if (!matched) continue;
     let colors = getCssColors(i.rule.style);
-    if (!colors) continue;
+    if (!colors || colors.length == 0) continue;
     for (const color of colors) {
       matchedColors.push({
         prop: color.prop,
