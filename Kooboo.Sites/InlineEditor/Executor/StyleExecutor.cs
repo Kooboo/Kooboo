@@ -162,15 +162,18 @@ namespace Kooboo.Sites.InlineEditor.Executor
                                 // 如果媒体查询不为空
                                 if (!string.IsNullOrWhiteSpace(ruleitem.MediaRuleList))
                                 {
-                                    var media = allrules.FirstOrDefault(o => CssSelectorComparer.IsEqual(o.SelectorText, ruleitem.MediaRuleList));
+                                    foreach (var foundruleItem in foundrules.ToList()) {
+                                        // 如果没有父id（不在媒体查询中）
+                                        if (foundruleItem.ParentCssRuleId == default(Guid)) {
+                                            foundrules.Remove(foundruleItem);
+                                        }
 
-                                    if (media != null)
-                                    {
-                                        foundrules = foundrules.Where(e => e.ParentCssRuleId == media.Id).ToList();
-                                    }
-                                    else
-                                    {
-                                        foundrules = new List<CmsCssRule>();
+                                        var media = allrules.FirstOrDefault(o => o.Id == foundruleItem.ParentCssRuleId);
+
+                                        if (media == null || !CssSelectorComparer.IsEqual(media.SelectorText, ruleitem.MediaRuleList))
+                                        {
+                                            foundrules.Remove(foundruleItem);
+                                        }
                                     }
                                 }
                                 else {
