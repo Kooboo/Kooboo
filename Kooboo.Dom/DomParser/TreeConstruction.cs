@@ -993,7 +993,7 @@ namespace Kooboo.Dom
 
 
             //If node is a td or th element and last is false, then switch the insertion mode to "in cell" and abort these steps.
-            if (node.tagName.isOneOf("td", "th") && last)
+            if (node.tagName.isOneOf("td", "th") && !last)
             {
                 insertionMode = enumInsertionMode.inCell;
                 return;

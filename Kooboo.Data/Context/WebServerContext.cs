@@ -8,14 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Kooboo.Data.Helper;
-using Kooboo.Data.Models; 
+using Kooboo.Data.Models;
 using Kooboo.Lib.Helper;
 using Microsoft.AspNetCore.Http;
 
 namespace Kooboo.Data.Context
-{ 
+{
     public static class WebServerContext
-    { 
+    {
         private static Func<string, string, User> _validate;
         public static Func<string, string, User> Validate
         {
@@ -53,14 +53,14 @@ namespace Kooboo.Data.Context
 
         public static Func<RenderContext, Guid> GetWebSiteFunc { get; set; }
 
-         
+
         public static User GetUser(HttpRequest request, RenderContext context = null)
-        { 
-            var user = _GetUserFromToken(request); 
+        {
+            var user = _GetUserFromToken(request);
             // the user first login with token, should try to find the last page of this user.  
-            if (user !=null)
-            {  
-                if (Kooboo.Data.Service.StartService.IsDefaultStartPage(request.RelativeUrl) &&  string.IsNullOrWhiteSpace(RequestManager.GetHttpValue(request, "returnurl")))
+            if (user != null)
+            {
+                if (Kooboo.Data.Service.StartService.IsDefaultStartPage(request.RelativeUrl) && string.IsNullOrWhiteSpace(RequestManager.GetHttpValue(request, "returnurl")))
                 {
                     var lasturl = Service.UserLoginService.GetLastPath(user.Id);
                     if (!string.IsNullOrEmpty(lasturl))
@@ -68,9 +68,9 @@ namespace Kooboo.Data.Context
                         context.Response.Redirect(302, lasturl);
                         context.Response.End = true;
                     }
-                } 
+                }
             }
-            else 
+            else
             {
                 user = _GetUserFromBasicAuthentication(request);
             }
@@ -89,11 +89,17 @@ namespace Kooboo.Data.Context
             if (user == null)
             {
                 user = _GetUserFromCookie(request);
-            } 
+            }
             //if (user != null && user.PasswordHash == default(Guid))
             //{
             //  return null;
             //} 
+
+            if (string.IsNullOrEmpty(Data.Service.UserLoginService.GetUserPassword(user)))
+            {
+                return null;
+            }
+
             return user;
         }
 
@@ -115,14 +121,14 @@ namespace Kooboo.Data.Context
                     Data.Cache.AccessTokenCache.SetToken(user.Id, token);
                 }
 
-                if (user !=null)
+                if (user != null)
                 {
                     if (!Kooboo.Data.Service.UserLoginService.IsAllow(user.Id))
                     {
-                        return null; 
+                        return null;
                     }
                 }
-        
+
                 return user;
             }
 
@@ -201,9 +207,14 @@ namespace Kooboo.Data.Context
         public static WebSite GetWebSite(RenderContext context)
         {
             var siteid = _GetSiteIdByUrl(context.Request);
-
+              
             if (siteid == default(Guid))
             {
+                siteid = Kooboo.Data.Service.WebSiteService.GetTempUrlSiteId(context.Request.Host); 
+            }
+             
+            if (siteid == default(Guid))
+            {   
                 siteid = _GetSiteIdBySiteIdQuery(context.Request);
             }
             else
@@ -214,10 +225,10 @@ namespace Kooboo.Data.Context
             if (siteid == default(Guid))
             {
                 siteid = _GetSiteIdByDefaultPort(context.Request);
-                if (siteid !=default(Guid))
+                if (siteid != default(Guid))
                 {
                     context.IsSiteBinding = true;
-                } 
+                }
             }
 
             if (siteid == default(Guid) && GetWebSiteFunc != null)
@@ -318,9 +329,12 @@ namespace Kooboo.Data.Context
                     return bindings.First().WebSiteId;
                 }
             }
+
+
+           
             return default(Guid);
         }
-         
+
 
         internal static DomainResult _fastFirstDomain(string host)
         {
@@ -459,9 +473,9 @@ namespace Kooboo.Data.Context
             }
             return default(Guid);
         }
-         
 
-   
+
+
 
     }
 

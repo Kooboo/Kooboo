@@ -109,27 +109,28 @@ namespace Kooboo.Sites.SiteTransfer
             if (!siteDb.WebSite.ContinueDownload)
             { return null;  }
 
-            var oktoDownload = await siteDb.TransferTasks.CanStartDownload(RelativeUrl); 
-
-            if (!oktoDownload)
-            {
-                return null; 
-            }
-
-            var history = siteDb.TransferTasks.History().ToList();  
+            var history = siteDb.TransferTasks.History().ToList();
             if (history.Count() == 0)
             {
                 return null;
-            } 
+            }
+
+
             /// track failed history...
             Guid downloadid = RelativeUrl.ToHashGuid();
+
             DownloadFailTrack failtrack = siteDb.DownloadFailedLog.Get(downloadid);
 
             if (failtrack != null)
             {
                 if (failtrack.HistoryTime.Where(o => o > DateTime.Now.AddMinutes(-30)).Any())
-                { 
+                {
                     return null;
+                }
+
+                if (failtrack.HistoryTime.Count()>3)
+                {
+                    return null; 
                 }
             }
             else
@@ -137,6 +138,14 @@ namespace Kooboo.Sites.SiteTransfer
                 failtrack = new DownloadFailTrack();
                 failtrack.Id = downloadid;
             }
+             
+            var oktoDownload = await siteDb.TransferTasks.CanStartDownload(RelativeUrl); 
+
+            if (!oktoDownload)
+            {
+                return null; 
+            }
+              
              
             string fullurl = string.Empty;
             DownloadContent download = null; 
@@ -181,10 +190,9 @@ namespace Kooboo.Sites.SiteTransfer
                     siteDb.TransferPages.AddOrUpdate(new TransferPage() { absoluteUrl = fullurl, PageId = downloadobject.Id }); 
                 }
 
-                /// for continue download content... 
-                Continue.ContinueTask.Convert(siteDb, downloadobject);
-
                 siteDb.TransferTasks.ReleaseDownload(RelativeUrl); 
+                ///for continue download content... 
+                Continue.ContinueTask.Convert(siteDb, downloadobject); 
                 return downloadobject;
             }
             else
@@ -195,37 +203,7 @@ namespace Kooboo.Sites.SiteTransfer
             //download failed. 
             failtrack.HistoryTime.Add(DateTime.Now);
             siteDb.DownloadFailedLog.AddOrUpdate(failtrack);
-
-            if (failtrack.HistoryTime.Count() > 5)
-            {
-                var filetype = Kooboo.Lib.Helper.UrlHelper.GetFileType(RelativeUrl);
-
-                byte consttype; 
-                switch (filetype)
-                {
-                    case UrlHelper.UrlFileType.Image:
-                        consttype = ConstObjectType.Image;
-                        break;
-                    case UrlHelper.UrlFileType.JavaScript:
-                        consttype = ConstObjectType.Script;
-                        break;
-                    case UrlHelper.UrlFileType.Style:
-                        consttype = ConstObjectType.Style;
-                        break;
-                    case UrlHelper.UrlFileType.File:
-                        consttype = ConstObjectType.CmsFile;
-                        break;
-                    case UrlHelper.UrlFileType.PageOrView:
-                        consttype = ConstObjectType.Page;
-                        break;
-                    default:
-                        consttype = 0;
-                        break;
-                }
-
-               // siteDb.Routes.EnsureExists(RelativeUrl, consttype, default(Guid));
-            }
-
+             
             return null;
         }
          

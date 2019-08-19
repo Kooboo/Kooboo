@@ -282,5 +282,29 @@ namespace Kooboo.Data.Service
             return false;
         }
 
+
+        public static string GetUserPassword(User user)
+        {
+            if (user == null)
+            {
+                return null; 
+            }
+            if (!string.IsNullOrWhiteSpace(user.Password))
+            {
+                var hash = Lib.Helper.IDHelper.ParseKey(user.Password); 
+                if (hash != default(Guid))
+                {
+                    return user.Password;  
+                }
+            }
+
+            if (user.PasswordHash != default(Guid))
+            {
+                return user.PasswordHash.ToString(); 
+            }
+            return null; 
+        }
+
+
     }
 }

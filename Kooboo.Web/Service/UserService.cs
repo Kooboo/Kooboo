@@ -137,5 +137,33 @@ namespace Kooboo.Web.Service
             return -1;
         }
 
+        public static Guid GuessOrgId(User user, string remotePublishurl)
+        {
+            remotePublishurl = remotePublishurl.ToLower();
+            if (remotePublishurl.StartsWith("https://"))
+            {
+                remotePublishurl = remotePublishurl.Substring("https://".Length);
+            }
+            else if (remotePublishurl.StartsWith("http://"))
+            {
+                remotePublishurl = remotePublishurl.Substring("http://".Length);
+            }
+
+            string[] parts = remotePublishurl.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+
+            if (parts.Length == 3 && parts[1].StartsWith("kooboo"))
+            {
+                var org = parts[0];
+                if (!string.IsNullOrEmpty(org))
+                {
+                    return Lib.Helper.IDHelper.ParseKey(org);
+                }
+            }
+
+            return user.CurrentOrgId;
+
+        }
+
+
     }
 }

@@ -38,45 +38,42 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public DomainInfo ServerInfo(ApiCall call)
+        public virtual DomainInfo ServerInfo(ApiCall call)
         {
-            DomainInfo info = new DomainInfo();
-            info.DnsServers = new List<string>();
+           DomainInfo info = new DomainInfo();
+           // info.DnsServers = new List<string>(); 
+           // if (!string.IsNullOrEmpty(AppSettings.ServerSetting.Ns1))
+           // {
+           //     info.DnsServers.Add(Kooboo.Data.AppSettings.ServerSetting.Ns1);
+           // }
+           // if (Kooboo.Data.AppSettings.ServerSetting.Ns2 != null)
+           // {
+           //     info.DnsServers.Add(Kooboo.Data.AppSettings.ServerSetting.Ns2);
+           // }
 
-            if (!string.IsNullOrEmpty(AppSettings.ServerSetting.Ns1))
-            {
-                info.DnsServers.Add(Kooboo.Data.AppSettings.ServerSetting.Ns1);
-            }
-            if (Kooboo.Data.AppSettings.ServerSetting.Ns2 != null)
-            {
-                info.DnsServers.Add(Kooboo.Data.AppSettings.ServerSetting.Ns2);
-            }
+           // if (info.DnsServers.Count < 2)
+           // {
+           //     info.DnsServers.Add("ns1.dnscall.org");
+           //     info.DnsServers.Add("ns2.dnscall.org");
+           // }
 
-            if (info.DnsServers.Count < 2)
-            {
-                info.DnsServers.Add("ns1.dnscall.org");
-                info.DnsServers.Add("ns2.dnscall.org");
-            }
+           // var orgname = Kooboo.Data.GlobalDb.Organization.GetName(call.Context.User.Id);
 
-            var orgname = Kooboo.Data.GlobalDb.Organization.GetName(call.Context.User.Id);
+           // string subname = null; 
+           // if (orgname !=null)
+           // {
+           //     subname = orgname; 
+           // }
+           // else
+           // {
+           //     subname = AppSettings.ServerSetting.ServerId.ToString(); 
+           // } 
+           // info.CName = subname + "." + AppSettings.ServerSetting.HostDomain; 
+           //if (Data.AppSettings.ServerSetting.Ips != null && Data.AppSettings.ServerSetting.Ips.Count > 0)
+           // {
+           //     info.IPAddress = AppSettings.ServerSetting.Ips.First();
+           // }
 
-            string subname = null; 
-            if (orgname !=null)
-            {
-                subname = orgname; 
-            }
-            else
-            {
-                subname = AppSettings.ServerSetting.ServerId.ToString(); 
-            }
-
-            info.CName = subname + "." + AppSettings.ServerSetting.HostDomain;
-             
-
-           if (Data.AppSettings.ServerSetting.Ips != null && Data.AppSettings.ServerSetting.Ips.Count > 0)
-            {
-                info.IPAddress = AppSettings.ServerSetting.Ips.First();
-            }
             return info;
         }
 

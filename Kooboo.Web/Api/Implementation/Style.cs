@@ -47,6 +47,7 @@ namespace Kooboo.Web.Api.Implementation
                    
         }
 
+        [Kooboo.Web.Menus.SiteObjectMenu]
         public List<IEmbeddableItemListViewModel> External(ApiCall apiCall)
         {
             var sitedb = apiCall.WebSite.SiteDb();

@@ -17,12 +17,19 @@ namespace Kooboo.Lib.Helper
         {
             //ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult;
             ////turn on tls12 and tls11,default is ssl3 and tls
-            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11; 
+            SetCustomSslChecker(); 
         }
 
+        public static bool HasSetCustomSSL { get; set; }
+
         public static void SetCustomSslChecker()
-        { 
-            ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult; 
+        {
+            if (!HasSetCustomSSL)
+            { 
+                ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult;
+                HasSetCustomSSL = true;
+            }
         }
          
         private static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
@@ -174,7 +181,30 @@ namespace Kooboo.Lib.Helper
                 return ProcessApiResponse<T>(backstring);
             }
         }
-         
+
+
+        public static string GetString(string url)
+        {
+            try
+            {
+                using (var client = new WebClient())
+                {
+                    client.Headers.Add("user-agent", DefaultUserAgent);
+
+                    client.Proxy = null;
+                    client.Encoding = Encoding.UTF8;
+
+                    return client.DownloadString(url);
+                }
+            }
+            catch (Exception)
+            { 
+            }
+
+            return null;  
+        }
+
+
         public static T TryGet<T>(string url, Dictionary<string, string> query = null)
         {
             if (query != null)

@@ -5,20 +5,27 @@
   <Example>
     <![CDATA[
  <script engine="kscript"> 
-    var msg = {}; 
-    msg.to="test@koobootemp.com"; 
-    msg.from= "yourname@yoursite.com"; 
-    msg.subject = "this is a test email"; 
-    msg.textBody = "this is the text body"; 
-    msg.htmlBody = "<b>you may have additional html body";  
-    k.mail.send(msg);  
+       var msg = {}; 
+      msg.to="guoqi@kooboo.net"; 
+      msg.from= "1802897953@qq.com"; 
+      msg.subject = "this is a test email xxxx";  
+      msg.body = "some html body";  
+     
+     var smtpserver = {}; 
+     smtpserver.host = "smtp.qq.com"; 
+     smtpserver.port = 587; 
+     smtpserver.ssl = true; 
+     smtpserver.username = "1802897953@qq.com"; 
+     smtpserver.password = "xjpctnbtvsxwbige"; 
+     
+     k.mail.smtpSend(smtpserver, msg);  
 </script>
 	]]></Example>
   <Props />
   <Methods>
     <Method>
       <Name>send</Name>
-      <Description>Send an email. You may need credit to send internet emails on online version</Description>
+      <Description>Send an email from current host. You may need credit to send internet emails on online version</Description>
       <Example> 
         <![CDATA[
  <script engine="kscript"> 

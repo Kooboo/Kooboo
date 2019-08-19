@@ -83,6 +83,15 @@ namespace Kooboo.IndexedDB
             int counter = BitConverter.ToInt32(counterbytes, 0); 
             return GetPartial(position, 10, counter); 
         }
+
+
+        public int GetLength(long position)
+        {
+            byte[] counterbytes = GetPartial(position, 2, 4);
+            int counter = BitConverter.ToInt32(counterbytes, 0);
+            return counter; 
+        }
+
         public byte[] Get(long position, int ColumnLen)
         { 
             return GetPartial(position, 10, ColumnLen);  

@@ -110,7 +110,7 @@ namespace Kooboo.Web.Api.Implementation
                         throw new Exception(Data.Language.Hardcoded.GetValue("port in use", call.Context) + ": " + port.ToString());
                     }
                 }
-                  
+
 
                 if (DefaultBinding && port > 0)
                 {
@@ -128,26 +128,32 @@ namespace Kooboo.Web.Api.Implementation
 
                     GlobalDb.Bindings.AddOrUpdate(RootDomain, subdomain, SiteId, call.Context.User.CurrentOrgId, DefaultBinding, port);
 
-                } 
+                }
 
             }
         }
 
-        [Kooboo.Attributes.RequireParameters("siteid")]
-        public List<Binding> ListBySite(ApiCall call)
+
+        public List<BindingViewModel> ListBySite(Guid SiteId, ApiCall call)
         {
-            Guid siteid = call.GetGuidValue("SiteId");
-            if (siteid != default(Guid))
+            List<BindingViewModel> result = new List<BindingViewModel>();
+
+
+            var list = GlobalDb.Bindings.GetByWebSite(SiteId);
+
+            foreach (var item in list)
             {
-                return GlobalDb.Bindings.GetByWebSite(siteid);
+                BindingViewModel model = new BindingViewModel(item);
+                model.EnableSsl = HasSsl(model.FullName);
+                result.Add(model);
             }
-            return null;
+
+            return result;
         }
 
         [Kooboo.Attributes.RequireParameters("domainid")]
         public List<BindingInfo> ListByDomain(ApiCall call)
         {
-
             Guid domainid = call.GetGuidValue("domainid");
             if (domainid != default(Guid))
             {
@@ -179,6 +185,53 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
+
+        public bool VerifySsl(string rootDomain, string Subdomain, ApiCall call)
+        {
+            string fullname = null;
+            if (rootDomain.StartsWith("."))
+            {
+                fullname = Subdomain + rootDomain;
+            }
+            else
+            {
+                fullname = Subdomain + "." + rootDomain;
+            }
+
+            return true;
+
+            //  return Kooboo.Data.SSL.SslService.EnsureCanGenerate(fullname); 
+        }
+
+        public void SetSsl(string rootDomain, string Subdomain, ApiCall call)
+        {
+            string fullname = null;
+            if (rootDomain.StartsWith("."))
+            {
+                fullname = Subdomain + rootDomain;
+            }
+            else
+            {
+                fullname = Subdomain + "." + rootDomain;
+            }
+
+            Guid Orgid = default(Guid);
+
+            if (call.Context.WebSite != null)
+            {
+                Orgid = call.Context.WebSite.OrganizationId;
+            }
+            else
+            {
+                if (call.Context.User != null)
+                {
+                    Orgid = call.Context.User.CurrentOrgId;
+                }
+            }
+            Kooboo.Data.SSL.SslService.SetSsl(rootDomain, Orgid);
+        }
+
+
         public List<SiteBindingViewModel> SiteBinding(ApiCall call)
         {
             var user = call.Context.User;
@@ -208,5 +261,62 @@ namespace Kooboo.Web.Api.Implementation
 
         }
 
+
+        private bool HasSsl(string fullDomain)
+        {
+            var item = Kooboo.Data.GlobalDb.SslCertificate.GetByDomain(fullDomain);
+            return (item != null);
+        }
+
+
+        public class BindingViewModel
+        {
+            public BindingViewModel(Binding binding)
+            {
+                this.Id = binding.Id;
+                this.OrganizationId = binding.OrganizationId;
+                this.WebSiteId = binding.WebSiteId;
+                this.SubDomain = binding.SubDomain;
+                this.IpAddress = binding.IpAddress;
+                this.DefaultPortBinding = binding.DefaultPortBinding;
+                this.Device = binding.Device;
+                this.DomainId = binding.DomainId;
+                this.FullName = binding.FullName;
+            }
+
+            public bool EnableSsl { get; set; }
+
+            public Guid Id
+            {
+                get; set;
+            }
+
+            public Guid OrganizationId { get; set; }
+
+
+            public Guid WebSiteId;
+
+            public string SubDomain { get; set; }
+
+            public Guid DomainId { get; set; }
+
+            public string FullName
+            {
+                get; set;
+            }
+
+            public string Device { get; set; }
+
+
+            public string IpAddress
+            {
+                get; set;
+            }
+
+            // for default port binding..
+            public int Port { get; set; } = 0;
+
+            public bool DefaultPortBinding { get; set; }
+        }
     }
 }

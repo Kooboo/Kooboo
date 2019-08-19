@@ -14,7 +14,7 @@ namespace Kooboo.Sites.Scripting
         {
             option.MaxStatements(5000);
             option.Strict(false);
-            option.TimeoutInterval(new TimeSpan(0, 0, 30));
+            option.TimeoutInterval(new TimeSpan(0, 0, 5*60));
             option.LimitRecursion(100); 
         }
 

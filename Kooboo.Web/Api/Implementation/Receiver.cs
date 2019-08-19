@@ -43,6 +43,12 @@ namespace Kooboo.Web.Api.Implementation
 
             Guid Hash = call.GetGuidValue("hash");
 
+            Guid userid = default(Guid); 
+            if (call.Context.User !=null)
+            {
+                userid = call.Context.User.Id; 
+            }
+
             if (Hash != default(Guid))
             {
                 var hashback = Kooboo.Lib.Security.Hash.ComputeGuid(call.Context.Request.PostData);
@@ -61,8 +67,8 @@ namespace Kooboo.Web.Api.Implementation
                 var converter = new IndexedDB.Serializer.Simple.SimpleConverter<SyncObject>();
 
                 SyncObject sync = converter.FromBytes(call.Context.Request.PostData);
-
-                SyncService.Receive(sitedb, sync);
+             
+                SyncService.Receive(sitedb, sync, null, userid);
             }
             else
             {

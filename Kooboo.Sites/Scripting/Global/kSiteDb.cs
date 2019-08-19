@@ -38,6 +38,9 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
 
+
+
+
         SiteItem.TextRepository _views;
 
         public SiteItem.TextRepository Views
@@ -97,6 +100,15 @@ namespace Kooboo.Sites.Scripting.Global
                 return _textcontents;
             }
         }
+
+        public SiteItem.TextContentObjectRepository TextContent
+        {
+            get
+            {
+                return this.TextContents; 
+            }
+        }
+
 
 
         private SiteItem.MultilingualRepository _htmlblock;
@@ -227,6 +239,27 @@ namespace Kooboo.Sites.Scripting.Global
                 return this.context.WebSite != null ? this.context.WebSite.SiteDb().Routes : null;
             }
         }
+
+        SiteItem.FormValuesRepository _formValues;
+
+        public SiteItem.FormValuesRepository FormValues
+        {
+            get
+            {
+                if (_formValues == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_formValues == null)
+                        {
+                            _formValues = new SiteItem.FormValuesRepository(this.context.WebSite.SiteDb().FormValues, this.context);
+                        }
+                    }
+                }
+                return _formValues;
+            }
+        }
+
 
     }
 

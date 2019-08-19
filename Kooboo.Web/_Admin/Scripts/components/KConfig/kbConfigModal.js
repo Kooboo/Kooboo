@@ -29,6 +29,7 @@
                 }).then(function(res) {
                     if (res.success) {
                         self.isShow(false);
+                        Kooboo.EventBus.publish("kb/config/attribute/update")
                     }
                 })
             }

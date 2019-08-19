@@ -2,14 +2,11 @@
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using Kooboo.Sites.Models; 
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+ 
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -66,7 +63,7 @@ namespace Kooboo.Web.Api.Implementation
                 SiteUserViewModel model = new SiteUserViewModel();
                 model.UserId = item.Id;
                 model.UserName = item.Name;
-                model.Role = item.Role;
+                model.Role = item.SiteRole;
                 result.Add(model);
             }
 
@@ -76,28 +73,26 @@ namespace Kooboo.Web.Api.Implementation
 
         public List<string> Roles(ApiCall call)
         {
-            var roles = Enum.GetNames(typeof(Kooboo.Sites.Authorization.EnumUserRole)).ToList();
+            var sitedb = call.Context.WebSite.SiteDb();
 
-            var admin = Enum.GetName(typeof(Kooboo.Sites.Authorization.EnumUserRole), Sites.Authorization.EnumUserRole.Administrator);
+            var repo = sitedb.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>();
 
-            roles.Remove(admin);
+            var all = repo.All();
 
-            return roles;
+            return all.Select(o => o.Name).ToList();  
+       
         }
 
         public void AddUser(Guid UserId, string role, ApiCall call)
-        {
-            var userrole = Lib.Helper.EnumHelper.GetEnum<Kooboo.Sites.Authorization.EnumUserRole>(role);
-
+        { 
             var sitedb = call.Context.WebSite.SiteDb();
 
             var user = Kooboo.Data.GlobalDb.Users.Get(UserId);
 
             if (user != null)
             {
-                sitedb.SiteUser.AddOrUpdate(new Sites.Models.SiteUser() { UserId = UserId, Role = userrole, Name = user.UserName });
-            }
-
+                sitedb.SiteUser.AddOrUpdate(new Sites.Models.SiteUser() { UserId = UserId, SiteRole = role, Name = user.UserName });
+            } 
         }
 
         public void DeleteUsers(Guid UserId, ApiCall call)
@@ -116,8 +111,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public Guid UserId { get; set; }
 
-        [JsonConverter(typeof(StringEnumConverter))]
-        public Kooboo.Sites.Authorization.EnumUserRole Role { get; set; }
+        public string Role { get; set; }
 
     }
 

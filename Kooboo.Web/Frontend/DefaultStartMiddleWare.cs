@@ -46,6 +46,11 @@ namespace Kooboo.Web.Frontend
             {
                 string relative = this.options.LoginPage; 
 
+                if (context.User !=null && !string.IsNullOrWhiteSpace(this.options.PageAfterLogin))
+                {
+                    relative = this.options.PageAfterLogin; 
+                }
+
                 if (relative.ToLower().StartsWith(this.options.StartPath))
                 {
                     relative = relative.Substring(this.options.StartPath.Length); 

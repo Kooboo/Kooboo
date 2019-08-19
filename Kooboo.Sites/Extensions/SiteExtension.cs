@@ -92,11 +92,12 @@ namespace Kooboo.Sites.Extensions
             return "/";
         }
 
+
+
         public static List<Page> StartPages(this WebSite site)
         {
             return site.SiteDb().Pages.Query.Where(o => o.DefaultStart == true).SelectAll();
         }
-
 
         public static string StartRoutePath(this WebSite site)
         {

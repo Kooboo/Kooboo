@@ -8,6 +8,7 @@ using Kooboo.IndexedDB.Schedule;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Scripting;
 using System;
+using System.Linq;
 
 namespace Kooboo.Sites.TaskQueue
 {
@@ -118,14 +119,18 @@ namespace Kooboo.Sites.TaskQueue
             {
                 ExecuteScheduleJob(scheduleJob);
                 scheduleJob = GlobalDb.ScheduleJob().DeQueue();
-            }
+            } 
 
-            var repeatingJob = GlobalDb.RepeatingJob().DequeueItem();
-            while (repeatingJob != null)
+            var repeatingJobs = GlobalDb.RepeatingJob().DequeueItems(); 
+            
+            if (repeatingJobs !=null &&  repeatingJobs.Any())
             {
-                ExecuteRepeatingJob(repeatingJob);
-                repeatingJob = GlobalDb.RepeatingJob().DequeueItem();
+                foreach (var item in repeatingJobs)
+                {
+                    ExecuteRepeatingJob(item);
+                } 
             }
+        
         }
 
     }

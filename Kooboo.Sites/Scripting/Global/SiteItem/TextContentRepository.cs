@@ -4,10 +4,12 @@ using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.DataSources;
-using Kooboo.Sites.Extensions; 
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 
 namespace Kooboo.Sites.Scripting.Global.SiteItem
 {
@@ -32,6 +34,11 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             var culture = this.context.Culture;
 
             Kooboo.Sites.Contents.Models.TextContent content = new Contents.Models.TextContent();
+
+            ContentType type = null;
+            ContentFolder folder = null;
+            Dictionary<string, string> initValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
 
             foreach (var item in data)
             {
@@ -61,11 +68,11 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }
                 else if (lower == "contenttype")
                 {
-                    var type = sitedb.ContentTypes.Get(lower);
+                    type = sitedb.ContentTypes.Get(lower);
                     if (type != null)
                     {
                         content.ContentTypeId = type.Id;
-                        var folder = sitedb.ContentFolders.All().Find(o => o.ContentTypeId == type.Id);
+                        folder = sitedb.ContentFolders.All().Find(o => o.ContentTypeId == type.Id);
                         if (folder != null)
                         {
                             content.FolderId = folder.Id;
@@ -75,7 +82,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }
                 else if (lower == "contentfolder" || lower == "folder")
                 {
-                    var folder = sitedb.ContentFolders.Get(item.Value.ToString());
+                    folder = sitedb.ContentFolders.Get(item.Value.ToString());
                     if (folder != null)
                     {
                         content.FolderId = folder.Id;
@@ -93,7 +100,9 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                     }
                 }
 
-                content.SetValue(item.Key, item.Value.ToString(), culture);
+                // content.SetValue(item.Key, item.Value.ToString(), culture);
+
+                initValues.Add(item.Key, item.Value.ToString());
 
             }
 
@@ -115,7 +124,126 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }
             }
 
+            // prepare and set values... 
+            if (type == null && folder != null)
+            {
+                type = sitedb.ContentTypes.Get(folder.ContentTypeId);
+            }
+
+            PrepareSetValues(initValues, content, culture, type, folder, sitedb);
+
             sitedb.TextContent.AddOrUpdate(content);
+        }
+
+        private void PrepareSetValues(Dictionary<string, string> initdata, TextContent content, string culture, ContentType type, ContentFolder folder, SiteDb siteDb)
+        {
+            List<EmbeddedBy> embeddedby = null;
+
+            Dictionary<string, string> nonfields = new Dictionary<string, string>();
+
+            foreach (var item in initdata)
+            {
+                if (type.Properties.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, item.Key)) != null)
+                {
+                    content.SetValue(item.Key, item.Value, culture);
+                }
+                else
+                {
+                    nonfields.Add(item.Key, item.Value);
+                }
+            }
+
+            siteDb.TextContent.EnsureUserKey(content);
+
+            foreach (var item in nonfields)
+            {
+                Guid ValueId = Lib.Helper.IDHelper.GetOrParseKey(item.Value);
+
+                var category = GetCatFolder(item.Key);
+                if (category != null)
+                {
+                    var catitem = siteDb.TextContent.Get(ValueId);
+                    if (catitem != null)
+                    {
+                        siteDb.ContentCategories.AddOrUpdate(new ContentCategory() { ContentId = content.Id, CategoryFolder = category.FolderId, CategoryId = ValueId });
+                    }
+                }
+                else
+                {
+                    var by = GetBY();
+
+                    if (by.Any())
+                    {
+                        var beEmbedded = by.Find(o => Lib.Helper.StringHelper.IsSameValue(o.FolderName, item.Key));
+
+                        if (beEmbedded == null && (item.Key.ToLower() == "parent" || item.Key.ToLower() == "parentid"))
+                        {
+                            beEmbedded = by.First();
+                        }
+                        if (beEmbedded != null)
+                        {
+                            var parentcontent = siteDb.TextContent.Get(ValueId);
+                            if (parentcontent != null)
+                            {
+                                if (parentcontent.Embedded.ContainsKey(folder.Id))
+                                {
+                                    var list = parentcontent.Embedded[folder.Id];
+                                    if (list == null)
+                                    {
+                                        list = new List<Guid>();
+                                    }
+                                    if (!list.Contains(content.Id))
+                                    {
+                                        list.Add(content.Id);
+                                    }
+                                }
+                                else
+                                {
+                                    List<Guid> ids = new List<Guid>();
+                                    ids.Add(content.Id);
+                                    parentcontent.Embedded[folder.Id] = ids;
+                                }
+
+                                siteDb.TextContent.AddOrUpdate(parentcontent);
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            List<EmbeddedBy> GetBY()
+            {
+                if (embeddedby == null)
+                {
+                    embeddedby = siteDb.ContentFolders.GetEmbeddedBy(folder.Id);
+                }
+                return embeddedby;
+            }
+
+            CategoryFolder GetCatFolder(string foldername)
+            {
+                var category = folder.Category.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Alias, foldername));
+                if (category != null)
+                {
+                    return category;
+                }
+                else
+                {
+                    foreach (var item in folder.Category)
+                    {
+                        var catfolder = siteDb.ContentFolders.Get(item.FolderId);
+                        if (catfolder != null)
+                        {
+                            if (Lib.Helper.StringHelper.IsSameValue(catfolder.Name, foldername))
+                            {
+                                return item;
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
         }
 
         public void Update(object SiteObject)
@@ -123,7 +251,140 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             if (SiteObject is TextContentObject)
             {
                 var obj = SiteObject as TextContentObject;
-                this.context.WebSite.SiteDb().TextContent.AddOrUpdate(obj.TextContent);
+                var sitedb = this.context.WebSite.SiteDb();
+
+                sitedb.TextContent.AddOrUpdate(obj.TextContent);
+
+                if (obj.AdditionalValues.Any())
+                {
+                    // handle additioanl values... like blog...but how to remove then?  
+                    ContentFolder folder = sitedb.ContentFolders.Get(obj.TextContent.FolderId);
+                    if (folder != null)
+                    {
+                        UpdateAdditional(obj.AdditionalValues, obj.TextContent, folder, sitedb);
+                    }
+                }
+            }
+        }
+
+
+        private void UpdateAdditional(Dictionary<string, string> additionalData, TextContent content, ContentFolder folder, SiteDb siteDb)
+        {
+            List<EmbeddedBy> embeddedby = null;
+
+            foreach (var item in additionalData)
+            {
+                Guid ValueId = default(Guid);
+                if (!String.IsNullOrWhiteSpace(item.Value))
+                {
+                    ValueId = Lib.Helper.IDHelper.GetOrParseKey(item.Value);
+                }
+
+                var category = GetCatFolder(item.Key);
+                if (category != null)
+                {
+                    if (ValueId == default(Guid))
+                    {
+                        //To remove item..
+                        var currentItems = siteDb.ContentCategories.GetCategories(category.FolderId, content.Id);
+                        foreach (var cat in currentItems)
+                        {
+                            siteDb.ContentCategories.Delete(cat.Id);
+                        }
+                    }
+                    else
+                    {
+                        var catitem = siteDb.TextContent.Get(ValueId);
+                        if (catitem != null)
+                        {
+                            siteDb.ContentCategories.AddOrUpdate(new ContentCategory() { ContentId = content.Id, CategoryFolder = category.FolderId, CategoryId = ValueId });
+                        }
+                    }
+                }
+                else
+                {
+                    var by = GetBY();
+
+                    if (by.Any())
+                    {
+                        var beEmbedded = by.Find(o => Lib.Helper.StringHelper.IsSameValue(o.FolderName, item.Key));
+
+                        if (beEmbedded == null && (item.Key.ToLower() == "parent" || item.Key.ToLower() == "parentid"))
+                        {
+                            beEmbedded = by.First();
+                        }
+                        if (beEmbedded != null)
+                        {
+                            if (ValueId != default(Guid))
+                            {
+                                var parentcontent = siteDb.TextContent.Get(ValueId);
+                                if (parentcontent != null)
+                                {
+                                    if (parentcontent.Embedded.ContainsKey(folder.Id))
+                                    {
+                                        var list = parentcontent.Embedded[folder.Id];
+                                        if (list == null)
+                                        {
+                                            list = new List<Guid>();
+                                        }
+                                        if (!list.Contains(content.Id))
+                                        {
+                                            list.Add(content.Id);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        List<Guid> ids = new List<Guid>();
+                                        ids.Add(content.Id);
+                                        parentcontent.Embedded[folder.Id] = ids;
+                                    }
+
+                                    siteDb.TextContent.AddOrUpdate(parentcontent);
+                                }
+                            }
+                            else
+                            {
+                                // TODO: 
+                                // this is to remove one item from the embedded...This is not happening often.
+                                // only we need to find out which item embed this one which is not easy... as we need to check every items. 
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            List<EmbeddedBy> GetBY()
+            {
+                if (embeddedby == null)
+                {
+                    embeddedby = siteDb.ContentFolders.GetEmbeddedBy(folder.Id);
+                }
+                return embeddedby;
+            }
+
+            CategoryFolder GetCatFolder(string foldername)
+            {
+                var category = folder.Category.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Alias, foldername));
+                if (category != null)
+                {
+                    return category;
+                }
+                else
+                {
+                    foreach (var item in folder.Category)
+                    {
+                        var catfolder = siteDb.ContentFolders.Get(item.FolderId);
+                        if (catfolder != null)
+                        {
+                            if (Lib.Helper.StringHelper.IsSameValue(catfolder.Name, foldername))
+                            {
+                                return item;
+                            }
+                        }
+                    }
+                }
+                return null;
             }
         }
 
@@ -151,7 +412,6 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             {
                 this.context.WebSite.SiteDb().TextContent.Delete(content.Id);
             }
-
         }
 
 

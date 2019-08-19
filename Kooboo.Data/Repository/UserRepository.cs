@@ -42,6 +42,20 @@ namespace Kooboo.Data.Repository
             AddOrUpdateLocal(user, Overwrite);
         }
 
+
+        public bool RemoveLocal(Guid UserId)
+        {
+            if (Cache.ContainsKey(UserId))
+            {
+                Cache.Remove(UserId); 
+            }
+
+            GlobalDb.LocalUser.Delete(UserId);
+
+            return true; 
+
+        }
+
         public void AddOrUpdateCache(User user, bool overwrite = false)
         {
             lock (_locker)

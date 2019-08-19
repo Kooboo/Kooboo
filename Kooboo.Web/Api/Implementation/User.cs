@@ -36,7 +36,7 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public MetaResponse Login(string UserName, string Password, ApiCall apiCall)
+        public virtual MetaResponse Login(string UserName, string Password, ApiCall apiCall)
         {
 
             if (!Kooboo.Data.Service.UserLoginProtection.CanTryLogin(UserName, apiCall.Context.Request.IP))
@@ -173,7 +173,7 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             var user = call.Context.User; 
-            if (string.IsNullOrWhiteSpace(user.Password) && user.PasswordHash == default(Guid))
+            if (string.IsNullOrWhiteSpace(Data.Service.UserLoginService.GetUserPassword(user)))
             {
                 var dbuser = GlobalDb.Users.Get(user.Id); 
                 if (dbuser !=null)
@@ -217,6 +217,9 @@ namespace Kooboo.Web.Api.Implementation
             user.UserName = newuser.UserName;
             user.Language = newuser.Language;
             user.EmailAddress = newuser.EmailAddress;
+
+            var localuser = Kooboo.Data.GlobalDb.Users.Get(newuser.Id); 
+
             if (GlobalDb.Users.AddOrUpdate(user))
             {
                 call.Context.User = user;

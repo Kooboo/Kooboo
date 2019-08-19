@@ -30,7 +30,7 @@ namespace Kooboo.Sites.Render
                     }
                     else
                     {
-                        page = FrontEvent.Manager.RaisePageEvent(FrontEvent.enumEventType.PageNotFound, context.RenderContext);  
+                       // page = FrontEvent.Manager.RaisePageEvent(FrontEvent.enumEventType.PageNotFound, context.RenderContext);  
                     }
                 }
  

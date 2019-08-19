@@ -1,11 +1,13 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data.Context;
+using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+
 
 namespace Kooboo.Sites.Scripting.Global.SiteItem
 {
@@ -100,7 +102,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             {
                 var view = Kooboo.Sites.Helper.ContentHelper.ToView(this.TextContent, this.Culture, contenttype.Properties);
 
-                var obj = view.GetValue(key);
+                var obj = view.GetValue(key, context);
                 if (obj != null)
                 {
                     return obj.ToString();
@@ -124,10 +126,9 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
         }
 
-
+         
         public void SetObjectValue(string FieldName, string Value)
         {
-
             string lower = FieldName.ToLower();
 
             if (lower == "folder" || lower == "contentfolder")
@@ -145,14 +146,48 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 var type = this.siteDb.ContentTypes.Get(Value);
                 if (type != null)
                 {
+                    contenttype = type;
                     this.TextContent.ContentTypeId = type.Id;
                     return;
                 }
             }
 
-            this.TextContent.SetValue(FieldName, Value, this.Culture);
-        }
+            if (contenttype == null)
+            {
+                if (this.TextContent.ContentTypeId != default(Guid))
+                {
+                    contenttype = siteDb.ContentTypes.Get(this.TextContent.ContentTypeId);
+                }
+            }
 
+            if (contenttype == null || contenttype.Properties.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, FieldName)) != null)
+            {
+                this.TextContent.SetValue(FieldName, Value, this.Culture);
+            }
+            else
+            {
+                AdditionalValues[FieldName] = Value;
+            } 
+        }
+         
+        public ContentType contenttype { get; set; }
+
+        private Dictionary<string, string> _AdditionalValues;
+        public Dictionary<string, string> AdditionalValues
+        {
+            get
+            {
+                if (_AdditionalValues == null)
+                {
+                    _AdditionalValues = new Dictionary<string, string>();
+                }
+                return _AdditionalValues;
+            }
+            set
+            {
+                _AdditionalValues = value;
+            }
+        }
 
         public ICollection<string> Keys
         {
@@ -161,18 +196,18 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 List<string> mykey = new List<string>();
                 mykey.Add("id");
                 mykey.Add("userKey");
-                mykey.Add("lastModifled"); 
+                mykey.Add("lastModifled");
 
                 var store = this.TextContent.GetContentStore(this.Culture);
                 if (store != null)
                 {
                     foreach (var item in store.FieldValues.Keys)
                     {
-                        mykey.Add(item); 
-                    } 
+                        mykey.Add(item);
+                    }
                 }
 
-                return mykey;  
+                return mykey;
             }
         }
 
@@ -291,7 +326,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 result["userKey"] = this.TextContent.UserKey;
                 result["lastModified"] = this.TextContent.LastModified;
                 result["ContentTypeId"] = this.TextContent.ContentTypeId.ToString();
-                result["ParentId"] = this.TextContent.ParentId.ToString(); 
+                result["ParentId"] = this.TextContent.ParentId.ToString();
 
                 return result;
 
@@ -365,7 +400,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
         {
             get
             {
-                return this.data; 
+                return this.data;
             }
         }
 

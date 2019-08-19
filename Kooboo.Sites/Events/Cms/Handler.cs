@@ -9,6 +9,7 @@ using Kooboo.Sites.Contents.Models;
 using Kooboo.Events.Cms;
 using Kooboo.Sites.Relation;
 using System.Linq;
+using Kooboo.Sites.SiteTransfer;
 
 namespace Kooboo.Sites.Events
 { 
@@ -35,6 +36,10 @@ namespace Kooboo.Sites.Events
             AddHandler<ContentFolder>(HandleContentFolderChange);
             AddHandler<Image>(HandleImageChange);
             AddHandler<ObjectRelation>(HandleObjectRelationChange);
+
+            AddHandler<Code>(HandleCodeChange); 
+
+            AddHandler<TransferTask>(HandleTransferTask);
         }
 
         public static void AddHandler<T>(Action<SiteObjectEvent<T>> handle)
@@ -114,8 +119,7 @@ namespace Kooboo.Sites.Events
                 //if (PageEvent.OldValue.Body != PageEvent.Value.Body)
                 //{ 
                 //   PageEvent.SiteDb.DomElements.AddOrUpdateDom(PageEvent.Value.Dom, PageEvent.Value.Id, PageEvent.Value.ConstType); 
-                //}
-
+                //} 
                 Cache.RenderPlan.RemovePlan(PageEvent.SiteDb, PageEvent.OldValue.Id);
 
             }
@@ -127,6 +131,31 @@ namespace Kooboo.Sites.Events
 
             Routing.PageRoute.UpdatePageRouteParameter(PageEvent.SiteDb, PageEvent.Value.Id);
         }
+
+        private static void HandleTransferTask(SiteObjectEvent<SiteTransfer.TransferTask> taskEvent)
+        {
+            // check whether need to continue download or not. 
+
+            var sitedb = taskEvent.SiteDb;
+            var taskcount = sitedb.TransferTasks.Count(); 
+            if (taskcount >0)
+            {
+                if (sitedb.WebSite.ContinueDownload == false)
+                {
+                    sitedb.WebSite.ContinueDownload = true;
+                    Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(sitedb.WebSite); 
+                }
+            }
+            else if (taskcount ==0)
+            {
+                if (sitedb.WebSite.ContinueDownload == true)
+                {
+                    sitedb.WebSite.ContinueDownload = false;
+                    Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(sitedb.WebSite); 
+                }
+            } 
+        }
+
 
         private static void HandleViewChange(SiteObjectEvent<View> ViewEvent)
         {
@@ -474,6 +503,24 @@ namespace Kooboo.Sites.Events
 
             ImageEvent.SiteDb.Thumbnails.DeleteByImageId(imageid);
         }
+
+
+        private static void HandleCodeChange(Kooboo.Events.Cms.SiteObjectEvent<Code> CodeEvent)
+        {
+            if (CodeEvent.ChangeType == ChangeType.Delete)
+            {
+                if(CodeEvent.Value.CodeType == CodeType.Api && CodeEvent.Value !=null)
+                {
+                    // for api, also need to remove the url. 
+                    var route = CodeEvent.SiteDb.Routes.GetByObjectId(CodeEvent.Value.Id); 
+                    if (route !=null)
+                    {
+                        CodeEvent.SiteDb.Routes.Delete(route.Id); 
+                    }
+                }
+            } 
+        }
+
 
         private static void HandleObjectRelationChange(SiteObjectEvent<ObjectRelation> relationEvent)
         {

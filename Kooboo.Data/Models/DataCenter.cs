@@ -28,5 +28,7 @@ namespace Kooboo.Data.Models
         public bool IsRoot { get; set; }
 
         public string PrimaryDomain { get; set; }
+
+
     }
 }

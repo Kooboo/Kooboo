@@ -151,6 +151,19 @@
         var obj = {fieldone: "value one", fieldtwo: "value two"};
         obj.folder = "blogfolder"; 
         k.site.textContents.add(obj); 
+
+        // To add relation data. For example, comment is embedded by blog.
+         var commentItem = {content: "very nice article"};
+        commentItem.folder = "comment"; 
+        commentItem.blog = "blogkey";  
+        k.site.textContents.add(commentItem);
+
+        // To add relation data. For example,  blog has a catgory.
+        var obj = {fieldone: "value one", fieldtwo: "value two"};
+        obj.folder = "blogfolder"; 
+        obj.catalias= "categorykey"; 
+        k.site.textContents.add(obj);  
+
         </script>
 		]]>
       </Example>

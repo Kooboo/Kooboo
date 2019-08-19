@@ -31,10 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Kooboo.Lib\Kooboo.Lib.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Doc\" />
   </ItemGroup>
 

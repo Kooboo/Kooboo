@@ -7,12 +7,12 @@ using System.Collections.Generic;
 namespace Kooboo.Web.Menus
 { 
 
-    public class Sites : ITopMenu
+    public class Sites : IHeaderMenu
     {
         public Sites()
         {
             this.Name = "Sites";
-            this.Url = MenuHelper.AdminUrl("Sites");
+            this.Url = "Sites";
             this.Icon = "fa fa-sitemap";
             this.BadgeIcon = "badge-success";
         }
@@ -23,7 +23,7 @@ namespace Kooboo.Web.Menus
 
         private List<ICmsMenu> _items;
 
-        public List<ICmsMenu> Items
+        public List<ICmsMenu> SubItems
         {
             get
             {
@@ -44,11 +44,7 @@ namespace Kooboo.Web.Menus
         {
             return Data.Language.Hardcoded.GetValue("Sites", Context);
         }
-
-        public bool CanShow(RenderContext context)
-        {
-            return true; 
-        }
+         
     }
 
 

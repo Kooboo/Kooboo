@@ -16,7 +16,7 @@ namespace Kooboo.Sites.Repository
     {
         public TransferTaskRepository()
         {
-            this.ContinueDownloading = new Dictionary<string, DownloadingTask>(); 
+            this.ContinueDownloading = new Dictionary<string, DownloadingTask>();
         }
 
         public override ObjectStoreParameters StoreParameters
@@ -128,21 +128,28 @@ namespace Kooboo.Sites.Repository
 
             var all = this.All();
 
-            foreach (var item in all.OrderBy(o => o.CreationDate))
+            if (all.Any())
             {
-                if (item.Domains.Count() > 0)
+                foreach (var item in all.OrderBy(o => o.CreationDate))
                 {
-                    foreach (var domain in item.Domains)
+                    if (item.Domains.Count() > 0)
                     {
-                        if (!string.IsNullOrEmpty(domain))
+                        foreach (var domain in item.Domains)
                         {
-                            if (!domain.ToLower().StartsWith("http://") && !domain.ToLower().StartsWith("https://"))
+                            if (!string.IsNullOrEmpty(domain))
                             {
-                                if (!string.IsNullOrEmpty(item.FullStartUrl))
+                                if (!domain.ToLower().StartsWith("http://") && !domain.ToLower().StartsWith("https://"))
                                 {
-                                    if (item.FullStartUrl.ToLower().StartsWith("https"))
+                                    if (!string.IsNullOrEmpty(item.FullStartUrl))
                                     {
-                                        result.Add("https://" + domain);
+                                        if (item.FullStartUrl.ToLower().StartsWith("https"))
+                                        {
+                                            result.Add("https://" + domain);
+                                        }
+                                        else
+                                        {
+                                            result.Add("http://" + domain);
+                                        }
                                     }
                                     else
                                     {
@@ -151,28 +158,23 @@ namespace Kooboo.Sites.Repository
                                 }
                                 else
                                 {
-                                    result.Add("http://" + domain);
+                                    result.Add(domain);
                                 }
-                            }
-                            else
-                            {
-                                result.Add(domain);
                             }
                         }
                     }
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(item.FullStartUrl))
+                    else
                     {
-                        result.Add(item.FullStartUrl);
+                        if (!string.IsNullOrEmpty(item.FullStartUrl))
+                        {
+                            result.Add(item.FullStartUrl);
+                        }
                     }
-                }
 
+                }
             }
 
             return result;
-
         }
 
         public void UpdateCookie(Guid taskid, System.Net.CookieContainer cookiecontainer)
@@ -267,6 +269,8 @@ namespace Kooboo.Sites.Repository
 
         #region ContinueDownload
 
+
+
         public Dictionary<string, DownloadingTask> ContinueDownloading { get; set; }
 
         public async Task<bool> CanStartDownload(string relativeUrl)
@@ -274,19 +278,20 @@ namespace Kooboo.Sites.Repository
             // site self resource cant download
             if (string.IsNullOrEmpty(relativeUrl))
             {
-                relativeUrl = "/"; 
+                relativeUrl = "/";
             }
-            
+
+
             if (!this.ContinueDownloading.ContainsKey(relativeUrl))
             {
                 // if not download yet, start download. 
-                this.ContinueDownloading[relativeUrl] = new DownloadingTask() { StartTime = DateTime.Now }; 
+                this.ContinueDownloading[relativeUrl] = new DownloadingTask() { StartTime = DateTime.Now };
                 return true;
             }
             else
             {
                 // if downlaoding, try wait..
-                return await EnterWait(relativeUrl); 
+                return await EnterWait(relativeUrl);
             }
         }
 
@@ -295,7 +300,7 @@ namespace Kooboo.Sites.Repository
             DownloadingTask last;
             if (this.ContinueDownloading.TryGetValue(relativeUrl, out last))
             {
-                last.IsCompleted = true;  
+                last.IsCompleted = true;
             }
         }
 
@@ -304,14 +309,22 @@ namespace Kooboo.Sites.Repository
             DownloadingTask lastdownload;
             if (this.ContinueDownloading.TryGetValue(relativeUrl, out lastdownload))
             {
-                int sleepCounter = 0;
-                while (!lastdownload.IsCompleted && lastdownload.StartTime > DateTime.Now.AddMinutes(-3))
+                if (lastdownload.IsCompleted)
                 {
-                    sleepCounter += 1;
-                    await System.Threading.Tasks.Task.Delay(5000);  
-                    if (sleepCounter > 4)
+                    return false; 
+                }
+
+                if (lastdownload.StartTime > DateTime.Now.AddMinutes(-2))
+                {
+                    int sleepCounter = 0;
+                    while (!lastdownload.IsCompleted)
                     {
-                        break;
+                        sleepCounter += 1;
+                        await System.Threading.Tasks.Task.Delay(5000);
+                        if (sleepCounter > 4)
+                        {
+                            break;
+                        }
                     }
                 }
 
@@ -319,7 +332,6 @@ namespace Kooboo.Sites.Repository
                 {
                     return false;
                 }
-                return true;
             }
             // not exists any more, continue download. 
             return true;
@@ -333,6 +345,7 @@ namespace Kooboo.Sites.Repository
             public DateTime StartTime { get; set; }
 
             public bool IsCompleted { get; set; }
+
         }
 
     }

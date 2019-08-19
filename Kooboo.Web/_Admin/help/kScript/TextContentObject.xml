@@ -18,7 +18,7 @@
   <Props>
     <Property>
       <Name>{fieldname}</Name>
-      <Description>Read the content property value</Description>
+      <Description>Read the content property value. The property value can also be a relation data</Description>
       <Type>string</Type>
     </Property>
 
@@ -46,8 +46,6 @@
       </Params>
       <ReturnType>TextContentObject</ReturnType>
     </Method>
-
-
-
+ 
   </Methods>
 </KScriptSetting>

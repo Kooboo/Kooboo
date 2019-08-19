@@ -189,89 +189,89 @@ namespace Kooboo.Sites.FrontEvent
         }
     }
      
-    public class PageNotFound : IFrontEvent
-    {
-        public PageNotFound()
-        {
+    //public class PageNotFound : IFrontEvent
+    //{
+    //    public PageNotFound()
+    //    {
 
-        }
+    //    }
 
-        public PageNotFound(RenderContext context)
-        {
-            this.Context = context;
-        }
+    //    public PageNotFound(RenderContext context)
+    //    {
+    //        this.Context = context;
+    //    }
 
-        [Attributes.SummaryIgnore]
-        public RenderContext Context { get; set; }
+    //    [Attributes.SummaryIgnore]
+    //    public RenderContext Context { get; set; }
 
-        public string Url
-        {
-            get { return Context.Request.RelativeUrl; }
-            set
-            {
-                var url = value;
-                if (url.ToLower().StartsWith("http://") || url.ToLower().StartsWith("https://"))
-                {
-                    //TODO: check if it is the same host.... then treat it as relativeurl.
+    //    public string Url
+    //    {
+    //        get { return Context.Request.RelativeUrl; }
+    //        set
+    //        {
+    //            var url = value;
+    //            if (url.ToLower().StartsWith("http://") || url.ToLower().StartsWith("https://"))
+    //            {
+    //                //TODO: check if it is the same host.... then treat it as relativeurl.
 
-                    Context.Response.Redirect(302, url);
-                    Context.Response.End = true;
-                    return;
-                }
+    //                Context.Response.Redirect(302, url);
+    //                Context.Response.End = true;
+    //                return;
+    //            }
 
-                url = url.Replace("\\", "/");
-                if (!url.StartsWith("/"))
-                {
-                    url = "/" + url;
-                }
-                Context.Request.RelativeUrl = url;
+    //            url = url.Replace("\\", "/");
+    //            if (!url.StartsWith("/"))
+    //            {
+    //                url = "/" + url;
+    //            }
+    //            Context.Request.RelativeUrl = url;
 
-            }
-        }
+    //        }
+    //    }
 
-        public string UserAgent
-        {
-            get
-            {
-                return this.Context.Request.Headers.Get("User-Agent");
-            }
-        }
+    //    public string UserAgent
+    //    {
+    //        get
+    //        {
+    //            return this.Context.Request.Headers.Get("User-Agent");
+    //        }
+    //    }
 
-        public string Culture
-        {
-            get { return Context.Culture; }
+    //    public string Culture
+    //    {
+    //        get { return Context.Culture; }
 
-            set
-            {
-                var culture = value;
-                if (Context.WebSite.Culture.ContainsKey(culture))
-                {
-                    Context.Culture = culture;
-                }
-            }
-        }
+    //        set
+    //        {
+    //            var culture = value;
+    //            if (Context.WebSite.Culture.ContainsKey(culture))
+    //            {
+    //                Context.Culture = culture;
+    //            }
+    //        }
+    //    }
 
-        [Attributes.SummaryIgnore]
-        public enumEventType EventType => enumEventType.PageNotFound;
+    //    [Attributes.SummaryIgnore]
+    //    public enumEventType EventType => enumEventType.PageNotFound;
 
-        private Page _page;
-        public Page Page
-        {
-            get { return _page; }
-            set { _page = value; DataChange = true; }
-        }
+    //    private Page _page;
+    //    public Page Page
+    //    {
+    //        get { return _page; }
+    //        set { _page = value; DataChange = true; }
+    //    }
 
-        public bool DataChange { get; set; }
+    //    public bool DataChange { get; set; }
 
-        [Attributes.SummaryIgnore]
-        public List<EventConditionSetting> GetConditionSetting(RenderContext context)
-        {
-            List<EventConditionSetting> result = new List<EventConditionSetting>();
-            result.Add(new EventConditionSetting() { Name = "Url" });
-            result.Add(new EventConditionSetting() { Name = "Culture" });
-            result.Add(new EventConditionSetting() { Name = "UserAgent" });
-            return result;
-        }
-    }
+    //    [Attributes.SummaryIgnore]
+    //    public List<EventConditionSetting> GetConditionSetting(RenderContext context)
+    //    {
+    //        List<EventConditionSetting> result = new List<EventConditionSetting>();
+    //        result.Add(new EventConditionSetting() { Name = "Url" });
+    //        result.Add(new EventConditionSetting() { Name = "Culture" });
+    //        result.Add(new EventConditionSetting() { Name = "UserAgent" });
+    //        return result;
+    //    }
+    //}
 
 }

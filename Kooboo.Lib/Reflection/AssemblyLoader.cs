@@ -32,36 +32,8 @@ namespace Kooboo.Lib.Reflection
             }
 
             var path =  AppDomain.CurrentDomain.BaseDirectory;
+            dlls = LoadKoobooDlls(dlls, path);
 
-            var alldlls = System.IO.Directory.GetFiles(path, "*.dll", SearchOption.TopDirectoryOnly);
-             
-            foreach (var name in alldlls)
-            {
-                string dllname = name.Substring(path.Length);
-
-                if (string.IsNullOrWhiteSpace(dllname))
-                {
-                    continue; 
-                }
-
-                dllname = dllname.Trim('\\').Trim('/'); 
-
-                if (dllname.StartsWith("Kooboo.") && dllname.EndsWith(".dll"))
-                {
-                    var index = dllname.LastIndexOf(".");
-                    if (index > -1)
-                    {
-                        string koobooname = dllname.Substring(0, index);
-                        var find = dlls.Find(o => o.FullName.StartsWith(koobooname));
-                        if (find == null && !IsIgnoredName(koobooname))
-                        {
-                            var otherAssembly = Assembly.LoadFile(name);
-                            dlls.Add(otherAssembly);
-                        }
-                    }
-                }
-            }
-             
             // load dll from modules or dll. 
             List<string> subfolders = new List<string>();
             subfolders.Add("dll");
@@ -94,6 +66,43 @@ namespace Kooboo.Lib.Reflection
                 }
             } 
             return dlls; 
+        }
+
+        public static List<Assembly> LoadKoobooDlls(List<Assembly> dlls,string path)
+        {
+            if (dlls == null)
+            {
+                dlls = new List<Assembly>();
+            }
+            var alldlls = System.IO.Directory.GetFiles(path, "*.dll", SearchOption.TopDirectoryOnly);
+
+            foreach (var name in alldlls)
+            {
+                string dllname = name.Substring(path.Length);
+
+                if (string.IsNullOrWhiteSpace(dllname))
+                {
+                    continue;
+                }
+
+                dllname = dllname.Trim('\\').Trim('/');
+
+                if (dllname.StartsWith("Kooboo.") && dllname.EndsWith(".dll"))
+                {
+                    var index = dllname.LastIndexOf(".");
+                    if (index > -1)
+                    {
+                        string koobooname = dllname.Substring(0, index);
+                        var find = dlls.Find(o => o.FullName.StartsWith(koobooname));
+                        if (find == null && !IsIgnoredName(koobooname))
+                        {
+                            var otherAssembly = Assembly.LoadFile(name);
+                            dlls.Add(otherAssembly);
+                        }
+                    }
+                }
+            }
+            return dlls;
         }
 
         public static List<Assembly> AllAssemblies

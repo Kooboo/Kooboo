@@ -957,6 +957,12 @@
     this.SiteBinding = function(para) {
       return this.executeGet("SiteBinding", para);
     };
+    this.verifySSL = function(para) {
+      return this.executeGet("verifySSL", para);
+    };
+    this.setSSL = function(para) {
+      return this.executePost("setSSL", para);
+    };
   }
   extend(Binding, BaseModel);
 
@@ -1392,6 +1398,10 @@
     this.CleanLog = function(para) {
       return this.executePost("CleanLog", para);
     };
+
+    this.getSize = function(para) {
+      return this.executeGet("GetSize", para);
+    };
   }
   extend(Disk, BaseModel);
 
@@ -1727,6 +1737,11 @@
   }
   extend(TransferTask, BaseModel);
 
+  function Role() {
+    this.name = "Role";
+  }
+  extend(Role, BaseModel);
+
   wind.Kooboo = {
     APIGeneration: new APIGeneration(),
     Bar: new Bar(),
@@ -1777,6 +1792,7 @@
     ProductCategory: new ProductCategory(),
     Profile: new Profile(),
     Publish: new Publish(),
+    Role: new Role(),
     Search: new Search(),
     Script: new Script(),
     Site: new Site(),

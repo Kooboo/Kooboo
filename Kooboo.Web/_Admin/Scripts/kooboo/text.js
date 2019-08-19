@@ -65,6 +65,8 @@
       confirm: "Confirm",
       detail: "Detail",
       balance: "Balance",
+      enable: "Enable",
+      enabled: "Enabled",
 
       API: "API",
       Code: "Code",
@@ -132,7 +134,8 @@
       SiteUser: "Site user",
       KConfig: "Kooboo Config",
       TableRelation: "Table Relation",
-      TransferTask:"Transfer Task",
+      TransferTask: "Transfer Task",
+      Roles: "Roles",
 
       Demands: "Demands",
       Demand: "Demand",
@@ -423,7 +426,8 @@
       checkServer: "please check your server.",
       inProgress: "This site is still downloading, please wait.",
       seleteExportStoreName:
-        "Please select the content you want before exporting."
+        "Please select the content you want before exporting.",
+      domainMissing: "Domain missing"
     },
 
     placeholder: {
@@ -511,12 +515,12 @@
     },
 
     component: {
-        tableRelation: {
-            tableA: "Table A",
-            fieldA: "Field A",
-            tableB: "Table B",
-            fieldB: "Field B"
-        },
+      tableRelation: {
+        tableA: "Table A",
+        fieldA: "Field A",
+        tableB: "Table B",
+        fieldB: "Field B"
+      },
       event: {
         noCondition: "No condition",
         noActivity: "No activity",
@@ -1048,7 +1052,8 @@
         year: "year",
         email: "Email",
         records: "Records",
-        expires: "Expires"
+        expires: "Expires",
+        sslEnabled: "SSL enabled"
       },
       assembly: {
         name: "Assembly",

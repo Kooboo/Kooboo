@@ -62,7 +62,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
 
-            result.Add(new UserPublishServer() { Name = Data.Language.Hardcoded.GetValue("LocalHost", call.Context),  ServerUrl = "http://127.0.0.1", Reserved = true });
+            result.Add(new UserPublishServer() { Name = Data.Language.Hardcoded.GetValue("LocalHost", call.Context), ServerUrl = "http://127.0.0.1", Reserved = true });
             return result;
         }
 
@@ -70,11 +70,18 @@ namespace Kooboo.Web.Api.Implementation
         public List<Data.Models.Domain> RemoteDomains(ApiCall call)
         {
             // request to remote for domains...    
-            var serverurl = call.GetValue("ServerUrl");
+            var serverurl = call.GetValue("ServerUrl"); 
 
             if (serverurl != null)
             {
+                var orgid = Service.UserService.GuessOrgId(call.Context.User, serverurl);
+
                 string url = Lib.Helper.UrlHelper.Combine(serverurl, "/_api/UserPublish/AvailableDomains");
+
+                if (orgid != default(Guid))
+                {
+                    url += "?organizationid=" + orgid.ToString();
+                }
 
                 return Lib.Helper.HttpHelper.Get<List<Domain>>(url, null, call.Context.User.UserName, call.Context.User.PasswordHash.ToString());
             }
@@ -83,9 +90,15 @@ namespace Kooboo.Web.Api.Implementation
 
         public List<Data.Models.Domain> AvailableDomains(ApiCall call)
         {
-            return Kooboo.Data.GlobalDb.Domains.ListByUser(call.Context.User);
+            Guid orgid = call.GetValue<Guid>("organizationid"); 
+            if (orgid == default(Guid))
+            {
+                orgid = call.Context.User.CurrentOrgId; 
+            }
+
+            return Kooboo.Data.GlobalDb.Domains.ListByOrg(orgid);
         }
-        
+
 
         [Kooboo.Attributes.RequireParameters("id")]
         public void DeleteServer(ApiCall call)
@@ -104,22 +117,22 @@ namespace Kooboo.Web.Api.Implementation
             string url = Kooboo.Data.Helper.AccountUrlHelper.UserPublish("Update");
 
             Guid id = call.ObjectId;
-            string serverurl = call.GetValue("ServerUrl"); 
-             
+            string serverurl = call.GetValue("ServerUrl");
+
             if (call.ObjectId == default(Guid))
             {
                 string unique = call.Context.User.Id.ToString() + serverurl;
-                id = Lib.Security.Hash.ComputeGuidIgnoreCase(unique); 
-               // url = Kooboo.Data.Helper.AccountUrlHelper.UserPublish("Add");
+                id = Lib.Security.Hash.ComputeGuidIgnoreCase(unique);
+                // url = Kooboo.Data.Helper.AccountUrlHelper.UserPublish("Add");
             }
-             
+
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("UserId", call.Context.User.Id.ToString());
             para.Add("Name", call.GetValue("Name"));
             para.Add("Id", id.ToString());
             para.Add("ServerUrl", call.GetValue("ServerUrl"));
 
-            bool ok =  Lib.Helper.HttpHelper.Post<bool>(url, para, call.Context.User.UserName, call.Context.User.PasswordHash.ToString());
+            bool ok = Lib.Helper.HttpHelper.Post<bool>(url, para, call.Context.User.UserName, call.Context.User.PasswordHash.ToString());
 
             if (ok)
             {
@@ -127,9 +140,9 @@ namespace Kooboo.Web.Api.Implementation
             }
             else
             {
-                return default(Guid); 
-            } 
-        }      
+                return default(Guid);
+            }
+        }
 
     }
 }

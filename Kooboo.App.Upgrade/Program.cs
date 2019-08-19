@@ -9,17 +9,16 @@ namespace Kooboo.App.Upgrade
         //current only support linux  app upgrade
         static void Main(string[] args)
         {
-            KoobooUpgrade.Log("start close kooboo");
+            KoobooUpgrade.Log("Closing Kooboo");
             KoobooUpgrade.CloseKooboo();
-            KoobooUpgrade.Log("close kooboo");
+            KoobooUpgrade.Log("Kooboo Closed");
 
-            KoobooUpgrade.Log("start upgrade");
+            KoobooUpgrade.Log("Upgrade in progress");
             KoobooUpgrade.Upgrade();
-            KoobooUpgrade.Log("end upgrade");
+            KoobooUpgrade.Log("Upgrade finished");
 
-            KoobooUpgrade.Log("open kooboo");
+            KoobooUpgrade.Log("Opening Kooboo");
             KoobooUpgrade.OpenKoobooApp();
-
         }
     }
 }

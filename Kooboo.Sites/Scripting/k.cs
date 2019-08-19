@@ -164,7 +164,20 @@ namespace Kooboo.Sites.Scripting
                 } 
                 return _user; 
             }  
-        } 
+        }
+
+        private KTemplate _template;
+        public KTemplate Template
+        {
+            get
+            {
+                if (_template == null)
+                {
+                    _template = new KTemplate(this.RenderContext);
+                }
+                return _template;
+            }
+        }
 
         public class InfoModel
         {
@@ -909,6 +922,17 @@ namespace Kooboo.Sites.Scripting
         public bool Exists(string UserName)
         {
             return Data.GlobalDb.Users.Get(UserName) != null; 
+        }
+
+        [Obsolete]
+        public bool ExistEmail(string email)
+        {
+            return Data.GlobalDb.Users.GetByEmail(email) != null;
+        }
+
+        public bool EmailExists(string email)
+        {
+            return Data.GlobalDb.Users.GetByEmail(email) != null;
         }
 
         public void Logout()

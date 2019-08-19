@@ -54,6 +54,7 @@ namespace Kooboo.HttpServer.Http
             {
                 IRequestProcessor requestProcessor = null;
                 Context.ServiceContext.ConnectionManager.AddConnection(Context.Features.Connection.HttpConnectionId, this);
+                _lastTimestamp = Context.ServiceContext.SystemClock.UtcNow.Ticks;
 
                 lock (_protocolSelectionLock)
                 {

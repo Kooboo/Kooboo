@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace Kooboo.Data.Models
 {
-    public class Currency: IGolbalObject
+    public class Currency : IGolbalObject
     {
         private Guid _id;
         public Guid Id
@@ -18,8 +18,8 @@ namespace Kooboo.Data.Models
             {
                 if (_id == default(Guid))
                 {
-                    
-                    if (!string.IsNullOrWhiteSpace(this.Code)&&!string.IsNullOrWhiteSpace(StandardMoneyCode))
+
+                    if (!string.IsNullOrWhiteSpace(this.Code) && !string.IsNullOrWhiteSpace(StandardMoneyCode))
                     {
                         var key = this.Code + this.StandardMoneyCode;
                         _id = Lib.Security.Hash.ComputeGuidIgnoreCase(key);
@@ -51,5 +51,13 @@ namespace Kooboo.Data.Models
         public decimal Rate { get; set; }
 
         public decimal ServiceChargeRate { get; set; } = 0.0M;
+
+
+        public override int GetHashCode()
+        {
+            string unique = this.MarketRate.ToString() + this.Rate.ToString() + this.ServiceChargeRate.ToString();
+
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
+        }
     }
 }

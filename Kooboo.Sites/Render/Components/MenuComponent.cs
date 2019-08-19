@@ -115,8 +115,10 @@ namespace Kooboo.Sites.Render.Components
             if (menu == null)
             {
                 return null; 
-            } 
-           return MenuHelper.Render(menu, null, 99); 
+            }
+            RenderContext previewContext = new RenderContext();
+            previewContext.WebSite = SiteDb.WebSite; 
+           return MenuHelper.Render(menu, previewContext, 99); 
         }
 
         public string DisplayName(RenderContext Context)

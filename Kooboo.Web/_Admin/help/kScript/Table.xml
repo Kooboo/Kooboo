@@ -3,10 +3,9 @@
   <Name>Table</Name>
   <Description>The kScript database table object</Description>
   <Example><![CDATA[
-    <script engine="kscript">
-    var table = k.database.getTable("tablename");
+    <script engine="kscript"> 
     var obj = {fieldone: "value one", fieldtwo: "value two"};
-    table.add(obj);  
+    k.database.tablename.add(obj);  
     </script>
     ]]></Example>
   <Props />
@@ -14,11 +13,11 @@
     <Method>
       <Name>add</Name>
       <Description>Add an object into database table. If the table does not have the field, the table schema will be automatically updated with that column. </Description>
-      <Example><![CDATA[
-        <script engine="kscript">
-        var table = k.database.getTable("tablename");
+      <Example>
+          <![CDATA[
+        <script engine="kscript"> 
         var obj = {fieldone: "value one", fieldtwo: "value two"};
-        var returnid = table.add(obj);
+        var returnid = k.database.tablename.add(obj);
         </script>
 		]]></Example>
       <Params>
@@ -33,10 +32,9 @@
     <Method>
       <Name>append</Name>
       <Description>Append an object to database table. This is the same as "add" except that it will not update table schema when the object contains fields not defined in the table schema.</Description>
-      <Example>
-        var table = k.database.getTable("tablename");
+      <Example> 
         var obj = {fieldone: "value one", fieldtwo: "value two"};
-        var returnid = table.append(obj);
+        var returnid = k.database.tablename.append(obj);
       </Example>
       <Params>
         <Param>
@@ -50,11 +48,9 @@
     <Method>
       <Name>delete</Name>
       <Description>Delete an item from database based on id or primary key</Description>
-      <Example>
-
-        var table = k.database.getTable("tablename");
-		var key = "key";
-        table.delete(key);
+      <Example> 
+        var key = "key";
+        k.database.tablename.delete(key);
 
       </Example>
       <Params>
@@ -70,7 +66,7 @@
       <Description>find the first item that field equal the match value</Description>
       <Example><![CDATA[
         <script engine="kscript">
-        var table = k.database.getTable("tablename");
+        var table = k.database.tablename;
 
         // find equal value match.
         var item = table.find("fieldname", "matchvalue");
@@ -101,7 +97,7 @@
       <Description>Return the all items that matches the condition</Description>
       <Example><![CDATA[
         <script engine="kscript">
-        var table = k.database.getTable("tablename");
+        var table = k.database.tablename;
 
         // findAll equal value match.
         var item = table.findAll("fieldname", "matchvalue");
@@ -133,7 +129,7 @@
       <Example><![CDATA[
         <script engine="kscript">
 
-        var table = k.database.getTable("tablename");
+        var table = k.database.tablename;
 
         // findAll  condition text can be one of the followings.
         // find item with field "name" value of "matchedvalue".
@@ -165,10 +161,9 @@
     <Method>
       <Name>get</Name>
       <Description>get an item based on Id or primary key</Description>
-      <Example>
-        var table = k.database.getTable("tablename");
-		var IdOrKey = "IdOrKey";
-        var item = table.get(IdOrKey);
+      <Example> 
+        var IdOrKey = "IdOrKey";
+        var item = k.database.tablename.get(IdOrKey);
       </Example>
       <Params>
         <Param>
@@ -185,14 +180,13 @@
       <Example>
         <![CDATA[
         <script engine="kscript">
-        var table = k.database.getTable("tablename");
+        var table = k.database.tablename;
         var obj = {fieldone: "value one", fieldtwo: "value two"};
         var returnid = table.add(obj);
         
         var dbItem = table.get(returnid); 
         
-        dbItem.fieldone = "new name";  
-        
+        dbItem.fieldone = "new name";   
         table.update(dbItem);  
         
         </script>
@@ -216,7 +210,7 @@
       <Example><![CDATA[
         <script engine="kscript">
         
-        var table = k.database.getTable("tablename");
+        var table = k.database.tablename;
         var obj = {fieldone: "value one", fieldtwo: "value two"};
         table.add(obj); 
         table.createIndex("name"); 
@@ -244,7 +238,7 @@
       <Description>Query table data with paging.</Description>
       <Example><![CDATA[
         <script engine="kscript">
-        var table = k.database.getTable("mytablename");
+        var table = k.database.mytablename;
         var obj = {name: "myname", number: 124};
         table.add(obj);
         var obj2 = {name: "myname", number: 125};
@@ -281,7 +275,7 @@
       <Example><![CDATA[
         <script engine="kscript">
 
-        var table = k.database.getTable("tablename");
+        var table = k.database.tablename;
 
         // Find  condition text can be one of the followings.
         // find item with field "name" value of "matchedvalue".

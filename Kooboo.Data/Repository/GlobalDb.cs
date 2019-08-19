@@ -5,6 +5,7 @@ using System;
 using Kooboo.Data.Repository;
 using Kooboo.IndexedDB;
 using Kooboo.IndexedDB.Schedule;
+using Kooboo.Data.Ensurance;
 
 namespace Kooboo.Data
 {
@@ -60,19 +61,13 @@ namespace Kooboo.Data
             {
                 if (_domains == null)
                 {
-                    lock (_lock)
-                    {
-                        if (_domains == null)
-                        {
-                           _domains = new LocalDomainRepository();   
-                        }
-                    }
+                    _domains = Lib.IOC.Service.GetSingleTon<IDomainRepository>(typeof(LocalDomainRepository));
                 }
                 return _domains;
             }
             set
             {
-                _domains = value; 
+                _domains = value;
             }
         }
 
@@ -105,7 +100,7 @@ namespace Kooboo.Data
                 return _users;
             }
         }
-         
+
         private static LocalUserRepository _localuser;
         public static LocalUserRepository LocalUser
         {
@@ -238,6 +233,18 @@ namespace Kooboo.Data
             }
         }
 
+        private static EnsureObjbectRepository _ensurance;
+
+        public static EnsureObjbectRepository Ensurance
+        {
+            get
+            {
+                return EnsureRepository<EnsureObjbectRepository, EnsureObject>(ref _ensurance); 
+            }
+
+        }
+
+
         private static TRepository EnsureRepository<TRepository, TGlobalObject>(ref TRepository repository)
           where TRepository : RepositoryBase<TGlobalObject>
           where TGlobalObject : IGolbalObject
@@ -254,6 +261,10 @@ namespace Kooboo.Data
             }
             return repository;
         }
+
+
+
+    
 
     }
 }

@@ -50,7 +50,13 @@ namespace Kooboo.Web.Api.Implementation
                 return null;
             }
 
-            var sites = Kooboo.Sites.Service.WebSiteService.ListByUser(user);  
+            var orgid = call.GetValue<Guid>("OrganizationId");
+            if (orgid == default(Guid))
+            {
+                orgid = user.CurrentOrgId; 
+            }
+             
+             var sites = Kooboo.Sites.Service.WebSiteService.RemoteListByUser(user.Id, orgid);  
 
             List<SimpleSiteItemViewModel> result = new List<SimpleSiteItemViewModel>();
 
@@ -71,6 +77,12 @@ namespace Kooboo.Web.Api.Implementation
                 return null;
             }
 
+            var user = call.Context.User;
+            Guid OrganizationId = Service.UserService.GuessOrgId(user, remoteurl);
+            string username = user.UserName;
+            string password = Data.Service.UserLoginService.GetUserPassword(user); 
+         
+            
             if (!remoteurl.ToLower().StartsWith("http"))
             {
                 remoteurl = "http://" + remoteurl;
@@ -80,14 +92,18 @@ namespace Kooboo.Web.Api.Implementation
             {
                 remoteurl = remoteurl + "/";
             }
+             
 
-            remoteurl = remoteurl + "_api/publish/sitelist";
+            remoteurl = remoteurl + "_api/publish/sitelist?OrganizationId=" + OrganizationId.ToString();
 
-            List<SimpleSiteItemViewModel> model = Kooboo.Lib.Helper.HttpHelper.Get<List<SimpleSiteItemViewModel>>(remoteurl, null, call.Context.User.UserName, call.Context.User.PasswordHash.ToString());
+            List<SimpleSiteItemViewModel> model = Kooboo.Lib.Helper.HttpHelper.Get<List<SimpleSiteItemViewModel>>(remoteurl, null, username, password);
 
             return model;
         }
          
+
+   
+
         public List<SyncItemViewModel> List(ApiCall call)
         {
             List<SyncItemViewModel> result = new List<SyncItemViewModel>();
@@ -282,6 +298,10 @@ namespace Kooboo.Web.Api.Implementation
             bool hasqueue = false;
             Kooboo.Sites.TaskQueue.TaskExecutor.PostSyncObjectTask executor = new Sites.TaskQueue.TaskExecutor.PostSyncObjectTask();
 
+            string username = call.Context.User.UserName;
+            string password = Data.Service.UserLoginService.GetUserPassword(call.Context.User);
+            
+
             foreach (var item in ids)
             {
                 var eachsync = SyncService.Prepare(sitedb, item);
@@ -289,8 +309,8 @@ namespace Kooboo.Web.Api.Implementation
                 postobject.SyncObject = eachsync;
                 postobject.RemoteSiteId = setting.RemoteWebSiteId;
                 postobject.RemoteUrl = serveapiurl;
-                postobject.UserName = call.Context.User.UserName; 
-                postobject.Password = call.Context.User.PasswordHash.ToString();
+                postobject.UserName = username; 
+                postobject.Password = password;
                 postobject.RemoteSiteId = setting.RemoteWebSiteId;
 
                 if (DirectSubmit)

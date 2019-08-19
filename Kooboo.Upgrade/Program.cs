@@ -37,8 +37,6 @@ namespace Kooboo.Upgrade
             Console.WriteLine("Upgrade Done!");
 
             UpgradeHelper.OpenKoobooApp();  
-        }
-        
-       
+        }  
     }
 }

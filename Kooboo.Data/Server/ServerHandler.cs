@@ -6,7 +6,7 @@
 
 using System;
 using Kooboo.Data.Context;
-using Kooboo.HttpServer; 
+using Kooboo.HttpServer;
 using System.Threading.Tasks;
 using System.Linq;
 using System.IO;
@@ -18,7 +18,7 @@ using Kooboo.Lib.Helper;
 
 namespace Kooboo.Data.Server
 {
-     
+
     public class ServerHandler : IHttpHandler
     {
         public Func<RenderContext, Task> _handle;
@@ -41,9 +41,9 @@ namespace Kooboo.Data.Server
                 renderContext.Response.StatusCode = 500;
                 renderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(ex.Message);
                 await SetResponse(context, renderContext);
-            } 
+            }
         }
-         
+
 
         public static async Task<RenderContext> GetRenderContext(HttpContext httpContext)
         {
@@ -80,6 +80,8 @@ namespace Kooboo.Data.Server
             httprequest.RawRelativeUrl = url;
             httprequest.Method = context.Features.Request.Method.ToUpper();
             httprequest.IP = context.Features.Connection.RemoteEndPoint.Address.ToString();
+
+
             httprequest.Port = context.Features.Connection.LocalEndPoint.Port;
             httprequest.Scheme = context.Features.Request.Scheme;
 
@@ -87,6 +89,14 @@ namespace Kooboo.Data.Server
             {
                 httprequest.Headers.Add(item.Key, item.Value);
             }
+
+            var headerip = httprequest.Headers.Get("X-Forwarded-For");
+
+            if (!string.IsNullOrWhiteSpace(headerip))
+            {
+                httprequest.IP = headerip;
+            }
+
 
             foreach (var item in context.Features.Request.Query)
             {
@@ -233,7 +243,7 @@ namespace Kooboo.Data.Server
             }
             return cookies;
         }
-         
+
         public static async Task SetResponse(HttpContext context, RenderContext renderContext)
         {
             var response = renderContext.Response;
@@ -325,12 +335,8 @@ namespace Kooboo.Data.Server
                     {
                         response.Stream.CopyTo(context.Features.Response.Body);
                     }
-                    else if (response.ContentType != null && response.ContentType.ToLower().Contains("javascript"))
-                    {
-                        // TODO:???? what is this???? 
-                    }
-                    else
 
+                    else
                     {
                         // 404.   
                         string filename = Lib.Helper.IOHelper.CombinePath(AppSettings.RootPath, Kooboo.DataConstants.Default404Page) + ".html";
@@ -386,8 +392,7 @@ namespace Kooboo.Data.Server
 
                 if (!string.IsNullOrEmpty(location))
                 {
-                    location = GetEncodedLocation(location);
-
+                
                     var host = renderContext.Request.Port == 80 || renderContext.Request.Port == 443
                         ? renderContext.Request.Host
                         : string.Format("{0}:{1}", renderContext.Request.Host, renderContext.Request.Port);
@@ -477,65 +482,20 @@ namespace Kooboo.Data.Server
             Log(renderContext);
             context = null;
         }
-         
-        internal static string GetEncodedLocation(string location)
-        {
-            if (string.IsNullOrEmpty(location))
-                return location;
-            var builder = new StringBuilder();
-            Uri uri;
-            // /admin/sites will be parse to uri.schema= file in linux
-            if (Uri.TryCreate(location, UriKind.Absolute, out uri))
-            {
-                if (!string.IsNullOrEmpty(uri.Scheme) &&
-                    (uri.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) ||
-                    uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase)))
-                {
-                    var baseUrl = uri.Scheme + "://" + uri.Authority;
-                    builder.Append(baseUrl);
-                    location = location.Replace(baseUrl, "");
-                }
-            }
 
-            var queryString = string.Empty;
-
-            int questionmark = location.IndexOf("?");
-            if (questionmark > -1)
-            {
-                queryString = location.Substring(questionmark);
-                location = location.Substring(0, questionmark);
-
-            }
-            var segments = location.Split('/');
-
-            for (var i = 0; i < segments.Length; i++)
-            {
-                var seg = segments[i];
-                builder.Append(System.Net.WebUtility.UrlEncode(seg));
-                if (segments.Length - 1 != i)
-                {
-                    builder.Append("/");
-                }
-
-            }
-            if (!string.IsNullOrEmpty(queryString))
-            {
-                builder.Append(queryString);
-            }
-            return builder.ToString();
-        }
+ 
         public static void Log(RenderContext context)
         {
             if (Data.AppSettings.Global.EnableLog)
             {
                 string log = context.Response.StatusCode.ToString() + " " + context.Request.IP + ": " + DateTime.Now.ToLongTimeString() + " " + context.Request.Host + " " + context.Request.Method + " " + context.Request.Url;
 
-                Kooboo.Data.Log.HttpLog.Write(log);
+                Kooboo.Data.Log.Instance.Http.Write(log);
             }
         }
 
     }
-     
+
 }
 
 

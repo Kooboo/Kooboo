@@ -44,6 +44,10 @@ namespace Kooboo.Lib.Helper
             {
                 CookieContainer = cookieContainer
             };
+#if NETSTANDARD2_0
+            //ServicePointManager does not affect httpclient in dotnet core
+            handler.ServerCertificateCustomValidationCallback = delegate { return true; };
+#endif
 
             handler.Proxy = null;
             handler.AllowAutoRedirect = true;

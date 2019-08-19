@@ -4,7 +4,7 @@
   <Description>Query the table with paged result.</Description>
   <Example><![CDATA[
     <script engine="kscript">
-    var table = k.database.getTable("mytablename");
+    var table = k.database.mytablename;
     var obj = {name: "myname", number: 124};
     table.add(obj);
     var obj2 = {name: "myname", number: 125};

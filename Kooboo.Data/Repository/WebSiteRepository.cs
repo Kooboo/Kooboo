@@ -29,29 +29,29 @@ namespace Kooboo.Data.Repository
 
         private object _locker = new object(); 
          
-        private  Dictionary<Guid, WebSite> _cachewebsites;
+        public  Dictionary<Guid, WebSite> Cachedsites;
 
         //cache of all local websites... 
         public  Dictionary<Guid, WebSite> AllSites
         {
             get
             {
-                if (_cachewebsites == null)
+                if (Cachedsites == null)
                 {
                     lock (_locker)
                     {
-                        if (_cachewebsites == null)
+                        if (Cachedsites == null)
                         {
-                            _cachewebsites = new Dictionary<Guid, WebSite>();
+                            Cachedsites = new Dictionary<Guid, WebSite>();
                             var sites = Data.GlobalDb.WebSites.All();
                             foreach (WebSite item in sites)
                             {
-                                _cachewebsites[item.Id] = item;
+                                Cachedsites[item.Id] = item;
                             }
                         }
                     }
                 }
-                return _cachewebsites; 
+                return Cachedsites; 
             } 
         } 
          

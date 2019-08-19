@@ -39,8 +39,7 @@ namespace Kooboo.Data.Authorization
         {
             get; set;
         }
-
-
+         
         public static bool CanSendEmail(Organization org, int emailnumber = 1)
         {
             if (!Data.AppSettings.IsOnlineServer)

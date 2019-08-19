@@ -65,12 +65,12 @@ namespace Kooboo.Sites.FrontEvent
                     }
                 }
             }
-            else if (eventtype == enumEventType.RouteNotFound)
-            {
-                PageNotFound notfound = new PageNotFound(context);
-                RaiseEvent(context, notfound);
-                return notfound.Page;
-            }
+            //else if (eventtype == enumEventType.)
+            //{
+            //    PageNotFound notfound = new PageNotFound(context);
+            //    RaiseEvent(context, notfound);
+            //    return notfound.Page;
+            //}
             return null;
         }
 
@@ -150,10 +150,12 @@ namespace Kooboo.Sites.FrontEvent
                     {
                         kcontext.config = CopySetting(item.Setting);
 
-                        Kooboo.Sites.Scripting.Manager.ExecuteCode(kcontext.RenderContext, code.Body, code.Id); 
-                        //TODO.... Get the debugger to work...
-                        //engine.Execute(code.Body); 
-
+                        var outputstring = Kooboo.Sites.Scripting.Manager.ExecuteCode(kcontext.RenderContext, code.Body, code.Id); 
+                        
+                        if (!string.IsNullOrEmpty(outputstring))
+                        {
+                            kcontext.RenderContext.Response.AppendString(outputstring); 
+                        }
                         kcontext.config = null;
                     }
                 }

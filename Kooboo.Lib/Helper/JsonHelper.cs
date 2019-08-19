@@ -24,6 +24,11 @@ namespace Kooboo.Lib.Helper
             return JsonConvert.SerializeObject(model, Formatting.Indented); 
         }
 
+        public static string SerializeCaseSensitive(object model,params JsonConverter[] jsonConverters)
+        {
+            return JsonConvert.SerializeObject(model, Formatting.Indented, jsonConverters);
+        }
+
         public static T Deserialize<T>(string json)
         {
             if (json[0] == 65279)
@@ -122,6 +127,44 @@ namespace Kooboo.Lib.Helper
             }
 
             return JsonValidatorTool.JsonValidator.IsJson(input); 
+        }
+    }
+
+    public class IntJsonConvert : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            //return typeof(int) == objectType || typeof(Int16) == objectType
+            //    || typeof(Int32) == objectType || typeof(Int64) == objectType
+            //    ||typeof(Double)==objectType;
+            return typeof(Double) == objectType;
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            return existingValue;
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            if (value == null)
+            {
+                writer.WriteValue(0);
+            }
+            else
+            {
+                //ensure int not be converted to double
+                if(int.TryParse(value.ToString(), out var intvalue))
+                {
+                    writer.WriteValue(intvalue);
+                }
+                else
+                {
+                    writer.WriteValue(value);
+                }
+                
+            }
+            
         }
     }
 }

@@ -24,7 +24,12 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     var layout = layoutobject as Layout;
                     var layoutclone = layout.Clone<Layout>();
+
+
                     string basehrel = call.WebSite.BaseUrl();
+                    basehrel = Kooboo.Data.Service.WebSiteService.EnsureHttpsBaseUrlOnServer(basehrel, call.WebSite); 
+                     
+
                     if (!string.IsNullOrEmpty(basehrel))
                     {
                         layoutclone.Body = Sites.Service.HtmlHeadService.SetBaseHref(layoutclone.Body, basehrel);
