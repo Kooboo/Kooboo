@@ -14,20 +14,20 @@ namespace Kooboo.Api
     {
         public static IResponse Execute(ApiCall call, IApiProvider apiProvider)
         {
-            ApiMethod apimethod = null; 
+            ApiMethod apimethod = null;
 
             var apiobject = apiProvider.Get(call.Command.ObjectType);
 
             if (apiobject != null)
             {
-                apimethod = Methods.ApiMethodManager.Get(apiobject, call.Command.Method); 
+                apimethod = Methods.ApiMethodManager.Get(apiobject, call.Command.Method);
             }
 
-            if (apimethod == null && apiProvider.GetMethod!=null)
+            if (apimethod == null && apiProvider.GetMethod != null)
             {
-                apimethod = apiProvider.GetMethod(call); 
+                apimethod = apiProvider.GetMethod(call);
             }
-          
+
             if (apimethod == null)
             {
                 var result = new JsonResponse() { Success = false };
@@ -35,7 +35,7 @@ namespace Kooboo.Api
                 return result;
             }
 
-           // check permission
+            // check permission
             if (apiProvider.CheckAccess != null)
             {
                 if (!apiProvider.CheckAccess(call.Context, apimethod))
@@ -51,7 +51,7 @@ namespace Kooboo.Api
                 var fakedata = Lib.Development.FakeData.GetFakeValue(apimethod.ReturnType);
                 return new JsonResponse(fakedata) { Success = true };
             }
-            if(apiobject!=null)
+            if (apiobject != null)
             {
                 if (!ValidateRequirement(call.Command, call.Context, apiProvider))
                 {
@@ -60,7 +60,7 @@ namespace Kooboo.Api
                     return result;
                 }
             }
-            
+
             List<string> errors = new List<string>();
             if (!ValideAssignModel(apimethod, call, errors.Add))
             {
@@ -92,7 +92,7 @@ namespace Kooboo.Api
                 Kooboo.Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace + "\r\n" + ex.Source);
 
                 return result;
-            } 
+            }
         }
 
         private static IResponse ExecuteMethod(ApiCall call, ApiMethod apimethod)
@@ -124,7 +124,7 @@ namespace Kooboo.Api
 
             if (response is IResponse)
             {
-                return response as IResponse; 
+                return response as IResponse;
                 //TODO: set the response message to multiple lingual. 
             }
             else
@@ -133,7 +133,7 @@ namespace Kooboo.Api
             }
         }
 
-   
+
         public static bool ValidateRequirement(ApiCommand command, RenderContext context, IApiProvider apiProvider)
         {
             if (command == null)
@@ -166,21 +166,18 @@ namespace Kooboo.Api
             }
 
 
-           if (apiobject is ISecureApi)
+            if (apiobject is ISecureApi)
             {
-                var secureobj = apiobject as ISecureApi; 
-                if (secureobj !=null)
+                var secureobj = apiobject as ISecureApi;
+                if (secureobj != null)
                 {
-                    if (!secureobj.AccessCheck(command, context))
-                    {
-                        return false; 
-                    }
+                    return secureobj.AccessCheck(command, context);
                 }
             }
 
             return true;
         }
-                             
+
 
         public static bool ValideAssignModel(ApiMethod method, ApiCall call, Action<string> callback)
         {

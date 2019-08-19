@@ -30,6 +30,12 @@ namespace Kooboo.Data.Ensurance
 
             set { _id = value; }
         }
+
+        public override int GetHashCode()
+        {
+            string unique = this.Json + this.ModelType; 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+        }
     } 
 
 }

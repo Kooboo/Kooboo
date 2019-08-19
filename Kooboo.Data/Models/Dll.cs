@@ -40,5 +40,12 @@ namespace Kooboo.Data.Models
        /// The byte content of this assembly. 
        /// </summary>
        public byte[] Content { get; set; }
+
+        public override int GetHashCode()
+        {
+            var guid =  Lib.Security.Hash.ComputeGuid(Content);
+            return Lib.Security.Hash.ComputeIntCaseSensitive(guid.ToString()); 
+
+        }
     }
 }

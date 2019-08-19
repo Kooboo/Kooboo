@@ -30,6 +30,7 @@ namespace Kooboo.Data.Models
             return null; 
         }
 
+        [Obsolete]
         public string Values { get; set; }
 
         public DateTime LastModified { get; set; } = DateTime.Now; 
@@ -53,6 +54,16 @@ namespace Kooboo.Data.Models
             }
             set { _id = value; }
         }
-         
+
+
+        public override int GetHashCode()
+        {
+            string unique = string.Empty;
+            foreach (var item in this.KeyValues)
+            {
+                unique += item.Key + item.Value;  
+            } 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Text;
 namespace Kooboo.Api
 {
     public interface ISecureApi : IApi
-    { 
-        bool AccessCheck(ApiCommand command, RenderContext call); 
+    {
+        bool AccessCheck(ApiCommand command, RenderContext call);
     }
 }
