@@ -9,9 +9,6 @@ import {
   nextNodes,
   getParentElements,
   isInEditorContainer,
-  getBackgroundImage,
-  clearBackgroundImage,
-  getBackgroundColor,
   isInTable
 } from "@/dom/utils";
 import { HOVER_BORDER_SKIP } from "@/common/constants";
@@ -253,105 +250,7 @@ describe("utils", () => {
     expect(elements.length).toBe(5);
     expect(elements2.length).toBe(4);
   });
-  test("getBackgroundImage", () => {
-    // language=HTML
-    document.body.innerHTML = `
-      <div>
-    <img id = 'test' style="background: rgb(255, 255, 255) url(test.png) no-repeat fixed top"/>
-      </div>
-    `;
-    let el = document.getElementById("test");
-    let getBackgroundImageResult = getBackgroundImage(el!);
-    let image = getBackgroundImageResult.image;
-    let imageInBackground = getBackgroundImageResult.imageInBackground;
-    expect(image).toEqual("url(test.png)");
-    expect(imageInBackground).toEqual(true);
-  });
-  test("getBackgroundImage_imageInBackground undefined", () => {
-    // language=HTML
-    document.body.innerHTML = `
-      <div>
-    <img id = 'test'/>
-      </div>
-    `;
-    let el = document.getElementById("test");
-    let getBackgroundImageResult = getBackgroundImage(el!);
-    let image = getBackgroundImageResult.image;
-    let imageInBackground = getBackgroundImageResult.imageInBackground;
-    expect(image).toEqual("");
-    expect(imageInBackground).toEqual(false);
-  });
-  test("getBackgroundImage_getBackgroundColor_ inline style defined but Embedded style undefined", () => {
-    // language=HTML
-    document.body.innerHTML = `
-      <style type="text/css">
-        #test{
-          height: 500px;
-          width: 500px;
-          background: rgb(255, 255, 255) url(http://iph.href.lu/200x300?text=test) no-repeat fixed top
-        }
 
-      </style>
-      <div>
-    <img id = 'test'/>
-      </div>
-    `;
-    let el = document.getElementById("test");
-    let getBackgroundImageResult = getBackgroundImage(el!);
-    let image = getBackgroundImageResult.image;
-    let imageInBackground = getBackgroundImageResult.imageInBackground;
-    expect(image).toEqual("url(http://iph.href.lu/200x300?text=test)");
-    expect(imageInBackground).toEqual(false);
-  });
-  test("clearBackgroundImage", () => {
-    // language=HTML
-    document.body.innerHTML = `
-        
-      <div>
-        <img id = 'test' style="background: rgb(255, 255, 255) url(http://iph.href.lu/200x300?text=test) no-repeat fixed top"/>
-      </div>
-    `;
-    let el = document.getElementById("test") as HTMLImageElement;
-    clearBackgroundImage(el, true);
-    expect(el!.style!.backgroundImage!.trim()).toEqual("url(none)");
-  });
-  test("getBackgroundColor", () => {
-    // language=HTML
-    document.body.innerHTML = `
-      <div>
-        <img id = 'test' style="background: rgb(255, 255, 255) url(http://iph.href.lu/200x300?text=test) no-repeat fixed top"/>
-      </div>
-    `;
-    let el = document.getElementById("test") as HTMLImageElement;
-    let getBackgroundColorResult = getBackgroundColor(el);
-    let color = getBackgroundColorResult.color;
-    let colorInBackground = getBackgroundColorResult.colorInBackground;
-    expect(color.trim()).toEqual("rgb(255, 255, 255)");
-    expect(colorInBackground).toEqual(true);
-  });
-  test("getBackgroundColor_ inline style defined but Embedded style undefined", () => {
-    // language=HTML
-    document.body.innerHTML = `
-      <style type="text/css">
-        #test{
-          height: 500px;
-          width: 500px;
-          background:  rgb(255, 255, 255) url(http://iph.href.lu/200x300?text=test) no-repeat fixed top
-        }
-
-      </style>
-      <div>
-        <img id = 'test'/>
-      </div>
-    `;
-    let el = document.getElementById("test") as HTMLImageElement;
-    el!.parentElement!.style.backgroundColor = "red";
-    let getBackgroundColorResult = getBackgroundColor(el);
-    let color = getBackgroundColorResult.color;
-    let colorInBackground = getBackgroundColorResult.colorInBackground;
-    expect(color.trim()).toEqual("rgb(255, 255, 255)");
-    expect(colorInBackground).toEqual(false);
-  });
   test("isInTable", () => {
     // language=HTML
     document.body.innerHTML = `

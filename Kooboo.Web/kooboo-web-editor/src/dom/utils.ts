@@ -1,5 +1,4 @@
 import { HOVER_BORDER_SKIP } from "../common/constants";
-import { Background } from "./Background";
 
 export function getScrollTop() {
   return document.documentElement.scrollTop;
@@ -131,59 +130,6 @@ export function getParentElements(el: HTMLElement, includeSelf: boolean = true) 
     if (el) elements.push(el);
   }
   return elements;
-}
-
-export function getBackgroundImage(el: HTMLElement) {
-  let image: string | undefined = undefined;
-  let imageInBackground = false;
-  if (el.style.background) {
-    let background = new Background(el.style.background);
-    image = background.image;
-  }
-
-  if (image) {
-    imageInBackground = true;
-  } else {
-    image = el.style.backgroundImage!;
-  }
-
-  if (!image) {
-    image = getComputedStyle(el).backgroundImage!;
-  }
-
-  return { image, imageInBackground };
-}
-
-export function clearBackgroundImage(el: HTMLElement, imageInBackground: boolean) {
-  if (imageInBackground) {
-    let background = new Background(el.style.background!);
-    background.image = "url(none)";
-    el.style.background = background.toString();
-  } else {
-    el.style.backgroundImage = "none";
-  }
-}
-
-export function getBackgroundColor(el: HTMLElement) {
-  let color: string | undefined = undefined;
-  let colorInBackground = false;
-
-  if (el.style.background) {
-    let background = new Background(el.style.background);
-    color = background.color;
-  }
-
-  if (color) {
-    colorInBackground = true;
-  } else {
-    color = el.style.backgroundColor!;
-  }
-
-  if (!color) {
-    color = getComputedStyle(el).backgroundColor!;
-  }
-
-  return { color, colorInBackground };
 }
 
 export function isInTable(el: HTMLElement) {
