@@ -13,6 +13,7 @@ export class StyleLog extends Log {
   styleSheetUrl!: string;
   styleTagKoobooId!: string | null;
   KoobooId!: string;
+  mediaRuleList!: string | null;
   readonly editorType: string = EDITOR_TYPE.style;
 
   static createUpdate(nameOrId: string, objectType: string, value: string, property: string, koobooId: string) {
@@ -34,7 +35,8 @@ export class StyleLog extends Log {
     url: string,
     important: boolean,
     nameOrId: string,
-    objectType: string
+    objectType: string,
+    mediaRuleList: string | null
   ) {
     let log = new StyleLog();
     log.action = ActionType.update;
@@ -46,6 +48,7 @@ export class StyleLog extends Log {
     log.important = important;
     log.nameOrId = nameOrId;
     log.objectType = objectType;
+    log.mediaRuleList = mediaRuleList;
     return log;
   }
 }

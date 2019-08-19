@@ -16,10 +16,13 @@ function* getStyles() {
 function* getRules(style: CSSStyleSheet) {
   for (let i = 0; i < style.rules.length; i++) {
     let rule = style.rules.item(i);
-    if (rule instanceof CSSStyleRule) yield rule;
+    if (rule instanceof CSSStyleRule) yield { cssRule: rule, mediaRuleList: null };
     if (rule instanceof CSSMediaRule && matchMedia(rule.conditionText).matches) {
       for (let j = 0; j < rule.cssRules.length; j++) {
-        yield rule.cssRules.item(j);
+        yield {
+          cssRule: rule.cssRules.item(j),
+          mediaRuleList: rule.conditionText
+        };
       }
     }
   }
@@ -35,15 +38,16 @@ export function* getCssRules() {
     let koobooId = style.ownerNode.getAttribute(KOOBOO_ID);
     let href = style.ownerNode.getAttribute("href");
     if ((!koobooId && !href) || (href && href.startsWith("http"))) continue;
-    for (const rule of getRules(style)) {
-      if (!rule || !(rule instanceof CSSStyleRule)) continue;
+    for (const { cssRule, mediaRuleList } of getRules(style)) {
+      if (!cssRule || !(cssRule instanceof CSSStyleRule)) continue;
       yield {
         styleSequence: ++styleSequence,
         koobooId,
         url: href,
-        rule,
+        cssRule,
         nameorid: comment.nameorid,
-        objecttype: comment.objecttype
+        objecttype: comment.objecttype,
+        mediaRuleList
       };
     }
   }
@@ -65,6 +69,7 @@ export interface CssColor {
   koobooId: string | null;
   pseudo: string | null;
   cssStyleRule: CSSStyleRule | null;
+  mediaRuleList: string | null;
 }
 
 export interface CssColorGroup {
@@ -135,16 +140,17 @@ function addInlineMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
       url: "",
       value: i.value,
       pseudo: "",
-      cssStyleRule: null
+      cssStyleRule: null,
+      mediaRuleList: null
     });
   }
 }
 
 function addStyleMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
   for (const i of getCssRules()) {
-    let matched = matchSelector(el, i.rule.selectorText);
+    let matched = matchSelector(el, i.cssRule.selectorText);
     if (!matched) continue;
-    let colors = getCssColors(i.rule.style);
+    let colors = getCssColors(i.cssRule.style);
     if (!colors || colors.length == 0) continue;
     for (const color of colors) {
       matchedColors.push({
@@ -153,14 +159,15 @@ function addStyleMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
         important: color.important,
         inline: false,
         koobooId: i.koobooId,
-        rawSelector: i.rule.selectorText,
+        rawSelector: i.cssRule.selectorText,
         targetSelector: matched.selector,
         url: i.url,
         value: color.value,
         pseudo: matched.pseudo,
-        cssStyleRule: i.rule,
+        cssStyleRule: i.cssRule,
         nameorid: i.nameorid,
-        objecttype: i.objecttype
+        objecttype: i.objecttype,
+        mediaRuleList: i.mediaRuleList
       });
     }
   }
@@ -238,7 +245,8 @@ function addDefaultColor(groups: CssColorGroup[], prop: string, value: string) {
           url: "",
           value: value,
           nameorid: undefined,
-          objecttype: undefined
+          objecttype: undefined,
+          mediaRuleList: null
         }
       ]
     });
