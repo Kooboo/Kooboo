@@ -426,7 +426,8 @@
       checkServer: "please check your server.",
       inProgress: "This site is still downloading, please wait.",
       seleteExportStoreName:
-        "Please select the content you want before exporting."
+        "Please select the content you want before exporting.",
+      domainMissing: "Domain missing"
     },
 
     placeholder: {

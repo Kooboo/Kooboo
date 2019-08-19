@@ -107,6 +107,10 @@ namespace Kooboo.Data.Repository
 
         public string GetName(Guid OrgId)
         {
+            if (OrgId == default(Guid))
+            {
+                return System.Guid.Empty.ToString(); 
+            } 
             if (!NameCache.ContainsKey(OrgId))
             {
                 var user = GlobalDb.Users.GetLocalUserByOrgId(OrgId);

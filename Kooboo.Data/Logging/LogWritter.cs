@@ -3,8 +3,7 @@ using System.IO;
 namespace Kooboo.Data.Log
 {
     public class LogWriter
-    {
-
+    { 
         private string Folder { get; set; }
 
         public LogWriter(string FolderName)
@@ -21,7 +20,7 @@ namespace Kooboo.Data.Log
 
         public void Write(string line)
         {
-            Writer.Write(line);
+            Writer.WriteLine(line);
         }
 
         private StreamWriter Writer

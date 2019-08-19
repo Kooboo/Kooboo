@@ -1,14 +1,18 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.IO;
-using System.Text;
+using System.Collections.Generic; 
 
 namespace Kooboo.Data.Log
-{
-
+{ 
     public static class Instance
     {
+
+        static Instance()
+        {
+            Cache = new Dictionary<string, LogWriter>(StringComparer.OrdinalIgnoreCase);
+        }
+
         private static object _locker = new object();
 
         private static LogWriter _http; 
@@ -48,6 +52,23 @@ namespace Kooboo.Data.Log
                     }
                 }
                 return _exception; 
+            }
+        }
+
+
+        private static Dictionary<string, LogWriter> Cache { get; set; }
+
+        public static void WriteLine(string LogFolderName, string message)
+        {
+           if (Cache.TryGetValue(LogFolderName, out LogWriter writer))
+            {
+                writer.Write(message); 
+            }
+           else
+            {
+                var newwriter = new LogWriter(LogFolderName);
+                Cache[LogFolderName] = newwriter;
+                newwriter.Write(message); 
             }
         }
     }

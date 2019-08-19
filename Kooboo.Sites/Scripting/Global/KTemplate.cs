@@ -251,6 +251,47 @@ namespace Kooboo.Sites.Scripting.Global
             return dic;
         }
 
+        /// <summary>
+        /// get template from old template server
+        /// can be removed after all template is imported
+        /// </summary>
+        /// <param name="domain"></param>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public Dictionary<string,object> GetTemplateFromRemote(string domain, System.Dynamic.ExpandoObject obj)
+        {
+            var result = new Dictionary<string, object>();
+            result["lastModified"] = DateTime.UtcNow;
+            result["lastModifiedTimeStamp"] = DateTime.UtcNow.Ticks;
+
+            var dic=obj as IDictionary<string,object>;
+            var id =Guid.Parse(dic["id"].ToString());
+
+            //get download package
+            var packageurl = "http://47.52.131.96/_api/download/package?id=" + id.ToString("N");
+            var bytes = Kooboo.Lib.Helper.HttpHelper.ConvertKooboo(packageurl, new byte[0], new Dictionary<string, string>());
+            var filePath = GetFilePath(id.ToString());
+            File.WriteAllBytes(filePath, bytes);
+
+            //import site
+            var siteDb = ImportBinary(domain, bytes, result);
+            Lib.Helper.IOHelper.EnsureDirectoryExists(ImagePath);
+
+            //download images
+            var imageStr = dic["images"].ToString();
+            var images = JsonHelper.Deserialize<List<string>>(imageStr);
+            foreach(var image in images)
+            {
+                var imageUrl= "http://47.52.131.96/_api/download/themeimg/" + image;
+
+                bytes= Kooboo.Lib.Helper.HttpHelper.ConvertKooboo(imageUrl, new byte[0], new Dictionary<string, string>());
+                var filepath = GetImagePath(image);
+                File.WriteAllBytes(filepath, bytes);
+            }
+
+            return result;
+        }
+
         public void DeleteTemplate(DynamicTableObject obj)
         {
             var oldtemplate = obj.Values;
