@@ -1,10 +1,10 @@
 import { HOVER_BORDER_SKIP } from "../common/constants";
 
 export function getScrollTop() {
-  return document.documentElement.scrollTop;
+  return window.pageYOffset || document.documentElement.scrollTop;
 }
 export function getScrollLeft() {
-  return document.documentElement.scrollLeft;
+  return window.pageXOffset || document.documentElement.scrollLeft;
 }
 export function getMaxHeight() {
   var body = document.body,

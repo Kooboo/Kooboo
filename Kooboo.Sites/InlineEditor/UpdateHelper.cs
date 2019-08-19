@@ -108,7 +108,9 @@ namespace Kooboo.Sites.InlineEditor
                 else
                 {
                     exist.value = item.value;
-                    exist.important = item.important; 
+                    exist.important = item.important;
+                    CurrentItems.Remove(exist);
+                    CurrentItems.Add(exist);
                 }
             }
 
