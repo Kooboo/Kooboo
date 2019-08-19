@@ -37,14 +37,6 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public List<Message> List(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
-            {
-                var dic = new Dictionary<string, string>();
-                dic.Add("address", call.GetValue("address"));
-                dic.Add("folder", call.GetValue("folder"));
-                return EmailForwardManager.Get<List<Message>>(this.ModelName, nameof(EmailMessageApi.List), call.Context.User, dic);
-            }
-
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
 
             int addressid = EmailAddress.ToId(call.GetValue("address"));
@@ -66,15 +58,6 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public List<Message> More(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
-            {
-                var dic = new Dictionary<string, string>();
-                dic.Add("address", call.GetValue("address"));
-                dic.Add("folder", call.GetValue("folder"));
-                dic.Add("messageId", call.GetValue("messageId"));
-                return EmailForwardManager.Get<List<Message>>(this.ModelName, nameof(EmailMessageApi.More), call.Context.User, dic);
-            }
-
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
 
             var add = call.GetValue("address");
@@ -125,13 +108,6 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public ContentViewModel Content(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
-            {
-                var dic = new Dictionary<string, string>();
-                dic.Add("messageId", call.GetValue("messageId"));
-                return EmailForwardManager.Get<ContentViewModel>(this.ModelName, nameof(EmailMessageApi.Content), call.Context.User, dic);
-                
-            }
             int messageid = call.GetValue<int>("messageId");
 
             if (messageid <= 0)
@@ -149,21 +125,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         [Kooboo.Attributes.RequireModel(typeof(ComposeViewModel))]
         public void Send(ApiCall call)
-        {
-            if (EmailForwardManager.NeedForward(call.Context))
-            {
-                var dic = new Dictionary<string, string>();
-                dic.Add("messageId", call.GetValue("messageId"));
-
-                var json = Kooboo.Lib.Helper.JsonHelper.Serialize(call.Context.Request.Model);
-                var message= EmailForwardManager.Post<string>(this.ModelName, nameof(EmailMessageApi.Send), call.Context.User, json, dic);
-                if (!string.IsNullOrEmpty(message))
-                {
-                    throw new Exception(message);
-                }
-                return; 
-            }
-
+        { 
             var user = call.Context.User;
             var model = call.Context.Request.Model as Mail.ViewModel.ComposeViewModel;
             var msg = Kooboo.Mail.Utility.ComposeUtility.FromComposeViewModel(model, user);
@@ -201,21 +163,12 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
                 Kooboo.Data.Infrastructure.InfraManager.Add(call.Context.User.CurrentOrgId, Data.Infrastructure.InfraType.Email,  rcpttos.Count, string.Join(",", rcpttos));
                  
-            }
+            } 
 
         }
 
         public void Moves(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
-            {
-                var dic = new Dictionary<string, string>();
-                dic.Add("ids", call.GetValue("ids"));
-                dic.Add("folder", call.Context.Request.GetValue("folder"));
-                EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailMessageApi.Moves), call.Context.User,dic);
-                return;
-            }
-
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
 
             var idsJson = call.GetValue("ids");
@@ -237,14 +190,6 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public void Deletes(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
-            {
-                var dic = new Dictionary<string, string>();
-                dic.Add("ids", call.GetValue("ids"));
-                EmailForwardManager.Post<bool>(this.ModelName, nameof(EmailMessageApi.Deletes), call.Context.User, dic);
-                return;
-            }
-
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
 
             var idsJson = call.GetValue("ids");
@@ -258,39 +203,18 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public ComposeViewModel Forward(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
-            {
-                var dic = new Dictionary<string, string>();
-                dic.Add("sourceId", call.GetValue("sourceId"));
-                return EmailForwardManager.Get<ComposeViewModel>(this.ModelName, nameof(EmailMessageApi.Forward), call.Context.User, dic);
-            }
             int messageId = call.GetValue<int>("sourceId");
             return Kooboo.Mail.Multipart.ReferenceComposer.ComposeForward(messageId, call.Context);
         }
 
         public ComposeViewModel Reply(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
-            {
-                var dic = new Dictionary<string, string>();
-                dic.Add("sourceId", call.GetValue("sourceId"));
-                return EmailForwardManager.Get<ComposeViewModel>(this.ModelName, nameof(EmailMessageApi.Reply), call.Context.User, dic);
-            }
-
             int messageId = call.GetValue<int>("sourceId");
             return Kooboo.Mail.Multipart.ReferenceComposer.ComposeReply(messageId, call.Context);
         }
 
         public void MarkReads(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
-            {
-                var dic = new Dictionary<string, string>();
-                dic.Add("ids", call.GetValue("ids"));
-                dic.Add("value", call.GetValue("value"));
-                EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailMessageApi.MarkReads), call.Context.User, dic);
-            }
-
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
 
             var idsJson = call.GetValue("ids");

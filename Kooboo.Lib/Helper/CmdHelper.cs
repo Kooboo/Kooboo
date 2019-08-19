@@ -86,5 +86,21 @@ namespace Kooboo.Lib.Helper
             return strOutput;
         }
 
+        public static void ExeCmdNoWait(string cmd)
+        {
+            Process p = new Process();
+            p.StartInfo.FileName = "cmd.exe";
+
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardInput = true;
+            p.StartInfo.RedirectStandardOutput = true;
+            p.StartInfo.RedirectStandardError = true;
+            p.StartInfo.CreateNoWindow = false;
+            p.Start();
+
+            p.StandardInput.WriteLine(cmd);
+           
+        }
+
     }
 }
