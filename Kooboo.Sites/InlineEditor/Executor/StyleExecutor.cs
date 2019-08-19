@@ -19,18 +19,18 @@ namespace Kooboo.Sites.InlineEditor.Executor
         {
             get
             {
-                return "style"; 
+                return "style";
             }
         }
-         
+
         public void ExecuteObject(RenderContext context, IRepository repo, string NameOrId, List<IInlineModel> updates)
         {
             throw new NotImplementedException();
         }
-         
+
         public void EnsureStyleId(List<Model.StyleModel> items, RenderContext context)
         {
-            var page = context.GetItem<Page>(); 
+            var page = context.GetItem<Page>();
 
             if (items.Count() == 0)
             {
@@ -53,7 +53,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
 
                         if (string.IsNullOrEmpty(CssUrl))
                         {
-                            var allPageCssUrl =  Relation.DomRelation.GetReferenceStyleUrl(page.Dom, page.Headers);
+                            var allPageCssUrl = Relation.DomRelation.GetReferenceStyleUrl(page.Dom, page.Headers);
                             allPageCssUrl.Reverse();
                             foreach (var cssitem in allPageCssUrl)
                             {
@@ -102,18 +102,18 @@ namespace Kooboo.Sites.InlineEditor.Executor
         public Guid GetStyleIdByKoobooTag(RenderContext Context, string StyleTagKoobooId, string ObjectType = null, string NameOrId = null)
         {
             IDomObject domobject = null;
-            Guid objectid = default(Guid); 
-            
+            Guid objectid = default(Guid);
+
             if (!string.IsNullOrEmpty(ObjectType) && !string.IsNullOrEmpty(NameOrId))
             {
-                var repo = Context.WebSite.SiteDb().GetRepository(ObjectType); 
-                if (repo !=null)
+                var repo = Context.WebSite.SiteDb().GetRepository(ObjectType);
+                if (repo != null)
                 {
-                    var siteobject = repo.GetByNameOrId(NameOrId); 
-                    if (siteobject !=null && siteobject is IDomObject)
+                    var siteobject = repo.GetByNameOrId(NameOrId);
+                    if (siteobject != null && siteobject is IDomObject)
                     {
                         domobject = siteobject as IDomObject;
-                        objectid = domobject.Id; 
+                        objectid = domobject.Id;
                     }
                 }
             }
@@ -122,15 +122,15 @@ namespace Kooboo.Sites.InlineEditor.Executor
             {
                 var page = Context.GetItem<Page>();
                 domobject = page as IDomObject;
-                objectid = page.Id; 
+                objectid = page.Id;
             }
-             
+
 
             var element = Service.DomService.GetElementByKoobooId(domobject.Dom, StyleTagKoobooId);
             if (element != null)
             {
                 string inner = element.InnerHtml;
-                int bodyhash = Lib.Security.Hash.ComputeIntCaseSensitive(inner); 
+                int bodyhash = Lib.Security.Hash.ComputeIntCaseSensitive(inner);
 
                 var style = Context.WebSite.SiteDb().Styles.Query.Where(o => o.OwnerObjectId == objectid && o.BodyHash == bodyhash).FirstOrDefault();
                 if (style != null)
@@ -143,7 +143,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
 
         public void EnsureCssRuleId(List<Model.StyleModel> items, RenderContext context)
         {
-            List<Model.StyleModel> addtional = new List<Model.StyleModel>(); 
+            List<Model.StyleModel> addtional = new List<Model.StyleModel>();
 
             foreach (var item in items.GroupBy(o => o.StyleId))
             {
@@ -155,21 +155,39 @@ namespace Kooboo.Sites.InlineEditor.Executor
                     {
                         if (ruleitem.RuleId == default(Guid) && !string.IsNullOrEmpty(ruleitem.Selector))
                         {
-                            var foundrules = allrules.FindAll(o => CssSelectorComparer.IsEqual(o.SelectorText, ruleitem.Selector));  
+                            var foundrules = allrules.FindAll(o => CssSelectorComparer.IsEqual(o.SelectorText, ruleitem.Selector));
 
-                            if (foundrules != null &&foundrules.Count()>0)
+                            if (foundrules != null && foundrules.Count() > 0)
                             {
+                                // 如果媒体查询不为空
+                                if (!string.IsNullOrWhiteSpace(ruleitem.MediaRuleList))
+                                {
+                                    var media = allrules.FirstOrDefault(o => CssSelectorComparer.IsEqual(o.SelectorText, ruleitem.MediaRuleList));
+
+                                    if (media != null)
+                                    {
+                                        foundrules = foundrules.Where(e => e.ParentCssRuleId == media.Id).ToList();
+                                    }
+                                    else
+                                    {
+                                        foundrules = new List<CmsCssRule>();
+                                    }
+                                }
+                                else {
+                                    foundrules = foundrules.Where(e => e.ParentCssRuleId == default(Guid)).ToList();
+                                }
+
                                 var result = AssignRuleId(ruleitem, foundrules);
-                                addtional.AddRange(result);  
-                            } 
+                                addtional.AddRange(result);
+                            }
                         }
                     }
                 }
-            } 
+            }
 
-            if (addtional.Count()>0)
+            if (addtional.Count() > 0)
             {
-                items.AddRange(addtional); 
+                items.AddRange(addtional);
             }
         }
 

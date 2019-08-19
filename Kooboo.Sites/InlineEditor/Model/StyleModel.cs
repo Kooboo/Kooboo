@@ -53,5 +53,7 @@ namespace Kooboo.Sites.InlineEditor.Model
         public string StyleTagKoobooId { get; set; } 
 
         public string KoobooId { get; set; }
+
+        public string MediaRuleList { get; set; }
     }  
 }
