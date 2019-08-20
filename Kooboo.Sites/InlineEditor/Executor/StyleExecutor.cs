@@ -485,7 +485,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                     if (!string.IsNullOrEmpty(item.Value))
                     {
                         current.Declarations.setProperty(item.Property, item.Value, item.Important);
-                        var prop= current.Declarations.item.FirstOrDefault(f => f.propertyname == item.Property);
+                        var prop= current.Declarations.item.FirstOrDefault(f => f != null && f.propertyname == item.Property);
                         if (prop != null) {
                             current.Declarations.item.Remove(prop);
                             current.Declarations.item.Add(prop);
