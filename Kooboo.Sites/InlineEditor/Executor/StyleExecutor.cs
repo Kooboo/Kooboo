@@ -159,11 +159,11 @@ namespace Kooboo.Sites.InlineEditor.Executor
 
                             if (foundrules != null && foundrules.Count() > 0)
                             {
-                                // Èç¹ûÃ½Ìå²éÑ¯²»Îª¿Õ
+                                // ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½Ñ¯ï¿½ï¿½Îªï¿½ï¿½
                                 if (!string.IsNullOrWhiteSpace(ruleitem.MediaRuleList))
                                 {
                                     foreach (var foundruleItem in foundrules.ToList()) {
-                                        // Èç¹ûÃ»ÓÐ¸¸id£¨²»ÔÚÃ½Ìå²éÑ¯ÖÐ£©
+                                        // ï¿½ï¿½ï¿½Ã»ï¿½Ð¸ï¿½idï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½Ñ¯ï¿½Ð£ï¿½
                                         if (foundruleItem.ParentCssRuleId == default(Guid)) {
                                             foundrules.Remove(foundruleItem);
                                         }
@@ -485,7 +485,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                     if (!string.IsNullOrEmpty(item.Value))
                     {
                         current.Declarations.setProperty(item.Property, item.Value, item.Important);
-                        var prop= current.Declarations.item.Where(w=>w!=null).FirstOrDefault(f => f.propertyname == item.Property);
+                        var prop= current.Declarations.item.FirstOrDefault(f => f != null && f.propertyname == item.Property);
                         if (prop != null) {
                             current.Declarations.item.Remove(prop);
                             current.Declarations.item.Add(prop);

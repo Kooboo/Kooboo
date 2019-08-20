@@ -53,6 +53,7 @@ export function createContainer() {
   root.style.fontFamily = `"Times New Roman",Times,serif`;
   root.style.fontStyle = "normal";
   root.style.fontVariant = "normal";
+  root.style.lineHeight = "16px";
   shadow.appendChild(root);
   return root;
 }
