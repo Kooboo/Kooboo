@@ -197,8 +197,9 @@ namespace Kooboo.Lib.Helper
                     return client.DownloadString(url);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             { 
+
             }
 
             return null;  
@@ -226,7 +227,7 @@ namespace Kooboo.Lib.Helper
                     return ProcessApiResponse<T>(backstring);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                  
             }

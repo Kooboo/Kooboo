@@ -12,9 +12,14 @@ namespace Kooboo.Sites.DataSources
     {
         public string FieldName { get; set; }
 
+        public bool IsNameValueType { get; set; }
+
         [JsonConverter(typeof(StringEnumConverter))]
         public Comparer Comparer { get; set; } = Comparer.EqualTo; 
 
-        public string FieldValue { get; set; }
+        public string FieldValue { get; set; } 
+
+        public bool IsValueValueType { get; set; }
+
     }
 }

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace Kooboo.Sites.DataSources
 {
     public class FilterHelper
-    { 
+    {
         public static FilterDefinition GetFilter(string expression)
         {
             if (string.IsNullOrWhiteSpace(expression))
@@ -19,13 +19,13 @@ namespace Kooboo.Sites.DataSources
             expression = expression.Replace("  ", " ");
             expression = expression.Trim();
 
-           var trysymbol = GetFilterBySymbol(expression); 
-            if (trysymbol !=null)
+            var trysymbol = GetFilterBySymbol(expression);
+            if (trysymbol != null)
             {
-                return trysymbol; 
+                return trysymbol;
             }
 
-            FilterDefinition filter = new FilterDefinition(); 
+            FilterDefinition filter = new FilterDefinition();
             int index = expression.IndexOf(" ");
 
             if (index == -1)
@@ -37,46 +37,81 @@ namespace Kooboo.Sites.DataSources
             else
             {
                 filter.FieldName = expression.Substring(0, index);
-                  
-                var nextindex = expression.IndexOf(" ", index + 1); 
+
+                var nextindex = expression.IndexOf(" ", index + 1);
 
                 if (nextindex == -1)
                 {
                     string compare = expression.Substring(index).Trim();
-                    filter.Comparer = ComparerHelper.GetComparer(compare);  
+                    filter.Comparer = ComparerHelper.GetComparer(compare);
                 }
                 else
                 {
                     string compare = expression.Substring(index, nextindex - index);
                     filter.Comparer = ComparerHelper.GetComparer(compare);
 
-                    filter.FieldValue = expression.Substring(nextindex).Trim();  
+                    filter.FieldValue = expression.Substring(nextindex).Trim();
                 }
 
-            } 
- 
+            }
+
             return filter;
         }
 
+
+        public static void CheckValueType(FilterDefinition filter)
+        {
+            if (filter.FieldName != null)
+            {
+                if (filter.FieldName.StartsWith("'") && filter.FieldName.EndsWith("'"))
+                {
+                    filter.FieldName = filter.FieldName.Trim('\'');
+                    filter.IsNameValueType = true;
+                }
+
+                else if (filter.FieldName.StartsWith("\"") && filter.FieldName.EndsWith("\""))
+                {
+                    filter.FieldName = filter.FieldName.Trim('"');
+                    filter.IsNameValueType = true;
+                }
+            }
+
+            if (filter.FieldValue !=null)
+            {
+
+                if (filter.FieldValue.StartsWith("'") && filter.FieldValue.EndsWith("'"))
+                {
+                    filter.FieldValue = filter.FieldValue.Trim('\'');
+                    filter.IsValueValueType = true;
+                }
+
+                else if (filter.FieldValue.StartsWith("\"") && filter.FieldValue.EndsWith("\""))
+                {
+                    filter.FieldValue = filter.FieldValue.Trim('"');
+                    filter.IsValueValueType = true;
+                }
+            }
+        }
+
         public static FilterDefinition GetFilterBySymbol(string expression)
-        { 
+        {
             foreach (var item in ComparerList)
             {
-                int index = expression.IndexOf(item); 
-                if (index >-1)
+                int index = expression.IndexOf(item);
+                if (index > -1)
                 {
                     FilterDefinition filter = new FilterDefinition();
-                   
+
                     filter.FieldName = expression.Substring(0, index).Trim();
 
                     filter.FieldValue = expression.Substring(index + item.Length).Trim();
 
                     filter.Comparer = ComparerHelper.GetComparer(item);
 
-                    return filter; 
+                    return filter;
                 }
             }
-            return null; 
+            return null;
         }
 
         public static bool Check(string FieldValue, Comparer Comparer, string CompareValue, Type ClrType = null)
@@ -148,13 +183,13 @@ namespace Kooboo.Sites.DataSources
                 }
                 catch (Exception)
                 {
-                    return false; 
-                } 
+                    return false;
+                }
             }
             return true;
         }
-        
-        private static List<string> _comparerlist; 
+
+        private static List<string> _comparerlist;
         private static List<string> ComparerList
         {
             get
@@ -170,11 +205,11 @@ namespace Kooboo.Sites.DataSources
                     _comparerlist.Add("<=");
                     _comparerlist.Add("=");
                     _comparerlist.Add(">");
-                    _comparerlist.Add("<"); 
+                    _comparerlist.Add("<");
                 }
-                return _comparerlist; 
+                return _comparerlist;
             }
         }
-         
+
     }
 }

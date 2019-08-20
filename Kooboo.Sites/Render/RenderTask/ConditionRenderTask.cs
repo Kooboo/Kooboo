@@ -21,6 +21,8 @@ namespace Kooboo.Sites.Render
 
         private ValueRenderTask ValueRenderTask { get; set; }
 
+        private ValueRenderTask CompareValueRenderTask { get; set; }
+
         public ConditionRenderTask(Element element, string ConditionText, EvaluatorOption options)
         {
             if (ConditionText.ToLower().StartsWith("repeat"))
@@ -31,11 +33,13 @@ namespace Kooboo.Sites.Render
             else
             {
                 this.Filter = FilterHelper.GetFilter(ConditionText);
+                 FilterHelper.CheckValueType(this.Filter); 
             }
             string NewElementString = Service.DomService.ReSerializeElement(element);
 
             this.SubTasks = RenderEvaluator.Evaluate(NewElementString, options);
         }
+         
 
         public string Render(RenderContext context)
         {
@@ -76,12 +80,22 @@ namespace Kooboo.Sites.Render
             {
                 if (this.Filter != null)
                 {
-                    if (this.ValueRenderTask == null)
+                    string value = null; 
+                    if (this.Filter.IsNameValueType)
                     {
-                        this.ValueRenderTask = new ValueRenderTask(this.Filter.FieldName);
+                        value = this.Filter.FieldName; 
                     }
+                    else
+                    {
+                        if (this.ValueRenderTask == null)
+                        {
+                            this.ValueRenderTask = new ValueRenderTask(this.Filter.FieldName);
+                        }
 
-                    var value = this.ValueRenderTask.Render(context);
+                       value = this.ValueRenderTask.Render(context);
+                    }
+                   
+
                     if (value == null)
                     {
                         // TODO: add more k-system fields. 
@@ -94,7 +108,34 @@ namespace Kooboo.Sites.Render
                             return false;
                         }
                     }
-                    return FilterHelper.Check(value.ToString(), this.Filter.Comparer, this.Filter.FieldValue);
+
+
+                    string comparevalue = null;
+                    if (this.Filter.IsValueValueType)
+                    {
+                        comparevalue = this.Filter.FieldValue;
+                    }
+                    else
+                    {
+                        if (this.CompareValueRenderTask == null)
+                        {
+                            this.CompareValueRenderTask = new ValueRenderTask(this.Filter.FieldValue);
+                        }
+
+                        var contextcomparevalue = this.CompareValueRenderTask.Render(context); 
+
+                        if (!string.IsNullOrWhiteSpace(contextcomparevalue))
+                        {
+                            comparevalue = contextcomparevalue; 
+                        } 
+                        else
+                        {
+                            comparevalue = this.Filter.FieldValue; 
+                        }
+                    }
+
+
+                    return FilterHelper.Check(value.ToString(), this.Filter.Comparer, comparevalue);
                 }
             }
 
