@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Kooboo.Data.Repository
-{ 
+{
 
     public class SslCertificateRepository : RepositoryBase<SslCertificate>
     {
@@ -17,73 +17,93 @@ namespace Kooboo.Data.Repository
             {
                 ObjectStoreParameters paras = new ObjectStoreParameters();
                 paras.SetPrimaryKeyField<SslCertificate>(o => o.Id);
-                paras.AddColumn<SslCertificate>(o => o.OrganizationId); 
+                paras.AddColumn<SslCertificate>(o => o.OrganizationId);
                 return paras;
             }
         }
 
         public void AddCert(Guid Organizationid, string domain, byte[] cert)
         {
-            bool iswildcard = false; 
+            bool iswildcard = false;
             if (domain.StartsWith("*."))
             {
                 domain = domain.Substring(2);
-                iswildcard = true; 
+                iswildcard = true;
             }
-             
+
             var certificate = new X509Certificate2(cert, "kooboo");
 
             if (certificate.Subject.Contains("*"))
             {
-                iswildcard = true; 
+                iswildcard = true;
+
+                string cn = GetCommonName(certificate.Subject);
+                if (!string.IsNullOrWhiteSpace(cn))
+                {
+                    domain = cn;
+                }
             }
-            
+
             SslCertificate ssl = new SslCertificate();
             ssl.Domain = domain;
             ssl.IsWildCard = iswildcard;
-            ssl.Expiration = certificate.NotAfter; 
-            ssl.OrganizationId = Organizationid; 
-            ssl.Content = cert; 
+            ssl.Expiration = certificate.NotAfter;
+            ssl.OrganizationId = Organizationid;
+            ssl.Content = cert;
             this.AddOrUpdate(ssl);
         }
 
+        public string GetCommonName(string subject)
+        {
+            int index = subject.IndexOf("=");
+            if (index > 0)
+            {
+                string name = subject.Substring(index + 1).Trim();
+                if (name.StartsWith("*."))
+                {
+                    return name.Substring(2);
+                }
+            }
+            return null;
+        }
+
         public SslCertificate GetByDomain(string fulldomain)
-        { 
+        {
             if (fulldomain == null)
             {
-                return null; 
-            } 
-            fulldomain = fulldomain.Trim(); 
+                return null;
+            }
+            fulldomain = fulldomain.Trim();
 
-            var id = Lib.Security.Hash.ComputeGuidIgnoreCase(fulldomain); 
- 
-            var item =  this.Get(id);  
-            if (item !=null)
+            var id = Lib.Security.Hash.ComputeGuidIgnoreCase(fulldomain);
+
+            var item = this.Get(id);
+            if (item != null)
             {
-                return item; 
+                return item;
             }
 
-            var index = fulldomain.IndexOf("."); 
-            while(index >-1)
+            var index = fulldomain.IndexOf(".");
+            while (index > -1)
             {
                 fulldomain = fulldomain.Substring(index + 1);
                 var domainid = Lib.Security.Hash.ComputeGuidIgnoreCase(fulldomain);
-                var ssl = this.Get(domainid); 
-                if (ssl !=null && ssl.IsWildCard)
+                var ssl = this.Get(domainid);
+                if (ssl != null && ssl.IsWildCard)
                 {
-                    return ssl; 
+                    return ssl;
                 }
-                index = fulldomain.IndexOf("."); 
+                index = fulldomain.IndexOf(".");
             }
 
-            return null; 
+            return null;
         }
-         
+
         public List<SslCertificate> ListByOrganization(Guid OrganizationId)
         {
-            return this.Query.Where(o => o.OrganizationId == OrganizationId).SelectAll();    
+            return this.Query.Where(o => o.OrganizationId == OrganizationId).SelectAll();
         }
-    } 
+    }
 
 }
 
