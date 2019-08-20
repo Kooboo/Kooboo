@@ -7,8 +7,9 @@ export function createImg(el: HTMLElement, nameOrId: string, objectType: string,
   const style = getComputedStyle(el);
 
   const changeImg = (path: string) => {
-    el.style.backgroundImage = `url('${path}')`;
-    log = StyleLog.createUpdate(nameOrId, objectType, `url('${path}')`, "background-image", koobooId);
+    path = path == "none" ? "none" : ` url('${path}')`;
+    el.style.backgroundImage = path;
+    log = StyleLog.createUpdate(nameOrId, objectType, path, "background-image", koobooId);
     setImage(path);
   };
 
