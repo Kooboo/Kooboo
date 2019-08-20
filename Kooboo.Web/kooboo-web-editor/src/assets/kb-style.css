@@ -9,6 +9,7 @@
   position: static;
   background-color: rgba(255, 255, 255, 0);
   font-weight: 400;
+  line-height: 1.2;
 }
 
 .kb_web_editor_input {
@@ -149,6 +150,7 @@
   padding: 5px 10px;
   color: #fff;
   background-color: rgb(2, 154, 214);
+  line-height: 18px;
 }
 
 .kb_web_editor_menu_title > .kb_web_editor_div {

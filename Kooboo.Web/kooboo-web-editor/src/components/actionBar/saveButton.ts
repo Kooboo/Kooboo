@@ -14,13 +14,11 @@ export function createSaveButton() {
   });
   saveBtn.onclick = async () => {
     let logs: Log[] = [];
-
     for (const iterator of context.operationManager.previousRecords) {
       logs.push(...iterator.logs);
     }
     if (logs.length == 0) return;
     try {
-      console.log(logs);
       await updateOperation(logs);
       reload();
     } catch (error) {
