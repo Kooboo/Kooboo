@@ -26,7 +26,7 @@ namespace Kooboo.Data.SSL
             string vefiryurl = tokenurl + "/_api/validator/SelfCheck";
             return Lib.Helper.HttpHelper.TryGet<bool>(vefiryurl, para);
         }
-          
+
         public static string GetToken(string domain)
         {
             Dictionary<string, string> para = new Dictionary<string, string>();
@@ -42,7 +42,7 @@ namespace Kooboo.Data.SSL
             if (cert != null && cert.Expiration > DateTime.Now.AddDays(10))
             {
                 return;
-            } 
+            }
 
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("domain", domain);
@@ -81,7 +81,7 @@ namespace Kooboo.Data.SSL
             MiddleWareList.Insert(pos, new SslCertMiddleWare());
         }
 
-         
+
         public static void EnsureServerHostDomain()
         {
             if (!Data.AppSettings.IsOnlineServer)
@@ -93,12 +93,14 @@ namespace Kooboo.Data.SSL
             if (setting != null && setting.MyIP != "127.0.0.1" && setting.ServerId > 0)
             {
                 if (!string.IsNullOrWhiteSpace(setting.HostDomain))
-                {
-                    var domain = setting.ServerId + "." + setting.HostDomain;
+                { 
+                    var domain = setting.ServerId + "." + setting.HostDomain; 
+                    Console.WriteLine("generating domain:" + domain);
+
                     SslService.SetSsl(domain, default(Guid));
                 }
             }
-        }  
+        }
     }
 
 }
