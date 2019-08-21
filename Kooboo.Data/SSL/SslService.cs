@@ -49,17 +49,26 @@ namespace Kooboo.Data.SSL
 
             string url = tokenurl + "/_api/SSL/GetPfx";
 
-            var certbytes = Lib.Helper.HttpHelper.Get<Data.Models.DataString>(url, para);
+            try
+            {
+                var certbytes = Lib.Helper.HttpHelper.Get<Data.Models.DataString>(url, para);
 
-            if (certbytes != null && certbytes.Validate())
-            {
-                var orgbytes = Convert.FromBase64String(certbytes.Base64String);
-                Kooboo.Data.GlobalDb.SslCertificate.AddCert(Organizationid, domain, orgbytes);
+                if (certbytes != null && certbytes.Validate())
+                {
+                    var orgbytes = Convert.FromBase64String(certbytes.Base64String);
+                    Kooboo.Data.GlobalDb.SslCertificate.AddCert(Organizationid, domain, orgbytes);
+                }
+                else
+                {
+                    Kooboo.Data.Log.Instance.Exception.Write("SSL generation failed: " + domain);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Kooboo.Data.Log.Instance.Exception.Write("SSL generation failed: " + domain);
+                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + ex.StackTrace);
             }
+
+
         }
 
 
@@ -93,8 +102,8 @@ namespace Kooboo.Data.SSL
             if (setting != null && setting.MyIP != "127.0.0.1" && setting.ServerId > 0)
             {
                 if (!string.IsNullOrWhiteSpace(setting.HostDomain))
-                { 
-                    var domain = setting.ServerId + "." + setting.HostDomain; 
+                {
+                    var domain = setting.ServerId + "." + setting.HostDomain;
                     Console.WriteLine("generating domain:" + domain);
 
                     SslService.SetSsl(domain, default(Guid));

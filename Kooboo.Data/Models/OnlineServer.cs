@@ -197,8 +197,11 @@ namespace Kooboo.Data.Models
         Nginx = 32, 
         SslServer = 64, 
         MailServer = 128,
-        Monitor = 256
-        //0 = normal, 1= template, 2= accountDns, 4= wwwhost.  5. Nginx = front end proxy server. 
+        Monitor = 256,
+        Redirect = 512,
+
+        // Nginx is for the www root redirect. Redirect for user custom domain redirect.... 
+       
     }
     
 }
