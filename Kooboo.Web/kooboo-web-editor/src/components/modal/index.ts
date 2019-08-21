@@ -29,6 +29,6 @@ export function createModal(title: string, content: string | HTMLElement, width?
       close.onclick = h;
     },
     close: recovery,
-    hideCancel: () => (cancel.hidden = true)
+    hideCancel: () => (cancel.style.display = "none")
   };
 }
