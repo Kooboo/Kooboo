@@ -8,22 +8,20 @@ import { getViewComment } from "@/components/floatMenu/utils";
 const pseudoes = ["visited", "hover", "active", "focus"];
 
 function* getStyles() {
-  for (let i = 0; i < document.styleSheets.length; i++) {
-    let style = document.styleSheets.item(i);
-    if (!style || !matchMedia(style.media.mediaText).matches) continue;
+  for (const style of document.styleSheets as any) {
+    if (!style || !(style instanceof StyleSheet) || !matchMedia(style.media.mediaText).matches) continue;
     yield style;
   }
 }
 
 function* getRules(style: CSSStyleSheet) {
-  for (let i = 0; i < style.rules.length; i++) {
-    let rule = style.rules.item(i);
+  for (const rule of style.rules as any) {
     if (rule instanceof CSSStyleRule) yield { cssRule: rule, mediaRuleList: null };
-    if (rule instanceof CSSMediaRule && matchMedia(rule.conditionText).matches) {
-      for (let j = 0; j < rule.cssRules.length; j++) {
+    if (rule instanceof CSSMediaRule && matchMedia(rule.media.mediaText).matches) {
+      for (const cssRule of rule.cssRules as any) {
         yield {
-          cssRule: rule.cssRules.item(j),
-          mediaRuleList: rule.conditionText
+          cssRule: cssRule as CSSStyleRule,
+          mediaRuleList: rule.media.mediaText
         };
       }
     }

@@ -5,7 +5,7 @@ describe("stylePriority", () => {
   test("getPriority ", () => {
     let styleSelector = { targetSelector: "button.button > i.icon:before", important: true, inline: false, styleSequence: 88 } as CssColor;
     let priority = getStylePriority(styleSelector);
-    expect(priority).toEqual([1, 0, 0, 2, 3, 88]);
+    expect(priority).toEqual([1, 0, 0, 2, 3, 0, 88]);
   });
   test("compareStylePriority ", () => {
     let styleSelector1 = { targetSelector: "button.button > i.icon:before", important: true, inline: false, styleSequence: 88 } as CssColor;
