@@ -3,14 +3,14 @@ import { createNotice } from "@/components/actionBar/Notice";
 describe("notice", () => {
   beforeEach(() => (document.body.innerHTML = ""));
 
-  test("createNotice", () => {
+  it("createNotice", () => {
     let notice = createNotice();
-    expect(notice.style.visibility).toEqual("");
+    expect(notice.style.visibility).equal("");
 
     notice.setCount(1);
-    expect(notice.style.visibility).toEqual("visible");
+    expect(notice.style.visibility).equal("visible");
 
     notice.setCount(-1);
-    expect(notice.style.visibility).toEqual("hidden");
+    expect(notice.style.visibility).equal("hidden");
   });
 });

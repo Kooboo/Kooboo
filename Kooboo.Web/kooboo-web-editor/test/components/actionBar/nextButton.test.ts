@@ -2,6 +2,7 @@ import { createNextButton } from "@/components/actionBar/nextButton";
 import context from "@/common/context";
 import { operationManager } from "@/operation/Manager";
 import { OperationEventArgs } from "@/events/OperationEvent";
+import { expect } from "chai";
 
 describe("nextButton", () => {
   beforeEach(() => {
@@ -10,7 +11,7 @@ describe("nextButton", () => {
   });
 
   // 点击时，期望触发下一步动作
-  test("createNextButton_click", () => {
+  it("createNextButton_click", () => {
     let isNext = false;
     context.operationManager.next = () => {
       isNext = true;
@@ -20,11 +21,10 @@ describe("nextButton", () => {
     let event = document.createEvent("MouseEvent");
     event.initEvent("click", true);
     element.dispatchEvent(event);
-
-    expect(isNext).toEqual(true);
+    expect(isNext).equal(true);
   });
 
-  test("createNextButton_eventListene", () => {
+  it("createNextButton_eventListene", () => {
     let element = createNextButton();
 
     context.operationEvent.emit(new OperationEventArgs(0, 1));

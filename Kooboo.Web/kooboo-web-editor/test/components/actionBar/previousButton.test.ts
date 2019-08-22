@@ -10,7 +10,7 @@ describe("previousButton", () => {
   });
 
   // 点击时，期望触发上一步动作
-  test("createPreviousButton_click", () => {
+  it("createPreviousButton_click", () => {
     let isPrevious = false;
     context.operationManager.previous = () => {
       isPrevious = true;
@@ -21,10 +21,10 @@ describe("previousButton", () => {
     event.initEvent("click", true);
     element.dispatchEvent(event);
 
-    expect(isPrevious).toEqual(true);
+    expect(isPrevious).equal(true);
   });
 
-  test("createPreviousButton_eventListene", () => {
+  it("createPreviousButton_eventListene", () => {
     let element = createPreviousButton();
 
     context.operationEvent.emit(new OperationEventArgs(1, 0));
