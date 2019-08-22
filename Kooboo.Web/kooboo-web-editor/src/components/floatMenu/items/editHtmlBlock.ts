@@ -5,6 +5,7 @@ import { editHtmlBlock } from "@/kooboo/outsideInterfaces";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
+import { reload } from "@/dom/utils";
 
 export default class EditHtmlBlockItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -26,6 +27,7 @@ export default class EditHtmlBlockItem extends BaseMenuItem {
   update(comments: KoobooComment[]): void {
     this.setVisiable(true);
     if (!getHtmlBlockComment(comments)) return this.setVisiable(false);
+    this.setReadonly(hasOperation(context.operationManager));
   }
 
   async click() {
@@ -36,5 +38,6 @@ export default class EditHtmlBlockItem extends BaseMenuItem {
     let comment = getHtmlBlockComment(comments)!;
     let nameorid = comment.nameorid;
     await editHtmlBlock(nameorid!);
+    reload();
   }
 }
