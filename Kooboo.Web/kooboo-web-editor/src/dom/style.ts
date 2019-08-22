@@ -8,9 +8,10 @@ import { getViewComment } from "@/components/floatMenu/utils";
 const pseudoes = ["visited", "hover", "active", "focus"];
 
 function getStyles() {
-  let styles: StyleSheet[] = [];
+  let styles: CSSStyleSheet[] = [];
   for (const style of document.styleSheets as any) {
-    if (!style || !(style instanceof StyleSheet) || !matchMedia(style.media.mediaText).matches) continue;
+    if (!style || !(style instanceof CSSStyleSheet)) continue;
+    if (style.media && style.media.mediaText && !matchMedia(style.media.mediaText).matches) continue;
     styles.push(style);
   }
   return styles;
@@ -36,7 +37,7 @@ export function getCssRules() {
   let cssRules = [];
   let styleSequence = 0;
   for (const style of getStyles()) {
-    if (!style || !(style instanceof CSSStyleSheet) || !(style.ownerNode instanceof HTMLElement)) continue;
+    if (!(style.ownerNode instanceof HTMLElement)) continue;
     let comments = KoobooComment.getComments(style.ownerNode);
     let comment = getViewComment(comments);
     if (!comment) continue;
