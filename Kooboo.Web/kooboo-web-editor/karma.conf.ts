@@ -6,6 +6,7 @@ const WebpackConfig = getWebpackConfig({ NODE_ENV: "development" });
 
 export default function(config: Config) {
   let configOptions = {
+    webpackMiddleware: {},
     basePath: "",
     frameworks: ["mocha", "chai"],
     reporters: ["progress"],
@@ -21,7 +22,7 @@ export default function(config: Config) {
     },
     files: ["test/index.test.ts"],
     preprocessors: {
-      "test/index.test.ts": ["webpack"]
+      "test/index.test.ts": ["webpack", "sourcemap"]
     },
     webpack: {
       mode: "development",

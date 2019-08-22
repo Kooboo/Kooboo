@@ -7,7 +7,7 @@ export default (env: any): webpack.Configuration => ({
     path: path.resolve("../_Admin/Scripts/kooboo-web-editor"),
     filename: "kooboo-web-editor.min.js"
   },
-  watch: env.NODE_ENV == "development" && !env.inKarma,
+  watch: env.NODE_ENV == "development",
   mode: env.NODE_ENV,
   resolve: {
     extensions: [".ts", ".tsx", ".js"],

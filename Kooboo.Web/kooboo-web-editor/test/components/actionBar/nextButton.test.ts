@@ -2,7 +2,6 @@ import { createNextButton } from "@/components/actionBar/nextButton";
 import context from "@/common/context";
 import { operationManager } from "@/operation/Manager";
 import { OperationEventArgs } from "@/events/OperationEvent";
-import { expect } from "chai";
 
 describe("nextButton", () => {
   beforeEach(() => {

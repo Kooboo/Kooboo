@@ -5,6 +5,7 @@ describe("notice", () => {
 
   it("createNotice", () => {
     let notice = createNotice();
+
     expect(notice.style.visibility).equal("");
 
     notice.setCount(1);
