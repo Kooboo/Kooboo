@@ -8,13 +8,16 @@ export function createFont(el: HTMLElement, nameOrId: string, objectType: string
   let fontSizeLog: StyleLog | undefined;
   let fontWeightLog: StyleLog | undefined;
   let fontFamilyLog: StyleLog | undefined;
+  let fontSizeImportant = !!style.getPropertyPriority("font-size");
+  let fontWeightImportant = !!style.getPropertyPriority("font-size");
+  let fontFamilyImportant = !!style.getPropertyPriority("font-size");
 
   let size = createLabelInput(TEXT.FONT_SIZE, 90);
   size.input.style.width = "50%";
   size.setContent(style.fontSize!);
   size.setInputHandler(content => {
     el.style.fontSize = (content.target! as HTMLInputElement).value;
-    fontSizeLog = StyleLog.createUpdate(nameOrId, objectType, el.style.fontSize, "font-size", koobooId);
+    fontSizeLog = StyleLog.createUpdate(nameOrId, objectType, el.style.fontSize, "font-size", koobooId, fontSizeImportant);
   });
   container.appendChild(size.input);
 
@@ -23,7 +26,7 @@ export function createFont(el: HTMLElement, nameOrId: string, objectType: string
   weight.setContent(style.fontWeight!);
   weight.setInputHandler(content => {
     el.style.fontWeight = (content.target! as HTMLInputElement).value;
-    fontWeightLog = StyleLog.createUpdate(nameOrId, objectType, el.style.fontWeight, "font-weight", koobooId);
+    fontWeightLog = StyleLog.createUpdate(nameOrId, objectType, el.style.fontWeight, "font-weight", koobooId, fontWeightImportant);
   });
   container.appendChild(weight.input);
 
@@ -31,7 +34,7 @@ export function createFont(el: HTMLElement, nameOrId: string, objectType: string
   family.setContent(style.fontFamily!);
   family.setInputHandler(content => {
     el.style.fontFamily = (content.target! as HTMLInputElement).value;
-    fontFamilyLog = StyleLog.createUpdate(nameOrId, objectType, el.style.fontFamily, "font-family", koobooId);
+    fontFamilyLog = StyleLog.createUpdate(nameOrId, objectType, el.style.fontFamily, "font-family", koobooId, fontFamilyImportant);
   });
   container.appendChild(family.input);
 

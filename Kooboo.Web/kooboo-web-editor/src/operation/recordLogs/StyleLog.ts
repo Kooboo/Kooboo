@@ -16,7 +16,7 @@ export class StyleLog extends Log {
   mediaRuleList!: string | null;
   readonly editorType: string = EDITOR_TYPE.style;
 
-  static createUpdate(nameOrId: string, objectType: string, value: string, property: string, koobooId: string) {
+  static createUpdate(nameOrId: string, objectType: string, value: string, property: string, koobooId: string, important?: boolean) {
     let log = new StyleLog();
     log.action = ActionType.update;
     log.nameOrId = nameOrId;
@@ -24,6 +24,7 @@ export class StyleLog extends Log {
     log.objectType = objectType;
     log.property = property;
     log.KoobooId = koobooId;
+    log.important = important || false;
     return log;
   }
 

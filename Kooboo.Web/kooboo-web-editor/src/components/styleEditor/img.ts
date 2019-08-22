@@ -5,11 +5,12 @@ import { StyleLog } from "@/operation/recordLogs/StyleLog";
 export function createImg(el: HTMLElement, nameOrId: string, objectType: string, koobooId: string) {
   let log: StyleLog | undefined;
   const style = getComputedStyle(el);
+  const important = !!style.getPropertyPriority("background-image");
 
   const changeImg = (path: string) => {
     path = path == "none" ? "none" : ` url('${path}')`;
     el.style.backgroundImage = path;
-    log = StyleLog.createUpdate(nameOrId, objectType, path, "background-image", koobooId);
+    log = StyleLog.createUpdate(nameOrId, objectType, path, "background-image", koobooId, important);
     setImage(path);
   };
 

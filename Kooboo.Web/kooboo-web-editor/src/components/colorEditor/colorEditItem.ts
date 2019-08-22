@@ -49,8 +49,8 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
         classCssColor.mediaRuleList
       );
     } else {
-      let value = updateInlineCss(updateColor, s, el);
-      inlineCssLog = StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, value, updateColor.prop.prop, koobooId);
+      let { important, value } = updateInlineCss(updateColor, s, el);
+      inlineCssLog = StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, value, updateColor.prop.prop, koobooId, !!important);
     }
   });
   picker.style.width = "200px";
@@ -93,7 +93,7 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
       classCssColor.newImportant = undefined;
 
       classCssLog = undefined;
-      inlineCssLog = StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, value, updateColor.prop.prop, koobooId);
+      inlineCssLog = StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, value, updateColor.prop.prop, koobooId, !!important);
       isGlobalUpdate = false;
     }
   };
@@ -135,5 +135,5 @@ function updateInlineCss(inlineCssColor: CssColor, color: string, el: HTMLElemen
   value = inlineCssColor.prop.replaceColor(value, color);
   el.style.setProperty(inlineCssColor.prop.prop, value, important);
 
-  return value;
+  return { value, important };
 }

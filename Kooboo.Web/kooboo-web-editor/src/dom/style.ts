@@ -7,30 +7,33 @@ import { getViewComment } from "@/components/floatMenu/utils";
 
 const pseudoes = ["visited", "hover", "active", "focus"];
 
-function* getStyles() {
-  for (let i = 0; i < document.styleSheets.length; i++) {
-    let style = document.styleSheets.item(i);
-    if (!style || !matchMedia(style.media.mediaText).matches) continue;
-    yield style;
+function getStyles() {
+  let styles: StyleSheet[] = [];
+  for (const style of document.styleSheets as any) {
+    if (!style || !(style instanceof StyleSheet) || !matchMedia(style.media.mediaText).matches) continue;
+    styles.push(style);
   }
+  return styles;
 }
 
-function* getRules(style: CSSStyleSheet) {
-  for (let i = 0; i < style.rules.length; i++) {
-    let rule = style.rules.item(i);
-    if (rule instanceof CSSStyleRule) yield { cssRule: rule, mediaRuleList: null };
-    if (rule instanceof CSSMediaRule && matchMedia(rule.conditionText).matches) {
-      for (let j = 0; j < rule.cssRules.length; j++) {
-        yield {
-          cssRule: rule.cssRules.item(j),
-          mediaRuleList: rule.conditionText
-        };
+function getRules(style: CSSStyleSheet) {
+  let rules: { cssRule: CSSStyleRule; mediaRuleList: string | null }[] = [];
+  for (const rule of style.rules as any) {
+    if (rule instanceof CSSStyleRule) rules.push({ cssRule: rule, mediaRuleList: null });
+    if (rule instanceof CSSMediaRule && matchMedia(rule.media.mediaText).matches) {
+      for (const cssRule of rule.cssRules as any) {
+        rules.push({
+          cssRule: cssRule as CSSStyleRule,
+          mediaRuleList: rule.media.mediaText
+        });
       }
     }
   }
+  return rules;
 }
 
-export function* getCssRules() {
+export function getCssRules() {
+  let cssRules = [];
   let styleSequence = 0;
   for (const style of getStyles()) {
     if (!style || !(style instanceof CSSStyleSheet) || !(style.ownerNode instanceof HTMLElement)) continue;
@@ -42,7 +45,7 @@ export function* getCssRules() {
     if ((!koobooId && !href) || (href && href.startsWith("http"))) continue;
     for (const { cssRule, mediaRuleList } of getRules(style)) {
       if (!cssRule || !(cssRule instanceof CSSStyleRule)) continue;
-      yield {
+      cssRules.push({
         styleSequence: ++styleSequence,
         koobooId,
         url: href,
@@ -50,9 +53,10 @@ export function* getCssRules() {
         nameorid: comment.nameorid,
         objecttype: comment.objecttype,
         mediaRuleList
-      };
+      });
     }
   }
+  return cssRules;
 }
 
 export interface CssColor {
