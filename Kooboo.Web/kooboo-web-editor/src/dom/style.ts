@@ -9,7 +9,9 @@ const pseudoes = ["visited", "hover", "active", "focus"];
 
 function* getStyles() {
   for (let i = 0; i < document.styleSheets.length; i++) {
-    yield document.styleSheets.item(i);
+    let style = document.styleSheets.item(i);
+    if (!style || !matchMedia(style.media.mediaText).matches) continue;
+    yield style;
   }
 }
 
