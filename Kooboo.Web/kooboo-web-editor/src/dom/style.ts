@@ -7,7 +7,7 @@ import { getViewComment } from "@/components/floatMenu/utils";
 
 const pseudoes = ["visited", "hover", "active", "focus"];
 
-function getStyles() {
+export function getStyles() {
   let styles: CSSStyleSheet[] = [];
   for (const style of document.styleSheets as any) {
     if (!style || !(style instanceof CSSStyleSheet)) continue;
@@ -17,7 +17,7 @@ function getStyles() {
   return styles;
 }
 
-function getRules(style: CSSStyleSheet) {
+export function getRules(style: CSSStyleSheet) {
   let rules: { cssRule: CSSStyleRule; mediaRuleList: string | null }[] = [];
   for (const rule of style.rules as any) {
     if (rule instanceof CSSStyleRule) rules.push({ cssRule: rule, mediaRuleList: null });
@@ -131,7 +131,7 @@ export function getMatchedColors(el: HTMLElement) {
   return matchedColors;
 }
 
-function addInlineMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
+export function addInlineMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
   let inlineColors = getCssColors(el.style);
   for (const i of inlineColors) {
     matchedColors.push({
@@ -180,7 +180,7 @@ function addStyleMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
   }
 }
 
-function getCssColors(style: CSSStyleDeclaration) {
+export function getCssColors(style: CSSStyleDeclaration) {
   let colors = [];
   for (const i of colorProps) {
     let value = style.getPropertyValue(i.prop);
@@ -203,7 +203,7 @@ function isOneColor(color: string) {
   }
 }
 
-function splitPseudo(selector: string) {
+export function splitPseudo(selector: string) {
   for (const i of pseudoes) {
     let pseudo = selector.match(`:+${i}\s*$`);
     if (!pseudo) continue;
@@ -214,7 +214,7 @@ function splitPseudo(selector: string) {
   }
 }
 
-function matchSelector(el: HTMLElement, selector: string) {
+export function matchSelector(el: HTMLElement, selector: string) {
   var selectors = selector.split(",");
   for (const i of selectors) {
     let splited = splitPseudo(i);
@@ -232,7 +232,7 @@ function matchSelector(el: HTMLElement, selector: string) {
   }
 }
 
-function addDefaultColor(groups: CssColorGroup[], prop: string, value: string) {
+export function addDefaultColor(groups: CssColorGroup[], prop: string, value: string) {
   let colorProp = colorProps.find(f => f.prop == prop)!;
   if (!groups.some(e => e.prop == colorProp.parent && !e.pseudo)) {
     groups.push({
