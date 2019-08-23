@@ -122,7 +122,8 @@ namespace Kooboo.Sites.Models
                     }
                     else if (this.ruleType == RuleType.MediaRule)
                     {
-                        return this.CssText.Substring(7, this.selectorPositionIndex - 7).Trim();
+                        var startPosition = this.CssText.ToLower().IndexOf("@media")+6;
+                        return this.CssText.Substring(startPosition, this.selectorPositionIndex - startPosition).Trim();
                     }
                     else
                     {

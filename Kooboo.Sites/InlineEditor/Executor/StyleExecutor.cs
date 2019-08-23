@@ -10,6 +10,7 @@ using Kooboo.Extensions;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.InlineEditor.Model;
 using Kooboo.Mail.Imap.Commands;
+using System.Text.RegularExpressions;
 
 namespace Kooboo.Sites.InlineEditor.Executor
 {
@@ -143,7 +144,9 @@ namespace Kooboo.Sites.InlineEditor.Executor
 
         public void EnsureCssRuleId(List<Model.StyleModel> items, RenderContext context)
         {
-            List<Model.StyleModel> addtional = new List<Model.StyleModel>();
+            var addtional = new List<Model.StyleModel>();
+
+            Func<string, string> removeSpace = (s) => Regex.Replace(s, @"\s", "", RegexOptions.IgnoreCase);
 
             foreach (var item in items.GroupBy(o => o.StyleId))
             {
@@ -159,22 +162,12 @@ namespace Kooboo.Sites.InlineEditor.Executor
 
                             if (foundrules != null && foundrules.Count() > 0)
                             {
-                                // ���ý���ѯ��Ϊ��
                                 if (!string.IsNullOrWhiteSpace(ruleitem.MediaRuleList))
                                 {
-                                    foreach (var foundruleItem in foundrules.ToList()) {
-                                        // ���û�и�id������ý���ѯ�У�
-                                        if (foundruleItem.ParentCssRuleId == default(Guid)) {
-                                            foundrules.Remove(foundruleItem);
-                                        }
-
-                                        var media = allrules.FirstOrDefault(o => o.Id == foundruleItem.ParentCssRuleId);
-
-                                        if (media == null || !CssSelectorComparer.IsEqual(media.SelectorText, ruleitem.MediaRuleList))
-                                        {
-                                            foundrules.Remove(foundruleItem);
-                                        }
-                                    }
+                                    foundrules = foundrules.Where(w => {
+                                       var parent= allrules.FirstOrDefault(f => f.Id == w.ParentCssRuleId);
+                                        return parent != null && removeSpace(parent.SelectorText) == removeSpace(ruleitem.MediaRuleList);
+                                    }).ToList();
                                 }
                                 else {
                                     foundrules = foundrules.Where(e => e.ParentCssRuleId == default(Guid)).ToList();
@@ -426,8 +419,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
 
         public  void ProcessStyleRules(RenderContext context, List<Model.StyleModel> changes, Guid StyleId)
         {
-            if (!changes.Any())
-            { return; }
+            if (!changes.Any()) return;
 
             var prechanges = new List<RuleChange>();
             RuleChange current = null;
