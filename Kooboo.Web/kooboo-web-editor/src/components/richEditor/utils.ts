@@ -70,20 +70,6 @@ export function onSetContent(e: any) {
   }
 }
 
-export function onRemove(e: any) {
-  let element = e.target.getElement();
-  if (element instanceof HTMLElement) {
-    setTimeout(() => {
-      if (element.id.startsWith("mce_")) element.removeAttribute("id");
-      if (element.getAttribute("style") == "") element.removeAttribute("style");
-      for (const i of getAllElement(document.body)) {
-        if (i.classList.contains("mce-item-table")) i.classList.remove("mce-item-table");
-      }
-    });
-  }
-  context.editing = false;
-}
-
 export function onKeyDown(e: KeyboardEvent) {
   var targetElm = e.target as HTMLElement;
   if (e.code == "Backspace") {
@@ -128,5 +114,18 @@ export function initInstanceCallback(e: Editor) {
 export function savePluginCallback(e: Editor, callBack: () => void) {
   e.save = () => ""; //fix loss element when tinymce editor removed
   e.remove();
+  let element = e.getElement();
+  if (element instanceof HTMLElement) {
+    if (element.id.startsWith("mce_")) element.removeAttribute("id");
+    if (element.getAttribute("style") == "") element.removeAttribute("style");
+  }
+  let deleted = [];
+  for (const i of getAllElement(document.body)) {
+    if (i.classList.contains("mce-item-table")) i.classList.remove("mce-item-table");
+    if (i.hasAttribute("data-mce-src")) i.removeAttribute("data-mce-src");
+    if (i.hasAttribute("data-mce-bogus")) deleted.push(i);
+  }
+  deleted.forEach(i => i.parentElement && i.parentElement.removeChild(i));
+  context.editing = false;
   callBack();
 }

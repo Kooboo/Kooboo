@@ -155,27 +155,27 @@ export function addInlineMatchedColors(el: HTMLElement, matchedColors: CssColor[
 
 function addStyleMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
   for (const i of getCssRules()) {
-    let matched = matchSelector(el, i.cssRule.selectorText);
-    if (!matched) continue;
-    let colors = getCssColors(i.cssRule.style);
-    if (!colors || colors.length == 0) continue;
-    for (const color of colors) {
-      matchedColors.push({
-        prop: color.prop,
-        styleSequence: i.styleSequence,
-        important: color.important,
-        inline: false,
-        koobooId: i.koobooId,
-        rawSelector: i.cssRule.selectorText,
-        targetSelector: matched.selector,
-        url: i.url,
-        value: color.value,
-        pseudo: matched.pseudo,
-        cssStyleRule: i.cssRule,
-        nameorid: i.nameorid,
-        objecttype: i.objecttype,
-        mediaRuleList: i.mediaRuleList
-      });
+    let matcheds = matchSelector(el, i.cssRule.selectorText);
+    for (const matched of matcheds) {
+      let colors = getCssColors(i.cssRule.style);
+      for (const color of colors) {
+        matchedColors.push({
+          prop: color.prop,
+          styleSequence: i.styleSequence,
+          important: color.important,
+          inline: false,
+          koobooId: i.koobooId,
+          rawSelector: i.cssRule.selectorText,
+          targetSelector: matched.selector,
+          url: i.url,
+          value: color.value,
+          pseudo: matched.pseudo,
+          cssStyleRule: i.cssRule,
+          nameorid: i.nameorid,
+          objecttype: i.objecttype,
+          mediaRuleList: i.mediaRuleList
+        });
+      }
     }
   }
 }
@@ -215,21 +215,23 @@ export function splitPseudo(selector: string) {
 }
 
 export function matchSelector(el: HTMLElement, selector: string) {
+  let matcheds = [];
   var selectors = selector.split(",");
   for (const i of selectors) {
     let splited = splitPseudo(i);
     if (splited && el.matches(splited.selector)) {
-      return {
+      matcheds.push({
         selector: i,
         pseudo: splited.pseudo
-      };
+      });
     } else if (el.matches(i)) {
-      return {
+      matcheds.push({
         selector: i,
         pseudo: ""
-      };
+      });
     }
   }
+  return matcheds;
 }
 
 export function addDefaultColor(groups: CssColorGroup[], prop: string, value: string) {

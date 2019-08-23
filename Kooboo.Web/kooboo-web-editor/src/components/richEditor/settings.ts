@@ -1,16 +1,6 @@
 import { Settings, Editor } from "tinymce";
 import context from "../../common/context";
-import {
-  setLang,
-  onBlur,
-  onSetContent,
-  onRemove,
-  onKeyDown,
-  onBeforeSetContent,
-  getToolbar,
-  initInstanceCallback,
-  savePluginCallback
-} from "./utils";
+import { setLang, onBlur, onSetContent, onKeyDown, onBeforeSetContent, getToolbar, initInstanceCallback, savePluginCallback } from "./utils";
 import { createLinkPicker } from "../linkPicker";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 
@@ -50,7 +40,6 @@ export function createSettings(args: SetInlineEditorArgs) {
     setup(editor: Editor) {
       editor.on("Blur", onBlur);
       editor.once("SetContent", onSetContent);
-      editor.on("Remove", onRemove);
       editor.on("Change", () => context.tinymceInputEvent.emit());
       editor.on("KeyUp", () => context.tinymceInputEvent.emit());
       editor.on("KeyDown", onKeyDown);
