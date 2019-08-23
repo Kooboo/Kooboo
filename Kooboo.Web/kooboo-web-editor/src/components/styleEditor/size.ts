@@ -7,15 +7,15 @@ export function createSize(el: HTMLElement, nameOrId: string, objectType: string
   let style = getComputedStyle(el);
   let widthLog: StyleLog | undefined;
   let heightLog: StyleLog | undefined;
-  let widthImportant = !!el.style.getPropertyPriority("width");
-  let heightImportant = !!el.style.getPropertyPriority("height");
+  let widthImportant = el.style.getPropertyPriority("width");
+  let heightImportant = el.style.getPropertyPriority("height");
 
   let width = createLabelInput(TEXT.WIDTH, 90);
   width.input.style.width = "50%";
   width.setContent(style.width!);
   width.setInputHandler(content => {
-    el.style.width = (content.target! as HTMLInputElement).value;
-    widthLog = StyleLog.createUpdate(nameOrId, objectType, el.style.width, "width", koobooId, widthImportant);
+    el.style.setProperty("width", (content.target! as HTMLInputElement).value, widthImportant);
+    widthLog = StyleLog.createUpdate(nameOrId, objectType, el.style.width!, "width", koobooId, !!widthImportant);
   });
   container.appendChild(width.input);
 
@@ -23,8 +23,8 @@ export function createSize(el: HTMLElement, nameOrId: string, objectType: string
   height.input.style.width = "50%";
   height.setContent(style.height!);
   height.setInputHandler(content => {
-    el.style.height = (content.target! as HTMLInputElement).value;
-    heightLog = StyleLog.createUpdate(nameOrId, objectType, el.style.height, "height", koobooId, heightImportant);
+    el.style.setProperty("height", (content.target! as HTMLInputElement).value, heightImportant);
+    heightLog = StyleLog.createUpdate(nameOrId, objectType, el.style.height!, "height", koobooId, !!heightImportant);
   });
   container.appendChild(height.input);
 

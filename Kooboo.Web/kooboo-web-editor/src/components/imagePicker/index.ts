@@ -18,8 +18,8 @@ export function createImagePicker(img: HTMLImageElement) {
     pickImg(path => {
       setImage(path);
       img.src = path;
-      img.style.width = style.width;
-      img.style.height = style.height;
+      img.style.setProperty("width", style.width, img.style.getPropertyPriority("width"));
+      img.style.setProperty("height", style.height, img.style.getPropertyPriority("height"));
     });
   };
   container.appendChild(imagePreview);
@@ -46,7 +46,7 @@ export function createImagePicker(img: HTMLImageElement) {
   width.input.style.width = "50%";
   width.setInputHandler(e => {
     if (e.target instanceof HTMLInputElement) {
-      img.style.width = e.target.value;
+      img.style.setProperty("width", e.target.value, img.style.getPropertyPriority("width"));
       style.width = e.target.value;
     }
   });
@@ -57,7 +57,7 @@ export function createImagePicker(img: HTMLImageElement) {
   height.input.style.width = "50%";
   height.setInputHandler(e => {
     if (e.target instanceof HTMLInputElement) {
-      img.style.height = e.target.value;
+      img.style.setProperty("height", e.target.value, img.style.getPropertyPriority("height"));
       style.height = e.target.value;
     }
   });

@@ -8,18 +8,17 @@ export function createColor(el: HTMLElement, nameOrId: string, objectType: strin
   const style = getComputedStyle(el);
   let backgroundColorLog: StyleLog | undefined;
   let frontColorLog: StyleLog | undefined;
-  let backgroundColorImportant = !!el.style.getPropertyPriority("background-color");
-  let frontColorImportant = !!el.style.getPropertyPriority("color");
-  debugger;
+  let backgroundColorImportant = el.style.getPropertyPriority("background-color");
+  let frontColorImportant = el.style.getPropertyPriority("color");
   let bgPicker = createColorPicker(TEXT.BACKGROUND_COLOR, style.backgroundColor!, e => {
-    el.style.backgroundColor = e;
-    backgroundColorLog = StyleLog.createUpdate(nameOrId, objectType, e, "background-color", koobooId, backgroundColorImportant);
+    el.style.setProperty("backgroundColor", e, backgroundColorImportant);
+    backgroundColorLog = StyleLog.createUpdate(nameOrId, objectType, e, "background-color", koobooId, !!backgroundColorImportant);
   });
   container.appendChild(bgPicker);
 
   let frontPicker = createColorPicker(TEXT.COLOR, style.color!, e => {
-    el.style.color = e;
-    frontColorLog = StyleLog.createUpdate(nameOrId, objectType, e, "color", koobooId, frontColorImportant);
+    el.style.setProperty("color", e, frontColorImportant);
+    frontColorLog = StyleLog.createUpdate(nameOrId, objectType, e, "color", koobooId, !!frontColorImportant);
   });
   container.appendChild(frontPicker);
 

@@ -47,12 +47,16 @@ export default class ReplaceToTextItem extends BaseMenuItem {
     let startContent = parent!.innerHTML;
     let text = createP();
     let style = getComputedStyle(args.element);
+    let width = style.width;
+    let widthImportant = args.element.style.getPropertyPriority("width");
+    let height = style.width;
+    let heightImportant = args.element.style.getPropertyPriority("height");
+    args.element.parentElement!.replaceChild(text, args.element);
     text.setAttribute(KOOBOO_ID, args.koobooId!);
     text.setAttribute(KOOBOO_DIRTY, "");
-    text.style.width = style.width;
-    text.style.height = style.height;
+    text.style.setProperty("width", width, widthImportant);
+    text.style.setProperty("height", height, heightImportant);
     text.style.display = "block";
-    args.element.parentElement!.replaceChild(text, args.element);
     emitHoverEvent(text);
     emitSelectedEvent();
 

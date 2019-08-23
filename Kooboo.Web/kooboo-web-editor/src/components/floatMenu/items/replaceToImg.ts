@@ -49,13 +49,19 @@ export default class ReplaceToImgItem extends BaseMenuItem {
     setGuid(parent!);
     let startContent = parent!.innerHTML;
     try {
-      let style = JSON.parse(JSON.stringify(getComputedStyle(args.element)));
+      let style = getComputedStyle(args.element);
+      let width = style.width;
+      let widthImportant = args.element.style.getPropertyPriority("width");
+      let height = style.width;
+      let heightImportant = args.element.style.getPropertyPriority("height");
+      let display = style.display;
       let img = createImg();
       img.setAttribute(KOOBOO_ID, args.koobooId!);
       args.element.parentElement!.replaceChild(img, args.element);
-      img.style.width = style.width;
-      img.style.height = style.height;
-      img.style.display = style.display;
+      img.style.setProperty("width", width, widthImportant);
+      img.style.setProperty("height", height, heightImportant);
+      debugger;
+      img.style.display = display;
       await createImagePicker(img);
       markDirty(parent!);
       let guid = setGuid(parent!);
