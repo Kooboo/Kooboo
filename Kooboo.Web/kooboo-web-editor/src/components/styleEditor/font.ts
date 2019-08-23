@@ -8,9 +8,9 @@ export function createFont(el: HTMLElement, nameOrId: string, objectType: string
   let fontSizeLog: StyleLog | undefined;
   let fontWeightLog: StyleLog | undefined;
   let fontFamilyLog: StyleLog | undefined;
-  let fontSizeImportant = !!style.getPropertyPriority("font-size");
-  let fontWeightImportant = !!style.getPropertyPriority("font-size");
-  let fontFamilyImportant = !!style.getPropertyPriority("font-size");
+  let fontSizeImportant = !!el.style.getPropertyPriority("font-size");
+  let fontWeightImportant = !!el.style.getPropertyPriority("font-size");
+  let fontFamilyImportant = !!el.style.getPropertyPriority("font-size");
 
   let size = createLabelInput(TEXT.FONT_SIZE, 90);
   size.input.style.width = "50%";

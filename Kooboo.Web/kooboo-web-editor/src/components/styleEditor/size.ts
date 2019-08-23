@@ -7,8 +7,8 @@ export function createSize(el: HTMLElement, nameOrId: string, objectType: string
   let style = getComputedStyle(el);
   let widthLog: StyleLog | undefined;
   let heightLog: StyleLog | undefined;
-  let widthImportant = !!style.getPropertyPriority("width");
-  let heightImportant = !!style.getPropertyPriority("height");
+  let widthImportant = !!el.style.getPropertyPriority("width");
+  let heightImportant = !!el.style.getPropertyPriority("height");
 
   let width = createLabelInput(TEXT.WIDTH, 90);
   width.input.style.width = "50%";

@@ -8,9 +8,9 @@ export function createColor(el: HTMLElement, nameOrId: string, objectType: strin
   const style = getComputedStyle(el);
   let backgroundColorLog: StyleLog | undefined;
   let frontColorLog: StyleLog | undefined;
-  let backgroundColorImportant = !!style.getPropertyPriority("background-color");
-  let frontColorImportant = !!style.getPropertyPriority("color");
-
+  let backgroundColorImportant = !!el.style.getPropertyPriority("background-color");
+  let frontColorImportant = !!el.style.getPropertyPriority("color");
+  debugger;
   let bgPicker = createColorPicker(TEXT.BACKGROUND_COLOR, style.backgroundColor!, e => {
     el.style.backgroundColor = e;
     backgroundColorLog = StyleLog.createUpdate(nameOrId, objectType, e, "background-color", koobooId, backgroundColorImportant);

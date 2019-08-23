@@ -63,6 +63,7 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
     if (!classCssColor) return;
 
     if (checked) {
+      debugger;
       let value = el.style.getPropertyValue(updateColor.prop.prop);
       value = updateColor.prop.getColor(value);
       value = updateClassCss(classCssColor, value);
@@ -99,7 +100,7 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
   };
 
   let { checkbox } = createCheckboxInput(TEXT.GLOBAL_UPDATE, !firstCssColor.inline, onChecked);
-  if (!classCssColor || colorGroup.pseudo) {
+  if (!isGlobalUpdate || colorGroup.pseudo) {
     checkbox.style.display = "none";
   }
   container.appendChild(checkbox);

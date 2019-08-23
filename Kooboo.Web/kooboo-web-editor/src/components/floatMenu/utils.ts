@@ -96,6 +96,8 @@ export async function updateDomImage(element: HTMLImageElement, closeParent: HTM
 
 export async function updateAttributeImage(element: HTMLImageElement, koobooId: string, comment: KoobooComment) {
   let startContent = element.cloneNode(true) as HTMLImageElement;
+  let widthImportant = !!element.style.getPropertyPriority("width");
+  let heightImportant = !!element.style.getPropertyPriority("height");
   let temp = createDiv();
   temp.appendChild(startContent);
   try {
@@ -117,8 +119,8 @@ export async function updateAttributeImage(element: HTMLImageElement, koobooId: 
       DomLog.createUpdate(comment.nameorid!, element.title, koobooId, comment.objecttype!, "title"),
       DomLog.createUpdate(comment.nameorid!, element.alt, koobooId, comment.objecttype!, "alt"),
       DomLog.createUpdate(comment.nameorid!, newSrc, koobooId, comment.objecttype!, "src"),
-      StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, element.style.width!, "width", koobooId),
-      StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, element.style.height!, "height", koobooId)
+      StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, element.style.width!, "width", koobooId, widthImportant),
+      StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, element.style.height!, "height", koobooId, heightImportant)
     ];
 
     let record = new operationRecord(units, logs, guid);
