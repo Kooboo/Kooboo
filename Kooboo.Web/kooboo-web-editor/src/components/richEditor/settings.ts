@@ -27,7 +27,7 @@ export function createSettings(args: SetInlineEditorArgs) {
     allow_unsafe_link_target: true,
     convert_fonts_to_spans: false,
     remove_trailing_brs: true,
-    browser_spellcheck: false,
+    browser_spellcheck: true,
     forced_root_block: "",
     visual_anchor_class: "no-anchor",
     valid_elements: "*[*]",
