@@ -2,6 +2,7 @@ import { getAllElement, isLink, isInEditorContainer } from "@/dom/utils";
 import context from "./context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import { HOVER_BORDER_SKIP } from "./constants";
+import { TEXT } from "./lang";
 
 try {
   require("@webcomponents/shadydom");
@@ -56,4 +57,9 @@ export function createContainer() {
   root.style.lineHeight = "16px";
   shadow.appendChild(root);
   return root;
+}
+
+export function browserCheck() {
+  let isChrome = navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
+  if (!isChrome) alert(TEXT.USE_CHROME_TIP);
 }
