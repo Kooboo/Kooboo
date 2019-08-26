@@ -3,6 +3,7 @@ import context from "./context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import { HOVER_BORDER_SKIP } from "./constants";
 import { TEXT } from "./lang";
+import { hover } from "@/dom/events";
 
 try {
   require("@webcomponents/shadydom");
@@ -14,7 +15,7 @@ export function delay(time: number) {
   });
 }
 
-export function setElementClick() {
+export function setElement() {
   for (const i of getAllElement(document.body, true)) {
     if (i instanceof HTMLElement) {
       if (isLink(i)) {
@@ -22,6 +23,7 @@ export function setElementClick() {
         (a as any)._a = i;
         i.parentElement!.replaceChild(a, i);
       }
+      i.addEventListener("mouseover", hover);
       holdUpClick(i);
     }
   }

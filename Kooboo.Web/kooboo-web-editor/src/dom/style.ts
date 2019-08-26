@@ -48,7 +48,7 @@ export function getCssRules() {
     if (!comment) continue;
     let koobooId = style.ownerNode.getAttribute(KOOBOO_ID);
     let href = style.ownerNode.getAttribute("href");
-    if ((!koobooId && !href) || (href && href.startsWith("http"))) continue;
+    if ((!koobooId && !href) || (href && href.startsWith("http") && !href.startsWith(location.origin))) continue;
     for (const { cssRule, mediaRuleList, url } of getRules(style, href)) {
       if (!cssRule || !(cssRule instanceof CSSStyleRule)) continue;
       cssRules.push({
