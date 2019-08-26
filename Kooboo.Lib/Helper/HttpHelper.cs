@@ -106,6 +106,43 @@ namespace Kooboo.Lib.Helper
             return default(T);
         }
 
+        public static T Post<T>(string url, Dictionary<string, string> Headers, byte[] postBytes, string UserName = null, string Password = null)
+        {
+            if (!string.IsNullOrEmpty(UserName))
+            {
+                if (Headers == null)
+                {
+                    Headers = new Dictionary<string, string>();
+                }
+                var bytes = Encoding.UTF8.GetBytes(String.Format("{0}:{1}", UserName, Password));
+                Headers.Add("Authorization", "Basic " + Convert.ToBase64String(bytes));
+            }
+            using (var client = new WebClient())
+            {
+                client.Headers.Add("user-agent", DefaultUserAgent);
+                client.Headers.Add("Content-Type", "multipart/form-data");
+                if (Headers != null)
+                {
+                    foreach (var item in Headers)
+                    {
+                        client.Headers.Add(item.Key, item.Value);
+                    }
+                }
+
+                try
+                {
+                    var responseData = client.UploadData(url, "POST", postBytes);
+
+                    return ProcessApiResponse<T>(Encoding.UTF8.GetString(responseData));
+                }
+                catch (Exception ex)
+                {
+
+                }
+                return default(T);
+            }
+        }
+
         public static byte[] ConvertKooboo(string url, byte[] data, Dictionary<string, string> headers, string UserName = null, string Password = null)
         {
             try
