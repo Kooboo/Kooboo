@@ -136,3 +136,8 @@ export function isInTable(el: HTMLElement) {
   var reExcept = /^(thead|tbody|tfoot|th|tr|td)$/i;
   return reExcept.test(el.tagName);
 }
+
+export function getImportant(el: HTMLElement, prop: string, cssRules: { cssRule: CSSStyleRule }[]) {
+  let cssImportant = cssRules.some(s => el.matches(s.cssRule.selectorText) && s.cssRule.style.getPropertyPriority(prop));
+  return cssImportant ? "important" : el.style.getPropertyPriority(prop);
+}

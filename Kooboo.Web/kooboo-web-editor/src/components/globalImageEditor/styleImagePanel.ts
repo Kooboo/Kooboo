@@ -1,4 +1,4 @@
-import { getAllElement } from "@/dom/utils";
+import { getAllElement, getImportant } from "@/dom/utils";
 import { setGuid } from "@/kooboo/utils";
 import { getViewComment } from "../floatMenu/utils";
 import { KOOBOO_ID } from "@/common/constants";
@@ -32,15 +32,14 @@ export function createStyleImagePanel() {
       let startContent = element.getAttribute("style");
       pickImg(path => {
         path = path == "none" ? "none" : ` url('${path}')`;
-        let important = rules.some(s => element.matches(s.cssRule.selectorText) && s.cssRule.style.getPropertyPriority("background-image"));
-        const importantStr = important ? "important" : element.style.getPropertyPriority("background-image");
-        element.style.setProperty("background-image", path, importantStr);
+        let important = getImportant(element, "background-image", rules);
+        element.style.setProperty("background-image", path, important);
         setImage(path);
         let guid = setGuid(element);
         let unit = new AttributeUnit(startContent!, "style");
         let log: StyleLog;
         let value = element.style.backgroundImage!.replace(/"/g, "'");
-        log = StyleLog.createUpdate(comment!.nameorid!, comment!.objecttype!, value, "background-image", koobooId!, !!importantStr);
+        log = StyleLog.createUpdate(comment!.nameorid!, comment!.objecttype!, value, "background-image", koobooId!, !!important);
         let record = new operationRecord([unit], [log], guid);
         context.operationManager.add(record);
       });

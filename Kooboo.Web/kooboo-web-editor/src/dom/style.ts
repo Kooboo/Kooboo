@@ -7,6 +7,8 @@ import { getViewComment } from "@/components/floatMenu/utils";
 
 const pseudoes = ["visited", "hover", "active", "focus"];
 
+type rule = { cssRule: CSSStyleRule; mediaRuleList?: string; url?: string };
+
 export function getStyles() {
   let styles: CSSStyleSheet[] = [];
   for (const style of document.styleSheets as any) {
@@ -17,17 +19,20 @@ export function getStyles() {
   return styles;
 }
 
-export function getRules(style: CSSStyleSheet) {
-  let rules: { cssRule: CSSStyleRule; mediaRuleList: string | null }[] = [];
+export function getRules(style: CSSStyleSheet, href: string | null) {
+  let rules: rule[] = [];
   for (const rule of style.rules as any) {
-    if (rule instanceof CSSStyleRule) rules.push({ cssRule: rule, mediaRuleList: null });
-    if (rule instanceof CSSMediaRule && matchMedia(rule.media.mediaText).matches) {
+    if (rule instanceof CSSStyleRule) rules.push({ cssRule: rule, url: href! });
+    else if (rule instanceof CSSMediaRule && matchMedia(rule.media.mediaText).matches) {
       for (const cssRule of rule.cssRules as any) {
         rules.push({
           cssRule: cssRule as CSSStyleRule,
-          mediaRuleList: rule.media.mediaText
+          mediaRuleList: rule.media.mediaText,
+          url: href!
         });
       }
+    } else if (rule instanceof CSSImportRule) {
+      rules.push(...getRules(rule.styleSheet, rule.styleSheet.href));
     }
   }
   return rules;
@@ -44,12 +49,12 @@ export function getCssRules() {
     let koobooId = style.ownerNode.getAttribute(KOOBOO_ID);
     let href = style.ownerNode.getAttribute("href");
     if ((!koobooId && !href) || (href && href.startsWith("http"))) continue;
-    for (const { cssRule, mediaRuleList } of getRules(style)) {
+    for (const { cssRule, mediaRuleList, url } of getRules(style, href)) {
       if (!cssRule || !(cssRule instanceof CSSStyleRule)) continue;
       cssRules.push({
         styleSequence: ++styleSequence,
         koobooId,
-        url: href,
+        url: url,
         cssRule,
         nameorid: comment.nameorid,
         objecttype: comment.objecttype,
@@ -167,13 +172,13 @@ function addStyleMatchedColors(el: HTMLElement, matchedColors: CssColor[]) {
           koobooId: i.koobooId,
           rawSelector: i.cssRule.selectorText,
           targetSelector: matched.selector,
-          url: i.url,
+          url: i.url!,
           value: color.value,
           pseudo: matched.pseudo,
           cssStyleRule: i.cssRule,
           nameorid: i.nameorid,
           objecttype: i.objecttype,
-          mediaRuleList: i.mediaRuleList
+          mediaRuleList: i.mediaRuleList!
         });
       }
     }
