@@ -60,7 +60,6 @@ export default class ReplaceToImgItem extends BaseMenuItem {
       args.element.parentElement!.replaceChild(img, args.element);
       img.style.setProperty("width", width, widthImportant);
       img.style.setProperty("height", height, heightImportant);
-      debugger;
       img.style.display = display;
       await createImagePicker(img);
       markDirty(parent!);

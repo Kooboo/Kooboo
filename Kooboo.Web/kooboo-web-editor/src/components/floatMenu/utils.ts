@@ -96,8 +96,7 @@ export async function updateDomImage(element: HTMLImageElement, closeParent: HTM
 
 export async function updateAttributeImage(element: HTMLImageElement, koobooId: string, comment: KoobooComment) {
   let startContent = element.cloneNode(true) as HTMLImageElement;
-  let widthImportant = !!element.style.getPropertyPriority("width");
-  let heightImportant = !!element.style.getPropertyPriority("height");
+
   let temp = createDiv();
   temp.appendChild(startContent);
   try {
@@ -106,12 +105,14 @@ export async function updateAttributeImage(element: HTMLImageElement, koobooId: 
     let guid = setGuid(element);
 
     let oldSrc = startContent.getAttribute("src");
+    let widthImportant = element.style.getPropertyPriority("width");
+    let heightImportant = element.style.getPropertyPriority("height");
     let units = [
       new AttributeUnit(startContent.title, "title"),
       new AttributeUnit(startContent.alt, "alt"),
       new AttributeUnit(oldSrc!, "src"),
-      new StyleUnit(startContent.style.width!, "width"),
-      new StyleUnit(startContent.style.height!, "height")
+      new StyleUnit(startContent.style.width!, "width", widthImportant),
+      new StyleUnit(startContent.style.height!, "height", heightImportant)
     ];
 
     let newSrc = element.getAttribute("src")!;
@@ -119,8 +120,8 @@ export async function updateAttributeImage(element: HTMLImageElement, koobooId: 
       DomLog.createUpdate(comment.nameorid!, element.title, koobooId, comment.objecttype!, "title"),
       DomLog.createUpdate(comment.nameorid!, element.alt, koobooId, comment.objecttype!, "alt"),
       DomLog.createUpdate(comment.nameorid!, newSrc, koobooId, comment.objecttype!, "src"),
-      StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, element.style.width!, "width", koobooId, widthImportant),
-      StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, element.style.height!, "height", koobooId, heightImportant)
+      StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, element.style.width!, "width", koobooId, !!widthImportant),
+      StyleLog.createUpdate(comment.nameorid!, comment.objecttype!, element.style.height!, "height", koobooId, !!heightImportant)
     ];
 
     let record = new operationRecord(units, logs, guid);

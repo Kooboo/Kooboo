@@ -11,9 +11,11 @@ import { AttributeUnit } from "@/operation/recordUnits/attributeUnit";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { createDiv } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
+import { getCssRules } from "@/dom/style";
 
 export function createStyleImagePanel() {
   let contiainer = createDiv();
+  let rules = getCssRules();
 
   for (const element of getAllElement(document.body)) {
     if (!(element instanceof HTMLElement)) continue;
@@ -29,13 +31,16 @@ export function createStyleImagePanel() {
     imagePreview.onclick = () => {
       let startContent = element.getAttribute("style");
       pickImg(path => {
-        element.style.backgroundImage = `url('${path}')`;
+        path = path == "none" ? "none" : ` url('${path}')`;
+        let important = rules.some(s => element.matches(s.cssRule.selectorText) && s.cssRule.style.getPropertyPriority("background-image"));
+        const importantStr = important ? "important" : element.style.getPropertyPriority("background-image");
+        element.style.setProperty("background-image", path, importantStr);
         setImage(path);
         let guid = setGuid(element);
         let unit = new AttributeUnit(startContent!, "style");
         let log: StyleLog;
         let value = element.style.backgroundImage!.replace(/"/g, "'");
-        log = StyleLog.createUpdate(comment!.nameorid!, comment!.objecttype!, value, "background-image", koobooId!);
+        log = StyleLog.createUpdate(comment!.nameorid!, comment!.objecttype!, value, "background-image", koobooId!, !!importantStr);
         let record = new operationRecord([unit], [log], guid);
         context.operationManager.add(record);
       });

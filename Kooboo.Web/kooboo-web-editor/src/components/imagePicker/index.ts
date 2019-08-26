@@ -4,9 +4,15 @@ import { pickImg } from "@/kooboo/outsideInterfaces";
 import { createDiv, createLabelInput } from "@/dom/element";
 import { createImagePreview } from "../common/imagePreview";
 import context from "@/common/context";
+import { getCssRules } from "@/dom/style";
 
 export function createImagePicker(img: HTMLImageElement) {
   let container = createDiv();
+  let rules = getCssRules();
+  let widthImportant = rules.some(s => img.matches(s.cssRule.selectorText) && s.cssRule.style.getPropertyPriority("width"));
+  let heightImportant = rules.some(s => img.matches(s.cssRule.selectorText) && s.cssRule.style.getPropertyPriority("height"));
+  let widthImportantStr = widthImportant ? "important" : img.style.getPropertyPriority("width");
+  let heightImportantStr = heightImportant ? "important" : img.style.getPropertyPriority("height");
   let { imagePreview, setImage } = createImagePreview();
   imagePreview.style.margin = "8px auto 16px auto";
   let style = JSON.parse(JSON.stringify(getComputedStyle(img)));
@@ -18,8 +24,8 @@ export function createImagePicker(img: HTMLImageElement) {
     pickImg(path => {
       setImage(path);
       img.src = path;
-      img.style.setProperty("width", style.width, img.style.getPropertyPriority("width"));
-      img.style.setProperty("height", style.height, img.style.getPropertyPriority("height"));
+      img.style.setProperty("width", style.width, widthImportantStr);
+      img.style.setProperty("height", style.height, heightImportantStr);
     });
   };
   container.appendChild(imagePreview);
@@ -46,7 +52,7 @@ export function createImagePicker(img: HTMLImageElement) {
   width.input.style.width = "50%";
   width.setInputHandler(e => {
     if (e.target instanceof HTMLInputElement) {
-      img.style.setProperty("width", e.target.value, img.style.getPropertyPriority("width"));
+      img.style.setProperty("width", e.target.value, widthImportantStr);
       style.width = e.target.value;
     }
   });
@@ -57,7 +63,7 @@ export function createImagePicker(img: HTMLImageElement) {
   height.input.style.width = "50%";
   height.setInputHandler(e => {
     if (e.target instanceof HTMLInputElement) {
-      img.style.setProperty("height", e.target.value, img.style.getPropertyPriority("height"));
+      img.style.setProperty("height", e.target.value, heightImportantStr);
       style.height = e.target.value;
     }
   });
