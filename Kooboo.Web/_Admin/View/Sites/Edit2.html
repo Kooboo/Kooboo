@@ -63,7 +63,14 @@
 
   $.ajax("/_api/User/getLanguage?SiteId=" + getQueryString("SiteId")).then(
     function(rsp) {
-      Kooboo.LanguageManager.setLang(rsp.model)
+      Kooboo.LanguageManager.setLang(rsp.model);
+      if (navigator.userAgent.toLowerCase().indexOf("chrome") == -1){
+        if(rsp.model=="zh"){
+          alert("暂不支持在非Chromium内核的浏览器中编辑，请使用Chrome 、Edge Chromium...");
+        }else{
+          alert("Non-Google kernel browsers are not currently supported, please use Google Chrome, Microsoft Edge Chromium...");
+        }
+      }
     }
   );
 

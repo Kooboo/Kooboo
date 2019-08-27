@@ -5,12 +5,11 @@ import { createFloatMenu } from "./components/floatMenu";
 import { createHoverBorder, createSelectedBorder } from "./components/selectorBorder";
 import { createEditorShade } from "./components/editorShade";
 import { emitHoverEvent } from "./dom/events";
-import { initElements, browserCheck } from "./common/utils";
+import { initElements } from "./common/utils";
 import { shareStyle } from "./kooboo/outsideInterfaces";
 import { createElementNav } from "./components/elementNav";
 import context from "./common/context";
 
-browserCheck();
 shareStyle();
 initElements();
 

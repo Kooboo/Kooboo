@@ -60,8 +60,3 @@ export function createContainer() {
   shadow.appendChild(root);
   return root;
 }
-
-export function browserCheck() {
-  let isChrome = navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
-  if (!isChrome) alert(TEXT.USE_CHROME_TIP);
-}
