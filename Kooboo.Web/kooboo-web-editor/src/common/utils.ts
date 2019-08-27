@@ -15,7 +15,7 @@ export function delay(time: number) {
   });
 }
 
-export function setElement() {
+export function initElements() {
   for (const i of getAllElement(document.body, true)) {
     if (i instanceof HTMLElement) {
       if (isLink(i)) {
