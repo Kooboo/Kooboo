@@ -14,7 +14,6 @@ import { createColorEditItem } from "./colorEditItem";
 export function createColorEditor(el: HTMLElement, comment: KoobooComment, koobooId: string) {
   var startStyle = el.getAttribute("style");
   var groups = getMatchedColorGroups(el);
-  debugger;
   let container = createDiv();
   let logGetters: (() => Log[])[] = [];
   for (const i of groups) {

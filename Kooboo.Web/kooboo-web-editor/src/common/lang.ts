@@ -31,7 +31,7 @@ const en = {
   COPY_REPEAT: "Copy repeat item",
   DELETE_REPEAR: "Delete repeat item",
   REPLACE_TO_IMG: "Replace to image",
-  REPLACE_TO_TEXT: "Replace to Text",
+  REPLACE_TO_TEXT: "Replace to text",
   MOVE: "Move",
   PREVIOUS: "Undo",
   NEXT: "Redo",
@@ -52,9 +52,8 @@ const en = {
   CLICK: "Click",
   EDIT_FORM: "Edit form",
   EXPAND_SELECTION: "Expand selection",
-  GLOBAL_UPDATE: "Global Update",
-  EDIT_COLOR: "Edit color",
-  USE_CHROME_TIP: "Please use chromium kernel browser for a better experience, such as Google Chrome , Microsoft Edge Chromium"
+  GLOBAL_UPDATE: "Global update",
+  EDIT_COLOR: "Edit color"
 };
 
 const zh = {
@@ -108,8 +107,7 @@ const zh = {
   EDIT_FORM: "编辑表单",
   EXPAND_SELECTION: "扩大选区",
   GLOBAL_UPDATE: "全局更新",
-  EDIT_COLOR: "编辑颜色",
-  USE_CHROME_TIP: "请使用chromium内核浏览器来获得更好的使用体验，例如 Chrome 、Edge Chromium 、360浏览器极速模式 、qq浏览器极速模式"
+  EDIT_COLOR: "编辑颜色"
 } as typeof en;
 
 var langPackages = { en, zh };

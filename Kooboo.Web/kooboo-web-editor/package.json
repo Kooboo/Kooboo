@@ -1,8 +1,7 @@
 {
   "name": "kooboo-web-editor",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "kooboo inline editor 2.0",
   "scripts": {
     "start": "webpack --env.NODE_ENV=development",
     "build": "webpack --env.NODE_ENV=production",
@@ -11,7 +10,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@simonwep/pickr": "^1.2.7",
     "@webcomponents/shadydom": "^1.6.0",

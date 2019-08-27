@@ -15,7 +15,7 @@ export function delay(time: number) {
   });
 }
 
-export function setElement() {
+export function initElements() {
   for (const i of getAllElement(document.body, true)) {
     if (i instanceof HTMLElement) {
       if (isLink(i)) {
@@ -59,9 +59,4 @@ export function createContainer() {
   root.style.lineHeight = "16px";
   shadow.appendChild(root);
   return root;
-}
-
-export function browserCheck() {
-  let isChrome = navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
-  if (!isChrome) alert(TEXT.USE_CHROME_TIP);
 }

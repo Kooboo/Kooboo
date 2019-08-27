@@ -31,10 +31,42 @@
       </div>
       <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog>
     </div>
-
   </body>
 </html>
 <script>
+  function checkBrowser(lang) {
+    if (lang == "zh") {
+      alert(
+        "暂不支持在非Chromium内核的浏览器中编辑，请使用Chrome 、Edge Chromium..."
+      );
+    } else {
+      alert(
+        "Non-Chromium kernel browsers are not currently supported, please use Google Chrome, Microsoft Edge Chromium..."
+      );
+    }
+  }
+
+  function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]);
+    return null;
+  }
+
+  try {
+    $.ajax("/_api/User/getLanguage?SiteId=" + getQueryString("SiteId")).then(
+      function(rsp) {
+        if (
+          navigator.userAgent.toLowerCase().indexOf("chrome") == -1 ||
+          navigator.userAgent.toLowerCase().indexOf("edge") != -1
+        ) {
+          checkBrowser(rsp.model);
+        }
+        Kooboo.LanguageManager.setLang(rsp.model);
+      }
+    );
+  } catch (error) {}
+
   (function() {
     Kooboo.loadJS([
       "/_Admin/Scripts/lib/lodash.min.js",
@@ -60,20 +92,6 @@
   })();
 </script>
 <script type="text/javascript">
-
-  $.ajax("/_api/User/getLanguage?SiteId=" + getQueryString("SiteId")).then(
-    function(rsp) {
-      Kooboo.LanguageManager.setLang(rsp.model)
-    }
-  );
-
-  function getQueryString(name) {
-    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-    var r = window.location.search.substr(1).match(reg);
-    if (r != null) return unescape(r[2]);
-    return null;
-  }
-
   $(function() {
     var mediaDialogData = ko.observable();
     var script = document.createElement("script");
@@ -91,7 +109,7 @@
       iframe.contentDocument.parentBody = document.body;
       iframe.contentDocument.__gl = __gl = {};
       iframe.contentDocument.head.appendChild(script);
-      
+
       $(".page-loading").hide();
       ko.applyBindings({ mediaDialogData }, document.getElementById("main"));
     };

@@ -18,7 +18,6 @@ import { getMaxHeight, getMaxWidth, getParentElements, getScrollLeft, getScrollT
 import ClickItem from "./items/click";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import context from "@/common/context";
-// import { createConvert } from "./items/convert";
 import InlineEditHtmlBlockItem from "./items/inlineEditHtmlBlock";
 import BaseMenuItem from "./items/BaseMenuItem";
 import { createDiv } from "@/dom/element";

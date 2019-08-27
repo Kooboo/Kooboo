@@ -5,14 +5,13 @@ import { createFloatMenu } from "./components/floatMenu";
 import { createHoverBorder, createSelectedBorder } from "./components/selectorBorder";
 import { createEditorShade } from "./components/editorShade";
 import { emitHoverEvent } from "./dom/events";
-import { setElement, browserCheck } from "./common/utils";
+import { initElements } from "./common/utils";
 import { shareStyle } from "./kooboo/outsideInterfaces";
 import { createElementNav } from "./components/elementNav";
 import context from "./common/context";
 
-browserCheck();
 shareStyle();
-setElement();
+initElements();
 
 context.container.appendChild(createHoverBorder());
 context.container.appendChild(createSelectedBorder());

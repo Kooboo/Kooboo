@@ -52,22 +52,6 @@ describe("utils", () => {
     expect(closeElement!.getAttribute("kooboo-id")).eq("1-0-3-1-1-1-1-3");
   });
 
-  // test("getMaxKoobooId", () => {
-  //   let temp = document.createElement("div");
-  //   temp.innerHTML = `
-  //   <div class="col-md-8 col-md-offset-2" kooboo-id="1-0-3-1-1-1-1">
-  // 		<div class="call-to-action" kooboo-id="1-0-3-1-1-1-1-3">
-  // 			<a href="#" class="demo to-animate fadeInUp animated" kooboo-id="1-0-3-1-1-1-1-3-1">Demo</a><a href="#" class="demo to-animate fadeInUp animated" kooboo-id="1-0-3-1-1-1-1-3-2">Demo</a>
-  // 			<a href="#" class="download to-animate fadeInUp animated" kooboo-id="1-0-3-1-1-1-1-3-4">Download</a>
-  // 		</div>
-  // 	</div>
-  //   `;
-
-  //   let el = temp.querySelector("a[kooboo-id='1-0-3-1-1-1-1-3-4']") as HTMLElement;
-  //   let koobooId = getMaxKoobooId(el);
-  //   expect(koobooId).eq("1-0-3-1-1-1-1-3-5");
-  // });
-
   it("markDirty", () => {
     let temp = document.createElement("div");
     temp.innerHTML = `
