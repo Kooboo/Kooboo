@@ -199,9 +199,7 @@ namespace Kooboo.Data.Models
         MailServer = 128,
         Monitor = 256,
         Redirect = 512,
-
-        // Nginx is for the www root redirect. Redirect for user custom domain redirect.... 
-       
+        // Nginx is for the www root redirect. Redirect for user custom domain redirect....  
     }
     
 }
