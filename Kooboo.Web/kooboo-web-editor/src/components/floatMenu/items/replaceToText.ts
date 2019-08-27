@@ -49,7 +49,7 @@ export default class ReplaceToTextItem extends BaseMenuItem {
     let style = getComputedStyle(args.element);
     let width = style.width;
     let widthImportant = args.element.style.getPropertyPriority("width");
-    let height = style.width;
+    let height = style.height;
     let heightImportant = args.element.style.getPropertyPriority("height");
     args.element.parentElement!.replaceChild(text, args.element);
     text.setAttribute(KOOBOO_ID, args.koobooId!);
