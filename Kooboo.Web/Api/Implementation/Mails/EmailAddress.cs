@@ -39,7 +39,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public List<Domain> Domains(ApiCall apiCall)
         {
-            if (EmailForwardManager.NeedForward(apiCall.Context))
+            if (EmailForwardManager.RequireForward(apiCall.Context))
             {
                 return EmailForwardManager.Get<List<Domain>>(this.ModelName, nameof(EmailAddressApi.Domains), apiCall.Context.User, null);
             }
@@ -49,7 +49,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public List<AddressItemModel> List(ApiCall apiCall)
         {
-            if (EmailForwardManager.NeedForward(apiCall.Context))
+            if (EmailForwardManager.RequireForward(apiCall.Context))
             {
                 return EmailForwardManager.Get<List<AddressItemModel>>(this.ModelName, nameof(EmailAddressApi.List),apiCall.Context.User);
             }
@@ -64,7 +64,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         [Kooboo.Attributes.RequireModel(typeof(AddressModel))]
         public bool IsUniqueName(ApiCall apiCall)
         {
-            if (EmailForwardManager.NeedForward(apiCall.Context))
+            if (EmailForwardManager.RequireForward(apiCall.Context))
             {
                 var json = Kooboo.Lib.Helper.JsonHelper.Serialize(apiCall.Context.Request.Model);
                 return EmailForwardManager.Post<bool>(this.ModelName, nameof(EmailAddressApi.IsUniqueName), apiCall.Context.User, json, null);
@@ -77,7 +77,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         [Kooboo.Attributes.RequireModel(typeof(AddressModel))]
         public object Post(ApiCall apiCall)
         {
-            if (EmailForwardManager.NeedForward(apiCall.Context))
+            if (EmailForwardManager.RequireForward(apiCall.Context))
             {
                 var json= Kooboo.Lib.Helper.JsonHelper.Serialize(apiCall.Context.Request.Model);
                 return EmailForwardManager.Post<object>(this.ModelName, nameof(EmailAddressApi.Post), apiCall.Context.User, json, null);
@@ -129,7 +129,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 idsJson = apiCall.Context.Request.Body;
             }
 
-            if (EmailForwardManager.NeedForward(apiCall.Context))
+            if (EmailForwardManager.RequireForward(apiCall.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("ids", idsJson);
@@ -148,7 +148,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public List<string> MemberList(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("addressId", call.GetValue("addressId"));
@@ -164,7 +164,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         [Kooboo.Attributes.RequireModel(typeof(ListMemberModel))]
         public object MemberPost(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("addressId", call.GetValue("addressId"));
@@ -191,7 +191,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public void MemberDelete(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("addressId", call.GetValue("addressId"));
@@ -209,7 +209,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public void UpdateForward(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("id", call.GetValue("id"));

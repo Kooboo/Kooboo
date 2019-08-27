@@ -44,7 +44,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             string filename = call.Command.Value;
 
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var method = nameof(EmailAttachmentApi.MsgFile) + "/" + filename;
                 if (!string.IsNullOrEmpty(filename))
@@ -91,7 +91,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 messageid = Convert.ToInt32(call.Command.Value);
             }
 
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var method = nameof(EmailAttachmentApi.MsgFile) + "/" + messageid;
                 if (!string.IsNullOrEmpty(filename))
@@ -144,7 +144,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public object AttachmentPost(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 return EmailForwardManager.Post<object>(this.ModelName, nameof(EmailAttachmentApi.AttachmentPost), call.Context.User, call.Context.Request.PostData, null);
             }
@@ -174,7 +174,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
  
         public void DeleteAttachment(string filename, ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("filename", filename);
@@ -186,7 +186,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         
         public object ImagePost(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 //string convert to object will throw exception
                 var url =EmailForwardManager.Post<string>(this.ModelName, nameof(EmailAttachmentApi.ImagePost), call.Context.User, call.Context.Request.PostData, null);

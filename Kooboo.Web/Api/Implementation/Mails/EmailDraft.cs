@@ -48,7 +48,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         public Kooboo.Mail.ViewModel.ComposeViewModel Compose(ApiCall call)
         {
             int messageid = call.GetValue<int>("messageId");
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("messageid", messageid.ToString());
@@ -73,7 +73,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         [Kooboo.Attributes.RequireModel(typeof(Mail.ViewModel.ComposeViewModel))]
         public int Post(ApiCall apiCall)
         {
-            if (EmailForwardManager.NeedForward(apiCall.Context))
+            if (EmailForwardManager.RequireForward(apiCall.Context))
             {
                 var json = Kooboo.Lib.Helper.JsonHelper.Serialize(apiCall.Context.Request.Model);
                 return EmailForwardManager.Post<int>(this.ModelName, nameof(EmailDraft.Post), apiCall.Context.User, json, null);

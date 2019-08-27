@@ -37,7 +37,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public List<Message> List(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("address", call.GetValue("address"));
@@ -66,7 +66,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public List<Message> More(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("address", call.GetValue("address"));
@@ -125,7 +125,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public ContentViewModel Content(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("messageId", call.GetValue("messageId"));
@@ -150,7 +150,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         [Kooboo.Attributes.RequireModel(typeof(ComposeViewModel))]
         public void Send(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("messageId", call.GetValue("messageId"));
@@ -207,7 +207,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public void Moves(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("ids", call.GetValue("ids"));
@@ -237,7 +237,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public void Deletes(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("ids", call.GetValue("ids"));
@@ -258,7 +258,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public ComposeViewModel Forward(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("sourceId", call.GetValue("sourceId"));
@@ -270,7 +270,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public ComposeViewModel Reply(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("sourceId", call.GetValue("sourceId"));
@@ -283,7 +283,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public void MarkReads(ApiCall call)
         {
-            if (EmailForwardManager.NeedForward(call.Context))
+            if (EmailForwardManager.RequireForward(call.Context))
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("ids", call.GetValue("ids"));

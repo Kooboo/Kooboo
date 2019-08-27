@@ -10,7 +10,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 {
     public class EmailForwardManager
     {
-        public static bool NeedForward(RenderContext context)
+        public static bool RequireForward(RenderContext context)
         {
 #if DEBUG
             return AppSettings.CurrentUsedPort == 80;
