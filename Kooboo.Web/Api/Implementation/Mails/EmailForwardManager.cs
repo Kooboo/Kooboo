@@ -12,17 +12,12 @@ namespace Kooboo.Web.Api.Implementation.Mails
     {
         public static bool RequireForward(RenderContext context)
         {
-#if DEBUG
-            return AppSettings.CurrentUsedPort == 80;
-#else
-            return AppSettings.IsOnlineServer;
-#endif
+            return !string.IsNullOrWhiteSpace(Data.AppSettings.MailServer);  
         }
-
-        private static string GetForwardServer()
+          
+        public  static string GetForwardUrl(string modelName, string method)
         {
-            //todo change
-            return "http://local.kooboo:81";
+          return string.Format(Data.AppSettings.MailServer + "/_api/{0}/{1}", modelName, method); 
         }
 
         public static T Get<T>(string modelName, string method,User user,Dictionary<string,string> param=null)
@@ -62,12 +57,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
             return HttpHelper.ConvertKooboo(url, bytes, param, user.UserName, user.Password);
         }
 
-        private static string GetForwardUrl(string modelName, string method)
-        {
-            var url = string.Format("_api/{0}/{1}", modelName, method);
-            var domain = GetForwardServer();
-            return string.Format("{0}/{1}",domain,url);
-        }
+
 
     }
 }

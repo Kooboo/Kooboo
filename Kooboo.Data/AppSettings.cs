@@ -267,6 +267,9 @@ namespace Kooboo.Data
             }
         }
 
+        // The mail server ip or domain. 
+        public static string MailServer { get; set;  }
+
         public static string DefaultLocalHost { get; set; } = "kooboo";
 
         public static int CurrentUsedPort { get; set; } = 80;
