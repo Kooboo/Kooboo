@@ -218,8 +218,7 @@ namespace Kooboo.Lib.Helper
                 return ProcessApiResponse<T>(backstring);
             }
         }
-
-
+         
         public static string GetString(string url)
         {
             try
