@@ -12,7 +12,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
     {
         public static bool RequireForward(RenderContext context)
         {
-            return !string.IsNullOrWhiteSpace(Data.AppSettings.MailServer);  
+            return Kooboo.Mail.Settings.ForwardRequired; 
         }
           
         public  static string GetForwardUrl(string modelName, string method)
