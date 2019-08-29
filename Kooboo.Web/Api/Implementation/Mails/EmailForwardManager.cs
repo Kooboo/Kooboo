@@ -25,7 +25,6 @@ namespace Kooboo.Web.Api.Implementation.Mails
             var url = GetForwardUrl(modelName, method);
             var headers = TwoFactorUserCache.GetHeaders(user.Id);
             return EmailHttpHelper.Get<T>(url, param, headers);
-            //return HttpHelper.Get<T>(url, param,user.UserName,user.Password);
         }
 
         public static T Post<T>(string modelName, string method, User user, Dictionary<string, string> param)
@@ -33,7 +32,6 @@ namespace Kooboo.Web.Api.Implementation.Mails
             var url = GetForwardUrl(modelName, method);
             var headers = TwoFactorUserCache.GetHeaders(user.Id);
             return EmailHttpHelper.Post<T>(url, param, headers);
-            //return HttpHelper.Post<T>(url, param,user.UserName,user.Password);
         }
 
         public static T Post<T>(string modelName, string method, User user, string json, Dictionary<string, string> param = null)
@@ -82,7 +80,6 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 }
             }
             return EmailHttpHelper.PostBytes(url, bytes, headers);
-            //return HttpHelper.ConvertKooboo(url, bytes, param, user.UserName, user.Password);
         }
 
          
