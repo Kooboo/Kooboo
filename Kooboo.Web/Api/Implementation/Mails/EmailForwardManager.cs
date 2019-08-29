@@ -56,8 +56,6 @@ namespace Kooboo.Web.Api.Implementation.Mails
             }
             return HttpHelper.ConvertKooboo(url, bytes, param, user.UserName, user.Password);
         }
-
-
-
+         
     }
 }

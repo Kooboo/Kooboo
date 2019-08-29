@@ -7,7 +7,7 @@ namespace Kooboo.Mail
 {
     public static class Settings
     {
-        // the mta server ip. 
+        // the mta server ip. This should only defined in the Mail Server.
         public static string Mta { get; set; }
 
         public static int MtaPort { get; set; }
@@ -100,6 +100,13 @@ namespace Kooboo.Mail
             }
             return setting;
         }
-
+         
+        public static bool ForwardRequired
+        {
+            get
+            {
+                return !HasDefineMta; 
+            }
+        }
     }
 }
