@@ -81,7 +81,7 @@ namespace Kooboo.Lib.Helper
             {
                 var current = input[i];
                  
-                if (Helper.CharHelper.isAlphanumeric(current) || current == '_' || current == '-')
+                if (Helper.CharHelper.isAlphanumeric(current) || current == '_')
                 {
                     sb.Append(current); 
                 }

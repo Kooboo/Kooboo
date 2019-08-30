@@ -13,32 +13,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
     public class EmailHttpHelper
     {
         public static readonly string DefaultUserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 4.0.30319)";
-
-        static EmailHttpHelper()
-        {
-            //ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult;
-            ////turn on tls12 and tls11,default is ssl3 and tls
-            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
-            SetCustomSslChecker();
-        }
-
-        public static bool HasSetCustomSSL { get; set; }
-
-        public static void SetCustomSslChecker()
-        {
-            if (!HasSetCustomSSL)
-            {
-                ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult;
-                HasSetCustomSSL = true;
-            }
-        }
-
-        private static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
-        {
-            //make self signed cert ,so not validate cert in client
-            return true;
-        }
-
+          
         public static T Get<T>(string url, Dictionary<string, string> query, Dictionary<string,string> headers)
         {
             if (query != null)

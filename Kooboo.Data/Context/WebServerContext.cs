@@ -91,6 +91,15 @@ namespace Kooboo.Data.Context
                 user = _GetUserFromCookie(request);
             }
  
+            if (user == null)
+            {
+                //Two factors is only use to validate access to remote servers. 
+                user = Kooboo.Data.Service.TwoFactorService.Validate(request); 
+                if (user !=null)
+                {
+                    return user; 
+                }
+            }
 
             if (string.IsNullOrEmpty(Data.Service.UserLoginService.GetUserPassword(user)))
             {
