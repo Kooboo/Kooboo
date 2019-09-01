@@ -194,6 +194,7 @@ namespace Kooboo.Data.Models
         PrivateWeb = 6, 
         Converter = 8,
         TBD = 9,
+        TheTheme =11,
         Root=16, 
         Nginx = 32, 
         SslServer = 64, 
