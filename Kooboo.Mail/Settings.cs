@@ -108,5 +108,7 @@ namespace Kooboo.Mail
                 return !HasDefineMta; 
             }
         }
+
+        public static string MailServer { get; set; }
     }
 }

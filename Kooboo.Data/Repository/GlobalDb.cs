@@ -120,6 +120,26 @@ namespace Kooboo.Data
             }
         }
 
+
+        private static LocalOrganizationRepository _localorg;
+        public static LocalOrganizationRepository LocalOrganization
+        {
+            get
+            {
+                if (_localorg == null)
+                {
+                    lock (_lock)
+                    {
+                        if (_localorg == null)
+                        {
+                            _localorg = new LocalOrganizationRepository(); 
+                        }
+                    }
+                }
+                return _localorg;
+            }
+        }
+
         private static DllRepository _dlls;
 
         public static DllRepository Dlls

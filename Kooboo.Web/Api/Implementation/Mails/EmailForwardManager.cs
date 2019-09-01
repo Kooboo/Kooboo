@@ -17,7 +17,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
           
         public  static string GetForwardUrl(string modelName, string method)
         {
-          return string.Format(Data.AppSettings.MailServer + "/_api/{0}/{1}", modelName, method); 
+          return string.Format(Kooboo.Mail.Settings.MailServer + "/_api/{0}/{1}", modelName, method); 
         }
 
         public static T Get<T>(string modelName, string method,User user,Dictionary<string,string> param=null)
