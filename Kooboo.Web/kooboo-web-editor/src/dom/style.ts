@@ -22,8 +22,6 @@ export function getStyles() {
 export function getRules(style: CSSStyleSheet, href?: string | null) {
   let rules: rule[] = [];
   for (const rule of style.rules as any) {
-    if (!href) href = null;
-    let con = rule instanceof CSSStyleRule;
     if (rule instanceof CSSStyleRule) rules.push({ cssRule: rule, url: href! });
     else if (rule instanceof CSSMediaRule && matchMedia(rule.media.mediaText).matches) {
       for (const cssRule of rule.cssRules as any) {
@@ -202,7 +200,7 @@ export function getCssColors(style: CSSStyleDeclaration) {
 }
 
 // 是否是单个颜色（有的时候color是 #fff #fff 多个颜色组成）
-export function isOneColor(color: string): boolean{
+export function isOneColor(color: string): boolean {
   color = color.trim().toLowerCase();
   if (/^(#|rgb)((?!(#|rgb)).)*$/g.test(color)) return true;
   if (colorEnum.hasOwnProperty(color)) return true;
