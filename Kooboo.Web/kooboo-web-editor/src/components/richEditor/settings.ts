@@ -86,15 +86,6 @@ export function createEditDataSettings(target: HTMLElement, source: HTMLElement)
     editor.once("SetContent", onSetContent);
     editor.on("KeyDown", onKeyDown);
     editor.on("BeforeSetContent", onBeforeSetContent);
-    editor.on("Focus", async (e: any) => {
-      let container = editor.getContainer() as HTMLElement;
-      container.style.zIndex = STANDARD_Z_INDEX + 6 + "";
-
-      await delay(100);
-      if (container.nextElementSibling instanceof HTMLElement) {
-        container.nextElementSibling.style.zIndex = STANDARD_Z_INDEX + 7 + "";
-      }
-    });
     editor.on("Change", (e: any) => {
       source.innerHTML = target.innerHTML;
     });
