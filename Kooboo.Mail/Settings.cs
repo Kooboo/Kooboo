@@ -105,7 +105,9 @@ namespace Kooboo.Mail
         {
             get
             {
-                return !HasDefineMta; 
+
+                return false; 
+             ///   return !HasDefineMta; 
             }
         }
 
