@@ -346,19 +346,37 @@
   padding-right: 5px;
 }
 
-.kb_web_editor_coloreditor_item{
+.kb_web_editor_coloreditor_item {
   display: flex;
   justify-content: flex-end;
   padding: 10px 20px;
 }
 
-.kb_web_editor_coloreditor_item_check{
+.kb_web_editor_coloreditor_item_check {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 25%;
 }
 
-.kb_web_editor_coloreditor_item_check>*{
+.kb_web_editor_coloreditor_item_check > * {
   margin: 0px;
 }
+
+.kb_web_editor_edit_data_item {
+  border-top: 1px solid #eee;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+}
+
+.kb_web_editor_edit_data_item > .kb_web_editor_div {
+  width: 100%;
+}
+
+.kb_web_editor_edit_data_item > .kb_web_editor_btn {
+  width: 15px;
+}
+

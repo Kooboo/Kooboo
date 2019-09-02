@@ -1,4 +1,3 @@
-import { isInEditorContainer } from "./utils";
 import context from "@/common/context";
 import { getCloseElement } from "@/kooboo/utils";
 import { HoverDomEventArgs } from "@/events/HoverDomEvent";
@@ -7,7 +6,7 @@ import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 export function hover(e: MouseEvent) {
   e.stopPropagation();
   let args = context.lastHoverDomEventArgs;
-  if (isInEditorContainer(e) || context.editing) return;
+  if (context.editing) return;
   let el = e.target as HTMLElement;
   if (args && args.element == el) return;
   let closeElement = getCloseElement(el);

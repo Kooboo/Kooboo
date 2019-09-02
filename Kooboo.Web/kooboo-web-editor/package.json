@@ -16,7 +16,7 @@
     "@webcomponents/shadydom": "^1.6.0",
     "color-string": "^1.5.3",
     "query-string": "^6.7.0",
-    "tinymce": "^5.0.6"
+    "tinymce": "^5.0.14"
   },
   "devDependencies": {
     "@types/chai": "^4.2.0",

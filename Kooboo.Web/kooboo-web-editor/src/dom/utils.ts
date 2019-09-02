@@ -20,13 +20,6 @@ export function getMaxWidth() {
   return Math.max(body.scrollWidth, body.offsetWidth, html.clientWidth, html.scrollWidth, html.offsetWidth);
 }
 
-export function isInEditorContainer(e: MouseEvent) {
-  return getParentElements(e.target as HTMLElement).some(s => {
-    if (s instanceof HTMLElement) return s.id == HOVER_BORDER_SKIP;
-    return false;
-  });
-}
-
 export function* getAllElement(parentEl: HTMLElement, containSelf = false) {
   if (containSelf) yield parentEl;
 
@@ -140,4 +133,15 @@ export function isInTable(el: HTMLElement) {
 export function getImportant(el: HTMLElement, prop: string, cssRules: { cssRule: CSSStyleRule }[]) {
   let cssImportant = cssRules.some(s => el.matches(s.cssRule.selectorText) && s.cssRule.style.getPropertyPriority(prop));
   return cssImportant ? "important" : el.style.getPropertyPriority(prop);
+}
+
+export function shareStyle(container: HTMLElement) {
+  let keywords = ["/*! Pickr", "/* kb_web_editor */"];
+  for (let i = 0; i < document.styleSheets.length; i++) {
+    let style = document.styleSheets.item(i)!;
+    if (!(style.ownerNode instanceof HTMLElement)) return;
+    if (keywords.some(s => (style.ownerNode as HTMLElement).innerHTML.startsWith(s))) {
+      container.appendChild(style.ownerNode.cloneNode(true));
+    }
+  }
 }

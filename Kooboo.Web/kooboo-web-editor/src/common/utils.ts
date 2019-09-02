@@ -1,13 +1,8 @@
-import { getAllElement, isLink, isInEditorContainer } from "@/dom/utils";
+import { getAllElement, isLink } from "@/dom/utils";
 import context from "./context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import { HOVER_BORDER_SKIP } from "./constants";
-import { TEXT } from "./lang";
 import { hover } from "@/dom/events";
-
-try {
-  require("@webcomponents/shadydom");
-} catch (error) {}
 
 export function delay(time: number) {
   return new Promise(rs => {
@@ -17,6 +12,7 @@ export function delay(time: number) {
 
 export function initElements() {
   for (const i of getAllElement(document.body, true)) {
+    if (i.id == HOVER_BORDER_SKIP) continue;
     if (i instanceof HTMLElement) {
       if (isLink(i)) {
         let a = i.cloneNode(true);
@@ -35,8 +31,7 @@ export function holdUpClick(el: HTMLElement) {
       e.stopPropagation();
       e.preventDefault();
     }
-
-    if (context.editing || isInEditorContainer(e)) return;
+    if (context.editing) return;
     let element = context.lastHoverDomEventArgs.closeElement;
     var args = new SelectedDomEventArgs(element);
     context.lastMouseEventArg = e;
@@ -48,10 +43,18 @@ export function createContainer() {
   let el = document.createElement("div");
   el.style.cssText = "all:unset !important";
   el.style.fontSize = "16px";
-  document.documentElement.appendChild(el);
+  el.id = HOVER_BORDER_SKIP;
+  el.onclick = e => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+  el.onmouseover = e => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+  document.body.appendChild(el);
   let shadow = el.attachShadow({ mode: "open" });
   let root = document.createElement("div");
-  root.id = HOVER_BORDER_SKIP;
   root.style.wordBreak = "break-all";
   root.style.fontFamily = `"Times New Roman",Times,serif`;
   root.style.fontStyle = "normal";

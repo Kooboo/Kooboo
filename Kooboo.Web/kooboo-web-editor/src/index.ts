@@ -6,11 +6,13 @@ import { createHoverBorder, createSelectedBorder } from "./components/selectorBo
 import { createEditorShade } from "./components/editorShade";
 import { emitHoverEvent } from "./dom/events";
 import { initElements } from "./common/utils";
-import { shareStyle } from "./kooboo/outsideInterfaces";
+import { parentBody } from "./kooboo/outsideInterfaces";
 import { createElementNav } from "./components/elementNav";
 import context from "./common/context";
+import { shareStyle } from "./dom/utils";
 
-shareStyle();
+shareStyle(parentBody);
+shareStyle(context.container);
 initElements();
 
 context.container.appendChild(createHoverBorder());

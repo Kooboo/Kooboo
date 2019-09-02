@@ -220,3 +220,8 @@ export function isRepeatComment(comment: KoobooComment) {
 }
 
 export const clearContent = (c: string) => clearKoobooInfo(c).replace(/\s/g, "");
+
+export function isEditable(el: HTMLElement) {
+  var reExcept = /^(img|button|input|textarea|hr|area|canvas|meter|progress|select|tr|td|tbody|thead|tfoot|th|table)$/i;
+  return !reExcept.test(el.tagName);
+}

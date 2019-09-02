@@ -5,6 +5,7 @@ import { createOutLinkPanel } from "./outLinkPanel";
 import { createPageLinkPanel } from "./pageLinkPanel";
 import { createDiv } from "@/dom/element";
 import context from "@/common/context";
+import { STANDARD_Z_INDEX } from "@/common/constants";
 
 export async function createLinkPicker(oldValue: string) {
   let el = createDiv();
@@ -30,6 +31,7 @@ export async function createLinkPicker(oldValue: string) {
   setContent(oldValue);
   el.appendChild(createTabs(options));
   let { modal, setOkHandler, close } = createModal(TEXT.EDIT_LINK, el, "400px", "500px");
+  modal.style.zIndex = STANDARD_Z_INDEX + 100 + "";
   context.container.appendChild(modal);
 
   return new Promise<string>((rs, rj) => {

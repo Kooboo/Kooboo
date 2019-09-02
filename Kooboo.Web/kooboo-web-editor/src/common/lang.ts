@@ -53,7 +53,8 @@ const en = {
   EDIT_FORM: "Edit form",
   EXPAND_SELECTION: "Expand selection",
   GLOBAL_UPDATE: "Global update",
-  EDIT_COLOR: "Edit color"
+  EDIT_COLOR: "Edit color",
+  EDIT_DATA: "Edit data"
 };
 
 const zh = {
@@ -107,7 +108,8 @@ const zh = {
   EDIT_FORM: "编辑表单",
   EXPAND_SELECTION: "扩大选区",
   GLOBAL_UPDATE: "全局更新",
-  EDIT_COLOR: "编辑颜色"
+  EDIT_COLOR: "编辑颜色",
+  EDIT_DATA: "编辑数据"
 } as typeof en;
 
 var langPackages = { en, zh };

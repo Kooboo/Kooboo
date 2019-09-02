@@ -2,10 +2,13 @@ import webpack from "webpack";
 import path from "path";
 
 export default (env: any): webpack.Configuration => ({
-  entry: "./src/index.ts",
+  entry: {
+    index: "./src/index.ts",
+    richEditor: "./src/components/dataEditor/tinymce.ts"
+  },
   output: {
     path: path.resolve("../_Admin/Scripts/kooboo-web-editor"),
-    filename: "kooboo-web-editor.min.js"
+    filename: "[name].bundle.js"
   },
   watch: env.NODE_ENV == "development",
   mode: env.NODE_ENV,

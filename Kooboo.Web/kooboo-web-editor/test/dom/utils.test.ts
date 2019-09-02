@@ -1,19 +1,5 @@
-import {
-  getAllElement,
-  getAllNode,
-  isBody,
-  isImg,
-  isLink,
-  canJump,
-  previousNodes,
-  nextNodes,
-  getParentElements,
-  isInEditorContainer,
-  isInTable
-} from "@/dom/utils";
-import { HOVER_BORDER_SKIP } from "@/common/constants";
+import { getAllElement, getAllNode, isBody, isImg, isLink, canJump, previousNodes, nextNodes, getParentElements, isInTable } from "@/dom/utils";
 import { previousComment } from "@/kooboo/utils";
-import context from "@/common/context";
 
 describe("utils", () => {
   beforeEach(
@@ -21,20 +7,6 @@ describe("utils", () => {
       (document.body.innerHTML = `
 `)
   );
-  it("isInEditorContainer", () => {
-    let div = document.createElement("div");
-    div.id = HOVER_BORDER_SKIP;
-    div.setAttribute("editorContainer", "true");
-    document.body.append(div);
-    let editorContainer = context.container;
-    editorContainer.addEventListener("click", e => {
-      expect(isInEditorContainer(e)).equal(true);
-      //id 不等于 HOVER_BORDER_SKIP时返回false
-      editorContainer.id = "test";
-      expect(isInEditorContainer(e)).equal(false);
-    });
-    editorContainer.click();
-  });
 
   it("getAllElement", () => {
     var el = document.createElement("div");

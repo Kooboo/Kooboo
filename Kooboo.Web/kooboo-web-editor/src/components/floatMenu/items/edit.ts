@@ -3,7 +3,7 @@ import context from "@/common/context";
 import { isDynamicContent, clearKoobooInfo, getCleanParent, isDirty, markDirty, setGuid } from "@/kooboo/utils";
 import { isBody } from "@/dom/utils";
 import { setInlineEditor } from "@/components/richEditor";
-import { getMenuComment, getEditComment, clearContent } from "../utils";
+import { getMenuComment, getEditComment, clearContent, isEditable } from "../utils";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
 import { Log } from "@/operation/recordLogs/Log";
@@ -36,8 +36,7 @@ export default class EditItem extends BaseMenuItem {
     if (getMenuComment(comments)) return this.setVisiable(false);
     if (!getEditComment(comments)) return this.setVisiable(false);
     if (!args.koobooId) return this.setVisiable(false);
-    var reExcept = /^(img|button|input|textarea|hr|area|canvas|meter|progress|select|tr|td|tbody|thead|tfoot|th|table)$/i;
-    if (reExcept.test(args.element.tagName)) return this.setVisiable(false);
+    if (!isEditable(args.element)) return this.setVisiable(false);
     let { parent } = getCleanParent(args.element);
     if (isDirty(args.element) && parent && isDynamicContent(parent)) return this.setVisiable(false);
     if (isDynamicContent(args.element)) return this.setVisiable(false);
