@@ -43,9 +43,11 @@ export default class EditDataItem extends BaseMenuItem {
     let startContent = cleanParent.innerHTML;
     try {
       await createDataEdtor(list);
+      let value = clearKoobooInfo(cleanParent.innerHTML);
+      if (value == clearKoobooInfo(startContent)) return;
       let guid = setGuid(cleanParent);
       let units = [new InnerHtmlUnit(startContent)];
-      let logs = [DomLog.createUpdate(comment.nameorid!, clearKoobooInfo(cleanParent.innerHTML), koobooId!, comment.objecttype!)];
+      let logs = [DomLog.createUpdate(comment.nameorid!, value, koobooId!, comment.objecttype!)];
       let operation = new operationRecord(units, logs, guid);
       context.operationManager.add(operation);
     } catch (error) {
