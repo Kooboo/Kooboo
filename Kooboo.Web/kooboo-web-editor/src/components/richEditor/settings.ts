@@ -1,6 +1,16 @@
 import { Settings, Editor } from "tinymce";
 import context from "../../common/context";
-import { setLang, onBlur, onSetContent, onKeyDown, onBeforeSetContent, getToolbar, initInstanceCallback, savePluginCallback } from "./utils";
+import {
+  setLang,
+  onBlur,
+  onSetContent,
+  onKeyDown,
+  onBeforeSetContent,
+  getToolbar,
+  initInstanceCallback,
+  savePluginCallback,
+  clearTinymceElements
+} from "./utils";
 import { createLinkPicker } from "../linkPicker";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 
@@ -85,6 +95,7 @@ export function createEditDataSettings(target: HTMLElement, source: HTMLElement)
     editor.on("BeforeSetContent", onBeforeSetContent);
     editor.on("Change", (e: any) => {
       source.innerHTML = target.innerHTML;
+      clearTinymceElements(source);
     });
   };
   return settings;

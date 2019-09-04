@@ -119,13 +119,17 @@ export function savePluginCallback(e: Editor, callBack: () => void) {
     if (element.id.startsWith("mce_")) element.removeAttribute("id");
     if (element.getAttribute("style") == "") element.removeAttribute("style");
   }
+  clearTinymceElements(document.body);
+  context.editing = false;
+  callBack();
+}
+
+export function clearTinymceElements(root: HTMLElement) {
   let deleted = [];
-  for (const i of getAllElement(document.body)) {
+  for (const i of getAllElement(root)) {
     if (i.classList.contains("mce-item-table")) i.classList.remove("mce-item-table");
     if (i.hasAttribute("data-mce-src")) i.removeAttribute("data-mce-src");
     if (i.hasAttribute("data-mce-bogus")) deleted.push(i);
   }
   deleted.forEach(i => i.parentElement && i.parentElement.removeChild(i));
-  context.editing = false;
-  callBack();
 }

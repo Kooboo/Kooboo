@@ -368,12 +368,13 @@
   min-height: 50px;
   display: flex;
   align-items: center;
-  padding: 20px;
+  padding: 30px;
   position: relative;
 }
 
 .kb_web_editor_edit_data_item > .kb_web_editor_div {
   width: 100%;
+  padding-right: 30px;
 }
 
 .kb_web_editor_edit_data_item > .kb_web_editor_btn {
