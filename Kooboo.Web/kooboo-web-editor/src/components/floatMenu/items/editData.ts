@@ -5,7 +5,7 @@ import { Menu } from "../menu";
 import { createDataEdtor } from "@/components/dataEditor";
 import { getEditableData } from "@/components/dataEditor/utils";
 import { InnerHtmlUnit } from "@/operation/recordUnits/InnerHtmlUnit";
-import { setGuid, clearKoobooInfo } from "@/kooboo/utils";
+import { setGuid, clearKoobooInfo, markDirty } from "@/kooboo/utils";
 import { DomLog } from "@/operation/recordLogs/DomLog";
 import { KoobooComment } from "@/kooboo/KoobooComment";
 import { getEditComment } from "../utils";
@@ -46,6 +46,7 @@ export default class EditDataItem extends BaseMenuItem {
       let value = clearKoobooInfo(cleanParent.innerHTML);
       if (value == clearKoobooInfo(startContent)) return;
       let guid = setGuid(cleanParent);
+      markDirty(cleanParent);
       let units = [new InnerHtmlUnit(startContent)];
       let logs = [DomLog.createUpdate(comment.nameorid!, value, koobooId!, comment.objecttype!)];
       let operation = new operationRecord(units, logs, guid);
