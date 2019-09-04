@@ -62,7 +62,7 @@ function createScript(doc: Document, elements: HTMLElement[]) {
         dataItem.el.parentElement!.insertBefore(cloned, dataItem.el.nextElementSibling);
         let { item, content } = createItem(cloned, onDelete, onCopy);
         container.insertBefore(item, dataItem.item.nextElementSibling);
-        (doc as any).init(createEditDataSettings(content, i));
+        (doc as any).init(createEditDataSettings(content, cloned));
       };
 
       let { item, content } = createItem(i, onDelete, onCopy);
