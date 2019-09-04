@@ -45,8 +45,7 @@ export function createColorPicker(text: string, old: string, onsave: (color: str
       button.style.border = "1px solid #ccc";
     });
     pickr.on("save", (e: any) => {
-      let c = e.toRGBA();
-      onsave(`rgba(${c[0].toFixed(0)},${c[1].toFixed(0)},${c[2].toFixed(0)},${c[3].toFixed(2)})`);
+      onsave(e.toRGBA().toString(0));
     });
   });
 

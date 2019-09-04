@@ -1,11 +1,8 @@
-import { Settings, Editor, dom } from "tinymce";
+import { Settings, Editor } from "tinymce";
 import context from "../../common/context";
 import { setLang, onBlur, onSetContent, onKeyDown, onBeforeSetContent, getToolbar, initInstanceCallback, savePluginCallback } from "./utils";
 import { createLinkPicker } from "../linkPicker";
 import { pickImg } from "@/kooboo/outsideInterfaces";
-import { STANDARD_Z_INDEX } from "@/common/constants";
-import { delay } from "@/common/utils";
-import conetxt from "@/common/context";
 
 export interface SetInlineEditorArgs {
   selector: HTMLElement;

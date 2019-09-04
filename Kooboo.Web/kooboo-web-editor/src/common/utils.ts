@@ -52,7 +52,7 @@ export function createContainer() {
     e.stopPropagation();
     e.preventDefault();
   };
-  document.body.appendChild(el);
+  document.documentElement.appendChild(el);
   let shadow = el.attachShadow({ mode: "open" });
   let root = document.createElement("div");
   root.style.wordBreak = "break-all";

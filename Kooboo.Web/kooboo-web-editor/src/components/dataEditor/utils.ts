@@ -1,6 +1,7 @@
 import { getParentElements } from "@/dom/utils";
 import { getCleanParent, isDynamicContent } from "@/kooboo/utils";
 import { isEditable } from "../floatMenu/utils";
+import { HOVER_BORDER_SKIP } from "@/common/constants";
 
 export type editableData = { list: HTMLElement[]; cleanParent: HTMLElement; koobooId: string };
 export function getEditableData(element: HTMLElement): editableData | undefined {
@@ -13,6 +14,7 @@ export function getEditableData(element: HTMLElement): editableData | undefined 
     let list: HTMLElement[] = [];
     for (const i of el.parentElement!.children as any) {
       let child = i as HTMLElement;
+      if (child.id == HOVER_BORDER_SKIP) continue;
       if (el.tagName == child.tagName) {
         list.push(child);
       }

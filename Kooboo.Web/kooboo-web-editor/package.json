@@ -13,9 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "@simonwep/pickr": "^1.2.7",
-    "@webcomponents/shadydom": "^1.6.0",
     "color-string": "^1.5.3",
-    "query-string": "^6.7.0",
     "tinymce": "^5.0.14"
   },
   "devDependencies": {
