@@ -54,7 +54,8 @@ const en = {
   EXPAND_SELECTION: "Expand selection",
   GLOBAL_UPDATE: "Global update",
   EDIT_COLOR: "Edit color",
-  EDIT_DATA: "Edit data"
+  EDIT_DATA: "Edit data",
+  HTML_MODE_TIP: "Failed to initialize the editor as the document is not in standards mode"
 };
 
 const zh = {
@@ -109,7 +110,8 @@ const zh = {
   EXPAND_SELECTION: "扩大选区",
   GLOBAL_UPDATE: "全局更新",
   EDIT_COLOR: "编辑颜色",
-  EDIT_DATA: "编辑数据"
+  EDIT_DATA: "编辑数据",
+  HTML_MODE_TIP: "无法在这个网页初始化内联编辑器，因为此页面工作在非标准模式下"
 } as typeof en;
 
 var langPackages = { en, zh };

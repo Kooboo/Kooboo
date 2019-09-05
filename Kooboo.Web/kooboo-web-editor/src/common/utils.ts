@@ -3,6 +3,7 @@ import context from "./context";
 import { SelectedDomEventArgs } from "@/events/SelectedDomEvent";
 import { HOVER_BORDER_SKIP } from "./constants";
 import { hover } from "@/dom/events";
+import { TEXT } from "./lang";
 
 export function delay(time: number) {
   return new Promise(rs => {
@@ -54,4 +55,9 @@ export function createContainer() {
   root.style.lineHeight = "16px";
   shadow.appendChild(root);
   return root;
+}
+
+export function htmlModeCheck() {
+  if (!document.doctype) alert(TEXT.HTML_MODE_TIP);
+  return !!document.doctype;
 }

@@ -13,6 +13,7 @@ import { DomLog } from "@/operation/recordLogs/DomLog";
 import { operationRecord } from "@/operation/Record";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
+import { htmlModeCheck } from "@/common/utils";
 
 export default class ReplaceToTextItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -42,6 +43,11 @@ export default class ReplaceToTextItem extends BaseMenuItem {
   }
 
   async click() {
+    if (!htmlModeCheck()) {
+      this.parentMenu.hidden();
+      return;
+    }
+
     let args = context.lastSelectedDomEventArgs;
     let { parent, koobooId } = getCleanParent(args.element);
     let startContent = parent!.innerHTML;

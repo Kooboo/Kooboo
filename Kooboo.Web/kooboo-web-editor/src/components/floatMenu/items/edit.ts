@@ -14,6 +14,7 @@ import { DomLog } from "@/operation/recordLogs/DomLog";
 import { operationRecord } from "@/operation/Record";
 import BaseMenuItem from "./BaseMenuItem";
 import { Menu } from "../menu";
+import { htmlModeCheck } from "@/common/utils";
 
 export default class EditItem extends BaseMenuItem {
   constructor(parentMenu: Menu) {
@@ -45,6 +46,8 @@ export default class EditItem extends BaseMenuItem {
   click() {
     let { element, koobooId } = context.lastSelectedDomEventArgs;
     this.parentMenu.hidden();
+
+    if (!htmlModeCheck()) return;
 
     let startContent = element.innerHTML;
     const onSave = () => {
