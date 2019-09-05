@@ -375,9 +375,10 @@
 .kb_web_editor_edit_data_item > .kb_web_editor_div {
   width: 100%;
   padding-right: 30px;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .kb_web_editor_edit_data_item > .kb_web_editor_btn {
   width: 15px;
 }
-
