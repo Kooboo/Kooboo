@@ -63,7 +63,6 @@ export function createColorEditItem(colorGroup: CssColorGroup, el: HTMLElement, 
     if (!classCssColor) return;
 
     if (checked) {
-      debugger;
       let value = el.style.getPropertyValue(updateColor.prop.prop);
       value = updateColor.prop.getColor(value);
       value = updateClassCss(classCssColor, value);

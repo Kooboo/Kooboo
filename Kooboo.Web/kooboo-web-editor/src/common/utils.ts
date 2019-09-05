@@ -44,14 +44,6 @@ export function createContainer() {
   el.style.cssText = "all:unset !important";
   el.style.fontSize = "16px";
   el.id = HOVER_BORDER_SKIP;
-  el.onclick = e => {
-    e.stopPropagation();
-    e.preventDefault();
-  };
-  el.onmouseover = e => {
-    e.stopPropagation();
-    e.preventDefault();
-  };
   document.documentElement.appendChild(el);
   let shadow = el.attachShadow({ mode: "open" });
   let root = document.createElement("div");

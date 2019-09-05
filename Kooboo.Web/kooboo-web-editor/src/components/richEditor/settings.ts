@@ -93,10 +93,14 @@ export function createEditDataSettings(target: HTMLElement, source: HTMLElement)
     editor.once("SetContent", onSetContent);
     editor.on("KeyDown", onKeyDown);
     editor.on("BeforeSetContent", onBeforeSetContent);
-    editor.on("Change", (e: any) => {
-      source.innerHTML = target.innerHTML;
-      clearTinymceElements(source);
-    });
+    editor.on("Change", () => syncContent(target, source));
+    editor.on("Undo", () => syncContent(target, source));
+    editor.on("Redo", () => syncContent(target, source));
   };
   return settings;
+}
+
+function syncContent(target: HTMLElement, source: HTMLElement) {
+  source.innerHTML = target.innerHTML;
+  clearTinymceElements(source);
 }

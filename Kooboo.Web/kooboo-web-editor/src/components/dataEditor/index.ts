@@ -22,9 +22,6 @@ function initDoc(doc: Document) {
   doc.write(myContent);
   doc.close();
   shareStyle(doc.body);
-  // let padding = document.createElement("div");
-  // padding.style.height = "20px";
-  // doc.body.appendChild(padding);
 }
 
 function addModal(el: HTMLElement) {
