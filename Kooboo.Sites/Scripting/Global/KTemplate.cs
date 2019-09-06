@@ -381,11 +381,23 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-        public string GetPreviewUrl(string siteid)
+        public string GetPreviewUrl(string siteid,string domain)
         {
             var site = GlobalDb.WebSites.Get(Guid.Parse(siteid));
-            string baseurl = site.BaseUrl();
+            //string baseurl = site.BaseUrl();
 
+            var hostname =string.Format("{0}.{1}",site.Name,domain);
+            var baseurl = string.Empty;
+            if (site.ForceSSL)
+            {
+                var uri = new UriBuilder("https", hostname, 443);
+                baseurl = uri.Uri.AbsoluteUri;
+            }
+            else
+            {
+                var uri = new UriBuilder("http", hostname, 80);
+                baseurl = uri.Uri.AbsoluteUri;
+            }
             return Lib.Helper.UrlHelper.Combine(baseurl, GetStartRelativeUrl(site));
         }
         /// <summary>
