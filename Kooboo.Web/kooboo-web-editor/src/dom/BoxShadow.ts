@@ -10,7 +10,7 @@ export class BoxShadow {
     }
 
     value = value.replace(/\s+/g, " ");
-    value = value.replace(/,\s+/g, ",");     // rgb(0, 0, 0) 移除其中的空格
+    value = value.replace(/,\s+/g, ","); // rgb(0, 0, 0) 移除其中的空格
     let values = value.trim().split(" ");
     if (values.length < 3 || values.length > 5) {
       return;
@@ -18,14 +18,13 @@ export class BoxShadow {
 
     // 判断是否以颜色开头
     let colorpos, hShadowpos, vShadowpos, blurpos, spreadpos;
-    if(/^([a-zA-Z#]|rgb)/.test(values[0])){
+    if (/^([a-zA-Z#]|rgb)/.test(values[0])) {
       colorpos = 0;
       hShadowpos = 1;
       vShadowpos = 2;
       blurpos = 3;
       spreadpos = 4;
-    }
-    else{
+    } else {
       hShadowpos = 0;
       vShadowpos = 1;
       blurpos = 2;

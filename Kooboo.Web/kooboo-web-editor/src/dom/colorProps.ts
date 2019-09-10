@@ -1,6 +1,5 @@
 import { BoxShadow } from "./BoxShadow";
 import { TextShadow } from "./TextShadow";
-import { Border } from "./Border";
 
 export interface ColorProp {
   prop: string;

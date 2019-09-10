@@ -42,21 +42,19 @@ export function holdUpClick(el: HTMLElement) {
 
 export function createContainer() {
   let el = document.createElement("div");
-  el.style.cssText = "all:unset !important";
-  el.style.fontSize = "16px";
+  el.classList.add("kb_web_editor_container");
   el.id = HOVER_BORDER_SKIP;
   document.documentElement.appendChild(el);
   let shadow = el.attachShadow({ mode: "open" });
   let root = document.createElement("div");
-  root.style.wordBreak = "break-all";
-  root.style.fontFamily = `"Times New Roman",Times,serif`;
-  root.style.fontStyle = "normal";
-  root.style.fontVariant = "normal";
-  root.style.lineHeight = "16px";
+  root.classList.add("kb_web_editor_root");
   shadow.appendChild(root);
   return root;
 }
 
+/**
+ * check document mode is standard or quirks(tinymce only work in standard mode)
+ */
 export function htmlModeCheck() {
   if (!document.doctype) alert(TEXT.HTML_MODE_TIP);
   return !!document.doctype;

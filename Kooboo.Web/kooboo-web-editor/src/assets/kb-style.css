@@ -382,3 +382,15 @@
 .kb_web_editor_edit_data_item > .kb_web_editor_btn {
   width: 15px;
 }
+
+.kb_web_editor_container {
+  all: unset !important;
+}
+
+.kb_web_editor_root{
+  word-break: break-all;
+  font-family: "Times New Roman",Times,serif;
+  font-style: normal;
+  font-variant: normal;
+  line-height: 16px;
+}
