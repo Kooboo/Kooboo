@@ -1,4 +1,4 @@
-import { Settings, Editor } from "tinymce";
+import tinymce from "tinymce-declaration";
 import context from "../../common/context";
 import {
   setLang,
@@ -56,7 +56,7 @@ function createCommonSettings(target: HTMLElement) {
         } catch (error) {}
       }
     }
-  } as Settings;
+  } as tinymce.Settings;
 
   //fix https://github.com/tinymce/tinymce/issues/1828
   (target as any)._position = target.style.position;
@@ -71,7 +71,7 @@ export function createSettings(args: SetInlineEditorArgs) {
   settings.toolbar = getToolbar(selector);
   settings.plugins = ["save", "link", "image"];
   settings.init_instance_callback = initInstanceCallback;
-  settings.setup = (editor: Editor) => {
+  settings.setup = (editor: tinymce.Editor) => {
     editor.on("Blur", onBlur);
     editor.once("SetContent", onSetContent);
     editor.on("Change", () => context.tinymceInputEvent.emit());
@@ -80,8 +80,8 @@ export function createSettings(args: SetInlineEditorArgs) {
     editor.on("BeforeSetContent", onBeforeSetContent);
   };
   (settings as any).save_enablewhendirty = false;
-  (settings as any).save_onsavecallback = (e: Editor) => savePluginCallback(e, onSave);
-  (settings as any).save_oncancelcallback = (e: Editor) => savePluginCallback(e, onCancel);
+  (settings as any).save_onsavecallback = (e: tinymce.Editor) => savePluginCallback(e, onSave);
+  (settings as any).save_oncancelcallback = (e: tinymce.Editor) => savePluginCallback(e, onCancel);
   return settings;
 }
 
@@ -89,7 +89,7 @@ export function createEditDataSettings(target: HTMLElement, source: HTMLElement)
   const settings = createCommonSettings(target);
   settings.toolbar = "undo redo | bold italic underline | forecolor backcolor | fontselect fontsizeselect | image | link unlink";
   settings.plugins = ["link", "image"];
-  settings.setup = (editor: Editor) => {
+  settings.setup = (editor: tinymce.Editor) => {
     editor.once("SetContent", onSetContent);
     editor.on("KeyDown", onKeyDown);
     editor.on("BeforeSetContent", onBeforeSetContent);

@@ -6,3 +6,5 @@ declare global {
   }
   var expect: Chai.ExpectStatic;
 }
+
+declare module "tinymce-declaration";

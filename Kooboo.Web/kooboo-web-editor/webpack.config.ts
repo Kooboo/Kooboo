@@ -4,7 +4,7 @@ import path from "path";
 export default (env: any): webpack.Configuration => ({
   entry: {
     index: "./src/index.ts",
-    richEditor: "./src/components/dataEditor/tinymce.ts"
+    richEditor: "./src/components/richEditor/tinymce.ts"
   },
   output: {
     path: path.resolve("../_Admin/Scripts/kooboo-web-editor"),
@@ -12,6 +12,9 @@ export default (env: any): webpack.Configuration => ({
   },
   watch: env.NODE_ENV == "development",
   mode: env.NODE_ENV,
+  externals: {
+    "tinymce-declaration": "tinymce"
+  },
   resolve: {
     extensions: [".ts", ".tsx", ".js"],
     alias: {

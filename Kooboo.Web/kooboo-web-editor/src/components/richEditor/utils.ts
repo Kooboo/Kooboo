@@ -1,4 +1,4 @@
-import { Editor, Settings } from "tinymce";
+import tinymce from "tinymce-declaration";
 import { STANDARD_Z_INDEX, EMPTY_COMMENT } from "../../common/constants";
 import { lang } from "../../common/lang";
 import context from "../../common/context";
@@ -7,7 +7,7 @@ import { delay } from "../../common/utils";
 import moveIcon from "@/assets/icons/drag-move--fill.svg";
 import { createDiv } from "@/dom/element";
 
-export async function impoveEditorUI(editor: Editor) {
+export async function impoveEditorUI(editor: tinymce.Editor) {
   editor.focus(false);
   let container = editor.getContainer();
   if (container instanceof HTMLElement) {
@@ -49,7 +49,7 @@ export async function impoveEditorUI(editor: Editor) {
   }
 }
 
-export function setLang(settings: Settings) {
+export function setLang(settings: tinymce.Settings) {
   if (lang == "zh") {
     settings.language = "zh_CN";
     settings.language_url = `${location.origin}\\_Admin\\Scripts\\kooboo-web-editor\\${settings.language}.js`;
@@ -102,7 +102,7 @@ export function getToolbar(el: HTMLElement) {
   return items;
 }
 
-export function initInstanceCallback(e: Editor) {
+export function initInstanceCallback(e: tinymce.Editor) {
   context.editing = true;
   impoveEditorUI(e);
   context.closeEditingEvent.addEventListener(() => {
@@ -111,7 +111,7 @@ export function initInstanceCallback(e: Editor) {
   });
 }
 
-export function savePluginCallback(e: Editor, callBack: () => void) {
+export function savePluginCallback(e: tinymce.Editor, callBack: () => void) {
   e.save = () => ""; //fix loss element when tinymce editor removed
   e.remove();
   let element = e.getElement();

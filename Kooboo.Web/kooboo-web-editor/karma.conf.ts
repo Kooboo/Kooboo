@@ -28,7 +28,8 @@ export default function(config: Config) {
       mode: "development",
       resolve: WebpackConfig.resolve,
       module: WebpackConfig.module,
-      devtool: "inline-source-map"
+      devtool: "inline-source-map",
+      externals: WebpackConfig.externals
     } as webpack.Configuration
   } as ConfigOptions;
 

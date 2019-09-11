@@ -9,3 +9,8 @@ declare module "*.png" {
 }
 
 declare module "@simonwep/pickr";
+
+declare module "tinymce-declaration" {
+  import tinymce from "tinymce";
+  export default tinymce;
+}

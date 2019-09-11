@@ -92,9 +92,11 @@
 <script type="text/javascript">
   $(function() {
     var mediaDialogData = ko.observable();
+    var tinymceScript = document.createElement("script");
+    tinymceScript.src =
+      "\\_Admin\\Scripts\\kooboo-web-editor\\richEditor.bundle.js";
     var script = document.createElement("script");
-    script.src =
-      "\\_Admin\\Scripts\\kooboo-web-editor\\index.bundle.js";
+    script.src = "\\_Admin\\Scripts\\kooboo-web-editor\\index.bundle.js";
     var iframe = document.getElementById("iframe");
     var pageUrl = getQueryString("PageUrl");
     if (pageUrl.indexOf("?") > -1) pageUrl += "&";
@@ -106,9 +108,16 @@
       iframe.contentDocument.mediaDialogData = mediaDialogData;
       iframe.contentDocument.parentBody = document.body;
       iframe.contentDocument.__gl = __gl = {};
-      iframe.contentDocument.head.appendChild(script);
+      iframe.contentDocument.head.appendChild(tinymceScript);
+      
+      tinymceScript.onload = function() {
+        iframe.contentDocument.head.appendChild(script);
+      };
 
-      $(".page-loading").hide();
+      script.onload = function() {
+        $(".page-loading").hide();
+      };
+
       ko.applyBindings({ mediaDialogData }, document.getElementById("main"));
     };
   });
