@@ -75,7 +75,7 @@ namespace Kooboo.Sites.Scripting.Global
 
                 if (model.NewImages.Count == 0 && existImages.Count()==0)
                 {
-                    images = GetScreenshotImages(siteDb);
+                    images = GetScreenshotImages(siteDb,domain);
                 }
                 // remove the old site. 
                 Sites.Service.WebSiteService.Delete(oldsiteid);
@@ -100,7 +100,28 @@ namespace Kooboo.Sites.Scripting.Global
             }
             existImages.AddRange(imagelist);
             oldTemplate["images"] = existImages.ToArray();
-            oldTemplate["thumbNail"] = existImages.Count > 0 ? existImages[0] : "";
+
+            if (existImages.Count > 0)
+            {
+                if (!string.IsNullOrEmpty(model.NewDefault))
+                {
+                    if (int.TryParse(model.NewDefault, out var index))
+                    {
+                        if (index < existImages.Count())
+                        {
+                            oldTemplate["thumbNail"] = existImages[index];
+                        }
+                    }
+                    else
+                    {
+                        oldTemplate["thumbNail"] = model.NewDefault;
+                    }
+                }
+            }
+            else
+            {
+                oldTemplate["thumbNail"] = "";
+            }
 
             return oldTemplate;
 
@@ -145,7 +166,7 @@ namespace Kooboo.Sites.Scripting.Global
             var images = new List<ScreenshotImage>();
             if (model.Images.Count() == 0)
             {
-                images = GetScreenshotImages(siteDb);
+                images = GetScreenshotImages(siteDb,domain);
             }
             else
             {
@@ -221,7 +242,7 @@ namespace Kooboo.Sites.Scripting.Global
                 var images = new List<ScreenshotImage>();
                 if (uploadImages.Count == 0)
                 {
-                    images = GetScreenshotImages(siteDb);
+                    images = GetScreenshotImages(siteDb,domain);
                 }
                 else
                 {
@@ -313,14 +334,15 @@ namespace Kooboo.Sites.Scripting.Global
 
             Sites.Service.WebSiteService.Delete(Guid.Parse(oldtemplate["siteId"].ToString()));
         }
-        private List<ScreenshotImage> GetScreenshotImages(SiteDb siteDb)
+        private List<ScreenshotImage> GetScreenshotImages(SiteDb siteDb,string domain)
         {
             var pageids = GetPageIds(siteDb);
 
             var images = new List<ScreenshotImage>();
             foreach (var item in pageids)
             {
-                var url = Kooboo.Sites.Service.ObjectService.GetObjectFullUrl(siteDb.WebSite, item);
+                //var url = Kooboo.Sites.Service.ObjectService.GetObjectFullUrl(siteDb.WebSite, item);
+                var url = GetObjectFullUrl(siteDb.WebSite, item, domain);
                 if (!string.IsNullOrEmpty(url) && !url.Contains("%") && !url.Contains("{"))
                 {
                     var decodedurl = System.Net.WebUtility.UrlDecode(url);
@@ -345,6 +367,18 @@ namespace Kooboo.Sites.Scripting.Global
             }
 
             return images;
+        }
+
+        private string GetObjectFullUrl(WebSite website, Guid ObjectId,string domain)
+        {
+           
+            var baseurl = GetBaseUrl(website, domain);
+            string objectUrl = website.SiteDb().Routes.GetObjectPrimaryRelativeUrl(ObjectId);
+            if (!string.IsNullOrEmpty(objectUrl))
+            {
+                objectUrl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, objectUrl);
+            }
+            return objectUrl;
         }
 
         private static List<string> clearImagePath(List<string> oldlist, List<string> newlist)
@@ -387,6 +421,14 @@ namespace Kooboo.Sites.Scripting.Global
             //string baseurl = site.BaseUrl();
 
             var hostname =string.Format("{0}.{1}",site.Name,domain);
+            var baseurl = GetBaseUrl(site, domain);
+            return Lib.Helper.UrlHelper.Combine(baseurl, GetStartRelativeUrl(site));
+        }
+
+        private string GetBaseUrl(WebSite site,string domain)
+        {
+            //string baseurl = website.BaseUrl();
+            var hostname = string.Format("{0}.{1}", site.Name, domain);
             var baseurl = string.Empty;
             if (site.ForceSSL)
             {
@@ -398,7 +440,7 @@ namespace Kooboo.Sites.Scripting.Global
                 var uri = new UriBuilder("http", hostname, 80);
                 baseurl = uri.Uri.AbsoluteUri;
             }
-            return Lib.Helper.UrlHelper.Combine(baseurl, GetStartRelativeUrl(site));
+            return baseurl;
         }
         /// <summary>
         /// download site package
