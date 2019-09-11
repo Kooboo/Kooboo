@@ -64,6 +64,8 @@ namespace Kooboo.Sites.Scripting.Global
             }
 
             var images = new List<ScreenshotImage>();
+            var thumbnail = string.Empty;
+
             if (model.Bytes!=null && model.Bytes.Length > 0)
             {
                 Guid oldsiteid = model.Id;
@@ -76,17 +78,26 @@ namespace Kooboo.Sites.Scripting.Global
                 if (model.NewImages.Count == 0 && existImages.Count()==0)
                 {
                     images = GetScreenshotImages(siteDb,domain);
+                    if (images.Count > 0)
+                    {
+                        thumbnail = images[0].FileName;
+                    }
                 }
                 // remove the old site. 
                 Sites.Service.WebSiteService.Delete(oldsiteid);
             }
             foreach (var image in model.NewImages)
             {
-                images.Add(new ScreenshotImage
+                var screenshotImage = new ScreenshotImage
                 {
                     Base64 = image.Base64,
                     FileName = Guid.NewGuid().ToString().Replace("-", "") + Kooboo.Lib.Helper.UrlHelper.FileExtension(image.FileName)
-                });
+                };
+                images.Add(screenshotImage);
+                if (image.IsDefault)
+                {
+                    thumbnail = screenshotImage.FileName;
+                }
             }
 
             var imagelist = new List<string>();
@@ -100,29 +111,7 @@ namespace Kooboo.Sites.Scripting.Global
             }
             existImages.AddRange(imagelist);
             oldTemplate["images"] = existImages.ToArray();
-
-            if (existImages.Count > 0)
-            {
-                if (!string.IsNullOrEmpty(model.NewDefault))
-                {
-                    if (int.TryParse(model.NewDefault, out var index))
-                    {
-                        if (index < existImages.Count())
-                        {
-                            oldTemplate["thumbNail"] = existImages[index];
-                        }
-                    }
-                    else
-                    {
-                        oldTemplate["thumbNail"] = model.NewDefault;
-                    }
-                }
-            }
-            else
-            {
-                oldTemplate["thumbNail"] = "";
-            }
-
+            oldTemplate["thumbNail"] = string.IsNullOrEmpty(thumbnail) ? GetDefaultImage(existImages, model.NewDefault) : thumbnail;
             return oldTemplate;
 
         }
@@ -164,19 +153,33 @@ namespace Kooboo.Sites.Scripting.Global
             Lib.Helper.IOHelper.EnsureDirectoryExists(ImagePath);
 
             var images = new List<ScreenshotImage>();
+            var thumbnail = "";
             if (model.Images.Count() == 0)
             {
                 images = GetScreenshotImages(siteDb,domain);
+                if (images.Count > 0)
+                {
+                    thumbnail = images[0].FileName;
+                }
             }
             else
             {
                 foreach (var image in model.Images)
                 {
-                    images.Add(new ScreenshotImage
+                    var screenshotImage = new ScreenshotImage
                     {
                         Base64 = image.Base64,
                         FileName = Guid.NewGuid().ToString().Replace("-", "") + Kooboo.Lib.Helper.UrlHelper.FileExtension(image.FileName)
-                    });
+                    };
+                    images.Add(screenshotImage);
+                    if (image.IsDefault)
+                    {
+                        thumbnail = screenshotImage.FileName;
+                    }
+                }
+                if(string.IsNullOrEmpty(thumbnail) && images.Count > 0)
+                {
+                    thumbnail = images[0].FileName;
                 }
             }
 
@@ -190,7 +193,7 @@ namespace Kooboo.Sites.Scripting.Global
                 imagelist.Add(relativeurl);
             }
             dic["images"] = imagelist.ToArray();
-            dic["thumbNail"] = imagelist.Count > 0 ? imagelist[0] : "";
+            dic["thumbNail"] = thumbnail;
 
             return dic;
         }
@@ -272,6 +275,28 @@ namespace Kooboo.Sites.Scripting.Global
             return dic;
         }
 
+        private string GetDefaultImage(List<string> images,string newDefault)
+        {
+            if (images.Count > 0)
+            {
+                if (!string.IsNullOrEmpty(newDefault))
+                {
+                    if (int.TryParse(newDefault, out var index))
+                    {
+                        if (index < images.Count())
+                        {
+                            return images[index];
+                            
+                        }
+                    }
+                    return newDefault;
+                }
+
+                return images[0];
+            }
+
+            return string.Empty;
+        }
         /// <summary>
         /// get template from old template server
         /// can be removed after all template is imported
