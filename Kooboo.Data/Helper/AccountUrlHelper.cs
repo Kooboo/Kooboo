@@ -10,7 +10,7 @@ namespace Kooboo.Data.Helper
 {
  public static   class AccountUrlHelper
     {
-        private static string AccountBase = AppSettings.AccountApiUrl; 
+        public static string AccountBase = AppSettings.AccountApiUrl; 
          
         public static string User(string relativeUrl)
         { 

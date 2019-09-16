@@ -266,7 +266,7 @@ namespace Kooboo.Data
                 return ConfigurationManager.AppSettings.Get("CmsLang");
             }
         }
-
+          
         public static string DefaultLocalHost { get; set; } = "kooboo";
 
         public static int CurrentUsedPort { get; set; } = 80;

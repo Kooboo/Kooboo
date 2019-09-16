@@ -90,10 +90,16 @@ namespace Kooboo.Data.Context
             {
                 user = _GetUserFromCookie(request);
             }
-            //if (user != null && user.PasswordHash == default(Guid))
-            //{
-            //  return null;
-            //} 
+ 
+            if (user == null)
+            {
+                //Two factors is only use to validate access to remote servers. 
+                user = Kooboo.Data.Service.TwoFactorService.Validate(request); 
+                if (user !=null)
+                {
+                    return user; 
+                }
+            }
 
             if (string.IsNullOrEmpty(Data.Service.UserLoginService.GetUserPassword(user)))
             {
@@ -163,10 +169,18 @@ namespace Kooboo.Data.Context
                 {
                     return Validate(basicuser.UserName, basicuser.Password);
                 }
-            }
-
+            } 
             return null;
         }
+
+
+        internal static User _GetUserFromTwoFactor(HttpRequest request)
+        {
+            return Kooboo.Data.Service.TwoFactorService.Validate(request); 
+        }
+
+
+
 
         //https://en.wikipedia.org/wiki/Basic_access_authentication
         public static BasicUser ExtractUserFromBasicAuthorization(string AuthorizationCookieValue)

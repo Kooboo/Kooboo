@@ -89,16 +89,16 @@ namespace Kooboo.Web.Api
         {
             if (GlobalDb.Users.IsDefaultUser(call.Context.User))
             {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Default account can not add user")); 
+                throw new Exception(Data.Language.Hardcoded.GetValue("Default account can not add user"));
             }
 
             string message = GlobalDb.Organization.AddUser(userName, organizationId);
 
             return message ?? "";
         }
-         
+
         public bool DeleteUser(string userName, Guid organizationId, ApiCall call)
-        { 
+        {
             return GlobalDb.Organization.DeleteUser(userName, organizationId);
         }
 
@@ -114,11 +114,19 @@ namespace Kooboo.Web.Api
             return GlobalDb.Organization.GetByUser(call.Context.User.Id);
         }
 
- 
+
         // TODO: should move to user api. 
         public bool IsAdminOfOrganization(Guid organizationId, ApiCall call)
-        { 
+        {
             return GlobalDb.Users.IsAdmin(organizationId, call.Context.User.Id);
-        } 
+        }
+
+        public bool RemoveLocal(string name, ApiCall call)
+        {
+            Guid id = Lib.Helper.IDHelper.ParseKey(name);
+
+            GlobalDb.Organization.RemoveOrgCache(id);
+            return true; 
+        }
     }
 }

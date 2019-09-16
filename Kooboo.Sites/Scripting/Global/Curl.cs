@@ -178,5 +178,44 @@ namespace Kooboo.Sites.Scripting.Global
 
         }
 
+        public string postform(string url, string data, string userName, string password)
+        {
+            return _PostForm(url, data, userName, password).Result;
+        }
+
+        public string postform(string url, object data, string userName, string password)
+        {
+            string json = JsonHelper.Serialize(data);
+            return _PostForm(url, json, userName, password).Result;
+        }
+
+        private async Task<string> _PostForm(string url, string json, string UserName = null, string Password = null)
+        {
+            string result;
+            try
+            {
+                HttpClient client = HttpClientHelper.Client;
+                FormUrlEncodedContent content = new FormUrlEncodedContent(JsonHelper.Deserialize<IDictionary<string, string>>(json));
+                HttpRequestMessage httpRequestMessage = new HttpRequestMessage
+                {
+                    RequestUri = new Uri(url),
+                    Method = HttpMethod.Post,
+                    Content = content
+                };
+                if (!string.IsNullOrEmpty(UserName) && !string.IsNullOrEmpty(Password))
+                {
+                    byte[] bytes = Encoding.UTF8.GetBytes(string.Format("{0}:{1}", UserName, Password));
+                    httpRequestMessage.Headers.Add(HttpRequestHeader.Authorization.ToString(), "Basic " + Convert.ToBase64String(bytes));
+                }
+                byte[] array = await (await client.SendAsync(httpRequestMessage)).Content.ReadAsByteArrayAsync();
+                result = Encoding.UTF8.GetString(array, 0, array.Length);
+            }
+            catch (Exception ex)
+            {
+                result = ex.Message;
+            }
+            return result;
+        }
+
     }
 }

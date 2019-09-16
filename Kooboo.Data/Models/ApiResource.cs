@@ -19,6 +19,8 @@ namespace Kooboo.Data.Models
         public string ConvertUrl { get; set; } 
 
         public DateTime Expiration { get; set; } 
+
+        public string MailServerIP { get; set; }
          
     }
 }

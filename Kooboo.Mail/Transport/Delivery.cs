@@ -43,7 +43,7 @@ namespace Kooboo.Mail.Transport
 
         private static async Task<ActionResponse> DoSend(string MailFrom, string RcptTo, string MessageContent)
         {
-            var setting = await SmtpUtility.GetSendSetting(Data.AppSettings.ServerSetting, Data.AppSettings.IsOnlineServer, MailFrom, RcptTo);
+            var setting = await  Settings.GetSendSetting(Data.AppSettings.ServerSetting, Data.AppSettings.IsOnlineServer, MailFrom, RcptTo);
 
             if (!setting.OkToSend)
             {

@@ -44,6 +44,21 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             string filename = call.Command.Value;
 
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                var method = nameof(EmailAttachmentApi.MsgFile) + "/" + filename;
+                if (!string.IsNullOrEmpty(filename))
+                {
+                    method += "/" + filename;
+                }
+
+                var filebytes = EmailForwardManager.Post(this.ModelName, method, call.Context.User, null, null);
+                var response = new BinaryResponse();
+                response.Headers.Add("Content-Disposition", $"filename={System.Web.HttpUtility.UrlEncode(filename)}");
+                response.BinaryBytes = filebytes;
+                return response;
+            }
+
             var bytes = Kooboo.Mail.MultiPart.FileService.Get(call.Context.User, filename);
 
             if (bytes != null && bytes.Length > 0)
@@ -73,9 +88,26 @@ namespace Kooboo.Web.Api.Implementation.Mails
             }
             else
             {
-                messageid = Convert.ToInt32(call.Command.Value); 
+                messageid = Convert.ToInt32(call.Command.Value);
             }
-             
+
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                var method = nameof(EmailAttachmentApi.MsgFile) + "/" + messageid;
+                if (!string.IsNullOrEmpty(filename))
+                {
+                    method += "/" + filename;
+                }
+
+                var bytes = EmailForwardManager.Post(this.ModelName, method, call.Context.User, null, null);
+
+                filename = !string.IsNullOrEmpty(filename) ? System.Web.HttpUtility.UrlEncode(filename) : "attachment.zip";
+                var response = new BinaryResponse();
+                response.ContentType = "application/zip";
+                response.Headers.Add("Content-Disposition", $"filename={filename}");
+                response.BinaryBytes = bytes;
+                return response;
+            }
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
 
             var content = maildb.Messages.GetContent(messageid);
@@ -112,6 +144,11 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public object AttachmentPost(ApiCall call)
         {
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                return EmailForwardManager.Post<object>(this.ModelName, nameof(EmailAttachmentApi.AttachmentPost), call.Context.User, call.Context.Request.PostData, null);
+            }
+
             var form = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(call.Context.Request.PostData);
             if (!form.Files.Any())
                 return null;
@@ -136,12 +173,35 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
  
         public void DeleteAttachment(string filename, ApiCall call)
-        {        
+        {
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                var dic = new Dictionary<string, string>();
+                dic.Add("filename", filename);
+                EmailForwardManager.Post<bool>(this.ModelName, nameof(EmailAttachmentApi.DeleteAttachment), call.Context.User, dic);
+                return;
+            }
             Kooboo.Mail.MultiPart.FileService.DeleteFile(call.Context.User, filename);
         }
         
         public object ImagePost(ApiCall call)
         {
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                //string convert to object will throw exception
+                var url =EmailForwardManager.Post<string>(this.ModelName, nameof(EmailAttachmentApi.ImagePost), call.Context.User, call.Context.Request.PostData, null);
+                if (!string.IsNullOrEmpty(url))
+                {
+                    return url;
+                }
+
+                return new JsonResponse
+                {
+                    Success = false,
+                    Messages = new List<string> { $"File size must be less than {MaxImageSize / 1024 / 1024}" }
+                };
+            }
+
             var form = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(call.Context.Request.PostData);
             if (!form.Files.Any())
                 return null;

@@ -192,7 +192,24 @@ namespace Kooboo.Data.Models
 
         public bool EnableImageLog { get; set; } = true;
 
-        public bool EnableDiskSync { get; set; }
+
+
+        private bool _enabledisksync;
+        public bool EnableDiskSync
+        {
+            get
+            {
+                if (Data.AppSettings.IsOnlineServer)
+                {
+                    return false;
+                }
+                return _enabledisksync;
+            }
+            set
+            {
+                _enabledisksync = value;
+            }
+        }
 
         public bool EnableSitePath { get; set; }
 
@@ -238,6 +255,11 @@ namespace Kooboo.Data.Models
         {
             get
             {
+                if (Data.AppSettings.IsOnlineServer)
+                {
+                    return null;
+                }
+
                 if (string.IsNullOrEmpty(this._LocalDiskSyncFolder))
                 {
                     _LocalDiskSyncFolder = System.IO.Path.Combine(AppSettings.GetOrganizationFolder(this.OrganizationId), "___disksync", this.Name);
@@ -290,7 +312,7 @@ namespace Kooboo.Data.Models
 
         [JsonConverter(typeof(StringEnumConverter))]
         public Data.Definition.WebsiteType SiteType { get; set; } = Definition.WebsiteType.p;
-                                            
+
         public bool IsApp { get; set; }
 
         public override int GetHashCode()
@@ -303,18 +325,18 @@ namespace Kooboo.Data.Models
 
             unique += this.EnableECommerce.ToString();
 
-            unique += this.EnableFileIOUrl.ToString();  
+            unique += this.EnableFileIOUrl.ToString();
 
-         //public bool EnableECommerce { get; set; } 
-         //Enable direct access to view, htmlblock etc, via system routes. 
-         //public bool EnableSystemRoute { get; set; }
-         //public bool EnableFileIOUrl { get; set; } = true;
+            //public bool EnableECommerce { get; set; } 
+            //Enable direct access to view, htmlblock etc, via system routes. 
+            //public bool EnableSystemRoute { get; set; }
+            //public bool EnableFileIOUrl { get; set; } = true;
 
 
             unique += this.LocalRootPath + this.MirrorWebSiteBaseUrl + this._LocalDiskSyncFolder;
 
             unique += this.DefaultCulture + this.AutoDetectCulture.ToString();
-                                      
+
             foreach (var item in this.Cultures)
             {
                 unique += item;
@@ -345,7 +367,7 @@ namespace Kooboo.Data.Models
             unique += this.Published.ToString();
             unique += this.SiteType.ToString();
             unique += this.IsApp.ToString();
-            unique += this.ForceSSL.ToString();  
+            unique += this.ForceSSL.ToString();
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }

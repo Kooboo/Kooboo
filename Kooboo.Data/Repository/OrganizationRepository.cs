@@ -11,55 +11,76 @@ namespace Kooboo.Data.Repository
     {
         public Dictionary<Guid, string> NameCache = new Dictionary<Guid, string>();
 
-        public Organization Add(Organization org)
-        {
-            var json = Lib.Helper.JsonHelper.Serialize(org);
-            var neworg = HttpHelper.Post<Organization>(Account.Url.Org.Add, json);
 
-            if (!NameCache.ContainsKey(neworg.Id))
-            {
-                NameCache.Add(neworg.Id, neworg.Name);
-            }
-            else
-            {
-                if (NameCache[neworg.Id] != neworg.Name)
-                {
-                    NameCache[neworg.Id] = neworg.Name;
-                }
-            }
-            return neworg;
-        }
+        private Dictionary<Guid, Organization> Cache = new Dictionary<Guid, Organization>();
 
-        public bool Update(Organization org)
-        {
-            if (!NameCache.ContainsKey(org.Id))
-            {
-                NameCache.Add(org.Id, org.Name);
-            }
-            else
-            {
-                if (NameCache[org.Id] != org.Name)
-                {
-                    NameCache[org.Id] = org.Name;
-                }
-            }
-            var json = Lib.Helper.JsonHelper.Serialize(org);
-            return HttpHelper.Post<bool>(Account.Url.Org.Update, json);
-        }
+        public Dictionary<Guid, DateTime> lastfail = new Dictionary<Guid, DateTime>();
 
-        public bool Delete(Guid id)
-        {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("id", id.ToString());
-            var paramStr = Lib.Helper.JsonHelper.Serialize(para);
-            return HttpHelper.Post<bool>(Account.Url.Org.Delete, paramStr);
-        }
+        // if failed for 5 times, not get any more.  
 
         public Organization Get(Guid id)
         {
+            var org = GetFromLocal(id); 
+              
+            if (org == null)
+            {
+                org = GetFromAccount(id);
+                if (org != null)
+                {
+                    AddOrUpdateLocal(org);
+                }
+            } 
+            return org;
+        }
+         
+        public Organization GetFromLocal(Guid id)
+        {
+            if (this.Cache.ContainsKey(id))
+            {
+                return this.Cache[id];
+            }
+
+            var org = GlobalDb.LocalOrganization.Get(id);
+
+            if (org != null)
+            { 
+                Cache[id] = org;
+                return org; 
+            } 
+            return null;
+        }
+
+
+        public Organization GetFromAccount(Guid id)
+        {
+            if (lastfail.ContainsKey(id))
+            {
+                var lasttime = lastfail[id];
+                if (lasttime > DateTime.Now.AddHours(-4))
+                {
+                    return null;
+                }
+            }
+
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("id", id.ToString());
-            return HttpHelper.Post<Organization>(Account.Url.Org.GetUrl, para);
+            var org = HttpHelper.Post<Organization>(Account.Url.Org.GetUrl, para);
+
+            if (org == null)
+            {
+                // try one more time. 
+                org = HttpHelper.Post<Organization>(Account.Url.Org.GetUrl, para);
+            }
+
+            if (org != null)
+            {
+                return org;
+            }
+            else
+            {
+                lastfail[id] = DateTime.Now;
+                return null;
+            }
         }
 
         public Organization GetByUser(Guid UserId)
@@ -104,13 +125,24 @@ namespace Kooboo.Data.Repository
             return ok;
         }
 
-
         public string GetName(Guid OrgId)
         {
             if (OrgId == default(Guid))
             {
-                return System.Guid.Empty.ToString(); 
-            } 
+                return System.Guid.Empty.ToString();
+            }
+
+            var org = GetFromLocal(OrgId); 
+
+            if (org !=null)
+            {
+                return org.Name; 
+            }
+            else
+            {
+
+            }
+
             if (!NameCache.ContainsKey(OrgId))
             {
                 var user = GlobalDb.Users.GetLocalUserByOrgId(OrgId);
@@ -140,10 +172,14 @@ namespace Kooboo.Data.Repository
 
         public void RemoveOrgCache(Guid orgId)
         {
-            if (NameCache.ContainsKey(orgId))
-            {
-                NameCache.Remove(orgId);
-            }
+            GlobalDb.LocalOrganization.Delete(orgId);
+            Cache.Remove(orgId);
+        }
+
+        public void AddOrUpdateLocal(Organization Organization)
+        {
+            GlobalDb.LocalOrganization.AddOrUpdate(Organization);
+            Cache[Organization.Id] = Organization;
         }
 
     }

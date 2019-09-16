@@ -39,11 +39,20 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public List<Domain> Domains(ApiCall apiCall)
         {
+            if (EmailForwardManager.RequireForward(apiCall.Context))
+            {
+                return EmailForwardManager.Get<List<Domain>>(this.ModelName, nameof(EmailAddressApi.Domains), apiCall.Context.User, null);
+            }
+
             return Data.GlobalDb.Domains.ListForEmail(apiCall.Context.User);
         }
 
         public List<AddressItemModel> List(ApiCall apiCall)
         {
+            if (EmailForwardManager.RequireForward(apiCall.Context))
+            {
+                return EmailForwardManager.Get<List<AddressItemModel>>(this.ModelName, nameof(EmailAddressApi.List),apiCall.Context.User);
+            }
             var user = apiCall.Context.User;
             var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(user.CurrentOrgId);
 
@@ -55,6 +64,11 @@ namespace Kooboo.Web.Api.Implementation.Mails
         [Kooboo.Attributes.RequireModel(typeof(AddressModel))]
         public bool IsUniqueName(ApiCall apiCall)
         {
+            if (EmailForwardManager.RequireForward(apiCall.Context))
+            {
+                var json = Kooboo.Lib.Helper.JsonHelper.Serialize(apiCall.Context.Request.Model);
+                return EmailForwardManager.Post<bool>(this.ModelName, nameof(EmailAddressApi.IsUniqueName), apiCall.Context.User, json, null);
+            }
             var model = apiCall.Context.Request.Model as AddressModel;
             var orgdb = Mail.Factory.DBFactory.OrgDb(apiCall.Context.User.CurrentOrgId);
             return orgdb.EmailAddress.Get(model.ToEmail()) == null;
@@ -63,6 +77,12 @@ namespace Kooboo.Web.Api.Implementation.Mails
         [Kooboo.Attributes.RequireModel(typeof(AddressModel))]
         public object Post(ApiCall apiCall)
         {
+            if (EmailForwardManager.RequireForward(apiCall.Context))
+            {
+                var json= Kooboo.Lib.Helper.JsonHelper.Serialize(apiCall.Context.Request.Model);
+                return EmailForwardManager.Post<object>(this.ModelName, nameof(EmailAddressApi.Post), apiCall.Context.User, json, null);
+            }
+
             var model = apiCall.Context.Request.Model as AddressModel;
             var user = apiCall.Context.User;
             var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(user.CurrentOrgId);
@@ -103,14 +123,21 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public void Deletes(ApiCall apiCall)
         {
-            var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(apiCall.Context.User.CurrentOrgId);
-
             string idsJson = apiCall.GetValue("ids");
             if (string.IsNullOrEmpty(idsJson))
             {
                 idsJson = apiCall.Context.Request.Body;
             }
 
+            if (EmailForwardManager.RequireForward(apiCall.Context))
+            {
+                var dic = new Dictionary<string, string>();
+                dic.Add("ids", idsJson);
+                EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailAddressApi.Deletes), apiCall.Context.User,dic);
+                return;
+            }
+
+            var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(apiCall.Context.User.CurrentOrgId);
             var ids = JsonConvert.DeserializeObject<int[]>(idsJson);
 
             foreach (var id in ids)
@@ -121,6 +148,13 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public List<string> MemberList(ApiCall call)
         {
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                var dic = new Dictionary<string, string>();
+                dic.Add("addressId", call.GetValue("addressId"));
+               return EmailForwardManager.Get<List<string>>(this.ModelName, nameof(EmailAddressApi.MemberList), call.Context.User, dic);
+            }
+
             int addressid = call.GetValue<int>("addressId");
             var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(call.Context.User.CurrentOrgId);
 
@@ -130,6 +164,14 @@ namespace Kooboo.Web.Api.Implementation.Mails
         [Kooboo.Attributes.RequireModel(typeof(ListMemberModel))]
         public object MemberPost(ApiCall call)
         {
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                var dic = new Dictionary<string, string>();
+                dic.Add("addressId", call.GetValue("addressId"));
+                var json = Kooboo.Lib.Helper.JsonHelper.Serialize(call.Context.Request.Model);
+                return EmailForwardManager.Post<object>(this.ModelName, nameof(EmailAddressApi.MemberPost), call.Context.User, json, dic);
+            }
+
             int addressid = call.GetValue<int>("addressId"); 
             var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(call.Context.User.CurrentOrgId);
 
@@ -149,6 +191,15 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public void MemberDelete(ApiCall call)
         {
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                var dic = new Dictionary<string, string>();
+                dic.Add("addressId", call.GetValue("addressId"));
+                dic.Add("memberAddress", call.GetValue("memberAddress"));
+                EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailAddressApi.MemberDelete), call.Context.User, dic);
+                return;
+            }
+
             int addressid = call.GetValue<int>("addressId");
             var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(call.Context.User.CurrentOrgId);
              
@@ -158,6 +209,15 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public void UpdateForward(ApiCall call)
         {
+            if (EmailForwardManager.RequireForward(call.Context))
+            {
+                var dic = new Dictionary<string, string>();
+                dic.Add("id", call.GetValue("id"));
+                dic.Add("forwardAddress", call.GetValue("forwardAddress"));
+                EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailAddressApi.UpdateForward), call.Context.User, dic);
+                return;
+            }
+
             int id = call.GetValue<int>("id");
             string add = call.GetValue("forwardAddress"); 
              

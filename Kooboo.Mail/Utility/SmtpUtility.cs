@@ -9,11 +9,13 @@ using System.Net.NetworkInformation;
 using System.Threading.Tasks; 
 using DNS.Client;
 using DNS.Protocol.ResourceRecords;
+using System.Configuration;
 
 namespace Kooboo.Mail.Utility
 {
    public static class SmtpUtility
-    {
+    {  
+
         public static string GetString(byte[] data)
         {
             var encodingresult = Lib.Helper.EncodingDetector.GetEmailEncoding(data);
@@ -51,66 +53,7 @@ namespace Kooboo.Mail.Utility
             } 
             return null; 
         }
-                  
-        
-        public static async Task<SendSetting> GetSendSetting(Data.Models.ServerSetting serverSetting, bool IsOnlineServer,  string MailFrom, string RcptTo)
-        {
-          
-            SendSetting setting = new SendSetting();
-
-            if (IsOnlineServer)
-            { 
-                if (!string.IsNullOrEmpty(serverSetting.SmtpServerIP))
-                {
-                    setting.UseKooboo = true;
-                    setting.KoobooServerIp = serverSetting.SmtpServerIP;
-                    setting.Port = serverSetting.SmtpPort;
-                    if (setting.Port <= 0)
-                    {
-                        setting.Port = 587; 
-                    }
-                    setting.HostName = System.Net.Dns.GetHostName();
-                    setting.LocalIp = System.Net.IPAddress.Any;
-                    setting.OkToSend = true;
-                }
-                else
-                {
-                    setting.OkToSend = false;
-                    setting.ErrorMessage = "Email Sending is prevented"; 
-                }
-            
-            }
-           else
-            { 
-                var mxs = await Kooboo.Mail.Utility.SmtpUtility.GetMxRecords(RcptTo); 
-                if (mxs == null || mxs.Count() ==0)
-                {
-                    setting.OkToSend = false;
-                    setting.ErrorMessage = "Mx records not found";
-                }
-                else
-                {
-                    setting.OkToSend = true;
-                    setting.Mxs = mxs; 
-
-                    if (serverSetting.ReverseDns !=null && serverSetting.ReverseDns.Count()>0)
-                    {          
-                        var dns = serverSetting.ReverseDns[0];  //TODO: random it.  
-                        setting.LocalIp =  System.Net.IPAddress.Parse(dns.IP);
-                        setting.HostName = dns.HostName; 
-                    }
-                    else
-                    {
-                        setting.LocalIp = System.Net.IPAddress.Any;
-                        setting.HostName = System.Net.Dns.GetHostName(); 
-                    } 
-                } 
-            } 
-            return setting; 
-        }
-
-       
-         
+                 
     }
 
 
@@ -247,24 +190,5 @@ namespace Kooboo.Mail.Utility
             public DateTime CacheTime { get; set; }
         }
     }
-
-
-    public class SendSetting
-    {
-        public bool  OkToSend { get; set; }
-
-        public string ErrorMessage { get; set; }
-
-        public string HostName { get; set; }
-
-        public System.Net.IPAddress LocalIp { get; set; }
-
-        public bool UseKooboo { get; set; }
-
-        public int Port { get; set; } = 25; 
-
-        public string KoobooServerIp { get; set; }
-
-        public List<string> Mxs { get; set; }
-    }
+     
 }
