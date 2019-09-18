@@ -21,20 +21,23 @@ export function getStyles() {
 
 export function getRules(style: CSSStyleSheet, href?: string | null) {
   let rules: rule[] = [];
-  for (const rule of style.rules as any) {
-    if (rule instanceof CSSStyleRule) rules.push({ cssRule: rule, url: href! });
-    else if (rule instanceof CSSMediaRule && matchMedia(rule.media.mediaText).matches) {
-      for (const cssRule of rule.cssRules as any) {
-        rules.push({
-          cssRule: cssRule as CSSStyleRule,
-          mediaRuleList: rule.media.mediaText,
-          url: href!
-        });
+  try {
+    for (const rule of style.rules as any) {
+      if (rule instanceof CSSStyleRule) rules.push({ cssRule: rule, url: href! });
+      else if (rule instanceof CSSMediaRule && matchMedia(rule.media.mediaText).matches) {
+        for (const cssRule of rule.cssRules as any) {
+          rules.push({
+            cssRule: cssRule as CSSStyleRule,
+            mediaRuleList: rule.media.mediaText,
+            url: href!
+          });
+        }
+      } else if (rule instanceof CSSImportRule) {
+        rules.push(...getRules(rule.styleSheet, rule.styleSheet.href));
       }
-    } else if (rule instanceof CSSImportRule) {
-      rules.push(...getRules(rule.styleSheet, rule.styleSheet.href));
     }
-  }
+  } catch (error) {}
+
   return rules;
 }
 

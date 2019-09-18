@@ -193,7 +193,7 @@
   height: 100%;
   background-position: center;
   background-repeat: no-repeat;
-  /* background-size: contain; */
+  background-size: contain;
   cursor: pointer;
 }
 
@@ -413,4 +413,8 @@
   font-style: normal;
   font-variant: normal;
   line-height: 16px;
+}
+
+.pcr-palette:before ,.pcr-current-color:before{
+  opacity: 0.3;
 }
