@@ -106,12 +106,14 @@
   background-color: #e3e3e3;
 }
 
-.kb_web_editor_btn_primary {
+.kb_web_editor_btn_primary,
+.pcr-save {
   background-color: #207ab7;
   color: #fff;
 }
 
-.kb_web_editor_btn_primary:hover {
+.kb_web_editor_btn_primary:hover,
+.pcr-save:hover {
   background-color: #1c6ca1;
 }
 
@@ -218,7 +220,7 @@
   right: 0;
   background-color: rgba(0, 0, 0, 0.384);
   opacity: 0;
-  transition: .3s;
+  transition: 0.3s;
   font-size: 30px;
   display: flex;
   justify-content: center;
@@ -415,6 +417,7 @@
   line-height: 16px;
 }
 
-.pcr-palette:before ,.pcr-current-color:before{
+.pcr-palette:before,
+.pcr-current-color:before {
   opacity: 0.3;
 }

@@ -42,7 +42,7 @@ export function getRules(style: CSSStyleSheet, href?: string | null) {
 }
 
 export function getCssRules() {
-  let cssRules = [];
+  let cssRules: CssRule[] = [];
   let styleSequence = 0;
   for (const style of getStyles()) {
     if (!(style.ownerNode instanceof HTMLElement)) continue;
@@ -66,6 +66,16 @@ export function getCssRules() {
     }
   }
   return cssRules;
+}
+
+export interface CssRule {
+  styleSequence: number;
+  koobooId: string | null;
+  url: string | undefined;
+  cssRule: CSSStyleRule;
+  nameorid: string | undefined;
+  objecttype: string | undefined;
+  mediaRuleList: string | undefined;
 }
 
 export interface CssColor {
