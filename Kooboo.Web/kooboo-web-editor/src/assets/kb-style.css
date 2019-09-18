@@ -193,7 +193,7 @@
   height: 100%;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  /* background-size: contain; */
   cursor: pointer;
 }
 
@@ -218,7 +218,7 @@
   right: 0;
   background-color: rgba(0, 0, 0, 0.384);
   opacity: 0;
-  transition: .3s;
+  transition: 0.3s;
   font-size: 30px;
   display: flex;
   justify-content: center;
@@ -226,7 +226,7 @@
   color: white;
 }
 .kb_web_editor_pick_shade:hover {
-  opacity: 0.8;
+  opacity: 1;
   cursor: pointer;
 }
 
@@ -259,7 +259,7 @@
 .kb_web_editor_modal_footer {
   border-top: 1px solid #eee;
   text-align: right;
-  padding: 15px 25px;
+  padding: 10px;
   margin-top: 10px;
 }
 
@@ -268,7 +268,7 @@
   font-weight: 400;
   line-height: 1.3;
   font-style: normal;
-  padding: 25px 25px 15px 25px;
+  padding: 16px;
   cursor: move;
   position: relative;
 }
@@ -415,6 +415,16 @@
   line-height: 16px;
 }
 
-.pcr-palette:before ,.pcr-current-color:before{
+.pcr-palette:before,
+.pcr-current-color:before {
   opacity: 0.3;
+}
+
+.pcr-app .pcr-interaction .pcr-save {
+  background-color: #207ab7 !important;
+  color: #fff !important;
+}
+.pcr-app .pcr-interaction .pcr-cancel {
+  background-color: #e3e3e3 !important;
+  color: #5f5f5f !important;
 }

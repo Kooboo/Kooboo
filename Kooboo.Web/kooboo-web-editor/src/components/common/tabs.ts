@@ -12,11 +12,13 @@ export function createTabs(options: tabOptions[]) {
   let el = createDiv();
   let bar = createDiv();
   bar.style.marginBottom = "15px";
+  bar.style.marginRight = "-15px";
+  bar.style.marginLeft = "-15px";
   let body = createDiv();
   options.forEach(i => {
     let tab = createTab(i.title);
     tab.style.width = 100 / options.length + "%";
-    tab.style.borderBottom = i.selected ? border : "'";
+    tab.style.borderBottom = i.selected ? border : "2px solid #eee";
     i.panel.style.display = i.selected ? "block" : "none";
     tab.onclick = () => {
       switchTab(bar, tab);
@@ -34,7 +36,7 @@ export function createTabs(options: tabOptions[]) {
 function switchTab(bar: HTMLElement, tab: HTMLElement) {
   for (let j = 0; j < bar.children.length; j++) {
     let element = bar.children.item(j) as HTMLElement;
-    element.style.borderBottom = element == tab ? border : "";
+    element.style.borderBottom = element == tab ? border : "2px solid #eee";
   }
 }
 
