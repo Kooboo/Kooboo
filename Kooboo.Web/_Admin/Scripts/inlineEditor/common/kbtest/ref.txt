@@ -1,5 +1,0 @@
-/_Admin/Scripts/lib/jquery.min.js
-/_Admin/Scripts/KoobooBase.js
-/_Admin/Scripts/lib/lodash.min.js
-/_Admin/Scripts/kooboo/text.js
-/_Admin/Scripts/inlineEditor/kooboobase.js

@@ -475,7 +475,6 @@ $(function() {
 
     function generatePageTableData(pages) {
         var _pages = [];
-
         pages.forEach(function(page) {
             var date = new Date(page.lastModified);
             var model = {
@@ -526,12 +525,15 @@ $(function() {
             };
             _pages.push(model);
         })
-
+        
         var tableActions = [{
             fieldName: "setting",
             type: "link-btn"
         }, {
             fieldName: "design",
+            type: "link-btn"
+        }, {
+            fieldName: "design2",
             type: "link-btn"
         }];
 

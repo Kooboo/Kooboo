@@ -10,36 +10,36 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Sites.InlineEditor
 {
-  public static  class UpdateHelper
+    public static class UpdateHelper
     {
         public static string Update(string source, List<InlineSourceUpdate> updates)
         {
             List<SourceUpdate> sourceupdates = new List<SourceUpdate>();
-            var doc = Kooboo.Dom.DomParser.CreateDom(source); 
+            var doc = Kooboo.Dom.DomParser.CreateDom(source);
 
-            foreach (var item in updates.GroupBy(o=>o.KoobooId))
+            foreach (var item in updates.GroupBy(o => o.KoobooId))
             {
                 string koobooid = item.Key;
-                var node = Service.DomService.GetElementByKoobooId(doc, koobooid); 
+                var node = Service.DomService.GetElementByKoobooId(doc, koobooid);
                 if (node != null)
                 {
                     var element = node as Element;
-                    var kooboolist = item.ToList(); 
-                    if (element != null &&kooboolist != null && kooboolist.Count()>0)
+                    var kooboolist = item.ToList();
+                    if (element != null && kooboolist != null && kooboolist.Count() > 0)
                     {
                         var koobooupdate = GetElementUpdate(doc, element, item.ToList());
-                        sourceupdates.AddRange(koobooupdate); 
+                        sourceupdates.AddRange(koobooupdate);
                     }
                 }
             }
 
-            return Service.DomService.UpdateSource(source, sourceupdates); 
+            return Service.DomService.UpdateSource(source, sourceupdates);
         }
 
-        private static List<SourceUpdate> GetElementUpdate(Document doc,  Element element, List<InlineSourceUpdate> KoobooIdUpdates)
+        private static List<SourceUpdate> GetElementUpdate(Document doc, Element element, List<InlineSourceUpdate> KoobooIdUpdates)
         {
             List<SourceUpdate> sourceupdates = new List<SourceUpdate>();
-            bool HasAttChange = false; 
+            bool HasAttChange = false;
             foreach (var item in KoobooIdUpdates)
             {
                 if (item.IsDelete)
@@ -81,43 +81,45 @@ namespace Kooboo.Sites.InlineEditor
                     }
                 }
             }
-            
+
             if (HasAttChange)
             {
                 SourceUpdate update = new SourceUpdate();
                 update.StartIndex = element.location.openTokenStartIndex;
                 update.EndIndex = element.location.openTokenEndIndex;
-                update.NewValue = Kooboo.Sites.Service.DomService.ReSerializeOpenTag(element); 
-                sourceupdates.Add(update); 
+                update.NewValue = Kooboo.Sites.Service.DomService.ReSerializeOpenTag(element);
+                sourceupdates.Add(update);
             }
-            return sourceupdates; 
+            return sourceupdates;
         }
-          
+
         public static string UpdateOrAppendInlineCss(string InlineCss, List<Kooboo.Dom.CSS.CSSDeclaration> NewDeclarations)
         {
-            var currentblock = Kooboo.Dom.CSS.CSSSerializer.deserializeDeclarationBlock(InlineCss); 
+            var currentblock = Kooboo.Dom.CSS.CSSSerializer.deserializeDeclarationBlock(InlineCss);
             var CurrentItems = currentblock.item;
 
             foreach (var item in NewDeclarations)
             {
-                var exist = CurrentItems.Find(o => o.propertyname.ToLower() == item.propertyname.ToLower()); 
+                var exist = CurrentItems.Find(o => o.propertyname.ToLower() == item.propertyname.ToLower());
                 if (exist == null)
                 {
-                    CurrentItems.Add(item); 
+                    CurrentItems.Add(item);
                 }
                 else
                 {
                     exist.value = item.value;
-                    exist.important = item.important; 
+                    exist.important = item.important;
+                    CurrentItems.Remove(exist);
+                    CurrentItems.Add(exist);
                 }
             }
 
             currentblock.item = currentblock.item.Where(o => !string.IsNullOrWhiteSpace(o.propertyname)).ToList();
             currentblock.item = currentblock.item.Where(o => !string.IsNullOrWhiteSpace(o.value)).ToList();
 
-            return Kooboo.Dom.CSS.CSSSerializer.serializeDeclarationBlock(currentblock); 
-             
+            return Kooboo.Dom.CSS.CSSSerializer.serializeDeclarationBlock(currentblock);
+
         }
     }
-    
+
 }

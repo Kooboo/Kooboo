@@ -12,6 +12,7 @@
     <Compile Remove="AppData\**" />
     <Compile Remove="Areas\**" />
     <Compile Remove="Backend\Menus\Hooker\**" />
+    <Compile Remove="kooboo-web-editor\**" />
     <Compile Remove="KoobooData\**" />
     <Compile Remove="upgradePackage\**" />
     <Compile Remove="_Admin\**" />
@@ -19,6 +20,7 @@
     <EmbeddedResource Remove="AppData\**" />
     <EmbeddedResource Remove="Areas\**" />
     <EmbeddedResource Remove="Backend\Menus\Hooker\**" />
+    <EmbeddedResource Remove="kooboo-web-editor\**" />
     <EmbeddedResource Remove="KoobooData\**" />
     <EmbeddedResource Remove="upgradePackage\**" />
     <EmbeddedResource Remove="_Admin\**" />
@@ -26,6 +28,7 @@
     <None Remove="AppData\**" />
     <None Remove="Areas\**" />
     <None Remove="Backend\Menus\Hooker\**" />
+    <None Remove="kooboo-web-editor\**" />
     <None Remove="KoobooData\**" />
     <None Remove="upgradePackage\**" />
     <None Remove="_Admin\**" />

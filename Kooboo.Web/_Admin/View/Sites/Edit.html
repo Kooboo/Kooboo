@@ -1,109 +1,124 @@
 ﻿<!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <title>Kooboo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0087c2">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0087c2" />
     <script src="/_Admin/Scripts/lib/jquery.min.js"></script>
     <script src="/_Admin/Scripts/KoobooBase.js"></script>
     <script src="/_Admin/Scripts/Kooboo.VersionManager.js"></script>
     <script src="/_Admin/Scripts/Kooboo.BrowserInfo.js"></script>
     <script src="/_Admin/Scripts/lib/knockout.min.js"></script>
     <script src="/_Admin/Scripts/kooboo/text.js"></script>
-    <script src="/_Admin/Scripts/inlineEditor/kooboobase.js"></script>
     <link href="/_Admin/Styles/styles.css" rel="stylesheet" />
     <link href="/_Admin/Styles/custom.css" rel="stylesheet" />
+    <link rel="Shortcut Icon" href="/_Admin/Images/favicon.ico" />
+    <meta charset="UTF-8" />
+  </head>
 
-    <!--<link href="/_Admin/Styles/jstree/style.min.css" rel="stylesheet">--> 
-
-    <link rel="Shortcut Icon" href="/_Admin/Images/favicon.ico">
-    <meta charset="UTF-8">
-</head>
-  
-<body style="overflow: hidden;">
-    <style type="text/css">
-        .mce-primary button {
-            background-color: #206ea1;
-        }
-    </style>
+  <body style="overflow: hidden;">
     <div class="page-loading">
-        <div class="content">
-            <p><i class="fa fa-spinner fa-spin"></i>Loading...</p>
-        </div>
+      <div class="content">
+        <p><i class="fa fa-spinner fa-spin"></i>Loading...</p>
+      </div>
     </div>
+
     <div id="main">
-        <div class="block-fullscreen">
-            <div class="block-visual-editor vertical">
-                <div id="kbActionMenu" data-bind="component: { name: 'KoobooActionMenu',params:actionMenuConfig}"></div>
-
-                <iframe id="iframe" class="kb-iframe" src="about:blank"></iframe>
-            </div>
+      <div class="block-fullscreen">
+        <div class="block-visual-editor vertical">
+          <iframe id="iframe" class="kb-iframe" src="about:blank"></iframe>
         </div>
-        <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog>
-        <!--<div id="kbMediaGrid" data-kb-type="widgets/MediaGrid/MediaGrid" data-kb-option="_mediagridOption"></div>-->
-        <div id="kbPagesPicker" data-kb-type="widgets/PagesPicker/PagesPicker" data-kb-option="_actionMenuOption"></div>
-        <kb-label-dialog></kb-label-dialog>
+      </div>
+      <kb-media-dialog params="data: mediaDialogData"></kb-media-dialog>
     </div>
-</body>
-
+  </body>
 </html>
 <script>
-    (function() {
-        Kooboo.loadJS([
-            "/_Admin/Scripts/lib/lodash.min.js",
-            "/_Admin/Scripts/lib/toastr.min.js",
-            "/_Admin/Scripts/lib/jstree.min.js",
-            "/_Admin/Scripts/lib/bootstrap.min.js",
-            "/_Admin/Scripts/lib/codemirror/lib/codemirror.js",
-            "/_Admin/Scripts/lib/codemirror/mode/xml/xml.js",
-            "/_Admin/Scripts/lib/codemirror/mode/css/css.js",
-            "/_Admin/Scripts/lib/codemirror/mode/javascript/javascript.js",
-            "/_Admin/Scripts/lib/codemirror/mode/htmlmixed/htmlmixed.js",
-            "/_Admin/Scripts/kobindings.codemirror.js",
-            "/_Admin/Scripts/DataCache.js",
-            "/_Admin/Scripts/app.js",
-            "/_Admin/Scripts/kobindingsOverride.js",
-            "/_Admin/Scripts/Kooboo.Route.js",
-            "/_Admin/Scripts/kobindings.js",
-            "/_Admin/Scripts/kooboo/EventBus.js",
-            "/_Admin/Scripts/kooboo/Guid.js",
-            "/_Admin/Scripts/kooboo/NodeType.js",
-            "/_Admin/Scripts/kooboo/LanguageManager.js",
-            "/_Admin/Scripts/kooboo/DateExtend.js",
-            "/_Admin/Scripts/lib/knockout.mapping.min.js",
-            "/_Admin/Scripts/lib/spectrum/spectrum-custom.js",
-            "/_Admin/Scripts/lib/select2.min.js",
-            "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.js",
-            "/_Admin/Scripts/lib/touchspin/jquery.bootstrap-touchspin.min.js",
-            "/_Admin/Scripts/lib/tinymce/tinymceInitPath.js",
-            "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
-            "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
-            "/_Admin/Scripts/components/kb-media-dialog.js",
-            "/_Admin/Scripts/components/kbLabelDialog.js",
-        ]);
-        Kooboo.loadCSS([
-            "/_Admin/Scripts/lib/spectrum/spectrum.css",
-            "/_Admin/Styles/select2/select2.css",
-            "/_Admin/Scripts/lib/bootstrap-switch/bootstrap-switch.min.css",
-            "/_Admin/Scripts/lib/touchspin/jquery.bootstrap-touchspin.min.css",
-            "/_Admin/Scripts/lib/codemirror/lib/codemirror.css",
-            "/_Admin/Styles/jstree/style.min.css"
-        ]);
-    })()
+  function checkBrowser(lang) {
+    if (lang == "zh") {
+      alert(
+        "暂不支持在非Chromium内核的浏览器中编辑，请使用Chrome 、Edge Chromium..."
+      );
+    } else {
+      alert(
+        "Non-Chromium kernel browsers are not currently supported, please use Google Chrome, Microsoft Edge Chromium..."
+      );
+    }
+  }
+
+  function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]);
+    return null;
+  }
+
+  try {
+    $.ajax("/_api/User/getLanguage?SiteId=" + getQueryString("SiteId")).then(
+      function(rsp) {
+        if (
+          navigator.userAgent.toLowerCase().indexOf("chrome") == -1 ||
+          navigator.userAgent.toLowerCase().indexOf("edge") != -1
+        ) {
+          checkBrowser(rsp.model);
+        }
+        Kooboo.LanguageManager.setLang(rsp.model);
+      }
+    );
+  } catch (error) {}
+
+  (function() {
+    Kooboo.loadJS([
+      "/_Admin/Scripts/lib/lodash.min.js",
+      "/_Admin/Scripts/lib/toastr.min.js",
+      "/_Admin/Scripts/lib/bootstrap.min.js",
+      "/_Admin/Scripts/DataCache.js",
+      "/_Admin/Scripts/app.js",
+      "/_Admin/Scripts/kobindingsOverride.js",
+      "/_Admin/Scripts/Kooboo.Route.js",
+      "/_Admin/Scripts/kobindings.js",
+      "/_Admin/Scripts/kooboo/EventBus.js",
+      "/_Admin/Scripts/kooboo/Guid.js",
+      "/_Admin/Scripts/kooboo/NodeType.js",
+      "/_Admin/Scripts/kooboo/LanguageManager.js",
+      "/_Admin/Scripts/kooboo/DateExtend.js",
+      "/_Admin/Scripts/lib/knockout.mapping.min.js",
+      "/_Admin/Scripts/lib/jquery.textarea_autosize.min.js",
+      "/_Admin/Scripts/components/kb-media-dialog.js",
+      "/_Admin/Scripts/components/kbLabelDialog.js"
+    ]);
+  })();
 </script>
 <script type="text/javascript">
-    $(function() {
-        ko.components.register("KoobooActionMenu", {
-            viewModel: Kooboo.actionMenu.KoobooActionMenu,
-            template: Kooboo.actionMenu.KoobooActionMenuHtml,
-        });
-        var jsArr = [
-            "/_Admin/Scripts/lib/tinymce/tinymce.min.js",
-            "/_Admin/Scripts/inlineEditor/methods/KoobooTinymceEditor.js",
-            "/_Admin/Scripts/inlineEditor/KoobooIframe.js",
-        ];
-        var siteEditor=Kooboo.KoobooSiteEditor("iframe",jsArr);
-        siteEditor.start();
-    })
+  $(function() {
+    var mediaDialogData = ko.observable();
+    var tinymceScript = document.createElement("script");
+    tinymceScript.src =
+      "\\_Admin\\Scripts\\kooboo-web-editor\\richEditor.bundle.js";
+    var script = document.createElement("script");
+    script.src = "\\_Admin\\Scripts\\kooboo-web-editor\\index.bundle.js";
+    var iframe = document.getElementById("iframe");
+    var pageUrl = getQueryString("PageUrl");
+    if (pageUrl.indexOf("?") > -1) pageUrl += "&";
+    else pageUrl += "?";
+    pageUrl += "koobooInline=design";
+    iframe.setAttribute("src", pageUrl);
+    iframe.onload = function() {
+      iframe.contentDocument.Kooboo = Kooboo;
+      iframe.contentDocument.mediaDialogData = mediaDialogData;
+      iframe.contentDocument.parentBody = document.body;
+      iframe.contentDocument.__gl = __gl = {};
+      iframe.contentDocument.head.appendChild(tinymceScript);
+      
+      tinymceScript.onload = function() {
+        iframe.contentDocument.head.appendChild(script);
+      };
+
+      script.onload = function() {
+        $(".page-loading").hide();
+      };
+
+      ko.applyBindings({ mediaDialogData }, document.getElementById("main"));
+    };
+  });
 </script>

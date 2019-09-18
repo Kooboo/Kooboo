@@ -64,6 +64,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         newcontent.FolderId = oldcontent.FolderId;
                         newcontent.ContentTypeId = oldcontent.ContentTypeId;
                         newcontent.Contents = oldcontent.Contents;
+                        newcontent.UserKey = NameOrId;
                        //newcontent.Embedded = oldcontent.Embedded;  
                         foreach (var item in contentmodels)
                         {

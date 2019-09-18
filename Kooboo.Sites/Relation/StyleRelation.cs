@@ -69,7 +69,7 @@ namespace Kooboo.Sites.Relation
                             if (oldrelations.Count == 1 && oldrelations[0].objectYId == routeid && oldrelations[0].ConstTypeY == ConstObjectType.Route)
                             {
                                 // the relation already there. 
-                                return;
+                                continue;
                             }
 
                             foreach (var relation in oldrelations)
