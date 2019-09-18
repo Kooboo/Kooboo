@@ -8,7 +8,7 @@ export default (env: any): webpack.Configuration => ({
   },
   output: {
     path: path.resolve("../_Admin/Scripts/kooboo-web-editor"),
-    filename: "[name].bundle.js"
+    filename: "[name].min.js"
   },
   watch: env.NODE_ENV == "development",
   mode: env.NODE_ENV,

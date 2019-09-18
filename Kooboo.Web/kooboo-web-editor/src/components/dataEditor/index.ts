@@ -47,7 +47,7 @@ function addModal(el: HTMLElement) {
 function createScript(win: Window, elements: HTMLElement[]) {
   let container = win.document.body;
   let richEditorScript = document.createElement("script");
-  richEditorScript.src = "\\_Admin\\Scripts\\kooboo-web-editor\\richEditor.bundle.js";
+  richEditorScript.src = "\\_Admin\\Scripts\\kooboo-web-editor\\richEditor.min.js";
   richEditorScript.onload = () => {
     for (const i of elements) {
       const onDelete = (item: dataItem) => {

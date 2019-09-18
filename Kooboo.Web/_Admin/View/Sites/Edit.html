@@ -94,9 +94,9 @@
     var mediaDialogData = ko.observable();
     var tinymceScript = document.createElement("script");
     tinymceScript.src =
-      "\\_Admin\\Scripts\\kooboo-web-editor\\richEditor.bundle.js";
+      "\\_Admin\\Scripts\\kooboo-web-editor\\richEditor.min.js";
     var script = document.createElement("script");
-    script.src = "\\_Admin\\Scripts\\kooboo-web-editor\\index.bundle.js";
+    script.src = "\\_Admin\\Scripts\\kooboo-web-editor\\index.min.js";
     var iframe = document.getElementById("iframe");
     var pageUrl = getQueryString("PageUrl");
     if (pageUrl.indexOf("?") > -1) pageUrl += "&";
