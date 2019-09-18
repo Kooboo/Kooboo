@@ -55,6 +55,25 @@ namespace Kooboo.Data.Log
             }
         }
 
+        private static LogWriter _trace;
+        public static LogWriter Trace
+        {
+            get
+            {
+                if (_trace == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_trace == null)
+                        {
+                            _trace = new LogWriter("Trace");
+                        }
+                    }
+                }
+                return _trace;
+            }
+        }
+
 
         private static Dictionary<string, LogWriter> Cache { get; set; }
 
