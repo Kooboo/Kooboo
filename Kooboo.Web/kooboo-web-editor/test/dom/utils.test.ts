@@ -139,7 +139,7 @@ describe("utils", () => {
     let el = document.createElement("div");
     el.innerHTML = `<div id="elChild1"></div>Text<div id="elChild2"><div2>`;
     let iter = previousNodes(el.children[1]);
-    let previousNode = iter.next().value;
+    let previousNode = iter.next().value as HTMLElement;
 
     expect(previousNode.textContent).equal("Text");
   });
@@ -179,9 +179,9 @@ describe("utils", () => {
     let el = document.createElement("div");
     el.innerHTML = `<div id="elChild1"></div>Text<div id="elChild2"><div2>`;
     let iter = nextNodes(el.children[0]);
-    let nextNode = iter.next().value;
+    let nextNode = iter.next().value as HTMLElement;
 
-    expect(nextNode.textContent).equal("Text");
+    expect(nextNode!.textContent).equal("Text");
   });
 
   it("previousComment", () => {

@@ -19,6 +19,8 @@ export function createImagePreview(showDeleteBtn: boolean = false, onDelete?: ()
   };
 
   const setImage = (src: string) => {
+    let img = document.createElement("img");
+    img.src = src;
     if (src == "none") preview.style.backgroundImage = "none";
     else if (src.indexOf("url(") > -1) preview.style.backgroundImage = src;
     else preview.style.backgroundImage = `url('${src}')`;
@@ -28,4 +30,11 @@ export function createImagePreview(showDeleteBtn: boolean = false, onDelete?: ()
     imagePreview: el,
     setImage
   };
+}
+
+export function createPickShade() {
+  let el = createDiv();
+  el.innerText = TEXT.CLICK_REPLACE;
+  el.classList.add("kb_web_editor_pick_shade");
+  return el;
 }

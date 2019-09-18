@@ -1,4 +1,4 @@
-import { createImagePreview } from "../common/imagePreview";
+import { createImagePreview, createPickShade } from "../common/imagePreview";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 import { StyleLog } from "@/operation/recordLogs/StyleLog";
 import { getImportant } from "@/dom/utils";
@@ -16,6 +16,7 @@ export function createImg(el: HTMLElement, nameOrId: string, objectType: string,
   };
 
   const { imagePreview, setImage } = createImagePreview(true, () => changeImg("none"));
+  imagePreview.appendChild(createPickShade());
   imagePreview.style.marginLeft = "auto";
   imagePreview.style.marginRight = "auto";
   imagePreview.style.marginBottom = "15px";

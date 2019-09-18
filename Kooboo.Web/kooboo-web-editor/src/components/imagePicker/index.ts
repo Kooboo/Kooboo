@@ -2,7 +2,7 @@ import { createModal } from "../modal";
 import { TEXT } from "@/common/lang";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 import { createDiv, createLabelInput } from "@/dom/element";
-import { createImagePreview } from "../common/imagePreview";
+import { createImagePreview, createPickShade } from "../common/imagePreview";
 import context from "@/common/context";
 import { getCssRules } from "@/dom/style";
 import { getImportant } from "@/dom/utils";
@@ -13,6 +13,7 @@ export function createImagePicker(img: HTMLImageElement) {
   let widthImportant = getImportant(img, "width", rules);
   let heightImportant = getImportant(img, "height", rules);
   let { imagePreview, setImage } = createImagePreview();
+  imagePreview.appendChild(createPickShade());
   imagePreview.style.margin = "8px auto 16px auto";
   let style = JSON.parse(JSON.stringify(getComputedStyle(img)));
   style.width = style.width == "0px" ? "auto" : style.width;

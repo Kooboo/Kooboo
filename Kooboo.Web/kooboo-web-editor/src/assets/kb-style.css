@@ -193,7 +193,7 @@
   height: 100%;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: contain;
+  /* background-size: contain; */
   cursor: pointer;
 }
 
@@ -208,6 +208,26 @@
 
 .kb_web_editor_image_preview > .kb_web_editor_btn :hover {
   background-color: #fff;
+}
+
+.kb_web_editor_pick_shade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.384);
+  opacity: 0;
+  transition: .3s;
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+.kb_web_editor_pick_shade:hover {
+  opacity: 0.8;
+  cursor: pointer;
 }
 
 .kb_web_editor_modal {
@@ -387,9 +407,9 @@
   all: unset !important;
 }
 
-.kb_web_editor_root{
+.kb_web_editor_root {
   word-break: break-all;
-  font-family: "Times New Roman",Times,serif;
+  font-family: "Times New Roman", Times, serif;
   font-style: normal;
   font-variant: normal;
   line-height: 16px;
