@@ -1,6 +1,7 @@
 import { createDiv, createButton, createImg } from "@/dom/element";
 import { TEXT } from "@/common/lang";
 import rect from "@/assets/img/transparent.png";
+import { clearCssImageWarp } from "@/dom/utils";
 
 export function createImagePreview(showDeleteBtn: boolean = false, onDelete?: () => void) {
   let el = createDiv();
@@ -19,8 +20,8 @@ export function createImagePreview(showDeleteBtn: boolean = false, onDelete?: ()
   };
 
   const setImage = (src: string) => {
-    if (src == "none") preview.src = "";
-    else if (src.indexOf("url(") > -1) preview.src = clearWarp(src);
+    src = clearCssImageWarp(src);
+    if (src == "none") (preview.src as any) = undefined;
     else preview.src = src;
   };
 
@@ -35,13 +36,4 @@ export function createPickShade() {
   el.innerText = TEXT.CLICK_REPLACE;
   el.classList.add("kb_web_editor_pick_shade");
   return el;
-}
-
-export function clearWarp(src: string) {
-  let startReg = /^\s*url\s*\(\s*[\',\"]?/i;
-  let endReg = /[\',\"]?\)\s*$/i;
-  src = src.trim().toLocaleLowerCase();
-  if (startReg.test(src)) src = src.replace(startReg, "");
-  if (endReg.test(src)) src = src.replace(endReg, "");
-  return src;
 }

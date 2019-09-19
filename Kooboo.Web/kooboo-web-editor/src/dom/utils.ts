@@ -1,4 +1,4 @@
-import { HOVER_BORDER_SKIP } from "../common/constants";
+import { HOVER_BORDER_SKIP, BACKGROUND_IMAGE_START, BACKGROUND_IMAGE_END } from "../common/constants";
 
 export function getScrollTop() {
   return window.pageYOffset || document.documentElement.scrollTop;
@@ -144,4 +144,12 @@ export function shareStyle(container: HTMLElement) {
       container.appendChild(style.ownerNode.cloneNode(true));
     }
   }
+}
+
+export function clearCssImageWarp(src: string) {
+  if (!src) return "";
+  src = src.trim().toLocaleLowerCase();
+  if (BACKGROUND_IMAGE_START.test(src)) src = src.replace(BACKGROUND_IMAGE_START, "");
+  if (BACKGROUND_IMAGE_END.test(src)) src = src.replace(BACKGROUND_IMAGE_END, "");
+  return src;
 }

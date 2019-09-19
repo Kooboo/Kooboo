@@ -9,6 +9,8 @@ export const KOOBOO_ID = "kooboo-id";
 export const KOOBOO_DIRTY = "kooboo-dirty";
 export const KOOBOO_GUID = "kooboo-guid";
 export const EMPTY_COMMENT = "<!--empty-->";
+export const BACKGROUND_IMAGE_START = /^\s*url\s*\(\s*[\',\"]?/i;
+export const BACKGROUND_IMAGE_END = /[\',\"]?\)\s*$/i;
 
 export const OBJECT_TYPE = {
   content: "content",

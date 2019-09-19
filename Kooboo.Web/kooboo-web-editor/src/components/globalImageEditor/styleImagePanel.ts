@@ -1,7 +1,7 @@
-import { getAllElement, getImportant } from "@/dom/utils";
+import { getAllElement, getImportant, clearCssImageWarp } from "@/dom/utils";
 import { setGuid } from "@/kooboo/utils";
 import { getViewComment } from "../floatMenu/utils";
-import { KOOBOO_ID } from "@/common/constants";
+import { KOOBOO_ID, BACKGROUND_IMAGE_START } from "@/common/constants";
 import { setImagePreview } from "./utils";
 import { pickImg } from "@/kooboo/outsideInterfaces";
 import { StyleLog } from "@/operation/recordLogs/StyleLog";
@@ -16,7 +16,7 @@ import { BgImageUnit } from "@/operation/recordUnits/bgImageUnit";
 
 export function createStyleImagePanel() {
   let contiainer = createDiv();
-  let rules = getCssRules().filter(f => f.cssRule.style.backgroundImage);
+  let rules = getCssRules().filter(f => f.cssRule.style.backgroundImage && BACKGROUND_IMAGE_START.test(f.cssRule.style.backgroundImage));
   let appendedRule: matchedRule[] = [];
 
   for (const element of getAllElement(document.body)) {
@@ -25,6 +25,7 @@ export function createStyleImagePanel() {
     if (!style.backgroundImage || style.backgroundImage == "none") continue;
     let matchedRules = getRule(element, rules);
     if (matchedRules.length > 0) {
+      debugger;
       for (const matchedRule of matchedRules) {
         let styleImagePreview = createStyleImagePreview(appendedRule, element, matchedRule);
         if (styleImagePreview) contiainer.appendChild(styleImagePreview);
@@ -67,7 +68,9 @@ function createInlineImagePreview(element: HTMLElement, style: CSSStyleDeclarati
   if (!comment || !koobooId) return;
   let { imagePreview, setImage } = createImagePreview();
   setImagePreview(imagePreview, element);
-  setImage(style.backgroundImage!);
+  let src = clearCssImageWarp(style.backgroundImage!);
+  if (!src) return;
+  setImage(src);
   imagePreview.onclick = () => {
     let startContent = element.getAttribute("style");
     pickImg(path => {
@@ -93,7 +96,9 @@ function createStyleImagePreview(appendedRule: matchedRule[], element: HTMLEleme
   let rule = matchedRule.rule;
   let { imagePreview, setImage } = createImagePreview();
   setImagePreview(imagePreview, element);
-  setImage(rule.cssRule.style.backgroundImage!);
+  let src = clearCssImageWarp(rule.cssRule.style.backgroundImage!);
+  if (!src) return;
+  setImage(src);
   imagePreview.onclick = () => {
     let startContent = rule.cssRule.style.backgroundImage;
     pickImg(path => {
