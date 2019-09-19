@@ -9,7 +9,6 @@ export function createImg(el: HTMLElement, nameOrId: string, objectType: string,
   let important = getImportant(el, "background-image", rules);
 
   const changeImg = (path: string) => {
-    path = path == "none" ? "none" : ` url('${path}')`;
     el.style.setProperty("background-image", path, important);
     log = StyleLog.createUpdate(nameOrId, objectType, path, "background-image", koobooId, !!important);
     setImage(path);
