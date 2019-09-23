@@ -43,7 +43,7 @@ namespace Kooboo.Web.Service
           
         }
 
-        public static string GetRedirectUrl(RenderContext context, User User, string currentRequestUrl, string returnUrl, bool samesite)
+        public static string GetRedirectUrl(RenderContext context, User User, string currentRequestUrl, string returnUrl, bool SameSiteRedirect)
         {
             if (!string.IsNullOrWhiteSpace(returnUrl))
             {
@@ -58,15 +58,15 @@ namespace Kooboo.Web.Service
             }
 
             string baseurl = currentRequestUrl; 
-            if (!samesite && Data.AppSettings.IsOnlineServer && !string.IsNullOrWhiteSpace(User.TempRedirectUrl))
-            { 
-                 baseurl = User.TempRedirectUrl;  
-            }
-            else if (Data.AppSettings.RedirectUser && !string.IsNullOrWhiteSpace(User.TempRedirectUrl))
+
+            if (!string.IsNullOrWhiteSpace(User.TempRedirectUrl))
             {
-                baseurl = User.TempRedirectUrl; 
+                if (Data.AppSettings.IsOnlineServer && !SameSiteRedirect)
+                {
+                    baseurl = User.TempRedirectUrl;
+                }
             }
-             
+              
             string url;
 
             if (string.IsNullOrEmpty(returnUrl))
@@ -88,9 +88,9 @@ namespace Kooboo.Web.Service
             return fullurl;
         }
 
-        public static string GetLoginRedirectUrl(RenderContext context, User user, string currentrequesturl, string returnurl, bool SameSite)
+        public static string GetLoginRedirectUrl(RenderContext context, User user, string currentrequesturl, string returnurl, bool SameSiteRedirect)
         {
-            string redirecturl = GetRedirectUrl(context, user, currentrequesturl, returnurl, SameSite);
+            string redirecturl = GetRedirectUrl(context, user, currentrequesturl, returnurl, SameSiteRedirect);
 
             string token = GetToken(user);
 

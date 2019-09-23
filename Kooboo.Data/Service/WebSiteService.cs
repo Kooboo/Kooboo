@@ -107,7 +107,7 @@ namespace Kooboo.Data.Service
 
         public static Guid GetTempUrlSiteId(string host)
         {
-            if (host.StartsWith("_preview_"))
+            if (host !=null && host.StartsWith("_preview_"))
             {
                 var index = host.IndexOf("_", 15);
                 if (index > 0)

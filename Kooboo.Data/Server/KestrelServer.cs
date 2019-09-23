@@ -491,7 +491,7 @@ namespace Kooboo.Data.Server
                 if (response.StatusCode == 200)
                 {
 
-                    if (response.Body != null && renderContext.Request.Method.ToLower() != "head")
+                    if (response.Body != null && renderContext.Request.Method != "HEAD")
                     {
                         try
                         {

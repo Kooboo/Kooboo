@@ -19,8 +19,7 @@ namespace Kooboo.Data
             Version = typeof(Kooboo.Data.Models.WebSite).Assembly.GetName().Version;
 
             RootPath = TryRootPath();
-            IsOnlineServer = GetBool("IsOnlineServer");
-            RedirectUser = GetBool("RedirectUser");  
+            IsOnlineServer = GetBool("IsOnlineServer"); 
 
             string quotavalue = ConfigurationManager.AppSettings.Get("QuotaControl");
             if (string.IsNullOrEmpty(quotavalue))
@@ -407,9 +406,15 @@ namespace Kooboo.Data
 
                 ApiResource apires = null;
 
+                string apiurl = "/account/system/apiresource";
+                if (IsOnlineServer)
+                {
+                    apiurl += apiurl += "?online=true"; 
+                }
+
                 foreach (var item in apis)
                 {
-                    string url = item + "/account/system/apiresource";
+                    string url = item + apiurl; 
                     try
                     {
                         apires = HttpHelper.Get<ApiResource>(url);
@@ -682,8 +687,7 @@ namespace Kooboo.Data
 
 
         public static bool IsOnlineServer { get; set; }
-
-        public static bool RedirectUser { get; set; }
+         
 
         public static GlobalInfo Global { get; set; }
 

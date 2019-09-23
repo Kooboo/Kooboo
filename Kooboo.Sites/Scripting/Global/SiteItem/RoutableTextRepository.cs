@@ -1,10 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
@@ -83,6 +79,12 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             {
                 return getUrl(siteobject.Id.ToString()); 
             }   
+
+            if (siteobj is Guid || siteobj is String)
+            {
+                return getUrl(siteobj.ToString()); 
+            }
+             
             return null; 
         }
 
@@ -105,6 +107,16 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                     return route.Name; 
                 }
             }        
+            return null; 
+        }
+
+        public string getAbsUrl(object id)
+        {
+            var relative = getUrl(id); 
+            if (!string.IsNullOrWhiteSpace(relative))
+            {
+                return this.context.WebSite.BaseUrl(relative); 
+            }
             return null; 
         }
     }

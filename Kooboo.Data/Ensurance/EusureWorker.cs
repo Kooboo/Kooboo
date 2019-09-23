@@ -9,7 +9,7 @@ namespace Kooboo.Data.Ensurance
         {
             get
             {
-                return 300;
+                return 60;
             }
         }
 

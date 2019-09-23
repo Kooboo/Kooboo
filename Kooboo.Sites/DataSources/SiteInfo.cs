@@ -50,8 +50,7 @@ namespace Kooboo.Sites.DataSources
             }
         }       
     }
-
-
+     
     public class MultilingualInfo
     {   
         public string Key { get; set; }

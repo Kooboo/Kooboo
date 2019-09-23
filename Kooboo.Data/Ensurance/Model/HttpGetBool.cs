@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Data.Ensurance.Model
 {
-  public  class HttpGet : IQueueTask
+
+    // this method must return bool.
+  public  class HttpGetBool : IQueueTask
     {
         public string FullUrl { get; set; }
 

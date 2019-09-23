@@ -54,9 +54,28 @@
       </Params>
       <ReturnType>SiteObject</ReturnType>
     </Method>
-    
-    
-    
+
+    <Method>
+      <Name>getAbsUrl</Name>
+      <Description>get the absolute Url of this object</Description>
+      <Example>
+        <![CDATA[
+  <script engine="kscript"> 
+      var page = k.site.pages.getByUrl("/pagename");
+      var url = k.site.pages.getAbsUrl(page.id); 
+    </script>
+	]]>
+
+      </Example>
+      <Params>
+        <Param>
+          <Name>id</Name>
+          <Description>object id</Description>
+          <Type>object</Type>
+        </Param>
+      </Params>
+      <ReturnType>SiteObject</ReturnType>
+    </Method> 
 
     <Method>
       <Name>all</Name>

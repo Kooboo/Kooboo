@@ -59,16 +59,15 @@ namespace Kooboo.Web.Api.Implementation
             {
                 string remember = apiCall.GetValue("remember");
 
-                bool samesite = false;
+                bool SameSiteRedirect = false;
                 string type = apiCall.GetValue("type"); 
                 if (type !=null && type == "site")
                 {
-                    samesite = true; 
-                }
-
+                    SameSiteRedirect = true; 
+                } 
 #if DEBUG
                 {
-                samesite = true; 
+                SameSiteRedirect = true; 
                 }
 #endif 
 
@@ -104,7 +103,7 @@ namespace Kooboo.Web.Api.Implementation
 
                 response.Success = true; 
 
-                string redirct = Kooboo.Web.Service.UserService.GetLoginRedirectUrl(apiCall.Context, user, apiCall.Context.Request.Url, returnUrl, samesite);
+                string redirct = Kooboo.Web.Service.UserService.GetLoginRedirectUrl(apiCall.Context, user, apiCall.Context.Request.Url, returnUrl, SameSiteRedirect);
 
                 if (isRemember)
                 {

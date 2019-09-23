@@ -83,7 +83,18 @@ namespace Kooboo.Data.Context
             }
         }
 
-        public string Method { get; set; }
+        private string _method; 
+        public string Method {
+            get { return _method;  }
+            set
+            {
+                _method = value; 
+                if (_method !=null)
+                {
+                    _method = _method.ToUpper(); 
+                }
+            }
+        }
 
         public string Host { get; set; }
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Kooboo.Extensions;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
+using Kooboo.Sites.Cache;
 
 namespace Kooboo.Sites.Models
 { 
@@ -97,7 +98,7 @@ namespace Kooboo.Sites.Models
         }
 
         public List<string> RequestParas { get; set; }
-
+         
         public override int GetHashCode()
         {
             string un = this.Name;

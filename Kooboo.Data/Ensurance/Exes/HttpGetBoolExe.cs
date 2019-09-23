@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 namespace Kooboo.Data.Ensurance.Exes
 {
     
-    public class HttpGetExe : IExecutor<HttpGet>
+    public class HttpGetBoolExe : IExecutor<HttpGetBool>
     {
         public bool Execute(string JsonModel)
         {
-            var item = Lib.Helper.JsonHelper.Deserialize<HttpGet>(JsonModel);
+            var item = Lib.Helper.JsonHelper.Deserialize<HttpGetBool>(JsonModel);
 
             return Kooboo.Lib.Helper.HttpHelper.Get<bool>(item.FullUrl, item.Parameters);
         }

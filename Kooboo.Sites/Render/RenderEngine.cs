@@ -3,11 +3,13 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Kooboo.Sites.Service;
+using System; 
 
 namespace Kooboo.Sites.Render
 {
     public static class RenderEngine
-    {
+    { 
+
         public static async Task<string> RenderPageAsync(FrontContext context)
         {
             if (context.Page.Parameters.Count > 0)
@@ -18,8 +20,7 @@ namespace Kooboo.Sites.Render
             string result = string.Empty;
 
             List<IRenderTask> RenderPlan = null;
-
-
+            
             if (context.RenderContext.Request.Channel != Data.Context.RequestChannel.InlineDesign)
             {
                 RenderPlan = Cache.RenderPlan.GetOrAddRenderPlan(context.SiteDb, context.Page.Id, () => RenderEvaluator.Evaluate(context.Page.Body, GetPageOption(context)));

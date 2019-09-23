@@ -80,7 +80,7 @@ namespace Kooboo.Web.Api
 
             string redirecturl = "/_Admin/Account/Profile";
 
-            result.redirectUrl = Kooboo.Web.Service.UserService.GetLoginRedirectUrl(call.Context, user, call.Context.Request.Url, redirecturl, true);
+            result.redirectUrl = Kooboo.Web.Service.UserService.GetLoginRedirectUrl(call.Context, user, call.Context.Request.Url, redirecturl, false);
 
             return result;
         }

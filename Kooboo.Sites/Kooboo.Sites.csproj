@@ -14,6 +14,7 @@
   <ItemGroup>
     <Compile Remove="Automation\**" />
     <Compile Remove="NodeTree\**" />
+    <Compile Remove="Render\Cache\**" />
     <Compile Remove="SizeAnalyze\**" />
     <Compile Remove="TAL\Binding\**" />
     <Compile Remove="TAL\Functions\**" />
@@ -21,6 +22,7 @@
     <Compile Remove="TreesTemp\**" />
     <EmbeddedResource Remove="Automation\**" />
     <EmbeddedResource Remove="NodeTree\**" />
+    <EmbeddedResource Remove="Render\Cache\**" />
     <EmbeddedResource Remove="SizeAnalyze\**" />
     <EmbeddedResource Remove="TAL\Binding\**" />
     <EmbeddedResource Remove="TAL\Functions\**" />
@@ -28,6 +30,7 @@
     <EmbeddedResource Remove="TreesTemp\**" />
     <None Remove="Automation\**" />
     <None Remove="NodeTree\**" />
+    <None Remove="Render\Cache\**" />
     <None Remove="SizeAnalyze\**" />
     <None Remove="TAL\Binding\**" />
     <None Remove="TAL\Functions\**" />

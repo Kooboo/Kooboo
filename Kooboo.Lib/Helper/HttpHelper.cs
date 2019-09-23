@@ -242,6 +242,35 @@ namespace Kooboo.Lib.Helper
         }
 
 
+        public static async Task<string> GetStringAsync(string url, Dictionary<string, string> query = null)
+        {
+            try
+            {
+
+                if (query != null)
+                {
+                    url = UrlHelper.AppendQueryString(url, query);
+                }
+
+                using (var client = new WebClient())
+                {
+                    client.Headers.Add("user-agent", DefaultUserAgent);
+
+                    client.Proxy = null;
+                    client.Encoding = Encoding.UTF8;
+
+                  return  await client.DownloadStringTaskAsync(new Uri(url));
+                }
+            }
+            catch (Exception ex)
+            { 
+
+            } 
+
+            return null;
+        }
+
+
         public static T TryGet<T>(string url, Dictionary<string, string> query = null)
         {
             if (query != null)
