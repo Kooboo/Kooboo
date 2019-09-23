@@ -35,7 +35,7 @@
                 </td>
                 <td>
                     <a data-bind="visible: $parent.isNotRoot($data) && !$data.urlEditing(), text: $data.url(), click: $parent.onEditLink" href="javascript:;" class="menu-link"></a>
-                    <div data-bind="visible: $data.urlEditing()" class="col-md-8 row">
+                    <div data-bind="visible: $data.urlEditing()" class="col-md-8 row" style="display: inline-flex">
                         <div class="col-md-8">
                             <input data-bind="textInput: $data.url, typeahead: $parent.pageList, items: 20, defaultShow: true" type="text" class="form-control" placeholder="Select value from below or type a new url">
                         </div>

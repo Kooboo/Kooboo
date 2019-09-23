@@ -166,11 +166,9 @@ namespace Kooboo.Web.FrontRequest
                 try
                 {
                     await RouteRenderers.RenderAsync(frontContext);
-                    endtime = DateTime.UtcNow;
-
+                    endtime = DateTime.UtcNow; 
                     // check for rights...
-                    CheckUserBandwidth(frontContext);
-
+                    CheckUserBandwidth(frontContext); 
                 }
                 catch (Exception ex)
                 {
@@ -182,6 +180,11 @@ namespace Kooboo.Web.FrontRequest
                         frontContext.RenderContext.Response.Body = System.Text.Encoding.UTF8.GetBytes(errorbody);
                     }
                     frontContext.Log.AddEntry("500", "exception", DateTime.UtcNow, DateTime.UtcNow, 500, ex.Message);
+
+
+                    string error = frontContext.RenderContext.Request.Url + ex.Message + "\r\n" + ex.Source + "\r\n" + ex.StackTrace; 
+
+                    Kooboo.Data.Log.Instance.Trace.Write(error); 
                 }
             }
 

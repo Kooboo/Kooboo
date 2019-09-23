@@ -520,7 +520,7 @@ namespace Kooboo.IndexedDB.Btree
 
             MemoryTreeNode foundleaf = MemoryTreeNodeManager.FindLeafByKey(this, this.RootCache, keybytes);
 
-            if (!foundleaf.TreeNode.KeyArray.ContainsKey(keybytes))
+            if (foundleaf == null || !foundleaf.TreeNode.KeyArray.ContainsKey(keybytes))
             {
                 return KeyList;
             }

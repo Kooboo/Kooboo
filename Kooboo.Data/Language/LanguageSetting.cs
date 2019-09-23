@@ -303,7 +303,7 @@ namespace Kooboo.Data.Language
 
             foreach (CultureInfo culture in cultures)
             {
-                RegionInfo region = new RegionInfo(culture.LCID);
+                RegionInfo region = new RegionInfo(culture.Name);
                 if (region != null)
                 {
                     if (region.TwoLetterISORegionName.ToLower() == regionCode)

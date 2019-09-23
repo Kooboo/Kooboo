@@ -29,7 +29,7 @@ namespace Kooboo.IndexedDB.Btree
 
             MemoryTreeNode foundnode = GetOrLoadNode(Tree, currentNode, pointer);
              
-            if (foundnode.TreeNode.TypeIndicator == EnumValues.TypeIndicator.leaf)
+            if (foundnode == null || foundnode.TreeNode.TypeIndicator == EnumValues.TypeIndicator.leaf)
             {
                 return foundnode;
             }

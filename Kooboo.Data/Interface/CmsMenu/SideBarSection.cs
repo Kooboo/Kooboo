@@ -10,6 +10,7 @@ namespace Kooboo.Web.Menus
         System = 2,
         Development = 3,
         Contents = 4,
-        Database = 5
+        Database = 5,
+        Commerce = 6
     }
 }
