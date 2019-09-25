@@ -62,7 +62,10 @@ namespace Kooboo.Data.Models
             foreach (var item in this.KeyValues)
             {
                 unique += item.Key + item.Value;  
-            } 
+            }
+
+            unique += this.Expiration.ToLongTimeString(); 
+
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
         }
     }

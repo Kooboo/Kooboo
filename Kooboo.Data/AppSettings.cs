@@ -435,7 +435,7 @@ namespace Kooboo.Data
                         apires.AccountUrl = apires.AcccountDomain; 
                     }
 
-                    Kooboo.Data.Helper.ApiHelper.EnsureAccountUrl(apires);
+                    //Kooboo.Data.Helper.ApiHelper.EnsureAccountUrl(apires);
 
                     var localsetting = new GlobalSetting() { Name = "ApiResource", LastModified = DateTime.Now };
                     localsetting.KeyValues["AccountUrl"] = apires.AccountUrl;
