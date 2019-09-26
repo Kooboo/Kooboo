@@ -248,6 +248,10 @@ namespace Kooboo.Data.Context
             if (siteid == default(Guid) && GetWebSiteFunc != null)
             {
                 siteid = GetWebSiteFunc(context);
+                if (siteid != default(Guid))
+                {
+                    context.IsSiteBinding = true;
+                }
             }
 
             if (siteid != default(Guid))
