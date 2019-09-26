@@ -198,9 +198,15 @@ namespace Kooboo.Web.Api.Implementation
                 fullname = Subdomain + "." + rootDomain;
             }
 
-            return true;
-
-            //  return Kooboo.Data.SSL.SslService.EnsureCanGenerate(fullname); 
+            var ok = Kooboo.Data.SSL.SslService.EnsureCheck(fullname);
+            if (ok)
+            {
+                return true;
+            }
+            else
+            {
+                throw new Exception(Data.Language.Hardcoded.GetValue("Only internet enabled domain that use Kooboo DNS or hosted by Kooboo can generate SSL certificates"));
+            }
         }
 
         public void SetSsl(string rootDomain, string Subdomain, ApiCall call)

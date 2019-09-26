@@ -16,10 +16,15 @@ namespace Kooboo.Data
     {
         static AppSettings()
         {
+            LoadSetting();
+        }
+
+        public static void LoadSetting()
+        {
             Version = typeof(Kooboo.Data.Models.WebSite).Assembly.GetName().Version;
 
             RootPath = TryRootPath();
-            IsOnlineServer = GetBool("IsOnlineServer"); 
+            IsOnlineServer = GetBool("IsOnlineServer");
 
             string quotavalue = ConfigurationManager.AppSettings.Get("QuotaControl");
             if (string.IsNullOrEmpty(quotavalue))
@@ -54,7 +59,7 @@ namespace Kooboo.Data
             // for some servers that does not have hostfile. 
             if (!System.IO.File.Exists(Kooboo.Data.Hosts.WindowsHost.HostFile))
             {
-                DefaultLocalHost = "localkooboo.com"; 
+                DefaultLocalHost = "localkooboo.com";
             }
         }
 
