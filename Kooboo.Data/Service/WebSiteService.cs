@@ -125,6 +125,7 @@ namespace Kooboo.Data.Service
             return default(Guid);
         }
 
+        // used by account. 
         public static string GetSitePreviewServerIdOrOrgName(string host)
         {
             if (host.StartsWith("_preview_"))

@@ -11,7 +11,7 @@ using Kooboo.Data;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Relation;
 using Kooboo.Data.Interface;
-using Kooboo.Sites.ThreadPool; 
+using Kooboo.Sites.ThreadPool;
 using Kooboo.Sites.ViewModel;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.SiteTransfer.Model;
@@ -110,13 +110,60 @@ namespace Kooboo.Sites.Repository
 
         public WebSite WebSite { get; set; }
 
-        public LayoutRepository Layouts => GetSiteRepository<LayoutRepository, Layout>();
 
-        public ContinueConvertRepository ContinueConverter => GetSiteRepository<ContinueConvertRepository, ContinueConverter>();
 
-        public DataMethodSettingRepository DataMethodSettings => GetSiteRepository<DataMethodSettingRepository, DataMethodSetting>();
+        private LayoutRepository _layouts;
+        public LayoutRepository Layouts
+        {
+            get
+            {
+                if (_layouts == null)
+                {
+                    _layouts = GetSiteRepository<LayoutRepository, Layout>();
+                }
+                return _layouts;
+            }
+        }
 
-        public SyncSettingRepository SyncSettings => GetSiteRepository<SyncSettingRepository, SyncSetting>();
+        private ContinueConvertRepository _continueConvert;
+        public ContinueConvertRepository ContinueConverter
+        {
+            get
+            {
+                if (_continueConvert == null)
+                {
+                    _continueConvert = GetSiteRepository<ContinueConvertRepository, ContinueConverter>();
+                }
+                return _continueConvert;
+            }
+        }
+
+        private DataMethodSettingRepository _datamethodSettings;
+        public DataMethodSettingRepository DataMethodSettings
+        {
+            get
+            {
+                if (_datamethodSettings == null)
+                {
+                    _datamethodSettings = GetSiteRepository<DataMethodSettingRepository, DataMethodSetting>();
+                }
+                return _datamethodSettings;
+            }
+        }
+
+        private SyncSettingRepository _syncsetting;
+
+        public SyncSettingRepository SyncSettings
+        {
+            get
+            {
+                if (_syncsetting == null)
+                {
+                    _syncsetting = GetSiteRepository<SyncSettingRepository, SyncSetting>();
+                }
+                return _syncsetting;
+            }
+        }
 
         private StorePool<Image> _imagepool;
         public StorePool<Image> ImagePool
@@ -131,12 +178,48 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public SynchronizationRepository Synchronization => GetSiteRepository<SynchronizationRepository, Synchronization>();
 
-        public CoreSettingRepository CoreSetting => GetSiteRepository<CoreSettingRepository, CoreSetting>();
+        private SynchronizationRepository _sychronization;
+        public SynchronizationRepository Synchronization
+        {
+            get
+            {
+                if (_sychronization == null)
+                {
+                    _sychronization = GetSiteRepository<SynchronizationRepository, Synchronization>();
+                }
+                return _sychronization;
+            }
+        }
 
 
-        public SiteClusterRepository SiteCluster => GetSiteRepository<SiteClusterRepository, SiteCluster>();
+        private CoreSettingRepository _coresetting;
+
+        public CoreSettingRepository CoreSetting
+        {
+            get
+            {
+                if (_coresetting == null)
+                {
+                    _coresetting = GetSiteRepository<CoreSettingRepository, CoreSetting>();
+                }
+                return _coresetting;
+            }
+        }
+
+        private SiteClusterRepository _sitecluster;
+
+        public SiteClusterRepository SiteCluster
+        {
+            get
+            {
+                if (_sitecluster == null)
+                {
+                    _sitecluster = GetSiteRepository<SiteClusterRepository, SiteCluster>();
+                }
+                return _sitecluster;
+            }
+        }
 
 
         private Kooboo.Sites.Sync.SiteClusterSync.SiteClusterManager _ClusterManager;
@@ -156,8 +239,19 @@ namespace Kooboo.Sites.Repository
             }
         }
 
+        private MenuRepository _menus;
+        public MenuRepository Menus
+        {
+            get
+            {
+                if (_menus == null)
+                {
+                    _menus = GetSiteRepository<MenuRepository, Menu>();
+                }
+                return _menus;
+            }
+        }
 
-        public MenuRepository Menus => GetSiteRepository<MenuRepository, Menu>();
 
         public TransferTaskRepository TransferTasks => GetSiteRepository<TransferTaskRepository, TransferTask>();
 
@@ -300,34 +394,186 @@ namespace Kooboo.Sites.Repository
 
         #endregion
 
+        private CmsFileRepository _files;
+        public CmsFileRepository Files
+        {
+            get
+            {
+                if (_files == null)
+                {
+                    _files = GetSiteRepository<CmsFileRepository, CmsFile>();
+                }
+                return _files;
+            }
+        }
 
-        public CmsFileRepository Files => GetSiteRepository<CmsFileRepository, CmsFile>();
 
-        public FolderRepository Folders => GetSiteRepository<FolderRepository, Folder>();
+        private FolderRepository _folders;
+        public FolderRepository Folders
+        {
+            get
+            {
+                if (_folders == null)
+                {
+                    _folders = GetSiteRepository<FolderRepository, Folder>();
+                }
+                return _folders;
+            }
+        }
 
-        public DomElementRepository DomElements => GetSiteRepository<DomElementRepository, DomElement>();
+        private DomElementRepository _domelements;
 
-        public RouteRepository Routes => GetSiteRepository<RouteRepository, Route>();
+        public DomElementRepository DomElements
+        {
+            get
+            {
+                if (_domelements == null)
+                {
+                    _domelements = GetSiteRepository<DomElementRepository, DomElement>();
+                }
+                return _domelements;
+            }
+        }
 
-        public FormRepository Forms => GetSiteRepository<FormRepository, Form>();
 
-        public FormSettingRepository FormSetting => GetSiteRepository<FormSettingRepository, FormSetting>();
+        private RouteRepository _routes;
+        public RouteRepository Routes
+        {
+            get
+            {
+                if (_routes == null)
+                {
+                    _routes = GetSiteRepository<RouteRepository, Route>();
+                }
+                return _routes;
+            }
+        }
 
-        public FormValueRepository FormValues => GetSiteRepository<FormValueRepository, FormValue>();
 
-        public ImageRepository Images => GetSiteRepository<ImageRepository, Image>();
+        private FormRepository _forms;
+        public FormRepository Forms
+        {
+            get
+            {
+                if (_forms == null)
+                {
+                    _forms = GetSiteRepository<FormRepository, Form>();
+                }
+                return _forms;
+            }
+        }
 
-        public PageRepository Pages => GetSiteRepository<PageRepository, Page>();
 
-        public ViewRepository Views => GetSiteRepository<ViewRepository, View>();
 
-        public ScriptRepository Scripts => GetSiteRepository<ScriptRepository, Script>();
+        private FormSettingRepository _formsetting;
+        public FormSettingRepository FormSetting
+        {
+            get
+            {
+                if (_formsetting == null)
+                {
+                    _formsetting = GetSiteRepository<FormSettingRepository, FormSetting>();
+                }
+                return _formsetting;
+            }
+        }
 
-        public CodeRepository Code => GetSiteRepository<CodeRepository, Code>();
+        private FormValueRepository _formvalues;
 
+        public FormValueRepository FormValues
+        {
+            get
+            {
+                if (_formvalues == null)
+                {
+                    _formvalues = GetSiteRepository<FormValueRepository, FormValue>();
+                }
+                return _formvalues;
+            }
+        }
+
+        private ImageRepository _images;
+        public ImageRepository Images
+        {
+            get
+            {
+                if (_images == null)
+                {
+                    _images = GetSiteRepository<ImageRepository, Image>();
+                }
+                return _images;
+            }
+        }
+
+        private PageRepository _pages;
+        public PageRepository Pages
+        {
+            get
+            {
+                if (_pages == null)
+                {
+                    _pages = GetSiteRepository<PageRepository, Page>();
+                }
+                return _pages;
+            }
+        }
+
+        private ViewRepository _views;
+        public ViewRepository Views
+        {
+            get
+            {
+                if (_views == null)
+                {
+                    _views = GetSiteRepository<ViewRepository, View>();
+                }
+                return _views;
+            }
+        }
+
+        private ScriptRepository _scripts;
+        public ScriptRepository Scripts
+        {
+            get
+            {
+                if (_scripts == null)
+                {
+                    _scripts = GetSiteRepository<ScriptRepository, Script>();
+                }
+                return _scripts;
+            }
+        }
+
+
+        private CodeRepository _code;
+        public CodeRepository Code
+        {
+            get
+            {
+                if (_code == null)
+                {
+                    _code = GetSiteRepository<CodeRepository, Code>();
+                }
+                return _code;
+            }
+        }
+
+        private BusinessRuleRepository _rules;
         public BusinessRuleRepository Rules => GetSiteRepository<BusinessRuleRepository, BusinessRule>();
 
-        public RelationRepository Relations => GetSiteRepository<RelationRepository, ObjectRelation>();
+        private RelationRepository _relation;
+        public RelationRepository Relations
+        {
+            get
+            {
+                if (_relation == null)
+                {
+                    _relation = GetSiteRepository<RelationRepository, ObjectRelation>();
+                }
+                return _relation;
+            }
+        }
+
 
         private SearchIndexRepository _searchindex;
         public SearchIndexRepository SearchIndex
@@ -348,12 +594,37 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public ViewDataMethodRepository ViewDataMethods => GetSiteRepository<ViewDataMethodRepository, ViewDataMethod>();
+
+        private ViewDataMethodRepository _viewdatamethod;
+
+        public ViewDataMethodRepository ViewDataMethods
+        {
+            get
+            {
+                if (_viewdatamethod == null)
+                {
+                    _viewdatamethod = GetSiteRepository<ViewDataMethodRepository, ViewDataMethod>();
+                }
+                return _viewdatamethod;
+            }
+        }
+
 
         public DownloadFailTrackRepository DownloadFailedLog => GetSiteRepository<DownloadFailTrackRepository, DownloadFailTrack>();
 
+        private SiteUserRepository _Siteuser;
 
-        public SiteUserRepository SiteUser => GetSiteRepository<SiteUserRepository, SiteUser>();
+        public SiteUserRepository SiteUser
+        {
+            get
+            {
+                if (_Siteuser == null)
+                {
+                    _Siteuser = GetSiteRepository<SiteUserRepository, SiteUser>();
+                }
+                return _Siteuser;
+            }
+        }
 
         public PathTree RouteTree(byte ConstType = 0)
         {
@@ -525,87 +796,171 @@ namespace Kooboo.Sites.Repository
 
         #endregion
 
-        public StyleRepository Styles => GetSiteRepository<StyleRepository, Style>();
+
+        private StyleRepository _styles;
+
+        public StyleRepository Styles
+        {
+            get
+            {
+                if (_styles == null)
+                {
+                    _styles = GetSiteRepository<StyleRepository, Style>();
+                }
+                return _styles;
+            }
+        }
+
+        private ResourceGroupRepository _ResourceGroups;
+
+        public ResourceGroupRepository ResourceGroups
+        {
+            get
+            {
+                if (_ResourceGroups == null)
+                {
+                    _ResourceGroups = GetSiteRepository<ResourceGroupRepository, ResourceGroup>();
+                }
+                return _ResourceGroups;
+            }
+        }
 
 
-        public ResourceGroupRepository ResourceGroups => GetSiteRepository<ResourceGroupRepository, ResourceGroup>();
+        private CmsCssRuleRepository _cssrules;
+        public CmsCssRuleRepository CssRules
+        {
+            get
+            {
+                if (_cssrules == null)
+                {
+                    _cssrules = GetSiteRepository<CmsCssRuleRepository, CmsCssRule>();
+                }
+                return _cssrules;
+            }
+        }
 
-        public CmsCssRuleRepository CssRules => GetSiteRepository<CmsCssRuleRepository, CmsCssRule>();
+        private ExternalResourceRepository _ExternalResource;
 
+        public ExternalResourceRepository ExternalResource
+        {
+            get
+            {
+                if (_ExternalResource == null)
+                {
+                    _ExternalResource = GetSiteRepository<ExternalResourceRepository, ExternalResource>();
+                }
+                return _ExternalResource;
+            }
+        }
 
-        public ExternalResourceRepository ExternalResource => GetSiteRepository<ExternalResourceRepository, ExternalResource>();
+        private ThumbnailRepository _Thumbnails;
+        public ThumbnailRepository Thumbnails
+        {
+            get
+            {
+                if (_Thumbnails == null)
+                {
+                    _Thumbnails = GetSiteRepository<ThumbnailRepository, Thumbnail>();
+                }
+                return _Thumbnails;
+            }
+        }
 
-        public ThumbnailRepository Thumbnails => GetSiteRepository<ThumbnailRepository, Thumbnail>();
-
-        public LabelRepository Labels => GetSiteRepository<LabelRepository, Label>();
-
-        public kConfigRepository KConfig => GetSiteRepository<kConfigRepository, KConfig>();
-
-        public HtmlBlockRepository HtmlBlocks => GetSiteRepository<HtmlBlockRepository, HtmlBlock>();
-
-        public ContentFolderRepository ContentFolders => GetSiteRepository<ContentFolderRepository, ContentFolder>();
-
-
-        public ContentTypeRepository ContentTypes => GetSiteRepository<ContentTypeRepository, ContentType>();
-
-        public ContentCategoryRepository ContentCategories => GetSiteRepository<ContentCategoryRepository, ContentCategory>();
-
-        public TextContentRepository TextContent => GetSiteRepository<TextContentRepository, TextContent>();
-
-        #region Ecommerce
-
-        //private CategoryRepository _category;
-
-        //public CategoryRepository Category
-        //{
-        //    get
-        //    {
-        //        return EnsureRepository<CategoryRepository, Category>(ref _category);
-        //    }
-        //}
-
-        //private ProductTypeRepository _productType;
-
-        //public ProductTypeRepository ProductType
-        //{
-        //    get
-        //    {
-        //        return EnsureRepository<ProductTypeRepository, ProductType>(ref _productType);
-        //    }
-        //}
-
-        //public ProductCategoryRepository _productcategory; 
-        //public ProductCategoryRepository ProductCategory
-        //{
-        //    get
-        //    {
-        //        return EnsureRepository<ProductCategoryRepository, ProductCategory>(ref _productcategory); 
-        //    }
-        //}
-
-        //public ProductRepository _product;
-        //public ProductRepository Product
-        //{
-        //    get
-        //    {
-        //        return EnsureRepository<ProductRepository, Product>(ref _product);
-        //    }
-        //}
-
-        //public ProductVariantsRepository _productvariants; 
-
-        //public ProductVariantsRepository ProductVariants
-        //{
-        //    get
-        //    {
-        //        return EnsureRepository<ProductVariantsRepository, ProductVariants>(ref _productvariants);
-        //    }
-        //}
+        private LabelRepository _labels;
+        public LabelRepository Labels
+        {
+            get
+            {
+                if (_labels == null)
+                {
+                    _labels = GetSiteRepository<LabelRepository, Label>();
+                }
+                return _labels;
+            }
+        }
 
 
+        private kConfigRepository _kconfig;
 
-        #endregion
+        public kConfigRepository KConfig
+        {
+            get
+            {
+                if (_kconfig == null)
+                {
+                    _kconfig = GetSiteRepository<kConfigRepository, KConfig>();
+                }
+                return _kconfig;
+            }
+        }
 
+        private HtmlBlockRepository _htmlblocks;
+        public HtmlBlockRepository HtmlBlocks
+        {
+            get
+            {
+                if (_htmlblocks == null)
+                {
+                    _htmlblocks = GetSiteRepository<HtmlBlockRepository, HtmlBlock>();
+                }
+                return _htmlblocks;
+            }
+        }
+
+
+        private ContentFolderRepository _contentfolders;
+        public ContentFolderRepository ContentFolders
+        {
+            get
+            {
+                if (_contentfolders == null)
+                {
+                    _contentfolders = GetSiteRepository<ContentFolderRepository, ContentFolder>();
+                }
+                return _contentfolders;
+            }
+        }
+
+
+        private ContentTypeRepository _ContentTypes;
+        public ContentTypeRepository ContentTypes
+        {
+            get
+            {
+                if (_ContentTypes == null)
+                {
+                    _ContentTypes = GetSiteRepository<ContentTypeRepository, ContentType>();
+                }
+                return _ContentTypes;
+            }
+        }
+
+        private ContentCategoryRepository _contentcategory;
+
+        public ContentCategoryRepository ContentCategories
+        {
+            get
+            {
+                if (_contentcategory == null)
+                {
+                    _contentcategory = GetSiteRepository<ContentCategoryRepository, ContentCategory>();
+                }
+                return _contentcategory;
+            }
+        }
+
+        private TextContentRepository _textcontent;
+        public TextContentRepository TextContent
+        {
+            get
+            {
+                if (_textcontent == null)
+                {
+                    _textcontent = GetSiteRepository<TextContentRepository, TextContent>();
+                }
+                return _textcontent;
+            }
+        } 
 
         // rebuild the index... 
         public void ClearLog(string[] storenames)
@@ -648,19 +1003,16 @@ namespace Kooboo.Sites.Repository
                     finally
                     {
                         Monitor.Exit(_repolocker);
-                    } 
+                    }
 
                 }
 
             }
-            
+
             this.WebSite.Published = published;
             this.WebSite.EnableDiskSync = disksync;
-            this.WebSite.ContinueDownload = continuedownload;  
-        } 
-
-
-
+            this.WebSite.ContinueDownload = continuedownload;
+        }
 
     }
 

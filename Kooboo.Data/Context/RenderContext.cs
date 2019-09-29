@@ -112,11 +112,17 @@ namespace Kooboo.Data.Context
                 if (_culture == null)
                 {             
                     _culture = RequestManager.GetSetCulture(this.WebSite, this);
-                    if (_culture == null && this.WebSite != null)
+                    if (_culture == null)
                     {
-                        _culture = this.WebSite.DefaultCulture;
-                    }
-
+                        if (this.WebSite !=null)
+                        {
+                            _culture = this.WebSite.DefaultCulture;
+                        }
+                        else
+                        {
+                            _culture = AppSettings.CmsLang; // default
+                        } 
+                    } 
                 }
                 return _culture;
             }

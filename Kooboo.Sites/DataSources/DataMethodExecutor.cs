@@ -41,7 +41,7 @@ namespace Kooboo.Sites.DataSources
             List<object> paras = ParameterBinder.Bind(CompiledMethod.Parameters, ParameterBindings, dataContext);
 
             CheckAndAssignDefaultValue(paras, CompiledMethod, context, ViewMethod.MethodId);
-              
+
 
             var result = Execute(CompiledMethod, paras.ToArray(), context);
             if (result == null)
@@ -91,7 +91,7 @@ namespace Kooboo.Sites.DataSources
                 return result;
             }
         }
-          
+
         internal static object Execute(Render.FrontContext context, DataMethodCompiled CompiledMethod)
         {
             List<object> paras = ParameterBinder.Bind(CompiledMethod.Parameters, CompiledMethod.ParameterBindings, context.RenderContext.DataContext);
@@ -241,15 +241,16 @@ namespace Kooboo.Sites.DataSources
             }
 
             int count = CompiledMethod.Parameters.Count();
+            var keylist = CompiledMethod.Parameters.Keys.ToList(); 
+
+            bool IsContentList = CompiledMethod.DeclareType == typeof(Kooboo.Sites.DataSources.ContentList);
+
+            bool IsContentQueried = false;
 
             bool IsTextContentMethod = CompiledMethod.ReturnType == typeof(TextContentViewModel) || Kooboo.Lib.Reflection.TypeHelper.GetGenericType(CompiledMethod.ReturnType) == typeof(TextContentViewModel);
 
             TextContentViewModel samplecontent = null;
-            if (IsTextContentMethod)
-            {
-                var folderid = TryGetFolderGuid(CompiledMethod.ParameterBindings);
-                samplecontent = context.SiteDb.TextContent.GetDefaultContentFromFolder(folderid, context.RenderContext.Culture);
-            }
+
 
             bool IsByCategory = IsQueryByCategory(CompiledMethod);
 
@@ -258,7 +259,18 @@ namespace Kooboo.Sites.DataSources
             {
                 if (values[i] == null)
                 {
-                    var paraname = CompiledMethod.Parameters.Keys.ToList()[i];
+                    var paraname = keylist[i];
+
+                    if (IsContentList)
+                    {
+                        //int PageSize, int PageNumber, string SortField, Boolean IsAscending
+                        if (paraname == "PageSize" || paraname == "PageNumber" || paraname == "SortField" || paraname == "IsAscending")
+                        {
+                            var x = keylist[i];
+                            var paratype = CompiledMethod.Parameters[x];
+                            values[i] = GetDefaultValueForDataType(paratype);
+                        }
+                    }
 
                     if (IsByCategory)
                     {
@@ -274,6 +286,16 @@ namespace Kooboo.Sites.DataSources
                         }
                     }
 
+                    if (!IsContentQueried)
+                    {
+                        if (IsTextContentMethod)
+                        {
+                            var folderid = TryGetFolderGuid(CompiledMethod.ParameterBindings);
+                            samplecontent = context.SiteDb.TextContent.GetDefaultContentFromFolder(folderid, context.RenderContext.Culture);
+                        }
+                        IsContentQueried = true;
+                    }
+                     
                     if (samplecontent != null)
                     {
                         var key = GetBindingKey(paraname, CompiledMethod.ParameterBindings);
@@ -287,7 +309,7 @@ namespace Kooboo.Sites.DataSources
 
                     if (values[i] == null)
                     {
-                        var x = CompiledMethod.Parameters.Keys.ToList()[i];
+                        var x = keylist[i];
                         var paratype = CompiledMethod.Parameters[x];
                         values[i] = GetDefaultValueForDataType(paratype);
                     }
@@ -458,7 +480,7 @@ namespace Kooboo.Sites.DataSources
                     var result = DataMethodExecutor.ExecuteDataMethod(context, item.Id);
                     if (result != null)
                     {
-                        List<object> itemcollection; 
+                        List<object> itemcollection;
 
                         if (result is PagedResult)
                         {
@@ -477,8 +499,8 @@ namespace Kooboo.Sites.DataSources
                             }
                         }
                         else
-                        { 
-                             itemcollection = ((IEnumerable)result).Cast<object>().ToList();
+                        {
+                            itemcollection = ((IEnumerable)result).Cast<object>().ToList();
 
                             if (itemcollection != null && itemcollection.Count() > 0)
                             {
@@ -509,7 +531,10 @@ namespace Kooboo.Sites.DataSources
                 if (lower == "folderid" || lower == "folder.id" || lower == "folder" || lower.Contains(".folderid"))
                 {
                     var value = item.Value;
-                    Guid.TryParse(value.Binding, out folderid);
+                    if (Guid.TryParse(value.Binding, out folderid))
+                    {
+                        return folderid; 
+                    }
                 }
             }
             return folderid;
@@ -657,7 +682,7 @@ namespace Kooboo.Sites.DataSources
                     {
                         if (item.Key.ToLower() != Kooboo.Sites.DataSources.ScriptSourceManager.SampleResponseFieldName.ToLower())
                         {
-                            this.ParameterBindings.Add(item.Key, item.Value); 
+                            this.ParameterBindings.Add(item.Key, item.Value);
                         }
                     }
                 }

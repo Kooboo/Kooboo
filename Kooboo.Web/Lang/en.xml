@@ -139,7 +139,6 @@
   <key id="privacy policy">privacy policy</key>
   <key id="Sign up">Sign up</key>
   <key id="Reset">Reset</key>
-  <key id="s">s</key>
   <key id="Continue">Continue</key>
   <key id="Click the &quot;New field&quot; below to create first content field for your content type.">Click the "New field" below to create first content field for your content type.</key>
   <key id="New field">New field</key>
@@ -641,9 +640,6 @@
   <key id="Data type">Data type</key>
   <key id="Error message">Error message</key>
   <key id="Length">Length</key>
-  <key id="Click to collapse actions">Click to collapse actions</key>
-  <key id="Redo">Redo</key>
-  <key id="NOTE!">NOTE!</key>
   <key id="Current page">Current page</key>
   <key id="Meta">Meta</key>
   <key id="HTTP-equiv">HTTP-equiv</key>
@@ -847,6 +843,7 @@
   <key id="please check your server.">please check your server.</key>
   <key id="This site is still downloading, please wait.">This site is still downloading, please wait.</key>
   <key id="Please select the content you want before exporting.">Please select the content you want before exporting.</key>
+  <key id="Domain missing">Domain missing</key>
   <key id="Reply content goes here">Reply content goes here</key>
   <key id="Input a amount large than 0.01">Input a amount large than 0.01</key>
   <key id="Add relative source">Add relative source</key>
@@ -1056,6 +1053,7 @@
   <key id="Day(s)">Day(s)</key>
   <key id="Bidder">Bidder</key>
   <key id="Day">Day</key>
+  <key id="s">s</key>
   <key id="Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.">Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.</key>
   <key id="Verify">Verify</key>
   <key id="Take offline">Take offline</key>
@@ -1256,7 +1254,6 @@
   <key id="Delete label">Delete label</key>
   <key id="Domain has been taken">Domain has been taken</key>
   <key id="Domain must use Kooboo DNS server">Domain must use Kooboo DNS server</key>
-  <key id="SSL generation failed">SSL generation failed</key>
   <key id="user or ip temporarily lockout">user or ip temporarily lockout</key>
   <key id="Old and New Password are the same">Old and New Password are the same</key>
   <key id="is in use">is in use</key>
@@ -1353,8 +1350,10 @@
   <key id="Advance">Advance</key>
   <key id="System">System</key>
   <key id="Development">Development</key>
+  <key id="Commerce">Commerce</key>
   <key id="SiteBindings">SiteBindings</key>
   <key id="SiteMirror">SiteMirror</key>
+  <key id="Only internet enabled domain that use Kooboo DNS or hosted by Kooboo can generate SSL certificates">Only internet enabled domain that use Kooboo DNS or hosted by Kooboo can generate SSL certificates</key>
   <key id="Request IP not allowed">Request IP not allowed</key>
   <key id="Root">Root</key>
   <key id="Website not found">Website not found</key>
@@ -1410,6 +1409,7 @@
   <key id="Member address should not be same as group address">Member address should not be same as group address</key>
   <key id="you have no enough credit to send emails">you have no enough credit to send emails</key>
   <key id="HtmlBlocks">HtmlBlocks</key>
+  <key id="Products">Products</key>
   <key id="ContentTypes">ContentTypes</key>
   <key id="Key-Value">Key-Value</key>
   <key id="Table">Table</key>

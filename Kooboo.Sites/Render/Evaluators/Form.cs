@@ -73,5 +73,4 @@ namespace Kooboo.Sites.Render
             return true;  
         }
     }
-
 }
