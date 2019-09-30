@@ -403,23 +403,6 @@ namespace Kooboo.IndexedDB.Btree
                 return ContainerNode;
             }
 
-            NodePointer pointer = new NodePointer();
-
-            pointer.PointerBytes = ContainerNode.TreeNode.PreviousPointer;
-
-            if (pointer.PositionPointer > 0)
-            {
-                var subnode = GetOrLoadNode(TreeFile, ContainerNode, pointer);
-                if (subnode != null)
-                {
-                    var result = FindContainerFirstLeaf(TreeFile, subnode);
-                    if (result != null)
-                    {
-                        return result;
-                    }
-                }
-            }
-
             // did not get return, try one key by one key. 
             byte[] key = KeyFinder.FindSmallestBiggerKey(null, ContainerNode.TreeNode.KeyArray, TreeFile.comparer);
 
@@ -441,6 +424,23 @@ namespace Kooboo.IndexedDB.Btree
                 }
 
                 key = KeyFinder.FindSmallestBiggerKey(key, ContainerNode.TreeNode.KeyArray, TreeFile.comparer);
+            }
+
+            NodePointer pointer = new NodePointer();
+
+            pointer.PointerBytes = ContainerNode.TreeNode.PreviousPointer;
+
+            if (pointer.PositionPointer > 0)
+            {
+                var subnode = GetOrLoadNode(TreeFile, ContainerNode, pointer);
+                if (subnode != null)
+                {
+                    var result = FindContainerFirstLeaf(TreeFile, subnode);
+                    if (result != null)
+                    {
+                        return result;
+                    }
+                }
             }
 
             return null;
