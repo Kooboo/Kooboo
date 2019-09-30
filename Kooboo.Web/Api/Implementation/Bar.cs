@@ -119,7 +119,7 @@ namespace Kooboo.Web.Api.Implementation
             advance.Items.Add(development);
             advance.Items.Add(content);
             advance.Items.Add(database);
-            advance.Items.Add(commerce);
+            // advance.Items.Add(commerce);
 
             var sitebarmenus = MenuContainer.SideBarMenus;
 
@@ -147,7 +147,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 else if (item.Parent == SideBarSection.Commerce)
                 {
-                    commerce.Items.Add(new CmsMenuViewModel(item, context));
+                  //  commerce.Items.Add(new CmsMenuViewModel(item, context));
                 }
             }
              

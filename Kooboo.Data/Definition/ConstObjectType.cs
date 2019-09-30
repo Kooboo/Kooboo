@@ -86,6 +86,9 @@ namespace Kooboo
         public const byte kfile = 80; 
         public const byte Kconfig = 81;
 
-        public const byte TableRelation = 82; 
+        public const byte TableRelation = 82;
+
+        public const byte kexternalcache = 83;
+      
     }
 }

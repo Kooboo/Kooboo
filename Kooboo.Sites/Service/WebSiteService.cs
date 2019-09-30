@@ -3,6 +3,7 @@
 using Kooboo.Data;
 using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Models;
 using Kooboo.Sites.Render;
 using System;
 using System.Collections.Generic;
@@ -346,7 +347,22 @@ namespace Kooboo.Sites.Service
 
             return "Internal Server Error";
         }
+ 
+        public static void VerifyFrontendEvent(WebSite website)
+        { 
+            // check if there is any event.... 
+            if (website.EnableFrontEvents)
+            {
+                var sitedb = website.SiteDb(); 
 
-
+                var events = sitedb.Code.Query.Where(o => o.CodeType == CodeType.Event).Count();
+                if (events == 0)
+                {
+                    website.EnableFrontEvents = false;
+                    Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(website);
+                }
+            }
+        }
+         
     }
 }

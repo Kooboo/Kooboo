@@ -209,11 +209,55 @@ namespace Kooboo.Sites.Systems
 
         public static void TextContentRender(FrontContext context, string NameOrId, Dictionary<string, string> Parameters)
         {
-
             throw new NotImplementedException();
         }
 
         public static void DefaultRender(FrontContext context, byte ConstType, string NameOrId, Dictionary<string, string> Parameters)
+        {
+
+            var modeltype = Service.ConstTypeService.GetModelType(ConstType);
+            var repo = context.SiteDb.GetRepository(modeltype);
+
+            ISiteObject siteobject = null;
+            siteobject = repo?.GetByNameOrId(NameOrId) as ISiteObject;
+
+            if (siteobject == null)
+            {
+                long logid = -1;
+
+                if (long.TryParse(NameOrId, out logid))
+                {
+                    var logentry = context.SiteDb.Log.Get(logid);
+                    siteobject = repo.GetByLog(logentry) as ISiteObject;
+                }
+            }
+
+            if (siteobject != null)
+            {
+                var contenttype = Service.ConstTypeService.GetContentType(ConstType);
+                context.RenderContext.Response.ContentType = contenttype;
+
+                if (siteobject is ITextObject)
+                {
+                    context.RenderContext.Response.ContentType += ";charset=utf-8";
+                    var textobject = siteobject as ITextObject;
+                    context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(textobject.Body);
+                }
+                else if (siteobject is IBinaryFile)
+                {
+                    var binary = siteobject as IBinaryFile;
+                    context.RenderContext.Response.Body = binary.ContentBytes;
+                }
+                else
+                {
+                    context.RenderContext.Response.ContentType += ";charset=utf-8";
+                    var json = Lib.Helper.JsonHelper.Serialize(siteobject);
+                    context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(json);
+                }
+            }
+        }
+
+        public static void Special(FrontContext context, byte ConstType, string NameOrId, Dictionary<string, string> Parameters)
         {
 
             var modeltype = Service.ConstTypeService.GetModelType(ConstType);
@@ -287,5 +331,7 @@ namespace Kooboo.Sites.Systems
                 context.RenderContext.Response.Body = allbytes; 
             }   
         }    
+
+
     }
 }

@@ -112,7 +112,12 @@ namespace Kooboo.Data.Repository
                 var counts = this.ListByOrg(value.OrganizationId).Count(); 
                 if (counts >= maxsites)
                 {
-                    throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Max number of sites has been reached, require service level upgrade")); 
+                    var found = this.Get(value.Id);
+
+                    if (found == null)
+                    {
+                        throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Max number of sites has been reached, require service level upgrade"));
+                    }  
                 }
             }
 

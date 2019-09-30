@@ -32,5 +32,6 @@ namespace Kooboo.Lib.Security
         { 
             return Encode(System.Guid.NewGuid()); 
         }
+ 
     }
 }
