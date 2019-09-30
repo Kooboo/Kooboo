@@ -404,7 +404,7 @@ namespace Kooboo.IndexedDB.Btree
             }
 
             // did not get return, try one key by one key. 
-            byte[] key = KeyFinder.FindSmallestBiggerKey(null, ContainerNode.TreeNode.KeyArray, TreeFile.comparer);
+            byte[] key = KeyFinder.FindLastKey(ContainerNode.TreeNode.KeyArray, TreeFile.comparer);
 
             while (key != null)
             {
@@ -423,7 +423,7 @@ namespace Kooboo.IndexedDB.Btree
                     }
                 }
 
-                key = KeyFinder.FindSmallestBiggerKey(key, ContainerNode.TreeNode.KeyArray, TreeFile.comparer);
+                key = KeyFinder.FindBiggestSmallerKey(key, ContainerNode.TreeNode.KeyArray, TreeFile.comparer);
             }
 
             NodePointer pointer = new NodePointer();
