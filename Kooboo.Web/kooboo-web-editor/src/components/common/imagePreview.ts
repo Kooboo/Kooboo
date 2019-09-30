@@ -21,7 +21,7 @@ export function createImagePreview(showDeleteBtn: boolean = false, onDelete?: ()
 
   const setImage = (src: string) => {
     src = clearCssImageWarp(src);
-    if (src == "none") (preview.src as any) = undefined;
+    if (src == "none") (preview.src as any) = "";
     else preview.src = src;
   };
 
