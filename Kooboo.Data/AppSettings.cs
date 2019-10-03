@@ -61,6 +61,8 @@ namespace Kooboo.Data
             {
                 DefaultLocalHost = "localkooboo.com";
             }
+
+            _serversetting = null; // reset server setting. 
         }
 
         private static void SetUser()
