@@ -3,11 +3,16 @@
 using System;
 using Kooboo.IndexedDB.Serializer.Simple.FieldConverter;
 using Kooboo.IndexedDB.Helper;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic; 
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
-   public static class ConverterHelper
+    public static class ConverterHelper
     {
+        
+
         public static Func<object, byte[]> GetValueToBytes(Type type)
         {
             if (type == typeof(int))
@@ -60,13 +65,13 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
             else if (type == typeof(System.Net.IPAddress))
             {
-                return ValueConverter.IpAddressToBytes; 
+                return ValueConverter.IpAddressToBytes;
             }
             else if (type == typeof(object))
             {
                 return ValueConverter.ObjectToTypes;
             }
-  
+
             else if (ObjectHelper.IsDictionary(type))
             {
                 return new DictionaryConverter(type).ToBytes;
@@ -81,22 +86,22 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
             else if (type.IsClass)
             {
-                ClassConverter converter = ClassConverterCache.Get(type); 
-                if (converter ==  null)
+                ClassConverter converter = ClassConverterCache.Get(type);
+                if (converter == null)
                 {
                     converter = new ClassConverter(type);
                     ClassConverterCache.Add(type, converter);
-                    converter.InitFields(); 
+                    converter.InitFields();
                 }
 
-                return  converter.ToBytes;
-            } 
+                return converter.ToBytes;
+            }
 
-            return null; 
+            return null;
         }
-        
+
         public static Func<byte[], object> GetBytesToValue(Type type)
-        { 
+        {
             if (type == typeof(int))
             {
                 return ValueConverter.FromIntBytes;
@@ -147,11 +152,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
             else if (type == typeof(System.Net.IPAddress))
             {
-                return ValueConverter.FromBytesToIpaddress; 
+                return ValueConverter.FromBytesToIpaddress;
             }
             else if (type == typeof(object))
             {
-                return ValueConverter.FromObjectBytes; 
+                return ValueConverter.FromObjectBytes;
             }
 
             else if (ObjectHelper.IsDictionary(type))
@@ -164,11 +169,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
             else if (ObjectHelper.IsCollection(type))
             {
-                return new CollectionConverter(type).FromBytes; 
+                return new CollectionConverter(type).FromBytes;
             }
-      
+
             else if (type.IsClass)
-            { 
+            {
                 ClassConverter converter = ClassConverterCache.Get(type);
                 if (converter == null)
                 {
@@ -179,14 +184,14 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
                 return converter.FromBytes;
             }
-            return null; 
+            return null;
         }
-         
+
         public static bool IsValueType(Type type)
         {
             if (type == typeof(int))
             {
-                return true; 
+                return true;
             }
             else if (type == typeof(string))
             {
@@ -234,7 +239,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
             else if (type == typeof(object))
             {
-                return true; 
+                return true;
             }
 
             return false;
@@ -289,23 +294,23 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
             else if (type.IsEnum)
             {
-                return 4; 
+                return 4;
             }
             else
             {
                 return 0;
-            } 
+            }
         }
 
         public static EnumValueType GetEnumType(Type type)
         {
             if (type == typeof(int))
             {
-                return EnumValueType.Int; 
+                return EnumValueType.Int;
             }
             else if (type == typeof(string))
             {
-                return EnumValueType.String; 
+                return EnumValueType.String;
             }
             else if (type == typeof(bool))
             {
@@ -349,7 +354,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
             else if (type == typeof(object))
             {
-                return EnumValueType.Object; 
+                return EnumValueType.Object;
             }
             return EnumValueType.Unknown;
         }
@@ -357,9 +362,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple
         public static Type GetTypeFromEnumType(EnumValueType enumvalue)
         {
             switch (enumvalue)
-            { 
+            {
                 case EnumValueType.Byte:
-                    return typeof(byte); 
+                    return typeof(byte);
 
                 case EnumValueType.Short:
                     return typeof(short);
@@ -371,7 +376,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                     return typeof(long);
 
                 case EnumValueType.Bool:
-                    return typeof(bool); 
+                    return typeof(bool);
 
                 case EnumValueType.DateTime:
                     return typeof(DateTime);
@@ -401,9 +406,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple
         public static Func<byte[], object> GetBytesToValueFromEnum(EnumValueType enumType)
         {
             switch (enumType)
-            { 
+            {
                 case EnumValueType.Byte:
-                    return ValueConverter.FromByteBytes; 
+                    return ValueConverter.FromByteBytes;
                 case EnumValueType.Short:
                     return ValueConverter.FromShortBytes;
                 case EnumValueType.Int:
@@ -430,16 +435,16 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                     return ValueConverter.FromObjectBytes;
                 default:
                     return null;
-            }          
+            }
         }
-        
+
         public static IFieldConverter<T> GetFieldConverter<T>(Type FieldType, string FieldName)
         {
             if (ObjectHelper.IsDictionary(FieldType))
             {
-                return new DictionaryFieldConverter<T>(FieldType, FieldName); 
+                return new DictionaryFieldConverter<T>(FieldType, FieldName);
             }
-              
+
             else if (ObjectHelper.IsList(FieldType))
             {
                 return new ListFieldConverter<T>(FieldType, FieldName);
@@ -499,7 +504,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
             else if (FieldType == typeof(System.Net.IPAddress))
             {
-                return new IpAddressFieldConverter<T>(FieldName); 
+                return new IpAddressFieldConverter<T>(FieldName);
             }
             else if (FieldType == typeof(object))
             {
@@ -513,13 +518,13 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
             else if (FieldType.IsEnum)
             {
-                return new EnumFieldConveter<T>(FieldName, FieldType); 
+                return new EnumFieldConveter<T>(FieldName, FieldType);
             }
 
             else
             {
                 throw new Exception(FieldType.Name + " can not be identified.");
-            }  
+            }
         }
 
         public static IFieldConverter GetFieldConverter(Type ObjectType, Type FieldType, string FieldName)
@@ -587,7 +592,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
             else if (FieldType == typeof(System.Net.IPAddress))
             {
-                return new IpAddressFieldConverter(FieldName, ObjectType); 
+                return new IpAddressFieldConverter(FieldName, ObjectType);
             }
             else if (FieldType == typeof(object))
             {
@@ -609,5 +614,40 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 throw new Exception(FieldType.Name + " can not be identified.");
             }
         }
+
+
+        private static Dictionary<string, Func<byte[], object>> _typenameconverter; 
+        public static Dictionary<string, Func<byte[], object>> TypeNameConverter
+        {
+            get
+            {
+                if (_typenameconverter == null)
+                {
+                    var result = new Dictionary<string, Func<byte[], object>>(StringComparer.OrdinalIgnoreCase);
+
+                    result.Add(typeof(int).Name, ValueConverter.FromIntBytes);
+                    result.Add(typeof(string).Name, ValueConverter.FromStringBytes);
+                    result.Add(typeof(bool).Name, ValueConverter.FromBoolBytes);
+                    result.Add(typeof(DateTime).Name, ValueConverter.FromDateTimeBytes);
+                    result.Add(typeof(Guid).Name, ValueConverter.FromGuidBytes);
+                    result.Add(typeof(byte).Name, ValueConverter.FromByteBytes);
+                    result.Add(typeof(byte[]).Name, ValueConverter.FromByteArrayBytes);
+                    result.Add(typeof(decimal).Name, ValueConverter.FromDecimalBytes);
+                    result.Add(typeof(double).Name, ValueConverter.FromDoubleBytes);
+
+                    result.Add(typeof(float).Name, ValueConverter.FromFloatBytes);
+                    result.Add(typeof(Int16).Name, ValueConverter.FromShortBytes);
+                    result.Add(typeof(Int64).Name, ValueConverter.FromLongBytes);
+
+                    result.Add(typeof(System.Net.IPAddress).Name, ValueConverter.FromBytesToIpaddress);
+                    result.Add(typeof(object).Name, ValueConverter.FromObjectBytes);
+
+                    _typenameconverter = result; 
+                }
+                return _typenameconverter; 
+            }
+        }
+
+         
     }
 }

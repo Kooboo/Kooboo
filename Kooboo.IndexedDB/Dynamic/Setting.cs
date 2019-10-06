@@ -14,6 +14,8 @@ namespace Kooboo.IndexedDB.Dynamic
         {
         }
 
+        public bool EnableLog { get; set; }
+
         private HashSet<TableColumn> _columns;
         public HashSet<TableColumn> Columns
         {

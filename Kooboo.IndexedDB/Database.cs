@@ -23,6 +23,33 @@ namespace Kooboo.IndexedDB
             }
         }
 
+        private BlockFile _tablelog; 
+
+        public BlockFile TableLog
+        {
+            get
+            {
+                if (_tablelog == null)
+                {
+                    lock (_locker)
+                    {
+                        if (_tablelog == null)
+                        {
+                            string folder =  System.IO.Path.Combine(this.AbsolutePath, GlobalSettings.TableLogName);
+
+                            string blockfileName = System.IO.Path.Combine(folder, "table.log");
+
+                            _tablelog = new BlockFile(blockfileName);
+                            _tablelog.OpenOrCreate();
+                        }
+                    }
+                }
+                return _tablelog;
+            }
+        }
+
+
+
         public Database(string databaseName)
         { 
             this.Name = databaseName.ToValidPath();

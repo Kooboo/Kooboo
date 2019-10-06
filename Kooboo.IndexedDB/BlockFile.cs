@@ -41,8 +41,12 @@ namespace Kooboo.IndexedDB
         {
             byte[] partial = new byte[count]; 
             Stream.Position = position + offset;
-            Stream.Read(partial, 0, count); 
-            return partial;
+            if (Stream.Length >= position + offset + count)
+            {
+                Stream.Read(partial, 0, count);
+                return partial;
+            }
+            return null;       
         }
             
         // keep for upgrade.. not used any more. 
@@ -74,12 +78,15 @@ namespace Kooboo.IndexedDB
             Stream.Write(bytes, 0, TotalByteLen); 
             return currentposition;
 
-
         }
          
         public byte[] Get(long position)
         {  
             byte[] counterbytes = GetPartial(position, 2, 4);
+            if (counterbytes == null)
+            {
+                return null; 
+            }
             int counter = BitConverter.ToInt32(counterbytes, 0); 
             return GetPartial(position, 10, counter); 
         }

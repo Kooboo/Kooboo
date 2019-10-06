@@ -9,30 +9,31 @@ namespace Kooboo.IndexedDB
     /// The cms editing log, this can be used to restore the entire cms entries
     /// </summary>
     public class LogEntry
-    {  
+    {
         /// <summary>
         /// sequence version id. incremental. this is also the key. 
         /// </summary>
         public Int64 Id
         {
-            get;set;
+            get; set;
         }
 
-        private string _storename; 
-        
-        public string StoreName {
+        private string _storename;
+
+        public string StoreName
+        {
             get
             {
-                return _storename; 
+                return _storename;
             }
             set
             {
                 _storename = value;
-                _storenamehash =_storename.GetHashCode32(); 
+                _storenamehash = _storename.GetHashCode32();
             }
         }
 
-        private int _storenamehash; 
+        private int _storenamehash;
 
         public int StoreNameHash
         {
@@ -42,53 +43,105 @@ namespace Kooboo.IndexedDB
                 {
                     if (!string.IsNullOrEmpty(_storename))
                     {
-                        _storenamehash =_storename.GetHashCode32();                  
+                        _storenamehash = _storename.GetHashCode32();
                     }
-                    return _storenamehash; 
+                    return _storenamehash;
                 }
-                return _storenamehash; 
+                return _storenamehash;
             }
             set
             {
-                _storenamehash = value; 
+                _storenamehash = value;
+            }
+        }
+
+
+        public string _tablename { get; set; }
+
+        public string TableName
+        {
+            get
+            {
+                return _tablename;
+            }
+            set
+            {
+                _tablename = value;
+                _tablenamehash = _tablename.GetHashCode32();
+            }
+        }
+
+
+        private int _tablenamehash;
+
+        public int TableNameHash
+        {
+            get
+            {
+                if (_tablenamehash == default(int))
+                {
+                    if (!string.IsNullOrEmpty(_tablename))
+                    {
+                        _tablenamehash = _tablename.GetHashCode32();
+                    }
+                    return _tablenamehash;
+                }
+                return _tablenamehash;
+            }
+            set
+            {
+                _tablenamehash = value;
+            }
+        }
+
+        public string TableColName { get; set; }
+
+        [Kooboo.IndexedDB.CustomAttributes.KoobooIgnore]
+        public bool IsTable
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(TableName);
             }
         }
 
         public Guid UserId { get; set; }
 
-        private byte[] _keybytes; 
+        private byte[] _keybytes;
 
         /// <summary>
         /// The key value in the format of byte array. 
         /// </summary>
-        public byte[] KeyBytes {
+        public byte[] KeyBytes
+        {
             get
             {
-                return _keybytes; 
+                return _keybytes;
             }
             set
             {
                 _keybytes = value;
-                _keyHash = ToHashGuid(_keybytes); 
+                _keyHash = ToHashGuid(_keybytes);
             }
         }
 
-        private Guid _keyHash; 
+        private Guid _keyHash;
         /// <summary>
         /// The KeyBytes HasKey; 
         /// </summary>
-        public Guid KeyHash {
+        public Guid KeyHash
+        {
             get
             {
                 if (_keyHash == default(Guid))
                 {
-                    _keyHash = ToHashGuid(_keybytes); 
+                    _keyHash = ToHashGuid(_keybytes);
                 }
-                return _keyHash; 
+                return _keyHash;
             }
             set
             {
-                _keyHash = value; 
+                _keyHash = value;
             }
 
         }
@@ -112,10 +165,10 @@ namespace Kooboo.IndexedDB
             }
             set
             {
-                _updatetime = DateTime.SpecifyKind(value, DateTimeKind.Utc); 
+                _updatetime = DateTime.SpecifyKind(value, DateTimeKind.Utc);
             }
         }
-          
+
         private Int64 _timetick;
 
         /// <summary>
@@ -127,7 +180,7 @@ namespace Kooboo.IndexedDB
             {
                 if (_timetick == default(Int64))
                 {
-                    _timetick = UpdateTime.Ticks;  
+                    _timetick = UpdateTime.Ticks;
                 }
                 return _timetick;
             }
@@ -140,17 +193,17 @@ namespace Kooboo.IndexedDB
         public Int64 OldBlockPosition { get; set; }
 
         public Int64 NewBlockPosition { get; set; }
-          
+
         public static Guid ToHashGuid(byte[] bytes)
-        { 
+        {
             if (bytes == null)
             {
-                return default(Guid); 
+                return default(Guid);
             }
             MD5 md5Hasher = MD5.Create();
             byte[] data = md5Hasher.ComputeHash(bytes);
             return new Guid(data);
-        } 
+        }
     }
 
     public enum EditType
