@@ -118,7 +118,7 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             this.Name = name;
             this.ObjectFolder = ownerdatabase.TableFolder(name);
-            this.SettingFile = ownerdatabase.SettingFile(name, "table.config");
+            this.SettingFile = ownerdatabase.TableSetitingFile(name);
 
             setting = SettingHelper.GetOrSetTableSetting(this.SettingFile, setting);
 
@@ -130,7 +130,7 @@ namespace Kooboo.IndexedDB.Dynamic
             Setting setting = null;
             this.Name = name;
             this.ObjectFolder = ownerdatabase.TableFolder(name);
-            this.SettingFile = ownerdatabase.SettingFile(name, "table.config");
+            this.SettingFile = ownerdatabase.TableSetitingFile(name);
 
             setting = SettingHelper.GetOrSetTableSetting(this.SettingFile, setting);
 

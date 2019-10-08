@@ -34,10 +34,10 @@ namespace Kooboo.IndexedDB
                     {
                         if (_tablelog == null)
                         {
-                            string tablefolder = this.AbsolutePath; 
+                            string tablefolder = this.AbsolutePath;
                             if (!string.IsNullOrWhiteSpace(TablePath))
                             {
-                                tablefolder = System.IO.Path.Combine(tablefolder, TablePath); 
+                                tablefolder = System.IO.Path.Combine(tablefolder, TablePath);
                             }
 
                             string folder = System.IO.Path.Combine(tablefolder, GlobalSettings.TableLogName);
@@ -60,9 +60,9 @@ namespace Kooboo.IndexedDB
             {
                 if (_tablePrefixFolder == null)
                 {
-                    return "Tables"; 
+                    return "Tables";
                 }
-                return _tablePrefixFolder; 
+                return _tablePrefixFolder;
             }
             set
             {
@@ -133,7 +133,7 @@ namespace Kooboo.IndexedDB
                 return false;
             }
 
-            string storesetting = SettingFile(objectStoreName);
+            string storesetting = StoreSetitingFile(objectStoreName);
 
             return System.IO.File.Exists(storesetting);
         }
@@ -469,7 +469,7 @@ namespace Kooboo.IndexedDB
             else
             {
                 return System.IO.Path.Combine(this.AbsolutePath, TablePath, TableName.ToValidPath());
-            } 
+            }
         }
 
         [Obsolete]
@@ -485,15 +485,10 @@ namespace Kooboo.IndexedDB
             return filename;
         }
 
-        internal string SettingFile(string storename, string settingfilename = null)
-        {
-            if (string.IsNullOrWhiteSpace(settingfilename))
-            {
-                settingfilename = "store.config";
-            }
-
+        internal string StoreSetitingFile(string storename)
+        {  
             string folder = objectFolder(storename);
-            string filename = System.IO.Path.Combine(folder, settingfilename);
+            string filename = System.IO.Path.Combine(folder, "store.config"); 
 
             if (!Directory.Exists(folder))
             {
@@ -501,6 +496,19 @@ namespace Kooboo.IndexedDB
             }
             return filename;
         }
+
+        internal string TableSetitingFile(string tableName)
+        { 
+            string folder = TableFolder(tableName);
+            string filename = System.IO.Path.Combine(folder, "table.config");
+
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+            return filename;
+        }
+
 
         /// <summary>
         /// delete current database
@@ -672,7 +680,7 @@ namespace Kooboo.IndexedDB
         /// <returns></returns>
         internal StoreSetting GetStoreSetting(string storename)
         {
-            string settingfile = this.SettingFile(storename);
+            string settingfile = this.StoreSetitingFile(storename);
             return Helper.SettingHelper.ReadSetting(settingfile);
         }
 
@@ -738,7 +746,7 @@ namespace Kooboo.IndexedDB
             if (!System.IO.Directory.Exists(tablefolder))
             {
                 return new List<string>();
-            } 
+            }
 
             var subfolders = System.IO.Directory.GetDirectories(tablefolder);
 
