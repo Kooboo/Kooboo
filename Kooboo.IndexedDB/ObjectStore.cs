@@ -105,7 +105,7 @@ namespace Kooboo.IndexedDB
         {
             this.Name = name;
             this.ObjectFolder = ownerdatabase.objectFolder(name);
-            this.StoreSettingFile = ownerdatabase.SettingFile(name);
+            this.StoreSettingFile = ownerdatabase.StoreSetitingFile(name);
             this.OwnerDatabase = ownerdatabase;
             this.StoreSetting = Helper.SettingHelper.GetOrSetSetting<TValue, TKey>(this.StoreSettingFile, parameters);
             Init();
@@ -115,7 +115,7 @@ namespace Kooboo.IndexedDB
         {
             this.Name = name;
             this.ObjectFolder = ownerdatabase.objectFolder(name);
-            this.StoreSettingFile = ownerdatabase.SettingFile(name);
+            this.StoreSettingFile = ownerdatabase.StoreSetitingFile(name);
             this.OwnerDatabase = ownerdatabase;
             this.StoreSetting = setting;
             Init();

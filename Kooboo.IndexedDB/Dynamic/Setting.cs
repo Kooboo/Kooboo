@@ -14,7 +14,7 @@ namespace Kooboo.IndexedDB.Dynamic
         {
         }
 
-        public bool EnableLog { get; set; }
+        public bool EnableLog { get; set; } = true;
 
         private HashSet<TableColumn> _columns;
         public HashSet<TableColumn> Columns
@@ -138,10 +138,10 @@ namespace Kooboo.IndexedDB.Dynamic
                     if (!IsSameValue(item.Name, FieldName))
                     {
                         item.IsPrimaryKey = false;
-                       if (item.Name != Constants.DefaultIdFieldName)
+                        if (item.Name != Constants.DefaultIdFieldName)
                         {
                             item.IsUnique = false;
-                            item.IsIndex = false; 
+                            item.IsIndex = false;
                         }
                     }
                 }
@@ -158,16 +158,16 @@ namespace Kooboo.IndexedDB.Dynamic
                 id.IsUnique = true;
             }
         }
-         
+
         public void AddColumn(TableColumn col)
         {
             lock (_locker)
             {
                 if (col.IsIncremental)
-                { 
+                {
                     col.DataType = typeof(long).FullName;
                     col.IsUnique = true;
-                    col.IsIndex = true; 
+                    col.IsIndex = true;
                 }
 
                 // double verify..
@@ -180,7 +180,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 {
                     col.Length = SettingHelper.GetColumnLen(col.ClrType, col.Length);
                     // get all the relative positive without the complex flxiable position.
-       
+
 
                     if (col.Length == int.MaxValue)
                     {
@@ -206,7 +206,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 if (string.IsNullOrEmpty(col.ControlType))
                 {
-                    col.ControlType = AssignControlType(col.ClrType); 
+                    col.ControlType = AssignControlType(col.ClrType);
                 }
 
                 this.Columns.Add(col);
@@ -255,7 +255,7 @@ namespace Kooboo.IndexedDB.Dynamic
             }
             return "TextBox";
         }
-         
+
         public void AppendColumn(string FieldOrPropertyName, Type DataType, int length)
         {
             lock (_locker)
@@ -360,7 +360,7 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             return this.Name == other.Name;
         }
-          
+
     }
 
 }
