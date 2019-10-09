@@ -56,7 +56,7 @@ namespace Kooboo.IndexedDB
         }
 
 
-        public string _tablename { get; set; }
+        private string _tablename { get; set; }
 
         public string TableName
         {

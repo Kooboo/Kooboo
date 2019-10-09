@@ -2,7 +2,7 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Reflection; 
+using System.Reflection;
 
 namespace Kooboo
 {
@@ -55,7 +55,7 @@ namespace Kooboo
 
         public const byte SiteCluster = 48;
 
-        public const byte ContinueConverter = 49; 
+        public const byte ContinueConverter = 49;
 
         public const byte FormSetting = 50;
 
@@ -70,7 +70,7 @@ namespace Kooboo
 
         public const byte Code = 58;
 
-        public const byte CoreSetting = 59; 
+        public const byte CoreSetting = 59;
 
         public const byte BusinessRule = 65;
 
@@ -82,10 +82,12 @@ namespace Kooboo
 
         public const byte PaymentCallback = 76;
         public const byte PaymentRequest = 77;
-         
-        public const byte kfile = 80; 
+
+        public const byte kfile = 80;
         public const byte Kconfig = 81;
 
-        public const byte TableRelation = 82;  
+        public const byte TableRelation = 82;
+
+        public const byte DatabaseTable = 83;
     }
 }

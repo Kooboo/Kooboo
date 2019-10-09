@@ -1,15 +1,41 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved.
+﻿using Kooboo.Data.Interface;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Kooboo.Web.ViewModel
-{ 
+namespace Kooboo.Sites.Models
+{
+    public class DatabaseTable : CoreObject
+    {
 
-    public class DatabaseItemEdit
+        public DatabaseTable()
+        {
+            this.ConstType = ConstObjectType.DatabaseTable;
+        }
+
+        private List<DbTableColumn> _columns;
+
+        public List<DbTableColumn> Columns
+        {
+            get
+            {
+                if (_columns == null)
+                {
+                    _columns = new List<DbTableColumn>();
+                }
+
+                return _columns; 
+            }
+            set
+            {
+                _columns = value;
+            }
+        }
+
+    }
+
+
+    public class DbTableColumn
     {
         public string Name { get; set; }
 
@@ -17,8 +43,6 @@ namespace Kooboo.Web.ViewModel
         {
             get; set;
         }
-         
-        public object Value { get; set; }
 
         public bool IsIncremental { get; set; }
 
@@ -39,6 +63,9 @@ namespace Kooboo.Web.ViewModel
         public string Setting { get; set; }
 
         public bool IsSystem { get; set; }
+
+        public int Length { get; set; }
     }
+
 
 }

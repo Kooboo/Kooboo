@@ -23,8 +23,7 @@ namespace Kooboo.Sites.Scripting.Global
                 return this.obj.ToDictionary(o => o.Key, o => o.Value); 
             }
         }
-
-
+         
         public DynamicTableObject(IDictionary<string, object> orgObj, Table orgtable, RenderContext renderContext)
         {
             this.obj = orgObj;

@@ -250,10 +250,12 @@ $(function() {
                 viewVersion: {
                     iconClass: "fa-clock-o",
                     title: Kooboo.text.common.viewAllVersions,
-                    url: Kooboo.Route.Get(Kooboo.Route.SiteLog.LogVersions, {
+                    url: Kooboo.Route.Get(Kooboo.Route.SiteLog.LogVersions, Object.assign({
                         KeyHash: log.keyHash,
-                        StoreNameHash: log.storeNameHash
-                    }),
+                        StoreNameHash: log.storeNameHash,
+                    }, log.tableNameHash ? {
+                        tableNameHash: log.tableNameHash
+                    } : {})),
                     newWindow: true
                 }
             };

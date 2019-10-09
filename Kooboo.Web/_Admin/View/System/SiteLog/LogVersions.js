@@ -51,10 +51,12 @@ $(function() {
 
     var vm = new versionViewModel();
 
-    Kooboo.SiteLog.Versions({
+    Kooboo.SiteLog.Versions(Object.assign({
         keyHash: Kooboo.getQueryString("KeyHash"),
         storeNameHash: Kooboo.getQueryString("StoreNameHash")
-    }).then(function(res) {
+    }, Kooboo.getQueryString('tableNameHash') ? {
+        tableNameHash: Kooboo.getQueryString('tableNameHash')
+    } : {})).then(function (res) {
 
         if (res.success) {
             var verList = [];

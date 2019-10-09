@@ -28,7 +28,7 @@ namespace Kooboo.Data
                     if (!_tabledb.ContainsKey(fullpath))
                     {
                         Database db = new Database(fullpath);
-                     
+
                         _tabledb.Add(fullpath, db);
                     }
                 }
@@ -36,25 +36,14 @@ namespace Kooboo.Data
 
             return _tabledb[fullpath];
         }
-
-        public static bool HasKDatabase(WebSite website)
-        {
-            string orgfolder = AppSettings.GetOrganizationFolder(website.OrganizationId);
-            string sitefolder = System.IO.Path.Combine(orgfolder, website.Name);
-            string name = System.IO.Path.Combine(sitefolder, "Tables");
-
-            name = name.ToValidPath();
-
-            return _tabledb.ContainsKey(name); 
-
-        }
-
+          
         public static Database GetKDatabase(WebSite website)
-        {  
-            string orgfolder = AppSettings.GetOrganizationFolder(website.OrganizationId);
-            string sitefolder = System.IO.Path.Combine(orgfolder, website.Name);
-            string name = System.IO.Path.Combine(sitefolder, "Tables"); 
-            return Kooboo.Data.DB.GetTableDatabase(name);
+        {
+            return GetDatabase(website); 
+            //string orgfolder = AppSettings.GetOrganizationFolder(website.OrganizationId);
+            //string sitefolder = System.IO.Path.Combine(orgfolder, website.Name);
+            //string name = System.IO.Path.Combine(sitefolder, "Tables");
+            //return Kooboo.Data.DB.GetTableDatabase(name);
         }
 
         /// <summary>
@@ -80,6 +69,13 @@ namespace Kooboo.Data
             }
 
             return _databasedictionary[name];
+        }
+
+
+        public static Database GetDatabase(WebSite site)
+        {
+            var dbName = AppSettings.GetDbName(site.OrganizationId, site.Name);
+            return GetDatabase(dbName);
         }
 
         public static void DeleteDatabase(string name)

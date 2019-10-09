@@ -1,13 +1,14 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Api;
-using Kooboo.Sites.Authorization;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Helper;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
 using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks; 
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -31,49 +32,49 @@ namespace Kooboo.Web.Api.Implementation
         public List<string> Tables(ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
-            var list =  db.GetTables();
+            var list = db.GetTables();
 
             list.RemoveAll(o => o.StartsWith("_sys_"));
 
-            list.RemoveAll(o => o.StartsWith("_koobootemp")); 
+            list.RemoveAll(o => o.StartsWith("_koobootemp"));
 
-            return list; 
+            return list;
         }
-         
+
         public PagedListViewModel<IDictionary<string, object>> Data(string table, ApiCall call)
-        { 
-            var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite); 
+        {
+            var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
             var dbtable = db.GetOrCreateTable(table);
 
-            string sortfield = call.GetValue("sort", "orderby", "order");  
+            string sortfield = call.GetValue("sort", "orderby", "order");
             // verify sortfield. 
 
             if (sortfield != null)
             {
                 var col = dbtable.Setting.Columns.First(o => o.Name == sortfield);
-                if (col==null)
+                if (col == null)
                 {
-                    sortfield = null; 
+                    sortfield = null;
                 }
             }
 
             if (sortfield == null)
             {
-                var primarycol = dbtable.Setting.Columns.First(o => o.IsPrimaryKey); 
-                if (primarycol !=null)
+                var primarycol = dbtable.Setting.Columns.First(o => o.IsPrimaryKey);
+                if (primarycol != null)
                 {
-                    sortfield = primarycol.Name; 
+                    sortfield = primarycol.Name;
                 }
             }
 
-              
+
             var pager = ApiHelper.GetPager(call, 30);
 
             PagedListViewModel<IDictionary<string, object>> result = new PagedListViewModel<IDictionary<string, object>>();
 
-           int totalcount = (int)dbtable.length;
+            int totalcount = (int)dbtable.length;
 
-            result.TotalCount = totalcount; 
+            result.TotalCount = totalcount;
             result.TotalPages = ApiHelper.GetPageCount(totalcount, pager.PageSize);
             result.PageNr = pager.PageNr;
             result.PageSize = pager.PageSize;
@@ -84,91 +85,66 @@ namespace Kooboo.Web.Api.Implementation
                 totalskip = (pager.PageNr - 1) * pager.PageSize;
             }
 
-            var query = dbtable.Query; 
+            var query = dbtable.Query;
 
             if (!string.IsNullOrWhiteSpace(sortfield))
             {
                 query.OrderByDescending(sortfield);
             }
 
-            var items = query.Skip(totalskip).Take(pager.PageSize).ToList();  
+            var items = query.Skip(totalskip).Take(pager.PageSize).ToList();
 
             if (items != null && items.Count() > 0)
             {
-                result.List = items; 
+                result.List = items;
             }
 
-            return result; 
+            return result;
         }
-        
-        
+
+
 
 
         public void CreateTable(string name, ApiCall call)
-        {
-            var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
-
+        { 
             if (!Kooboo.IndexedDB.Helper.CharHelper.IsValidTableName(name))
             {
-                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Only Alphanumeric are allowed to use as a table", call.Context)); 
+                throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Only Alphanumeric are allowed to use as a table", call.Context));
             }
-            var table = db.GetOrCreateTable(name);
 
+            var repo = call.Context.WebSite.SiteDb().GetSiteRepository<DatabaseTableRepository>();
+            repo.AddOrUpdate(new DatabaseTable() { Name = name }); 
             return;
         }
          
-        [Attributes.RequireParameters("names")]
-        public void DeleteTables(ApiCall call)
-        {
-            var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
-
-            string json = call.GetValue("names");
-            if (string.IsNullOrEmpty(json))
-            {
-                json = call.Context.Request.Body;
-            }
-            List<string> ids = Lib.Helper.JsonHelper.Deserialize<List<string>>(json);
-
-            if (ids != null && ids.Count() > 0)
-            {
-                foreach (var item in ids)
-                {
-                    db.DeleteTable(item);
-                }
-            }
+        public void DeleteTables(string names, ApiCall call)
+        { 
+            List<string> ids = Lib.Helper.JsonHelper.Deserialize<List<string>>(names);
+            var repo = call.Context.WebSite.SiteDb().GetSiteRepository<DatabaseTableRepository>();
+            repo.DeleteTable(ids, call.Context.User.Id); 
         }
 
-   
+
         public bool IsUniqueTableName(string name, ApiCall call)
         {
-            name = name.ToLower(); 
+            var repo = call.Context.WebSite.SiteDb().GetSiteRepository<DatabaseTableRepository>();
 
-            var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
-
-            var tables = db.GetTables();
-
-            foreach (var item in tables)
-            {
-                 if (item.ToLower() == name)
-                {
-                    return false; 
-                }
-            }   
-            return true;
+            return repo.isUniqueName(name);  
+ 
         }
 
         public List<string> AvailableControlTypes(ApiCall call)
         {
-            return Kooboo.Data.Definition.ControlTypes.List;  
+            return Kooboo.Data.Definition.ControlTypes.List;
         }
 
-        public List<DatabaseColumnViewModel> Columns(string table, ApiCall call)
+        public List<DbTableColumn> Columns(string table, ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
             var dbTable = db.GetOrCreateTable(table);
 
-            List<DatabaseColumnViewModel> result = new List<DatabaseColumnViewModel>();
+            List<DbTableColumn> result = new List<DbTableColumn>();
 
             foreach (var item in dbTable.Setting.Columns)
             {
@@ -179,19 +155,19 @@ namespace Kooboo.Web.Api.Implementation
                 }
 
 
-                DatabaseColumnViewModel model = new DatabaseColumnViewModel() { Name = item.Name, IsIncremental = item.IsIncremental, IsUnique = item.IsUnique, IsIndex = item.IsIndex, IsPrimaryKey = item.IsPrimaryKey, Seed = item.Seed, Scale = item.Increment, IsSystem = item.IsSystem };
+                DbTableColumn model = new DbTableColumn() { Name = item.Name, IsIncremental = item.IsIncremental, IsUnique = item.IsUnique, IsIndex = item.IsIndex, IsPrimaryKey = item.IsPrimaryKey, Seed = item.Seed, Scale = item.Increment, IsSystem = item.IsSystem };
 
                 model.DataType = DatabaseColumnHelper.ToFrontEndDataType(item.ClrType);
 
                 model.ControlType = item.ControlType;
                 model.Setting = item.Setting;
 
-                model.Length = item.Length; 
+                model.Length = item.Length;
 
                 result.Add(model);
             }
             return result;
-        } 
+        }
 
         public List<DatabaseItemEdit> GetEdit(string tablename, string Id, ApiCall call)
         {
@@ -204,7 +180,7 @@ namespace Kooboo.Web.Api.Implementation
             var obj = dbTable.Get(Id);
 
             foreach (var item in dbTable.Setting.Columns)
-            { 
+            {
                 DatabaseItemEdit model = new DatabaseItemEdit() { Name = item.Name, IsIncremental = item.IsIncremental, IsUnique = item.IsUnique, IsIndex = item.IsIndex, IsPrimaryKey = item.IsPrimaryKey, Seed = item.Seed, Scale = item.Increment, IsSystem = item.IsSystem };
 
                 model.DataType = DatabaseColumnHelper.ToFrontEndDataType(item.ClrType);
@@ -214,7 +190,7 @@ namespace Kooboo.Web.Api.Implementation
 
                 // get value
                 if (obj != null && obj.ContainsKey(model.Name))
-                { 
+                {
                     model.Value = obj[model.Name];
                 }
 
@@ -229,6 +205,7 @@ namespace Kooboo.Web.Api.Implementation
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
             var dbTable = db.GetOrCreateTable(tablename);
+            dbTable.CurrentUserId = call.Context.User.Id;
 
             List<DatabaseItemEdit> result = new List<DatabaseItemEdit>();
 
@@ -240,7 +217,7 @@ namespace Kooboo.Web.Api.Implementation
                     return default(Guid);
                 }
 
-                foreach (var item in dbTable.Setting.Columns.Where(o=>!o.IsSystem))
+                foreach (var item in dbTable.Setting.Columns.Where(o => !o.IsSystem))
                 {
                     var value = Values.Find(o => o.Name.ToLower() == item.Name.ToLower());
                     if (value == null)
@@ -258,9 +235,9 @@ namespace Kooboo.Web.Api.Implementation
             else
             {
                 var obj = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-                 
-                foreach (var item in dbTable.Setting.Columns.Where(o=>!o.IsSystem))
-                { 
+
+                foreach (var item in dbTable.Setting.Columns.Where(o => !o.IsSystem))
+                {
                     if (!item.IsIncremental)
                     {
                         var value = Values.Find(o => o.Name.ToLower() == item.Name.ToLower());
@@ -273,12 +250,12 @@ namespace Kooboo.Web.Api.Implementation
                             var rightvalue = Lib.Reflection.TypeHelper.ChangeType(value.Value, item.ClrType);
                             obj[item.Name] = rightvalue;
                         }
-                    } 
+                    }
                 }
-                return dbTable.Add(obj);     
+                return dbTable.Add(obj);
             }
 
-            return default(Guid); 
+            return default(Guid);
         }
 
         public void DeleteData(string tablename, List<Guid> values, ApiCall call)
@@ -286,153 +263,25 @@ namespace Kooboo.Web.Api.Implementation
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
             var dbTable = db.GetOrCreateTable(tablename);
+            dbTable.CurrentUserId = call.Context.User.Id;
 
             foreach (var item in values)
             {
-                dbTable.Delete(item); 
+                dbTable.Delete(item);
             }
         }
 
-        public void UpdateColumn(string tablename, List<DatabaseColumnViewModel> columns, ApiCall call)
+        public void UpdateColumn(string tablename, List<DbTableColumn> columns, ApiCall call)
         {
-            var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
-            var table = db.GetOrCreateTable(tablename);
-
-            var setting = Lib.Serializer.Copy.DeepCopy<IndexedDB.Dynamic.Setting>(table.Setting);
-
-            // deleted items. 
-            setting.Columns.RemoveWhere(o => columns.Find(m => o.Name.ToLower() == m.Name.ToLower()) == null && o.Name != IndexedDB.Dynamic.Constants.DefaultIdFieldName);
-
-            // update items or new added items. 
-
-            foreach (var item in columns)
-            {
-                if (item.Name == Kooboo.IndexedDB.Dynamic.Constants.DefaultIdFieldName)
-                {
-                    continue;
-                }
-
-                var find = setting.Columns.FirstOrDefault(o => o.Name.ToLower() == item.Name.ToLower());
-                if (find == null)
-                {
-                    Type datatype = DatabaseColumnHelper.ToClrType(item.DataType);
-
-                    int length = 0; 
-
-                    if (datatype == typeof(string) && item.ControlType != null)
-                    {
-                        if (item.Length > 0)
-                        {
-                            length = item.Length; 
-                        }
-                        else
-                        {
-                            if (item.ControlType.ToLower() != "textbox")
-                            {
-                                length = int.MaxValue;
-                            }
-                            else
-                            {
-                                length = 256;
-                            }
-                        } 
-                        
-                    }
-                     
-                    setting.AppendColumn(item.Name, datatype, length);
-
-                    var col = setting.Columns.FirstOrDefault(o => o.Name == item.Name);
-                    col.Setting = item.Setting;
-                    col.ControlType = item.ControlType;
-                    col.IsIncremental = item.IsIncremental;
-                    col.Seed = item.Seed;
-                    col.Increment = item.Scale;
-                    col.IsIndex = item.IsIndex;
-                    col.IsPrimaryKey = item.IsPrimaryKey;
-                    col.IsUnique = item.IsUnique;
-                }
-                else
-                {
-                    find.Setting = item.Setting;
-
-                    // check string change the controltype from textbox to textarea. 
-                    if (find.ClrType ==typeof(string))
-                    {
-                        if (find.Length != item.Length && item.Length >0)
-                        {
-                            find.Length = item.Length; 
-                        } 
-                    }
-
-                    find.ControlType = item.ControlType;
-                    find.IsIncremental = item.IsIncremental;
-                    find.Seed = item.Seed;
-                    find.Increment = item.Scale;
-                    find.IsIndex = item.IsIndex;
-                    find.IsPrimaryKey = item.IsPrimaryKey;
-                    find.IsUnique = item.IsUnique;  
-                }
-            }
-            
-            setting.EnsurePrimaryKey(""); 
-            
-            table.UpdateSetting(setting);
-
-            table.Close();
-           
+            DatabaseTable table = new DatabaseTable();
+            table.Name = tablename;
+            table.Columns = columns;
+            var sitedb = call.Context.WebSite.SiteDb();
+            var repo = sitedb.GetSiteRepository<DatabaseTableRepository>();
+            repo.AddOrUpdate(table, call.Context.User.Id);
         }
 
     }
 
-    public static class DatabaseColumnHelper
-    {
-        public static string ToFrontEndDataType(Type clrType)
-        {
-            // string, number, datetime, bool, undefined 
-            if (clrType == typeof(Int16) || clrType == typeof(Int32) || clrType == typeof(Int64) || clrType == typeof(byte))
-            {
-                return "number";
-            }
-            else if (clrType == typeof(decimal) || clrType == typeof(double) || clrType == typeof(float))
-            {
-                return "number";
-            }
-            else if (clrType == typeof(DateTime))
-            {
-                return "datetime";
-            }
-            else if (clrType == typeof(bool))
-            {
-                return "bool";
-            }
-            else if (clrType == typeof(string) || clrType == typeof(Guid))
-            {
-                return "string";
-            }
-            return "string";
-        }
 
-        public static Type ToClrType(string type)
-        {
-            string lower = type.ToLower();
-
-            if (lower == "datetime")
-            {
-                return typeof(System.DateTime);
-            }
-            else if (lower == "number")
-            {
-                return typeof(System.Double);
-            }
-            else if (lower == "bool")
-            {
-                return typeof(bool);
-            }
-            else if (lower == "string")
-            {
-                return typeof(string);
-            }
-            return typeof(string);
-        }
-    }
 }

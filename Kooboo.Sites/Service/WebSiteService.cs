@@ -48,13 +48,7 @@ namespace Kooboo.Sites.Service
                 website.EnableSitePath = false;
                 website.EnableVisitorLog = false;
                 website.ContinueDownload = false;
-                website.Published = false;
-
-                if (Kooboo.Data.DB.HasKDatabase(website))
-                {
-                    var kdb = Kooboo.Data.DB.GetKDatabase(website);
-                    kdb.deleteDatabase();
-                }
+                website.Published = false; 
 
                 sitedb.SearchIndex.DelSelf();
                 sitedb.ImagePool.ClearAll();
@@ -64,13 +58,7 @@ namespace Kooboo.Sites.Service
                 sitedb.DatabaseDb.Close();
 
                 sitedb.DatabaseDb.deleteDatabase();
-
-                if (Kooboo.Data.DB.HasKDatabase(website))
-                {
-                    var kdb = Kooboo.Data.DB.GetKDatabase(website);
-                    kdb.deleteDatabase();
-                }
-
+                  
                 Thread.Sleep(20);
 
                 Cache.WebSiteCache.RemoveWebSitePlan(website.Id);
