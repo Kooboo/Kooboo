@@ -212,14 +212,10 @@ namespace Kooboo.Web.Api.Implementation
             List<PushItemViewModel> result = new List<PushItemViewModel>();
 
             var sitedb = call.WebSite.SiteDb();
+            var kdb = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
             foreach (var item in sitedb.Synchronization.GetPushItems(call.ObjectId))
-            {
-                var siteojbect = ObjectService.GetSiteObject(sitedb, item);
-                if (siteojbect == null)
-                {
-                    continue;
-                }
+            { 
                 ChangeType changetype = ChangeType.Add;
                 if (item.EditType == IndexedDB.EditType.Delete)
                 {
@@ -230,26 +226,54 @@ namespace Kooboo.Web.Api.Implementation
                     changetype = ChangeType.Update;
                 }
 
-                PushItemViewModel viewmodel = new PushItemViewModel
+                if (item.IsTable)
                 {
-                    Id = item.Id,
-                    ObjectType = ConstTypeService.GetModelType(siteojbect.ConstType).Name,
-                    Name = LogService.GetLogDisplayName(sitedb, item),
-                    KoobooType = siteojbect.ConstType,
-                    ChangeType = changetype,
-                    LastModified = siteojbect.LastModified,
-                    LogId = item.Id
-                };
 
-                viewmodel.Size = CalculateUtility.GetSizeString(ObjectService.GetSize(siteojbect));
+                    var table = kdb.GetOrCreateTable(item.TableName);
+                    var logdata = table.GetLogData(item.Id, item.NewBlockPosition);
+                    PushItemViewModel viewmodel = new PushItemViewModel
+                    {
+                        Id = item.Id,
+                        ObjectType = Kooboo.Data.Language.Hardcoded.GetValue("Table", call.Context),
+                        Name = LogService.GetTableDisplayName(sitedb, item, call.Context),
+                       // KoobooType = siteojbect.ConstType,
+                        ChangeType = changetype,
+                        LastModified = item.UpdateTime,
+                        LogId = item.Id
+                    };
 
-                if (siteojbect.ConstType == ConstObjectType.Image)
-                {
-                    viewmodel.Thumbnail = ThumbnailService.GenerateThumbnailUrl(siteojbect.Id, 50, 50, call.WebSite.Id);
+                    result.Add(viewmodel);
                 }
+                else
+                { 
 
-                result.Add(viewmodel);
+                    var siteojbect = ObjectService.GetSiteObject(sitedb, item);
+                    if (siteojbect == null)
+                    {
+                        continue;
+                    }
 
+                    PushItemViewModel viewmodel = new PushItemViewModel
+                    {
+                        Id = item.Id,
+                        ObjectType = ConstTypeService.GetModelType(siteojbect.ConstType).Name,
+                        Name = LogService.GetLogDisplayName(sitedb, item),
+                        KoobooType = siteojbect.ConstType,
+                        ChangeType = changetype,
+                        LastModified = siteojbect.LastModified,
+                        LogId = item.Id
+                    };
+
+                    viewmodel.Size = CalculateUtility.GetSizeString(ObjectService.GetSize(siteojbect));
+
+                    if (siteojbect.ConstType == ConstObjectType.Image)
+                    {
+                        viewmodel.Thumbnail = ThumbnailService.GenerateThumbnailUrl(siteojbect.Id, 50, 50, call.WebSite.Id);
+                    }
+
+                    result.Add(viewmodel);
+                }
+                 
             }
              
             return result;
