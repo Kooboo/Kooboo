@@ -306,7 +306,7 @@ namespace Jint
                     var jsex = ex as JavaScriptException; 
                     if (jsex !=null)
                     {
-                        error = "JavaScript error on line" + jsex.Location.Start.Line.ToString() + ", cloumn: " + jsex.Location.Start.Column.ToString(); 
+                        error = "JavaScript error on line" + jsex.Location.Start.Line.ToString() + ", cloumn: " + jsex.Location.Start.Column.ToString() + " " + ex.Message; 
                     }
                 }      
                 else if (ex is ParserException)
@@ -314,7 +314,7 @@ namespace Jint
                     var pex = ex as ParserException;
                     if (pex != null)
                     {
-                        error = "JavaScript error on line" + pex.LineNumber.ToString() + ", cloumn: " + pex.Column.ToString();
+                        error = "JavaScript error on line" + pex.LineNumber.ToString() + ", cloumn: " + pex.Column.ToString() + " " + ex.Message;
                     }
                 }
                 else
