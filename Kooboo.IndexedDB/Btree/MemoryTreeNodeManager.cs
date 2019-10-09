@@ -383,7 +383,8 @@ namespace Kooboo.IndexedDB.Btree
             previousPointer.PointerBytes = ParentNode.Parent.TreeNode.PreviousPointer;
 
             var PreviousPointerNode = GetOrLoadNode(TreeFile, ParentNode.Parent, previousPointer);
-            if (PreviousPointerNode != null)
+            //parentNode.Parent.PreviousPointerNode can't be the same with ParentNode,otherwise it will cause a dead cycle.
+            if (PreviousPointerNode != null && ParentNode != PreviousPointerNode)
             {
                 var result = FindContainerLastLeaf(TreeFile, PreviousPointerNode);
                 if (result != null)
