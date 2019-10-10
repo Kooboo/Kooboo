@@ -6,6 +6,8 @@ namespace Kooboo.IndexedDB.Helper
 {
     public class DateTimeUtcHelper
     {
+        private static int UtcFlagInt = 128;//biggest bit(128) as the utc tag,2^7
+
         public static byte[] ToBytes(DateTime time)
         {
             var bytes = BitConverter.GetBytes(time.Ticks);
@@ -29,17 +31,17 @@ namespace Kooboo.IndexedDB.Helper
             {
                 var lastByte = bytes[bytes.Length - 1];
                 //use biggest bit(128) as the utc tag
-                bytes[bytes.Length - 1] = (byte)(lastByte + 128);
+                bytes[bytes.Length - 1] = (byte)(lastByte + UtcFlagInt);
             }
         }
 
         private static bool RemoveUtcBit(byte[] bytes)
         {
             var lastByte = bytes[bytes.Length - 1];
-            var isUtc = lastByte > 128;
+            var isUtc = lastByte > UtcFlagInt;
             if (isUtc)
             {
-                bytes[bytes.Length - 1] = (byte)(lastByte - 128);
+                bytes[bytes.Length - 1] = (byte)(lastByte - UtcFlagInt);
             }
 
             return isUtc;
