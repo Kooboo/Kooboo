@@ -426,7 +426,7 @@ namespace Kooboo.Web.Api.Implementation
                     throw new Exception(model.Message); 
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             { 
                 throw;
             } 

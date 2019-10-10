@@ -248,10 +248,11 @@ namespace Kooboo.Sites.Service
 
                 if (!string.IsNullOrWhiteSpace(json))
                 {
-                    return Lib.Helper.StringHelper.GetSummary(json);
+                    return name + " "  + Lib.Helper.StringHelper.GetSummary(json);
                 }
             }
-            return null;
+
+            return name;
         }
          
 

@@ -519,6 +519,8 @@ namespace Kooboo.IndexedDB
             {
                 this.Log.DelSelf();
 
+                this.TableLog.DelSelf(); 
+
                 foreach (var item in this.openStoreList)
                 {
                     item.Value.DelSelf();

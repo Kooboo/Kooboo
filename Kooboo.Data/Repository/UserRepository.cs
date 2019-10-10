@@ -47,12 +47,12 @@ namespace Kooboo.Data.Repository
         {
             if (Cache.ContainsKey(UserId))
             {
-                Cache.Remove(UserId); 
+                Cache.Remove(UserId);
             }
 
             GlobalDb.LocalUser.Delete(UserId);
 
-            return true; 
+            return true;
 
         }
 
@@ -284,7 +284,7 @@ namespace Kooboo.Data.Repository
             if (this.Cache.ContainsKey(userid) && !Data.AppSettings.IsOnlineServer)
             {
                 var cacheuser = this.Cache[userid];
-                if (cacheuser.Password != null && cacheuser.Password == password)
+                if (cacheuser.Password != null && Kooboo.Data.Service.UserLoginService.IsValidPassword(cacheuser, password))
                 {
                     return cacheuser;
                 }
@@ -310,7 +310,7 @@ namespace Kooboo.Data.Repository
 
                 if (user != null)
                 {
-                    if (user.Password != null && user.Password == password)
+                    if (user.Password != null && Kooboo.Data.Service.UserLoginService.IsValidPassword(user, password))
                     {
                         return user;
                     }
@@ -442,7 +442,7 @@ namespace Kooboo.Data.Repository
         }
 
         public User GetByToken(string token)
-        { 
+        {
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("mytoken", token);
             var user = HttpHelper.Post<User>(GetByTokenUrl, para);
@@ -473,6 +473,6 @@ namespace Kooboo.Data.Repository
             para.Add("Token", Token.ToString());
             para.Add("newpasspord", newpasspord);
             return HttpHelper.Post<bool>(this.ResetPasswordUrl, para);
-        } 
+        }
     }
 }
