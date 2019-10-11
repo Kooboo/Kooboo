@@ -1,8 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
 using System;
 using System.Collections.Generic;
-using Kooboo.Data.Context;
 
 namespace Kooboo.Api
 {
@@ -16,9 +16,7 @@ namespace Kooboo.Api
             {
                 Set(item);
             }
-
         }
-
 
         public Dictionary<string, IApi> List
         {
@@ -31,23 +29,13 @@ namespace Kooboo.Api
 
         public void Set(Type apitype)
         {
-            var instance = Activator.CreateInstance(apitype) as IApi;
-            if (instance != null)
-            {   
-                List[instance.ModelName] = instance;
-            }    
+            if (Activator.CreateInstance(apitype) is IApi instance) List[instance.ModelName] = instance;
         }
 
-        public IApi Get(string ModelName)
+        public IApi Get(string modelName)
         {
-            if (string.IsNullOrEmpty(ModelName))
-            {
-                return null;
-            }
-            if (List.ContainsKey(ModelName))
-            {
-                return List[ModelName];
-            }
+            if (!string.IsNullOrEmpty(modelName))
+                return List.ContainsKey(modelName) ? List[modelName] : null;
 
             return null;
         }

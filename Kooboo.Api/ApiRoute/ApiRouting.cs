@@ -1,40 +1,40 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 
 namespace Kooboo.Api.ApiRoute
 {
     public static class ApiRouting
     {
-        public static bool TryParseCommand(string RelativeUrl, string HttpMethod, out ApiCommand command, string beforeapi = null)
+        public static bool TryParseCommand(string relativeUrl, string httpMethod, out ApiCommand command, string beforeApi = null)
         {
-            if (string.IsNullOrEmpty(beforeapi))
+            if (string.IsNullOrEmpty(beforeApi))
             {
-                beforeapi = "_api"; 
+                beforeApi = "_api";
             }
-            command = new ApiCommand();
-            command.HttpMethod = HttpMethod;
-            if (string.IsNullOrEmpty(RelativeUrl))
+            command = new ApiCommand
+            {
+                HttpMethod = httpMethod
+            };
+            if (string.IsNullOrEmpty(relativeUrl))
             {
                 command = null;
                 return false;
             }
-            int questionMarkIndex = RelativeUrl.IndexOf("?");
+            var questionMarkIndex = relativeUrl.IndexOf("?");
             if (questionMarkIndex > -1)
             {
                 if (questionMarkIndex == 0)
                 {
                     return false;
                 }
-                else
-                {
-                    RelativeUrl = RelativeUrl.Substring(0, questionMarkIndex);
-                }
+
+                relativeUrl = relativeUrl.Substring(0, questionMarkIndex);
             }
-            RelativeUrl = RelativeUrl.Replace("\\", "/");
+            relativeUrl = relativeUrl.Replace("\\", "/");
 
-            RoutingState state =RoutingState.BeforeApi;
+            var state = RoutingState.BeforeApi;
 
-            string[] segments = RelativeUrl.Split('/');
+            var segments = relativeUrl.Split('/');
 
             foreach (var item in segments)
             {
@@ -44,54 +44,47 @@ namespace Kooboo.Api.ApiRoute
                     {
                         continue;
                     }
-                    else
-                    {
-                        break;
-                    }
+
+                    break;
                 }
-                else
+
+                switch (state)
                 {
-                    switch (state)
+                    case RoutingState.BeforeApi:
                     {
-                        case RoutingState.BeforeApi:
-                            {
-                                if (item.ToLower() == beforeapi)
-                                {
-                                    state = RoutingState.BeforeObject;
-                                    continue;
-                                }
-                                else
-                                {
-                                    return false;
-                                }
-                            }
-                        case RoutingState.BeforeObject:
+                        if (item.ToLower() == beforeApi)
+                        {
+                            state = RoutingState.BeforeObject;
+                            continue;
+                        }
 
-                          
-                            command.ObjectType = item; 
-                            state = RoutingState.AfterObject;
-                            break;
-                        case RoutingState.AfterObject:
-                            command.Method = item;
-                            state = RoutingState.AfterCommand;
-                            break;
-                        case RoutingState.AfterCommand:
-                            command.Value = item;
-                            state = RoutingState.AfterValue;
-                            break;
-                        case RoutingState.AfterValue:
-                           
-                            if (command.Parameters.Count == 0)
-                            {
-                                command.Parameters.Add(command.Value); 
-                            }
-                            command.Parameters.Add(item);
-                            // return false;
-                            break; 
-                        default:
-                            break;
+                        return false;
                     }
+                    case RoutingState.BeforeObject:
 
+                        command.ObjectType = item;
+                        state = RoutingState.AfterObject;
+                        break;
+
+                    case RoutingState.AfterObject:
+                        command.Method = item;
+                        state = RoutingState.AfterCommand;
+                        break;
+
+                    case RoutingState.AfterCommand:
+                        command.Value = item;
+                        state = RoutingState.AfterValue;
+                        break;
+
+                    case RoutingState.AfterValue:
+
+                        if (command.Parameters.Count == 0)
+                        {
+                            command.Parameters.Add(command.Value);
+                        }
+                        command.Parameters.Add(item);
+                        // return false;
+                        break;
                 }
             }
 
@@ -99,15 +92,13 @@ namespace Kooboo.Api.ApiRoute
             {
                 return false;
             }
-            else
+
+            if (string.IsNullOrEmpty(command.Method))
             {
-                if (string.IsNullOrEmpty(command.Method))
-                {
-                    command.Method = HttpMethod;
-                }
-                return true;
+                command.Method = httpMethod;
             }
-        } 
+            return true;
+        }
     }
 
     public enum RoutingState

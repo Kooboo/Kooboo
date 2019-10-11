@@ -1,107 +1,86 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Api
 {
-   public class ApiHelper
+    public class ApiHelper
     {
         public static string GetHelper(ApiCall request)
         {
-            return null; 
+            return null;
         }
 
         public static int GetPageNr(ApiCall call)
         {
-            int pagenr = 1; 
-            string value = call.GetValue("pagenr"); 
-            
+            var pagenr = 1;
+            var value = call.GetValue("pagenr");
+
             if (!string.IsNullOrEmpty(value))
-            {
-               if (int.TryParse(value, out pagenr))
-                {
-                    return pagenr; 
-                }
-            } 
-            return pagenr; 
+                if (int.TryParse(value, out pagenr))
+                    return pagenr;
+            return pagenr;
         }
 
-        public static int GetPageSize(ApiCall call, int defaultSize =20)
+        public static int GetPageSize(ApiCall call, int defaultSize = 20)
         {
-            int pagesize = 20;
-            string value = call.GetRequestValue("pagesize");
+            var value = call.GetRequestValue("pagesize");
 
             if (!string.IsNullOrEmpty(value))
-            {
-                if (int.TryParse(value, out pagesize))
-                {
+                if (int.TryParse(value, out int pagesize))
                     return pagesize;
-                }
-            }
             return defaultSize;
         }
 
         public static Pager GetPager(ApiCall call, int defaultPageSize = 20)
         {
-            Pager pager = new Pager();
-            pager.PageNr = GetPageNr(call);
-            pager.PageSize = GetPageSize(call, defaultPageSize); 
-            return pager;  
+            Pager pager = new Pager
+            {
+                PageNr = GetPageNr(call),
+                PageSize = GetPageSize(call, defaultPageSize)
+            };
+            return pager;
         }
 
         public static int GetPageCount(int totalcount, int pagesize)
         {
-            if (totalcount <=0)
-            {
-                return 0; 
-            }
+            if (totalcount <= 0)
+                return 0;
 
-            if (pagesize <=1)
-            {
-                pagesize = 1; 
-            }
+            if (pagesize <= 1) pagesize = 1;
 
-             int number  = (int)totalcount/pagesize;
+            var number = totalcount / pagesize;
 
-             int newtotal = pagesize * number;
+            var newtotal = pagesize * number;
 
-            return newtotal < totalcount ? number + 1 : number;  
-
+            return newtotal < totalcount ? number + 1 : number;
         }
 
         public static List<Parameter> GetParameters(System.Reflection.MethodInfo method)
         {
-            List<Parameter> result = new List<Parameter>(); 
+            var result = new List<Parameter>();
 
             var paras = method.GetParameters();
             foreach (var item in paras)
             {
-                result.Add(new Parameter() { Name = item.Name, ClrType = item.ParameterType });
+                result.Add(new Parameter { Name = item.Name, ClrType = item.ParameterType });
             }
-            return result; 
+            return result;
         }
     }
 
     public class Pager
-    { 
+    {
         public int PageNr { get; set; }
 
-        public int PageSize { get; set; }  
+        public int PageSize { get; set; }
 
         public int SkipCount
         {
             get
             {
-                int num = (PageNr - 1) * PageSize; 
-                if (num >=0)
-                {
-                    return num; 
-                }
-                return 0; 
+                var num = (PageNr - 1) * PageSize;
+                return num >= 0 ? num : 0;
             }
         }
     }

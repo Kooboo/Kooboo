@@ -1,17 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System.Collections.Generic;
 
-
 namespace Kooboo.Api.ApiResponse
 {
-    public  class ResponseBase : IResponse
+    public class ResponseBase : IResponse
     {
         public ResponseBase()
         {
-            this.FieldErrors = new List<FieldError>();
-            this.Messages = new List<string>(); 
+            FieldErrors = new List<FieldError>();
+            Messages = new List<string>();
         }
+
         public bool DataChange
         {
             get; set;

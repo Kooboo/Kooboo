@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System.Collections.Generic;
- 
+
 namespace Kooboo.Api
 {
-   public class ApiCommand
-    { 
+    public class ApiCommand
+    {
         public string ObjectType { get; set; }
 
         public string Method { get; set; }
@@ -14,21 +14,12 @@ namespace Kooboo.Api
 
         public string HttpMethod { get; set; }
 
-        private List<string> _parameters; 
+        private List<string> _parameters;
+
         public List<string> Parameters
         {
-            get
-            {
-                if (_parameters == null)
-                {
-                    _parameters = new List<string>();
-                }
-                return _parameters; 
-            }
-            set
-            {
-                _parameters = value; 
-            }
+            get => _parameters ?? (_parameters = new List<string>());
+            set => _parameters = value;
         }
     }
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -9,8 +9,8 @@ namespace Kooboo.Api.ApiResponse
     {
         public TransferResponse()
         {
-            this.Messages = new List<string>();
-            this.FieldErrors = new List<FieldError>();
+            Messages = new List<string>();
+            FieldErrors = new List<FieldError>();
         }
 
         public Guid TaskId { get; set; }
@@ -37,11 +37,10 @@ namespace Kooboo.Api.ApiResponse
             get; set;
         }
     }
-     
 
     public class SingleResponse : TransferResponse
-    { 
+    {
         public bool Finish { get; set; }
-        public Object Page { get; set; }
+        public object Page { get; set; }
     }
 }

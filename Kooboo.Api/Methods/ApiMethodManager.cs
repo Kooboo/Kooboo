@@ -1,19 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Reflection;
-using Kooboo.Data.Language;
 
 namespace Kooboo.Api.Methods
 {
     public static class ApiMethodManager
     {
-        private static object locker = new object();
+        private static readonly object locker = new object();
         private static Dictionary<string, ApiMethod> _list;
+
         public static Dictionary<string, ApiMethod> List
         {
             get
@@ -32,15 +30,15 @@ namespace Kooboo.Api.Methods
             }
         }
 
-        public static ApiMethod Get(IApi instance, string MethodName)
+        public static ApiMethod Get(IApi instance, string methodName)
         {
             var currentlist = List;
 
-            if (string.IsNullOrEmpty(MethodName))
+            if (string.IsNullOrEmpty(methodName))
             {
                 return null;
             }
-            string key = instance.ModelName + "." + MethodName;
+            string key = instance.ModelName + "." + methodName;
             if (currentlist.ContainsKey(key))
             {
                 return currentlist[key];
@@ -49,10 +47,10 @@ namespace Kooboo.Api.Methods
             if (instance is IDynamicApi)
             {
                 var dynamic = instance as IDynamicApi;
-                return GetDynamicApiMethod(dynamic, MethodName); 
+                return GetDynamicApiMethod(dynamic, methodName);
             }
 
-            var methodinfo = Lib.Reflection.TypeHelper.GetMethodInfo(instance.GetType(), MethodName);
+            var methodinfo = Lib.Reflection.TypeHelper.GetMethodInfo(instance.GetType(), methodName);
 
             if (methodinfo == null)
             {
@@ -60,25 +58,27 @@ namespace Kooboo.Api.Methods
                 return null;
             }
 
-            ApiMethod newmethod = new ApiMethod();
-            newmethod.MethodName = methodinfo.Name;
-            newmethod.ClassInstance = instance;
-            newmethod.ReturnType = methodinfo.ReturnType;
-            newmethod.DeclareType = instance.GetType();
-            newmethod.IsVoid = methodinfo.ReturnType == typeof(void);
+            var newmethod = new ApiMethod
+            {
+                MethodName = methodinfo.Name,
+                ClassInstance = instance,
+                ReturnType = methodinfo.ReturnType,
+                DeclareType = instance.GetType(),
+                IsVoid = methodinfo.ReturnType == typeof(void)
+            };
 
-            var acceptmodel = methodinfo.GetCustomAttribute(typeof(Kooboo.Attributes.RequireModel), true);
+            var acceptmodel = methodinfo.GetCustomAttribute(typeof(Attributes.RequireModel), true);
             if (acceptmodel != null)
             {
-                var Accepted = acceptmodel as Attributes.RequireModel;
-                newmethod.RequireModelType = Accepted.ModelType;
+                var accepted = acceptmodel as Attributes.RequireModel;
+                newmethod.RequireModelType = accepted.ModelType;
             }
 
-            var requirepara = methodinfo.GetCustomAttribute(typeof(Kooboo.Attributes.RequireParameters));
+            var requirepara = methodinfo.GetCustomAttribute(typeof(Attributes.RequireParameters));
             if (requirepara != null)
             {
-                var RequiredParas = requirepara as Attributes.RequireParameters;
-                newmethod.RequireParas = RequiredParas.Parameters;
+                var requiredParas = requirepara as Attributes.RequireParameters;
+                newmethod.RequireParas = requiredParas.Parameters;
             }
 
             if (newmethod.IsVoid)
@@ -96,12 +96,11 @@ namespace Kooboo.Api.Methods
                 newmethod.Parameters.Add(new Parameter() { Name = item.Name, ClrType = item.ParameterType });
             }
 
-            //set set call function. 
-            string apicallName = GetApiCallName(newmethod.DeclareType);
+            //set set call function.
+            var apicallName = GetApiCallName(newmethod.DeclareType);
             if (!string.IsNullOrEmpty(apicallName))
             {
-
-                newmethod.SetCall = Kooboo.Lib.Reflection.TypeHelper.GetSetFieldValue<ApiCall>(apicallName, newmethod.DeclareType);
+                newmethod.SetCall = Lib.Reflection.TypeHelper.GetSetFieldValue<ApiCall>(apicallName, newmethod.DeclareType);
             }
 
             try
@@ -113,13 +112,12 @@ namespace Kooboo.Api.Methods
             }
             catch (Exception ex)
             {
-                string abc = ex.Message;
+                _ = ex.Message;
             }
             return newmethod;
         }
 
-
-        public static ApiMethod GetDynamicApiMethod(IDynamicApi instance, string MethodName)
+        public static ApiMethod GetDynamicApiMethod(IDynamicApi instance, string methodName)
         {
             var api = instance as IApi;
             if (api == null)
@@ -129,18 +127,18 @@ namespace Kooboo.Api.Methods
 
             var currentlist = List;
 
-            if (string.IsNullOrEmpty(MethodName))
+            if (string.IsNullOrEmpty(methodName))
             {
                 return null;
             }
 
-            string key = api.ModelName + "." + MethodName;
+            string key = api.ModelName + "." + methodName;
             if (currentlist.ContainsKey(key))
             {
                 return currentlist[key];
             }
-              
-            var info = instance.GetMethod(MethodName);
+
+            var info = instance.GetMethod(methodName);
 
             //var methodinfo = GetMethodInfo(instance.GetType(), MethodName);
 
@@ -150,25 +148,27 @@ namespace Kooboo.Api.Methods
                 return null;
             }
 
-            ApiMethod newmethod = new ApiMethod();
-            newmethod.MethodName = info.Method.Name;
-            newmethod.ClassInstance = Activator.CreateInstance(info.Type);
-            newmethod.ReturnType = info.Method.ReturnType;
-            newmethod.DeclareType = info.Type;
-            newmethod.IsVoid = info.Method.ReturnType == typeof(void);
+            var newmethod = new ApiMethod
+            {
+                MethodName = info.Method.Name,
+                ClassInstance = Activator.CreateInstance(info.Type),
+                ReturnType = info.Method.ReturnType,
+                DeclareType = info.Type,
+                IsVoid = info.Method.ReturnType == typeof(void)
+            };
 
-            var acceptmodel = info.Method.GetCustomAttribute(typeof(Kooboo.Attributes.RequireModel), true);
+            var acceptmodel = info.Method.GetCustomAttribute(typeof(Attributes.RequireModel), true);
             if (acceptmodel != null)
             {
-                var Accepted = acceptmodel as Attributes.RequireModel;
-                newmethod.RequireModelType = Accepted.ModelType;
+                var accepted = acceptmodel as Attributes.RequireModel;
+                newmethod.RequireModelType = accepted.ModelType;
             }
 
-            var requirepara = info.Method.GetCustomAttribute(typeof(Kooboo.Attributes.RequireParameters));
+            var requirepara = info.Method.GetCustomAttribute(typeof(Attributes.RequireParameters));
             if (requirepara != null)
             {
-                var RequiredParas = requirepara as Attributes.RequireParameters;
-                newmethod.RequireParas = RequiredParas.Parameters;
+                var requiredParas = requirepara as Attributes.RequireParameters;
+                newmethod.RequireParas = requiredParas.Parameters;
             }
 
             if (newmethod.IsVoid)
@@ -186,12 +186,11 @@ namespace Kooboo.Api.Methods
                 newmethod.Parameters.Add(new Parameter() { Name = item.Name, ClrType = item.ParameterType });
             }
 
-            //set set call function. 
-            string apicallName = GetApiCallName(newmethod.DeclareType);
+            //set set call function.
+            var apicallName = GetApiCallName(newmethod.DeclareType);
             if (!string.IsNullOrEmpty(apicallName))
             {
-
-                newmethod.SetCall = Kooboo.Lib.Reflection.TypeHelper.GetSetFieldValue<ApiCall>(apicallName, newmethod.DeclareType);
+                newmethod.SetCall = Lib.Reflection.TypeHelper.GetSetFieldValue<ApiCall>(apicallName, newmethod.DeclareType);
             }
 
             try
@@ -203,11 +202,10 @@ namespace Kooboo.Api.Methods
             }
             catch (Exception ex)
             {
-                string abc = ex.Message;
+                _ = ex.Message;
             }
             return newmethod;
         }
-         
 
         public static string GetApiCallName(Type apiType)
         {
@@ -243,31 +241,25 @@ namespace Kooboo.Api.Methods
                     method.Void(method.ClassInstance, paras.ToArray());
                     return true;
                 }
-                else
-                {
-                    return method.Func(method.ClassInstance, paras.ToArray());
-                }
-            }
-            else
-            {
-                var cls = Activator.CreateInstance(method.DeclareType) as IApi;
-                method.SetCall(cls, request);
 
-                if (method.IsVoid)
-                {
-                    method.Void(cls, paras.ToArray());
-                    return true;
-                }
-                else
-                {
-                    return method.Func(cls, paras.ToArray());
-                }
+                return method.Func(method.ClassInstance, paras.ToArray());
             }
+
+            var cls = Activator.CreateInstance(method.DeclareType) as IApi;
+            method.SetCall(cls, request);
+
+            if (method.IsVoid)
+            {
+                method.Void(cls, paras.ToArray());
+                return true;
+            }
+
+            return method.Func(cls, paras.ToArray());
         }
-         
+
         public static List<object> BindParameters(ApiMethod method, ApiCall call)
         {
-            List<object> result = new List<object>();
+            var result = new List<object>();
 
             foreach (var item in method.Parameters)
             {
@@ -287,11 +279,10 @@ namespace Kooboo.Api.Methods
                     {
                         result.Add(null);
                     }
-
                 }
                 else if (item.ClrType.IsClass)
                 {
-                    // try to assign the model. 
+                    // try to assign the model.
                     result.Add(AssignModel(call, item.ClrType, item.Name));
                 }
                 else
@@ -303,7 +294,7 @@ namespace Kooboo.Api.Methods
             return result;
         }
 
-        public static object AssignModel(ApiCall call, Type ModelType, string fieldname)
+        public static object AssignModel(ApiCall call, Type modelType, string fieldname)
         {
             object model = null;
 
@@ -313,28 +304,25 @@ namespace Kooboo.Api.Methods
             {
                 try
                 {
-                    model = Lib.Helper.JsonHelper.Deserialize(fieldvalue, ModelType);
+                    model = Lib.Helper.JsonHelper.Deserialize(fieldvalue, modelType);
 
                     return model;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-
                 }
             }
 
-
-            string json = call.Context.Request.Body;
+            var json = call.Context.Request.Body;
 
             if (!string.IsNullOrEmpty(json))
             {
                 try
                 {
-                    model = Lib.Helper.JsonHelper.Deserialize(json, ModelType);
+                    model = Lib.Helper.JsonHelper.Deserialize(json, modelType);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-
                 }
             }
             else
@@ -356,21 +344,18 @@ namespace Kooboo.Api.Methods
 
                 if (values.Count() >= 0)
                 {
-                    string dictjson = Lib.Helper.JsonHelper.Serialize(values);
+                    var dictjson = Lib.Helper.JsonHelper.Serialize(values);
                     try
                     {
-                        model = Lib.Helper.JsonHelper.Deserialize(dictjson, ModelType);
+                        model = Lib.Helper.JsonHelper.Deserialize(dictjson, modelType);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                     }
                 }
-
             }
 
             return model;
         }
-         
-
     }
 }

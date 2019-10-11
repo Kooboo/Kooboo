@@ -1,12 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Models;
 using Kooboo.Api.ApiResponse;
+using Kooboo.Data.Context;
+using Kooboo.Data.Language;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Data.Language;
-using Kooboo.Data.Context;
 
 namespace Kooboo.Api
 {
@@ -30,7 +29,7 @@ namespace Kooboo.Api
 
             if (apimethod == null)
             {
-                var result = new JsonResponse() { Success = false };
+                var result = new JsonResponse { Success = false };
                 result.Messages.Add(Hardcoded.GetValue("Api method Not Found", call.Context));
                 return result;
             }
@@ -61,23 +60,22 @@ namespace Kooboo.Api
                 }
             }
 
-            List<string> errors = new List<string>();
-            if (!ValideAssignModel(apimethod, call, errors.Add))
+            var errors = new List<string>();
+            if (!ValidAssignModel(apimethod, call, errors.Add))
             {
                 var result = new JsonResponse() { Success = false };
                 result.Messages.AddRange(errors);
                 return result;
             }
 
-            if (!ValideParameters(apimethod, call, errors.Add))
+            if (!ValidParameters(apimethod, call, errors.Add))
             {
                 var result = new JsonResponse() { Success = false };
                 result.Messages.AddRange(errors);
                 return result;
             }
 
-
-            // ValidateKModel() 
+            // ValidateKModel()
             try
             {
                 return ExecuteMethod(call, apimethod);
@@ -87,7 +85,7 @@ namespace Kooboo.Api
                 var result = new JsonResponse() { Success = false };
                 result.Messages.Add(ex.Message);
 
-                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace + "\r\n" + ex.Source);
+                Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace + "\r\n" + ex.Source);
 
                 return result;
             }
@@ -99,7 +97,7 @@ namespace Kooboo.Api
 
             if (apimethod.IsVoid)
             {
-                return new JsonResponse() { Success = true, DataChange = true };
+                return new JsonResponse { Success = true, DataChange = true };
             }
 
             if (response != null && response.GetType() == typeof(bool))
@@ -123,66 +121,47 @@ namespace Kooboo.Api
             if (response is IResponse)
             {
                 return response as IResponse;
-                //TODO: set the response message to multiple lingual. 
+                //TODO: set the response message to multiple lingual.
             }
-            else
-            {
-                return new JsonResponse(response) { Success = true };
-            }
-        }
 
+            return new JsonResponse(response) { Success = true };
+        }
 
         public static bool ValidateRequirement(ApiCommand command, RenderContext context, IApiProvider apiProvider)
         {
             if (command == null)
-            {
                 return false;
-            }
 
             var apiobject = apiProvider.Get(command.ObjectType);
             if (apiobject == null)
-            {
                 return false;
-            }
 
             if (apiobject.RequireSite && context.WebSite == null)
-            {
                 return false;
-            }
 
             if (apiobject.RequireUser && context.User == null)
-            {
                 return false;
-            }
 
             if (apiobject.RequireSite && apiobject.RequireUser)
-            {
                 if (context.WebSite.OrganizationId != context.User.CurrentOrgId)
-                {
                     return false;
-                }
-            }
-
 
             if (apiobject is ISecureApi)
             {
                 var secureobj = apiobject as ISecureApi;
                 if (secureobj != null)
-                {
                     return secureobj.AccessCheck(command, context);
-                }
             }
 
             return true;
         }
 
-
-        public static bool ValideAssignModel(ApiMethod method, ApiCall call, Action<string> callback)
+        public static bool ValidAssignModel(ApiMethod method, ApiCall call, Action<string> callback)
         {
-            bool IsSuccess = true;
+            var isSuccess = true;
             if (method.RequireModelType != null)
             {
-                string json = call.Context.Request.Body;
+                var json = call.Context.Request.Body;
 
                 if (!string.IsNullOrEmpty(json))
                 {
@@ -192,14 +171,14 @@ namespace Kooboo.Api
                     }
                     catch (Exception ex)
                     {
-                        IsSuccess = false;
+                        isSuccess = false;
                         callback.Invoke(ex.Message);
                     }
                 }
                 else
                 {
                     var req = call.Context.Request;
-                    Dictionary<string, string> values = new Dictionary<string, string>();
+                    var values = new Dictionary<string, string>();
 
                     foreach (var item in req.Forms.AllKeys)
                     {
@@ -213,40 +192,40 @@ namespace Kooboo.Api
                         values[item] = value;
                     }
 
-                    if (values.Count() == 0)
+                    if (values.Count == 0)
                     {
                         callback.Invoke(Hardcoded.GetValue("required model type not provided", call.Context) + ": " + method.RequireModelType.Name);
-                        IsSuccess = false;
+                        isSuccess = false;
                     }
                     else
                     {
-                        string dictjson = Lib.Helper.JsonHelper.Serialize(values);
+                        var dictjson = Lib.Helper.JsonHelper.Serialize(values);
                         try
                         {
                             call.Context.Request.Model = Lib.Helper.JsonHelper.Deserialize(dictjson, method.RequireModelType);
                         }
                         catch (Exception ex)
                         {
-                            IsSuccess = false;
+                            isSuccess = false;
                             callback.Invoke(ex.Message);
                         }
                     }
                 }
             }
-            return IsSuccess;
+            return isSuccess;
         }
 
-        public static bool ValideParameters(ApiMethod method, ApiCall call, Action<string> callback)
+        public static bool ValidParameters(ApiMethod method, ApiCall call, Action<string> callback)
         {
-            bool IsSuccess = true;
-            if (method.RequireParas != null && method.RequireParas.Count() > 0)
+            var isSuccess = true;
+            if (method.RequireParas != null && method.RequireParas.Any())
             {
                 foreach (var item in method.RequireParas)
                 {
-                    string value = call.GetValue(item);
+                    var value = call.GetValue(item);
                     if (string.IsNullOrEmpty(value))
                     {
-                        IsSuccess = false;
+                        isSuccess = false;
                         callback.Invoke(Hardcoded.GetValue("Require parameter not found", call.Context) + ": " + item);
                     }
                 }
@@ -256,16 +235,16 @@ namespace Kooboo.Api
             {
                 if (item.ClrType != typeof(ApiCall) && (item.ClrType.IsValueType || item.ClrType == typeof(string)))
                 {
-                    string value = call.GetValue(item.Name);
+                    var value = call.GetValue(item.Name);
                     if (string.IsNullOrEmpty(value))
                     {
-                        IsSuccess = false;
+                        isSuccess = false;
                         callback.Invoke(Hardcoded.GetValue("Require parameter not found", call.Context) + ": " + item.Name);
                     }
                 }
             }
 
-            return IsSuccess;
+            return isSuccess;
         }
     }
 }

@@ -1,9 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Data.Context;
 using System.Net;
 
 namespace Kooboo.Api.ApiResponse
@@ -12,8 +12,8 @@ namespace Kooboo.Api.ApiResponse
     {
         public MetaResponse()
         {
-            this.FieldErrors = new List<FieldError>();
-            this.Messages = new List<string>(); 
+            FieldErrors = new List<FieldError>();
+            Messages = new List<string>();
         }
 
         public bool DataChange
@@ -42,81 +42,48 @@ namespace Kooboo.Api.ApiResponse
         }
 
         private HttpStringCollection _headers;
+
         public HttpStringCollection Headers
         {
-            get
-            {
-                if (_headers == null)
-                {
-                    _headers = new HttpStringCollection();
-                }
-                return _headers;
-            }
-            set
-            {
-                _headers = value;
-            }
+            get => _headers ?? (_headers = new HttpStringCollection());
+            set => _headers = value;
         }
 
-        private List<string> _DeletedCookieNames;
+        private List<string> _deletedCookieNames;
+
         public List<string> DeletedCookieNames
         {
-            get
-            {
-                if (_DeletedCookieNames == null)
-                {
-                    _DeletedCookieNames = new List<string>();
-                }
-                return _DeletedCookieNames;
-            }
-            set
-            {
-                _DeletedCookieNames = value;
-            }
+            get => _deletedCookieNames ?? (_deletedCookieNames = new List<string>());
+            set => _deletedCookieNames = value;
         }
 
-        private List<Cookie> _appendcookies;
+        private List<Cookie> _appendCookies;
+
         public List<Cookie> AppendedCookies
         {
-            get
-            {
-                if (_appendcookies == null)
-                {
-                    _appendcookies = new List<Cookie>();
-                }
-                return _appendcookies;
-            }
-            set
-            {
-                _appendcookies = new List<Cookie>();
-            }
+            get => _appendCookies ?? (_appendCookies = new List<Cookie>());
+            set => _appendCookies = new List<Cookie>();
         }
 
-        public void AppendCookie(string CookieName, string CookieValue, int days =30)
+        public void AppendCookie(string cookieName, string cookieValue, int days = 30)
         {
-            var oldcookie = AppendedCookies.Where(o => o.Name == CookieName).FirstOrDefault();
+            var cookie = AppendedCookies.FirstOrDefault(o => o.Name == cookieName);
 
-            if (oldcookie != null)
+            if (cookie != null)
             {
-                AppendedCookies.Remove(oldcookie);
+                AppendedCookies.Remove(cookie);
             }
 
-            if (days==0)
-            {
-                AppendedCookies.Add(new Cookie() { Name = CookieName, Value = CookieValue, Expires =default(DateTime) });
-            }
-            else
-            {
-                AppendedCookies.Add(new Cookie() { Name = CookieName, Value = CookieValue, Expires = DateTime.Now.AddDays(days) });
-            }
-           
+            AppendedCookies.Add(days == 0
+                ? new Cookie {Name = cookieName, Value = cookieValue, Expires = default}
+                : new Cookie {Name = cookieName, Value = cookieValue, Expires = DateTime.Now.AddDays(days)});
         }
 
-        public void DeleteCookie(string CookieName)
+        public void DeleteCookie(string cookieName)
         {
-            if (!DeletedCookieNames.Contains(CookieName))
+            if (!DeletedCookieNames.Contains(cookieName))
             {
-                this.DeletedCookieNames.Add(CookieName);
+                DeletedCookieNames.Add(cookieName);
             }
         }
 
@@ -153,16 +120,16 @@ namespace Kooboo.Api.ApiResponse
         //    public string Value { get; set; }
 
         //    public CookieOptions Options { get; set; }
-        //} 
+        //}
 
         public string RedirectUrl { get; set; }
 
-        public int StatusCode { get; set; } = 200; 
+        public int StatusCode { get; set; } = 200;
 
-        public void Redirect(string url, int statuscode = 302)
+        public void Redirect(string url, int statusCode = 302)
         {
-            this.RedirectUrl = url;
-            this.StatusCode = statuscode; 
+            RedirectUrl = url;
+            StatusCode = statusCode;
         }
     }
 }

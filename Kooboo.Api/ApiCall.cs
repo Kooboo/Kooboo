@@ -1,144 +1,81 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
+using System.Linq;
 
 namespace Kooboo.Api
 {
     public class ApiCall
     {
-        private RenderContext _Context;
+        private RenderContext _context;
+
         public RenderContext Context
         {
-            get
-            {
-                if (_Context == null)
-                {
-                    _Context = new RenderContext();
-                }
-                return _Context;
-            }
-            set { _Context = value; }
+            get => _context ?? (_context = new RenderContext());
+            set => _context = value;
         }
 
         private ApiCommand _command;
+
         public ApiCommand Command
         {
-            get
-            {
-                if (_command == null)
-                {
-                    _command = new ApiCommand();
-                }
-                return _command;
-            }
-            set
-            {
-                _command = value;
-            }
+            get => _command ?? (_command = new ApiCommand());
+            set => _command = value;
         }
 
         private WebSite _website;
+
         public WebSite WebSite
         {
-            get
-            {
-                if (_website == null)
-                {
-                    _website = this.Context.WebSite;
-                }
-                return _website;
-            }
-            set
-            {
-                _website = value;
-            }
+            get => _website ?? (_website = Context.WebSite);
+            set => _website = value;
         }
 
-    
         private Guid _objectid;
 
         public Guid ObjectId
         {
             get
             {
-                if (_objectid == default(Guid))
-                {
-                    _objectid = TryGetId();
-                }
+                if (_objectid == default) _objectid = TryGetId();
                 return _objectid;
             }
-            set
-            {
-                _objectid = value;
-            }
+            set => _objectid = value;
         }
 
-        private string _NameOrId = null;
+        private string _nameOrId;
+
         public string NameOrId
         {
-            get
-            {
-                if (_NameOrId == null)
-                {
-                    if (!string.IsNullOrEmpty(this.Command.Value))
-                    {
-                        _NameOrId = this.Command.Value;
-                    }
-                    else
-                    {
-                        _NameOrId = this.GetValue("name");
-                    }
-
-                }
-                return _NameOrId;
-            }
-            set
-            {
-                _NameOrId = value;
-            }
+            get =>
+                _nameOrId ??
+                (_nameOrId = !string.IsNullOrEmpty(Command.Value) ? Command.Value : GetValue("name"));
+            set => _nameOrId = value;
         }
 
         private Guid TryGetId()
         {
-            Guid id = default(Guid);
+            Guid id = default;
 
-            var strid = this.Context.Request.GetValue("id");
+            var strid = Context.Request.GetValue("id");
             if (!string.IsNullOrEmpty(strid))
+                if (Guid.TryParse(strid, out id))
+                    return id;
+
+            if (!string.IsNullOrEmpty(Command.Value))
+                if (Guid.TryParse(Command.Value, out id))
+                    return id;
+
+            if (!string.IsNullOrWhiteSpace(Context.Request.Body))
             {
-                if (System.Guid.TryParse(strid, out id))
+                var data = Lib.Helper.JsonHelper.DeserializeJObject(Context.Request.Body);
+
+                if (data.Properties().Any(item => item.Name.ToLower() == "id" && !string.IsNullOrEmpty(item.Value.ToString()) && Guid.TryParse(item.Value.ToString(), out id)))
                 {
                     return id;
                 }
-            }
-
-            if (!string.IsNullOrEmpty(this.Command.Value))
-            {
-                if (System.Guid.TryParse(this.Command.Value, out id))
-                {
-                    return id;
-                }
-            }
-
-            if (!string.IsNullOrWhiteSpace(this.Context.Request.Body))
-            {
-                var data =  Lib.Helper.JsonHelper.DeserializeJObject(this.Context.Request.Body);
-
-                foreach (var item in data.Properties())
-                {
-                    if (item.Name.ToLower() == "id" && !string.IsNullOrEmpty(item.Value.ToString()))
-                    {
-                        if (System.Guid.TryParse(item.Value.ToString(), out id))
-                        {
-                            return id;
-                        }
-                    }
-                }
-
-
             }
 
             return id;
@@ -146,136 +83,114 @@ namespace Kooboo.Api
 
         public string GetValue(string name)
         {
-            return RequestManager.GetValue(this.Context.Request, name);
+            return RequestManager.GetValue(Context.Request, name);
         }
 
         public T GetValue<T>(string name)
         {
             var type = typeof(T);
-            string value = GetValue(name);
+            var value = GetValue(name);
             if (string.IsNullOrEmpty(value))
             {
-                return default(T);
+                return default;
             }
             if (type == typeof(Guid))
             {
-                Guid id = default(Guid);
-                System.Guid.TryParse(value, out id);
+                Guid.TryParse(value, out Guid id);
                 return (T)Convert.ChangeType(id, type);
             }
             else if (type == typeof(bool))
             {
-                bool ok = false;
-                bool.TryParse(value, out ok);
+                bool.TryParse(value, out bool ok);
                 return (T)Convert.ChangeType(ok, type);
             }
             else if (type == typeof(int))
             {
-                int intvalue = 0; 
-                int.TryParse(value, out intvalue);
+                int.TryParse(value, out int intvalue);
                 return (T)Convert.ChangeType(intvalue, type);
             }
             else if (type == typeof(long))
             {
-                long longvalue = 0; 
-                long.TryParse(value, out longvalue);
+                long.TryParse(value, out long longvalue);
                 return (T)Convert.ChangeType(longvalue, type);
             }
-           else if (type == typeof(string))
+            else if (type == typeof(string))
             {
-                return (T)Convert.ChangeType(value, type); 
+                return (T)Convert.ChangeType(value, type);
             }
             else if (type == typeof(decimal))
             {
-                decimal decvalue = 0;
-                decimal.TryParse(value, out decvalue);
+                decimal.TryParse(value, out decimal decvalue);
                 return (T)Convert.ChangeType(decvalue, type);
-                 
-            } 
+            }
             else
             {
-                throw new Exception("type of not supported"); 
+                throw new Exception("type of not supported");
             }
-
         }
 
         public Guid GetGuidValue(string name)
         {
-            string value = GetValue(name);
+            var value = GetValue(name);
             if (string.IsNullOrEmpty(value))
-            {
-                return default(Guid);
-            }
-            Guid id = default(Guid);
-
-            System.Guid.TryParse(value, out id);
+                return default;
+            Guid.TryParse(value, out Guid id);
             return id;
         }
 
         public bool GetBoolValue(string name)
         {
-            string value = GetValue(name);
+            var value = GetValue(name);
             if (string.IsNullOrEmpty(value))
-            {
                 return false;
-            }
-            bool ok = false;
 
-            bool.TryParse(value, out ok);
+            bool.TryParse(value, out bool ok);
             return ok;
         }
-         
+
         public long GetLongValue(string name)
         {
-            string value = GetValue(name);
+            var value = GetValue(name);
             if (string.IsNullOrEmpty(value))
-            {
                 return 0;
-            }
-            long longvalue = 0;
 
-            long.TryParse(value, out longvalue);
+            long.TryParse(value, out long longvalue);
             return longvalue;
         }
 
         public int GetIntValue(string name)
         {
-            string value = GetValue(name);
+            var value = GetValue(name);
             if (string.IsNullOrEmpty(value))
-            {
                 return 0;
-            }
-            int intvalue = 0;
 
-            int.TryParse(value, out intvalue);
+            int.TryParse(value, out int intvalue);
             return intvalue;
         }
 
         /// <summary>
-        ///  get the value from query string or form only... 
+        ///  get the value from query string or form only...
         /// </summary>
-        /// <param name="Name"></param>
+        /// <param name="name"></param>
         /// <returns></returns>
-        public string GetRequestValue(string Name)
+        public string GetRequestValue(string name)
         {
-            return RequestManager.GetHttpValue(this.Context.Request, Name);
+            return RequestManager.GetHttpValue(Context.Request, name);
         }
 
         public string GetValue(params string[] names)
         {
-            return RequestManager.GetValue(this.Context.Request, names);
+            return RequestManager.GetValue(Context.Request, names);
         }
 
-        // a fake request to fake data only.. 
+        // a fake request to fake data only..
         public bool IsFake
         {
             get
             {
-                var fake = RequestManager.GetHttpValue(this.Context.Request, "fake");
+                var fake = RequestManager.GetHttpValue(Context.Request, "fake");
                 return fake != null;
             }
         }
     }
-
-
 }

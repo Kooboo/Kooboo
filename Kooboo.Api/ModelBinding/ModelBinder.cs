@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -6,18 +6,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Kooboo.Api.ModelBinding
 {
-   public class ModelBinder
-    { 
-        public static BindingResponse TryBind(string Json, Type ObjectType)
+    public class ModelBinder
+    {
+        public static BindingResponse TryBind(string json, Type objectType)
         {
             try
             {
-                var data = Lib.Helper.JsonHelper.Deserialize(Json, ObjectType);
+                var data = Lib.Helper.JsonHelper.Deserialize(json, objectType);
 
                 var context = new ValidationContext(data);
                 var results = new List<ValidationResult>();
                 var isSuccess = Validator.TryValidateObject(data, context, results, true);
-                
+
                 if (!isSuccess)
                 {
                     var messages = new Dictionary<string, string>();
@@ -28,13 +28,13 @@ namespace Kooboo.Api.ModelBinding
                             messages.Add(name, result.ErrorMessage);
                         }
                     }
-                    return new BindingResponse()
+                    return new BindingResponse
                     {
                         IsSuccess = false,
                         FieldMessage = messages
                     };
                 }
-                return new BindingResponse()
+                return new BindingResponse
                 {
                     IsSuccess = true,
                     Model = data
@@ -42,7 +42,7 @@ namespace Kooboo.Api.ModelBinding
             }
             catch (Exception e)
             {
-                return new BindingResponse()
+                return new BindingResponse
                 {
                     IsSuccess = false,
                     Message = e.Message
