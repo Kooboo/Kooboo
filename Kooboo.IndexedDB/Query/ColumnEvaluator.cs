@@ -37,6 +37,11 @@ namespace Kooboo.IndexedDB.Query
         /// <returns></returns>
         public virtual bool isMatch(byte[] columnbytes)
         {
+            if (this.DataType == typeof(DateTime))
+            {
+                columnbytes = ConvertDatetimeBytes(columnbytes);
+            }
+
             switch (compareType)
             {
                 case Comparer.EqualTo:
@@ -69,7 +74,20 @@ namespace Kooboo.IndexedDB.Query
                     return false;
             }
         }
-
+        /// <summary>
+        /// If column's type is datetime,the block data will store datetime.ticks in byte array
+        /// but the compare value(this.ValueBytes) store (datetime-DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc)) in byte array 
+        /// so we need change datetime to the same byte array format.
+        /// </summary>
+        /// <param name="columnbytes"></param>
+        /// <returns></returns>
+        private static byte[] ConvertDatetimeBytes(byte[] columnbytes)
+        {
+            var datetime = Helper.DateTimeUtcHelper.ToDateTime(columnbytes);
+            var converter = ObjectContainer.GetConverter<DateTime>();
+            columnbytes = converter.ToByte(datetime);
+            return columnbytes;
+        }
 
         public static ColumnEvaluator GetEvaluator(Type datatype, Comparer comparetype, byte[] ValueBytes, int columnLength)
         {
