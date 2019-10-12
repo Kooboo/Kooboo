@@ -1,7 +1,5 @@
-﻿using Kooboo.Data.Interface;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿ 
+using System.Collections.Generic; 
 
 namespace Kooboo.Sites.Models
 {
@@ -31,7 +29,6 @@ namespace Kooboo.Sites.Models
                 _columns = value;
             }
         }
-
     }
 
 
@@ -51,9 +48,7 @@ namespace Kooboo.Sites.Models
         public int Scale { get; set; }
 
         public bool IsIndex { get; set; }
-
-        // when this is set to an value non defined as "_id", it means the _id field will be hash from this value. 
-        // Then there will be at least two index instantly... Fine... 
+         
         public bool IsPrimaryKey { get; set; }
 
         public bool IsUnique { get; set; }

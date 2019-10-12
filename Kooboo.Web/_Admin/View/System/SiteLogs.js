@@ -226,16 +226,18 @@ $(function() {
         var logList = [];
         data.list.forEach(function(log) {
             var date = new Date(log.lastModified);
-
+        
             var model = {
                 id: log.id,
                 name: {
                     text: log.itemName,
-                    url: Kooboo.Route.Get(Kooboo.Route.SiteLog.LogVersions, {
+                    url: Kooboo.Route.Get(Kooboo.Route.SiteLog.LogVersions, Object.assign({
                         Id: log.id,
                         KeyHash: log.keyHash,
                         StoreNameHash: log.storeNameHash
-                    })
+                    }, log.hasOwnProperty('tableNameHash') ? {
+                        tableNameHash: log.tableNameHash
+                    } : {}))
                 },
                 type: {
                     text: log.storeName ? (Kooboo.text.component.table[log.storeName.toLowerCase()] || log.storeName) : "",
@@ -253,7 +255,7 @@ $(function() {
                     url: Kooboo.Route.Get(Kooboo.Route.SiteLog.LogVersions, Object.assign({
                         KeyHash: log.keyHash,
                         StoreNameHash: log.storeNameHash,
-                    }, log.tableNameHash ? {
+                    }, log.hasOwnProperty('tableNameHash') ? {
                         tableNameHash: log.tableNameHash
                     } : {})),
                     newWindow: true

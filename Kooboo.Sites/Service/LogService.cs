@@ -242,8 +242,7 @@ namespace Kooboo.Sites.Service
 
         public static string GetTableDisplayName(SiteDb sitedb, LogEntry log, RenderContext context, Dictionary<string, object> LogData)
         {
-            string name = Data.Language.Hardcoded.GetValue("Table", context);
-            name += ": " + log.TableName;
+            string name =  log.TableName;
             if (!string.IsNullOrWhiteSpace(log.TableColName))
             {
                 name += ":" + log.TableColName;
