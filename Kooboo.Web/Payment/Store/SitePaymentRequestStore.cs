@@ -1,7 +1,7 @@
-﻿using System;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
+using System;
 
 namespace Kooboo.Web.Payment
 {
@@ -15,10 +15,10 @@ namespace Kooboo.Web.Payment
                 if (sitedb != null)
                 {
                     var repo = sitedb.GetSiteRepository<SitePaymentRequestRepository>();
-                    return repo.Get(PaymentRequestId); 
+                    return repo.Get(PaymentRequestId);
                 }
             }
-            return null; 
+            return null;
         }
 
         public void Save(PaymentRequest request, RenderContext context)
@@ -30,8 +30,8 @@ namespace Kooboo.Web.Payment
                 {
                     var repo = sitedb.GetSiteRepository<SitePaymentRequestRepository>();
                     repo.AddOrUpdate(request);
-                } 
+                }
             }
         }
     }
-} 
+}

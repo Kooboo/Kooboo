@@ -1,31 +1,26 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.ByteConverter;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Queue
 {
     /// <summary>
-    /// The content body of TValue class. 
+    /// The content body of TValue class.
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-   public class QueueContent<TValue>
+    public class QueueContent<TValue>
     {
-       private object _object = new object();
+        private object _object = new object();
 
         public string FullFileName;
         private FileStream _stream;
 
         private IByteConverter<TValue> ValueConverter;
-           
+
         private void _initialize()
         {
-           
             if (!File.Exists(FullFileName))
             {
                 FileInfo fileinfo = new FileInfo(FullFileName);
@@ -34,7 +29,6 @@ namespace Kooboo.IndexedDB.Queue
                 {
                     fileinfo.Directory.Create();
                 }
-               
 
                 FileStream openstream = File.Create(FullFileName);
 
@@ -43,7 +37,6 @@ namespace Kooboo.IndexedDB.Queue
                 openstream.Write(bytes, 0, bytes.Length);
                 openstream.Close();
             }
-
         }
 
         public QueueContent(string fullfilename)
@@ -52,7 +45,6 @@ namespace Kooboo.IndexedDB.Queue
             _initialize();
             this.ValueConverter = ObjectContainer.GetConverter<TValue>();
         }
-
 
         public bool Exists()
         {
@@ -75,22 +67,20 @@ namespace Kooboo.IndexedDB.Queue
 
                 Int64 ReturnPosition = startwriteposition;  // to be return for outside.
                 Stream.Position = ReturnPosition;
-                Stream.Write(BitConverter.GetBytes(count), 0, 4);   // the value length counter. 
+                Stream.Write(BitConverter.GetBytes(count), 0, 4);   // the value length counter.
 
                 Stream.Position = ReturnPosition + 4;
                 Stream.Write(valueytes, 0, valueytes.Length);
 
                 return ReturnPosition;
             }
-
-
         }
 
         public TValue Get(Int64 Position)
         {
             lock (_object)
             {
-                Stream.Position = Position; 
+                Stream.Position = Position;
 
                 byte[] counterbyte = new byte[4];
 
@@ -124,14 +114,12 @@ namespace Kooboo.IndexedDB.Queue
                     {
                         if (_stream == null || _stream.CanRead == false)
                         {
-                            _stream = StreamManager.GetFileStream(this.FullFileName); 
+                            _stream = StreamManager.GetFileStream(this.FullFileName);
                         }
                     }
                 }
                 return _stream;
             }
         }
-
-
     }
 }

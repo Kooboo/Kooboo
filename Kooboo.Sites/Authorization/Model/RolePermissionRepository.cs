@@ -2,11 +2,9 @@
 using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Sites.Authorization.Model
 {
-
     public class RolePermissionRepository : SiteRepositoryBase<RolePermission>
     {
         public override ObjectStoreParameters StoreParameters
@@ -39,7 +37,6 @@ namespace Kooboo.Sites.Authorization.Model
 
         public override RolePermission GetByNameOrId(string NameOrGuid)
         {
-
             Guid key;
             bool parseok = Guid.TryParse(NameOrGuid, out key);
 
@@ -59,7 +56,6 @@ namespace Kooboo.Sites.Authorization.Model
             return list;
         }
 
-
         public void AppendDefault(List<RolePermission> current)
         {
             if (current.Find(o => o.Id == DefaultData.Master.Id) == null)
@@ -76,7 +72,6 @@ namespace Kooboo.Sites.Authorization.Model
             {
                 current.Add(DefaultData.ContentManager);
             }
-
         }
 
         public override RolePermission GetFromCache(Guid id)
@@ -88,7 +83,6 @@ namespace Kooboo.Sites.Authorization.Model
             }
             return DefaultData.GetDefault(id);
         }
-
 
         public override List<RolePermission> List(bool UseColumnData = false)
         {
@@ -105,7 +99,6 @@ namespace Kooboo.Sites.Authorization.Model
             {
                 return false;
             }
-
 
             //  return base.AddOrUpdate(value, UserId);
 
@@ -134,17 +127,12 @@ namespace Kooboo.Sites.Authorization.Model
                 }
                 return false;
             }
-
         }
-         
-
 
         public override bool AddOrUpdate(RolePermission value)
         {
             return AddOrUpdate(value, default(Guid));
         }
-
-
 
         public override void Delete(Guid id)
         {
@@ -153,9 +141,9 @@ namespace Kooboo.Sites.Authorization.Model
 
         public override void Delete(Guid id, Guid UserId)
         {
-            if (id==DefaultData.Master.Id || id == DefaultData.Developer.Id || id == DefaultData.ContentManager.Id)
+            if (id == DefaultData.Master.Id || id == DefaultData.Developer.Id || id == DefaultData.ContentManager.Id)
             {
-                throw new Exception("default role can not be deleted"); 
+                throw new Exception("default role can not be deleted");
             }
             var old = this.Store.get(id);
             if (old != null)
@@ -166,21 +154,11 @@ namespace Kooboo.Sites.Authorization.Model
             }
             RaiseEvent(old, ChangeType.Delete);
         }
-
     }
-
-
-
-
-
 }
-
-
-
 
 //public static class Actions
 //{
-
 //    public static uint Admin = Hierarchy.GetInt(1);
 
 //    public static uint System = Hierarchy.GetInt(1, 1);

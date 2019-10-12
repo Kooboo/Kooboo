@@ -1,14 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.ViewModel
-{ 
-
+{
     public class DatabaseItemEdit
     {
         public string Name { get; set; }
@@ -17,7 +11,7 @@ namespace Kooboo.Web.ViewModel
         {
             get; set;
         }
-         
+
         public object Value { get; set; }
 
         public bool IsIncremental { get; set; }
@@ -28,8 +22,8 @@ namespace Kooboo.Web.ViewModel
 
         public bool IsIndex { get; set; }
 
-        // when this is set to an value non defined as "_id", it means the _id field will be hash from this value. 
-        // Then there will be at least two index instantly... Fine... 
+        // when this is set to an value non defined as "_id", it means the _id field will be hash from this value.
+        // Then there will be at least two index instantly... Fine...
         public bool IsPrimaryKey { get; set; }
 
         public bool IsUnique { get; set; }
@@ -40,5 +34,4 @@ namespace Kooboo.Web.ViewModel
 
         public bool IsSystem { get; set; }
     }
-
 }

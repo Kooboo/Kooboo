@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Jint.Native;
+﻿using Jint.Native;
 using Jint.Parser.Ast;
 using Jint.Runtime.Environments;
-using Jint.Runtime.References;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Jint.Runtime.Debugger
 {
@@ -76,7 +74,7 @@ namespace Jint.Runtime.Debugger
             {
                 return;
             }
-            
+
             BreakPoint breakpoint = _engine.BreakPoints.FirstOrDefault(breakPoint => BpTest(statement, breakPoint));
             bool breakpointFound = false;
 
@@ -121,13 +119,12 @@ namespace Jint.Runtime.Debugger
 
         private bool BpTest(Statement statement, BreakPoint breakpoint)
         {
-
             bool afterStart, beforeEnd;
 
             //afterStart = (breakpoint.Line == statement.Location.Start.Line &&
             //                 breakpoint.Char >= statement.Location.Start.Column);
             //our breakpoint column always start with zero,so it don't need to compare the start column
-            afterStart = (breakpoint.Line == statement.Location.Start.Line );
+            afterStart = (breakpoint.Line == statement.Location.Start.Line);
 
             if (!afterStart)
             {

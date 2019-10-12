@@ -1,14 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.Columns;
-using Kooboo.IndexedDB.Dynamic;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Helper
 {
@@ -67,7 +64,6 @@ namespace Kooboo.IndexedDB.Helper
 
             if (parameters.ColumnList.Count > 0)
             {
-
                 foreach (var item in parameters.ColumnList)
                 {
                     ColumnSetting column = new ColumnSetting();
@@ -82,7 +78,7 @@ namespace Kooboo.IndexedDB.Helper
                     }
                     else
                     {
-                        //try get property. 
+                        //try get property.
                         PropertyInfo propertyinfo = valuetype.GetProperty(item.Key);
                         if (propertyinfo != null)
                         {
@@ -188,7 +184,6 @@ namespace Kooboo.IndexedDB.Helper
             return false;
         }
 
-
         internal static bool IsSameSetting(StoreSetting settings, StoreSetting newsetting)
         {
             if (settings.EnableLog != newsetting.EnableLog || settings.EnableVersion != newsetting.EnableVersion || settings.UseDefaultNETBinaryFormater != newsetting.UseDefaultNETBinaryFormater || settings.PrimaryKey != newsetting.PrimaryKey || settings.PrimaryKeyLen != newsetting.PrimaryKeyLen)
@@ -239,7 +234,6 @@ namespace Kooboo.IndexedDB.Helper
 
             var allbytes = converter.ToBytes(setting);
             File.WriteAllBytes(SettingFile, allbytes);
-
         }
 
         public static StoreSetting GetSetting<TValue>(ObjectStoreParameters para)
@@ -271,7 +265,6 @@ namespace Kooboo.IndexedDB.Helper
             return setting;
         }
 
-        #endregion
-          
+        #endregion NewSettingApi
     }
 }

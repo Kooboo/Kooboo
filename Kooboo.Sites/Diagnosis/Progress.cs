@@ -1,12 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System.Threading;
 
 namespace Kooboo.Sites.Diagnosis
 {
-  public  class Progress
-    { 
-        private int _totalAmount; 
+    public class Progress
+    {
+        private int _totalAmount;
+
         public int TotalAmount
         {
             get
@@ -15,7 +16,8 @@ namespace Kooboo.Sites.Diagnosis
             }
         }
 
-        private int _checkedAmount; 
+        private int _checkedAmount;
+
         public int CheckedAmount
         {
             get
@@ -24,7 +26,8 @@ namespace Kooboo.Sites.Diagnosis
             }
         }
 
-        private int _criticalAmount; 
+        private int _criticalAmount;
+
         public int CriticalAmount
         {
             get
@@ -33,7 +36,8 @@ namespace Kooboo.Sites.Diagnosis
             }
         }
 
-        private int _warningAmount; 
+        private int _warningAmount;
+
         public int WarningAmount
         {
             get
@@ -61,13 +65,5 @@ namespace Kooboo.Sites.Diagnosis
         {
             Interlocked.Increment(ref _warningAmount);
         }
-
     }
-
-
- 
-
-
-
-
 }

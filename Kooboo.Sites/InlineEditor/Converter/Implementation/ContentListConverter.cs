@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
@@ -8,8 +8,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.InlineEditor.Converter
 {
@@ -43,8 +41,8 @@ namespace Kooboo.Sites.InlineEditor.Converter
 
             string viewbody = Lib.Helper.JsonHelper.GetString(result, "HtmlBody");
 
-             view.Body = UpdateViewTemplate(viewbody, res); 
-             
+            view.Body = UpdateViewTemplate(viewbody, res);
+
             sitedb.Views.AddOrUpdate(view);
 
             DataManager.AddGetContentListDataMethod(sitedb, view.Id, res.contentFolder.Id, "List");
@@ -55,9 +53,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
                 ComponentNameOrId = view.Name,
                 Tag = "<view id='" + view.Name.ToString() + "'></view>"
             };
-
         }
-
 
         private bool HasCategory(SiteDb SiteDb, Guid PageId, string KoobooId)
         {
@@ -71,21 +67,20 @@ namespace Kooboo.Sites.InlineEditor.Converter
                 return template;
             }
 
-            List<SourceUpdate> sourceUpdate = new List<SourceUpdate>(); 
+            List<SourceUpdate> sourceUpdate = new List<SourceUpdate>();
 
             var doc = Kooboo.Dom.DomParser.CreateDom(template);
             var els = GetPossibleEls(doc);
 
             foreach (var el in els)
             {
-
                 Dictionary<string, string> dict = new Dictionary<string, string>();
                 foreach (var att in el.attributes)
                 {
                     dict.Add(att.name, att.value);
                 }
 
-                Dictionary<string, string> updates = new Dictionary<string, string>(); 
+                Dictionary<string, string> updates = new Dictionary<string, string>();
 
                 foreach (var at in dict)
                 {
@@ -96,19 +91,18 @@ namespace Kooboo.Sites.InlineEditor.Converter
                         {
                             if (value == date.Name || value.EndsWith("." + date.Name))
                             {
-                                var newvalue =  "DateFormat(" + at.Value + ", '" + date.Format + "')";
-                                updates.Add(at.Key, newvalue); 
+                                var newvalue = "DateFormat(" + at.Value + ", '" + date.Format + "')";
+                                updates.Add(at.Key, newvalue);
                             }
                         }
                     }
                 }
 
-
-                if (updates.Count()>0)
+                if (updates.Count() > 0)
                 {
                     foreach (var item in updates)
                     {
-                        dict[item.Key] = item.Value; 
+                        dict[item.Key] = item.Value;
                     }
 
                     SourceUpdate supdate = new SourceUpdate();
@@ -118,19 +112,17 @@ namespace Kooboo.Sites.InlineEditor.Converter
                     string newopentag = Kooboo.Sites.Service.DomService.GenerateOpenTag(dict, el.tagName);
                     supdate.NewValue = newopentag;
 
-                    sourceUpdate.Add(supdate); 
-
+                    sourceUpdate.Add(supdate);
                 }
-
             }
 
             if (sourceUpdate.Any())
             {
-                return Kooboo.Sites.Service.DomService.UpdateSource(template, sourceUpdate); 
+                return Kooboo.Sites.Service.DomService.UpdateSource(template, sourceUpdate);
             }
             else
             {
-                return template; 
+                return template;
             }
         }
 
@@ -154,6 +146,5 @@ namespace Kooboo.Sites.InlineEditor.Converter
 
             return elements;
         }
-
     }
 }

@@ -1,17 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Dom.CSS;
 
 namespace Kooboo.Dom
 {
     public static class CharacterExtension
     {
-
         public static bool isOneOf(this string input, params string[] stringlist)
         {
             if (string.IsNullOrEmpty(input))
@@ -28,7 +21,6 @@ namespace Kooboo.Dom
             }
 
             return false;
-
         }
 
         public static bool isOneOf(this char input, params char[] chars)
@@ -44,7 +36,7 @@ namespace Kooboo.Dom
         }
 
         /// <summary>
-        /// The first char of the string is one of the chars. 
+        /// The first char of the string is one of the chars.
         /// </summary>
         /// <param name="input"></param>
         /// <param name="chars"></param>
@@ -67,7 +59,6 @@ namespace Kooboo.Dom
             }
 
             return false;
-
         }
 
         public static bool isSpaceCharacter(this string data)
@@ -129,6 +120,5 @@ namespace Kooboo.Dom
 
             return false;
         }
-
     }
 }

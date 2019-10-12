@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.App.Commands;
 using Kooboo.App.Extensions;
@@ -8,8 +8,6 @@ using Kooboo.Data.Helper;
 using Kooboo.Data.Models;
 using System.Windows;
 using System.Windows.Controls;
-using Kooboo.App.UserControls;
-
 
 namespace Kooboo.App
 {
@@ -19,22 +17,23 @@ namespace Kooboo.App
     public partial class CreateServerPage : Page
     {
         private readonly DependencyObject _parent;
+
         public CreateServerPage(DependencyObject parent)
             : this()
         {
             _parent = parent;
         }
 
-        internal readonly NewServerViewModel serverViewModel;
+        internal readonly NewServerViewModel ServerViewModel;
 
         public CreateServerPage()
         {
             InitializeComponent();
             backbtn.Content = Data.Language.Hardcoded.GetValue("back");
-            saveBtn.Content = Data.Language.Hardcoded.GetValue("save"); 
-            serverViewModel = new NewServerViewModel
+            saveBtn.Content = Data.Language.Hardcoded.GetValue("save");
+            ServerViewModel = new NewServerViewModel
             {
-                Title = Data.Language.Hardcoded.GetValue("+ New Server"), 
+                Title = Data.Language.Hardcoded.GetValue("+ New Server"),
                 AddCommand = new DelegateCommand<NewServerViewModel>(vm =>
                 {
                     if (!vm.IsValid())
@@ -66,7 +65,7 @@ namespace Kooboo.App
                             OrganizationId = GlobalDb.Users.DefaultUser.CurrentOrgId
                         };
                         GlobalDb.Domains.AddOrUpdate(domain);
-                        if (domainresult != null && !string.IsNullOrEmpty(domainresult.Domain))
+                        if (!string.IsNullOrEmpty(domainresult.Domain))
                         {
                             name = domainresult.Domain;
                             domainid = IDGenerator.GetDomainId(domainresult.Domain);
@@ -84,7 +83,7 @@ namespace Kooboo.App
                         {
                             int.TryParse(vm.Port, out port);
                         }
-                        if (port <= 0 || port>65535)
+                        if (port <= 0 || port > 65535)
                         {
                             MessageBox.Show(messageText);
                             return;
@@ -93,8 +92,8 @@ namespace Kooboo.App
                         defaultbinding = true;
                     }
 
-                    // add new website. 
-                    WebSite site = new WebSite
+                    // add new website.
+                    var site = new WebSite
                     {
                         Name = name,
                         LocalRootPath = vm.Path
@@ -113,11 +112,10 @@ namespace Kooboo.App
                     GlobalDb.Bindings.AddOrUpdate(bind);
 
                     this.Redirect(new ServerPage());
-                     
                 })
             };
-            DataContext = serverViewModel;
-        } 
+            DataContext = ServerViewModel;
+        }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
@@ -126,7 +124,7 @@ namespace Kooboo.App
 
         protected void Select_BindingTo(object sender, RoutedEventArgs e)
         {
-            RadioButton radioButtion = sender as RadioButton;
+            var radioButtion = sender as RadioButton;
             var content = radioButtion.Content.ToString().ToLower();
             switch (content)
             {
@@ -135,13 +133,13 @@ namespace Kooboo.App
                     portTxt.Visibility = Visibility.Collapsed;
                     domainTxt.Visibility = Visibility.Visible;
                     break;
+
                 case "port":
                     //domainTxt.Text = "";
                     domainTxt.Visibility = Visibility.Collapsed;
                     portTxt.Visibility = Visibility.Visible;
                     break;
             }
-
         }
     }
 }

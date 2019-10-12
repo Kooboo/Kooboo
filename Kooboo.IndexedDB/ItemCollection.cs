@@ -1,10 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB
 {
@@ -13,7 +9,6 @@ namespace Kooboo.IndexedDB
     /// </summary>
     public class ValueCollection<TKey, TValue> : IEnumerable<TValue>
     {
-
         private ObjectStore<TKey, TValue> store;
         private IEnumerator<long> enumerator;
 
@@ -23,7 +18,7 @@ namespace Kooboo.IndexedDB
             this.enumerator = enumerator;
         }
 
-        IEnumerator<TValue> GetEnumerator()
+        private IEnumerator<TValue> GetEnumerator()
         {
             return new Enumerator(store, enumerator);
         }
@@ -38,10 +33,8 @@ namespace Kooboo.IndexedDB
             return this.GetEnumerator();
         }
 
-
         public class Enumerator : IEnumerator<TValue>
         {
-
             private ObjectStore<TKey, TValue> store;
             private IEnumerator<long> enumerator;
 
@@ -65,7 +58,6 @@ namespace Kooboo.IndexedDB
                 this.enumerator = null;
             }
 
-
             public bool MoveNext()
             {
                 return enumerator.MoveNext();
@@ -80,9 +72,6 @@ namespace Kooboo.IndexedDB
             {
                 get { return Current; }
             }
-
         }
-
-
     }
 }

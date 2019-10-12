@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Jint.Native.Function;
+﻿using Jint.Native.Function;
 using Jint.Native.Object;
 using Jint.Runtime;
 using Jint.Runtime.Descriptors;
 using Jint.Runtime.Descriptors.Specialized;
 using Jint.Runtime.Environments;
+using System;
+using System.Collections.Generic;
 
 namespace Jint.Native.Argument
 {
@@ -27,7 +27,7 @@ namespace Jint.Native.Argument
 
         protected override void EnsureInitialized()
         {
-            if(_initialized)
+            if (_initialized)
             {
                 return;
             }
@@ -92,7 +92,6 @@ namespace Jint.Native.Argument
             obj.Extensible = true;
             obj.Strict = strict;
 
-
             return obj;
         }
 
@@ -105,7 +104,6 @@ namespace Jint.Native.Argument
                 return "Arguments";
             }
         }
-
 
         public override PropertyDescriptor GetOwnProperty(string propertyName)
         {

@@ -1,16 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Lib.NETMultiplePart
-{ 
-     
+{
     public class AttributeReader
-    { 
+    {
         public static Dictionary<string, string> GetAttributes(string input)
         {
             Dictionary<string, string> result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -20,24 +17,24 @@ namespace Kooboo.Lib.NETMultiplePart
             foreach (var item in segs)
             {
                 var attributes = GetAttribute(item);
-                if (attributes != null && attributes.Count()>0)
+                if (attributes != null && attributes.Count() > 0)
                 {
                     foreach (var dict in attributes)
                     {
                         if (!result.ContainsKey(dict.Key))
                         {
-                            result.Add(dict.Key, dict.Value); 
+                            result.Add(dict.Key, dict.Value);
                         }
                     }
                 }
             }
 
-            return result; 
+            return result;
         }
- 
-        public static Dictionary<string, string>GetAttribute(string input)
+
+        public static Dictionary<string, string> GetAttribute(string input)
         {
-            Dictionary<string, string> returnDict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); 
+            Dictionary<string, string> returnDict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             string name = string.Empty;
             string value = string.Empty;
@@ -47,7 +44,7 @@ namespace Kooboo.Lib.NETMultiplePart
             bool hasquote = false;
 
             int index = 0;
-            int len = input.Length; 
+            int len = input.Length;
 
             while (index < len)
             {
@@ -89,8 +86,8 @@ namespace Kooboo.Lib.NETMultiplePart
                             returnDict.Add(name, "");
                             name = null;
                             value = null;
-                            hasquote = false; 
-                            state = AttributeState.beforeName; 
+                            hasquote = false;
+                            state = AttributeState.beforeName;
                         }
                     }
                 }
@@ -121,7 +118,7 @@ namespace Kooboo.Lib.NETMultiplePart
                             name = null;
                             value = null;
                             hasquote = false;
-                            state = AttributeState.beforeName; 
+                            state = AttributeState.beforeName;
                         }
                         else
                         {
@@ -143,7 +140,6 @@ namespace Kooboo.Lib.NETMultiplePart
                             value += current;
                         }
                     }
-
                 }
                 else
                 {
@@ -153,7 +149,7 @@ namespace Kooboo.Lib.NETMultiplePart
                 index += 1;
             }
 
-            return returnDict; 
+            return returnDict;
         }
 
         private static bool NonData(char current)
@@ -174,5 +170,4 @@ namespace Kooboo.Lib.NETMultiplePart
         BeforeValue = 3,
         InValue = 4
     }
-
 }

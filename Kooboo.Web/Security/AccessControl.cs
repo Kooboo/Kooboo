@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
@@ -6,19 +6,20 @@ using Kooboo.Sites.Extensions;
 using System.Linq;
 
 namespace Kooboo.Web.Security
-{ 
+{
     public static class AccessControl
-    { 
+    {
         public static bool HasWebsiteAccess(WebSite site, RenderContext context)
         {
             switch (site.SiteType)
             {
                 case Data.Definition.WebsiteType.p:
                     return true;
+
                 case Data.Definition.WebsiteType.o:
-                    var user = context.User;   
+                    var user = context.User;
                     if (user == null)
-                    {    return false;   } 
+                    { return false; }
 
                     return Kooboo.Data.Cache.OrganizationUserCache.HasUser(site.OrganizationId, user.Id);
 
@@ -30,35 +31,34 @@ namespace Kooboo.Web.Security
 
                     if (siteuser.Id == site.OrganizationId)
                     {
-                        return true; 
+                        return true;
                     }
 
-                    var allusers = site.SiteDb().SiteUser.All(); 
-                    if (allusers.Find(o=>o.Id == siteuser.Id)!=null)
+                    var allusers = site.SiteDb().SiteUser.All();
+                    if (allusers.Find(o => o.Id == siteuser.Id) != null)
                     {
-                        return true; 
+                        return true;
                     }
                     else
                     {
-                        return false; 
-                    }        
+                        return false;
+                    }
                 default:
                     break;
             }
 
-            return true; 
-   
+            return true;
         }
-      
+
         public static bool HasServerAccess(RenderContext context)
         {
-            if (Data.AppSettings.AllowUsers !=null && Data.AppSettings.AllowUsers.Any())
+            if (Data.AppSettings.AllowUsers != null && Data.AppSettings.AllowUsers.Any())
             {
-                if (context.User !=null)
+                if (context.User != null)
                 {
                     if (Data.AppSettings.AllowUsers.Contains(context.User.Id))
                     {
-                        return true; 
+                        return true;
                     }
                     else
                     {
@@ -72,9 +72,8 @@ namespace Kooboo.Web.Security
                         }
                     }
                 }
-            } 
-            return true; 
+            }
+            return true;
         }
-       
     }
 }

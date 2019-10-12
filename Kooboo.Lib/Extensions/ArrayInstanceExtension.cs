@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Jint.Native.Array;
 using Jint.Native.Object;
-using Jint.Native.Array;
 using Jint.Runtime.Interop;
+
 namespace Jint
 {
     public static class ArrayInstanceExtension
@@ -22,9 +20,6 @@ namespace Jint
             {
                 Engine.TypeMappers.Add(typeof(byte[]), (Engine en, object v) => en.Array.Construct((byte[])v));
             }
-            
         }
     }
-
-
 }

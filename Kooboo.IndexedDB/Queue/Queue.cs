@@ -1,22 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.IndexedDB.ByteConverter;
 using Kooboo.IndexedDB.Queue;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB
 {
     /// <summary>
     /// queue is a fast storage.
-    /// queue only has in and out, sequence write to disk , and sequence get out. 
+    /// queue only has in and out, sequence write to disk , and sequence get out.
     /// </summary>
     public class Queue<TValue> : IQueue
     {
-
         private static object _object = new object();
 
         private Dictionary<int, QueueContent<TValue>> _queueContentDictionary;
@@ -26,6 +21,7 @@ namespace Kooboo.IndexedDB
         /// the Int date representation of current dequeue reading file.
         /// </summary>
         internal int _dequeueDateInt;
+
         internal int _dequeueDateCounter;
 
         private string queueFolder;
@@ -53,20 +49,18 @@ namespace Kooboo.IndexedDB
             this._queueContentDictionary = new Dictionary<int, QueueContent<TValue>>();
             this._queueListDictionary = new Dictionary<int, QueueList>();
 
-
             this.queueFileIdList = new SortedSet<int>();
 
-            // check for the last reading. 
+            // check for the last reading.
             _init();
         }
 
-
         /// <summary>
-        /// check, remove old files and set the start point for next dequeue. 
+        /// check, remove old files and set the start point for next dequeue.
         /// </summary>
         internal void _init()
         {
-            // get list of all files in queue. 
+            // get list of all files in queue.
 
             foreach (var item in System.IO.Directory.GetFiles(this.queueFolder))
             {
@@ -79,7 +73,7 @@ namespace Kooboo.IndexedDB
 
                         filename = filename.Replace(this.queueListExtension, "");
 
-                        filename = filename.Replace("\\", "").Replace("/","");
+                        filename = filename.Replace("\\", "").Replace("/", "");
 
                         this.queueFileIdList.Add(Convert.ToInt32(filename));
                     }
@@ -96,13 +90,11 @@ namespace Kooboo.IndexedDB
                             this.queueFileIdList.Add(Convert.ToInt32(filename));
                         }
                     }
-
                 }
             }
 
             foreach (var item in queueFileIdList)
             {
-
                 QueueList list = GetQueueListFile(item);
 
                 if (list.isDequeueFinished() && item < DateTime.Now.DayToInt())
@@ -123,17 +115,13 @@ namespace Kooboo.IndexedDB
                     list = null;
                     queuecontent = null;
                 }
-
                 else
                 {
                     this._dequeueDateInt = item;
                     this._dequeueDateCounter = list.GetCounter();
                     return;
                 }
-
             }
-
-
         }
 
         private string GetFileName(int dateint, string extension)
@@ -142,7 +130,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// Add one item into queue. 
+        /// Add one item into queue.
         /// </summary>
         /// <param name="?"></param>
         public void Add(TValue T)
@@ -150,7 +138,6 @@ namespace Kooboo.IndexedDB
             int intday = DateTime.Now.DayToInt();
             Int64 blockposition = GetQueueContentFile(intday).Add(T);
             GetQueueListFile(intday).Add(blockposition);
-
         }
 
         /// <summary>
@@ -162,9 +149,8 @@ namespace Kooboo.IndexedDB
             Add(T);
         }
 
-
         /// <summary>
-        ///   get the current queue  content file to insert the queue item. 
+        ///   get the current queue  content file to insert the queue item.
         /// </summary>
         /// <returns></returns>
         internal QueueContent<TValue> GetQueueContentFile(int intday)
@@ -207,9 +193,8 @@ namespace Kooboo.IndexedDB
             return _queueListDictionary[intday];
         }
 
-
         /// <summary>
-        /// Read and remove items from queue. 
+        /// Read and remove items from queue.
         /// </summary>
         /// <returns></returns>
         public QueueCollection<TValue> DeQueue()
@@ -220,7 +205,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// Read the queue items without removing them from queue. 
+        /// Read the queue items without removing them from queue.
         /// </summary>
         /// <returns></returns>
         public QueueCollection<TValue> ReadQueue()
@@ -267,13 +252,13 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// delete itself. 
+        /// delete itself.
         /// </summary>
         public void DelSelf()
         {
             this.Close();
 
-            // del all files in this directory. 
+            // del all files in this directory.
 
             foreach (var item in System.IO.Directory.GetFiles(this.queueFolder))
             {
@@ -282,6 +267,5 @@ namespace Kooboo.IndexedDB
 
             System.IO.Directory.Delete(this.queueFolder);
         }
-
     }
 }

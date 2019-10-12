@@ -1,11 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace Kooboo.Collections
@@ -18,7 +14,9 @@ namespace Kooboo.Collections
     /// </summary>
     public class QueryString : NameValueCollection
     {
-        public QueryString() { }
+        public QueryString()
+        {
+        }
 
         public QueryString(string queryString)
         {
@@ -58,7 +56,6 @@ namespace Kooboo.Collections
             }
             return this;
         }
-
 
         /// <summary>
         /// add a name value pair to the collection
@@ -112,7 +109,6 @@ namespace Kooboo.Collections
             base.Clear();
             return this;
         }
-
 
         /// <summary>
         /// overrides the default

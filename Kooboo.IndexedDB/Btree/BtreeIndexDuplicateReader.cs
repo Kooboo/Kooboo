@@ -1,16 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Btree
 {
-
     /// <summary>
-    /// duplcate items sequence reader. 
+    /// duplcate items sequence reader.
     /// </summary>
     public class BtreeIndexDuplicateReader
     {
@@ -39,26 +34,25 @@ namespace Kooboo.IndexedDB.Btree
                 if (current != null)
                 {
                     return current.BlockPosition;
-                } 
-            } 
-         
-            return -1; 
-        } 
+                }
+            }
+
+            return -1;
+        }
 
         public byte[] ReadNextPointerBytes()
         {
-
             if (this.current.Next > 0)
             {
                 current = this.duplicate.getJumpRecord(current.Next);
 
                 if (current != null)
-                { 
+                {
                     return current.pointerBytes;
                 }
             }
 
-            return null; 
+            return null;
         }
     }
 }

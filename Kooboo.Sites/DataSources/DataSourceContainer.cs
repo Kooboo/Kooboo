@@ -1,7 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using Kooboo.Data.Interface;
+using System;
 
 namespace Kooboo.Sites.DataSources
 {
@@ -14,6 +14,5 @@ namespace Kooboo.Sites.DataSources
         {
             return !typeof(IDataSource).IsAssignableFrom(dataSourceType);
         }
-      
     }
 }

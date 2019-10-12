@@ -6,9 +6,9 @@ namespace Jint.Native.Number.Dtoa
 {
     public class FastDtoaBuilder
     {
-
         // allocate buffer for generated digits + extra notation + padding zeroes
         private readonly char[] _chars = new char[FastDtoa.KFastDtoaMaximalLength + 8];
+
         internal int End = 0;
         internal int Point;
         private bool _formatted;
@@ -52,7 +52,6 @@ namespace Jint.Native.Number.Dtoa
                 _formatted = true;
             }
             return new System.String(_chars, 0, End);
-
         }
 
         private void ToFixedFormat(int firstDigit, int decPoint)
@@ -113,11 +112,11 @@ namespace Jint.Native.Number.Dtoa
             End = charPos + 1;
 
             // code below is needed because Integer.getChars() is not public
-            for (;;)
+            for (; ; )
             {
-                int r = exp%10;
+                int r = exp % 10;
                 _chars[charPos--] = Digits[r];
-                exp = exp/10;
+                exp = exp / 10;
                 if (exp == 0) break;
             }
         }

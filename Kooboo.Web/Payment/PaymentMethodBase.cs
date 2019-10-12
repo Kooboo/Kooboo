@@ -3,7 +3,6 @@ using Kooboo.Data.Models;
 using Kooboo.Web.Payment.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Web.Payment
 {
@@ -23,13 +22,13 @@ namespace Kooboo.Web.Payment
 
         public virtual PaymentStatusResponse EnquireStatus(PaymentRequest request, RenderContext context)
         {
-            var dbrequest = this.GetRequest(request.Id, context); 
-            
-            if (dbrequest !=null && dbrequest.IsPaid)
+            var dbrequest = this.GetRequest(request.Id, context);
+
+            if (dbrequest != null && dbrequest.IsPaid)
             {
                 return new PaymentStatusResponse() { HasResult = true, IsPaid = true };
-            }  
-            return new PaymentStatusResponse();  
+            }
+            return new PaymentStatusResponse();
         }
 
         public abstract IPaymentResponse MakePayment(PaymentRequest request, RenderContext Context);
@@ -38,36 +37,35 @@ namespace Kooboo.Web.Payment
         {
             return PaymentManager.GetPaymentSetting<TSetting>(context);
         }
-         
 
         public PaymentRequest GetRequest(Guid PaymentRequestId, RenderContext context)
         {
-            return PaymentManager.GetRequest(PaymentRequestId, context); 
+            return PaymentManager.GetRequest(PaymentRequestId, context);
         }
 
         public void UpdateRequest(PaymentRequest request, RenderContext context)
-        { 
-              PaymentManager.SaveRequest(request, context);
+        {
+            PaymentManager.SaveRequest(request, context);
         }
-         
+
         public string GetCallbackUrl(string MethodName, RenderContext context)
         {
-            return PaymentManager.GetCallbackUrl(this, MethodName, context);  
+            return PaymentManager.GetCallbackUrl(this, MethodName, context);
         }
 
         public string EnsureHttpUrl(string AbsOrRelativeUrl, RenderContext context)
         {
-           return PaymentManager.EnsureHttp(AbsOrRelativeUrl, context);
+            return PaymentManager.EnsureHttp(AbsOrRelativeUrl, context);
         }
 
         public virtual bool CanUse(RenderContext context)
         {
-            var setting = this.GetSetting(context); 
-            if (setting !=null)
+            var setting = this.GetSetting(context);
+            if (setting != null)
             {
-                return true; 
+                return true;
             }
-            return false; 
+            return false;
         }
     }
 }

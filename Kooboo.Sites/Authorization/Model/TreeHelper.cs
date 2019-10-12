@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Kooboo.Sites.Authorization.Model
 {
-  public static  class TreeHelper
+    public static class TreeHelper
     {
-
         // fullrighgts like string[] of :
         // root/sub/sub
         // root/sub/subtwo
@@ -29,7 +27,7 @@ namespace Kooboo.Sites.Authorization.Model
             AppendToPermissionTree(tree, rights.ToList());
         }
 
-        // single rights without \\ 
+        // single rights without \\
         public static void AppendToPermissionTree(PermissionTree tree, List<string> SingleRights)
         {
             foreach (var item in SingleRights)
@@ -60,10 +58,5 @@ namespace Kooboo.Sites.Authorization.Model
 
             tree.RootAccess = true; // at the
         }
-
-
-
     }
 }
-
-

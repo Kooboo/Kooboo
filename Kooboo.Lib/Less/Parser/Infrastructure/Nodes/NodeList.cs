@@ -11,7 +11,7 @@
         }
 
         public NodeList(params Node[] nodes)
-            : this((IEnumerable<Node>) nodes)
+            : this((IEnumerable<Node>)nodes)
         {
         }
 
@@ -36,7 +36,7 @@
         }
 
         public NodeList(params TNode[] nodes)
-            : this((IEnumerable<TNode>) nodes)
+            : this((IEnumerable<TNode>)nodes)
         {
         }
 
@@ -121,7 +121,7 @@
 
         public bool IsReadOnly
         {
-            get { return ((IList) Inner).IsReadOnly; }
+            get { return ((IList)Inner).IsReadOnly; }
         }
 
         public int IndexOf(TNode item)

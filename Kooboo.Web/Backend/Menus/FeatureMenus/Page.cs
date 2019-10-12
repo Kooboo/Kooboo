@@ -1,9 +1,5 @@
 ﻿using Kooboo.Data.Context;
-using Kooboo.Web.Backend.Menus;
-using Kooboo.Web.Menus;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Web.Menus.FeatureMenus
 {
@@ -18,14 +14,13 @@ namespace Kooboo.Web.Menus.FeatureMenus
         public int Order => 2;
 
         public List<ICmsMenu> SubItems { get; set; }
-         
+
         public string GetDisplayName(RenderContext Context)
         {
             return Kooboo.Data.Language.Hardcoded.GetValue("Pages", Context);
         }
     }
 }
-
 
 //new MenuItem { Name = Hardcoded.GetValue("Media library", context), Icon="icon icon-picture", Url = AdminUrl("Contents/Images", siteDb) },
 //            new MenuItem { Name = Hardcoded.GetValue("Pages", context), Icon = "icon icon-layers", Url = AdminUrl("Pages", siteDb) },

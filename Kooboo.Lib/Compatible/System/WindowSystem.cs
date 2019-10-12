@@ -1,10 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 using System.IO;
+using System.Linq;
 
 namespace Kooboo.Lib.Compatible
 {
@@ -21,6 +19,7 @@ namespace Kooboo.Lib.Compatible
         }
 
         #region
+
         public string CombinePath(string root, string relativePath)
         {
             relativePath = relativePath.TrimStart('/');
@@ -44,7 +43,8 @@ namespace Kooboo.Lib.Compatible
 
             return fullpath;
         }
-        //todo move 
+
+        //todo move
         public string CombineRelativePath(string relativePath, string path)
         {
             var slash = GetSlash();
@@ -73,9 +73,11 @@ namespace Kooboo.Lib.Compatible
             }
             return input.Split('\\').ToList();
         }
+
         #endregion
 
         #region port
+
         public int GetPort(int port)
         {
             while (Lib.Helper.NetworkHelper.IsPortInUse(port) && port < 65535)
@@ -93,6 +95,7 @@ namespace Kooboo.Lib.Compatible
             }
             return false;
         }
+
         #endregion
 
         public List<string> GetTryPaths()
@@ -112,8 +115,7 @@ namespace Kooboo.Lib.Compatible
 
         public string GetUpgradeUrl(string convertApiUrl)
         {
-           return convertApiUrl + "/_api/converter/WindowServerPackage";
+            return convertApiUrl + "/_api/converter/WindowServerPackage";
         }
-
     }
 }

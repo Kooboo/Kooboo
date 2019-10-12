@@ -1,14 +1,14 @@
-﻿using System.Collections;
-using Jint.Native.Function;
+﻿using Jint.Native.Function;
 using Jint.Native.Object;
 using Jint.Runtime;
 using Jint.Runtime.Interop;
+using System.Collections;
 
 namespace Jint.Native.Array
 {
     public sealed class ArrayConstructor : FunctionInstance, IConstructor
     {
-        private ArrayConstructor(Engine engine) :  base(engine, null, null, false)
+        private ArrayConstructor(Engine engine) : base(engine, null, null, false)
         {
         }
 
@@ -19,7 +19,7 @@ namespace Jint.Native.Array
             var obj = new ArrayConstructor(engine);
             obj.Extensible = true;
 
-            // The value of the [[Prototype]] internal property of the Array constructor is the Function prototype object 
+            // The value of the [[Prototype]] internal property of the Array constructor is the Function prototype object
             obj.Prototype = engine.Function.PrototypeObject;
             obj.PrototypeObject = ArrayPrototype.CreatePrototypeObject(engine, obj);
 
@@ -66,10 +66,10 @@ namespace Jint.Native.Array
                 {
                     throw new JavaScriptException(Engine.RangeError, "Invalid array length");
                 }
-                
+
                 instance.FastAddProperty("length", length, true, false, false);
             }
-            else if (arguments.Length == 1 && arguments.At(0).IsObject() && arguments.At(0).As<ObjectWrapper>() != null )
+            else if (arguments.Length == 1 && arguments.At(0).IsObject() && arguments.At(0).As<ObjectWrapper>() != null)
             {
                 var enumerable = arguments.At(0).As<ObjectWrapper>().Target as IEnumerable;
 
@@ -93,6 +93,5 @@ namespace Jint.Native.Array
 
             return instance;
         }
-
     }
 }

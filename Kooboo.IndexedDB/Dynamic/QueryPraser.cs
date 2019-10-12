@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.Query;
 using System;
@@ -11,7 +11,7 @@ namespace Kooboo.IndexedDB.Dynamic
     public class QueryPraser
     {
         /// <summary>
-        /// prase the filter collection and get an execution plan. 
+        /// prase the filter collection and get an execution plan.
         /// </summary>
         /// <returns></returns>
         public static ExecutionPlan GetExecutionPlan(Query query)
@@ -21,14 +21,14 @@ namespace Kooboo.IndexedDB.Dynamic
             ITableIndex startindex = null;
             if (!string.IsNullOrEmpty(query.OrderByFieldName))
             {
-                startindex = query.table.Indexs.Find(o => o.FieldName == query.OrderByFieldName); 
+                startindex = query.table.Indexs.Find(o => o.FieldName == query.OrderByFieldName);
                 if (startindex == null)
                 {
-                    executionplan.RequireOrderBy = true; 
+                    executionplan.RequireOrderBy = true;
                 }
             }
 
-            // find other where fields......  
+            // find other where fields......
             if (startindex == null)
             {
                 startindex = query.table.Indexs.Find(o => o.IsSystem);
@@ -51,7 +51,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 executionplan.startCollection = startindex.AllItems(query.Ascending);
             }
 
-            // check all index fields that has been used in the filter. 
+            // check all index fields that has been used in the filter.
             foreach (var item in query.table.Indexs)
             {
                 if (item.FieldName != startindex.FieldName)
@@ -64,7 +64,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
             }
 
-            // now the left columns.. 
+            // now the left columns..
             foreach (var item in query.items)
             {
                 var column = query.table.ObjectConverter.Fields.Find(o => o.FieldName == item.FieldOrProperty);
@@ -108,7 +108,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
             }
 
-            /// for the methods calls. 
+            /// for the methods calls.
             foreach (var item in query.calls)
             {
                 MemberExpression memberaccess = null;
@@ -125,7 +125,6 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
 
                 string fieldname = memberaccess.Member.Name;
-
 
                 var column = query.table.ObjectConverter.Fields.Find(o => o.FieldName == fieldname);
 
@@ -151,7 +150,7 @@ namespace Kooboo.IndexedDB.Dynamic
         }
 
         /// <summary>
-        /// get the range query collection of index fields.for looping.  this can be OrderBy fields or fields that has more sparnse. this only works for index fields. 
+        /// get the range query collection of index fields.for looping.  this can be OrderBy fields or fields that has more sparnse. this only works for index fields.
         /// after get, the related field or property item will be removed from the item collection.
         /// </summary>
         /// <param name="FieldOrPropertyName"></param>
@@ -171,54 +170,59 @@ namespace Kooboo.IndexedDB.Dynamic
 
             for (int i = 0; i < items.Count; i++)
             {
-
                 if (items[i].FieldOrProperty.ToLower() == FieldOrPropertyName)
                 {
                     switch (items[i].Compare)
                     {
                         case Comparer.EqualTo:
-                            // for equal to. 
+                            // for equal to.
                             range.upper = items[i].Value;
                             range.upperOpen = false;
                             range.lower = items[i].Value;
                             range.lowerOpen = false;
                             removeditem.Add(i);
                             break;
+
                         case Comparer.GreaterThan:
                             range.lower = items[i].Value;
                             range.lowerOpen = true;
                             removeditem.Add(i);
                             break;
+
                         case Comparer.GreaterThanOrEqual:
                             range.lower = items[i].Value;
                             range.lowerOpen = false;
                             removeditem.Add(i);
                             break;
+
                         case Comparer.LessThan:
                             range.upper = items[i].Value;
                             range.upperOpen = true;
                             removeditem.Add(i);
                             break;
+
                         case Comparer.LessThanOrEqual:
                             range.upper = items[i].Value;
                             range.upperOpen = false;
                             removeditem.Add(i);
                             break;
+
                         case Comparer.NotEqualTo:
-                            //does not do anything. 
+                            //does not do anything.
                             break;
+
                         case Comparer.StartWith:
-                            // does not do anything for startwith or contains. 
+                            // does not do anything for startwith or contains.
 
                             break;
+
                         case Comparer.Contains:
                             break;
+
                         default:
                             break;
                     }
-
                 }
-
             }
 
             bool hasmatch = false;
@@ -242,7 +246,7 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             if (string.IsNullOrWhiteSpace(expression))
             {
-                return new List<ConditionItem>(); 
+                return new List<ConditionItem>();
             }
             var scanner = new SyntaxScanner(expression);
 
@@ -277,7 +281,6 @@ namespace Kooboo.IndexedDB.Dynamic
                             result.Add(item);
                         }
 
-
                         field = null;
                         compare = null;
                         value = null;
@@ -286,7 +289,6 @@ namespace Kooboo.IndexedDB.Dynamic
                     field = null;
                     compare = null;
                     value = null;
-
                 }
                 else
                 {
@@ -369,9 +371,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
             return Comparer.EqualTo;
         }
-
     }
-
 
     public class ConditionItem
     {
@@ -380,7 +380,5 @@ namespace Kooboo.IndexedDB.Dynamic
         public Comparer Comparer { get; set; }
 
         public string Value { get; set; }
-
     }
-
 }

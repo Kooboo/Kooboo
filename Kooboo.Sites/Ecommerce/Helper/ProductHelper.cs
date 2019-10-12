@@ -1,17 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.Ecommerce.Models;
 using Kooboo.Sites.Ecommerce.ViewModel;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Ecommerce.Helper
 {
-   public static  class ProductHelper
-    {  
+    public static class ProductHelper
+    {
         public static ProductViewModel ToView(Product product, string lang, List<Models.ProductProperty> Properties)
         {
             if (product == null)
@@ -19,11 +16,11 @@ namespace Kooboo.Sites.Ecommerce.Helper
                 return null;
             }
             ProductViewModel model = new ProductViewModel();
-            model.Id = product.Id;     
+            model.Id = product.Id;
             model.ProductTypeId = product.ProductTypeId;
             model.UserKey = product.UserKey;
-            model.LastModified = product.LastModified;     
-            model.Online = product.Online;   
+            model.LastModified = product.LastModified;
+            model.Online = product.Online;
             model.CreationDate = product.CreationDate;
 
             var langcontent = product.GetContentStore(lang);
@@ -59,6 +56,5 @@ namespace Kooboo.Sites.Ecommerce.Helper
 
             return model;
         }
-           
     }
 }

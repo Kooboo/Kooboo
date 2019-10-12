@@ -1,16 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Queue
 {
     public class QueueCollection<TValue> : IEnumerable<TValue>
     {
-
         private Queue<TValue> queue;
         private bool dequeue;
 
@@ -20,7 +16,7 @@ namespace Kooboo.IndexedDB.Queue
             this.dequeue = dequeue;
         }
 
-        IEnumerator<TValue> GetEnumerator()
+        private IEnumerator<TValue> GetEnumerator()
         {
             return new Enumerator<TValue>(queue, dequeue);
         }
@@ -41,7 +37,7 @@ namespace Kooboo.IndexedDB.Queue
             private bool dequeue;
 
             private int CurrentDayInt;
-            private int currentcounter;  // the current reading or dequeue counter of current queue file. 
+            private int currentcounter;  // the current reading or dequeue counter of current queue file.
             private int currentTotalCount;
 
             public Enumerator(Queue<EValue> queue, bool dequeue)
@@ -51,7 +47,6 @@ namespace Kooboo.IndexedDB.Queue
                 this.CurrentDayInt = this.queue._dequeueDateInt;
                 this.currentcounter = this.queue._dequeueDateCounter;
                 this.currentTotalCount = this.queue.GetQueueListFile(CurrentDayInt).TotalCount();
-
             }
 
             public EValue Current
@@ -68,12 +63,11 @@ namespace Kooboo.IndexedDB.Queue
                 this.queue = null;
             }
 
-
             public bool MoveNext()
             {
                 if (this.currentcounter >= this.currentTotalCount)
                 {
-                    /// check one more time to refresh the update... 
+                    /// check one more time to refresh the update...
                     this.currentTotalCount = this.queue.GetQueueListFile(this.CurrentDayInt).TotalCount();
                 }
                 if (this.currentcounter < this.currentTotalCount)
@@ -100,7 +94,7 @@ namespace Kooboo.IndexedDB.Queue
 
             private bool MoveOneDay()
             {
-                int nextid =  this.CurrentDayInt;
+                int nextid = this.CurrentDayInt;
                 foreach (int item in this.queue.queueFileIdList)
                 {
                     if (item > nextid)
@@ -122,11 +116,10 @@ namespace Kooboo.IndexedDB.Queue
                 {
                     return false;
                 }
-
             }
 
             /// <summary>
-            /// Sorry,not reset available or needed here. 
+            /// Sorry,not reset available or needed here.
             /// </summary>
             public void Reset()
             {
@@ -138,6 +131,5 @@ namespace Kooboo.IndexedDB.Queue
                 get { return Current; }
             }
         }
-
     }
 }

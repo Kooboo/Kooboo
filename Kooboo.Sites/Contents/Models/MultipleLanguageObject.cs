@@ -1,17 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Collections.Generic;
-using Kooboo.Extensions;
-using Kooboo.Sites.Models;
-using Kooboo.Data.Interface;
 using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using Kooboo.Sites.Models;
 using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Contents.Models
 {
     public abstract class MultipleLanguageObject : CoreObject, IDynamic
-    {         
-
+    {
         private Dictionary<string, object> _values;
 
         public Dictionary<string, object> Values
@@ -20,9 +18,9 @@ namespace Kooboo.Sites.Contents.Models
             {
                 if (_values == null)
                 {
-                    _values = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase); 
+                    _values = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
                 }
-                return _values; 
+                return _values;
             }
             set
             {
@@ -30,27 +28,27 @@ namespace Kooboo.Sites.Contents.Models
             }
         }
 
-        public Object  GetValue(string fieldName)
-        {  
+        public Object GetValue(string fieldName)
+        {
             if (Values.ContainsKey(fieldName))
             {
-                return Values[fieldName]; 
+                return Values[fieldName];
             }
 
             if (Values.ContainsKey(""))
             {
-                return Values[""]; 
+                return Values[""];
             }
 
-            string lower = fieldName.ToLower(); 
+            string lower = fieldName.ToLower();
             foreach (var item in Values)
             {
                 if (item.Key.ToLower().StartsWith(lower))
                 {
-                    return item.Value; 
+                    return item.Value;
                 }
-            } 
-            
+            }
+
             return string.Empty;
         }
 
@@ -76,7 +74,7 @@ namespace Kooboo.Sites.Contents.Models
 
         public Object GetValue(string FieldName, RenderContext Context)
         {
-            return GetValue(FieldName); 
+            return GetValue(FieldName);
         }
     }
 }

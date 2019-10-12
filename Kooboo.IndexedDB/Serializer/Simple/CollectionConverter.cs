@@ -1,16 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
- public   class CollectionConverter
+    public class CollectionConverter
     {
         private Type DataType;
         private Type CollectionType;
@@ -37,13 +34,13 @@ namespace Kooboo.IndexedDB.Serializer.Simple
         }
 
         public object FromBytes(byte[] bytes)
-        { 
-            var GenericHashSet =  typeof(CollectionWrapper<>).MakeGenericType(DataType);
+        {
+            var GenericHashSet = typeof(CollectionWrapper<>).MakeGenericType(DataType);
 
-            var OriginalInstance = Activator.CreateInstance(this.CollectionType); 
+            var OriginalInstance = Activator.CreateInstance(this.CollectionType);
 
             var list = Activator.CreateInstance(GenericHashSet, OriginalInstance) as System.Collections.IList;
-            
+
             int startposition = 0;
             int totallength = bytes.Length;
 
@@ -51,13 +48,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 if (this.FieldLength > 0)
                 {
-
                     byte[] FieldValueBytes = new byte[this.FieldLength];
                     System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, this.FieldLength);
                     startposition += this.FieldLength;
 
                     var objectvalue = this.GetObjectValue(FieldValueBytes);
-
 
                     list.Add(objectvalue);
                 }
@@ -85,7 +80,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
 
             return OriginalInstance;
-
         }
 
         public byte[] ToBytes(object value)
@@ -96,7 +90,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
 
             List<byte[]> results = new List<byte[]>();
-
 
             int totallen = 0;
 
@@ -136,7 +129,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
 
             return BackValue;
-
         }
     }
 }

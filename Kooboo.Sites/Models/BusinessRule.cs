@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.FrontEvent;
 using Newtonsoft.Json;
@@ -12,7 +12,7 @@ namespace Kooboo.Sites.Models
     {
         public BusinessRule()
         {
-            // TODO: set the business rule type here... 
+            // TODO: set the business rule type here...
             this.ConstType = ConstObjectType.BusinessRule;
         }
 
@@ -69,6 +69,7 @@ namespace Kooboo.Sites.Models
         }
 
         private List<Action> _do;
+
         public List<Action> Do
         {
             get
@@ -86,6 +87,7 @@ namespace Kooboo.Sites.Models
         }
 
         private Guid _id;
+
         public Guid Id
         {
             get
@@ -144,7 +146,7 @@ namespace Kooboo.Sites.Models
                 }
             }
 
-            return Lib.Security.Hash.ComputeInt(unique); 
+            return Lib.Security.Hash.ComputeInt(unique);
         }
     }
 
@@ -154,5 +156,4 @@ namespace Kooboo.Sites.Models
 
         public Dictionary<string, string> Setting { get; set; }
     }
-
 }

@@ -1,6 +1,6 @@
-﻿using System.Globalization;
+﻿using Jint.Native;
+using System.Globalization;
 using System.Reflection;
-using Jint.Native;
 
 namespace Jint.Runtime.Descriptors.Specialized
 {
@@ -30,7 +30,7 @@ namespace Jint.Runtime.Descriptors.Specialized
             {
                 var currentValue = value;
                 object obj;
-                if (_propertyInfo.PropertyType == typeof (JsValue))
+                if (_propertyInfo.PropertyType == typeof(JsValue))
                 {
                     obj = currentValue;
                 }

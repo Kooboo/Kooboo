@@ -1,24 +1,22 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Api;
+using Kooboo.Data;
 using Kooboo.Data.Template;
+using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
+using Kooboo.Sites.Routing;
 using Kooboo.Sites.Sync;
+using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Kooboo.Web.ViewModel;
-using Kooboo.Api;
-using Kooboo.Sites.Routing;
-using Kooboo.Data;
-using Kooboo.Lib.Helper;
-using System.Threading;
-using Kooboo.Sites.TaskQueue.Model;
 
 namespace Kooboo.Web.Api.Implementation
 {
-    public    class TemplateApi : IApi
+    public class TemplateApi : IApi
     {
         public string ModelName
         {
@@ -44,7 +42,6 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-    
         public PagedListViewModel<TemplateItemViewModel> List(ApiCall call)
         {
             int pagenr = ApiHelper.GetPageNr(call);
@@ -66,12 +63,9 @@ namespace Kooboo.Web.Api.Implementation
             var pagedlist = HttpHelper.Get<PagedListViewModel<TemplateItemViewModel>>(Url);
             SetThumbnailUrl(pagedlist.List);
 
-
             return pagedlist;
-
         }
 
-     
         public TemplateDetailViewModel Get(ApiCall call)
         {
             string Url = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/template/Get2");
@@ -86,7 +80,6 @@ namespace Kooboo.Web.Api.Implementation
             return detail;
         }
 
-   
         public PagedListViewModel<TemplateItemViewModel> Private(ApiCall call)
         {
             Dictionary<string, string> para = new Dictionary<string, string>();
@@ -113,7 +106,6 @@ namespace Kooboo.Web.Api.Implementation
             return pagedlist;
         }
 
-   
         public PagedListViewModel<TemplateItemViewModel> Personal(ApiCall call)
         {
             Dictionary<string, string> para = new Dictionary<string, string>();
@@ -139,7 +131,6 @@ namespace Kooboo.Web.Api.Implementation
             return pagedlist;
         }
 
-   
         public PagedListViewModel<TemplateItemViewModel> Search(ApiCall call)
         {
             Dictionary<string, string> para = new Dictionary<string, string>();
@@ -164,7 +155,6 @@ namespace Kooboo.Web.Api.Implementation
             return pagedlist;
         }
 
-             
         protected string GetStartRelativeUrl(Data.Models.WebSite site)
         {
             var startpages = site.StartPages();
@@ -211,7 +201,6 @@ namespace Kooboo.Web.Api.Implementation
 
             return "/";
         }
-
 
         protected void SetThumbnailUrl(List<TemplateItemViewModel> items)
         {
@@ -299,7 +288,7 @@ namespace Kooboo.Web.Api.Implementation
 
             if (formResult.FormData.ContainsKey("price"))
             {
-                data.Price=decimal.Parse(formResult.FormData["price"]);
+                data.Price = decimal.Parse(formResult.FormData["price"]);
             }
             if (formResult.FormData.ContainsKey("currency"))
             {
@@ -417,7 +406,6 @@ namespace Kooboo.Web.Api.Implementation
                 return;
             }
 
-
             var postdata = InitData(formreader, call);
 
             var zipbytes = IOHelper.ReadAllBytes(exportfile);
@@ -443,7 +431,7 @@ namespace Kooboo.Web.Api.Implementation
                 throw new Exception(Data.Language.Hardcoded.GetValue("Share template failed", call.Context));
             }
         }
-         
+
         public void Update(ApiCall call)
         {
             var formResult = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(call.Context.Request.PostData);
@@ -503,7 +491,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 else
                 {
-                    update.OrganizationId = default(Guid); 
+                    update.OrganizationId = default(Guid);
                 }
             }
 
@@ -523,7 +511,7 @@ namespace Kooboo.Web.Api.Implementation
                 else if (contenttype.Contains("zip"))
                 {
                     update.Bytes = item.Bytes;
-                } 
+                }
             }
 
             if (formResult.FormData.ContainsKey("defaultimg"))
@@ -567,7 +555,7 @@ namespace Kooboo.Web.Api.Implementation
                 throw new Exception(Data.Language.Hardcoded.GetValue("Update template failed", call.Context));
             }
         }
-          
+
         public void Delete(ApiCall call)
         {
             var packageid = call.ObjectId;
@@ -625,6 +613,5 @@ namespace Kooboo.Web.Api.Implementation
             var newsite = ImportExport.ImportZip(memory, call.Context.User.CurrentOrgId, SiteName, FullDomain, call.Context.User.Id);
             return newsite.Id;
         }
-          
-    } 
+    }
 }

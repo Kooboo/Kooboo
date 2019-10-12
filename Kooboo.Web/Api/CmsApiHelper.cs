@@ -1,16 +1,14 @@
 ﻿using Kooboo.Api;
+using Kooboo.Api.Methods;
+using Kooboo.Attributes;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using Kooboo.Attributes;
-using Kooboo.Api.Methods;
 
 namespace Kooboo.Web.Api
 {
     public static class CmsApiHelper
     {
-
         private static Dictionary<string, List<Parameter>> cache = new Dictionary<string, List<Parameter>>(StringComparer.OrdinalIgnoreCase);
 
         [Obsolete]
@@ -19,7 +17,6 @@ namespace Kooboo.Web.Api
             var apiProvider = GetApiProvider();
             return GetParameters(ObjectType, Method, apiProvider);
         }
-
 
         public static ApiMethod GetApiMethod(string ObjectType, string Method)
         {
@@ -40,7 +37,6 @@ namespace Kooboo.Web.Api
             return null;
         }
 
-
         [Obsolete]
         public static List<Kooboo.Api.Parameter> GetParameters(string route)
         {
@@ -58,7 +54,6 @@ namespace Kooboo.Web.Api
             {
                 return null;
             }
-
         }
 
         [Obsolete]
@@ -120,7 +115,7 @@ namespace Kooboo.Web.Api
         }
 
         [Obsolete]
-        // Get the default API provider. 
+        // Get the default API provider.
         public static IApiProvider GetApiProvider()
         {
             foreach (var item in Kooboo.Web.SystemStart.Middleware)
@@ -133,6 +128,5 @@ namespace Kooboo.Web.Api
             }
             return null;
         }
-
     }
 }

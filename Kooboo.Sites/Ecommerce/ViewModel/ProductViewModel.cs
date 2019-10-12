@@ -1,13 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
-using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Ecommerce.ViewModel
 {
@@ -16,11 +13,11 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
         public Guid Id { get; set; }
 
         public string UserKey { get; set; }
-                                              
+
         public Guid ProductTypeId { get; set; }
 
         public int Order { get; set; }
-                                             
+
         public Dictionary<string, string> Values { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public Object GetValue(string FieldName)
@@ -31,7 +28,6 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
             {
                 return this.UserKey;
             }
-        
             else if (lower == "id")
             {
                 return this.Id;
@@ -44,8 +40,7 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
             if (Values.ContainsKey(FieldName))
             {
                 return Values[FieldName];
-            }             
-     
+            }
             else if (lower == "contenttypeid")
             {
                 return this.ProductTypeId;
@@ -81,7 +76,7 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
             var result = GetValue(FieldName);
             if (result == null && Context != null)
             {
-                //// check category and embedded. 
+                //// check category and embedded.
                 //var sitedb = Context.WebSite.SiteDb();
                 //var folder = sitedb.ContentFolders.Get(this.FolderId);
                 //if (folder != null)
@@ -168,7 +163,6 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
 
         public string Name { get; set; }
 
-
         public string Summary { get; set; }
 
         public bool Online { get; set; }
@@ -177,8 +171,8 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
         {
             get
             {
-                return this.Values.ToDictionary(o=>o.Key, o=>(object)o.Value);
+                return this.Values.ToDictionary(o => o.Key, o => (object)o.Value);
             }
         }
-    } 
+    }
 }

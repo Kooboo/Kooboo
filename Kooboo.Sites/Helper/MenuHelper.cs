@@ -1,7 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
-using Kooboo.Data.Models;
 using Kooboo.Sites.Models;
 using System;
 using System.Linq;
@@ -13,9 +12,9 @@ namespace Kooboo.Sites.Helper
         public const string MarkAnchorText = "{anchortext}";
 
         public const string MarkHref = "{href}";
-         
+
         public const string MarkSubItems = "{items}";
-         
+
         public const string MarkActiveClassReplacer = "{activeclass}";
 
         public const string MarkParentId = "{parentid}";
@@ -74,7 +73,6 @@ namespace Kooboo.Sites.Helper
                             template = item.Template;
                             break;
                         }
-
                     }
                 }
                 currentParent = currentParent.Parent;
@@ -115,7 +113,6 @@ namespace Kooboo.Sites.Helper
                             subitemcontainer = item.SubItemContainer;
                             break;
                         }
-
                     }
                 }
 
@@ -126,12 +123,12 @@ namespace Kooboo.Sites.Helper
 
             return subitemcontainer;
         }
-         
+
         private static string getMenuUrl(Menu menu, RenderContext context)
         {
             if (menu == null)
             {
-                return null;  
+                return null;
             }
 
             string url = menu.Url;
@@ -143,10 +140,9 @@ namespace Kooboo.Sites.Helper
 
             if (url.ToLower().StartsWith("https://") || url.ToLower().StartsWith("http://"))
             {
-                return url; 
+                return url;
             }
-              
-             
+
             if (context.WebSite.EnableMultilingual && context.WebSite.Culture.Count > 1)
             {
                 if (context.WebSite.EnableSitePath)
@@ -168,7 +164,7 @@ namespace Kooboo.Sites.Helper
                     }
                     else
                     {
-                        return "/" + path + "/" +  url;
+                        return "/" + path + "/" + url;
                     }
                 }
                 else
@@ -180,12 +176,11 @@ namespace Kooboo.Sites.Helper
                     }
                 }
             }
-            return url; 
-
+            return url;
         }
 
         /// <summary>
-        /// Render current menu and output the string. 
+        /// Render current menu and output the string.
         /// </summary>
         /// <returns></returns>
         public static string Render(Menu Menu, Render.FrontContext context = null)
@@ -193,13 +188,12 @@ namespace Kooboo.Sites.Helper
             string template = null;
             if (!string.IsNullOrEmpty(Menu.Url) && !string.IsNullOrEmpty(Menu.Name))
             {
-
                 EnsureMenuRenderData(Menu);
 
-                var renderdata = Menu.TempRenderData; 
+                var renderdata = Menu.TempRenderData;
 
                 template = renderdata.FineTemplate;
-                
+
                 template = template.Replace(MenuHelper.MarkHref, Menu.Url);
                 template = template.Replace(MenuHelper.MarkAnchorText, Menu.Name);
                 if (renderdata.RenderId)
@@ -221,7 +215,6 @@ namespace Kooboo.Sites.Helper
                     }
                     template = template.Replace(MenuHelper.MarkActiveClassReplacer, activeclassname);
                 }
-
             }
             string submenustring = string.Empty;
 
@@ -281,17 +274,17 @@ namespace Kooboo.Sites.Helper
                     }
                 }
             }
-             
+
             if (!string.IsNullOrEmpty(Menu.Url) && !string.IsNullOrEmpty(menuname))
             {
                 string url = getMenuUrl(Menu, context);
-                 
+
                 EnsureMenuRenderData(Menu);
 
                 var renderdata = Menu.TempRenderData;
 
                 template = renderdata.FineTemplate;
-                  
+
                 template = template.Replace(MenuHelper.MarkHref, url);
                 template = template.Replace(MenuHelper.MarkAnchorText, menuname);
 
@@ -314,7 +307,6 @@ namespace Kooboo.Sites.Helper
                     }
                     template = template.Replace(MenuHelper.MarkActiveClassReplacer, activeclassname);
                 }
-
             }
             string submenustring = string.Empty;
 
@@ -354,11 +346,11 @@ namespace Kooboo.Sites.Helper
                 }
             }
         }
-         
-        // find insert position to merge into class names of the template. 
+
+        // find insert position to merge into class names of the template.
         public static int FindClassInsertPosition(string template)
         {
-            // find the right place to insert 
+            // find the right place to insert
             int index = template.IndexOf(" class", StringComparison.OrdinalIgnoreCase);
 
             if (index == -1)
@@ -421,7 +413,7 @@ namespace Kooboo.Sites.Helper
         {
             if (!string.IsNullOrEmpty(template))
             {
-                MenuRenderData result = new MenuRenderData(); 
+                MenuRenderData result = new MenuRenderData();
 
                 int activeindex = template.IndexOf("{activeclass:");
                 if (activeindex >= 0)
@@ -437,7 +429,7 @@ namespace Kooboo.Sites.Helper
 
                     if (template.IndexOf(" class", StringComparison.OrdinalIgnoreCase) != -1)
                     {
-                        // find the right place to insert 
+                        // find the right place to insert
                         int index = template.IndexOf(" class", StringComparison.OrdinalIgnoreCase);
                         int nextequalmark = template.IndexOf("=", index);
                         if (index > -1 && nextequalmark > -1)
@@ -458,7 +450,6 @@ namespace Kooboo.Sites.Helper
                         {
                             template = template.Substring(0, activeindex) + "class='" + MenuHelper.MarkActiveClassReplacer + "'" + template.Substring(endindex + 1);
                         }
-
                     }
                     else
                     {
@@ -466,18 +457,18 @@ namespace Kooboo.Sites.Helper
                     }
                 }
 
-                result.FineTemplate = template; 
+                result.FineTemplate = template;
 
                 if (template.IndexOf(MenuHelper.MarkParentId) > -1 || template.IndexOf(MenuHelper.MarkCurrentId) > -1)
                 {
                     result.RenderId = true;
                 }
 
-                return result; 
+                return result;
             }
             else
             {
-                return new MenuRenderData() { FineTemplate = template }; 
+                return new MenuRenderData() { FineTemplate = template };
             }
         }
 
@@ -486,8 +477,8 @@ namespace Kooboo.Sites.Helper
             if (menu.TempRenderData == null)
             {
                 var template = GetSelfTemplate(menu);
-                menu.TempRenderData = ParseRenderTemplate(template);  
+                menu.TempRenderData = ParseRenderTemplate(template);
             }
-        } 
+        }
     }
-} 
+}

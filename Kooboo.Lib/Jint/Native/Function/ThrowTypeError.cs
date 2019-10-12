@@ -7,7 +7,7 @@ namespace Jint.Native.Function
     {
         private readonly Engine _engine;
 
-        public ThrowTypeError(Engine engine): base(engine, new string[0], engine.GlobalEnvironment, false)
+        public ThrowTypeError(Engine engine) : base(engine, new string[0], engine.GlobalEnvironment, false)
         {
             _engine = engine;
             DefineOwnProperty("length", new PropertyDescriptor(0, false, false, false), false);

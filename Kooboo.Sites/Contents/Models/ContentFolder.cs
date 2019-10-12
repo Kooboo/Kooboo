@@ -1,14 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Kooboo.Extensions;
 
 namespace Kooboo.Sites.Contents.Models
 {
     /// <summary>
-    /// The text content folder. 
+    /// The text content folder.
     /// </summary>
     [Kooboo.Attributes.Diskable(Kooboo.Attributes.DiskType.Json)]
     [Kooboo.Attributes.NameAsID]
@@ -18,9 +16,11 @@ namespace Kooboo.Sites.Contents.Models
         {
             this.ConstType = ConstObjectType.ContentFolder;
         }
+
         public Guid ParentFolderId { get; set; }
 
         private string _displayName;
+
         public string DisplayName
         {
             get
@@ -35,32 +35,35 @@ namespace Kooboo.Sites.Contents.Models
         }
 
         public Guid ContentTypeId { get; set; }
-   
-        private List<EmbeddedFolder> _embedded; 
-        public List<EmbeddedFolder> Embedded {
+
+        private List<EmbeddedFolder> _embedded;
+
+        public List<EmbeddedFolder> Embedded
+        {
             get
             {
                 if (_embedded == null)
                 {
-                    _embedded = new List<EmbeddedFolder>(); 
+                    _embedded = new List<EmbeddedFolder>();
                 }
-                return _embedded; 
+                return _embedded;
             }
-            set { _embedded = value;  }
+            set { _embedded = value; }
         }
 
-        private List<CategoryFolder> _category; 
+        private List<CategoryFolder> _category;
 
-        public List<CategoryFolder> Category {
+        public List<CategoryFolder> Category
+        {
             get
             {
                 if (_category == null)
                 {
-                    _category = new List<CategoryFolder>(); 
+                    _category = new List<CategoryFolder>();
                 }
-                return _category; 
+                return _category;
             }
-            set { _category = value;  }
+            set { _category = value; }
         }
 
         public override int GetHashCode()
@@ -68,23 +71,22 @@ namespace Kooboo.Sites.Contents.Models
             string unique = this.Name;
             unique += this.ContentTypeId.ToString();
             unique += this.DisplayName;
-            unique += this.Sortable.ToString();             
-             
+            unique += this.Sortable.ToString();
+
             foreach (var item in this.Category)
             {
-                unique += item.Alias + item.FolderId.ToString() + item.Multiple.ToString(); 
+                unique += item.Alias + item.FolderId.ToString() + item.Multiple.ToString();
             }
 
             foreach (var item in this.Embedded)
             {
-                unique += item.Alias + item.FolderId.ToString(); 
+                unique += item.Alias + item.FolderId.ToString();
             }
-              
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
 
         public bool Sortable { get; set; }
-
     }
 
     public class EmbeddedFolder
@@ -98,9 +100,8 @@ namespace Kooboo.Sites.Contents.Models
     {
         public string Alias { get; set; }
 
-        public Guid  FolderId { get; set; }
+        public Guid FolderId { get; set; }
 
-        public bool Multiple { get; set;  }
+        public bool Multiple { get; set; }
     }
- 
 }

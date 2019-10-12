@@ -1,6 +1,6 @@
-﻿using System;
-using Jint.Native;
+﻿using Jint.Native;
 using Jint.Native.Error;
+using System;
 
 namespace Jint.Runtime
 {
@@ -25,7 +25,7 @@ namespace Jint.Runtime
             _errorObject = error;
         }
 
-        private static string GetErrorMessage(JsValue error) 
+        private static string GetErrorMessage(JsValue error)
         {
             if (error.IsObject())
             {
@@ -34,7 +34,7 @@ namespace Jint.Runtime
                 return message;
             }
             else
-                return string.Empty;            
+                return string.Empty;
         }
 
         public JsValue Error { get { return _errorObject; } }

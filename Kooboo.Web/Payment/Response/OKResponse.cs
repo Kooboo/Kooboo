@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Payment.Models
 {
@@ -10,10 +6,10 @@ namespace Kooboo.Web.Payment.Models
     {
         public OKResponse()
         {
-            this.ActionRequired = false; 
+            this.ActionRequired = false;
         }
 
-        public bool ActionRequired { get;  set; }
+        public bool ActionRequired { get; set; }
         public Guid PaymentRequestId { get; set; }
         public string PaymentReferenceId { get; set; }
     }

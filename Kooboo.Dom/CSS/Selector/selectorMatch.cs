@@ -1,17 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Dom;
 
 namespace Kooboo.Dom.CSS
 {
     public static class selectorMatch
     {
-
         public static bool Match(Element element, string selectorText)
         {
             List<simpleSelector> selectorList = SelectorParser.parseSelectorGroup(selectorText);
@@ -29,7 +25,6 @@ namespace Kooboo.Dom.CSS
                 }
             }
             return false;
-
         }
 
         public static bool Match(Element element, simpleSelector selector)
@@ -39,7 +34,6 @@ namespace Kooboo.Dom.CSS
 
         private static bool matchOneSelector(Element element, simpleSelector selector)
         {
-
             switch (selector.Type)
             {
                 case enumSimpleSelectorType.universal:
@@ -65,11 +59,10 @@ namespace Kooboo.Dom.CSS
 
                 case enumSimpleSelectorType.pseudoElement:
                     return matchPseudoElement(element, (pseudoElementSelector)selector);
-                     
+
                 default:
                     return false;
             }
-
         }
 
         private static bool matchType(Element element, typeSelector typeselector)
@@ -114,7 +107,6 @@ namespace Kooboo.Dom.CSS
 
         private static bool matchId(Element element, idSelector idselector)
         {
-
             if (!string.IsNullOrEmpty(idselector.elementE))
             {
                 if (element.tagName != idselector.elementE.ToLower() && idselector.elementE != "*")
@@ -140,7 +132,6 @@ namespace Kooboo.Dom.CSS
             {
                 return false;
             }
-
         }
 
         private static bool matchAttribute(Element element, attributeSelector attSelector)
@@ -162,7 +153,6 @@ namespace Kooboo.Dom.CSS
             //E[foo|="en"]	an E element whose "foo" attribute has a hyphen-separated list of values beginning (from the left) with "en"	Attribute selectors	2
             //[att|=val]
             //Represents an element with the att attribute, its value either being exactly "val" or beginning with "val" immediately followed by "-" (U+002D). This is primarily intended to allow language subcode matches (e.g., the hreflang attribute on the a element in HTML) as described in BCP 47 ([BCP47]) or its successor. For lang (or xml:lang) language subcode matching, please see the :lang pseudo-class.
-
 
             switch (attSelector.matchType)
             {
@@ -192,7 +182,6 @@ namespace Kooboo.Dom.CSS
 
                 case enumAttributeType.exactlyBegin:
                     {
-
                         string attvalue = element.getAttribute(attSelector.attributeName);
 
                         if (string.IsNullOrEmpty(attvalue))
@@ -211,7 +200,6 @@ namespace Kooboo.Dom.CSS
                     }
                 case enumAttributeType.exactlyEnd:
                     {
-
                         string attvalue = element.getAttribute(attSelector.attributeName);
 
                         if (string.IsNullOrEmpty(attvalue))
@@ -248,10 +236,9 @@ namespace Kooboo.Dom.CSS
                     }
                 case enumAttributeType.hyphenSeperated:
                     {
-                       /// The following selector represents an a element for which the 
-                       /// value of the hreflang attribute begins with "en", 
-                       /// including "en", "en-US", and "en-scouse":
-                        
+                        /// The following selector represents an a element for which the
+                        /// value of the hreflang attribute begins with "en",
+                        /// including "en", "en-US", and "en-scouse":
 
                         string attvalue = element.getAttribute(attSelector.attributeName);
 
@@ -261,7 +248,7 @@ namespace Kooboo.Dom.CSS
                         }
 
                         if (attvalue == attSelector.attributeValue)
-                        { 
+                        {
                             return true;
                         }
 
@@ -269,15 +256,12 @@ namespace Kooboo.Dom.CSS
                         {
                             return true;
                         }
-                          
 
                         return false;
-
                     }
                 case enumAttributeType.defaultHas:
                     {
                         return element.hasAttribute(attSelector.attributeName);
-
                     }
                 default:
                     {
@@ -351,7 +335,6 @@ namespace Kooboo.Dom.CSS
                         }
                     case combinator.AdjacentSibling:
                         {
-
                             Node previousnode = matched.previousSibling();
                             Element previouselement = null;
 
@@ -380,17 +363,12 @@ namespace Kooboo.Dom.CSS
                                 {
                                     return false;
                                 }
-
                             }
-
-
                         }
                     case combinator.Sibling:
                         {
-
                             Node previousnode = matched.previousSibling();
                             bool matchedfound = false;
-
 
                             while (previousnode != null)
                             {
@@ -406,7 +384,6 @@ namespace Kooboo.Dom.CSS
                                 }
 
                                 previousnode = previousnode.previousSibling();
-
                             }
 
                             if (matchedfound)
@@ -417,14 +394,11 @@ namespace Kooboo.Dom.CSS
                             {
                                 return false;
                             }
-
                         }
-
 
                     default:
                         return false;
                 }
-
             }
 
             return true;
@@ -434,14 +408,14 @@ namespace Kooboo.Dom.CSS
         {
             if (!string.IsNullOrEmpty(pseudoClass.elementE))
             {
-                if (!selectorMatch.Match(element, pseudoClass.ElementSelector)) 
+                if (!selectorMatch.Match(element, pseudoClass.ElementSelector))
                 {
                     return false;
                 }
             }
 
             pseudoClass.matchText = pseudoClass.matchText.ToLower().Trim();
-    
+
             // E:root	an E element, root of the document	Structural pseudo-classes	3
             if (pseudoClass.matchText == "root")
             {
@@ -458,18 +432,18 @@ namespace Kooboo.Dom.CSS
             //E:nth-child(n)	an E element, the n-th child of its parent	Structural pseudo-classes	3
             else if (pseudoClass.matchText.Contains("nth-child"))
             {
-                return _pseudoClassNthMatch(element, pseudoClass, false, false); 
+                return _pseudoClassNthMatch(element, pseudoClass, false, false);
             }
             else if (pseudoClass.matchText.Contains("not"))
             {
                 if (pseudoClass.NotSelector == null)
                 {
-                    return false; 
+                    return false;
                 }
 
                 var innermatch = selectorMatch.Match(element, pseudoClass.NotSelector);
 
-                return !innermatch; 
+                return !innermatch;
             }
             //E:nth-last-child(n)	an E element, the n-th child of its parent, counting from the last one	Structural pseudo-classes	3
             else if (pseudoClass.matchText.Contains("nth-last-child"))
@@ -495,7 +469,6 @@ namespace Kooboo.Dom.CSS
                 return (counter == 0);
             }
             //E:last-child	an E element, last child of its parent	Structural pseudo-classes	3
-
             else if (pseudoClass.matchText == "last-child")
             {
                 int counter = _getSilbingCount(element, pseudoClass, true, false);
@@ -546,22 +519,21 @@ namespace Kooboo.Dom.CSS
             //E:enabled
             //E:disabled	a user interface element E which is enabled or disabled	The UI element states pseudo-classes	3
             //E:checked	a user interface element E which is checked (for instance a radio-button or checkbox)	The UI element states pseudo-classes	3
-
             else if (pseudoClass.matchText.isOneOf("active", "hover", "focus"))
             {
-                return true; 
+                return true;
             }
             else if (pseudoClass.matchText.isOneOf("link", "visited"))
             {
-                return (element.tagName == "a" || element.tagName == "area");                
+                return (element.tagName == "a" || element.tagName == "area");
             }
             else if (pseudoClass.matchText.isOneOf("enabled", "disabled"))
             {
-                return true; 
+                return true;
             }
-            else if (pseudoClass.matchText=="checked")
+            else if (pseudoClass.matchText == "checked")
             {
-                return element.tagName == "input"; 
+                return element.tagName == "input";
             }
 
             //E:target	an E element being the target of the referring URI	The target pseudo-class	3
@@ -574,27 +546,24 @@ namespace Kooboo.Dom.CSS
             //E:lang(fr)	an element of type E in language "fr" (the document language specifies how language is determined)	The :lang() pseudo-class	2
             else if (pseudoClass.matchText.StartsWith("lang"))
             {
-                /// not supported, always return true because we do not know when the language will be switched. has to assume it will match. 
+                /// not supported, always return true because we do not know when the language will be switched. has to assume it will match.
                 return true;
             }
-
             else
             {
-                //Unrecognized syntax. 
+                //Unrecognized syntax.
                 return false;
             }
         }
-
-
 
         private static bool _pseudoClassNthMatch(Element element, pseudoClassSelector pseudoClass, bool last, bool sametype)
         {
             int firstindex = pseudoClass.matchText.IndexOf("(");
             int lastindex = pseudoClass.matchText.IndexOf(")");
 
-            if (firstindex < 0 || lastindex <0)
+            if (firstindex < 0 || lastindex < 0)
             {
-                return false; 
+                return false;
             }
 
             string strnumber = pseudoClass.matchText.Substring(firstindex + 1, lastindex - firstindex - 1).Trim();
@@ -611,41 +580,40 @@ namespace Kooboo.Dom.CSS
                 if (strnumber.Contains("n"))
                 {
                     int beforen = 0;
-                    int aftern = 0; 
+                    int aftern = 0;
                     string strbefore = strnumber.Substring(0, strnumber.IndexOf("n")).Trim();
                     if (string.IsNullOrEmpty(strbefore))
-                    { return false;  }
+                    { return false; }
                     if (!int.TryParse(strbefore, out beforen))
                     {
                         return false;
                     }
-  
+
                     if (CommonIdoms.isAsciiDigit(strbefore))
-                    { 
-                          beforen = Convert.ToInt32(strbefore); 
+                    {
+                        beforen = Convert.ToInt32(strbefore);
                     }
 
-                    if (strnumber.IndexOf("+")>0)
+                    if (strnumber.IndexOf("+") > 0)
                     {
                         string strafter = strnumber.Substring(strnumber.IndexOf("+") + 1).Trim();
                         if (!string.IsNullOrEmpty(strafter))
                         {
                             if (!int.TryParse(strafter, out aftern))
                             {
-                                return false; 
+                                return false;
                             }
                         }
                     }
 
                     if (beforen == 0)
                     {
-                        return (counter + 1) == aftern; 
+                        return (counter + 1) == aftern;
                     }
                     else
                     {
                         return ((counter + 1) % beforen == aftern);
-                    } 
-                    
+                    }
                 }
                 else if (strnumber == "odd")
                 {
@@ -706,14 +674,12 @@ namespace Kooboo.Dom.CSS
 
         private static bool matchPseudoElement(Element element, pseudoElementSelector pseudoElement)
         {
-
             if (!string.IsNullOrEmpty(pseudoElement.elementE))
             {
-
                 if (!selectorMatch.Match(element, pseudoElement.ElementSelector))
                 {
                     return false;
-                }  
+                }
             }
 
             //E::first-line	the first formatted line of an E element	The ::first-line pseudo-element	1
@@ -721,7 +687,7 @@ namespace Kooboo.Dom.CSS
             //E::before	generated content before an E element	The ::before pseudo-element	2
             //E::after	generated content after an E element
 
-            //TODO: when applying style of this class to element, it may requires to alter the element text. 
+            //TODO: when applying style of this class to element, it may requires to alter the element text.
             return true;
         }
     }

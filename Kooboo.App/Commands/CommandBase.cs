@@ -1,11 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Markup;
@@ -23,15 +19,14 @@ namespace Kooboo.App.Commands
         /// <summary>
         /// A singleton instance.
         /// </summary>
-        private static T command;
+        private static T _command;
 
         /// <summary>
         /// Gets a shared command instance.
         /// </summary>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            if (command == null) command = new T();
-            return command;
+            return _command ?? (_command = new T());
         }
 
         /// <summary>
@@ -40,8 +35,8 @@ namespace Kooboo.App.Commands
         /// </summary>
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
 
         /// <summary>
@@ -60,25 +55,19 @@ namespace Kooboo.App.Commands
         /// <returns>
         /// This default implementation always returns true.
         /// </returns>
-        /// <param name="parameter">Data used by the command.  
+        /// <param name="parameter">Data used by the command.
         /// If the command does not require data to be passed,
         /// this object can be set to null.
         /// </param>
         public virtual bool CanExecute(object parameter)
         {
-            return IsDesignMode ? false : true;
+            return !IsDesignMode;
         }
 
-
-        public static bool IsDesignMode
-        {
-            get
-            {
-                return (bool)
-                    DependencyPropertyDescriptor.FromProperty(DesignerProperties.IsInDesignModeProperty,
-                        typeof(FrameworkElement))
-                        .Metadata.DefaultValue;
-            }
-        }
+        public static bool IsDesignMode =>
+            (bool)
+            DependencyPropertyDescriptor.FromProperty(DesignerProperties.IsInDesignModeProperty,
+                    typeof(FrameworkElement))
+                .Metadata.DefaultValue;
     }
 }

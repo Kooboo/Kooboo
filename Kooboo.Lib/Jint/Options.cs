@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Jint.Runtime.Interop;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using Jint.Runtime.Interop;
 
 namespace Jint
 {
@@ -16,7 +16,7 @@ namespace Jint
         private bool _allowClr;
         private readonly List<IObjectConverter> _objectConverters = new List<IObjectConverter>();
         private int _maxStatements;
-        private int _maxRecursionDepth = -1; 
+        private int _maxRecursionDepth = -1;
         private TimeSpan _timeoutInterval;
         private CultureInfo _culture = CultureInfo.CurrentCulture;
         private TimeZoneInfo _localTimeZone = TimeZoneInfo.Local;
@@ -46,7 +46,7 @@ namespace Jint
         /// Allow the <code>debugger</code> statement to be called in a script.
         /// </summary>
         /// <remarks>
-        /// Because the <code>debugger</code> statement can start the 
+        /// Because the <code>debugger</code> statement can start the
         /// Visual Studio debugger, is it disabled by default
         /// </remarks>
         public Options AllowDebuggerStatement(bool allowDebuggerStatement = true)
@@ -65,7 +65,7 @@ namespace Jint
         }
 
         /// <summary>
-         /// Adds a <see cref="IObjectConverter"/> instance to convert CLR types to <see cref="JsValue"/>
+        /// Adds a <see cref="IObjectConverter"/> instance to convert CLR types to <see cref="JsValue"/>
         /// </summary>
         public Options AddObjectConverter(IObjectConverter objectConverter)
         {
@@ -111,7 +111,7 @@ namespace Jint
             _maxStatements = maxStatements;
             return this;
         }
-        
+
         public Options TimeoutInterval(TimeSpan timeoutInterval)
         {
             _timeoutInterval = timeoutInterval;

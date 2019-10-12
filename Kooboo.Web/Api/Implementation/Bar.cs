@@ -1,16 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
+using Kooboo.Api;
+using Kooboo.Data.Language;
+using Kooboo.Sites.Repository;
+using Kooboo.Web.Menus;
+using Kooboo.Web.ViewModel;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Data.Models;
-using Kooboo.Sites.Repository;
-using Kooboo.Web.ViewModel;
-using Kooboo.Api;
-using Kooboo.Sites.Extensions;
-using Kooboo.Data.Language;
-using Kooboo.Web.Menus;
-using Kooboo.Data.Context;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -61,7 +57,7 @@ namespace Kooboo.Web.Api.Implementation
                 header.Menu.Add(new CmsMenuViewModel(item, call.Context));
             }
 
-            //header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Market", context), Url = "/_api/user/onlineserver", Icon = "fa fa-plug", Count = 0, BadgeIcon = "badge-primary", OpenInNewWindow = true }); 
+            //header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Market", context), Url = "/_api/user/onlineserver", Icon = "fa fa-plug", Count = 0, BadgeIcon = "badge-primary", OpenInNewWindow = true });
             //header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("E-Commerce", context), Url = AdminUrl("Ecommerce"), Icon = "fa fa-shopping-cart", Count = 0, BadgeIcon = "badge-success" });
 
             header.User = new DisplayName() { name = user.UserName, id = user.UserName, Language = user.Language };
@@ -80,35 +76,33 @@ namespace Kooboo.Web.Api.Implementation
 
             List<CmsMenuViewModel> menus = new List<CmsMenuViewModel>();
 
-
-            var featureheadline = Hardcoded.GetValue("Feature", call.Context); 
-            var feature = new CmsMenuViewModel("feature", featureheadline); 
+            var featureheadline = Hardcoded.GetValue("Feature", call.Context);
+            var feature = new CmsMenuViewModel("feature", featureheadline);
             feature.Items = MenuContainer.FeatureMenus.Select(o => new CmsMenuViewModel(o, call.Context)).ToList();
 
-            MenuManager.VerifySortSideBar(feature.Items, call.Context); 
+            MenuManager.VerifySortSideBar(feature.Items, call.Context);
 
             if (feature.HasSubItem)
             {
                 menus.Add(feature);
             }
 
-            var advancemenu = SiteBarAdvancedMenu(call); 
+            var advancemenu = SiteBarAdvancedMenu(call);
 
             if (advancemenu.HasSubItem)
             {
                 menus.Add(advancemenu);
             }
-            
+
             return menus;
         }
-
 
         private CmsMenuViewModel SiteBarAdvancedMenu(ApiCall call)
         {
             var context = call.Context;
-            var advanceheadline = Hardcoded.GetValue("Advance", context); 
+            var advanceheadline = Hardcoded.GetValue("Advance", context);
             var advance = new CmsMenuViewModel(advanceheadline, advanceheadline);
-  
+
             var system = new CmsMenuViewModel(SideBarSection.System.ToString(), Hardcoded.GetValue("System", context)) { Icon = "icon icon-settings" };
             var development = new CmsMenuViewModel(SideBarSection.Development.ToString(), Hardcoded.GetValue("Development", context)) { Icon = "icon fa fa-code" };
             var content = new CmsMenuViewModel(SideBarSection.Contents.ToString(), Hardcoded.GetValue("Contents", context)) { Icon = "icon fa fa-files-o" };
@@ -147,18 +141,15 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 else if (item.Parent == SideBarSection.Commerce)
                 {
-                  //  commerce.Items.Add(new CmsMenuViewModel(item, context));
+                    //  commerce.Items.Add(new CmsMenuViewModel(item, context));
                 }
             }
-             
-            MenuManager.VerifySortSideBar(advance.Items, call.Context); 
 
-            return advance; 
+            MenuManager.VerifySortSideBar(advance.Items, call.Context);
 
+            return advance;
         }
 
-          
-     
         public List<MenuItem> EmailMenu(ApiCall call)
         {
             var context = call.Context;
@@ -184,12 +175,10 @@ namespace Kooboo.Web.Api.Implementation
                 new MenuItem { Name =Hardcoded.GetValue("Domains", call.Context), Icon = "icon fa fa-at", Url = AdminUrl("Domains") },
                 new MenuItem { Name = Hardcoded.GetValue("SiteBindings", call.Context), Icon = "icon fa fa-link", Url = AdminUrl("Domains/SiteBindings") },
                 new MenuItem { Name = Hardcoded.GetValue("SiteMirror", call.Context), Icon = "icon fa fa-sitemap", Url = AdminUrl("Domains/SiteMirror") },
-
              }.ToList();
 
             return menus;
         }
-         
 
         private List<MenuItem> EmailMenu_Addresses(string folderName, IEnumerable<Kooboo.Mail.EmailAddress> addresses)
         {
@@ -216,7 +205,6 @@ namespace Kooboo.Web.Api.Implementation
             return Kooboo.Lib.Helper.UrlHelper.AppendQueryString("/_Admin/" + relativeUrl, para);
         }
     }
-
 
     public class HeaderMenu
     {

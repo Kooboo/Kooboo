@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data.Definition;
@@ -123,7 +123,6 @@ namespace Kooboo.Web.Api.Implementation
     </p>
 </div>";
             return defaultview;
-
         }
 
         [Kooboo.Attributes.RequireModel(typeof(ViewModel.ViewEditViewModel))]
@@ -154,9 +153,7 @@ namespace Kooboo.Web.Api.Implementation
 
             return view.Id;
         }
-                     
-        
-        
+
         public Dictionary<string, ComparerModel[]> CompareType(ApiCall call)
         {
             var types = Data.Helper.DataTypeHelper.GetDataTypeCompareModel();
@@ -170,15 +167,14 @@ namespace Kooboo.Web.Api.Implementation
                 result[name] = item.Value;
             }
 
-
             var kooboodatatypes = Data.Helper.DataTypeHelper.GetDataTypeCompareModel();
 
             foreach (var item in kooboodatatypes)
             {
                 var name = Enum.GetName(typeof(Kooboo.Data.Definition.DataTypes), item.Key);
 
-                result[name] = item.Value;   
-            }        
+                result[name] = item.Value;
+            }
             return result;
         }
 
@@ -210,7 +206,7 @@ namespace Kooboo.Web.Api.Implementation
                 newview.Name = call.GetValue("name");
                 sitedb.Views.AddOrUpdate(newview, call.Context.User.Id);
 
-                // now copy the viewdatemethod. 
+                // now copy the viewdatemethod.
                 var datamethods = sitedb.ViewDataMethods.Query.Where(o => o.ViewId == view.Id).SelectAll();
                 foreach (var method in datamethods)
                 {
@@ -218,7 +214,7 @@ namespace Kooboo.Web.Api.Implementation
                     copymethod.ViewId = newview.Id;
                     copymethod.Id = default(Guid);
 
-                    // check to see if datamethod is private.  
+                    // check to see if datamethod is private.
                     var datamethod = sitedb.DataMethodSettings.Get(copymethod.MethodId);
                     if (datamethod != null && !datamethod.IsPublic)
                     {
@@ -231,7 +227,6 @@ namespace Kooboo.Web.Api.Implementation
 
                     sitedb.ViewDataMethods.AddOrUpdate(copymethod, call.Context.User.Id);
                 }
-
 
                 string baseurl = call.WebSite.BaseUrl();
 
@@ -248,10 +243,8 @@ namespace Kooboo.Web.Api.Implementation
                 model.DataSourceCount = sitedb.ViewDataMethods.Query.Where(o => o.ViewId == newview.Id).Count();
 
                 return model;
-
             }
             return null;
         }
-
     }
 }

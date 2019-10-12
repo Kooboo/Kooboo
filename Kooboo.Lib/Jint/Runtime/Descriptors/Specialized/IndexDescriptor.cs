@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Jint.Native;
+using System;
 using System.Globalization;
 using System.Reflection;
-using Jint.Native;
 
 namespace Jint.Runtime.Descriptors.Specialized
 {
@@ -35,7 +35,6 @@ namespace Jint.Runtime.Descriptors.Specialized
                         // get contains key method to avoid index exception being thrown in dictionaries
                         _containsKey = targetType.GetMethod("ContainsKey", new Type[] { paramType });
                         break;
-
                     }
                 }
             }
@@ -48,7 +47,6 @@ namespace Jint.Runtime.Descriptors.Specialized
 
             Writable = true;
         }
-
 
         public IndexDescriptor(Engine engine, string key, object item)
             : this(engine, item.GetType(), key, item)

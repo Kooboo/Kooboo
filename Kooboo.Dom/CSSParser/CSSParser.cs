@@ -1,22 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
 using Kooboo.Dom.CSS;
 using Kooboo.Dom.CSS.rawmodel;
 using Kooboo.Dom.CSS.Tokens;
 
 namespace Kooboo.Dom
 {
-
     /// <summary>
-    /// Parse low level CSS objects to high level CSS objects, that can be used and query. 
+    /// Parse low level CSS objects to high level CSS objects, that can be used and query.
     /// </summary>
     public static class CSSParser
     {
-
         /// <summary>
-        /// parse a style sheet. 
+        /// parse a style sheet.
         /// </summary>
         /// <param name="cssText"></param>
         /// <param name="baseurl"></param>
@@ -50,7 +46,6 @@ namespace Kooboo.Dom
 
         public static CSSStyleSheet ParseCSSStyleSheetFromUrl(string url, bool DownloadImportRule)
         {
-
             string webstring = Loader.DownloadCss(url);
 
             if (!string.IsNullOrEmpty(webstring))
@@ -72,6 +67,7 @@ namespace Kooboo.Dom
             }
             return null;
         }
+
         /// <summary>
         /// The parsing algo from W3C does not parse CSS into right CSS object model, this is to convert to right CSSOM.
         /// </summary>
@@ -108,7 +104,7 @@ namespace Kooboo.Dom
         }
 
         /// <summary>
-        /// From W3C, in most case, th preclude matchs to Selector and block value contains declaration. 
+        /// From W3C, in most case, th preclude matchs to Selector and block value contains declaration.
         /// </summary>
         /// <param name="rule"></param>
         /// <returns></returns>
@@ -128,13 +124,11 @@ namespace Kooboo.Dom
 
             cssrule.style = ParseDeclarations(rule.block, ref endindex, ref OriginalCss);
 
-
             cssrule.StartIndex = rule.startindex;
             cssrule.EndIndex = rule.endindex;
             cssrule.EndSelectorIndex = endindexselector - cssrule.StartIndex + 1;
 
             return cssrule;
-
         }
 
         private static CSSRule ParseAtRule(AtRule rule, CSSStyleSheet parentSheet, string baseurl, bool downloadImportRule, ref string OriginalCss)
@@ -161,7 +155,6 @@ namespace Kooboo.Dom
                         return ParseFontFace(rule, ref OriginalCss);
                     }
                 }
-
             }
 
             return null;
@@ -174,8 +167,8 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private static CSSRule ParseImportRule(AtRule rule, string baseurl, bool downloadImportRule, ref string OriginalCss)
         {
-            /// the import starts with import atkeyword token. 
-            /// it should have been checked before calling this method, can be ignored. 
+            /// the import starts with import atkeyword token.
+            /// it should have been checked before calling this method, can be ignored.
             PreservedToken token = rule.prelude[0] as PreservedToken;
 
             int count = rule.prelude.Count;
@@ -202,7 +195,7 @@ namespace Kooboo.Dom
                 {
                     PreservedToken preservedToken = rule.prelude[i] as PreservedToken;
 
-                    /// ignore the whitespace and at-keyword token. 
+                    /// ignore the whitespace and at-keyword token.
                     if (preservedToken.token.Type == enumTokenType.at_keyword || (string.IsNullOrEmpty(importrule.href) && preservedToken.token.Type == enumTokenType.whitespace))
                     {
                         continue;
@@ -229,7 +222,6 @@ namespace Kooboo.Dom
                             {
                                 importrule.stylesheet = CSSParser.ParseCSSStyleSheetFromUrl(url);
                             }
-
                         }
                         else if (preservedToken.token.Type == enumTokenType.url)
                         {
@@ -246,19 +238,18 @@ namespace Kooboo.Dom
                             importrule.href = url;
                             if (downloadImportRule && !string.IsNullOrEmpty(url))
                             {
-
                                 importrule.stylesheet = CSSParser.ParseCSSStyleSheetFromUrl(url);
                             }
                         }
                         else
                         {
-                            // must start with a string or url token as the next. 
+                            // must start with a string or url token as the next.
                             string error = "this is an error";
                         }
                     }
                     else
                     {
-                        // the import rule has href already, next is the media rules. 
+                        // the import rule has href already, next is the media rules.
                         if (preservedToken.token.Type == enumTokenType.comma || preservedToken.token.Type == enumTokenType.semicolon)
                         {
                             if (!string.IsNullOrEmpty(media))
@@ -269,7 +260,7 @@ namespace Kooboo.Dom
                         }
                         else
                         {
-                            // can be delim token. 
+                            // can be delim token.
                             if (string.IsNullOrEmpty(media) && preservedToken.token.Type == enumTokenType.whitespace)
                             {
                                 // the start of whitespace will be ignored.
@@ -279,11 +270,8 @@ namespace Kooboo.Dom
                                 media += preservedToken.token.GetString(ref OriginalCss);
                             }
                         }
-
                     }
-
                 }
-
                 else if (rule.prelude[i].Type == CompoenentValueType.function)
                 {
                     Function urlfunction = rule.prelude[i] as Function;
@@ -309,7 +297,6 @@ namespace Kooboo.Dom
                         importrule.href = href;
                     }
                 }
-
                 else if (rule.prelude[i].Type == CompoenentValueType.simpleBlock)
                 {
                     // simple block is the block like  screen and (min-width:300);
@@ -327,7 +314,6 @@ namespace Kooboo.Dom
                             {
                                 endindex = token.token.endIndex;
                             }
-
                         }
                     }
 
@@ -346,7 +332,6 @@ namespace Kooboo.Dom
 
                     media += mediarule;
                 }
-
             }
 
             if (!string.IsNullOrEmpty(media))
@@ -365,7 +350,7 @@ namespace Kooboo.Dom
             int endselectorindex = rule.prelude[0].endindex + 1;
 
             ///import rule does not have one extra char like {
-           // importrule.EndSelectorIndex = endselectorindex - importrule.StartIndex + 1; 
+           // importrule.EndSelectorIndex = endselectorindex - importrule.StartIndex + 1;
             importrule.EndSelectorIndex = endselectorindex - importrule.StartIndex;
 
             return importrule;
@@ -392,7 +377,6 @@ namespace Kooboo.Dom
                 }
             }
 
-
             CSSStyleDeclaration style = ParseDeclarations(rule.block, ref endindex, ref OriginalCss);
 
             fontrule.style = style;
@@ -402,7 +386,6 @@ namespace Kooboo.Dom
             fontrule.EndSelectorIndex = endselectindex - fontrule.StartIndex + 1;
 
             return fontrule;
-
         }
 
         private static CSSRule ParseMediaRule(AtRule rule, CSSStyleSheet parentSheet, ref string OriginalCss)
@@ -419,7 +402,7 @@ namespace Kooboo.Dom
 
             startindex = rule.prelude[0].startindex;
 
-            // the first componentvalue is a preservedtoken and it media. 
+            // the first componentvalue is a preservedtoken and it media.
             rule.prelude.RemoveAt(0);
 
             wholeconditiontext = ComponentValueExtension.getString(rule.prelude, ref startindex, ref endindexselector, ref OriginalCss);
@@ -454,8 +437,8 @@ namespace Kooboo.Dom
         }
 
         /// <summary>
-        /// consume a list of cssrule from simpleblock, 
-        /// Recursive. 
+        /// consume a list of cssrule from simpleblock,
+        /// Recursive.
         /// </summary>
         /// <param name="block"></param>
         /// <returns></returns>
@@ -496,31 +479,31 @@ namespace Kooboo.Dom
 
                                 if (pretoken.token.Type == enumTokenType.whitespace)
                                 {
-                                    // ignored whitespace at the beginning. 
+                                    // ignored whitespace at the beginning.
                                 }
                                 else if (pretoken.token.Type == enumTokenType.at_keyword)
                                 {
-                                    // at keyword token, only handle media now. 
-                                    // others to be added. 
+                                    // at keyword token, only handle media now.
+                                    // others to be added.
                                     at_keyword_token token = pretoken.token as at_keyword_token;
                                     if (token.value.ToLower() == "media")
                                     {
                                         state = MediaRuleParseState.mediarule;
-                                        i = i - 1; // reconsume to have correct startindex. 
+                                        i = i - 1; // reconsume to have correct startindex.
                                     }
                                     else
                                     {
-                                        // other at rules. 
+                                        // other at rules.
                                         state = MediaRuleParseState.OtherAtRule;
                                         i = i - 1;
                                     }
                                 }
 
-                                /// else treat as regular style rule. 
+                                /// else treat as regular style rule.
                                 else
                                 {
                                     state = MediaRuleParseState.stylerule;
-                                    i = i - 1; // reconsume. 
+                                    i = i - 1; // reconsume.
                                 }
                             }
                             break;
@@ -538,7 +521,7 @@ namespace Kooboo.Dom
                             {
                                 PreservedToken pretoken = block.value[i] as PreservedToken;
                                 // not a defined way to parse the selector, assembly them back and give it to selector module.
-                                // in the new way of getting selectorText, we have not need to assign it any more.  
+                                // in the new way of getting selectorText, we have not need to assign it any more.
                                 //stylerule.selectorText += pretoken.token.getString();
                             }
                             else if (block.value[i].Type == CompoenentValueType.simpleBlock)
@@ -562,7 +545,6 @@ namespace Kooboo.Dom
                                 state = MediaRuleParseState.init;
                                 startindex = -1;
                             }
-
 
                             break;
                         }
@@ -595,7 +577,7 @@ namespace Kooboo.Dom
                                 }
                                 else
                                 {
-                                    // can be delim token. 
+                                    // can be delim token.
                                     if (string.IsNullOrEmpty(media) && pretoken.token.Type == enumTokenType.whitespace)
                                     {
                                         // the start of whitespace will be ignored.
@@ -609,7 +591,6 @@ namespace Kooboo.Dom
                             }
                             else if (block.value[i].Type == CompoenentValueType.simpleBlock)
                             {
-
                                 CSSRuleList mediarulelist = ParseMediaRuleList(block.value[i] as SimpleBlock, ref endindex, mediarule, ref OriginalCss);
 
                                 mediarule.cssRules = mediarulelist;
@@ -653,7 +634,6 @@ namespace Kooboo.Dom
 
                             if (block.value[i].Type == CompoenentValueType.preservedToken)
                             {
-                               
                                 //PreservedToken pretoken = block.value[i] as PreservedToken;
 
                                 //if (pretoken.token.Type == enumTokenType.comma)
@@ -667,7 +647,7 @@ namespace Kooboo.Dom
                                 //}
                                 //else
                                 //{
-                                //    // can be delim token. 
+                                //    // can be delim token.
                                 //    if (string.IsNullOrEmpty(media) && pretoken.token.Type == enumTokenType.whitespace)
                                 //    {
                                 //        // the start of whitespace will be ignored.
@@ -680,8 +660,8 @@ namespace Kooboo.Dom
                                 //}
                             }
                             else if (block.value[i].Type == CompoenentValueType.simpleBlock)
-                            { 
-                                // not implemented now. 
+                            {
+                                // not implemented now.
                                 //CSSRuleList mediarulelist = ParseMediaRuleList(block.value[i] as SimpleBlock, ref endindex, mediarule, ref OriginalCss);
 
                                 //mediarule.cssRules = mediarulelist;
@@ -700,7 +680,7 @@ namespace Kooboo.Dom
 
                                 //rulelist.appendRule(mediarule);
 
-                                state =  MediaRuleParseState.init; 
+                                state = MediaRuleParseState.init;
                                 startindex = -1;
                             }
 
@@ -710,9 +690,7 @@ namespace Kooboo.Dom
                     default:
                         break;
                 }
-
             }
-
 
             if (stylerule != null)
             {
@@ -727,12 +705,12 @@ namespace Kooboo.Dom
             {
                 rulelist.appendRule(mediarule);
                 mediarule = null;
-            } 
-            return rulelist; 
+            }
+            return rulelist;
         }
 
         /// <summary>
-        /// Consume a list of declaration from a simple block. 
+        /// Consume a list of declaration from a simple block.
         /// </summary>
         /// <param name="block"></param>
         /// <returns></returns>
@@ -742,7 +720,7 @@ namespace Kooboo.Dom
             string csstext = string.Empty;
 
             CSSDeclaration onedeclaration = null;
-            bool colonfound = false;   // check value before or after colon. 
+            bool colonfound = false;   // check value before or after colon.
 
             int valuecount = block.value.Count;
 
@@ -776,12 +754,11 @@ namespace Kooboo.Dom
                     }
                     else if (token.token.Type == enumTokenType.semicolon || token.token.Type == enumTokenType.EOF)
                     {
-                        // this is the end of one declaration. 
+                        // this is the end of one declaration.
                         declarations.item.Add(onedeclaration);
                         onedeclaration = null;
                         colonfound = false;
                     }
-
                     else if (colonfound == false)
                     {
                         if (token.token.Type == enumTokenType.colon)
@@ -790,15 +767,14 @@ namespace Kooboo.Dom
                         }
                         else if (token.token.Type == enumTokenType.whitespace)
                         {
-                            // white space do nothing. 
+                            // white space do nothing.
                         }
                         else
                         {
-                            // the next one must be white space or colon, otherwise, error. 
+                            // the next one must be white space or colon, otherwise, error.
                             //TODO: onError.
                         }
                     }
-
                     else if (token.token.Type == enumTokenType.delim && ((delim_token)token.token).value == '!')
                     {
                         if ((i + 1) < valuecount)
@@ -816,7 +792,7 @@ namespace Kooboo.Dom
                                 }
                             }
 
-                            // has to consume the important now, because value has been processed. 
+                            // has to consume the important now, because value has been processed.
                             i = i + 1;
                         }
                     }
@@ -828,7 +804,6 @@ namespace Kooboo.Dom
                             onedeclaration.value += token.token.GetString(ref CssText);
                         }
                     }
-
                 }
                 else if (item.Type == CompoenentValueType.function)
                 {
@@ -850,18 +825,9 @@ namespace Kooboo.Dom
                         {
                             onedeclaration.propertyname += func.getString(ref CssText);
                         }
-
                     }
-
-
-
                 }
-
-
-
             }
-
-
 
             if (onedeclaration != null && !string.IsNullOrEmpty(onedeclaration.propertyname))
             {
@@ -870,17 +836,13 @@ namespace Kooboo.Dom
                 colonfound = false;
             }
 
-
             if (block.endindex > endindex)
             {
                 endindex = block.endindex;
             }
 
             return declarations;
-
-
         }
-
 
         public enum MediaRuleParseState
         {
@@ -889,6 +851,5 @@ namespace Kooboo.Dom
             mediarule = 2,
             OtherAtRule = 3
         }
-
     }
 }

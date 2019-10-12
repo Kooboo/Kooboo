@@ -1,28 +1,25 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Helper
 {
     public static class KeyHelper
     {
-        public static int GetKeyLen(Type keytype, int len=0)
+        public static int GetKeyLen(Type keytype, int len = 0)
         {
             if (keytype == typeof(string))
             {
-                if (len ==0)
+                if (len == 0)
                 {
                     return GlobalSettings.defaultKeyLength;
                 }
                 else
                 {
-                    return len; 
-                } 
+                    return len;
+                }
             }
             else if (keytype == typeof(Int32))
             {
@@ -71,8 +68,8 @@ namespace Kooboo.IndexedDB.Helper
             }
             else
             {
-                throw new Exception(keytype.ToString() + " data type not supported"); 
-            }  
+                throw new Exception(keytype.ToString() + " data type not supported");
+            }
         }
 
         public static byte[] AppendToKeyLength(byte[] input, bool IsString, int KeyLen)
@@ -100,7 +97,6 @@ namespace Kooboo.IndexedDB.Helper
                 return input;
             }
         }
-
 
         public static Guid ComputeGuid(string input)
         {

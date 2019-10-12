@@ -32,7 +32,6 @@ using System.Diagnostics;
 
 namespace Jint.Native.Number.Dtoa
 {
-
     public class CachedPowers
     {
         private const double Kd1Log210 = 0.30102999566398114; //  1 / lg(10)
@@ -45,18 +44,17 @@ namespace Jint.Native.Number.Dtoa
 
             internal CachedPower(ulong significand, short binaryExponent, short decimalExponent)
             {
-                Significand = (long) significand;
+                Significand = (long)significand;
                 BinaryExponent = binaryExponent;
                 DecimalExponent = decimalExponent;
             }
         }
 
-
         internal static int GetCachedPower(int e, int alpha, int gamma, DiyFp cMk)
         {
             const int kQ = DiyFp.KSignificandSize;
-            double k = System.Math.Ceiling((alpha - e + kQ - 1)*Kd1Log210);
-            int index = (GrisuCacheOffset + (int) k - 1)/CachedPowersSpacing + 1;
+            double k = System.Math.Ceiling((alpha - e + kQ - 1) * Kd1Log210);
+            int index = (GrisuCacheOffset + (int)k - 1) / CachedPowersSpacing + 1;
             CachedPower cachedPower = CACHED_POWERS[index];
 
             cMk.F = cachedPower.Significand;
@@ -159,7 +157,5 @@ namespace Jint.Native.Number.Dtoa
         };
 
         private const int GrisuCacheOffset = 308;
-
-
     }
 }

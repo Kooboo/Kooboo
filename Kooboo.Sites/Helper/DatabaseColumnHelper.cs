@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Sites.Helper
-{ 
+{
     public static class DatabaseColumnHelper
     {
         public static string ToFrontEndDataType(Type clrType)
         {
-            // string, number, datetime, bool, undefined 
+            // string, number, datetime, bool, undefined
             if (clrType == typeof(Int16) || clrType == typeof(Int32) || clrType == typeof(Int64) || clrType == typeof(byte))
             {
                 return "number";
@@ -55,7 +53,4 @@ namespace Kooboo.Sites.Helper
             return typeof(string);
         }
     }
-
-
-
 }

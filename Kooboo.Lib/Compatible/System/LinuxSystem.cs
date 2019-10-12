@@ -1,10 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 using System.IO;
+using System.Linq;
 
 namespace Kooboo.Lib.Compatible
 {
@@ -21,6 +20,7 @@ namespace Kooboo.Lib.Compatible
         }
 
         #region path
+
         public string CombinePath(string root, string relativePath)
         {
             if (string.IsNullOrEmpty(relativePath))
@@ -37,8 +37,9 @@ namespace Kooboo.Lib.Compatible
             relativePath = relativePath.Replace("\\", "/");
 
             #region get new segments
+
             var segments = relativePath.Split('/');
-            
+
             for (int i = 0; i < segments.Length; i++)
             {
                 string segment = segments[i];
@@ -59,7 +60,7 @@ namespace Kooboo.Lib.Compatible
                 else
                 {
                     var extension = Path.GetExtension(segment);
-                    
+
                     if (!string.IsNullOrEmpty(extension))
                     {
                         var fileInfo = folder.GetFiles().FirstOrDefault(file =>
@@ -91,7 +92,9 @@ namespace Kooboo.Lib.Compatible
                 }
                 segments[i] = segment;
             }
-            #endregion
+
+            #endregion get new segments
+
             var reletivePath = string.Join("/", segments);
             root = root.Replace("\\", "/");
             if (!root.EndsWith("/"))
@@ -131,9 +134,11 @@ namespace Kooboo.Lib.Compatible
             }
             return input.Split('/').ToList();
         }
-        #endregion
+
+        #endregion path
 
         #region port
+
         public int GetPort(int port)
         {
             return port;
@@ -146,7 +151,8 @@ namespace Kooboo.Lib.Compatible
             //NetworkHelper.IsPortInUse will get wrong result
             return false;
         }
-        #endregion
+
+        #endregion port
 
         public List<string> GetTryPaths()
         {
@@ -162,6 +168,5 @@ namespace Kooboo.Lib.Compatible
         {
             return convertApiUrl + "/_api/converter/LinuxServerPackage";
         }
-
     }
 }

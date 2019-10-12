@@ -1,19 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
+using Kooboo.Attributes;
 using Kooboo.Data;
+using Kooboo.Data.Context;
 using Kooboo.Data.Extensions;
+using Kooboo.Data.Language;
 using Kooboo.Data.Models;
 using Kooboo.IndexedDB.Schedule;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Repository;
 using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Kooboo.Data.Context;
-using Kooboo.Data.Language;
-using Kooboo.Attributes;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Repository;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -74,7 +73,6 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-
         public bool Run(Guid id, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
@@ -97,7 +95,6 @@ namespace Kooboo.Web.Api.Implementation
             job.Context = call.Context;
             return job;
         }
-
 
         public JobViewModel GetEdit(ApiCall call)
         {
@@ -123,9 +120,7 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             return new JobViewModel();
-
         }
-
 
         [RequireParameters("success")]
         public List<JobLog> Logs(ApiCall call)
@@ -140,7 +135,6 @@ namespace Kooboo.Web.Api.Implementation
             return GlobalDb.JobLog().GetByWebSiteId(call.Context.WebSite.Id, IsSuccess, 100);
         }
 
-
         public void Post(JobEditViewModel model, ApiCall call)
         {
             //JobEditViewModel model = call.Context.Request.Model as JobEditViewModel;
@@ -153,7 +147,7 @@ namespace Kooboo.Web.Api.Implementation
             newjob.Script = model.Script;
             newjob.CodeId = model.CodeId;
 
-            // add a new job. 
+            // add a new job.
             if (model.IsRepeat)
             {
                 RepeatItem<Job> repeatjob = new RepeatItem<Job>();
@@ -178,7 +172,7 @@ namespace Kooboo.Web.Api.Implementation
                             repeatjob.Frequence = RepeatFrequence.Minutes;
                             break;
                         }
-                    case "minute": 
+                    case "minute":
                         {
                             repeatjob.Frequence = RepeatFrequence.Minutes;
                             break;
@@ -202,14 +196,14 @@ namespace Kooboo.Web.Api.Implementation
                         break;
                 }
 
-                GlobalDb.RepeatingJob().Add(repeatjob); 
-                GlobalDb.RepeatingJob().Close();  
+                GlobalDb.RepeatingJob().Add(repeatjob);
+                GlobalDb.RepeatingJob().Close();
             }
             else
             {
                 GlobalDb.ScheduleJob().Add(newjob, model.StartTime);
-                GlobalDb.ScheduleJob().Close(); 
-            } 
+                GlobalDb.ScheduleJob().Close();
+            }
         }
 
         [RequireModel(typeof(JobDeleteViewModel))]
@@ -219,73 +213,66 @@ namespace Kooboo.Web.Api.Implementation
 
             _delete(model);
         }
+
         private void _delete(JobDeleteViewModel model)
         {
             if (model.IsRepeat)
             {
                 GlobalDb.RepeatingJob().Del(model.Id);
-                GlobalDb.RepeatingJob().Close(); 
+                GlobalDb.RepeatingJob().Close();
             }
             else
             {
                 GlobalDb.ScheduleJob().Delete(model.DayInt, model.SecondOfDay, model.BlockPosition);
-                GlobalDb.ScheduleJob().Close(); 
+                GlobalDb.ScheduleJob().Close();
             }
         }
 
         public void Deletes(ApiCall call)
         {
- 
             try
             {
-
                 string body = call.GetValue("ids");
                 if (string.IsNullOrEmpty(body))
                 {
                     body = call.Context.Request.Body;
                 }
 
-                var   ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(body);
+                var ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(body);
 
-                if (ids !=null)
+                if (ids != null)
                 {
                     var schedulejobs = GlobalDb.ScheduleJob().GetByWebSiteId(call.Context.WebSite.Id);
                     var repeatjobs = GlobalDb.RepeatingJob().GetByWebSiteId(call.Context.WebSite.Id);
 
                     foreach (var item in ids)
                     {
-                        var findschedule = schedulejobs.Find(o => o.Item.Id == item); 
-                        if (findschedule !=null)
+                        var findschedule = schedulejobs.Find(o => o.Item.Id == item);
+                        if (findschedule != null)
                         {
                             GlobalDb.ScheduleJob().Delete(findschedule.DayInt, findschedule.SecondOfDay, findschedule.BlockPosition);
                         }
                         else
                         {
                             var findrepeat = repeatjobs.Find(o => o.Item.Id == item);
-                            if (findrepeat !=null)
+                            if (findrepeat != null)
                             {
                                 GlobalDb.RepeatingJob().Del(findrepeat);
                             }
-
                         }
                     }
-
                 }
             }
             catch (Exception)
             {
-
             }
-
-
-
         }
-
     }
 
     public class FakeJob : IJob
     {
         public RenderContext Context { get; set; }
+
         public List<JobConfig> Config
         {
             get
@@ -329,5 +316,4 @@ namespace Kooboo.Web.Api.Implementation
             return;
         }
     }
-
 }

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Jint.Native.Object;
+﻿using Jint.Native.Object;
 using Jint.Runtime;
 using Jint.Runtime.Descriptors;
 using Jint.Runtime.Interop;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Jint.Native.Array
 {
@@ -20,10 +20,10 @@ namespace Jint.Native.Array
         public static ArrayPrototype CreatePrototypeObject(Engine engine, ArrayConstructor arrayConstructor)
         {
             var obj = new ArrayPrototype(engine)
-                {
-                    Extensible = true,
-                    Prototype = engine.Object.PrototypeObject
-                };
+            {
+                Extensible = true,
+                Prototype = engine.Object.PrototypeObject
+            };
 
             obj.FastAddProperty("length", 0, true, false, false);
             obj.FastAddProperty("constructor", arrayConstructor, true, false, true);
@@ -138,14 +138,14 @@ namespace Jint.Native.Array
                 }
             }
 
-            while(k < len)
+            while (k < len)
             {
                 var pk = k.ToString();
                 var kPresent = o.HasProperty(pk);
                 if (kPresent)
                 {
                     var kvalue = o.Get(pk);
-                    accumulator = callable.Call(Undefined.Instance, new [] { accumulator, kvalue, k, o });
+                    accumulator = callable.Call(Undefined.Instance, new[] { accumulator, kvalue, k, o });
                 }
                 k++;
             }
@@ -178,7 +178,7 @@ namespace Jint.Native.Array
                 if (kpresent)
                 {
                     var kvalue = o.Get(pk);
-                    var selected = callable.Call(thisArg, new [] { kvalue, k, o });
+                    var selected = callable.Call(thisArg, new[] { kvalue, k, o });
                     if (TypeConverter.ToBoolean(selected))
                     {
                         a.DefineOwnProperty(to.ToString(), new PropertyDescriptor(kvalue, true, true, true), false);
@@ -204,7 +204,7 @@ namespace Jint.Native.Array
                 throw new JavaScriptException(Engine.TypeError, "Argument must be callable");
             });
 
-            var a = Engine.Array.Construct(new JsValue[] {len});
+            var a = Engine.Array.Construct(new JsValue[] { len });
 
             for (var k = 0; k < len; k++)
             {
@@ -213,7 +213,7 @@ namespace Jint.Native.Array
                 if (kpresent)
                 {
                     var kvalue = o.Get(pk);
-                    var mappedValue = callable.Call(thisArg, new [] { kvalue, k, o });
+                    var mappedValue = callable.Call(thisArg, new[] { kvalue, k, o });
                     a.DefineOwnProperty(pk, new PropertyDescriptor(mappedValue, true, true, true), false);
                 }
             }
@@ -242,7 +242,7 @@ namespace Jint.Native.Array
                 if (kpresent)
                 {
                     var kvalue = o.Get(pk);
-                    callable.Call(thisArg, new [] { kvalue, k, o });
+                    callable.Call(thisArg, new[] { kvalue, k, o });
                 }
             }
 
@@ -270,7 +270,7 @@ namespace Jint.Native.Array
                 if (kpresent)
                 {
                     var kvalue = o.Get(pk);
-                    var testResult = callable.Call(thisArg, new [] { kvalue, k, o });
+                    var testResult = callable.Call(thisArg, new[] { kvalue, k, o });
                     if (TypeConverter.ToBoolean(testResult))
                     {
                         return true;
@@ -302,7 +302,7 @@ namespace Jint.Native.Array
                 if (kpresent)
                 {
                     var kvalue = o.Get(pk);
-                    var testResult = callable.Call(thisArg, new [] { kvalue, k, o });
+                    var testResult = callable.Call(thisArg, new[] { kvalue, k, o });
                     if (false == TypeConverter.ToBoolean(testResult))
                     {
                         return JsValue.False;
@@ -410,7 +410,7 @@ namespace Jint.Native.Array
                         o.Delete(to, true);
                     }
                 }
-                for (var k = len; k > len - actualDeleteCount + items.Length; k-- )
+                for (var k = len; k > len - actualDeleteCount + items.Length; k--)
                 {
                     o.Delete((k - 1).ToString(), true);
                 }
@@ -434,10 +434,10 @@ namespace Jint.Native.Array
                 }
             }
 
-            for(var k = 0; k< items.Length; k++)
+            for (var k = 0; k < items.Length; k++)
             {
                 var e = items[k];
-                o.Put((k+actualStart).ToString(), e, true);
+                o.Put((k + actualStart).ToString(), e, true);
             }
 
             o.Put("length", len - actualDeleteCount + items.Length, true);
@@ -518,7 +518,7 @@ namespace Jint.Native.Array
 
                     if (compareFn != null)
                     {
-                        var s = TypeConverter.ToNumber(compareFn.Call(Undefined.Instance, new[] {x, y}));
+                        var s = TypeConverter.ToNumber(compareFn.Call(Undefined.Instance, new[] { x, y }));
                         if (s < 0)
                         {
                             return -1;
@@ -640,7 +640,7 @@ namespace Jint.Native.Array
                 }
             }
             o.Delete(TypeConverter.ToString(len - 1), true);
-            o.Put("length", len-1, true);
+            o.Put("length", len - 1, true);
 
             return first;
         }
@@ -650,7 +650,7 @@ namespace Jint.Native.Array
             var o = TypeConverter.ToObject(Engine, thisObj);
             var lenVal = o.Get("length");
             var len = TypeConverter.ToUint32(lenVal);
-            var middle = (uint)System.Math.Floor(len/2.0);
+            var middle = (uint)System.Math.Floor(len / 2.0);
             uint lower = 0;
             while (lower != middle)
             {
@@ -764,7 +764,6 @@ namespace Jint.Native.Array
             }
 
             return r;
-
         }
 
         private JsValue Concat(JsValue thisObj, JsValue[] arguments)
@@ -772,7 +771,7 @@ namespace Jint.Native.Array
             var o = TypeConverter.ToObject(Engine, thisObj);
             var a = Engine.Array.Construct(Arguments.Empty);
             var n = 0;
-            var items = new List<JsValue> {o};
+            var items = new List<JsValue> { o };
             items.AddRange(arguments);
 
             foreach (var e in items)
@@ -780,7 +779,7 @@ namespace Jint.Native.Array
                 var eArray = e.TryCast<ArrayInstance>();
                 if (eArray != null)
                 {
-                    var len =  TypeConverter.ToUint32(eArray.Get("length"));
+                    var len = TypeConverter.ToUint32(eArray.Get("length"));
                     for (var k = 0; k < len; k++)
                     {
                         var p = k.ToString();
@@ -795,7 +794,7 @@ namespace Jint.Native.Array
                 }
                 else
                 {
-                    a.DefineOwnProperty(TypeConverter.ToString(n), new PropertyDescriptor(e, true, true, true ), false);
+                    a.DefineOwnProperty(TypeConverter.ToString(n), new PropertyDescriptor(e, true, true, true), false);
                     n++;
                 }
             }
@@ -873,7 +872,7 @@ namespace Jint.Native.Array
                 if (kPresent)
                 {
                     var kvalue = o.Get(pk);
-                    accumulator = callable.Call(Undefined.Instance, new [] { accumulator, kvalue, k, o });
+                    accumulator = callable.Call(Undefined.Instance, new[] { accumulator, kvalue, k, o });
                 }
             }
 

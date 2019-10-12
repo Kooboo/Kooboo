@@ -1,18 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
- public   class GuidFieldConverter<T> : IFieldConverter<T>
+    public class GuidFieldConverter<T> : IFieldConverter<T>
     {
-        Func<T, Guid> getValue;
-        Action<T, Guid> setValue;
+        private Func<T, Guid> getValue;
+        private Action<T, Guid> setValue;
 
         public GuidFieldConverter(string FieldName)
         {
@@ -46,8 +42,8 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
     public class GuidFieldConverter : IFieldConverter
     {
-        Func<object, Guid> getValue;
-        Action<object, Guid> setValue;
+        private Func<object, Guid> getValue;
+        private Action<object, Guid> setValue;
 
         public GuidFieldConverter(string FieldName, Type ObjectType)
         {
@@ -70,12 +66,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         {
             Guid bytevalue = ValueConverter.ToGuid(bytes);
             this.setValue(value, bytevalue);
-        } 
+        }
 
         public byte[] ToBytes(object Value)
         {
             Guid fieldvalue = this.getValue(Value);
             return ValueConverter.ToBytes(fieldvalue);
-        } 
+        }
     }
 }

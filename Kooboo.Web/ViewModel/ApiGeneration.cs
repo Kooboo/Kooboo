@@ -1,10 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.ViewModel
 {
@@ -21,7 +17,6 @@ namespace Kooboo.Web.ViewModel
         public List<string> Actions { get; set; }
     }
 
-
     public class ApiGenerationUpdate
     {
         public string Type { get; set; }
@@ -29,6 +24,5 @@ namespace Kooboo.Web.ViewModel
         public string Name { get; set; }
 
         public List<string> Actions { get; set; }
-
     }
 }

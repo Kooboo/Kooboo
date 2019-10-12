@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Models;
@@ -67,11 +67,10 @@ namespace Kooboo.Sites.Helper
                             }
                         }
                     }
-                    else if (rule.ruleType== RuleType.ImportRule)
+                    else if (rule.ruleType == RuleType.ImportRule)
                     {
-
                         string newdecltext = Lib.Helper.StringHelper.ReplaceIgnoreCase(rule.RuleText, OldUrl, NewUrl);
-                         
+
                         List<CmsCssRuleChanges> changelist = new List<CmsCssRuleChanges>();
                         CmsCssRuleChanges changes = new CmsCssRuleChanges();
                         changes.CssRuleId = rule.Id;
@@ -86,7 +85,6 @@ namespace Kooboo.Sites.Helper
                             parentstyle = rule.OwnerObjectId;
                         }
                         sitedb.CssRules.UpdateStyle(changelist, parentstyle);
-
                     }
                     else
                     {
@@ -115,7 +113,6 @@ namespace Kooboo.Sites.Helper
                         sitedb.CssRules.UpdateStyle(changelist, parentstyle);
                     }
                 }
-
                 else if (UseObject is ResourceGroup)
                 {
                     var oldid = Data.IDGenerator.GetRouteId(OldUrl);
@@ -218,7 +215,6 @@ namespace Kooboo.Sites.Helper
                     }
                     else if (rule.ruleType == RuleType.ImportRule)
                     {
-                         
                         List<CmsCssRuleChanges> changelist = new List<CmsCssRuleChanges>();
                         CmsCssRuleChanges changes = new CmsCssRuleChanges();
                         changes.CssRuleId = rule.Id;
@@ -233,7 +229,6 @@ namespace Kooboo.Sites.Helper
                         }
 
                         sitedb.CssRules.UpdateStyle(changelist, parentstyle);
-
                     }
                     else
                     {
@@ -264,10 +259,7 @@ namespace Kooboo.Sites.Helper
                         }
                         sitedb.CssRules.UpdateStyle(changelist, parentstyle);
                     }
-
-
                 }
-
                 else if (UseObject is ResourceGroup)
                 {
                     var oldid = Data.IDGenerator.GetRouteId(OldUrl);
@@ -277,17 +269,15 @@ namespace Kooboo.Sites.Helper
                     group.Children.Remove(oldid);
 
                     repo.AddOrUpdate(group);
-
                 }
-
             }
         }
 
         public static void DeleteRoutableObject(SiteDb sitedb, IRepository repo, ISiteObject value)
         {
-            // delete route.. 
-            //TODO: 
-            // Sites.Helper.ChangeHelper.DeleteUrl(this.SiteDb,)   
+            // delete route..
+            //TODO:
+            // Sites.Helper.ChangeHelper.DeleteUrl(this.SiteDb,)
             var objectroutes = sitedb.Routes.Query.Where(o => o.objectId == value.Id).SelectAll();
             foreach (var item in objectroutes)
             {
@@ -315,16 +305,15 @@ namespace Kooboo.Sites.Helper
             }
         }
 
-    
         public static void DeleteComponentFromSource(SiteDb sitedb, ISiteObject value)
         {
             if (value is IEmbeddable)
             {
-                var embed = value as IEmbeddable; 
+                var embed = value as IEmbeddable;
                 if (embed.IsEmbedded)
                 {
-                    // embedded handled by update source. 
-                    return; 
+                    // embedded handled by update source.
+                    return;
                 }
             }
 
@@ -379,6 +368,5 @@ namespace Kooboo.Sites.Helper
                 }
             }
         }
-
     }
 }

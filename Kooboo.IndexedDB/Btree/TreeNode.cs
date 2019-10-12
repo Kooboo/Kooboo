@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace Kooboo.IndexedDB.Btree
     {
         //////////////////////////////////////////////////////////////////////////////////////////////
         // a node contains below info.
-        //  /startbyte, delete indicator, type indicator, parent position,  count, Pointers to Previous/Next leaf,  
+        //  /startbyte, delete indicator, type indicator, parent position,  count, Pointers to Previous/Next leaf,
         // [key + pointer 8 + counter + indicator] * X number, endbyte
 
         private TreeFile tree;
@@ -26,9 +26,9 @@ namespace Kooboo.IndexedDB.Btree
 
             _freeRelativePos = new HashSet<int>();
 
-            PreviousPointer = new byte[this.tree.config.PointerLen]; 
+            PreviousPointer = new byte[this.tree.config.PointerLen];
         }
-         
+
         /// <summary>
         /// To indicate status of this node location.
         /// </summary>
@@ -37,8 +37,8 @@ namespace Kooboo.IndexedDB.Btree
         public EnumValues.TypeIndicator TypeIndicator;
 
         /// <summary>
-        /// The amount of duplicate keys within this node. 
-        /// A node should not have more than 256 keys, otherwise. 
+        /// The amount of duplicate keys within this node.
+        /// A node should not have more than 256 keys, otherwise.
         /// </summary>
       // public byte DuplicateKeys;
 
@@ -46,23 +46,24 @@ namespace Kooboo.IndexedDB.Btree
         /// This value will be available after load one node, but will not be saved into disk.
         /// </summary>
         public Int64 DiskPosition;
-        
+
         public static Int64 NodeCounterPosition = 24;
-        
+
         public static int PreviousPointerPosition = 13;
 
         public static int DeletionIndicationPosition = 2;
-          
+
         public static int MinKeysMustBeFree = 3;
         public static int StartKeyPosition = 42;
 
         public static byte startkeyone = 10;
         public static byte startkeytwo = 13;
-        
+
         /// <summary>
         /// free record postion to be used.
         /// </summary>
         private HashSet<int> _freeRelativePos;
+
         public int GetFreeRelativePosition()
         {
             if (_freeRelativePos.Count > 0)
@@ -81,27 +82,26 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         private int _startwriteposition;
-        
+
         /// <summary>
-        ///pointer to previous records that =last key.. next pointer contains within the key pointer pairs. 
+        ///pointer to previous records that =last key.. next pointer contains within the key pointer pairs.
         /// </summary>
         public byte[] PreviousPointer { get; set; }
 
-       
-         /// <summary>
+        /// <summary>
         ///  The key value pair convert into dictionary
         ///  string = key, byte[] =  indicator(leaf or node) + counter + position
         ///  Key len must always = _config.keylength, and value len must always = _config.pointerlen.
         /// </summary>
         public Dictionary<byte[], byte[]> KeyArray { get; set; }
-         
+
         public Int16 Count { get; set; }
-        
+
         public byte[] ToBytes()
         {
             byte[] bytearray = new byte[this.tree.config.NodeDiskSize];
 
-            bytearray[0] =  startkeyone;
+            bytearray[0] = startkeyone;
             bytearray[1] = startkeytwo;
 
             bytearray[this.tree.config.NodeDiskSize - 1] = startkeytwo;
@@ -110,7 +110,7 @@ namespace Kooboo.IndexedDB.Btree
             bytearray[2] = (byte)this.Deletion;
             bytearray[3] = (byte)this.TypeIndicator;
 
-           //bytearray[4] = (byte)this.DuplicateKeys;
+            //bytearray[4] = (byte)this.DuplicateKeys;
 
             // parent position
             // System.Buffer.BlockCopy(BitConverter.GetBytes(this.ParentPosition), 0, bytearray, 5, 8);
@@ -118,8 +118,8 @@ namespace Kooboo.IndexedDB.Btree
             System.Buffer.BlockCopy(this.PreviousPointer, 0, bytearray, 13, 11);
             // The key counts == how many times to read.
             System.Buffer.BlockCopy(BitConverter.GetBytes((Int16)this.KeyArray.Count), 0, bytearray, 24, 2);
-           // System.Buffer.BlockCopy(BitConverter.GetBytes(this.Navigator_Previous), 0, bytearray, 26, 8);
-           // System.Buffer.BlockCopy(BitConverter.GetBytes(this.Navigator_Next), 0, bytearray, 34, 8);
+            // System.Buffer.BlockCopy(BitConverter.GetBytes(this.Navigator_Previous), 0, bytearray, 26, 8);
+            // System.Buffer.BlockCopy(BitConverter.GetBytes(this.Navigator_Next), 0, bytearray, 34, 8);
 
             // now all the key pairs.
             int startposition = TreeNode.StartKeyPosition;  //after above writing.
@@ -132,8 +132,8 @@ namespace Kooboo.IndexedDB.Btree
 
                 System.Buffer.BlockCopy(item.Key, 0, bytearray, startposition, this.tree.config.KeyLength);
 
-                startposition += this.tree.config.KeyLength; 
-           
+                startposition += this.tree.config.KeyLength;
+
                 System.Buffer.BlockCopy(item.Value, 0, bytearray, startposition, this.tree.config.PointerLen);
                 startposition += this.tree.config.PointerLen;
             }
@@ -152,9 +152,9 @@ namespace Kooboo.IndexedDB.Btree
 
             this.TypeIndicator = (EnumValues.TypeIndicator)bytes[3];
 
-           //this.DuplicateKeys = bytes[4];
+            //this.DuplicateKeys = bytes[4];
 
-           // this.ParentPosition = BitConverter.ToInt64(bytes, 5);
+            // this.ParentPosition = BitConverter.ToInt64(bytes, 5);
 
             System.Buffer.BlockCopy(bytes, 13, this.PreviousPointer, 0, 11);
 
@@ -173,13 +173,13 @@ namespace Kooboo.IndexedDB.Btree
                     break;
                 }
 
-                ///To check, this might have an error when startposition out of index. To be checked. 
+                ///To check, this might have an error when startposition out of index. To be checked.
                 EnumValues.DeleteIndicator status = (EnumValues.DeleteIndicator)bytes[startposition];
 
                 if (status == EnumValues.DeleteIndicator.free_deleted)
                 {
                     this._freeRelativePos.Add(startposition);
-                    i--;  // Skip this record. 
+                    i--;  // Skip this record.
                     startposition = startposition + this.tree.config.RecordLen;
                     continue; //continue for the next loop.
                 }
@@ -191,7 +191,7 @@ namespace Kooboo.IndexedDB.Btree
                 byte[] keybyte = new byte[this.tree.config.KeyLength];
 
                 System.Buffer.BlockCopy(bytes, startposition, keybyte, 0, this.tree.config.KeyLength);
-                
+
                 byte[] pointerbyte = new byte[this.tree.config.PointerLen];
 
                 startposition += this.tree.config.KeyLength;
@@ -203,17 +203,14 @@ namespace Kooboo.IndexedDB.Btree
                 KeyArray.Add(keybyte, pointerbyte);
 
                 startposition = startposition + this.tree.config.PointerLen;
-
-
             }
 
             /// the position that we can start to write new record.
             _startwriteposition = startposition;
-
         }
 
         /// <summary>
-        /// find the pointer to next node or leaf that should contains the key. 
+        /// find the pointer to next node or leaf that should contains the key.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -223,7 +220,7 @@ namespace Kooboo.IndexedDB.Btree
             byte[] currentkey = key;
             byte[] currentvalue = new byte[NodePointer.Length];
             bool found = false;
-            
+
             foreach (var item in KeyArray)
             {
                 if (this.tree.comparer.Compare(key, item.Key) >= 0)
@@ -242,11 +239,9 @@ namespace Kooboo.IndexedDB.Btree
                             currentvalue = item.Value;
                         }
                     }
-
                 }
             }
 
-         
             if (found)
             {
                 nodepointer.KeyToPosition = currentkey;
@@ -260,6 +255,5 @@ namespace Kooboo.IndexedDB.Btree
 
             return nodepointer;
         }
-
     }
 }

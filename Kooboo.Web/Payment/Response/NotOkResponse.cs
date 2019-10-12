@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Payment.Models
 {
@@ -10,7 +6,7 @@ namespace Kooboo.Web.Payment.Models
     {
         public NotOkResponse(string error)
         {
-            this.Message = error; 
+            this.Message = error;
         }
 
         public bool ActionRequired { get; set; }

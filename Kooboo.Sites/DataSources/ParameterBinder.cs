@@ -1,10 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Collections.Generic;
-using System;
+using Kooboo.Data.Context;
 using Kooboo.Data.Models;
 using Kooboo.Lib.Reflection;
-using Kooboo.Data.Context;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.DataSources
 {
@@ -24,21 +24,20 @@ namespace Kooboo.Sites.DataSources
 
         public static Dictionary<string, object> BindKScript(Dictionary<string, string> Parameters, Dictionary<string, ParameterBinding> Bindings, DataContext dataContext)
         {
-            Dictionary<string, object> paras = new Dictionary<string, object>(); 
+            Dictionary<string, object> paras = new Dictionary<string, object>();
 
             foreach (var item in Parameters)
             {
-                var type = item.Value; 
+                var type = item.Value;
                 if (type == null)
                 {
-                    type = typeof(string).FullName; 
+                    type = typeof(string).FullName;
                 }
                 object value = GetValueByObjectAndProperty(item.Key, type, Parameters, Bindings, dataContext);
                 paras.Add(item.Key, value);
             }
             return paras;
         }
-
 
         private static object GetValueByObjectAndProperty(string ParentKey, string ParentType, Dictionary<string, string> Parameters, Dictionary<string, ParameterBinding> Bindings, DataContext dataContext)
         {
@@ -121,7 +120,7 @@ namespace Kooboo.Sites.DataSources
             Type KeyType = Data.TypeCache.GetType(binding.KeyType);
             Type ValueType = Data.TypeCache.GetType(binding.ValueType);
 
-            // try... jsonbinding first.  
+            // try... jsonbinding first.
             Dictionary<string, string> dictjson = null;
 
             try
@@ -174,7 +173,6 @@ namespace Kooboo.Sites.DataSources
                 }
                 return dict;
             }
-
             else
             {
                 string key = GetBindingKey(BindingString);
@@ -185,9 +183,7 @@ namespace Kooboo.Sites.DataSources
                 }
             }
 
-
             return null;
-
         }
 
         private static object BindList(string ParentKey, string ParentType, Dictionary<string, string> Parameters, Dictionary<string, ParameterBinding> Bindings, DataContext dataContext)
@@ -209,7 +205,7 @@ namespace Kooboo.Sites.DataSources
 
             try
             {
-                var value =  Lib.Helper.JsonHelper.Deserialize(BindingString, collectiontype);
+                var value = Lib.Helper.JsonHelper.Deserialize(BindingString, collectiontype);
                 if (value != null)
                 {
                     var list = value as System.Collections.IList;
@@ -236,18 +232,17 @@ namespace Kooboo.Sites.DataSources
             {
             }
 
-
             string bkey = GetBindingKey(BindingString);
             var valueback = GetValue(bkey, binding.FullTypeName, dataContext);
             if (valueback != null && valueback.GetType() == collectiontype)
             {
                 return valueback;
-            } 
+            }
 
             return null;
         }
 
-        // Get the one level down property of current type... 
+        // Get the one level down property of current type...
         private static Dictionary<string, ParameterBinding> GetSubPropertyBindings(string ParentKey, Dictionary<string, ParameterBinding> Bindings)
         {
             string Prefix = ParentKey + ".";

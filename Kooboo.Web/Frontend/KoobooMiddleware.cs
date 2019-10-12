@@ -1,14 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Threading.Tasks;
-using Kooboo.Sites.Render;
-using Kooboo.Sites.Routing;
-using Kooboo.Sites.SiteTransfer;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Service;
 using Kooboo.Data.Context;
 using Kooboo.Data.Server;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Render;
+using Kooboo.Sites.Routing;
+using Kooboo.Sites.Service;
+using Kooboo.Sites.SiteTransfer;
+using System;
+using System.Threading.Tasks;
 
 namespace Kooboo.Web.FrontRequest
 {
@@ -18,9 +18,9 @@ namespace Kooboo.Web.FrontRequest
         {
             get; set;
         }
+
         public async Task Invoke(RenderContext context)
         {
-
             FrontContext kooboocontext = new FrontContext();
             context.SetItem<FrontContext>(kooboocontext);
             kooboocontext.RenderContext = context;
@@ -46,7 +46,6 @@ namespace Kooboo.Web.FrontRequest
                     }
                 }
 
-
                 if (kooboocontext.RenderContext.IsSiteBinding || !CheckIsBackEndOrImageUrl(kooboocontext.RenderContext.Request.RelativeUrl))
                 {
                     ObjectRoute.Parse(kooboocontext);
@@ -56,7 +55,6 @@ namespace Kooboo.Web.FrontRequest
                         return;
                     }
                 }
-
 
                 if (kooboocontext.Route == null && !String.IsNullOrEmpty(kooboocontext.WebSite.LocalRootPath))
                 {
@@ -109,7 +107,7 @@ namespace Kooboo.Web.FrontRequest
                 }
                 else
                 {
-                    // reensure siteid... in case of the same url used for login. 
+                    // reensure siteid... in case of the same url used for login.
                     var siteid = Kooboo.Data.Context.WebServerContext.RequestSiteId(context.Request);
                     if (siteid != kooboocontext.RenderContext.WebSite.Id)
                     {
@@ -119,14 +117,13 @@ namespace Kooboo.Web.FrontRequest
                             kooboocontext.WebSite = site;
                         }
                     }
-
                 }
             }
 
             if (RenderThumbnail(kooboocontext))
             { return; }
 
-            // access control for allow users...   
+            // access control for allow users...
             await Next.Invoke(context);
         }
 
@@ -166,9 +163,9 @@ namespace Kooboo.Web.FrontRequest
                 try
                 {
                     await RouteRenderers.RenderAsync(frontContext);
-                    endtime = DateTime.UtcNow; 
+                    endtime = DateTime.UtcNow;
                     // check for rights...
-                    CheckUserBandwidth(frontContext); 
+                    CheckUserBandwidth(frontContext);
                 }
                 catch (Exception ex)
                 {
@@ -181,13 +178,11 @@ namespace Kooboo.Web.FrontRequest
                     }
                     frontContext.Log.AddEntry("500", "exception", DateTime.UtcNow, DateTime.UtcNow, 500, ex.Message);
 
+                    string error = frontContext.RenderContext.Request.Url + ex.Message + "\r\n" + ex.Source + "\r\n" + ex.StackTrace;
 
-                    string error = frontContext.RenderContext.Request.Url + ex.Message + "\r\n" + ex.Source + "\r\n" + ex.StackTrace; 
-
-                    Kooboo.Data.Log.Instance.Trace.Write(error); 
+                    Kooboo.Data.Log.Instance.Trace.Write(error);
                 }
             }
-
 
             if (frontContext.RenderContext.Response.StatusCode != 200)
             {
@@ -255,7 +250,6 @@ namespace Kooboo.Web.FrontRequest
             return false;
         }
 
-
         public async void CheckUserBandwidth(FrontContext frontContext)
         {
             bool shouldcheck = false;
@@ -310,10 +304,7 @@ namespace Kooboo.Web.FrontRequest
                         Kooboo.Data.Infrastructure.InfraManager.Add(orgid, Data.Infrastructure.InfraType.Bandwidth, length, url);
                     }
                 }
-
             }
-
         }
-
     }
 }

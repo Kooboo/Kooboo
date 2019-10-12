@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data;
@@ -34,7 +34,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 item.Methods.RemoveAll(o => !o.IsGlobal && !o.IsPublic);
             }
-            SetRelation(all, call.WebSite.SiteDb());   
+            SetRelation(all, call.WebSite.SiteDb());
             return all;
         }
 
@@ -135,7 +135,7 @@ namespace Kooboo.Web.Api.Implementation
                     target.Add(dataSource);
                 }
 
-                // TODO... check that kind of datamethod that is from code. 
+                // TODO... check that kind of datamethod that is from code.
 
                 foreach (var dataMethod in item)
                 {
@@ -146,8 +146,8 @@ namespace Kooboo.Web.Api.Implementation
 
         private void AppendCode(SiteDb sitedb, List<DataSourceViewModel> target)
         {
-            // append the global code...NOT the one in the site datemethod setting. 
-            // but those to be set... 
+            // append the global code...NOT the one in the site datemethod setting.
+            // but those to be set...
             var settings = Kooboo.Sites.DataSources.ScriptSourceManager.GetCodeMethods(sitedb);
 
             List<DataMethodSetting> newsetting = new List<DataMethodSetting>();
@@ -207,7 +207,6 @@ namespace Kooboo.Web.Api.Implementation
             return viewmodel;
         }
 
-
         private void CheckCorrectSampleJson(DataMethodViewModel model, ApiCall call)
         {
             if (model != null && model.ParameterBinding != null)
@@ -226,7 +225,6 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-
         public TypeInfoModel Update(ApiCall call)
         {
             string json = call.Context.Request.Body;
@@ -239,7 +237,7 @@ namespace Kooboo.Web.Api.Implementation
 
             if (viewmodel.Id == default(Guid))
             {
-                // TODO: check if it is from the kscript source as well.. 
+                // TODO: check if it is from the kscript source as well..
                 var methodhash = viewmodel.MethodSignatureHash;
 
                 IDataMethodSetting originalSetting;
@@ -281,12 +279,9 @@ namespace Kooboo.Web.Api.Implementation
 
                     return fields;
                 }
-
-
             }
             else
             {
-
                 var dataMethodSetting = call.WebSite.SiteDb().DataMethodSettings.Get(viewmodel.Id);
 
                 if (dataMethodSetting == null)
@@ -315,11 +310,9 @@ namespace Kooboo.Web.Api.Implementation
                     fields.Paras = GetBindingPara(dataMethodSetting);
                     return fields;
                 }
-
             }
 
             return null;
-
         }
 
         private DataMethodViewModel UpdateViewModel(DataMethodViewModel model, SiteDb siteDb, IDataMethodSetting setting)
@@ -369,11 +362,10 @@ namespace Kooboo.Web.Api.Implementation
 
         private void SetDisplayName(DataMethodSetting setting, ApiCall call)
         {
-
             foreach (var item in setting.ParameterBinding)
             {
                 var value = item.Value;
-                value.DisplayName = item.Key;   // Data.Language.Hardcoded.GetValuexxxx(item.Key, call.Context); 
+                value.DisplayName = item.Key;   // Data.Language.Hardcoded.GetValuexxxx(item.Key, call.Context);
             }
         }
 
@@ -420,7 +412,6 @@ namespace Kooboo.Web.Api.Implementation
         {
             var viewdatamethod = call.WebSite.SiteDb().ViewDataMethods.Query.Where(o => o.MethodId == call.ObjectId).SelectAll();
 
-
             string by = call.GetValue("by");
             if (string.IsNullOrEmpty(by))
             { return null; }
@@ -458,11 +449,10 @@ namespace Kooboo.Web.Api.Implementation
             return paras;
         }
 
-
         private List<DataSourceViewModel> FilterOut(List<DataSourceViewModel> input, WebSite site)
         {
-            // filter out not used datasource. 
-            List<DataSourceViewModel> result = new List<DataSourceViewModel>();      
+            // filter out not used datasource.
+            List<DataSourceViewModel> result = new List<DataSourceViewModel>();
             foreach (var item in input)
             {
                 if (item.DataSourceType == typeof(Kooboo.Sites.DataSources.Search))
@@ -476,7 +466,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     result.Add(item);
                 }
-            }     
+            }
             return result;
         }
     }

@@ -1,22 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.IndexedDB.Btree.Comparer;
+using Kooboo.IndexedDB.ByteConverter;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.IndexedDB.ByteConverter;
-using Kooboo.IndexedDB.Btree.Comparer;
 
 namespace Kooboo.IndexedDB.Btree
 {
     /// <summary>
-    /// string index. 
+    /// string index.
     /// </summary>
     public class BtreeIndex<T>
     {
-
         public string fieldname;
         public bool unique;
         public int keylength;
@@ -38,7 +34,6 @@ namespace Kooboo.IndexedDB.Btree
         {
             get
             {
-
                 if (_tree == null)
                 {
                     lock (_object)
@@ -58,9 +53,9 @@ namespace Kooboo.IndexedDB.Btree
 
         private IByteConverter<T> Converter;
 
-        private IEqualityComparer<byte[]> EqualityComparer;  /// only used for dictionary to find key. 
+        private IEqualityComparer<byte[]> EqualityComparer;  /// only used for dictionary to find key.
 
-        ///only string key has the keylength, the rest does not have. 
+        ///only string key has the keylength, the rest does not have.
         private bool isString = false;
 
         public BtreeIndex(string fieldname, bool unique, int keylength, string fullIndexFileName, int MaxCacheLevel = 0)
@@ -90,7 +85,6 @@ namespace Kooboo.IndexedDB.Btree
             {
                 isString = false;
             }
-
         }
 
         public bool Exists
@@ -125,7 +119,7 @@ namespace Kooboo.IndexedDB.Btree
                 if (System.IO.File.Exists(fullindexfilename))
                 {
                     File.Delete(fullindexfilename);
-                } 
+                }
             }
         }
 
@@ -140,7 +134,6 @@ namespace Kooboo.IndexedDB.Btree
             }
         }
 
-
         private bool Add(byte[] keybytes, Int64 blockposition)
         {
             lock (_object)
@@ -151,12 +144,10 @@ namespace Kooboo.IndexedDB.Btree
 
         public bool Add(T key, Int64 blockposition)
         {
-
             if (key == null)
             {
                 key = default(T);
             }
-
 
             return Add(this.Converter.ToByte(key), blockposition);
         }
@@ -226,8 +217,6 @@ namespace Kooboo.IndexedDB.Btree
             }
         }
 
-
-
         public List<Int64> List(T key)
         {
             if (key == null)
@@ -292,7 +281,7 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         /// <summary>
-        /// append byte 0 to the iput to make it match the keylength. 
+        /// append byte 0 to the iput to make it match the keylength.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -342,7 +331,7 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         /// <summary>
-        /// Get the count of records in the range. count distinct will have better performance. 
+        /// Get the count of records in the range. count distinct will have better performance.
         /// </summary>
         /// <param name="range"></param>
         /// <param name="distinct"></param>
@@ -362,7 +351,6 @@ namespace Kooboo.IndexedDB.Btree
 
                 if (startnode.TreeNode.DiskPosition == endnode.TreeNode.DiskPosition)
                 {
-
                     int count = 0;
                     foreach (var item in startnode.TreeNode.KeyArray)
                     {
@@ -381,13 +369,11 @@ namespace Kooboo.IndexedDB.Btree
                                 {
                                     count += 1;
                                 }
-
                             }
                             else
                             {
                                 count += 1;
                             }
-
                     }
                     return count;
                 }
@@ -424,7 +410,6 @@ namespace Kooboo.IndexedDB.Btree
 
                     foreach (var item in endnode.TreeNode.KeyArray)
                     {
-
                         if (this.Comparer.Compare(endKeyBytes, item.Key) > 0 || (this.Comparer.Compare(endKeyBytes, item.Key) == 0 && !range.upperOpen))
                         {
                             if (!distinct)
@@ -446,7 +431,6 @@ namespace Kooboo.IndexedDB.Btree
                                 lastnodecount += 1;
                             }
                         }
-
                     }
 
                     var middlenode = MemoryTreeNodeManager.FindNextLeaf(this.Tree, startnode);
@@ -491,7 +475,6 @@ namespace Kooboo.IndexedDB.Btree
 
         public List<Int64> getRange(Range<T> range, int skipcount, int takecount, bool ascending)
         {
-
             int skipped = 0;
             int taken = 0;
             List<long> list = new List<long>();
@@ -522,7 +505,7 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         /// <summary>
-        /// get a collection object that contains of the range records. 
+        /// get a collection object that contains of the range records.
         /// </summary>
         /// <param name="range"></param>
         /// <param name="ascending"></param>
@@ -535,9 +518,8 @@ namespace Kooboo.IndexedDB.Btree
             return getCollection(startKeyBytes, endKeyBytes, range.lowerOpen, range.upperOpen, ascending);
         }
 
-
         /// <summary>
-        /// get a collection object that contains of the range records. 
+        /// get a collection object that contains of the range records.
         /// </summary>
         /// <param name="startKey"></param>
         /// <param name="endKey"></param>
@@ -561,14 +543,14 @@ namespace Kooboo.IndexedDB.Btree
 
             startKey = this.appendToFixedLength(startKey);
             endKey = this.appendToFixedLength(endKey);
-              
+
             ItemCollection collection = new ItemCollection(this.Tree, this.Comparer, startKey, endKey, lowerOpen, upperOpen, ascending);
 
             return collection;
         }
 
         /// <summary>
-        /// get the collectiont that contains all items in the index. 
+        /// get the collectiont that contains all items in the index.
         /// </summary>
         /// <param name="ascending"></param>
         /// <returns></returns>
@@ -592,9 +574,9 @@ namespace Kooboo.IndexedDB.Btree
         public KeyBytesCollection AllKeyBytesCollection(bool ascending)
         {
             Range<T> range = Range<T>.bound(this.FirstKey, this.LastKey, false, false);
-            return GetKeyBytesCollection(range, ascending); 
+            return GetKeyBytesCollection(range, ascending);
         }
-         
+
         private KeyBytesCollection GetKeyBytesCollection(byte[] startKey, byte[] endKey, bool lowerOpen, bool upperOpen, bool ascending)
         {
             if (startKey == null)
@@ -616,7 +598,7 @@ namespace Kooboo.IndexedDB.Btree
 
             return collection;
         }
-         
+
         private KeyBytesCollection GetKeyBytesCollection(Range<T> range, bool ascending)
         {
             byte[] startKeyBytes = this.Converter.ToByte(range.lower);
@@ -625,6 +607,4 @@ namespace Kooboo.IndexedDB.Btree
             return GetKeyBytesCollection(startKeyBytes, endKeyBytes, range.lowerOpen, range.upperOpen, ascending);
         }
     }
-
-
 }

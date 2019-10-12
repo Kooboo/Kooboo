@@ -1,10 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
 
@@ -12,7 +8,6 @@ namespace Kooboo.Lib.Helper
 {
     public static class HttpClientHelper
     {
-       
         public static HttpClient Client { get; private set; }
 
         private static CookieContainer _cookieContainer;
@@ -23,12 +18,12 @@ namespace Kooboo.Lib.Helper
             Client = CreateHttpClient(_cookieContainer);
         }
 
-        public static void SetCookieContainer(CookieContainer cookieContainer,string url)
+        public static void SetCookieContainer(CookieContainer cookieContainer, string url)
         {
             if (cookieContainer == null)
                 return;
             Uri uri;
-            if(cookieContainer !=null &&  Uri.TryCreate(url,UriKind.Absolute,out uri))
+            if (cookieContainer != null && Uri.TryCreate(url, UriKind.Absolute, out uri))
             {
                 var cookies = cookieContainer.GetCookies(uri);
                 foreach (var cookieObj in cookies)
@@ -38,6 +33,7 @@ namespace Kooboo.Lib.Helper
                 }
             }
         }
+
         private static HttpClient CreateHttpClient(CookieContainer cookieContainer)
         {
             HttpClientHandler handler = new HttpClientHandler()

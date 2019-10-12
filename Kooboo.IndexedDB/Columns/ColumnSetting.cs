@@ -1,16 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Columns
 {
-
     /// <summary>
-    /// Save some extra column data of one record, in order to search into it quickly. 
+    /// Save some extra column data of one record, in order to search into it quickly.
     /// This is only used in the store setting, but not the real instance.
     /// </summary>
     [Serializable]
@@ -20,6 +15,7 @@ namespace Kooboo.IndexedDB.Columns
         /// The public field or property name.
         /// </summary>
         public string FieldName;
+
         [Obsolete]
         public Type KeyType;
 
@@ -39,9 +35,8 @@ namespace Kooboo.IndexedDB.Columns
         public int length;
 
         /// <summary>
-        /// The relative start position of this column within the entire columnized data bytes. 
+        /// The relative start position of this column within the entire columnized data bytes.
         /// </summary>
         public int relativePosition { get; set; }
     }
-
 }

@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Web;
-using System.Xml;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Xml;
 using WxPayAPI.lib;
-using System.Linq; 
-
-
 
 namespace WxPayAPI
-{ 
-
+{
     /// <summary>
     /// 微信支付协议接口数据类，所有的API接口通信都依赖这个数据结构，
     /// 在调用接口之前先填充各个字段的值，然后进行接口通信，
@@ -20,11 +15,11 @@ namespace WxPayAPI
     /// </summary>
     public class WxPayData
     {
-        public  const string SIGN_TYPE_MD5 = "MD5";
-        public  const string SIGN_TYPE_HMAC_SHA256 = "HMAC-SHA256";
+        public const string SIGN_TYPE_MD5 = "MD5";
+        public const string SIGN_TYPE_HMAC_SHA256 = "HMAC-SHA256";
+
         public WxPayData()
         {
-
         }
 
         //采用排序的Dictionary的好处是方便对数据包进行签名，不用再签名之前再做一次排序
@@ -35,6 +30,7 @@ namespace WxPayAPI
         * @param key 字段名
          * @param value 字段值
         */
+
         public void SetValue(string key, object value)
         {
             m_values[key] = value;
@@ -45,6 +41,7 @@ namespace WxPayAPI
         * @param key 字段名
          * @return key对应的字段值
         */
+
         public object GetValue(string key)
         {
             object o = null;
@@ -57,6 +54,7 @@ namespace WxPayAPI
          * @param key 字段名
          * @return 若字段key已被设置，则返回true，否则返回false
          */
+
         public bool IsSet(string key)
         {
             object o = null;
@@ -72,6 +70,7 @@ namespace WxPayAPI
         * @return 经转换得到的xml串
         * @throws WxPayException
         **/
+
         public string ToXml()
         {
             //数据为空时不能转化为xml格式
@@ -117,6 +116,7 @@ namespace WxPayAPI
         * @return 经转换得到的Dictionary
         * @throws WxPayException
         */
+
         public SortedDictionary<string, object> FromXml(string xml)
         {
             if (string.IsNullOrEmpty(xml))
@@ -125,7 +125,6 @@ namespace WxPayAPI
                 throw new WxPayException("将空的xml串转换为WxPayData不合法!");
             }
 
-			
             SafeXmlDocument xmlDoc = new SafeXmlDocument();
             xmlDoc.LoadXml(xml);
             XmlNode xmlNode = xmlDoc.FirstChild;//获取到根节点<xml>
@@ -135,17 +134,17 @@ namespace WxPayAPI
                 XmlElement xe = (XmlElement)xn;
                 m_values[xe.Name] = xe.InnerText;//获取xml的键值对到WxPayData内部的数据中
             }
-			
+
             try
             {
-				//2015-06-29 错误是没有签名
-				if(m_values["return_code"] != "SUCCESS")
-				{
-					return m_values;
-				}
+                //2015-06-29 错误是没有签名
+                if (m_values["return_code"] != "SUCCESS")
+                {
+                    return m_values;
+                }
                 CheckSign();//验证签名,不通过会抛异常
             }
-            catch(WxPayException ex)
+            catch (WxPayException ex)
             {
                 throw new WxPayException(ex.Message);
             }
@@ -157,6 +156,7 @@ namespace WxPayAPI
         * @Dictionary格式转化成url参数格式
         * @ return url格式串, 该串不包含sign字段值
         */
+
         public string ToUrl()
         {
             string buff = "";
@@ -177,21 +177,21 @@ namespace WxPayAPI
             return buff;
         }
 
-
         /**
         * @Dictionary格式化成Json
          * @return json串数据
         */
+
         public string ToJson()
         {
             string jsonStr = Kooboo.Lib.Helper.JsonHelper.Serialize(m_values);
             return jsonStr;
-
         }
 
         /**
         * @values格式化成能在Web页面上显示的结果（因为web页面上不能直接输出xml格式的字符串）
         */
+
         public string ToPrintStr()
         {
             string str = "";
@@ -203,20 +203,20 @@ namespace WxPayAPI
                     throw new WxPayException("WxPayData内部含有值为null的字段!");
                 }
 
-
                 str += string.Format("{0}={1}\n", pair.Key, pair.Value.ToString());
             }
-            str =  System.Web.HttpUtility.HtmlEncode(str);
+            str = System.Web.HttpUtility.HtmlEncode(str);
             Log.Debug(this.GetType().ToString(), "Print in Web Page : " + str);
             return str;
         }
-
 
         /**
         * @生成签名，详见签名生成算法
         * @return 签名, sign字段不参加签名
         */
-        public string MakeSign(string signType){
+
+        public string MakeSign(string signType)
+        {
             //转url格式
             string str = ToUrl();
             //在string后加入API KEY
@@ -233,10 +233,12 @@ namespace WxPayAPI
                 //所有字符转为大写
                 return sb.ToString().ToUpper();
             }
-            else if(signType==SIGN_TYPE_HMAC_SHA256)
+            else if (signType == SIGN_TYPE_HMAC_SHA256)
             {
                 return CalcHMACSHA256Hash(str, WxPayConfig.GetConfig().GetKey());
-            }else{
+            }
+            else
+            {
                 throw new WxPayException("sign_type 不合法");
             }
         }
@@ -245,16 +247,18 @@ namespace WxPayAPI
         * @生成签名，详见签名生成算法
         * @return 签名, sign字段不参加签名 SHA256
         */
+
         public string MakeSign()
         {
             return MakeSign(SIGN_TYPE_HMAC_SHA256);
         }
-         
+
         /**
-        * 
+        *
         * 检测签名是否正确
         * 正确返回true，错误抛异常
         */
+
         public bool CheckSign(string signType)
         {
             //如果没有设置签名，则跳过检测
@@ -285,13 +289,12 @@ namespace WxPayAPI
             throw new WxPayException("WxPayData签名验证错误!");
         }
 
-
-
         /**
-        * 
+        *
         * 检测签名是否正确
         * 正确返回true，错误抛异常
         */
+
         public bool CheckSign()
         {
             return CheckSign(SIGN_TYPE_HMAC_SHA256);
@@ -300,13 +303,13 @@ namespace WxPayAPI
         /**
         * @获取Dictionary
         */
+
         public SortedDictionary<string, object> GetValues()
         {
             return m_values;
         }
 
-
-        private  string CalcHMACSHA256Hash(string plaintext, string salt)
+        private string CalcHMACSHA256Hash(string plaintext, string salt)
         {
             string result = "";
             var enc = Encoding.UTF8;
@@ -318,9 +321,5 @@ namespace WxPayAPI
             result = string.Join("", baHashedText.ToList().Select(b => b.ToString("x2")).ToArray());
             return result;
         }
-
-
-
-
     }
 }

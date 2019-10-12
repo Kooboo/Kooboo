@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 //using Kooboo.Sites.Models;
 //using System;
@@ -16,7 +16,7 @@
 //        {
 //            get
 //            {
-//                return true; 
+//                return true;
 //            }
 //        }
 
@@ -24,7 +24,7 @@
 //        {
 //            get
 //            {
-//                return false; 
+//                return false;
 //            }
 //        }
 
@@ -32,7 +32,7 @@
 //        {
 //            get
 //            {
-//                return true; 
+//                return true;
 //            }
 //        }
 
@@ -45,17 +45,17 @@
 //        {
 //            if (!SiteObject.HasLayout && SiteObject.HasHeaderValue)
 //            {
-//                string onlyenablecuture = null; 
+//                string onlyenablecuture = null;
 //                if (SiteDb.WebSite.EnableMultilingual && SiteDb.WebSite.Cultures.Count() ==1)
 //                {
-//                    onlyenablecuture = SiteDb.WebSite.Cultures.First(); 
+//                    onlyenablecuture = SiteDb.WebSite.Cultures.First();
 //                }
 //                if (!SiteDb.WebSite.EnableMultilingual)
 //                {
-//                    onlyenablecuture = SiteDb.WebSite.DefaultCulture; 
+//                    onlyenablecuture = SiteDb.WebSite.DefaultCulture;
 //                }
 
-//                SiteObject.Body = Service.HtmlHeadService.SetHeader(SiteObject.Body, SiteObject.Headers, onlyenablecuture); 
+//                SiteObject.Body = Service.HtmlHeadService.SetHeader(SiteObject.Body, SiteObject.Headers, onlyenablecuture);
 //            }
 //        }
 

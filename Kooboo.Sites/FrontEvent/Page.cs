@@ -1,19 +1,19 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
- 
+using System;
+using System.Collections.Generic;
+
 namespace Kooboo.Sites.FrontEvent
 {
     public class PageFinding : IFrontEvent
     {
         public PageFinding()
         {
-
         }
+
         public PageFinding(RenderContext context)
         {
             this.Context = context;
@@ -29,7 +29,7 @@ namespace Kooboo.Sites.FrontEvent
             {
                 var url = value;
                 if (url.ToLower().StartsWith("http://") || url.ToLower().StartsWith("https://"))
-                { 
+                {
                     //TODO: check if it is the same host.... then treat it as relativeurl.
 
                     Context.Response.Redirect(302, url);
@@ -43,7 +43,6 @@ namespace Kooboo.Sites.FrontEvent
                     url = "/" + url;
                 }
                 Context.Request.RelativeUrl = url;
-
             }
         }
 
@@ -72,13 +71,14 @@ namespace Kooboo.Sites.FrontEvent
         [Attributes.SummaryIgnore]
         public enumEventType EventType => enumEventType.PageFinding;
 
-        private Page _page; 
+        private Page _page;
+
         public Page Page
         {
-            get { return _page;  }
-            set { _page = value; DataChange = true;  }
+            get { return _page; }
+            set { _page = value; DataChange = true; }
         }
-         
+
         public bool DataChange { get; set; }
 
         [Attributes.SummaryIgnore]
@@ -96,8 +96,8 @@ namespace Kooboo.Sites.FrontEvent
     {
         public PageFound()
         {
-
         }
+
         public PageFound(RenderContext context, Page page)
         {
             this._page = page;
@@ -128,7 +128,6 @@ namespace Kooboo.Sites.FrontEvent
                     url = "/" + url;
                 }
                 Context.Request.RelativeUrl = url;
-
             }
         }
 
@@ -158,6 +157,7 @@ namespace Kooboo.Sites.FrontEvent
         public enumEventType EventType => enumEventType.PageFound;
 
         private Page _page;
+
         public Page Page
         {
             get { return _page; }
@@ -165,7 +165,7 @@ namespace Kooboo.Sites.FrontEvent
         }
 
         public bool DataChange { get; set; }
-         
+
         public List<EventConditionSetting> GetConditionSetting(RenderContext context)
         {
             List<EventConditionSetting> result = new List<EventConditionSetting>();
@@ -188,12 +188,11 @@ namespace Kooboo.Sites.FrontEvent
             return result;
         }
     }
-     
+
     //public class PageNotFound : IFrontEvent
     //{
     //    public PageNotFound()
     //    {
-
     //    }
 
     //    public PageNotFound(RenderContext context)
@@ -273,5 +272,4 @@ namespace Kooboo.Sites.FrontEvent
     //        return result;
     //    }
     //}
-
 }

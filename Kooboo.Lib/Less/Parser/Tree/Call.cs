@@ -2,10 +2,10 @@ using System;
 
 namespace dotless.Core.Parser.Tree
 {
-    using System.Linq;
     using Infrastructure;
     using Infrastructure.Nodes;
     using Plugins;
+    using System.Linq;
 
     public class Call : Node
     {
@@ -41,7 +41,7 @@ namespace dotless.Core.Parser.Tree
             }
 
             env.Output.Push();
-            
+
             env.Output
                 .Append(Name)
                 .Append("(")

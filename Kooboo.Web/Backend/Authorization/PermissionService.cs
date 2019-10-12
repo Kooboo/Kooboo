@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
+﻿using Kooboo.Data.Context;
 using Kooboo.Sites.Authorization.Model;
-using Kooboo.Data.Context;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Sites.Authorization
 {
     public static class PermissionService
-    { 
-      
+    {
         public static bool HasPermission(PermissionTree tree, params string[] HierarchyRights)
-        { 
+        {
             return HasPermission(HierarchyRights, tree);
         }
 
@@ -43,9 +41,9 @@ namespace Kooboo.Sites.Authorization
 
             var paras = permissionstring.Split(spe, StringSplitOptions.RemoveEmptyEntries);
 
-            return HasPermission(paras, tree); 
+            return HasPermission(paras, tree);
         }
-         
+
         // root/sub/subtwo
         public static PermissionViewModel ToViewModel(RolePermission permission, RenderContext context)
         {
@@ -55,15 +53,15 @@ namespace Kooboo.Sites.Authorization
             result.Name = permission.Name;
             result.Id = permission.Id;
 
-            //result.DisplayName = Kooboo.Data.Language.LanguageProvider.GetValue(result.Name, context); 
-            
+            //result.DisplayName = Kooboo.Data.Language.LanguageProvider.GetValue(result.Name, context);
+
             foreach (var item in permission.Permission)
             {
                 var rights = item.Split(spe, StringSplitOptions.RemoveEmptyEntries);
                 AppendToModel(result, rights.ToList());
             }
 
-            SetDisplayName(result.SubItems, context); 
+            SetDisplayName(result.SubItems, context);
             return result;
         }
 
@@ -71,16 +69,16 @@ namespace Kooboo.Sites.Authorization
         {
             foreach (var item in Subitems)
             {
-                item.DisplayName = Data.Language.LanguageProvider.GetValue(item.Name, context); 
+                item.DisplayName = Data.Language.LanguageProvider.GetValue(item.Name, context);
 
                 if (item.SubItems.Any())
                 {
-                    SetDisplayName(item.SubItems, context); 
+                    SetDisplayName(item.SubItems, context);
                 }
             }
         }
-         
-        // single rights without \\ 
+
+        // single rights without \\
         public static void AppendToModel(PermissionViewModel model, List<string> SingleRights)
         {
             foreach (var item in SingleRights)
@@ -97,10 +95,9 @@ namespace Kooboo.Sites.Authorization
 
                 var find = model.SubItems.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, item));
 
-
                 if (find == null)
                 {
-                    return; 
+                    return;
                 }
 
                 model = find;
@@ -108,7 +105,6 @@ namespace Kooboo.Sites.Authorization
 
             model.Selected = true; // at the
         }
-
 
         public static List<string> ExtractPermissionFromModel(PermissionViewModel model)
         {
@@ -125,7 +121,7 @@ namespace Kooboo.Sites.Authorization
 
                 if (item.Selected)
                 {
-                    result.Add(root); 
+                    result.Add(root);
                 }
                 else
                 {
@@ -138,14 +134,10 @@ namespace Kooboo.Sites.Authorization
                             result.Add(rootsub);
                         }
                     }
-                }  
+                }
             }
 
             return result;
         }
-
-
-
-
     }
 }

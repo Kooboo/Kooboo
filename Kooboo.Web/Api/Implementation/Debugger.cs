@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
@@ -15,7 +15,6 @@ namespace Kooboo.Web.Api.Implementation
 
         public bool RequireSite => true;
 
-
         public bool RequireUser => true;
 
         public List<string> StartSession(Guid CodeId, ApiCall call)
@@ -23,23 +22,23 @@ namespace Kooboo.Web.Api.Implementation
             if (CodeId != default(Guid))
             {
                 var code = call.WebSite.SiteDb().Code.Get(CodeId);
-                 
+
                 if (code != null && !string.IsNullOrEmpty(code.Body))
-                { 
+                {
                     var sesssion = Kooboo.Sites.ScriptDebugger.SessionManager.CreateSession(call.Context, CodeId);
 
                     return code.Body.Split("\n".ToCharArray()).ToList();
-                } 
-            } 
-            return null; 
+                }
+            }
+            return null;
         }
 
         public void StopSession(Guid CodeId, ApiCall call)
         {
             if (CodeId != default(Guid))
             {
-                Kooboo.Sites.ScriptDebugger.SessionManager.RemoveSession(call.Context, CodeId, call.Context.Request.IP); 
-            } 
+                Kooboo.Sites.ScriptDebugger.SessionManager.RemoveSession(call.Context, CodeId, call.Context.Request.IP);
+            }
         }
 
         public void SetBreakPoints(Guid CodeId, List<int> Points, ApiCall call)
@@ -50,7 +49,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 if (session.JsEngine != null)
                 {
-                    // remvoe points.  
+                    // remvoe points.
                     List<int> toremove = new List<int>();
                     foreach (var item in session.JsEngine.BreakPoints)
                     {
@@ -70,12 +69,9 @@ namespace Kooboo.Web.Api.Implementation
                             session.JsEngine.BreakPoints.Add(new Jint.Runtime.Debugger.BreakPoint(item, 0));
                         }
                     }
-
                 }
-
                 else
                 {
-
                     List<int> toremove = new List<int>();
                     foreach (var item in session.BreakLines)
                     {
@@ -96,7 +92,6 @@ namespace Kooboo.Web.Api.Implementation
                     }
                 }
             }
-
             else
             {
                 var msg = Data.Language.Hardcoded.GetValue("You need to start the debugger first", call.Context);
@@ -104,7 +99,7 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        // get the break point info..... only return one for one break. 
+        // get the break point info..... only return one for one break.
         public Kooboo.Sites.ScriptDebugger.DebugInfo GetInfo(Guid CodeId, ApiCall call)
         {
             var session = SessionManager.GetDebugSession(call.Context, CodeId);
@@ -163,6 +158,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
         }
+
         [Obsolete]
         public object GetValue(Guid CodeId, string FullName, ApiCall call)
         {
@@ -224,7 +220,6 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 else if (Lib.Helper.JintHelper.IsAssignmentExpression(JsStatement))
                 {
-
                     try
                     {
                         session.JsEngine.Execute(JsStatement);
@@ -238,12 +233,10 @@ namespace Kooboo.Web.Api.Implementation
                         result.Model = ex.Message;
                     }
                 }
-
                 else
                 {
                     try
                     {
-
                         session.JsEngine.Execute(JsStatement);
                         result.Success = true;
                     }
@@ -252,7 +245,6 @@ namespace Kooboo.Web.Api.Implementation
                         result.Success = false;
                         result.Model = ex.Message;
                     }
-
                 }
 
                 var variables = Kooboo.Sites.Scripting.Manager.GetVariables(session.JsEngine);
@@ -267,10 +259,9 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             return result;
-
         }
 
-        // call to get the update variables after exe code. 
+        // call to get the update variables after exe code.
         public Kooboo.Sites.ScriptDebugger.DebugVariables GetVariables(Guid CodeId, ApiCall call)
         {
             var session = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(call.Context, CodeId);
@@ -281,6 +272,5 @@ namespace Kooboo.Web.Api.Implementation
             }
             return new Sites.ScriptDebugger.DebugVariables();
         }
-        
     }
 }

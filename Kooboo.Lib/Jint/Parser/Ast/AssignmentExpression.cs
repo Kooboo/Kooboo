@@ -30,26 +30,37 @@ namespace Jint.Parser.Ast
             {
                 case "=":
                     return AssignmentOperator.Assign;
+
                 case "+=":
                     return AssignmentOperator.PlusAssign;
+
                 case "-=":
                     return AssignmentOperator.MinusAssign;
+
                 case "*=":
                     return AssignmentOperator.TimesAssign;
+
                 case "/=":
                     return AssignmentOperator.DivideAssign;
+
                 case "%=":
                     return AssignmentOperator.ModuloAssign;
+
                 case "&=":
                     return AssignmentOperator.BitwiseAndAssign;
+
                 case "|=":
                     return AssignmentOperator.BitwiseOrAssign;
+
                 case "^=":
                     return AssignmentOperator.BitwiseXOrAssign;
+
                 case "<<=":
                     return AssignmentOperator.LeftShiftAssign;
+
                 case ">>=":
                     return AssignmentOperator.RightShiftAssign;
+
                 case ">>>=":
                     return AssignmentOperator.UnsignedRightShiftAssign;
 

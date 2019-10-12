@@ -1,13 +1,12 @@
-﻿using System;
-using dotless.Core.Exceptions;
+﻿using dotless.Core.Exceptions;
 using dotless.Core.Parser.Infrastructure;
 
 namespace dotless.Core
 {
+    using Parameters;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using Parameters;
 
     public class ParameterDecorator : ILessEngine
     {

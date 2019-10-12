@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Sites.Render.Commands;
@@ -22,6 +22,7 @@ namespace Kooboo.Web.Spa
         public SpaRenderOption option { get; set; }
 
         private List<string> _startPageNames;
+
         private List<string> StartPageNames
         {
             get
@@ -35,7 +36,6 @@ namespace Kooboo.Web.Spa
                 return _startPageNames;
             }
         }
-
 
         private string GetRoot(RenderContext context)
         {
@@ -246,7 +246,6 @@ namespace Kooboo.Web.Spa
                 }
             }
             return result;
-
         }
 
         private static string GetText(RenderContext context, SpaRenderOption option, string RelativeUrl, string FullFileName)
@@ -298,7 +297,4 @@ namespace Kooboo.Web.Spa
             return null;
         }
     }
-
-
-
 }

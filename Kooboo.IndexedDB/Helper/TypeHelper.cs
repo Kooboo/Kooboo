@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.CustomAttributes;
 using System;
@@ -8,11 +8,11 @@ using System.Reflection;
 
 namespace Kooboo.IndexedDB.Helper
 {
-  public  static class TypeHelper
-    { 
+    public static class TypeHelper
+    {
         public static Dictionary<string, Type> GetPublicPropertyOrFields(Type ClassType)
         {
-            Dictionary<string, Type> result = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase); 
+            Dictionary<string, Type> result = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var item in ClassType.GetProperties())
             {
@@ -24,22 +24,22 @@ namespace Kooboo.IndexedDB.Helper
                 if (item.CanRead && item.CanWrite)
                 {
                     result.Add(item.Name, item.PropertyType);
-                } 
+                }
             }
 
             foreach (var item in ClassType.GetFields())
             {
                 if (item.IsPublic && !item.IsStatic)
                 {
-                    result.Add(item.Name, item.FieldType); 
+                    result.Add(item.Name, item.FieldType);
                 }
             }
-            return result; 
-        } 
+            return result;
+        }
 
         public static Type GetFieldType<TValue>(string FieldName)
         {
-            return GetFieldType(typeof(TValue), FieldName); 
+            return GetFieldType(typeof(TValue), FieldName);
         }
 
         public static Type GetFieldType(Type ObjectType, string FieldName)
@@ -84,13 +84,13 @@ namespace Kooboo.IndexedDB.Helper
         }
 
         public static bool IsDictIgnoreCase(Type declareType, string DictFieldName)
-        { 
+        {
             foreach (var item in declareType.GetProperties())
             {
                 if (item.Name == DictFieldName)
                 {
-                    return (item.IsDefined(typeof(KoobooKeyIgnoreCase), false)); 
-                }  
+                    return (item.IsDefined(typeof(KoobooKeyIgnoreCase), false));
+                }
             }
 
             foreach (var item in declareType.GetFields())
@@ -104,8 +104,6 @@ namespace Kooboo.IndexedDB.Helper
                 }
             }
             return false;
-
         }
-
     }
 }

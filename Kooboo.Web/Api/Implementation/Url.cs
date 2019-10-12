@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data.Interface;
@@ -59,7 +59,7 @@ namespace Kooboo.Web.Api.Implementation
             var items = allroutes.OrderBy(o => o.Name).Skip(pager.SkipCount).Take(pager.PageSize);
 
             foreach (var item in items)
-            {   
+            {
                 RouteItemViewModel model = new RouteItemViewModel();
                 model.Id = item.Id;
                 model.Name = item.Name;
@@ -74,7 +74,6 @@ namespace Kooboo.Web.Api.Implementation
             result.List = list;
 
             return result;
-
         }
 
         public PagedListViewModel<ExternalResourceItemViewModel> External(ApiCall call)
@@ -115,7 +114,7 @@ namespace Kooboo.Web.Api.Implementation
         [Kooboo.Attributes.RequireParameters("type", "value", "id")]
         public RouteUpdate UpdateUrl(ApiCall call)
         {
-            // type = route or external. 
+            // type = route or external.
             var type = call.GetValue("type");
             if (type.ToLower() == "route" || type.ToLower() == "internal")
             {
@@ -167,7 +166,7 @@ namespace Kooboo.Web.Api.Implementation
                     }
 
                     var referredby = sitedb.Relations.GetReferredByRelations(id);
-                    
+
                     foreach (var by in referredby)
                     {
                         var repofrom = sitedb.GetRepository(by.ConstTypeX);
@@ -179,10 +178,10 @@ namespace Kooboo.Web.Api.Implementation
 
                     if (siteobject is Route)
                     {
-                        var route = siteobject as Route; 
+                        var route = siteobject as Route;
                         if (route.objectId == default(Guid))
                         {
-                            repo.Delete(siteobject.Id); 
+                            repo.Delete(siteobject.Id);
                         }
                     }
                     else
@@ -190,19 +189,18 @@ namespace Kooboo.Web.Api.Implementation
                         repo.Delete(siteobject.Id);
                     }
                 }
-
             }
         }
 
         private RouteUpdate UpdateRoute(ApiCall call)
         {
             string url = call.GetValue("value", "url");
-  
-            url = url.Replace("\\", "/"); 
+
+            url = url.Replace("\\", "/");
             if (!url.StartsWith("/"))
             {
-                url = "/" + url; 
-            } 
+                url = "/" + url;
+            }
             RouteUpdate result = new RouteUpdate();
 
             var sitedb = call.WebSite.SiteDb();
@@ -222,8 +220,8 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
             result.NewId = Kooboo.Data.IDGenerator.GetRouteId(url);
-            var newroute = sitedb.Routes.Get(result.NewId); 
-             result.PreviewUrl  = sitedb.WebSite.BaseUrl(newroute.Name);  
+            var newroute = sitedb.Routes.Get(result.NewId);
+            result.PreviewUrl = sitedb.WebSite.BaseUrl(newroute.Name);
             return result;
         }
 
@@ -249,7 +247,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
             result.NewId = Data.IDGenerator.Generate(value, ConstObjectType.ExternalResource);
-            result.PreviewUrl = value; 
+            result.PreviewUrl = value;
             return result;
         }
 

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Globalization;
-using Jint.Native.Function;
+﻿using Jint.Native.Function;
 using Jint.Native.Object;
 using Jint.Runtime;
 using Jint.Runtime.Interop;
+using System;
+using System.Globalization;
 
 namespace Jint.Native.Date
 {
@@ -13,7 +13,6 @@ namespace Jint.Native.Date
 
         public DateConstructor(Engine engine) : base(engine, null, null, false)
         {
-
         }
 
         public static DateConstructor CreateDateConstructor(Engine engine)
@@ -21,7 +20,7 @@ namespace Jint.Native.Date
             var obj = new DateConstructor(engine);
             obj.Extensible = true;
 
-            // The value of the [[Prototype]] internal property of the Date constructor is the Function prototype object 
+            // The value of the [[Prototype]] internal property of the Date constructor is the Function prototype object
             obj.Prototype = engine.Function.PrototypeObject;
             obj.PrototypeObject = DatePrototype.CreatePrototypeObject(engine, obj);
 
@@ -186,11 +185,11 @@ namespace Jint.Native.Date
         public DateInstance Construct(DateTime value)
         {
             var instance = new DateInstance(Engine)
-                {
-                    Prototype = PrototypeObject,
-                    PrimitiveValue = FromDateTime(value),
-                    Extensible = true
-                };
+            {
+                Prototype = PrototypeObject,
+                PrimitiveValue = FromDateTime(value),
+                Extensible = true
+            };
 
             return instance;
         }
@@ -198,11 +197,11 @@ namespace Jint.Native.Date
         public DateInstance Construct(double time)
         {
             var instance = new DateInstance(Engine)
-                {
-                    Prototype = PrototypeObject,
-                    PrimitiveValue = TimeClip(time),
-                    Extensible = true
-                };
+            {
+                Prototype = PrototypeObject,
+                PrimitiveValue = TimeClip(time),
+                Extensible = true
+            };
 
             return instance;
         }

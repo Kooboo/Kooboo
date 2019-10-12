@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data.Models;
@@ -58,7 +58,6 @@ namespace Kooboo.Web.Api.Implementation
             bool IsSlave = false;
             //if (!Kooboo.Data.AppSettings.Global.IsOnlineServer)
             //{
-
             foreach (var item in sitedb.SiteCluster.All())
             {
                 if (item.IsRoot)
@@ -86,9 +85,8 @@ namespace Kooboo.Web.Api.Implementation
                 viewmodel.DataCenter.Add(dc);
             }
 
-            viewmodel.IsSlave =  IsSlave; 
+            viewmodel.IsSlave = IsSlave;
 
-            
             return viewmodel;
             //}
             //else
@@ -161,7 +159,6 @@ namespace Kooboo.Web.Api.Implementation
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("To be a host of web cluster, your kooboo instance must be listening on port 80", call.Context));
             }
-
         }
 
         public void Post(ClusterEditViewModel model, ApiCall call)
@@ -174,36 +171,34 @@ namespace Kooboo.Web.Api.Implementation
 
             if (Data.AppSettings.Global.IsOnlineServer)
             {
-                // check and update the SiteInfo of EnableCluster.  
+                // check and update the SiteInfo of EnableCluster.
                 var siteid = call.GetValue<Guid>("SiteId");
                 var user = call.Context.User;
                 if (user == null)
                 {
                     throw new Exception(Data.Language.Hardcoded.GetValue("user required", call.Context));
                 }
-                // Set the website doamins and send to Account for update... 
-                // Get a list of ServerId back for sync purpose... 
+                // Set the website doamins and send to Account for update...
+                // Get a list of ServerId back for sync purpose...
                 string url = Kooboo.Data.Account.Url.Cluster.SaveSetting + "?SiteId=" + siteid.ToString() + "&OrganizatioinId=" + user.CurrentOrgId.ToString();
 
                 var result = Lib.Helper.HttpHelper.Post<List<SiteClusterViewModel>>(url, Lib.Helper.JsonHelper.Serialize(model));
 
                 if (result != null)
                 {
-
                 }
-                /// var errro; 
+                /// var errro;
             }
-
             else
             {
                 // local server, no need for location redirect.
-                // local server does not support location redirect.. 
+                // local server does not support location redirect..
                 List<SiteCluster> updates = new List<SiteCluster>();
                 foreach (var item in model.DataCenter)
                 {
                     if (!item.IsRoot)
                     {
-                        // can not contains itself... 
+                        // can not contains itself...
                         SiteCluster cluster = new SiteCluster();
                         cluster.ServerIp = item.Ip;
                         cluster.Port = item.Port;
@@ -215,7 +210,7 @@ namespace Kooboo.Web.Api.Implementation
                     }
                 }
 
-                // do the delection. 
+                // do the delection.
                 HashSet<Guid> deleteIds = new HashSet<Guid>();
                 foreach (var item in sitedb.SiteCluster.All())
                 {
@@ -256,13 +251,13 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        // receive the site object... 
+        // receive the site object...
         public bool Receive(Guid SiteId, ApiCall call)
         {
             var converter = new IndexedDB.Serializer.Simple.SimpleConverter<SyncObject>();
             SyncObject sync = converter.FromBytes(call.Context.Request.PostData);
 
-            //must do the user validation here...  
+            //must do the user validation here...
             var website = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
 
             if (website == null)
@@ -285,7 +280,7 @@ namespace Kooboo.Web.Api.Implementation
             return true;
         }
 
-        // this is used for remote site cluster to query information from here.. 
+        // this is used for remote site cluster to query information from here..
         [Attributes.RequireParameters("SiteId")]
         public ClusterSiteEditModel SiteModel(ApiCall call)
         {

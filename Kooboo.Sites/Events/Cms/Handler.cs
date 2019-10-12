@@ -1,23 +1,21 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Events.Cms;
+using Kooboo.Sites.Contents.Models;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Relation;
+using Kooboo.Sites.SiteTransfer;
 using System;
 using System.Collections.Generic;
-using Kooboo.Extensions;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Contents.Models;
-using Kooboo.Events.Cms;
-using Kooboo.Sites.Relation;
 using System.Linq;
-using Kooboo.Sites.SiteTransfer;
 
 namespace Kooboo.Sites.Events
-{ 
-    public static class  Handler
+{
+    public static class Handler
     {
         private static Dictionary<Type, List<object>> _handlers = new Dictionary<Type, List<object>>();
 
-        private static object _locker = new object(); 
+        private static object _locker = new object();
 
         static Handler()
         {
@@ -37,7 +35,7 @@ namespace Kooboo.Sites.Events
             AddHandler<Image>(HandleImageChange);
             AddHandler<ObjectRelation>(HandleObjectRelationChange);
 
-            AddHandler<Code>(HandleCodeChange); 
+            AddHandler<Code>(HandleCodeChange);
 
             AddHandler<TransferTask>(HandleTransferTask);
         }
@@ -45,22 +43,20 @@ namespace Kooboo.Sites.Events
         public static void AddHandler<T>(Action<SiteObjectEvent<T>> handle)
             where T : class, Data.Interface.ISiteObject
         {
-
-          lock(_locker)
+            lock (_locker)
             {
                 if (!_handlers.ContainsKey(typeof(T)))
                 {
                     List<object> target = new List<object>();
                     target.Add(handle);
-                    _handlers.Add(typeof(T), target); 
+                    _handlers.Add(typeof(T), target);
                 }
                 else
                 {
                     var target = _handlers[typeof(T)];
-                    target.Add(handle); 
+                    target.Add(handle);
                 }
-            } 
-    
+            }
         }
 
         public static void HandleChange<T>(SiteObjectEvent<T> e)
@@ -72,12 +68,12 @@ namespace Kooboo.Sites.Events
 
             foreach (var item in handler)
             {
-               var HandleItem = item as Action<SiteObjectEvent<T>>; 
-               if (HandleItem !=null)
+                var HandleItem = item as Action<SiteObjectEvent<T>>;
+                if (HandleItem != null)
                 {
-                    HandleItem(e); 
+                    HandleItem(e);
                 }
-            }  
+            }
         }
 
         private static void HandleRoute(SiteObjectEvent<Routing.Route> ChangeEvent)
@@ -87,7 +83,6 @@ namespace Kooboo.Sites.Events
                 Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb).AddOrUpdate(ChangeEvent.Value);
                 Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb, ChangeEvent.Value.DestinationConstType).AddOrUpdate(ChangeEvent.Value);
             }
-
             else if (ChangeEvent.ChangeType == ChangeType.Update)
             {
                 if (ChangeEvent.OldValue.Name.ToLower() != ChangeEvent.Value.Name.ToLower())
@@ -98,13 +93,12 @@ namespace Kooboo.Sites.Events
 
                 Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb).AddOrUpdate(ChangeEvent.Value);
                 Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb, ChangeEvent.Value.DestinationConstType).AddOrUpdate(ChangeEvent.Value);
-
             }
             else
             {
-                // delete an route.. 
+                // delete an route..
                 Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb).Del(ChangeEvent.Value.Name);
-                Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb, ChangeEvent.Value.DestinationConstType).Del(ChangeEvent.Value.Name); 
+                Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb, ChangeEvent.Value.DestinationConstType).Del(ChangeEvent.Value.Name);
             }
         }
 
@@ -112,21 +106,20 @@ namespace Kooboo.Sites.Events
         {
             if (PageEvent.ChangeType == ChangeType.Add)
             {
-                //PageEvent.SiteDb.DomElements.AddOrUpdateDom(PageEvent.Value.Dom, PageEvent.Value.Id, PageEvent.Value.ConstType); 
+                //PageEvent.SiteDb.DomElements.AddOrUpdateDom(PageEvent.Value.Dom, PageEvent.Value.Id, PageEvent.Value.ConstType);
             }
             else if (PageEvent.ChangeType == ChangeType.Update)
             {
                 //if (PageEvent.OldValue.Body != PageEvent.Value.Body)
-                //{ 
-                //   PageEvent.SiteDb.DomElements.AddOrUpdateDom(PageEvent.Value.Dom, PageEvent.Value.Id, PageEvent.Value.ConstType); 
-                //} 
+                //{
+                //   PageEvent.SiteDb.DomElements.AddOrUpdateDom(PageEvent.Value.Dom, PageEvent.Value.Id, PageEvent.Value.ConstType);
+                //}
                 Cache.RenderPlan.RemovePlan(PageEvent.SiteDb, PageEvent.OldValue.Id);
-
             }
             else
             {
                 Cache.RenderPlan.RemovePlan(PageEvent.SiteDb, PageEvent.Value.Id);
-                //PageEvent.SiteDb.DomElements.CleanObject(PageEvent.Value.Id, PageEvent.Value.ConstType); 
+                //PageEvent.SiteDb.DomElements.CleanObject(PageEvent.Value.Id, PageEvent.Value.ConstType);
             }
 
             Routing.PageRoute.UpdatePageRouteParameter(PageEvent.SiteDb, PageEvent.Value.Id);
@@ -134,34 +127,32 @@ namespace Kooboo.Sites.Events
 
         private static void HandleTransferTask(SiteObjectEvent<SiteTransfer.TransferTask> taskEvent)
         {
-            // check whether need to continue download or not. 
+            // check whether need to continue download or not.
 
             var sitedb = taskEvent.SiteDb;
-            var taskcount = sitedb.TransferTasks.Count(); 
-            if (taskcount >0)
+            var taskcount = sitedb.TransferTasks.Count();
+            if (taskcount > 0)
             {
                 if (sitedb.WebSite.ContinueDownload == false)
                 {
                     sitedb.WebSite.ContinueDownload = true;
-                    Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(sitedb.WebSite); 
+                    Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(sitedb.WebSite);
                 }
             }
-            else if (taskcount ==0)
+            else if (taskcount == 0)
             {
                 if (sitedb.WebSite.ContinueDownload == true)
                 {
                     sitedb.WebSite.ContinueDownload = false;
-                    Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(sitedb.WebSite); 
+                    Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(sitedb.WebSite);
                 }
-            } 
+            }
         }
-
 
         private static void HandleViewChange(SiteObjectEvent<View> ViewEvent)
         {
             if (ViewEvent.ChangeType == ChangeType.Add)
             {
-
             }
             else if (ViewEvent.ChangeType == ChangeType.Update)
             {
@@ -174,11 +165,10 @@ namespace Kooboo.Sites.Events
                     {
                         Cache.RenderPlan.RemovePlan(ViewEvent.SiteDb, item.objectXId);
 
-                        // also the route parameter. 
+                        // also the route parameter.
                         Routing.PageRoute.UpdatePageRouteParameter(ViewEvent.SiteDb, item.objectXId);
                     }
                 }
-
             }
             else
             {
@@ -188,19 +178,18 @@ namespace Kooboo.Sites.Events
                 foreach (var item in pageviewrelation)
                 {
                     Cache.RenderPlan.RemovePlan(ViewEvent.SiteDb, item.objectXId);
-                     
-                    // also the route parameter. 
+
+                    // also the route parameter.
                     Routing.PageRoute.UpdatePageRouteParameter(ViewEvent.SiteDb, item.objectXId);
                 }
 
-                // delete view date method. 
+                // delete view date method.
                 var viewmethods = ViewEvent.SiteDb.ViewDataMethods.Query.Where(o => o.ViewId == ViewEvent.Value.Id).SelectAll();
 
                 foreach (var item in viewmethods)
                 {
                     ViewEvent.SiteDb.ViewDataMethods.Delete(item.Id);
                 }
-
             }
         }
 
@@ -208,7 +197,6 @@ namespace Kooboo.Sites.Events
         {
             if (LayoutEvent.ChangeType == ChangeType.Add)
             {
-
             }
             else if (LayoutEvent.ChangeType == ChangeType.Update)
             {
@@ -235,7 +223,6 @@ namespace Kooboo.Sites.Events
                     Kooboo.Sites.Cache.RenderPlan.RemovePlan(LayoutEvent.SiteDb, item.Id);
                 }
             }
-
         }
 
         private static void HandleContentTypeChange(SiteObjectEvent<ContentType> contenttypeevent)
@@ -274,14 +261,14 @@ namespace Kooboo.Sites.Events
 
             if (TheEvent.ChangeType == ChangeType.Delete)
             {
-                // delete content folder, delete all content. 
+                // delete content folder, delete all content.
                 var foldercontent = sitedb.TextContent.Query.Where(o => o.FolderId == TheEvent.Value.Id).UseColumnData().SelectAll();
 
                 foreach (var item in foldercontent)
                 {
                     TheEvent.SiteDb.TextContent.Delete(item.Id);
                 }
-                // delete all  categories. 
+                // delete all  categories.
 
                 var AllAssignedCategories = sitedb.ContentCategories.Query.Where(o => o.CategoryFolder == TheEvent.Value.Id).SelectAll();
                 foreach (var item in AllAssignedCategories)
@@ -304,7 +291,7 @@ namespace Kooboo.Sites.Events
                     }
                 }
 
-                // remove embedded. 
+                // remove embedded.
 
                 foreach (var folder in allfolder)
                 {
@@ -328,12 +315,8 @@ namespace Kooboo.Sites.Events
                                 sitedb.TextContent.AddOrUpdate(item);
                             }
                         }
-
                     }
-
                 }
-
-
             }
         }
 
@@ -361,7 +344,6 @@ namespace Kooboo.Sites.Events
 
             //    StyleEvent.SiteDb.Relations.CleanObjectRelation(StyleEvent.Value.Id);
 
-
             //    if (StyleEvent.Value.IsEmbedded)
             //    {
             //        StyleEvent.SiteDb.Styles.RemoveEmbedded(StyleEvent.Value);
@@ -369,7 +351,6 @@ namespace Kooboo.Sites.Events
             //    }
 
             //}
-
         }
 
         private static void HandleDataMethodSettingChange(Kooboo.Events.Cms.SiteObjectEvent<Kooboo.Data.Models.DataMethodSetting> MethodEvent)
@@ -382,7 +363,7 @@ namespace Kooboo.Sites.Events
 
             if (MethodEvent.ChangeType == ChangeType.Delete)
             {
-                // when delete viewdatamethod, it will update the route parameters as well. 
+                // when delete viewdatamethod, it will update the route parameters as well.
                 foreach (var item in allviewmethods)
                 {
                     sitedb.ViewDataMethods.Delete(item.Id);
@@ -410,11 +391,10 @@ namespace Kooboo.Sites.Events
                     Sites.Routing.PageRoute.UpdatePageRouteParameter(sitedb, item);
                 }
             }
-
         }
 
         private static void HandleViewDataMethodChange(Kooboo.Events.Cms.SiteObjectEvent<ViewDataMethod> ViewDataMethodEvent)
-        { 
+        {
             var viewid = ViewDataMethodEvent.Value.ViewId;
             var pages = ViewDataMethodEvent.SiteDb.Relations.GetReferredByRelations(viewid, ConstObjectType.Page);
 
@@ -429,7 +409,7 @@ namespace Kooboo.Sites.Events
                 var sitemethod = ViewDataMethodEvent.SiteDb.DataMethodSettings.Get(methodid);
                 if (sitemethod != null && !sitemethod.IsPublic)
                 {
-                    // check being used or not. 
+                    // check being used or not.
                     var viewdatamethod = ViewDataMethodEvent.SiteDb.ViewDataMethods.Query.Where(o => o.MethodId == sitemethod.Id).SelectAll();
                     if (viewdatamethod == null || viewdatamethod.Count == 0)
                     {
@@ -462,10 +442,10 @@ namespace Kooboo.Sites.Events
             //        CssRuleEvent.SiteDb.CssRules.Delete(item.Id);
             //    }
 
-            //    // clean all relations. 
+            //    // clean all relations.
             //    CssRuleEvent.SiteDb.Relations.CleanObjectRelation(CssRuleEvent.Value.Id);
 
-            //    // clean all sub css declarations. 
+            //    // clean all sub css declarations.
             //    List<CmsCssDeclaration> declarations = CssRuleEvent.SiteDb.CssDeclarations.Query.Where(o => o.CmsCssRuleId == CssRuleEvent.Value.Id).UseColumnData().SelectAll();
 
             //    foreach (var item in declarations)
@@ -486,7 +466,6 @@ namespace Kooboo.Sites.Events
 
                 FormEvent.SiteDb.Relations.CleanObjectRelation(FormEvent.Value.Id);
             }
-
         }
 
         private static void HandleImageChange(Kooboo.Events.Cms.SiteObjectEvent<Image> ImageEvent)
@@ -504,48 +483,45 @@ namespace Kooboo.Sites.Events
             ImageEvent.SiteDb.Thumbnails.DeleteByImageId(imageid);
         }
 
-
         private static void HandleCodeChange(Kooboo.Events.Cms.SiteObjectEvent<Code> CodeEvent)
         {
             if (CodeEvent.ChangeType == ChangeType.Delete)
             {
-                if(CodeEvent.Value.CodeType == CodeType.Api && CodeEvent.Value !=null)
+                if (CodeEvent.Value.CodeType == CodeType.Api && CodeEvent.Value != null)
                 {
-                    // for api, also need to remove the url. 
-                    var route = CodeEvent.SiteDb.Routes.GetByObjectId(CodeEvent.Value.Id); 
-                    if (route !=null)
+                    // for api, also need to remove the url.
+                    var route = CodeEvent.SiteDb.Routes.GetByObjectId(CodeEvent.Value.Id);
+                    if (route != null)
                     {
-                        CodeEvent.SiteDb.Routes.Delete(route.Id); 
+                        CodeEvent.SiteDb.Routes.Delete(route.Id);
                     }
                 }
-            } 
-
+            }
 
             if (CodeEvent.Value.CodeType == CodeType.Event)
             {
-                var website = CodeEvent.SiteDb.WebSite; 
+                var website = CodeEvent.SiteDb.WebSite;
 
                 if (CodeEvent.ChangeType == ChangeType.Delete)
                 {
-                    // check if there is any event.... 
+                    // check if there is any event....
                     if (website.EnableFrontEvents)
                     {
-                        var events = CodeEvent.SiteDb.Code.Query.Where(o => o.CodeType == CodeType.Event).Count(); 
+                        var events = CodeEvent.SiteDb.Code.Query.Where(o => o.CodeType == CodeType.Event).Count();
                         if (events == 0)
                         {
                             website.EnableFrontEvents = false;
-                            Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(website); 
+                            Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(website);
                         }
-                    } 
+                    }
                 }
                 else
-                { 
+                {
                     CodeEvent.SiteDb.WebSite.EnableFrontEvents = true;
-                    Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(website); 
+                    Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(website);
                 }
             }
         }
-
 
         private static void HandleObjectRelationChange(SiteObjectEvent<ObjectRelation> relationEvent)
         {

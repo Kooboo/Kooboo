@@ -1,7 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -17,8 +16,8 @@ namespace Kooboo.Sites.Helper
         //    pageelement.NodeAttributes = element.attributes.ToDictionary(o => o.name, o => o.value);
         //    pageelement.Name = element.nodeName;
         //    pageelement.ParentPath = getParentPath(element);
-        //    // pageelement.SubElements = GetSubElements(element); 
-        //    //pageelement.SubElementHash = GetSubElementString(element).ToHashGuid(); 
+        //    // pageelement.SubElements = GetSubElements(element);
+        //    //pageelement.SubElementHash = GetSubElementString(element).ToHashGuid();
         //    pageelement.SubElementString = GetSubElementString(element);
         //    pageelement.Depth = element.depth;
         //    pageelement.Sibling = element.siblingIndex;
@@ -62,8 +61,8 @@ namespace Kooboo.Sites.Helper
         {
             var parent = element.parentElement;
             string path = "/" + element.tagName;
-            if(!string.IsNullOrEmpty(element.id))
-            {  path += "[" + element.id + "]"; }
+            if (!string.IsNullOrEmpty(element.id))
+            { path += "[" + element.id + "]"; }
 
             while (parent != null && parent.tagName != "html")
             {
@@ -71,25 +70,24 @@ namespace Kooboo.Sites.Helper
                 if (!string.IsNullOrEmpty(parent.id))
                 {
                     path += "[" + parent.id + "]";
-                } 
+                }
                 parent = parent.parentElement;
             }
             return path.ToLower();
         }
 
-
         public static string GetSubElementPath(Element element)
         {
-            string sub = string.Empty; 
+            string sub = string.Empty;
             foreach (var item in element.childNodes.item)
             {
-                 if (item.nodeType == enumNodeType.ELEMENT)
+                if (item.nodeType == enumNodeType.ELEMENT)
                 {
                     var el = item as Element;
-                    sub += el.tagName + el.id;  
+                    sub += el.tagName + el.id;
                 }
             }
-            return sub; 
+            return sub;
         }
 
         public static string GetSiblingElementsSimple(Element element, bool before = true)
@@ -114,7 +112,7 @@ namespace Kooboo.Sites.Helper
             if (nodelist != null)
             {
                 foreach (var item in nodelist)
-                { 
+                {
                     if (item.nodeType == enumNodeType.ELEMENT)
                     {
                         Element el = item as Element;
@@ -125,25 +123,25 @@ namespace Kooboo.Sites.Helper
 
             foreach (var item in siblings)
             {
-                // for more strict one, this should include attributes. 
+                // for more strict one, this should include attributes.
                 if (before)
                 {
-                    SiblingString += item.tagName + item.id; 
+                    SiblingString += item.tagName + item.id;
                 }
                 else
                 {
-                    SiblingString += item.OuterHtml; 
+                    SiblingString += item.OuterHtml;
                 }
             }
 
-            return SiblingString; 
+            return SiblingString;
         }
 
         public static Element FindSameElement(Element sourceElement, Document TargetDom)
         {
             if (TargetDom == null)
             {
-                return null; 
+                return null;
             }
 
             var targets = FindElementsByDepth(TargetDom, sourceElement.depth);
@@ -153,7 +151,7 @@ namespace Kooboo.Sites.Helper
                 return null;
             }
 
-            // filter by same parentpath. 
+            // filter by same parentpath.
             string parentpath = GetParentPath(sourceElement);
 
             var sameparent = targets.Where(o => GetParentPath(o) == parentpath).ToList();
@@ -163,24 +161,24 @@ namespace Kooboo.Sites.Helper
                 return null;
             }
 
-            // filter by same inner html.  
-            var sameinner = FindSameInnerElements(sourceElement, sameparent);  
+            // filter by same inner html.
+            var sameinner = FindSameInnerElements(sourceElement, sameparent);
 
-            string siblingpath = GetSiblingElementsSimple(sourceElement); 
+            string siblingpath = GetSiblingElementsSimple(sourceElement);
 
             foreach (var item in sameinner)
             {
-                //check for sample front sibling. 
-                var ItemSibling = GetSiblingElementsSimple(item); 
+                //check for sample front sibling.
+                var ItemSibling = GetSiblingElementsSimple(item);
                 if (ItemSibling == siblingpath)
                 {
-                    return item; 
-                } 
+                    return item;
+                }
             }
 
             siblingpath = GetSiblingElementsSimple(sourceElement, false);
             foreach (var item in sameinner)
-            { 
+            {
                 var ItemSibling = GetSiblingElementsSimple(item, false);
                 if (ItemSibling == siblingpath)
                 {
@@ -217,44 +215,43 @@ namespace Kooboo.Sites.Helper
                     }
                 }
             }
-
         }
-        
+
         internal static List<Element> FindSameInnerElements(Element el, List<Element> targets)
         {
-            //should remove all space between elements.  
-            var exactmatch = targets.Where(o => o.InnerHtml == el.InnerHtml).ToList(); 
-             
-            if (exactmatch != null &&exactmatch.Count()>0)
+            //should remove all space between elements.
+            var exactmatch = targets.Where(o => o.InnerHtml == el.InnerHtml).ToList();
+
+            if (exactmatch != null && exactmatch.Count() > 0)
             {
-                return exactmatch; 
-            } 
-            // remove not possible items. 
-            var elsub = GetSubElementPath(el); 
-            var left = targets.Where(o => GetSubElementPath(o) == elsub).ToList(); 
-            
-            if (left !=null &&left.Count()>0)
+                return exactmatch;
+            }
+            // remove not possible items.
+            var elsub = GetSubElementPath(el);
+            var left = targets.Where(o => GetSubElementPath(o) == elsub).ToList();
+
+            if (left != null && left.Count() > 0)
             {
-                //try to check without space.. 
+                //try to check without space..
                 string nonspace = RemoveSpace(el.InnerHtml);
 
-                return left.Where(o => RemoveSpace(o.InnerHtml) == nonspace).ToList();  
+                return left.Where(o => RemoveSpace(o.InnerHtml) == nonspace).ToList();
             }
-                          
-            return new List<Element>(); 
-        } 
+
+            return new List<Element>();
+        }
 
         private static string RemoveSpace(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
             {
-                return string.Empty; 
+                return string.Empty;
             }
             input = input.Replace("\r", " ");
             input = input.Replace("\n", " ");
             input = Regex.Replace(input, @"\s+", " ");
-            input = input.Trim(); 
-            return input;       
+            input = input.Trim();
+            return input;
         }
     }
 }

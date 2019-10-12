@@ -1,14 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
-
     // http://www.w3.org/TR/dom/
 
     /// <summary>
@@ -17,9 +14,7 @@ namespace Kooboo.Dom
     [Serializable]
     public abstract class Node : IDisposable
     {
-
         public enumNodeType nodeType;
-
 
         public string nodeName
         {
@@ -70,9 +65,7 @@ namespace Kooboo.Dom
                     default:
                         return "#unknown";
                 }
-
             }
-
         }
 
         /// <summary>
@@ -103,6 +96,7 @@ namespace Kooboo.Dom
 
                     case enumNodeType.ATTRIBUTE:
                         return null;
+
                     case enumNodeType.TEXT:
                         {
                             Text text = (Text)this;
@@ -118,6 +112,7 @@ namespace Kooboo.Dom
 
                     case enumNodeType.ENTITY:
                         return null;
+
                     case enumNodeType.PROCESSING_INSTRUCTION:
                         {
                             throw new NotImplementedException();
@@ -142,19 +137,15 @@ namespace Kooboo.Dom
                     default:
                         return null;
                 }
-
-
             }
-
-
         }
 
         private string _textcontent;
+
         public string textContent
         {
             get
             {
-
                 if (string.IsNullOrEmpty(_textcontent))
                 {
                     _textcontent = string.Empty;
@@ -163,9 +154,9 @@ namespace Kooboo.Dom
                 return _textcontent;
             }
 
-//Note that while textContent gets the content of all elements, including <script> and <style> elements, the mostly equivalent IE-specific property, innerText, does not.
-//innerText is also aware of style and will not return the text of hidden elements, whereas textContent will.
-//As innerText is aware of CSS styling, it will trigger a reflow, whereas textContent will not.
+            //Note that while textContent gets the content of all elements, including <script> and <style> elements, the mostly equivalent IE-specific property, innerText, does not.
+            //innerText is also aware of style and will not return the text of hidden elements, whereas textContent will.
+            //As innerText is aware of CSS styling, it will trigger a reflow, whereas textContent will not.
         }
 
         private void _getTextContent(Node node, ref string content)
@@ -180,7 +171,6 @@ namespace Kooboo.Dom
             {
                 content = content + ((Text)node).data;
             }
-
 
             foreach (var item in node.childNodes.item)
             {
@@ -210,6 +200,7 @@ namespace Kooboo.Dom
             }
             set { _parentElement = value; }
         }
+
         private Element _parentElement;
 
         public NodeList childNodes = new NodeList();
@@ -265,7 +256,7 @@ namespace Kooboo.Dom
 
             int parentChildrenCount = this.parentNode.childNodes.length;
 
-            // this is the max. 
+            // this is the max.
             if (this.siblingIndex == (parentChildrenCount - 1))
             {
                 return null;
@@ -273,12 +264,11 @@ namespace Kooboo.Dom
 
             if (this.siblingIndex > (parentChildrenCount - 1))
             {
-                // it should never happen. 
+                // it should never happen.
                 return null;
             }
 
             return this.parentNode.childNodes.item[this.siblingIndex + 1];
-
         }
 
         public virtual bool isEqualNode(Node node)
@@ -291,9 +281,8 @@ namespace Kooboo.Dom
 
             if (thisstart > 0 && thisend > 0 && nodestart > 0 && nodeend > 0)
             {
-                return (thisstart == nodestart && thisend == nodeend); 
+                return (thisstart == nodestart && thisend == nodeend);
             }
-
 
             if (this.nodeName != node.nodeName || this.depth != node.depth || this.siblingIndex != node.siblingIndex)
             {
@@ -319,7 +308,6 @@ namespace Kooboo.Dom
             }
 
             return true;
-
         }
 
         public bool contains(Node other)
@@ -359,7 +347,7 @@ namespace Kooboo.Dom
 
             if (currentCount == otherCount)
             {
-                // possible: disconnected preceding, following.  
+                // possible: disconnected preceding, following.
 
                 for (int i = 0; i < currentCount; i++)
                 {
@@ -377,12 +365,10 @@ namespace Kooboo.Dom
                 {
                     return enumNodeComparePosition.DOCUMENT_POSITION_FOLLOWING;
                 }
-
             }
-
             else
             {
-                // possible: contains or contain_by or disconnect. 
+                // possible: contains or contain_by or disconnect.
 
                 if (currentCount > otherCount)
                 {
@@ -397,7 +383,7 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-                    // check if it contains. 
+                    // check if it contains.
                     foreach (var item in otherPath)
                     {
                         if (item.isEqualNode(this))
@@ -405,9 +391,7 @@ namespace Kooboo.Dom
                             return enumNodeComparePosition.DOCUMENT_POSITION_CONTAINS;
                         }
                     }
-
                 }
-
             }
 
             return enumNodeComparePosition.DOCUMENT_POSITION_DISCONNECTED;
@@ -433,7 +417,7 @@ namespace Kooboo.Dom
         {
             if (child.parentNode == null || !this.isEqualNode(child.parentNode))
             {
-                // the child is not a child of current node, exception. 
+                // the child is not a child of current node, exception.
                 throw new Exception("child is not a sub of current node.");
             }
 
@@ -444,7 +428,6 @@ namespace Kooboo.Dom
             Node nextNode = child.nextSibling();
 
             child.siblingIndex = child.siblingIndex + 1;
-
 
             while (nextNode != null)
             {
@@ -457,9 +440,7 @@ namespace Kooboo.Dom
             this.childNodes.item.Insert(child.siblingIndex, node);
 
             return node;
-
         }
-
 
         /// <summary>
         /// The appendChild(node) method must return the result of appending node to the context object.
@@ -486,7 +467,7 @@ namespace Kooboo.Dom
         {
             if (child.parentNode == null || !this.isEqualNode(child.parentNode))
             {
-                // the child is not a child of current node, exception. 
+                // the child is not a child of current node, exception.
                 throw new Exception("child is not a sub of current node.");
             }
 
@@ -499,7 +480,6 @@ namespace Kooboo.Dom
             node.childNodes.item[itemindex] = node;
 
             return node;
-
         }
 
         /// <summary>
@@ -525,7 +505,7 @@ namespace Kooboo.Dom
             return child;
         }
 
-        /// these are extremely useful, but did not find it in the w3c. 
+        /// these are extremely useful, but did not find it in the w3c.
 
         /// <summary>
         /// The depth of this node in the document. html = 0
@@ -534,20 +514,18 @@ namespace Kooboo.Dom
 
         /// <summary>
         /// the 0 base siblingindex of current under its parent. html= {depth=10, siblingindex =0}
-        /// this is the same as the item[index] in the parentNode. 
+        /// this is the same as the item[index] in the parentNode.
         /// </summary>
         public int siblingIndex;
-
 
         public int ItemIndex { get; set; }
 
         /// <summary>
-        /// the location of this node in the underlying file stream and calculated x.y position within the position. 
+        /// the location of this node in the underlying file stream and calculated x.y position within the position.
         /// </summary>
         public Location location;
 
         public Size size;
-
 
         public string InnerHtml
         {
@@ -558,56 +536,50 @@ namespace Kooboo.Dom
                 int len = this.location.endTokenStartIndex - this.location.openTokenEndIndex - 1;
                 if (this.location.endTokenStartIndex == this.location.endTokenEndIndex)
                 {
-                    len = len + 1; 
+                    len = len + 1;
                 }
                 if (start < 1 || len < 1)
                 {
                     return null;
                 }
-
                 else
-                { 
-                    return this.ownerDocument.HtmlSource.Substring(start, len); 
-                } 
+                {
+                    return this.ownerDocument.HtmlSource.Substring(start, len);
+                }
             }
-
         }
-
 
         public string OuterHtml
         {
             get
             {
-                int start = this.location.openTokenStartIndex; 
+                int start = this.location.openTokenStartIndex;
                 //if (this.location.endTokenStartIndex < start)
                 //{
-                //    start = this.location.endTokenStartIndex; 
+                //    start = this.location.endTokenStartIndex;
                 //}
 
-                int end = this.location.endTokenEndIndex; 
+                int end = this.location.endTokenEndIndex;
                 if (this.location.openTokenEndIndex > end)
                 {
-                    end = this.location.openTokenEndIndex; 
+                    end = this.location.openTokenEndIndex;
                 }
 
-                int len = end - start + 1; 
+                int len = end - start + 1;
 
-                if (start <0 || len <1)
+                if (start < 0 || len < 1)
                 {
-                    return null; 
+                    return null;
                 }
                 else
                 {
-                    return this.ownerDocument.HtmlSource.Substring(start, len); 
-                } 
-                 
+                    return this.ownerDocument.HtmlSource.Substring(start, len);
+                }
             }
         }
 
-
-
         /// <summary>
-        /// The list of nodes from first node till current node. The node navigation path. 
+        /// The list of nodes from first node till current node. The node navigation path.
         /// </summary>
         /// <returns></returns>
         public List<Node> getNodePath(bool includeSelf)
@@ -639,9 +611,8 @@ namespace Kooboo.Dom
 
             foreach (var item in childNodes.item)
             {
-                item.Dispose(); 
+                item.Dispose();
             }
-         
         }
     }
 }

@@ -1,17 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Helper
 {
     public static class ExpressionHelper
     {
-
         public static string GetFieldName<TValue>(Expression<Func<TValue, object>> expression)
         {
             string fieldname = string.Empty;
@@ -25,8 +20,7 @@ namespace Kooboo.IndexedDB.Helper
                 throw new ArgumentException("Expression must represent field or property access.");
             }
 
-            return fieldname; 
+            return fieldname;
         }
-
     }
 }

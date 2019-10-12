@@ -1,14 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using Kooboo.Data.Models;
+using Kooboo.Lib.Reflection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Kooboo.Data.Interface;
-using Kooboo.Data.Context;
-using Kooboo.Data.Models;
-using System.Reflection;
 using System.IO;
-using Kooboo.Lib.Reflection;
+using System.Linq;
+using System.Reflection;
 
 namespace Kooboo.Web.DashBoard
 {
@@ -103,7 +103,7 @@ namespace Kooboo.Web.DashBoard
                     }
                 }
 
-                /// search all views... 
+                /// search all views...
                 string name = dashboard.GetType().Name + ".html";
                 var basedir = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -173,7 +173,5 @@ namespace Kooboo.Web.DashBoard
         {
             get; set;
         }
-
     }
-
 }

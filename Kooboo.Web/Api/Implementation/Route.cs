@@ -1,16 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Api; 
-using Kooboo.Sites.Extensions; 
+using Kooboo.Api;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Routing;
-using Kooboo.Web.ViewModel; 
+using Kooboo.Web.ViewModel;
 using System.Collections.Generic;
 using System.Linq;
- 
 
 namespace Kooboo.Web.Api.Implementation
 {
-  public  class RouteApi: SiteObjectApi<Route>
+    public class RouteApi : SiteObjectApi<Route>
     {
         public override List<object> List(ApiCall call)
         {
@@ -33,7 +32,6 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             return result.ToList<object>();
-        } 
-
+        }
     }
 }

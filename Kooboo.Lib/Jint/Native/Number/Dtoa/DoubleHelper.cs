@@ -32,11 +32,9 @@ using System.Diagnostics;
 
 namespace Jint.Native.Number.Dtoa
 {
-
-// Helper functions for doubles.
+    // Helper functions for doubles.
     public class DoubleHelper
     {
-
         private const long KExponentMask = 0x7FF0000000000000L;
         private const long KSignificandMask = 0x000FFFFFFFFFFFFFL;
         private const long KHiddenBit = 0x0010000000000000L;
@@ -71,7 +69,7 @@ namespace Jint.Native.Number.Dtoa
         {
             if (IsDenormal(d64)) return KDenormalExponent;
 
-            int biasedE = (int) ((d64 & KExponentMask).UnsignedShift(KSignificandSize) & 0xffffffffL);
+            int biasedE = (int)((d64 & KExponentMask).UnsignedShift(KSignificandSize) & 0xffffffffL);
             return biasedE - KExponentBias;
         }
 

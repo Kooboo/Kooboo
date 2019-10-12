@@ -1,6 +1,6 @@
-﻿using System;
-using Jint.Native;
+﻿using Jint.Native;
 using Jint.Runtime.Interop;
+using System;
 
 namespace Jint.Runtime.Descriptors.Specialized
 {

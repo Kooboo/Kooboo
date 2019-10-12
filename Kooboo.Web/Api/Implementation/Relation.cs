@@ -1,13 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
-using Kooboo.Sites.Extensions;
-using System.Collections.Generic;
-using System.Linq;
 using Kooboo.Data.Models;
-using System;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -25,7 +25,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -39,7 +39,7 @@ namespace Kooboo.Web.Api.Implementation
 
         [Kooboo.Attributes.RequireParameters("id", "by", "type")]
         public List<UsedByRelation> ShowBy(ApiCall call)
-        { 
+        {
             var sitedb = call.WebSite.SiteDb();
 
             string type = call.GetValue("type");
@@ -52,7 +52,7 @@ namespace Kooboo.Web.Api.Implementation
 
             if (type.ToLower() == "page")
             {
-                return PageRelation(sitedb, by, call.ObjectId); 
+                return PageRelation(sitedb, by, call.ObjectId);
             }
 
             var repo = sitedb.GetRepository(type);
@@ -64,24 +64,24 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             string baseurl = call.WebSite.BaseUrl();
-     
+
             byte consttype = ConstTypeContainer.GetConstType(by);
-    
+
             List<UsedByRelation> result = new List<UsedByRelation>();
 
-            var usedby = repo.GetUsedBy(call.ObjectId).Where(o=>o.ConstType == consttype).ToList(); 
- 
+            var usedby = repo.GetUsedBy(call.ObjectId).Where(o => o.ConstType == consttype).ToList();
+
             foreach (var item in usedby)
             {
                 item.Url = sitedb.WebSite.BaseUrl(item.Url);
-            } 
-            return usedby; 
+            }
+            return usedby;
         }
 
         private List<UsedByRelation> PageRelation(SiteDb sitedb, string by, Guid PageId)
-        {  
+        {
             string baseurl = sitedb.WebSite.BaseUrl();
-              
+
             byte consttype = ConstTypeContainer.GetConstType(by);
 
             List<UsedByRelation> result = new List<UsedByRelation>();

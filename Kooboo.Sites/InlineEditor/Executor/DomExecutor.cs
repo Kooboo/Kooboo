@@ -1,15 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Collections.Generic;
-using System.Linq;
 using Kooboo.Data.Context;
-using Kooboo.Sites.InlineEditor.Model;
-using Kooboo.Sites.Extensions;
 using Kooboo.Data.Interface;
+using Kooboo.Dom;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.InlineEditor.Model;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
-using Kooboo.Dom;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Sites.InlineEditor.Executor
 {
@@ -58,9 +58,9 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         oneupdate.AttributeName = item.AttributeName;
                         oneupdate.Value = item.Value;
 
-                        if (item.Action !=null && item.Action.ToString().ToLower() == "delete")
+                        if (item.Action != null && item.Action.ToString().ToLower() == "delete")
                         {
-                            oneupdate.IsDelete = true; 
+                            oneupdate.IsDelete = true;
                         }
                         sourceupdates.Add(oneupdate);
                     }
@@ -84,12 +84,12 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         updateothers.sitedb = context.WebSite.SiteDb();
                         updateothers.updates = sourceupdates;
                         updateothers.CurrentPage = savepage;
-                        updateothers.UserId = context.User.Id; 
+                        updateothers.UserId = context.User.Id;
                         System.Threading.Tasks.Task.Factory.StartNew(updateothers.Execute);
                     }
                 }
             }
-        }  
+        }
     }
 
     public class UpdateSamePage
@@ -98,7 +98,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
         public List<InlineSourceUpdate> updates { get; set; }
         public Page CurrentPage { get; set; }
 
-        public Guid UserId { get; set; } = default(Guid); 
+        public Guid UserId { get; set; } = default(Guid);
 
         public void Execute()
         {
@@ -128,9 +128,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                     item.Body = UpdateHelper.Update(item.Body, itemupdates);
                     sitedb.Pages.AddOrUpdate(item);
                 }
-
             }
         }
     }
-
 }

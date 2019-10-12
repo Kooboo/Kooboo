@@ -1,14 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Reflection
 {
-  public static class Dynamic
+    public static class Dynamic
     {
         private static object _lock = new object();
 
@@ -63,10 +60,8 @@ namespace Kooboo.Lib.Reflection
             }
 
             return dest;
-
         }
 
         private static Dictionary<string, Func<object, object>> GetValueFuncs = new Dictionary<string, Func<object, object>>();
-          
     }
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Sites.Routing;
@@ -10,7 +10,6 @@ namespace Kooboo.Sites.FrontEvent
     {
         public RouteFinding()
         {
-
         }
 
         public RouteFinding(RenderContext context)
@@ -67,6 +66,7 @@ namespace Kooboo.Sites.FrontEvent
         }
 
         private Route _route;
+
         public Route Route
         {
             get { return _route; }
@@ -97,8 +97,8 @@ namespace Kooboo.Sites.FrontEvent
     {
         public RouteFound()
         {
-
         }
+
         public RouteFound(RenderContext context, Route route)
         {
             this._route = route;
@@ -153,6 +153,7 @@ namespace Kooboo.Sites.FrontEvent
         }
 
         private Route _route;
+
         public Route Route
         {
             get { return _route; }
@@ -186,7 +187,7 @@ namespace Kooboo.Sites.FrontEvent
                     objecttypes.Add(item.Key.ToString(), item.Value.Name);
                 }
             }
-              
+
             result.Add(new EventConditionSetting() { Name = "Route.DestinationConstType", ControlType = Data.ControlType.Selection, SelectionValues = objecttypes });
 
             return result;
@@ -197,8 +198,8 @@ namespace Kooboo.Sites.FrontEvent
     {
         public RouteNotFound()
         {
-
         }
+
         public RouteNotFound(RenderContext context)
         {
             this.Context = context;
@@ -251,11 +252,11 @@ namespace Kooboo.Sites.FrontEvent
                 }
             }
         }
+
         public Route Route
         {
             get; set;
         }
-
 
         public enumEventType EventType => enumEventType.RouteNotFound;
 

@@ -1,9 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.IO;
+using System.Reflection;
 
 namespace Kooboo.Lib.Reflection
 {
@@ -31,18 +31,18 @@ namespace Kooboo.Lib.Reflection
                 }
             }
 
-            var path =  AppDomain.CurrentDomain.BaseDirectory;
+            var path = AppDomain.CurrentDomain.BaseDirectory;
             dlls = LoadKoobooDlls(dlls, path);
 
-            // load dll from modules or dll. 
+            // load dll from modules or dll.
             List<string> subfolders = new List<string>();
             subfolders.Add("dll");
             subfolders.Add("modules");
-            subfolders.Add("packages"); 
+            subfolders.Add("packages");
 
             foreach (var item in subfolders)
             {
-                string folder = System.IO.Path.Combine(path, item); 
+                string folder = System.IO.Path.Combine(path, item);
                 if (System.IO.Directory.Exists(folder))
                 {
                     var allsubdlls = System.IO.Directory.GetFiles(folder, "*.dll", SearchOption.AllDirectories);
@@ -52,23 +52,21 @@ namespace Kooboo.Lib.Reflection
                         try
                         {
                             var otherAssembly = Assembly.LoadFile(filename);
-                            if (otherAssembly !=null)
+                            if (otherAssembly != null)
                             {
                                 dlls.Add(otherAssembly);
-                            } 
+                            }
                         }
                         catch (Exception ex)
                         {
- 
-                        } 
-                    } 
-
+                        }
+                    }
                 }
-            } 
-            return dlls; 
+            }
+            return dlls;
         }
 
-        public static List<Assembly> LoadKoobooDlls(List<Assembly> dlls,string path)
+        public static List<Assembly> LoadKoobooDlls(List<Assembly> dlls, string path)
         {
             if (dlls == null)
             {
@@ -144,7 +142,6 @@ namespace Kooboo.Lib.Reflection
             }
 
             return false;
-
         }
 
         public static List<Type> LoadTypeByInterface(Type interfaceType)
@@ -160,12 +157,11 @@ namespace Kooboo.Lib.Reflection
                         typelist.Add(type);
                     }
                 }
-
             }
 
             return typelist;
         }
- 
+
         public static List<Type> LoadTypeByGenericInterface(Type GenericInterface)
         {
             List<Type> typelist = new List<Type>();
@@ -183,6 +179,5 @@ namespace Kooboo.Lib.Reflection
 
             return typelist;
         }
-
     }
 }

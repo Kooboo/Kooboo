@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
 using Kooboo.Sites.Contents.Models;
@@ -12,11 +12,11 @@ using System.Text;
 namespace Kooboo.Sites.Ecommerce.Models
 {
     [Kooboo.Attributes.Diskable(Kooboo.Attributes.DiskType.Json)]
-    public   class Product: CoreObject
+    public class Product : CoreObject
     {
         public Product()
         {
-            this.ConstType = ConstObjectType.Product; 
+            this.ConstType = ConstObjectType.Product;
         }
 
         private Guid _id;
@@ -37,11 +37,10 @@ namespace Kooboo.Sites.Ecommerce.Models
             }
         }
 
-
-        // can be used for url.. 
+        // can be used for url..
         public string UserKey { get; set; }
 
-       public Guid ProductTypeId { get; set; }
+        public Guid ProductTypeId { get; set; }
 
         [Newtonsoft.Json.JsonIgnore]
         public string SummaryText
@@ -57,7 +56,7 @@ namespace Kooboo.Sites.Ecommerce.Models
                 return null;
             }
         }
-                                               
+
         public List<MultilingualContent> Contents { get; set; } = new List<MultilingualContent>();
 
         private Document _dom;
@@ -193,19 +192,15 @@ namespace Kooboo.Sites.Ecommerce.Models
                 return this.Id;
             }
 
-      
             MultilingualContent content = GetContentStore(Lang);
             if (content != null && content.FieldValues.ContainsKey(FieldName))
             {
                 return content.FieldValues[FieldName];
             }
-  
-          
             else if (lower == "ProductTypeId")
             {
                 return this.ProductTypeId;
             }
-
             else if (lower == "online")
             {
                 return this.Online;
@@ -214,7 +209,6 @@ namespace Kooboo.Sites.Ecommerce.Models
             {
                 return this.LastModified;
             }
-
 
             foreach (var item in this.Contents)
             {
@@ -235,7 +229,6 @@ namespace Kooboo.Sites.Ecommerce.Models
                 this.UserKey = Value;
                 return;
             }
-        
             else if (lower == "id")
             {
                 Guid id;
@@ -245,7 +238,6 @@ namespace Kooboo.Sites.Ecommerce.Models
                     return;
                 }
             }
-  
             else if (lower == "ProductTypeId")
             {
                 Guid contenttypeid;
@@ -255,7 +247,6 @@ namespace Kooboo.Sites.Ecommerce.Models
                     return;
                 }
             }
-        
             else if (lower == "online")
             {
                 bool online = false;
@@ -279,12 +270,12 @@ namespace Kooboo.Sites.Ecommerce.Models
         }
 
         public int Order { get; set; }
-          
+
         public override int GetHashCode()
         {
             string unique = this.Name + this.UserKey;
-            unique += this.ProductTypeId.ToString()  + this.Online.ToString() + this.Order.ToString();
-        
+            unique += this.ProductTypeId.ToString() + this.Online.ToString() + this.Order.ToString();
+
             foreach (var item in this.Contents)
             {
                 unique += item.Lang;
@@ -299,7 +290,5 @@ namespace Kooboo.Sites.Ecommerce.Models
 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
-           
-
     }
 }

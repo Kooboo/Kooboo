@@ -1,18 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Btree
 {
     public class KeyFinder
     {
         /// <summary>
-        /// Find the bigger key in order to merger, or return null if this key is the biggest. 
-        /// If keybytes == null, return the first key. 
+        /// Find the bigger key in order to merger, or return null if this key is the biggest.
+        /// If keybytes == null, return the first key.
         /// </summary>
         /// <param name="keybytes"></param>
         /// <param name="KeyArray"></param>
@@ -43,7 +39,6 @@ namespace Kooboo.IndexedDB.Btree
                             currentkey = item.Key;
                         }
                     }
-
                 }
             }
 
@@ -55,15 +50,14 @@ namespace Kooboo.IndexedDB.Btree
             {
                 return null;
             }
-
         }
 
         public static byte[] FindBiggestSmallerKey(byte[] keybytes, Dictionary<byte[], byte[]> KeyArray, IComparer<byte[]> comparer)
         {
             if (keybytes == null)
             {
-                // this is when it is the previous pointer. 
-                return null; 
+                // this is when it is the previous pointer.
+                return null;
             }
 
             byte[] currentkey = null;
@@ -85,7 +79,6 @@ namespace Kooboo.IndexedDB.Btree
                             currentkey = item.Key;
                         }
                     }
-
                 }
             }
 
@@ -97,7 +90,6 @@ namespace Kooboo.IndexedDB.Btree
             {
                 return null;
             }
-
         }
 
         /// <summary>
@@ -122,12 +114,10 @@ namespace Kooboo.IndexedDB.Btree
                         foundkey = item.Key;
                     }
                 }
-
             }
 
             return foundkey;
         }
-
 
         /// <summary>
         /// Find the biggest key in the keyarray.
@@ -151,11 +141,9 @@ namespace Kooboo.IndexedDB.Btree
                         foundkey = item.Key;
                     }
                 }
-
             }
 
-            return foundkey; 
-        } 
-
+            return foundkey;
+        }
     }
 }

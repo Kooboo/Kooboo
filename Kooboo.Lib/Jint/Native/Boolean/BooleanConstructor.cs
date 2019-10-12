@@ -6,7 +6,7 @@ namespace Jint.Native.Boolean
 {
     public sealed class BooleanConstructor : FunctionInstance, IConstructor
     {
-        private BooleanConstructor(Engine engine): base(engine, null, null, false)
+        private BooleanConstructor(Engine engine) : base(engine, null, null, false)
         {
         }
 
@@ -15,7 +15,7 @@ namespace Jint.Native.Boolean
             var obj = new BooleanConstructor(engine);
             obj.Extensible = true;
 
-            // The value of the [[Prototype]] internal property of the Boolean constructor is the Function prototype object 
+            // The value of the [[Prototype]] internal property of the Boolean constructor is the Function prototype object
             obj.Prototype = engine.Function.PrototypeObject;
             obj.PrototypeObject = BooleanPrototype.CreatePrototypeObject(engine, obj);
 
@@ -29,7 +29,6 @@ namespace Jint.Native.Boolean
 
         public void Configure()
         {
-
         }
 
         public override JsValue Call(JsValue thisObject, JsValue[] arguments)

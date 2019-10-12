@@ -1,18 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Reflection;
-using Kooboo.Extensions;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Kooboo.Lib.Reflection
 {
     public static class TypeHelper
     {
-
         public static List<MethodInfo> GetPublicMethods(Type type)
         {
             List<MethodInfo> result = new List<MethodInfo>();
@@ -80,9 +79,7 @@ namespace Kooboo.Lib.Reflection
             }
 
             return null;
-
         }
-
 
         public static List<Type> GetGenericTypes(Type typeinfo)
         {
@@ -128,7 +125,6 @@ namespace Kooboo.Lib.Reflection
             }
 
             return Result;
-
         }
 
         public static MethodInfo GetRightMethodInfo(List<MethodInfo> MethodList, string MethodName, Guid MethodHash)
@@ -222,8 +218,8 @@ namespace Kooboo.Lib.Reflection
         }
 
         /// <summary>
-        /// The the list of field or property of this object. 
-        /// This is used to generate like property list from like config type. 
+        /// The the list of field or property of this object.
+        /// This is used to generate like property list from like config type.
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -253,7 +249,6 @@ namespace Kooboo.Lib.Reflection
 
         public static List<MemberInfo> GetPublicPropertyOrFields(Type ClassType)
         {
-
             List<MemberInfo> result = new List<MemberInfo>();
 
             foreach (var item in ClassType.GetProperties())
@@ -315,7 +310,7 @@ namespace Kooboo.Lib.Reflection
             }
             return result;
         }
-         
+
         public static bool IsDictionary(Type type)
         {
             if (!type.IsGenericType)
@@ -364,7 +359,7 @@ namespace Kooboo.Lib.Reflection
                         return true;
                     }
                 }
-            } 
+            }
             return false;
         }
 
@@ -372,16 +367,16 @@ namespace Kooboo.Lib.Reflection
         {
             if (type.IsGenericType)
             {
-                return IsGenericCollection(type); 
+                return IsGenericCollection(type);
             }
             else
             {
                 if (HasInterface(type, typeof(System.Collections.IEnumerable)))
                 {
-                    return true; 
+                    return true;
                 }
             }
-            return false; 
+            return false;
         }
 
         public static bool HasInterface(Type CheckType, Type InterfaceType)
@@ -398,7 +393,6 @@ namespace Kooboo.Lib.Reflection
 
         public static bool HasGenericInterface(Type CheckType, Type GenericInterfaceType)
         {
-
             if (CheckType.IsGenericType && CheckType.GetGenericTypeDefinition() == GenericInterfaceType)
             {
                 return true;
@@ -414,9 +408,7 @@ namespace Kooboo.Lib.Reflection
                     {
                         return true;
                     }
-
                 }
-
             }
             return false;
         }
@@ -505,8 +497,6 @@ namespace Kooboo.Lib.Reflection
             return Expression.Lambda<Action<TValue, TFieldType>>(Expression.Assign(expr, valueExp), arg, valueExp).Compile();
         }
 
-
-
         public static Action<TValue, object> GetSetObjectValue<TValue>(string FieldName, Type fieldtype)
         {
             ParameterExpression arg = Expression.Parameter(typeof(TValue));
@@ -537,7 +527,6 @@ namespace Kooboo.Lib.Reflection
             Expression expr = Expression.PropertyOrField(rightObjectType, FieldName);
             var righttype = Expression.Convert(fieldpara, fieldtype);
             return Expression.Lambda<Action<object, object>>(Expression.Assign(expr, righttype), objectpara, fieldpara).Compile();
-
         }
 
         public static Func<object, object> GetGetObjectValue(string FieldName, Type objecttype)
@@ -570,14 +559,12 @@ namespace Kooboo.Lib.Reflection
                     {
                         return null;
                     }
-
                 }
             }
 
             Expression convertobject = Expression.Convert(expr, typeof(object));
 
             return Expression.Lambda<Func<object, object>>(convertobject, objectPara).Compile();
-
         }
 
         private static string GetPropertyName(Type objType, string fieldname)
@@ -848,8 +835,6 @@ namespace Kooboo.Lib.Reflection
 
             return Expression.Lambda<Action<object, object[]>>(methodCall, instanceParam, argsParam).Compile();
         }
-         
-
 
         public static bool IsFieldType(Type type)
         {
@@ -868,7 +853,6 @@ namespace Kooboo.Lib.Reflection
 
             return false;
         }
-
 
         public static object ChangeType(object value, Type ConversionType)
         {
@@ -926,16 +910,15 @@ namespace Kooboo.Lib.Reflection
             return result;
         }
 
-
         public static T ToObject<T>(IDictionary<string, object> source)
         {
             var result = ToObject(source, typeof(T));
-            return (T)result; 
+            return (T)result;
         }
 
         public static object ToObject(IDictionary<string, object> source, Type ObjectType)
         {
-            var result = Activator.CreateInstance(ObjectType); 
+            var result = Activator.CreateInstance(ObjectType);
 
             var allproperties = _GetProperties(ObjectType);
             var allfields = _GetFields(ObjectType);
@@ -972,24 +955,22 @@ namespace Kooboo.Lib.Reflection
                         }
                     }
                 }
-
             }
 
             return result;
-
         }
 
         private static List<PropertyInfo> _GetProperties(Type type)
-        {      
+        {
             var props = type.GetProperties();
             if (props != null)
             {
                 return props.ToList();
             }
-            else    
+            else
             {
                 return new List<PropertyInfo>();
-            }   
+            }
         }
 
         private static List<FieldInfo> _GetFields(Type type)
@@ -1001,10 +982,9 @@ namespace Kooboo.Lib.Reflection
             }
             else
             {
-                return new List<FieldInfo>(); 
+                return new List<FieldInfo>();
             }
         }
-
 
         public static MethodInfo GetMethodInfo(Type type, string methodname)
         {
@@ -1027,8 +1007,5 @@ namespace Kooboo.Lib.Reflection
 
             return null;
         }
-
-         
-
     }
 }

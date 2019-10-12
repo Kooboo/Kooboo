@@ -1,19 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
-    ///note: 
-    /// 1. the user agent is to do something "using the rules for the m insertion mode", 
-    /// where m is one of these modes, the user agent must use the rules described under 
+    ///note:
+    /// 1. the user agent is to do something "using the rules for the m insertion mode",
+    /// where m is one of these modes, the user agent must use the rules described under
     /// the m insertion mode's section, but must leave the insertion mode unchanged
     /// unless the rules in m themselves switch the insertion mode to a new value.
-
 
     public enum enumInsertionMode
     {
@@ -41,5 +35,4 @@ namespace Kooboo.Dom
         afterAfterBody = 22,
         afterAfterFrameset = 23,
     }
-
 }

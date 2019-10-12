@@ -1,16 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.ByteConverter;
+using Kooboo.IndexedDB.Sequence;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Kooboo.IndexedDB.Sequence; 
 
 namespace Kooboo.IndexedDB
 {
     /// <summary>
-    /// Used for read only data storage, sequence write and read. 
-    /// To delete records,  del the entire sequence file. 
+    /// Used for read only data storage, sequence write and read.
+    /// To delete records,  del the entire sequence file.
     /// </summary>
     public class Sequence<TValue> : ISequence
     {
@@ -19,7 +19,7 @@ namespace Kooboo.IndexedDB
         public string FullFileName;
         private FileStream _stream;
 
-        private long start = 10;   // ignore the first 10 bytes. 
+        private long start = 10;   // ignore the first 10 bytes.
         private byte sanitybyteone = 10;
         private byte sanitybytetwo = 13;
 
@@ -47,15 +47,14 @@ namespace Kooboo.IndexedDB
                 openstream.Write(header, 0, 10);
                 openstream.Close();
             }
-
         }
 
         /// <summary>
-        /// the global sequence. 
+        /// the global sequence.
         /// </summary>
         /// <param name="sequencename"></param>
         public Sequence(string SequenceNameOrFullFileName)
-        { 
+        {
             if (System.IO.Path.IsPathRooted(SequenceNameOrFullFileName))
             {
                 this.FullFileName = SequenceNameOrFullFileName;
@@ -108,7 +107,6 @@ namespace Kooboo.IndexedDB
             totalreocrd[totalcount - 2] = this.sanitybyteone;
             totalreocrd[totalcount - 1] = this.sanitybytetwo;
 
-
             long returnposition = 0;
 
             lock (_object)
@@ -120,11 +118,10 @@ namespace Kooboo.IndexedDB
             }
 
             return returnposition;
-
         }
 
         /// <summary>
-        /// get the valud bytes count of current record. 
+        /// get the valud bytes count of current record.
         /// </summary>
         /// <param name="position"></param>
         /// <param name="ascending">check forward or backward.</param>
@@ -150,12 +147,11 @@ namespace Kooboo.IndexedDB
             }
 
             return BitConverter.ToInt32(counterbyte, 0);
-
         }
 
         public TValue Get(Int64 position, int bytescount)
         {
-            // the first 6 byte are the sanity checker and bytecounter. 
+            // the first 6 byte are the sanity checker and bytecounter.
             byte[] contentbytes = new byte[bytescount];
 
             lock (_object)
@@ -177,7 +173,7 @@ namespace Kooboo.IndexedDB
         {
             int count = GetValueBytesCount(position, true);
 
-            return new BlockStream(this.FullFileName, position + 6, count); 
+            return new BlockStream(this.FullFileName, position + 6, count);
         }
 
         public SequenceCollection<TValue> GetCollection(bool ascending = false)
@@ -197,11 +193,11 @@ namespace Kooboo.IndexedDB
             foreach (var item in this.GetCollection(ascending))
             {
                 list.Add(item);
-            } 
-            return list; 
+            }
+            return list;
         }
 
-        public  List<TValue> Take(bool ascending, int skip = 0, int count = 100)
+        public List<TValue> Take(bool ascending, int skip = 0, int count = 100)
         {
             List<TValue> col = new List<TValue>();
 
@@ -227,14 +223,13 @@ namespace Kooboo.IndexedDB
             }
             return col;
         }
- 
 
         public SequenceQuery<TValue> QueryAscending(Predicate<TValue> Query)
         {
             SequenceQuery<TValue> query = new SequenceQuery<TValue>(this);
             query.Ascending = true;
             query.Predicate = Query;
-            return query;            
+            return query;
         }
 
         public SequenceQuery<TValue> QueryDescending(Predicate<TValue> Query)
@@ -264,7 +259,7 @@ namespace Kooboo.IndexedDB
             {
                 return endposition;
             }
-            /// else we have some problems here. The record was not end, need to be cut off. 
+            /// else we have some problems here. The record was not end, need to be cut off.
             for (int i = 0; i < 999; i++)
             {
                 if (endposition - (i + 1) * 100 < 0)
@@ -290,7 +285,6 @@ namespace Kooboo.IndexedDB
                         return endposition - (i * 100 + j);
                     }
                 }
-
             }
             return 0;
         }
@@ -309,11 +303,11 @@ namespace Kooboo.IndexedDB
 
         public void Flush()
         {
-            lock(_object)
+            lock (_object)
             {
-                if (_stream !=null)
+                if (_stream != null)
                 {
-                    _stream.Flush(); 
+                    _stream.Flush();
                 }
             }
         }
@@ -334,16 +328,14 @@ namespace Kooboo.IndexedDB
                     {
                         if (_stream == null || _stream.CanRead == false)
                         {
-
                             _initialize();
-                            _stream = StreamManager.GetFileStream(this.FullFileName); 
+                            _stream = StreamManager.GetFileStream(this.FullFileName);
                         }
                     }
                 }
                 return _stream;
             }
         }
-
     }
 
     public class SequenceQuery<TResult>
@@ -359,33 +351,33 @@ namespace Kooboo.IndexedDB
         private int skip { get; set; }
 
         /// <summary>
-        /// The time point that it will be stop query. 
-        /// it can be the min time when DESC or max time when ASC. 
+        /// The time point that it will be stop query.
+        /// it can be the min time when DESC or max time when ASC.
         /// </summary>
         private DateTime QueryEndTime { get; set; }
 
         public SequenceQuery(Sequence<TResult> Seq)
         {
             this._seq = Seq;
-            this.skip = 0; 
+            this.skip = 0;
         }
 
         public SequenceQuery<TResult> Skip(int skipcount)
         {
             this.skip = skipcount;
-            return this; 
+            return this;
         }
 
         public SequenceQuery<TResult> EndQueryCondition(Predicate<TResult> EndCondition)
         {
             this.EndPredicate = EndCondition;
-            return this; 
+            return this;
         }
 
         public List<TResult> Take(int takecount)
         {
             List<TResult> col = new List<TResult>();
-       
+
             int skipped = 0;
             int taken = 0;
 
@@ -413,17 +405,14 @@ namespace Kooboo.IndexedDB
 
                     taken += 1;
                 }
-
-          
             }
             return col;
-
         }
 
         public int Count()
         {
-            int counter = 0;  
- 
+            int counter = 0;
+
             foreach (var item in this._seq.GetCollection(Ascending))
             {
                 if (this.EndPredicate != null && this.EndPredicate(item))
@@ -432,13 +421,11 @@ namespace Kooboo.IndexedDB
                 }
 
                 if (Predicate(item))
-                { 
-                    counter += 1;  
-                } 
+                {
+                    counter += 1;
+                }
             }
             return counter;
-
         }
- 
     }
 }

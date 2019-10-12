@@ -1,10 +1,10 @@
 ﻿namespace dotless.Core.Parser.Tree
 {
+    using dotless.Core.Exceptions;
     using Infrastructure;
     using Infrastructure.Nodes;
     using Plugins;
     using System;
-    using dotless.Core.Exceptions;
 
     public class Condition : Node
     {
@@ -46,8 +46,10 @@
             {
                 case "or":
                     return ToBool(lValue) || ToBool(rValue);
+
                 case "and":
                     return ToBool(lValue) && ToBool(rValue);
+
                 default:
                     int result;
                     IComparable lValueComparable = lValue as IComparable;

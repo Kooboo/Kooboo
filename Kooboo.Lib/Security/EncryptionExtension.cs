@@ -1,9 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Security.Cryptography;
-using System.Xml;
 using System.Text;
+using System.Xml;
 
 namespace Kooboo.Lib.Security
 {
@@ -43,7 +43,6 @@ namespace Kooboo.Lib.Security
 
         public static String ToXmlString(RSACryptoServiceProvider rsa, bool includePrivateParameters)
         {
-            
             // we extend appropriately for private components
             RSAParameters rsaParams = rsa.ExportParameters(includePrivateParameters);
             StringBuilder sb = new StringBuilder();

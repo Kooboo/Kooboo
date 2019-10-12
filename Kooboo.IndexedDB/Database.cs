@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,7 @@ namespace Kooboo.IndexedDB
     public class Database
     {
         private EditLog _log;
+
         public EditLog Log
         {
             get
@@ -54,6 +55,7 @@ namespace Kooboo.IndexedDB
         }
 
         private string _tablePrefixFolder;
+
         public string TablePath
         {
             get
@@ -80,7 +82,7 @@ namespace Kooboo.IndexedDB
         private string _absolutepath;
 
         /// <summary>
-        /// the absolute path/folder of this database. 
+        /// the absolute path/folder of this database.
         /// </summary>
         public string AbsolutePath
         {
@@ -152,7 +154,8 @@ namespace Kooboo.IndexedDB
                 {
                     if (!HasObjectStore(StoreName))
                     {
-                        // Should be removed. 
+                        // Should be removed.
+
                         #region TempUpgrade2017end
 
                         var oldsettingfile = objectSettingFile(StoreName);
@@ -162,7 +165,7 @@ namespace Kooboo.IndexedDB
 
                             if (oldsetting.UseDefaultNETBinaryFormater)
                             {
-                                //clean everything. does not want to upgrade those....  
+                                //clean everything. does not want to upgrade those....
                                 var folder = objectFolder(StoreName);
                                 System.IO.Directory.Delete(folder, true);
                                 return GetOrCreateObjectStore<Tkey, TValue>(StoreName, Parameters);
@@ -171,7 +174,6 @@ namespace Kooboo.IndexedDB
                             int keyoffset = oldsetting.primaryKeyLength;
                             foreach (var item in oldsetting.ColumnList)
                             {
-
                                 if (item.KeyType == typeof(string))
                                 {
                                     keyoffset += item.length;
@@ -184,7 +186,7 @@ namespace Kooboo.IndexedDB
 
                             var oldfolder = this.objectFolder(StoreName);
 
-                            // primary key. 
+                            // primary key.
                             var primaryIndex = new Btree.BtreeIndex<Tkey>(oldsetting.primaryKeyFieldName, true, oldsetting.primaryKeyLength, Helper.IndexHelper.GetIndexFileName(oldfolder, oldsetting.primaryKeyFieldName), oldsetting.MaxCacheLevel);
 
                             string blockfileName = System.IO.Path.Combine(oldfolder, "Data.block");
@@ -230,7 +232,7 @@ namespace Kooboo.IndexedDB
                             return this.GetOrCreateObjectStore<Tkey, TValue>(StoreName, Parameters);
                         }
 
-                        #endregion
+                        #endregion TempUpgrade2017end
 
                         clearOpenStoreCache();
                         if (Parameters == null)
@@ -268,7 +270,6 @@ namespace Kooboo.IndexedDB
             }
             return this.openTableList[name];
         }
-
 
         public void DeleteTable(string name)
         {
@@ -315,7 +316,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// get an existing object store. 
+        /// get an existing object store.
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
         /// <typeparam name="TValue"></typeparam>
@@ -435,7 +436,6 @@ namespace Kooboo.IndexedDB
 
         public void DeleteObjectStore(string name)
         {
-
             lock (_locker)
             {
                 string storename = name.ToValidPath();
@@ -486,9 +486,9 @@ namespace Kooboo.IndexedDB
         }
 
         internal string StoreSetitingFile(string storename)
-        {  
+        {
             string folder = objectFolder(storename);
-            string filename = System.IO.Path.Combine(folder, "store.config"); 
+            string filename = System.IO.Path.Combine(folder, "store.config");
 
             if (!Directory.Exists(folder))
             {
@@ -498,7 +498,7 @@ namespace Kooboo.IndexedDB
         }
 
         internal string TableSetitingFile(string tableName)
-        { 
+        {
             string folder = TableFolder(tableName);
             string filename = System.IO.Path.Combine(folder, "table.config");
 
@@ -508,7 +508,6 @@ namespace Kooboo.IndexedDB
             }
             return filename;
         }
-
 
         /// <summary>
         /// delete current database
@@ -587,19 +586,18 @@ namespace Kooboo.IndexedDB
                         break;
                     }
                 }
-
             }
 
             foreach (var item in toBeRemovedItems)
             {
                 this.openStoreList.Remove(item);
             }
-
         }
 
         private List<string> _storelist;
+
         /// <summary>
-        /// Get the list of store names within this database. 
+        /// Get the list of store names within this database.
         /// </summary>
         /// <param name="update">update the store list before return, otherwise return cached version</param>
         /// <returns></returns>
@@ -630,7 +628,6 @@ namespace Kooboo.IndexedDB
             }
 
             return _storelist;
-
         }
 
         public IObjectStore GetStore(string Name)
@@ -670,7 +667,6 @@ namespace Kooboo.IndexedDB
             }
 
             return this.openStoreList[storename];
-
         }
 
         /// <summary>
@@ -730,11 +726,10 @@ namespace Kooboo.IndexedDB
                 {
                     item.Value.Flush();
                 }
-
             }
         }
 
-        // list of dynamic tables. 
+        // list of dynamic tables.
         public List<string> GetTables()
         {
             string tablefolder = this.AbsolutePath;
@@ -759,7 +754,7 @@ namespace Kooboo.IndexedDB
 
             foreach (var item in subfolders)
             {
-                // verify as subfolder.  
+                // verify as subfolder.
                 var tablepath = System.IO.Path.Combine(tablefolder, item);
 
                 string tableSetting = System.IO.Path.Combine(tablepath, "table.config");
@@ -774,7 +769,5 @@ namespace Kooboo.IndexedDB
             }
             return result;
         }
-
     }
-
 }

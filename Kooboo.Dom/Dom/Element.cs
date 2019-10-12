@@ -1,11 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Dom.CSS;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Dom.CSS;
 
 namespace Kooboo.Dom
 {
@@ -22,7 +19,7 @@ namespace Kooboo.Dom
         public string localName;
 
         /// <summary>
-        /// If namespace prefix is not null, returns the concatenation of namespace prefix, ":", and local name. 
+        /// If namespace prefix is not null, returns the concatenation of namespace prefix, ":", and local name.
         /// Otherwise it returns the local name. (The return value is uppercased in an HTML document.)
         /// </summary>
         public string tagName;
@@ -33,7 +30,6 @@ namespace Kooboo.Dom
         {
             get
             {
-
                 if (string.IsNullOrEmpty(_id))
                 {
                     if (this.hasAttribute("id"))
@@ -56,18 +52,17 @@ namespace Kooboo.Dom
             {
                 _id = value;
             }
-
         }
 
         private string _classname;
+
         /// <summary>
-        /// the "class" content attribute value. 
+        /// the "class" content attribute value.
         /// </summary>
         public string className
         {
             get
             {
-
                 if (string.IsNullOrEmpty(_classname))
                 {
                     if (this.hasAttribute("class"))
@@ -85,7 +80,6 @@ namespace Kooboo.Dom
                 {
                     return _classname;
                 }
-
             }
             set
             {
@@ -102,7 +96,6 @@ namespace Kooboo.Dom
         {
             get
             {
-
                 if (_classlist == null)
                 {
                     _classlist = new DOMTokenList();
@@ -124,10 +117,8 @@ namespace Kooboo.Dom
             }
             set
             {
-
                 _classlist = value;
             }
-
         }
 
         private List<Attr> _attribute;
@@ -158,7 +149,7 @@ namespace Kooboo.Dom
             {
                 return string.Empty;
             }
-            
+
             name = name.ToLower().Trim();
             foreach (var item in attributes)
             {
@@ -256,27 +247,27 @@ namespace Kooboo.Dom
 
         public Element getOneElementByTagName(string tagname)
         {
-            string lowername = tagname.ToLower(); 
-              return  _getOneElementByTagName(this, lowername);         
+            string lowername = tagname.ToLower();
+            return _getOneElementByTagName(this, lowername);
         }
 
         private Element _getOneElementByTagName(Element topElement, string tagname)
         {
-            if(topElement.tagName.ToLower()== tagname)
+            if (topElement.tagName.ToLower() == tagname)
             {
-                return topElement; 
+                return topElement;
             }
 
             foreach (var item in topElement.childNodes.item)
             {
-               if (item.nodeType == enumNodeType.ELEMENT)
+                if (item.nodeType == enumNodeType.ELEMENT)
                 {
-                 var result = _getOneElementByTagName(item as Element, tagname);
+                    var result = _getOneElementByTagName(item as Element, tagname);
                     if (result != null)
                     {
-                        return result; 
+                        return result;
                     }
-                } 
+                }
             }
 
             return null;
@@ -313,9 +304,6 @@ namespace Kooboo.Dom
                 _getElementByTagName(item, collection, tagname);
             }
         }
-
-
-
 
         public HTMLCollection getElementsByTagNames(params string[] tagNames)
         {
@@ -383,7 +371,6 @@ namespace Kooboo.Dom
             return null;
         }
 
-
         public HTMLCollection getElementsByAttribute(string AttributeName)
         {
             HTMLCollection collection = new HTMLCollection();
@@ -391,7 +378,6 @@ namespace Kooboo.Dom
             _getElementByAttribute(this, collection, AttributeName.ToLower());
             return collection;
         }
-
 
         private Element _getElementByIndex(Element TopElement, int TokenIndex, bool IsStartIndex)
         {
@@ -442,10 +428,8 @@ namespace Kooboo.Dom
             }
         }
 
-
         public HTMLCollection getElementsByAttributeValues(string AttributeName, string AttributeValue)
         {
-
             if (string.IsNullOrEmpty(AttributeValue))
             {
                 return getElementsByAttribute(AttributeName);
@@ -456,7 +440,6 @@ namespace Kooboo.Dom
             _getElementByAttributeValue(this, collection, AttributeName.ToLower(), AttributeValue.ToLower());
             return collection;
         }
-
 
         private void _getElementByAttributeValue(Node topElement, HTMLCollection collection, string AttributeName, string AttributeValue)
         {
@@ -470,7 +453,6 @@ namespace Kooboo.Dom
                 {
                     collection.Add(element);
                 }
-
             }
 
             foreach (var item in topElement.childNodes.item)
@@ -479,15 +461,13 @@ namespace Kooboo.Dom
             }
         }
 
-
-
         public HTMLCollection getElementsByTagNameNS(string @namespace, string localName)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
-        /// get Elements by class name. Class name is case sensitive. 
+        /// get Elements by class name. Class name is case sensitive.
         /// </summary>
         /// <param name="classNames"></param>
         /// <returns></returns>
@@ -590,7 +570,6 @@ namespace Kooboo.Dom
                 xparent = xparent.parentElement;
                 yparent = yparent.parentElement;
             }
-
         }
 
         public HTMLCollection Select(string CSSSelector)
@@ -606,7 +585,6 @@ namespace Kooboo.Dom
 
         private HTMLCollection getElementByCSSSelector(List<simpleSelector> selectorList)
         {
-
             HTMLCollection collection = new HTMLCollection();
 
             _getElementByCSSSelector(this, collection, selectorList);
@@ -630,9 +608,9 @@ namespace Kooboo.Dom
                 _getElementByCSSSelector(item, collection, selectorList);
             }
         }
-        
 
         private CSSStyleDeclaration _rawComputedStyle;
+
         public CSSStyleDeclaration RawComputedStyle
         {
             get
@@ -652,12 +630,10 @@ namespace Kooboo.Dom
 
                         if (!string.IsNullOrEmpty(stringvalue))
                         {
-
                             CSSStyleDeclaration inlinestyle = CSSSerializer.deserializeDeclarationBlock(stringvalue);
 
                             _rawComputedStyle.merge(inlinestyle);
                         }
-
                     }
                 }
 
@@ -674,9 +650,8 @@ namespace Kooboo.Dom
         /// </summary>
         public List<CSSStyleRule> StyleRules = new List<CSSStyleRule>();
 
-
         /// <summary>
-        /// Customize value here. used for machine learning or other purposes. 
+        /// Customize value here. used for machine learning or other purposes.
         /// </summary>
         public Dictionary<string, object> notation = new Dictionary<string, object>();
 
@@ -695,10 +670,8 @@ namespace Kooboo.Dom
             this.classList.item.Clear();
             this.classList = null;
 
-            this.className = null;  
+            this.className = null;
             base.Dispose();
         }
-
-
     }
 }

@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;  
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Data.Language;
 using Kooboo.Sites.Extensions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Web.Menus.SideBarMenu
 {
     public class MultiLingual : ISideBarMenu, IDynamicMenu
     {
-        public SideBarSection Parent =>  SideBarSection.Root;
+        public SideBarSection Parent => SideBarSection.Root;
 
         public string Name => "Multilingual";
 
@@ -17,24 +16,24 @@ namespace Kooboo.Web.Menus.SideBarMenu
 
         public string Url => "";
 
-        public int Order =>  5;
+        public int Order => 5;
 
         public List<ICmsMenu> SubItems { get; set; }
 
         public string GetDisplayName(RenderContext Context)
         {
-            return Hardcoded.GetValue("Multilingual", Context); 
+            return Hardcoded.GetValue("Multilingual", Context);
         }
 
         public bool Show(RenderContext context)
         {
-            return context.WebSite != null && context.WebSite.EnableMultilingual; 
+            return context.WebSite != null && context.WebSite.EnableMultilingual;
         }
 
         public List<ICmsMenu> ShowSubItems(RenderContext context)
-        { 
-            var siteDb = context.WebSite.SiteDb(); 
-             
+        {
+            var siteDb = context.WebSite.SiteDb();
+
             List<string> othercultures = new List<string>();
             foreach (var item in siteDb.WebSite.Culture.Keys.ToList())
             {
@@ -61,30 +60,28 @@ namespace Kooboo.Web.Menus.SideBarMenu
                 {
                     var folderMenu = new GeneralMenu();
                     folderMenu.Name = folder.DisplayName;
-                    folderMenu.Url = "Multilingual/TextContentsByFolder?folder=" + folder.Id.ToString() + "&lang=" + item; 
-                    contents.SubItems.Add(folderMenu); 
+                    folderMenu.Url = "Multilingual/TextContentsByFolder?folder=" + folder.Id.ToString() + "&lang=" + item;
+                    contents.SubItems.Add(folderMenu);
                 }
 
-                cultureItem.SubItems.Add(contents); 
+                cultureItem.SubItems.Add(contents);
 
                 cultureItem.SubItems.Add(new GeneralMenu()
                 {
                     Name = Hardcoded.GetValue("Labels", context),
                     Url = "Multilingual/Labels?lang=" + item
                 });
-                 
+
                 cultureItem.SubItems.Add(new GeneralMenu()
                 {
                     Name = Hardcoded.GetValue("HtmlBlocks", context),
                     Url = "Multilingual/HtmlBlocks?Lang=" + item
                 });
 
-                result.Add(cultureItem); 
+                result.Add(cultureItem);
             }
 
-            return result; 
+            return result;
         }
     }
 }
-
- 

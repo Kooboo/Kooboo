@@ -1,6 +1,6 @@
-﻿using System;
-using Jint.Native;
+﻿using Jint.Native;
 using Jint.Native.Function;
+using System;
 
 namespace Jint.Runtime.Interop
 {
@@ -20,7 +20,7 @@ namespace Jint.Runtime.Interop
         public override JsValue Call(JsValue thisObject, JsValue[] arguments)
         {
             _setter(thisObject, arguments[0]);
-            
+
             return Null.Instance;
         }
     }

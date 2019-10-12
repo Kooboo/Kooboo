@@ -1,9 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 
 namespace Kooboo.IndexedDB.ByteConverter
 {
-   public class BoolConverter : IByteConverter<bool>
+    public class BoolConverter : IByteConverter<bool>
     {
         public byte[] ToByte(bool input)
         {
@@ -27,7 +27,5 @@ namespace Kooboo.IndexedDB.ByteConverter
                 return false;
             }
         }
-
-
     }
 }

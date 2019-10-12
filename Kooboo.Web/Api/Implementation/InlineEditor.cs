@@ -1,16 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using Kooboo.Sites.InlineEditor;
-using Newtonsoft.Json.Linq;
-using Kooboo.Sites.Models;
-using Kooboo.Web.ViewModel;
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.Service;
-using Kooboo.Lib.Utilities; 
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.InlineEditor;
+using Kooboo.Sites.Models;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -44,7 +40,7 @@ namespace Kooboo.Web.Api.Implementation
 
         [Kooboo.Attributes.RequireParameters("updates")]
         public void Update(Guid PageId, ApiCall call)
-        {  
+        {
             var page = call.WebSite.SiteDb().Pages.Get(PageId);
             if (page == null)
             {
@@ -53,7 +49,7 @@ namespace Kooboo.Web.Api.Implementation
 
             call.Context.SetItem<Page>(page);
 
-            // pageid,...updates...  
+            // pageid,...updates...
             if (string.IsNullOrEmpty(call.Context.Request.Body))
             {
                 return;
@@ -74,11 +70,6 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             UpdateManager.Execute(call.Context, updatemodels);
-
         }
-   
-
     }
-    
-
 }

@@ -1,12 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Definition;
 using System.Collections.Generic;
- 
+
 namespace Kooboo.Sites.Contents.Models
 {
-  public  class SystemFields  
-    { 
+    public class SystemFields
+    {
         public static ContentProperty UserKey = new ContentProperty
         {
             Name = "UserKey",
@@ -15,7 +15,7 @@ namespace Kooboo.Sites.Contents.Models
             Order = 100,
             Editable = false,
             IsSystemField = true
-        }; 
+        };
 
         public static ContentProperty Online = new ContentProperty
         {
@@ -24,7 +24,7 @@ namespace Kooboo.Sites.Contents.Models
             ControlType = ControlTypes.Boolean,
             Order = 101,
             Editable = true,
-            IsSystemField = true 
+            IsSystemField = true
         };
 
         public static ContentProperty Sequence = new ContentProperty
@@ -37,7 +37,6 @@ namespace Kooboo.Sites.Contents.Models
             IsSystemField = true
         };
 
-
         public static ContentProperty LastModified = new ContentProperty
         {
             Name = "LastModified",
@@ -48,7 +47,8 @@ namespace Kooboo.Sites.Contents.Models
             IsSystemField = true
         };
 
-        private static List<string> _ReservedFields; 
+        private static List<string> _ReservedFields;
+
         public static List<string> ReservedFields
         {
             get
@@ -61,12 +61,10 @@ namespace Kooboo.Sites.Contents.Models
                     _ReservedFields.Add("parentid");
                     _ReservedFields.Add("contenttypeid");
                     _ReservedFields.Add("lastmodified");
-                    _ReservedFields.Add("creationdate"); 
+                    _ReservedFields.Add("creationdate");
                 }
-                return _ReservedFields; 
-            } 
- 
+                return _ReservedFields;
+            }
         }
-
     }
 }

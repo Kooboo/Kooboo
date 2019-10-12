@@ -1,25 +1,21 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Sites.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Ecommerce.Models
 {
- 
     [Kooboo.Attributes.Diskable(Kooboo.Attributes.DiskType.Json)]
     [Kooboo.Attributes.NameAsID]
     public class ProductType : Kooboo.Sites.Models.CoreObject
     {
         public ProductType()
         {
-            this.ConstType = ConstObjectType.ProductType; 
+            this.ConstType = ConstObjectType.ProductType;
         }
-    
+
         private List<ProductProperty> _properties;
+
         public List<ProductProperty> Properties
         {
             get
@@ -39,7 +35,7 @@ namespace Kooboo.Sites.Ecommerce.Models
 
         public override int GetHashCode()
         {
-            string unique = ""; 
+            string unique = "";
             if (_properties != null)
             {
                 foreach (var item in this.Properties)
@@ -51,15 +47,4 @@ namespace Kooboo.Sites.Ecommerce.Models
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
 }

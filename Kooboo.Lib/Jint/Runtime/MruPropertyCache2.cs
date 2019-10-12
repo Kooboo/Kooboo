@@ -3,19 +3,22 @@ using System.Collections.Generic;
 
 namespace Jint.Runtime
 {
-    public class MruPropertyCache2<TKey, TValue> : IDictionary<TKey, TValue> 
-        where TValue:class
+    public class MruPropertyCache2<TKey, TValue> : IDictionary<TKey, TValue>
+        where TValue : class
     {
         private IDictionary<TKey, TValue> _dictionary = new Dictionary<TKey, TValue>();
         private bool _set;
         private TKey _key;
         private TValue _value;
 
-        public MruPropertyCache2() {
+        public MruPropertyCache2()
+        {
         }
 
-        public TValue this[TKey key] {
-            get {
+        public TValue this[TKey key]
+        {
+            get
+            {
                 if (_set && key.Equals(_key))
                 {
                     return _value;
@@ -24,7 +27,8 @@ namespace Jint.Runtime
                 return _dictionary[key];
             }
 
-            set {
+            set
+            {
                 _set = true;
                 _key = key;
                 _value = value;
@@ -33,31 +37,40 @@ namespace Jint.Runtime
             }
         }
 
-        public int Count {
-            get {
+        public int Count
+        {
+            get
+            {
                 return _dictionary.Count;
             }
         }
 
-        public bool IsReadOnly {
-            get {
+        public bool IsReadOnly
+        {
+            get
+            {
                 return _dictionary.IsReadOnly;
             }
         }
 
-        public ICollection<TKey> Keys {
-            get {
+        public ICollection<TKey> Keys
+        {
+            get
+            {
                 return _dictionary.Keys;
             }
         }
 
-        public ICollection<TValue> Values {
-            get {
+        public ICollection<TValue> Values
+        {
+            get
+            {
                 return _dictionary.Values;
             }
         }
 
-        public void Add(KeyValuePair<TKey, TValue> item) {
+        public void Add(KeyValuePair<TKey, TValue> item)
+        {
             _set = true;
             _key = item.Key;
             _value = item.Value;
@@ -65,7 +78,8 @@ namespace Jint.Runtime
             _dictionary.Add(item);
         }
 
-        public void Add(TKey key, TValue value) {
+        public void Add(TKey key, TValue value)
+        {
             _set = true;
             _key = key;
             _value = value;
@@ -73,7 +87,8 @@ namespace Jint.Runtime
             _dictionary.Add(key, value);
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             _set = false;
             _key = default(TKey);
             _value = null;
@@ -81,8 +96,9 @@ namespace Jint.Runtime
             _dictionary.Clear();
         }
 
-        public bool Contains(KeyValuePair<TKey, TValue> item) {
-            if(_set && item.Key.Equals(_key))
+        public bool Contains(KeyValuePair<TKey, TValue> item)
+        {
+            if (_set && item.Key.Equals(_key))
             {
                 return true;
             }
@@ -90,7 +106,8 @@ namespace Jint.Runtime
             return _dictionary.Contains(item);
         }
 
-        public bool ContainsKey(TKey key) {
+        public bool ContainsKey(TKey key)
+        {
             if (_set && key.Equals(_key))
             {
                 return true;
@@ -99,16 +116,19 @@ namespace Jint.Runtime
             return _dictionary.ContainsKey(key);
         }
 
-        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+        {
             _dictionary.CopyTo(array, arrayIndex);
         }
 
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
             return _dictionary.GetEnumerator();
         }
 
-        public bool Remove(KeyValuePair<TKey, TValue> item) {
-            if(_set && item.Key.Equals(_key))
+        public bool Remove(KeyValuePair<TKey, TValue> item)
+        {
+            if (_set && item.Key.Equals(_key))
             {
                 _set = false;
                 _key = default(TKey);
@@ -118,7 +138,8 @@ namespace Jint.Runtime
             return _dictionary.Remove(item);
         }
 
-        public bool Remove(TKey key) {
+        public bool Remove(TKey key)
+        {
             if (_set && key.Equals(_key))
             {
                 _set = false;
@@ -129,7 +150,8 @@ namespace Jint.Runtime
             return _dictionary.Remove(key);
         }
 
-        public bool TryGetValue(TKey key, out TValue value) {
+        public bool TryGetValue(TKey key, out TValue value)
+        {
             if (_set && key.Equals(_key))
             {
                 value = _value;
@@ -139,7 +161,8 @@ namespace Jint.Runtime
             return _dictionary.TryGetValue(key, out value);
         }
 
-        IEnumerator IEnumerable.GetEnumerator() {
+        IEnumerator IEnumerable.GetEnumerator()
+        {
             return _dictionary.GetEnumerator();
         }
     }

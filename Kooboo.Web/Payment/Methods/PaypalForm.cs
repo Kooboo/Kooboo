@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using Kooboo.Api.ApiResponse;
+﻿using Kooboo.Api.ApiResponse;
 using Kooboo.Data.Context;
-using System.IO;
-using System.Net;
 using Kooboo.Data.Models;
 using Kooboo.Web.Payment.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net;
 
 namespace Kooboo.Web.Payment.Methods
 {
     public class PaypalForm : PaymentMethodBase<PaypalFormPaymentSetting>
     {
-
         public override string Name { get => "PaypalForm"; }
         public override string DisplayName { get => Data.Language.Hardcoded.GetValue("Paypal"); }
 
         public override string Icon { get => "/_Admin/View/Market/Images/payment-paypal.jpg"; }
 
         private List<string> _currency;
+
         // see: https://developer.paypal.com/docs/classic/api/currency_codes/
         public override List<string> ForCurrency
         {
@@ -122,9 +122,7 @@ namespace Kooboo.Web.Payment.Methods
                         //Installment Plan buttons — < INPUT TYPE = "hidden" name = "cmd" value = "_xclick-payment-plan" >
                         //  Donate buttons — < INPUT TYPE = "hidden" name = "cmd" value = "_donations" >
 
-
                         formhtml += "<input type = 'hidden' name = 'cmd' value = '_xclick' />\r\n";
-
 
                         formhtml += "<input type = 'hidden' name = 'charset' value = 'utf-8' /> \r\n";
                         formhtml += "<input type = 'hidden' name = 'business' value = '" + setting.EmailAddress + "' />\r\n";
@@ -137,7 +135,6 @@ namespace Kooboo.Web.Payment.Methods
                         formhtml += "<input type = 'hidden' name = 'image_url' value = '" + imageurl + "' />\r\n";
                         formhtml += "<input type = 'hidden' name = 'item_name' value = '" + GetRequestName(request.Name) + "' /> \r\n";
                         formhtml += "<input type = 'hidden' name = 'amount' value = '" + this.ToCurrencyString(request.Currency, request.TotalAmount) + "' />\r\n";
-
 
                         // FROM paypal: Pass-through variable for you to track product or service purchased or the contribution made. The value you specify is passed back to you upon payment completion. Required if you want PayPal to track either inventory or profit and loss for the item the button sells.
 
@@ -157,13 +154,10 @@ namespace Kooboo.Web.Payment.Methods
                         //2.The buyer's browser is redirected to the return URL by using the POST method, and all payment variables are included.
                         //                        ///
 
-
                         formhtml += "<input type = 'hidden' name = 'rm' value = '2' />\r\n";
-
 
                         formhtml += "<input type = 'submit' name = 'submit' id='submit' style='display: none' value='please wait ...' />\r\n";
                         formhtml += "<script>document.getElementById('submit').click() </script></form>";
-
 
                         var response = new PlainResponse();
                         response.ContentType = "text/html";
@@ -173,10 +167,8 @@ namespace Kooboo.Web.Payment.Methods
 
                         return result;
                     }
-
                 }
             }
-
 
             var errorresponse = new PlainResponse();
             errorresponse.ContentType = "Application/Json";
@@ -185,10 +177,9 @@ namespace Kooboo.Web.Payment.Methods
             return result;
         }
 
-
         private string GetRequestName(string name)
         {
-            if(!string.IsNullOrEmpty(name))
+            if (!string.IsNullOrEmpty(name))
             {
                 name = name.Trim();
                 if (name.Length > 0)
@@ -200,18 +191,17 @@ namespace Kooboo.Web.Payment.Methods
                         return "name";
                     }
                 }
-                
             }
             return name;
         }
 
         public PaymentCallback NofityUrl(RenderContext context)
-        { 
+        {
             // PayPal HTTPS POSTs an IPN message to your listener that notifies it of an event.
             //Your listener returns an empty HTTP 200 response to PayPal.
             //Your listener HTTPS POSTs the complete, unaltered message back to PayPal; the message must contain the same fields (in the same order) as the original message and be encoded in the same way as the original message.
             //PayPal sends a single word back - either VERIFIED(if the message matches the original) or INVALID(if the message does not match the original).
-             
+
             if (ValidateResponse(context))
             {
                 var strPaymentRequestId = context.Request.GetValue("item_number");
@@ -237,7 +227,7 @@ namespace Kooboo.Web.Payment.Methods
                     }
 
                     if (setting.EmailAddress.ToLower() == email.ToLower() && paymentRequest.Currency.ToLower() == currency.ToLower() &&
-                        IsSameAmount(paymentRequest.Currency,paymentRequest.TotalAmount,mcGross))
+                        IsSameAmount(paymentRequest.Currency, paymentRequest.TotalAmount, mcGross))
                     {
                         var callback = new PaymentCallback()
                         {
@@ -248,16 +238,15 @@ namespace Kooboo.Web.Payment.Methods
                         {
                             callback.IsPaid = true;
                         }
-                        // TODO: add cancel here.. 
+                        // TODO: add cancel here..
                         return callback;
                     }
                 }
-
             }
             return null;
         }
 
-        private bool IsSameAmount(string currency,decimal requestAmount,decimal mcGross)
+        private bool IsSameAmount(string currency, decimal requestAmount, decimal mcGross)
         {
             return ToCurrencyString(currency, requestAmount) == ToCurrencyString(currency, mcGross);
         }
@@ -314,24 +303,15 @@ namespace Kooboo.Web.Payment.Methods
             //If the payment_status is Completed, check the txn_id against the previous PayPal transaction that you processed to ensure the IPN message is not a duplicate.
             //Check that the receiver_email is an email address registered in your PayPal account.
             //Check that the price(carried in mc_gross) and the currency(carried in mc_currency) are correct for the item (carried in item_name or item_number).
-
-
-
-
-
         }
-
     }
-
 }
-
-
 
 //Canceled: You canceled your payment, and the money was credited back to your account.
 //Cleared: Money from an eCheck that you sent has been deposited in the recipient’s account.
 //Cleared by Payment Review: We reviewed the transaction and the money is in the recipient’s account.
 //Completed: The transaction was successful and the money is in the recipient’s account.
-//Denied: The recipient didn’t accept your payment, and the money was credited back to your account.View the transaction details to see why your payment was denied or contact the recipient for more information. 
+//Denied: The recipient didn’t accept your payment, and the money was credited back to your account.View the transaction details to see why your payment was denied or contact the recipient for more information.
 //Failed: Your payment didn’t go through.We recommend that you try your payment again.
 //Held: We’re reviewing the transaction and your payment might be reversed. You should check the Resolution Center for more information.
 //In progress: Your payment was sent, but the recipient hasn’t accepted it yet.
@@ -348,8 +328,6 @@ namespace Kooboo.Web.Payment.Methods
 //Reversed: Either you canceled the transaction or we did.
 //Temporary hold: Money from your account is being held temporarily during the authorization process.The recipient isn’t able to use or withdraw this money until the authorization is complete.
 //Unclaimed: The recipient hasn’t accepted or received your payment. Unclaimed transactions are automatically canceled after 30 days.
-
-
 
 //Currency Currency code Per transaction limit
 //Australian Dollar   AUD

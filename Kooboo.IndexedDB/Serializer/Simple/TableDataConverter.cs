@@ -1,25 +1,25 @@
 ﻿using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
-    // TEMP, this is used for table log, which is dictionary<string, object>. 
+    // TEMP, this is used for table log, which is dictionary<string, object>.
     public class TableDataLogConverter
     {
-        private static TableDataLogConverter _instance; 
-        public static TableDataLogConverter Instance {
+        private static TableDataLogConverter _instance;
+
+        public static TableDataLogConverter Instance
+        {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new TableDataLogConverter(); 
+                    _instance = new TableDataLogConverter();
                 }
-                return _instance;  
+                return _instance;
             }
         }
-
 
         public Dictionary<string, object> FromBytes(byte[] bytes)
         {
@@ -93,7 +93,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                     {
                         values.Add(null);
                     }
-
                 }
                 else
                 {
@@ -105,7 +104,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
 
             Dictionary<string, object> Result = new Dictionary<string, object>();
-
 
             int count = keys.Count;
 
@@ -125,7 +123,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             if (value == null)
             { return null; }
             var dict = value as Dictionary<string, object>;
-    
+
             return ToBytes(dict);
         }
 
@@ -185,9 +183,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                     ValueResults.Add(bytes);
 
                     ValueTotalLen += 4 + 4 + 4 + typenamebytes.Length + bytes.Length;
-
                 }
-
             }
 
             byte[] ValueBytes = new byte[ValueTotalLen];
@@ -220,7 +216,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
         public byte[] GetValueBytes(Type type, object value)
         {
-
             var converter = ConverterHelper.GetValueToBytes(type);
             if (converter != null)
             {
@@ -256,7 +251,5 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 return null;
             }
         }
-
     }
-
 }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.IndexedDB.Helper
 {
@@ -18,14 +16,14 @@ namespace Kooboo.IndexedDB.Helper
 
         public static DateTime ToDateTime(byte[] bytes)
         {
-            var isUtc= RemoveUtcBit(bytes);
+            var isUtc = RemoveUtcBit(bytes);
             var datetick = BitConverter.ToInt64(bytes, 0);
 
             return isUtc ? new DateTime(datetick, DateTimeKind.Utc)
                         : new DateTime(datetick);
         }
 
-        private static void AddUtcBit(byte[] bytes,DateTime time)
+        private static void AddUtcBit(byte[] bytes, DateTime time)
         {
             if (time.Kind == DateTimeKind.Utc)
             {

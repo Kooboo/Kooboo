@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Lib.Reflection;
@@ -11,9 +11,7 @@ namespace Kooboo.Sites.Diagnosis
 {
     public class Manager
     {
-
         private static Dictionary<Guid, DiagnosisSession> sessions = new Dictionary<Guid, DiagnosisSession>();
-
 
         public static List<DiagnosisChecker> ListCheckers(RenderContext context)
         {
@@ -80,14 +78,12 @@ namespace Kooboo.Sites.Diagnosis
             task.Session = session;
 
             Thread thread = new Thread(task.Exe);
-            thread.Start(); 
-            
+            thread.Start();
+
             sessions.Add(sessionid, session);
 
             return sessionid;
-
         }
-
 
         public static SessionStatus CheckStatus(Guid sessionid)
         {
@@ -108,11 +104,6 @@ namespace Kooboo.Sites.Diagnosis
             {
                 return new SessionStatus() { IsFinished = true };
             }
-
         }
-
     }
-
-
-
 }

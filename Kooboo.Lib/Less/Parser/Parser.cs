@@ -23,7 +23,7 @@ namespace dotless.Core.Parser
     //      and move the `lastIndex` pointer on match, foregoing `slice()`
     //      completely. This gives us a 3x speed-up.
     //
-    //    - Matching on a huge input is often cause of slowdowns. 
+    //    - Matching on a huge input is often cause of slowdowns.
     //      The solution to that is to chunkify the input into
     //      smaller strings.
     //
@@ -51,6 +51,7 @@ namespace dotless.Core.Parser
         public bool Debug { get; set; }
 
         private INodeProvider _nodeProvider;
+
         public INodeProvider NodeProvider
         {
             get { return _nodeProvider ?? (_nodeProvider = new DefaultNodeProvider()); }
@@ -58,6 +59,7 @@ namespace dotless.Core.Parser
         }
 
         private IImporter _importer;
+
         public IImporter Importer
         {
             get { return _importer; }
@@ -65,10 +67,10 @@ namespace dotless.Core.Parser
             {
                 _importer = value;
                 _importer.Parser = () => new Parser(Tokenizer.Optimization, Stylizer, _importer)
-                                             {
-                                                 NodeProvider = NodeProvider,
-                                                 Debug = Debug
-                                             };
+                {
+                    NodeProvider = NodeProvider,
+                    Debug = Debug
+                };
             }
         }
 

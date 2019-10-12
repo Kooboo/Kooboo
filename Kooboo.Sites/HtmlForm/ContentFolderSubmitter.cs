@@ -1,14 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
-using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Contents.Models;
+using Kooboo.Sites.Extensions;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.HtmlForm
 {
@@ -18,7 +15,7 @@ namespace Kooboo.Sites.HtmlForm
         {
             get
             {
-                return "ContentFolder"; 
+                return "ContentFolder";
             }
         }
 
@@ -29,29 +26,29 @@ namespace Kooboo.Sites.HtmlForm
 
         public List<SimpleSetting> Settings(RenderContext context)
         {
-            List<SimpleSetting> setting = new List<SimpleSetting>(); 
+            List<SimpleSetting> setting = new List<SimpleSetting>();
             SimpleSetting foldersetting = new SimpleSetting();
             foldersetting.Name = "ContentFolder";
-            foldersetting.ControlType = Data.ControlType.Selection; 
+            foldersetting.ControlType = Data.ControlType.Selection;
             var folders = context.WebSite.SiteDb().ContentFolders.All();
             foreach (var item in folders)
             {
-                foldersetting.SelectionValues.Add(item.Id.ToString(), item.Name); 
+                foldersetting.SelectionValues.Add(item.Id.ToString(), item.Name);
             }
-            setting.Add(foldersetting); 
-            return setting; 
+            setting.Add(foldersetting);
+            return setting;
         }
 
         public bool Submit(RenderContext context, Guid FormId, Dictionary<string, string> settings)
         {
-           var sitedb = context.WebSite.SiteDb();
-             
+            var sitedb = context.WebSite.SiteDb();
+
             Guid ContentFolderId = default(Guid);
             foreach (var item in settings)
             {
                 if (item.Key.ToLower().Contains("folder"))
                 {
-                    var value = item.Value; 
+                    var value = item.Value;
                     if (System.Guid.TryParse(value, out ContentFolderId))
                     {
                         break;
@@ -61,12 +58,12 @@ namespace Kooboo.Sites.HtmlForm
 
             if (ContentFolderId != default(Guid))
             {
-                string culture = context.Culture; 
+                string culture = context.Culture;
 
                 TextContent content = new TextContent();
                 content.FolderId = ContentFolderId;
 
-                 if (context.Request.Forms.Count>0)
+                if (context.Request.Forms.Count > 0)
                 {
                     foreach (var item in context.Request.Forms.AllKeys)
                     {
@@ -77,7 +74,7 @@ namespace Kooboo.Sites.HtmlForm
                         }
                     }
                 }
-                 else if (context.Request.QueryString.Count>0)
+                else if (context.Request.QueryString.Count > 0)
                 {
                     foreach (var item in context.Request.QueryString.AllKeys)
                     {
@@ -93,8 +90,7 @@ namespace Kooboo.Sites.HtmlForm
                 return true;
             }
 
-            return false; 
-        
+            return false;
         }
     }
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -25,7 +25,6 @@ namespace Kooboo.IndexedDB
             paras.AddColumn<LogEntry>(o => o.TimeTick);
             paras.SetPrimaryKeyField<LogEntry>(o => o.Id);
             return db.GetOrCreateObjectStore<Int64, LogEntry>(storename, paras);
-
         }
 
         public EditLog(Database db)
@@ -36,9 +35,8 @@ namespace Kooboo.IndexedDB
             SetLogId(this.Store.OwnerDatabase.Name, initid);
         }
 
-
         /// <summary>
-        /// get the new database log entry id. 
+        /// get the new database log entry id.
         /// </summary>
         /// <param name="databasename"></param>
         /// <returns></returns>
@@ -138,15 +136,15 @@ namespace Kooboo.IndexedDB
             return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().FirstOrDefault();
         }
 
-        public List<LogEntry> GetByTableNameAndKey(string TableName,Guid Id, int take, int skip = 0, bool ascending = false)
+        public List<LogEntry> GetByTableNameAndKey(string TableName, Guid Id, int take, int skip = 0, bool ascending = false)
         {
             var keys = ObjectContainer.GuidConverter.ToByte(Id);
-            return GetByTableNameAndKey(TableName, keys, take, skip, ascending); 
+            return GetByTableNameAndKey(TableName, keys, take, skip, ascending);
         }
 
         public List<LogEntry> GetByTableNameAndKey(string TableName, byte[] Keys, int take, int skip = 0, bool ascending = false)
         {
-             Guid HashKey = LogEntry.ToHashGuid(Keys);
+            Guid HashKey = LogEntry.ToHashGuid(Keys);
             int namehash = TableName.GetHashCode32();
             if (ascending)
             {
@@ -161,7 +159,7 @@ namespace Kooboo.IndexedDB
         public LogEntry GetLastLogByTableNameAndKey(string TableName, Guid Id)
         {
             var keys = ObjectContainer.GuidConverter.ToByte(Id);
-            return GetLastLogByTableNameAndKey(TableName, keys); 
+            return GetLastLogByTableNameAndKey(TableName, keys);
         }
 
         public LogEntry GetLastLogByTableNameAndKey(string TableName, byte[] Keys)
@@ -174,9 +172,8 @@ namespace Kooboo.IndexedDB
 
         public LogEntry GetPreviousTableLog(LogEntry current)
         {
-
             Guid HashKey = LogEntry.ToHashGuid(current.KeyBytes);
-     
+
             return this.Store.Where(o => o.TableNameHash == current.TableNameHash && o.KeyHash == HashKey && o.Id < current.Id).OrderByDescending().FirstOrDefault();
         }
 
@@ -205,7 +202,6 @@ namespace Kooboo.IndexedDB
             return -1;
         }
 
-
         public IEnumerable<LogEntry> GetCollection(bool ascending)
         {
             return this.Store.ItemCollection(ascending);
@@ -215,7 +211,5 @@ namespace Kooboo.IndexedDB
         {
             return this.Store.ItemCollection(ascending).Skip(skip).Take(take);
         }
-
     }
-
 }

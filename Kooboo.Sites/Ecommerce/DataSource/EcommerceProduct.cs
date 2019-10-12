@@ -1,19 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Models;
-using Kooboo.Sites.DataSources;
-using Kooboo.Sites.Ecommerce.Repository;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Ecommerce.DataSource
-{ 
-
+{
     //public class EcommerceProduct : SiteDataSource
     //{
     //    public bool IsDefault
@@ -43,7 +32,7 @@ namespace Kooboo.Sites.Ecommerce.DataSource
     //        }
     //        return result;
     //    }
-                                               
+
     //    public List<ViewModel.CategoryViewModel> SubCategories(Guid id)
     //    {
     //        var sitedb = this.Context.RenderContext.WebSite.SiteDb();
@@ -77,7 +66,7 @@ namespace Kooboo.Sites.Ecommerce.DataSource
 
     //        List<ViewModel.ProductViewModel> result = new List<ViewModel.ProductViewModel>();
 
-    //        string culture = this.Context.RenderContext.Culture; 
+    //        string culture = this.Context.RenderContext.Culture;
 
     //        foreach (var item in allproducts)
     //        {
@@ -87,15 +76,15 @@ namespace Kooboo.Sites.Ecommerce.DataSource
     //            {
     //                var view = Helper.ProductHelper.ToView(item, culture, type.Properties);
 
-    //                result.Add(view); 
-    //            }  
-    //        }     
+    //                result.Add(view);
+    //            }
+    //        }
     //        return result;
     //    }
 
     //    public List<ViewModel.ProductViewModel> AllProducts()
-    //    {   
-    //        var allproducts = this.Context.SiteDb.GetSiteRepository<ProductRepository>().All();  
+    //    {
+    //        var allproducts = this.Context.SiteDb.GetSiteRepository<ProductRepository>().All();
 
     //        List<ViewModel.ProductViewModel> result = new List<ViewModel.ProductViewModel>();
 
@@ -112,7 +101,7 @@ namespace Kooboo.Sites.Ecommerce.DataSource
     //                result.Add(view);
     //            }
     //        }
-    //        return result;    
+    //        return result;
     //    }
 
     //    [Kooboo.Attributes.RequireProductType]
@@ -137,7 +126,6 @@ namespace Kooboo.Sites.Ecommerce.DataSource
     //        }
     //        return result;
     //    }
-
 
     //    private HashSet<Guid> GetAllSubCats(Guid Id)
     //    {
@@ -178,8 +166,6 @@ namespace Kooboo.Sites.Ecommerce.DataSource
     //    //    contentviews = SortFilterContentViews(contentviews, FolderId, Filters, SortField, IsAscending);
     //    //    return GetPagedResult(contentviews, PageSize, PageNumber);
     //    //}
-
-
 
     //    //private static PagedResult GetPagedResult(List<TextContentViewModel> contents, int PageSize, int PageNumber)
     //    //{
@@ -445,7 +431,6 @@ namespace Kooboo.Sites.Ecommerce.DataSource
     //    //    return ByCategoryId(Id, FolderId, Filters, PageSize, PageNumber, SortField, IsAscending);
     //    //}
 
-
     //    //private void SetSortField(ref string sortField, List<ContentProperty> props)
     //    //{
     //    //    if (string.IsNullOrEmpty(sortField) && props != null)
@@ -458,9 +443,5 @@ namespace Kooboo.Sites.Ecommerce.DataSource
     //    //    }
     //    //}
 
-
-
     //}
-
-     
 }

@@ -1,10 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Btree
 {
@@ -25,13 +20,13 @@ namespace Kooboo.IndexedDB.Btree
             node = 2,
             root = 3,
             block = 4,   // Pointer to block position.
-            duplicate =6   // this is a duplicate item, pointer to duplicate section start location. 
+            duplicate = 6   // this is a duplicate item, pointer to duplicate section start location.
         }
 
         /// <summary>
         /// OnlyPrevious = in the previous pointer and the only sub node. parentnode.keyarray.count ==0
         /// largest = the largest key.
-        /// InBetween = found key > current key, in order to merge. 
+        /// InBetween = found key > current key, in order to merge.
         /// </summary>
         public enum SearchResultType : byte
         {
@@ -39,6 +34,5 @@ namespace Kooboo.IndexedDB.Btree
             InBetween = 2,
             Largest = 3
         }
-
     }
 }

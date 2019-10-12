@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-using Jint.Runtime;
+﻿using Jint.Runtime;
 using Jint.Runtime.Descriptors;
-using System;
+using System.Collections.Generic;
 
 namespace Jint.Native.Object
 {
@@ -102,7 +101,7 @@ namespace Jint.Native.Object
 
             PropertyDescriptor x;
             if (Properties.TryGetValue(propertyName, out x))
-            { 
+            {
                 return x;
             }
 
@@ -129,7 +128,7 @@ namespace Jint.Native.Object
                 return prop;
             }
 
-            if(Prototype == null)
+            if (Prototype == null)
             {
                 return PropertyDescriptor.Undefined;
             }
@@ -176,7 +175,7 @@ namespace Jint.Native.Object
             if (desc.IsAccessorDescriptor())
             {
                 var setter = desc.Set.TryCast<ICallable>();
-                setter.Call(new JsValue(this), new [] {value});
+                setter.Call(new JsValue(this), new[] { value });
             }
             else
             {
@@ -365,7 +364,8 @@ namespace Jint.Native.Object
         {
             var current = GetOwnProperty(propertyName);
 
-            if (current == desc) {
+            if (current == desc)
+            {
                 return true;
             }
 
@@ -415,7 +415,6 @@ namespace Jint.Native.Object
                 current.Set == null &&
                 current.Value == null)
             {
-
                 return true;
             }
 
@@ -428,7 +427,8 @@ namespace Jint.Native.Object
                 ((current.Get == null && desc.Get == null) || (current.Get != null && desc.Get != null && ExpressionInterpreter.SameValue(current.Get, desc.Get))) &&
                 ((current.Set == null && desc.Set == null) || (current.Set != null && desc.Set != null && ExpressionInterpreter.SameValue(current.Set, desc.Set))) &&
                 ((current.Value == null && desc.Value == null) || (current.Value != null && desc.Value != null && ExpressionInterpreter.StrictlyEqual(current.Value, desc.Value)))
-            ) {
+            )
+            {
                 return true;
             }
 
@@ -457,7 +457,6 @@ namespace Jint.Native.Object
 
             if (!desc.IsGenericDescriptor())
             {
-
                 if (current.IsDataDescriptor() != desc.IsDataDescriptor())
                 {
                     if (!current.Configurable.HasValue || !current.Configurable.Value)
@@ -594,7 +593,6 @@ namespace Jint.Native.Object
 
         protected virtual void EnsureInitialized()
         {
-
         }
 
         public override string ToString()

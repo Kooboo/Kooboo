@@ -1,16 +1,15 @@
 namespace dotless.Core.Parser.Tree
 {
-    using System.IO;
+    using dotless.Core.Exceptions;
     using Importers;
     using Infrastructure;
     using Infrastructure.Nodes;
     using Utils;
-    using dotless.Core.Exceptions;
 
     public class Import : Directive
     {
         /// <summary>
-        ///  The importer to use to import the 
+        ///  The importer to use to import the
         /// </summary>
         public IImporter Importer { get; set; }
 

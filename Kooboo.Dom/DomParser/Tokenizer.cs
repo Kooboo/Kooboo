@@ -1,16 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
     /// <summary>
     /// Exactly follows the instruction at: http://www.w3.org/TR/html5/syntax.html
-    /// a copy of current version as of 2014. 07 has been attached with this source project. 
+    /// a copy of current version as of 2014. 07 has been attached with this source project.
     /// </summary>
     public class Tokenizer
     {
@@ -18,18 +15,18 @@ namespace Kooboo.Dom
         internal int _readIndex;
         private int _maxColLastLine;
         private int _length;
-          
+
         private TreeConstruction _treeConstruction;
 
         private StringBuilder _buffer;
 
-        // to hold the character inserted by parser, for example, javascript document.write. 
+        // to hold the character inserted by parser, for example, javascript document.write.
         public StringBuilder parserInsertBuffer;
 
         private bool isEOF;
 
         public enumParseState ParseState;
-        public enumScriptParseState ScriptState;     // Own element, due to change the way of EmitToken to provide ReadNextToken like method for outside. 
+        public enumScriptParseState ScriptState;     // Own element, due to change the way of EmitToken to provide ReadNextToken like method for outside.
 
         public int oldInsertionPoint;
         public int insertionPoint;
@@ -77,7 +74,7 @@ namespace Kooboo.Dom
         }
 
         /// <summary>
-        /// move the reading index location back one, in order for the next consumeNext to read current char. 
+        /// move the reading index location back one, in order for the next consumeNext to read current char.
         /// </summary>
         private void reConsume()
         {
@@ -101,7 +98,7 @@ namespace Kooboo.Dom
         }
 
         /// <summary>
-        /// Move read index advance one, and get current char. 
+        /// Move read index advance one, and get current char.
         /// </summary>
         /// <returns></returns>
         private char consumeNext()
@@ -111,7 +108,7 @@ namespace Kooboo.Dom
         }
 
         /// <summary>
-        /// Lookup a char ahead, 
+        /// Lookup a char ahead,
         /// </summary>
         /// <param name="aheadcount">0=current char.</param>
         /// <returns></returns>
@@ -150,7 +147,7 @@ namespace Kooboo.Dom
         }
 
         /// <summary>
-        /// emit a new character token. 
+        /// emit a new character token.
         /// </summary>
         /// <param name="chr"></param>
         /// <returns></returns>
@@ -187,26 +184,29 @@ namespace Kooboo.Dom
             {
                 case enumParseState.DATA:
                     return Data();
+
                 case enumParseState.RCDATA:
                     return RCDATA();
+
                 case enumParseState.Plaintext:
                     return PlainText();
+
                 case enumParseState.RAWTEXT:
                     return RAWTEXT();
+
                 case enumParseState.Script:
                     return Script();
+
                 default:
                     return createToken(enumHtmlTokenType.EOF);
             }
-
-
         }
 
         /// <summary>
-        /// occure when there is an parsing error. 
+        /// occure when there is an parsing error.
         /// </summary>
         /// <param name="errormessage"></param>
-        /// 
+        ///
         private void ParseError(string errormessage)
         {
             //TODO:
@@ -214,7 +214,7 @@ namespace Kooboo.Dom
         }
 
         /// <summary>
-        /// 8.2.4.1 Data state  
+        /// 8.2.4.1 Data state
         /// </summary>
         private HtmlToken Data()
         {
@@ -242,7 +242,6 @@ namespace Kooboo.Dom
                 return emitTokenChar(current);
             }
             /// U+0026 AMPERSAND (&) Switch to the character reference in data state.
-
             else if (current == '\u0026')
             {
                 HtmlToken token = characterReferenceInDataState();
@@ -254,7 +253,6 @@ namespace Kooboo.Dom
             {
                 return emitTokenChar(current);
             }
-
         }
 
         /// <summary>
@@ -284,11 +282,8 @@ namespace Kooboo.Dom
                 //Anything else
                 //Emit the current input character as a character token.
                 return emitTokenChar(current);
-
             }
-
         }
-
 
         /// <summary>
         /// 8.2.4.2 Character reference in data state
@@ -330,7 +325,6 @@ namespace Kooboo.Dom
             {
                 //parenttoken.currentAttributeValue += '\u0026'.ToString();
                 parenttoken.appendAttributeChar('\u0026');
-
             }
             else
             {
@@ -357,7 +351,6 @@ namespace Kooboo.Dom
             //{
             //    return attributeValueUnquoted(parenttoken);
             //}
-
         }
 
         /// <summary>
@@ -366,7 +359,6 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken characterReferenceInRCDATA()
         {
-
             //Switch to the RCDATA state.
             ParseState = enumParseState.RCDATA;
 
@@ -378,7 +370,6 @@ namespace Kooboo.Dom
             if (token == null)
             {
                 return emitTokenChar('\u0026');
-
             }
             else
             {
@@ -404,7 +395,6 @@ namespace Kooboo.Dom
             //The additional allowed character, if there is one
             if (isEOF || current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020', '\u003C', '\u0026') || (additionalAllowedChar != null && current == additionalAllowedChar))
             {
-               
                 //No characters are consumed, and nothing is returned
                 reConsume();
                 return null;
@@ -426,7 +416,7 @@ namespace Kooboo.Dom
                 {
                     if (CommonIdoms.isAsciiHexDigit(LookupChar(2)))
                     {
-                        moveNext(); // == 0078 or 0058.  the X mark. 
+                        moveNext(); // == 0078 or 0058.  the X mark.
 
                         string hexString = string.Empty;
 
@@ -455,16 +445,13 @@ namespace Kooboo.Dom
                         }
 
                         codepoint = Convert.ToInt32(hexString, 16);
-
                     }
                     else
                     {
-                        //If no characters match the range, then don't consume any characters and unconsume the U+0023 
+                        //If no characters match the range, then don't consume any characters and unconsume the U+0023
                         reConsume();  // unconsume.
                     }
-
                 }
-
                 else
                 {
                     //Anything else
@@ -497,15 +484,14 @@ namespace Kooboo.Dom
                         ParseError("; expected");
                     }
 
-                    int.TryParse(asciiString, out codepoint); 
-   
+                    int.TryParse(asciiString, out codepoint);
                 }
 
                 //If one or more characters match the range, then take them all and interpret the string of characters as a number (either hexadecimal or decimal as appropriate).
-                // we have the codepoint now. 
+                // we have the codepoint now.
 
-                //If that number is one of the numbers in the first column of the following table, 
-                // then this is a parse error. Find the row with that number in the first column, 
+                //If that number is one of the numbers in the first column of the following table,
+                // then this is a parse error. Find the row with that number in the first column,
                 //and return a character token for the Unicode character given in the second column of that row.
 
                 if (CharacterReferences.unicodeCharacters().ContainsKey(codepoint))
@@ -514,7 +500,7 @@ namespace Kooboo.Dom
                     return emitToken(token);
                 }
 
-                // Otherwise, if the number is in the range 0xD800 to 0xDFFF or is greater than 0x10FFFF, 
+                // Otherwise, if the number is in the range 0xD800 to 0xDFFF or is greater than 0x10FFFF,
                 //then this is a parse error. Return a U+FFFD REPLACEMENT CHARACTER character token.
 
                 if ((codepoint >= Convert.ToInt32("0xD800", 16) && codepoint <= Convert.ToInt32("0xDFFF", 16))
@@ -525,12 +511,12 @@ namespace Kooboo.Dom
                     return emitToken(token);
                 }
 
-                ///Otherwise, return a character token for the Unicode character whose code point is that number. 
-                ///Additionally, if the number is in the range 0x0001 to 0x0008, 0x000D to 0x001F, 0x007F to 0x009F, 
-                ///0xFDD0 to 0xFDEF, or is one of 0x000B, 0xFFFE, 0xFFFF, 0x1FFFE, 0x1FFFF, 0x2FFFE, 
+                ///Otherwise, return a character token for the Unicode character whose code point is that number.
+                ///Additionally, if the number is in the range 0x0001 to 0x0008, 0x000D to 0x001F, 0x007F to 0x009F,
+                ///0xFDD0 to 0xFDEF, or is one of 0x000B, 0xFFFE, 0xFFFF, 0x1FFFE, 0x1FFFF, 0x2FFFE,
                 ///0x2FFFF, 0x3FFFE, 0x3FFFF, 0x4FFFE, 0x4FFFF, 0x5FFFE, 0x5FFFF, 0x6FFFE, 0x6FFFF, 0x7FFFE,
-                ///0x7FFFF, 0x8FFFE, 0x8FFFF, 0x9FFFE, 0x9FFFF, 0xAFFFE, 0xAFFFF, 0xBFFFE, 0xBFFFF, 0xCFFFE, 
-                ///0xCFFFF, 0xDFFFE, 0xDFFFF, 0xEFFFE, 0xEFFFF, 0xFFFFE, 0xFFFFF, 0x10FFFE, or 0x10FFFF, 
+                ///0x7FFFF, 0x8FFFE, 0x8FFFF, 0x9FFFE, 0x9FFFF, 0xAFFFE, 0xAFFFF, 0xBFFFE, 0xBFFFF, 0xCFFFE,
+                ///0xCFFFF, 0xDFFFE, 0xDFFFF, 0xEFFFE, 0xEFFFF, 0xFFFFE, 0xFFFFF, 0x10FFFE, or 0x10FFFF,
                 ///then this is a parse error.
                 if (!CharacterReferences.isValidCharacters(codepoint))
                 {
@@ -540,11 +526,10 @@ namespace Kooboo.Dom
                 token.data = char.ConvertFromUtf32(codepoint);
 
                 return emitToken(token);
-
             }
             else
             {
-                //Consume the maximum number of characters possible, with the consumed characters matching one of the 
+                //Consume the maximum number of characters possible, with the consumed characters matching one of the
                 // identifiers in the first column of the named character references table (in a case-sensitive manner).
                 int advancei = 0;
                 string consumeString = string.Empty;
@@ -567,13 +552,13 @@ namespace Kooboo.Dom
                     advancei += 1;
                 }
 
-                //If no match can be made, then no characters are consumed, and nothing is returned. 
-                //In this case, if the characters after the U+0026 AMPERSAND character (&) consist of 
+                //If no match can be made, then no characters are consumed, and nothing is returned.
+                //In this case, if the characters after the U+0026 AMPERSAND character (&) consist of
                 //a sequence of one or more alphanumeric ASCII characters followed by a U+003B SEMICOLON character (;),
                 //then this is a parse error.
                 if (!CharacterReferences.namedCharacters().ContainsKey(consumeString))
                 {
-                    // no consumed. 
+                    // no consumed.
                     reConsume();
                     if (consumeString.LastIndexOf(";") > 0)
                     {
@@ -583,22 +568,22 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-                    // If the character reference is being consumed as part of an attribute, 
-                    // and the last character matched is not a ";" (U+003B) character, 
+                    // If the character reference is being consumed as part of an attribute,
+                    // and the last character matched is not a ";" (U+003B) character,
                     // and the next character is either a "=" (U+003D) character or an alphanumeric ASCII character,
-                    // then, for historical reasons, all the characters that were matched after the U+0026 AMPERSAND 
+                    // then, for historical reasons, all the characters that were matched after the U+0026 AMPERSAND
                     // character (&) must be unconsumed, and nothing is returned.
                     if (partOfAttribute)
                     {
                         int stringlength = consumeString.Length;
                         if (consumeString[stringlength - 1] != '\u003B' && (consumeString[stringlength - 2] == '\u003D' || CommonIdoms.isAlphanumeric(consumeString[stringlength - 2])))
                         {
-                            // then, for historical reasons, all the characters that were matched after the U+0026 AMPERSAND 
+                            // then, for historical reasons, all the characters that were matched after the U+0026 AMPERSAND
                             // character (&) must be unconsumed, and nothing is returned.
 
-                            // do not consume afer &, do not return. 
+                            // do not consume afer &, do not return.
 
-                            //However, if this next character is in fact a "=" (U+003D) character, 
+                            //However, if this next character is in fact a "=" (U+003D) character,
                             //then this is a parse error, because some legacy user agents will misinterpret the markup in those cases.
                             if (consumeString[stringlength - 2] == '\u003D')
                             {
@@ -613,7 +598,6 @@ namespace Kooboo.Dom
                             return emitToken(token);
                         }
                     }
-
                     else
                     {
                         //Otherwise, a character reference is parsed. If the last character matched is not a ";" (U+003B) character, there is a parse error.
@@ -623,13 +607,10 @@ namespace Kooboo.Dom
                         token.data = namedstring;
                         return emitToken(token);
                     }
-
                 }
             }
 
-
             return null;
-
         }
 
         /// <summary>
@@ -652,7 +633,6 @@ namespace Kooboo.Dom
                 //"/" (U+002F)
                 //Switch to the end tag open state.
                 return endTagOpen();
-
             }
             else if (CommonIdoms.isUppercaseAscii(current))
             {
@@ -669,7 +649,6 @@ namespace Kooboo.Dom
                 token.tagName = current.ToString();
                 return tagName(token);
             }
-
             else if (current == '\u003F')
             {
                 //"?" (U+003F)
@@ -677,7 +656,6 @@ namespace Kooboo.Dom
                 ParseError("unexpected ? mark ");
                 return bogusComment();
             }
-
             else
             {
                 //Anything else
@@ -687,10 +665,7 @@ namespace Kooboo.Dom
                 ParseState = enumParseState.DATA;
 
                 return emitTokenChar('\u003C');
-
             }
-
-
         }
 
         /// <summary>
@@ -710,7 +685,6 @@ namespace Kooboo.Dom
             }
             else
             {
-
                 string nextseven = LookupChar(1).ToString() + LookupChar(2).ToString() + LookupChar(3).ToString() + LookupChar(4).ToString() + LookupChar(5).ToString() + LookupChar(6).ToString() + LookupChar(7).ToString();
 
                 nextseven = nextseven.ToUpper();
@@ -723,25 +697,19 @@ namespace Kooboo.Dom
                 }
                 else if (nextseven == "[CDATA[")
                 {
-                    //TODO: check this adjusted current node. 
+                    //TODO: check this adjusted current node.
                     //Otherwise, if there is an adjusted current node and it is not an element in the HTML namespace and the next seven characters are a case-sensitive match for the string "[CDATA[" (the five uppercase letters "CDATA" with a U+005B LEFT SQUARE BRACKET character before and after), then consume those characters and switch to the CDATA section state.
 
                     moveAhead(7);
                     return CDATA();
-
                 }
                 else
                 {
-
                     //Otherwise, this is a parse error. Switch to the bogus comment state. The next character that is consumed, if any, is the first character that will be in the comment.
                     ParseError("unexpected char in mark declaration open");
                     return bogusComment();
-
                 }
-
             }
-
-
         }
 
         /// <summary>
@@ -757,13 +725,13 @@ namespace Kooboo.Dom
                 char current = consumeNext();
 
                 //"tab" (U+0009)//"LF" (U+000A)//"FF" (U+000C)//U+0020 SPACE
-                //Switch to the before attribute name state. 
+                //Switch to the before attribute name state.
                 if (CommonIdoms.isSpaceCharacters(current))
                 ///if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020', '\u000D'))
                 {
                     return beforeAttributeName(token);
                 }
- 
+
                 //"/" (U+002F)
                 //Switch to the self-closing start tag state.
                 else if (current == '\u002F')
@@ -804,10 +772,9 @@ namespace Kooboo.Dom
                 //Anything else
                 //Append the current input character to the current tag token's tag name.
                 else
-                { 
+                {
                     token.tagName += current.ToString();
                 }
-
             }
         }
 
@@ -842,15 +809,11 @@ namespace Kooboo.Dom
                 }
 
                 sb.Append(current.ToString());
-
             }
 
             token.data = sb.ToString();
 
-
-
             return token;
-
         }
 
         /// <summary>
@@ -895,7 +858,6 @@ namespace Kooboo.Dom
                 ParseState = enumParseState.DATA;
 
                 return emitTokenString('\u003C'.ToString() + '\u002F'.ToString());
-
             }
             else
             {
@@ -904,7 +866,6 @@ namespace Kooboo.Dom
                 ParseError("unexpected end tag token");
                 return bogusComment();
             }
-
         }
 
         /// <summary>
@@ -923,7 +884,7 @@ namespace Kooboo.Dom
             //  if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020'))
             if (CommonIdoms.isSpaceCharacters(current))
             {
-                return beforeAttributeName(token);  // recursive,  ignore = do it again. 
+                return beforeAttributeName(token);  // recursive,  ignore = do it again.
             }
             //"/" (U+002F)
             //Switch to the self-closing start tag state.
@@ -951,7 +912,6 @@ namespace Kooboo.Dom
 
                 return attributeName(token);
             }
-
 
             //U+0000 NULL
             //Parse error. Start a new attribute in the current tag token. Set that attribute's name to a U+FFFD REPLACEMENT CHARACTER character, and its value to the empty string. Switch to the attribute name state.
@@ -1007,7 +967,7 @@ namespace Kooboo.Dom
                 //"tab" (U+0009)   //"LF" (U+000A)   //"FF" (U+000C)    //U+0020 SPACE
                 //Switch to the after attribute name state.
                 if (CommonIdoms.isSpaceCharacters(current))
-              //  if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020'))
+                //  if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020'))
                 {
                     return afterAttributeName(token);
                 }
@@ -1067,7 +1027,6 @@ namespace Kooboo.Dom
                     //Anything else
                     //Append the current input character to the current attribute's name.
                     token.currentAttributeName += current.ToString();
-
                 }
             }
         }
@@ -1085,7 +1044,7 @@ namespace Kooboo.Dom
             //"tab" (U+0009)  //"LF" (U+000A)  //"FF" (U+000C) //U+0020 SPACE
             //Ignore the character.
             if (CommonIdoms.isSpaceCharacters(current))
-           // if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020'))
             {
                 return afterAttributeName(token);   //recursive = ignore = advanceone && continue.
             }
@@ -1130,7 +1089,6 @@ namespace Kooboo.Dom
                 //token.currentAttributeValue = string.Empty;
                 token.CleanAttributeValue();
                 return attributeName(token);
-
             }
             else if (isEOF)
             {
@@ -1142,7 +1100,6 @@ namespace Kooboo.Dom
             }
             else
             {
-
                 //U+0022 QUOTATION MARK (")    //"'" (U+0027)          //"<" (U+003C)
                 //Parse error. Treat it as per the "anything else" entry below.
                 if (current == '\u0022' || current == '\u0027' || current == '\u003C')
@@ -1158,7 +1115,6 @@ namespace Kooboo.Dom
                 token.CleanAttributeValue();
                 return attributeName(token);
             }
-
         }
 
         /// <summary>
@@ -1174,7 +1130,7 @@ namespace Kooboo.Dom
             //"tab" (U+0009)   //"LF" (U+000A)   //"FF" (U+000C)    //U+0020 SPACE
             //Ignore the character.
             if (CommonIdoms.isSpaceCharacters(current))
-           // if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020'))
             {
                 return beforeAttributeValue(token);   //recursive = ignore = advanceone && continue.
             }
@@ -1241,7 +1197,6 @@ namespace Kooboo.Dom
                 token.appendAttributeChar(current);
                 return attributeValueUnquoted(token);
             }
-
         }
 
         /// <summary>
@@ -1278,7 +1233,6 @@ namespace Kooboo.Dom
                 reConsume();
                 return beforeAttributeName(token);
             }
-
         }
 
         /// <summary>
@@ -1304,7 +1258,7 @@ namespace Kooboo.Dom
                 //Switch to the character reference in attribute value state, with the additional allowed character being U+0022 QUOTATION MARK (").
                 else if (current == '\u0026')
                 {
-                     characterReferenceInAttributeValue(token, '\u0022');
+                    characterReferenceInAttributeValue(token, '\u0022');
                 }
                 //U+0000 NULL
                 //Parse error. Append a U+FFFD REPLACEMENT CHARACTER character to the current attribute's value.
@@ -1329,10 +1283,7 @@ namespace Kooboo.Dom
                     // token.currentAttributeValue += current.ToString();
                     token.appendAttributeChar(current);
                 }
-
             }
-
-
         }
 
         /// <summary>
@@ -1351,7 +1302,7 @@ namespace Kooboo.Dom
                 //Switch to the before attribute name state.
                 if (CommonIdoms.isSpaceCharacters(current))
                 //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
-               // if (current == '\u0009' || current == '\u000A' || current == '\u000C' || current == '\u0020')
+                // if (current == '\u0009' || current == '\u000A' || current == '\u000C' || current == '\u0020')
                 {
                     return beforeAttributeName(token);
                 }
@@ -1359,7 +1310,7 @@ namespace Kooboo.Dom
                 //Switch to the character reference in attribute value state, with the additional allowed character being ">" (U+003E).
                 else if (current == '\u0026')
                 {
-                      characterReferenceInAttributeValue(token, '\u003E');
+                    characterReferenceInAttributeValue(token, '\u003E');
                 }
 
                 //">" (U+003E)
@@ -1388,7 +1339,6 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-
                     //U+0022 QUOTATION MARK (") //"'" (U+0027) //"<" (U+003C) //"=" (U+003D)  //"`" (U+0060)
                     //Parse error. Treat it as per the "anything else" entry below.
                     if (current == '\u0022' || current == '\u0027' || current == '\u0022' || current == '\u003C' || current == '\u003D' || current == '\u0060')
@@ -1401,15 +1351,9 @@ namespace Kooboo.Dom
                         //Append the current input character to the current attribute's value.
                         // token.currentAttributeValue += current.ToString();
                         token.appendAttributeChar(current);
-
                     }
-
                 }
-
-
             }
-
-
         }
 
         /// <summary>
@@ -1435,7 +1379,7 @@ namespace Kooboo.Dom
                 //Switch to the character reference in attribute value state, with the additional allowed character being "'" (U+0027).
                 else if (current == '\u0026')
                 {
-                      characterReferenceInAttributeValue(token, '\u0027');
+                    characterReferenceInAttributeValue(token, '\u0027');
                 }
                 //U+0000 NULL
                 //Parse error. Append a U+FFFD REPLACEMENT CHARACTER character to the current attribute's value.
@@ -1454,16 +1398,13 @@ namespace Kooboo.Dom
                     reConsume();
                     return Data();
                 }
-
                 else
                 {
                     //Anything else
                     //Append the current input character to the current attribute's value.
                     // token.currentAttributeValue += current.ToString();
                     token.appendAttributeChar(current);
-
                 }
-
             }
         }
 
@@ -1480,13 +1421,12 @@ namespace Kooboo.Dom
             //"tab" (U+0009)   //"LF" (U+000A)   //"FF" (U+000C)  //U+0020 SPACE
             //Switch to the before attribute name state.
             if (CommonIdoms.isSpaceCharacters(current))
-           // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 return beforeAttributeName(token);
             }
             //"/" (U+002F)
             //Switch to the self-closing start tag state.
-
             else if (current == '\u002F')
             {
                 return selfClosingStartTag(token);
@@ -1559,7 +1499,6 @@ namespace Kooboo.Dom
                 reConsume();
                 ParseState = enumParseState.DATA;
                 return emitToken(token);
-
             }
             else
             {
@@ -1568,7 +1507,6 @@ namespace Kooboo.Dom
                 token.data += current.ToString();
                 return this.comment(token);
             }
-
         }
 
         /// <summary>
@@ -1578,7 +1516,6 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken commentStartDash(HtmlToken token)
         {
-
             //Consume the next input character:
             char current = consumeNext();
 
@@ -1617,12 +1554,10 @@ namespace Kooboo.Dom
             }
             else
             {
-
                 //Anything else
                 //Append a "-" (U+002D) character and the current input character to the comment token's data. Switch to the comment state.
                 token.data += '\u002D'.ToString() + current.ToString();
                 return this.comment(token);
-
             }
         }
 
@@ -1668,7 +1603,6 @@ namespace Kooboo.Dom
                     //Append the current input character to the comment token's data.
                     token.data += current.ToString();
                 }
-
             }
         }
 
@@ -1816,7 +1750,6 @@ namespace Kooboo.Dom
                 ParseError("unexpected EOF");
                 reConsume();
                 return emitToken(token);
-
             }
             else
             {
@@ -1844,7 +1777,6 @@ namespace Kooboo.Dom
                 HtmlToken token = characterReferenceInRCDATA();
                 token.startIndex = startindex;
                 return emitToken(token);
-
             }
             //"<" (U+003C)
             //Switch to the RCDATA less-than sign state.
@@ -1866,16 +1798,13 @@ namespace Kooboo.Dom
             else if (current == '\u0000')
             {
                 return emitTokenChar('\uFFFD');
-
             }
             else
             {
                 //Anything else
                 //Emit the current input character as a character token.
                 return emitTokenChar(current);
-
             }
-
         }
 
         /// <summary>
@@ -1884,7 +1813,6 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken RCDATALessThanSign()
         {
-
             //Consume the next input character:
 
             char current = consumeNext();
@@ -1898,14 +1826,12 @@ namespace Kooboo.Dom
             }
             else
             {
-
                 //Anything else
                 //Switch to the RCDATA state. Emit a U+003C LESS-THAN SIGN character token. Reconsume the current input character.
                 ParseState = enumParseState.RCDATA;
                 reConsume();
                 return emitTokenChar('\u003C');
             }
-
         }
 
         /// <summary>
@@ -1914,14 +1840,12 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken RCDATAEndTagOpen()
         {
-
             //Consume the next input character:
             char current = consumeNext();
 
             //Uppercase ASCII letter
             if (CommonIdoms.isUppercaseAscii(current))
             {
-
                 //Create a new end tag token, and set its tag name to the lowercase version of the current input character. Append the current input character to the temporary buffer. Finally, switch to the RCDATA end tag name state. (Don't emit the token yet; further details will be filled in before it is emitted.)
                 HtmlToken token = createToken(enumHtmlTokenType.EndTag);
                 token.tagName = current.ToString().ToLower();
@@ -1929,7 +1853,6 @@ namespace Kooboo.Dom
                 _buffer.Append(current);
 
                 return RCDATAEndTagName(token);
-
             }
             //Lowercase ASCII letter
             else if (CommonIdoms.isLowercaseAscii(current))
@@ -1941,7 +1864,6 @@ namespace Kooboo.Dom
                 _buffer.Append(current);
 
                 return RCDATAEndTagName(token);
-
             }
             //Anything else
             else
@@ -1953,7 +1875,6 @@ namespace Kooboo.Dom
 
                 return emitTokenString('\u003C'.ToString() + '\u002F'.ToString());
             }
-
         }
 
         /// <summary>
@@ -1970,11 +1891,10 @@ namespace Kooboo.Dom
 
                 //"tab" (U+0009)        //"LF" (U+000A)        //"FF" (U+000C)        //U+0020 SPACE
                 if (CommonIdoms.isSpaceCharacters(current))
-             // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+                // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
                 {
                     //If the current end tag token is an appropriate end tag token, then switch to the before attribute name state. Otherwise, treat it as per the "anything else" entry below.
                     return beforeAttributeName(token);
-
                 }
 
                 //"/" (U+002F)
@@ -1997,7 +1917,6 @@ namespace Kooboo.Dom
                 {
                     token.tagName += current.ToString().ToLower();
                     _buffer.Append(current);
-
                 }
 
                 //Lowercase ASCII letter
@@ -2017,7 +1936,6 @@ namespace Kooboo.Dom
 
                     string chars = '\u003C'.ToString() + '\u002F'.ToString() + _buffer.ToString();
                     return emitTokenString(chars);
-
                 }
             }
         }
@@ -2039,7 +1957,6 @@ namespace Kooboo.Dom
                 HtmlToken token = RAWTEXTLessThanSign();
                 token.startIndex = startindex;
                 return emitToken(token);
-
             }
             //U+0000 NULL
             //Parse error. Emit a U+FFFD REPLACEMENT CHARACTER character token.
@@ -2048,7 +1965,6 @@ namespace Kooboo.Dom
                 ParseError("unexpected null character");
 
                 return emitTokenChar('\uFFFD');
-
             }
             //EOF
             //Emit an end-of-file token.
@@ -2062,7 +1978,6 @@ namespace Kooboo.Dom
                 //Emit the current input character as a character token.
                 return emitTokenChar(current);
             }
-
         }
 
         /// <summary>
@@ -2090,8 +2005,8 @@ namespace Kooboo.Dom
 
                 return emitTokenChar('\u003C');
             }
-
         }
+
         /// <summary>
         /// 8.2.4.15 RAWTEXT end tag open state
         /// </summary>
@@ -2113,7 +2028,6 @@ namespace Kooboo.Dom
                     _buffer.Append(current);
 
                     return RAWTEXTEndTagName(token);
-
                 }
                 //Lowercase ASCII letter
                 else if (CommonIdoms.isLowercaseAscii(current))
@@ -2135,13 +2049,8 @@ namespace Kooboo.Dom
                     reConsume();
 
                     return emitTokenString('\u003C'.ToString() + '\u002F'.ToString());
-
                 }
-
             }
-
-
-
         }
 
         /// <summary>
@@ -2176,7 +2085,6 @@ namespace Kooboo.Dom
                     //If the current end tag token is an appropriate end tag token, then switch to the data state and emit the current tag token. Otherwise, treat it as per the "anything else" entry below.
                     ParseState = enumParseState.DATA;
                     return emitToken(token);
-
                 }
                 //Uppercase ASCII letter
                 else if (CommonIdoms.isUppercaseAscii(current))
@@ -2201,7 +2109,6 @@ namespace Kooboo.Dom
                     reConsume();
 
                     return emitTokenString('\u003C'.ToString() + '\u002F'.ToString() + _buffer.ToString());
-
                 }
             }
         }
@@ -2259,7 +2166,6 @@ namespace Kooboo.Dom
         {
             switch (ScriptState)
             {
-
                 case enumScriptParseState.dataEscapeStart:
                     return ScriptDataEscapeStart();
 
@@ -2296,7 +2202,6 @@ namespace Kooboo.Dom
                 default:
                     return Script();
             }
-
         }
 
         /// <summary>
@@ -2305,7 +2210,6 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken ScriptDataLessThanSign()
         {
-
             //Consume the next input character:
             char current = consumeNext();
 
@@ -2324,8 +2228,6 @@ namespace Kooboo.Dom
                 ScriptState = enumScriptParseState.dataEscapeStart;
 
                 return emitTokenString('\u003C'.ToString() + '\u0021'.ToString());
-
-
             }
             else
             {
@@ -2337,7 +2239,6 @@ namespace Kooboo.Dom
                 reConsume();
 
                 return emitTokenChar('\u003C');
-
             }
         }
 
@@ -2358,19 +2259,16 @@ namespace Kooboo.Dom
                 _buffer.Append(current);
                 token.tagName = current.ToString().ToLower();
                 return ScriptDataEndTagName(token);
-
             }
 
             //Lowercase ASCII letter
             //Create a new end tag token, and set its tag name to the current input character. Append the current input character to the temporary buffer. Finally, switch to the script data end tag name state. (Don't emit the token yet; further details will be filled in before it is emitted.)
             else if (CommonIdoms.isLowercaseAscii(current))
             {
-
                 HtmlToken token = createToken(enumHtmlTokenType.EndTag);
                 _buffer.Append(current);
                 token.tagName = current.ToString();
                 return ScriptDataEndTagName(token);
-
             }
             else
             {
@@ -2381,9 +2279,7 @@ namespace Kooboo.Dom
 
                 reConsume();
                 return emitTokenString('\u003C'.ToString() + '\u002F'.ToString());
-
             }
-
         }
 
         /// <summary>
@@ -2392,7 +2288,6 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken ScriptDataEscapeStart()
         {
-
             //Consume the next input character:
 
             char current = consumeNext();
@@ -2406,21 +2301,16 @@ namespace Kooboo.Dom
                 ScriptState = enumScriptParseState.dataEscapeStartDash;
 
                 return emitTokenChar('\u002D');
-
             }
-
             else
             {
-
                 //Anything else
                 //Switch to the script data state. Reconsume the current input character.
                 ParseState = enumParseState.Script;
                 ScriptState = enumScriptParseState.initial;
                 reConsume();
                 return Script();
-
             }
-
         }
 
         /// <summary>
@@ -2474,7 +2364,6 @@ namespace Kooboo.Dom
                     //Append the current input character to the current tag token's tag name. Append the current input character to the temporary buffer.
                     token.tagName += current.ToString();
                     _buffer.Append(current);
-
                 }
                 else
                 {
@@ -2487,10 +2376,7 @@ namespace Kooboo.Dom
                     reConsume();
 
                     return emitTokenString('\u003C'.ToString() + '\u002F'.ToString() + _buffer.ToString());
-
                 }
-
-
             }
         }
 
@@ -2511,7 +2397,6 @@ namespace Kooboo.Dom
                 ScriptState = enumScriptParseState.dataEscapedDashDash;
 
                 return emitTokenChar('\u002D');
-
             }
             else
             {
@@ -2523,7 +2408,6 @@ namespace Kooboo.Dom
 
                 return Script();
             }
-
         }
 
         /// <summary>
@@ -2551,10 +2435,8 @@ namespace Kooboo.Dom
 
             //">" (U+003E)
             //Switch to the script data state. Emit a U+003E GREATER-THAN SIGN character token.
-
             else if (current == '\u003E')
             {
-
                 ParseState = enumParseState.Script;
                 ScriptState = enumScriptParseState.initial;
 
@@ -2591,9 +2473,7 @@ namespace Kooboo.Dom
                 ScriptState = enumScriptParseState.dataEscaped;
 
                 return emitTokenChar(current);
-
             }
-
         }
 
         /// <summary>
@@ -2623,12 +2503,10 @@ namespace Kooboo.Dom
                 ScriptState = enumScriptParseState.dataDoubleEscapeStart;
 
                 return emitTokenString('\u003C'.ToString() + current.ToString());
-
             }
             //Lowercase ASCII letter
             else if (CommonIdoms.isLowercaseAscii(current))
             {
-
                 //Set the temporary buffer to the empty string. Append the current input character to the temporary buffer. Switch to the script data double escape start state. Emit a U+003C LESS-THAN SIGN character token and the current input character as a character token.
                 _buffer.Clear();
                 _buffer.Append(current.ToString());
@@ -2648,9 +2526,7 @@ namespace Kooboo.Dom
 
                 return emitTokenChar('\u003C');
             }
-
         }
-
 
         /// <summary>
         /// 8.2.4.26 Script data escaped end tag open state
@@ -2672,7 +2548,6 @@ namespace Kooboo.Dom
                 _buffer.Append(current);
 
                 return ScriptDataEscapedEndTagName(token);
-
             }
 
             //Lowercase ASCII letter
@@ -2685,7 +2560,6 @@ namespace Kooboo.Dom
                 _buffer.Append(current);
 
                 return ScriptDataEscapedEndTagName(token);
-
             }
             else
             {
@@ -2697,10 +2571,8 @@ namespace Kooboo.Dom
                 reConsume();
 
                 return emitTokenString('\u003C'.ToString() + '\u002F'.ToString());
-
             }
         }
-
 
         /// <summary>
         /// 8.2.4.28 Script data double escape start state
@@ -2708,12 +2580,11 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken ScriptDataDoubleEscapeStart()
         {
-
             //Consume the next input character:
             char current = consumeNext();
 
             //"tab" (U+0009)   //"LF" (U+000A)   //"FF" (U+000C)  //U+0020 SPACE   //"/" (U+002F)   //">" (U+003E)
-            if (current.isOneOf('\u0009', '\u000A','\u000D', '\u000C', '\u0020', '\u002F', '\u003E'))
+            if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020', '\u002F', '\u003E'))
             {
                 //If the temporary buffer is the string "script", then switch to the script data double escaped state. Otherwise, switch to the script data escaped state. Emit the current input character as a character token.
                 if (_buffer.ToString().ToLower() == "script")
@@ -2726,7 +2597,6 @@ namespace Kooboo.Dom
                     ScriptState = enumScriptParseState.dataEscaped;
 
                     return emitTokenChar(current);
-
                 }
             }
 
@@ -2738,7 +2608,6 @@ namespace Kooboo.Dom
                 _buffer.Append(current.ToString().ToLower());
 
                 return emitTokenChar(current);
-
             }
             //Lowercase ASCII letter
             else if (CommonIdoms.isLowercaseAscii(current))
@@ -2747,7 +2616,6 @@ namespace Kooboo.Dom
                 _buffer.Append(current.ToString().ToLower());
 
                 return emitTokenChar(current);
-
             }
             else
             {
@@ -2764,7 +2632,6 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken ScriptDataDoubleEscapedDash()
         {
-
             //Consume the next input character:
             char current = consumeNext();
 
@@ -2777,7 +2644,6 @@ namespace Kooboo.Dom
                 ScriptState = enumScriptParseState.dataDoubleEscapedDashDash;
 
                 return emitTokenChar('\u002D');
-
             }
             //"<" (U+003C)
             else if (current == '\u003C')
@@ -2796,7 +2662,6 @@ namespace Kooboo.Dom
                 ParseError("unexpected null character");
 
                 return emitTokenChar('\uFFFD');
-
             }
 
             //EOF
@@ -2816,7 +2681,6 @@ namespace Kooboo.Dom
                 ScriptState = enumScriptParseState.dataDoubleEscaped;
 
                 return emitTokenChar(current);
-
             }
         }
 
@@ -2837,7 +2701,6 @@ namespace Kooboo.Dom
                 ScriptState = enumScriptParseState.dataDoubleEscapedDash;
 
                 return emitTokenChar('\u002D');
-
             }
             //"<" (U+003C)
             else if (current == '\u003C')
@@ -2847,7 +2710,6 @@ namespace Kooboo.Dom
                 ScriptState = enumScriptParseState.dataDoubleEscapedLessThanSign;
 
                 return emitTokenChar('\u003C');
-
             }
 
             //U+0000 NULL
@@ -2857,7 +2719,6 @@ namespace Kooboo.Dom
                 ParseError("unexpected null character");
 
                 return emitTokenChar('\uFFFD');
-
             }
             //EOF
             else if (isEOF)
@@ -2897,7 +2758,6 @@ namespace Kooboo.Dom
                 ScriptState = enumScriptParseState.dataEscapedDash;
 
                 return emitTokenChar('\u002D');
-
             }
             //"<" (U+003C)
             else if (current == '\u003C')
@@ -2913,7 +2773,6 @@ namespace Kooboo.Dom
                 ParseError("unexpected null character");
 
                 return emitTokenChar('\uFFFD');
-
             }
             //EOF
             else if (isEOF)
@@ -2942,13 +2801,12 @@ namespace Kooboo.Dom
         {
             while (true)
             {
-
                 //Consume the next input character:
                 char current = consumeNext();
 
                 //"tab" (U+0009)       //"LF" (U+000A)           //"FF" (U+000C)           //U+0020 SPACE
                 if (CommonIdoms.isSpaceCharacters(current))
-               // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+                // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
                 {
                     //If the current end tag token is an appropriate end tag token, then switch to the before attribute name state. Otherwise, treat it as per the "anything else" entry below.
                     return beforeAttributeName(token);
@@ -2973,7 +2831,6 @@ namespace Kooboo.Dom
                     //Append the lowercase version of the current input character (add 0x0020 to the character's code point) to the current tag token's tag name. Append the current input character to the temporary buffer.
                     token.tagName += current.ToString().ToLower();
                     _buffer.Append(current);
-
                 }
                 //Lowercase ASCII letter
                 else if (CommonIdoms.isLowercaseAscii(current))
@@ -2981,7 +2838,6 @@ namespace Kooboo.Dom
                     //Append the current input character to the current tag token's tag name. Append the current input character to the temporary buffer.
                     token.tagName += current.ToString();
                     _buffer.Append(current);
-
                 }
                 else
                 {
@@ -2993,11 +2849,8 @@ namespace Kooboo.Dom
                     reConsume();
 
                     return emitTokenString('\u003C'.ToString() + '\u002F'.ToString() + _buffer.ToString());
-
-
                 }
             }
-
         }
 
         /// <summary>
@@ -3094,7 +2947,6 @@ namespace Kooboo.Dom
                 ScriptState = enumScriptParseState.dataDoubleEscaped;
 
                 return emitTokenChar('\uFFFD');
-
             }
 
             //EOF
@@ -3134,7 +2986,6 @@ namespace Kooboo.Dom
                 ScriptState = enumScriptParseState.dataDoubleEscapeEnd;
 
                 return emitTokenChar('\u002F');
-
             }
             else
             {
@@ -3142,9 +2993,7 @@ namespace Kooboo.Dom
                 //Switch to the script data double escaped state. Reconsume the current input character.
                 reConsume();
                 return ScriptDataDoubleEscaped();
-
             }
-
         }
 
         /// <summary>
@@ -3157,7 +3006,7 @@ namespace Kooboo.Dom
             char current = consumeNext();
 
             //"tab" (U+0009)    //"LF" (U+000A)   //"FF" (U+000C)    //U+0020 SPACE    //"/" (U+002F)    //">" (U+003E)
-            if (current.isOneOf('\u0009', '\u000A','\u000D', '\u000C', '\u0020', '\u002F', '\u003E'))
+            if (current.isOneOf('\u0009', '\u000A', '\u000D', '\u000C', '\u0020', '\u002F', '\u003E'))
             {
                 //If the temporary buffer is the string "script", then switch to the script data escaped state. Otherwise, switch to the script data double escaped state. Emit the current input character as a character token.
                 if (_buffer.ToString().ToLower() == "script")
@@ -3196,7 +3045,6 @@ namespace Kooboo.Dom
                 reConsume();
                 return ScriptDataDoubleEscaped();
             }
-
         }
 
         /// <summary>
@@ -3224,7 +3072,6 @@ namespace Kooboo.Dom
                     {
                         moveAhead(2);
                         return emitTokenString(sb.ToString());
-
                     }
                     else
                     {
@@ -3240,12 +3087,10 @@ namespace Kooboo.Dom
                 {
                     sb.Append(current);
                 }
-
             }
 
             //If the end of the file was reached, reconsume the EOF character.
         }
-
 
         /// <summary>
         /// 8.2.4.52 DOCTYPE state
@@ -3255,7 +3100,6 @@ namespace Kooboo.Dom
         {
             //Consume the next input character:
             char current = consumeNext();
-
 
             //"tab" (U+0009)        //"LF" (U+000A)       //"FF" (U+000C)       //U+0020 SPACE
             if (CommonIdoms.isSpaceCharacters(current))
@@ -3277,7 +3121,6 @@ namespace Kooboo.Dom
                 reConsume();
 
                 return token;
-
             }
             else
             {
@@ -3288,7 +3131,6 @@ namespace Kooboo.Dom
                 return beforeDOCTYPEName();
             }
         }
-
 
         /// <summary>
         /// 8.2.4.53 Before DOCTYPE name state
@@ -3301,7 +3143,7 @@ namespace Kooboo.Dom
 
             //"tab" (U+0009)      //"LF" (U+000A)      //"FF" (U+000C)     //U+0020 SPACE
             if (CommonIdoms.isSpaceCharacters(current))
-         // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 return beforeDOCTYPEName();
                 //Ignore the character.
@@ -3314,7 +3156,6 @@ namespace Kooboo.Dom
                 HtmlToken token = createToken(enumHtmlTokenType.DocType);
                 token.name = current.ToString().ToLower();
                 return DOCTYPEName(token);
-
             }
             //U+0000 NULL
             else if (current == '\u0000')
@@ -3346,7 +3187,6 @@ namespace Kooboo.Dom
                 token.forceQuirks = true;
 
                 return token;
-
             }
             else
             {
@@ -3356,9 +3196,7 @@ namespace Kooboo.Dom
                 token.name = current.ToString();
                 return DOCTYPEName(token);
             }
-
         }
-
 
         /// <summary>
         /// 8.2.4.54 DOCTYPE name state
@@ -3366,16 +3204,14 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken DOCTYPEName(HtmlToken token)
         {
-
             //Consume the next input character:
             while (true)
             {
                 char current = consumeNext();
 
-
                 //"tab" (U+0009)      //"LF" (U+000A)      //"FF" (U+000C)      //U+0020 SPACE
                 if (CommonIdoms.isSpaceCharacters(current))
-              //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+                //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
                 {
                     return afterDOCTYPEName(token);
                     //Switch to the after DOCTYPE name state.
@@ -3387,14 +3223,12 @@ namespace Kooboo.Dom
                     ParseState = enumParseState.DATA;
 
                     return emitToken(token);
-
                 }
                 //Uppercase ASCII letter
                 else if (CommonIdoms.isUppercaseAscii(current))
                 {
                     //Append the lowercase version of the current input character (add 0x0020 to the character's code point) to the current DOCTYPE token's name.
                     token.name += current.ToString().ToLower();
-
                 }
                 //U+0000 NULL
                 else if (current == '\u0000')
@@ -3417,7 +3251,6 @@ namespace Kooboo.Dom
                     //Anything else
                     //Append the current input character to the current DOCTYPE token's name.
                     token.name += current.ToString();
-
                 }
             }
         }
@@ -3434,7 +3267,7 @@ namespace Kooboo.Dom
 
             //"tab" (U+0009)     //"LF" (U+000A)    //"FF" (U+000C)   //U+0020 SPACE
             if (CommonIdoms.isSpaceCharacters(current))
-          // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 //Ignore the character.
                 return afterDOCTYPEName(token);
@@ -3497,7 +3330,7 @@ namespace Kooboo.Dom
 
             //"tab" (U+0009)     //"LF" (U+000A)     //"FF" (U+000C)   //U+0020 SPACE
             if (CommonIdoms.isSpaceCharacters(current))
-          // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 //Switch to the before DOCTYPE public identifier state.
                 return beforeDOCTYPEPublicIdentifier(token);
@@ -3506,7 +3339,6 @@ namespace Kooboo.Dom
             //U+0022 QUOTATION MARK (")
             else if (current == '\u0022')
             {
-
                 //Parse error. Set the DOCTYPE token's public identifier to the empty string (not missing), then switch to the DOCTYPE public identifier (double-quoted) state.
                 ParseError("unexpected quotation mark");
                 token.publicId = string.Empty;
@@ -3548,7 +3380,6 @@ namespace Kooboo.Dom
                 token.forceQuirks = true;
                 return bogusDOCTYPE(token);
             }
-
         }
 
         /// <summary>
@@ -3558,13 +3389,12 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken afterDOCTYPESystemKeyword(HtmlToken token)
         {
-
             //Consume the next input character:
             char current = consumeNext();
 
             //"tab" (U+0009)    //"LF" (U+000A)       //"FF" (U+000C)       //U+0020 SPACE
             if (CommonIdoms.isSpaceCharacters(current))
-         // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 //Switch to the before DOCTYPE system identifier state.
                 return beforeDOCTYPESystemIdentifier(token);
@@ -3585,7 +3415,6 @@ namespace Kooboo.Dom
                 ParseError("unexpected '");
                 token.systemId = string.Empty;
                 return DOCTYPESystemIdentifierSingleQuoted(token);
-
             }
             //">" (U+003E)
             else if (current == '\u003E')
@@ -3647,7 +3476,6 @@ namespace Kooboo.Dom
                 //Ignore the character
                 return bogusDOCTYPE(token);
             }
-
         }
 
         /// <summary>
@@ -3657,13 +3485,12 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken beforeDOCTYPEPublicIdentifier(HtmlToken token)
         {
-
             //Consume the next input character:
             char current = consumeNext();
 
             //"tab" (U+0009)      //"LF" (U+000A)           //"FF" (U+000C)           //U+0020 SPACE
             if (CommonIdoms.isSpaceCharacters(current))
-           //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 //Ignore the character.
                 return beforeDOCTYPEPublicIdentifier(token);
@@ -3711,7 +3538,6 @@ namespace Kooboo.Dom
                 return bogusDOCTYPE(token);
             }
         }
-
 
         /// <summary>
         /// 8.2.4.58 DOCTYPE public identifier (double-quoted) state
@@ -3766,7 +3592,6 @@ namespace Kooboo.Dom
             }
         }
 
-
         /// <summary>
         /// 8.2.4.59 DOCTYPE public identifier (single-quoted) state
         /// </summary>
@@ -3791,7 +3616,6 @@ namespace Kooboo.Dom
                     //Parse error. Append a U+FFFD REPLACEMENT CHARACTER character to the current DOCTYPE token's public identifier.
                     ParseError("unexpected null char");
                     token.publicId += '\uFFFD'.ToString();
-
                 }
                 //">" (U+003E)
                 else if (current == '\u003E')
@@ -3819,9 +3643,7 @@ namespace Kooboo.Dom
                     token.publicId += current.ToString();
                 }
             }
-
         }
-
 
         /// <summary>
         /// 8.2.4.60 After DOCTYPE public identifier state
@@ -3835,11 +3657,10 @@ namespace Kooboo.Dom
 
             //"tab" (U+0009)      //"LF" (U+000A)       //"FF" (U+000C)         //U+0020 SPACE
             if (CommonIdoms.isSpaceCharacters(current))
-          // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 //Switch to the between DOCTYPE public and system identifiers state.
                 return betweenDOCTYPEPublicAndSystemIdentifier(token);
-
             }
             //">" (U+003E)
             else if (current == '\u003E')
@@ -3891,14 +3712,13 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken betweenDOCTYPEPublicAndSystemIdentifier(HtmlToken token)
         {
-
             //Consume the next input character:
             char current = consumeNext();
 
             //"tab" (U+0009)    //"LF" (U+000A)        //"FF" (U+000C)     //U+0020 SPACE
             //Ignore the character.
             if (CommonIdoms.isSpaceCharacters(current))
-           //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 return betweenDOCTYPEPublicAndSystemIdentifier(token);
             }
@@ -3909,7 +3729,6 @@ namespace Kooboo.Dom
                 //Switch to the data state. Emit the current DOCTYPE token.
                 ParseState = enumParseState.DATA;
                 return token;
-
             }
             //U+0022 QUOTATION MARK (")
             else if (current == '\u0022')
@@ -3917,7 +3736,6 @@ namespace Kooboo.Dom
                 //Set the DOCTYPE token's system identifier to the empty string (not missing), then switch to the DOCTYPE system identifier (double-quoted) state.
                 token.systemId = string.Empty;
                 return DOCTYPESystemIdentifierDoubleQuoted(token);
-
             }
             //"'" (U+0027)
             else if (current == '\u0027')
@@ -3946,7 +3764,6 @@ namespace Kooboo.Dom
             }
         }
 
-
         /// <summary>
         /// 8.2.4.64 DOCTYPE system identifier (double-quoted) state
         /// </summary>
@@ -3956,7 +3773,6 @@ namespace Kooboo.Dom
         {
             while (true)
             {
-
                 //Consume the next input character:
                 char current = consumeNext();
 
@@ -3999,7 +3815,6 @@ namespace Kooboo.Dom
             }
         }
 
-
         /// <summary>
         /// 8.2.4.65 DOCTYPE system identifier (single-quoted) state
         /// </summary>
@@ -4009,7 +3824,6 @@ namespace Kooboo.Dom
         {
             while (true)
             {
-
                 //Consume the next input character:
                 char current = consumeNext();
 
@@ -4050,12 +3864,9 @@ namespace Kooboo.Dom
                     //Anything else
                     //Append the current input character to the current DOCTYPE token's system identifier.
                     token.systemId += current.ToString();
-
                 }
             }
-
         }
-
 
         /// <summary>
         /// 8.2.4.63 Before DOCTYPE system identifier state
@@ -4064,18 +3875,16 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken beforeDOCTYPESystemIdentifier(HtmlToken token)
         {
-
             //Consume the next input character:
             char current = consumeNext();
 
             //"tab" (U+0009)     //"LF" (U+000A)      //"FF" (U+000C)      //U+0020 SPACE
             //Ignore the character.
             if (CommonIdoms.isSpaceCharacters(current))
-           //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            //if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 return beforeDOCTYPESystemIdentifier(token);
             }
-
 
             //U+0022 QUOTATION MARK (")
             else if (current == '\u0022')
@@ -4084,7 +3893,6 @@ namespace Kooboo.Dom
 
                 token.systemId = string.Empty;
                 return DOCTYPESystemIdentifierDoubleQuoted(token);
-
             }
             //"'" (U+0027)
             else if (current == '\u0027')
@@ -4092,7 +3900,6 @@ namespace Kooboo.Dom
                 //Set the DOCTYPE token's system identifier to the empty string (not missing), then switch to the DOCTYPE system identifier (single-quoted) state.
                 token.systemId = string.Empty;
                 return DOCTYPESystemIdentifierSingleQuoted(token);
-
             }
             //">" (U+003E)
             else if (current == '\u003E')
@@ -4121,7 +3928,6 @@ namespace Kooboo.Dom
                 token.forceQuirks = true;
                 return bogusDOCTYPE(token);
             }
-
         }
 
         /// <summary>
@@ -4131,14 +3937,13 @@ namespace Kooboo.Dom
         /// <returns></returns>
         private HtmlToken afterDOCTYPESystemIdentifier(HtmlToken token)
         {
-
             //Consume the next input character:
             char current = consumeNext();
 
             //"tab" (U+0009)       //"LF" (U+000A)           //"FF" (U+000C)           //U+0020 SPACE
             //Ignore the character.
             if (CommonIdoms.isSpaceCharacters(current))
-           // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
+            // if (current.isOneOf('\u0009', '\u000A', '\u000C', '\u0020'))
             {
                 return afterDOCTYPESystemIdentifier(token);
             }
@@ -4168,7 +3973,5 @@ namespace Kooboo.Dom
                 return bogusDOCTYPE(token);
             }
         }
-
     }
-
 }

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Globalization;
-using System.Text;
-using Jint.Native.Number.Dtoa;
+﻿using Jint.Native.Number.Dtoa;
 using Jint.Runtime;
 using Jint.Runtime.Interop;
+using System;
+using System.Globalization;
+using System.Text;
 
 namespace Jint.Native.Number
 {
@@ -154,7 +154,7 @@ namespace Jint.Native.Number
 
             // Get the number of decimals
             string str = x.ToString("e23", CultureInfo.InvariantCulture);
-            int decimals = str.IndexOfAny(new [] { '.', 'e' });
+            int decimals = str.IndexOfAny(new[] { '.', 'e' });
             decimals = decimals == -1 ? str.Length : decimals;
 
             p -= decimals;
@@ -170,7 +170,7 @@ namespace Jint.Native.Number
                 throw new JavaScriptException(Engine.TypeError);
             }
 
-            var radix = arguments.At(0) == JsValue.Undefined ? 10 : (int) TypeConverter.ToInteger(arguments.At(0));
+            var radix = arguments.At(0) == JsValue.Undefined ? 10 : (int)TypeConverter.ToInteger(arguments.At(0));
 
             if (radix < 2 || radix > 36)
             {
@@ -201,11 +201,11 @@ namespace Jint.Native.Number
 
             if (radix == 10)
             {
-                return ToNumberString(x);    
+                return ToNumberString(x);
             }
 
-            var integer = (long) x;
-            var fraction = x -  integer;
+            var integer = (long)x;
+            var fraction = x - integer;
 
             string result = ToBase(integer, radix);
             if (!fraction.Equals(0))
@@ -249,8 +249,8 @@ namespace Jint.Native.Number
             var result = new StringBuilder();
             while (n > 0 && result.Length < 50) // arbitrary limit
             {
-                var c = n*radix;
-                var d = (int) c;
+                var c = n * radix;
+                var d = (int)c;
                 n = c - d;
 
                 result.Append(digits[d].ToString());
@@ -259,7 +259,7 @@ namespace Jint.Native.Number
             return result.ToString();
         }
 
-        public static string ToNumberString(double m) 
+        public static string ToNumberString(double m)
         {
             if (double.IsNaN(m))
             {
@@ -300,7 +300,7 @@ namespace Jint.Native.Number
             {
                 s = rFormat.Replace(".", "").TrimStart('0').TrimEnd('0');
             }
-        
+
             const string format = "0.00000000000000000e0";
             var parts = m.ToString(format, CultureInfo.InvariantCulture).Split('e');
             if (s == null)
@@ -310,7 +310,7 @@ namespace Jint.Native.Number
 
             var n = int.Parse(parts[1]) + 1;
             var k = s.Length;
-            
+
             if (k <= n && n <= 21)
             {
                 return s + new string('0', n - k);

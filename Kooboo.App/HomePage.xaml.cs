@@ -1,13 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.App.Models;
-using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-
 
 namespace Kooboo.App
 {
@@ -16,17 +12,17 @@ namespace Kooboo.App
     /// </summary>
     public partial class HomePage : Page
     {
-        private readonly HomeViewModel vm;
+        private readonly HomeViewModel _vm;
 
         public HomePage()
         {
             InitializeComponent();
-            vm = new HomeViewModel
+            _vm = new HomeViewModel
             {
                 Title = Data.Language.Hardcoded.GetValue("Home"),
                 From = this,
             };
-            DataContext = vm;
+            DataContext = _vm;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -36,9 +32,9 @@ namespace Kooboo.App
 
         private void Init()
         {
-            vm.Done = true;
-            vm.ButtonText = Data.Language.Hardcoded.GetValue("Start");
-            vm.Description = Data.Language.Hardcoded.GetValue("Kooboo Ready at port") + ": " + Kooboo.Data.AppSettings.CurrentUsedPort.ToString();
+            _vm.Done = true;
+            _vm.ButtonText = Data.Language.Hardcoded.GetValue("Start");
+            _vm.Description = Data.Language.Hardcoded.GetValue("Kooboo Ready at port") + ": " + Kooboo.Data.AppSettings.CurrentUsedPort.ToString();
             Img.VerticalAlignment = VerticalAlignment.Top;
             btn.VerticalAlignment = VerticalAlignment.Top;
             txt.VerticalAlignment = VerticalAlignment.Top;

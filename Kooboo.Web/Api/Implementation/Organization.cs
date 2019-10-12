@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Collections.Generic;
 using Kooboo.Api;
 using Kooboo.Data;
 using Kooboo.Data.Models;
-using System;
 using Kooboo.Web.ViewModel;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Web.Api
 {
@@ -65,7 +65,6 @@ namespace Kooboo.Web.Api
             return null;
         }
 
-
         public SimpleUser ChangeUserOrg(Guid organizationId, ApiCall call)
         {
             var user = GlobalDb.Users.ChangeOrg(call.Context.User.Id, organizationId);
@@ -102,7 +101,6 @@ namespace Kooboo.Web.Api
             return GlobalDb.Organization.DeleteUser(userName, organizationId);
         }
 
-
         public Organization GetOrg(ApiCall call)
         {
             var organizationId = call.Context.User.CurrentOrgId;
@@ -114,8 +112,7 @@ namespace Kooboo.Web.Api
             return GlobalDb.Organization.GetByUser(call.Context.User.Id);
         }
 
-
-        // TODO: should move to user api. 
+        // TODO: should move to user api.
         public bool IsAdminOfOrganization(Guid organizationId, ApiCall call)
         {
             return GlobalDb.Users.IsAdmin(organizationId, call.Context.User.Id);
@@ -126,7 +123,7 @@ namespace Kooboo.Web.Api
             Guid id = Lib.Helper.IDHelper.ParseKey(name);
 
             GlobalDb.Organization.RemoveOrgCache(id);
-            return true; 
+            return true;
         }
     }
 }

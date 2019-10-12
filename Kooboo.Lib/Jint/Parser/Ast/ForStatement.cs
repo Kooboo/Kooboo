@@ -4,6 +4,7 @@ namespace Jint.Parser.Ast
     {
         // can be a Statement (var i) or an Expression (i=0)
         public SyntaxNode Init;
+
         public Expression Test;
         public Expression Update;
         public Statement Body;

@@ -1,11 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Data.Context;
+using System;
 
 namespace Kooboo.Sites.Diagnosis
 {
@@ -21,12 +17,12 @@ namespace Kooboo.Sites.Diagnosis
 
         public string Group(RenderContext context)
         {
-            return Data.Language.Hardcoded.GetValue("Code", context); 
+            return Data.Language.Hardcoded.GetValue("Code", context);
         }
 
         public string Name(RenderContext context)
         {
-            return null; 
+            return null;
         }
     }
 }

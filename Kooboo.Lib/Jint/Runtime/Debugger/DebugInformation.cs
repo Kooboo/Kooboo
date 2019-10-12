@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Jint.Native;
+﻿using Jint.Native;
 using Jint.Parser.Ast;
-using Jint.Runtime.Environments;
+using System;
+using System.Collections.Generic;
 
 namespace Jint.Runtime.Debugger
 {

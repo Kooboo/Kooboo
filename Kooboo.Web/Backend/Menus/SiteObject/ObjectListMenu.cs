@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Kooboo.Web.Menus.ObjectMenu
 {
-  public  class ObjectListMenu
-    { 
+    public class ObjectListMenu
+    {
         public string Name { get; set; }
-         
-        public string Url {
+
+        public string Url
+        {
             get
             {
-                // TODO: generate the URL. 
-                return null; 
+                // TODO: generate the URL.
+                return null;
             }
-        } 
+        }
 
         public Dictionary<string, string> Para { get; set; }
 
-        public bool AcceptMultipleSelection { get; set; } = false; 
+        public bool AcceptMultipleSelection { get; set; } = false;
 
-        public bool AcceptionSingleSelection { get; set; } = true; 
+        public bool AcceptionSingleSelection { get; set; } = true;
     }
 }

@@ -1,17 +1,15 @@
-﻿using Kooboo.Data.Interface;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace Kooboo.Web.Menus.ObjectMenu
 {
     public static class MenuManager
-    { 
-        // Menu for the table list.... 
+    {
+        // Menu for the table list....
         //public static List<Menu> GetSiteObjectMenu<T>() where T: ISiteObject
-        //{ 
-        //} 
+        //{
+        //}
 
         public static List<Kooboo.Api.ApiMethod> GetSiteMenuApiMethodByType(Type SiteObjectType)
         {
@@ -28,12 +26,10 @@ namespace Kooboo.Web.Menus.ObjectMenu
                 {
                     if (IsMenu(item))
                     {
-
                     }
-                } 
+                }
             }
             return null;
-
         }
 
         public static Kooboo.Api.IApiProvider GetApiProvider()
@@ -42,18 +38,16 @@ namespace Kooboo.Web.Menus.ObjectMenu
             {
                 if (item is Kooboo.Api.ApiMiddleware)
                 {
-                    var apimiddle = item as Kooboo.Api.ApiMiddleware; 
-                    return apimiddle.ApiProvider; 
+                    var apimiddle = item as Kooboo.Api.ApiMiddleware;
+                    return apimiddle.ApiProvider;
                 }
             }
             return null;
         }
 
-
         public static bool IsMenu(MethodInfo method)
         {
             return method.IsDefined(typeof(SiteObjectMenu));
-        } 
-
+        }
     }
 }

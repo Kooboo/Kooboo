@@ -1,8 +1,8 @@
 namespace dotless.Core.Parser.Functions
 {
-    using System;
     using Infrastructure;
     using Infrastructure.Nodes;
+    using System;
     using Tree;
 
     public class AbsFunction : NumberFunctionBase

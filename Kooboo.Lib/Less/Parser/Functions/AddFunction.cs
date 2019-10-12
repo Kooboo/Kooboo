@@ -1,8 +1,8 @@
 namespace dotless.Core.Parser.Functions
 {
-    using System.Linq;
     using Infrastructure;
     using Infrastructure.Nodes;
+    using System.Linq;
     using Tree;
     using Utils;
 

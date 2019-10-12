@@ -1,12 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Kooboo.Data.Context;
-using Kooboo.Sites.Extensions;
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Contents.Models;
+using Kooboo.Sites.Extensions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Sites.InlineEditor.Executor
 {
@@ -16,30 +15,30 @@ namespace Kooboo.Sites.InlineEditor.Executor
         {
             get
             {
-                return "content"; 
+                return "content";
             }
         }
 
         public void Execute(RenderContext context, List<IInlineModel> updatelist)
-        { 
-           // string culture = context.Request.Culture;
-            //var repo = context.WebSite.SiteDb().TextContents(culture); 
+        {
+            // string culture = context.Request.Culture;
+            //var repo = context.WebSite.SiteDb().TextContents(culture);
 
-            foreach (var item in updatelist.GroupBy(o=>o.NameOrId))
+            foreach (var item in updatelist.GroupBy(o => o.NameOrId))
             {
-                ExecuteObject(context, null, item.Key, item.ToList()); 
-            } 
+                ExecuteObject(context, null, item.Key, item.ToList());
+            }
         }
 
         public void ExecuteObject(RenderContext context, IRepository repo, string NameOrId, List<IInlineModel> updates)
         {
             var sitedb = context.WebSite.SiteDb();
-            string culture = context.Culture; 
+            string culture = context.Culture;
             if (string.IsNullOrEmpty(culture))
             {
-                culture = context.WebSite.DefaultCulture; 
+                culture = context.WebSite.DefaultCulture;
             }
-          //  var repo = context.WebSite.SiteDb().TextContents(culture); 
+            //  var repo = context.WebSite.SiteDb().TextContents(culture);
             var contentmodels = updates.Cast<Model.ContentModel>().ToList();
             if (contentmodels.Where(o => o.Action == ActionType.Delete).Any())
             {
@@ -50,7 +49,6 @@ namespace Kooboo.Sites.InlineEditor.Executor
                 }
                 return;
             }
-
             else if (contentmodels.Where(o => o.Action == ActionType.Copy).Any())
             {
                 var orgitem = contentmodels.Find(o => !string.IsNullOrEmpty(o.OrgNameOrId));
@@ -65,7 +63,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         newcontent.ContentTypeId = oldcontent.ContentTypeId;
                         newcontent.Contents = oldcontent.Contents;
                         newcontent.UserKey = NameOrId;
-                       //newcontent.Embedded = oldcontent.Embedded;  
+                        //newcontent.Embedded = oldcontent.Embedded;
                         foreach (var item in contentmodels)
                         {
                             if (!string.IsNullOrEmpty((item.FieldName)))
@@ -73,7 +71,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                                 newcontent.SetValue(item.FieldName, item.Value, culture);
                             }
                         }
-                        
+
                         sitedb.TextContent.AddOrUpdate(newcontent, context.User.Id);
 
                         // category.
@@ -86,11 +84,9 @@ namespace Kooboo.Sites.InlineEditor.Executor
                             newcat.ContentId = newcontent.Id;
                             sitedb.ContentCategories.AddOrUpdate(newcat, context.User.Id);
                         }
-
                     }
                 }
             }
-
             else if (contentmodels.Where(o => o.Action == ActionType.Add).Any())
             {
                 var newcontent = new TextContent();

@@ -9,7 +9,6 @@ namespace Jint.Native.Number
         public NumberConstructor(Engine engine)
             : base(engine, null, null, false)
         {
-            
         }
 
         public static NumberConstructor CreateNumberConstructor(Engine engine)
@@ -17,7 +16,7 @@ namespace Jint.Native.Number
             var obj = new NumberConstructor(engine);
             obj.Extensible = true;
 
-            // The value of the [[Prototype]] internal property of the Number constructor is the Function prototype object 
+            // The value of the [[Prototype]] internal property of the Number constructor is the Function prototype object
             obj.Prototype = engine.Function.PrototypeObject;
             obj.PrototypeObject = NumberPrototype.CreatePrototypeObject(engine, obj);
 

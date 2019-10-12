@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using Jint.Parser.Ast;
+using System.Collections.Generic;
 
 namespace Jint.Parser
 {

@@ -1,11 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -15,7 +11,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return "dashboard"; 
+                return "dashboard";
             }
         }
 
@@ -23,7 +19,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -31,17 +27,18 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
         public List<string> All(ApiCall call)
         {
-            return Kooboo.Web.DashBoard.DashBoardManager.Render(call.Context); 
-        } 
+            return Kooboo.Web.DashBoard.DashBoardManager.Render(call.Context);
+        }
+
         public List<Kooboo.Web.ViewModel.DashBoardItemHtml> Items(ApiCall call)
         {
-            return Kooboo.Web.DashBoard.DashBoardManager.ItemHtml(call.Context); 
-        } 
+            return Kooboo.Web.DashBoard.DashBoardManager.ItemHtml(call.Context);
+        }
     }
 }

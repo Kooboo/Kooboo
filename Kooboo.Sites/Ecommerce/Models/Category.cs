@@ -1,11 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.Contents.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Ecommerce.Models
 {
@@ -16,10 +12,11 @@ namespace Kooboo.Sites.Ecommerce.Models
         {
             this.ConstType = ConstObjectType.Cateogry;
         }
+
         public Guid ParentId { get; set; }
 
-
         private Guid _id;
+
         [Kooboo.Attributes.SummaryIgnore]
         public override Guid Id
         {
@@ -29,15 +26,15 @@ namespace Kooboo.Sites.Ecommerce.Models
                 {
                     if (!string.IsNullOrEmpty(this.Name))
                     {
-                        string unique = this.Name; 
-                         
+                        string unique = this.Name;
+
                         if (this.ParentId == default(Guid))
                         {
-                            unique += this.ParentId.ToString(); 
+                            unique += this.ParentId.ToString();
                         }
 
-                        unique += this.ConstType.ToString(); 
-                                                         
+                        unique += this.ConstType.ToString();
+
                         _id = Data.IDGenerator.GetId(unique);
                     }
                     else
@@ -62,11 +59,10 @@ namespace Kooboo.Sites.Ecommerce.Models
             {
                 foreach (var item in this.Values)
                 {
-                    unique += item.Key + item.Value; 
+                    unique += item.Key + item.Value;
                 }
             }
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
-
     }
 }

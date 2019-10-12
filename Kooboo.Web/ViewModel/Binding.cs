@@ -1,24 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.ViewModel
 {
     public class BindingInfo
-    { 
+    {
         public Guid Id
         {
-            get;set;
+            get; set;
         }
 
         public Guid OrganizationId { get; set; }
 
         /// <summary>
-        ///  the name key of the website. used as a foreign key. 
+        ///  the name key of the website. used as a foreign key.
         /// </summary>
         // public string websiteName;
         public Guid WebSiteId;
@@ -26,7 +22,7 @@ namespace Kooboo.Web.ViewModel
         public string SiteName { get; set; }
 
         /// <summary>
-        /// Subdomain, includes www or others. 
+        /// Subdomain, includes www or others.
         /// </summary>
         public string SubDomain { get; set; }
 
@@ -37,15 +33,15 @@ namespace Kooboo.Web.ViewModel
         /// </summary>
         public string FullName
         {
-            get;set;
+            get; set;
         }
 
         /// <summary>
         /// Device is the user agent. It used a contains to match the user agent.
-        /// blank = match all. 
+        /// blank = match all.
         /// </summary>
-        public string Device { get; set; } 
+        public string Device { get; set; }
 
-        public int Port { get; set;  }
+        public int Port { get; set; }
     }
 }

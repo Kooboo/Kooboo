@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ namespace Kooboo.Dom
     public class CharacterReferences
     {
         /// <summary>
-        /// get one or two char from the named character code. 
+        /// get one or two char from the named character code.
         /// </summary>
         /// <param name="key">key in the formate of &xxxx;</param>
         /// <returns></returns>
@@ -24,7 +24,7 @@ namespace Kooboo.Dom
                 ///this contains two code point. \0000\4444.
                 if (value.LastIndexOf(@"\") > 0)
                 {
-                    // there are two tokens here. 
+                    // there are two tokens here.
                     string one = value.Substring(0, value.LastIndexOf(@"\"));
                     string two = value.Substring(value.LastIndexOf(@"\"));
 
@@ -48,17 +48,17 @@ namespace Kooboo.Dom
             int codepoint = Convert.ToInt32(strHexCode, 16);
 
             return char.ConvertFromUtf32(codepoint);
-
         }
 
         private static Dictionary<string, string> _charRef;
+
         public static Dictionary<string, string> namedCharacters()
         {
             if (_charRef == null)
             {
                 _charRef = new Dictionary<string, string>();
 
-                 _charRef.Add("&Aacute;", "\u00C1");
+                _charRef.Add("&Aacute;", "\u00C1");
                 _charRef.Add("&Aacute", "\u00C1");
                 _charRef.Add("&aacute;", "\u00E1");
                 _charRef.Add("&aacute", "\u00E1");
@@ -2289,13 +2289,12 @@ namespace Kooboo.Dom
                 _charRef.Add("&zscr;", "\uD835\uDCCF");
                 _charRef.Add("&zwj;", "\u200D");
                 _charRef.Add("&zwnj;", "\u200C");
-
             }
             return _charRef;
         }
 
-
         private static Dictionary<int, string> _unicodeChar;
+
         public static Dictionary<int, string> unicodeCharacters()
         {
             if (_unicodeChar == null)
@@ -2372,50 +2371,43 @@ namespace Kooboo.Dom
                 //0x9C	U+0153	LATIN SMALL LIGATURE OE (œ)
                 //0x9E	U+017E	LATIN SMALL LETTER Z WITH CARON (ž)
                 //0x9F	U+0178	LATIN CAPITAL LETTER Y WITH DIAERESIS (Ÿ)
-
             }
 
             return _unicodeChar;
-
         }
-
 
         public static bool isValidCharacters(int codepoint)
         {
-            ///Otherwise, return a character token for the Unicode character whose code point is that number. 
-            ///Additionally, if the number is in the range 0x0001 to 0x0008, 0x000D to 0x001F, 0x007F to 0x009F, 
-            ///0xFDD0 to 0xFDEF, or is one of 0x000B, 0xFFFE, 0xFFFF, 0x1FFFE, 0x1FFFF, 0x2FFFE, 
+            ///Otherwise, return a character token for the Unicode character whose code point is that number.
+            ///Additionally, if the number is in the range 0x0001 to 0x0008, 0x000D to 0x001F, 0x007F to 0x009F,
+            ///0xFDD0 to 0xFDEF, or is one of 0x000B, 0xFFFE, 0xFFFF, 0x1FFFE, 0x1FFFF, 0x2FFFE,
             ///0x2FFFF, 0x3FFFE, 0x3FFFF, 0x4FFFE, 0x4FFFF, 0x5FFFE, 0x5FFFF, 0x6FFFE, 0x6FFFF, 0x7FFFE,
-            ///0x7FFFF, 0x8FFFE, 0x8FFFF, 0x9FFFE, 0x9FFFF, 0xAFFFE, 0xAFFFF, 0xBFFFE, 0xBFFFF, 0xCFFFE, 
-            ///0xCFFFF, 0xDFFFE, 0xDFFFF, 0xEFFFE, 0xEFFFF, 0xFFFFE, 0xFFFFF, 0x10FFFE, or 0x10FFFF, 
+            ///0x7FFFF, 0x8FFFE, 0x8FFFF, 0x9FFFE, 0x9FFFF, 0xAFFFE, 0xAFFFF, 0xBFFFE, 0xBFFFF, 0xCFFFE,
+            ///0xCFFFF, 0xDFFFE, 0xDFFFF, 0xEFFFE, 0xEFFFF, 0xFFFFE, 0xFFFFF, 0x10FFFE, or 0x10FFFF,
             ///then this is a parse error.
-      
-         
-           /// 0x0001 to 0x0008, 0x000D to 0x001F, 0x007F to 0x009F, 0xFDD0 to 0xFDEF,
-            if ((codepoint >= Convert.ToInt32("0x0001", 16) && codepoint <= Convert.ToInt32("0x0008", 16)) || (codepoint >= Convert.ToInt32("0x000D", 16) && codepoint <= Convert.ToInt32("0x001F", 16))  || (codepoint >= Convert.ToInt32("0x007F", 16) && codepoint <= Convert.ToInt32("0x009F", 16))  ||  (codepoint >= Convert.ToInt32("0xFDD0", 16) && codepoint <= Convert.ToInt32("0xFDEF", 16)))
+
+            /// 0x0001 to 0x0008, 0x000D to 0x001F, 0x007F to 0x009F, 0xFDD0 to 0xFDEF,
+            if ((codepoint >= Convert.ToInt32("0x0001", 16) && codepoint <= Convert.ToInt32("0x0008", 16)) || (codepoint >= Convert.ToInt32("0x000D", 16) && codepoint <= Convert.ToInt32("0x001F", 16)) || (codepoint >= Convert.ToInt32("0x007F", 16) && codepoint <= Convert.ToInt32("0x009F", 16)) || (codepoint >= Convert.ToInt32("0xFDD0", 16) && codepoint <= Convert.ToInt32("0xFDEF", 16)))
             {
                 return false;
             }
-            else 
+            else
             {
-               string listofchars = "0x000B, 0xFFFE, 0xFFFF, 0x1FFFE, 0x1FFFF, 0x2FFFE, 0x2FFFF, 0x3FFFE, 0x3FFFF, 0x4FFFE, 0x4FFFF, 0x5FFFE, 0x5FFFF, 0x6FFFE, 0x6FFFF, 0x7FFFE, 0x7FFFF, 0x8FFFE, 0x8FFFF, 0x9FFFE, 0x9FFFF, 0xAFFFE, 0xAFFFF, 0xBFFFE, 0xBFFFF, 0xCFFFE, 0xCFFFF, 0xDFFFE, 0xDFFFF, 0xEFFFE, 0xEFFFF, 0xFFFFE, 0xFFFFF, 0x10FFFE,0x10FFFF";
+                string listofchars = "0x000B, 0xFFFE, 0xFFFF, 0x1FFFE, 0x1FFFF, 0x2FFFE, 0x2FFFF, 0x3FFFE, 0x3FFFF, 0x4FFFE, 0x4FFFF, 0x5FFFE, 0x5FFFF, 0x6FFFE, 0x6FFFF, 0x7FFFE, 0x7FFFF, 0x8FFFE, 0x8FFFF, 0x9FFFE, 0x9FFFF, 0xAFFFE, 0xAFFFF, 0xBFFFE, 0xBFFFF, 0xCFFFE, 0xCFFFF, 0xDFFFE, 0xDFFFF, 0xEFFFE, 0xEFFFF, 0xFFFFE, 0xFFFFF, 0x10FFFE,0x10FFFF";
 
-                string [] charitems = listofchars.Split(',');
+                string[] charitems = listofchars.Split(',');
 
                 foreach (var item in charitems)
-	            {
-		             int decode = Convert.ToInt32(item.ToString().Trim(), 16);
+                {
+                    int decode = Convert.ToInt32(item.ToString().Trim(), 16);
                     if (codepoint == decode)
                     {
                         return false;
                     }
-	            }
-
+                }
             }
-           
-           return true;
-          
-        }
 
+            return true;
+        }
     }
 }

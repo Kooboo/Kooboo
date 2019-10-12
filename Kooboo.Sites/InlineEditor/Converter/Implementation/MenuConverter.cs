@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Dom;
@@ -10,7 +10,6 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 
 namespace Kooboo.Sites.InlineEditor.Converter
 {
@@ -38,7 +37,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
             newmenu.Name = menuname;
             newmenu.Id = default(Guid);
 
-            EnSureParentId(newmenu); 
+            EnSureParentId(newmenu);
 
             string koobooid = Lib.Helper.JsonHelper.GetString(result, "KoobooId");
 
@@ -121,13 +120,13 @@ namespace Kooboo.Sites.InlineEditor.Converter
 
         public void EnSureParentId(Menu menu)
         {
-            if (menu.children !=null && menu.children.Any())
+            if (menu.children != null && menu.children.Any())
             {
                 foreach (var item in menu.children)
                 {
                     item.ParentId = menu.Id;
 
-                    EnSureParentId(item); 
+                    EnSureParentId(item);
                 }
             }
         }
@@ -158,7 +157,6 @@ namespace Kooboo.Sites.InlineEditor.Converter
 
         public string FindSameKoobooId(SiteDb SiteDb, Page DestinationPage, Menu CurrentMenu, Guid ParentPathHash)
         {
-
             var candidates = SiteDb.DomElements.Query.Where(o => o.OwnerObjectId == DestinationPage.Id && o.ParentPathHash == ParentPathHash).SelectAll();
 
             foreach (var item in candidates)
@@ -216,7 +214,6 @@ namespace Kooboo.Sites.InlineEditor.Converter
                     {
                         return true;
                     }
-
                 }
             }
             return false;
@@ -280,12 +277,10 @@ namespace Kooboo.Sites.InlineEditor.Converter
             {
                 var onlychild = menu.children[0];
                 var koobooid = DetectKoobooId(dom, onlychild);
-                // upgrade to one that contains that koobooid. 
+                // upgrade to one that contains that koobooid.
                 // TODO: to be implemented.
             }
             return null;
         }
-
-
     }
 }

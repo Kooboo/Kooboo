@@ -1,19 +1,19 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Api;
+using Kooboo.Api.ApiResponse;
 using Kooboo.Data;
+using Kooboo.Data.Language;
 using Kooboo.Data.Models;
+using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Service;
 using Kooboo.Sites.Sync;
-using Kooboo.Api.ApiResponse;
 using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Kooboo.Api;
-using Kooboo.Lib.Helper;
-using Kooboo.Data.Language;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -42,16 +42,16 @@ namespace Kooboo.Web.Api.Implementation
                 return "Site";
             }
         }
-                        
+
         public Dictionary<string, string> Types(ApiCall call)
         {
             Dictionary<string, string> types = new Dictionary<string, string>();
             types.Add("p", Data.Language.Hardcoded.GetValue("public", call.Context));
             types.Add("o", Data.Language.Hardcoded.GetValue("private", call.Context));
-            types.Add("m", Data.Language.Hardcoded.GetValue("member", call.Context));   
+            types.Add("m", Data.Language.Hardcoded.GetValue("member", call.Context));
             return types;
         }
-                                                       
+
         public SiteCultureViewModel Langs(ApiCall request)
         {
             SiteCultureViewModel viewmodel = new SiteCultureViewModel();
@@ -140,8 +140,8 @@ namespace Kooboo.Web.Api.Implementation
                 summary.SiteName = item.Name;
                 summary.SiteDisplayName = item.DisplayName;
                 summary.PageCount = sitedb.Pages.Count();
-                summary.ImageCount = sitedb.Images.Count(); 
-                // if user has not right to access the site. present the preview link.  
+                summary.ImageCount = sitedb.Images.Count();
+                // if user has not right to access the site. present the preview link.
 
                 summary.Online = item.Published;
                 summary.Visitors = sitedb.VisitorLog.QueryDescending(o => true).EndQueryCondition(o => o.Begin < DateTime.UtcNow.AddHours(-12)).Count();
@@ -159,8 +159,8 @@ namespace Kooboo.Web.Api.Implementation
                         }
                     }
                 }
-                 
-                summary.HomePageLink = item.BaseUrl(); 
+
+                summary.HomePageLink = item.BaseUrl();
                 result.Add(summary);
             }
             return result;
@@ -258,20 +258,18 @@ namespace Kooboo.Web.Api.Implementation
             Data.GlobalDb.WebSites.AddOrUpdate(site);
         }
 
-
         public void Preview(ApiCall call, Guid SiteId)
-        {                      
+        {
             var site = Kooboo.Data.GlobalDb.WebSites.Get(SiteId);
             if (site != null)
-            {                      
+            {
                 var baseurl = site.BaseUrl();
 
                 if (!string.IsNullOrEmpty(baseurl))
                 {
                     call.Context.Response.Redirect(301, baseurl);
-                }   
-            }     
-            
+                }
+            }
         }
 
         public WebSite Get(ApiCall call)
@@ -323,9 +321,9 @@ namespace Kooboo.Web.Api.Implementation
                 currentsite.AutoDetectCulture = newinfo.AutoDetectCulture;
                 currentsite.ForceSSL = newinfo.ForceSSL;
 
-                currentsite.SiteType = newinfo.SiteType; 
+                currentsite.SiteType = newinfo.SiteType;
 
-                // the cluster... 
+                // the cluster...
 
                 GlobalDb.WebSites.AddOrUpdate(currentsite);
             }
@@ -334,7 +332,6 @@ namespace Kooboo.Web.Api.Implementation
             {
                 WebSiteService.InitDiskSync(currentsite, true);
             }
-
         }
 
         public bool Delete(ApiCall call)
@@ -416,7 +413,7 @@ namespace Kooboo.Web.Api.Implementation
 
             if (enable)
             {
-                // init disk.. 
+                // init disk..
                 if (!hasSamePath)
                 {
                     DiskSyncFolderWatcher.StopDiskWatcher(website);
@@ -424,7 +421,6 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 WebSiteService.InitDiskSync(website, true);
             }
-
         }
 
         public WebSite Create(ApiCall call)
@@ -553,7 +549,5 @@ namespace Kooboo.Web.Api.Implementation
             temp.Add(new DataCenter() { Name = "US", DisplayName = "America", IsCompleted = false, IsSelected = false });
             return temp;
         }
-
     }
-
 }

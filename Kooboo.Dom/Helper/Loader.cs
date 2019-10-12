@@ -1,21 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
-
     public class Loader
     {
-
-
         public static string DownloadCss(string fullurl)
         {
             DownloadContent content = downloadUrl(fullurl);
@@ -35,9 +29,8 @@ namespace Kooboo.Dom
             }
         }
 
-
         /// <summary>
-        /// load css from internet or local file. 
+        /// load css from internet or local file.
         /// </summary>
         /// <param name="FullUrlOrPath"></param>
         /// <returns></returns>
@@ -63,14 +56,11 @@ namespace Kooboo.Dom
                         {
                             //Error handling TODO:
                         }
-
                     }
-
                 }
             }
             return csstext;
         }
-
 
         public static string DownloadHtml(string fullurl)
         {
@@ -83,14 +73,11 @@ namespace Kooboo.Dom
             else
             {
                 return content.getString();
-
             }
         }
 
-
         public static string LoadHtml(string FullUrlOrPath)
         {
-
             string text = string.Empty;
 
             if (FullUrlOrPath.ToLower().StartsWith("http://") || FullUrlOrPath.ToLower().StartsWith("https://"))
@@ -111,15 +98,11 @@ namespace Kooboo.Dom
                         {
                             //Error handling TODO:
                         }
-
                     }
-
                 }
             }
             return text;
-
         }
-
 
         private static Encoding ParseEncoding(byte[] databyes, string contentType)
         {
@@ -145,7 +128,6 @@ namespace Kooboo.Dom
             //
             if (string.IsNullOrEmpty(charset) && !contentType.Contains("css") && !contentType.Contains("script"))
             {
-
                 string meta = System.Text.Encoding.ASCII.GetString(databyes);
 
                 if (!string.IsNullOrEmpty(meta))
@@ -180,7 +162,6 @@ namespace Kooboo.Dom
             return e;
         }
 
-
         public static byte[] downloadFile(string absoluteUrl)
         {
             byte[] imagebytes = null;
@@ -203,9 +184,7 @@ namespace Kooboo.Dom
             {
                 return null;
             }
-
         }
-
 
         public static DownloadContent downloadUrl(string fullurl)
         {
@@ -219,9 +198,7 @@ namespace Kooboo.Dom
                 // TODO: handle exception.
             }
             return null;
-
         }
-
 
         public static DownloadContent downloadUrl(Uri uri)
         {
@@ -244,14 +221,12 @@ namespace Kooboo.Dom
                     down = ProcessResponse((HttpWebResponse)webResponse);
                     if (down != null)
                     {
-
                         return down;
                     }
                 }
             }
             catch (Exception e)
             {
-
             }
 
             return down;
@@ -283,31 +258,25 @@ namespace Kooboo.Dom
 
                 if (string.IsNullOrEmpty(downcontent.ContentType) || downcontent.ContentType.Contains("text"))
                 {
-
                     string text = string.Empty;
                     Encoding encoding = Encoding.Default;
 
                     encoding = ParseEncoding(databytes, contentType);
 
-                    text = encoding.GetString(databytes).Trim(new []{'\uFEFF','\u200B'});
+                    text = encoding.GetString(databytes).Trim(new[] { '\uFEFF', '\u200B' });
 
                     downcontent.isString = true;
                     downcontent.ContentString = text;
-
                 }
-
                 else
                 {
-
                     downcontent.DataBytes = databytes;
                     downcontent.isString = false;
                 }
 
                 return downcontent;
-
             }
         }
-
 
         public class DownloadContent
         {
@@ -317,7 +286,7 @@ namespace Kooboo.Dom
             }
 
             /// <summary>
-            ///  the full url. 
+            ///  the full url.
             /// </summary>
             public string Url;
 
@@ -347,20 +316,6 @@ namespace Kooboo.Dom
 
                 return string.Empty;
             }
-
         }
-
-
     }
-
-
-
-
-
-
-
-
-
-
-
 }

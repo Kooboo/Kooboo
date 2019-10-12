@@ -1,14 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using Kooboo.Sites.InlineEditor.Converter;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Data.Context;
-using Kooboo.Data.Interface;
-using Newtonsoft.Json.Linq;
-using Kooboo.Sites.InlineEditor.Converter;
 
 namespace Kooboo.Sites.InlineEditor.Executor
 {
@@ -18,14 +16,14 @@ namespace Kooboo.Sites.InlineEditor.Executor
         {
             get
             {
-                return "converter"; 
+                return "converter";
             }
         }
 
         public void Execute(RenderContext context, List<IInlineModel> updatelist)
         {
             var modellist = updatelist.ToList().Cast<InlineEditor.Model.ConverterModel>().ToList();
-             
+
             List<JObject> result = new List<JObject>();
 
             foreach (var item in modellist)
@@ -47,7 +45,5 @@ namespace Kooboo.Sites.InlineEditor.Executor
         {
             throw new NotImplementedException();
         }
-         
-
     }
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Definition;
 using Kooboo.Data.Models;
@@ -33,14 +33,13 @@ namespace Kooboo.Sites.DataSources
             var orgcontents = query.SelectAll();
             var props = Context.SiteDb.ContentTypes.GetPropertiesByFolder(FolderId);
 
-            SetSortField(ref SortField, props);  
+            SetSortField(ref SortField, props);
 
             var contentviews = Helper.ContentHelper.ToViews(orgcontents, this.Context.RenderContext.Culture, props);
 
             contentviews = SortFilterContentViews(contentviews, FolderId, Filters, SortField, IsAscending);
             return GetPagedResult(contentviews, PageSize, PageNumber);
         }
-
 
         private static PagedResult GetPagedResult(List<TextContentViewModel> contents, int PageSize, int PageNumber)
         {
@@ -91,7 +90,6 @@ namespace Kooboo.Sites.DataSources
                         }
                         return default(DateTime);
                     }
-
                 }
                 else if (datatype == DataTypes.Bool)
                 {
@@ -144,7 +142,7 @@ namespace Kooboo.Sites.DataSources
         }
 
         private List<TextContentViewModel> SortFilterContentViews(List<TextContentViewModel> contentviews, Guid FolderId, List<FilterDefinition> Filters, string SortField, bool IsAscending)
-        { 
+        {
             if (Filters != null && Filters.Count > 0)
             {
                 var folder = Context.SiteDb.ContentFolders.Get(FolderId);
@@ -159,7 +157,7 @@ namespace Kooboo.Sites.DataSources
                     contentviews = Filter(contentviews, filter.FieldName, filter.Comparer, filter.FieldValue, columns);
                 }
             }
-             
+
             if (!String.IsNullOrWhiteSpace(SortField))
             {
                 DataTypes datatype = DataTypes.Undefined;
@@ -248,12 +246,11 @@ namespace Kooboo.Sites.DataSources
 
             var props = Context.SiteDb.ContentTypes.GetPropertiesByFolder(ContentFolderId);
 
-            SetSortField(ref SortField, props); 
-             
+            SetSortField(ref SortField, props);
+
             var allcontents = Helper.ContentHelper.ToViews(allorgcontents, this.Context.RenderContext.Culture, props);
 
             return SortFilterContentViews(allcontents, ContentFolderId, Filters, SortField, IsAscending);
-
         }
 
         private List<TextContentViewModel> ByAllCategory(Guid ContentFolderId, List<FilterDefinition> Filters, string SortField, Boolean IsAscending)
@@ -270,10 +267,10 @@ namespace Kooboo.Sites.DataSources
 
             var props = Context.SiteDb.ContentTypes.GetPropertiesByFolder(ContentFolderId);
 
-            SetSortField(ref SortField, props);  
+            SetSortField(ref SortField, props);
 
             var allcontents = Helper.ContentHelper.ToViews(allorgcontents, this.Context.RenderContext.Culture, props);
-              
+
             return SortFilterContentViews(allcontents, ContentFolderId, Filters, SortField, IsAscending);
         }
 
@@ -306,7 +303,6 @@ namespace Kooboo.Sites.DataSources
             return ByCategoryId(Id, FolderId, Filters, PageSize, PageNumber, SortField, IsAscending);
         }
 
-
         private void SetSortField(ref string sortField, List<ContentProperty> props)
         {
             if (string.IsNullOrEmpty(sortField) && props != null)
@@ -315,8 +311,8 @@ namespace Kooboo.Sites.DataSources
                 if (seqEditable != null && seqEditable.Editable)
                 {
                     sortField = SystemFields.Sequence.Name.ToLower();
-                } 
-            }  
+                }
+            }
         }
     }
 }

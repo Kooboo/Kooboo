@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Jint.Native;
+using Jint.Native.Number;
+using Jint.Native.Object;
+using Jint.Native.String;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using Jint.Native;
-using Jint.Native.Number;
-using Jint.Native.Object;
-using Jint.Native.String;
 
 namespace Jint.Runtime
 {
@@ -44,7 +44,6 @@ namespace Jint.Runtime
             return input.AsObject().DefaultValue(preferredType);
         }
 
-    
         /// <summary>
         /// http://www.ecma-international.org/ecma-262/5.1/#sec-9.2
         /// </summary>
@@ -61,7 +60,7 @@ namespace Jint.Runtime
             {
                 return false;
             }
-            
+
             if (o.IsBoolean())
             {
                 return o.AsBoolean();
@@ -107,8 +106,8 @@ namespace Jint.Runtime
             if (o.IsNumber())
             {
                 return o.AsNumber();
-            } 
-            
+            }
+
             if (o.IsObject())
             {
                 var p = o.AsObject() as IPrimitiveInstance;
@@ -176,7 +175,7 @@ namespace Jint.Runtime
                     }
 
                     int i = int.Parse(s.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-                 
+
                     return i;
                 }
                 catch (OverflowException)
@@ -205,7 +204,7 @@ namespace Jint.Runtime
             {
                 return 0;
             }
-            
+
             if (number.Equals(0) || double.IsInfinity(number))
             {
                 return number;
@@ -274,7 +273,7 @@ namespace Jint.Runtime
             {
                 return Null.Text;
             }
-            
+
             if (o.IsBoolean())
             {
                 return o.AsBoolean() ? "true" : "false";
@@ -368,7 +367,7 @@ namespace Jint.Runtime
                 {
                     var arg = objectArguments[i];
                     var paramType = parameters[i].ParameterType;
-                    
+
                     if (arg == null)
                     {
                         if (!TypeIsNullable(paramType))

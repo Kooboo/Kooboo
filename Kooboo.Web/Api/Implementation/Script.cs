@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
@@ -7,8 +7,6 @@ using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -58,7 +56,6 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             return null;
-
         }
 
         public Guid Update(ApiCall call)
@@ -70,9 +67,9 @@ namespace Kooboo.Web.Api.Implementation
 
             if (string.IsNullOrEmpty(extension))
             {
-                extension = "js"; 
+                extension = "js";
             }
-                   
+
             if (id != default(Guid))
             {
                 var script = call.WebSite.SiteDb().Scripts.Get(id);
@@ -81,7 +78,7 @@ namespace Kooboo.Web.Api.Implementation
                     script.Body = body;
                     if (script.Extension == null)
                     {
-                        script.Extension = extension; 
+                        script.Extension = extension;
                     }
                     call.WebSite.SiteDb().Scripts.AddOrUpdate(script, true, true, call.Context.User.Id);
                     return script.Id;
@@ -130,14 +127,12 @@ namespace Kooboo.Web.Api.Implementation
             }
             return default(Guid);
         }
-              
-
 
         public override bool IsUniqueName(ApiCall call)
         {
-            var sitedb = call.WebSite.SiteDb(); 
+            var sitedb = call.WebSite.SiteDb();
             string name = call.NameOrId;
-                                                  
+
             if (!string.IsNullOrEmpty(name))
             {
                 var value = sitedb.Scripts.GetByNameOrId(name);
@@ -149,22 +144,22 @@ namespace Kooboo.Web.Api.Implementation
                 List<string> dotextension = new List<string>();
                 foreach (var item in GetExtensions(call))
                 {
-                    string dotitem = item; 
+                    string dotitem = item;
                     if (!dotitem.StartsWith("."))
                     {
-                        dotitem = "." + dotitem; 
+                        dotitem = "." + dotitem;
                     }
-                    dotextension.Add(dotitem); 
+                    dotextension.Add(dotitem);
                 }
 
                 name = name.ToLower();
 
-                var find = sitedb.Scripts.Store.FullScan(o => samename(o.Name, name, dotextension)).FirstOrDefault(); 
+                var find = sitedb.Scripts.Store.FullScan(o => samename(o.Name, name, dotextension)).FirstOrDefault();
 
-                if (find !=null)
+                if (find != null)
                 {
-                    return false; 
-                }   
+                    return false;
+                }
             }
 
             return true;
@@ -177,7 +172,7 @@ namespace Kooboo.Web.Api.Implementation
                 return false;
             }
 
-            dbname = dbname.ToLower();      
+            dbname = dbname.ToLower();
             if (dbname == name)
             {
                 return true;
@@ -185,7 +180,6 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in extensionsWithDot)
             {
-
                 if (dbname.EndsWith(item))
                 {
                     dbname = dbname.Substring(0, dbname.Length - item.Length);
@@ -194,7 +188,7 @@ namespace Kooboo.Web.Api.Implementation
                         return true;
                     }
                 }
-            }     
+            }
             return false;
         }
 

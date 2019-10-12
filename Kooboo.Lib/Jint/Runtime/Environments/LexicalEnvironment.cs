@@ -44,7 +44,7 @@ namespace Jint.Runtime.Environments
 
             if (lex.Outer == null)
             {
-                return new Reference(Undefined.Instance, name, strict);    
+                return new Reference(Undefined.Instance, name, strict);
             }
 
             return GetIdentifierReference(lex.Outer, name, strict);
@@ -60,6 +60,4 @@ namespace Jint.Runtime.Environments
             return new LexicalEnvironment(new ObjectEnvironmentRecord(engine, objectInstance, provideThis), outer);
         }
     }
-
-    
 }

@@ -1,21 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
 using Kooboo.IndexedDB.Helper;
+using System;
+using System.Net;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
-  
     public class IpAddressFieldConverter<T> : IFieldConverter<T>
     {
-
-        Func<T, IPAddress> getValue;
-        Action<T, IPAddress> setValue;
+        private Func<T, IPAddress> getValue;
+        private Action<T, IPAddress> setValue;
 
         public IpAddressFieldConverter(string FieldName)
         {
@@ -53,16 +47,14 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             {
                 return fieldvalue.GetAddressBytes();
             }
-            return null; 
+            return null;
         }
-
     }
 
     public class IpAddressFieldConverter : IFieldConverter
     {
-
-        Func<object, IPAddress> getValue;
-        Action<object, IPAddress> setValue;
+        private Func<object, IPAddress> getValue;
+        private Action<object, IPAddress> setValue;
 
         public IpAddressFieldConverter(string FieldName, Type ObjectType)
         {
@@ -100,9 +92,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             {
                 return fieldvalue.GetAddressBytes();
             }
-            return null; 
+            return null;
         }
     }
-
-
 }

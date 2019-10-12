@@ -1,10 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.ViewModel
 {
@@ -13,20 +10,21 @@ namespace Kooboo.Web.ViewModel
         public string Name { get; set; }
 
         private string _displayName;
+
         public string DisplayName
         {
             get
             {
                 if (string.IsNullOrEmpty(_displayName))
                 {
-                    return this.Name; 
+                    return this.Name;
                 }
-               
+
                 return _displayName;
             }
             set
             {
-                _displayName = value; 
+                _displayName = value;
             }
         }
 
@@ -34,9 +32,10 @@ namespace Kooboo.Web.ViewModel
 
         public string Url { get; set; }
 
-        public uint ActionRights { get; set; } = 0; 
+        public uint ActionRights { get; set; } = 0;
 
         private List<MenuItem> _items;
+
         public List<MenuItem> Items
         {
             get
@@ -52,7 +51,6 @@ namespace Kooboo.Web.ViewModel
                 _items = value;
             }
         }
-         
     }
 
     public class GlobalMenuItem : MenuItem
@@ -76,35 +74,27 @@ namespace Kooboo.Web.ViewModel
 
         public DateTime LastModified { get; set; }
         public Dictionary<string, int> Relations { get; set; }
-
     }
 
-
- 
     public class SiteMenuItemViewModel
-    { 
+    {
         public Guid RootId { get; set; }
-         
-        public  Guid Id { get; set; }
-          
+
+        public Guid Id { get; set; }
+
         public string Name { get; set; }
         public string Url { get; set; }
 
-
         public string SubItemContainer { get; set; }
 
-     
         public string SubItemTemplate { get; set; }
-  
+
         public Guid ParentId { get; set; }
-         
+
         public Guid DataSourceId { get; set; } = default(Guid);
 
         public string Template { get; set; }
 
-        public List<SiteMenuItemViewModel> Children { get; set; } = new List<SiteMenuItemViewModel>(); 
-  
+        public List<SiteMenuItemViewModel> Children { get; set; } = new List<SiteMenuItemViewModel>();
     }
-   
-
 }

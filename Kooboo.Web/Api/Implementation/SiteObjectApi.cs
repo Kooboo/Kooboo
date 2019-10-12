@@ -1,18 +1,19 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Api;
+using Kooboo.Attributes;
 using Kooboo.Data.Interface;
+using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Attributes;
-using Kooboo.Api;
-using Kooboo.Sites.Extensions;
 
 namespace Kooboo.Web.Api
 {
     public class SiteObjectApi<T> : ISiteObjectApi where T : ISiteObject
     {
         private string _modelname;
+
         public virtual string ModelName
         {
             get
@@ -30,6 +31,7 @@ namespace Kooboo.Web.Api
         }
 
         private Type _modeltype;
+
         public virtual Type ModelType
         {
             get
@@ -50,7 +52,7 @@ namespace Kooboo.Web.Api
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -58,7 +60,7 @@ namespace Kooboo.Web.Api
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -77,8 +79,8 @@ namespace Kooboo.Web.Api
 
             IRepository repo = call.WebSite.SiteDb().GetRepository(this.ModelType);
 
-              repo.AddOrUpdate(value, call.Context.User.Id);
-            return value.Id; 
+            repo.AddOrUpdate(value, call.Context.User.Id);
+            return value.Id;
         }
 
         public virtual Guid Post(ApiCall call)
@@ -109,7 +111,6 @@ namespace Kooboo.Web.Api
                     return false;
                 }
             }
-
             else if (!string.IsNullOrEmpty(call.NameOrId))
             {
                 var value = repo.GetByNameOrId(call.NameOrId);
@@ -134,8 +135,8 @@ namespace Kooboo.Web.Api
             if (string.IsNullOrEmpty(json))
             {
                 json = call.Context.Request.Body;
-            } 
-            List<Guid> ids  = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(json); 
+            }
+            List<Guid> ids = Lib.Helper.JsonHelper.Deserialize<List<Guid>>(json);
 
             if (ids != null && ids.Count() > 0)
             {
@@ -158,14 +159,14 @@ namespace Kooboo.Web.Api
             else if (!string.IsNullOrEmpty(call.NameOrId))
             {
                 return repo.GetByNameOrId(call.NameOrId);
-            } 
-            return Activator.CreateInstance(this.ModelType);  
+            }
+            return Activator.CreateInstance(this.ModelType);
         }
 
         public virtual List<object> List(ApiCall call)
         {
             IRepository repo = call.WebSite.SiteDb().GetRepository(this.ModelType);
-            return repo.All().OrderBy(o=>o.Name).ToList<object>();  
+            return repo.All().OrderBy(o => o.Name).ToList<object>();
         }
 
         public virtual bool IsUniqueName(ApiCall call)
@@ -200,15 +201,15 @@ namespace Kooboo.Web.Api
                 if (value != null)
                 {
                     return false;
-                } 
+                }
             }
 
-            return true; 
-        } 
+            return true;
+        }
     }
-     
+
     public interface ISiteObjectApi : IApi
     {
-        Type ModelType { get; set;  }
+        Type ModelType { get; set; }
     }
 }

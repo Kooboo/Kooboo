@@ -1,8 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Kooboo.Sites.Diagnosis
@@ -13,7 +11,7 @@ namespace Kooboo.Sites.Diagnosis
 
         public RenderContext context { get; set; }
 
-        // all checkers that will be checking... 
+        // all checkers that will be checking...
         public List<DiagnosisChecker> AllCheckers { get; set; } = new List<DiagnosisChecker>();
 
         public DiagnosisChecker Current { get; set; }
@@ -29,20 +27,20 @@ namespace Kooboo.Sites.Diagnosis
         public int WarningCount { get; set; } = 0;
 
         public List<Message> Messages = new List<Message>();
-         
+
         public void AddMessage(string head, string body, MessageType type)
         {
             string msg = head + ": " + body;
             AddMessage(new Message() { body = msg, Type = type });
         }
-         
+
         private object _locker = new object();
 
         public void AddMessage(Message message)
         {
             lock (_locker)
             {
-                message.CheckerId = this.Current.Id; 
+                message.CheckerId = this.Current.Id;
                 this.Messages.Add(message);
                 if (message.Type == MessageType.Critical)
                 {
@@ -56,7 +54,7 @@ namespace Kooboo.Sites.Diagnosis
                 {
                     this.informationCount += 1;
                 }
-            } 
+            }
         }
 
         public List<Message> FlushMessage()
@@ -68,6 +66,5 @@ namespace Kooboo.Sites.Diagnosis
                 return old;
             }
         }
-
     }
 }

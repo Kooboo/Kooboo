@@ -1,10 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
@@ -13,11 +8,9 @@ namespace Kooboo.Dom
     /// </summary>
     public static class CommonIdoms
     {
-
         //The White_Space characters are those that have the Unicode property "White_Space" in the Unicode PropList.txt data file. [UNICODE]
         //This should not be confused with the "White_Space" value (abbreviated "WS") of the "Bidi_Class" property in the Unicode.txt data file.
         //The control characters are those whose Unicode "General_Category" property has the value "Cc" in the Unicode UnicodeData.txt data file. [UNICODE]
-
 
         /// <summary>
         /// The space characters, for the purposes of this specification, are
@@ -30,7 +23,6 @@ namespace Kooboo.Dom
             return (chr == '\u0020' || chr == '\u0009' || chr == '\u000a' || chr == '\u000c' || chr == '\u000d');
         }
 
-
         /// <summary>
         /// The lowercase ASCII letters are the characters in the range lowercase ASCII letters. a-z
         /// </summary>
@@ -38,7 +30,7 @@ namespace Kooboo.Dom
         /// <returns></returns>
         public static bool isLowercaseAscii(char chr)
         {
-            //a-z, ascii 61-122. 
+            //a-z, ascii 61-122.
             return (chr >= 97 && chr <= 122);
         }
 
@@ -79,7 +71,7 @@ namespace Kooboo.Dom
         /// <returns></returns>
         public static bool isAsciiDigit(char chr)
         {
-            //0-9, acsii 48-57. 
+            //0-9, acsii 48-57.
             return (chr >= 48 && chr <= 57);
         }
 
@@ -120,8 +112,6 @@ namespace Kooboo.Dom
             {
                 return true;
             }
-
-
 
             return false;
         }
@@ -167,7 +157,5 @@ namespace Kooboo.Dom
 
             return false;
         }
-
-
     }
 }

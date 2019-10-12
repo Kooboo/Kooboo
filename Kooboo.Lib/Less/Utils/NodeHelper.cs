@@ -1,8 +1,8 @@
 namespace dotless.Core.Utils
 {
-    using System.Collections.Generic;
     using Parser.Infrastructure;
     using Parser.Infrastructure.Nodes;
+    using System.Collections.Generic;
 
     internal class NodeHelper
     {

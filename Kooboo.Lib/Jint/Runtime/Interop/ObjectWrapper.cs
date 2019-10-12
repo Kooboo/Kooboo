@@ -1,17 +1,17 @@
-using System;
-using System.Linq;
-using System.Reflection;
 using Jint.Native;
 using Jint.Native.Object;
 using Jint.Runtime.Descriptors;
 using Jint.Runtime.Descriptors.Specialized;
+using System;
+using System.Linq;
+using System.Reflection;
 
 namespace Jint.Runtime.Interop
 {
-	/// <summary>
-	/// Wraps a CLR instance
-	/// </summary>
-	public sealed class ObjectWrapper : ObjectInstance, IObjectWrapper
+    /// <summary>
+    /// Wraps a CLR instance
+    /// </summary>
+    public sealed class ObjectWrapper : ObjectInstance, IObjectWrapper
     {
         public Object Target { get; set; }
 
@@ -80,7 +80,7 @@ namespace Jint.Runtime.Interop
                 return descriptor;
             }
 
-            // if no properties were found then look for a method 
+            // if no properties were found then look for a method
             var methods = type.GetMethods(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public)
                 .Where(m => EqualsIgnoreCasing(m.Name, propertyName))
                 .ToArray();
@@ -146,11 +146,11 @@ namespace Jint.Runtime.Interop
             bool equals = false;
             if (s1.Length == s2.Length)
             {
-                if (s1.Length > 0 && s2.Length > 0) 
+                if (s1.Length > 0 && s2.Length > 0)
                 {
                     equals = (s1.ToLower()[0] == s2.ToLower()[0]);
                 }
-                if (s1.Length > 1 && s2.Length > 1) 
+                if (s1.Length > 1 && s2.Length > 1)
                 {
                     equals = equals && (s1.Substring(1) == s2.Substring(1));
                 }

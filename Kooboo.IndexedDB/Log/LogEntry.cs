@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Security.Cryptography;
@@ -11,7 +11,7 @@ namespace Kooboo.IndexedDB
     public class LogEntry
     {
         /// <summary>
-        /// sequence version id. incremental. this is also the key. 
+        /// sequence version id. incremental. this is also the key.
         /// </summary>
         public Int64 Id
         {
@@ -55,7 +55,6 @@ namespace Kooboo.IndexedDB
             }
         }
 
-
         private string _tablename { get; set; }
 
         public string TableName
@@ -70,7 +69,6 @@ namespace Kooboo.IndexedDB
                 _tablenamehash = _tablename.GetHashCode32();
             }
         }
-
 
         private int _tablenamehash;
 
@@ -110,7 +108,7 @@ namespace Kooboo.IndexedDB
         private byte[] _keybytes;
 
         /// <summary>
-        /// The key value in the format of byte array. 
+        /// The key value in the format of byte array.
         /// </summary>
         public byte[] KeyBytes
         {
@@ -126,8 +124,9 @@ namespace Kooboo.IndexedDB
         }
 
         private Guid _keyHash;
+
         /// <summary>
-        /// The KeyBytes HasKey; 
+        /// The KeyBytes HasKey;
         /// </summary>
         public Guid KeyHash
         {
@@ -143,16 +142,15 @@ namespace Kooboo.IndexedDB
             {
                 _keyHash = value;
             }
-
         }
 
-
         /// <summary>
-        ///The kind of action, Add =0, update =1, del =2. 
+        ///The kind of action, Add =0, update =1, del =2.
         /// </summary>
         public EditType EditType { get; set; }
 
         private DateTime _updatetime;
+
         public DateTime UpdateTime
         {
             get
@@ -172,7 +170,7 @@ namespace Kooboo.IndexedDB
         private Int64 _timetick;
 
         /// <summary>
-        /// use timetick instead of datatime to roll back items. Tick is smaller and more accurace than datetime. 
+        /// use timetick instead of datatime to roll back items. Tick is smaller and more accurace than datetime.
         /// </summary>
         public Int64 TimeTick
         {
@@ -212,5 +210,4 @@ namespace Kooboo.IndexedDB
         Update = 2,
         Delete = 3
     }
-
 }

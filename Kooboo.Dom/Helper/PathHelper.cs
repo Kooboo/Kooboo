@@ -1,17 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
     public static class PathHelper
     {
-
         /// <summary>
         /// combine base url with sub url.
         /// </summary>
@@ -20,7 +14,6 @@ namespace Kooboo.Dom
         /// <returns></returns>
         public static string combine(string basestring, string subpath)
         {
-
             if (subpath.ToLower().StartsWith("http") || string.IsNullOrEmpty(basestring))
             {
                 return subpath;
@@ -34,7 +27,6 @@ namespace Kooboo.Dom
             }
             else
             {
-
                 if (basestring.EndsWith(@"\") || basestring.EndsWith(@"/"))
                 {
                     return System.IO.Path.Combine(basestring, subpath);
@@ -60,13 +52,8 @@ namespace Kooboo.Dom
                     }
 
                     return System.IO.Path.Combine(newbase, subpath);
-
-
                 }
             }
-
         }
-
-      
     }
 }

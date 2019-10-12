@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Jint.Native;
+﻿using Jint.Native;
 using Jint.Native.Argument;
 using Jint.Native.Array;
 using Jint.Native.Boolean;
@@ -24,6 +21,9 @@ using Jint.Runtime.Descriptors;
 using Jint.Runtime.Environments;
 using Jint.Runtime.Interop;
 using Jint.Runtime.References;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Jint
 {
@@ -68,7 +68,6 @@ namespace Jint
 
         public Engine() : this(null)
         {
-
         }
 
         public Engine(Action<Options> options)
@@ -193,10 +192,15 @@ namespace Jint
         internal Options Options { get; private set; }
 
         #region Debugger
+
         public delegate StepMode DebugStepDelegate(object sender, DebugInformation e);
+
         public delegate StepMode BreakDelegate(object sender, DebugInformation e);
+
         public event DebugStepDelegate Step;
+
         public event BreakDelegate Break;
+
         internal DebugHandler DebugHandler { get; private set; }
         public List<BreakPoint> BreakPoints { get; private set; }
 
@@ -217,7 +221,8 @@ namespace Jint
             }
             return null;
         }
-        #endregion
+
+        #endregion Debugger
 
         public ExecutionContext EnterExecutionContext(LexicalEnvironment lexicalEnvironment, LexicalEnvironment variableEnvironment, JsValue thisBinding)
         {
@@ -294,7 +299,7 @@ namespace Jint
         public Engine Execute(string source)
         {
             var parser = new JavaScriptParser();
-            string error = null; 
+            string error = null;
             try
             {
                 return Execute(parser.Parse(source));
@@ -303,12 +308,12 @@ namespace Jint
             {
                 if (ex is JavaScriptException)
                 {
-                    var jsex = ex as JavaScriptException; 
-                    if (jsex !=null)
+                    var jsex = ex as JavaScriptException;
+                    if (jsex != null)
                     {
-                        error = "JavaScript error on line" + jsex.Location.Start.Line.ToString() + ", cloumn: " + jsex.Location.Start.Column.ToString() + " " + ex.Message; 
+                        error = "JavaScript error on line" + jsex.Location.Start.Line.ToString() + ", cloumn: " + jsex.Location.Start.Column.ToString() + " " + ex.Message;
                     }
-                }      
+                }
                 else if (ex is ParserException)
                 {
                     var pex = ex as ParserException;
@@ -319,16 +324,16 @@ namespace Jint
                 }
                 else
                 {
-                    error = ex.Message; 
+                    error = ex.Message;
                 }
             }
 
-            if (error !=null)
+            if (error != null)
             {
-                throw new Exception(error); 
+                throw new Exception(error);
             }
 
-            return null;  
+            return null;
         }
 
         public Engine Execute(string source, ParserOptions parserOptions)

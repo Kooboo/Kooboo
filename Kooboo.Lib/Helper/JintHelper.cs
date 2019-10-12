@@ -1,14 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Jint.Parser;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System;
-using System.Collections;
-using Newtonsoft.Json.Linq;
-using System.Xml.Linq;
-using Jint.Parser;
 
 namespace Kooboo.Lib.Helper
 {
@@ -76,7 +74,6 @@ namespace Kooboo.Lib.Helper
 
             if (jsprogram != null)
             {
-
                 var func = GetFuncByName(jsprogram, functionName);
                 if (func != null)
                 {
@@ -119,7 +116,7 @@ namespace Kooboo.Lib.Helper
 
                 foreach (var item in functions)
                 {
-                    result.Add(item.Id.Name); 
+                    result.Add(item.Id.Name);
                 }
             }
             else
@@ -136,10 +133,9 @@ namespace Kooboo.Lib.Helper
             return result;
         }
 
-
-        public static Dictionary<string,List<string>> ListFunctions(string js)
+        public static Dictionary<string, List<string>> ListFunctions(string js)
         {
-            Dictionary<string, List<string>> result = new Dictionary<string, List<string>>();  
+            Dictionary<string, List<string>> result = new Dictionary<string, List<string>>();
 
             if (IsRequireJs(js))
             {
@@ -148,16 +144,16 @@ namespace Kooboo.Lib.Helper
                 foreach (var item in functions)
                 {
                     string name = item.Id.Name;
-                    List<string> paras = new List<string>(); 
-                    if (item.Parameters !=null)
+                    List<string> paras = new List<string>();
+                    if (item.Parameters != null)
                     {
                         foreach (var p in item.Parameters)
                         {
-                            paras.Add(p.Name); 
+                            paras.Add(p.Name);
                         }
                     }
 
-                    result[name] = paras; 
+                    result[name] = paras;
                 }
             }
             else
@@ -184,7 +180,6 @@ namespace Kooboo.Lib.Helper
             return result;
         }
 
-         
         public static List<Jint.Parser.Ast.FunctionDeclaration> ListRequireJsFuncs(string requireJsBlock)
         {
             Jint.Parser.JavaScriptParser parser = new Jint.Parser.JavaScriptParser();
@@ -193,7 +188,6 @@ namespace Kooboo.Lib.Helper
 
             if (prog != null && prog.Body.Count() > 0)
             {
-
                 var item = prog.Body.First();
 
                 if (item is Jint.Parser.Ast.ExpressionStatement)
@@ -216,13 +210,10 @@ namespace Kooboo.Lib.Helper
                                     return requireFunc.FunctionDeclarations.ToList();
                                 }
                             }
-
                         }
-
                     }
                 }
             }
-
 
             return new List<Jint.Parser.Ast.FunctionDeclaration>();
         }
@@ -258,7 +249,7 @@ namespace Kooboo.Lib.Helper
             return false;
         }
 
-        // append to end of the functions. 
+        // append to end of the functions.
         public static string AppendRequireJsBlock(string Js, string append, List<Jint.Parser.Ast.FunctionDeclaration> list = null)
         {
             if (list == null)
@@ -333,7 +324,7 @@ namespace Kooboo.Lib.Helper
         }
 
         private static object GetValue(Jint.Runtime.Debugger.DebugInformation info, string property)
-        { 
+        {
             var value = info.Locals.Where(item => item.Key.ToLower() == property).Select(item => item.Value).FirstOrDefault();
             if (value == null)
             {
@@ -341,15 +332,16 @@ namespace Kooboo.Lib.Helper
             }
             return value;
         }
+
         public static object GetGebuggerValue(Jint.Engine engine, string FullProperty)
         {
             if (string.IsNullOrEmpty(FullProperty))
             {
                 return null;
             }
-               
+
             FullProperty = FullProperty.Trim();
-            FullProperty = FullProperty.TrimEnd(';'); 
+            FullProperty = FullProperty.TrimEnd(';');
 
             string[] parts = FullProperty.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
             var info = engine.DebugHandler.GetDebugInformation();
@@ -360,7 +352,7 @@ namespace Kooboo.Lib.Helper
             {
                 if (i == 0)
                 {
-                    value = GetValue(info,parts[i]);
+                    value = GetValue(info, parts[i]);
                     if (value == null)
                     {
                         return null;
@@ -376,7 +368,6 @@ namespace Kooboo.Lib.Helper
                 }
             }
 
-
             if (value is Jint.Native.JsValue)
             {
                 var jsvalue = value as Jint.Native.JsValue;
@@ -387,10 +378,7 @@ namespace Kooboo.Lib.Helper
             }
 
             return value;
-
-
         }
-
 
         private static object getMember(object obj, string PropertyName)
         {
@@ -399,12 +387,10 @@ namespace Kooboo.Lib.Helper
                 var dict = obj as IDictionary;
                 return GetValueDic(dict, PropertyName);
             }
-
             else if (obj is JObject)
             {
                 return Lib.Helper.JsonHelper.GetObject(obj as JObject, PropertyName);
             }
-
             else if (obj is System.Dynamic.ExpandoObject)
             {
                 IDictionary<String, Object> value = obj as IDictionary<String, Object>;
@@ -428,9 +414,9 @@ namespace Kooboo.Lib.Helper
                 var value = obj as Jint.Native.JsValue;
 
                 var jsObject = value.ToObject();
-                if (jsObject ==null)
+                if (jsObject == null)
                 {
-                    return null; 
+                    return null;
                 }
 
                 IDictionary<String, Object> rightvalue = jsObject as IDictionary<String, Object>;
@@ -454,17 +440,16 @@ namespace Kooboo.Lib.Helper
                         return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(jsObject, PropertyName);
                     }
                 }
-
             }
 
             return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(obj, PropertyName);
         }
 
-        private static object GetValueDic(IDictionary dictionary,string name)
+        private static object GetValueDic(IDictionary dictionary, string name)
         {
             var keys = dictionary.Keys;
-            string matchKey=null;
-            foreach(var key in keys)
+            string matchKey = null;
+            foreach (var key in keys)
             {
                 if (EqualsIgnoreCasing(name, key as string))
                 {
@@ -472,7 +457,7 @@ namespace Kooboo.Lib.Helper
                     break;
                 }
             }
-            if(!string.IsNullOrEmpty(matchKey))
+            if (!string.IsNullOrEmpty(matchKey))
             {
                 return dictionary[matchKey];
             }
@@ -496,7 +481,6 @@ namespace Kooboo.Lib.Helper
             return equals;
         }
 
-
         public static bool IsMemberExpression(string code)
         {
             if (string.IsNullOrWhiteSpace(code))
@@ -517,26 +501,26 @@ namespace Kooboo.Lib.Helper
                 return false;
             }
 
-            var statement = prog.Body.First(); 
+            var statement = prog.Body.First();
 
             if (statement == null)
             {
-                return false; 
-            } 
-            var exp = statement as Jint.Parser.Ast.ExpressionStatement; 
+                return false;
+            }
+            var exp = statement as Jint.Parser.Ast.ExpressionStatement;
 
             if (exp == null)
             {
-                return false; 
+                return false;
             }
-              
+
             var t = exp.Expression.GetType();
 
-            if (t == typeof(Jint.Parser.Ast.MemberExpression) || t== typeof(Jint.Parser.Ast.Identifier))
+            if (t == typeof(Jint.Parser.Ast.MemberExpression) || t == typeof(Jint.Parser.Ast.Identifier))
             {
-                return true; 
-            } 
-            return false;  
+                return true;
+            }
+            return false;
         }
 
         public static bool IsAssignmentExpression(string code)
@@ -571,7 +555,7 @@ namespace Kooboo.Lib.Helper
             {
                 return false;
             }
-              
+
             var t = exp.Expression.GetType();
 
             if (t == typeof(Jint.Parser.Ast.AssignmentExpression))
@@ -582,25 +566,24 @@ namespace Kooboo.Lib.Helper
         }
 
         public static object GetAssignmentValue(string code)
-        { 
+        {
             var parser = new JavaScriptParser();
             var prog = parser.Parse(code);
-             
-            var statement = prog.Body.First(); 
-  
+
+            var statement = prog.Body.First();
+
             var exp = statement as Jint.Parser.Ast.ExpressionStatement;
 
             var ass = exp.Expression as Jint.Parser.Ast.AssignmentExpression;
 
-            var rightvalue = ass.Right as Jint.Parser.Ast.Literal; 
+            var rightvalue = ass.Right as Jint.Parser.Ast.Literal;
 
-            if (rightvalue !=null)
+            if (rightvalue != null)
             {
-                return rightvalue.Value; 
+                return rightvalue.Value;
             }
 
-            return null; 
+            return null;
         }
-
     }
 }

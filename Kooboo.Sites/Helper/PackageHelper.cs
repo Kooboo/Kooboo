@@ -1,12 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data;
+using Kooboo.Lib.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Lib.Helper;
-using Kooboo.Data;
 
 namespace Kooboo.Sites.Helper
 {
@@ -29,6 +27,7 @@ namespace Kooboo.Sites.Helper
                 return ext;
             }
         }
+
         public static string GetThumbnailUrl(string thumbNail)
         {
             string imgbase = UrlHelper.Combine(AppSettings.ThemeUrl, "/_api/download/themeimg/");

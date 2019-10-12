@@ -1,12 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Interface;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.ViewModel
 {
@@ -21,7 +17,6 @@ namespace Kooboo.Web.ViewModel
         public string Body { get; set; }
 
         public Dictionary<string, int> Relations { get; set; } = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-
     }
 
     public class FormValueViewModel
@@ -48,7 +43,6 @@ namespace Kooboo.Web.ViewModel
         public string Style { get; set; }
 
         public List<FormSubmitterViewModel> AvailableSubmitters { get; set; } = new List<FormSubmitterViewModel>();
-
     }
 
     public class FormSubmitterViewModel
@@ -56,7 +50,6 @@ namespace Kooboo.Web.ViewModel
         public string Name { get; set; }
         public List<Data.Models.SimpleSetting> Settings { get; set; }
     }
-
 
     public class FormUpdateViewModel
     {
@@ -88,11 +81,8 @@ namespace Kooboo.Web.ViewModel
         public string FormType { get; set; }
     }
 
-
-
     public class FormSettingEditViewModel
     {
-
         public Guid Id { get; set; }
 
         public Guid FormId { get; set; }
@@ -100,7 +90,7 @@ namespace Kooboo.Web.ViewModel
         public bool Enable { get; set; }
 
         /// <summary>
-        /// the Action method, HTTP Post or Http Get. 
+        /// the Action method, HTTP Post or Http Get.
         /// </summary>
         public string Method { get; set; }
 
@@ -131,9 +121,7 @@ namespace Kooboo.Web.ViewModel
         public string FormSubmitter { get; set; }
 
         public List<FormSubmitterViewModel> AvailableSubmitters { get; set; } = new List<FormSubmitterViewModel>();
-
     }
-
 
     public class KoobooFormEditModel
     {
@@ -144,14 +132,13 @@ namespace Kooboo.Web.ViewModel
         public string Body { get; set; }
 
         public bool IsEmbedded { get; set; }
-         
 
         public string Fields { get; set; }
 
         public string Style { get; set; }
 
         public bool Enable { get; set; }
-        
+
         public string Method { get; set; }
 
         public string RedirectUrl { get; set; }
@@ -168,7 +155,4 @@ namespace Kooboo.Web.ViewModel
 
         public List<FormSubmitterViewModel> AvailableSubmitters { get; set; } = new List<FormSubmitterViewModel>();
     }
-
-
-
 }

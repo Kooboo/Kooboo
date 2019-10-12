@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
@@ -12,7 +12,6 @@ namespace Kooboo.Web.Api.Implementation
 {
     public class BusinessRuleApi : SiteObjectApi<BusinessRule>
     {
-
         public virtual Dictionary<Guid, string> GetAvailableCodes(string eventname, ApiCall call)
         {
             Enum.TryParse(eventname, out Kooboo.Sites.FrontEvent.enumEventType enumeventyptye);
@@ -110,7 +109,7 @@ namespace Kooboo.Web.Api.Implementation
             return convert(sitedb.Rules.List().Where(o => o.EventType == enumvalue).ToList());
         }
 
-        List<IFElseRule> convert(List<BusinessRule> rules)
+        private List<IFElseRule> convert(List<BusinessRule> rules)
         {
             if (rules == null)
             {
@@ -124,13 +123,11 @@ namespace Kooboo.Web.Api.Implementation
             return converted;
         }
 
-
         public List<EventConditionSetting> ConditionOption(string eventname, ApiCall call)
         {
             var eventtype = Lib.Helper.EnumHelper.GetEnum<Kooboo.Sites.FrontEvent.enumEventType>(eventname);
 
             return Kooboo.Sites.FrontEvent.Manager.GetConditionSetting(eventtype, call.Context);
-
         }
 
         public virtual void DeleteRule(Guid id, ApiCall call)
@@ -138,6 +135,5 @@ namespace Kooboo.Web.Api.Implementation
             var sitedb = call.Context.WebSite.SiteDb();
             sitedb.Rules.Delete(id);
         }
-
     }
 }

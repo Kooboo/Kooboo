@@ -10,7 +10,6 @@ namespace Jint.Parser.Ast
         Set = 4
     };
 
-
     public class Property : Expression
     {
         public PropertyKind Kind;

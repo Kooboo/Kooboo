@@ -8,6 +8,7 @@ namespace Jint.Parser.Ast
         {
             VariableDeclarations = new List<VariableDeclaration>();
         }
+
         public ICollection<Statement> Body;
 
         public List<Comment> Comments;

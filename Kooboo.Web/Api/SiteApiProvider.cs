@@ -1,12 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Contents.Models;
-using Kooboo.Lib.Reflection;
 using Kooboo.Api;
 using Kooboo.Data.Context;
+using Kooboo.Lib.Reflection;
+using Kooboo.Sites.Models;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Web.Api
 {
@@ -15,7 +14,7 @@ namespace Kooboo.Web.Api
         public SiteApiProvider()
         {
             List = DefaultList();
-            CheckAccess = Kooboo.Web.Backend.ApiPermission.IsAllow; 
+            CheckAccess = Kooboo.Web.Backend.ApiPermission.IsAllow;
         }
 
         private Dictionary<string, IApi> DefaultList()
@@ -38,7 +37,6 @@ namespace Kooboo.Web.Api
             return defaultlist;
         }
 
-
         private object _locker = new object();
 
         public Dictionary<string, IApi> List
@@ -47,22 +45,23 @@ namespace Kooboo.Web.Api
         }
 
         public string ApiPrefix { get; set; } = "/_api";
-        public Func<ApiCall, ApiMethod> GetMethod {
+
+        public Func<ApiCall, ApiMethod> GetMethod
+        {
             get
             {
-                return getmethod; 
+                return getmethod;
             }
             set
             {
-
             }
         }
 
         public Func<RenderContext, ApiMethod, bool> CheckAccess { get; set; }
 
-        public ApiMethod  getmethod(ApiCall call)
+        public ApiMethod getmethod(ApiCall call)
         {
-            return Kooboo.Module.ModuleApiHelper.GetApiMethod(call);  
+            return Kooboo.Module.ModuleApiHelper.GetApiMethod(call);
         }
 
         internal void AddApi(Dictionary<string, IApi> currentlist, IApi instance)
@@ -70,7 +69,7 @@ namespace Kooboo.Web.Api
             if (instance != null && currentlist != null)
             {
                 var name = instance.ModelName;
-                currentlist[name] = instance;     
+                currentlist[name] = instance;
             }
         }
 
@@ -95,7 +94,7 @@ namespace Kooboo.Web.Api
             {
                 return List[ModelName];
             }
-            return null; 
+            return null;
         }
     }
 }

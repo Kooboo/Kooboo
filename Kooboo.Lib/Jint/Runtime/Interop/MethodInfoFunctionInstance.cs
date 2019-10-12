@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Jint.Native;
+using Jint.Native.Function;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Jint.Native;
-using Jint.Native.Array;
-using Jint.Native.Function;
 
 namespace Jint.Runtime.Interop
 {
@@ -120,6 +119,5 @@ namespace Jint.Runtime.Interop
 
             return jsArguments;
         }
-
     }
 }

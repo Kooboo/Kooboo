@@ -4,7 +4,7 @@ using Jint.Runtime.Environments;
 
 namespace Jint.Native.Function
 {
-    public class EvalFunctionInstance: FunctionInstance
+    public class EvalFunctionInstance : FunctionInstance
     {
         private readonly Engine _engine;
 
@@ -53,7 +53,7 @@ namespace Jint.Native.Function
                             }
 
                             Engine.DeclarationBindingInstantiation(DeclarationBindingType.EvalCode, program.FunctionDeclarations, program.VariableDeclarations, this, arguments);
-                            
+
                             var result = _engine.ExecuteStatement(program);
 
                             if (result.Type == Completion.Throw)

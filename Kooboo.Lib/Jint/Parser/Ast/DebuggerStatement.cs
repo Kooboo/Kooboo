@@ -1,7 +1,6 @@
 namespace Jint.Parser.Ast
 {
-    public class DebuggerStatement: Statement
+    public class DebuggerStatement : Statement
     {
-        
     }
 }

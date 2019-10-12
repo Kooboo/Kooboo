@@ -1,17 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Helper
 {
-   public static class NetworkHelper
+    public static class NetworkHelper
     {
         public static string GetLocalIpAddress()
         {
@@ -49,29 +46,28 @@ namespace Kooboo.Lib.Helper
 
             foreach (var item in ipEndPoints)
             {
-                if (item.Port == port) 
+                if (item.Port == port)
                 {
-                    // if in use. 
-                    bool IsInUsed = false; 
+                    // if in use.
+                    bool IsInUsed = false;
                     try
                     {
-                        TcpListener tcpListener = new TcpListener(System.Net.IPAddress.Any,  port);
+                        TcpListener tcpListener = new TcpListener(System.Net.IPAddress.Any, port);
                         tcpListener.Start();
                         tcpListener.Stop();
-                        tcpListener = null; 
+                        tcpListener = null;
                     }
                     catch (SocketException ex)
                     {
-                        IsInUsed = true; 
+                        IsInUsed = true;
                     }
                     finally
                     {
-
                     }
-                    return IsInUsed; 
+                    return IsInUsed;
                 }
             }
-               
+
             return false;
         }
     }

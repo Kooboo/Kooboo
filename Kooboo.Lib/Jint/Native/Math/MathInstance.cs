@@ -1,16 +1,16 @@
-﻿using System;
-using Jint.Native.Number;
+﻿using Jint.Native.Number;
 using Jint.Native.Object;
 using Jint.Runtime;
 using Jint.Runtime.Interop;
+using System;
 
 namespace Jint.Native.Math
 {
     public sealed class MathInstance : ObjectInstance
     {
         private static Random _random = new Random();
-        
-        private MathInstance(Engine engine):base(engine)
+
+        private MathInstance(Engine engine) : base(engine)
         {
         }
 
@@ -28,7 +28,6 @@ namespace Jint.Native.Math
             math.Extensible = true;
             math.Prototype = engine.Object.PrototypeObject;
 
-            
             return math;
         }
 
@@ -61,7 +60,6 @@ namespace Jint.Native.Math
             FastAddProperty("PI", System.Math.PI, false, false, false);
             FastAddProperty("SQRT1_2", System.Math.Sqrt(0.5), false, false, false);
             FastAddProperty("SQRT2", System.Math.Sqrt(2), false, false, false);
-
         }
 
         private static JsValue Abs(JsValue thisObject, JsValue[] arguments)
@@ -101,9 +99,9 @@ namespace Jint.Native.Math
 
             if (y > 0 && x.Equals(0))
             {
-                return System.Math.PI/2;
+                return System.Math.PI / 2;
             }
-            
+
             if (NumberInstance.IsPositiveZero(y))
             {
                 // If y is +0 and x>0, the result is +0.
@@ -123,7 +121,7 @@ namespace Jint.Native.Math
                 {
                     return System.Math.PI;
                 }
-                
+
                 // If y is +0 and x<0, the result is an implementation-dependent approximation to +π.
                 if (x < 0)
                 {
@@ -162,7 +160,7 @@ namespace Jint.Native.Math
             // If y<0 and x is −0, the result is an implementation-dependent approximation to −π/2.
             if (y < 0 && x.Equals(0))
             {
-                return -System.Math.PI/2;
+                return -System.Math.PI / 2;
             }
 
             // If y>0 and y is finite and x is +∞, the result is +0.
@@ -180,7 +178,6 @@ namespace Jint.Native.Math
                 }
             }
 
-
             // If y<0 and y is finite and x is +∞, the result is −0.
             // If y<0 and y is finite and x is −∞, the result is an implementation-dependent approximation to −π.
             if (y < 0 && !double.IsInfinity(y))
@@ -196,11 +193,11 @@ namespace Jint.Native.Math
                     return -System.Math.PI;
                 }
             }
-            
+
             // If y is +∞ and x is finite, the result is an implementation-dependent approximation to +π/2.
             if (double.IsPositiveInfinity(y) && !double.IsInfinity(x))
             {
-                return System.Math.PI/2;
+                return System.Math.PI / 2;
             }
 
             // If y is −∞ and x is finite, the result is an implementation-dependent approximation to −π/2.
@@ -212,27 +209,27 @@ namespace Jint.Native.Math
             // If y is +∞ and x is +∞, the result is an implementation-dependent approximation to +π/4.
             if (double.IsPositiveInfinity(y) && double.IsPositiveInfinity(x))
             {
-                return System.Math.PI/4;
+                return System.Math.PI / 4;
             }
-            
+
             // If y is +∞ and x is −∞, the result is an implementation-dependent approximation to +3π/4.
             if (double.IsPositiveInfinity(y) && double.IsNegativeInfinity(x))
             {
                 return 3 * System.Math.PI / 4;
             }
-            
+
             // If y is −∞ and x is +∞, the result is an implementation-dependent approximation to −π/4.
             if (double.IsNegativeInfinity(y) && double.IsPositiveInfinity(x))
             {
                 return -System.Math.PI / 4;
             }
-            
+
             // If y is −∞ and x is −∞, the result is an implementation-dependent approximation to −3π/4.
             if (double.IsNegativeInfinity(y) && double.IsNegativeInfinity(x))
             {
-                return - 3 * System.Math.PI / 4;
+                return -3 * System.Math.PI / 4;
             }
-            
+
             return System.Math.Atan2(y, x);
         }
 
@@ -401,7 +398,6 @@ namespace Jint.Native.Math
                 }
             }
 
-
             if (NumberInstance.IsNegativeZero(x))
             {
                 if (y > 0)
@@ -472,7 +468,5 @@ namespace Jint.Native.Math
             var x = TypeConverter.ToNumber(arguments.At(0));
             return System.Math.Tan(x);
         }
-
-
     }
 }

@@ -1,14 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Btree
 {
-
     /// <summary>
     /// The tree node pointer to sub leaf or node or block
     /// </summary>
@@ -38,7 +33,7 @@ namespace Kooboo.IndexedDB.Btree
         private Int16 _relativeposition;
 
         /// <summary>
-        /// relative disk position of this key-pointer pair within the leaf/node, this is used to delete a record quickly. 
+        /// relative disk position of this key-pointer pair within the leaf/node, this is used to delete a record quickly.
         /// </summary>
         public Int16 RelativePosition
         {
@@ -46,7 +41,7 @@ namespace Kooboo.IndexedDB.Btree
             {
                 if (_relativeposition == default(Int16) && _pointerbytes != null)
                 {
-                    _relativeposition =BitConverter.ToInt16(_pointerbytes, 1);
+                    _relativeposition = BitConverter.ToInt16(_pointerbytes, 1);
                 }
                 return _relativeposition;
             }
@@ -54,9 +49,6 @@ namespace Kooboo.IndexedDB.Btree
             {
                 _relativeposition = value;
             }
-
-
-
         }
 
         /// <summary>
@@ -65,7 +57,7 @@ namespace Kooboo.IndexedDB.Btree
         public byte[] KeyToPosition;
 
         /// <summary>
-        ///  The fixed length of a node pointer. point to sub node or leaf or block or duplicate. 
+        ///  The fixed length of a node pointer. point to sub node or leaf or block or duplicate.
         ///  a pointer fixed at 11 length.
         /// </summary>
         public static Int16 Length = 11;
@@ -92,7 +84,7 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         /// <summary>
-        /// Convert value to bytes. 
+        /// Convert value to bytes.
         /// </summary>
         /// <returns></returns>
         public byte[] ToBytes()
@@ -120,7 +112,7 @@ namespace Kooboo.IndexedDB.Btree
             set
             {
                 _pointerbytes = value;
-                //when assign value, reset other values. 
+                //when assign value, reset other values.
                 _positionpointer = default(long);
                 _relativeposition = default(Int16);
                 _indicator = default(EnumValues.TypeIndicator);
@@ -139,7 +131,6 @@ namespace Kooboo.IndexedDB.Btree
             }
         }
 
-
         public bool hasPointer
         {
             get
@@ -151,7 +142,7 @@ namespace Kooboo.IndexedDB.Btree
         private bool _isPreviousPoionter;
 
         /// <summary>
-        ///  whether this is the left preious pointer of current node or not. 
+        ///  whether this is the left preious pointer of current node or not.
         /// </summary>
         public bool IsFirstPreviousPointer
         {
@@ -177,8 +168,6 @@ namespace Kooboo.IndexedDB.Btree
             {
                 _isPreviousPoionter = value;
             }
-
         }
-
     }
 }

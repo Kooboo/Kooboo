@@ -1,18 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
-   public class FloatFieldConverter<T> : IFieldConverter<T>
+    public class FloatFieldConverter<T> : IFieldConverter<T>
     {
-        Func<T, float> getValue;
-        Action<T, float> setValue;
+        private Func<T, float> getValue;
+        private Action<T, float> setValue;
 
         public FloatFieldConverter(string FieldName)
         {
@@ -33,7 +29,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         public void SetByteValues(T value, byte[] bytes)
         {
-            float bytevalue =   BitConverter.ToSingle(bytes, 0);
+            float bytevalue = BitConverter.ToSingle(bytes, 0);
             this.setValue(value, bytevalue);
         }
 
@@ -42,13 +38,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             float fieldvalue = this.getValue(Value);
             return ValueConverter.ToBytes(fieldvalue);
         }
-
     }
 
     public class FloatFieldConverter : IFieldConverter
     {
-        Func<object, float> getValue;
-        Action<object, float> setValue;
+        private Func<object, float> getValue;
+        private Action<object, float> setValue;
 
         public FloatFieldConverter(string FieldName, Type ObjectType)
         {
@@ -78,6 +73,5 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             float fieldvalue = this.getValue(Value);
             return ValueConverter.ToBytes(fieldvalue);
         }
-         
     }
 }

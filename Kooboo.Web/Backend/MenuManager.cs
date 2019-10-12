@@ -1,18 +1,14 @@
 ﻿using Kooboo.Data.Context;
-using Kooboo.Web.Menus;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Authorization.Model;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Web.Menus
 {
     public static class MenuManager
     {
-
         public static void VerifySortSideBar(List<CmsMenuViewModel> menus, RenderContext context)
         {
             var user = context.User;
@@ -22,11 +18,10 @@ namespace Kooboo.Web.Menus
             {
                 menus.RemoveAll(o => true);
             }
-
             else
             {
                 if (!user.IsAdmin)
-                { 
+                {
                     var siteuser = sitedb.GetSiteRepository<SiteUserRepository>().Get(user.Id);
                     if (siteuser == null)
                     {
@@ -38,10 +33,8 @@ namespace Kooboo.Web.Menus
                         var role = repo.Get(siteuser.SiteRole);
                         AccessControl(menus, role);
                     }
-
                 }
             }
-
 
             RemoveItems(menus);
 
@@ -51,13 +44,12 @@ namespace Kooboo.Web.Menus
             }
         }
 
-
         public static void AccessControl(List<CmsMenuViewModel> menus, RolePermission role)
         {
             foreach (var item in menus)
             {
                 var permission = GetPermissionString(item);
-                //var permission 
+                //var permission
                 var haspermission = Kooboo.Sites.Authorization.PermissionService.HasPermission(permission, role.Tree);
                 if (haspermission)
                 {
@@ -117,7 +109,6 @@ namespace Kooboo.Web.Menus
                     return sidebarmenu.Parent.ToString() + "/" + sidebarmenu.Name;
                 }
             }
-
             else if (menu is IFeatureMenu)
             {
                 return "feature/" + menu.Name;
@@ -125,7 +116,6 @@ namespace Kooboo.Web.Menus
 
             return null;
         }
-
 
         public static string GetPermissionString(CmsMenuViewModel menu)
         {
@@ -160,7 +150,6 @@ namespace Kooboo.Web.Menus
             list.RemoveAll(o => o.Hide);
         }
 
-
         public static void Sort(List<CmsMenuViewModel> list)
         {
             foreach (var item in list)
@@ -172,10 +161,7 @@ namespace Kooboo.Web.Menus
             }
             list.Sort(CompareMenu.instance);
         }
-
-
     }
-
 
     public class CompareMenu : IComparer<CmsMenuViewModel>
     {
@@ -185,6 +171,7 @@ namespace Kooboo.Web.Menus
         }
 
         private static CompareMenu _instance;
+
         public static CompareMenu instance
         {
             get
@@ -195,10 +182,7 @@ namespace Kooboo.Web.Menus
                     return _instance;
                 }
                 return _instance;
-
             }
         }
     }
-
-
 }

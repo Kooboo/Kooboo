@@ -1,6 +1,6 @@
-﻿using System.Linq;
-using Jint.Native.Object;
+﻿using Jint.Native.Object;
 using Jint.Runtime;
+using System.Linq;
 
 namespace Jint.Native.Function
 {
@@ -42,7 +42,7 @@ namespace Jint.Native.Function
             {
                 throw new JavaScriptException(Engine.TypeError);
             });
-              
+
             return f.HasInstance(v);
         }
     }

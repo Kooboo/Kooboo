@@ -1,10 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Utilities
 {
@@ -32,15 +28,14 @@ namespace Kooboo.Lib.Utilities
                     }
                     else
                     {
-                        // the data: will be ignored. 
+                        // the data: will be ignored.
                         temp = string.Empty;
                     }
                     continue;
                 }
-
                 else if (input[i] == ',')
                 {
-                    // temp contains mine and charset, etc. 
+                    // temp contains mine and charset, etc.
                     string[] sets = temp.Split(';');
 
                     foreach (string item in sets)
@@ -60,27 +55,22 @@ namespace Kooboo.Lib.Utilities
                         }
                         else
                         {
-                            // this should be the mine now. To be checked. 
+                            // this should be the mine now. To be checked.
                             schema.MineType = lower;
-
                         }
                     }
 
-
-                    // The rest of the string is the data. 
+                    // The rest of the string is the data.
                     schema.DataString = input.Substring(i + 1);
 
                     return schema;
-
                 }
 
                 temp += input[i].ToString();
             }
 
             return schema;
-
         }
-
 
         public static bool isDataUri(string src)
         {
@@ -130,6 +120,5 @@ namespace Kooboo.Lib.Utilities
         {
             return (chr == '\u0020' || chr == '\u0009' || chr == '\u000a' || chr == '\u000c' || chr == '\u000d');
         }
-
     }
 }

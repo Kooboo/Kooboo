@@ -1,15 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.App.Commands;
+using Kooboo.App.Extensions;
 using Kooboo.App.Models;
-using System;
+using Kooboo.Data.Hosts;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using Kooboo.App.Extensions;
-using Kooboo.Data.Hosts;
 
 namespace Kooboo.App
 {
@@ -18,8 +16,7 @@ namespace Kooboo.App
     /// </summary>
     public partial class HostPage : Page
     {
-
-        private readonly ListViewModel context = new ListViewModel
+        private readonly ListViewModel _context = new ListViewModel
         {
             Title = Data.Language.Hardcoded.GetValue("Host")
         };
@@ -27,24 +24,24 @@ namespace Kooboo.App
         public HostPage()
         {
             InitializeComponent();
-            context.Buttons = new[]
+            _context.Buttons = new[]
             {
                 new NavbarButton
                 {
-                    Text = Data.Language.Hardcoded.GetValue("+ New host"), 
+                    Text = Data.Language.Hardcoded.GetValue("+ New host"),
                     Command = new DelegateCommand(vm=> {
                         this.Redirect(new CreateHostPage(this));
                     }),
                     From = this
                 }
             };
-            DataContext = context;
+            DataContext = _context;
             Reload();
         }
 
         private void Reload()
         {
-            context.ItemsSource = WindowsHost
+            _context.ItemsSource = WindowsHost
                 .GetList()
                 .OrderBy(it => it.Domain)
                 .Select(it => new ListViewItemViewModel
@@ -70,7 +67,7 @@ namespace Kooboo.App
                         }
                     }
                 });
-            DataContext = context;
+            DataContext = _context;
         }
     }
 }

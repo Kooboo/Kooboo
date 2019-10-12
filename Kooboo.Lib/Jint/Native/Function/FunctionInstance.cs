@@ -25,7 +25,7 @@ namespace Jint.Native.Function
         public abstract JsValue Call(JsValue thisObject, JsValue[] arguments);
 
         public LexicalEnvironment Scope { get; private set; }
-        
+
         public string[] FormalParameters { get; private set; }
         public bool Strict { get; private set; }
 
@@ -36,7 +36,7 @@ namespace Jint.Native.Function
             {
                 return false;
             }
-            
+
             var po = Get("prototype");
             if (!po.IsObject())
             {
@@ -44,10 +44,10 @@ namespace Jint.Native.Function
             }
 
             var o = po.AsObject();
-            
+
             if (o == null)
             {
-                throw new JavaScriptException(_engine.TypeError);    
+                throw new JavaScriptException(_engine.TypeError);
             }
 
             while (true)

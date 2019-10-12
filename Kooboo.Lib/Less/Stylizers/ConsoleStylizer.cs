@@ -2,8 +2,8 @@ using System.Text;
 
 namespace dotless.Core.Stylizers
 {
-    using System.Collections.Generic;
     using Parser;
+    using System.Collections.Generic;
 
     public class ConsoleStylizer : IStylizer
     {

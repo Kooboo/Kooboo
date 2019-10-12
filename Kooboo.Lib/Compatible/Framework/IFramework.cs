@@ -1,11 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Text;
-using Kooboo.Lib.Utilities;
-using Kooboo.Lib.Security;
 using Kooboo.Lib.Helper;
+using Kooboo.Lib.Security;
+using Kooboo.Lib.Utilities;
 
 namespace Kooboo.Lib.Compatible
 {
@@ -38,6 +35,5 @@ namespace Kooboo.Lib.Compatible
         RsaKeys GenerateKeys(int size = 512);
 
         bool IsUWP();
-
     }
 }

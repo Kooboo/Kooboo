@@ -1,16 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Api;
+using Kooboo.Api.ApiResponse;
 using Kooboo.Data.Models;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.SiteTransfer;
-using Kooboo.Api.ApiResponse;
 using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Api;
-
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -39,11 +38,11 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-        public  SingleResponse Single(string pageUrl, string name, ApiCall call)
+        public SingleResponse Single(string pageUrl, string name, ApiCall call)
         {
             SingleResponse response = new SingleResponse();
             var sitedb = call.WebSite.SiteDb();
-                                                   
+
             if (Kooboo.Sites.SiteTransfer.TransferManager.IsUrlBanned(pageUrl))
             {
                 string error = Data.Language.Hardcoded.GetValue("Target Url is Protected", call.Context);
@@ -76,7 +75,7 @@ namespace Kooboo.Web.Api.Implementation
                 var task = TransferManager.AddTask(sitedb, pageUrl, name, call.Context.User.Id);
 
                 TransferManager.ExecuteTask(sitedb, task).Wait();
-                    
+
                 response.TaskId = task.Id;
                 response.Finish = true;
 
@@ -98,9 +97,7 @@ namespace Kooboo.Web.Api.Implementation
                             response.Model = PageApi.ToPageViewModel(sitedb, sitepage);
                         }
                     }
-
                 }
-
             }
             else
             {
@@ -112,7 +109,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         public virtual TransferResponse ByPage(ApiCall call)
-        {           
+        {
             string fulldomain = call.GetValue("FullDomain");
             if (string.IsNullOrEmpty(fulldomain))
             {
@@ -152,9 +149,9 @@ namespace Kooboo.Web.Api.Implementation
                     SiteId = newsite.Id,
                     TaskId = transferTask.Id,
                     Success = true
-                };  
-            }   
-            return null;   
+                };
+            }
+            return null;
         }
 
         [Kooboo.Attributes.RequireParameters("RootDomain", "SubDomain", "SiteName", "url")]
@@ -183,7 +180,6 @@ namespace Kooboo.Web.Api.Implementation
 
                 throw new Exception(error);
             }
-
 
             url = url.Trim();
             if (!url.ToLower().StartsWith("http"))
@@ -336,7 +332,6 @@ namespace Kooboo.Web.Api.Implementation
 
             return response;
         }
-
     }
 
     public class TaskResponse
@@ -347,5 +342,4 @@ namespace Kooboo.Web.Api.Implementation
 
         public int Images { get; set; }
     }
-
 }

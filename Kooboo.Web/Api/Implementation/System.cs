@@ -1,12 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -41,7 +39,7 @@ namespace Kooboo.Web.Api.Implementation
             Guid SiteId = call.GetValue<Guid>("SiteId");
 
             SystemVersion version = new SystemVersion();
-            version.Admin = Data.AppSettings.Version.ToString();  
+            version.Admin = Data.AppSettings.Version.ToString();
             version.SiteVersions = new Dictionary<Guid, string>();
 
             if (SiteId != default(Guid))
@@ -68,7 +66,6 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
             return version;
-
         }
 
         [Kooboo.Attributes.RequireModel(typeof(List<string>))]
@@ -87,10 +84,9 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
-  
         public string LoadOneJs(string url, ApiCall call)
-        {    
-            return GetString(url); 
+        {
+            return GetString(url);
         }
 
         private string GetString(string url)
@@ -119,7 +115,7 @@ namespace Kooboo.Web.Api.Implementation
             }
             else
             {
-                result.Add("ApiResource", null); 
+                result.Add("ApiResource", null);
             }
 
             if (Data.AppSettings.ServerSetting != null)

@@ -1,12 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using System.Collections.Generic;
 
-
 namespace Kooboo.Web.Menus
-{ 
-
+{
     public class Sites : IHeaderMenu
     {
         public Sites()
@@ -44,9 +42,5 @@ namespace Kooboo.Web.Menus
         {
             return Data.Language.Hardcoded.GetValue("Sites", Context);
         }
-         
     }
-
-
-
 }

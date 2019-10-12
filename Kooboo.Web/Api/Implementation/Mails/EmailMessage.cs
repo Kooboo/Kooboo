@@ -1,16 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Api;
+using Kooboo.Mail;
+using Kooboo.Mail.ViewModel;
 using System;
 using System.Collections.Generic;
-using Kooboo.Mail;
-using Kooboo.Api;
-using Kooboo.Mail.ViewModel;
 
 namespace Kooboo.Web.Api.Implementation.Mails
 {
     public class EmailMessageApi : IApi
     {
         public const int PageSize = 30;
+
         public string ModelName
         {
             get
@@ -55,14 +56,13 @@ namespace Kooboo.Web.Api.Implementation.Mails
             if (addressid != 0)
             {
                 query.Where(o => o.AddressId == addressid);
-            } 
+            }
             var list = query.OrderByDescending(o => o.Id).Take(PageSize);
 
             MarkStatus(maildb, list);
 
             return list;
         }
-
 
         public List<Message> More(ApiCall call)
         {
@@ -91,18 +91,18 @@ namespace Kooboo.Web.Api.Implementation.Mails
             }
 
             var query = maildb.Messages.Query().Where(o => o.FolderId == folderid && o.Id < messageid);
-           // var list = maildb.Messages.Query().Where(o => o.AddressId == addressid && o.FolderId == folderid && o.Id < messageid).OrderByDescending(o => o.Id).Take(PageSize);
+            // var list = maildb.Messages.Query().Where(o => o.AddressId == addressid && o.FolderId == folderid && o.Id < messageid).OrderByDescending(o => o.Id).Take(PageSize);
             if (addressid != 0)
             {
                 query.Where(o => o.AddressId == addressid);
-            } 
+            }
             var list = query.OrderByDescending(o => o.Id).Take(PageSize);
-              
+
             MarkStatus(maildb, list);
 
             return list;
         }
-         
+
         private void MarkStatus(MailDb maildb, List<Message> msgs)
         {
             foreach (var item in msgs)
@@ -130,7 +130,6 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 var dic = new Dictionary<string, string>();
                 dic.Add("messageId", call.GetValue("messageId"));
                 return EmailForwardManager.Get<ContentViewModel>(this.ModelName, nameof(EmailMessageApi.Content), call.Context.User, dic);
-                
             }
             int messageid = call.GetValue<int>("messageId");
 
@@ -156,12 +155,12 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 dic.Add("messageId", call.GetValue("messageId"));
 
                 var json = Kooboo.Lib.Helper.JsonHelper.Serialize(call.Context.Request.Model);
-                var message= EmailForwardManager.Post<string>(this.ModelName, nameof(EmailMessageApi.Send), call.Context.User, json, dic);
+                var message = EmailForwardManager.Post<string>(this.ModelName, nameof(EmailMessageApi.Send), call.Context.User, json, dic);
                 if (!string.IsNullOrEmpty(message))
                 {
                     throw new Exception(message);
                 }
-                return; 
+                return;
             }
 
             var user = call.Context.User;
@@ -178,31 +177,29 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
             var msginfo = Kooboo.Mail.Utility.MessageUtility.ParseMeta(messagebody);
 
-            if (rcpttos.Count>0)
-            { 
+            if (rcpttos.Count > 0)
+            {
                 // verify sending quota.
-                if (!Kooboo.Data.Infrastructure.InfraManager.Test(call.Context.User.CurrentOrgId, Data.Infrastructure.InfraType.Email,  rcpttos.Count))
+                if (!Kooboo.Data.Infrastructure.InfraManager.Test(call.Context.User.CurrentOrgId, Data.Infrastructure.InfraType.Email, rcpttos.Count))
                 {
                     throw new Exception(Data.Language.Hardcoded.GetValue("you have no enough credit to send emails", call.Context));
                 }
 
-                // save sent.. 
+                // save sent..
                 Kooboo.Mail.Transport.Incoming.SaveSent(fromaddress, msginfo, messagebody);
 
                 Kooboo.Mail.Transport.Incoming.Receive(fromaddress, rcpttos, messagebody, msginfo);
 
-                // draft message id. 
+                // draft message id.
                 var messageid = call.GetValue<int>("messageId");
                 if (messageid > 0)
                 {
                     var usermaildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
                     usermaildb.Messages.Delete(messageid);
-                } 
+                }
 
-                Kooboo.Data.Infrastructure.InfraManager.Add(call.Context.User.CurrentOrgId, Data.Infrastructure.InfraType.Email,  rcpttos.Count, string.Join(",", rcpttos));
-                 
+                Kooboo.Data.Infrastructure.InfraManager.Add(call.Context.User.CurrentOrgId, Data.Infrastructure.InfraType.Email, rcpttos.Count, string.Join(",", rcpttos));
             }
-
         }
 
         public void Moves(ApiCall call)
@@ -212,7 +209,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 var dic = new Dictionary<string, string>();
                 dic.Add("ids", call.GetValue("ids"));
                 dic.Add("folder", call.Context.Request.GetValue("folder"));
-                EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailMessageApi.Moves), call.Context.User,dic);
+                EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailMessageApi.Moves), call.Context.User, dic);
                 return;
             }
 
@@ -307,6 +304,5 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 }
             }
         }
-
     }
 }

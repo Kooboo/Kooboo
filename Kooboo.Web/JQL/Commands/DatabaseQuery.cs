@@ -1,22 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.JQL
 {
- public   class DatabaseQuery : ICommand
-    {     
+    public class DatabaseQuery : ICommand
+    {
         public DatabaseQuery()
         {
-            this.ObjectType = EnumObjectType.Database; 
+            this.ObjectType = EnumObjectType.Database;
         }
 
         public string Table { get; set; }
-                                            
+
         public string Condition { get; set; }
 
         public string OrderBy { get; set; }
@@ -27,6 +22,6 @@ namespace Kooboo.Web.JQL
 
         public int Take { get; set; }
 
-        public EnumObjectType  ObjectType { get; set; }
+        public EnumObjectType ObjectType { get; set; }
     }
 }

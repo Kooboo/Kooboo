@@ -1,13 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Sites.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Repository;
 using Kooboo.Extensions;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Constraints
 {
@@ -81,7 +77,6 @@ namespace Kooboo.Sites.Constraints
             {
                 if (SiteObject.Extension != null && (SiteObject.Extension.ToLower() == "css" || SiteObject.Extension.ToLower() == ".css"))
                 {
-
                     string relativecssrule = Service.ObjectService.GetObjectRelativeUrl(SiteDb, SiteObject);
                     if (string.IsNullOrEmpty(relativecssrule))
                     {
@@ -114,7 +109,6 @@ namespace Kooboo.Sites.Constraints
                     string righturl = Kooboo.Lib.Helper.UrlHelper.ReplaceBackSlash(item.PureUrl);
                     string NewRelativeUrl = Kooboo.Lib.Helper.UrlHelper.Combine(CssFileRelativeUrl, righturl);
 
-
                     if (item.PureUrl != NewRelativeUrl)
                     {
                         string newvalue;
@@ -129,12 +123,10 @@ namespace Kooboo.Sites.Constraints
 
                         updates.Add(new SourceUpdate { StartIndex = item.StartIndex, EndIndex = item.EndIndex, NewValue = newvalue });
                     }
-
                 }
             }
 
             return updates;
         }
-
     }
 }

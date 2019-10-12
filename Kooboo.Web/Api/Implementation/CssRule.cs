@@ -1,11 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Service;
 using Kooboo.Web.ViewModel;
-using System;
 using System.Collections.Generic;
 
 namespace Kooboo.Web.Api.Implementation
@@ -20,13 +19,12 @@ namespace Kooboo.Web.Api.Implementation
             }
             set
             {
-
             }
         }
-         
+
         public List<InlineItemViewModel> InlineList(ApiCall apiCall)
         {
-            var sitedb = apiCall.WebSite.SiteDb(); 
+            var sitedb = apiCall.WebSite.SiteDb();
 
             List<InlineItemViewModel> result = new List<InlineItemViewModel>();
 
@@ -82,15 +80,13 @@ namespace Kooboo.Web.Api.Implementation
             model.Declarations = CssService.ParseDeclarationBlock(item.CssText, call.ObjectId);
 
             return model;
-        } 
-        
+        }
+
         [Kooboo.Attributes.RequireParameters("id", "RuleText")]
         public void UpdateInline(ApiCall call)
         {
-            string ruletext = call.GetValue("RuleText"); 
-            call.WebSite.SiteDb().CssRules.UpdateInlineCss(call.ObjectId, ruletext);  
+            string ruletext = call.GetValue("RuleText");
+            call.WebSite.SiteDb().CssRules.UpdateInlineCss(call.ObjectId, ruletext);
         }
-
-      
     }
 }

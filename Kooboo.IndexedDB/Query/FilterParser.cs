@@ -1,26 +1,24 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.Indexs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Query
 {
     public class FilterParser<TKey, TValue>
     {
         /// <summary>
-        /// prase the filter collection and get an execution plan. 
+        /// prase the filter collection and get an execution plan.
         /// </summary>
         /// <returns></returns>
         public static ExecutionPlan GetExecutionPlan(Filter<TKey, TValue> filter)
         {
             ExecutionPlan executionplan = new ExecutionPlan();
 
-            //first check order by field. 
+            //first check order by field.
             if (filter.OrderByPrimaryKey)
             {
                 // does not support range with primary key yet, will be supported later.
@@ -35,7 +33,7 @@ namespace Kooboo.IndexedDB.Query
                     executionplan.startCollection = filter.store.primaryIndex.allItemCollection(filter.Ascending);
                 }
 
-               // executionplan.OrderBySettled = true;
+                // executionplan.OrderBySettled = true;
                 executionplan.hasStartCollection = true;
             }
             else
@@ -55,13 +53,13 @@ namespace Kooboo.IndexedDB.Query
                             executionplan.startCollection = filter.store.Indexes.getIndex(filter.OrderByFieldName).AllItems(filter.Ascending);
                         }
 
-                       // executionplan.OrderBySettled = true;
+                        // executionplan.OrderBySettled = true;
                         executionplan.hasStartCollection = true;
                     }
                 }
             }
 
-            // check the primary key index. 
+            // check the primary key index.
             Range<byte[]> primarykeyrange = getRange(filter.store.StoreSetting.PrimaryKey, filter.items);
 
             if (primarykeyrange != null)
@@ -70,7 +68,7 @@ namespace Kooboo.IndexedDB.Query
                 executionplan.hasStartCollection = true;
             }
 
-            // check all index fields that has been used in the filter. 
+            // check all index fields that has been used in the filter.
             foreach (var item in filter.store.Indexes.items)
             {
                 Range<byte[]> indexrange = getRange(item.FieldName, filter.items);
@@ -80,7 +78,7 @@ namespace Kooboo.IndexedDB.Query
                 }
             }
 
-            // now parse columns. All query where condition item must be in columns, otherwise this will be a problem. 
+            // now parse columns. All query where condition item must be in columns, otherwise this will be a problem.
             foreach (var item in filter.items)
             {
                 Columns.IColumn<TValue> column;
@@ -94,7 +92,7 @@ namespace Kooboo.IndexedDB.Query
                     colplan.length = column.Length;
                     colplan.Evaluator = ColumnEvaluator.GetEvaluator(column.DataType, item.Compare, item.Value, column.Length);
 
-                    executionplan.scanColumns.Add(colplan); 
+                    executionplan.scanColumns.Add(colplan);
                 }
                 else
                 {
@@ -113,9 +111,9 @@ namespace Kooboo.IndexedDB.Query
                     colplan.ColumnName = column.FieldName;
                     colplan.relativeStartPosition = column.relativePosition;
                     colplan.length = column.Length;
-                    colplan.Evaluator = ColumnInEvaluator.GetInEvaluator(column.DataType, item.Value, column.Length); 
+                    colplan.Evaluator = ColumnInEvaluator.GetInEvaluator(column.DataType, item.Value, column.Length);
 
-                    executionplan.scanColumns.Add(colplan); 
+                    executionplan.scanColumns.Add(colplan);
                 }
                 else
                 {
@@ -123,23 +121,23 @@ namespace Kooboo.IndexedDB.Query
                 }
             }
 
-            /// for the methods calls. 
+            /// for the methods calls.
             foreach (var item in filter.calls)
             {
-                MemberExpression memberaccess = null; 
+                MemberExpression memberaccess = null;
                 foreach (var xitem in item.Arguments)
                 {
                     if (xitem.NodeType == ExpressionType.MemberAccess)
                     {
-                        memberaccess = xitem as MemberExpression; 
+                        memberaccess = xitem as MemberExpression;
                     }
                 }
                 if (memberaccess == null)
                 {
-                    throw new Exception("Method call require use one of the Fields or Property as parameters"); 
+                    throw new Exception("Method call require use one of the Fields or Property as parameters");
                 }
 
-                string fieldname = memberaccess.Member.Name; 
+                string fieldname = memberaccess.Member.Name;
 
                 Columns.IColumn<TValue> column;
                 column = filter.store.GetColumn(fieldname);
@@ -159,18 +157,18 @@ namespace Kooboo.IndexedDB.Query
                 {
                     throw new Exception("methed call parameter must be a column, add the field to colomn creating creating the store, otherwise use the fullscan option");
                 }
-            } 
+            }
             /// verify the plan. or optimize it.
             if (!executionplan.hasStartCollection)
             {
-                //make one of the range. pick any one now. should be pick by the optimizer.  
+                //make one of the range. pick any one now. should be pick by the optimizer.
                 foreach (var item in executionplan.indexRanges)
                 {
                     IIndex<TValue> index = filter.store.Indexes.getIndex(item.Key);
                     if (index != null)
                     {
                         executionplan.startCollection = index.GetCollection(item.Value.lower, item.Value.upper, item.Value.lowerOpen, item.Value.upperOpen, filter.Ascending);
-                        executionplan.hasStartCollection = true; 
+                        executionplan.hasStartCollection = true;
                         executionplan.indexRanges.Remove(item.Key);
                         break;
                     }
@@ -180,15 +178,13 @@ namespace Kooboo.IndexedDB.Query
                     executionplan.startCollection = filter.store.primaryIndex.allItemCollection(filter.Ascending);
                     executionplan.hasStartCollection = true;
                 }
-
             }
 
             return executionplan;
         }
 
-
         /// <summary>
-        /// get the range query collection of index fields.for looping.  this can be OrderBy fields or fields that has more sparnse. this only works for index fields. 
+        /// get the range query collection of index fields.for looping.  this can be OrderBy fields or fields that has more sparnse. this only works for index fields.
         /// after get, the related field or property item will be removed from the item collection.
         /// </summary>
         /// <param name="FieldOrPropertyName"></param>
@@ -197,7 +193,7 @@ namespace Kooboo.IndexedDB.Query
         {
             if (string.IsNullOrWhiteSpace(FieldOrPropertyName))
             {
-                return null; 
+                return null;
             }
 
             FieldOrPropertyName = FieldOrPropertyName.ToLower();
@@ -208,54 +204,59 @@ namespace Kooboo.IndexedDB.Query
 
             for (int i = 0; i < items.Count; i++)
             {
-
                 if (items[i].FieldOrProperty.ToLower() == FieldOrPropertyName)
                 {
                     switch (items[i].Compare)
                     {
                         case Comparer.EqualTo:
-                            // for equal to. 
+                            // for equal to.
                             range.upper = items[i].Value;
                             range.upperOpen = false;
                             range.lower = items[i].Value;
                             range.lowerOpen = false;
                             removeditem.Add(i);
                             break;
+
                         case Comparer.GreaterThan:
                             range.lower = items[i].Value;
                             range.lowerOpen = true;
                             removeditem.Add(i);
                             break;
+
                         case Comparer.GreaterThanOrEqual:
                             range.lower = items[i].Value;
                             range.lowerOpen = false;
                             removeditem.Add(i);
                             break;
+
                         case Comparer.LessThan:
                             range.upper = items[i].Value;
                             range.upperOpen = true;
                             removeditem.Add(i);
                             break;
+
                         case Comparer.LessThanOrEqual:
                             range.upper = items[i].Value;
                             range.upperOpen = false;
                             removeditem.Add(i);
                             break;
+
                         case Comparer.NotEqualTo:
-                            //does not do anything. 
+                            //does not do anything.
                             break;
+
                         case Comparer.StartWith:
-                            // does not do anything for startwith or contains. 
+                            // does not do anything for startwith or contains.
 
                             break;
+
                         case Comparer.Contains:
                             break;
+
                         default:
                             break;
                     }
-
                 }
-
             }
 
             bool hasmatch = false;
@@ -274,7 +275,5 @@ namespace Kooboo.IndexedDB.Query
                 return null;
             }
         }
-
-
     }
 }

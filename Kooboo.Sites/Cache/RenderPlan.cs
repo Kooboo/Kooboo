@@ -1,10 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Extensions;
+using Kooboo.Sites.Render;
+using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
-using Kooboo.Extensions;
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.Render; 
 
 namespace Kooboo.Sites.Cache
 {
@@ -79,11 +79,11 @@ namespace Kooboo.Sites.Cache
                 {
                     SitePageRenderPlan = new Dictionary<Guid, List<IRenderTask>>();
                     SiteRenderPlans[SiteDb.Id] = SitePageRenderPlan;
-                }  
-               SitePageRenderPlan[UniqueObjectId] = plans; 
+                }
+                SitePageRenderPlan[UniqueObjectId] = plans;
             }
         }
-        
+
         public static void RemovePlan(SiteDb SiteDb, Guid ObjectId)
         {
             var indeisngid = ObjectId.ToString().ToHashGuid();
@@ -94,7 +94,6 @@ namespace Kooboo.Sites.Cache
                 if (SiteRenderPlans.ContainsKey(SiteDb.Id))
                 {
                     SiteRenderPlan = SiteRenderPlans[SiteDb.Id];
-
                 }
                 else
                 {

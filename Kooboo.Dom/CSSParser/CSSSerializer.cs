@@ -1,11 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Dom.CSS;
 using System.Text.RegularExpressions;
 
 namespace Kooboo.Dom.CSS
@@ -47,11 +42,11 @@ namespace Kooboo.Dom.CSS
         }
 
         /// <summary>
-        ///  desrialized rule list. ImportRule is at the beginning of file, and should be ignored. 
-      /// </summary>
-      /// <param name="cssText"></param>
-      /// <param name="basehref">the base href for import rule. </param>
-      /// <returns></returns>
+        ///  desrialized rule list. ImportRule is at the beginning of file, and should be ignored.
+        /// </summary>
+        /// <param name="cssText"></param>
+        /// <param name="basehref">the base href for import rule. </param>
+        /// <returns></returns>
         public static CSSRuleList deserializeRuleList(string cssText, string basehref)
         {
             CSSRuleList rules = new CSSRuleList();
@@ -87,8 +82,7 @@ namespace Kooboo.Dom.CSS
                 }
                 else
                 {
-                  //TODO: other rules are not implemented now. 
-
+                    //TODO: other rules are not implemented now.
                 }
 
                 result = filescanner.ReadNext();
@@ -114,7 +108,7 @@ namespace Kooboo.Dom.CSS
 
             if (firstBracket <= 0 && nextBracket <= 0 && firstBracket > nextBracket)
             {
-                // failed, did not find it. 
+                // failed, did not find it.
                 return null;
             }
 
@@ -146,14 +140,13 @@ namespace Kooboo.Dom.CSS
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="cssText">The text that contains the media blocks</param>
         /// <returns></returns>
         public static CSSMediaRule deserializeCSSMediaRule(string cssText)
         {
             CSSMediaRule mediaRule = new CSSMediaRule();
-
 
             int firstBracket = cssText.IndexOf("{");
             int lastBracket = cssText.LastIndexOf("}");
@@ -167,7 +160,7 @@ namespace Kooboo.Dom.CSS
 
             mediaRule.cssText = ruletext;
 
-            int mediaIndex = cssText.IndexOf("@media", StringComparison.OrdinalIgnoreCase);   // this should be 0. 
+            int mediaIndex = cssText.IndexOf("@media", StringComparison.OrdinalIgnoreCase);   // this should be 0.
 
             string mediatext = cssText.Substring(mediaIndex + 6, firstBracket - mediaIndex - 1 - 5).Trim();
 
@@ -187,7 +180,6 @@ namespace Kooboo.Dom.CSS
 
             mediaRule.media = medialist;
 
-
             CSSRuleList rulelist = deserializeRuleList(ruletext, null);
 
             foreach (var item in rulelist.item)
@@ -198,11 +190,10 @@ namespace Kooboo.Dom.CSS
             mediaRule.cssRules = rulelist;
 
             return mediaRule;
-
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="cssText"></param>
         /// <param name="BaseHref">if null, URL must contains http, otherwise, return null</param>
@@ -215,7 +206,6 @@ namespace Kooboo.Dom.CSS
 
             if (m.Success)
             {
-
                 string medias = m.Groups["media"].Value;
                 string url = m.Groups["url"].Value;
 
@@ -226,11 +216,7 @@ namespace Kooboo.Dom.CSS
 
                 if (!url.ToLower().StartsWith("http://"))
                 {
-
                     url = PathHelper.combine(BaseHref, url);
-
-               
-
                 }
 
                 CSSImportRule newRule = new CSSImportRule();
@@ -238,7 +224,6 @@ namespace Kooboo.Dom.CSS
 
                 if (!string.IsNullOrEmpty(medias))
                 {
-
                     string[] mediaArray = medias.Split(',');
 
                     MediaList mediaList = new MediaList();
@@ -246,7 +231,6 @@ namespace Kooboo.Dom.CSS
                     foreach (var item in mediaArray)
                     {
                         mediaList.appendMedium(item);
-
                     }
                     newRule.media = mediaList;
                 }
@@ -263,8 +247,6 @@ namespace Kooboo.Dom.CSS
                 {
                     return null;
                 }
-
-
             }
             else
             {
@@ -273,7 +255,7 @@ namespace Kooboo.Dom.CSS
         }
 
         /// <summary>
-        /// Parse the property name and value in the declaration block. 
+        /// Parse the property name and value in the declaration block.
         /// </summary>
         /// <param name="cssBlockText"></param>
         /// <returns></returns>
@@ -339,7 +321,7 @@ namespace Kooboo.Dom.CSS
             return styleDeclaration;
         }
 
-         public static string serializeCSSStyleRule(CSSStyleRule Rule)
+        public static string serializeCSSStyleRule(CSSStyleRule Rule)
         {
             string returnstring = string.Empty;
 
@@ -365,7 +347,6 @@ namespace Kooboo.Dom.CSS
 
         public static string serializeCSSImportRule(CSSImportRule Rule)
         {
-
             if (Rule.media.item.Count > 0)
             {
                 string mediatext = string.Join(", ", Rule.media.item.ToArray());
@@ -373,7 +354,6 @@ namespace Kooboo.Dom.CSS
             }
             else
             {
-
                 return "@import url('" + Rule.href + "');";    // SelectorText is the original media + query text. NON-W3C
             }
         }
@@ -381,20 +361,20 @@ namespace Kooboo.Dom.CSS
         public static string serializeDeclarationBlock(CSSStyleDeclaration styleDeclaration)
         {
             string cssText = string.Empty;
-            bool first = true; 
+            bool first = true;
             foreach (var item in styleDeclaration.item)
             {
-                string declarationText = null; 
+                string declarationText = null;
                 if (first)
                 {
                     declarationText = item.propertyname + ": " + item.value;
-                    first = false; 
+                    first = false;
                 }
                 else
                 {
-                    declarationText = "\r\n" +  item.propertyname + ": " + item.value;
+                    declarationText = "\r\n" + item.propertyname + ": " + item.value;
                 }
-                 
+
                 if (item.important)
                 {
                     declarationText = declarationText + " !important";
@@ -428,12 +408,11 @@ namespace Kooboo.Dom.CSS
                 }
                 else
                 {
-                    //TODO: others not supported yet. 
+                    //TODO: others not supported yet.
                 }
             }
 
             return cssText;
-
         }
     }
 }

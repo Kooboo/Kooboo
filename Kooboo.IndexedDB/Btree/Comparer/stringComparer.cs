@@ -1,28 +1,23 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Btree.Comparer
 {
-
     /// <summary>
-    /// Compare string. Unicode string comparision only to guarantee that the comparision result will always be the same, but not to sort according to any known library or protocol. As it is not possible to implement. 
+    /// Compare string. Unicode string comparision only to guarantee that the comparision result will always be the same, but not to sort according to any known library or protocol. As it is not possible to implement.
     /// </summary>
-  public  class StringComparer : IComparer<byte[]>
+    public class StringComparer : IComparer<byte[]>
     {
-      private int len;
-      private int charlen;   // the len of bytes per char.
+        private int len;
+        private int charlen;   // the len of bytes per char.
 
-      public StringComparer(int len, System.Text.Encoding encoding)
-      {
-          this.len = len;
-          byte[] charbyte = encoding.GetBytes("a");
-          this.charlen = charbyte.Length;
-      }
+        public StringComparer(int len, System.Text.Encoding encoding)
+        {
+            this.len = len;
+            byte[] charbyte = encoding.GetBytes("a");
+            this.charlen = charbyte.Length;
+        }
 
         public int Compare(byte[] x, byte[] y)
         {
@@ -70,7 +65,6 @@ namespace Kooboo.IndexedDB.Btree.Comparer
             return 0;
         }
 
-
         private int compareLenTwo(byte[] x, byte[] y)
         {
             int i = 0;
@@ -99,18 +93,17 @@ namespace Kooboo.IndexedDB.Btree.Comparer
                     {
                         return -1;
                     }
-
                 }
 
                 i = i + 2;
             }
 
-            return 0; 
+            return 0;
         }
 
         private int compareLenThree(byte[] x, byte[] y)
         {
-           int i = 0;
+            int i = 0;
             while (true)
             {
                 if ((i + 3) > this.len)
@@ -128,11 +121,11 @@ namespace Kooboo.IndexedDB.Btree.Comparer
                 }
                 else
                 {
-                    if (x[i+1] > y[i+1])
+                    if (x[i + 1] > y[i + 1])
                     {
                         return 1;
                     }
-                    else if (x[i+1] < y[i+1])
+                    else if (x[i + 1] < y[i + 1])
                     {
                         return -1;
                     }
@@ -147,7 +140,6 @@ namespace Kooboo.IndexedDB.Btree.Comparer
                             return -1;
                         }
                     }
-
                 }
 
                 i = i + 3;
@@ -158,7 +150,6 @@ namespace Kooboo.IndexedDB.Btree.Comparer
 
         private int compareLenFour(byte[] x, byte[] y)
         {
-          
             int i = 0;
             while (true)
             {
@@ -186,11 +177,11 @@ namespace Kooboo.IndexedDB.Btree.Comparer
                     }
                     else
                     {
-                        if (x[i+1] > y[i+1])
+                        if (x[i + 1] > y[i + 1])
                         {
                             return 1;
                         }
-                        else if (x[i+1] < y[i+1])
+                        else if (x[i + 1] < y[i + 1])
                         {
                             return -1;
                         }
@@ -213,6 +204,5 @@ namespace Kooboo.IndexedDB.Btree.Comparer
 
             return 0;
         }
-
     }
 }

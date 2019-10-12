@@ -1,17 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Btree
 {
     public class MemoryTreeNodeManager
-    { 
+    {
         /// <summary>
-        /// Find by key, return the lowerest node... 
+        /// Find by key, return the lowerest node...
         /// </summary>
         /// <param name="currentNode"></param>
         /// <param name="Key"></param>
@@ -23,12 +19,12 @@ namespace Kooboo.IndexedDB.Btree
             if (pointer.PositionPointer == 0)
             {
                 Tree.CreateFirstLeaf(currentNode.TreeNode);
-                NodeChange(Tree, currentNode); 
-                return FindLeafByKey(Tree, Tree.RootCache, Keybytes); 
+                NodeChange(Tree, currentNode);
+                return FindLeafByKey(Tree, Tree.RootCache, Keybytes);
             }
 
             MemoryTreeNode foundnode = GetOrLoadNode(Tree, currentNode, pointer);
-             
+
             if (foundnode == null || foundnode.TreeNode.TypeIndicator == EnumValues.TypeIndicator.leaf)
             {
                 return foundnode;
@@ -38,41 +34,41 @@ namespace Kooboo.IndexedDB.Btree
                 return FindLeafByKey(Tree, foundnode, Keybytes);
             }
         }
-        
-        public static MemoryTreeNode FindFirstLeaf(TreeFile TreeFile, MemoryTreeNode currentNode= null)
+
+        public static MemoryTreeNode FindFirstLeaf(TreeFile TreeFile, MemoryTreeNode currentNode = null)
         {
             if (currentNode == null)
             {
                 currentNode = TreeFile.RootCache;
             }
- 
+
             NodePointer pointer = new NodePointer();
             pointer.PointerBytes = currentNode.TreeNode.PreviousPointer;
 
             if (pointer.PositionPointer == 0)
             {
-                var key = KeyFinder.FindFirstKey(currentNode.TreeNode.KeyArray, TreeFile.comparer); 
-                if (key ==null)
+                var key = KeyFinder.FindFirstKey(currentNode.TreeNode.KeyArray, TreeFile.comparer);
+                if (key == null)
                 {
                     return null;
                 }
                 pointer = currentNode.TreeNode.FindPointer(key);
             }
-             
+
             if (pointer.PointerBytes != null && pointer.PositionPointer > 0 && pointer.Indicator != EnumValues.TypeIndicator.leaf)
             {
-                var newcachenode = GetOrLoadNode(TreeFile, currentNode, pointer); 
-                return FindFirstLeaf(TreeFile, newcachenode); 
+                var newcachenode = GetOrLoadNode(TreeFile, currentNode, pointer);
+                return FindFirstLeaf(TreeFile, newcachenode);
             }
 
-            ///find the leaf that contains the key. 
+            ///find the leaf that contains the key.
             if (pointer.PointerBytes != null && pointer.PositionPointer > 0 && pointer.Indicator == EnumValues.TypeIndicator.leaf)
-            { 
-                MemoryTreeNode newcacheleaf = GetOrLoadNode(TreeFile, currentNode, pointer); 
-                return newcacheleaf; 
+            {
+                MemoryTreeNode newcacheleaf = GetOrLoadNode(TreeFile, currentNode, pointer);
+                return newcacheleaf;
             }
-      
-             return null;  
+
+            return null;
         }
 
         public static MemoryTreeNode FindLastLeaf(TreeFile TreeFile, MemoryTreeNode currentNode = null)
@@ -80,7 +76,7 @@ namespace Kooboo.IndexedDB.Btree
             if (currentNode == null)
             {
                 currentNode = TreeFile.RootCache;
-            } 
+            }
 
             NodePointer pointer = new NodePointer();
             var key = KeyFinder.FindLastKey(currentNode.TreeNode.KeyArray, TreeFile.comparer);
@@ -91,38 +87,35 @@ namespace Kooboo.IndexedDB.Btree
             }
             else
             {
-                pointer = currentNode.TreeNode.FindPointer(key); 
+                pointer = currentNode.TreeNode.FindPointer(key);
             }
-             
 
-            if  (pointer.PositionPointer > 0 && pointer.Indicator != EnumValues.TypeIndicator.leaf)
+            if (pointer.PositionPointer > 0 && pointer.Indicator != EnumValues.TypeIndicator.leaf)
             {
-                MemoryTreeNode newcachenode = GetOrLoadNode(TreeFile, currentNode, pointer); 
-                return FindLastLeaf(TreeFile, newcachenode); 
-
+                MemoryTreeNode newcachenode = GetOrLoadNode(TreeFile, currentNode, pointer);
+                return FindLastLeaf(TreeFile, newcachenode);
             }
 
-            ///find the leaf that contains the key. 
+            ///find the leaf that contains the key.
             if (pointer.PointerBytes != null && pointer.PositionPointer > 0 && pointer.Indicator == EnumValues.TypeIndicator.leaf)
             {
                 MemoryTreeNode newcacheleaf = GetOrLoadNode(TreeFile, currentNode, pointer);
                 return newcacheleaf;
-            } 
-            return null;  
-
+            }
+            return null;
         }
-        
+
         public static void NodeChange(TreeFile tree, MemoryTreeNode node)
         {
             if (node == null)
             {
-                return; 
+                return;
             }
             if (node.TreeNode.TypeIndicator == EnumValues.TypeIndicator.root)
             {
-                var treenode =  tree.ReadNode(node.TreeNode.DiskPosition);
-                var newrootcache = new MemoryTreeNode(treenode); 
-                tree.RootCache = newrootcache; 
+                var treenode = tree.ReadNode(node.TreeNode.DiskPosition);
+                var newrootcache = new MemoryTreeNode(treenode);
+                tree.RootCache = newrootcache;
             }
             else
             {
@@ -139,27 +132,27 @@ namespace Kooboo.IndexedDB.Btree
                     }
                 }
             }
-            node = null; 
+            node = null;
         }
 
         public static void NodeReload(TreeFile tree, MemoryTreeNode node)
         {
             var newnode = tree.ReadNode(node.TreeNode.DiskPosition);
-            node.TreeNode = newnode; 
+            node.TreeNode = newnode;
         }
-        
+
         public static MemoryTreeNode GetOrLoadNode(TreeFile TreeFile, MemoryTreeNode ParentNode, NodePointer Pointer)
         {
             if (Pointer.IsFirstPreviousPointer)
             {
                 if (ParentNode.PreviousPointer != null)
                 {
-                    return ParentNode.PreviousPointer; 
+                    return ParentNode.PreviousPointer;
                 }
                 else
-                { 
+                {
                     TreeNode node = TreeFile.ReadNode(Pointer.PositionPointer);
-                    if(node == null)
+                    if (node == null)
                     {
                         return null;
                     }
@@ -168,13 +161,13 @@ namespace Kooboo.IndexedDB.Btree
                     newcachenode.Parent = ParentNode;
                     newcachenode.IsParentPreviousPointer = Pointer.IsFirstPreviousPointer;
                     newcachenode.ParentNodeKey = Pointer.KeyToPosition;
-                    newcachenode.Level = ParentNode.Level + 1;  
+                    newcachenode.Level = ParentNode.Level + 1;
 
                     if (newcachenode.Level < TreeFile.MaxCacheLevel)
                     {
-                       ParentNode.PreviousPointer = newcachenode; 
+                        ParentNode.PreviousPointer = newcachenode;
                     }
-                    return newcachenode;   
+                    return newcachenode;
                 }
             }
             else
@@ -189,7 +182,7 @@ namespace Kooboo.IndexedDB.Btree
                     if (node == null)
                     {
                         return null;
-                    } 
+                    }
                     MemoryTreeNode newcachenode = new MemoryTreeNode(node);
                     newcachenode.Parent = ParentNode;
                     newcachenode.IsParentPreviousPointer = Pointer.IsFirstPreviousPointer;
@@ -201,8 +194,7 @@ namespace Kooboo.IndexedDB.Btree
                         ParentNode.Children[Pointer.PositionPointer] = newcachenode;
                     }
                     return newcachenode;
-                } 
-
+                }
             }
         }
 
@@ -210,64 +202,64 @@ namespace Kooboo.IndexedDB.Btree
         {
             if (CurrentLeaf.TreeNode.TypeIndicator != EnumValues.TypeIndicator.leaf)
             {
-                throw new Exception("this method only accept leaf"); 
+                throw new Exception("this method only accept leaf");
             }
-            byte[] key = KeyFinder.FindSmallestBiggerKey(CurrentLeaf.ParentNodeKey, CurrentLeaf.Parent.TreeNode.KeyArray, TreeFile.comparer); 
+            byte[] key = KeyFinder.FindSmallestBiggerKey(CurrentLeaf.ParentNodeKey, CurrentLeaf.Parent.TreeNode.KeyArray, TreeFile.comparer);
 
             while (key != null)
             {
                 var pointer = CurrentLeaf.Parent.TreeNode.FindPointer(key);
                 if (pointer != null && pointer.PositionPointer > 0)
                 {
-                    var nextleaf = GetOrLoadNode(TreeFile, CurrentLeaf.Parent, pointer); 
+                    var nextleaf = GetOrLoadNode(TreeFile, CurrentLeaf.Parent, pointer);
                     if (nextleaf != null && nextleaf.TreeNode.TypeIndicator == EnumValues.TypeIndicator.leaf)
                     {
-                        return nextleaf; 
+                        return nextleaf;
                     }
                 }
 
                 key = KeyFinder.FindSmallestBiggerKey(key, CurrentLeaf.Parent.TreeNode.KeyArray, TreeFile.comparer);
             }
-         
-            return GetUpLinkFirstLeaf(TreeFile, CurrentLeaf.Parent); 
+
+            return GetUpLinkFirstLeaf(TreeFile, CurrentLeaf.Parent);
         }
-        private static  MemoryTreeNode GetUpLinkFirstLeaf(TreeFile TreeFile, MemoryTreeNode ParentNode )
+
+        private static MemoryTreeNode GetUpLinkFirstLeaf(TreeFile TreeFile, MemoryTreeNode ParentNode)
         {
             if (ParentNode.TreeNode.TypeIndicator == EnumValues.TypeIndicator.root)
             {
-                return null;    
+                return null;
             }
-            
+
             MemoryTreeNode siblingNode;
-            byte[] siblingkey=KeyFinder.FindSmallestBiggerKey(ParentNode.ParentNodeKey, ParentNode.Parent.TreeNode.KeyArray, TreeFile.comparer);
-           
+            byte[] siblingkey = KeyFinder.FindSmallestBiggerKey(ParentNode.ParentNodeKey, ParentNode.Parent.TreeNode.KeyArray, TreeFile.comparer);
+
             while (siblingkey != null)
             {
                 var pointer = ParentNode.Parent.TreeNode.FindPointer(siblingkey);
                 if (pointer != null && pointer.PositionPointer > 0)
                 {
-                    siblingNode =  GetOrLoadNode(TreeFile, ParentNode.Parent, pointer);
+                    siblingNode = GetOrLoadNode(TreeFile, ParentNode.Parent, pointer);
 
-                    var result = FindContainerFirstLeaf(TreeFile, siblingNode); 
+                    var result = FindContainerFirstLeaf(TreeFile, siblingNode);
                     if (result != null)
-                    { return result;  }
+                    { return result; }
                 }
                 siblingkey = KeyFinder.FindSmallestBiggerKey(siblingkey, ParentNode.Parent.TreeNode.KeyArray, TreeFile.comparer);
             }
 
-            return GetUpLinkFirstLeaf(TreeFile, ParentNode.Parent); 
-             
+            return GetUpLinkFirstLeaf(TreeFile, ParentNode.Parent);
         }
 
         private static MemoryTreeNode FindContainerFirstLeaf(TreeFile TreeFile, MemoryTreeNode ContainerNode)
         {
             if (ContainerNode == null)
             {
-                return null; 
+                return null;
             }
-           if (ContainerNode.TreeNode.TypeIndicator == EnumValues.TypeIndicator.leaf)
+            if (ContainerNode.TreeNode.TypeIndicator == EnumValues.TypeIndicator.leaf)
             {
-                return ContainerNode; 
+                return ContainerNode;
             }
 
             NodePointer pointer = new NodePointer();
@@ -276,21 +268,21 @@ namespace Kooboo.IndexedDB.Btree
 
             if (pointer.PositionPointer > 0)
             {
-                var subnode = GetOrLoadNode(TreeFile, ContainerNode, pointer); 
+                var subnode = GetOrLoadNode(TreeFile, ContainerNode, pointer);
                 if (subnode != null)
                 {
                     var result = FindContainerFirstLeaf(TreeFile, subnode);
                     if (result != null)
                     {
-                        return result; 
+                        return result;
                     }
                 }
             }
 
-            // did not get return, try one key by one key. 
+            // did not get return, try one key by one key.
             byte[] key = KeyFinder.FindSmallestBiggerKey(null, ContainerNode.TreeNode.KeyArray, TreeFile.comparer);
-            
-             while(key != null)
+
+            while (key != null)
             {
                 var nodepointer = ContainerNode.TreeNode.FindPointer(key);
 
@@ -337,11 +329,11 @@ namespace Kooboo.IndexedDB.Btree
                     {
                         return nextleaf;
                     }
-                } 
+                }
                 key = KeyFinder.FindBiggestSmallerKey(key, CurrentLeaf.Parent.TreeNode.KeyArray, TreeFile.comparer);
             }
 
-            // check the previous pointer. 
+            // check the previous pointer.
             NodePointer previousPointer = new NodePointer();
             previousPointer.PointerBytes = CurrentLeaf.Parent.TreeNode.PreviousPointer;
 
@@ -355,7 +347,7 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         private static MemoryTreeNode GetUpLinkLastLeaf(TreeFile TreeFile, MemoryTreeNode ParentNode)
-        { 
+        {
             if (ParentNode.TreeNode.TypeIndicator == EnumValues.TypeIndicator.root)
             {
                 return null;
@@ -378,7 +370,7 @@ namespace Kooboo.IndexedDB.Btree
                 siblingkey = KeyFinder.FindBiggestSmallerKey(siblingkey, ParentNode.Parent.TreeNode.KeyArray, TreeFile.comparer);
             }
 
-            /// need to check the first previous pointer after process all key arrays. 
+            /// need to check the first previous pointer after process all key arrays.
             NodePointer previousPointer = new NodePointer();
             previousPointer.PointerBytes = ParentNode.Parent.TreeNode.PreviousPointer;
 
@@ -393,6 +385,7 @@ namespace Kooboo.IndexedDB.Btree
 
             return GetUpLinkLastLeaf(TreeFile, ParentNode.Parent);
         }
+
         private static MemoryTreeNode FindContainerLastLeaf(TreeFile TreeFile, MemoryTreeNode ContainerNode)
         {
             if (ContainerNode == null)
@@ -404,7 +397,7 @@ namespace Kooboo.IndexedDB.Btree
                 return ContainerNode;
             }
 
-            // did not get return, try one key by one key. 
+            // did not get return, try one key by one key.
             byte[] key = KeyFinder.FindLastKey(ContainerNode.TreeNode.KeyArray, TreeFile.comparer);
 
             while (key != null)
@@ -446,6 +439,5 @@ namespace Kooboo.IndexedDB.Btree
 
             return null;
         }
-
     }
 }

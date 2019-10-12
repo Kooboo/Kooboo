@@ -1,18 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.FrontEvent
 {
-   public static  class ConditionManager
-    { 
+    public static class ConditionManager
+    {
         public static bool Evaluate(IFrontEvent TheEvent, Condition condition)
         {
-            var value =   Lib.Reflection.Dynamic.GetObjectMember(TheEvent, condition.Left);  
+            var value = Lib.Reflection.Dynamic.GetObjectMember(TheEvent, condition.Left);
             if (value == null)
             {
                 return false;
@@ -46,7 +43,6 @@ namespace Kooboo.Sites.FrontEvent
                             return leftvalue <= rightvalue;
                         }
                     }
-
                 }
                 else if (type == typeof(decimal) || type == typeof(float) || type == typeof(double))
                 {
@@ -72,7 +68,6 @@ namespace Kooboo.Sites.FrontEvent
                         }
                     }
                 }
-
             }
             else if (Operator == "=" || Operator == "==" || Operator == "!=")
             {
@@ -92,7 +87,6 @@ namespace Kooboo.Sites.FrontEvent
                         }
                     }
                 }
-
                 else if (type == typeof(bool))
                 {
                     bool leftvalue = (bool)value;
@@ -108,10 +102,7 @@ namespace Kooboo.Sites.FrontEvent
                             return leftvalue != rightvalue;
                         }
                     }
-
-
                 }
-
                 else
                 {
                     string leftvalue = value.ToString();
@@ -125,10 +116,8 @@ namespace Kooboo.Sites.FrontEvent
                     }
                 }
             }
-
             else
             {
-
                 //Operators.Add("Contains");
                 //Operators.Add("NotContains");
                 //Operators.Add("Startwith");

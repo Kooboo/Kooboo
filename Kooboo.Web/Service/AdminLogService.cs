@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api.ApiResponse;
 using Kooboo.Data.Models;
@@ -9,8 +9,6 @@ using Kooboo.Render;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Service
 {
@@ -19,7 +17,7 @@ namespace Kooboo.Web.Service
         static AdminLogService()
         {
             GlobalDatabase = Kooboo.Data.DB.Global();
-            LogFolder = System.IO.Path.Combine(Data.AppSettings.RootPath, "AppData", "AdminLog"); 
+            LogFolder = System.IO.Path.Combine(Data.AppSettings.RootPath, "AppData", "AdminLog");
             IOHelper.EnsureDirectoryExists(LogFolder);
 
             var setting = new Setting();
@@ -31,6 +29,7 @@ namespace Kooboo.Web.Service
         public static Database GlobalDatabase { get; set; }
 
         private static string _logfolder;
+
         public static string LogFolder
         {
             get
@@ -72,6 +71,7 @@ namespace Kooboo.Web.Service
 
         private static Sequence<BackendLog> _logstore;
         private static DateTime _logtime;
+
         public static Sequence<BackendLog> LogStore
         {
             get
@@ -99,7 +99,7 @@ namespace Kooboo.Web.Service
 
         public static void Add(BackendLog log)
         {
-            LogStore.Add(log); 
+            LogStore.Add(log);
             LogStore.Flush();
         }
 
@@ -296,11 +296,9 @@ namespace Kooboo.Web.Service
             }
             return result;
         }
-         
 
         public static string GetLastPath(Guid UserId)
         {
-
             var find = LastPath.Get(UserId);
             if (find != null && find.ContainsKey("Path"))
             {
@@ -312,6 +310,5 @@ namespace Kooboo.Web.Service
             }
             return null;
         }
-          
     }
 }

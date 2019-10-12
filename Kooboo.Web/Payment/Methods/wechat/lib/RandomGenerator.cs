@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Security;
 using System.Security.Cryptography;
 
 namespace WxPayAPI.lib
 {
     public class RandomGenerator
     {
-        readonly RNGCryptoServiceProvider csp;
+        private readonly RNGCryptoServiceProvider csp;
 
         public RandomGenerator()
         {

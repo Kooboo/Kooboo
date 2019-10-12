@@ -6,6 +6,7 @@ namespace dotless.Core.Parser.Infrastructure
     public interface IOperable
     {
         Node Operate(Operation op, Node other);
+
         Color ToColor();
     }
 }

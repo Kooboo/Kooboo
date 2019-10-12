@@ -1,20 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Schedule
 {
     /// <summary>
-    /// The items on every second record. 
+    /// The items on every second record.
     /// </summary>
     public class SecondItem
     {
-
         private object _object = new object();
 
         private string FullFileName;
@@ -25,7 +21,6 @@ namespace Kooboo.IndexedDB.Schedule
 
         private ISchedule _schedule;
 
-
         public SecondItem(int DayInt, ISchedule schedule)
         {
             this._schedule = schedule;
@@ -34,7 +29,7 @@ namespace Kooboo.IndexedDB.Schedule
             this.DayInt = DayInt;
             this.FullFileName = FileNameGenerator.GetItemFullFileName(DayInt, schedule);
 
-            // create the file and write a header. 
+            // create the file and write a header.
             if (!File.Exists(this.FullFileName))
             {
                 File.WriteAllText(this.FullFileName, "store items of every second");
@@ -42,7 +37,7 @@ namespace Kooboo.IndexedDB.Schedule
         }
 
         /// <summary>
-        /// Add the first item and return the section position. 
+        /// Add the first item and return the section position.
         /// </summary>
         /// <param name="blockPosition"></param>
         /// <returns></returns>
@@ -66,7 +61,7 @@ namespace Kooboo.IndexedDB.Schedule
         }
 
         /// <summary>
-        /// Del an item from the second item. Delete is expensive as it has to search throught all records. 
+        /// Del an item from the second item. Delete is expensive as it has to search throught all records.
         /// </summary>
         /// <param name="SectionPosition"></param>
         /// <param name="BlockPosition"></param>
@@ -76,7 +71,7 @@ namespace Kooboo.IndexedDB.Schedule
 
             if (header.BlockPosition <= 0)
             {
-                return; 
+                return;
             }
 
             Item nextitem = loadItem(header.FirstRecordPointer);
@@ -95,7 +90,7 @@ namespace Kooboo.IndexedDB.Schedule
                 {
                     header.counter = header.counter - 1;
                     Stream.Position = header.BlockPosition;
-                    Stream.Write(header.ToBytes(), 0, 14); 
+                    Stream.Write(header.ToBytes(), 0, 14);
                 }
             }
         }
@@ -103,7 +98,7 @@ namespace Kooboo.IndexedDB.Schedule
         private bool Del(Item currentItem, long BlockPosition)
         {
             Item previousitem = currentItem;
-            currentItem = loadItem(currentItem.NextRecord); 
+            currentItem = loadItem(currentItem.NextRecord);
 
             while (true)
             {
@@ -114,21 +109,18 @@ namespace Kooboo.IndexedDB.Schedule
 
                     Stream.Position = previousitem.ItemDiskLocation;
 
-                    Stream.Write(previousitem.ToBytes(), 0, 18); 
+                    Stream.Write(previousitem.ToBytes(), 0, 18);
 
-                    return true; 
+                    return true;
                 }
-
                 else if (currentItem.NextRecord <= 0)
                 {
-                    return false; 
+                    return false;
                 }
 
                 previousitem = currentItem;
-                currentItem = loadItem(previousitem.NextRecord); 
+                currentItem = loadItem(previousitem.NextRecord);
             }
-
-
         }
 
         /// <summary>
@@ -140,7 +132,6 @@ namespace Kooboo.IndexedDB.Schedule
         {
             lock (_object)
             {
-
                 ItemHeader header = loadHeader(SectionPosition);
 
                 if (header.counter < 1)
@@ -158,7 +149,6 @@ namespace Kooboo.IndexedDB.Schedule
 
                 return item.ContentBlockPosition;
             }
-
         }
 
         public int Count(long sectionPosition)
@@ -169,18 +159,15 @@ namespace Kooboo.IndexedDB.Schedule
             }
         }
 
-
         public List<long> GetAll(long SectionPosition)
         {
-            return ReadAll(SectionPosition); 
+            return ReadAll(SectionPosition);
         }
 
         public List<long> ReadAll(long SectionPosition)
         {
-
             lock (_object)
             {
-
                 List<long> list = new List<long>();
 
                 ItemHeader header = loadHeader(SectionPosition);
@@ -201,7 +188,6 @@ namespace Kooboo.IndexedDB.Schedule
 
                 return list;
             }
-
         }
 
         private void Add(ItemHeader header, long BlockPosition)
@@ -212,7 +198,7 @@ namespace Kooboo.IndexedDB.Schedule
 
             long writeposition = Stream.Length;
 
-            Stream.Position = writeposition; 
+            Stream.Position = writeposition;
             Stream.Write(item.ToBytes(), 0, 18);
 
             header.FirstRecordPointer = writeposition;
@@ -233,7 +219,7 @@ namespace Kooboo.IndexedDB.Schedule
 
             item.ParseBytes(itembytes);
 
-            item.ItemDiskLocation = itemBlockPosition; 
+            item.ItemDiskLocation = itemBlockPosition;
 
             return item;
         }
@@ -253,7 +239,6 @@ namespace Kooboo.IndexedDB.Schedule
 
             return header;
         }
-
 
         private ItemHeader CreateNewSection()
         {
@@ -283,15 +268,13 @@ namespace Kooboo.IndexedDB.Schedule
                     {
                         if (_indexstream == null || _indexstream.CanRead == false)
                         {
-                            _indexstream = StreamManager.GetFileStream(this.FullFileName); 
+                            _indexstream = StreamManager.GetFileStream(this.FullFileName);
                         }
                     }
-
                 }
                 return _indexstream;
             }
         }
-
 
         public void Close()
         {
@@ -307,19 +290,17 @@ namespace Kooboo.IndexedDB.Schedule
                 }
             }
         }
-
     }
-
 
     public class ItemHeader
     {
         /// <summary>
-        /// The total counter of this section. 
+        /// The total counter of this section.
         /// </summary>
         public int counter { get; set; }
 
         /// <summary>
-        /// The block position of first record. 
+        /// The block position of first record.
         /// </summary>
         public long FirstRecordPointer { get; set; }
 
@@ -344,12 +325,10 @@ namespace Kooboo.IndexedDB.Schedule
 
         public void ParseBytes(byte[] bytes)
         {
-
             this.counter = BitConverter.ToInt32(bytes, 1);
 
             this.FirstRecordPointer = BitConverter.ToInt64(bytes, 5);
         }
-
     }
 
     public class Item
@@ -379,7 +358,5 @@ namespace Kooboo.IndexedDB.Schedule
             this.ContentBlockPosition = BitConverter.ToInt64(bytes, 1);
             this.NextRecord = BitConverter.ToInt64(bytes, 9);
         }
-
     }
-
 }

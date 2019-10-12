@@ -1,6 +1,7 @@
 ﻿namespace dotless.Core.Parser.Functions
 {
     using System;
+
     public class NegationFunction : ColorMixFunction
     {
         protected override double Operate(double a, double b)

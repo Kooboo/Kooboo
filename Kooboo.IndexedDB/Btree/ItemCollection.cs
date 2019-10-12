@@ -1,10 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Btree
 {
@@ -45,7 +43,6 @@ namespace Kooboo.IndexedDB.Btree
             return this.GetEnumerator();
         }
 
-
         public class Enumerator : IEnumerator<long>
         {
             private TreeFile treefile;
@@ -71,7 +68,7 @@ namespace Kooboo.IndexedDB.Btree
                 init();
 
                 if (recordlistcount == 0)
-                { 
+                {
                     if ((this.isCurrentEndNode && this.isCurrentStartNode) == false)
                     {
                         getnextnode();
@@ -82,7 +79,6 @@ namespace Kooboo.IndexedDB.Btree
             private MemoryTreeNode startnode;
             private MemoryTreeNode endnode;
             private MemoryTreeNode currentnode;
-
 
             private bool isCurrentStartNode;
             private bool isCurrentEndNode;
@@ -140,12 +136,11 @@ namespace Kooboo.IndexedDB.Btree
 
                 foreach (var item in currentnode.TreeNode.KeyArray.OrderBy(o => o.Key, this.comparer))
                 {
-
                     if (isCurrentStartNode)
                     {
                         if (isCurrentEndNode)
                         {
-                            //both start and end in the same leaf. 
+                            //both start and end in the same leaf.
                             if ((this.comparer.Compare(startKeyBytes, item.Key) < 0 || (this.comparer.Compare(startKeyBytes, item.Key) == 0 && !this.lowerOpen)) && (this.comparer.Compare(endKeyBytes, item.Key) > 0 || (this.comparer.Compare(endKeyBytes, item.Key) == 0 && !this.upperOpen)))
                             {
                                 NodePointer pointer = new NodePointer();
@@ -155,49 +150,43 @@ namespace Kooboo.IndexedDB.Btree
                         }
                         else
                         {
-                            // the start node.  
+                            // the start node.
                             if (this.comparer.Compare(startKeyBytes, item.Key) < 0 || (this.comparer.Compare(startKeyBytes, item.Key) == 0 && !this.lowerOpen))
                             {
                                 NodePointer pointer = new NodePointer();
                                 pointer.PointerBytes = item.Value;
                                 recordlist.Add(pointer);
                             }
-
                         }
                     }
                     else
                     {
-                        // the end node. 
+                        // the end node.
 
                         if (isCurrentEndNode)
                         {
-
                             if (this.comparer.Compare(endKeyBytes, item.Key) > 0 || (this.comparer.Compare(endKeyBytes, item.Key) == 0 && !this.upperOpen))
                             {
                                 NodePointer pointer = new NodePointer();
                                 pointer.PointerBytes = item.Value;
                                 recordlist.Add(pointer);
                             }
-
                         }
                         else
                         {
-                            //not start, not end, the middle one, insert everything. 
+                            //not start, not end, the middle one, insert everything.
                             NodePointer pointer = new NodePointer();
                             pointer.PointerBytes = item.Value;
                             recordlist.Add(pointer);
-
                         }
-
                     }
-
                 }
 
                 recordlistcount = recordlist.Count;
             }
-            
+
             /// <summary>
-            /// load the record, this is in the DESC mode. 
+            /// load the record, this is in the DESC mode.
             /// </summary>
             /// <param name="currentnode"></param>
             private void loadNodeRecordDESC(MemoryTreeNode currentnode)
@@ -212,7 +201,7 @@ namespace Kooboo.IndexedDB.Btree
                     {
                         if (isCurrentEndNode)
                         {
-                            //both start and end in the same leaf. 
+                            //both start and end in the same leaf.
                             if ((this.comparer.Compare(startKeyBytes, item.Key) < 0 || (this.comparer.Compare(startKeyBytes, item.Key) == 0 && !this.lowerOpen)) && (this.comparer.Compare(endKeyBytes, item.Key) > 0 || (this.comparer.Compare(endKeyBytes, item.Key) == 0 && !this.upperOpen)))
                             {
                                 NodePointer pointer = new NodePointer();
@@ -222,7 +211,7 @@ namespace Kooboo.IndexedDB.Btree
                         }
                         else
                         {
-                            // the start node. 
+                            // the start node.
 
                             if (this.comparer.Compare(endKeyBytes, item.Key) > 0 || (this.comparer.Compare(endKeyBytes, item.Key) == 0 && !this.upperOpen))
                             {
@@ -230,40 +219,33 @@ namespace Kooboo.IndexedDB.Btree
                                 pointer.PointerBytes = item.Value;
                                 recordlist.Add(pointer);
                             }
-
                         }
                     }
                     else
                     {
-                        // the end node. 
+                        // the end node.
 
                         if (isCurrentEndNode)
                         {
-
                             if (this.comparer.Compare(startKeyBytes, item.Key) < 0 || (this.comparer.Compare(startKeyBytes, item.Key) == 0 && !this.lowerOpen))
                             {
                                 NodePointer pointer = new NodePointer();
                                 pointer.PointerBytes = item.Value;
                                 recordlist.Add(pointer);
                             }
-
                         }
                         else
                         {
-                            //not start, not end, the middle one, insert everything. 
+                            //not start, not end, the middle one, insert everything.
                             NodePointer pointer = new NodePointer();
                             pointer.PointerBytes = item.Value;
                             recordlist.Add(pointer);
-
                         }
-
                     }
-
                 }
 
-                recordlistcount = recordlist.Count;             
+                recordlistcount = recordlist.Count;
             }
-
 
             private void getnextnode()
             {
@@ -278,11 +260,11 @@ namespace Kooboo.IndexedDB.Btree
 
                 if (ascending)
                 {
-                    this.currentnode = MemoryTreeNodeManager.FindNextLeaf(this.treefile, currentnode); 
+                    this.currentnode = MemoryTreeNodeManager.FindNextLeaf(this.treefile, currentnode);
                 }
                 else
                 {
-                    this.currentnode = MemoryTreeNodeManager.FindPreviousLeaf(this.treefile, currentnode); 
+                    this.currentnode = MemoryTreeNodeManager.FindPreviousLeaf(this.treefile, currentnode);
                 }
 
                 if (this.currentnode == null)
@@ -316,7 +298,6 @@ namespace Kooboo.IndexedDB.Btree
                 {
                     loadNodeRecordDESC(currentnode);
                 }
-
             }
 
             private NodePointer getnextpointer()
@@ -345,7 +326,7 @@ namespace Kooboo.IndexedDB.Btree
 
             public void Dispose()
             {
-                //release the reference. 
+                //release the reference.
                 this.treefile = null;
                 this.startnode = null;
                 this.endnode = null;
@@ -356,13 +337,12 @@ namespace Kooboo.IndexedDB.Btree
             {
                 get { return Current; }
             }
-            
+
             private bool inDuplicateMode = false;
             private BtreeIndexDuplicateReader duplicatereader;
 
             public bool MoveNext()
             {
-
                 ///if in duplicate mode.
                 if (inDuplicateMode)
                 {
@@ -374,7 +354,7 @@ namespace Kooboo.IndexedDB.Btree
                     }
                     else
                     {
-                        // end of duplicate. 
+                        // end of duplicate.
                         this.inDuplicateMode = false;
                         this.duplicatereader = null;
                         // cotinue with the getnextpointer;
@@ -389,7 +369,7 @@ namespace Kooboo.IndexedDB.Btree
                 }
 
                 /// else
-                /// 
+                ///
                 if (pointer.Indicator == EnumValues.TypeIndicator.block)
                 {
                     this.currentValue = pointer.PositionPointer;
@@ -408,17 +388,16 @@ namespace Kooboo.IndexedDB.Btree
                     }
                     else
                     {
-                        // there is no item in the duplicate, should not be possible, just to make sure. 
+                        // there is no item in the duplicate, should not be possible, just to make sure.
                         this.duplicatereader = null;
                         this.inDuplicateMode = false;
-                        // go to the next record again. 
+                        // go to the next record again.
                         return MoveNext();
                     }
-
                 }
                 else
                 {
-                    /// should not be possible. 
+                    /// should not be possible.
                     return false;
                 }
             }
@@ -427,8 +406,6 @@ namespace Kooboo.IndexedDB.Btree
             {
                 init();
             }
-
         }
-
     }
 }

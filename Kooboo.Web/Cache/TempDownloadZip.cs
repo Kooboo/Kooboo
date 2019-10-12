@@ -1,21 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Cache
 {
     public static class TempDownloadZip
     {
         public static Dictionary<Guid, string> DownloadPath = new Dictionary<Guid, string>();
+
         static TempDownloadZip()
         {
-
         }
-
 
         public static Guid AddPath(string path)
         {

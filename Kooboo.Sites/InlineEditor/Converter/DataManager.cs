@@ -1,20 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Definition;
+using Kooboo.Sites.Contents.Models;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Sites.Contents.Models;
-using Newtonsoft.Json.Linq;
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.Models;
-using Kooboo.Data.Definition;
 
 namespace Kooboo.Sites.InlineEditor.Converter
 {
     public class DataManager
-    { 
+    {
         /// <summary>
-        /// Add data and return the folder id. 
+        /// Add data and return the folder id.
         /// </summary>
         /// <param name="SiteDb"></param>
         /// <param name="TypeAndFolderName"></param>
@@ -23,7 +23,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
         public static DataAddResponse AddData(SiteDb SiteDb, string TypeAndFolderName, Object JsonData)
         {
             var Fields = ConvertToDataFields(JsonData);
-        
+
             string ContentTypeName = GetContentTypeName(SiteDb, TypeAndFolderName);
             string ContentFolderName = GetContentFolderName(SiteDb, TypeAndFolderName);
 
@@ -32,7 +32,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
 
             var contentfolder = new ContentFolder();
             contentfolder.Name = ContentFolderName;
-            contentfolder.ContentTypeId = contenttype.Id; 
+            contentfolder.ContentTypeId = contenttype.Id;
             SiteDb.ContentFolders.AddOrUpdate(contentfolder);
 
             AddValue(SiteDb, contenttype.Id, contentfolder.Id, Fields);
@@ -47,14 +47,14 @@ namespace Kooboo.Sites.InlineEditor.Converter
                     var datefield = new DateField();
                     datefield.Name = item.Name;
                     datefield.Format = Lib.Helper.DateTimeHelper.ParseDateFormat(item.Values);
-                    response.DateList.Add(datefield); 
+                    response.DateList.Add(datefield);
                 }
             }
-            
-            return response; 
+
+            return response;
         }
-          
-        public static void AddValue(SiteDb SiteDb, Guid ContentTypeId, Guid FolderId,  List<DataField> Fields, Guid ParentContentId=default(Guid))
+
+        public static void AddValue(SiteDb SiteDb, Guid ContentTypeId, Guid FolderId, List<DataField> Fields, Guid ParentContentId = default(Guid))
         {
             int maxi = 0;
             foreach (var item in Fields)
@@ -66,34 +66,33 @@ namespace Kooboo.Sites.InlineEditor.Converter
             }
             if (maxi == 0) return;
 
-            for (int i = maxi-1; i>=0 ; i--)
+            for (int i = maxi - 1; i >= 0; i--)
             {
-                TextContent content = new TextContent(); 
+                TextContent content = new TextContent();
                 foreach (var item in Fields)
                 {
-                   ///var value = GetValueByControlType(item.Values[i], item.ControlType); 
-                    content.SetValue(item.Name, item.Values[i],SiteDb.WebSite.DefaultCulture);
+                    ///var value = GetValueByControlType(item.Values[i], item.ControlType);
+                    content.SetValue(item.Name, item.Values[i], SiteDb.WebSite.DefaultCulture);
                 }
 
                 content.ContentTypeId = ContentTypeId;
                 content.FolderId = FolderId;
-                content.ParentId = ParentContentId; 
+                content.ParentId = ParentContentId;
 
-                SiteDb.TextContent.AddOrUpdate(content); 
-            } 
-
+                SiteDb.TextContent.AddOrUpdate(content);
+            }
         }
 
         public static ViewDataMethod AddGetContentListDataMethod(SiteDb SiteDb, Guid ViewId, Guid FolderId, string AliasName)
-        {  
+        {
             var contentdatasorcetype = typeof(Kooboo.Sites.DataSources.ContentList);
 
             var method = Kooboo.Data.GlobalDb.DataMethodSettings.TableScan.Where(o => o.DeclareType == contentdatasorcetype.FullName).SelectAll().Where(o => o.MethodName == "ByFolder").First();
-             
+
             var binding = method.ParameterBinding["FolderId"];
             binding.Binding = FolderId.ToString();
             method.MethodName = System.Guid.NewGuid().ToString();
-            method.Id = default(Guid); 
+            method.Id = default(Guid);
             method.IsPublic = false;
             SiteDb.DataMethodSettings.AddOrUpdate(method);
 
@@ -101,11 +100,11 @@ namespace Kooboo.Sites.InlineEditor.Converter
             viewmethod.AliasName = "List";
             viewmethod.Name = "List";
             viewmethod.MethodId = method.Id;
-            viewmethod.ViewId = ViewId; 
-            SiteDb.ViewDataMethods.AddOrUpdate(viewmethod); 
-            return viewmethod; 
+            viewmethod.ViewId = ViewId;
+            SiteDb.ViewDataMethods.AddOrUpdate(viewmethod);
+            return viewmethod;
         }
-          
+
         private static string GetContentTypeName(SiteDb SiteDb, string Name)
         {
             if (!SiteDb.ContentTypes.IsNameExists(Name))
@@ -142,12 +141,11 @@ namespace Kooboo.Sites.InlineEditor.Converter
             }
 
             return null;
-
         }
 
         internal static List<DataField> ConvertToDataFields(Object Data)
-        {   
-            var dictvalues = ConvertToFieldValues(Data);  
+        {
+            var dictvalues = ConvertToFieldValues(Data);
             List<DataField> result = new List<DataField>();
 
             foreach (var item in dictvalues)
@@ -156,84 +154,82 @@ namespace Kooboo.Sites.InlineEditor.Converter
                 field.Name = item.Key;
                 field.Values = item.Value;
                 field.ControlType = EvaluateControlType(field.Values);
-                result.Add(field); 
+                result.Add(field);
             }
-         
+
             return result;
-        } 
- 
+        }
+
         public static Dictionary<string, List<string>> ConvertToFieldValues(Object JsonData)
         {
             var jobject = (JObject)JsonData;
-             
+
             Dictionary<string, List<string>> result = new Dictionary<string, List<string>>();
-             
+
             var values = jobject.Values().ToList();
-            int valuecount = 0; 
-              
+            int valuecount = 0;
+
             foreach (var item in jobject.Values().ToList())
             {
                 var jitem = (JObject)item;
                 var plist = jitem.Properties().ToList();
                 foreach (var pitem in plist)
                 {
-                    var name = pitem.Name; 
+                    var name = pitem.Name;
                     var value = pitem.Value.ToString();
 
                     if (!string.IsNullOrEmpty(name))
                     {
-                        List<string> resultvalues; 
+                        List<string> resultvalues;
                         if (result.ContainsKey(name))
                         {
-                            resultvalues = result[name]; 
+                            resultvalues = result[name];
                         }
                         else
                         {
                             resultvalues = new List<string>();
                             for (int i = 0; i < valuecount; i++)
                             {
-                                resultvalues.Add(string.Empty); 
+                                resultvalues.Add(string.Empty);
                             }
-                            result[name] = resultvalues; 
+                            result[name] = resultvalues;
                         }
 
-                        resultvalues.Add(value); 
+                        resultvalues.Add(value);
                     }
-                    
                 }
-                valuecount += 1; 
+                valuecount += 1;
             }
 
-            return result; 
+            return result;
         }
-         
+
         internal static ContentType GetContentType(string ContentTypeName, List<DataField> Fields)
         {
-            ContentType contenttype = new  ContentType();
+            ContentType contenttype = new ContentType();
 
-            contenttype.Name = ContentTypeName; 
-  
+            contenttype.Name = ContentTypeName;
+
             foreach (var item in Fields)
             {
                 ContentProperty property = new ContentProperty();
                 property.Name = item.Name;
                 property.ControlType = item.ControlType;
-                property.Editable = true; 
-                contenttype.Properties.Add(property);  
+                property.Editable = true;
+                contenttype.Properties.Add(property);
             }
-            return contenttype; 
+            return contenttype;
         }
-         
+
         public static string EvaluateControlType(List<string> values)
         {
-             
             if (IsNullColumn(values))
             {
-                return ControlTypes.TextBox; 
+                return ControlTypes.TextBox;
             }
             else if (IsDateTime(values))
             {
-                return ControlTypes.DateTime; 
+                return ControlTypes.DateTime;
             }
             else if (IsInt(values))
             {
@@ -241,37 +237,37 @@ namespace Kooboo.Sites.InlineEditor.Converter
             }
             else if (IsBool(values))
             {
-                return ControlTypes.Checkbox; 
+                return ControlTypes.Checkbox;
             }
             else if (IsImageUrl(values))
-            { 
-                return ControlTypes.MediaFile; 
-            }
-           else if (IsLongText(values))
             {
-                return ControlTypes.TextArea; 
+                return ControlTypes.MediaFile;
+            }
+            else if (IsLongText(values))
+            {
+                return ControlTypes.TextArea;
             }
 
-            return ControlTypes.TextBox; 
+            return ControlTypes.TextBox;
         }
 
         private static bool IsBool(List<string> values)
-        { 
+        {
             bool parsevalue;
-            bool result = false; 
+            bool result = false;
             foreach (var item in values)
             {
                 if (!string.IsNullOrEmpty(item))
                 {
                     if (item.ToLower() == "yes" || item.ToLower() == "no")
                     {
-                        result = true; 
-                        continue; 
+                        result = true;
+                        continue;
                     }
 
                     if (item.ToLower() == "true" || item.ToLower() == "false")
                     {
-                        result = true; 
+                        result = true;
                         continue;
                     }
                     if (!bool.TryParse(item, out parsevalue))
@@ -280,11 +276,11 @@ namespace Kooboo.Sites.InlineEditor.Converter
                     }
                     else
                     {
-                        result = true; 
+                        result = true;
                     }
                 }
-            } 
-            return result;  
+            }
+            return result;
         }
 
         private static bool IsNullColumn(List<string> values)
@@ -293,24 +289,24 @@ namespace Kooboo.Sites.InlineEditor.Converter
             {
                 if (!string.IsNullOrEmpty(item))
                 {
-                    return false; 
+                    return false;
                 }
             }
-            return true; 
+            return true;
         }
 
         private static bool IsDateTime(List<string> values)
         {
             DateTime parsevalue;
- 
+
             foreach (var item in values)
             {
                 if (!string.IsNullOrEmpty(item))
-                { 
+                {
                     if (!DateTime.TryParse(item, out parsevalue))
                     {
                         return false;
-                    } 
+                    }
                 }
             }
             return true;
@@ -336,36 +332,32 @@ namespace Kooboo.Sites.InlineEditor.Converter
         private static bool IsLongText(List<string> Values)
         {
             foreach (var item in Values)
-            { 
-
+            {
                 if (!string.IsNullOrEmpty(item) && (item.Contains("\r\n") || item.Length > 150))
                 {
-                    return true; 
+                    return true;
                 }
             }
 
-            return false; 
+            return false;
         }
 
         private static bool IsImageUrl(List<string> values)
-        { 
+        {
             foreach (var item in values)
-            { 
+            {
                 if (!Lib.Helper.UrlHelper.IsValidUrl(item))
                 {
-                    return false; 
+                    return false;
                 }
-               
-                var type = Kooboo.Lib.Helper.UrlHelper.GetFileType(item); 
+
+                var type = Kooboo.Lib.Helper.UrlHelper.GetFileType(item);
                 if (type != Lib.Helper.UrlHelper.UrlFileType.Image)
                 {
-                    return false; 
+                    return false;
                 }
-            } 
-            return true; 
-
+            }
+            return true;
         }
     }
-
-
 }

@@ -1,11 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Btree
 {
@@ -15,21 +10,22 @@ namespace Kooboo.IndexedDB.Btree
         /// The level of this node. root =0
         /// </summary>
         public int Level { get; set; }
-         
+
         public byte[] ParentNodeKey { get; set; }
 
         public byte[] KeyBytes { get; set; }
 
         public MemoryTreeNode Parent { get; set; }
-         
+
         /// <summary>
-        /// Current tree node. 
+        /// Current tree node.
         /// </summary>
         public TreeNode TreeNode { get; set; }
 
         private Dictionary<long, MemoryTreeNode> _children;
+
         /// <summary>
-        /// long is the disk position, or the positionPointer. 
+        /// long is the disk position, or the positionPointer.
         /// </summary>
         public Dictionary<long, MemoryTreeNode> Children
         {
@@ -48,14 +44,14 @@ namespace Kooboo.IndexedDB.Btree
         public void AddChild(MemoryTreeNode memorynode)
         {
             memorynode.Parent = this;
-            memorynode.Level = this.Level + 1; 
-            this.Children.Add(memorynode.TreeNode.DiskPosition, memorynode); 
+            memorynode.Level = this.Level + 1;
+            this.Children.Add(memorynode.TreeNode.DiskPosition, memorynode);
         }
 
         public MemoryTreeNode PreviousPointer { get; set; }
 
         /// <summary>
-        /// is this node belong to the PreviousPointer of parent. 
+        /// is this node belong to the PreviousPointer of parent.
         /// </summary>
         public bool IsParentPreviousPointer { get; set; }
 
@@ -64,5 +60,4 @@ namespace Kooboo.IndexedDB.Btree
             this.TreeNode = treenode;
         }
     }
-     
 }

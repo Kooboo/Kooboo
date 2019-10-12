@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
@@ -7,7 +7,7 @@ using System;
 namespace Kooboo.Web.Service
 {
     public static class UserService
-    { 
+    {
         public static string GetToken(User user)
         {
             if (Kooboo.Data.AppSettings.IsOnlineServer && !IsSameServer(user.TempRedirectUrl))
@@ -38,9 +38,8 @@ namespace Kooboo.Web.Service
             {
                 gettokenurl += "&password=" + user.Password;
             }
-        
+
             return Kooboo.Lib.Helper.HttpHelper.Get<string>(gettokenurl);
-          
         }
 
         public static string GetRedirectUrl(RenderContext context, User User, string currentRequestUrl, string returnUrl, bool SameSiteRedirect)
@@ -57,7 +56,7 @@ namespace Kooboo.Web.Service
                 }
             }
 
-            string baseurl = currentRequestUrl; 
+            string baseurl = currentRequestUrl;
 
             if (!string.IsNullOrWhiteSpace(User.TempRedirectUrl))
             {
@@ -66,12 +65,12 @@ namespace Kooboo.Web.Service
                     baseurl = User.TempRedirectUrl;
                 }
             }
-              
+
             string url;
 
             if (string.IsNullOrEmpty(returnUrl))
             {
-                context.User = User; 
+                context.User = User;
                 url = Kooboo.Data.Service.StartService.AfterLoginPage(context);
             }
             else
@@ -79,12 +78,12 @@ namespace Kooboo.Web.Service
                 url = returnUrl;
             }
 
-            string fullurl = url; 
-           
-            if (baseurl !=null && baseurl.ToLower().StartsWith("http://") || baseurl.ToLower().StartsWith("https://"))
+            string fullurl = url;
+
+            if (baseurl != null && baseurl.ToLower().StartsWith("http://") || baseurl.ToLower().StartsWith("https://"))
             {
                 fullurl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, url);
-            }      
+            }
             return fullurl;
         }
 
@@ -106,15 +105,12 @@ namespace Kooboo.Web.Service
 
             if (Kooboo.Data.AppSettings.ServerSetting != null)
             {
-
                 var serverid = getServerid(redirecturl);
 
                 return serverid == Kooboo.Data.AppSettings.ServerSetting.ServerId;
-
             }
 
             return false;
-
         }
 
         public static int getServerid(string redirecturl)
@@ -161,9 +157,6 @@ namespace Kooboo.Web.Service
             }
 
             return user.CurrentOrgId;
-
         }
-
-
     }
 }

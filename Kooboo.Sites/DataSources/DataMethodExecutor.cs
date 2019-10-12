@@ -1,19 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Reflection;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
-using Kooboo.Sites.Models;
 using Kooboo.Sites.Cache;
-using System.Collections;
-using Kooboo.Data.Context;
+using Kooboo.Sites.Models;
 using Kooboo.Sites.ViewModel;
-using Kooboo.Sites.Scripting;
-using Kooboo.Sites.Extensions;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Kooboo.Sites.DataSources
 {
@@ -41,7 +39,6 @@ namespace Kooboo.Sites.DataSources
             List<object> paras = ParameterBinder.Bind(CompiledMethod.Parameters, ParameterBindings, dataContext);
 
             CheckAndAssignDefaultValue(paras, CompiledMethod, context, ViewMethod.MethodId);
-
 
             var result = Execute(CompiledMethod, paras.ToArray(), context);
             if (result == null)
@@ -190,7 +187,6 @@ namespace Kooboo.Sites.DataSources
             }
         }
 
-
         private static DataMethodResult ExecuteSubViewDataMethod(Render.FrontContext Context, object itemvalue, List<ViewDataMethod> Children)
         {
             DataMethodResult dataresult = new DataMethodResult();
@@ -218,7 +214,6 @@ namespace Kooboo.Sites.DataSources
                 }
             }
             return dataresult;
-
         }
 
         private static List<DataMethodResult> ConvertToMethodResultList(object data)
@@ -241,7 +236,7 @@ namespace Kooboo.Sites.DataSources
             }
 
             int count = CompiledMethod.Parameters.Count();
-            var keylist = CompiledMethod.Parameters.Keys.ToList(); 
+            var keylist = CompiledMethod.Parameters.Keys.ToList();
 
             bool IsContentList = CompiledMethod.DeclareType == typeof(Kooboo.Sites.DataSources.ContentList);
 
@@ -251,9 +246,7 @@ namespace Kooboo.Sites.DataSources
 
             TextContentViewModel samplecontent = null;
 
-
             bool IsByCategory = IsQueryByCategory(CompiledMethod);
-
 
             for (int i = 0; i < count; i++)
             {
@@ -295,7 +288,7 @@ namespace Kooboo.Sites.DataSources
                         }
                         IsContentQueried = true;
                     }
-                     
+
                     if (samplecontent != null)
                     {
                         var key = GetBindingKey(paraname, CompiledMethod.ParameterBindings);
@@ -314,9 +307,7 @@ namespace Kooboo.Sites.DataSources
                         values[i] = GetDefaultValueForDataType(paratype);
                     }
                 }
-
             }
-
         }
 
         private static bool IsQueryByCategory(DataMethodCompiled CompiledMethod)
@@ -395,7 +386,6 @@ namespace Kooboo.Sites.DataSources
             return null;
         }
 
-
         internal static TextContentViewModel GetDefaultContentNew(Guid FolderId, Render.FrontContext context, Guid CurrentMethodId = default(Guid))
         {
             List<DataMethodSetting> CorrectMethods = new List<DataMethodSetting>();
@@ -443,7 +433,7 @@ namespace Kooboo.Sites.DataSources
                         CorrectMethods.Remove(item);
                     }
 
-                    ///execute pages that link to current page... 
+                    ///execute pages that link to current page...
                     var allotherpages = context.SiteDb.Relations.GetReferredBy(context.Page, ConstObjectType.Page);
 
                     foreach (var item in allotherpages)
@@ -474,7 +464,6 @@ namespace Kooboo.Sites.DataSources
                     }
                 }
 
-
                 foreach (var item in CorrectMethods)
                 {
                     var result = DataMethodExecutor.ExecuteDataMethod(context, item.Id);
@@ -495,7 +484,6 @@ namespace Kooboo.Sites.DataSources
                                 {
                                     return contentitem as TextContentViewModel;
                                 }
-
                             }
                         }
                         else
@@ -510,17 +498,14 @@ namespace Kooboo.Sites.DataSources
                                 {
                                     return contentitem as TextContentViewModel;
                                 }
-
                             }
                         }
-
                     }
                 }
             }
 
             return context.SiteDb.TextContent.GetDefaultContentFromFolder(FolderId, context.RenderContext.Culture);
         }
-
 
         private static Guid TryGetFolderGuid(Dictionary<string, ParameterBinding> bindings)
         {
@@ -533,7 +518,7 @@ namespace Kooboo.Sites.DataSources
                     var value = item.Value;
                     if (Guid.TryParse(value.Binding, out folderid))
                     {
-                        return folderid; 
+                        return folderid;
                     }
                 }
             }
@@ -555,7 +540,6 @@ namespace Kooboo.Sites.DataSources
             CheckAndAssignDefaultValue(paras, CompiledMethod, context, MethodId);
 
             return Execute(CompiledMethod, paras.ToArray(), context);
-
         }
 
         private static void ThrowIfWrappedTaskInstance(Type actualTypeReturned, string methodName, Type declaringType)
@@ -629,7 +613,6 @@ namespace Kooboo.Sites.DataSources
         private static readonly MethodInfo _convertOfTMethod =
             typeof(DataMethodExecutor).GetRuntimeMethods().Single(methodInfo => methodInfo.Name == "Convert");
 
-
         // Method called via reflection.
         public static object Convert<T>(object taskAsObject)
         {
@@ -637,7 +620,6 @@ namespace Kooboo.Sites.DataSources
             return task.Result;
         }
     }
-
 
     public class DataMethodCompiled
     {
@@ -686,11 +668,9 @@ namespace Kooboo.Sites.DataSources
                         }
                     }
                 }
-
             }
             else
             {
-
                 Type returntype = Kooboo.Data.TypeCache.GetType(methodsetting.ReturnType);
                 this.ReturnType = returntype;
                 this.OriginalMethodName = methodsetting.OriginalMethodName;
@@ -729,12 +709,7 @@ namespace Kooboo.Sites.DataSources
                         Func = Lib.Reflection.TypeHelper.CompileFunc(type, methodsetting.OriginalMethodName, paratypes);
                     }
                 }
-
-
             }
-
-
         }
-
     }
 }

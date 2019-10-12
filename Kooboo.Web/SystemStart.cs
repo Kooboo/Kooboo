@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data;
@@ -24,20 +24,19 @@ namespace Kooboo.Web
 
         public static void Start(int port)
         {
-
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 System.IO.File.AppendAllText("log.txt", "Unhandled exception: " + args.ExceptionObject);
             };
 
-            // ensure that WindowsHost is working .   
+            // ensure that WindowsHost is working .
             //foreach (var item in Data.GlobalDb.Dlls.All())
             //{
             //    AppDomain.CurrentDomain.Load(item.Content);
             //}
 
             Sites.DataSources.DataSourceHelper.InitIDataSource();
-             
+
             Kooboo.Data.Events.EventBus.Raise(new Data.Events.Global.ApplicationStartUp());
 
             Data.GlobalDb.Bindings.EnsureLocalBinding();
@@ -58,7 +57,6 @@ namespace Kooboo.Web
                 {
                     StartNewWebServer(443);
                 }
-
                 else if (!Lib.Helper.NetworkHelper.IsPortInUse(443))
                 {
                     StartNewWebServer(443);
@@ -67,9 +65,8 @@ namespace Kooboo.Web
 
             JobWorker.Instance.Start();
 
-            Service.UpGradeService.UpgradeFix(); 
+            Service.UpGradeService.UpgradeFix();
         }
-
 
         public static void StartNewWebServer(int port)
         {
@@ -78,10 +75,9 @@ namespace Kooboo.Web
                 var server = Kooboo.Data.Server.WebServerFactory.Create(port, Middleware);
 
                 server.Start();
-                WebServers[port] = server; 
+                WebServers[port] = server;
             }
         }
-
 
         private static List<IKoobooMiddleWare> _middlewares;
 
@@ -107,7 +103,7 @@ namespace Kooboo.Web
                             _middlewares.Add(new RenderMiddleWare(KoobooLolcaServerOption()));
 
                             _middlewares.Add(new DefaultStartMiddleWare(KoobooBackEndViewOption()));
-                             
+
                             _middlewares.Add(new EndMiddleWare());
                         }
                     }
@@ -116,17 +112,16 @@ namespace Kooboo.Web
             }
         }
 
-
-        // only call this before shut down the server. 
+        // only call this before shut down the server.
         public static void Stop(int port = 0)
         {
-            // stop all web servers. 
+            // stop all web servers.
             foreach (var item in WebServers)
-            { 
-                item.Value.Stop(); 
+            {
+                item.Value.Stop();
             }
 
-            // close all database. 
+            // close all database.
             foreach (var item in Kooboo.Data.GlobalDb.WebSites.AllSites)
             {
                 item.Value.Published = false; //set to false in the memory only..
@@ -134,8 +129,8 @@ namespace Kooboo.Web
 
             foreach (var item in Kooboo.Data.GlobalDb.WebSites.AllSites)
             {
-                item.Value.SiteDb().DatabaseDb.Close(); 
-            } 
+                item.Value.SiteDb().DatabaseDb.Close();
+            }
         }
 
         private static RenderOption KoobooBackEndViewOption()
@@ -251,9 +246,10 @@ namespace Kooboo.Web
             return option;
         }
 
-        private static Kooboo.Api.IApiProvider _apiprovider; 
-        public static Kooboo.Api.IApiProvider CurrentApiProvider 
-        { 
+        private static Kooboo.Api.IApiProvider _apiprovider;
+
+        public static Kooboo.Api.IApiProvider CurrentApiProvider
+        {
             get
             {
                 if (_apiprovider == null)
@@ -264,13 +260,13 @@ namespace Kooboo.Web
                         {
                             var apimiddle = item as Kooboo.Api.ApiMiddleware;
 
-                            _apiprovider =  apimiddle.ApiProvider;  
+                            _apiprovider = apimiddle.ApiProvider;
                         }
-                    } 
-                } 
-                return _apiprovider;  
-            } 
-        } 
+                    }
+                }
+                return _apiprovider;
+            }
+        }
     }
 
     public class CmsLanguage
@@ -279,6 +275,4 @@ namespace Kooboo.Web
 
         public string Name { get; set; }
     }
-
-
 }

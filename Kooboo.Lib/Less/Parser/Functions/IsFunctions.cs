@@ -1,12 +1,8 @@
 ﻿namespace dotless.Core.Parser.Functions
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using dotless.Core.Utils;
     using dotless.Core.Parser.Infrastructure.Nodes;
     using dotless.Core.Parser.Tree;
+    using dotless.Core.Utils;
 
     public abstract class IsFunction : Function
     {
@@ -20,7 +16,7 @@
         protected abstract bool IsEvaluator(Node node);
     }
 
-    public abstract class IsTypeFunction<T> : IsFunction where T:Node
+    public abstract class IsTypeFunction<T> : IsFunction where T : Node
     {
         protected override bool IsEvaluator(Node node)
         {

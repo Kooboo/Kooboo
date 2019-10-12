@@ -1,16 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Btree
 {
-   /// <summary>
-   /// each record with the jump table list.
-   /// </summary>
+    /// <summary>
+    /// each record with the jump table list.
+    /// </summary>
     public class JumpRecord
     {
         public JumpRecord()
@@ -39,10 +35,10 @@ namespace Kooboo.IndexedDB.Btree
             {
                 _level = value;
             }
-
         }
 
         private Int64 _previous;
+
         public Int64 Previous
         {
             get
@@ -64,6 +60,7 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         private Int64 _next;
+
         public Int64 Next
         {
             get
@@ -81,10 +78,10 @@ namespace Kooboo.IndexedDB.Btree
             {
                 _next = value;
             }
-
         }
 
         private Int64 _top;
+
         public Int64 TOP
         {
             get
@@ -102,7 +99,6 @@ namespace Kooboo.IndexedDB.Btree
             {
                 _top = value;
             }
-
         }
 
         private Int64 _buttom;
@@ -124,10 +120,10 @@ namespace Kooboo.IndexedDB.Btree
             {
                 _buttom = value;
             }
-
         }
 
         private Int64 _blockposition;
+
         public Int64 BlockPosition
         {
             get
@@ -145,10 +141,10 @@ namespace Kooboo.IndexedDB.Btree
             {
                 _blockposition = value;
             }
-
         }
 
         private enumSectionType _indicator;
+
         public enumSectionType Indicator
         {
             get
@@ -167,12 +163,9 @@ namespace Kooboo.IndexedDB.Btree
             {
                 _indicator = value;
             }
-
         }
 
-
         public byte[] pointerBytes;
-
 
         public byte[] ToBytes()
         {
@@ -195,5 +188,4 @@ namespace Kooboo.IndexedDB.Btree
             return bytearray;
         }
     }
-
 }

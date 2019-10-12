@@ -1,14 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Diagnosis
 {
-  public  class KDiagnosis
+    public class KDiagnosis
     {
         public DiagnosisSession session { get; set; }
 
@@ -16,28 +11,29 @@ namespace Kooboo.Sites.Diagnosis
         {
             get
             {
-                return this.session.Headline; 
+                return this.session.Headline;
             }
             set
             {
-                this.session.Headline = value; 
+                this.session.Headline = value;
             }
         }
 
-       public KDiagnosis(DiagnosisSession session)
+        public KDiagnosis(DiagnosisSession session)
         {
-            this.session = session; 
+            this.session = session;
         }
 
         public void onError(string message)
         {
-            this.session.AddMessage(new Message() { body = message, Type = MessageType.Critical }); 
+            this.session.AddMessage(new Message() { body = message, Type = MessageType.Critical });
         }
 
-        public void  error(string message)
+        public void error(string message)
         {
-            onError(message); 
+            onError(message);
         }
+
         public void addError(string message)
         {
             onError(message);
@@ -45,12 +41,12 @@ namespace Kooboo.Sites.Diagnosis
 
         public void onInfo(string message)
         {
-            this.session.AddMessage(new Message() { body = message, Type = MessageType.Information }); 
+            this.session.AddMessage(new Message() { body = message, Type = MessageType.Information });
         }
 
         public void info(string message)
         {
-            onInfo(message); 
+            onInfo(message);
         }
 
         public void addInfo(string message)
@@ -60,12 +56,12 @@ namespace Kooboo.Sites.Diagnosis
 
         public void onWarning(string message)
         {
-            this.session.AddMessage(new Message() { body = message, Type = MessageType.Warning }); 
+            this.session.AddMessage(new Message() { body = message, Type = MessageType.Warning });
         }
 
         public void warning(string message)
         {
-            this.onWarning(message); 
+            this.onWarning(message);
         }
 
         public void addWarning(string message)

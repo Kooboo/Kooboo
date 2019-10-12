@@ -12,9 +12,9 @@
 
         protected override Node EditColor(Color color, Number number)
         {
-            var alpha = number.Value/100d;
+            var alpha = number.Value / 100d;
 
-            return new Color(color.R, color.G, color.B, ProcessAlpha( color.Alpha, alpha));
+            return new Color(color.R, color.G, color.B, ProcessAlpha(color.Alpha, alpha));
         }
 
         protected virtual double ProcessAlpha(double originalAlpha, double newAlpha)
@@ -23,7 +23,7 @@
         }
     }
 
-    public class AlphaFunction : FadeInFunction 
+    public class AlphaFunction : FadeInFunction
     {
         protected override Node EditColor(Color color, Number number)
         {
@@ -43,9 +43,9 @@
 
     public class FadeFunction : AlphaFunction
     {
-        protected override double  ProcessAlpha(double originalAlpha, double newAlpha)
+        protected override double ProcessAlpha(double originalAlpha, double newAlpha)
         {
- 	        return newAlpha;
+            return newAlpha;
         }
     }
 }

@@ -1,15 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom.CSS
 {
     //http://dev.w3.org/csswg/cssom/#cssimportrule
-
 
     public class CSSImportRule : CSSRule
     {
@@ -17,7 +11,6 @@ namespace Kooboo.Dom.CSS
         {
             base.type = enumCSSRuleType.IMPORT_RULE;
             media = new MediaList();
-
         }
 
         public string href;
@@ -30,7 +23,7 @@ namespace Kooboo.Dom.CSS
                 {
                     return string.Empty;
                 }
-                return cssText.Substring(8).TrimEnd(new []{';',' '});
+                return cssText.Substring(8).TrimEnd(new[] { ';', ' ' });
             }
         }
 
@@ -44,6 +37,5 @@ namespace Kooboo.Dom.CSS
         /// Even is the stylesheet parse failed, it should return the stylesheet with rulelist item count=0
         /// </summary>
         public CSSStyleSheet stylesheet;
-
     }
 }

@@ -1,11 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Lib
 {
@@ -26,15 +20,14 @@ namespace Kooboo.Lib
             var val = System.Configuration.ConfigurationManager.AppSettings.Get(name);
             if (string.IsNullOrEmpty(val))
             {
-                return false; 
+                return false;
             }
 
             bool result;
 
             bool.TryParse(val, out result);
 
-            return result; 
+            return result;
         }
-
     }
 }

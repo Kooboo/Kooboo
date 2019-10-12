@@ -1,9 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 
 namespace Kooboo.IndexedDB.Query
 {
@@ -14,8 +13,8 @@ namespace Kooboo.IndexedDB.Query
         private IComparer<byte[]> byteCompare;
         private byte[] ValueBytes;
 
-        private int columnLength; // the actually column length. Maybe adjusted by different compare type. 
-        private int maxColumnLength;   // the setting defined column length. 
+        private int columnLength; // the actually column length. Maybe adjusted by different compare type.
+        private int maxColumnLength;   // the setting defined column length.
 
         public ColumnEvaluator(Type datatype, Comparer comparertype, IComparer<byte[]> bytecompare, byte[] valuebytes, int columnlength, int maxcolumnlength)
         {
@@ -31,7 +30,7 @@ namespace Kooboo.IndexedDB.Query
         { }
 
         /// <summary>
-        /// test column value match the condition. 
+        /// test column value match the condition.
         /// </summary>
         /// <param name="columnbytes"></param>
         /// <returns></returns>
@@ -63,7 +62,6 @@ namespace Kooboo.IndexedDB.Query
 
                     return !Btree.Comparer.ByteEqualComparer.isEqual(columnbytes, this.ValueBytes, columnLength);
 
-
                 case Comparer.StartWith:
                     return Btree.Comparer.MoreComparer.StartWith(columnbytes, this.ValueBytes, this.columnLength);
 
@@ -74,9 +72,10 @@ namespace Kooboo.IndexedDB.Query
                     return false;
             }
         }
+
         /// <summary>
         /// If column's type is datetime,the block data will store datetime.ticks in byte array
-        /// but the compare value(this.ValueBytes) store (datetime-DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc)) in byte array 
+        /// but the compare value(this.ValueBytes) store (datetime-DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc)) in byte array
         /// so we need change datetime to the same byte array format.
         /// </summary>
         /// <param name="columnbytes"></param>
@@ -93,7 +92,7 @@ namespace Kooboo.IndexedDB.Query
         {
             int orginalLength = columnLength;
 
-            ///StartWith, Contains & ... are exception, not need the apppend space. 
+            ///StartWith, Contains & ... are exception, not need the apppend space.
             if (comparetype == Comparer.Contains || comparetype == Comparer.StartWith)
             {
                 columnLength = ValueBytes.Length;
@@ -134,9 +133,7 @@ namespace Kooboo.IndexedDB.Query
                 fixedbytes = ValueBytes;
             }
 
-
             return new ColumnEvaluator(datatype, comparetype, compare, fixedbytes, columnLength, orginalLength);
         }
-
     }
 }

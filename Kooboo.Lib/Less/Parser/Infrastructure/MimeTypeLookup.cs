@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace dotless.Core.Parser.Infrastructure
 {
     // Source: https://gist.github.com/ChristianWeyer/eea2cb567932e345cdfa
-    // If this project is moved to .NET 4.5, this can be replaced with System.Web.MimeMapping 
+    // If this project is moved to .NET 4.5, this can be replaced with System.Web.MimeMapping
     // http://msdn.microsoft.com/en-us/library/system.web.mimemapping.getmimemapping.aspx
     internal class MimeTypeLookup
     {
@@ -19,7 +19,8 @@ namespace dotless.Core.Parser.Infrastructure
             return null;
         }
 
-        #region MimeTypes  
+        #region MimeTypes
+
         private static readonly Dictionary<string, string> _mappings = new Dictionary<string, string>(2000, StringComparer.InvariantCultureIgnoreCase)
         {
             {".ez", "application/andrew-inset"},
@@ -1297,6 +1298,7 @@ namespace dotless.Core.Parser.Infrastructure
             {".xtp", "application/octet-stream"},
             {".z", "application/x-compress"},
         };
-        #endregion
+
+        #endregion MimeTypes
     }
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data.Context;
@@ -22,11 +22,11 @@ namespace Kooboo.Module
             }
             return default(T);
         }
-        
+
         public static ApiMethod GetApiMethod(ApiCall call)
         {
-            // this is only for the sitemodule. 
-            if (call.Context.WebSite ==null)
+            // this is only for the sitemodule.
+            if (call.Context.WebSite == null)
             {
                 return null;
             }
@@ -37,22 +37,22 @@ namespace Kooboo.Module
 
             if (type != null)
             {
-                var instance = CreateInstance(type, call.Context) as ISiteModuleApi; 
-                if (instance !=null)
+                var instance = CreateInstance(type, call.Context) as ISiteModuleApi;
+                if (instance != null)
                 {
-                    method = GetMethod(instance, call.Command.Method, call); 
-                    if (method !=null)
+                    method = GetMethod(instance, call.Command.Method, call);
+                    if (method != null)
                     {
-                        return method; 
+                        return method;
                     }
                 }
             }
             else
             {
-                // try command and value. 
-                var commandtype = ModuleApiContainer.GetType(call.Command.Method); 
+                // try command and value.
+                var commandtype = ModuleApiContainer.GetType(call.Command.Method);
 
-                if (commandtype !=null)
+                if (commandtype != null)
                 {
                     var instance = CreateInstance(commandtype, call.Context) as ISiteModuleApi;
                     if (instance != null)
@@ -63,9 +63,7 @@ namespace Kooboo.Module
                             return method;
                         }
                     }
-
-                } 
-
+                }
             }
 
             return null;
@@ -88,7 +86,6 @@ namespace Kooboo.Module
             }
 
             return consturcs.First();
-
         }
 
         public static object[] InitConstructors(ParameterInfo[] parainfos, RenderContext context)
@@ -116,7 +113,6 @@ namespace Kooboo.Module
             {
                 return default(Guid);
             }
-
             else if (clrtype == typeof(bool))
             {
                 return false;
@@ -125,7 +121,6 @@ namespace Kooboo.Module
             {
                 return DateTime.Now;
             }
-
             else if (clrtype.IsClass)
             {
                 var constructor = GetConstrutor(clrtype);
@@ -163,7 +158,7 @@ namespace Kooboo.Module
                 {
                     propertyInfo.SetValue(obj, context.WebSite);
                 }
-                // invoke init...  
+                // invoke init...
                 MethodInfo methodInfo = objtype.GetMethod("init");
 
                 if (methodInfo != null)
@@ -189,19 +184,18 @@ namespace Kooboo.Module
             return false;
         }
 
-
         public static ApiMethod GetMethod(ISiteModuleApi instance, string MethodName, ApiCall call)
         {
             if (instance == null)
             {
-                return null; 
+                return null;
             }
 
-            if (instance is  SiteModuleApiBase)
+            if (instance is SiteModuleApiBase)
             {
                 var basemodule = instance as SiteModuleApiBase;
                 basemodule.Context = call.Context;
-                basemodule.SiteDb = call.Context.WebSite.SiteDb(); 
+                basemodule.SiteDb = call.Context.WebSite.SiteDb();
             }
 
             var methodinfo = GetMethodInfo(instance.GetType(), MethodName);
@@ -231,9 +225,9 @@ namespace Kooboo.Module
             foreach (var item in paras)
             {
                 newmethod.Parameters.Add(new Parameter() { Name = item.Name, ClrType = item.ParameterType });
-            } 
- 
-             return newmethod;
+            }
+
+            return newmethod;
         }
 
         private static MethodInfo GetMethodInfo(Type type, string methodname)
@@ -257,8 +251,5 @@ namespace Kooboo.Module
 
             return null;
         }
-
-
-
     }
 }

@@ -1,13 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.InlineEditor.Executor
 {
@@ -17,7 +14,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
         {
             get
             {
-                return "htmlblock"; 
+                return "htmlblock";
             }
         }
 
@@ -26,9 +23,9 @@ namespace Kooboo.Sites.InlineEditor.Executor
             foreach (var item in updatelist)
             {
                 var blockupdate = item as Model.HtmlblockModel;
-                if (blockupdate ==null)
+                if (blockupdate == null)
                 {
-                    continue; 
+                    continue;
                 }
                 if (blockupdate.Action == ActionType.Add)
                 {
@@ -54,9 +51,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         context.WebSite.SiteDb().HtmlBlocks.Delete(block.Id, context.User.Id);
                     }
                 }
-
             }
-
         }
 
         public void ExecuteObject(RenderContext context, IRepository repo, string NameOrId, List<IInlineModel> updates)

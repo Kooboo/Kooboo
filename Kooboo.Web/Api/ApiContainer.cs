@@ -1,20 +1,21 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Api;
+using Kooboo.Lib.Reflection;
+using Kooboo.Sites.Contents.Models;
+using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Contents.Models;
-using Kooboo.Lib.Reflection;
-using Kooboo.Api;
 
 namespace Kooboo.Web.Api
 {
-    // looks like this is not very useful now. only for the api helper. 
+    // looks like this is not very useful now. only for the api helper.
     public static class ApiContainer
     {
         private static object _locker = new object();
 
         private static Dictionary<string, IApi> _list;
+
         public static Dictionary<string, IApi> List
         {
             get
@@ -57,11 +58,10 @@ namespace Kooboo.Web.Api
         private static List<Type> GetAllDefinedApi()
         {
             return AssemblyLoader.LoadTypeByInterface(typeof(IApi));
-        }            
+        }
 
         public static void Init()
         {
-
             if (_list == null)
             {
                 _list = new Dictionary<string, IApi>(StringComparer.OrdinalIgnoreCase);
@@ -85,11 +85,9 @@ namespace Kooboo.Web.Api
                 AddApi(_list, new SiteObjectApi<ViewDataMethod>());
 
                 AddApi(_list, new SiteObjectApi<ContentType>());
-                AddApi(_list, new SiteObjectApi<Label>());    
-
+                AddApi(_list, new SiteObjectApi<Label>());
             }
         }
-           
 
         internal static void AddApi(Dictionary<string, IApi> currentlist, IApi instance)
         {
@@ -103,7 +101,7 @@ namespace Kooboo.Web.Api
             }
         }
 
-        // this seems like only for unit test now. 
+        // this seems like only for unit test now.
         public static void AddApi(Type apitype)
         {
             lock (_locker)
@@ -125,7 +123,5 @@ namespace Kooboo.Web.Api
             }
             return null;
         }
-
     }
-     
 }

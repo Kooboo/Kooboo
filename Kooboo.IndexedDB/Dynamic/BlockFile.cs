@@ -1,14 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.IO;
 
 namespace Kooboo.IndexedDB.Dynamic
 {
-
     public class BlockFile
     {
-
         private string _fullfilename;
         private FileStream _filestream;
 
@@ -36,15 +34,13 @@ namespace Kooboo.IndexedDB.Dynamic
 
         private byte[] GetPartial(long position, int offset, int count)
         {
-
             byte[] partial = new byte[count];
             Stream.Position = position + offset;
             Stream.Read(partial, 0, count);
             return partial;
-
         }
 
-        // keep for upgrade.. not used any more. 
+        // keep for upgrade.. not used any more.
         public byte[] GetContent(long position, int KeyColumnOffset)
         {
             byte[] counterbytes = GetPartial(position, 26, 4);
@@ -57,7 +53,7 @@ namespace Kooboo.IndexedDB.Dynamic
             return GetPartial(position, 30 + ColumnOffset, KeyLength);
         }
 
-        #region  NewAPI
+        #region NewAPI
 
         public long Add(byte[] bytes, int TotalByteLen)
         {
@@ -90,13 +86,11 @@ namespace Kooboo.IndexedDB.Dynamic
 
             Stream.Write(counter, 0, 4);
 
-            // Stream.Position = blockposition + 6;  
+            // Stream.Position = blockposition + 6;
 
             Stream.Position = blockposition + 10;
             Stream.Write(bytes, 0, bytes.Length);
-
         }
-
 
         public byte[] Get(long position)
         {
@@ -111,8 +105,6 @@ namespace Kooboo.IndexedDB.Dynamic
             return BitConverter.ToInt32(counterbytes, 0);
         }
 
-
-
         public byte[] Get(long position, int ColumnLen)
         {
             return GetPartial(position, 10, ColumnLen);
@@ -124,18 +116,18 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 if (len == int.MaxValue)
                 {
-                    byte[] header = GetPartial(position, relativePos + 10, 8);   
+                    byte[] header = GetPartial(position, relativePos + 10, 8);
                     int counter = BitConverter.ToInt32(header, 4);
-                    return GetPartial(position, relativePos + 10 + 8, counter); 
+                    return GetPartial(position, relativePos + 10 + 8, counter);
                 }
                 else
                 {
                     return GetPartial(position, relativePos + 10 + 8, len);
-                } 
+                }
             }
             else
             {
-                // TODO: This should not needed.... 
+                // TODO: This should not needed....
             }
             return null;
         }
@@ -147,7 +139,8 @@ namespace Kooboo.IndexedDB.Dynamic
             this.Stream.Write(values, 0, length);
         }
 
-        #endregion
+        #endregion NewAPI
+
         public void Close()
         {
             if (_filestream != null)
@@ -176,10 +169,8 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public FileStream Stream
         {
-
             get
             {
-
                 if (_filestream == null || !_filestream.CanRead)
                 {
                     lock (_object)
@@ -194,7 +185,5 @@ namespace Kooboo.IndexedDB.Dynamic
                 return _filestream;
             }
         }
-
     }
-
 }

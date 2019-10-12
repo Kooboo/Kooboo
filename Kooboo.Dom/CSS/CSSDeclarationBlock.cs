@@ -1,30 +1,26 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom.CSS
 {
-
     // http://dev.w3.org/csswg/cssom/#cssstyledeclaration
 
     /// <summary>
-    /// One block contains one definiation of multiple property + values. 
+    /// One block contains one definiation of multiple property + values.
     /// example.
     /// .class
     /// {
-    /// font-size: 10px;    // = one CSS Declaration. 
-    /// font-color:red; 
+    /// font-size: 10px;    // = one CSS Declaration.
+    /// font-color:red;
     /// }
     /// </summary>
     [Serializable]
     public class CSSDeclarationBlock
     {
-
         public CSSDeclarationBlock()
         {
             this.item = new List<CSSDeclaration>();
@@ -34,7 +30,7 @@ namespace Kooboo.Dom.CSS
 
         /// <summary>
         /// Textual representation of the declaration block. Setting this attribute changes the style.
-        /// this text should not contains the {}. 
+        /// this text should not contains the {}.
         /// </summary>
         public string cssText
         {
@@ -94,7 +90,6 @@ namespace Kooboo.Dom.CSS
                 }
             }
             return result;
-
         }
 
         public List<CSSDeclaration> item;
@@ -134,7 +129,7 @@ namespace Kooboo.Dom.CSS
         }
 
         /// <summary>
-        /// Set/insert or update the property + value. 
+        /// Set/insert or update the property + value.
         /// </summary>
         /// <param name="propertyname"></param>
         /// <param name="value"></param>
@@ -143,8 +138,8 @@ namespace Kooboo.Dom.CSS
         {
             propertyname = propertyname.ToLower();
 
-            bool found = false; 
-             
+            bool found = false;
+
             foreach (var onedeclaration in item)
             {
                 if (onedeclaration != null && onedeclaration.propertyname.ToLower() == propertyname)
@@ -190,13 +185,13 @@ namespace Kooboo.Dom.CSS
             foreach (var one in itemstoremove)
             {
                 item.Remove(one);
-            } 
+            }
         }
 
         public void setPropertyValue(string propertyname, string value)
         {
             propertyname = propertyname.ToLower();
-            bool found = false; 
+            bool found = false;
 
             foreach (var onedeclaration in item)
             {
@@ -215,23 +210,24 @@ namespace Kooboo.Dom.CSS
 
         public void setPropertyPriority(string propertyname, bool important)
         {
-            propertyname = propertyname.ToLower(); 
+            propertyname = propertyname.ToLower();
 
             foreach (var onedeclaration in item)
             {
                 if (onedeclaration.propertyname.ToLower() == propertyname)
                 {
-                    onedeclaration.important = important; 
+                    onedeclaration.important = important;
                 }
             }
             // not found
         }
 
         #region "non w3c"
+
         //below methods are created to update _cssText when a property is set or changed.
 
         /// <summary>
-        /// Insert or update declaration, will also update the cssText. 
+        /// Insert or update declaration, will also update the cssText.
         /// </summary>
         /// <param name="declaration"></param>
         public void updateDeclaration(CSSDeclaration declaration)
@@ -256,7 +252,7 @@ namespace Kooboo.Dom.CSS
 
         /// <summary>
         /// CSSStyleDeclaration == CSSDeclarationBlock
-        /// Merge two declaration blocks into one. 
+        /// Merge two declaration blocks into one.
         /// </summary>
         /// <param name="styleDeclaration"></param>
         public void merge(CSSStyleDeclaration styleDeclaration)
@@ -291,19 +287,19 @@ namespace Kooboo.Dom.CSS
             }
             declarationText = declarationText + ";";
 
-            // use regex is OK in this case, because all property name does not contains escape chars. 
+            // use regex is OK in this case, because all property name does not contains escape chars.
             string pattern = declaration.propertyname + @"\s*\:\s*.*?(;|$)";
 
             _cssText = Regex.Replace(_cssText, pattern, declarationText);
-
         }
+
         /// <summary>
         /// add the new declaration to csstext.
         /// </summary>
         /// <param name="declaration"></param>
         private void appendCssText(CSSDeclaration declaration)
         {
-            /// this append actually insert at the beginning to prevent, 
+            /// this append actually insert at the beginning to prevent,
             ////// To serialize a CSS declaration with property name property, value and optionally an important flag set, follow these steps:
             //Let s be the empty string.
             //Append property to s.
@@ -344,9 +340,7 @@ namespace Kooboo.Dom.CSS
             {
                 _cssText = declarationText + _cssText;
             }
-
         }
-
 
         public bool hasPartialProperty(string partialPropertyName)
         {
@@ -362,7 +356,6 @@ namespace Kooboo.Dom.CSS
             return false;
         }
 
-        #endregion
-
+        #endregion "non w3c"
     }
 }

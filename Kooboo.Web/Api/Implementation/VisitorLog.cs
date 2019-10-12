@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data.Models;
@@ -47,11 +47,11 @@ namespace Kooboo.Web.Api.Implementation
                 log = call.WebSite.SiteDb().LogByWeek<VisitorLog>(weekname);
             }
 
-            var pager = ApiHelper.GetPager(call, 50);   
+            var pager = ApiHelper.GetPager(call, 50);
 
             PagedListViewModel<VisitorLog> result = new PagedListViewModel<VisitorLog>();
 
-            var alllog = log.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead);  
+            var alllog = log.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead);
 
             var total = alllog.Count();
             result.TotalCount = total;
@@ -60,7 +60,7 @@ namespace Kooboo.Web.Api.Implementation
 
             List<VisitorLog> logs = alllog.Skip(pager.SkipCount).Take(pager.PageSize).ToList();
             result.List = logs;
-            return result;   
+            return result;
         }
 
         public List<ResourceCount> TopPages(ApiCall call)
@@ -152,7 +152,6 @@ namespace Kooboo.Web.Api.Implementation
 
             string baseurl = call.WebSite.BaseUrl();
             return repo.QueryDescending(o => o.Id == call.ObjectId).Take(99999).ToList();
-
         }
 
         public List<ResourceCount> Monthly(ApiCall call)

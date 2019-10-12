@@ -1,17 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using Kooboo.Extensions;
-using System.Collections.Generic;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Models
-{ 
+{
     public class CmsCssRule : SiteObject
     {
-        ///How to identify a css rule. 
-        // When this is a css rule under a style sheet, identified by the style sheet id and itemindex. if this is also under a like media rule, should also check into the media rule. 
+        ///How to identify a css rule.
+        // When this is a css rule under a style sheet, identified by the style sheet id and itemindex. if this is also under a like media rule, should also check into the media rule.
         /// <summary>
         /// Css Rule of StyleSheet.  This is the CMS CSS Rule, Not the DOM Css Rule.
         /// </summary>
@@ -24,6 +23,7 @@ namespace Kooboo.Sites.Models
         }
 
         private Guid _id;
+
         public override Guid Id
         {
             set { _id = value; }
@@ -31,12 +31,11 @@ namespace Kooboo.Sites.Models
             {
                 if (_id == default(Guid))
                 {
-
-                    string unique = this.ConstType.ToString() + this.ParentStyleId +  this.SelectorText + this.DuplicateIndex.ToString();
+                    string unique = this.ConstType.ToString() + this.ParentStyleId + this.SelectorText + this.DuplicateIndex.ToString();
 
                     if (this.ParentCssRuleId != default(Guid))
                     {
-                        unique += this.ParentCssRuleId.ToString(); 
+                        unique += this.ParentCssRuleId.ToString();
                     }
 
                     if (this.IsInline)
@@ -56,7 +55,6 @@ namespace Kooboo.Sites.Models
         [Kooboo.Attributes.SummaryIgnore]
         public int ItemIndex { get; set; }
 
-        
         [Kooboo.Attributes.SummaryIgnore]
         [Kooboo.IndexedDB.CustomAttributes.KoobooIgnore]
         public int TempCssRuleIndex { get; set; }
@@ -66,21 +64,20 @@ namespace Kooboo.Sites.Models
         /// </summary>        [Kooboo.Attributes.SummaryIgnore]
         public int DuplicateIndex { get; set; }
 
-
         /// <summary>
-        /// The style sheet that this rule belongs to. 
+        /// The style sheet that this rule belongs to.
         /// </summary>
-       [Kooboo.Attributes.SummaryIgnore]
+        [Kooboo.Attributes.SummaryIgnore]
         public Guid ParentStyleId { get; set; }
 
         /// <summary>
-        /// The parent rule this rule belongs to. for example, a parent media rule. 
+        /// The parent rule this rule belongs to. for example, a parent media rule.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public Guid ParentCssRuleId { get; set; }
 
         /// <summary>
-        ///  the Css rule text. 
+        ///  the Css rule text.
         /// </summary>
         public string CssText { get; set; }
 
@@ -88,7 +85,7 @@ namespace Kooboo.Sites.Models
         public int selectorPositionIndex { get; set; }
 
         /// <summary>
-        /// The selector text part, for At-rule, it is @import, @font-face or @media + media condition. 
+        /// The selector text part, for At-rule, it is @import, @font-face or @media + media condition.
         /// </summary>
         public string SelectorText
         {
@@ -106,7 +103,6 @@ namespace Kooboo.Sites.Models
                             this.selectorPositionIndex = bracketindex;
                         }
                     }
-
                 }
 
                 if (this.selectorPositionIndex <= 0)
@@ -115,14 +111,13 @@ namespace Kooboo.Sites.Models
                 }
                 else
                 {
-
                     if (this.ruleType == RuleType.ImportRule || this.ruleType == RuleType.FontFaceRule)
                     {
                         return string.Empty;
                     }
                     else if (this.ruleType == RuleType.MediaRule)
                     {
-                        var startPosition = this.CssText.ToLower().IndexOf("@media")+6;
+                        var startPosition = this.CssText.ToLower().IndexOf("@media") + 6;
                         return this.CssText.Substring(startPosition, this.selectorPositionIndex - startPosition).Trim();
                     }
                     else
@@ -133,8 +128,7 @@ namespace Kooboo.Sites.Models
             }
         }
 
- 
-        ///  The rule text body of this rule, for stylerule, this is the style decleration block text. 
+        ///  The rule text body of this rule, for stylerule, this is the style decleration block text.
         public string RuleText
         {
             get
@@ -143,7 +137,6 @@ namespace Kooboo.Sites.Models
                 {
                     return CssText;
                 }
-
                 else
                 {
                     return this.CssText.Substring(this.selectorPositionIndex + 1, this.CssText.Length - this.selectorPositionIndex - 2);
@@ -159,35 +152,35 @@ namespace Kooboo.Sites.Models
         }
 
         /// <summary>
-        /// In the case of inline style, the Id of the container object. like page, view or layout. 
+        /// In the case of inline style, the Id of the container object. like page, view or layout.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public Guid OwnerObjectId
         {
-            get;set;
+            get; set;
         }
 
         /// <summary>
-        /// The constObjectType of ObjectId. 
+        /// The constObjectType of ObjectId.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public byte OwnerObjectConstType { get; set; }
 
         /// <summary>
-        /// The kooboo tag id when it is an inline style rule. 
+        /// The kooboo tag id when it is an inline style rule.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public string KoobooId { get; set; }
 
         /// <summary>
-        /// The open tag content of Kooboo Id, this field is only used for quick access for display information only. 
+        /// The open tag content of Kooboo Id, this field is only used for quick access for display information only.
         /// </summary>
         public string KoobooOpenTag { get; set; }
 
         private string _displayName;
 
         /// <summary>
-        /// The display name of this Rule when it is an inline style rule. 
+        /// The display name of this Rule when it is an inline style rule.
         /// </summary>
         public string DisplayName
         {
@@ -211,33 +204,35 @@ namespace Kooboo.Sites.Models
         [Kooboo.Attributes.SummaryIgnore]
         [JsonConverter(typeof(StringEnumConverter))]
         public RuleType ruleType { get; set; }
-         
+
         public override int GetHashCode()
         {
-            string unique = this.CssText + this.SelectorText + this.RuleText; 
+            string unique = this.CssText + this.SelectorText + this.RuleText;
 
             if (this.IsInline)
             {
-                unique += this.KoobooOpenTag; 
+                unique += this.KoobooOpenTag;
             }
 
-            unique += this.OwnerObjectId.ToString(); 
+            unique += this.OwnerObjectId.ToString();
 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
 
-        private List<string> _properties; 
-        public List<string> Properties {
-            get {
+        private List<string> _properties;
+
+        public List<string> Properties
+        {
+            get
+            {
                 if (_properties == null)
                 {
                     _properties = new List<string>();
                 }
-                return _properties; 
+                return _properties;
             }
-            set { _properties = value;  }
+            set { _properties = value; }
         }
-        
     }
 
     public enum RuleType
@@ -247,8 +242,4 @@ namespace Kooboo.Sites.Models
         ImportRule = 2,
         FontFaceRule = 3
     }
-
-
-
-
 }

@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
-using Kooboo.Sites.Scripting.Global; 
-using System.Collections.Generic; 
+using Kooboo.Sites.Scripting.Global;
+using System.Collections.Generic;
 
 namespace Kooboo.Web.Api.Implementation
-{ 
+{
     public class KeyValueApi : IApi
     {
         public string ModelName
@@ -23,7 +23,7 @@ namespace Kooboo.Web.Api.Implementation
             get { return true; }
         }
 
-        public Dictionary<string, string>  List(ApiCall call)
+        public Dictionary<string, string> List(ApiCall call)
         {
             kKeyValue store = new kKeyValue(call.Context);
 
@@ -31,21 +31,21 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in store)
             {
-                allvalues.Add(item.Key, item.Value); 
+                allvalues.Add(item.Key, item.Value);
             }
-            return allvalues;  
+            return allvalues;
         }
-         
+
         public string Get(string key, ApiCall call)
         {
-            kKeyValue store = new kKeyValue(call.Context); 
-            return store.get(key); 
+            kKeyValue store = new kKeyValue(call.Context);
+            return store.get(key);
         }
 
         public void Update(string key, string value, ApiCall call)
         {
             kKeyValue store = new kKeyValue(call.Context);
-            store.set(key, value); 
+            store.set(key, value);
         }
 
         public void Deletes(List<string> ids, ApiCall call)
@@ -54,7 +54,7 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in ids)
             {
-                store.Remove(item); 
+                store.Remove(item);
             }
         }
 
@@ -63,9 +63,7 @@ namespace Kooboo.Web.Api.Implementation
             kKeyValue store = new kKeyValue(call.Context);
             var obj = store.get(name);
 
-            return obj == null; 
-
+            return obj == null;
         }
-
     }
 }

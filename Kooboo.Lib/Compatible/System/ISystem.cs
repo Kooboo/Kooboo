@@ -1,9 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Text;
-
 
 namespace Kooboo.Lib.Compatible
 {
@@ -28,6 +25,5 @@ namespace Kooboo.Lib.Compatible
         string JoinPath(string[] segments);
 
         List<string> GetSegments(string input);
-
     }
 }

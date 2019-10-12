@@ -18,11 +18,12 @@ namespace Jint.Parser.Ast
         public IList<FunctionDeclaration> FunctionDeclarations { get; set; }
 
         #region ECMA6
+
         public IEnumerable<Expression> Defaults;
         public SyntaxNode Rest;
         public bool Generator;
         public bool Expression;
-        #endregion
 
+        #endregion ECMA6
     }
 }

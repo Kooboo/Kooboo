@@ -17,7 +17,7 @@ namespace Jint.Native.String
             var obj = new StringConstructor(engine);
             obj.Extensible = true;
 
-            // The value of the [[Prototype]] internal property of the String constructor is the Function prototype object 
+            // The value of the [[Prototype]] internal property of the String constructor is the Function prototype object
             obj.Prototype = engine.Function.PrototypeObject;
             obj.PrototypeObject = StringPrototype.CreatePrototypeObject(engine, obj);
 
@@ -37,11 +37,11 @@ namespace Jint.Native.String
         private static JsValue FromCharCode(JsValue thisObj, JsValue[] arguments)
         {
             var chars = new char[arguments.Length];
-            for (var i = 0; i < chars.Length; i++ )
+            for (var i = 0; i < chars.Length; i++)
             {
                 chars[i] = (char)TypeConverter.ToUint16(arguments[i]);
             }
-            
+
             return new System.String(chars);
         }
 

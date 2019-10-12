@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Data.Language;
+using System.Collections.Generic;
 
 namespace Kooboo.Web.Menus.SideBarMenu.Development
 {
     public class DataSource : ISideBarMenu
     {
-        public SideBarSection Parent =>  SideBarSection.Development;
+        public SideBarSection Parent => SideBarSection.Development;
 
         public string Name => "DataSource";
 
-        public string Icon =>"";
+        public string Icon => "";
 
         public string Url => "Development/DataSources";
 
@@ -22,7 +20,7 @@ namespace Kooboo.Web.Menus.SideBarMenu.Development
 
         public string GetDisplayName(RenderContext Context)
         {
-            return Hardcoded.GetValue("DataSource", Context); 
+            return Hardcoded.GetValue("DataSource", Context);
         }
     }
 }

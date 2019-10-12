@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data.Interface;
@@ -21,11 +21,10 @@ namespace Kooboo.Web.Api.Implementation
         {
             var sitedb = call.Context.WebSite.SiteDb();
 
-          
-            var item = sitedb.CoreSetting.Get(name); 
-            if (item !=null)
+            var item = sitedb.CoreSetting.Get(name);
+            if (item != null)
             {
-                return item.Values; 
+                return item.Values;
             }
             else
             {
@@ -33,47 +32,46 @@ namespace Kooboo.Web.Api.Implementation
 
                 if (type != null)
                 {
-                    Dictionary<string, string> result = new Dictionary<string, string>(); 
+                    Dictionary<string, string> result = new Dictionary<string, string>();
                     var allfieldsl = Lib.Reflection.TypeHelper.GetPublicPropertyOrFields(type);
                     foreach (var field in allfieldsl)
                     {
-                        result[field.Name] = ""; 
+                        result[field.Name] = "";
                     }
 
-                    return result; 
+                    return result;
                 }
             }
-            return null; 
+            return null;
         }
 
         public List<CoreSettingViewModel> List(ApiCall call)
-        {  
+        {
             var sitedb = call.WebSite.SiteDb();
 
-            List<CoreSettingViewModel> result = new List<CoreSettingViewModel>(); 
-             
+            List<CoreSettingViewModel> result = new List<CoreSettingViewModel>();
+
             foreach (var item in Kooboo.Sites.Service.CoreSettingService.types)
             {
-                var value = sitedb.CoreSetting.Get(item.Key); 
-               
+                var value = sitedb.CoreSetting.Get(item.Key);
+
                 if (value == null)
                 {
-                    var instance = Activator.CreateInstance(item.Value) as ISiteSetting; 
-                    if (instance !=null)
+                    var instance = Activator.CreateInstance(item.Value) as ISiteSetting;
+                    if (instance != null)
                     {
-                        result.Add(new CoreSettingViewModel() { Name = instance.Name }); 
-                    } 
+                        result.Add(new CoreSettingViewModel() { Name = instance.Name });
+                    }
                 }
                 else
                 {
-                    var json = Lib.Helper.JsonHelper.Serialize(value.Values); 
+                    var json = Lib.Helper.JsonHelper.Serialize(value.Values);
 
-                    result.Add(new CoreSettingViewModel() { Name =value.Name, Value = json, lastModify = value.LastModified });  
+                    result.Add(new CoreSettingViewModel() { Name = value.Name, Value = json, lastModify = value.LastModified });
                 }
-
             }
 
-            return result; 
+            return result;
         }
 
         public void Update(string name, Dictionary<string, string> model, ApiCall call)
@@ -81,14 +79,12 @@ namespace Kooboo.Web.Api.Implementation
             var Core = new CoreSetting();
             Core.Name = name;
             Core.Values = model;
-            call.WebSite.SiteDb().CoreSetting.AddOrUpdate(Core); 
-
+            call.WebSite.SiteDb().CoreSetting.AddOrUpdate(Core);
         }
     }
 
     public class CoreSettingViewModel
     {
-       
         public string Name { get; set; }
 
         public string Value { get; set; }

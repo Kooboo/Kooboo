@@ -1,8 +1,8 @@
-﻿using System;
-using System.Xml;
+﻿using System.Xml;
+
 namespace WxPayAPI.lib
 {
-    public class SafeXmlDocument:XmlDocument
+    public class SafeXmlDocument : XmlDocument
     {
         public SafeXmlDocument()
         {

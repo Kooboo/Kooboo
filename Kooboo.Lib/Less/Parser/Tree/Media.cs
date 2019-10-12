@@ -1,21 +1,21 @@
-﻿using System;
-using dotless.Core.Utils;
+﻿using dotless.Core.Utils;
+using System;
 
 namespace dotless.Core.Parser.Tree
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using Infrastructure;
     using Infrastructure.Nodes;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class Media : Ruleset
     {
         public Node Features { get; set; }
         public Ruleset Ruleset { get; set; }
-		public List<Extender> Extensions { get; set; }
+        public List<Extender> Extensions { get; set; }
 
         public Media(Node features, NodeList rules)
-            : this(features, new Ruleset(GetEmptySelector(), rules),null)
+            : this(features, new Ruleset(GetEmptySelector(), rules), null)
         {
         }
 
@@ -23,7 +23,7 @@ namespace dotless.Core.Parser.Tree
         {
             Features = features;
             Ruleset = ruleset;
-			Extensions = extensions ?? new List<Extender>();
+            Extensions = extensions ?? new List<Extender>();
         }
 
         public static NodeList<Selector> GetEmptySelector()
@@ -51,7 +51,7 @@ namespace dotless.Core.Parser.Tree
             var features = Features.Evaluate(env);
             var ruleset = Ruleset.Evaluate(env) as Ruleset;
 
-            var media = new Media(features, ruleset,Extensions).ReducedFrom<Media>(this);
+            var media = new Media(features, ruleset, Extensions).ReducedFrom<Media>(this);
 
             env.MediaPath.Pop();
             env.MediaBlocks[blockIndex] = media;
@@ -147,7 +147,7 @@ namespace dotless.Core.Parser.Tree
         ///  (A) and (B) and (C) => A and B and C
         ///  (A, B) and (D) and (C) => A and D and C, B and D and C
         ///  (A) and (B) and (C, D) => A and B and C, A and B and D
-        /// 
+        ///
         ///  It does this by generating a list of permutations for the last n-1 then n-2
         ///  and with each call it multiplies out the OR'd elements
         /// </summary>
@@ -214,7 +214,7 @@ namespace dotless.Core.Parser.Tree
 
             Ruleset.IsRoot = ctx.Count == 0;
 
-			//Track the last media block being appended for extender filters
+            //Track the last media block being appended for extender filters
             env.ExtendMediaScope.Push(this);
 
             // Set the current feeatures to filter extenders
@@ -245,14 +245,13 @@ namespace dotless.Core.Parser.Tree
             else
                 env.Output.Append(" {\n");
 
-
             env.Output.Append(contents);
 
             if (env.Compress)
                 env.Output.Append('}');
             else
                 env.Output.Append("\n}\n");
-}
+        }
 
         public void AddExtension(Selector selector, Extend extends, Env env)
         {

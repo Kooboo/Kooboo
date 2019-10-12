@@ -16,7 +16,7 @@ namespace dotless.Core.Parser.Tree
         public bool Variadic { get; set; }
 
         public Rule(string name, Node value) : this(name, value, false)
-        { 
+        {
         }
 
         public Rule(string name, Node value, bool variadic)

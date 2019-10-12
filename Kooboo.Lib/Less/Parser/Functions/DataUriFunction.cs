@@ -1,10 +1,10 @@
 ﻿namespace dotless.Core.Parser.Functions
 {
-    using System;
-    using System.IO;
     using Exceptions;
     using Infrastructure;
     using Infrastructure.Nodes;
+    using System;
+    using System.IO;
     using Tree;
     using Utils;
 
@@ -58,7 +58,7 @@
             if (Arguments.Count > 1)
             {
                 Guard.ExpectNode<Quoted>(Arguments[0], this, Location);
-                var mimeType = ((Quoted) Arguments[0]).Value;
+                var mimeType = ((Quoted)Arguments[0]).Value;
 
                 if (mimeType.IndexOf(';') > -1)
                     mimeType = mimeType.Split(';')[0];

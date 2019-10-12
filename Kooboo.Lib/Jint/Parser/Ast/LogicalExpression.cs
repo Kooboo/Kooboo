@@ -13,13 +13,14 @@ namespace Jint.Parser.Ast
         public LogicalOperator Operator;
         public Expression Left;
         public Expression Right;
-        
+
         public static LogicalOperator ParseLogicalOperator(string op)
         {
             switch (op)
             {
                 case "&&":
                     return LogicalOperator.LogicalAnd;
+
                 case "||":
                     return LogicalOperator.LogicalOr;
 

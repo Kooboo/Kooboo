@@ -1,27 +1,22 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
-
     /// <summary>
-    /// NOTE: this implemented is not fully according to the lines from W3C, instead implement the description accordig to own understanding to meet our needs. 
+    /// NOTE: this implemented is not fully according to the lines from W3C, instead implement the description accordig to own understanding to meet our needs.
     /// </summary>
     [Serializable]
     public class NodeIterator
     {
-
         public NodeIterator()
         {
-            this.pointerBeforeReferenceNode = false; 
+            this.pointerBeforeReferenceNode = false;
         }
 
         private Node _root;
+
         /// <summary>
         /// The root of an object is itself, if its parent is null, or else it is the root of its parent.
         /// </summary>
@@ -33,24 +28,24 @@ namespace Kooboo.Dom
                 {
                     while (_root.parentNode != null)
                     {
-                        _root = _root.parentNode; 
+                        _root = _root.parentNode;
                     }
                 }
-                return _root; 
+                return _root;
             }
             set
             {
-                _root = value; 
+                _root = value;
             }
         }
 
         /// <summary>
-        /// Whether root will always go up the toppest parent or not. 
+        /// Whether root will always go up the toppest parent or not.
         /// </summary>
         public bool AllowChildAsRoot { get; set; }
 
         /// <summary>
-        /// current node, the node that has been consumed. 
+        /// current node, the node that has been consumed.
         /// </summary>
         public Node referenceNode { get; set; }
 
@@ -139,15 +134,14 @@ namespace Kooboo.Dom
             }
         }
 
-
         public Node nextNode()
         {
-            return Following(); 
+            return Following();
         }
 
         public Node previousNode()
         {
-            return Proceeding(); 
+            return Proceeding();
         }
 
         public void detach()
@@ -157,15 +151,14 @@ namespace Kooboo.Dom
 
         //public Node TraverseNode(TraverseType type)
         //{
-
         //    //  To traverse in direction direction run these steps:
 
         //    //Let node be the value of the referenceNode attribute.
 
-        //    var node = this.referenceNode; 
+        //    var node = this.referenceNode;
 
         //    //Let before node be the value of the pointerBeforeReferenceNode attribute.
-        //    var beforeNode = this.pointerBeforeReferenceNode;  
+        //    var beforeNode = this.pointerBeforeReferenceNode;
 
         //    //Run these substeps:
         //    substeps:
@@ -176,8 +169,6 @@ namespace Kooboo.Dom
         //        //If before node is false, let node be the first node following node in the iterator collection. If there is no such node return null.
         //        if (!beforeNode)
         //        {
-
-
         //        }
         //        else
         //        {
@@ -202,14 +193,14 @@ namespace Kooboo.Dom
         //}
 
         /// <summary>
-        /// return the node following current node. 
+        /// return the node following current node.
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
         public Node Following()
         {
-            // deepest first. when there is a child nodes, always go down to child first. 
-            // when there is no node any more, go back to parent, parent always has been consumed. 
+            // deepest first. when there is a child nodes, always go down to child first.
+            // when there is no node any more, go back to parent, parent always has been consumed.
 
             var node = this.referenceNode;
 
@@ -231,25 +222,22 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-                    // rejected. the same as all the sub has been consumed. 
-                    /// must go silbing or parent now. 
-                    // do nothing and go out to the "when there is no child any more. 
-
+                    // rejected. the same as all the sub has been consumed.
+                    /// must go silbing or parent now.
+                    // do nothing and go out to the "when there is no child any more.
                 }
-
             }
             return NextSibling(node);
         }
 
         /// <summary>
-        /// skip the sub of this node and continue consume the next sibling or parent sibling. 
+        /// skip the sub of this node and continue consume the next sibling or parent sibling.
         /// </summary>
         /// <param name="node"></param>
         /// <returns></returns>
         public Node NextSibling(Node node)
         {
-
-        // when there is no child any more. 
+        // when there is no child any more.
         checksibling:
 
             if (node.nextSibling() != null)
@@ -270,16 +258,15 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-                    // when rejected, check sibling again. 
+                    // when rejected, check sibling again.
                     goto checksibling;
                 }
             }
 
         checkparentSibling:
 
-
-            // there is no sibling, check parent sibling. 
-            /// go to any parent that has sibling. 
+            // there is no sibling, check parent sibling.
+            /// go to any parent that has sibling.
             node = getParentNextSibling(node);
             if (node != null)
             {
@@ -296,10 +283,9 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-                    // when rejected, check sibling again. 
+                    // when rejected, check sibling again.
                     goto checkparentSibling;
                 }
-
             }
 
             return null;
@@ -307,8 +293,8 @@ namespace Kooboo.Dom
 
         public Node Proceeding()
         {
-            // deepest first. when there is a child nodes, always go down to child first. 
-            // when there is no node any more, go back to parent, parent always has been consumed. 
+            // deepest first. when there is a child nodes, always go down to child first.
+            // when there is no node any more, go back to parent, parent always has been consumed.
 
             var node = this.referenceNode;
 
@@ -330,15 +316,13 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-                    // rejected. the same as all the sub has been consumed. 
-                    /// must go silbing or parent now. 
-                    // do nothing and go out to the "when there is no child any more. 
-
+                    // rejected. the same as all the sub has been consumed.
+                    /// must go silbing or parent now.
+                    // do nothing and go out to the "when there is no child any more.
                 }
-
             }
 
-            // when there is no child any more. 
+        // when there is no child any more.
         checksibling:
 
             if (node.previousSibling() != null)
@@ -359,15 +343,15 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-                    // when rejected, check sibling again. 
+                    // when rejected, check sibling again.
                     goto checksibling;
                 }
             }
 
         checkparentSibling:
 
-            // there is no sibling, check parent sibling. 
-            /// go to any parent that has sibling. 
+            // there is no sibling, check parent sibling.
+            /// go to any parent that has sibling.
             node = getParentPreviousSibling(node);
             if (node != null)
             {
@@ -381,15 +365,15 @@ namespace Kooboo.Dom
                 else if (result == enumNodeFilterAcceptNode.FILTER_SKIP)
                 {
                     this.referenceNode = node;
-                    return  Proceeding();
+                    return Proceeding();
                 }
                 else
                 {
-                    // when rejected, check sibling again. 
+                    // when rejected, check sibling again.
                     goto checkparentSibling;
                 }
             }
-            return null; 
+            return null;
         }
 
         private Node getParentNextSibling(Node checknode)
@@ -433,17 +417,11 @@ namespace Kooboo.Dom
                 return getParentPreviousSibling(parent);
             }
         }
-
     }
-
-
-
 
     public enum TraverseType
     {
         Next = 0,
         Previous = 1
     }
-
-
 }

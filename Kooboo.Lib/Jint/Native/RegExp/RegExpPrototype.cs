@@ -1,7 +1,7 @@
-﻿using System.Text.RegularExpressions;
-using Jint.Runtime;
+﻿using Jint.Runtime;
 using Jint.Runtime.Descriptors;
 using Jint.Runtime.Interop;
+using System.Text.RegularExpressions;
 
 namespace Jint.Native.RegExp
 {
@@ -71,7 +71,7 @@ namespace Jint.Native.RegExp
             var lastIndex = TypeConverter.ToNumber(R.Get("lastIndex"));
             var i = TypeConverter.ToInteger(lastIndex);
             var global = R.Global;
-            
+
             if (!global)
             {
                 i = 0;
@@ -88,7 +88,7 @@ namespace Jint.Native.RegExp
             Match r = null;
             if (i < 0 || i > length)
             {
-                R.Put("lastIndex", (double) 0, true);
+                R.Put("lastIndex", (double)0, true);
                 return Null.Instance;
             }
 
@@ -96,26 +96,26 @@ namespace Jint.Native.RegExp
 
             if (!r.Success)
             {
-                R.Put("lastIndex", (double) 0, true);
+                R.Put("lastIndex", (double)0, true);
                 return Null.Instance;
             }
 
             var e = r.Index + r.Length;
-            
+
             if (global)
             {
-                R.Put("lastIndex", (double) e, true);
+                R.Put("lastIndex", (double)e, true);
             }
             var n = r.Groups.Count;
             var matchIndex = r.Index;
 
             var a = InitReturnValueArray(Engine.Array.Construct(Arguments.Empty), s, n, matchIndex);
-            
+
             for (var k = 0; k < n; k++)
             {
                 var group = r.Groups[k];
                 var value = group.Success ? group.Value : Undefined.Instance;
-                a.DefineOwnProperty(k.ToString(), new PropertyDescriptor(value, true, true, true), true);            
+                a.DefineOwnProperty(k.ToString(), new PropertyDescriptor(value, true, true, true), true);
             }
 
             return a;

@@ -1,9 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using Kooboo.Extensions;
-using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace Kooboo.Sites.Contents.Models
 {
@@ -13,7 +9,7 @@ namespace Kooboo.Sites.Contents.Models
     {
         public Label()
         {
-            this.ConstType = ConstObjectType.Label; 
+            this.ConstType = ConstObjectType.Label;
         }
 
         public override int GetHashCode()

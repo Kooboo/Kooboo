@@ -1,16 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
- public   class StackTemplateMode
+    public class StackTemplateMode
     {
-     public List<enumInsertionMode> item = new List<enumInsertionMode>();
+        public List<enumInsertionMode> item = new List<enumInsertionMode>();
 
         public int length
         {
@@ -38,7 +35,7 @@ namespace Kooboo.Dom
         }
 
         /// <summary>
-        /// add/append a new open elements. 
+        /// add/append a new open elements.
         /// </summary>
         /// <param name="node"></param>
         public void push(enumInsertionMode mode)
@@ -62,10 +59,7 @@ namespace Kooboo.Dom
                     return;
                 }
             }
-           
-           
         }
-
 
         public void popOffCurrent()
         {
@@ -75,6 +69,5 @@ namespace Kooboo.Dom
                 item.RemoveAt(index);
             }
         }
-
     }
 }

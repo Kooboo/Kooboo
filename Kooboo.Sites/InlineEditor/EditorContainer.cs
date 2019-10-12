@@ -1,14 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Sites.InlineEditor.Model;
 using System;
 using System.Collections.Generic;
-using Kooboo.Sites.InlineEditor.Model; 
 
 namespace Kooboo.Sites.InlineEditor
 {
-   public static class EditorContainer
+    public static class EditorContainer
     {
-        private static List<IInlineModel> _List; 
+        private static List<IInlineModel> _List;
 
         public static List<IInlineModel> ModelList
         {
@@ -23,9 +23,9 @@ namespace Kooboo.Sites.InlineEditor
                     _List.Add(new LabelModel());
                     _List.Add(new StyleModel());
                     _List.Add(new ImageModel());
-                    _List.Add(new ConverterModel()); 
+                    _List.Add(new ConverterModel());
                 }
-                return _List; 
+                return _List;
             }
         }
 
@@ -44,26 +44,25 @@ namespace Kooboo.Sites.InlineEditor
                     _ExecutorList.Add(new Executor.HtmlBlockExecutor());
                     _ExecutorList.Add(new Executor.StyleExecutor());
                     _ExecutorList.Add(new Executor.ImageExecutor());
-                    _ExecutorList.Add(new Executor.ConverterExecutor()); 
+                    _ExecutorList.Add(new Executor.ConverterExecutor());
                 }
                 return _ExecutorList;
             }
         }
-        
+
         public static Type GetModelType(string editorType)
         {
-            var type = ModelList.Find(o => o.EditorType == editorType); 
+            var type = ModelList.Find(o => o.EditorType == editorType);
             if (type != null)
             {
-                return type.GetType(); 
+                return type.GetType();
             }
-            return null; 
-        }
-        
-        public static IInlineExecutor GetExecutor(string editorType)
-        {
-          return ExecutorList.Find(o => o.EditorType == editorType); 
+            return null;
         }
 
+        public static IInlineExecutor GetExecutor(string editorType)
+        {
+            return ExecutorList.Find(o => o.EditorType == editorType);
+        }
     }
 }

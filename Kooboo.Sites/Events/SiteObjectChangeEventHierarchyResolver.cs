@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 //using System;
 //using System.Collections.Generic;
@@ -40,7 +40,7 @@
 //            var to = Activator.CreateInstance(toType) as Kooboo.Events.Cms.SiteObjectEvent;
 //            to.ChangeType = from.ChangeType;
 //            to.OldValue = from.OldValue;
-//            to.Value = from.Value; 
+//            to.Value = from.Value;
 //            to.SiteDb = from.SiteDb;
 //            return to;
 //        }

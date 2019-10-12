@@ -1,12 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Helper
@@ -137,7 +137,6 @@ namespace Kooboo.Lib.Helper
                 }
                 catch (Exception ex)
                 {
-
                 }
                 return default(T);
             }
@@ -218,7 +217,7 @@ namespace Kooboo.Lib.Helper
                 return ProcessApiResponse<T>(backstring);
             }
         }
-         
+
         public static string GetString(string url)
         {
             try
@@ -235,18 +234,15 @@ namespace Kooboo.Lib.Helper
             }
             catch (Exception ex)
             {
-
             }
 
             return null;
         }
 
-
         public static async Task<string> GetStringAsync(string url, Dictionary<string, string> query = null)
         {
             try
             {
-
                 if (query != null)
                 {
                     url = UrlHelper.AppendQueryString(url, query);
@@ -259,17 +255,15 @@ namespace Kooboo.Lib.Helper
                     client.Proxy = null;
                     client.Encoding = Encoding.UTF8;
 
-                  return  await client.DownloadStringTaskAsync(new Uri(url));
+                    return await client.DownloadStringTaskAsync(new Uri(url));
                 }
             }
             catch (Exception ex)
-            { 
-
-            } 
+            {
+            }
 
             return null;
         }
-
 
         public static T TryGet<T>(string url, Dictionary<string, string> query = null)
         {
@@ -294,7 +288,6 @@ namespace Kooboo.Lib.Helper
             }
             catch (Exception ex)
             {
-
             }
             return default(T);
         }
@@ -331,10 +324,8 @@ namespace Kooboo.Lib.Helper
             }
         }
 
-
         public static async Task<T> TryGetAsync<T>(string url, Dictionary<string, string> headers = null, Dictionary<string, string> query = null)
         {
-
             try
             {
                 return await GetAsync<T>(url, headers, query);
@@ -343,10 +334,7 @@ namespace Kooboo.Lib.Helper
             {
                 return default(T);
             }
-
-
         }
-
 
         public static bool PostData(string url, Dictionary<string, string> Headers, byte[] PostBytes, string UserName = null, string Password = null)
         {
@@ -387,6 +375,5 @@ namespace Kooboo.Lib.Helper
                 return success;
             }
         }
-
     }
 }

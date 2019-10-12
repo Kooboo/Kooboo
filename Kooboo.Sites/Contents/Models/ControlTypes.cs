@@ -1,4 +1,4 @@
-////Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+////Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 ////All rights reserved.
 //using Kooboo.Data.Definition;
 //using System;
@@ -39,7 +39,7 @@
 
 //        public const string Selection = "Selection";
 
-//        public const string RadioBox = "RadioBox"; 
-  
+//        public const string RadioBox = "RadioBox";
+
 //    }
 //}

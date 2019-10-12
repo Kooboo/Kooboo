@@ -1,8 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-  
+
 namespace Kooboo.Web.Areas.Admin.ViewModels
-{ 
+{
     public class FieldError
     {
         /// <summary>
@@ -12,10 +12,10 @@ namespace Kooboo.Web.Areas.Admin.ViewModels
         /// The name of the field.
         /// </value>
         public string FieldName { get; set; }
+
         /// <summary>
         /// Gets or sets the error message.
         /// </summary>
         public string ErrorMessage { get; set; }
     }
-    
 }

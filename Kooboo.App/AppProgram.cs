@@ -29,9 +29,9 @@ namespace Kooboo.App
                     {
                         assemblies.Add(resource, Assembly.Load(bytes));
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        
+                        // ignored
                     }
                 }
             } 
@@ -41,7 +41,7 @@ namespace Kooboo.App
             {
                 var assemblyName = new AssemblyName(ev.Name);
 
-                var path = string.Format("{0}.dll", assemblyName.Name);
+                var path = $"{assemblyName.Name}.dll";
 
                 if (assemblies.ContainsKey(path))
                 {

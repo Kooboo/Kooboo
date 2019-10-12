@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
@@ -60,7 +60,6 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
-
         public List<ComponentInfo> TagObjects(string tag, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
@@ -82,10 +81,8 @@ namespace Kooboo.Web.Api.Implementation
             {
                 return Manager.AvailableObjects(sitedb, tag);
             }
-
         }
 
- 
         public string PreviewHtml(ApiCall call)
         {
             string tag = call.GetValue("tag");
@@ -109,7 +106,6 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
-    
         public ComponentSource GetSource(ApiCall call)
         {
             ComponentSource source = new ComponentSource();
@@ -151,8 +147,6 @@ namespace Kooboo.Web.Api.Implementation
                 return source;
             }
         }
-
-
     }
 
     public class ComponentSource
@@ -162,7 +156,6 @@ namespace Kooboo.Web.Api.Implementation
         public List<string> MetaBindings { get; set; } = new List<string>();
 
         public List<string> UrlParamsBindings { get; set; } = new List<string>();
-
     }
 
     public class ComponentNames

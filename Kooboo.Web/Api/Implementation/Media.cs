@@ -1,14 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
-using Kooboo.Data.Models;
 using Kooboo.Lib.Utilities;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
-using Kooboo.Sites.Relation;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
-using Kooboo.Sites.ViewModel;
 using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -39,7 +36,7 @@ namespace Kooboo.Web.Api.Implementation
             string path = call.GetValue("path");
             if (!path.EndsWith("/"))
             {
-                path = path + "/"; 
+                path = path + "/";
             }
 
             string fullpath = Lib.Helper.UrlHelper.Combine(path, name);
@@ -95,18 +92,18 @@ namespace Kooboo.Web.Api.Implementation
             var lower = by.ToLower();
             if (lower == "page" || lower == "view" || lower == "layout" || lower == "textcontent" || lower == "style" || lower == "htmlblock")
             {
-                MediaLibraryViewModel model = new MediaLibraryViewModel(); 
+                MediaLibraryViewModel model = new MediaLibraryViewModel();
 
                 model.Files = GetFilesBy(call.WebSite.SiteDb(), by);
 
                 model.CrumbPath = PathService.GetCrumbPath("/");
 
-                return model; 
+                return model;
             }
             else
             {
                 return null;
-            } 
+            }
         }
 
         public MediaPagedViewModel PagedListBy(ApiCall call)
@@ -117,7 +114,6 @@ namespace Kooboo.Web.Api.Implementation
             var lower = by.ToLower();
             if (lower == "page" || lower == "view" || lower == "layout" || lower == "textcontent" || lower == "style" || lower == "htmlblock")
             {
-             
                 int pagesize = ApiHelper.GetPageSize(call, 50);
                 int pagenr = ApiHelper.GetPageNr(call);
 
@@ -145,7 +141,7 @@ namespace Kooboo.Web.Api.Implementation
 
             int pagesize = ApiHelper.GetPageSize(call, 50);
             int pagenr = ApiHelper.GetPageNr(call);
-             
+
             MediaPagedViewModel model = new MediaPagedViewModel();
 
             model.Folders = GetFolders(call.WebSite.SiteDb(), path);
@@ -157,7 +153,6 @@ namespace Kooboo.Web.Api.Implementation
             return model;
         }
 
-         
         private List<ImageFolderViewModel> GetFolders(SiteDb siteDb, string path)
         {
             var SubFolders = siteDb.Folders.GetSubFolders(path, ConstObjectType.Image);
@@ -167,7 +162,7 @@ namespace Kooboo.Web.Api.Implementation
             foreach (var item in SubFolders)
             {
                 ImageFolderViewModel model = new ImageFolderViewModel();
-                // model.Id = path; 
+                // model.Id = path;
                 model.Name = item.Segment;
                 model.FullPath = item.FullPath;
                 model.Count = siteDb.Folders.GetFolderObjects<Image>(item.FullPath, true, false).Count +
@@ -182,7 +177,7 @@ namespace Kooboo.Web.Api.Implementation
 
         private List<MediaFileViewModel> GetFiles(SiteDb siteDb, string path)
         {
-            string baseurl = siteDb.WebSite.BaseUrl(); 
+            string baseurl = siteDb.WebSite.BaseUrl();
 
             List<Image> images = siteDb.Folders.GetFolderObjects<Image>(path, true);
 
@@ -200,8 +195,8 @@ namespace Kooboo.Web.Api.Implementation
                 model.Thumbnail = ThumbnailService.GenerateThumbnailUrl(item.Id, 90, 0, siteDb.Id);
                 model.Url = ObjectService.GetObjectRelativeUrl(siteDb, item);
                 model.IsImage = true;
-                model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Url); 
-                
+                model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Url);
+
                 var usedby = siteDb.Images.GetUsedBy(item.Id);
 
                 if (usedby != null)
@@ -209,7 +204,7 @@ namespace Kooboo.Web.Api.Implementation
                     model.References = usedby.GroupBy(it => it.ConstType).ToDictionary(
                                       key =>
                                       {
-                                          return  ConstTypeService.GetModelType(key.Key).Name;
+                                          return ConstTypeService.GetModelType(key.Key).Name;
                                       }, value => value.Count());
                 }
 
@@ -220,7 +215,7 @@ namespace Kooboo.Web.Api.Implementation
 
         // public PagedListViewModel<MediaFileViewModel> Files { get; set; }
 
-        private PagedListViewModel<MediaFileViewModel>  GetPagedFiles(SiteDb siteDb, string path, int PageSize, int PageNumber)
+        private PagedListViewModel<MediaFileViewModel> GetPagedFiles(SiteDb siteDb, string path, int PageSize, int PageNumber)
         {
             string baseurl = siteDb.WebSite.BaseUrl();
 
@@ -237,10 +232,9 @@ namespace Kooboo.Web.Api.Implementation
             Result.TotalCount = images.Count();
             Result.TotalPages = ApiHelper.GetPageCount(Result.TotalCount, PageSize);
             Result.PageSize = PageSize;
-            Result.PageNr = PageNumber; 
+            Result.PageNr = PageNumber;
 
-
-            List<MediaFileViewModel> pagedlist = new List<MediaFileViewModel>(); 
+            List<MediaFileViewModel> pagedlist = new List<MediaFileViewModel>();
 
             foreach (var item in images.Skip(totalskip).Take(PageSize))
             {
@@ -269,16 +263,16 @@ namespace Kooboo.Web.Api.Implementation
 
                 pagedlist.Add(model);
             }
-            Result.List = pagedlist;  
+            Result.List = pagedlist;
             return Result;
         }
 
         private List<MediaFileViewModel> GetFilesBy(SiteDb siteDb, string by)
         {
-            string baseurl = siteDb.WebSite.BaseUrl(); 
-            // by = View, Page, Layout, TextContent, Style. 
+            string baseurl = siteDb.WebSite.BaseUrl();
+            // by = View, Page, Layout, TextContent, Style.
             byte consttype = ConstTypeContainer.GetConstType(by);
-             
+
             var images = siteDb.Images.ListUsedBy(consttype);
 
             List<MediaFileViewModel> Result = new List<MediaFileViewModel>();
@@ -304,21 +298,19 @@ namespace Kooboo.Web.Api.Implementation
                     model.References = usedby.GroupBy(it => it.ConstType).ToDictionary(
                                       key =>
                                       {
-                                          return  ConstTypeService.GetModelType(key.Key).Name;
+                                          return ConstTypeService.GetModelType(key.Key).Name;
                                       }, value => value.Count());
                 }
 
                 Result.Add(model);
             }
             return Result;
-             
         }
-
 
         private PagedListViewModel<MediaFileViewModel> GetPagedFilesBy(SiteDb siteDb, string by, int PageSize, int PageNumber)
         {
             string baseurl = siteDb.WebSite.BaseUrl();
-            // by = View, Page, Layout, TextContent, Style. 
+            // by = View, Page, Layout, TextContent, Style.
             byte consttype = ConstTypeContainer.GetConstType(by);
 
             var images = siteDb.Images.ListUsedBy(consttype);
@@ -335,7 +327,6 @@ namespace Kooboo.Web.Api.Implementation
             Result.TotalPages = ApiHelper.GetPageCount(Result.TotalCount, PageSize);
             Result.PageSize = PageSize;
             Result.PageNr = PageNumber;
-
 
             List<MediaFileViewModel> list = new List<MediaFileViewModel>();
 
@@ -367,11 +358,9 @@ namespace Kooboo.Web.Api.Implementation
                 list.Add(model);
             }
 
-            Result.List = list;  
+            Result.List = list;
             return Result;
-
         }
-
 
         public void DeleteFolders(ApiCall call)
         {
@@ -439,62 +428,60 @@ namespace Kooboo.Web.Api.Implementation
                         if (datauri.isBase64)
                         {
                             image.ContentBytes = Convert.FromBase64String(datauri.DataString);
-                            image.ResetSize(); 
+                            image.ResetSize();
                         }
-
                     }
                     else
                     {
                         image.ContentBytes = Convert.FromBase64String(base64);
-                        image.ResetSize(); 
-                    } 
-                } 
-                call.WebSite.SiteDb().Images.AddOrUpdate(image, call.Context.User.Id); 
+                        image.ResetSize();
+                    }
+                }
+                call.WebSite.SiteDb().Images.AddOrUpdate(image, call.Context.User.Id);
             }
-
         }
 
-       public string ContentImage(ApiCall call)
+        public string ContentImage(ApiCall call)
         {
             var files = Kooboo.Lib.NETMultiplePart.FormReader.ReadFile(call.Context.Request.PostData);
 
-            if (files == null || files.Count() ==0)
+            if (files == null || files.Count() == 0)
             {
-                return null; 
+                return null;
             }
-            
+
             foreach (var f in files)
             {
                 string filename = f.FileName;
 
-                string url = GetUploadUrl(call, filename); 
-                 
-                var siteobject = call.WebSite.SiteDb().Images.UploadImage(f.Bytes, url, call.Context.User.Id);
-                return url; 
-            } 
+                string url = GetUploadUrl(call, filename);
 
-            return null; 
+                var siteobject = call.WebSite.SiteDb().Images.UploadImage(f.Bytes, url, call.Context.User.Id);
+                return url;
+            }
+
+            return null;
         }
 
-        private string GetUploadUrl(ApiCall call, string filename) 
+        private string GetUploadUrl(ApiCall call, string filename)
         {
-            var sitedb = call.WebSite.SiteDb(); 
+            var sitedb = call.WebSite.SiteDb();
             if (string.IsNullOrEmpty(filename))
             {
                 return null;
             }
-            string fullname =  filename.Replace("\\", "/"); 
+            string fullname = filename.Replace("\\", "/");
             if (fullname.StartsWith("/"))
             {
-                fullname = fullname.Substring(1); 
+                fullname = fullname.Substring(1);
             }
 
             string checkurl = "/" + fullname;
 
-            var image = sitedb.Images.GetByUrl(checkurl); 
-            if (image ==null)
+            var image = sitedb.Images.GetByUrl(checkurl);
+            if (image == null)
             {
-                return checkurl; 
+                return checkurl;
             }
 
             for (int i = 0; i < 999; i++)
@@ -504,10 +491,10 @@ namespace Kooboo.Web.Api.Implementation
                 if (image == null)
                 {
                     return checkurl;
-                } 
+                }
             }
 
-            return null; 
+            return null;
         }
     }
 }

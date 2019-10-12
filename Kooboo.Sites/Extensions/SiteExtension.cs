@@ -1,13 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Collections.Generic;
-using System.Linq;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Routing;
-using System;
 using Kooboo.Data;
 using Kooboo.Data.Models;
+using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
+using Kooboo.Sites.Routing;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Sites.Extensions
 {
@@ -36,7 +36,6 @@ namespace Kooboo.Sites.Extensions
             }
             return starturl;
         }
-
 
         public static string BaseUrl(this WebSite site, string path = null)
         {
@@ -92,8 +91,6 @@ namespace Kooboo.Sites.Extensions
             return "/";
         }
 
-
-
         public static List<Page> StartPages(this WebSite site)
         {
             return site.SiteDb().Pages.Query.Where(o => o.DefaultStart == true).SelectAll();
@@ -113,6 +110,5 @@ namespace Kooboo.Sites.Extensions
 
             return string.Empty;
         }
-
     }
 }

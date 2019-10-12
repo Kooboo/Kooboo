@@ -1,8 +1,8 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using Jint.Native.Function;
+﻿using Jint.Native.Function;
 using Jint.Native.Object;
 using Jint.Runtime;
+using System;
+using System.Text.RegularExpressions;
 
 namespace Jint.Native.RegExp
 {
@@ -18,7 +18,7 @@ namespace Jint.Native.RegExp
             var obj = new RegExpConstructor(engine);
             obj.Extensible = true;
 
-            // The value of the [[Prototype]] internal property of the RegExp constructor is the Function prototype object 
+            // The value of the [[Prototype]] internal property of the RegExp constructor is the Function prototype object
             obj.Prototype = engine.Function.PrototypeObject;
             obj.PrototypeObject = RegExpPrototype.CreatePrototypeObject(engine, obj);
 
@@ -75,13 +75,12 @@ namespace Jint.Native.RegExp
                 if (pattern == Undefined.Instance)
                 {
                     p = "";
-
                 }
                 else
                 {
                     p = TypeConverter.ToString(pattern);
                 }
-                
+
                 f = flags != Undefined.Instance ? TypeConverter.ToString(flags) : "";
             }
 
@@ -102,7 +101,7 @@ namespace Jint.Native.RegExp
 
             string s;
             s = p;
-             
+
             if (System.String.IsNullOrEmpty(s))
             {
                 s = "(?:)";
@@ -125,7 +124,7 @@ namespace Jint.Native.RegExp
             var r = new RegExpInstance(Engine);
             r.Prototype = PrototypeObject;
             r.Extensible = true;
- 
+
             if (regExp[0] != '/')
             {
                 throw new JavaScriptException(Engine.SyntaxError, "Regexp should start with slash");
@@ -138,16 +137,16 @@ namespace Jint.Native.RegExp
             var options = ParseOptions(r, flags);
             try
             {
-                if((RegexOptions.Multiline & options) == RegexOptions.Multiline)
+                if ((RegexOptions.Multiline & options) == RegexOptions.Multiline)
                 {
                     // Replace all non-escaped $ occurences by \r?$
                     // c.f. http://programmaticallyspeaking.com/regular-expression-multiline-mode-whats-a-newline.html
 
                     int index = 0;
                     var newPattern = pattern;
-                    while((index = newPattern.IndexOf("$", index)) != -1)
+                    while ((index = newPattern.IndexOf("$", index)) != -1)
                     {
-                        if(index > 0 && newPattern[index - 1] != '\\')
+                        if (index > 0 && newPattern[index - 1] != '\\')
                         {
                             newPattern = newPattern.Substring(0, index) + @"\r?" + newPattern.Substring(index);
                             index += 4;
@@ -160,7 +159,6 @@ namespace Jint.Native.RegExp
                 {
                     r.Value = new Regex(pattern, options);
                 }
-                
             }
             catch (Exception e)
             {

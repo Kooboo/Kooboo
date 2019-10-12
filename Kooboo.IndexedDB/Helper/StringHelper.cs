@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Text;
 namespace Kooboo.IndexedDB.Helper
 {
     public static class StringHelper
-    {  
+    {
         public static bool IsSameValue(string x, string y)
         {
             if (string.IsNullOrWhiteSpace(x) && string.IsNullOrWhiteSpace(y))
@@ -22,7 +22,7 @@ namespace Kooboo.IndexedDB.Helper
             }
             return x.Trim().ToLower() == y.Trim().ToLower();
         }
-          
+
         public static string ToValidFileName(string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -49,7 +49,6 @@ namespace Kooboo.IndexedDB.Helper
             return string.Empty;
         }
 
-      
         public static bool IsString(string input)
         {
             input = input.Trim();
@@ -90,10 +89,11 @@ namespace Kooboo.IndexedDB.Helper
         }
 
         private static char[] _space;
+
         private static char[] SpaceChars
         {
             /// The space characters, for the purposes of this specification, are
-            /// U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), and "CR" (U+000D). 
+            /// U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), and "CR" (U+000D).
             get
             {
                 if (_space == null)
@@ -114,6 +114,5 @@ namespace Kooboo.IndexedDB.Helper
         {
             return (chr == '\u0020' || chr == '\u0009' || chr == '\u000a' || chr == '\u000c' || chr == '\u000d');
         }
-   
     }
 }

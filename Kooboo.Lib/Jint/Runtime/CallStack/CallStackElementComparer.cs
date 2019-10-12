@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public class CallStackElementComparer: IEqualityComparer<CallStackElement>
+    public class CallStackElementComparer : IEqualityComparer<CallStackElement>
     {
         public bool Equals(CallStackElement x, CallStackElement y)
         {

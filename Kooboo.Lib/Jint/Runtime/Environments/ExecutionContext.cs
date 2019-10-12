@@ -7,6 +7,5 @@ namespace Jint.Runtime.Environments
         public LexicalEnvironment LexicalEnvironment { get; set; }
         public LexicalEnvironment VariableEnvironment { get; set; }
         public JsValue ThisBinding { get; set; }
-
     }
 }

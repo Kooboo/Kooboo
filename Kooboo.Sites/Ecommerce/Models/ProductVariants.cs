@@ -1,20 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Ecommerce.Models
 {
-
     public class ProductVariants : CoreObject
     {
         public ProductVariants()
         {
-            this.ConstType = ConstObjectType.ProductVariants; 
+            this.ConstType = ConstObjectType.ProductVariants;
         }
 
         private Guid _id;
@@ -47,12 +43,12 @@ namespace Kooboo.Sites.Ecommerce.Models
 
         public Guid ProductId { get; set; }
 
-        // can have additional things to group  
+        // can have additional things to group
         public List<Guid> Groups { get; set; }
 
         public Dictionary<String, string> Variants { get; set; }
 
-        ///public List<Variants> Variants { get; set; } 
+        ///public List<Variants> Variants { get; set; }
         public List<string> Images { get; set; }
 
         public string Thumbnail { get; set; }
@@ -65,7 +61,7 @@ namespace Kooboo.Sites.Ecommerce.Models
 
         public override int GetHashCode()
         {
-            string unique = this.Images + this.Price.ToString() + this.Thumbnail + this.Stock.ToString(); 
+            string unique = this.Images + this.Price.ToString() + this.Thumbnail + this.Stock.ToString();
             unique += this.Sku + this.Order.ToString();
 
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
@@ -78,7 +74,6 @@ namespace Kooboo.Sites.Ecommerce.Models
 
         public string Value { get; set; }
     }
-
 
     public enum VariantType
     {

@@ -1,16 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Menus
 {
-  
-
     ///  header.Menu.Add(new GlobalMenuItem { Name = Hardcoded.GetValue("Emails", context), Url = AdminUrl("Emails/Inbox"), Icon = "fa fa-envelope", Count = 0, BadgeIcon = "badge-primary" });
 
     public class Emails : IHeaderMenu
@@ -52,9 +46,5 @@ namespace Kooboo.Web.Menus
         {
             return Data.Language.Hardcoded.GetValue("Emails", Context);
         }
-         
     }
-
-
-
 }

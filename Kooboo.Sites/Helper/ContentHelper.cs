@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
 using Kooboo.Sites.Contents.Models;
@@ -86,8 +86,7 @@ namespace Kooboo.Sites.Helper
                 {
                     displayFields.Add(item.Name, item.DisplayName);
                 }
-            } 
-
+            }
 
             if (Content == null)
             {
@@ -198,7 +197,7 @@ namespace Kooboo.Sites.Helper
                             .WhereIn("Id", ids)
                             .SelectAll();
 
-                // also display use the parent ids. 
+                // also display use the parent ids.
                 if (textContentId != default(Guid))
                 {
                     var subcontents = sitedb.TextContent.Query.Where(o => o.FolderId == item.FolderId && o.ParentId == textContentId).SelectAll();
@@ -282,7 +281,7 @@ namespace Kooboo.Sites.Helper
                     {
                         if (link.StartsWith("[") && link.EndsWith("]"))
                         {
-                            // possible json, multiitem media. 
+                            // possible json, multiitem media.
                             try
                             {
                                 List<string> files = Lib.Helper.JsonHelper.Deserialize<List<string>>(link);
@@ -297,14 +296,12 @@ namespace Kooboo.Sites.Helper
                                         }
                                     }
                                 }
-
                             }
                             catch (Exception)
                             {
                             }
                         }
                     }
-
                 }
             }
             else
@@ -318,11 +315,6 @@ namespace Kooboo.Sites.Helper
                     }
                 }
             }
-
-
-
-
-
         }
 
         private static bool OnlyTextSubNode(Element el)
@@ -375,6 +367,5 @@ namespace Kooboo.Sites.Helper
             }
             return contentview.TextValues.First().Value;
         }
-
     }
 }

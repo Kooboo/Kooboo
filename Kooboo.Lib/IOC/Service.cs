@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 
 namespace Kooboo.Lib.IOC
@@ -23,15 +22,13 @@ namespace Kooboo.Lib.IOC
 
         public static Dictionary<string, List<Object>> Instances { get; set; }
 
-
         public static Dictionary<Type, Type> ImplementationType { get; set; }
-
 
         public static Dictionary<string, Object> SingleTons { get; set; }
 
         public static Dictionary<string, Type> Transients { get; set; }
-          
-        // get the Singleton instance. 
+
+        // get the Singleton instance.
         public static T GetSingleTon<T>(bool SearchImplemention = false)
         {
             var result = GetSingleTon(typeof(T), SearchImplemention);
@@ -45,7 +42,7 @@ namespace Kooboo.Lib.IOC
             }
         }
 
-        // get the Singleton instance. 
+        // get the Singleton instance.
         public static T GetSingleTon<T>(Type DefaultImplementation)
         {
             var result = GetSingleTon(typeof(T), false);
@@ -53,12 +50,12 @@ namespace Kooboo.Lib.IOC
             {
                 var newinstance = (T)Activator.CreateInstance(DefaultImplementation);
                 AddSingleton<T>(newinstance);
-                return newinstance;  
+                return newinstance;
             }
             else
             {
-                return (T)result; 
-            } 
+                return (T)result;
+            }
         }
 
         public static Object GetSingleTon(Type objType, bool SearchImplementation)
@@ -68,14 +65,14 @@ namespace Kooboo.Lib.IOC
             if (!SingleTons.ContainsKey(name))
             {
                 if (SearchImplementation)
-                { 
+                {
                     lock (_lock)
                     {
                         if (!SingleTons.ContainsKey(name))
                         {
                             var types = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(objType);
 
-                            //TODO: add rule to get the right intance. 
+                            //TODO: add rule to get the right intance.
                             if (types != null && types.Any())
                             {
                                 var type = types[0];
@@ -91,22 +88,19 @@ namespace Kooboo.Lib.IOC
                 }
                 else
                 {
-                    return null; 
+                    return null;
                 }
             }
 
             return SingleTons[name];
         }
-          
-
-   
 
         public static void AddSingleton<T>(T instance)
         {
             var name = typeof(T).Name;
             SingleTons[name] = instance;
         }
-         
+
         public static List<Type> GetImplementationTypes<T>()
         {
             return GetImplementationTypes(typeof(T));
@@ -129,20 +123,20 @@ namespace Kooboo.Lib.IOC
             return InterfaceTypes[name];
         }
 
-        //Get instance that implement the TInterface. 
+        //Get instance that implement the TInterface.
         public static List<T> GetInstances<T>()
         {
             var instances = GetInstances(typeof(T));
             List<T> result = new List<T>();
             foreach (var item in instances)
             {
-                var Tinstance = (T)item; 
-                if (Tinstance !=null)
+                var Tinstance = (T)item;
+                if (Tinstance != null)
                 {
-                    result.Add(Tinstance); 
+                    result.Add(Tinstance);
                 }
             }
-            return result; 
+            return result;
         }
 
         public static List<object> GetInstances(Type InterfaceType)
@@ -162,20 +156,20 @@ namespace Kooboo.Lib.IOC
                             var instance = Activator.CreateInstance(item);
                             if (instance != null)
                             {
-                                Result.Add(instance); 
+                                Result.Add(instance);
                             }
                         }
 
-                        Instances[name] = Result; 
+                        Instances[name] = Result;
                     }
                 }
             }
 
-            return Instances[name]; 
+            return Instances[name];
         }
     }
 }
- 
+
 //Transient – Created every time they are requested
 //Scoped – Created once per scope. Most of the time, scope refers to a web request. But this can also be used for any unit of work, such as the execution of an Azure Function.
 //Singleton – Created only for the first request.If a particular instance is specified at registration time, this instance will be provided to all consumers of the registration type.

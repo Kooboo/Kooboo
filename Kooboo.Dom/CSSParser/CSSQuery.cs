@@ -1,23 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Dom.CSS;
 
 namespace Kooboo.Dom.CSS
 {
-
     /// <summary>
-    /// NOTE: this is not a real query now. it is ONLY written to return the list of ruleset 
-    /// that match media = all. 
+    /// NOTE: this is not a real query now. it is ONLY written to return the list of ruleset
+    /// that match media = all.
     /// </summary>
     public static class CSSQuery
     {
         /// <summary>
-        /// generate all rule for media = all. 
+        /// generate all rule for media = all.
         /// </summary>
         /// <param name="list"></param>
         /// <returns></returns>
@@ -34,7 +27,7 @@ namespace Kooboo.Dom.CSS
         }
 
         /// <summary>
-        /// Return the ruleset for media = all. 
+        /// Return the ruleset for media = all.
         /// </summary>
         /// <param name="stylesheetlist"></param>
         public static CSSRuleList getRuleSetForAll(StyleSheetList stylesheetlist)
@@ -68,7 +61,7 @@ namespace Kooboo.Dom.CSS
 
         /// <summary>
         /// Get all the ruleset that define for @media.
-        /// TODO: this implementation to be verify. 
+        /// TODO: this implementation to be verify.
         /// </summary>
         /// <param name="stylesheetlist"></param>
         /// <returns></returns>
@@ -100,7 +93,6 @@ namespace Kooboo.Dom.CSS
                 }
                 else
                 {
-
                     addMediaRulesFromStyleSheet((CSSStyleSheet)item, ruleList);
                 }
             }
@@ -114,20 +106,19 @@ namespace Kooboo.Dom.CSS
         /// <param name="ownerRuleList"></param>
         private static void addMediaRulesFromStyleSheet(CSSStyleSheet stylesheet, CSSRuleList ownerRuleList)
         {
-
             foreach (var item in stylesheet.cssRules.item)
             {
                 if (item.type == enumCSSRuleType.STYLE_RULE)
                 {
-                  //  ownerRuleList.appendRule(item);
+                    //  ownerRuleList.appendRule(item);
                 }
                 else if (item.type == enumCSSRuleType.IMPORT_RULE)
                 {
-                   // addImportRule((CSSImportRule)item, ownerRuleList);
+                    // addImportRule((CSSImportRule)item, ownerRuleList);
                 }
                 else if (item.type == enumCSSRuleType.MEDIA_RULE)
                 {
-                   // addMediaRule((CSSMediaRule)item, ownerRuleList);
+                    // addMediaRule((CSSMediaRule)item, ownerRuleList);
 
                     CSSMediaRule mediarule = (CSSMediaRule)item;
 
@@ -146,7 +137,6 @@ namespace Kooboo.Dom.CSS
                             //addMediaRule((CSSMediaRule)item, ownerRuleList);
                         }
                     }
-
                 }
             }
         }
@@ -177,14 +167,13 @@ namespace Kooboo.Dom.CSS
 
         private static void addStylesheetRules(CSSStyleSheet stylesheet, CSSRuleList ownerRuleList)
         {
-
             foreach (var item in stylesheet.cssRules.item)
             {
                 if (item.type == enumCSSRuleType.STYLE_RULE)
                 {
                     ownerRuleList.appendRule(item);
                 }
-                else if(item.type == enumCSSRuleType.IMPORT_RULE)
+                else if (item.type == enumCSSRuleType.IMPORT_RULE)
                 {
                     addImportRule((CSSImportRule)item, ownerRuleList);
                 }
@@ -256,6 +245,5 @@ namespace Kooboo.Dom.CSS
                 addStylesheetRules(rule.stylesheet, ownerRuleList);
             }
         }
-
     }
 }

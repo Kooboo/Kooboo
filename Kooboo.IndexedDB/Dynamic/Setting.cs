@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -17,6 +17,7 @@ namespace Kooboo.IndexedDB.Dynamic
         public bool EnableLog { get; set; } = true;
 
         private HashSet<TableColumn> _columns;
+
         public HashSet<TableColumn> Columns
         {
             get
@@ -181,7 +182,6 @@ namespace Kooboo.IndexedDB.Dynamic
                     col.Length = SettingHelper.GetColumnLen(col.ClrType, col.Length);
                     // get all the relative positive without the complex flxiable position.
 
-
                     if (col.Length == int.MaxValue)
                     {
                         col.relativePosition = int.MaxValue;
@@ -193,7 +193,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         {
                             if (item.relativePosition != int.MaxValue)
                             {
-                                int pos = item.relativePosition + item.Length + 8;   // 8 bytes to record the fieldmhash + len. 
+                                int pos = item.relativePosition + item.Length + 8;   // 8 bytes to record the fieldmhash + len.
                                 if (pos > relativepos)
                                 {
                                     relativepos = pos;
@@ -248,7 +248,6 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 return "Boolean";
             }
-
             else if (datatype == typeof(DateTime))
             {
                 return "DateTime";
@@ -298,6 +297,7 @@ namespace Kooboo.IndexedDB.Dynamic
         public string Name { get; set; }
 
         private string _datatype;
+
         public string DataType
         {
             get { return _datatype; }
@@ -308,16 +308,17 @@ namespace Kooboo.IndexedDB.Dynamic
             }
         }
 
-        // int.maxvalue == varies length. 
+        // int.maxvalue == varies length.
         public int Length { get; set; }
 
         public bool isComplex { get; set; }
 
-        // The position that this will be stored in the block data file. 
+        // The position that this will be stored in the block data file.
         // Int.maxvalue means dynamic.. can not be searched....
         public int relativePosition { get; set; }
 
         private Type _clrtype;
+
         [CustomAttributes.KoobooIgnore]
         public Type ClrType
         {
@@ -339,8 +340,8 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public bool IsIndex { get; set; }
 
-        // when this is set to an value non defined as "_id", it means the _id field will be hash from this value. 
-        // Then there will be at least two index instantly... Fine... 
+        // when this is set to an value non defined as "_id", it means the _id field will be hash from this value.
+        // Then there will be at least two index instantly... Fine...
         public bool IsPrimaryKey { get; set; }
 
         public bool IsUnique { get; set; }
@@ -360,7 +361,5 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             return this.Name == other.Name;
         }
-
     }
-
 }

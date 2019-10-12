@@ -1,15 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
-using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -25,10 +22,8 @@ namespace Kooboo.Web.Api.Implementation
                     var layout = layoutobject as Layout;
                     var layoutclone = layout.Clone<Layout>();
 
-
                     string basehrel = call.WebSite.BaseUrl();
-                    basehrel = Kooboo.Data.Service.WebSiteService.EnsureHttpsBaseUrlOnServer(basehrel, call.WebSite); 
-                     
+                    basehrel = Kooboo.Data.Service.WebSiteService.EnsureHttpsBaseUrlOnServer(basehrel, call.WebSite);
 
                     if (!string.IsNullOrEmpty(basehrel))
                     {
@@ -67,7 +62,7 @@ namespace Kooboo.Web.Api.Implementation
 
             var sitedb = call.WebSite.SiteDb();
 
-            int storenamehash =  Lib.Security.Hash.ComputeInt(sitedb.Layouts.StoreName);
+            int storenamehash = Lib.Security.Hash.ComputeInt(sitedb.Layouts.StoreName);
 
             foreach (var item in sitedb.Layouts.All())
             {
@@ -93,12 +88,12 @@ namespace Kooboo.Web.Api.Implementation
             {
                 var newlayout = Lib.Serializer.Copy.DeepCopy<Layout>(layout);
                 newlayout.CreationDate = DateTime.UtcNow;
-                newlayout.LastModified = DateTime.UtcNow; 
+                newlayout.LastModified = DateTime.UtcNow;
 
                 newlayout.Name = call.GetValue("name");
                 sitedb.Layouts.AddOrUpdate(newlayout, call.Context.User.Id);
 
-                int storenamehash = Lib.Security.Hash.ComputeInt(call.WebSite.SiteDb().Layouts.StoreName); 
+                int storenamehash = Lib.Security.Hash.ComputeInt(call.WebSite.SiteDb().Layouts.StoreName);
 
                 LayoutItemViewModel model = new LayoutItemViewModel();
                 model.Id = newlayout.Id;
@@ -113,10 +108,9 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
-
         public override bool Deletes(ApiCall call)
         {
-            var sitedb = call.WebSite.SiteDb(); 
+            var sitedb = call.WebSite.SiteDb();
 
             string json = call.GetValue("ids");
             if (string.IsNullOrEmpty(json))
@@ -129,18 +123,17 @@ namespace Kooboo.Web.Api.Implementation
             {
                 foreach (var item in ids)
                 {
-                    var relations = sitedb.Relations.GetReferredBy(this.ModelType, item); 
-                    if (relations !=null && relations.Count>0)
+                    var relations = sitedb.Relations.GetReferredBy(this.ModelType, item);
+                    if (relations != null && relations.Count > 0)
                     {
-                        throw new Exception(Data.Language.Hardcoded.GetValue("Layout is being used, can not be deleted", call.Context)); 
+                        throw new Exception(Data.Language.Hardcoded.GetValue("Layout is being used, can not be deleted", call.Context));
                     }
-                     
-                   sitedb.Layouts.Delete(item, call.Context.User.Id);
+
+                    sitedb.Layouts.Delete(item, call.Context.User.Id);
                 }
                 return true;
             }
             return false;
         }
-
     }
 }

@@ -1,15 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using Kooboo.Sites.Models;
-using Kooboo.Sites.Relation;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Helper
 {
@@ -31,13 +28,12 @@ namespace Kooboo.Sites.Helper
 
         public static Dictionary<string, int> Sum(List<UsedByRelation> relations)
         {
+            Dictionary<string, int> result = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
-            Dictionary<string, int> result = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase); 
-
-            if (relations !=null && relations.Any())
+            if (relations != null && relations.Any())
             {
-                foreach (var item in relations.GroupBy(o=>o.ConstType))
-                {            
+                foreach (var item in relations.GroupBy(o => o.ConstType))
+                {
                     var consttype = item.Key;
 
                     var type = ConstTypeService.GetModelType(consttype);
@@ -46,13 +42,12 @@ namespace Kooboo.Sites.Helper
                     {
                         var name = type.Name;
                         var count = item.Count();
-                        result[name] = count; 
-                    }    
-                }      
+                        result[name] = count;
+                    }
+                }
             }
 
-            return result;  
-
+            return result;
         }
 
         public static List<UsedByRelation> ShowUsedBy(SiteDb sitedb, List<Relation.ObjectRelation> objectrelations)
@@ -86,20 +81,19 @@ namespace Kooboo.Sites.Helper
 
                 var objectinfo = Sites.Service.ObjectService.GetObjectInfo(sitedb, item.objectXId, item.ConstTypeX);
 
-                if (objectinfo !=null)
+                if (objectinfo != null)
                 {
                     relation.Name = objectinfo.DisplayName;
                     relation.Url = objectinfo.Url;
                     relation.ModelType = objectinfo.ModelType;
                     relation.ObjectId = objectinfo.ObjectId;
                     relation.ConstType = objectinfo.ConstType;
-                }       
+                }
 
                 relations.Add(relation);
             }
 
             return relations;
         }
-
     }
 }

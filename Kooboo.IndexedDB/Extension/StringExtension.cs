@@ -1,16 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB
 {
     public static class StringExtension
     {
-
         public static string ToValidPath(this string input)
         {
             StringBuilder sb = new StringBuilder();
@@ -74,19 +70,19 @@ namespace Kooboo.IndexedDB
 
             return sb.ToString();
         }
-         
+
         /// <summary>
         /// generate a constant hashcode.
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
         public static int GetHashCode32(this string s)
-        { 
+        {
             if (string.IsNullOrEmpty(s))
             {
                 s = " ";
             }
-            s = s.ToLower(); 
+            s = s.ToLower();
 
             var chars = s.ToCharArray();
             var lastCharInd = chars.Length - 1;
@@ -104,7 +100,6 @@ namespace Kooboo.IndexedDB
                 num2 = (((num2 << 5) + num2) + (num2 >> 0x1b)) ^ (nextCh << 16 | ch);
             }
             return num1 + num2 * 0x5d588b65;
-
         }
 
         // case insensitive compare values.
@@ -112,14 +107,13 @@ namespace Kooboo.IndexedDB
         {
             if (string.IsNullOrEmpty(x) && string.IsNullOrEmpty(y))
             {
-                return true; 
+                return true;
             }
             if (string.IsNullOrEmpty(x) || string.IsNullOrEmpty(y))
             {
                 return false;
             }
-            return x.ToLower()  == y.ToLower(); 
+            return x.ToLower() == y.ToLower();
         }
-          
     }
 }

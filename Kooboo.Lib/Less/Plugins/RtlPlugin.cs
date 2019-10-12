@@ -1,14 +1,12 @@
 ﻿namespace dotless.Core.Plugins
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using dotless.Core.Parser.Infrastructure.Nodes;
     using dotless.Core.Parser.Tree;
-    using System.Globalization;
-    using System.Text.RegularExpressions;
+    using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Globalization;
+    using System.Text;
 
     [DisplayName("Rtl"), Description("Reverses some css when in rtl mode")]
     public class RtlPlugin : VisitorPlugin
@@ -191,7 +189,6 @@
                 return haystack;
             }
             return haystack.Substring(0, index) + replacement + haystack.Substring(index + needle.Length);
-
         }
 
         private List<Prefix> PrefixesToProcess { get; set; }
@@ -251,7 +248,7 @@
                             valueChanged = true;
                         }
                     }
-            
+
                     if (valueChanged)
                     {
                         return new Rule(rule.Name, new TextNode(content)).ReducedFrom<Rule>(rule);
@@ -296,7 +293,7 @@
                 return node;
             }
 
-            #endregion
+            #endregion IVisitor Members
         }
     }
 }

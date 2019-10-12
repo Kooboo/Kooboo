@@ -1,7 +1,5 @@
 ﻿namespace dotless.Core.Plugins
 {
-    using System;
-
     public interface IPluginParameter
     {
         string Name { get; }

@@ -1,16 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.InlineEditor
-{ 
+{
     public class CssSelectorComparer
     {
         private static HashSet<char> _Combinators;
+
         public static HashSet<char> Combinators
         {
             get
@@ -36,8 +33,8 @@ namespace Kooboo.Sites.InlineEditor
                 }
                 return _Combinators;
             }
-
         }
+
         public static bool IsEqual(string RuleA, string RuleB)
         {
             if (string.IsNullOrEmpty(RuleA) || string.IsNullOrEmpty(RuleB))
@@ -52,7 +49,7 @@ namespace Kooboo.Sites.InlineEditor
             var regx = new System.Text.RegularExpressions.Regex("[\n|\t|\r| ]");
             var noEmptyContentA = regx.Replace(RuleA, "");
             var noEmptyContentB = regx.Replace(RuleB, "");
-            if(noEmptyContentA != noEmptyContentB)
+            if (noEmptyContentA != noEmptyContentB)
             {
                 return false;
             }
@@ -63,7 +60,7 @@ namespace Kooboo.Sites.InlineEditor
             //    return false;
             //}
 
-            // verify they are the same by the rules. 
+            // verify they are the same by the rules.
             int maxi = RuleA.Length;
             if (maxi < RuleB.Length)
             {
@@ -88,54 +85,54 @@ namespace Kooboo.Sites.InlineEditor
 
                 if (IsSpace(a) || IsSpace(b))
                 {
-                   if (IsSpace(previous) ||IsSpecialMark(previous))
+                    if (IsSpace(previous) || IsSpecialMark(previous))
                     {
                         if (IsSpace(a))
                         {
                             ai++;
-                            continue; 
-                        }
-                        else
-                        { bi++;
-                            continue; 
-                        }
-                    }
-                   else
-                    {
-                        if (IsSpace(a))
-                        { 
-                            var next = GetNextNonSpace(ref RuleA,ref ai, maxa); 
-                            if (next == b)
-                            { 
-                                continue; 
-                            }
-                            else
-                            { return false;  }
+                            continue;
                         }
                         else
                         {
-                            var nextb = GetNextNonSpace(ref RuleB, ref bi, maxb); 
+                            bi++;
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if (IsSpace(a))
+                        {
+                            var next = GetNextNonSpace(ref RuleA, ref ai, maxa);
+                            if (next == b)
+                            {
+                                continue;
+                            }
+                            else
+                            { return false; }
+                        }
+                        else
+                        {
+                            var nextb = GetNextNonSpace(ref RuleB, ref bi, maxb);
                             if (nextb == a)
                             {
-                                continue; 
+                                continue;
                             }
                             else
                             {
-                                return false; 
+                                return false;
                             }
-                        }  
+                        }
                     }
-
-                } 
+                }
             }
 
-            // if still contains no space, return false; 
+            // if still contains no space, return false;
             return true;
         }
- 
+
         private static char GetNextNonSpace(ref string input, ref int current, int max)
         {
-            while(current < max)
+            while (current < max)
             {
                 var currentchar = input[current];
 
@@ -143,14 +140,14 @@ namespace Kooboo.Sites.InlineEditor
                 {
                     return currentchar;
                 }
-                current++; 
-            } 
-            return default(char); 
+                current++;
+            }
+            return default(char);
         }
 
         private static bool IsSpace(char input)
         {
-            return Kooboo.Lib.Helper.CharHelper.isSpaceCharacters(input); 
+            return Kooboo.Lib.Helper.CharHelper.isSpaceCharacters(input);
         }
 
         private static bool IsSpecialMark(char input)
@@ -160,8 +157,7 @@ namespace Kooboo.Sites.InlineEditor
                 if (input == item)
                 { return true; }
             }
-            return false; 
+            return false;
         }
-         
     }
 }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kooboo.Web.Authorization
+﻿namespace Kooboo.Web.Authorization
 {
-   public interface IPermissionControl
+    public interface IPermissionControl
     {
     }
 }

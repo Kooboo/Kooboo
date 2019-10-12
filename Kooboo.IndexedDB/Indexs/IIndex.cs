@@ -1,11 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.IndexedDB.Btree;
+using System;
 
 namespace Kooboo.IndexedDB.Indexs
 {
@@ -14,14 +10,13 @@ namespace Kooboo.IndexedDB.Indexs
         string FieldName { get; set; }
 
         /// <summary>
-        ///  the key length of this index. 
+        ///  the key length of this index.
         /// </summary>
         int Length { get; set; }
 
         Type keyType { get; set; }
-          
-        bool Add(TValue input, Int64 blockPosition);
 
+        bool Add(TValue input, Int64 blockPosition);
 
         void Update(TValue oldRecord, TValue NewRecord, Int64 oldBlockPosition, Int64 newBlockPosition);
 
@@ -43,7 +38,6 @@ namespace Kooboo.IndexedDB.Indexs
 
         void Flush();
 
-        void DelSelf(); 
-
+        void DelSelf();
     }
 }

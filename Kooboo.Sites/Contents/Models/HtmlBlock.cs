@@ -1,8 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Sites.Models;
 using Kooboo.Dom;
-using Kooboo.Extensions;
+using Kooboo.Sites.Models;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -73,8 +72,7 @@ namespace Kooboo.Sites.Contents.Models
             {
                 unique += item;
             }
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);  
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
-
     }
 }

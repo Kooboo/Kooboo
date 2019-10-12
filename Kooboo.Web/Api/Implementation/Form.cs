@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
@@ -49,7 +49,7 @@ namespace Kooboo.Web.Api.Implementation
                 model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
                 model.StoreNameHash = storenameHash;
 
-                model.Type = item.FormType.ToString(); 
+                model.Type = item.FormType.ToString();
 
                 result.Add(model);
             }
@@ -78,12 +78,12 @@ namespace Kooboo.Web.Api.Implementation
                 model.Source = item.Source;
                 model.IsEmbedded = isEmbedded;
                 model.References = item.References;
-                model.FormType = item.Type; 
+                model.FormType = item.Type;
                 formlist.Add(model);
             }
             return formlist;
         }
-          
+
         [Kooboo.Attributes.RequireParameters("id")]
         public PagedListViewModel<FormValue> FormValues(ApiCall call)
         {
@@ -121,13 +121,12 @@ namespace Kooboo.Web.Api.Implementation
                 edit.IsEmbedded = form.IsEmbedded;
                 edit.Name = form.Name;
                 edit.Fields = form.Fields;
-                edit.Style = form.Style; 
+                edit.Style = form.Style;
 
                 foreach (var item in Kooboo.Sites.HtmlForm.FormManager.List)
                 {
                     edit.AvailableSubmitters.Add(new FormSubmitterViewModel() { Name = item.Name, Settings = item.Settings(call.Context) });
                 }
-
 
                 // should be ignored.
                 edit.Settings = form.Setting;
@@ -145,7 +144,6 @@ namespace Kooboo.Web.Api.Implementation
                                 item.DefaultValue = edit.Settings[item.Name];
                             }
                         }
-
                     }
                 }
 
@@ -166,39 +164,39 @@ namespace Kooboo.Web.Api.Implementation
 
             string body = call.GetValue("Body");
 
-            string fields = call.GetValue("Fields"); 
+            string fields = call.GetValue("Fields");
 
             if (call.ObjectId == default(Guid))
             {
                 // create new..
                 string name = call.GetValue("Name");
-                Form form = new Form() { Name = name, Body = body, Fields = fields,  IsEmbedded = isEmbedded };
+                Form form = new Form() { Name = name, Body = body, Fields = fields, IsEmbedded = isEmbedded };
 
                 if (!string.IsNullOrEmpty(fields))
                 {
                     form.FormType = FormType.KoobooForm;
-                    form.IsEmbedded = false; 
+                    form.IsEmbedded = false;
                 }
 
                 sitedb.Forms.AddOrUpdate(form);
 
-                return form.Id; 
+                return form.Id;
             }
             else
             {
-                // update form. 
+                // update form.
                 var form = sitedb.Forms.Get(call.ObjectId);
                 if (form != null)
                 {
                     form.Body = body;
-                    form.Fields = fields; 
+                    form.Fields = fields;
                     sitedb.Forms.AddOrUpdate(form, true, true, call.Context.User.Id);
                 }
 
-                return call.ObjectId; 
+                return call.ObjectId;
             }
         }
-          
+
         public FormSettingEditViewModel GetSetting(ApiCall call)
         {
             var setting = call.WebSite.SiteDb().FormSetting.GetByFormId(call.ObjectId);
@@ -220,7 +218,7 @@ namespace Kooboo.Web.Api.Implementation
                 result.SuccessCallBack = setting.SuccessCallBack;
                 result.FailedCallBack = setting.FailedCallBack;
                 result.Enable = setting.Enable;
-                result.Setting = setting.Setting; 
+                result.Setting = setting.Setting;
             }
 
             foreach (var item in Kooboo.Sites.HtmlForm.FormManager.List)
@@ -230,7 +228,7 @@ namespace Kooboo.Web.Api.Implementation
 
             if (!string.IsNullOrEmpty(result.FormSubmitter))
             {
-                // set default value. 
+                // set default value.
                 if (result.Setting != null && result.Setting.Count() > 0)
                 {
                     var available = result.AvailableSubmitters.Find(o => o.Name == result.FormSubmitter);
@@ -242,34 +240,30 @@ namespace Kooboo.Web.Api.Implementation
                             {
                                 item.DefaultValue = result.Setting[item.Name];
                             }
-
                         }
                     }
                 }
-
             }
-             
 
             return result;
         }
 
         [Attributes.RequireModel(typeof(FormSetting))]
         public void UpdateSetting(ApiCall call)
-        { 
-            var model = call.Context.Request.Model as FormSetting; 
-            call.WebSite.SiteDb().FormSetting.AddOrUpdate(model); 
+        {
+            var model = call.Context.Request.Model as FormSetting;
+            call.WebSite.SiteDb().FormSetting.AddOrUpdate(model);
         }
-         
 
         [Attributes.RequireModel(typeof(KoobooFormEditModel))]
         public Guid UpdateKoobooForm(ApiCall call)
-        { 
+        {
             var model = call.Context.Request.Model as KoobooFormEditModel;
-            var sitedb = call.Context.WebSite.SiteDb(); 
+            var sitedb = call.Context.WebSite.SiteDb();
 
-            Guid formid = model.Id; 
-              
-            // update form body.... 
+            Guid formid = model.Id;
+
+            // update form body....
             if (formid != default(Guid))
             {
                 var form = sitedb.Forms.Get(call.ObjectId);
@@ -277,13 +271,13 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     form.Body = model.Body;
                     form.Fields = model.Fields;
-                    form.Style = model.Style; 
+                    form.Style = model.Style;
                     sitedb.Forms.AddOrUpdate(form, true, true, call.Context.User.Id);
                     formid = form.Id;
                 }
                 else
                 {
-                    throw new Exception(Data.Language.Hardcoded.GetValue("Form not found", call.Context)); 
+                    throw new Exception(Data.Language.Hardcoded.GetValue("Form not found", call.Context));
                 }
             }
             else
@@ -298,7 +292,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
 
                 sitedb.Forms.AddOrUpdate(form);
-                formid = form.Id; 
+                formid = form.Id;
             }
 
             FormSetting formsetting = new FormSetting();
@@ -310,20 +304,20 @@ namespace Kooboo.Web.Api.Implementation
             formsetting.RedirectUrl = model.RedirectUrl;
             formsetting.Method = model.Method;
             formsetting.Setting = model.Setting;
-            formsetting.Enable = true; 
+            formsetting.Enable = true;
 
-            formsetting.FormSubmitter = model.FormSubmitter; 
+            formsetting.FormSubmitter = model.FormSubmitter;
 
             sitedb.FormSetting.AddOrUpdate(formsetting);
 
             return formid;
         }
- 
+
         public KoobooFormEditModel GetKoobooForm(ApiCall call)
         {
-            var sitedb = call.Context.WebSite.SiteDb();  
-            KoobooFormEditModel edit = new KoobooFormEditModel();   
-            var form = sitedb.Forms.Get(call.ObjectId); 
+            var sitedb = call.Context.WebSite.SiteDb();
+            KoobooFormEditModel edit = new KoobooFormEditModel();
+            var form = sitedb.Forms.Get(call.ObjectId);
             if (form != null)
             {
                 edit.Id = form.Id;
@@ -337,10 +331,10 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     edit.AvailableSubmitters.Add(new FormSubmitterViewModel() { Name = item.Name, Settings = item.Settings(call.Context) });
                 }
-         
-                var formsetting = sitedb.FormSetting.GetByFormId(call.ObjectId); 
-                 
-                if (formsetting !=null)
+
+                var formsetting = sitedb.FormSetting.GetByFormId(call.ObjectId);
+
+                if (formsetting != null)
                 {
                     edit.AllowAjax = formsetting.AllowAjax;
                     edit.Enable = formsetting.Enable;
@@ -349,44 +343,41 @@ namespace Kooboo.Web.Api.Implementation
                     edit.RedirectUrl = formsetting.RedirectUrl;
                     edit.Setting = formsetting.Setting;
                     edit.Method = formsetting.Method;
-                    edit.FormSubmitter = formsetting.FormSubmitter; 
+                    edit.FormSubmitter = formsetting.FormSubmitter;
 
                     if (!string.IsNullOrEmpty(edit.FormSubmitter))
                     {
-                        // set default value. 
-                        if (edit.Setting !=null && edit.Setting.Count()>0)
+                        // set default value.
+                        if (edit.Setting != null && edit.Setting.Count() > 0)
                         {
-                            var available = edit.AvailableSubmitters.Find(o => o.Name == edit.FormSubmitter); 
-                            if (available !=null)
+                            var available = edit.AvailableSubmitters.Find(o => o.Name == edit.FormSubmitter);
+                            if (available != null)
                             {
                                 foreach (var item in available.Settings)
                                 {
-                                   if (edit.Setting.ContainsKey(item.Name))
+                                    if (edit.Setting.ContainsKey(item.Name))
                                     {
-                                        item.DefaultValue = edit.Setting[item.Name]; 
+                                        item.DefaultValue = edit.Setting[item.Name];
                                     }
-                                  
                                 }
                             }
                         }
-                       
                     }
                 }
                 return edit;
             }
             else
             {
-                var result =  new KoobooFormEditModel();
+                var result = new KoobooFormEditModel();
 
                 foreach (var item in Kooboo.Sites.HtmlForm.FormManager.List)
                 {
                     result.AvailableSubmitters.Add(new FormSubmitterViewModel() { Name = item.Name, Settings = item.Settings(call.Context) });
                 }
 
-                return result; 
-            }  
+                return result;
+            }
         }
-         
 
         [Kooboo.Attributes.RequireModel(typeof(FormUpdateViewModel))]
         public void UpdateForm(ApiCall call)
@@ -399,13 +390,12 @@ namespace Kooboo.Web.Api.Implementation
             {
                 form.Body = model.Body;
 
-
                 form.FormSubmitter = model.Submitter;
                 form.Setting = model.Settings;
                 form.Method = model.Method;
                 form.AllowAjax = model.AllowAjax;
                 form.RedirectUrl = model.RedirectUrl;
-                form.IsEmbedded = false;   // once is updated..... 
+                form.IsEmbedded = false;   // once is updated.....
                 form.SuccessCallBack = model.SuccessCallBack;
                 form.FailedCallBack = model.FailedCallBack;
                 call.WebSite.SiteDb().Forms.AddOrUpdate(form, call.Context.User.Id);
@@ -433,9 +423,9 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         [Attributes.RequireParameters("ids")]
-        public  bool Deletes(ApiCall call)
+        public bool Deletes(ApiCall call)
         {
-            var sitedb = call.WebSite.SiteDb(); 
+            var sitedb = call.WebSite.SiteDb();
 
             string json = call.GetValue("ids");
             if (string.IsNullOrEmpty(json))
@@ -448,28 +438,27 @@ namespace Kooboo.Web.Api.Implementation
             {
                 foreach (var item in ids)
                 {
-                  sitedb.Forms.Delete(item, call.Context.User.Id);
+                    sitedb.Forms.Delete(item, call.Context.User.Id);
                 }
                 return true;
             }
             return false;
         }
-                  
+
         public bool IsUniqueName(string name, ApiCall call)
-        {         
+        {
             if (!string.IsNullOrEmpty(name))
             {
-                name = name.ToLower(); 
+                name = name.ToLower();
 
-                var value = call.WebSite.SiteDb().Forms.Store.FullScan(o=>o.Name !=null && o.Name.ToLower() == name).FirstOrDefault();
+                var value = call.WebSite.SiteDb().Forms.Store.FullScan(o => o.Name != null && o.Name.ToLower() == name).FirstOrDefault();
                 if (value != null)
                 {
                     return false;
-                } 
+                }
             }
 
             return true;
         }
-
     }
 }

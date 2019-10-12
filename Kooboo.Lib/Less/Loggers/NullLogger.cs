@@ -12,6 +12,7 @@ namespace dotless.Core.Loggers
         }
 
         private static readonly NullLogger instance = new NullLogger(LogLevel.Warn);
+
         public static NullLogger Instance
         {
             get

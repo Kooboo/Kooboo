@@ -1,11 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Btree
 {
@@ -17,6 +15,7 @@ namespace Kooboo.IndexedDB.Btree
         private Type keytype;
 
         private int _maxcachelevel;
+
         internal int MaxCacheLevel
         {
             get
@@ -34,6 +33,7 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         private int _maxrecords;
+
         private int MaxRecords
         {
             get
@@ -55,6 +55,7 @@ namespace Kooboo.IndexedDB.Btree
         private HashSet<Int64> _freeNodeAddress = new HashSet<long>();
 
         private MemoryTreeNode _rootcache;
+
         internal MemoryTreeNode RootCache
         {
             get
@@ -81,6 +82,7 @@ namespace Kooboo.IndexedDB.Btree
         private object _object = new object();
 
         private BtreeIndexDuplicate _duplicate;
+
         public BtreeIndexDuplicate duplicate
         {
             get
@@ -98,12 +100,10 @@ namespace Kooboo.IndexedDB.Btree
                 }
                 return _duplicate;
             }
-
         }
 
         public TreeFile(string fullfilename, bool unique, Type keytype, int keylen, IComparer<byte[]> comparer, IEqualityComparer<byte[]> equalitycomparer, int MaxCacheLevel)
         {
-
             this.keytype = keytype;
             this.fullfilename = fullfilename;
             this.keylength = keylen;
@@ -142,7 +142,6 @@ namespace Kooboo.IndexedDB.Btree
                         indexFileStream.Close();
                     }
                 }
-
             }
             else
             {
@@ -157,8 +156,6 @@ namespace Kooboo.IndexedDB.Btree
                 this.keytype = config.keyType;
                 this.unique = config.unique;
             }
-
-
         }
 
         private void loadfreespace()
@@ -178,7 +175,7 @@ namespace Kooboo.IndexedDB.Btree
 
                 long startposition = this.config.ConfigDiskBytes + this.config.RecordLen;
 
-                /// every time open, we check 10% of the disk. 
+                /// every time open, we check 10% of the disk.
                 int checkcount = (Int32)(totalnodenumber / 10);
 
                 int endnumber = startnumber + checkcount;
@@ -189,9 +186,7 @@ namespace Kooboo.IndexedDB.Btree
 
                 for (int i = startnumber; i < endnumber; i++)
                 {
-
                 }
-
             }
         }
 
@@ -218,6 +213,7 @@ namespace Kooboo.IndexedDB.Btree
             }
             return node;
         }
+
         /// <summary>
         /// Create the first left leaf for the node. only create previous left pointer, one leaf.
         /// </summary>
@@ -243,7 +239,6 @@ namespace Kooboo.IndexedDB.Btree
 
             IndexStream.Position = node.DiskPosition;
             IndexStream.Write(node.ToBytes(), 0, this.config.NodeDiskSize);
-
         }
 
         private Int64 GetInsertPosition()
@@ -263,7 +258,7 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         /// <summary>
-        /// add a new key,  duplicate value should has been checked by another method. 
+        /// add a new key,  duplicate value should has been checked by another method.
         /// </summary>
         /// <param name="keybytes"></param>
         /// <param name="blockposition"></param>
@@ -281,20 +276,20 @@ namespace Kooboo.IndexedDB.Btree
                 else
                 {
                     // this is duplicate
-                    // check whether duplicate already there or not. 
+                    // check whether duplicate already there or not.
                     NodePointer pointer = new NodePointer();
                     pointer.PointerBytes = memoryleaf.TreeNode.KeyArray[keybytes];
 
                     if (pointer.Indicator == EnumValues.TypeIndicator.block)
                     {
-                        ///get current block position, 
-                        ///insert both position and update positionpointer into new duplicate section start pointer. 
+                        ///get current block position,
+                        ///insert both position and update positionpointer into new duplicate section start pointer.
 
                         Int64 currentposition = pointer.PositionPointer;
 
                         Int64 duplicateposition = this.duplicate.AddFirst(currentposition, blockposition);
 
-                        ///update duplicate counter. 
+                        ///update duplicate counter.
                         pointer.Indicator = EnumValues.TypeIndicator.duplicate;
                         pointer.PositionPointer = duplicateposition;
 
@@ -302,20 +297,17 @@ namespace Kooboo.IndexedDB.Btree
 
                         IndexStream.Position = pointerdiskposition;
                         IndexStream.Write(pointer.ToBytes(), 0, NodePointer.Length);
-
                     }
                     else if (pointer.Indicator == EnumValues.TypeIndicator.duplicate)
                     {
-                        //only need to insert one item into the duplicate index. 
+                        //only need to insert one item into the duplicate index.
                         this.duplicate.Add(pointer.PositionPointer, blockposition);
                     }
 
                     MemoryTreeNodeManager.NodeChange(this, memoryleaf);
                     return true;
                 }
-
             }
-
             else
             {
                 NodePointer blockpointer = new NodePointer();
@@ -338,8 +330,8 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         /// <summary>
-        /// Get the block position that attached to this key. 
-        /// Remove 0 if not found. 
+        /// Get the block position that attached to this key.
+        /// Remove 0 if not found.
         /// </summary>
         /// <param name="keybytes"></param>
         /// <returns></returns>
@@ -368,11 +360,9 @@ namespace Kooboo.IndexedDB.Btree
                         }
                         else
                         {
-                            ///duplicate keys, return the first key within the duplicate. 
+                            ///duplicate keys, return the first key within the duplicate.
                             return this.duplicate.GetOne(pointer.PositionPointer);
-
                         }
-
                     }
                 }
             }
@@ -380,15 +370,13 @@ namespace Kooboo.IndexedDB.Btree
             return 0;
         }
 
-
-        // list all items of this key.... 
+        // list all items of this key....
         public List<Int64> ListAll(byte[] keybytes)
         {
             List<long> result = new List<long>();
             MemoryTreeNode leaf = MemoryTreeNodeManager.FindLeafByKey(this, this.RootCache, keybytes);
             if (leaf != null)
             {
-
                 foreach (var item in leaf.TreeNode.KeyArray)
                 {
                     if (Comparer.ByteEqualComparer.isEqual(item.Key, keybytes, this.config.KeyLength))
@@ -409,14 +397,12 @@ namespace Kooboo.IndexedDB.Btree
                             {
                                 return this.duplicate.GetAll(pointer.PositionPointer);
                             }
-
                         }
                     }
                 }
             }
             return result;
         }
-
 
         /// <summary>
         /// remove a key, identified by key and block position. blockposition >0.
@@ -443,10 +429,9 @@ namespace Kooboo.IndexedDB.Btree
 
             if (pointer.Indicator == EnumValues.TypeIndicator.block)
             {
-
                 if (blockposition > 0 && pointer.PositionPointer != blockposition)
                 {
-                    /// sanity verification. 
+                    /// sanity verification.
                     return false;
                 }
 
@@ -471,10 +456,9 @@ namespace Kooboo.IndexedDB.Btree
 
                 return true;
             }
-
             else
             {
-                /// this is record in the duplicate.  
+                /// this is record in the duplicate.
                 bool delok = this.duplicate.Del(pointer.PositionPointer, blockposition);
                 if (!delok)
                 {
@@ -483,8 +467,8 @@ namespace Kooboo.IndexedDB.Btree
 
                 if (!this.duplicate.hasMoreThanOne(pointer.PositionPointer))
                 {
-                    // this is only one record in the duplidate list  now. 
-                    // convert it back to a block. 
+                    // this is only one record in the duplidate list  now.
+                    // convert it back to a block.
                     Int64 existsblockposition = this.duplicate.GetOne(pointer.PositionPointer);
                     if (existsblockposition > 0)
                     {
@@ -498,19 +482,15 @@ namespace Kooboo.IndexedDB.Btree
                         IndexStream.Write(pointer.ToBytes(), 0, NodePointer.Length);
 
                         MemoryTreeNodeManager.NodeChange(this, foundleaf);
-
                     }
-
                 }
 
                 return true;
             }
-
-
         }
 
         /// <summary>
-        /// Delete a key and return the list of keys that have been deleted. 
+        /// Delete a key and return the list of keys that have been deleted.
         /// </summary>
         /// <param name="keybytes"></param>
         /// <returns></returns>
@@ -553,12 +533,10 @@ namespace Kooboo.IndexedDB.Btree
                 }
 
                 return KeyList;
-
             }
-
             else
             {
-                /// this is record in the duplicate. 
+                /// this is record in the duplicate.
 
                 KeyList = this.duplicate.GetAll(pointer.PositionPointer);
 
@@ -571,7 +549,6 @@ namespace Kooboo.IndexedDB.Btree
 
                 IndexStream.Position = foundleaf.TreeNode.DiskPosition + TreeNode.NodeCounterPosition;
                 IndexStream.Write(BitConverter.GetBytes(foundleaf.TreeNode.Count), 0, 2);
-
 
                 if (foundleaf.TreeNode.Count < this.config.MergeCount)
                 {
@@ -607,13 +584,11 @@ namespace Kooboo.IndexedDB.Btree
 
             if (pointer.Indicator == EnumValues.TypeIndicator.block)
             {
-
                 if (pointer.PositionPointer != oldBlockPosition)
                 {
-                    ///sanity verification. 
+                    ///sanity verification.
                     return false;
                 }
-
 
                 pointer.PositionPointer = newBlockPosition;
 
@@ -625,20 +600,18 @@ namespace Kooboo.IndexedDB.Btree
                 MemoryTreeNodeManager.NodeChange(this, foundleaf);
 
                 return true;
-
             }
-
             else if (pointer.Indicator == EnumValues.TypeIndicator.duplicate)
             {
-                /// this is record in the duplicate. 
+                /// this is record in the duplicate.
 
-                // remove the old record and insert new reocrd. 
+                // remove the old record and insert new reocrd.
 
-                /// check whether the key exists or not. 
+                /// check whether the key exists or not.
 
                 if (!this.duplicate.HasKey(pointer.PositionPointer, oldBlockPosition))
                 {
-                    // the old key does not exists. 
+                    // the old key does not exists.
                     return false;
                 }
 
@@ -660,11 +633,10 @@ namespace Kooboo.IndexedDB.Btree
             {
                 return false;
             }
-
         }
 
         /// <summary>
-        /// add a new record, return true = add ok, otherwise, duplicate found. 
+        /// add a new record, return true = add ok, otherwise, duplicate found.
         /// </summary>
         /// <param name="MemoryLeaf"></param>
         /// <param name="keybytes"></param>
@@ -695,9 +667,7 @@ namespace Kooboo.IndexedDB.Btree
 
                 IndexStream.Position = MemoryLeaf.TreeNode.DiskPosition + TreeNode.NodeCounterPosition;
                 IndexStream.Write(BitConverter.GetBytes(MemoryLeaf.TreeNode.Count), 0, 2);
-
             }
-
         }
 
         private void DeleteNode(Int64 diskposition)
@@ -723,10 +693,9 @@ namespace Kooboo.IndexedDB.Btree
             IndexStream.Position = recordposition;
             IndexStream.WriteByte(deletebyte);
             node.KeyArray.Remove(keybytes);
-            // now update the counter. 
+            // now update the counter.
             IndexStream.Position = node.DiskPosition + TreeNode.NodeCounterPosition;
             IndexStream.Write(BitConverter.GetBytes(node.KeyArray.Count()), 0, 2);
-
         }
 
         /// <summary>
@@ -744,11 +713,10 @@ namespace Kooboo.IndexedDB.Btree
 
             IndexStream.Position = recordposition;
             IndexStream.Write(nullbytes, 0, this.config.PointerLen);
-
         }
 
         /// <summary>
-        /// When a leaf does not have record any more, remove itself and all possible empty parents. 
+        /// When a leaf does not have record any more, remove itself and all possible empty parents.
         /// </summary>
         /// <param name="node"></param>
         /// <param name="keytosearch"></param>
@@ -770,19 +738,17 @@ namespace Kooboo.IndexedDB.Btree
             {
                 NodePointer previouspointer = new NodePointer();
                 previouspointer.PointerBytes = node.TreeNode.PreviousPointer;
-                // if there is no key and also not any left previous pointer. 
+                // if there is no key and also not any left previous pointer.
                 if (node.TreeNode.KeyArray.Count == 0 & previouspointer.PositionPointer == 0)
                 {
                     DeleteNode(node.TreeNode.DiskPosition);
                     MemoryTreeNodeManager.NodeChange(this, node);
                 }
-
                 else
                 { return; }
-
             }
 
-            // has delete node. 
+            // has delete node.
             if (node.IsParentPreviousPointer)
             {
                 DeletePreviousPointer(parent.TreeNode);
@@ -802,9 +768,9 @@ namespace Kooboo.IndexedDB.Btree
 
         private void SplitLeaf(MemoryTreeNode MemoryLeaf)
         {
-            /// 4 steps to split, 
+            /// 4 steps to split,
             /// 1. create a new leaf with half of the records.
-            /// 2. update to the parent node of the new leaf. 
+            /// 2. update to the parent node of the new leaf.
             /// 3. update the old leaf to new half left record leaf.
             /// 4. Check whether the new updated node needs split or not.
 
@@ -847,7 +813,7 @@ namespace Kooboo.IndexedDB.Btree
             IndexStream.Position = diskposition;
             IndexStream.Write(newleaf.ToBytes(), 0, this.config.NodeDiskSize);
 
-            // 2. update to the parent node of the new leaf.  
+            // 2. update to the parent node of the new leaf.
             ///TreeNode ParentNode = LoadParentNode(MemoryLeaf);
 
             NodePointer newkeypointer = new NodePointer();
@@ -862,7 +828,7 @@ namespace Kooboo.IndexedDB.Btree
             IndexStream.Position = MemoryLeaf.TreeNode.DiskPosition;
             IndexStream.Write(MemoryLeaf.TreeNode.ToBytes(), 0, this.config.NodeDiskSize);
 
-            /// 4. Check whether the new updated node needs split or not. 
+            /// 4. Check whether the new updated node needs split or not.
             if ((MemoryLeaf.Parent.TreeNode.Count) > this.config.SplitCount)
             {
                 SplitNode(MemoryLeaf.Parent);
@@ -876,10 +842,10 @@ namespace Kooboo.IndexedDB.Btree
         //This is very similiar like SplitLeaf, should be combined.
         private void SplitNode(MemoryTreeNode node)
         {
-            /// 4 steps to split, 
+            /// 4 steps to split,
             /// 1. create a new node with half of the records.
             /// 2. update the old node to  half left record node.
-            /// 3. update to the parent node of the new node by adding a new record. 
+            /// 3. update to the parent node of the new node by adding a new record.
             /// 4. Check whether the parent updated node needs split or not.
             ///  NOTE: Node has previouspointer, Leaf does not have.
             ///  When split a node, the the first key of the new node shoulbe be removed and move into previouspointer.
@@ -936,7 +902,7 @@ namespace Kooboo.IndexedDB.Btree
             IndexStream.Position = GetInsertPosition();
             IndexStream.Write(newnode.ToBytes(), 0, this.config.NodeDiskSize);
 
-            // 2. update to the parent node of the new node.  
+            // 2. update to the parent node of the new node.
             NodePointer newkeypointer = new NodePointer();
             newkeypointer.Indicator = EnumValues.TypeIndicator.node;
             newkeypointer.PositionPointer = diskposition;
@@ -962,8 +928,8 @@ namespace Kooboo.IndexedDB.Btree
 
         private void SplitRoot(MemoryTreeNode rootnode)
         {
-            // 1. move the right half to a new node. 
-            // 2. move the left left side half to another new node. 
+            // 1. move the right half to a new node.
+            // 2. move the left left side half to another new node.
             // 3. update the root with one new keyvalue pair only to the this two new nodes.
 
             Dictionary<byte[], byte[]> RightKeyArray = new Dictionary<byte[], byte[]>(this.equalitycomparer);
@@ -993,7 +959,6 @@ namespace Kooboo.IndexedDB.Btree
                     }
                     else
                     {
-
                         RightKeyArray.Add(item.Key, item.Value);
                     }
                 }
@@ -1013,7 +978,7 @@ namespace Kooboo.IndexedDB.Btree
             IndexStream.Position = rightnodediskposition;
             IndexStream.Write(rightnode.ToBytes(), 0, this.config.NodeDiskSize);
 
-            //2. create a left new node with half of the records. 
+            //2. create a left new node with half of the records.
             TreeNode leftnode = new TreeNode(this);
             leftnode.Deletion = EnumValues.DeleteIndicator.normal_not_deleted;
             leftnode.TypeIndicator = EnumValues.TypeIndicator.node;
@@ -1051,10 +1016,10 @@ namespace Kooboo.IndexedDB.Btree
         private void Merge(MemoryTreeNode leaf, byte[] keybytes)
         {
             /// find the next or previous leaf and merge with it.
-            //1. find the bigger or smaller key. 
+            //1. find the bigger or smaller key.
             //2. move all record into the bigger key.
-            //3. remove itself by remove its own key. 
-            //If it is the last key, remove the previous key. 
+            //3. remove itself by remove its own key.
+            //If it is the last key, remove the previous key.
 
             if (leaf.TreeNode.Count == 0)
             {
@@ -1064,7 +1029,7 @@ namespace Kooboo.IndexedDB.Btree
             var parent = leaf.Parent;
             var hasmerge = MergeLeaf(leaf, parent);
 
-            // after leaf is merge, check node. 
+            // after leaf is merge, check node.
             if (hasmerge)
             {
                 if (parent.TreeNode.KeyArray.Count < this.config.MergeCount)
@@ -1119,7 +1084,7 @@ namespace Kooboo.IndexedDB.Btree
 
             if (biggerkey != null)
             {
-                //move all the found keys to current leaf and remove the found leaf. 
+                //move all the found keys to current leaf and remove the found leaf.
                 NodePointer foundpointer = new NodePointer();
                 foundpointer.PointerBytes = ParentNode.TreeNode.KeyArray[biggerkey];
                 foundpointer.KeyToPosition = biggerkey;
@@ -1136,19 +1101,18 @@ namespace Kooboo.IndexedDB.Btree
                     IndexStream.Position = leaf.TreeNode.DiskPosition;
                     IndexStream.Write(leaf.TreeNode.ToBytes(), 0, this.config.NodeDiskSize);
 
-                    // remove from parent node. 
+                    // remove from parent node.
                     DeleteKey(ParentNode.TreeNode, biggerkey);
                     DeleteNode(foundleaf.DiskPosition);
-                    // MemoryTreeNodeManager.NodeReload(this, ParentNode); 
+                    // MemoryTreeNodeManager.NodeReload(this, ParentNode);
                     hasmerge = true;
                 }
             }
-
             else
             {
                 // this leaf is the biggest key in the parent keyarray.
                 // Find the second biggest key
-                // move this leaf to the found, and remove this key. 
+                // move this leaf to the found, and remove this key.
                 byte[] foundkey = KeyFinder.FindBiggestSmallerKey(leafParentKey, ParentNode.TreeNode.KeyArray, this.comparer);
 
                 NodePointer smallerpointer = new NodePointer();
@@ -1181,18 +1145,16 @@ namespace Kooboo.IndexedDB.Btree
                     DeleteKey(ParentNode.TreeNode, leafParentKey);
                     DeleteNode(leaf.TreeNode.DiskPosition);
 
-                    // MemoryTreeNodeManager.NodeChange(this, ParentNode); 
+                    // MemoryTreeNodeManager.NodeChange(this, ParentNode);
                     hasmerge = true;
-
                 }
-
             }
 
             return hasmerge;
         }
 
         /// <summary>
-        /// Merge current node with others. 
+        /// Merge current node with others.
         /// </summary>
         /// <param name="node"></param>
         /// <param name="keytosearch"></param>
@@ -1206,7 +1168,7 @@ namespace Kooboo.IndexedDB.Btree
                     CombineSub(node.TreeNode);
                     MemoryTreeNodeManager.NodeChange(this, node);
                 }
-                return false;  /// there is no need to do anything any more since root cache is updated now, so return false. 
+                return false;  /// there is no need to do anything any more since root cache is updated now, so return false.
             }
 
             // Find the nodepointer that is just  key < that leaf.
@@ -1223,7 +1185,7 @@ namespace Kooboo.IndexedDB.Btree
 
             if (biggerkey != null)
             {
-                //move all the found keys to current node and remove the found node. 
+                //move all the found keys to current node and remove the found node.
                 NodePointer foundpointer = new NodePointer();
                 foundpointer.PointerBytes = ParentNode.TreeNode.KeyArray[biggerkey];
                 foundpointer.KeyToPosition = biggerkey;
@@ -1234,7 +1196,7 @@ namespace Kooboo.IndexedDB.Btree
                 {
                     byte[] foundnode_firstkey = KeyFinder.FindFirstKey(foundnode.KeyArray, this.comparer);
 
-                    /// This is to check whether the biggerKey is the first key of foundnode or not. 
+                    /// This is to check whether the biggerKey is the first key of foundnode or not.
                     /// if yes, means that is not a previous pointer in foundnode.
                     if (this.comparer.Compare(biggerkey, foundnode_firstkey) != 0)
                     {
@@ -1255,7 +1217,7 @@ namespace Kooboo.IndexedDB.Btree
                     IndexStream.Position = node.TreeNode.DiskPosition;
                     IndexStream.Write(node.TreeNode.ToBytes(), 0, this.config.NodeDiskSize);
 
-                    // remove from parent node. 
+                    // remove from parent node.
                     DeleteKey(ParentNode.TreeNode, biggerkey);
                     DeleteNode(foundnode.DiskPosition);
                     hasMerge = true;
@@ -1265,7 +1227,7 @@ namespace Kooboo.IndexedDB.Btree
             {
                 // this node is the biggest key in the parent keyarray.
                 // Find the second biggest key
-                // move this node to the found, and remove this key. 
+                // move this node to the found, and remove this key.
 
                 byte[] foundkey = KeyFinder.FindBiggestSmallerKey(node.ParentNodeKey, ParentNode.TreeNode.KeyArray, this.comparer);
 
@@ -1286,7 +1248,7 @@ namespace Kooboo.IndexedDB.Btree
 
                 if (canMerge(node.TreeNode, _foundnode))
                 {
-                    //The previous pointer, biggestone is the key pointer to current node. 
+                    //The previous pointer, biggestone is the key pointer to current node.
                     NodePointer previous = new NodePointer();
                     previous.PointerBytes = node.TreeNode.PreviousPointer;
 
@@ -1303,7 +1265,7 @@ namespace Kooboo.IndexedDB.Btree
                     IndexStream.Position = _foundnode.DiskPosition;
                     IndexStream.Write(_foundnode.ToBytes(), 0, this.config.NodeDiskSize);
 
-                    // remove from parent node. 
+                    // remove from parent node.
                     DeleteKey(ParentNode.TreeNode, node.ParentNodeKey);
                     DeleteNode(node.TreeNode.DiskPosition);
                     hasMerge = true;
@@ -1331,7 +1293,7 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         /// <summary>
-        /// This node has two sub, combine them into current node and remove subs. 
+        /// This node has two sub, combine them into current node and remove subs.
         /// Before call this method, must already check that node.keyarray.count = 1; and this is the root.
         /// </summary>
         /// <param name="node"></param>
@@ -1346,7 +1308,7 @@ namespace Kooboo.IndexedDB.Btree
             {
                 newroot = ReadNode(previous.PositionPointer);
 
-                //can only be 1 or 0, 0 do nothing, 1, check sub node = type node and  move the right node to leaf node. 
+                //can only be 1 or 0, 0 do nothing, 1, check sub node = type node and  move the right node to leaf node.
                 if (root.KeyArray.Count == 1)
                 {
                     byte[] rightkey = root.KeyArray.First().Key;
@@ -1378,16 +1340,15 @@ namespace Kooboo.IndexedDB.Btree
 
                     IndexStream.Position = rootposition;
                     IndexStream.Write(newroot.ToBytes(), 0, this.config.NodeDiskSize);
-                    /// remove the two nodes. 
+                    /// remove the two nodes.
                     DeleteNode(previous.PositionPointer);
                     DeleteNode(rightpointer.PositionPointer);
                 }
-
             }
             else
             {
-                // there is not previous pointer, make check whether there is a need to make node upgrade to root.  
-                //can only be 1 or 0, 0 do nothing, 1, move the right node to root node. 
+                // there is not previous pointer, make check whether there is a need to make node upgrade to root.
+                //can only be 1 or 0, 0 do nothing, 1, move the right node to root node.
                 if (root.KeyArray.Count == 1)
                 {
                     byte[] rightkey = root.KeyArray.First().Key;
@@ -1400,11 +1361,9 @@ namespace Kooboo.IndexedDB.Btree
                         return;
                     }
 
-
                     if (rightpointer.PositionPointer > 0)
                     {
-
-                        //use the right node to replace root node. 
+                        //use the right node to replace root node.
                         IndexStream.Position = rightpointer.PositionPointer;
 
                         byte[] rightnodebytes = new byte[this.config.NodeDiskSize];
@@ -1420,9 +1379,7 @@ namespace Kooboo.IndexedDB.Btree
                         DeleteNode(rightpointer.PositionPointer);
                     }
                 }
-
             }
-
         }
 
         public FileStream IndexStream
@@ -1527,7 +1484,5 @@ namespace Kooboo.IndexedDB.Btree
             }
             return null;
         }
-
     }
-
 }

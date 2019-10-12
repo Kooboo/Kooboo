@@ -1,23 +1,23 @@
 namespace dotless.Core.Parser.Tree
 {
-    using System;
-    using System.Linq;
+    using dotless.Core.Utils;
     using Exceptions;
     using Infrastructure;
     using Infrastructure.Nodes;
     using Plugins;
-    using dotless.Core.Utils;
+    using System;
+    using System.Linq;
 
     public class Root : Ruleset
     {
         public Func<ParsingException, ParserException> Error { get; set; }
 
-        public Root(NodeList rules, Func<ParsingException, ParserException> error) 
+        public Root(NodeList rules, Func<ParsingException, ParserException> error)
             : this(rules, error, null)
         {
         }
 
-        protected Root(NodeList rules, Func<ParsingException, ParserException> error, Ruleset master) 
+        protected Root(NodeList rules, Func<ParsingException, ParserException> error, Ruleset master)
             : base(new NodeList<Selector>(), rules, master)
         {
             Error = error;
@@ -40,7 +40,7 @@ namespace dotless.Core.Parser.Tree
         {
             return env.VisitorPlugins
                 .Where(p => p.AppliesTo == pluginType)
-                .Aggregate(node, (current, plugin) => 
+                .Aggregate(node, (current, plugin) =>
                 {
                     try
                     {
@@ -55,12 +55,11 @@ namespace dotless.Core.Parser.Tree
                         throw new ParserException(message, ex);
                     }
                 });
-
         }
 
         public override Node Evaluate(Env env)
         {
-            if(Evaluated) return this;
+            if (Evaluated) return this;
 
             try
             {

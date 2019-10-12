@@ -1,43 +1,38 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Helper
-{ 
+{
     /// <summary>
     ///  2.4.1 Common parser idioms
     /// </summary>
     public static class CharHelper
-    {  
+    {
         public static bool IsValidTableName(string name)
-        { 
+        {
             if (string.IsNullOrWhiteSpace(name))
             {
-                return false; 
-            } 
+                return false;
+            }
             int len = name.Length;
             for (int i = 0; i < len; i++)
             {
-                var currentchar = name[i];  
+                var currentchar = name[i];
                 if (!isAlphanumeric(currentchar))
                 {
                     if (currentchar != '.' && currentchar != ',' && currentchar != '_' && currentchar != '-')
                     {
-                        return false; 
+                        return false;
                     }
-                } 
-            } 
-            return true; 
+                }
+            }
+            return true;
         }
 
         //The White_Space characters are those that have the Unicode property "White_Space" in the Unicode PropList.txt data file. [UNICODE]
         //This should not be confused with the "White_Space" value (abbreviated "WS") of the "Bidi_Class" property in the Unicode.txt data file.
         //The control characters are those whose Unicode "General_Category" property has the value "Cc" in the Unicode UnicodeData.txt data file. [UNICODE]
-         
+
         /// <summary>
         /// The space characters, for the purposes of this specification, are
         /// U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), and "CR" (U+000D).
@@ -49,7 +44,6 @@ namespace Kooboo.IndexedDB.Helper
             return (chr == '\u0020' || chr == '\u0009' || chr == '\u000a' || chr == '\u000c' || chr == '\u000d');
         }
 
-
         /// <summary>
         /// The lowercase ASCII letters are the characters in the range lowercase ASCII letters. a-z
         /// </summary>
@@ -57,7 +51,7 @@ namespace Kooboo.IndexedDB.Helper
         /// <returns></returns>
         public static bool isLowercaseAscii(char chr)
         {
-            //a-z, ascii 61-122. 
+            //a-z, ascii 61-122.
             return (chr >= 97 && chr <= 122);
         }
 
@@ -98,7 +92,7 @@ namespace Kooboo.IndexedDB.Helper
         /// <returns></returns>
         public static bool isAsciiDigit(char chr)
         {
-            //0-9, acsii 48-57. 
+            //0-9, acsii 48-57.
             return (chr >= 48 && chr <= 57);
         }
 
@@ -139,8 +133,6 @@ namespace Kooboo.IndexedDB.Helper
             {
                 return true;
             }
-
-
 
             return false;
         }
@@ -186,8 +178,5 @@ namespace Kooboo.IndexedDB.Helper
 
             return false;
         }
-
-
     }
-
 }

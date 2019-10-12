@@ -1,13 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.App.Converters;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -18,7 +13,7 @@ namespace Kooboo.App.UserControls
 {
     public class PlaceholderAdorner1 : Adorner
     {
-        string _placeholder;
+        private string _placeholder;
 
         public PlaceholderAdorner1(UIElement ele, string placeholder)
             : base(ele)
@@ -169,12 +164,14 @@ namespace Kooboo.App.UserControls
                 }
             };
         }
-        #endregion
+
+        #endregion Placeholder2
     }
 
     public partial class TextBoxHelper
     {
         #region MyRegion
+
         public static string GetPlaceholder(DependencyObject obj)
         {
             return (string)obj.GetValue(PlaceholderProperty);
@@ -184,6 +181,7 @@ namespace Kooboo.App.UserControls
         {
             obj.SetValue(PlaceholderProperty, value);
         }
+
         public static readonly DependencyProperty PlaceholderProperty =
             DependencyProperty.RegisterAttached("Placeholder",
                 typeof(string),
@@ -255,7 +253,8 @@ namespace Kooboo.App.UserControls
                     }
                 }
             };
-        } 
-        #endregion
+        }
+
+        #endregion MyRegion
     }
 }

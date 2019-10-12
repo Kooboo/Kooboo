@@ -7,7 +7,7 @@ namespace Kooboo.Web.Backend.Menus.SideBarMenu.Contents
 {
     public class File : ISideBarMenu
     {
-        public SideBarSection Parent => SideBarSection.Contents; 
+        public SideBarSection Parent => SideBarSection.Contents;
 
         public string Name => "Files";
 
@@ -21,11 +21,9 @@ namespace Kooboo.Web.Backend.Menus.SideBarMenu.Contents
 
         public string GetDisplayName(RenderContext Context)
         {
-            return Hardcoded.GetValue("Files", Context); 
+            return Hardcoded.GetValue("Files", Context);
         }
     }
 }
-
-
 
 ///new MenuItem { Name = Hardcoded.GetValue("Files", context), Url = AdminUrl("Storage/Files", siteDb) },

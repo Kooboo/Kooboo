@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Kooboo.Lib.Logging
-{ 
-     
+{
     public class SimpleLogWriter
     {
         private string Folder { get; set; }
@@ -20,7 +17,7 @@ namespace Kooboo.Lib.Logging
         private StreamWriter _writer;
         private DateTime _date;
         private object _createLock = new object();
-        
+
         public void Write(string line)
         {
             Writer.WriteLine(line);
@@ -56,14 +53,13 @@ namespace Kooboo.Lib.Logging
 
                 return _writer;
             }
-
         }
 
         private StreamWriter CreateWriter(DateTime utcdate)
         {
             string basefolder = AppDomain.CurrentDomain.BaseDirectory;
-            basefolder = System.IO.Path.Combine(basefolder, "LibLog"); 
-             
+            basefolder = System.IO.Path.Combine(basefolder, "LibLog");
+
             string path = System.IO.Path.Combine(basefolder, this.Folder);
 
             string filename = System.IO.Path.Combine(path, utcdate.ToString("yy-MM-dd") + ".log");
@@ -72,13 +68,5 @@ namespace Kooboo.Lib.Logging
             wr.AutoFlush = true;
             return wr;
         }
-
     }
-
-
-
-
-
-
-
 }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Kooboo.Web.Payment.Models
+﻿namespace Kooboo.Web.Payment.Models
 {
-   public class PaymentStatusResponse
+    public class PaymentStatusResponse
     {
         public bool HasResult { get; set; }
 
@@ -20,17 +14,16 @@ namespace Kooboo.Web.Payment.Models
             {
                 if (IsPaid)
                 {
-                    return "PAID"; 
+                    return "PAID";
                 }
                 else if (IsCancel)
                 {
-                    return "CANCELLED"; 
+                    return "CANCELLED";
                 }
                 else
                 {
-                    return "OPEN"; 
+                    return "OPEN";
                 }
-
             }
         }
     }

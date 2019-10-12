@@ -29,6 +29,7 @@ namespace Jint
     }
 }
 #else
+
 using System;
 using System.Reflection;
 
@@ -62,4 +63,5 @@ namespace Jint
         }
     }
 }
+
 #endif

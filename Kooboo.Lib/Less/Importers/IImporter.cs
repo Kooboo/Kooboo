@@ -1,11 +1,9 @@
 ﻿namespace dotless.Core.Importers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
     using Parser;
     using Parser.Tree;
+    using System;
+    using System.Collections.Generic;
 
     public interface IImporter
     {
@@ -46,14 +44,17 @@
         ///  Import as less (process the file and include)
         /// </summary>
         ImportLess,
+
         /// <summary>
         ///  Import verbatim as CSS
         /// </summary>
         ImportCss,
+
         /// <summary>
         ///  Leave a @import statement
         /// </summary>
         LeaveImport,
+
         /// <summary>
         ///  Do nothing (e.g. when it is an import-once and has already been imported)
         /// </summary>

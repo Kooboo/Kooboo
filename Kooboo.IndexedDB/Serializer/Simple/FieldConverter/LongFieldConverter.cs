@@ -1,19 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
     public class LongFieldConverter<T> : IFieldConverter<T>
     {
-
-        Func<T, long> getValue;
-        Action<T, long> setValue;
+        private Func<T, long> getValue;
+        private Action<T, long> setValue;
 
         public LongFieldConverter(string FieldName)
         {
@@ -21,12 +16,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue = ObjectHelper.GetSetValue<T, long>(FieldName);
             this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
         }
-         
+
         public int ByteLength
         {
             get
             {
-                return 8; 
+                return 8;
             }
         }
 
@@ -37,7 +32,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         public void SetByteValues(T value, byte[] bytes)
         {
-            if (bytes.Length >=8)
+            if (bytes.Length >= 8)
             {
                 long bytevalue = BitConverter.ToInt64(bytes, 0);
                 this.setValue(value, bytevalue);
@@ -46,7 +41,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             {
                 if (bytes.Length == 4)
                 {
-                    long bytevalue =(long)BitConverter.ToInt32(bytes, 0);
+                    long bytevalue = (long)BitConverter.ToInt32(bytes, 0);
                     this.setValue(value, bytevalue);
                 }
                 else if (bytes.Length == 2)
@@ -54,7 +49,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                     long bytevalue = (long)BitConverter.ToInt16(bytes, 0);
                     this.setValue(value, bytevalue);
                 }
-            } 
+            }
         }
 
         public byte[] ToBytes(T Value)
@@ -62,14 +57,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             long fieldvalue = this.getValue(Value);
             return ValueConverter.ToBytes(fieldvalue);
         }
-
     }
 
     public class LongFieldConverter : IFieldConverter
     {
-
-        Func<object, long> getValue;
-        Action<object, long> setValue;
+        private Func<object, long> getValue;
+        private Action<object, long> setValue;
 
         public LongFieldConverter(string FieldName, Type ObjectType)
         {
@@ -96,12 +89,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             long bytevalue = BitConverter.ToInt64(bytes, 0);
             this.setValue(value, bytevalue);
         }
-         
+
         public byte[] ToBytes(object Value)
         {
             long fieldvalue = this.getValue(Value);
             return ValueConverter.ToBytes(fieldvalue);
-        } 
+        }
     }
-
 }

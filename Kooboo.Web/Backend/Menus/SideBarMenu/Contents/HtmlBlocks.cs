@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Data.Language;
+using System.Collections.Generic;
 
 namespace Kooboo.Web.Menus.SideBarMenu.Contents
 {
@@ -22,7 +20,7 @@ namespace Kooboo.Web.Menus.SideBarMenu.Contents
 
         public string GetDisplayName(RenderContext Context)
         {
-            return Hardcoded.GetValue("HtmlBlocks", Context); 
+            return Hardcoded.GetValue("HtmlBlocks", Context);
         }
     }
 }

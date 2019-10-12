@@ -1,18 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Models; 
+using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
- 
 
 namespace Kooboo.Web.Api.Implementation
 {
     public class SiteUserApi : SiteObjectApi<SiteUser>
     {
-
         public List<SiteUserViewModel> AvailableUsers(ApiCall call)
         {
             var sitedb = call.Context.WebSite.SiteDb();
@@ -21,11 +19,11 @@ namespace Kooboo.Web.Api.Implementation
 
             if (allusers == null)
             {
-                allusers = new List<Data.Models.User>(); 
+                allusers = new List<Data.Models.User>();
             }
 
             var org = Kooboo.Data.GlobalDb.Organization.Get(call.Context.User.CurrentOrgId);
-                                                                                         
+
             List<SiteUserViewModel> result = new List<SiteUserViewModel>();
 
             var currentusers = sitedb.SiteUser.All();
@@ -44,7 +42,6 @@ namespace Kooboo.Web.Api.Implementation
 
                         result.Add(model);
                     }
-
                 }
             }
 
@@ -70,7 +67,6 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
-
         public List<string> Roles(ApiCall call)
         {
             var sitedb = call.Context.WebSite.SiteDb();
@@ -79,12 +75,11 @@ namespace Kooboo.Web.Api.Implementation
 
             var all = repo.All();
 
-            return all.Select(o => o.Name).ToList();  
-       
+            return all.Select(o => o.Name).ToList();
         }
 
         public void AddUser(Guid UserId, string role, ApiCall call)
-        { 
+        {
             var sitedb = call.Context.WebSite.SiteDb();
 
             var user = Kooboo.Data.GlobalDb.Users.Get(UserId);
@@ -92,7 +87,7 @@ namespace Kooboo.Web.Api.Implementation
             if (user != null)
             {
                 sitedb.SiteUser.AddOrUpdate(new Sites.Models.SiteUser() { UserId = UserId, SiteRole = role, Name = user.UserName });
-            } 
+            }
         }
 
         public void DeleteUsers(Guid UserId, ApiCall call)
@@ -101,9 +96,7 @@ namespace Kooboo.Web.Api.Implementation
 
             sitedb.SiteUser.Delete(UserId);
         }
-
     }
-
 
     public class SiteUserViewModel
     {
@@ -112,8 +105,5 @@ namespace Kooboo.Web.Api.Implementation
         public Guid UserId { get; set; }
 
         public string Role { get; set; }
-
     }
-
-
 }

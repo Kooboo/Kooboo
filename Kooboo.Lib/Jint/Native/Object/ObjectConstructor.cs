@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Jint.Native.Function;
+﻿using Jint.Native.Function;
 using Jint.Native.String;
 using Jint.Runtime;
 using Jint.Runtime.Descriptors;
 using Jint.Runtime.Interop;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Jint.Native.Object
 {
@@ -62,9 +62,9 @@ namespace Jint.Native.Object
             if (arguments.Length == 0)
             {
                 return Construct(arguments);
-            } 
-            
-            if(arguments[0] == Null.Instance || arguments[0] == Undefined.Instance)
+            }
+
+            if (arguments[0] == Null.Instance || arguments[0] == Undefined.Instance)
             {
                 return Construct(arguments);
             }
@@ -95,10 +95,10 @@ namespace Jint.Native.Object
             }
 
             var obj = new ObjectInstance(_engine)
-                {
-                    Extensible = true,
-                    Prototype = Engine.Object.PrototypeObject
-                };
+            {
+                Extensible = true,
+                Prototype = Engine.Object.PrototypeObject
+            };
 
             return obj;
         }
@@ -111,7 +111,7 @@ namespace Jint.Native.Object
             {
                 throw new JavaScriptException(Engine.TypeError);
             }
-            
+
             return o.Prototype ?? Null.Instance;
         }
 
@@ -150,7 +150,7 @@ namespace Jint.Native.Object
                 {
                     array.DefineOwnProperty(n.ToString(), new PropertyDescriptor(i.ToString(), true, true, true), false);
                     n++;
-                }  
+                }
             }
 
             foreach (var p in o.GetOwnProperties())
@@ -178,7 +178,7 @@ namespace Jint.Native.Object
             var properties = arguments.At(1);
             if (properties != Undefined.Instance)
             {
-                DefineProperties(thisObject, new [] {obj, properties});
+                DefineProperties(thisObject, new[] { obj, properties });
             }
 
             return obj;
@@ -284,9 +284,9 @@ namespace Jint.Native.Object
                 }
                 o.DefineOwnProperty(p, desc, true);
             }
-            
+
             o.Extensible = false;
-         
+
             return o;
         }
 
@@ -387,14 +387,14 @@ namespace Jint.Native.Object
                 .Where(x => x.Value.Enumerable.HasValue && x.Value.Enumerable.Value)
                 .ToArray();
             var n = enumerableProperties.Length;
-            var array = Engine.Array.Construct(new JsValue[] {n});
+            var array = Engine.Array.Construct(new JsValue[] { n });
             var index = 0;
             foreach (var prop in enumerableProperties)
             {
                 var p = prop.Key;
                 array.DefineOwnProperty(
-                    TypeConverter.ToString(index), 
-                    new PropertyDescriptor(p, true, true, true), 
+                    TypeConverter.ToString(index),
+                    new PropertyDescriptor(p, true, true, true),
                     false);
                 index++;
             }

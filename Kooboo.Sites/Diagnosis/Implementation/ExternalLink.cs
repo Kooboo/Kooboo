@@ -1,14 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Threading.Tasks;
 using Kooboo.Data.Context;
 using Kooboo.Data.Language;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Diagnosis.Implementation
 {
@@ -29,7 +29,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
         public void Check()
         {
             string checking = Hardcoded.GetValue("Checking", this.session.context);
-            string name = Hardcoded.GetValue("external links", this.session.context); 
+            string name = Hardcoded.GetValue("external links", this.session.context);
             session.Headline = checking + " " + name;
 
             var sitedb = this.session.context.WebSite.SiteDb();
@@ -48,9 +48,8 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                 }
             }
 
-            Task.WaitAll(tasks.ToArray()); 
+            Task.WaitAll(tasks.ToArray());
         }
-
 
         private void DoCheck(RenderContext context, ExternalResource resource)
         {
@@ -77,7 +76,6 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                     {
                         session.AddMessage(header, message, MessageType.Critical);
                     }
-
                 }
                 catch (Exception)
                 {
@@ -85,7 +83,6 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                 }
             }
         }
-         
 
         private bool IsEnableStatusCode(HttpStatusCode statusCode)
         {
@@ -106,7 +103,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
             }
             if (fullurl.StartsWith("javascript:"))
             {
-                return false; 
+                return false;
             }
             if (fullurl.StartsWith("#"))
             {
@@ -120,6 +117,5 @@ namespace Kooboo.Sites.Diagnosis.Implementation
 
             return false;
         }
-
     }
 }

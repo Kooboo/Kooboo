@@ -1,12 +1,12 @@
 namespace dotless.Core.Parser.Tree
 {
+    using Infrastructure;
+    using Infrastructure.Nodes;
+    using Plugins;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
-    using Infrastructure;
-    using Infrastructure.Nodes;
     using Utils;
-    using Plugins;
 
     public class Ruleset : Node
     {
@@ -184,14 +184,14 @@ namespace dotless.Core.Parser.Tree
                     //If we're in a media block, then extenders can only apply to that media block
                     if (env.MediaPath.Any())
                     {
-                        env.MediaPath.Peek().AddExtension(s, (Extend) r.Evaluate(env), env);
+                        env.MediaPath.Peek().AddExtension(s, (Extend)r.Evaluate(env), env);
                     }
                     else //Global extend
                     {
-                        env.AddExtension(s, (Extend) r.Evaluate(env), env);
+                        env.AddExtension(s, (Extend)r.Evaluate(env), env);
                     }
                 }
-                
+
                 Rules.Remove(r);
             }
 
@@ -215,7 +215,7 @@ namespace dotless.Core.Parser.Tree
             if (Rules == null || !Rules.Any())
                 return;
 
-            ((Ruleset) Evaluate(env)).AppendCSS(env, new Context());
+            ((Ruleset)Evaluate(env)).AppendCSS(env, new Context());
         }
 
         /// <summary>
@@ -319,7 +319,6 @@ namespace dotless.Core.Parser.Tree
             {
                 if (nonCommentRules > 0)
                 {
-
                     foreach (var s in Selectors.Where(s => s.Elements.First().Value != null))
                     {
                         var local = context.Clone();
@@ -337,7 +336,6 @@ namespace dotless.Core.Parser.Tree
                             paths.AppendSelectors(context.Clone(), partials.SelectMany(p => p.Replacements(finalString)));
                         }
                     }
-
 
                     paths.AppendCSS(env);
 

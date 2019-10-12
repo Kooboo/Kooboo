@@ -1,17 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Globalization;
 
 namespace Kooboo.Lib.Helper
 {
     public static class DateTimeHelper
     {
-
         public static string ParseDateFormat(List<string> DateStrings)
         {
             HashSet<string> formates = GetPossibleFormats(DateStrings);
@@ -30,16 +26,16 @@ namespace Kooboo.Lib.Helper
 
             foreach (var item in formates)
             {
-                var trimyear = TrimYear(item); 
+                var trimyear = TrimYear(item);
                 if (!string.IsNullOrWhiteSpace(trimyear))
                 {
-                    withoutyear.Add(trimyear); 
+                    withoutyear.Add(trimyear);
                 }
             }
 
             foreach (var item in withoutyear)
             {
-                formates.Add(item); 
+                formates.Add(item);
             }
 
             return formates;
@@ -47,30 +43,11 @@ namespace Kooboo.Lib.Helper
 
         public static string TrimYear(string formate)
         {
-            int len = formate.Length; 
-            
+            int len = formate.Length;
+
             if (formate[0] == 'y' || formate[0] == 'Y')
             {
                 for (int i = 0; i < len; i++)
-                {
-                    if (formate[i] =='y' || formate[i] =='Y')
-                    {
-                        continue; 
-                    }
-
-                    var currentchar = formate[i]; 
-                    if (!Lib.Helper.CharHelper.IsAscii(currentchar))
-                    {
-                        continue; 
-                    }
-
-                    return formate.Substring(i); 
-                }
-            }
-            else if (formate[len -1] == 'y' || formate[len-1] == 'Y')
-            {
-
-                for (int i = len -1; i > 0; i--)
                 {
                     if (formate[i] == 'y' || formate[i] == 'Y')
                     {
@@ -83,11 +60,29 @@ namespace Kooboo.Lib.Helper
                         continue;
                     }
 
-                    return formate.Substring(0, i+1);
-                }  
+                    return formate.Substring(i);
+                }
+            }
+            else if (formate[len - 1] == 'y' || formate[len - 1] == 'Y')
+            {
+                for (int i = len - 1; i > 0; i--)
+                {
+                    if (formate[i] == 'y' || formate[i] == 'Y')
+                    {
+                        continue;
+                    }
+
+                    var currentchar = formate[i];
+                    if (!Lib.Helper.CharHelper.IsAscii(currentchar))
+                    {
+                        continue;
+                    }
+
+                    return formate.Substring(0, i + 1);
+                }
             }
 
-            return null; 
+            return null;
         }
 
         public static string ParseDateFormat(IEnumerable<string> DateStrings, IEnumerable<string> availableFormats)
@@ -210,8 +205,7 @@ namespace Kooboo.Lib.Helper
                     continue;
                 }
 
-
-                // filter by exclus. 
+                // filter by exclus.
 
                 bool excl = false;
 
@@ -224,21 +218,17 @@ namespace Kooboo.Lib.Helper
                     }
                 }
 
-
                 if (excl)
                 {
                     continue;
                 }
 
-
                 result.Add(item);
-
             }
 
             return result;
-
         }
-        
+
         public static HashSet<string> AllFormates()
         {
             HashSet<string> formates = new HashSet<string>();
@@ -257,11 +247,10 @@ namespace Kooboo.Lib.Helper
             return formates;
         }
 
-        // compare till minutes. 
+        // compare till minutes.
         public static bool EqualMinitues(DateTime timeone, DateTime timetwo)
         {
-            return timeone.Year == timetwo.Year && timeone.DayOfYear == timetwo.DayOfYear && timeone.Hour == timetwo.Hour && timeone.Minute == timetwo.Minute; 
-        }    
+            return timeone.Year == timetwo.Year && timeone.DayOfYear == timetwo.DayOfYear && timeone.Hour == timetwo.Hour && timeone.Minute == timetwo.Minute;
+        }
     }
 }
-

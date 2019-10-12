@@ -1,14 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom.CSS
 {
-
     /// <summary>
     /// E::first-line	the first formatted line of an E element	The ::first-line pseudo-element	1
     //E::first-letter	the first formatted letter of an E element	The ::first-letter pseudo-element	1
@@ -17,7 +11,6 @@ namespace Kooboo.Dom.CSS
     /// </summary>
     public class pseudoElementSelector : simpleSelector
     {
-
         public pseudoElementSelector()
         {
             base.Type = enumSimpleSelectorType.pseudoElement;
@@ -28,6 +21,7 @@ namespace Kooboo.Dom.CSS
         public string matchElement { get; set; }
 
         private simpleSelector _elementSelector;
+
         public simpleSelector ElementSelector
         {
             get
@@ -40,6 +34,5 @@ namespace Kooboo.Dom.CSS
                 return _elementSelector;
             }
         }
-
     }
 }

@@ -1,20 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Extensions; 
 
 namespace Kooboo.Web.Api.Implementation
-{                                       
+{
     public class KConfigApi : SiteObjectApi<KConfig>
-    {         
-       
+    {
         public void Update(KConfig model, ApiCall call)
         {
             if (model.Id != default(Guid))
@@ -26,12 +23,12 @@ namespace Kooboo.Web.Api.Implementation
                     config.Binding = model.Binding;
                     sitedb.KConfig.AddOrUpdate(config);
                 }
-            }  
+            }
         }
 
         public override object Get(ApiCall call)
         {
-            var obj =  base.Get(call);
+            var obj = base.Get(call);
 
             if (obj is KConfig)
             {
@@ -40,14 +37,14 @@ namespace Kooboo.Web.Api.Implementation
                 var model = new KConfigEditModel(kconfig);
 
                 model.Id = kconfig.Id.ToString();
-                 
+
                 if (kconfig.TagName == "img")
                 {
                     model.ControlType = Kooboo.Data.Definition.ControlTypes.MediaFile;
                 }
-                return model; 
+                return model;
             }
-            return obj; 
+            return obj;
         }
 
         public override List<object> List(ApiCall call)
@@ -64,7 +61,7 @@ namespace Kooboo.Web.Api.Implementation
                 model.Id = item.Id;
                 model.TagName = item.TagName;
                 model.TagHtml = item.TagHtml;
-                model.Name = item.Name; 
+                model.Name = item.Name;
                 model.KeyHash = Sites.Service.LogService.GetKeyHash(item.Id);
                 model.StoreNameHash = storenamehash;
                 model.LastModified = item.LastModified;
@@ -84,6 +81,6 @@ namespace Kooboo.Web.Api.Implementation
                 keys.Add(item.Name);
             }
             return keys;
-        }   
-    }    
+        }
+    }
 }

@@ -1,84 +1,26 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
 using Kooboo.Data.Context;
+using Kooboo.Sites.Events.FrontFlow;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Render.Components;
-using Kooboo.Sites.Events.FrontFlow;
 using Kooboo.Sites.Repository;
-using Kooboo.Sites.FrontEvent; 
-  
+using System;
+using System.Collections.Generic;
+
 namespace Kooboo.Sites.FrontEvent
 {
     public class ViewFinding : IFrontEvent
-    { 
+    {
         public ViewFinding()
         {
-
         }
+
         public ViewFinding(RenderContext context, ComponentSetting comsetting)
         {
             this.Context = context;
-            this.componentSetting = comsetting; 
-        } 
-
-        public string Name
-        {
-            get { return this.componentSetting.NameOrId;  }
-        }
-        
-        public Dictionary<string, string> setting
-        {
-            get
-            {
-                Dictionary<string, string> result = new Dictionary<string, string>();
-                if (this.componentSetting.Settings !=null)
-                {
-                    foreach (var item in this.componentSetting.Settings)
-                    {
-                        result.Add(item.Key, item.Value); 
-                    }
-                }
-                return result;  
-            }
-        }
-
-       
-       private ComponentSetting componentSetting { get; set; }
-
-        public RenderContext Context { get; set; }
-         
-        public View View { get; set; }
-    
-        public bool DataChange
-        {
-            get; set;
-        }
-
-        public enumEventType EventType =>  enumEventType.ViewFinding;
-
-        public List<EventConditionSetting> GetConditionSetting(RenderContext context)
-        {
-            List<EventConditionSetting> result = new List<EventConditionSetting>();
-            result.Add(new EventConditionSetting() { Name = "NameOrId" });
-            return result;
-        }
-    }
-
-    public class ViewFound : IFrontEvent
-    {
-        public ViewFound()
-        {
-
-        }
- 
-        public ViewFound(RenderContext context, ComponentSetting comsetting,  View View)
-        {
-            this.Context = context;
-            this._view = View;
-            this.componentSetting = comsetting; 
+            this.componentSetting = comsetting;
         }
 
         public string Name
@@ -102,19 +44,74 @@ namespace Kooboo.Sites.FrontEvent
             }
         }
 
+        private ComponentSetting componentSetting { get; set; }
+
+        public RenderContext Context { get; set; }
+
+        public View View { get; set; }
+
+        public bool DataChange
+        {
+            get; set;
+        }
+
+        public enumEventType EventType => enumEventType.ViewFinding;
+
+        public List<EventConditionSetting> GetConditionSetting(RenderContext context)
+        {
+            List<EventConditionSetting> result = new List<EventConditionSetting>();
+            result.Add(new EventConditionSetting() { Name = "NameOrId" });
+            return result;
+        }
+    }
+
+    public class ViewFound : IFrontEvent
+    {
+        public ViewFound()
+        {
+        }
+
+        public ViewFound(RenderContext context, ComponentSetting comsetting, View View)
+        {
+            this.Context = context;
+            this._view = View;
+            this.componentSetting = comsetting;
+        }
+
+        public string Name
+        {
+            get { return this.componentSetting.NameOrId; }
+        }
+
+        public Dictionary<string, string> setting
+        {
+            get
+            {
+                Dictionary<string, string> result = new Dictionary<string, string>();
+                if (this.componentSetting.Settings != null)
+                {
+                    foreach (var item in this.componentSetting.Settings)
+                    {
+                        result.Add(item.Key, item.Value);
+                    }
+                }
+                return result;
+            }
+        }
 
         private ComponentSetting componentSetting { get; set; }
 
         public RenderContext Context { get; set; }
 
+        private View _view;
 
-        private View _view; 
-        public View View {
-            get { return _view;  }
+        public View View
+        {
+            get { return _view; }
             set
             {
                 _view = value;
-                DataChange = true; 
+                DataChange = true;
             }
         }
 
@@ -137,26 +134,28 @@ namespace Kooboo.Sites.FrontEvent
 
     public class ViewNotFound : IFrontEvent
     {
-        public ViewNotFound() { }
+        public ViewNotFound()
+        {
+        }
 
         public ViewNotFound(RenderContext context, ComponentSetting ComSettings)
         {
             this.Context = context;
-            this.componentSetting = ComSettings; 
+            this.componentSetting = ComSettings;
         }
 
         public string Name
         {
             get { return this.componentSetting.NameOrId; }
         }
-           
+
         private ComponentSetting componentSetting { get; set; }
 
         public RenderContext Context { get; set; }
- 
+
         public View View
         {
-            get;set;
+            get; set;
         }
 
         public bool DataChange
@@ -164,7 +163,7 @@ namespace Kooboo.Sites.FrontEvent
             get; set;
         }
 
-        public enumEventType EventType => enumEventType.ViewNotFound; 
+        public enumEventType EventType => enumEventType.ViewNotFound;
 
         public List<EventConditionSetting> GetConditionSetting(RenderContext context)
         {
@@ -173,7 +172,7 @@ namespace Kooboo.Sites.FrontEvent
             return result;
         }
     }
-    
+
     public class ViewEventHelper
     {
         public static List<EventConditionSetting> GetViewSetting(SiteDb siteDb)
@@ -193,5 +192,4 @@ namespace Kooboo.Sites.FrontEvent
             return result;
         }
     }
-
 }

@@ -1,10 +1,10 @@
 namespace dotless.Core.Parser.Functions
 {
-    using System.Collections.Generic;
-    using System.Linq;
+    using dotless.Core.Loggers;
     using Infrastructure;
     using Infrastructure.Nodes;
-    using dotless.Core.Loggers;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public abstract class Function
     {

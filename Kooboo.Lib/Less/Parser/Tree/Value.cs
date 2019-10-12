@@ -1,11 +1,10 @@
 ﻿namespace dotless.Core.Parser.Tree
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using Infrastructure;
     using Infrastructure.Nodes;
     using Plugins;
-    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class Value : Node
     {
@@ -22,8 +21,8 @@
         public override void AppendCSS(Env env)
         {
             env.Output.AppendMany(Values, env.Compress ? "," : ", ");
- 
-            if  (!string.IsNullOrEmpty(Important)) 
+
+            if (!string.IsNullOrEmpty(Important))
             {
                 if (PreImportantComments)
                 {

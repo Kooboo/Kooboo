@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Contents.Models;
@@ -58,8 +58,8 @@ namespace Kooboo.Web.Api.Implementation
 
             if (!string.IsNullOrEmpty(userkey) && newcontent.UserKey != userkey)
             {
-                var existings = sitedb.TextContent.Get(userkey); 
-                if (existings !=null && existings.Id != newcontent.Id)
+                var existings = sitedb.TextContent.Get(userkey);
+                if (existings != null && existings.Id != newcontent.Id)
                 {
                     throw new Exception(Data.Language.Hardcoded.GetValue("UserKey has been taken", call.Context));
                 }
@@ -136,14 +136,13 @@ namespace Kooboo.Web.Api.Implementation
             return null;
         }
 
-
         public PagedListViewModel<TextContentViewModel> ByFolder(Guid FolderId, ApiCall call)
         {
             int pagesize = ApiHelper.GetPageSize(call, 50);
             int pagenr = ApiHelper.GetPageNr(call);
 
-            string language =  Kooboo.Data.Language.LanguageSetting.GetCmsSiteLangCode(call.Context, call.WebSite);
-                                           
+            string language = Kooboo.Data.Language.LanguageSetting.GetCmsSiteLangCode(call.Context, call.WebSite);
+
             PagedListViewModel<TextContentViewModel> model = new PagedListViewModel<TextContentViewModel>();
             model.PageNr = pagenr;
             model.PageSize = pagesize;
@@ -199,7 +198,6 @@ namespace Kooboo.Web.Api.Implementation
 
             return categories;
         }
-
 
         private List<ContentFieldViewModel> GetProperties(ApiCall call, Guid FolderId)
         {
@@ -368,7 +366,7 @@ namespace Kooboo.Web.Api.Implementation
 
             if (!string.IsNullOrWhiteSpace(key))
             {
-                // remove the key 
+                // remove the key
                 foreach (var langitem in updatemodel.Values)
                 {
                     List<string> keysToRemove = new List<string>();
@@ -390,7 +388,6 @@ namespace Kooboo.Web.Api.Implementation
             return key;
         }
 
-
         public PagedListViewModel<TextContentViewModel> Search(Guid FolderId, string Keyword, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
@@ -411,7 +408,7 @@ namespace Kooboo.Web.Api.Implementation
 
             var all = sitedb.TextContent.Query.Where(o => o.FolderId == FolderId).SelectAll();
 
-            var textContents = all.Where(o => o.Body.IndexOf(Keyword, StringComparison.OrdinalIgnoreCase)>-1).OrderByDescending(o => o.LastModified);
+            var textContents = all.Where(o => o.Body.IndexOf(Keyword, StringComparison.OrdinalIgnoreCase) > -1).OrderByDescending(o => o.LastModified);
 
             model.TotalCount = textContents.Count();
             model.TotalPages = ApiHelper.GetPageCount(model.TotalCount, model.PageSize);
@@ -428,7 +425,5 @@ namespace Kooboo.Web.Api.Implementation
 
             return model;
         }
-
     }
-
 }

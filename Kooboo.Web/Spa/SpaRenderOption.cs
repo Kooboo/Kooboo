@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,9 @@ namespace Kooboo.Web.Spa
     public class SpaRenderOption
     {
         private Func<Kooboo.Data.Context.RenderContext, string> _GetDbPath;
-        public Func<Kooboo.Data.Context.RenderContext, string> GetDbPath {
+
+        public Func<Kooboo.Data.Context.RenderContext, string> GetDbPath
+        {
             get
             {
                 return _GetDbPath == null ? DefaultOptions.DefaultGetDbPath : _GetDbPath;
@@ -22,7 +24,8 @@ namespace Kooboo.Web.Spa
 
         private Func<Kooboo.Data.Context.RenderContext, string> _GetRoot;
 
-        public Func<Kooboo.Data.Context.RenderContext, string> GetDiskRoot {
+        public Func<Kooboo.Data.Context.RenderContext, string> GetDiskRoot
+        {
             get
             {
                 return _GetRoot == null ? DefaultOptions.DefaultGetRoot : _GetRoot;
@@ -32,7 +35,6 @@ namespace Kooboo.Web.Spa
                 _GetRoot = value;
             }
         }
-         
 
         public bool ShouldTryHandle(Kooboo.Data.Context.RenderContext context, SpaRenderOption Options)
         {
@@ -48,10 +50,11 @@ namespace Kooboo.Web.Spa
             }
             return false;
         }
-        
 
         private string _layoutfolder;
-        public string LayoutFolder {
+
+        public string LayoutFolder
+        {
             get
             {
                 if (string.IsNullOrEmpty(_layoutfolder))
@@ -69,7 +72,9 @@ namespace Kooboo.Web.Spa
                 _layoutfolder = value;
             }
         }
+
         private string _Extension;
+
         public string Extension
         {
             get
@@ -91,6 +96,7 @@ namespace Kooboo.Web.Spa
         }
 
         private List<string> _Extensions;
+
         internal List<string> Extensions
         {
             get
@@ -111,6 +117,7 @@ namespace Kooboo.Web.Spa
         }
 
         private string _ViewFolder;
+
         public string ViewFolder
         {
             get
@@ -132,6 +139,7 @@ namespace Kooboo.Web.Spa
         }
 
         private List<string> _ViewFolders;
+
         internal List<string> ViewFolders
         {
             get
@@ -150,7 +158,9 @@ namespace Kooboo.Web.Spa
                 return _ViewFolders;
             }
         }
+
         private List<string> _layoutFolders;
+
         internal List<string> LayoutFolders
         {
             get
@@ -171,8 +181,10 @@ namespace Kooboo.Web.Spa
         }
 
         private string _startPath;
-        // the prefix path that should be ignored.  
-        public string StartPath {
+
+        // the prefix path that should be ignored.
+        public string StartPath
+        {
             get
             {
                 return _startPath;
@@ -187,17 +199,16 @@ namespace Kooboo.Web.Spa
             }
         }
 
-        public string Prefix { get;set;}
+        public string Prefix { get; set; }
 
         private string GetAppSetting(string Name)
         {
             return System.Configuration.ConfigurationManager.AppSettings.Get(Name);
         }
-         
+
         public Dictionary<string, object> InitData { get; set; }
 
         public bool EnableMultilingual { get; set; }
-          
     }
 
     public static class DefaultOptions
@@ -211,14 +222,13 @@ namespace Kooboo.Web.Spa
         public static string DefaultGetRoot(Kooboo.Data.Context.RenderContext request)
         {
             string ExecutingFolder = AppDomain.CurrentDomain.BaseDirectory;
-            return System.IO.Path.Combine(ExecutingFolder, @"..\") ;
+            return System.IO.Path.Combine(ExecutingFolder, @"..\");
         }
-           
+
         public static string DefaultGetDbPath(Kooboo.Data.Context.RenderContext request)
         {
-            string ExecutingFolder = AppDomain.CurrentDomain.BaseDirectory; 
+            string ExecutingFolder = AppDomain.CurrentDomain.BaseDirectory;
             return System.IO.Path.Combine(ExecutingFolder, @"..\_renderdata");
         }
-         
     }
 }

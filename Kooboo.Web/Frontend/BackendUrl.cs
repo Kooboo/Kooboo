@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kooboo.Web.Frontend
+﻿namespace Kooboo.Web.Frontend
 {
-   public static class BackendUrl
+    public static class BackendUrl
     {
-
         public static bool IsBackendUrl(string relativeUrl)
         {
-
-
-            //string relativeUrl = Relativeurl.ToLower(); 
+            //string relativeUrl = Relativeurl.ToLower();
             //if (relativeUrl.StartsWith("/_api/") ||
             //    relativeUrl.StartsWith("/_admin/") ||
             //    relativeUrl.StartsWith("/_spa/") ||
@@ -20,9 +13,9 @@ namespace Kooboo.Web.Frontend
             //    )
             //{
             //    return true;
-            //} 
+            //}
 
-            return false; 
+            return false;
         }
     }
 }

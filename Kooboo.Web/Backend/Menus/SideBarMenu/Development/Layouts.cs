@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Data.Language;
+using System.Collections.Generic;
 
 namespace Kooboo.Web.Menus.SideBarMenu.Development
 {
@@ -26,6 +24,5 @@ namespace Kooboo.Web.Menus.SideBarMenu.Development
         }
     }
 }
-
 
 // new MenuItem { Name = Hardcoded.GetValue("Layouts", context), Url = AdminUrl("Development/Layouts", siteDb), ActionRights = Sites.Authorization.Actions.Developments.Layouts },

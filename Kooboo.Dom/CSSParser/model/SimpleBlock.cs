@@ -1,11 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom.CSS.Tokens;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom.CSS.rawmodel
 {
@@ -14,7 +10,6 @@ namespace Kooboo.Dom.CSS.rawmodel
     /// </summary>
     public class SimpleBlock : ComponentValue
     {
-
         public SimpleBlock()
         {
             this.Type = CompoenentValueType.simpleBlock;
@@ -41,7 +36,6 @@ namespace Kooboo.Dom.CSS.rawmodel
                 {
                     Function func = item as Function;
                     valuelist += func.getString(ref CssText);
-
                 }
                 else if (item.Type == CompoenentValueType.simpleBlock)
                 {
@@ -64,11 +58,9 @@ namespace Kooboo.Dom.CSS.rawmodel
                 {
                     valuelist = "(" + valuelist + ")";
                 }
-
             }
 
             return valuelist;
         }
-
     }
 }

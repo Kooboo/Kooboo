@@ -1,12 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Language;
 using Kooboo.Dom;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
-using System.Web;
 using System.Collections.Generic;
+using System.Web;
 
 namespace Kooboo.Sites.Diagnosis.Implementation
 {
@@ -25,6 +25,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
         }
 
         private string _line;
+
         private string line
         {
             get
@@ -35,7 +36,6 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                 }
                 return _line;
             }
-
         }
 
         public void Check()
@@ -66,13 +66,12 @@ namespace Kooboo.Sites.Diagnosis.Implementation
 
                             CheckOutdateTag(domobj as SiteObject, dom);
 
-                            CheckWrongNestedTag(domobj as SiteObject, dom); 
+                            CheckWrongNestedTag(domobj as SiteObject, dom);
                         }
                     }
                 }
             }
         }
-
 
         public void CheckEmptyTag(SiteObject siteobject, Kooboo.Dom.Document dom)
         {
@@ -183,7 +182,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
 
             taglist.Reverse();
             string result = string.Join(" > ", taglist.ToArray());
-            //this.line　+  " " + el.location + 
+            //this.line　+  " " + el.location +
             return HttpUtility.HtmlEncode(result);
         }
 
@@ -207,8 +206,6 @@ namespace Kooboo.Sites.Diagnosis.Implementation
             }
         }
 
-
-
         public void CheckOutdateTag(SiteObject siteobject, Kooboo.Dom.Document dom)
         {
             if (siteobject == null || dom == null)
@@ -227,7 +224,6 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                 session.AddMessage(name, message, MessageType.Warning);
             }
         }
-
 
         public void getOutdateTags(Node topElement, HTMLCollection collection)
         {
@@ -269,7 +265,6 @@ namespace Kooboo.Sites.Diagnosis.Implementation
             }
         }
 
-
         public void getWrongNestedTags(Node topElement, HTMLCollection col)
         {
             if (topElement.nodeType == enumNodeType.ELEMENT)
@@ -294,8 +289,6 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                             getWrongNestedTags(item, col);
                         }
                     }
-
-
                 }
             }
         }
@@ -312,7 +305,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
 
                     if (isblock)
                     {
-                        col.Add(element); 
+                        col.Add(element);
                     }
                     else
                     {
@@ -320,13 +313,13 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                         {
                             getWrongBlockTags(item, col);
                         }
-                    } 
+                    }
                 }
             }
         }
 
-
         private HashSet<string> _outdatetags;
+
         private HashSet<string> outdatetags
         {
             get
@@ -350,6 +343,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
         }
 
         private HashSet<string> _inline;
+
         private HashSet<string> inline
         {
             get
@@ -373,6 +367,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
         }
 
         private HashSet<string> _block;
+
         private HashSet<string> Block
         {
             get
@@ -394,6 +389,5 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                 return _block;
             }
         }
-
     }
 }

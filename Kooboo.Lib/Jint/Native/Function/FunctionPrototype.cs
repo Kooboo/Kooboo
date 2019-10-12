@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Jint.Native.Object;
+﻿using Jint.Native.Object;
 using Jint.Runtime;
 using Jint.Runtime.Descriptors;
 using Jint.Runtime.Interop;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Jint.Native.Function
 {
@@ -44,9 +44,9 @@ namespace Jint.Native.Function
             {
                 throw new JavaScriptException(Engine.TypeError);
             });
-            
+
             var thisArg = arguments.At(0);
-            var f = new BindFunctionInstance(Engine) {Extensible = true};
+            var f = new BindFunctionInstance(Engine) { Extensible = true };
             f.TargetFunction = thisObj;
             f.BoundThis = thisArg;
             f.BoundArgs = arguments.Skip(1).ToArray();
@@ -56,18 +56,16 @@ namespace Jint.Native.Function
             if (o != null)
             {
                 var l = TypeConverter.ToNumber(o.Get("length")) - (arguments.Length - 1);
-                f.FastAddProperty("length", System.Math.Max(l, 0), false, false, false); 
+                f.FastAddProperty("length", System.Math.Max(l, 0), false, false, false);
             }
             else
             {
-                f.FastAddProperty("length", 0, false, false, false); 
+                f.FastAddProperty("length", 0, false, false, false);
             }
-            
 
             var thrower = Engine.Function.ThrowTypeError;
             f.DefineOwnProperty("caller", new PropertyDescriptor(thrower, thrower, false, false), false);
             f.DefineOwnProperty("arguments", new PropertyDescriptor(thrower, thrower, false, false), false);
-
 
             return f;
         }
@@ -78,7 +76,7 @@ namespace Jint.Native.Function
 
             if (func == null)
             {
-                throw new JavaScriptException(Engine.TypeError, "Function object expected.");       
+                throw new JavaScriptException(Engine.TypeError, "Function object expected.");
             }
 
             return System.String.Format("function() {{ ... }}");

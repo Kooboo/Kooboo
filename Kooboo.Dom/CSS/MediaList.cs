@@ -1,16 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom.CSS
 {
     /*
      http://dev.w3.org/csswg/cssom
-     * 
+     *
   An object that implements the MediaList interface has an associated collection of media queries.
 [ArrayClass]
 interface MediaList {
@@ -23,14 +20,13 @@ interface MediaList {
 */
 
     /// <summary>
-    /// Firefox does not have MediaList, it has MediaQueryList instead, 
+    /// Firefox does not have MediaList, it has MediaQueryList instead,
     /// this Medialist it is not enough.
-    /// Right now, the string might contains both media and conditiontext. 
+    /// Right now, the string might contains both media and conditiontext.
     /// </summary>
     [Serializable]
     public class MediaList
     {
-
         public List<string> item = new List<string>();
 
         public void appendMedium(string medium)
@@ -44,7 +40,6 @@ interface MediaList {
             {
                 item.Add(medium);
             }
-
         }
 
         public void deleteMedium(string medium)
@@ -57,8 +52,7 @@ interface MediaList {
             if (item.Contains(medium))
             {
                 item.Remove(medium);
-             }
+            }
         }
-
     }
 }

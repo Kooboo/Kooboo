@@ -2,11 +2,11 @@ using dotless.Core.Plugins;
 
 namespace dotless.Core
 {
-    using System.Collections.Generic;
-    using System.Linq;
     using Exceptions;
     using Loggers;
     using Parser.Infrastructure;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class LessEngine : ILessEngine
     {
@@ -54,6 +54,7 @@ namespace dotless.Core
         }
 
         public static LessEngine _instance;
+
         public static LessEngine Instance
         {
             get
@@ -79,13 +80,13 @@ namespace dotless.Core
 
                 var env = Env ??
                           new Env
-                              {
-                                  Compress = Compress,
-                                  Debug = Debug,
-                                  KeepFirstSpecialComment = KeepFirstSpecialComment,
-                                  DisableVariableRedefines = DisableVariableRedefines,
-                                  DisableColorCompression = DisableColorCompression
-                              };
+                          {
+                              Compress = Compress,
+                              Debug = Debug,
+                              KeepFirstSpecialComment = KeepFirstSpecialComment,
+                              DisableVariableRedefines = DisableVariableRedefines,
+                              DisableColorCompression = DisableColorCompression
+                          };
 
                 if (Plugins != null)
                 {
@@ -118,6 +119,5 @@ namespace dotless.Core
         {
             Parser.Importer.Imports.Clear();
         }
-
     }
 }

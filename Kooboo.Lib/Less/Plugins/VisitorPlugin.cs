@@ -1,9 +1,8 @@
 ﻿namespace dotless.Core.Plugins
 {
-    using System;
+    using dotless.Core.Parser.Infrastructure;
     using Parser.Infrastructure.Nodes;
     using Parser.Tree;
-    using dotless.Core.Parser.Infrastructure;
 
     public abstract class VisitorPlugin : IVisitorPlugin, IVisitor
     {

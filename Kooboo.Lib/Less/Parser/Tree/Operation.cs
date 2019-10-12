@@ -1,10 +1,10 @@
 ﻿namespace dotless.Core.Parser.Tree
 {
-    using System;
     using Exceptions;
     using Infrastructure;
     using Infrastructure.Nodes;
     using Plugins;
+    using System;
 
     public class Operation : Node
     {
@@ -56,19 +56,23 @@
 
         public static double Operate(string op, double first, double second)
         {
-            if(op == "/" && second == 0)
+            if (op == "/" && second == 0)
                 throw new DivideByZeroException();
 
             switch (op)
             {
                 case "+":
                     return first + second;
+
                 case "-":
                     return first - second;
+
                 case "*":
                     return first * second;
+
                 case "/":
                     return first / second;
+
                 default:
                     throw new InvalidOperationException("Unknown operator");
             }

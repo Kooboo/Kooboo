@@ -1,6 +1,6 @@
-﻿using System;
-using Jint.Native.Object;
+﻿using Jint.Native.Object;
 using Jint.Runtime;
+using System;
 
 namespace Jint.Native.Number
 {
@@ -42,6 +42,5 @@ namespace Jint.Native.Number
         {
             return x == 0 && BitConverter.DoubleToInt64Bits(x) != NegativeZeroBits;
         }
-
     }
 }

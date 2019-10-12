@@ -1,20 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.ViewModel
 {
-  //public  class HtmlBlockViewModel
-  //  {
-  //      public string Name { get; set; }
+    //public  class HtmlBlockViewModel
+    //  {
+    //      public string Name { get; set; }
 
-  //      public Dictionary<string, string> Values { get; set; }
-  //  } 
-
+    //      public Dictionary<string, string> Values { get; set; }
+    //  }
 
     public class HtmlBlockItemViewModel
     {
@@ -44,11 +40,11 @@ namespace Kooboo.Web.ViewModel
         {
             get; set;
         }
+
         public Guid KeyHash { get; set; }
 
         public int StoreNameHash { get; set; }
 
         public Dictionary<string, int> Relations { get; set; }
     }
-
 }

@@ -1,9 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Definition;
-using Kooboo.Sites.DataSources;
-using System;
 using Kooboo.Data.Helper;
+using System;
 using System.Collections.Generic;
 
 namespace Kooboo.Sites.DataSources
@@ -52,12 +51,10 @@ namespace Kooboo.Sites.DataSources
 
                     filter.FieldValue = expression.Substring(nextindex).Trim();
                 }
-
             }
 
             return filter;
         }
-
 
         public static void CheckValueType(FilterDefinition filter)
         {
@@ -68,7 +65,6 @@ namespace Kooboo.Sites.DataSources
                     filter.FieldName = filter.FieldName.Trim('\'');
                     filter.IsNameValueType = true;
                 }
-
                 else if (filter.FieldName.StartsWith("\"") && filter.FieldName.EndsWith("\""))
                 {
                     filter.FieldName = filter.FieldName.Trim('"');
@@ -76,15 +72,13 @@ namespace Kooboo.Sites.DataSources
                 }
             }
 
-            if (filter.FieldValue !=null)
+            if (filter.FieldValue != null)
             {
-
                 if (filter.FieldValue.StartsWith("'") && filter.FieldValue.EndsWith("'"))
                 {
                     filter.FieldValue = filter.FieldValue.Trim('\'');
                     filter.IsValueValueType = true;
                 }
-
                 else if (filter.FieldValue.StartsWith("\"") && filter.FieldValue.EndsWith("\""))
                 {
                     filter.FieldValue = filter.FieldValue.Trim('"');
@@ -134,7 +128,6 @@ namespace Kooboo.Sites.DataSources
             {
                 return !Lib.Helper.StringHelper.IsSameValue(FieldValue, CompareValue);
             }
-
             else if (Comparer == Comparer.Contains)
             {
                 return FieldValue.Contains(CompareValue);
@@ -143,7 +136,6 @@ namespace Kooboo.Sites.DataSources
             {
                 return FieldValue.StartsWith(CompareValue);
             }
-
             else
             {
                 try
@@ -158,7 +150,6 @@ namespace Kooboo.Sites.DataSources
                             return ((IComparable)value).CompareTo((IComparable)tovale) > 0;
                         }
                     }
-
                     else if (Comparer == Comparer.GreaterThanOrEqual)
                     {
                         if (value != null && value is IComparable && tovale is IComparable)
@@ -190,6 +181,7 @@ namespace Kooboo.Sites.DataSources
         }
 
         private static List<string> _comparerlist;
+
         private static List<string> ComparerList
         {
             get
@@ -210,6 +202,5 @@ namespace Kooboo.Sites.DataSources
                 return _comparerlist;
             }
         }
-
     }
 }

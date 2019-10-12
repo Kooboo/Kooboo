@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System.Collections.Generic;
 using System.Linq;
@@ -11,11 +11,13 @@ namespace Kooboo.Sites.Contents.Models
     {
         public ContentType()
         {
-            this.ConstType = ConstObjectType.ContentType; 
+            this.ConstType = ConstObjectType.ContentType;
         }
+
         public bool IsNested { get; set; }
 
         private List<ContentProperty> _properties;
+
         public List<ContentProperty> Properties
         {
             get
@@ -34,17 +36,17 @@ namespace Kooboo.Sites.Contents.Models
         }
 
         public override int GetHashCode()
-        { 
-            string unique = this.IsNested.ToString(); 
-            if (_properties !=null)
+        {
+            string unique = this.IsNested.ToString();
+            if (_properties != null)
             {
                 foreach (var item in this.Properties)
                 {
-                    unique += item.GetHashCode().ToString(); 
+                    unique += item.GetHashCode().ToString();
                 }
             }
 
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }
 }

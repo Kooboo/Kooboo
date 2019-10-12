@@ -38,13 +38,13 @@ namespace Jint.Native.String
                 var l = (long)d;
                 return l >= int.MinValue && l <= int.MaxValue;
             }
-            else 
+            else
                 return false;
         }
 
         public override PropertyDescriptor GetOwnProperty(string propertyName)
         {
-            if(propertyName == "Infinity")
+            if (propertyName == "Infinity")
                 return PropertyDescriptor.Undefined;
 
             var desc = base.GetOwnProperty(propertyName);
@@ -60,7 +60,7 @@ namespace Jint.Native.String
 
             var str = PrimitiveValue;
             var dIndex = TypeConverter.ToInteger(propertyName);
-            if(!IsInt(dIndex))
+            if (!IsInt(dIndex))
                 return PropertyDescriptor.Undefined;
 
             var index = (int)dIndex;

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data.Definition;
@@ -33,14 +33,14 @@ namespace Kooboo.Web.Api.Implementation
         [Attributes.RequireModel(typeof(ContentType))]
         public override Guid Post(ApiCall call)
         {
-            ContentType value = (ContentType)call.Context.Request.Model; 
+            ContentType value = (ContentType)call.Context.Request.Model;
 
             EnsureSystemFields(value);
 
             ValidateReservedFields(value, call);
 
             call.WebSite.SiteDb().ContentTypes.AddOrUpdate(value, call.Context.User.Id);
-            return value.Id; 
+            return value.Id;
         }
 
         private void EnsureSystemFields(ContentType contenttype)
@@ -51,31 +51,31 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     item.MultipleLanguage = false;
                     item.DataType = Data.Definition.DataTypes.String;
-                    item.ControlType = ControlTypes.TextBox; 
+                    item.ControlType = ControlTypes.TextBox;
                     item.IsSystemField = true;
                 }
                 else if (item.Name.ToLower() == SystemFields.Sequence.Name.ToLower())
                 {
                     item.MultipleLanguage = SystemFields.Sequence.MultipleLanguage;
                     item.DataType = SystemFields.Sequence.DataType;
-                    item.ControlType = SystemFields.Sequence.ControlType; 
+                    item.ControlType = SystemFields.Sequence.ControlType;
                     item.IsSystemField = true;
                 }
                 else if (item.Name.ToLower() == SystemFields.Online.Name.ToLower())
                 {
                     item.MultipleLanguage = SystemFields.Online.MultipleLanguage;
                     item.DataType = SystemFields.Online.DataType;
-                    item.ControlType = SystemFields.Online.ControlType; 
+                    item.ControlType = SystemFields.Online.ControlType;
                     item.IsSystemField = true;
                 }
             }
 
-            // remove duplicate system fields... 
+            // remove duplicate system fields...
             List<ContentProperty> removeProp = new List<ContentProperty>();
 
             bool hasuserkey = false;
             bool hasseq = false;
-            bool hasonline = false; 
+            bool hasonline = false;
 
             foreach (var item in contenttype.Properties)
             {
@@ -83,11 +83,11 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     if (hasuserkey)
                     {
-                        removeProp.Add(item); 
+                        removeProp.Add(item);
                     }
-                    else { hasuserkey = true;  }
+                    else { hasuserkey = true; }
                 }
-               else  if (item.Name.ToLower() == SystemFields.Sequence .Name.ToLower())
+                else if (item.Name.ToLower() == SystemFields.Sequence.Name.ToLower())
                 {
                     if (hasseq)
                     {
@@ -95,7 +95,6 @@ namespace Kooboo.Web.Api.Implementation
                     }
                     else { hasseq = true; }
                 }
-
                 else if (item.Name.ToLower() == SystemFields.Online.Name.ToLower())
                 {
                     if (hasonline)
@@ -103,8 +102,8 @@ namespace Kooboo.Web.Api.Implementation
                         removeProp.Add(item);
                     }
                     else { hasonline = true; }
-                } 
-            } 
+                }
+            }
         }
 
         private void ValidateReservedFields(ContentType contentType, ApiCall call)
@@ -122,7 +121,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             if (call.ObjectId == default(Guid))
             {
-                // new... 
+                // new...
                 ContentType contentType = new ContentType();
                 contentType.Properties = new List<ContentProperty>{
                             SystemFields.UserKey,
@@ -134,28 +133,26 @@ namespace Kooboo.Web.Api.Implementation
             else
             {
                 var type = call.WebSite.SiteDb().ContentTypes.Get(call.ObjectId);
-                removeSystemField(type); 
-                return type; 
+                removeSystemField(type);
+                return type;
             }
         }
-         
+
         private void removeSystemField(ContentType type)
         {
             foreach (var item in SystemFields.ReservedFields)
             {
-                var find = type.Properties.Find(o => o.Name.ToLower() == item.ToLower()); 
-                if (find !=null)
+                var find = type.Properties.Find(o => o.Name.ToLower() == item.ToLower());
+                if (find != null)
                 {
-                    type.Properties.Remove(find); 
+                    type.Properties.Remove(find);
                 }
             }
 
-            // SET online field to boolean. 
+            // SET online field to boolean.
             var online = type.Properties.Find(o => o.Name == SystemFields.Online.Name);
 
-            online.ControlType = ControlTypes.Boolean; 
+            online.ControlType = ControlTypes.Boolean;
         }
-
-
     }
 }

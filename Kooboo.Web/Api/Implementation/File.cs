@@ -1,23 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
-using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
-using Kooboo.Sites.Relation;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
 using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-
 
 namespace Kooboo.Web.Api.Implementation
 {
-   public class FileApi : IApi
+    public class FileApi : IApi
     {
-
         public string ModelName
         {
             get
@@ -76,7 +71,7 @@ namespace Kooboo.Web.Api.Implementation
                 path = "/";
             }
 
-            FileOverViewModel model = new FileOverViewModel(); 
+            FileOverViewModel model = new FileOverViewModel();
 
             model.Folders = GetFolders(call.WebSite.SiteDb(), path);
 
@@ -85,7 +80,7 @@ namespace Kooboo.Web.Api.Implementation
             model.CrumbPath = PathService.GetCrumbPath(path);
 
             return model;
-        } 
+        }
 
         private List<FileFolderViewModel> GetFolders(SiteDb siteDb, string path)
         {
@@ -96,7 +91,7 @@ namespace Kooboo.Web.Api.Implementation
             foreach (var item in SubFolders)
             {
                 FileFolderViewModel model = new FileFolderViewModel();
-                // model.Id = path; 
+                // model.Id = path;
                 model.Name = item.Segment;
                 model.FullPath = item.FullPath;
                 model.Count = siteDb.Folders.GetFolderObjects<CmsFile>(item.FullPath, true, false).Count +
@@ -110,8 +105,8 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         private List<FileItemViewModel> GetFiles(SiteDb siteDb, string path)
-        { 
-            string baseurl = siteDb.WebSite.BaseUrl(); 
+        {
+            string baseurl = siteDb.WebSite.BaseUrl();
 
             List<CmsFile> files = siteDb.Folders.GetFolderObjects<CmsFile>(path, true);
 
@@ -120,24 +115,24 @@ namespace Kooboo.Web.Api.Implementation
             foreach (var item in files)
             {
                 FileItemViewModel model = new FileItemViewModel();
-                model.Id = item.Id; 
+                model.Id = item.Id;
                 model.Size = item.Size;
                 model.Name = item.Name;
-                model.LastModified = item.LastModified; 
+                model.LastModified = item.LastModified;
                 model.Url = ObjectService.GetObjectRelativeUrl(siteDb, item);
                 model.PreviewUrl = Lib.Helper.UrlHelper.Combine(baseurl, model.Url);
 
-                model.Relations = Sites.Helper.RelationHelper.Sum(siteDb.Files.GetUsedBy(item.Id)); 
-                  
+                model.Relations = Sites.Helper.RelationHelper.Sum(siteDb.Files.GetUsedBy(item.Id));
+
                 Result.Add(model);
             }
             return Result;
         }
-         
+
         [Kooboo.Attributes.RequireModel(typeof(List<string>))]
         public void DeleteFolders(ApiCall call)
-        { 
-            List<string> FolderFullPaths = call.Context.Request.Model as List<string>;   
+        {
+            List<string> FolderFullPaths = call.Context.Request.Model as List<string>;
             foreach (var item in FolderFullPaths)
             {
                 call.WebSite.SiteDb().Folders.Delete(item, ConstObjectType.CmsFile);
@@ -146,7 +141,7 @@ namespace Kooboo.Web.Api.Implementation
 
         [Kooboo.Attributes.RequireModel(typeof(List<Guid>))]
         public void DeleteFiles(ApiCall call)
-        {  
+        {
             List<Guid> FileIds = call.Context.Request.Model as List<Guid>;
             foreach (var item in FileIds)
             {

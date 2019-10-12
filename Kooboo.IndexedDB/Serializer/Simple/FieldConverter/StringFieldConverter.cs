@@ -1,23 +1,19 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
-   public class StringFieldConverter<T> : IFieldConverter<T>
+    public class StringFieldConverter<T> : IFieldConverter<T>
     {
-        Func<T, string> getValue;
-        Action<T, string> setValue;
+        private Func<T, string> getValue;
+        private Action<T, string> setValue;
 
         public StringFieldConverter(string FieldName)
         {
             this.getValue = ObjectHelper.GetGetValue<T, string>(FieldName);
-            this.setValue = ObjectHelper.GetSetValue<T, string>(FieldName); 
+            this.setValue = ObjectHelper.GetSetValue<T, string>(FieldName);
             this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
         }
 
@@ -25,7 +21,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         {
             get
             {
-                return 0; 
+                return 0;
             }
         }
 
@@ -33,11 +29,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         {
             get; set;
         }
-  
+
         public void SetByteValues(T value, byte[] bytes)
         {
             string fieldvalue = GlobalSettings.DefaultEncoding.GetString(bytes).TrimEnd('\0');
-            setValue(value, fieldvalue); 
+            setValue(value, fieldvalue);
         }
 
         public byte[] ToBytes(T value)
@@ -48,16 +44,14 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             {
                 return null;
             }
-            return GlobalSettings.DefaultEncoding.GetBytes(fieldvalue); 
-        } 
+            return GlobalSettings.DefaultEncoding.GetBytes(fieldvalue);
+        }
     }
-
-    
 
     public class StringFieldConverter : IFieldConverter
     {
-        Func<object, string> getValue;
-        Action<object, string> setValue;
+        private Func<object, string> getValue;
+        private Action<object, string> setValue;
 
         public StringFieldConverter(string FieldName, Type ObjectType)
         {
@@ -95,7 +89,5 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             }
             return GlobalSettings.DefaultEncoding.GetBytes(fieldvalue);
         }
-         
     }
-
 }

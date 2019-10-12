@@ -1,27 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Api;
-using Kooboo.Api.ApiResponse;
+﻿using Kooboo.Api.ApiResponse;
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
-using Kooboo.Web.Payment;
-using Kooboo.Web.Payment.Methods;
 using Kooboo.Web.Payment.Models;
+using System;
+using System.Collections.Generic;
 using WxPayAPI;
 
 namespace Kooboo.Web.Payment.Methods
 {
     public class WeChatNative : PaymentMethodBase<WeChatSetting>
-    { 
+    {
         public override string Name => "wechat";
 
         public override string DisplayName => Data.Language.Hardcoded.GetValue("wechat");
 
         public override string Icon => "/_Admin/View/Market/Images/payment-wechat.jpg";
-         
 
         public override List<string> ForCurrency
         {
@@ -33,16 +26,16 @@ namespace Kooboo.Web.Payment.Methods
             }
         }
 
-        public override IPaymentResponse MakePayment(PaymentRequest request, RenderContext Context)  
-        {  
+        public override IPaymentResponse MakePayment(PaymentRequest request, RenderContext Context)
+        {
             WxPayData data = new WxPayData();
 
-            var setting = this.GetSetting(Context); 
+            var setting = this.GetSetting(Context);
             if (setting == null)
             {
-                return null; 
+                return null;
             }
-           
+
             data.SetValue("body", request.Name);
             if (request.Description != null)
             {
@@ -58,7 +51,7 @@ namespace Kooboo.Web.Payment.Methods
             //    amount = Currency.ExConverter.To(amount, request.Currency, "CNY");
             //}
 
-            amount = amount * 100;  // convert to cents. 
+            amount = amount * 100;  // convert to cents.
 
             data.SetValue("total_fee", (int)amount);//总金额
             data.SetValue("time_start", DateTime.Now.ToString("yyyyMMddHHmmss"));//交易起始时间
@@ -70,11 +63,10 @@ namespace Kooboo.Web.Payment.Methods
 
             data.SetValue("product_id", request.Id.ToString("N"));//商品ID
 
-
             //异步通知url未设置，则使用配置文件中的url
             // string notifurl = Manager.GetCallbackUrl(this, "Notify", site);
 
-            string notifurl = this.GetCallbackUrl(nameof(Notify), Context);  
+            string notifurl = this.GetCallbackUrl(nameof(Notify), Context);
 
             data.SetValue("notify_url", notifurl); //异步通知url
 
@@ -88,9 +80,7 @@ namespace Kooboo.Web.Payment.Methods
             }
 
             return new QRCodeResponse(url, request.Id);
-
         }
-
 
         public PaymentCallback Notify(RenderContext context)
         {
@@ -106,7 +96,6 @@ namespace Kooboo.Web.Payment.Methods
             {
                 result.RawData = postdata;
             }
-
 
             WxPayData data = new WxPayData();
             try
@@ -131,7 +120,6 @@ namespace Kooboo.Web.Payment.Methods
 
             //  Log.Info(this.GetType().ToString(), "Check sign success");
             // return data;
-
 
             //检查支付结果中transaction_id是否存在
             if (!data.IsSet("transaction_id"))
@@ -203,9 +191,7 @@ namespace Kooboo.Web.Payment.Methods
                 result.IsCancel = IsCancel;
                 return result;
             }
-
         }
-
 
         [Obsolete]
         public IPaymentResponse GetPaymentStatus(RenderContext context)
@@ -213,21 +199,21 @@ namespace Kooboo.Web.Payment.Methods
             Guid paymentRequestId;
             if (Guid.TryParse(context.Request.GetValue("paymentRequestId"), out paymentRequestId))
             {
-                var request = this.GetRequest(paymentRequestId, context); 
-                if (request !=null)
+                var request = this.GetRequest(paymentRequestId, context);
+                if (request != null)
                 {
-                    //return EnquireStatus(request, context); 
+                    //return EnquireStatus(request, context);
                 }
             }
 
-            return null; 
+            return null;
         }
-  
+
         public override PaymentStatusResponse EnquireStatus(PaymentRequest request, RenderContext context)
         {
             PaymentStatusResponse result = new PaymentStatusResponse();
 
-            var setting = this.GetSetting(context); 
+            var setting = this.GetSetting(context);
 
             if (request == null || request.Id == default(Guid) || setting == null)
             {
@@ -255,17 +241,13 @@ namespace Kooboo.Web.Payment.Methods
                     {
                         result.IsCancel = true;
                     }
-
                 }
             }
             catch (Exception ex)
             {
-
             }
 
             return result;
         }
-
     }
-
 }

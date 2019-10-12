@@ -1,19 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
-using Kooboo.Events.Cms;
-using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Authorization.Model;
+using Kooboo.Sites.Contents.Models;
+using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
+using Kooboo.Sites.Routing;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Contents.Models;
-using Kooboo.Sites.Routing;
-using Kooboo.Sites.Authorization.Model;
 
 namespace Kooboo.Sites.Cache
 {
@@ -31,8 +25,8 @@ namespace Kooboo.Sites.Cache
 
             //    //foreach (var item in PageRenderPlan.Where(o => o.Key.StartsWith(id)))
             //    //{
-            //    //    pagekeys.Add(item.Key); 
-            //    //} 
+            //    //    pagekeys.Add(item.Key);
+            //    //}
             //    foreach (var item in pagekeys)
             //    {
             //        PageRenderPlan.Remove(item);
@@ -41,8 +35,8 @@ namespace Kooboo.Sites.Cache
             //    var layoutkeys = LayoutRenderPlan.Where(o => o.Key.StartsWith(id)).Select(o => o.Key).ToList();
             //    //foreach (var item in LayoutRenderPlan.Where(o => o.Key.StartsWith(id)))
             //    //{
-            //    //    LayoutRenderPlan.Remove(item.Key); 
-            //    //} 
+            //    //    LayoutRenderPlan.Remove(item.Key);
+            //    //}
             //    foreach (var item in layoutkeys)
             //    {
             //        LayoutRenderPlan.Remove(item);
@@ -51,7 +45,7 @@ namespace Kooboo.Sites.Cache
             //    var viewkeys = ViewRenderPlan.Where(o => o.Key.StartsWith(id)).Select(o => o.Key).ToList();
             //    //foreach (var item in ViewRenderPlan.Where(o => o.Key.StartsWith(id)))
             //    //{
-            //    //    ViewRenderPlan.Remove(item.Key); 
+            //    //    ViewRenderPlan.Remove(item.Key);
             //    //}
             //    foreach (var item in viewkeys)
             //    {
@@ -88,12 +82,12 @@ namespace Kooboo.Sites.Cache
 
         public static void SetNull(Guid SiteId)
         {
-            _SiteDbs[SiteId] = null;   
+            _SiteDbs[SiteId] = null;
         }
 
         public static void RemoveNull(Guid SiteId)
         {
-            _SiteDbs.Remove(SiteId); 
+            _SiteDbs.Remove(SiteId);
         }
 
         public static void Remove(SiteDb sitedb)
@@ -115,25 +109,20 @@ namespace Kooboo.Sites.Cache
             Cache.SiteObjectCache<KConfig>.RemoveSiteDb(sitedb.Id);
             Cache.SiteObjectCache<Code>.RemoveSiteDb(sitedb.Id);
 
-
-
             //    || TValueType == typeof(ContentCategory)
             //    || TValueType == typeof(SiteCluster)
             //    || TValueType == typeof(Code)
             //    || TValueType == typeof(KConfig)
 
-
-            Cache.SiteObjectCache<Page>.RemoveSiteDb(sitedb.Id);  
+            Cache.SiteObjectCache<Page>.RemoveSiteDb(sitedb.Id);
             Cache.SiteObjectCache<Route>.RemoveSiteDb(sitedb.Id);
             Cache.SiteObjectCache<HtmlBlock>.RemoveSiteDb(sitedb.Id);
             Cache.SiteObjectCache<Style>.RemoveSiteDb(sitedb.Id);
             Cache.SiteObjectCache<Script>.RemoveSiteDb(sitedb.Id);
-            Cache.SiteObjectCache<Image>.RemoveSiteDb(sitedb.Id); 
-             
+            Cache.SiteObjectCache<Image>.RemoveSiteDb(sitedb.Id);
 
             _SiteDbs.Remove(sitedb.WebSite.Id);
         }
-
 
         public static bool EnableCache(WebSite website, Type TValueType)
         {
@@ -173,6 +162,5 @@ namespace Kooboo.Sites.Cache
 
             return false;
         }
-
     }
 }

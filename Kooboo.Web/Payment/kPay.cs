@@ -1,8 +1,5 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Web.Payment
 {
@@ -13,9 +10,9 @@ namespace Kooboo.Web.Payment
         public RenderContext context { get; set; }
 
         public KPaymentMethod this[string key]
-        { 
+        {
             get
-            { 
+            {
                 var paymentmethod = Kooboo.Web.Payment.PaymentManager.GetMethod(key);
                 if (paymentmethod != null)
                 {
@@ -24,13 +21,9 @@ namespace Kooboo.Web.Payment
                     method.PaymentMethod = paymentmethod;
                     return method;
                 }
-                return null; 
+                return null;
             }
             set { }
         }
-
     }
-
-
-
 }

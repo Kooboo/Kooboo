@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 
@@ -16,15 +16,15 @@ namespace Kooboo.Lib.CrossPlatform
             {
                 if (_image == null)
                 {
-                    lock(_lock)
+                    lock (_lock)
                     {
                         if (_image == null)
                         {
                             _image = CreateInstance<IImage>();
                         }
-                    } 
+                    }
                 }
-                return _image;  
+                return _image;
             }
         }
 
@@ -43,15 +43,14 @@ namespace Kooboo.Lib.CrossPlatform
 
                 if (target == null)
                 {
-                    target = instance; 
+                    target = instance;
                 }
                 else if (instance.Priority > target.Priority)
                 {
                     target = instance;
-                } 
+                }
             }
             return target;
         }
-
     }
 }

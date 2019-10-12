@@ -11,10 +11,10 @@ namespace Kooboo.App
 {
     public class KoobooAutoStart
     {
-        private readonly static string _taskName = "KoobooApp";
-        private readonly static string _firstBoot = "FirstBoot";
-        private readonly static string _path = System.Windows.Forms.Application.ExecutablePath;
-        private readonly static string _dir = Path.GetDirectoryName(_path);
+        private static readonly string _taskName = "KoobooApp";
+        private static readonly string _firstBoot = "FirstBoot";
+        private static readonly string _path = System.Windows.Forms.Application.ExecutablePath;
+        private static readonly string _dir = Path.GetDirectoryName(_path);
 
         public static bool IsFirstBoot()
         {
@@ -79,8 +79,8 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
     </Exec>
   </Actions>
 </Task>";
-                    var dir = System.IO.Path.Combine(Kooboo.Data.AppSettings.RootPath, "AppData");
-                    Kooboo.Lib.Helper.IOHelper.EnsureDirectoryExists(dir);
+                    var dir = Path.Combine(Kooboo.Data.AppSettings.RootPath, "AppData");
+                    Lib.Helper.IOHelper.EnsureDirectoryExists(dir);
 
                     string path = Path.Combine(dir, "task.xml");
                     File.WriteAllText(path, taskConfig);
@@ -96,6 +96,7 @@ $@"<?xml version=""1.0"" encoding=""utf-16""?>
             }
             catch (Exception)
             {
+                // ignored
             }
         }
 

@@ -1,53 +1,48 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Routing;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Cache
 {
-   public static class RouteTreeCache
+    public static class RouteTreeCache
     {
         private static Dictionary<string, PathTree> _RouteTree = new Dictionary<string, PathTree>();
 
-        private static Dictionary<Guid, Dictionary<byte, PathTree>> SiteTypeRouteTrees = new Dictionary<Guid, Dictionary<byte, PathTree>>(); 
+        private static Dictionary<Guid, Dictionary<byte, PathTree>> SiteTypeRouteTrees = new Dictionary<Guid, Dictionary<byte, PathTree>>();
 
         private static object _object = new object();
 
         public static PathTree RouteTree(SiteDb sitedb, byte ConstType = 0)
         {
-
-            lock(_object)
+            lock (_object)
             {
-                Dictionary<byte, PathTree> sitetree; 
+                Dictionary<byte, PathTree> sitetree;
                 if (SiteTypeRouteTrees.ContainsKey(sitedb.Id))
                 {
-                    sitetree = SiteTypeRouteTrees[sitedb.Id]; 
+                    sitetree = SiteTypeRouteTrees[sitedb.Id];
                 }
                 else
                 {
                     sitetree = new Dictionary<byte, PathTree>();
-                    SiteTypeRouteTrees[sitedb.Id] = sitetree; 
+                    SiteTypeRouteTrees[sitedb.Id] = sitetree;
                 }
 
-                PathTree pathtree; 
+                PathTree pathtree;
 
                 if (sitetree.ContainsKey(ConstType))
                 {
-                    pathtree = sitetree[ConstType]; 
+                    pathtree = sitetree[ConstType];
                 }
                 else
                 {
                     pathtree = GetRouteTree(sitedb, ConstType);
-                    sitetree[ConstType] = pathtree; 
+                    sitetree[ConstType] = pathtree;
                 }
-                return pathtree; 
-            } 
-          
+                return pathtree;
+            }
         }
 
         private static PathTree GetRouteTree(SiteDb db, byte ObjectType = 0)
@@ -66,7 +61,7 @@ namespace Kooboo.Sites.Cache
                 tree.AddOrUpdate(item);
             }
 
-            // append system routes... 
+            // append system routes...
             //if (ObjectType == 0)
             //{
             //    var systemroutes = Kooboo.Sites.Systems.Routes.DefaultRoutes();
@@ -80,10 +75,10 @@ namespace Kooboo.Sites.Cache
 
             return tree;
         }
-         
+
         public static void RemoveSiteDb(Guid id)
         {
-            SiteTypeRouteTrees.Remove(id); 
+            SiteTypeRouteTrees.Remove(id);
         }
     }
 }

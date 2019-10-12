@@ -1,20 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
-using Kooboo.Sites.Scripting;
-using System.Linq;
-using System.Collections.Generic;
 using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Repository;
 using Kooboo.Sites.Render.Components;
-using System.Collections;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.Scripting;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Sites.FrontEvent
 {
     public static class Manager
     {
-
         public static Kooboo.Sites.Routing.Route RaiseRouteEvent(enumEventType eventtype, RenderContext context, Kooboo.Sites.Routing.Route route = null)
         {
             if (eventtype == enumEventType.RouteFinding)
@@ -105,20 +103,18 @@ namespace Kooboo.Sites.FrontEvent
             return null;
         }
 
-
-
         public static void RaiseEvent(RenderContext context, IFrontEvent theevent)
         {
-            var sitedb = context.WebSite.SiteDb(); 
+            var sitedb = context.WebSite.SiteDb();
             var list = sitedb.Rules.ListByEventType(theevent.EventType);
 
             if (list == null || list.Count() == 0)
             {
                 return;
-            } 
+            }
             RaiseEvent(context, theevent, list);
         }
-         
+
         public static void RaiseEvent(RenderContext context, IFrontEvent theevent, List<Sites.Models.BusinessRule> rules)
         {
             var sitedb = context.WebSite.SiteDb();
@@ -131,15 +127,14 @@ namespace Kooboo.Sites.FrontEvent
             {
                 if (item.Rule != null)
                 {
-                    ExecuteRule(sitedb,   kcontext, theevent, item.Rule);
+                    ExecuteRule(sitedb, kcontext, theevent, item.Rule);
                 }
             }
 
             kcontext.@event = null;
         }
 
-
-        public static void ExecuteRule(SiteDb sitedb,   Kooboo.Sites.Scripting.k kcontext, IFrontEvent theevent, Kooboo.Sites.Models.IFElseRule rule)
+        public static void ExecuteRule(SiteDb sitedb, Kooboo.Sites.Scripting.k kcontext, IFrontEvent theevent, Kooboo.Sites.Models.IFElseRule rule)
         {
             if (rule.Do != null && rule.Do.Count() > 0)
             {
@@ -150,11 +145,11 @@ namespace Kooboo.Sites.FrontEvent
                     {
                         kcontext.config = CopySetting(item.Setting);
 
-                        var outputstring = Kooboo.Sites.Scripting.Manager.ExecuteCode(kcontext.RenderContext, code.Body, code.Id); 
-                        
+                        var outputstring = Kooboo.Sites.Scripting.Manager.ExecuteCode(kcontext.RenderContext, code.Body, code.Id);
+
                         if (!string.IsNullOrEmpty(outputstring))
                         {
-                            kcontext.RenderContext.Response.AppendString(outputstring); 
+                            kcontext.RenderContext.Response.AppendString(outputstring);
                         }
                         kcontext.config = null;
                     }
@@ -171,7 +166,7 @@ namespace Kooboo.Sites.FrontEvent
                     {
                         foreach (var item in rule.Then)
                         {
-                            ExecuteRule(sitedb,   kcontext, theevent, item);
+                            ExecuteRule(sitedb, kcontext, theevent, item);
                         }
                     }
                 }
@@ -181,19 +176,17 @@ namespace Kooboo.Sites.FrontEvent
                     {
                         foreach (var item in rule.Else)
                         {
-                            ExecuteRule(sitedb,   kcontext, theevent, item);
+                            ExecuteRule(sitedb, kcontext, theevent, item);
                         }
                     }
                 }
             }
-
             else if (rule.Then != null && rule.Then.Count > 0)
             {
-
                 foreach (var item in rule.Then)
                 {
-                    ExecuteRule(sitedb,   kcontext, theevent, item);
-                } 
+                    ExecuteRule(sitedb, kcontext, theevent, item);
+                }
             }
         }
 
@@ -208,15 +201,13 @@ namespace Kooboo.Sites.FrontEvent
             }
             return true;
         }
-         
- 
+
         public static List<EventConditionSetting> GetConditionSetting(enumEventType eventype, RenderContext context)
         {
             var alltypes = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(typeof(IFrontEvent));
 
             foreach (var item in alltypes)
             {
-
                 if (System.Activator.CreateInstance(item) is IFrontEvent instance && instance.EventType == eventype)
                 {
                     return instance.GetConditionSetting(context);
@@ -227,20 +218,17 @@ namespace Kooboo.Sites.FrontEvent
         }
 
         public static Dictionary<string, string> CopySetting(Dictionary<string, string> input)
-        {   
+        {
             if (input == null || !input.Any())
             {
-                return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); 
+                return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             }
-            
+
             var comparer = StringComparer.OrdinalIgnoreCase;
 
             var newDictionary = new Dictionary<string, string>(input, comparer);
 
-            return newDictionary; 
-           
+            return newDictionary;
         }
-
     }
 }
-

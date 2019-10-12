@@ -1,21 +1,19 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using Kooboo.Extensions;
 
 namespace Kooboo.Sites.Models
 {
-  public  class CmsCssDeclaration : SiteObject
+    public class CmsCssDeclaration : SiteObject
     {
+        public CmsCssDeclaration()
+        {
+            this.ConstType = ConstObjectType.CssDeclaration;
+        }
 
-      public CmsCssDeclaration()
-      {
-          this.ConstType = ConstObjectType.CssDeclaration;
-      }
+        private Guid _id;
 
-      private Guid _id;
-      
-      public override Guid Id
+        public override Guid Id
         {
             set { _id = value; }
             get
@@ -28,42 +26,41 @@ namespace Kooboo.Sites.Models
             }
         }
 
-      public Guid CmsCssRuleId { get; set; }
-           
-      private string _propertyname;
+        public Guid CmsCssRuleId { get; set; }
 
-      public string PropertyName
-      {
-          get
-          {
-              return _propertyname;
-          }
-          set
-          {
-              _propertyname = value;
+        private string _propertyname;
 
-              if (!string.IsNullOrEmpty(_propertyname))
-              {
-                  _propertyname = _propertyname.ToLower(); 
-              } 
-          }
-      }
+        public string PropertyName
+        {
+            get
+            {
+                return _propertyname;
+            }
+            set
+            {
+                _propertyname = value;
 
-      public string Value { get; set; }
+                if (!string.IsNullOrEmpty(_propertyname))
+                {
+                    _propertyname = _propertyname.ToLower();
+                }
+            }
+        }
 
-      public bool Important { get; set; }
+        public string Value { get; set; }
 
-      /// <summary>
-      /// redundancy
-      /// </summary>
-      public Guid ParentStyleId { get; set; } 
-  
-      public override int GetHashCode()
-      {
-          string unique = this.PropertyName + this.Value + this.Important.ToString();
+        public bool Important { get; set; }
 
-          return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
-      }
+        /// <summary>
+        /// redundancy
+        /// </summary>
+        public Guid ParentStyleId { get; set; }
 
+        public override int GetHashCode()
+        {
+            string unique = this.PropertyName + this.Value + this.Important.ToString();
+
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
+        }
     }
 }

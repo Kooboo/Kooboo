@@ -1,30 +1,30 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace Kooboo.Lib.Helper
 {
-  public static  class JsonHelper
+    public static class JsonHelper
     {
-        private static JsonSerializerSettings camelsetting  = new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+        private static JsonSerializerSettings camelsetting = new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
         public static string Serialize(object Model)
         {
-            return  JsonConvert.SerializeObject(Model, Formatting.Indented, camelsetting);  
+            return JsonConvert.SerializeObject(Model, Formatting.Indented, camelsetting);
         }
 
         public static string SerializeCaseSensitive(object model)
         {
-            return JsonConvert.SerializeObject(model, Formatting.Indented); 
+            return JsonConvert.SerializeObject(model, Formatting.Indented);
         }
 
-        public static string SerializeCaseSensitive(object model,params JsonConverter[] jsonConverters)
+        public static string SerializeCaseSensitive(object model, params JsonConverter[] jsonConverters)
         {
             return JsonConvert.SerializeObject(model, Formatting.Indented, jsonConverters);
         }
@@ -33,18 +33,18 @@ namespace Kooboo.Lib.Helper
         {
             if (json[0] == 65279)
             {
-                json = json.Substring(1); 
+                json = json.Substring(1);
             }
-            return JsonConvert.DeserializeObject<T>(json, camelsetting); 
-        } 
+            return JsonConvert.DeserializeObject<T>(json, camelsetting);
+        }
 
         public static JObject DeserializeJObject(string json)
         {
             if (json[0] == 65279)
             {
                 json = json.Substring(1);
-            } 
-            return (JObject)JsonConvert.DeserializeObject(json); 
+            }
+            return (JObject)JsonConvert.DeserializeObject(json);
         }
 
         public static object DeserialzeBaseObject(string json)
@@ -53,7 +53,7 @@ namespace Kooboo.Lib.Helper
             {
                 json = json.Substring(1);
             }
-            return  JsonConvert.DeserializeObject(json);
+            return JsonConvert.DeserializeObject(json);
         }
 
         public static object DeserializeObject(string json)
@@ -63,45 +63,44 @@ namespace Kooboo.Lib.Helper
                 json = json.Substring(1);
             }
 
-            return  JsonConvert.DeserializeObject(json);
+            return JsonConvert.DeserializeObject(json);
         }
-          
-        public static object  Deserialize(string json)
+
+        public static object Deserialize(string json)
         {
             if (json[0] == 65279)
             {
                 json = json.Substring(1);
             }
 
-            return  JsonConvert.DeserializeObject(json);
+            return JsonConvert.DeserializeObject(json);
         }
-
 
         public static object Deserialize(string json, Type type)
         {
-           if (json[0] == 65279)
+            if (json[0] == 65279)
             {
-                json = json.Substring(1); 
+                json = json.Substring(1);
             }
             return JsonConvert.DeserializeObject(json, type);
         }
 
         public static string GetString(JObject jobject, string memberName)
         {
-            var token = GetObject(jobject, memberName); 
-            if (token==null)
+            var token = GetObject(jobject, memberName);
+            if (token == null)
             {
-                return null; 
+                return null;
             }
             else
-            { return token.ToString();  }
+            { return token.ToString(); }
         }
 
         public static Object GetObject(JObject jobject, string memberName)
         {
             if (jobject == null)
             {
-                return null; 
+                return null;
             }
             var token = jobject[memberName];
             if (token == null)
@@ -116,17 +115,17 @@ namespace Kooboo.Lib.Helper
                     }
                 }
             }
-            return token;  
+            return token;
         }
- 
+
         public static bool IsJson(string input)
         {
             if (input == null)
             {
-                return false;  
+                return false;
             }
 
-            return JsonValidatorTool.JsonValidator.IsJson(input); 
+            return JsonValidatorTool.JsonValidator.IsJson(input);
         }
     }
 
@@ -154,7 +153,7 @@ namespace Kooboo.Lib.Helper
             else
             {
                 //ensure int not be converted to double
-                if(int.TryParse(value.ToString(), out var intvalue))
+                if (int.TryParse(value.ToString(), out var intvalue))
                 {
                     writer.WriteValue(intvalue);
                 }
@@ -162,17 +161,13 @@ namespace Kooboo.Lib.Helper
                 {
                     writer.WriteValue(value);
                 }
-                
             }
-            
         }
     }
 }
- 
- 
+
 namespace JsonValidatorTool
 {
-
     internal sealed class JsonChecker
     {
         private int _state;
@@ -284,7 +279,6 @@ namespace JsonValidatorTool
         private const int N3 = 29;  /* null     */
         private const int NR_STATES = 30;
 
-
         private static readonly int[,] state_transition_table = new int[NR_STATES, NR_CLASSES]
         {
         /*
@@ -342,7 +336,9 @@ namespace JsonValidatorTool
 
         public const int NoDepthLimit = 0;
 
-        public JsonChecker() : this(NoDepthLimit) { }
+        public JsonChecker() : this(NoDepthLimit)
+        {
+        }
 
         public JsonChecker(int depth)
         {
@@ -444,10 +440,12 @@ namespace JsonValidatorTool
                             case Mode.Key:
                                 _state = CO;
                                 break;
+
                             case Mode.Array:
                             case Mode.Object:
                                 _state = OK;
                                 break;
+
                             default:
                                 OnError();
                                 break;
@@ -466,9 +464,11 @@ namespace JsonValidatorTool
                                 Push(Mode.Key);
                                 _state = KE;
                                 break;
+
                             case Mode.Array:
                                 _state = VA;
                                 break;
+
                             default:
                                 OnError();
                                 break;
@@ -548,7 +548,6 @@ namespace JsonValidatorTool
         /// <param name="message">Message.</param>
         public JsonNotValidException(string message) : base(message)
         {
-
         }
     }
 
@@ -594,10 +593,9 @@ namespace JsonValidatorTool
             {
                 return false;
             }
-
         }
 
-        static void ValidateJson(IEnumerable<char> chars, int? depth = null)
+        private static void ValidateJson(IEnumerable<char> chars, int? depth = null)
         {
             var checker = depth.HasValue ? new JsonChecker(depth.Value) : new JsonChecker();
             foreach (char ch in chars)
@@ -607,7 +605,7 @@ namespace JsonValidatorTool
             checker.FinalCheck();
         }
 
-        static IEnumerable<char> ReadChars(TextReader reader)
+        private static IEnumerable<char> ReadChars(TextReader reader)
         {
             int ch = reader.Read();
             while (ch != -1)
@@ -623,6 +621,3 @@ namespace JsonValidatorTool
         }
     }
 }
-
-
-

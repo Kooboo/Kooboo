@@ -1,14 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Sites.Models;
+using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
+using Kooboo.Data.Models;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Models;
+using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Api;
-using Kooboo.Sites.Extensions;
-using Kooboo.Web.ViewModel;
-using Kooboo.Data.Models;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -59,13 +59,12 @@ namespace Kooboo.Web.Api.Implementation
                     string text = call.GetValue("Value");
                     sub.Name = text;
                     sub.Values[call.WebSite.DefaultCulture] = text;
-                     
+
                     call.WebSite.SiteDb().Menus.AddOrUpdate(root, call.Context.User.Id);
                     return true;
                 }
             }
             return false;
-
         }
 
         [Kooboo.Attributes.RequireParameters("Id", "RootId", "Url")]
@@ -90,7 +89,6 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
             return false;
-
         }
 
         //[Kooboo.Attributes.RequireParameters("Id", "RootId", "SubItemTemplate", "SubItemContainer")]
@@ -125,7 +123,6 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
             return false;
-
         }
 
         [Kooboo.Attributes.RequireParameters("Id", "RootId")]
@@ -162,7 +159,6 @@ namespace Kooboo.Web.Api.Implementation
                         Values[call.WebSite.DefaultCulture] = sub.Name;
                     }
                 }
-
             }
             return Values;
         }
@@ -198,7 +194,6 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
             return null;
-
         }
 
         public override List<object> List(ApiCall call)
@@ -228,19 +223,17 @@ namespace Kooboo.Web.Api.Implementation
 
             if (!string.IsNullOrEmpty(Name))
             {
-
                 var old = sitedb.Menus.GetByNameOrId(Name);
                 if (old != null)
                 {
                     throw new Exception(Data.Language.Hardcoded.GetValue("Name already exists", call.Context));
-
                 }
 
                 var menu = new Menu();
                 menu.Name = Name;
                 sitedb.Menus.AddOrUpdate(menu);
                 return menu;
-            } 
+            }
             return null;
         }
 
@@ -248,7 +241,6 @@ namespace Kooboo.Web.Api.Implementation
         {
             return base.IsUniqueName(call);
         }
-
 
         [Kooboo.Attributes.RequireParameters("ParentId", "RootId", "Name", "Url")]
         public Menu CreateSub(ApiCall call)
@@ -276,9 +268,7 @@ namespace Kooboo.Web.Api.Implementation
                         call.WebSite.SiteDb().Menus.AddOrUpdate(root, call.Context.User.Id);
                         return Submenu;
                     }
-
                 }
-
             }
             return null;
         }
@@ -344,7 +334,6 @@ namespace Kooboo.Web.Api.Implementation
         [Kooboo.Attributes.RequireParameters("Id", "RootId")]
         public override bool Delete(ApiCall call)
         {
-
             string strrootid = call.GetValue("rootid");
             string strid = call.GetValue("id");
 
@@ -391,7 +380,6 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             return false;
-
         }
 
         private SiteMenuItemViewModel ToViewModel(Menu menu, WebSite site)
@@ -417,6 +405,6 @@ namespace Kooboo.Web.Api.Implementation
             Guid idb = call.GetGuidValue("idb");
 
             call.WebSite.SiteDb().Menus.Swap(rootid, ida, idb, call.Context.User.Id);
-        } 
+        }
     }
 }

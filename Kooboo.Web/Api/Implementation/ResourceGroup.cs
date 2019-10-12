@@ -1,12 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Api;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Sites.Extensions;
-using Kooboo.Api;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -55,21 +55,20 @@ namespace Kooboo.Web.Api.Implementation
                 newitem.Type = item.Type;
                 newitem.LastModified = item.LastModified;
                 newitem.ChildrenCount = item.Children.Count();
-                 
+
                 var usedby = sitedb.ResourceGroups.GetUsedBy(item.Id);
                 newitem.References = Sites.Helper.RelationHelper.Sum(usedby);
                 var route = sitedb.Routes.GetByObjectId(item.Id);
                 if (route != null)
                 {
-                    newitem.RelativeUrl = route.Name; 
-                } 
+                    newitem.RelativeUrl = route.Name;
+                }
                 else
                 {
                     newitem.RelativeUrl = PreviewTemplate.Replace("{nameorid}", item.Name);
                 }
                 newitem.PreviewUrl = Lib.Helper.UrlHelper.Combine(sitebaseurl, newitem.RelativeUrl);
                 result.Add(newitem);
-
             }
             return result;
         }
@@ -100,14 +99,14 @@ namespace Kooboo.Web.Api.Implementation
                 var route = sitedb.Routes.GetByObjectId(item.Id);
                 if (route != null)
                 {
-                    newitem.RelativeUrl = route.Name; 
+                    newitem.RelativeUrl = route.Name;
                 }
                 else
                 {
                     newitem.RelativeUrl = PreviewTemplate.Replace("{nameorid}", item.Name);
                 }
                 newitem.PreviewUrl = Lib.Helper.UrlHelper.Combine(sitebaseurl, newitem.RelativeUrl);
-                result.Add(newitem); 
+                result.Add(newitem);
             }
             return result;
         }
@@ -188,9 +187,8 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-     
         public bool IsUniqueName(string name, string type, ApiCall call)
-        {       
+        {
             byte consttype = 0;
 
             if (type.ToLower() == "style")
@@ -233,6 +231,5 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
         }
-
     }
 }

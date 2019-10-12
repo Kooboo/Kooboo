@@ -1,18 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.IndexedDB.Btree;
+using System;
 
 namespace Kooboo.IndexedDB.Indexs
 {
     public class DecimalIndex<TValue> : IIndex<TValue>
     {
-
         public string FieldName
         {
             get;
@@ -33,8 +27,7 @@ namespace Kooboo.IndexedDB.Indexs
 
         public Btree.BtreeIndex<double> index;
 
-        Func<TValue, decimal> getValue;
-
+        private Func<TValue, decimal> getValue;
 
         public DecimalIndex(string FieldOrPropertyName, string FullIndexFileName, bool unique, int keylength, int MaxCacheLevel)
         {
@@ -42,13 +35,11 @@ namespace Kooboo.IndexedDB.Indexs
 
             this.FieldName = FieldOrPropertyName;
 
-
             getValue = Helper.ObjectHelper.GetGetValue<TValue, decimal>(FieldName);
             index = new Btree.BtreeIndex<double>(this.FieldName, unique, keylength, FullIndexFileName, MaxCacheLevel);
 
             this.Length = index.keylength;
         }
-
 
         public bool Add(TValue input, long blockPosition)
         {
@@ -66,7 +57,6 @@ namespace Kooboo.IndexedDB.Indexs
             double dnewvalue = Convert.ToDouble(newvalue);
 
             this.index.Update(doldvalue, dnewvalue, oldBlockPosition, newBlockPosition);
-
         }
 
         public bool Del(TValue record, long blockPosition)
@@ -95,10 +85,12 @@ namespace Kooboo.IndexedDB.Indexs
         {
             this.index.Close();
         }
+
         public void Flush()
         {
             this.index.Flush();
         }
+
         public void DelSelf()
         {
             this.index.DelSelf();
@@ -106,7 +98,7 @@ namespace Kooboo.IndexedDB.Indexs
 
         public KeyBytesCollection AllKeys(bool ascending)
         {
-            return this.index.AllKeyBytesCollection(ascending); 
+            return this.index.AllKeyBytesCollection(ascending);
         }
     }
 }

@@ -1,10 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Lib.Helper;
 using Kooboo.Sites.Models;
-using Kooboo.Lib;
 using System;
 using System.Collections.Generic;
-using Kooboo.Lib.Helper;
 
 namespace Kooboo.Web.ViewModel
 {
@@ -30,24 +29,24 @@ namespace Kooboo.Web.ViewModel
         public DateTime LastModified { get; set; }
     }
 
-    public class  FileItemViewModel
-    { 
+    public class FileItemViewModel
+    {
         public Guid Id { get; set; }
 
         public string Name { get; set; }
-          
+
         public string Url { get; set; }
 
-        public string PreviewUrl { get; set;  }
-          
+        public string PreviewUrl { get; set; }
+
         public long Size { get; set; }
-         
+
         public string Type { get; set; }
 
         public Dictionary<string, int> Relations { get; set; }
 
         public DateTime LastModified { get; set; }
-         
+
         public string MimeType
         {
             get
@@ -62,6 +61,5 @@ namespace Kooboo.Web.ViewModel
         public List<string> Folders { get; set; } = new List<string>();
 
         public List<Guid> Images { get; set; } = new List<Guid>();
-    } 
-   
+    }
 }

@@ -1,10 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Kooboo.App.Commands
@@ -14,24 +10,15 @@ namespace Kooboo.App.Commands
         private readonly Action<object> _execute;
         private readonly Predicate<object> _canExecute;
 
-        public DelegateCommand(Action<object> execute)
-            : this(execute, null)
+        public DelegateCommand(Action<object> execute, Predicate<object> canExecute = null)
         {
-        }
-
-        public DelegateCommand(Action<object> execute, Predicate<object> canExecute)
-        {
-            if (execute == null)
-            {
-                throw new ArgumentNullException(nameof(execute));
-            }
-            _execute = execute;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
 
         public bool CanExecute(object parameter)
         {
-            return _canExecute == null ? true : _canExecute(parameter);
+            return _canExecute?.Invoke(parameter) ?? true;
         }
 
         public void Execute(object parameter)
@@ -41,8 +28,8 @@ namespace Kooboo.App.Commands
 
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
     }
 
@@ -55,22 +42,17 @@ namespace Kooboo.App.Commands
         public DelegateCommand(Action<T> execute)
             : this(execute, null)
         {
-
         }
 
         public DelegateCommand(Action<T> execute, Predicate<object> canExecute)
         {
-            if (execute == null)
-            {
-                throw new ArgumentNullException(nameof(execute));
-            }
-            _execute = execute;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
             _canExecute = canExecute;
         }
 
         public bool CanExecute(object parameter)
         {
-            return _canExecute == null ? true : _canExecute(parameter as T);
+            return _canExecute == null || _canExecute(parameter as T);
         }
 
         public void Execute(object parameter)
@@ -80,8 +62,8 @@ namespace Kooboo.App.Commands
 
         public event EventHandler CanExecuteChanged
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            add => CommandManager.RequerySuggested += value;
+            remove => CommandManager.RequerySuggested -= value;
         }
     }
 }

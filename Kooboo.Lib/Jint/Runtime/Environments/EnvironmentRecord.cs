@@ -14,7 +14,7 @@ namespace Jint.Runtime.Environments
         }
 
         /// <summary>
-        /// Determines if an environment record has a binding for an identifier. 
+        /// Determines if an environment record has a binding for an identifier.
         /// </summary>
         /// <param name="name">The identifier of the binding</param>
         /// <returns><c>true</c> if it does and <c>false</c> if it does not.</returns>
@@ -28,15 +28,15 @@ namespace Jint.Runtime.Environments
         public abstract void CreateMutableBinding(string name, bool canBeDeleted = false);
 
         /// <summary>
-        /// Sets the value of an already existing mutable binding in an environment record. 
+        /// Sets the value of an already existing mutable binding in an environment record.
         /// </summary>
         /// <param name="name">The identifier of the binding</param>
         /// <param name="value">The value of the binding.</param>
         /// <param name="strict">The identify strict mode references.</param>
         public abstract void SetMutableBinding(string name, JsValue value, bool strict);
-        
+
         /// <summary>
-        /// Returns the value of an already existing binding from an environment record. 
+        /// Returns the value of an already existing binding from an environment record.
         /// </summary>
         /// <param name="name">The identifier of the binding</param>
         /// <param name="strict">The identify strict mode references.</param>

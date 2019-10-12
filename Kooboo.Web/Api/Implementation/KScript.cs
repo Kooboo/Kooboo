@@ -1,17 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Api;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Models;
-using Kooboo.Web.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
-{ 
+{
     //public class KScriptApi : SiteObjectApi<KScript>
     //{
     //    //public List<IEmbeddableItemListViewModel> External(ApiCall call)
@@ -36,7 +27,7 @@ namespace Kooboo.Web.Api.Implementation
     //    //    return apiCall.WebSite.SiteDb().KScripts.GetEmbeddeds()
     //    //    .Select(o => new IEmbeddableItemListViewModel(apiCall.WebSite.SiteDb(), o)).ToList();
     //    //}
-         
+
     //    //public Guid Update(ApiCall call)
     //    //{
     //    //    Guid id = call.ObjectId;
@@ -63,11 +54,11 @@ namespace Kooboo.Web.Api.Implementation
     //    //        if (!name.ToLower().EndsWith(".js"))
     //    //        {
     //    //            name = name + ".js";
-    //    //        } 
+    //    //        }
 
     //    //        KScript newscript = new KScript();
     //    //        newscript.Name = name;
-    //    //        newscript.Body = body; 
+    //    //        newscript.Body = body;
     //    //        call.WebSite.SiteDb().KScripts.AddOrUpdate(newscript, true, true, call.Context.User.Id);
     //    //        return newscript.Id;
     //    //    }
@@ -96,6 +87,6 @@ namespace Kooboo.Web.Api.Implementation
     //    //    }
 
     //    //    return true;
-    //    //} 
-    //} 
+    //    //}
+    //}
 }

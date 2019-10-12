@@ -1,10 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.InlineEditor.Model
 {
@@ -12,48 +8,49 @@ namespace Kooboo.Sites.InlineEditor.Model
     {
         public ActionType Action
         {
-            get;set;
-        } 
+            get; set;
+        }
 
         public string EditorType
         {
             get
             {
-                return "style"; 
+                return "style";
             }
         }
 
         public string NameOrId
-        { get;set;
+        {
+            get; set;
         }
 
         public string ObjectType
         {
-            get;set;
+            get; set;
         }
 
         public string Value
         {
-            get;set;
+            get; set;
         }
-         
+
         public Guid RuleId { get; set; }
-         
+
         public Guid StyleId { get; set; }
-         
+
         public string Property { get; set; }
-          
+
         public string Selector { get; set; }
-           
+
         public bool Important { get; set; }
- 
-        public string StyleSheetUrl { get; set; } 
+
+        public string StyleSheetUrl { get; set; }
 
         //For modify on the embedded style sheet. rules under <style>div{}</style>
-        public string StyleTagKoobooId { get; set; } 
+        public string StyleTagKoobooId { get; set; }
 
         public string KoobooId { get; set; }
 
         public string MediaRuleList { get; set; }
-    }  
+    }
 }

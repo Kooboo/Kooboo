@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kooboo.Web.Payment.Methods
+﻿namespace Kooboo.Web.Payment.Methods
 {
     public class PaypalFormPaymentSetting : IPaymentSetting
     {
@@ -15,7 +11,6 @@ namespace Kooboo.Web.Payment.Methods
                     return "https://www.sandbox.paypal.com/cgi-bin/webscr";
                 }
                 return "https://www.paypal.com/cgi-bin/webscr";
-
             }
         }
 
@@ -40,7 +35,7 @@ namespace Kooboo.Web.Payment.Methods
         public string CancelUrl { get; set; }
 
         public string LogoImage { get; set; }
-          
-        public string Name =>"PaypalFormPayment";
+
+        public string Name => "PaypalFormPayment";
     }
 }

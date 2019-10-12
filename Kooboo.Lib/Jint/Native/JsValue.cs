@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Diagnostics.Contracts;
-using System.Dynamic;
-using System.Threading;
-using Jint.Native.Array;
+﻿using Jint.Native.Array;
 using Jint.Native.Boolean;
 using Jint.Native.Date;
 using Jint.Native.Function;
@@ -14,6 +8,12 @@ using Jint.Native.RegExp;
 using Jint.Native.String;
 using Jint.Runtime;
 using Jint.Runtime.Interop;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.Contracts;
+using System.Dynamic;
+using System.Threading;
 
 namespace Jint.Native
 {
@@ -248,7 +248,7 @@ namespace Jint.Native
                 return false;
             }
 
-            if(ReferenceEquals(this, other))
+            if (ReferenceEquals(this, other))
             {
                 return true;
             }
@@ -262,16 +262,21 @@ namespace Jint.Native
             {
                 case Types.None:
                     return false;
+
                 case Types.Undefined:
                     return true;
+
                 case Types.Null:
                     return true;
+
                 case Types.Boolean:
                 case Types.Number:
                     return _double == other._double;
+
                 case Types.String:
                 case Types.Object:
                     return _object == other._object;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -378,12 +383,16 @@ namespace Jint.Native
                 case Types.Undefined:
                 case Types.Null:
                     return null;
+
                 case Types.String:
                     return _object;
+
                 case Types.Boolean:
                     return _double != 0;
+
                 case Types.Number:
                     return _double;
+
                 case Types.Object:
                     var wrapper = _object as IObjectWrapper;
                     if (wrapper != null)
@@ -492,8 +501,8 @@ namespace Jint.Native
                             return o;
                     }
 
-
                     return _object;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -533,17 +542,23 @@ namespace Jint.Native
             {
                 case Types.None:
                     return "None";
+
                 case Types.Undefined:
                     return "undefined";
+
                 case Types.Null:
                     return "null";
+
                 case Types.Boolean:
                     return _double != 0 ? bool.TrueString : bool.FalseString;
+
                 case Types.Number:
                     return _double.ToString();
+
                 case Types.String:
                 case Types.Object:
                     return _object.ToString();
+
                 default:
                     return string.Empty;
             }
@@ -602,38 +617,46 @@ namespace Jint.Native
         internal class JsValueDebugView
         {
             public string Value;
+
             public JsValueDebugView(JsValue value)
             {
-
                 switch (value.Type)
                 {
                     case Types.None:
                         Value = "None";
                         break;
+
                     case Types.Undefined:
                         Value = "undefined";
                         break;
+
                     case Types.Null:
                         Value = "null";
                         break;
+
                     case Types.Boolean:
                         Value = value.AsBoolean() + " (bool)";
                         break;
+
                     case Types.String:
                         Value = value.AsString() + " (string)";
                         break;
+
                     case Types.Number:
                         Value = value.AsNumber() + " (number)";
                         break;
+
                     case Types.Object:
                         Value = value.AsObject().GetType().Name;
                         break;
+
                     default:
                         Value = "Unknown";
                         break;
                 }
             }
         }
+
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;

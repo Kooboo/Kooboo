@@ -1,10 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Cache
 {
@@ -43,7 +40,7 @@ namespace Kooboo.Sites.Cache
                     {
                         key = key.GetHashCode();
                     }
-                } 
+                }
                 AlternativeView record = new AlternativeView();
                 record.ListViewId = ListViewId;
                 record.DestinationViewId = DestinationViewId;
@@ -57,14 +54,14 @@ namespace Kooboo.Sites.Cache
         {
             if (cachelist.ContainsKey(AlternativeId))
             {
-                var result = cachelist[AlternativeId]; 
+                var result = cachelist[AlternativeId];
                 if (result.ListViewId == ListViewId)
                 {
-                    return result.DestinationViewId; 
-                } 
+                    return result.DestinationViewId;
+                }
             }
 
-            return default(Guid); 
+            return default(Guid);
         }
 
         public class AlternativeView
@@ -74,8 +71,6 @@ namespace Kooboo.Sites.Cache
             public Guid ListViewId { get; set; }
 
             public Guid DestinationViewId { get; set; }
-
         }
-    } 
-  
+    }
 }

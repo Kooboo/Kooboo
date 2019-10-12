@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Text.RegularExpressions;
@@ -50,40 +50,38 @@ namespace Kooboo
         {
             if (string.IsNullOrEmpty(input))
             {
-                return false; 
+                return false;
             }
 
             int htmlindex = input.IndexOf("<html", StringComparison.OrdinalIgnoreCase);
 
             if (htmlindex >= 0)
             {
-                return true; 
+                return true;
             }
 
             int bodyindex = input.IndexOf("<body", StringComparison.OrdinalIgnoreCase);
 
             if (bodyindex >= 0)
             {
-                return true; 
+                return true;
             }
 
-              htmlindex = input.IndexOf("</html>", StringComparison.OrdinalIgnoreCase);
+            htmlindex = input.IndexOf("</html>", StringComparison.OrdinalIgnoreCase);
 
             if (htmlindex >= 0)
             {
                 return true;
             }
 
-              bodyindex = input.IndexOf("</body>", StringComparison.OrdinalIgnoreCase);
+            bodyindex = input.IndexOf("</body>", StringComparison.OrdinalIgnoreCase);
 
             if (bodyindex >= 0)
             {
                 return true;
             }
 
-            return false; 
-
-
+            return false;
         }
     }
 }

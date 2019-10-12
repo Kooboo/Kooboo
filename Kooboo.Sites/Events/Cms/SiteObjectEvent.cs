@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Interface;
 using Kooboo.IndexedDB;
@@ -40,24 +40,23 @@ namespace Kooboo.Events.Cms
         {
             get
             {
-                // TODO: Improve performance. 
-                return this.Store.getBlockPosition(Value.Id); 
+                // TODO: Improve performance.
+                return this.Store.getBlockPosition(Value.Id);
             }
         }
     }
-
 
     public class SiteObjectEvent : Kooboo.Data.Events.IEvent
     {
         public ChangeType ChangeType { get; set; }
 
         public ISiteObject Value { get; set; }
+
         /// <summary>
         /// The old value when it is an update event.
         /// </summary>
         public ISiteObject OldValue { get; set; }
-         
+
         public SiteDb SiteDb { get; set; }
-        
     }
 }

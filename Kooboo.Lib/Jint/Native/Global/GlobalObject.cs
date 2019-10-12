@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using Jint.Native.Object;
+﻿using Jint.Native.Object;
 using Jint.Native.String;
 using Jint.Runtime;
 using Jint.Runtime.Interop;
+using System;
+using System.Linq;
+using System.Text;
 
 namespace Jint.Native.Global
 {
@@ -16,7 +16,7 @@ namespace Jint.Native.Global
 
         public static GlobalObject CreateGlobalObject(Engine engine)
         {
-            var global = new GlobalObject(engine) {Prototype = null, Extensible = true};
+            var global = new GlobalObject(engine) { Prototype = null, Extensible = true };
 
             return global;
         }
@@ -76,7 +76,7 @@ namespace Jint.Native.Global
                 {
                     sign = -1;
                 }
-                
+
                 if (s[0] == '-' || s[0] == '+')
                 {
                     s = s.Substring(1);
@@ -102,7 +102,7 @@ namespace Jint.Native.Global
             {
                 return double.NaN;
             }
-            else if(radix != 16)
+            else if (radix != 16)
             {
                 stripPrefix = false;
             }
@@ -120,7 +120,6 @@ namespace Jint.Native.Global
             {
                 return double.NaN;
             }
-
         }
 
         private static JsValue Parse(string number, int radix)
@@ -132,7 +131,7 @@ namespace Jint.Native.Global
 
             double result = 0;
             double pow = 1;
-            for (int i = number.Length - 1; i >= 0 ; i--)
+            for (int i = number.Length - 1; i >= 0; i--)
             {
                 double index = double.NaN;
                 char digit = number[i];
@@ -155,7 +154,7 @@ namespace Jint.Native.Global
                     return Parse(number.Substring(0, i), radix);
                 }
 
-                result += index*pow;
+                result += index * pow;
                 pow = pow * radix;
             }
 
@@ -171,7 +170,7 @@ namespace Jint.Native.Global
             var trimmedString = StringPrototype.TrimStartEx(inputString);
 
             var sign = 1;
-            if (trimmedString.Length > 0 )
+            if (trimmedString.Length > 0)
             {
                 if (trimmedString[0] == '-')
                 {
@@ -186,7 +185,7 @@ namespace Jint.Native.Global
 
             if (trimmedString.StartsWith("Infinity"))
             {
-                return sign*double.PositiveInfinity;
+                return sign * double.PositiveInfinity;
             }
 
             if (trimmedString.StartsWith("NaN"))
@@ -194,7 +193,7 @@ namespace Jint.Native.Global
                 return double.NaN;
             }
 
-            var separator = (char) 0;
+            var separator = (char)0;
 
             bool isNan = true;
             decimal number = 0;
@@ -208,8 +207,8 @@ namespace Jint.Native.Global
                     separator = '.';
                     break;
                 }
-                
-                if(c == 'e' || c == 'E')
+
+                if (c == 'e' || c == 'E')
                 {
                     i++;
                     separator = 'e';
@@ -309,8 +308,8 @@ namespace Jint.Native.Global
                     number /= 10;
                 }
             }
-            
-            return (double) (sign * number);
+
+            return (double)(sign * number);
         }
 
         /// <summary>
@@ -341,7 +340,7 @@ namespace Jint.Native.Global
             return true;
         }
 
-        private static readonly char[] UriReserved = {';', '/', '?', ':', '@', '&', '=', '+', '$', ','};
+        private static readonly char[] UriReserved = { ';', '/', '?', ':', '@', '&', '=', '+', '$', ',' };
 
         private static readonly char[] UriUnescaped =
         {
@@ -360,6 +359,7 @@ namespace Jint.Native.Global
                 c >= 'a' && c <= 'f' ||
                 c >= 'A' && c <= 'F';
         }
+
         /// <summary>
         /// http://www.ecma-international.org/ecma-262/5.1/#sec-15.1.3.2
         /// </summary>
@@ -369,11 +369,10 @@ namespace Jint.Native.Global
         public JsValue EncodeUri(JsValue thisObject, JsValue[] arguments)
         {
             var uriString = TypeConverter.ToString(arguments.At(0));
-            var unescapedUriSet = UriReserved.Concat(UriUnescaped).Concat(new [] {'#'}).ToArray();
+            var unescapedUriSet = UriReserved.Concat(UriUnescaped).Concat(new[] { '#' }).ToArray();
 
             return Encode(uriString, unescapedUriSet);
         }
-
 
         /// <summary>
         /// http://www.ecma-international.org/ecma-262/5.1/#sec-15.1.3.4
@@ -392,7 +391,7 @@ namespace Jint.Native.Global
         {
             var strLen = uriString.Length;
             var r = new StringBuilder(uriString.Length);
-            for (var k = 0; k< strLen; k++)
+            for (var k = 0; k < strLen; k++)
             {
                 var c = uriString[k];
                 if (System.Array.IndexOf(unescapedUriSet, c) != -1)
@@ -419,7 +418,7 @@ namespace Jint.Native.Global
                             throw new JavaScriptException(Engine.UriError);
                         }
 
-                        var kChar = (int) uriString[k];
+                        var kChar = (int)uriString[k];
                         if (kChar < 0xDC00 || kChar > 0xDFFF)
                         {
                             throw new JavaScriptException(Engine.UriError);
@@ -440,17 +439,17 @@ namespace Jint.Native.Global
                         // 00000yyy yyzzzzzz ->	110yyyyy ; 10zzzzzz
                         octets = new[]
                         {
-                            (byte)(0xC0 | (v >> 6)), 
+                            (byte)(0xC0 | (v >> 6)),
                             (byte)(0x80 | (v & 0x3F))
                         };
                     }
                     else if (v <= 0xD7FF)
                     {
-                        // xxxxyyyy yyzzzzzz -> 1110xxxx; 10yyyyyy; 10zzzzzz	
+                        // xxxxyyyy yyzzzzzz -> 1110xxxx; 10yyyyyy; 10zzzzzz
                         octets = new[]
                         {
-                            (byte)(0xE0 | (v >> 12)), 
-                            (byte)(0x80 | ((v >> 6) & 0x3F)), 
+                            (byte)(0xE0 | (v >> 12)),
+                            (byte)(0x80 | ((v >> 6) & 0x3F)),
                             (byte)(0x80 | (v & 0x3F))
                         };
                     }
@@ -528,7 +527,7 @@ namespace Jint.Native.Global
 
                     if (!IsValidHexaChar(uriString[k + 1]) || !IsValidHexaChar(uriString[k + 2]))
                     {
-                        throw new JavaScriptException(Engine.UriError);    
+                        throw new JavaScriptException(Engine.UriError);
                     }
 
                     var B = Convert.ToByte(uriString[k + 1].ToString() + uriString[k + 2], 16);
@@ -536,7 +535,7 @@ namespace Jint.Native.Global
                     k += 2;
                     if ((B & 0x80) == 0)
                     {
-                        C = (char) B;
+                        C = (char)B;
                         if (System.Array.IndexOf(reservedSet, C) == -1)
                         {
                             R.Append(C);
@@ -555,16 +554,16 @@ namespace Jint.Native.Global
                         {
                             throw new JavaScriptException(Engine.UriError);
                         }
-                        
+
                         var Octets = new byte[n];
                         Octets[0] = B;
-                        
-                        if (k + (3*(n - 1)) >= strLen)
+
+                        if (k + (3 * (n - 1)) >= strLen)
                         {
                             throw new JavaScriptException(Engine.UriError);
                         }
-                        
-                        for(var j=1; j <n; j++)
+
+                        for (var j = 1; j < n; j++)
                         {
                             k++;
                             if (uriString[k] != '%')
@@ -579,7 +578,7 @@ namespace Jint.Native.Global
 
                             B = Convert.ToByte(uriString[k + 1].ToString() + uriString[k + 2], 16);
 
-                            // B & 11000000 != 10000000 
+                            // B & 11000000 != 10000000
                             if ((B & 0xC0) != 0x80)
                             {
                                 throw new JavaScriptException(Engine.UriError);
@@ -594,9 +593,8 @@ namespace Jint.Native.Global
                     }
                 }
             }
-            
+
             return R.ToString();
         }
-
     }
 }

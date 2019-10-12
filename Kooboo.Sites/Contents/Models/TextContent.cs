@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Dom;
 using Kooboo.Sites.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Dom;
-using Newtonsoft.Json;
 using System.Text;
 
 namespace Kooboo.Sites.Contents.Models
@@ -13,6 +13,7 @@ namespace Kooboo.Sites.Contents.Models
     public class MultilingualContent
     {
         private string _lang;
+
         public string Lang
         {
             get
@@ -26,25 +27,24 @@ namespace Kooboo.Sites.Contents.Models
             set { _lang = value; }
         }
 
-
-        private Dictionary<string, string> _fieldvalues; 
+        private Dictionary<string, string> _fieldvalues;
 
         [Kooboo.IndexedDB.CustomAttributes.KoobooKeyIgnoreCase]
-        public Dictionary<string, string> FieldValues {
-
+        public Dictionary<string, string> FieldValues
+        {
             get
             {
                 if (_fieldvalues == null)
                 {
-                    _fieldvalues =  new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                } 
-                return _fieldvalues; 
+                    _fieldvalues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                }
+                return _fieldvalues;
             }
             set
             {
-                _fieldvalues = value; 
+                _fieldvalues = value;
             }
-        } 
+        }
     }
 
     [Kooboo.Attributes.Diskable(Kooboo.Attributes.DiskType.Json)]
@@ -58,6 +58,7 @@ namespace Kooboo.Sites.Contents.Models
         private Guid _id;
 
         private string _name;
+
         public override string Name
         {
             get
@@ -104,6 +105,7 @@ namespace Kooboo.Sites.Contents.Models
         }
 
         private string _userkey;
+
         public string UserKey
         {
             get { return _userkey; }
@@ -138,6 +140,7 @@ namespace Kooboo.Sites.Contents.Models
         }
 
         private Dictionary<Guid, List<Guid>> _embedded;
+
         public Dictionary<Guid, List<Guid>> Embedded
         {
             get
@@ -288,23 +291,21 @@ namespace Kooboo.Sites.Contents.Models
             {
                 return this.Id;
             }
-
             else if (lower == "order" || lower == "sequence")
             {
                 return this.Order;
             }
 
             MultilingualContent content = GetContentStore(Lang);
-            if (content !=null &&  content.FieldValues.ContainsKey(FieldName))
+            if (content != null && content.FieldValues.ContainsKey(FieldName))
             {
                 return content.FieldValues[FieldName];
             }
-             
+
             if (lower == "folderid")
             {
                 return this.FolderId;
             }
-
             else if (lower == "parentid")
             {
                 return this.ParentId;
@@ -313,7 +314,6 @@ namespace Kooboo.Sites.Contents.Models
             {
                 return this.ContentTypeId;
             }
-  
             else if (lower == "online")
             {
                 return this.Online;
@@ -322,7 +322,6 @@ namespace Kooboo.Sites.Contents.Models
             {
                 return this.LastModified;
             }
-
 
             foreach (var item in this.Contents)
             {
@@ -409,7 +408,6 @@ namespace Kooboo.Sites.Contents.Models
             var content = GetContentStore(Lang, true);
             content.FieldValues[FieldName] = Value;
         }
-
 
         public override int GetHashCode()
         {

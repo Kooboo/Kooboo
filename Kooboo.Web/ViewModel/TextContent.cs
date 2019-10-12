@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Definition;
 using Kooboo.Sites.Contents.Models;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace Kooboo.Web.ViewModel
 {
     public class LangTextContentViewModel
-    { 
+    {
         /// <summary>
         /// {folderid,categoriesids}
         /// </summary>
@@ -28,7 +28,7 @@ namespace Kooboo.Web.ViewModel
         public string ContentTypeId { get; set; }
 
         public bool Online { get; set; }
-         
+
         private Dictionary<string, Dictionary<string, string>> _values;
 
         /// <summary>
@@ -60,25 +60,24 @@ namespace Kooboo.Web.ViewModel
         {
             get
             {
-
                 var support = Kooboo.Data.Helper.DataTypeHelper.GetSupportedComparers(this.DataType);
 
                 List<string> result = new List<string>();
 
                 foreach (var item in support)
                 {
-                    result.Add(item.ToString()); 
+                    result.Add(item.ToString());
                 }
 
-                return result; 
-      //  EqualTo = 0,
-      //GreaterThan = 1,
-      //GreaterThanOrEqual = 2,
-      //LessThan = 3,
-      //LessThanOrEqual = 4,
-      //NotEqualTo = 5,
-      //StartWith = 6,
-      //Contains = 7, 
+                return result;
+                //  EqualTo = 0,
+                //GreaterThan = 1,
+                //GreaterThanOrEqual = 2,
+                //LessThan = 3,
+                //LessThanOrEqual = 4,
+                //NotEqualTo = 5,
+                //StartWith = 6,
+                //Contains = 7,
 
                 //List<string> operators = new List<string>();
                 //operators.Add("EqualTo");
@@ -105,13 +104,13 @@ namespace Kooboo.Web.ViewModel
     {
         public string Name { get; set; }
 
-        public string  DisplayName { get; set; }
+        public string DisplayName { get; set; }
 
-        public Dictionary<string, string> Values = new Dictionary<string, string>(); 
-  
+        public Dictionary<string, string> Values = new Dictionary<string, string>();
+
         public string ControlType { get; set; }
 
-        public string Validations { get; set; } 
+        public string Validations { get; set; }
 
         public string ToolTip { get; set; }
 
@@ -121,26 +120,24 @@ namespace Kooboo.Web.ViewModel
 
         public bool MultipleValue { get; set; }
 
-        public string selectionOptions { get; set; }    
-
+        public string selectionOptions { get; set; }
     }
-    
+
     public class CategoryContentViewModel
     {
-        public ContentFolder CategoryFolder { get;   set; }
+        public ContentFolder CategoryFolder { get; set; }
 
         public string Alias { get; set; }
 
-        public List<TextContentViewModel> Contents { get; set; } = new List<TextContentViewModel>(); 
+        public List<TextContentViewModel> Contents { get; set; } = new List<TextContentViewModel>();
 
         public string Display
         {
-            get { return  CategoryFolder!=null? CategoryFolder.DisplayName:null; }
+            get { return CategoryFolder != null ? CategoryFolder.DisplayName : null; }
         }
-        
+
         public bool MultipleChoice { get; set; }
     }
-     
 
     public class ContentEditViewModel
     {

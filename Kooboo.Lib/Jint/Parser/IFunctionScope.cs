@@ -1,12 +1,12 @@
-using System.Collections.Generic;
 using Jint.Parser.Ast;
+using System.Collections.Generic;
 
 namespace Jint.Parser
 {
     /// <summary>
     /// Used to safe references to all function delcarations in a specific scope.
     /// </summary>
-    public interface IFunctionScope: IVariableScope
+    public interface IFunctionScope : IVariableScope
     {
         IList<FunctionDeclaration> FunctionDeclarations { get; set; }
     }

@@ -1,18 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using Kooboo.IndexedDB.Serializer.Simple.FieldConverter;
 using Kooboo.IndexedDB.Helper;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic; 
+using Kooboo.IndexedDB.Serializer.Simple.FieldConverter;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
     public static class ConverterHelper
     {
-        
-
         public static Func<object, byte[]> GetValueToBytes(Type type)
         {
             if (type == typeof(int))
@@ -71,7 +67,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 return ValueConverter.ObjectToTypes;
             }
-
             else if (ObjectHelper.IsDictionary(type))
             {
                 return new DictionaryConverter(type).ToBytes;
@@ -158,7 +153,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 return ValueConverter.FromObjectBytes;
             }
-
             else if (ObjectHelper.IsDictionary(type))
             {
                 return new DictionaryConverter(type).FromBytes;
@@ -171,7 +165,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 return new CollectionConverter(type).FromBytes;
             }
-
             else if (type.IsClass)
             {
                 ClassConverter converter = ClassConverterCache.Get(type);
@@ -395,12 +388,13 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
                 case EnumValueType.Bytes:
                     return typeof(byte[]);
+
                 case EnumValueType.String:
                     return typeof(string);
+
                 default:
                     return null;
             }
-
         }
 
         public static Func<byte[], object> GetBytesToValueFromEnum(EnumValueType enumType)
@@ -409,30 +403,43 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 case EnumValueType.Byte:
                     return ValueConverter.FromByteBytes;
+
                 case EnumValueType.Short:
                     return ValueConverter.FromShortBytes;
+
                 case EnumValueType.Int:
                     return ValueConverter.FromIntBytes;
+
                 case EnumValueType.Long:
                     return ValueConverter.FromLongBytes;
+
                 case EnumValueType.Bool:
                     return ValueConverter.FromBoolBytes;
+
                 case EnumValueType.DateTime:
                     return ValueConverter.FromDateTimeBytes;
+
                 case EnumValueType.Decimal:
                     return ValueConverter.FromDecimalBytes;
+
                 case EnumValueType.Float:
                     return ValueConverter.FromFloatBytes;
+
                 case EnumValueType.Double:
                     return ValueConverter.FromDoubleBytes;
+
                 case EnumValueType.Guid:
                     return ValueConverter.FromGuidBytes;
+
                 case EnumValueType.Bytes:
                     return ValueConverter.FromByteArrayBytes;
+
                 case EnumValueType.String:
                     return ValueConverter.FromStringBytes;
+
                 case EnumValueType.Object:
                     return ValueConverter.FromObjectBytes;
+
                 default:
                     return null;
             }
@@ -444,7 +451,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 return new DictionaryFieldConverter<T>(FieldType, FieldName);
             }
-
             else if (ObjectHelper.IsList(FieldType))
             {
                 return new ListFieldConverter<T>(FieldType, FieldName);
@@ -453,7 +459,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 return new CollectionFieldConverter<T>(FieldType, FieldName);
             }
-
             else if (FieldType == typeof(int))
             {
                 return new IntFieldConverter<T>(FieldName);
@@ -510,17 +515,14 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 return new ObjectFieldConverter<T>(FieldName);
             }
-
             else if (FieldType.IsClass)
             {
                 return new ClassFieldConverter<T>(FieldName);
             }
-
             else if (FieldType.IsEnum)
             {
                 return new EnumFieldConveter<T>(FieldName, FieldType);
             }
-
             else
             {
                 throw new Exception(FieldType.Name + " can not be identified.");
@@ -541,7 +543,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 return new CollectionFieldConverter(ObjectType, FieldType, FieldName);
             }
-
             else if (FieldType == typeof(int))
             {
                 return new IntFieldConverter(FieldName, ObjectType);
@@ -598,25 +599,22 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 return new ObjectFieldConverter(FieldName, ObjectType);
             }
-
             else if (FieldType.IsClass)
             {
                 return new ClassFieldConverter(ObjectType, FieldType, FieldName);
             }
-
             else if (FieldType.IsEnum)
             {
                 return new EnumFieldConveter(FieldName, ObjectType, FieldType);
             }
-
             else
             {
                 throw new Exception(FieldType.Name + " can not be identified.");
             }
         }
 
+        private static Dictionary<string, Func<byte[], object>> _typenameconverter;
 
-        private static Dictionary<string, Func<byte[], object>> _typenameconverter; 
         public static Dictionary<string, Func<byte[], object>> TypeNameConverter
         {
             get
@@ -642,12 +640,10 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                     result.Add(typeof(System.Net.IPAddress).Name, ValueConverter.FromBytesToIpaddress);
                     result.Add(typeof(object).Name, ValueConverter.FromObjectBytes);
 
-                    _typenameconverter = result; 
+                    _typenameconverter = result;
                 }
-                return _typenameconverter; 
+                return _typenameconverter;
             }
         }
-
-         
     }
 }

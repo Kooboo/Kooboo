@@ -1,10 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Dom.CSS;
-using System;
-using System.Collections.Generic;
-using Kooboo.Dom.CSS.Tokens;
 using Kooboo.Dom.CSS.rawmodel;
+using Kooboo.Dom.CSS.Tokens;
+using System.Collections.Generic;
 
 namespace Kooboo.Dom.CSS
 {
@@ -14,11 +12,10 @@ namespace Kooboo.Dom.CSS
     /// </summary>
     public class TokenParser
     {
-
         private Tokenizer tokenizer;
 
         /// <summary>
-        /// 5.3. Parser Entry Points.  They assume that they are invoked on a token stream, 
+        /// 5.3. Parser Entry Points.  They assume that they are invoked on a token stream,
         /// </summary>
         /// <param name="tokenizer"></param>
         public TokenParser(Tokenizer tokenizer)
@@ -37,11 +34,10 @@ namespace Kooboo.Dom.CSS
 
         public TokenParser()
         {
-
         }
 
-
         private cssToken currentToken;
+
         private cssToken ConsumeNextToken()
         {
             currentToken = tokenizer.ConsumeNextToken();
@@ -120,7 +116,6 @@ namespace Kooboo.Dom.CSS
                             rulelist.Add(rule);
                         }
                     }
-
                 }
                 //<at-keyword-token>
                 else if (token.Type == enumTokenType.at_keyword)
@@ -133,8 +128,6 @@ namespace Kooboo.Dom.CSS
                     {
                         rulelist.Add(rule);
                     }
-
-
                 }
                 //anything else
                 else
@@ -146,11 +139,8 @@ namespace Kooboo.Dom.CSS
                     {
                         rulelist.Add(rule);
                     }
-
                 }
-
             }
-
         }
 
         /// <summary>
@@ -159,12 +149,11 @@ namespace Kooboo.Dom.CSS
         /// <returns></returns>
         private QualifiedRule ConsumeQualifiedRule()
         {
-
             //To consume a qualified rule:
             //Create a new qualified rule with its prelude initially set to an empty list, and its value initially set to nothing.
 
             QualifiedRule rule = new QualifiedRule();
-            // set operation is performed by CTOR. 
+            // set operation is performed by CTOR.
 
             int startindex = -1;
 
@@ -203,7 +192,7 @@ namespace Kooboo.Dom.CSS
 
                 //simple block with an associated token of <{-token>
 
-                //???????TODO: this must be an mistake in the syntax paper.. 
+                //???????TODO: this must be an mistake in the syntax paper..
 
                 //Assign the block to the qualified rule’s block. Return the qualified rule.
                 //anything else
@@ -214,11 +203,9 @@ namespace Kooboo.Dom.CSS
                     ReconsumeToken();
                     ComponentValue value = ConsumeComponentValue();
                     rule.prelude.Add(value);
-
                 }
             }
         }
-
 
         /// <summary>
         /// 5.4.7. Consume a simple block
@@ -226,7 +213,6 @@ namespace Kooboo.Dom.CSS
         /// <returns></returns>
         private SimpleBlock ConsumeSimpleBlock()
         {
-
             //The ending token is the mirror variant of the current input token. (E.g. if it was called with <[-token>, the ending token is <]-token>.)
 
             enumTokenType endTokenType = enumTokenType.curly_bracket_right;
@@ -264,7 +250,7 @@ namespace Kooboo.Dom.CSS
                     simpleblock.endindex = token.endIndex;
                     if (token.Type == enumTokenType.EOF)
                     {
-                        simpleblock.endindex = simpleblock.endindex - 1; 
+                        simpleblock.endindex = simpleblock.endindex - 1;
                     }
                     return simpleblock;
                 }
@@ -285,7 +271,6 @@ namespace Kooboo.Dom.CSS
         /// <returns></returns>
         private ComponentValue ConsumeComponentValue()
         {
-
             //Consume the next input token.
             cssToken token = ConsumeNextToken();
 
@@ -315,17 +300,15 @@ namespace Kooboo.Dom.CSS
             }
         }
 
-
         /// <summary>
         /// 5.4.8. Consume a function
         /// </summary>
         /// <returns></returns>
         private Function ConsumeFunction()
         {
-
             //Create a function with a name equal to the value of the current input token, and with a value which is initially an empty list.
 
-            /// before calling this method, the calling method must already check that current token is a function token. 
+            /// before calling this method, the calling method must already check that current token is a function token.
             function_token token = currentToken as function_token;
 
             Function func = new Function();
@@ -346,7 +329,7 @@ namespace Kooboo.Dom.CSS
                     func.endindex = nexttoken.endIndex;
                     if (nexttoken.Type == enumTokenType.EOF)
                     {
-                        func.endindex = func.endindex - 1; 
+                        func.endindex = func.endindex - 1;
                     }
                     return func;
                 }
@@ -358,13 +341,9 @@ namespace Kooboo.Dom.CSS
                     ReconsumeToken();
                     ComponentValue value = ConsumeComponentValue();
                     func.value.Add(value);
-
                 }
-
             }
-
         }
-
 
         /// <summary>
         /// 5.4.2. Consume an at-rule
@@ -395,7 +374,7 @@ namespace Kooboo.Dom.CSS
 
                     if (token.Type == enumTokenType.EOF)
                     {
-                        rule.endindex = rule.endindex - 1; 
+                        rule.endindex = rule.endindex - 1;
                     }
                     return rule;
                 }
@@ -415,7 +394,7 @@ namespace Kooboo.Dom.CSS
                 //simple block with an associated token of <{-token>
                 //Assign the block to the at-rule’s block. Return the at-rule.
 
-                ///TODO: ???? check what does this means??? 
+                ///TODO: ???? check what does this means???
 
                 //anything else
                 else
@@ -424,10 +403,8 @@ namespace Kooboo.Dom.CSS
                     ReconsumeToken();
                     ComponentValue value = ConsumeComponentValue();
                     rule.prelude.Add(value);
-
                 }
             }
         }
-
     }
 }

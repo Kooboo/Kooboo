@@ -1,16 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Models;
 using Kooboo.Dom;
-using Kooboo.Sites.Extensions;
+using Kooboo.Extensions;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Service;
-using System;
-using System.Collections.Generic; 
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Extensions; 
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Constraints
 {
@@ -25,7 +20,7 @@ namespace Kooboo.Sites.Constraints
         }
 
         public bool HasCheck
-        { get { return true; } } 
+        { get { return true; } }
 
         public bool AutoFixOnSave
         {
@@ -41,10 +36,9 @@ namespace Kooboo.Sites.Constraints
             if (string.IsNullOrEmpty(DomObject.Body))
             {
                 return updates;
-            } 
-            
-            string   ObjectRelativeUrl = GetObjectUrl(SiteDb, DomObject);
-          
+            }
+
+            string ObjectRelativeUrl = GetObjectUrl(SiteDb, DomObject);
 
             ObjectRelativeUrl = ObjectRelativeUrl.Replace("\\", "/");
 
@@ -64,17 +58,17 @@ namespace Kooboo.Sites.Constraints
                     CheckAndAddChange(updates, item, itemsrc, ObjectRelativeUrl);
                 }
             }
-             
+
             var imgurls = Kooboo.Sites.Service.DomUrlService.GetImageSrcs(dom);
 
             foreach (var item in imgurls)
             {
                 if (!string.IsNullOrEmpty(item.Value) && !Kooboo.Lib.Utilities.DataUriService.isDataUri(item.Value))
-                { 
+                {
                     CheckAndAddChange(updates, item.Key, item.Value, ObjectRelativeUrl);
                 }
             }
-              
+
             HTMLCollection scripts = dom.getElementsByTagName("script");
 
             foreach (var item in scripts.item)
@@ -114,7 +108,6 @@ namespace Kooboo.Sites.Constraints
                     {
                         CheckAndAddChange(updates, item, itemurl, ObjectRelativeUrl);
                     }
-
                 }
             }
 
@@ -125,19 +118,19 @@ namespace Kooboo.Sites.Constraints
         {
             if (string.IsNullOrEmpty(itemsrc))
             {
-                return; 
+                return;
             }
 
             if (DomUrlService.IsExternalLink(itemsrc))
             {
-                return; 
+                return;
             }
 
             string RelativeUrl = Kooboo.Lib.Helper.UrlHelper.Combine(ObjectRelativeUrl, itemsrc);
 
-            if (RelativeUrl !=null)
+            if (RelativeUrl != null)
             {
-                RelativeUrl = System.Net.WebUtility.UrlDecode(RelativeUrl); 
+                RelativeUrl = System.Net.WebUtility.UrlDecode(RelativeUrl);
             }
 
             if (itemsrc != RelativeUrl)
@@ -150,27 +143,26 @@ namespace Kooboo.Sites.Constraints
                     StartIndex = item.location.openTokenStartIndex,
                     EndIndex = item.location.openTokenEndIndex,
                     NewValue = newstring
-
                 });
             }
         }
 
         private string GetObjectUrl(SiteDb SiteDb, DomObject DomObject)
         {
-            string url; 
+            string url;
             if (Attributes.AttributeHelper.IsRoutable(DomObject))
             {
-                url=  SiteDb.Routes.GetObjectPrimaryRelativeUrl(DomObject.Id);
+                url = SiteDb.Routes.GetObjectPrimaryRelativeUrl(DomObject.Id);
             }
             else
             {
                 if (string.IsNullOrEmpty(DomObject.Name))
                 {
-                    url =  "/";
+                    url = "/";
                 }
                 else
                 {
-                    url =  "/" + DomObject.Name;
+                    url = "/" + DomObject.Name;
                 }
             }
             if (string.IsNullOrEmpty(url))
@@ -200,7 +192,7 @@ namespace Kooboo.Sites.Constraints
             {
                 foreach (var item in changes)
                 {
-                    string oldvalue = domobject.Body.Substring(item.StartIndex, item.EndIndex - item.StartIndex +1);
+                    string oldvalue = domobject.Body.Substring(item.StartIndex, item.EndIndex - item.StartIndex + 1);
 
                     ConstraintResponse response = new ConstraintResponse();
                     response.AffectedPart = oldvalue;
@@ -212,7 +204,7 @@ namespace Kooboo.Sites.Constraints
 
                     response.Message = "Should be: " + item.NewValue;
 
-                    responseresult.Add(response); 
+                    responseresult.Add(response);
                 }
             }
 

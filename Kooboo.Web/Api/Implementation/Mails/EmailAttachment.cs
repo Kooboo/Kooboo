@@ -1,12 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation.Mails
 {
@@ -39,7 +37,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
             }
         }
 
-        //attachment image. 
+        //attachment image.
         public BinaryResponse File(ApiCall call)
         {
             string filename = call.Command.Value;
@@ -73,7 +71,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
             return null;
         }
 
-        // formate. msgfile/{messageid}/filename. 
+        // formate. msgfile/{messageid}/filename.
         public BinaryResponse MsgFile(ApiCall call)
         {
             string filename = null;
@@ -111,7 +109,6 @@ namespace Kooboo.Web.Api.Implementation.Mails
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(call.Context.User);
 
             var content = maildb.Messages.GetContent(messageid);
-             
 
             if (!string.IsNullOrEmpty(content))
             {
@@ -130,13 +127,13 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 }
                 else
                 {
-                    var bytes = Mail.Utility.MessageUtility.GenerateAllAttachmentZip(content); 
+                    var bytes = Mail.Utility.MessageUtility.GenerateAllAttachmentZip(content);
                     var response = new BinaryResponse();
                     response.ContentType = "application/zip";
                     response.Headers.Add("Content-Disposition", $"filename=attachment.zip");
                     response.BinaryBytes = bytes;
                     return response;
-                } 
+                }
             }
 
             return null;
@@ -171,7 +168,6 @@ namespace Kooboo.Web.Api.Implementation.Mails
             return new Mail.Models.Attachment() { FileName = fileName };
         }
 
- 
         public void DeleteAttachment(string filename, ApiCall call)
         {
             if (EmailForwardManager.RequireForward(call.Context))
@@ -183,13 +179,13 @@ namespace Kooboo.Web.Api.Implementation.Mails
             }
             Kooboo.Mail.MultiPart.FileService.DeleteFile(call.Context.User, filename);
         }
-        
+
         public object ImagePost(ApiCall call)
         {
             if (EmailForwardManager.RequireForward(call.Context))
             {
                 //string convert to object will throw exception
-                var url =EmailForwardManager.Post<string>(this.ModelName, nameof(EmailAttachmentApi.ImagePost), call.Context.User, call.Context.Request.PostData, null);
+                var url = EmailForwardManager.Post<string>(this.ModelName, nameof(EmailAttachmentApi.ImagePost), call.Context.User, call.Context.Request.PostData, null);
                 if (!string.IsNullOrEmpty(url))
                 {
                     return url;
@@ -224,7 +220,5 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
             return $"/_api/emailattachment/file/" + System.Web.HttpUtility.UrlEncode(fileName);
         }
-
-
     }
 }

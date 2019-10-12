@@ -1,21 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Schedule
 {
-
     public class ScheduleReadCollection<TValue> : IEnumerable<TValue>
     {
-
         private Schedule<TValue> schedule;
 
         /// <summary>
-        /// read the collection of schedules, can be read only or dequeue. 
+        /// read the collection of schedules, can be read only or dequeue.
         /// </summary>
         /// <param name="schedule"></param>
         /// <param name="dequeue"></param>
@@ -24,7 +19,7 @@ namespace Kooboo.IndexedDB.Schedule
             this.schedule = schedule;
         }
 
-        IEnumerator<TValue> GetEnumerator()
+        private IEnumerator<TValue> GetEnumerator()
         {
             return new Enumerator<TValue>(schedule);
         }
@@ -45,7 +40,6 @@ namespace Kooboo.IndexedDB.Schedule
 
             private int currentdate;
             private int currentcounter;
-
 
             private List<long> CurrentList;
             private int ListIndex;
@@ -73,7 +67,6 @@ namespace Kooboo.IndexedDB.Schedule
                 }
             }
 
-
             public EValue Current
             {
                 get
@@ -88,10 +81,8 @@ namespace Kooboo.IndexedDB.Schedule
                 this.schedule = null;
             }
 
-
             public bool MoveNext()
             {
-
                 if (this.ListIndex < (this.ListCount - 1))
                 {
                     this.ListIndex = this.ListIndex + 1;
@@ -106,7 +97,6 @@ namespace Kooboo.IndexedDB.Schedule
 
                     if (itemposition > 0)
                     {
-
                         List<long> list = this.schedule.GetItemFile(this.currentdate).ReadAll(itemposition);
 
                         this.ListCount = list.Count;
@@ -118,14 +108,12 @@ namespace Kooboo.IndexedDB.Schedule
                             this.currentcounter = i + 1;
                             return true;
                         }
-
                     }
 
                     this.currentcounter = i + 1;
                 }
 
-
-                // advance one day if any. 
+                // advance one day if any.
                 int nextday = GetNextDay(this.currentdate);
 
                 if (nextday <= 0)
@@ -153,9 +141,8 @@ namespace Kooboo.IndexedDB.Schedule
                 return 0;
             }
 
-
             /// <summary>
-            /// Sorry,not reset available or needed here. 
+            /// Sorry,not reset available or needed here.
             /// </summary>
             public void Reset()
             {
@@ -167,8 +154,5 @@ namespace Kooboo.IndexedDB.Schedule
                 get { return Current; }
             }
         }
-
     }
-
-
 }

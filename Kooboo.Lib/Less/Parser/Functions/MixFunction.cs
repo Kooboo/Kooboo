@@ -1,8 +1,8 @@
 namespace dotless.Core.Parser.Functions
 {
-    using System.Linq;
     using Infrastructure;
     using Infrastructure.Nodes;
+    using System.Linq;
     using Tree;
     using Utils;
 
@@ -57,7 +57,7 @@ namespace dotless.Core.Parser.Functions
 
             double weight = ((Number)Arguments[1]).Value;
 
-            return Mix(new Color(255, 255, 255),(Color)Arguments[0], weight);
+            return Mix(new Color(255, 255, 255), (Color)Arguments[0], weight);
         }
     }
 

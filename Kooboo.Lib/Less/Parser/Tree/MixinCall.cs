@@ -1,13 +1,13 @@
 namespace dotless.Core.Parser.Tree
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
     using Exceptions;
     using Infrastructure;
     using Infrastructure.Nodes;
-    using Utils;
     using Plugins;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Utils;
 
     public class MixinCall : Node
     {
@@ -149,11 +149,11 @@ namespace dotless.Core.Parser.Tree
             {
                 if (x is Rule)
                 {
-                    importantRules.Add(MakeRuleImportant((Rule) x));
+                    importantRules.Add(MakeRuleImportant((Rule)x));
                 }
                 else if (x is Ruleset)
                 {
-                    importantRules.Add(MakeRulesetImportant((Ruleset) x));
+                    importantRules.Add(MakeRulesetImportant((Ruleset)x));
                 }
                 else
                 {
@@ -170,7 +170,7 @@ namespace dotless.Core.Parser.Tree
             var value = valueNode as Value;
             value = value != null
                         ? new Value(value.Values, "!important").ReducedFrom<Value>(value)
-                        : new Value(new NodeList {valueNode}, "!important");
+                        : new Value(new NodeList { valueNode }, "!important");
 
             var importantRule = new Rule(rule.Name, value).ReducedFrom<Rule>(rule);
             return importantRule;

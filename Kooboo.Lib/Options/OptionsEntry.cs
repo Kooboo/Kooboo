@@ -1,10 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo
 {
@@ -15,6 +12,7 @@ namespace Kooboo
         public Type Type { get; set; }
 
         private List<Action<object>> _configure;
+
         public List<Action<object>> Configure
         {
             get
@@ -28,6 +26,7 @@ namespace Kooboo
         }
 
         private object _value;
+
         public object Value
         {
             get

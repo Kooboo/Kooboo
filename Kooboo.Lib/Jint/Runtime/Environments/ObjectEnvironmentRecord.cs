@@ -1,7 +1,7 @@
-﻿using System.Linq;
-using Jint.Native;
+﻿using Jint.Native;
 using Jint.Native.Object;
 using Jint.Runtime.Descriptors;
+using System.Linq;
 
 namespace Jint.Runtime.Environments
 {
@@ -48,7 +48,7 @@ namespace Jint.Runtime.Environments
 
             if (!_bindingObject.HasProperty(name))
             {
-                if(!strict)
+                if (!strict)
                 {
                     return Undefined.Instance;
                 }
@@ -78,7 +78,7 @@ namespace Jint.Runtime.Environments
         {
             if (_bindingObject != null)
             {
-                return _bindingObject.GetOwnProperties().Select( x=> x.Key).ToArray();
+                return _bindingObject.GetOwnProperties().Select(x => x.Key).ToArray();
             }
 
             return new string[0];

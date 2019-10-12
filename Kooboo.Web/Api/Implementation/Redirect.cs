@@ -1,13 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
 using Kooboo.Sites.Extensions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -39,7 +35,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public MetaResponse Login(ApiCall call)
         {
-            // get the redirect url.  
+            // get the redirect url.
             MetaResponse res = new MetaResponse();
             res.Redirect("/_admin/sites");
             return res;
@@ -77,7 +73,7 @@ namespace Kooboo.Web.Api.Implementation
 
             string url = null;
 
-            if (IsMobile(call)|| isMobile)
+            if (IsMobile(call) || isMobile)
             {
                 url = "/_Admin/Phone/Index";
             }
@@ -90,11 +86,11 @@ namespace Kooboo.Web.Api.Implementation
 
             url += "&accessToken=" + newtoken;
 
-            url += "&pageUrl=" +System.Net.WebUtility.UrlEncode(fullpageurl);
+            url += "&pageUrl=" + System.Net.WebUtility.UrlEncode(fullpageurl);
 
             url = Lib.Helper.UrlHelper.Combine(baseurl, url);
-            /// /_Admin/Sites/Edit?SiteId=55b15904-3725-6cd8-9dfe-c58c52e7861f&pageId=5b4335d3-becc-4831-97d0-57adbc065cfd&pageUrl=http%3A%2F%2Fsss.kooboo%3A82%2Fsdfsdfsd&accessToken=ycc0xnXIkEinKo_G851TwQ  
-            //var url = "/"  
+            /// /_Admin/Sites/Edit?SiteId=55b15904-3725-6cd8-9dfe-c58c52e7861f&pageId=5b4335d3-becc-4831-97d0-57adbc065cfd&pageUrl=http%3A%2F%2Fsss.kooboo%3A82%2Fsdfsdfsd&accessToken=ycc0xnXIkEinKo_G851TwQ
+            //var url = "/"
             MetaResponse res = new MetaResponse();
             res.Redirect(url);
             return res;
@@ -143,8 +139,6 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             return false;
-
         }
-
     }
 }

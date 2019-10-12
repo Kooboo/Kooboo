@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
@@ -100,13 +100,11 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     list.Add(model);
                 }
-
             }
 
             result.List = list;
 
             return result;
-
         }
 
         public int PageCount(ApiCall apiCall)
@@ -260,7 +258,7 @@ namespace Kooboo.Web.Api.Implementation
                 else
                 {
                     nextlog = sitedb.Log.Get(id2);
-                }  
+                }
                 var itemone = table.GetLogData(prelog.Id, prelog.NewBlockPosition);
                 Dictionary<string, object> itemtwo = null;
 
@@ -280,7 +278,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     model.Source2 = Sites.Service.ObjectService.GetSummaryText(itemtwo);
                 }
-                model.DataType = VersionDataType.String; 
+                model.DataType = VersionDataType.String;
             }
             return model;
         }
@@ -332,7 +330,6 @@ namespace Kooboo.Web.Api.Implementation
             }
             else
             { return false; }
-
 
             if (id > -1)
             {
@@ -386,7 +383,6 @@ namespace Kooboo.Web.Api.Implementation
             Kooboo.Sites.Service.LogService.CheckOut(call.WebSite.SiteDb(), newwebsite.SiteDb(), id);
 
             return true;
-
         }
 
         public Guid ExportBatch(long id, ApiCall call)
@@ -408,7 +404,6 @@ namespace Kooboo.Web.Api.Implementation
 
                 return guid;
             }
-
         }
 
         public Guid ExportItems(List<long> ids, ApiCall call)

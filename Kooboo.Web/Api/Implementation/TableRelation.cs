@@ -7,7 +7,6 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -23,7 +22,7 @@ namespace Kooboo.Web.Api.Implementation
             foreach (var item in tablelist)
             {
                 if (!item.StartsWith("_sys_"))
-                { 
+                {
                     var table = db.GetOrCreateTable(item);
                     if (table != null)
                     {
@@ -99,14 +98,13 @@ namespace Kooboo.Web.Api.Implementation
                 }
 
                 result.Add(model);
-
             }
 
             return result.ToList<object>();
         }
     }
 
-    public class TableRelationViewModel  
+    public class TableRelationViewModel
     {
         public TableRelationViewModel(TableRelation relation)
         {
@@ -116,7 +114,7 @@ namespace Kooboo.Web.Api.Implementation
             this.TableA = relation.TableA;
             this.TableB = relation.TableB;
             this.Id = relation.Id;
-            this.Name = relation.Name; 
+            this.Name = relation.Name;
         }
 
         public string Name { get; set; }
@@ -127,7 +125,6 @@ namespace Kooboo.Web.Api.Implementation
 
         public string FieldA { get; set; }
 
-
         public string TableB { get; set; }
 
         public string FieldB { get; set; }
@@ -136,10 +133,7 @@ namespace Kooboo.Web.Api.Implementation
         public EnumTableRelation Relation { get; set; }
 
         public string relationName { get; set; }
-
     }
-
-
 
     public class RelationTypeViewModel
     {
@@ -153,23 +147,14 @@ namespace Kooboo.Web.Api.Implementation
         public string Name { get; set; }
 
         public List<string> Fields { get; set; } = new List<string>();
-
     }
 }
-
-
-
-
-
-
-
 
 //getTableRelationTypes
 //[{
 //  type: '',
 //  displayName: ''
 //}]
-
 
 //AddRelation
 //{
@@ -180,7 +165,6 @@ namespace Kooboo.Web.Api.Implementation
 //  fieldB: '',
 //  relationType: ''
 //}
-
 
 //RelationList
 //[{

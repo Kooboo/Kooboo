@@ -1,18 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Server;
 using Kooboo.Render;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Web.Frontend
 {
-
     public class DefaultStartMiddleWare : IKoobooMiddleWare
     {
         private RenderOption options;
@@ -44,19 +39,19 @@ namespace Kooboo.Web.Frontend
         {
             if (context.Request.RelativeUrl == "/" || string.IsNullOrEmpty(context.Request.RelativeUrl))
             {
-                string relative = this.options.LoginPage; 
+                string relative = this.options.LoginPage;
 
-                if (context.User !=null && !string.IsNullOrWhiteSpace(this.options.PageAfterLogin))
+                if (context.User != null && !string.IsNullOrWhiteSpace(this.options.PageAfterLogin))
                 {
-                    relative = this.options.PageAfterLogin; 
+                    relative = this.options.PageAfterLogin;
                 }
 
                 if (relative.ToLower().StartsWith(this.options.StartPath))
                 {
-                    relative = relative.Substring(this.options.StartPath.Length); 
+                    relative = relative.Substring(this.options.StartPath.Length);
                 }
 
-                var Response = RenderEngine.Render(context, this.options,  relative);
+                var Response = RenderEngine.Render(context, this.options, relative);
 
                 if (Response != null)
                 {
@@ -82,18 +77,12 @@ namespace Kooboo.Web.Frontend
                     }
                 }
 
-                await Next.Invoke(context); 
+                await Next.Invoke(context);
             }
             else
             {
                 await Next.Invoke(context); return;
             }
-              
-        
-
         }
     }
-
 }
-
-

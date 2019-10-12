@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Contents;
@@ -8,12 +8,9 @@ using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Ecommerce.Repository
 {
-
     public class ProductRepository : SiteRepositoryBase<Product>
     {
         public override ObjectStoreParameters StoreParameters
@@ -21,7 +18,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
             get
             {
                 ObjectStoreParameters paras = new ObjectStoreParameters();
-                paras.AddColumn<Product>(it => it.Id);   
+                paras.AddColumn<Product>(it => it.Id);
                 paras.AddColumn<Product>(it => it.Online);
                 paras.AddColumn<Product>(it => it.LastModified);
                 paras.SetPrimaryKeyField<Product>(o => o.Id);
@@ -38,7 +35,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
             return base.AddOrUpdate(product, UserId);
         }
 
-        public  ProductViewModel GetView(Guid id, string lang)
+        public ProductViewModel GetView(Guid id, string lang)
         {
             return GetView(this.Get(id), lang);
         }
@@ -175,7 +172,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
         //    {
         //        contenttype = this.SiteDb.ContentTypes.Get(content.ContentTypeId);
         //    }
-                  
+
         //    string defaultculture = this.SiteDb.WebSite.DefaultCulture;
 
         //    var NoSysNoMul = contenttype.Properties.Where(o => o.IsSystemField == false && o.MultipleLanguage == false).ToList();
@@ -202,7 +199,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
         //        }
 
         //        bool valueset = false;
-        //        // remove the key...  
+        //        // remove the key...
         //        foreach (var citem in content.Contents)
         //        {
         //            if (citem.Lang != defaultculture)
@@ -224,51 +221,46 @@ namespace Kooboo.Sites.Ecommerce.Repository
         //    }
         //}
 
-
-        public void UpdateVariants(Guid ProductId,  List<ProductVariants> variants)
-        {    
+        public void UpdateVariants(Guid ProductId, List<ProductVariants> variants)
+        {
             if (variants == null)
             {
-                variants = new List<ProductVariants>(); 
+                variants = new List<ProductVariants>();
             }
 
             foreach (var item in variants)
             {
                 item.ProductId = ProductId;
-                item.Id = default(Guid); // reset id. 
+                item.Id = default(Guid); // reset id.
             }
 
-            var repo = this.SiteDb.GetSiteRepository<ProductVariantsRepository>(); 
+            var repo = this.SiteDb.GetSiteRepository<ProductVariantsRepository>();
 
             var old = repo.ListByProductId(ProductId);
 
             foreach (var item in old)
             {
-                if (variants.Find(o=>o.Id == item.Id) == null)
+                if (variants.Find(o => o.Id == item.Id) == null)
                 {
-                    repo.Delete(item.Id); 
+                    repo.Delete(item.Id);
                 }
             }
 
             foreach (var item in variants)
             {
-                repo.AddOrUpdate(item); 
-            }       
-
+                repo.AddOrUpdate(item);
+            }
         }
 
-
         public List<Product> GetByCategory(Guid CategoryId)
-        {                                                  
+        {
             var allcats = GetAllSubCats(CategoryId).ToList();
 
             var allproductcats = this.SiteDb.GetSiteRepository<ProductCategoryRepository>().List();
 
+            var allproductids = allproductcats.Where(o => allcats.Contains(o.CategoryId)).Select(o => o.ProductId).ToList();
 
-            var allproductids = allproductcats.Where(o => allcats.Contains(o.CategoryId)).Select(o=>o.ProductId).ToList();
-
-            return this.Query.WhereIn<Guid>(o => o.Id, allproductids.ToList()).SelectAll(); 
-         
+            return this.Query.WhereIn<Guid>(o => o.Id, allproductids.ToList()).SelectAll();
         }
 
         private HashSet<Guid> GetAllSubCats(Guid Id)
@@ -290,6 +282,4 @@ namespace Kooboo.Sites.Ecommerce.Repository
             }
         }
     }
-
-
 }

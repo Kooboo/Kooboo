@@ -1,10 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Utilities
 {
@@ -36,27 +31,28 @@ namespace Kooboo.Lib.Utilities
         }
 
         private string _charset;
-        public string CharSet {
+
+        public string CharSet
+        {
             get
             {
-                if (string.IsNullOrEmpty(_charset)  && string.IsNullOrEmpty(_minetype))
+                if (string.IsNullOrEmpty(_charset) && string.IsNullOrEmpty(_minetype))
                 {
                     return "US-ASCII";
                 }
                 else
                 {
-                    return _charset; 
+                    return _charset;
                 }
             }
             set
             {
-                _charset = value; 
+                _charset = value;
             }
         }
 
         public string DataString { get; set; }
 
         public bool isBase64 { get; set; }
-
     }
 }

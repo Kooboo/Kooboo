@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data.Models;
@@ -28,30 +28,29 @@ namespace Kooboo.Web.Api.Implementation
                 model.DisplayName = style.DisplayName;
                 model.FullUrl = ObjectService.GetObjectRelativeUrl(call.WebSite.SiteDb(), style);
 
-                model.Extension = style.Extension; 
+                model.Extension = style.Extension;
 
-                if (model.Extension !=null && model.Extension != "css" && model.Extension != ".css")
+                if (model.Extension != null && model.Extension != "css" && model.Extension != ".css")
                 {
                     model.SourceChange = style.SourceChange;
                     if (!string.IsNullOrEmpty(style.Source))
                     {
                         model.Body = style.Source;
-                    }   
-                }     
+                    }
+                }
                 return model;
             }
             else
             {
-                return new StyleViewModel(); 
+                return new StyleViewModel();
             }
-                   
         }
 
         [Kooboo.Web.Menus.SiteObjectMenu]
         public List<IEmbeddableItemListViewModel> External(ApiCall apiCall)
         {
             var sitedb = apiCall.WebSite.SiteDb();
-       
+
             int storenameHash = Lib.Security.Hash.ComputeInt(sitedb.Styles.StoreName);
             List<IEmbeddableItemListViewModel> result = new List<IEmbeddableItemListViewModel>();
 
@@ -105,15 +104,14 @@ namespace Kooboo.Web.Api.Implementation
             if (string.IsNullOrEmpty(extension))
             {
                 extension = "css";
-            }      
+            }
             string source = null;
-            
+
             if (extension != "css" && extension != ".css")
             {
                 source = body;
-                body = Kooboo.Sites.Engine.Manager.Execute(extension, call.Context, body); 
+                body = Kooboo.Sites.Engine.Manager.Execute(extension, call.Context, body);
             }
-
 
             if (id != default(Guid))
             {
@@ -126,10 +124,10 @@ namespace Kooboo.Web.Api.Implementation
                         style.Extension = extension;
                     }
 
-                    if (source !=null)
+                    if (source != null)
                     {
                         style.Source = source;
-                        style.SourceChange = false; 
+                        style.SourceChange = false;
                     }
                     sitedb.Styles.AddOrUpdate(style, true, true, call.Context.User.Id);
                     return style.Id;
@@ -172,7 +170,7 @@ namespace Kooboo.Web.Api.Implementation
                         {
                             style.Source = source;
                             style.SourceChange = false;
-                        }      
+                        }
                         sitedb.Styles.AddOrUpdate(style, false, false, call.Context.User.Id);
                         return style.Id;
                     }
@@ -195,7 +193,6 @@ namespace Kooboo.Web.Api.Implementation
             }
             return default(Guid);
         }
-           
 
         public List<UsedByRelation> Relation(ApiCall call)
         {
@@ -263,7 +260,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 else
                 {
-                    // style rule or font face rule. 
+                    // style rule or font face rule.
                     CssRuleViewModel rule = new CssRuleViewModel();
                     rule.RuleType = ruleType;
                     List<DeclarationViewModel> subdeclarations = new List<DeclarationViewModel>();
@@ -313,7 +310,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
                 else
                 {
-                    // style rule or font face rule. 
+                    // style rule or font face rule.
 
                     CssRuleViewModel rule = new CssRuleViewModel();
                     rule.RuleType = ruleType;
@@ -334,7 +331,6 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             return rules;
-
         }
 
         public void UpdateRules(ApiCall call)
@@ -365,19 +361,18 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     if (rule.Value.RuleType == RuleType.StyleRule)
                     {
-                        CmsCssRuleChanges changeitem = GetStyleRuleChangeItem(rule.Value); 
+                        CmsCssRuleChanges changeitem = GetStyleRuleChangeItem(rule.Value);
                         changes.Add(changeitem);
                     }
                     else if (rule.Value.RuleType == RuleType.MediaRule)
                     {
                         CmsCssRuleChanges changeitem = GetMediaRuleAdded(rule.Value);
-                        changes.Add(changeitem); 
-                    } 
+                        changes.Add(changeitem);
+                    }
                 }
             }
             if (model.Modified != null && model.Modified.Count > 0)
             {
-
                 foreach (var rule in model.Modified)
                 {
                     List<CmsCssDeclaration> declarations = new List<CmsCssDeclaration>();
@@ -406,7 +401,7 @@ namespace Kooboo.Web.Api.Implementation
         }
 
         private static CmsCssRuleChanges GetStyleRuleChangeItem(CssRuleViewModel rule)
-        { 
+        {
             List<CmsCssDeclaration> declarations = new List<CmsCssDeclaration>();
             if (rule.Declarations != null)
             {
@@ -414,8 +409,8 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     declarations.Add(new CmsCssDeclaration() { PropertyName = item.Name, Value = item.Value, Important = item.Important });
                 }
-            } 
-            var changeitem = new CmsCssRuleChanges() { ChangeType = ChangeType.Add, CssRuleId = rule.Id, selectorText = rule.Selector,  Declarations = declarations };
+            }
+            var changeitem = new CmsCssRuleChanges() { ChangeType = ChangeType.Add, CssRuleId = rule.Id, selectorText = rule.Selector, Declarations = declarations };
 
             return changeitem;
         }
@@ -423,20 +418,20 @@ namespace Kooboo.Web.Api.Implementation
         private static CmsCssRuleChanges GetMediaRuleAdded(CssRuleViewModel rule)
         {
             CmsCssRuleChanges change = new CmsCssRuleChanges();
-            if (rule.Selector.IndexOf("@media",  StringComparison.OrdinalIgnoreCase) == -1)
+            if (rule.Selector.IndexOf("@media", StringComparison.OrdinalIgnoreCase) == -1)
             {
                 change.selectorText = "@media " + rule.Selector;
             }
             else
             {
-                change.selectorText = rule.Selector; 
+                change.selectorText = rule.Selector;
             }
 
-            string ruletext = string.Empty; 
+            string ruletext = string.Empty;
 
             foreach (var item in rule.Rules)
             {
-                ruletext += "\r\n" + item.Selector + "\r\n{\r\n"; 
+                ruletext += "\r\n" + item.Selector + "\r\n{\r\n";
                 List<CmsCssDeclaration> declarations = new List<CmsCssDeclaration>();
                 if (item.Declarations != null)
                 {
@@ -444,17 +439,15 @@ namespace Kooboo.Web.Api.Implementation
                     {
                         declarations.Add(new CmsCssDeclaration() { PropertyName = decl.Name, Value = decl.Value, Important = decl.Important });
                     }
-                    ruletext += CssService.SerializeCmsCssDeclaration(declarations); 
+                    ruletext += CssService.SerializeCmsCssDeclaration(declarations);
                 }
-                ruletext += "\r\n}"; 
+                ruletext += "\r\n}";
             }
 
-            change.DeclarationText = ruletext; 
+            change.DeclarationText = ruletext;
 
-            return change; 
+            return change;
         }
-
- 
 
         public override bool IsUniqueName(ApiCall call)
         {
@@ -493,8 +486,6 @@ namespace Kooboo.Web.Api.Implementation
             return true;
         }
 
-
-
         private bool samename(string dbname, string name, List<string> extensionsWithDot)
         {
             if (dbname == null || name == null)
@@ -510,7 +501,6 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in extensionsWithDot)
             {
-
                 if (dbname.EndsWith(item))
                 {
                     dbname = dbname.Substring(0, dbname.Length - item.Length);
@@ -522,8 +512,6 @@ namespace Kooboo.Web.Api.Implementation
             }
             return false;
         }
-
-
 
         public List<string> GetExtensions(ApiCall call)
         {
@@ -538,7 +526,5 @@ namespace Kooboo.Web.Api.Implementation
             }
             return result.ToList();
         }
-
-
-    } 
+    }
 }

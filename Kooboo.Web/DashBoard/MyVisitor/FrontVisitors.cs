@@ -1,17 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
+using System.Linq;
 
 namespace Kooboo.Web.DashBoard.MyVisitor
 {
-
     public class FrontVisitors : IDashBoard
     {
         public string DisplayName(RenderContext context)
@@ -25,8 +20,8 @@ namespace Kooboo.Web.DashBoard.MyVisitor
             {
                 return "Visitors";
             }
-        } 
-  
+        }
+
         public IDashBoardResponse Render(RenderContext Context)
         {
             var sitedb = Context.WebSite.SiteDb();
@@ -55,6 +50,4 @@ namespace Kooboo.Web.DashBoard.MyVisitor
 
         public int AvgSize { get; set; }
     }
-
-
 }

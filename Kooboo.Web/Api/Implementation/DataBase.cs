@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
@@ -47,7 +47,7 @@ namespace Kooboo.Web.Api.Implementation
             var dbtable = db.GetOrCreateTable(table);
 
             string sortfield = call.GetValue("sort", "orderby", "order");
-            // verify sortfield. 
+            // verify sortfield.
 
             if (sortfield != null)
             {
@@ -66,7 +66,6 @@ namespace Kooboo.Web.Api.Implementation
                     sortfield = primarycol.Name;
                 }
             }
-
 
             var pager = ApiHelper.GetPager(call, 30);
 
@@ -102,35 +101,30 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
-
-
-
         public void CreateTable(string name, ApiCall call)
-        { 
+        {
             if (!Kooboo.IndexedDB.Helper.CharHelper.IsValidTableName(name))
             {
                 throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Only Alphanumeric are allowed to use as a table", call.Context));
             }
 
             var repo = call.Context.WebSite.SiteDb().GetSiteRepository<DatabaseTableRepository>();
-            repo.AddOrUpdate(new DatabaseTable() { Name = name }); 
+            repo.AddOrUpdate(new DatabaseTable() { Name = name });
             return;
         }
-         
+
         public void DeleteTables(string names, ApiCall call)
-        { 
+        {
             List<string> ids = Lib.Helper.JsonHelper.Deserialize<List<string>>(names);
             var repo = call.Context.WebSite.SiteDb().GetSiteRepository<DatabaseTableRepository>();
-            repo.DeleteTable(ids, call.Context.User.Id); 
+            repo.DeleteTable(ids, call.Context.User.Id);
         }
-
 
         public bool IsUniqueTableName(string name, ApiCall call)
         {
             var repo = call.Context.WebSite.SiteDb().GetSiteRepository<DatabaseTableRepository>();
 
-            return repo.isUniqueName(name);  
- 
+            return repo.isUniqueName(name);
         }
 
         public List<string> AvailableControlTypes(ApiCall call)
@@ -148,12 +142,10 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in dbTable.Setting.Columns)
             {
-
                 if (item.IsSystem && item.Name == IndexedDB.Dynamic.Constants.DefaultIdFieldName)
                 {
                     continue;
                 }
-
 
                 DbTableColumn model = new DbTableColumn() { Name = item.Name, IsIncremental = item.IsIncremental, IsUnique = item.IsUnique, IsIndex = item.IsIndex, IsPrimaryKey = item.IsPrimaryKey, Seed = item.Seed, Scale = item.Increment, IsSystem = item.IsSystem };
 
@@ -198,7 +190,6 @@ namespace Kooboo.Web.Api.Implementation
             }
             return result;
         }
-
 
         public Guid UpdateData(string tablename, Guid id, List<DatabaseItemEdit> Values, ApiCall call)
         {
@@ -280,8 +271,5 @@ namespace Kooboo.Web.Api.Implementation
             var repo = sitedb.GetSiteRepository<DatabaseTableRepository>();
             repo.AddOrUpdate(table, call.Context.User.Id);
         }
-
     }
-
-
 }

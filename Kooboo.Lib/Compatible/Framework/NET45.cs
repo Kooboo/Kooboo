@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 #if NET45 || NET461
 using System;
@@ -19,9 +19,9 @@ namespace Kooboo.Lib.Compatible
         {
             return System.Web.MimeMapping.GetMimeMapping(extension);
         }
-        
 
 #region RSA
+
         public RsaKeys GenerateKeys(int size = 512)
         {
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(size);
@@ -88,7 +88,9 @@ namespace Kooboo.Lib.Compatible
             bytes = rsa.Decrypt(Convert.FromBase64String(content), false);
             return Encoding.UTF8.GetString(bytes);
         }
-#endregion
+
+#endregion RSA
+
         public double GetDistance(double xLa, double xLong, double yLa, double yLong)
         {
             System.Device.Location.GeoCoordinate cordx = new System.Device.Location.GeoCoordinate(xLa, xLong);
@@ -97,6 +99,7 @@ namespace Kooboo.Lib.Compatible
         }
 
 #region image
+
         public SizeMeansurement GetImageSize(byte[] imagebytes)
         {
             SizeMeansurement measure = new SizeMeansurement();
@@ -111,7 +114,6 @@ namespace Kooboo.Lib.Compatible
             }
             catch (Exception ex)
             {
-
             }
             return measure;
         }
@@ -171,7 +173,8 @@ namespace Kooboo.Lib.Compatible
                 return Convert.ToBase64String(data);
             }
         }
-#endregion
+
+#endregion image
 
         public void OpenDefaultUrl(string url)
         {
@@ -197,20 +200,19 @@ namespace Kooboo.Lib.Compatible
          public bool IsUWP()
         {
             var uwp= System.Configuration.ConfigurationManager.AppSettings.Get("IsUWP");
-           
+
             if (string.IsNullOrEmpty(uwp))
             {
-                return false; 
+                return false;
             }
             else
             {
-                bool boolValue; 
+                bool boolValue;
                 bool.TryParse(uwp, out boolValue);
 
-                return boolValue; 
-            } 
+                return boolValue;
+            }
         }
-
     }
 }
 #endif

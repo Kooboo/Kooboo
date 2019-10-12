@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
@@ -34,14 +34,14 @@ namespace Kooboo.Web.JQL
 
         public static string DatabaseDeleteScript(WebSite Site, string tablename)
         {
-            string js = "var id=k.request.id; \r\n"; 
+            string js = "var id=k.request.id; \r\n";
             js += "k.database." + tablename + ".delete(id);\r\n";
             return js;
         }
 
         public static string DatabaseGetScript(WebSite Site, string tablename)
         {
-            string js = "var id = k.request.id; \r\n"; 
+            string js = "var id = k.request.id; \r\n";
             js += " var obj = k.database." + tablename + ".get(id);\r\n";
             js += "if (obj) {  k.response.json(obj); }; ";
             return js;
@@ -105,7 +105,6 @@ namespace Kooboo.Web.JQL
             return null;
         }
 
-
         public static void GenerateDatabase(WebSite website, string TableName, List<string> actions)
         {
             foreach (var item in actions)
@@ -156,7 +155,7 @@ namespace Kooboo.Web.JQL
             var oldcode = sitedb.Code.Get(code.Id);
             if (oldcode != null)
             {
-                return; // already exists. 
+                return; // already exists.
             }
 
             code.CodeType = CodeType.Api;
@@ -165,21 +164,19 @@ namespace Kooboo.Web.JQL
             {
                 if (!sitedb.Routes.Validate(url, code.Id))
                 {
-                    // already exists... 
+                    // already exists...
                     return;
                 }
             }
-                        
-            sitedb.Code.AddOrUpdate(code);    
+
+            sitedb.Code.AddOrUpdate(code);
 
             var route = new Kooboo.Sites.Routing.Route();
             route.Name = url;
             route.objectId = code.Id;
             route.DestinationConstType = ConstObjectType.Code;
             sitedb.Routes.AddOrUpdate(route);
-
         }
-                               
 
         public static void GenerateTextContent(WebSite website, string folderName, List<string> actions)
         {
@@ -221,8 +218,6 @@ namespace Kooboo.Web.JQL
             }
         }
 
-
-
         public static void AddTextContentApi_code(SiteDb sitedb, string folderName, string actionName, string codebody)
         {
             string url = "/textapi/" + folderName + "/" + actionName;
@@ -234,7 +229,7 @@ namespace Kooboo.Web.JQL
             var oldcode = sitedb.Code.Get(code.Id);
             if (oldcode != null)
             {
-                return; // already exists. 
+                return; // already exists.
             }
 
             code.CodeType = CodeType.Api;
@@ -243,7 +238,7 @@ namespace Kooboo.Web.JQL
             {
                 if (!sitedb.Routes.Validate(url, code.Id))
                 {
-                    // already exists... 
+                    // already exists...
                     return;
                 }
             }
@@ -254,9 +249,8 @@ namespace Kooboo.Web.JQL
             route.Name = url;
             route.objectId = code.Id;
             route.DestinationConstType = ConstObjectType.Code;
-            sitedb.Routes.AddOrUpdate(route); 
+            sitedb.Routes.AddOrUpdate(route);
         }
-
 
         public static string TextContentAddScript(WebSite Site, string folderName)
         {
@@ -270,7 +264,7 @@ namespace Kooboo.Web.JQL
                 }
                 js += "obj.folder='" + folderName + "'\r\n";
                 js += "k.site.textContents.add(obj); \r\n";
-                // js += "k.response.write('ok');"; 
+                // js += "k.response.write('ok');";
 
                 return js;
             }
@@ -281,15 +275,14 @@ namespace Kooboo.Web.JQL
         {
             var fields = GetTextContentFields(Site, tablename);
             if (fields != null && fields.Any())
-            { 
-
-                string js = JsKey();  
+            {
+                string js = JsKey();
 
                 js += "if (id) {\r\n";
 
                 js += "var obj=k.site.textContents.get(id); \r\n";
 
-                js += "if (obj) {\r\n"; 
+                js += "if (obj) {\r\n";
 
                 foreach (var item in fields)
                 {
@@ -299,17 +292,15 @@ namespace Kooboo.Web.JQL
                 }
                 js += "k.site.textContents.update(obj); \r\n";
 
-                js += "}\r\n"; 
+                js += "}\r\n";
 
                 js += "}";
 
                 return js;
-
-
             }
             return null;
         }
-            
+
         private static string JsKey()
         {
             string js = "var id;\r\n";
@@ -317,19 +308,19 @@ namespace Kooboo.Web.JQL
             js += " { id = k.request.id; }\r\n";
             js += "else if (k.request.usekey)\r\n";
             js += "{ id = k.request.userkey; }\r\n";
-            return js; 
+            return js;
         }
 
         public static string TextContentDeleteScript(WebSite Site, string tablename)
         {
-            string js = JsKey(); 
+            string js = JsKey();
             js += "k.site.textContents.delete(id);\r\n";
             return js;
         }
 
         public static string TextContentGetScript(WebSite Site, string tablename)
         {
-            string js = JsKey(); 
+            string js = JsKey();
 
             js += "var obj = k.site.textContents.get(id);\r\n";
             js += "if (obj) {  k.response.json(obj); }; ";
@@ -338,8 +329,7 @@ namespace Kooboo.Web.JQL
 
         public static string TextContentListScript(WebSite Site, string folderName)
         {
-            
-            string js = " var list = k.site.textContents.findAll(\"folder=='"+ folderName+"'\");\r\n";
+            string js = " var list = k.site.textContents.findAll(\"folder=='" + folderName + "'\");\r\n";
             js += "if (list) {  k.response.json(list); }; ";
             return js;
         }
@@ -354,12 +344,10 @@ namespace Kooboo.Web.JQL
 
                 if (type != null)
                 {
-                    return type.Properties.Where(o=>!o.IsSystemField).Select(o => o.Name).ToList();
+                    return type.Properties.Where(o => !o.IsSystemField).Select(o => o.Name).ToList();
                 }
             }
             return null;
         }
-
-
     }
 }

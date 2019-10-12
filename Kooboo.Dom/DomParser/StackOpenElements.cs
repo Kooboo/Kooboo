@@ -1,10 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
@@ -13,8 +10,7 @@ namespace Kooboo.Dom
     /// </summary>
     public class StackOpenElements
     {
-
-        TreeConstruction TreeConstruction;
+        private TreeConstruction TreeConstruction;
 
         public StackOpenElements(TreeConstruction treeconstruction)
         {
@@ -49,28 +45,26 @@ namespace Kooboo.Dom
         }
 
         /// <summary>
-        /// add/append a new open elements. 
+        /// add/append a new open elements.
         /// </summary>
         /// <param name="node"></param>
         public void push(Element node)
         {
-
             item.Add(node);
         }
 
         /// <summary>
-        /// Only pop off the element if it is the last in the item list. 
+        /// Only pop off the element if it is the last in the item list.
         /// </summary>
         /// <param name="node"></param>
         public void popOffLast(Element node)
         {
             int index = length - 1;
 
-            string tagName = node.tagName; 
+            string tagName = node.tagName;
 
-            if (this.TreeConstruction.IsSameDomElement(item[index], node))    
+            if (this.TreeConstruction.IsSameDomElement(item[index], node))
             {
-
                 if (TreeConstruction.CurrentProcessingToken.tagName == tagName)
                 {
                     item[index].location.endTokenStartIndex = this.TreeConstruction.CurrentProcessingToken.startIndex;
@@ -91,17 +85,15 @@ namespace Kooboo.Dom
                         {
                             item[index].location.endTokenEndIndex = maxend;
                         }
-
                     }
                 }
-                
-                
+
                 item.RemoveAt(index);
             }
         }
 
         /// <summary>
-        /// get one off the last append node. 
+        /// get one off the last append node.
         /// </summary>
         /// <param name="node"></param>
         public void popOff(Element node)
@@ -111,14 +103,12 @@ namespace Kooboo.Dom
 
         public void popOff(string tagName)
         {
-
             int index = length - 1;
 
             for (int i = index; i >= 0; i--)
             {
                 if (item[i].tagName == tagName)
                 {
-
                     if (TreeConstruction.CurrentProcessingToken.tagName == tagName)
                     {
                         item[i].location.endTokenStartIndex = this.TreeConstruction.CurrentProcessingToken.startIndex;
@@ -139,7 +129,6 @@ namespace Kooboo.Dom
                             {
                                 item[i].location.endTokenEndIndex = maxend;
                             }
-
                         }
                     }
 
@@ -154,7 +143,6 @@ namespace Kooboo.Dom
         /// <param name="selfIncluded"></param>
         public void popOffTill(string tagName, bool selfIncluded)
         {
-
             List<int> itemToRemoved = new List<int>();
             bool hastag = false;
 
@@ -182,7 +170,7 @@ namespace Kooboo.Dom
             {
                 foreach (var removeIndex in itemToRemoved)
                 {
-                    string currentTagName = item[removeIndex].tagName; 
+                    string currentTagName = item[removeIndex].tagName;
                     if (TreeConstruction.CurrentProcessingToken.tagName == currentTagName)
                     {
                         item[removeIndex].location.endTokenStartIndex = this.TreeConstruction.CurrentProcessingToken.startIndex;
@@ -203,10 +191,8 @@ namespace Kooboo.Dom
                             {
                                 item[removeIndex].location.endTokenEndIndex = maxend;
                             }
-
                         }
                     }
-
 
                     item.RemoveAt(removeIndex);
                 }
@@ -216,7 +202,7 @@ namespace Kooboo.Dom
         public void popOffTillOneOf(bool selfIncluded, params string[] tagNames)
         {
             string foundTagName = null;
-            
+
             List<int> itemToRemoved = new List<int>();
 
             int index = length - 1;
@@ -240,7 +226,6 @@ namespace Kooboo.Dom
 
             if (!string.IsNullOrEmpty(foundTagName))
             {
-
                 foreach (var removeIndex in itemToRemoved)
                 {
                     string currentTagName = item[removeIndex].tagName;
@@ -264,17 +249,12 @@ namespace Kooboo.Dom
                             {
                                 item[removeIndex].location.endTokenEndIndex = maxend;
                             }
-
                         }
                     }
 
-
-
                     item.RemoveAt(removeIndex);
                 }
-
             }
-
         }
 
         /// <summary>
@@ -286,7 +266,6 @@ namespace Kooboo.Dom
             {
                 return currentNode();
             }
-
         }
 
         public bool hasTag(string tagName)
@@ -345,9 +324,8 @@ namespace Kooboo.Dom
             }
         }
 
-
         /// <summary>
-        /// should be HTML, the first element. 
+        /// should be HTML, the first element.
         /// </summary>
         /// <returns></returns>
         public Element topElement()
@@ -420,10 +398,9 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-
                     if (type == ScopeType.inSelectScope)
                     {
-                        // The stack of open elements is said to have a particular element in select scope when it has that element in the specific scope consisting of all element types except the following: 
+                        // The stack of open elements is said to have a particular element in select scope when it has that element in the specific scope consisting of all element types except the following:
                         //optgroup in the HTML namespace
                         //option in the HTML namespace
                         if (tagName != "optgroup" && tagName != "option")
@@ -431,9 +408,8 @@ namespace Kooboo.Dom
                             return false;
                         }
                     }
-
                     else
-                    { 
+                    {
                         //Otherwise, if node is one of the element types in list, terminate in a failure state.
                         foreach (var tagNameItem in scopeElements(type))
                         {
@@ -443,20 +419,16 @@ namespace Kooboo.Dom
                             }
                         }
                     }
-                     
-
                 }
 
                 //Otherwise, set node to the previous entry in the stack of open elements and return to step 2. (This will never fail, since the loop will always terminate in the previous step if the top of the stack — an html element — is reached.)
             }
 
             return false;
-
         }
 
         private List<string> scopeElements(ScopeType type)
         {
-
             switch (type)
             {
                 case ScopeType.inScope:
@@ -477,6 +449,7 @@ namespace Kooboo.Dom
         }
 
         private List<string> _inscope;
+
         private List<string> inScope()
         {
             if (_inscope == null)
@@ -520,16 +493,14 @@ namespace Kooboo.Dom
                 _inscope.Add("foreignObject");
                 _inscope.Add("desc");
                 _inscope.Add("title");
-
             }
             return _inscope;
-
         }
 
         private List<string> _inListItemScope;
+
         private List<string> inListItemScope()
         {
-
             //The stack of open elements is said to have a particular element in list item scope when it has that element in the specific scope consisting of the following element types:
             //All the element types listed above for the has an element in scope algorithm.
             //ol in the HTML namespace
@@ -544,13 +515,12 @@ namespace Kooboo.Dom
 
                 _inListItemScope.Add("ol");
                 _inListItemScope.Add("ul");
-
             }
             return _inListItemScope;
-
         }
 
         private List<string> _inButtonScope;
+
         private List<string> inButtonScope()
         {
             //          The stack of open elements is said to have a particular element in button scope when it has that element in the specific scope consisting of the following element types:
@@ -566,14 +536,12 @@ namespace Kooboo.Dom
                 }
 
                 _inButtonScope.Add("button");
-
             }
             return _inButtonScope;
-
         }
 
-
         private List<string> _inTableScope;
+
         private List<string> inTableScope()
         {
             // The stack of open elements is said to have a particular element in table scope when it has that element in the specific scope consisting of the following element types:
@@ -588,18 +556,16 @@ namespace Kooboo.Dom
                 _inTableScope.Add("html");
                 _inTableScope.Add("table");
                 _inTableScope.Add("template");
-
             }
             return _inTableScope;
         }
 
-
         private List<string> _special;
+
         public List<string> Special()
         {
             if (_special == null)
             {
-
                 //The following elements have varying levels of special parsing rules: HTML's address, applet, area, article, aside, base, basefont, bgsound, blockquote, body, br, button, caption, center, col, colgroup, dd, details, dir, div, dl, dt, embed, fieldset, figcaption, figure, footer, form, frame, frameset, h1, h2, h3, h4, h5, h6, head, header, hgroup, hr, html, iframe, img, input, isindex, li, link, listing, main, marquee, meta, nav, noembed, noframes, noscript, object, ol, p, param, plaintext, pre, script, section, select, source, style, summary, table, tbody, td, template, textarea, tfoot, th, thead, title, tr, track, ul, wbr, and xmp; MathML's mi, mo, mn, ms, mtext, and annotation-xml; and SVG's foreignObject, desc, and title.
 
                 _special = new List<string>();
@@ -612,16 +578,13 @@ namespace Kooboo.Dom
                 {
                     _special.Add(item);
                 }
-
             }
 
             return _special;
         }
 
-
         public void ClearStackBackToTableContext()
         {
-
             //When the steps above require the UA to clear the stack back to a table context, it means that the UA must, while the current node is not a table, template, or html element, pop elements from the stack of open elements.
 
             int index = length - 1;
@@ -640,12 +603,10 @@ namespace Kooboo.Dom
                     popOff(element);
                 }
             }
-
         }
 
         public void ClearStackBackToTableRowContext()
         {
-
             //When the steps above require the UA to clear the stack back to a table row context, it means that the UA must, while the current node is not a tr, template, or html element, pop elements from the stack of open elements.
             int index = length - 1;
 
@@ -665,10 +626,8 @@ namespace Kooboo.Dom
             }
         }
 
-
         public void ClearStackBackToTableBodyContext()
         {
-
             //When the steps above require the UA to clear the stack back to a table body context, it means that the UA must, while the current node is not a tbody, tfoot, thead, template, or html element, pop elements from the stack of open elements.
 
             int index = length - 1;
@@ -679,7 +638,6 @@ namespace Kooboo.Dom
 
                 if (element.tagName.isOneOf("tbody", "tfoot", "thead", "template", "html"))
                 {
-
                     return;
                 }
                 else
@@ -688,7 +646,6 @@ namespace Kooboo.Dom
                 }
             }
         }
-
     }
 
     public enum ScopeType
@@ -699,5 +656,4 @@ namespace Kooboo.Dom
         inTableScope = 4,
         inSelectScope = 5,
     }
-
 }

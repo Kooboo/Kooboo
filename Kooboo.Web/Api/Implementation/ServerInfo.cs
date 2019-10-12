@@ -1,11 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -20,7 +15,7 @@ namespace Kooboo.Web.Api.Implementation
         public string Setting(ApiCall call)
         {
             string value = Lib.Helper.JsonHelper.Serialize(Kooboo.Data.AppSettings.ServerSetting);
-            return value; 
+            return value;
         }
 
         public string Api(ApiCall call)

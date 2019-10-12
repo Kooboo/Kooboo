@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
@@ -6,11 +6,9 @@ using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.HtmlForm
-{               
+{
     public class SubmitToExternal : Data.Interface.IFormSubmitter
     {
         public string Name
@@ -48,7 +46,7 @@ namespace Kooboo.Sites.HtmlForm
                     {
                         item.SelectionValues[url] = url;
                     }
-                }    
+                }
             }
             setting.Add(item);
             return setting;
@@ -56,10 +54,8 @@ namespace Kooboo.Sites.HtmlForm
 
         public bool Submit(RenderContext context, Guid FormId, Dictionary<string, string> settings)
         {
-            // this will post directly to the url... 
+            // this will post directly to the url...
             return true;
         }
     }
-
-
 }

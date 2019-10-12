@@ -1,19 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
-  public  class DecimalFieldConvertercs<T> : IFieldConverter<T>
+    public class DecimalFieldConvertercs<T> : IFieldConverter<T>
     {
-
-        Func<T, decimal> getValue;
-        Action<T, decimal> setValue;
+        private Func<T, decimal> getValue;
+        private Action<T, decimal> setValue;
 
         public DecimalFieldConvertercs(string FieldName)
         {
@@ -43,14 +38,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             decimal fieldvalue = this.getValue(Value);
             return ValueConverter.ToBytes(fieldvalue);
         }
-
     }
-
 
     public class DecimalFieldConverter : IFieldConverter
     {
-        Func<object, decimal> getValue;
-        Action<object, decimal> setValue;
+        private Func<object, decimal> getValue;
+        private Action<object, decimal> setValue;
 
         public DecimalFieldConverter(string FieldName, Type ObjectType)
         {
@@ -68,7 +61,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         {
             get; set;
         }
-         
 
         public void SetByteValues(object value, byte[] bytes)
         {

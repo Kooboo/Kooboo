@@ -1,20 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Btree
 {
-
     /// <summary>
-    /// this implement the enumerable interface. 
+    /// this implement the enumerable interface.
     /// </summary>
     public class BtreeIndexDuplicateCollection : IEnumerable<Int64>
     {
-
         private BtreeIndexDuplicate duplicate;
         private JumpRecord start;
 
@@ -22,11 +17,9 @@ namespace Kooboo.IndexedDB.Btree
         {
             this.duplicate = duplicate;
             this.start = start;
-
-           
         }
 
-        IEnumerator<long> GetEnumerator()
+        private IEnumerator<long> GetEnumerator()
         {
             return new Enumerator(duplicate, start);
         }
@@ -40,8 +33,6 @@ namespace Kooboo.IndexedDB.Btree
         {
             return this.GetEnumerator();
         }
-
-
 
         public class Enumerator : IEnumerator<long>
         {
@@ -71,7 +62,6 @@ namespace Kooboo.IndexedDB.Btree
                 this.current = null;
             }
 
-
             public bool MoveNext()
             {
                 if (this.current.Next > 0)
@@ -83,7 +73,6 @@ namespace Kooboo.IndexedDB.Btree
                 {
                     return false;
                 }
-
             }
 
             public void Reset()
@@ -96,10 +85,5 @@ namespace Kooboo.IndexedDB.Btree
                 get { return Current; }
             }
         }
-
-
     }
-
-
-
 }

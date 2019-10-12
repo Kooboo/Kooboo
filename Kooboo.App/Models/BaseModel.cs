@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.App.Commands;
 using System;
@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Kooboo.App.Models
@@ -15,16 +13,15 @@ namespace Kooboo.App.Models
     internal abstract class BaseModel : INotifyPropertyChanged, IDataErrorInfo
     {
         private string _title;
+
         public virtual string Title
         {
-            get { return _title; }
+            get => _title;
             set
             {
-                if (_title != value)
-                {
-                    _title = value;
-                    OnPropertyChanged(nameof(Title));
-                }
+                if (_title == value) return;
+                _title = value;
+                OnPropertyChanged(nameof(Title));
             }
         }
 
@@ -32,14 +29,9 @@ namespace Kooboo.App.Models
 
         public virtual DependencyObject From { get; set; }
 
-        public string Error
-        {
-            get
-            {
-                return errorMessage;
-            }
-        }
-        private string errorMessage { get; set; } = string.Empty;
+        public string Error => ErrorMessage;
+
+        private string ErrorMessage { get; set; } = string.Empty;
 
         public string this[string columnName]
         {
@@ -50,12 +42,8 @@ namespace Kooboo.App.Models
                     MemberName = columnName
                 };
                 var res = new List<ValidationResult>();
-                var result = Validator.TryValidateProperty(GetType().GetProperty(columnName).GetValue(this, null), vc, res);
-                if (res.Count > 0)
-                {
-                    return string.Join(Environment.NewLine, res.Select(r => r.ErrorMessage).ToArray());
-                }
-                return string.Empty;
+                var result = Validator.TryValidateProperty(GetType().GetProperty(columnName)?.GetValue(this, null), vc, res);
+                return res.Count > 0 ? string.Join(Environment.NewLine, res.Select(r => r.ErrorMessage).ToArray()) : string.Empty;
             }
         }
 
@@ -66,7 +54,7 @@ namespace Kooboo.App.Models
             var vc = new ValidationContext(this, null, null);
             var res = new List<ValidationResult>();
             var result = Validator.TryValidateObject(this, vc, res);
-            errorMessage = string.Join(Environment.NewLine, res.Select(r => r.ErrorMessage).ToArray());
+            ErrorMessage = string.Join(Environment.NewLine, res.Select(r => r.ErrorMessage).ToArray());
             return result;
         }
 

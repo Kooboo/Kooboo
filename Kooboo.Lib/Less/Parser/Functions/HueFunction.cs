@@ -15,7 +15,7 @@
         {
             WarnNotSupportedByLessJS("hue(color, number)");
 
-            color.Hue += number.Value/360d;
+            color.Hue += number.Value / 360d;
             return color.ToRgbColor();
         }
     }

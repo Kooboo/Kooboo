@@ -1,11 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.Columns;
 using Kooboo.IndexedDB.Helper;
 using System;
 using System.Collections.Generic;
-using System.Collections;
-
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
@@ -60,7 +58,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                         var collen = columns[item.Key];
                         IColumn<T> created = Helper.ColumnHelper.GetColumn<T>(item.Key, item.Value, collen);
                         created.relativePosition = relativepos;
-                        relativepos += created.Length + 8; // 4 bytes for fieldnamehash and 4 bytes for lenmark. 
+                        relativepos += created.Length + 8; // 4 bytes for fieldnamehash and 4 bytes for lenmark.
                         this.Columns.Add(created);
                     }
                     else
@@ -98,7 +96,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
         }
 
         private void AddFields(Type valuetype, string FieldName)
-        {  
+        {
             var converter = ConverterHelper.GetFieldConverter<T>(valuetype, FieldName);
 
             if (converter != null)
@@ -187,9 +185,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 int len = BitConverter.ToInt32(bytes, startposition);
                 startposition += 4;
 
-                if (len <=0)
+                if (len <= 0)
                 {
-                    break; 
+                    break;
                 }
 
                 var item = Fields.Find(o => o.FieldNameHash == FieldNameHash);
@@ -241,7 +239,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 int len = BitConverter.ToInt32(ColBytes, startposition);
                 startposition += 4;
 
-
                 var col = this.Columns.Find(o => o.FieldNameHash == FieldNameHash);
 
                 if (col != null)
@@ -271,7 +268,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             return value;
         }
 
-        private List<IFieldConverter<T>> _Fields; 
+        private List<IFieldConverter<T>> _Fields;
 
         public List<IFieldConverter<T>> Fields
         {
@@ -279,11 +276,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 if (_Fields == null)
                 {
-                    _Fields = new List<IFieldConverter<T>>(); 
+                    _Fields = new List<IFieldConverter<T>>();
                 }
-                return _Fields; 
+                return _Fields;
             }
-          set { _Fields = value;  }
+            set { _Fields = value; }
         }
 
         public List<IColumn<T>> Columns { get; set; }
@@ -307,7 +304,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
             return null;
         }
-
     }
 
     public class SimpleConverter
@@ -330,7 +326,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             {
                 AddFields(item.Value, item.Key);
             }
-
         }
 
         private void AddFields(Type valuetype, string FieldName)
@@ -391,7 +386,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             int totallength = bytes.Length;
             while (true)
             {
-
                 int FieldNameHash = BitConverter.ToInt32(bytes, startposition);
 
                 startposition += 4;
@@ -426,7 +420,5 @@ namespace Kooboo.IndexedDB.Serializer.Simple
         {
             get; set;
         }
-
     }
-
 }

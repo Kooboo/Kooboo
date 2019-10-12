@@ -1,11 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Web.Backend.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Menus
 {
@@ -13,6 +10,7 @@ namespace Kooboo.Web.Menus
     {
         private static object _locker = new object();
         private static List<ICmsMenu> _items;
+
         public static List<ICmsMenu> Items
         {
             get
@@ -23,7 +21,7 @@ namespace Kooboo.Web.Menus
                     {
                         if (_items == null)
                         {
-                            _items = Kooboo.Lib.IOC.Service.GetInstances<ICmsMenu>(); 
+                            _items = Kooboo.Lib.IOC.Service.GetInstances<ICmsMenu>();
                         }
                     }
                 }
@@ -34,7 +32,7 @@ namespace Kooboo.Web.Menus
 
         public static ICmsMenu GetMenu(Type type)
         {
-            // TODO: also do the submenu. 
+            // TODO: also do the submenu.
             foreach (var item in Items)
             {
                 if (item.GetType() == type)
@@ -45,8 +43,7 @@ namespace Kooboo.Web.Menus
             return null;
         }
 
-
-        // Subitem, should use load by interface.... 
+        // Subitem, should use load by interface....
         public static List<ICmsMenu> SubMenus(Type type)
         {
             if (type.IsInterface)
@@ -74,7 +71,6 @@ namespace Kooboo.Web.Menus
             return result.OrderBy(o => o.Order).ToList();
         }
 
-
         public static List<ICmsMenu> SubMenusByInterface(Type type)
         {
             if (!type.IsInterface)
@@ -85,7 +81,6 @@ namespace Kooboo.Web.Menus
 
             foreach (var item in Items)
             {
-
                 var itemtype = item.GetType();
 
                 if (Lib.Reflection.TypeHelper.HasInterface(itemtype, type))
@@ -98,9 +93,9 @@ namespace Kooboo.Web.Menus
             }
             return result.OrderBy(o => o.Order).ToList();
         }
-         
 
         private static List<ICmsMenu> _featuremenu;
+
         public static List<ICmsMenu> FeatureMenus
         {
             get
@@ -119,7 +114,6 @@ namespace Kooboo.Web.Menus
             }
         }
 
-
         private static List<ISideBarMenu> _sidebarmenus;
 
         public static List<ISideBarMenu> SideBarMenus
@@ -129,7 +123,7 @@ namespace Kooboo.Web.Menus
                 if (_sidebarmenus == null)
                 {
                     lock (_locker)
-                    { 
+                    {
                         if (_sidebarmenus == null)
                         {
                             _sidebarmenus = new List<ISideBarMenu>();
@@ -139,7 +133,7 @@ namespace Kooboo.Web.Menus
                                 var sidebaritem = item as ISideBarMenu;
                                 if (sidebaritem != null)
                                 {
-                                    _sidebarmenus.Add(sidebaritem); 
+                                    _sidebarmenus.Add(sidebaritem);
                                 }
                             }
                         }

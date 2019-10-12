@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data;
@@ -44,7 +44,6 @@ namespace Kooboo.Web.Api.Implementation
 
         public virtual bool Deletes(ApiCall call)
         {
-
             string json = call.GetValue("ids");
             if (string.IsNullOrEmpty(json))
             {
@@ -90,18 +89,15 @@ namespace Kooboo.Web.Api.Implementation
 
             if (SiteId != default(Guid))
             {
-
                 if (port <= 0)
                 {
                     DefaultBinding = false;
                 }
 
-
                 if (!DefaultBinding)
                 {
                     port = 0;
                 }
-
 
                 if (port > 0)
                 {
@@ -111,15 +107,12 @@ namespace Kooboo.Web.Api.Implementation
                     }
                 }
 
-
                 if (DefaultBinding && port > 0)
                 {
-
                     GlobalDb.Bindings.AddOrUpdate(null, null, SiteId, call.Context.User.CurrentOrgId, DefaultBinding, port);
                 }
                 else
                 {
-
                     var domain = GlobalDb.Domains.Get(RootDomain);
                     if (domain.OrganizationId != default(Guid) && AppSettings.IsOnlineServer && domain.OrganizationId != call.Context.User.CurrentOrgId)
                     {
@@ -127,17 +120,13 @@ namespace Kooboo.Web.Api.Implementation
                     }
 
                     GlobalDb.Bindings.AddOrUpdate(RootDomain, subdomain, SiteId, call.Context.User.CurrentOrgId, DefaultBinding, port);
-
                 }
-
             }
         }
-
 
         public List<BindingViewModel> ListBySite(Guid SiteId, ApiCall call)
         {
             List<BindingViewModel> result = new List<BindingViewModel>();
-
 
             var list = GlobalDb.Bindings.GetByWebSite(SiteId);
 
@@ -184,7 +173,6 @@ namespace Kooboo.Web.Api.Implementation
 
             return null;
         }
-
 
         public bool VerifySsl(string rootDomain, string Subdomain, ApiCall call)
         {
@@ -237,7 +225,6 @@ namespace Kooboo.Web.Api.Implementation
             Kooboo.Data.SSL.SslService.SetSsl(fullname, Orgid);
         }
 
-
         public List<SiteBindingViewModel> SiteBinding(ApiCall call)
         {
             var user = call.Context.User;
@@ -260,20 +247,16 @@ namespace Kooboo.Web.Api.Implementation
                 }
 
                 result.Add(new SiteBindingViewModel() { Name = item.Name, Id = item.Id, BindingCount = count });
-
             }
 
             return result;
-
         }
-
 
         private bool HasSsl(string fullDomain)
         {
             var item = Kooboo.Data.GlobalDb.SslCertificate.GetByDomain(fullDomain);
             return (item != null);
         }
-
 
         public class BindingViewModel
         {
@@ -299,7 +282,6 @@ namespace Kooboo.Web.Api.Implementation
 
             public Guid OrganizationId { get; set; }
 
-
             public Guid WebSiteId;
 
             public string SubDomain { get; set; }
@@ -312,7 +294,6 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             public string Device { get; set; }
-
 
             public string IpAddress
             {

@@ -1,17 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace Kooboo.IndexedDB
 {
     /// <summary>
-    ///this is for like image store, that can open a new stream to read the image content. 
+    ///this is for like image store, that can open a new stream to read the image content.
     /// </summary>
     public class BlockStream : Stream
     {
@@ -29,7 +24,7 @@ namespace Kooboo.IndexedDB
             {
                 if (_stream == null)
                 {
-                    _stream = StreamManager.GetFileStream(this._blockFilePath); 
+                    _stream = StreamManager.GetFileStream(this._blockFilePath);
                 }
                 return _stream;
             }
@@ -74,7 +69,7 @@ namespace Kooboo.IndexedDB
 
         public override void Flush()
         {
-            // do nothing. 
+            // do nothing.
         }
 
         public override long Length
@@ -86,7 +81,7 @@ namespace Kooboo.IndexedDB
         {
             if (Position == Length)
             {
-                return 0; 
+                return 0;
             }
 
             if ((count + offset) > this.Length)
@@ -99,7 +94,7 @@ namespace Kooboo.IndexedDB
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            offset = offset + _start; 
+            offset = offset + _start;
 
             return this.Stream.Seek(offset, origin);
         }

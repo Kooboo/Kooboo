@@ -1,16 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Schedule
 {
     public static class FileNameGenerator
     {
-
         public static string GetTimeFileName(int dayint)
         {
             return dayint.ToString() + ".time";
@@ -24,7 +18,6 @@ namespace Kooboo.IndexedDB.Schedule
             }
             return System.IO.Path.Combine(schedule.Folder, GetTimeFileName(dayint));
         }
-
 
         public static string GetContentFileName(int dayint)
         {
@@ -40,7 +33,6 @@ namespace Kooboo.IndexedDB.Schedule
             return System.IO.Path.Combine(schedule.Folder, GetContentFileName(dayint));
         }
 
-
         public static string GetItemFileName(int dayint)
         {
             return dayint.ToString() + ".items";
@@ -55,7 +47,6 @@ namespace Kooboo.IndexedDB.Schedule
             return System.IO.Path.Combine(schedule.Folder, GetItemFileName(dayint));
         }
 
-
         public static string GetRepeatRecordFileName(string Folder)
         {
             string repeatfolder = System.IO.Path.Combine(GlobalSettings.RootPath, GlobalSettings.scheduleRepeatingPath);
@@ -64,9 +55,8 @@ namespace Kooboo.IndexedDB.Schedule
 
             if (!System.IO.Directory.Exists(repeatfolder))
             {
-                System.IO.Directory.CreateDirectory(repeatfolder); 
+                System.IO.Directory.CreateDirectory(repeatfolder);
             }
-
 
             return System.IO.Path.Combine(repeatfolder, "record.repeat");
         }
@@ -84,7 +74,5 @@ namespace Kooboo.IndexedDB.Schedule
 
             return System.IO.Path.Combine(repeatfolder, "content.repeat");
         }
-
-
     }
 }

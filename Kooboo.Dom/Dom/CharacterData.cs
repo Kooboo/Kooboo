@@ -1,30 +1,26 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
-
-//    Interface CharacterData
-//interface CharacterData : Node {
-//  [TreatNullAs=EmptyString] attribute DOMString data;
-//  readonly attribute unsigned long length;
-//  DOMString substringData(unsigned long offset, unsigned long count);
-//  void appendData(DOMString data);
-//  void insertData(unsigned long offset, DOMString data);
-//  void deleteData(unsigned long offset, unsigned long count);
-//  void replaceData(unsigned long offset, unsigned long count, DOMString data);
-//};
-    [Serializable]  
-   public abstract class CharacterData : Node
+    //    Interface CharacterData
+    //interface CharacterData : Node {
+    //  [TreatNullAs=EmptyString] attribute DOMString data;
+    //  readonly attribute unsigned long length;
+    //  DOMString substringData(unsigned long offset, unsigned long count);
+    //  void appendData(DOMString data);
+    //  void insertData(unsigned long offset, DOMString data);
+    //  void deleteData(unsigned long offset, unsigned long count);
+    //  void replaceData(unsigned long offset, unsigned long count, DOMString data);
+    //};
+    [Serializable]
+    public abstract class CharacterData : Node
     {
         public CharacterData()
         {
-            sb = new StringBuilder(); 
+            sb = new StringBuilder();
         }
 
         private StringBuilder sb;
@@ -33,56 +29,49 @@ namespace Kooboo.Dom
         {
             get
             {
-                    return sb.ToString();
+                return sb.ToString();
             }
 
             set { appendData(value); }
-
         }
 
+        //public int length
+        //{
+        //    get
+        //    {
+        //        if (string.IsNullOrEmpty(data))
+        //        {
+        //            return 0;
+        //        }
+        //        else
+        //        {
+        //            return data.Length;
+        //        }
+        //    }
+        //}
 
+        public string substringData(int offset, int count)
+        {
+            throw new NotImplementedException();
+        }
 
+        public void appendData(string data)
+        {
+            sb.Append(data);
+        }
 
-       //public int length
-       //{
-       //    get
-       //    {
-       //        if (string.IsNullOrEmpty(data))
-       //        {
-       //            return 0;
-       //        }
-       //        else
-       //        {
-       //            return data.Length;
-       //        }
-       //    }
-       //}
+        public void appendData(char chr)
+        {
+            sb.Append(data);
+        }
 
-       public string substringData(int offset, int count)
-       {
-           throw new NotImplementedException(); 
-       }
+        public void insertData(int offset, string data)
+        { throw new NotImplementedException(); }
 
+        public void deleteData(int offset, int count)
+        { throw new NotImplementedException(); }
 
-
-       public void appendData(string data)
-       {
-           sb.Append(data); 
-       }
-
-       public void appendData(char chr)
-       {
-           sb.Append(data); 
-       }
-
-       public void insertData(int offset, string data)
-       { throw new NotImplementedException(); }
-
-       public void deleteData(int offset, int count)
-       { throw new NotImplementedException(); }
-
-       public void replaceData(int offset, int count, string data)
-       { throw new NotImplementedException(); }
-
+        public void replaceData(int offset, int count, string data)
+        { throw new NotImplementedException(); }
     }
 }

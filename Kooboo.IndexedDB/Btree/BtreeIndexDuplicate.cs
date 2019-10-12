@@ -1,22 +1,21 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.IO;
 using System.Linq;
 
 namespace Kooboo.IndexedDB.Btree
 {
     /// <summary>
-    /// This is to save the duplicate key items within a btree, in order to make sure that Btree does not contains duplicate key for better search performance. 
-    /// When a btree index with unique = false, it allows save duplicate key item with different block position. 
-    /// However, the blockposition record must be unique. 
+    /// This is to save the duplicate key items within a btree, in order to make sure that Btree does not contains duplicate key for better search performance.
+    /// When a btree index with unique = false, it allows save duplicate key item with different block position.
+    /// However, the blockposition record must be unique.
     /// </summary>
     public class BtreeIndexDuplicate
     {
-        //this design use 4 jump linked table, each sub containns 10 records.  See end of this file for design. 
-        // this might not be the best efficient search that use 10 sub records. It is only a guess now, best performance has not been tested. use of 50% chance upgrade theory when inserting in the jumb table theory is not effecitive. 
+        //this design use 4 jump linked table, each sub containns 10 records.  See end of this file for design.
+        // this might not be the best efficient search that use 10 sub records. It is only a guess now, best performance has not been tested. use of 50% chance upgrade theory when inserting in the jumb table theory is not effecitive.
 
         private string fullfilename;
 
@@ -24,8 +23,9 @@ namespace Kooboo.IndexedDB.Btree
 
         public static int indicatorindex = 2;
 
-        private int counterStartindex = 20;   /// the counter of each level. 
-                                              /// 
+        private int counterStartindex = 20;   /// the counter of each level.
+
+        ///
         private Int64 startRecordPointerPositionIndex = 3;
 
         private Int64 totalCounterPositionIndex = 12;
@@ -53,7 +53,7 @@ namespace Kooboo.IndexedDB.Btree
 
         public void OpenOrCreate()
         {
-            // create the file and write a header. 
+            // create the file and write a header.
             if (!File.Exists(this.fullfilename))
             {
                 // file not exists.first check directory exists or not.
@@ -75,7 +75,6 @@ namespace Kooboo.IndexedDB.Btree
 
                 indexFileStream.Close();
             }
-
         }
 
         public bool Exists
@@ -87,7 +86,7 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         /// <summary>
-        /// First create two duplicate, when there is a need to use duplicate, it must always start with two same key records. 
+        /// First create two duplicate, when there is a need to use duplicate, it must always start with two same key records.
         /// </summary>
         /// <param name="positionx">The block file position x</param>
         /// <param name="positiony">The block file position y</param>
@@ -124,10 +123,9 @@ namespace Kooboo.IndexedDB.Btree
                 }
                 if (blockposition == currentRecord.BlockPosition)
                 {
-                    // record already exists. 
+                    // record already exists.
                     return false;
                 }
-
                 else if (blockposition > currentRecord.BlockPosition)
                 {
                     if (currentRecord.Next > 0)
@@ -174,10 +172,9 @@ namespace Kooboo.IndexedDB.Btree
                         break;
                     }
                 }
-
             }
 
-            // now we should insert the block position after this previous record. 
+            // now we should insert the block position after this previous record.
             JumpRecord newrecord = insertNewRecord(blockposition);
             updateNavigator(previousrecord.diskLocation, newrecord.diskLocation, enumPosition.next);
             updateNavigator(newrecord.diskLocation, previousrecord.diskLocation, enumPosition.previous);
@@ -188,7 +185,7 @@ namespace Kooboo.IndexedDB.Btree
                 updateNavigator(previousrecord.Next, newrecord.diskLocation, enumPosition.previous);
             }
 
-            // now determine whether to promote the record or not. 
+            // now determine whether to promote the record or not.
 
             int counter = getLevelCounter(sectionStartPosition, previousrecord.level);
 
@@ -199,7 +196,7 @@ namespace Kooboo.IndexedDB.Btree
             }
             else
             {
-                // we need to promote this item. 
+                // we need to promote this item.
                 promoteItems(sectionStartPosition, loadChain, blockposition);
                 reloadStartRecordPointer(sectionStartPosition);
             }
@@ -226,7 +223,6 @@ namespace Kooboo.IndexedDB.Btree
                 {
                     return true;
                 }
-
                 else if (blockposition > currentRecord.BlockPosition)
                 {
                     if (currentRecord.Next > 0)
@@ -244,7 +240,7 @@ namespace Kooboo.IndexedDB.Btree
                     }
                     else
                     {
-                        //reach end, not found. 
+                        //reach end, not found.
                         return false;
                     }
                 }
@@ -252,31 +248,26 @@ namespace Kooboo.IndexedDB.Btree
                 {
                     if (previousrecord.Buttom > 0)
                     {
-
                         currentRecord = getJumpRecord(previousrecord.Buttom);
 
                         continue;
                     }
                     else
                     {
-                        //reach end, not found. 
+                        //reach end, not found.
                         return false;
                     }
                 }
-
             }
-
-
         }
 
         private void reloadStartRecordPointer(Int64 sectionStartPointer)
         {
-
             Int64 position = 0;
 
             for (int i = 0; i < this.maxJumpTableLevel; i++)
             {
-                position = sectionStartPointer + i * sectionlen + 46;  //46 is the start 46 bytes for counter, etc. 
+                position = sectionStartPointer + i * sectionlen + 46;  //46 is the start 46 bytes for counter, etc.
                 byte[] nextpointer = new byte[8];
 
                 lock (_object)
@@ -300,7 +291,6 @@ namespace Kooboo.IndexedDB.Btree
 
         public bool Del(Int64 SectionStartPosition, Int64 blockPosition)
         {
-
             JumpRecord startSearchRecord = getStartPointerRecord(SectionStartPosition);
 
             if (startSearchRecord == null)
@@ -316,13 +306,12 @@ namespace Kooboo.IndexedDB.Btree
             {
                 if (blockPosition == currentRecord.BlockPosition)
                 {
-                    // record found, delete it. 
+                    // record found, delete it.
                     deleteRecord(currentRecord);
 
                     this.updateTotalCounter(SectionStartPosition, -1);
                     return true;
                 }
-
                 else if (blockPosition > currentRecord.BlockPosition)
                 {
                     if (currentRecord.Next > 0)
@@ -340,7 +329,7 @@ namespace Kooboo.IndexedDB.Btree
                     }
                     else
                     {
-                        //reach end, not found. 
+                        //reach end, not found.
                         return false;
                     }
                 }
@@ -348,17 +337,15 @@ namespace Kooboo.IndexedDB.Btree
                 {
                     if (previousrecord.Buttom > 0)
                     {
-
                         currentRecord = getJumpRecord(previousrecord.Buttom);
                         continue;
                     }
                     else
                     {
-                        //reach end, not found. 
+                        //reach end, not found.
                         return false;
                     }
                 }
-
             }
 
             return false;
@@ -392,7 +379,6 @@ namespace Kooboo.IndexedDB.Btree
                     continue;
                 }
 
-
                 recordlist.Add(start.BlockPosition);
 
                 takecount += 1;
@@ -401,11 +387,9 @@ namespace Kooboo.IndexedDB.Btree
                 {
                     break;
                 }
-
             }
 
             return recordlist;
-
         }
 
         public Int64 GetOne(Int64 SectionStartPosition)
@@ -450,12 +434,10 @@ namespace Kooboo.IndexedDB.Btree
             }
 
             return recordlist;
-
         }
 
         public List<long> GetSome(Int64 SectionStartPosition, int takecount)
         {
-
             JumpRecord start = getStartPointerRecord(SectionStartPosition);
             while (start.Buttom > 0)
             {
@@ -483,12 +465,10 @@ namespace Kooboo.IndexedDB.Btree
             }
 
             return recordlist;
-
         }
 
         public BtreeIndexDuplicateCollection getCollection(Int64 SectionStartPosition)
         {
-
             JumpRecord start = getStartPointerRecord(SectionStartPosition);
             while (start.Buttom > 0)
             {
@@ -498,7 +478,6 @@ namespace Kooboo.IndexedDB.Btree
             BtreeIndexDuplicateCollection collection = new BtreeIndexDuplicateCollection(this, start);
 
             return collection;
-
         }
 
         public BtreeIndexDuplicateReader getReader(Int64 SectionStartPosition)
@@ -539,7 +518,7 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         /// <summary>
-        /// used to determine that there are more than one record so that it can NOT be removed yet. 
+        /// used to determine that there are more than one record so that it can NOT be removed yet.
         /// </summary>
         /// <param name="SectionStartPosition"></param>
         /// <returns></returns>
@@ -566,17 +545,15 @@ namespace Kooboo.IndexedDB.Btree
                 }
             }
             return false;
-
         }
 
         /// <summary>
-        /// delete the record and all the chains. 
+        /// delete the record and all the chains.
         /// </summary>
         /// <param name="record"></param>
         /// <returns></returns>
         private void deleteRecord(JumpRecord record)
         {
-
             updateNavigator(record.Previous, record.Next, enumPosition.next);
             updateNavigator(record.Next, record.Previous, enumPosition.previous);
             markAsDeleted(record.diskLocation);
@@ -593,23 +570,17 @@ namespace Kooboo.IndexedDB.Btree
                 updateNavigator(toprecord.Next, toprecord.Previous, enumPosition.previous);
 
                 markAsDeleted(toprecord.diskLocation);
-
             }
 
             while (buttomreocrd.Buttom > 0)
             {
                 buttomreocrd = getJumpRecord(buttomreocrd.Buttom);
 
-
                 updateNavigator(buttomreocrd.Previous, buttomreocrd.Next, enumPosition.next);
                 updateNavigator(buttomreocrd.Next, buttomreocrd.Previous, enumPosition.previous);
 
                 markAsDeleted(buttomreocrd.diskLocation);
-
             }
-
-
-
         }
 
         private void markAsDeleted(Int64 diskposition)
@@ -662,6 +633,7 @@ namespace Kooboo.IndexedDB.Btree
                 case enumPosition.bottom:
                     relativeposition = 27;
                     break;
+
                 default:
                     relativeposition = 11;
                     break;
@@ -672,19 +644,17 @@ namespace Kooboo.IndexedDB.Btree
                 IndexStream.Position = recorddiskposition + relativeposition;
                 IndexStream.Write(BitConverter.GetBytes(PointerDiskPosition), 0, 8);
             }
-
         }
 
-
         /// <summary>
-        /// promote items up. 
+        /// promote items up.
         /// </summary>
         /// <param name="sectionStartPosition"></param>
         /// <param name="loadchains"></param>
         /// <param name="blockposition"></param>
         private void promoteItems(Int64 sectionStartPosition, Dictionary<int, JumpRecord> loadchains, Int64 blockposition)
         {
-            /// we now use a temp counter on each level, and reset that temp counter when item promoted. 
+            /// we now use a temp counter on each level, and reset that temp counter when item promoted.
             foreach (var item in loadchains.OrderByDescending(o => o.Key))
             {
                 int level = item.Key;
@@ -694,7 +664,7 @@ namespace Kooboo.IndexedDB.Btree
                 JumpRecord ItemCurrentLevel = item.Value;
 
                 updateNavigator(ItemCurrentLevel.diskLocation, newrecord.diskLocation, enumPosition.next);
-     
+
                 updateNavigator(newrecord.diskLocation, ItemCurrentLevel.diskLocation, enumPosition.previous);
 
                 if (ItemCurrentLevel.Next > 0)
@@ -708,25 +678,24 @@ namespace Kooboo.IndexedDB.Btree
                 if (counter < this.counterBeforePromotion)
                 {
                     setLevelCounter(sectionStartPosition, (byte)counter, level);
-                    //STOP, not promot up again. 
+                    //STOP, not promot up again.
                     return;
                 }
                 else
                 {
-                    // reSet counter and continue loop up. 
+                    // reSet counter and continue loop up.
                     setLevelCounter(sectionStartPosition, (byte)0, level);
                 }
             }
         }
 
-
         private Int64 createNewStartSection()
         {
-            /// in the format of 
-            /// [8] start search pointer. Pointer to the highest jump table. 
-            /// [2] * = number of counter of each level.  start pointer = 
+            /// in the format of
+            /// [8] start search pointer. Pointer to the highest jump table.
+            /// [2] * = number of counter of each level.  start pointer =
 
-            // header section + number levels. 
+            // header section + number levels.
             int totallen = sectionlen + this.maxJumpTableLevel * sectionlen;
 
             byte[] totalbytes = new byte[totallen];
@@ -758,7 +727,6 @@ namespace Kooboo.IndexedDB.Btree
                 if (i == 0)
                 {
                     updateNavigator(tablelist[i].diskLocation, tablelist[i + 1].diskLocation, enumPosition.next);
-
                 }
                 else if (i == tablelist.Count - 1)
                 {
@@ -766,16 +734,15 @@ namespace Kooboo.IndexedDB.Btree
                 }
                 else
                 {
-                    // in the middle. 
+                    // in the middle.
                     updateNavigator(tablelist[i].diskLocation, tablelist[i - 1].diskLocation, enumPosition.previous);
                     updateNavigator(tablelist[i].diskLocation, tablelist[i + 1].diskLocation, enumPosition.next);
                 }
             }
 
-
             Int64 writeposition = getInsertPosition();
 
-            //write position for each start of level table. 
+            //write position for each start of level table.
             for (int i = 0; i < tablelist.Count; i++)
             {
                 tablelist[i].diskLocation = writeposition + 46 + i * 46;
@@ -794,7 +761,6 @@ namespace Kooboo.IndexedDB.Btree
                     IndexStream.Position = item.diskLocation;
                     IndexStream.Write(item.ToBytes(), 0, sectionlen);
                 }
-
             }
 
             return writeposition;
@@ -805,10 +771,8 @@ namespace Kooboo.IndexedDB.Btree
             //TODO:
         }
 
-
         private Int64 getInsertPosition()
         {
-
             Int64 pos;
             //if (this._freespace.Count > 0)
             //{
@@ -817,14 +781,14 @@ namespace Kooboo.IndexedDB.Btree
             //}
             //else
             //{
-                pos = IndexStream.Length;
-                Int64 left = pos % sectionlen;
+            pos = IndexStream.Length;
+            Int64 left = pos % sectionlen;
 
-                if (left != 0)
-                {
-                    pos = pos - left;
-                }
-           // }
+            if (left != 0)
+            {
+                pos = pos - left;
+            }
+            // }
 
             /// Check to make sure that POS is the right spot.
             return pos;
@@ -840,10 +804,9 @@ namespace Kooboo.IndexedDB.Btree
                     {
                         if (_indexstream == null || _indexstream.CanRead == false)
                         {
-                            _indexstream = StreamManager.GetFileStream(this.fullfilename); 
+                            _indexstream = StreamManager.GetFileStream(this.fullfilename);
                         }
                     }
-
                 }
                 return _indexstream;
             }
@@ -888,7 +851,7 @@ namespace Kooboo.IndexedDB.Btree
         }
 
         /// <summary>
-        /// get the indicator of this block of 46 bytes. 
+        /// get the indicator of this block of 46 bytes.
         /// </summary>
         /// <param name="startSectionPosition"></param>
         /// <returns></returns>
@@ -978,9 +941,7 @@ namespace Kooboo.IndexedDB.Btree
 
         private void updateTotalCounter(Int64 startSectionPosition, int PlusOrMinusDigit)
         {
-
             Int64 readposition = startSectionPosition + this.totalCounterPositionIndex;
-
 
             byte[] counterbyte = new byte[4];
 
@@ -1002,17 +963,14 @@ namespace Kooboo.IndexedDB.Btree
                 IndexStream.Position = readposition;
                 IndexStream.Write(counterbyte, 0, 4);
             }
-
         }
 
         private int getTotalCounter(Int64 startSectionPosition)
         {
-
             byte[] counterbyte = new byte[4];
 
             lock (_object)
             {
-
                 Int64 readposition = startSectionPosition + this.totalCounterPositionIndex;
                 IndexStream.Position = readposition;
 
@@ -1021,13 +979,11 @@ namespace Kooboo.IndexedDB.Btree
 
                 return BitConverter.ToInt32(counterbyte, 0);
             }
-
         }
-
     }
 
     /// <summary>
-    /// Deleted = avaiable for another insertion. 
+    /// Deleted = avaiable for another insertion.
     /// </summary>
     public enum enumSectionType
     {
@@ -1043,10 +999,9 @@ namespace Kooboo.IndexedDB.Btree
         top = 2,
         bottom = 3
     }
-
 }
 
-/// Bytes format as below. 
+/// Bytes format as below.
 
 //start
 
@@ -1061,17 +1016,15 @@ namespace Kooboo.IndexedDB.Btree
 
 //45 bytes total
 
-
 //each
 
 //[2] startbyte
-//[1] indicator (deleted, start, record.). 
+//[1] indicator (deleted, start, record.).
 //[8] previous
 //[8] next
 //[8] top
 //[8] buttom
 //[8] blockposition
 //[2] endbyte
-
 
 //45 bytes.

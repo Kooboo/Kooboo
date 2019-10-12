@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.Helper;
 using System;
@@ -32,7 +32,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
             this.GetFieldValue = ObjectHelper.GetGetObjectValue<T>(FieldName);
             this.SetFieldValue = ObjectHelper.GetSetObjectValue<T>(FieldName, this.ListType);
-            
+
             this.GetObjectBytes = ConverterHelper.GetValueToBytes(this.DataType);
             this.GetObjectValue = ConverterHelper.GetBytesToValue(this.DataType);
 
@@ -66,7 +66,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             {
                 if (this.FieldLength > 0)
                 {
-
                     byte[] FieldValueBytes = new byte[this.FieldLength];
                     System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, this.FieldLength);
                     startposition += this.FieldLength;
@@ -88,7 +87,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                     }
                     else
                     {
-                        list.Add(null); 
+                        list.Add(null);
                     }
                 }
 
@@ -97,7 +96,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             }
 
             this.SetFieldValue(value, list);
-
         }
 
         public byte[] ToBytes(T value)
@@ -149,16 +147,15 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             }
 
             return BackValue;
-
         }
     }
 
     public class ListFieldConverter : IFieldConverter
     {
-        Func<object, object> getValue;
-        Action<object, object> setValue;
+        private Func<object, object> getValue;
+        private Action<object, object> setValue;
 
-        ListConverter converter;
+        private ListConverter converter;
 
         public ListFieldConverter(string FieldName, Type ObjectType, Type ListType)
         {

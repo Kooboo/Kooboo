@@ -1,31 +1,29 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Collections.Generic;
 using Kooboo.Dom;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Extensions
 {
     public static class DomExtension
-    {  
+    {
         public static NodeIterator getIterator(this NodeList nodes)
         {
             NodeIterator iterator = new NodeIterator(nodes);
             return iterator;
         }
     }
-    
+
     public class NodeIterator : IEnumerable<Node>
     {
-
         private NodeList rootnodelist;
-
 
         public NodeIterator(NodeList nodelist)
         {
             this.rootnodelist = nodelist;
         }
 
-        IEnumerator<Node> GetEnumerator()
+        private IEnumerator<Node> GetEnumerator()
         {
             return new Enumerator(this.rootnodelist);
         }
@@ -39,14 +37,10 @@ namespace Kooboo.Sites.Extensions
         {
             return this.GetEnumerator();
         }
-
-
     }
-
 
     public class Enumerator : IEnumerator<Node>
     {
-
         private NodeList nodelist;
 
         private Node currentnode;
@@ -65,8 +59,6 @@ namespace Kooboo.Sites.Extensions
             {
                 this.lastnode = nodelist.item[rootnodecount - 1];
             }
-
-
         }
 
         public Node Current
@@ -82,10 +74,8 @@ namespace Kooboo.Sites.Extensions
             this.nodelist = null;
         }
 
-
         public bool MoveNext()
         {
-
             if (this.currentnode == null)
             {
                 if (this.rootnodecount == 0)
@@ -98,7 +88,7 @@ namespace Kooboo.Sites.Extensions
                 return true;
             }
 
-            // first go down to child. 
+            // first go down to child.
             nextnode = this.currentnode.firstChild();
 
             if (this.nextnode != null)
@@ -107,7 +97,7 @@ namespace Kooboo.Sites.Extensions
                 return true;
             }
 
-            /// check the next sibling. 
+            /// check the next sibling.
             nextnode = this.currentnode.nextSibling();
 
             if (nextnode != null)
@@ -116,7 +106,7 @@ namespace Kooboo.Sites.Extensions
                 return true;
             }
 
-            //go to parent next sibling, until reach the lastnode. 
+            //go to parent next sibling, until reach the lastnode.
 
             nextnode = getParentNextSibling(this.currentnode);
 
@@ -131,7 +121,6 @@ namespace Kooboo.Sites.Extensions
 
         private Node getParentNextSibling(Node checknode)
         {
-
             if (checknode.isEqualNode(this.lastnode))
             {
                 return null;
@@ -154,11 +143,10 @@ namespace Kooboo.Sites.Extensions
             {
                 return getParentNextSibling(parent);
             }
-
         }
 
         /// <summary>
-        /// Sorry,not reset available or needed here. 
+        /// Sorry,not reset available or needed here.
         /// </summary>
         public void Reset()
         {
@@ -170,13 +158,10 @@ namespace Kooboo.Sites.Extensions
         {
             get { return Current; }
         }
-
     }
-
 
     public class ElementWalker
     {
-
         private NodeList nodelist;
 
         private Node currentnode;
@@ -217,7 +202,7 @@ namespace Kooboo.Sites.Extensions
                 return this.currentnode;
             }
 
-            // first go down to child. 
+            // first go down to child.
 
             if (!skipsub)
             {
@@ -232,7 +217,7 @@ namespace Kooboo.Sites.Extensions
             {
                 skipsub = false;
             }
-            /// check the next sibling. 
+            /// check the next sibling.
             nextnode = this.currentnode.nextSibling();
 
             if (nextnode != null)
@@ -241,7 +226,7 @@ namespace Kooboo.Sites.Extensions
                 return this.currentnode;
             }
 
-            //go to parent next sibling, until reach the lastnode. 
+            //go to parent next sibling, until reach the lastnode.
 
             nextnode = getParentNextSibling(this.currentnode);
 
@@ -254,7 +239,6 @@ namespace Kooboo.Sites.Extensions
             return null;
         }
 
-
         public void Dispose()
         {
             this.nodelist = null;
@@ -264,7 +248,6 @@ namespace Kooboo.Sites.Extensions
 
         private Node getParentNextSibling(Node checknode)
         {
-
             if (checknode.isEqualNode(this.lastnode))
             {
                 return null;
@@ -287,19 +270,15 @@ namespace Kooboo.Sites.Extensions
             {
                 return getParentNextSibling(parent);
             }
-
         }
 
         /// <summary>
-        /// Sorry,not reset available or needed here. 
+        /// Sorry,not reset available or needed here.
         /// </summary>
         public void Reset()
         {
             this.currentnode = null;
             this.nextnode = null;
         }
-
     }
-
-
 }

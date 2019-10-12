@@ -2,11 +2,10 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Reflection;
-    using System.IO;
     using System.ComponentModel;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
 
     public static class PluginFinder
     {
@@ -76,7 +75,7 @@
                 if (Directory.Exists(pluginsFolder))
                 {
                     DirectoryInfo pluginsFolderDirectoryInfo = new DirectoryInfo(pluginsFolder);
-                    foreach(FileInfo pluginAssembly in pluginsFolderDirectoryInfo.GetFiles("*.dll"))
+                    foreach (FileInfo pluginAssembly in pluginsFolderDirectoryInfo.GetFiles("*.dll"))
                     {
                         pluginConfigurators.Add(GetConfigurators(Assembly.LoadFile(pluginAssembly.FullName)));
                     }
@@ -98,7 +97,7 @@
 
             IEnumerable<IPluginConfigurator> pluginConfigurators = types
                 .Where(type => typeof(IPluginConfigurator).IsAssignableFrom(type))
-                .Select(type => (IPluginConfigurator)type.GetConstructor(new Type[] {}).Invoke(new object[]{}));
+                .Select(type => (IPluginConfigurator)type.GetConstructor(new Type[] { }).Invoke(new object[] { }));
 
             IEnumerable<Type> pluginsConfigurated = pluginConfigurators.Select(pluginConfigurator => pluginConfigurator.Configurates);
 

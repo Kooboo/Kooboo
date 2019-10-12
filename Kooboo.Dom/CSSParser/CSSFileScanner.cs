@@ -1,17 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Dom.CSS;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom.CSS
 {
     /// <summary>
-    /// Css file scanner to return the list of rules inside the documents. 
-    /// This is a very expensive praser now, not fully operate according to syntax from W3C, without things like badstring, security exception. 
+    /// Css file scanner to return the list of rules inside the documents.
+    /// This is a very expensive praser now, not fully operate according to syntax from W3C, without things like badstring, security exception.
     /// Depreciated： use the tokenizer instead.
     /// </summary>
     public class CSSFileScanner
@@ -42,82 +36,72 @@ namespace Kooboo.Dom.CSS
                 if (_cssText[i] == 47 && _cssText[i + 1] == 42)
                 {
                     int endComment = _cssText.IndexOf("*/", i);
-                    i = endComment + 1;    // to be checked. 
+                    i = endComment + 1;    // to be checked.
                     continue;
                 }
                 else
                 {
                     //if null, space or another char that should be ignored, ignore them
-                   if (isEscapeChar(_cssText[i]))
-                   {
-                       continue;
-                   }
+                    if (isEscapeChar(_cssText[i]))
+                    {
+                        continue;
+                    }
 
-                   if (isAtRule(_cssText[i]))
-                   {
+                    if (isAtRule(_cssText[i]))
+                    {
+                        int endposition = 0;
+                        string ruletext = getAtRuleText(i, ref endposition);
 
-                       int endposition = 0;
-                       string ruletext = getAtRuleText(i, ref endposition);
+                        if (!string.IsNullOrEmpty(ruletext) && endposition > 0)
+                        {
+                            i = endposition;
+                            _currentRead = endposition + 1;  // to be checked + 1 or not.
 
+                            enumCSSRuleType type = getAtRuleType(ruletext);
 
-                       if (!string.IsNullOrEmpty(ruletext) && endposition > 0)
-                       {
-                           i = endposition;
-                           _currentRead = endposition + 1;  // to be checked + 1 or not. 
+                            if (type == enumCSSRuleType.reserved)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                CSSFileScannerResult result = new CSSFileScannerResult();
+                                result.type = type;
+                                result.cssText = ruletext;
 
-                           enumCSSRuleType type = getAtRuleType(ruletext);
+                                return result;
+                            }
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if (isValidIndent(_cssText[i]))
+                        {
+                            int endMark = 0;
+                            string ruletext = getNextBlock(i, ref endMark);
 
-                           if (type == enumCSSRuleType.reserved)
-                           {
-                               continue;
-                           }
-                           else
-                           {
-                               CSSFileScannerResult result = new CSSFileScannerResult();
-                               result.type = type;
-                               result.cssText = ruletext;
+                            if (!string.IsNullOrEmpty(ruletext) && endMark > 0)
+                            {
+                                CSSFileScannerResult result = new CSSFileScannerResult();
+                                result.type = enumCSSRuleType.STYLE_RULE;
+                                result.cssText = ruletext;
 
-                               return result;
+                                _currentRead = endMark + 1;
+                                return result;
+                            }
+                        }
+                        else
+                        {
+                            /// nothing match, can not escape, can not read. should throw exception
 
-                           }
-                       }
-                       else
-                       {
-                           continue;
-                       }
-
-                   }
-                   else
-                   {
-                       if (isValidIndent(_cssText[i]))
-                       {
-                           int endMark =0;
-                           string ruletext = getNextBlock(i, ref endMark);
-
-                           if (!string.IsNullOrEmpty(ruletext) && endMark > 0)
-                           {
-                               CSSFileScannerResult result = new CSSFileScannerResult();
-                               result.type = enumCSSRuleType.STYLE_RULE;
-                               result.cssText = ruletext;
-
-                               _currentRead = endMark +1 ;
-                               return result;
-                           }
-
-
-                       }
-                       else
-                       {
-                           /// nothing match, can not escape, can not read. should throw exception
-
-                           continue;
-
-                       }
-                   }
-
-
+                            continue;
+                        }
+                    }
                 }
-
             }
 
             return null;
@@ -151,24 +135,22 @@ namespace Kooboo.Dom.CSS
                 string nextblock = getNextBlock(starti, ref endPosition);
                 return nextblock;
             }
-
         }
 
         private string getNextBlock(int startIndex, ref int endMark)
         {
+            // now find out the close } position.
+            int leftBracketIndex = _cssText.IndexOf("{", startIndex);
 
-            // now find out the close } position. 
-           int leftBracketIndex = _cssText.IndexOf("{", startIndex);
+            if (leftBracketIndex < 0)
+            {
+                return string.Empty;
+            }
 
-           if (leftBracketIndex < 0)
-           {
-               return string.Empty;
-           }
+            int nextSearchPosition = leftBracketIndex + 1;
 
-           int  nextSearchPosition = leftBracketIndex + 1;
+            int pairbalance = 1;   /// The target to make paribalance =0
 
-            int pairbalance = 1;   /// The target to make paribalance =0 
-           
             int rightBracketIndex = 0;
 
             int maxi = 0;
@@ -195,7 +177,6 @@ namespace Kooboo.Dom.CSS
                     nextSearchPosition = leftBracketIndex + 1;
                 }
 
-
                 maxi++;  // only to prevent dead loop, should never happen.
                 if (maxi > 1000)
                 {
@@ -203,10 +184,10 @@ namespace Kooboo.Dom.CSS
                 }
             }
 
-            nextSearchPosition = nextSearchPosition - 1; /// back to the position where it was found. 
+            nextSearchPosition = nextSearchPosition - 1; /// back to the position where it was found.
             endMark = nextSearchPosition;
 
-            /// till now we have the start and end position. 
+            /// till now we have the start and end position.
 
             return _cssText.Substring(startIndex, endMark - startIndex + 1);
         }
@@ -219,13 +200,13 @@ namespace Kooboo.Dom.CSS
 
         private bool isEscapeChar(int charcode)
         {
-            // all chars before 33 (!) will be ignored. 
+            // all chars before 33 (!) will be ignored.
             return (charcode < 33);
         }
 
         private bool isValidIndent(int charcode)
         {
-            /// 0-9 = ASCII 48-57  // not allowed as the start indentifier. 
+            /// 0-9 = ASCII 48-57  // not allowed as the start indentifier.
             /// +, -, . :  43, 45, 46,
             /// _: 95
             /// #, *: 23, 42.
@@ -256,7 +237,6 @@ namespace Kooboo.Dom.CSS
             }
 
             return false;
-
         }
 
         private enumCSSRuleType getAtRuleType(string cssText)
@@ -278,14 +258,12 @@ namespace Kooboo.Dom.CSS
             }
             else
             {
-
                 if (typeLowerCase.Contains("media"))
                 {
                     return enumCSSRuleType.MEDIA_RULE;
                 }
                 else
                 {
-
                     if (typeLowerCase.Contains("page"))
                     { return enumCSSRuleType.PAGE_RULE; }
                     else
@@ -301,16 +279,12 @@ namespace Kooboo.Dom.CSS
                     }
                 }
             }
-
         }
-
     }
-
 
     public class CSSFileScannerResult
     {
         public enumCSSRuleType type;
         public string cssText;
-
     }
 }

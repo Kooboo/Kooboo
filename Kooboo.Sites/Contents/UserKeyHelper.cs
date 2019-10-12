@@ -1,7 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Text;
 using System.Globalization;
+using System.Text;
 
 namespace Kooboo.Sites.Contents
 {
@@ -22,17 +22,17 @@ namespace Kooboo.Sites.Contents
             input = input.Replace("%", " ");
             input = input.Replace(":", " ");
             input = input.Replace("=", " ");
-            input = input.Replace("#", " "); 
+            input = input.Replace("#", " ");
             input = input.Replace("$", " ");
             input = input.Replace("  ", " ");
             input = input.Replace(" ", "-");
-            // 空格  !	#	$	%	+	@	:	=	? 
-            string back =  System.Net.WebUtility.UrlEncode(input);
+            // 空格  !	#	$	%	+	@	:	=	?
+            string back = System.Net.WebUtility.UrlEncode(input);
             back = back.Replace("%", "");
-            return back; 
+            return back;
         }
 
-        static string RemoveDiacritics(string text)
+        private static string RemoveDiacritics(string text)
         {
             var normalizedString = text.Normalize(NormalizationForm.FormD);
             var stringBuilder = new StringBuilder();
@@ -47,6 +47,5 @@ namespace Kooboo.Sites.Contents
             }
             return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
         }
-
     }
 }

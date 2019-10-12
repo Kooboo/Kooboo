@@ -1,8 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.IndexedDB.Columns;
 using System;
 using System.Collections.Generic;
-using Kooboo.IndexedDB.Columns;
 
 namespace Kooboo.IndexedDB
 {
@@ -28,7 +28,7 @@ namespace Kooboo.IndexedDB
         public List<IndexSetting> IndexList;
 
         /// <summary>
-        /// The list of columns and the length can not be changed after it is initialized. 
+        /// The list of columns and the length can not be changed after it is initialized.
         /// </summary>
         public List<ColumnSetting> ColumnList;
 
@@ -39,6 +39,5 @@ namespace Kooboo.IndexedDB
         public bool EnableVersion { get; set; }
 
         public int MaxCacheLevel { get; set; }
-
     }
 }

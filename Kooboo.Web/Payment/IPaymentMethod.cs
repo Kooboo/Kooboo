@@ -6,9 +6,8 @@ using System.Collections.Generic;
 
 namespace Kooboo.Web.Payment
 {
-    public interface IPaymentMethod<T> : IPaymentMethod where T:IPaymentSetting
+    public interface IPaymentMethod<T> : IPaymentMethod where T : IPaymentSetting
     {
-     
     }
 
     public interface IPaymentMethod
@@ -29,16 +28,14 @@ namespace Kooboo.Web.Payment
 
         PaymentStatusResponse EnquireStatus(PaymentRequest request, RenderContext context);
 
-        bool CanUse(RenderContext context); 
+        bool CanUse(RenderContext context);
     }
 
     public interface IPaymentSetting : ISiteSetting
     {
-
     }
-     
+
     public interface IKoobooPayment
     {
-
     }
 }

@@ -1,11 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
@@ -32,16 +29,18 @@ namespace Kooboo.Dom
         public bool fragmentParsing;
 
         public bool stop;
+
         /// <summary>
         /// for fragment parsing.
         /// </summary>
-        public Element context;  // for fragment. 
+        public Element context;  // for fragment.
 
         private HtmlToken _currentToken;
 
         internal bool EnableErrorLogging;
 
         private Dictionary<int, string> _Errors;
+
         internal Dictionary<int, string> Errors
         {
             get
@@ -50,14 +49,13 @@ namespace Kooboo.Dom
                 {
                     _Errors = new Dictionary<int, string>();
                 }
-                return _Errors; 
+                return _Errors;
             }
-            set { _Errors = value;  }
+            set { _Errors = value; }
         }
 
         public TreeConstruction()
         {
-
             insertionMode = enumInsertionMode.Initial;
             doc = new Document();
             doc.depth = -1;
@@ -78,8 +76,9 @@ namespace Kooboo.Dom
         }
 
         internal HtmlToken _nexttoken;
+
         /// <summary>
-        /// look up next token. 
+        /// look up next token.
         /// </summary>
         /// <returns></returns>
         private HtmlToken nextToken()
@@ -92,17 +91,16 @@ namespace Kooboo.Dom
         {
             _nexttoken = null;
         }
-       
+
         public Document Parse(string htmlText)
         {
             this.fragmentParsing = false;
-           
+
             tokenizer = new Tokenizer(htmlText, this);
             _currentToken = tokenizer.ReadNextToken();
 
             while (_currentToken != null)
             {
-
                 ProcessToken(_currentToken);
 
                 if (stop)
@@ -123,7 +121,7 @@ namespace Kooboo.Dom
 
             openElements.item.Clear();
             activeFormatingElements.item.Clear();
-            
+
             doc.documentElement.depth = 0;
             doc.documentElement.siblingIndex = doc.childNodes.length;
 
@@ -136,7 +134,6 @@ namespace Kooboo.Dom
         {
             return ParseFragment(input, this.context);
         }
-
 
         public NodeList ParseFragment(string input, Element contextElement)
         {
@@ -161,7 +158,6 @@ namespace Kooboo.Dom
 
             //Create a new Document node, and mark it as being an HTML document.
 
-
             //If there is a context element, and the Document of the context element is in quirks mode, then let the Document be in quirks mode. Otherwise, if there is a context element, and the Document of the context element is in limited-quirks mode, then let the Document be in limited-quirks mode. Otherwise, leave the Document in no-quirks mode.
 
             //Create a new HTML parser, and associate it with the just created Document node.
@@ -172,7 +168,6 @@ namespace Kooboo.Dom
 
             if (contextElement != null)
             {
-
                 //Set the state of the HTML parser's tokenization stage as follows:
 
                 //If it is a title or textarea element
@@ -216,13 +211,10 @@ namespace Kooboo.Dom
                 }
             }
 
-
-          
             //For performance reasons, an implementation that does not report errors and that uses the actual state machine described in this specification directly could use the PLAINTEXT state instead of the RAWTEXT and script data states where those are mentioned in the list above. Except for rules regarding parse errors, they are equivalent, since there is no appropriate end tag token in the fragment case, yet they involve far fewer state transitions.
 
-            //Let root be a new html element with no attributes. 
+            //Let root be a new html element with no attributes.
             //Append the element root to the Document node created above.
-    
 
             //Set up the parser's stack of open elements so that it contains just the single element root.
             this.openElements.push(contextElement);
@@ -232,7 +224,6 @@ namespace Kooboo.Dom
             {
                 //TODO:
             }
-
 
             //Reset the parser's insertion mode appropriately.
             resetInsertionMode();
@@ -249,7 +240,6 @@ namespace Kooboo.Dom
 
             while (_currentToken != null)
             {
-
                 ProcessToken(_currentToken);
 
                 if (stop)
@@ -271,18 +261,15 @@ namespace Kooboo.Dom
             openElements.item.Clear();
             activeFormatingElements.item.Clear();
 
-
             //If there is a context element, return the child nodes of root, in tree order.
 
             //Otherwise, return the children of the Document object, in tree order.
-             
-            return this.context.childNodes;
 
+            return this.context.childNodes;
         }
 
-
         /// <summary>
-        /// re calculate the sibling index of elements. 
+        /// re calculate the sibling index of elements.
         /// </summary>
         /// <param name="element"></param>
         private void ReOrganizeDepthSibling(Kooboo.Dom.Node element)
@@ -390,10 +377,10 @@ namespace Kooboo.Dom
                 case enumInsertionMode.afterAfterFrameset:
                     afterAfterFrameset(token);
                     return;
+
                 default:
                     break;
             }
-
         }
 
         public HtmlToken CurrentProcessingToken
@@ -434,29 +421,28 @@ namespace Kooboo.Dom
 
         private void onError(string errorMessage, [CallerMemberName]string memberName = null)
         {
-           if (this.EnableErrorLogging && !string.IsNullOrEmpty(errorMessage))
+            if (this.EnableErrorLogging && !string.IsNullOrEmpty(errorMessage))
             {
-                string err = null; 
+                string err = null;
                 if (string.IsNullOrEmpty(memberName))
                 {
-                   err = this.CurrentProcessingToken.type.ToString() + " " + this.CurrentProcessingToken.tagName + ", " + errorMessage;
+                    err = this.CurrentProcessingToken.type.ToString() + " " + this.CurrentProcessingToken.tagName + ", " + errorMessage;
                 }
                 else
                 {
                     err = this.CurrentProcessingToken.type.ToString() + " " + this.CurrentProcessingToken.tagName + ", " + memberName + ", " + errorMessage;
                 }
-                
-                this.Errors[this.tokenizer._readIndex] =  err; 
-            } 
+
+                this.Errors[this.tokenizer._readIndex] = err;
+            }
         }
 
         /// <summary>
-        /// The adjusted place to insert a new node. 
+        /// The adjusted place to insert a new node.
         /// </summary>
         /// <returns></returns>
         private insertionLocation appropriatePlaceNewNode(Element overrideTarget)
         {
-
             //  The appropriate place for inserting a node, optionally using a particular override target, is the position in an element returned by running the following steps:
 
             Element target;
@@ -505,11 +491,10 @@ namespace Kooboo.Dom
                     }
                 }
 
-
                 //If there is a last template and either there is no last table, or there is one, but last template is lower (more recently added) than last table in the stack of open elements, then: let adjusted insertion location be inside last template's template contents, after its last child (if any), and abort these substeps.
                 if (lastTemplate != null && (lastTable == null || templatei > tablei))
                 {
-                    //TODO: what is template's template contents. Check it. 
+                    //TODO: what is template's template contents. Check it.
                     return new insertionLocation() { partentElement = lastTemplate, insertAt = -1 };
                 }
 
@@ -554,13 +539,11 @@ namespace Kooboo.Dom
                 //These steps are involved in part because it's possible for elements, the table element in this case in particular, to have been moved by a script around in the DOM, or indeed removed from the DOM entirely, after the element was inserted by the parser.
             }
             //Otherwise
-
             else
             {
                 //Let adjusted insertion location be inside target, after its last child (if any).
-                return new insertionLocation() { partentElement = target, insertAt = -1 };   // always append, so always after the last child. 
+                return new insertionLocation() { partentElement = target, insertAt = -1 };   // always append, so always after the last child.
             }
-
         }
 
         private Comment insertComment(HtmlToken token)
@@ -596,7 +579,6 @@ namespace Kooboo.Dom
                 return comment;
             }
 
-
             //Let data be the data given in the comment token being processed.
 
             //If position was specified, then let the adjusted insertion location be position. Otherwise, let adjusted insertion location be the appropriate place for inserting a node.
@@ -604,7 +586,6 @@ namespace Kooboo.Dom
             //Create a Comment node whose data attribute is set to data and whose ownerDocument is the same as that of the node in which the adjusted insertion location finds itself.
 
             //Insert the newly created node at the adjusted insertion location.
-
         }
 
         public Element insertElement(HtmlToken token)
@@ -666,7 +647,6 @@ namespace Kooboo.Dom
 
             if (node != null && node.nodeType != enumNodeType.DOCUMENT)
             {
-
                 //If there is a Text node immediately before the adjusted insertion location, then append data to that Text node's data.
                 //Otherwise, create a new Text node whose data is data and whose ownerDocument is the same as that of the element in which the adjusted insertion location finds itself, and insert the newly created node at the adjusted insertion location.
 
@@ -691,7 +671,6 @@ namespace Kooboo.Dom
                     {
                         node.childNodes.item.Insert(insertlocation.insertAt, textnode);
                     }
-
                 }
                 else
                 {
@@ -699,15 +678,13 @@ namespace Kooboo.Dom
                     //textnode.data += characterData;
                     textnode.appendData(token.data);
                     textnode.location.endTokenEndIndex = token.endIndex;
-                    textnode.location.endTokenStartIndex = token.endIndex; 
+                    textnode.location.endTokenStartIndex = token.endIndex;
                 }
-
             }
-
         }
 
         /// <summary>
-        /// This is only used by the before html comment now. 
+        /// This is only used by the before html comment now.
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
@@ -720,10 +697,8 @@ namespace Kooboo.Dom
 
             comment.location.openTokenEndIndex = token.endIndex;
             comment.location.endTokenEndIndex = token.endIndex;
-        
 
             return comment;
-
         }
 
         private Text createTextNode(Node parentNode)
@@ -755,31 +730,29 @@ namespace Kooboo.Dom
             }
 
             Node currentOpenNode = openElements.currentNode();
-             
-            doctype.location.openTokenStartIndex = token.startIndex; 
+
+            doctype.location.openTokenStartIndex = token.startIndex;
             doctype.location.openTokenEndIndex = token.endIndex;
 
             doctype.location.endTokenStartIndex = token.startIndex;
             doctype.location.endTokenEndIndex = token.endIndex;
- 
 
             return doctype;
-
         }
 
-       internal Element createElement(HtmlToken token)
+        internal Element createElement(HtmlToken token)
         {
             Element element = doc.createElement(token.tagName);
-            
+
             foreach (var item in token.attributes)
             {
                 element.setAttribute(item.Key, item.Value);
             }
- 
+
             element.location.openTokenStartIndex = token.startIndex;
 
             element.location.openTokenEndIndex = token.endIndex;
-  
+
             return element;
         }
 
@@ -791,10 +764,10 @@ namespace Kooboo.Dom
             //When an end tag token is emitted with attributes, that is a parse error.
 
             //When an end tag token is emitted with its self-closing flag set, that is a parse error.
-
         }
 
         private List<string> _impliedEndTags;
+
         private List<string> ImpliedEndTags
         {
             get
@@ -813,24 +786,23 @@ namespace Kooboo.Dom
                     _impliedEndTags.Add("rt");
                     _impliedEndTags.Add("rtc");
                 }
-                return _impliedEndTags; 
-
+                return _impliedEndTags;
             }
         }
+
         /// <summary>
         ///  8.2.5.3 Closing elements that have implied end tags
         /// </summary>
-        private void generateImpliedEndTags(string excludeElementTag =null)
+        private void generateImpliedEndTags(string excludeElementTag = null)
         {
             //When the steps below require the UA to generate implied end tags, then, while the current node is a dd element, a dt element, an li element, an option element, an optgroup element, a p element, an rb element, an rp element, an rt element, or an rtc element, the UA must pop the current node off the stack of open elements.
-            //If a step requires the UA to generate implied end tags but lists an element to exclude from the process, then the UA must perform the above steps as if that element was not in the above list. 
-            ///TODO: check whether we need to loop currentnode or not, to popoff recursive.  
+            //If a step requires the UA to generate implied end tags but lists an element to exclude from the process, then the UA must perform the above steps as if that element was not in the above list.
+            ///TODO: check whether we need to loop currentnode or not, to popoff recursive.
             Element currentnode = openElements.currentNode();
             if (currentnode == null)
-            { return;  }
+            { return; }
 
             string currentNodeTagName = currentnode.tagName.ToLower();
-
 
             if (ImpliedEndTags.Contains(currentNodeTagName))
             {
@@ -838,18 +810,17 @@ namespace Kooboo.Dom
                 {
                     openElements.popOffLast(currentnode);
                     return;
-                } 
-            } 
-        }
-         
-      
-        private void generateImpliedEndTagsThroughly()
-        {
-            //TODO: this is for template tag parsing, did not implemented now. 
-            return; 
+                }
+            }
         }
 
-        public  bool IsSameDomElement(Element one, Element two)
+        private void generateImpliedEndTagsThroughly()
+        {
+            //TODO: this is for template tag parsing, did not implemented now.
+            return;
+        }
+
+        public bool IsSameDomElement(Element one, Element two)
         {
             if (one.tagName != two.tagName)
             {
@@ -877,21 +848,17 @@ namespace Kooboo.Dom
 
                 if (string.IsNullOrWhiteSpace(item.value) && string.IsNullOrWhiteSpace(valueInTwo))
                 {
-                    continue; 
+                    continue;
                 }
 
                 if (valueInTwo != item.value)
                 {
-
                     return false;
                 }
-
             }
 
             return true;
         }
-
-
 
         private void closeCell()
         {
@@ -932,9 +899,9 @@ namespace Kooboo.Dom
             }
             Element node = openElements.item[index];
 
-            //Loop: If node is the first node in the stack of open elements, then set last to true, and, if the parser was originally created as part of the HTML fragment parsing algorithm (fragment case) set node to the context element.
+        //Loop: If node is the first node in the stack of open elements, then set last to true, and, if the parser was originally created as part of the HTML fragment parsing algorithm (fragment case) set node to the context element.
 
-         myLoop:
+        myLoop:
             if (IsSameDomElement(node, openElements.firstElement()))
             {
                 last = true;
@@ -958,7 +925,7 @@ namespace Kooboo.Dom
 
                 Element ancestor = node;
 
-                //Loop: If ancestor is the first node in the stack of open elements, jump to the step below labeled done.
+            //Loop: If ancestor is the first node in the stack of open elements, jump to the step below labeled done.
             myinnerloop:
                 if (IsSameDomElement(ancestor, openElements.firstElement()))
                 {
@@ -983,14 +950,12 @@ namespace Kooboo.Dom
                 //Jump back to the step labeled loop.
                 goto myinnerloop;
 
-
-                //Done: Switch the insertion mode to "in select" and abort these steps.
+            //Done: Switch the insertion mode to "in select" and abort these steps.
             done:
 
                 insertionMode = enumInsertionMode.inSelect;
                 return;
             }
-
 
             //If node is a td or th element and last is false, then switch the insertion mode to "in cell" and abort these steps.
             if (node.tagName.isOneOf("td", "th") && !last)
@@ -1048,7 +1013,6 @@ namespace Kooboo.Dom
                 return;
             }
 
-
             //If node is a head element and last is false, then switch the insertion mode to "in head" and abort these steps.
             if (node.tagName == "head" && !last)
             {
@@ -1074,7 +1038,6 @@ namespace Kooboo.Dom
             //If node is an html element, run these substeps:
             if (node.tagName == "html")
             {
-
                 //If the head element pointer is null, switch the insertion mode to "before head" and abort these steps. (fragment case)
                 if (elementPointer.head == null)
                 {
@@ -1087,7 +1050,6 @@ namespace Kooboo.Dom
                     insertionMode = enumInsertionMode.afterHead;
                     return;
                 }
-
             }
 
             //If last is true, then switch the insertion mode to "in body" and abort these steps. (fragment case)
@@ -1103,11 +1065,10 @@ namespace Kooboo.Dom
 
             //Return to the step labeled loop.
             goto myLoop;
-
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="subject"></param>
         /// <returns>return = false = gotoanything else. else, return = true</returns>
@@ -1134,9 +1095,9 @@ namespace Kooboo.Dom
             int outLoopCounter = 0;
         //Let outer loop counter be zero.
 
-            //Outer loop: If outer loop counter is greater than or equal to eight, then abort these steps.
+        //Outer loop: If outer loop counter is greater than or equal to eight, then abort these steps.
 
-            outerLoop:
+        outerLoop:
             if (outLoopCounter >= 8)
             {
                 return true;
@@ -1166,9 +1127,7 @@ namespace Kooboo.Dom
                         formattingelement = activeFormatingElements.item[i];
                         break;
                     }
-
                 }
-
             }
 
             //If there is no such element, then abort these steps and instead act as described in the "any other end tag" entry above.
@@ -1178,7 +1137,6 @@ namespace Kooboo.Dom
                 //TODO: as described in the "any other end tag" entry above.
                 return false;
             }
-
 
             //If formatting element is not in the stack of open elements, then this is a parse error; remove the element from the list, and abort these steps.
 
@@ -1197,13 +1155,11 @@ namespace Kooboo.Dom
                 return true;
             }
 
-
             //If formatting element is not the current node, this is a parse error. (But do not abort these steps.)
             if (!IsSameDomElement(formattingelement.element, openElements.currentNode()))
             {
                 onError("formatting element is not the current open element");
             }
-
 
             //Let furthest block be the topmost node in the stack of open elements that is lower in the stack than formatting element, and is an element in the special category. There might not be one.
             int openElementIndex = openElements.length - 1;
@@ -1211,7 +1167,7 @@ namespace Kooboo.Dom
 
             for (int i = openElementIndex; i >= 0; i--)
             {
-                if (IsSameDomElement(openElements.item[i], formattingelement.element))               
+                if (IsSameDomElement(openElements.item[i], formattingelement.element))
                 {
                     break;
                 }
@@ -1221,7 +1177,6 @@ namespace Kooboo.Dom
                     furthestBlock = openElements.item[i];
                 }
             }
-
 
             //If there is no furthest block, then the UA must first pop all the nodes from the bottom of the stack of open elements, from the current node up to and including formatting element, then remove formatting element from the list of active formatting elements, and finally abort these steps.
             if (furthestBlock == null)
@@ -1236,7 +1191,6 @@ namespace Kooboo.Dom
             bool found = false;
             for (int i = openElementIndex; i >= 0; i--)
             {
-
                 if (found)
                 {
                     commonAncestor = openElements.item[i];
@@ -1247,14 +1201,11 @@ namespace Kooboo.Dom
                 {
                     found = true;
                 }
-
             }
-
 
             //Let a bookmark note the position of formatting element in the list of active formatting elements relative to the elements on either side of it in the list.
 
-
-            int bookmarkBeforeCounter = 0;   // the counter of elements on top of formatting elements 
+            int bookmarkBeforeCounter = 0;   // the counter of elements on top of formatting elements
             for (int i = 0; i < activeFormatingElements.length - 1; i++)
             {
                 if (formattingelement.isEqualTo(activeFormatingElements.item[i]))
@@ -1263,10 +1214,9 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-                    bookmarkBeforeCounter=i;
+                    bookmarkBeforeCounter = i;
                 }
             }
-
 
             //Let node and last node be furthest block. Follow these steps:
 
@@ -1276,12 +1226,12 @@ namespace Kooboo.Dom
             //Let inner loop counter be zero.
             int innerLoopCounter = 0;
 
-            //Inner loop: Increment inner loop counter by one.
+        //Inner loop: Increment inner loop counter by one.
         innerLoop:
             innerLoopCounter += 1;
 
             //Let node be the element immediately above node in the stack of open elements, or if node is no longer in the stack of open elements (e.g. because it got removed by this algorithm), the element that was immediately above node in the stack of open elements before node was removed.
-        Element aboveNodeBeforeRemoved = null;
+            Element aboveNodeBeforeRemoved = null;
 
             openElementIndex = openElements.length - 1;
             if (openElements.hasTag(node.tagName))
@@ -1301,7 +1251,6 @@ namespace Kooboo.Dom
                         matched = true;
                     }
                 }
-
             }
             else
             {
@@ -1315,9 +1264,7 @@ namespace Kooboo.Dom
                 {
                     node = openElements.item[openElementIndex];
                 }
-
             }
-
 
             //If node is formatting element, then go to the next step in the overall algorithm.
             if (IsSameDomElement(node, formattingelement.element))
@@ -1329,19 +1276,18 @@ namespace Kooboo.Dom
             if (innerLoopCounter > 3 && activeFormatingElements.hasElement(node))
             {
                 activeFormatingElements.Remove(node.tagName, false);
-
             }
 
             //If node is not in the list of active formatting elements, then remove node from the stack of open elements and then go back to the step labeled inner loop.
 
             if (!activeFormatingElements.hasElement(node))
             {
-             ///   openElements.popOff(node);  use manually removal instead of popoff. 
+                ///   openElements.popOff(node);  use manually removal instead of popoff.
 
-                int removei=0;
+                int removei = 0;
                 int abovei = 0;
 
-                for (int i = openElements.length -1 ; i >= 0; i--)
+                for (int i = openElements.length - 1; i >= 0; i--)
                 {
                     if (openElements.item[i].tagName == node.tagName)
                     {
@@ -1357,7 +1303,6 @@ namespace Kooboo.Dom
                     aboveNodeBeforeRemoved = openElements.item[abovei];
                 }
                 goto innerLoop;
-
             }
 
             //Create an element for the token for which the element node was created, in the HTML namespace, with common ancestor as the intended parent; replace the entry for node in the list of active formatting elements with an entry for the new element, replace the entry for node in the stack of open elements with an entry for the new element, and let node be the new element.
@@ -1365,7 +1310,7 @@ namespace Kooboo.Dom
             Element newelement = doc.createElement(node.tagName);
             foreach (var item in node.attributes)
             {
-                // ignore namespace now. 
+                // ignore namespace now.
                 newelement.setAttribute(item.name, item.value);
             }
             newelement.parentNode = commonAncestor;
@@ -1410,7 +1355,7 @@ namespace Kooboo.Dom
                         break;
                     }
 
-                    if (!activeFormatingElements.item[i].isMarker && (ActiveFormattingElementList.IsSameDomElement(activeFormatingElements.item[i].element, node))) 
+                    if (!activeFormatingElements.item[i].isMarker && (ActiveFormattingElementList.IsSameDomElement(activeFormatingElements.item[i].element, node)))
                     {
                         itemfound = true;
                     }
@@ -1418,7 +1363,7 @@ namespace Kooboo.Dom
 
                 if (!itemfound)
                 {
-                    bookmarkBeforeCounter = activeFormatingElements.length - 1;  //TODO: check whether we need -1 or not. 
+                    bookmarkBeforeCounter = activeFormatingElements.length - 1;  //TODO: check whether we need -1 or not.
                 }
             }
 
@@ -1484,7 +1429,7 @@ namespace Kooboo.Dom
             openElements.popOff(formattingelement.element.tagName);
 
             int insertposition = 0;
-            for (int i = 0; i < openElements.length-1; i++)
+            for (int i = 0; i < openElements.length - 1; i++)
             {
                 if (openElements.item[i].tagName == furthestBlock.tagName)
                 {
@@ -1498,10 +1443,7 @@ namespace Kooboo.Dom
             goto outerLoop;
 
             //This algorithm's name, the "adoption agency algorithm", comes from the way it causes elements to change parents, and is in contrast with other possible algorithms for dealing with misnested content, which included the "incest algorithm", the "secret affair algorithm", and the "Heisenberg algorithm".
-
-
         }
-
 
         /// <summary>
         /// 8.2.5.2 Parsing elements that contain only text
@@ -1512,7 +1454,7 @@ namespace Kooboo.Dom
             //Insert an HTML element for the token.
             insertElement(token);
 
-            //If the algorithm that was invoked is the generic raw text element parsing algorithm, switch the tokenizer to the RAWTEXT state; 
+            //If the algorithm that was invoked is the generic raw text element parsing algorithm, switch the tokenizer to the RAWTEXT state;
             tokenizer.ParseState = enumParseState.RAWTEXT;
             tokenizer.ScriptState = enumScriptParseState.initial;
 
@@ -1540,19 +1482,16 @@ namespace Kooboo.Dom
             originalInsertionMode = insertionMode;
             //Then, switch the insertion mode to "text".
             insertionMode = enumInsertionMode.text;
-
         }
 
-
         /// <summary>
-        /// this token is a home token or a foreign token. 
+        /// this token is a home token or a foreign token.
         /// see 8.2.5 Tree construction
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
         private bool isHome(HtmlToken token)
         {
-
             /// return true for now. Foreign token is not common. does not justify the time for now.
             /// TO BE Implemented.
             return true;
@@ -1586,7 +1525,6 @@ namespace Kooboo.Dom
             //A foreignObject element in the SVG namespace
             //A desc element in the SVG namespace
             //A title element in the SVG namespace
-
         }
 
         /// <summary>
@@ -1599,11 +1537,10 @@ namespace Kooboo.Dom
             //Ignore the token.
             if (token.type == enumHtmlTokenType.Character && token.data.isOneOf('\u0009', '\u000A', '\u000C', '\u000D', '\u0020'))
             {
-
                 return;
             }
 
-             //A comment token
+            //A comment token
             //Insert a comment as the last child of the Document object.
             else if (token.type == enumHtmlTokenType.Comment)
             {
@@ -1617,13 +1554,12 @@ namespace Kooboo.Dom
             //the publicId attribute set to the public identifier given in the DOCTYPE token
             //the systemId attribute set to the system identifier given in the DOCTYPE token
             //Associate the DocumentType node with the Document object so that it is returned as the value of the doctype attribute of the Document object
-
             else if (token.type == enumHtmlTokenType.DocType)
             {
                 DocumentType doctype = createDocType(token);
                 doc.appendChild(doctype);
                 doc.doctype = doctype;
-                
+
                 if (documentMode.checkQuirkMode(doc, doctype))
                 {
                     doc.setQuirksMode();
@@ -1634,27 +1570,21 @@ namespace Kooboo.Dom
 
                 return;
             }
-
             else
             {
                 //  Anything else
-                
+
                 //If the document is not an iframe srcdoc document, then this is a parse error; set the Document to quirks mode.
                 if (!doc.iframeSrcDoc)
                 {
-                   onError("expect a doctype definition or iframe srcdoc document.");
+                    onError("expect a doctype definition or iframe srcdoc document.");
                     doc.setQuirksMode();
                 }
-                
+
                 //In any case, switch the insertion mode to "before html", then reprocess the token.
                 insertionMode = enumInsertionMode.beforeHtml;
                 beforeHtml(token);
-
             }
-
-
-
-
         }
 
         /// <summary>
@@ -1680,16 +1610,15 @@ namespace Kooboo.Dom
             }
             //A character token that is one of U+0009 CHARACTER TABULATION, "LF" (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
             //Ignore the token.
-            else if (token.type == enumHtmlTokenType.Character && token.data.isOneOf('\u0009','\u000A','\u000C','\u000D','\u0020'))
+            else if (token.type == enumHtmlTokenType.Character && token.data.isOneOf('\u0009', '\u000A', '\u000C', '\u000D', '\u0020'))
             {
                 return;
             }
 
             //A start tag whose tag name is "html"
             //Create an element for the token in the HTML namespace, with the Document as the intended parent. Append it to the Document object. Put this element in the stack of open elements.
-            //application cached algo not supported. 
+            //application cached algo not supported.
             //Switch the insertion mode to "before head".
-
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "html")
             {
                 Element htmlElement = this.createElement(token);
@@ -1705,7 +1634,7 @@ namespace Kooboo.Dom
                 return;
             }
 
-             //An end tag whose tag name is one of: "head", "body", "html", "br"
+            //An end tag whose tag name is one of: "head", "body", "html", "br"
             //Act as described in the "anything else" entry below.
             //Any other end tag
             //Parse error. Ignore the token.
@@ -1726,10 +1655,10 @@ namespace Kooboo.Dom
                 goto anythingelse;
             }
 
-            anythingelse:
+        anythingelse:
             {
                 //Anything else
-                //Create an html element whose ownerDocument is the Document object. Append it to the Document object. 
+                //Create an html element whose ownerDocument is the Document object. Append it to the Document object.
                 // Put this element in the stack of open elements.
 
                 //fake a token.
@@ -1737,8 +1666,8 @@ namespace Kooboo.Dom
                 faketoken.tagName = "html";
 
                 faketoken.startIndex = token.startIndex;
-                faketoken.endIndex =-1;
-              
+                faketoken.endIndex = -1;
+
                 Element htmlElement = this.createElement(faketoken);
                 htmlElement.parentNode = doc;
                 doc.appendChild(htmlElement);
@@ -1751,9 +1680,7 @@ namespace Kooboo.Dom
 
                 //Switch the insertion mode to "before head", then reprocess the token.
                 beforeHead(token);
-
             }
-
         }
 
         /// <summary>
@@ -1768,10 +1695,10 @@ namespace Kooboo.Dom
             {
                 return;
             }
-            //A comment token 
+            //A comment token
             else if (token.type == enumHtmlTokenType.Comment)
             {
-                 //Insert a comment.
+                //Insert a comment.
                 insertComment(token);
                 return;
             }
@@ -1818,8 +1745,8 @@ namespace Kooboo.Dom
 
                 // faketoken.startIndex = token.startIndex;
                 faketoken.startIndex = token.startIndex;
-                faketoken.endIndex = -1; 
-   
+                faketoken.endIndex = -1;
+
                 //Set the head element pointer to the newly created head element.
                 elementPointer.head = insertElement(faketoken);
 
@@ -1875,7 +1802,6 @@ namespace Kooboo.Dom
                 openElements.popOff(element);
 
                 acknowledgedSelfClosing(token);
-
             }
 
             //A start tag whose tag name is "meta"
@@ -1888,32 +1814,31 @@ namespace Kooboo.Dom
 
                 acknowledgedSelfClosing(token);
 
-                //If the element has a charset attribute, and getting an encoding from its value results in a supported 
+                //If the element has a charset attribute, and getting an encoding from its value results in a supported
                 //ASCII-compatible character encoding or a UTF-16 encoding, and the confidence is currently tentative,
                 //then change the encoding to the resulting encoding.
                 if (element.hasAttribute("charset"))
                 {
-                    // TODO: to be implemented.  this is done by .NET string now. 
+                    // TODO: to be implemented.  this is done by .NET string now.
                 }
                 else
                 {
                     //Otherwise, if the element has an http-equiv attribute whose value is an ASCII case-insensitive match for the string "Content-Type", and the element has a content attribute, and applying the algorithm for extracting a character encoding from a meta element to that attribute's value returns a supported ASCII-compatible character encoding or a UTF-16 encoding, and the confidence is currently tentative, then change the encoding to the extracted encoding.
 
-                    //TODO: to be implemented. 
+                    //TODO: to be implemented.
                 }
 
                 return;
             }
             //A start tag whose tag name is "title"
             //Follow the generic RCDATA element parsing algorithm.
-
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "title")
             {
                 RCDATAParsing(token);
                 return;
             }
 
-               //A start tag whose tag name is "noscript", if the scripting flag is enabled
+            //A start tag whose tag name is "noscript", if the scripting flag is enabled
             //A start tag whose tag name is one of: "noframes", "style"
             //Follow the generic raw text element parsing algorithm.
             else if ((token.type == enumHtmlTokenType.StartTag) && ((token.tagName == "noscript" && scripting) || token.tagName.isOneOf("noframes", "style")))
@@ -1931,7 +1856,7 @@ namespace Kooboo.Dom
                 return;
             }
 
-               //A start tag whose tag name is "script"
+            //A start tag whose tag name is "script"
             //Run these steps:
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "script")
             {
@@ -1948,7 +1873,7 @@ namespace Kooboo.Dom
                 if (parentnode.nodeType == enumNodeType.ELEMENT)
                 { element.parentElement = (Element)parentnode; }
 
-                //TODO: below has  not been implemented yet. 
+                //TODO: below has  not been implemented yet.
 
                 //Mark the element as being "parser-inserted" and unset the element's "force-async" flag.
                 //This ensures that, if the script is external, any document.write() calls in the script will execute in-line, instead of blowing the document away, as would happen in most other cases. It also prevents the script from executing until the end tag is seen.
@@ -1991,7 +1916,7 @@ namespace Kooboo.Dom
                 return;
             }
 
-                //An end tag whose tag name is one of: "body", "html", "br"
+            //An end tag whose tag name is one of: "body", "html", "br"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName.isOneOf("body", "html", "br"))
             {
                 //Act as described in the "anything else" entry below.
@@ -2004,7 +1929,6 @@ namespace Kooboo.Dom
                 return;
             }
             //A start tag whose tag name is "template"
-
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "template")
             {
                 //Insert an HTML element for the token.
@@ -2050,13 +1974,11 @@ namespace Kooboo.Dom
                     //Clear the list of active formatting elements up to the last marker.
                     activeFormatingElements.clearUpToLastMarker();
 
-
                     //Pop the current template insertion mode off the stack of template insertion modes.
                     templateMode.popOffCurrent();
 
                     //Reset the insertion mode appropriately.
                     resetInsertionMode();
-
                 }
                 return;
             }
@@ -2078,9 +2000,7 @@ namespace Kooboo.Dom
                 openElements.popOff("head");
                 afterHead(token);
             }
-
         }
-
 
         /// <summary>
         /// 8.2.5.4.5 The "in head noscript" insertion mode
@@ -2088,7 +2008,6 @@ namespace Kooboo.Dom
         /// <param name="token"></param>
         private void InHeadNoScript(HtmlToken token)
         {
-
             //A DOCTYPE token
             //Parse error. Ignore the token.
             if (token.type == enumHtmlTokenType.DocType)
@@ -2108,7 +2027,6 @@ namespace Kooboo.Dom
             //An end tag whose tag name is "noscript"
             //Pop the current node (which will be a noscript element) from the stack of open elements; the new current node will be a head element.
             //Switch the insertion mode to "in head".
-
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName == "noscript")
             {
                 openElements.popOff("noscript");
@@ -2118,29 +2036,23 @@ namespace Kooboo.Dom
                 return;
             }
 
-
             //A character token that is one of U+0009 CHARACTER TABULATION, "LF" (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
             //A comment token
             //A start tag whose tag name is one of: "basefont", "bgsound", "link", "meta", "noframes", "style"
             //Process the token using the rules for the "in head" insertion mode.
-
             else if ((token.type == enumHtmlTokenType.Character && token.data.isOneOf('\u0009', '\u000A', '\u000C', '\u000D', '\u0020')) |
                 token.type == enumHtmlTokenType.Comment |
                 (token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("basefont", "bgsound", "link", "meta", "noframes", "style")))
             {
                 inHead(token);
                 return;
-
             }
 
-
-
-           //An end tag whose tag name is "br"
+            //An end tag whose tag name is "br"
             //Act as described in the "anything else" entry below.
             //A start tag whose tag name is one of: "head", "noscript"
             //Any other end tag
             //Parse error. Ignore the token.
-
             else if ((token.type == enumHtmlTokenType.StartTag && (token.tagName == "head" || token.tagName == "noscript")) || (token.type == enumHtmlTokenType.EndTag && token.tagName != "br"))
             {
                 onError("unexpected tag");
@@ -2148,7 +2060,6 @@ namespace Kooboo.Dom
             }
             else
             {
-
                 //Anything else
                 //Parse error.
 
@@ -2162,11 +2073,8 @@ namespace Kooboo.Dom
 
                 //Reprocess the token.
                 inHead(token);
-
             }
-
         }
-
 
         /// <summary>
         /// 8.2.5.4.6 The "after head" insertion mode
@@ -2174,7 +2082,6 @@ namespace Kooboo.Dom
         /// <param name="token"></param>
         private void afterHead(HtmlToken token)
         {
-
             //A character token that is one of U+0009 CHARACTER TABULATION, "LF" (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
             //Insert the character.
             if (token.type == enumHtmlTokenType.Character && token.data.isOneOf('\u0009', '\u000A', '\u000C', '\u000D', '\u0020'))
@@ -2230,20 +2137,16 @@ namespace Kooboo.Dom
             //Process the token using the rules for the "in head" insertion mode.
             //Remove the node pointed to by the head element pointer from the stack of open elements. (It might not be the current node at this point.)
             //The head element pointer cannot be null at this point.
-
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("base", "basefont", "bgsound", "link", "meta", "noframes", "script", "style", "template", "title"))
             {
                 if (elementPointer.head != null)
                 {
-
                     openElements.push(elementPointer.head);
 
                     inHead(token);
 
                     openElements.popOff(elementPointer.head);
-
                 }
-
             }
 
             //An end tag whose tag name is "template"
@@ -2259,24 +2162,21 @@ namespace Kooboo.Dom
             //A start tag whose tag name is "head"
             //Any other end tag
             //Parse error. Ignore the token.
-
             else if ((token.type == enumHtmlTokenType.StartTag && token.tagName == "head") || (token.type == enumHtmlTokenType.EndTag && (token.tagName != "body" || token.tagName != "html" || token.tagName != "br")))
             {
                 onError("unexpected tag");
                 return;
-
             }
             else
             {
-
                 //Anything else
                 //Insert an HTML element for a "body" start tag token with no attributes.
                 HtmlToken faketoken = new HtmlToken(enumHtmlTokenType.StartTag);
                 faketoken.tagName = "body";
 
                 // faketoken.startIndex = token.startIndex;
-                faketoken.startIndex =token.startIndex;
-                faketoken.endIndex = -1; 
+                faketoken.startIndex = token.startIndex;
+                faketoken.endIndex = -1;
 
                 Element bodyelement = insertElement(faketoken);
 
@@ -2287,7 +2187,6 @@ namespace Kooboo.Dom
                 return;
             }
         }
-
 
         /// <summary>
         /// 8.2.5.4.7 The "in body" insertion mode
@@ -2310,24 +2209,20 @@ namespace Kooboo.Dom
                 if (string.IsNullOrEmpty(token.data) || (!string.IsNullOrEmpty(token.data) && token.data[0] == '\u0000'))
                 {
                     onError("invalid null character.");
-               
                 }
                 //A character token that is one of U+0009 CHARACTER TABULATION, "LF" (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
-
                 else if (token.type == enumHtmlTokenType.Character && token.data.isOneOf('\u0009', '\u000A', '\u000C', '\u000D', '\u0020'))
                 {
                     //Reconstruct the active formatting elements, if any.
                     //Insert the token's character.
                     activeFormatingElements.Reconstruct();
                     insertCharacter(token);
-                
                 }
                 else
                 {
                     activeFormatingElements.Reconstruct();
                     insertCharacter(token);
                     frameset_ok = false;
-              
                 }
                 return;
             }
@@ -2352,7 +2247,6 @@ namespace Kooboo.Dom
             //Parse error.
             //If there is a template element on the stack of open elements, then ignore the token.
             //Otherwise, for each attribute on the token, check to see if the attribute is already present on the top element of the stack of open elements. If it is not, add the attribute and its corresponding value to that element.
-
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "html")
             {
                 onError("unexpected html tag");
@@ -2372,11 +2266,9 @@ namespace Kooboo.Dom
                             topElement.setAttribute(item.Key, item.Value);
                         }
                     }
-
                 }
                 return;
             }
-
 
             //A start tag whose tag name is one of: "base", "basefont", "bgsound", "link", "meta", "noframes", "script", "style", "template", "title"
             //An end tag whose tag name is "template"
@@ -2398,10 +2290,8 @@ namespace Kooboo.Dom
                 {
                     return;
                 }
-
                 else
                 {
-
                     //Otherwise, set the frameset-ok flag to "not ok"; then, for each attribute on the token, check to see if the attribute is already present on the body element (the second element) on the stack of open elements, and if it is not, add the attribute and its corresponding value to that element.
                     frameset_ok = false;
 
@@ -2413,14 +2303,11 @@ namespace Kooboo.Dom
                         {
                             body.setAttribute(item.Key, item.Value);
                         }
-
                     }
-
                 }
 
                 return;
             }
-
 
             //A start tag whose tag name is "frameset"
             //Parse error.
@@ -2437,13 +2324,11 @@ namespace Kooboo.Dom
                 //If the frameset-ok flag is set to "not ok", ignore the token.
                 if (frameset_ok == false)
                 {
-             
                 }
 
-               //Otherwise, run the following steps:
+                //Otherwise, run the following steps:
                 else
                 {
-
                     //Remove the second element on the stack of open elements from its parent node, if it has one.
                     Element body = openElements.secondElement();
                     if (body.parentNode != null)
@@ -2462,11 +2347,9 @@ namespace Kooboo.Dom
                     insertElement(token);
                     //Switch the insertion mode to "in frameset".
                     insertionMode = enumInsertionMode.inFrameset;
-            
                 }
                 return;
             }
-
 
             //An end-of-file token
             else if (token.type == enumHtmlTokenType.EOF)
@@ -2487,14 +2370,11 @@ namespace Kooboo.Dom
                 if (templateMode.length > 0)
                 {
                     inTemplate(token);
-             
                 }
                 else
                 {
-
                     //Otherwise, stop parsing.
                     stopParsing();
-        
                 }
                 return;
             }
@@ -2513,7 +2393,6 @@ namespace Kooboo.Dom
                     }
                 }
 
-
                 //If the stack of open elements does not have a body element in scope, this is a parse error; ignore the token.
                 if (!openElements.hasElementInScope("body", ScopeType.inScope))
                 {
@@ -2524,7 +2403,6 @@ namespace Kooboo.Dom
                 {
                     //Otherwise, if there is a node in the stack of open elements that is not either a dd element, a dt element, an li element, an optgroup element, an option element, a p element, an rb element, an rp element, an rt element, an rtc element, a tbody element, a td element, a tfoot element, a th element, a thead element, a tr element, the body element, or the html element, then this is a parse error.
 
-
                     foreach (var oneitem in openElements.item)
                     {
                         if (oneitem.tagName != "dd" && oneitem.tagName != "dt" && oneitem.tagName != "li" && oneitem.tagName != "p" && oneitem.tagName != "tbody" && oneitem.tagName != "td" && oneitem.tagName != "tfoot" && oneitem.tagName != "th" && oneitem.tagName != "thead" && oneitem.tagName != "tr" && oneitem.tagName != "body" && oneitem.tagName != "html")
@@ -2532,22 +2410,17 @@ namespace Kooboo.Dom
                             onError("tag should not open " + oneitem.tagName);
                         }
                     }
-
                 }
-
 
                 //Switch the insertion mode to "after body".
                 insertionMode = enumInsertionMode.afterBody;
-                
 
                 return;
-
             }
 
-                //An end tag whose tag name is "html"
+            //An end tag whose tag name is "html"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName == "html")
             {
-
                 //If the stack of open elements does not have a body element in scope, this is a parse error; ignore the token.
                 if (!openElements.hasElementInScope("body", ScopeType.inScope))
                 {
@@ -2565,7 +2438,6 @@ namespace Kooboo.Dom
                             onError("unexpected open tag " + oneitem.tagName);
                         }
                     }
-
                 }
                 //Switch the insertion mode to "after body".
                 insertionMode = enumInsertionMode.afterBody;
@@ -2578,7 +2450,6 @@ namespace Kooboo.Dom
             //A start tag whose tag name is one of: "address", "article", "aside", "blockquote", "center", "details", "dialog", "dir", "div", "dl", "fieldset", "figcaption", "figure", "footer", "header", "hgroup", "main", "nav", "ol", "p", "section", "summary", "ul"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("address", "article", "aside", "blockquote", "center", "details", "dialog", "dir", "div", "dl", "fieldset", "figcaption", "figure", "footer", "header", "hgroup", "main", "nav", "ol", "p", "section", "summary", "ul"))
             {
-
                 //If the stack of open elements has a p element in button scope, then close a p element.
 
                 if (openElements.hasElementInScope("p", ScopeType.inButtonScope))
@@ -2593,11 +2464,9 @@ namespace Kooboo.Dom
                 return;
             }
 
-
             //A start tag whose tag name is one of: "h1", "h2", "h3", "h4", "h5", "h6"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("h1", "h2", "h3", "h4", "h5", "h6"))
             {
-
                 //If the stack of open elements has a p element in button scope, then close a p element.
                 if (openElements.hasElementInScope("p", ScopeType.inButtonScope))
                 {
@@ -2612,7 +2481,6 @@ namespace Kooboo.Dom
                     onError("unclosed H tag");
 
                     openElements.popOffLast(currentnode);
-
                 }
 
                 //Insert an HTML element for the token.
@@ -2622,7 +2490,6 @@ namespace Kooboo.Dom
             }
 
             //A start tag whose tag name is one of: "pre", "listing"
-
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("pre", "listing"))
             {
                 //If the stack of open elements has a p element in button scope, then close a p element.
@@ -2633,7 +2500,6 @@ namespace Kooboo.Dom
 
                 //Insert an HTML element for the token.
                 insertElement(token);
-
 
                 //If the next token is a "LF" (U+000A) character token, then ignore that token and move on to the next one. (Newlines at the start of pre blocks are ignored as an authoring convenience.)
                 HtmlToken nexttoken = nextToken();
@@ -2646,13 +2512,11 @@ namespace Kooboo.Dom
                 frameset_ok = false;
 
                 return;
-
             }
 
             //A start tag whose tag name is "form"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "form")
             {
-
                 //If the form element pointer is not null, and there is no template element on the stack of open elements, then this is a parse error; ignore the token.
                 if (elementPointer.form != null && !openElements.hasElement("template"))
                 {
@@ -2676,19 +2540,15 @@ namespace Kooboo.Dom
                     {
                         elementPointer.form = formelement;
                     }
-
-
                 }
 
                 return;
             }
 
-
             //A start tag whose tag name is "li"
             //Run these steps:
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "li")
             {
-
                 //Set the frameset-ok flag to "not ok".
                 frameset_ok = false;
 
@@ -2713,27 +2573,24 @@ namespace Kooboo.Dom
                         if (openElements.currentNode().tagName != "li")
                         {
                             //If the current node is not an li element, then this is a parse error.
-                            //Guoqi: find a open li tag, but not the last open elements. 
+                            //Guoqi: find a open li tag, but not the last open elements.
                             onError(" closing li tag, unexpected open tag " + openElements.currentNode().tagName);
                         }
                         //Pop elements from the stack of open elements until an li element has been popped from the stack.
                         openElements.popOffTill("li", true);
 
                         ///Jump to the step labeled done below.
-                      
-                        goto done; 
 
+                        goto done;
                     }
                     else if (openElements.Special().Contains(currentNode.tagName) && currentNode.tagName != "address" && currentNode.tagName != "div" && currentNode.tagName != "p")
                     {
-                        //If node is in the special category, but is not an address, div, or p element, then jump to the step labeled done below. 
-                        goto done;  
-
+                        //If node is in the special category, but is not an address, div, or p element, then jump to the step labeled done below.
+                        goto done;
                     }
-
                 }
 
-                done:
+            done:
                 //Done: If the stack of open elements has a p element in button scope, then close a p element.
                 if (openElements.hasElementInScope("p", ScopeType.inButtonScope))
                 {
@@ -2747,21 +2604,17 @@ namespace Kooboo.Dom
             }
 
             //A start tag whose tag name is one of: "dd", "dt"
-
             else if (token.type == enumHtmlTokenType.StartTag && (token.tagName == "dd" || token.tagName == "dt"))
             {
-
                 //Run these steps:
                 //Set the frameset-ok flag to "not ok".
                 frameset_ok = false;
-
 
                 //Initialize node to be the current node (the bottommost node of the stack).
                 int index = openElements.length - 1;
 
                 for (int i = index; i >= 0; i--)
                 {
-
                     //Loop: If node is a dd element, then run these substeps:
 
                     Element currentNode = openElements.item[index];
@@ -2781,7 +2634,6 @@ namespace Kooboo.Dom
                         //Pop elements from the stack of open elements until a dd element has been popped from the stack.
                         openElements.popOffTill("dd", true);
                         break;
-
                     }
 
                     //If node is a dt element, then run these substeps:
@@ -2801,7 +2653,6 @@ namespace Kooboo.Dom
                         break;
                     }
 
-
                     //If node is in the special category, but is not an address, div, or p element, then jump to the step labeled done below.
 
                     if (openElements.Special().Contains(currentNode.tagName) && currentNode.tagName != "address" && currentNode.tagName != "div" && currentNode.tagName != "p")
@@ -2810,9 +2661,7 @@ namespace Kooboo.Dom
                     }
 
                     //Otherwise, set node to the previous entry in the stack of open elements and return to the step labeled loop.
-
                 }
-
 
                 //Done: If the stack of open elements has a p element in button scope, then close a p element.
                 if (openElements.hasElementInScope("p", ScopeType.inButtonScope))
@@ -2824,7 +2673,6 @@ namespace Kooboo.Dom
 
                 return;
             }
-
 
             //A start tag whose tag name is "plaintext"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "plaintext")
@@ -2847,7 +2695,6 @@ namespace Kooboo.Dom
                 //Once a start tag with the tag name "plaintext" has been seen, that will be the last token ever seen other than character tokens (and the end-of-file token), because there is no way to switch out of the PLAINTEXT state.
             }
 
-
             //A start tag whose tag name is "button"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "button")
             {
@@ -2862,7 +2709,6 @@ namespace Kooboo.Dom
 
                     //Pop elements from the stack of open elements until a button element has been popped from the stack.
                     openElements.popOffTill("button", true);
-
                 }
 
                 //Reconstruct the active formatting elements, if any.
@@ -2877,11 +2723,9 @@ namespace Kooboo.Dom
                 return;
             }
 
-
             //An end tag whose tag name is one of: "address", "article", "aside", "blockquote", "button", "center", "details", "dialog", "dir", "div", "dl", "fieldset", "figcaption", "figure", "footer", "header", "hgroup", "listing", "main", "nav", "ol", "pre", "section", "summary", "ul"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName.isOneOf("address", "article", "aside", "blockquote", "button", "center", "details", "dialog", "dir", "div", "dl", "fieldset", "figcaption", "figure", "footer", "header", "hgroup", "listing", "main", "nav", "ol", "pre", "section", "summary", "ul"))
             {
-
                 //If the stack of open elements does not have an element in scope that is an HTML element and with the same tag name as that of the token, then this is a parse error; ignore the token.
                 if (!openElements.hasElementInScope(token.tagName, ScopeType.inScope))
                 {
@@ -2890,7 +2734,6 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-
                     //Otherwise, run these steps:
                     //Generate implied end tags.
 
@@ -2905,13 +2748,12 @@ namespace Kooboo.Dom
                     //Pop elements from the stack of open elements until an HTML element with the same tag name as the token has been popped from the stack.
 
                     openElements.popOffTill(token.tagName, true);
-               
                 }
                 return;
             }
             //An end tag whose tag name is "form"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName == "form")
-            { 
+            {
                 //If there is no template element on the stack of open elements, then run these substeps:
                 if (!openElements.hasElement("template"))
                 {
@@ -2919,11 +2761,11 @@ namespace Kooboo.Dom
                     Element formnode = null;
                     if (elementPointer.form != null)
                     {
-                        formnode = elementPointer.form; 
+                        formnode = elementPointer.form;
                         formnode.location.endTokenStartIndex = token.startIndex;
-                        formnode.location.endTokenEndIndex = token.endIndex; 
+                        formnode.location.endTokenEndIndex = token.endIndex;
                     }
-       
+
                     //Set the form element pointer to null. Otherwise, let node be null.
                     elementPointer.form = null;
 
@@ -2943,12 +2785,10 @@ namespace Kooboo.Dom
                     }
                     //Remove node from the stack of open elements.
                     openElements.popOff(formnode.tagName);
-
                 }
                 //If there is a template element on the stack of open elements, then run these substeps instead:
                 else
                 {
-
                     //If the stack of open elements does not have a form element in scope, then this is a parse error; abort these steps and ignore the token.
                     if (!openElements.hasElementInScope("form", ScopeType.inScope))
                     {
@@ -2970,7 +2810,7 @@ namespace Kooboo.Dom
                 return;
             }
 
-             //An end tag whose tag name is "p"
+            //An end tag whose tag name is "p"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName == "p")
             {
                 //If the stack of open elements does not have a p element in button scope, then this is a parse error; insert an HTML element for a "p" start tag token with no attributes.
@@ -2978,19 +2818,17 @@ namespace Kooboo.Dom
                 {
                     onError("an p end tag found, but open tag p has been implied closed or not exists. This often happen with miss nested tags");
                     HtmlToken newtoken = new HtmlToken(enumHtmlTokenType.StartTag);
-                    newtoken.startIndex =token.startIndex;
-                    newtoken.endIndex = -1; 
-                     
+                    newtoken.startIndex = token.startIndex;
+                    newtoken.endIndex = -1;
+
                     newtoken.tagName = "p";
                     insertElement(newtoken);
-
                 }
 
                 //Close a p element.
                 ClosePElement();
 
                 return;
-
             }
 
             //An end tag whose tag name is "li"
@@ -3004,7 +2842,6 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-
                     //Otherwise, run these steps:
                     //Generate implied end tags, except for li elements.
                     generateImpliedEndTags("li");
@@ -3047,10 +2884,9 @@ namespace Kooboo.Dom
                 return;
             }
 
-           //An end tag whose tag name is one of: "h1", "h2", "h3", "h4", "h5", "h6"
+            //An end tag whose tag name is one of: "h1", "h2", "h3", "h4", "h5", "h6"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName.isOneOf("h1", "h2", "h3", "h4", "h5", "h6"))
             {
-
                 //If the stack of open elements does not have an element in scope that is an HTML element and whose tag name is one of "h1", "h2", "h3", "h4", "h5", or "h6", then this is a parse error; ignore the token.
                 if (!openElements.hasOneOfElementsInScope(ScopeType.inScope, "h1", "h2", "h3", "h4", "h5", "h6"))
                 {
@@ -3072,7 +2908,6 @@ namespace Kooboo.Dom
                     //Pop elements from the stack of open elements until an HTML element whose tag name is one of "h1", "h2", "h3", "h4", "h5", or "h6" has been popped from the stack.
 
                     openElements.popOffTillOneOf(true, "h1", "h2", "h3", "h4", "h5", "h6");
-
                 }
                 return;
             }
@@ -3087,7 +2922,7 @@ namespace Kooboo.Dom
             //A start tag whose tag name is "a"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "a")
             {
-                //If the list of active formatting elements contains an a element between the end of the list and the last marker on the list (or the start of the list if there is no marker on the list), 
+                //If the list of active formatting elements contains an a element between the end of the list and the last marker on the list (or the start of the list if there is no marker on the list),
                 bool isContains = false;
                 int index = activeFormatingElements.length - 1;
                 for (int i = index; i >= 0; i--)
@@ -3106,11 +2941,10 @@ namespace Kooboo.Dom
 
                 if (isContains)
                 {
-
-                    //then this is a parse error; 
+                    //then this is a parse error;
                     ///run the adoption agency algorithm for the tag name "a", then remove that element from the list of active formatting elements and the stack of open elements if the adoption agency algorithm didn't already remove it (it might not have if the element is not in table scope).
 
-                    bool anyend =   adoptionAgency("a");
+                    bool anyend = adoptionAgency("a");
 
                     if (!anyend)
                     {
@@ -3125,8 +2959,6 @@ namespace Kooboo.Dom
 
                     activeFormatingElements.Remove("a", false);
                     openElements.popOff("a");
-                    
-
                 }
                 //In the non-conforming stream <a href="a">a<table><a href="b">b</table>x, the first a element would be closed upon seeing the second one, and the "x" character would be inside a link to "b", not to "a". This is despite the fact that the outer a element is not in table scope (meaning that a regular </a> end tag at the start of the table wouldn't close the outer a element). The result is that the two a elements are indirectly nested inside each other — non-conforming markup will often result in non-conforming DOMs when parsed.
 
@@ -3138,9 +2970,7 @@ namespace Kooboo.Dom
                 Element element = insertElement(token);
                 activeFormatingElements.Push(element, token);
                 return;
-
             }
-
 
             //A start tag whose tag name is one of: "b", "big", "code", "em", "font", "i", "s", "small", "strike", "strong", "tt", "u"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("b", "big", "code", "em", "font", "i", "s", "small", "strike", "strong", "tt", "u"))
@@ -3153,7 +2983,6 @@ namespace Kooboo.Dom
                 activeFormatingElements.Push(element, token);
 
                 return;
-
             }
             //A start tag whose tag name is "nobr"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "nobr")
@@ -3166,17 +2995,17 @@ namespace Kooboo.Dom
                 if (openElements.hasElementInScope("nobr", ScopeType.inScope))
                 {
                     onError("nobr in scope");
-                   bool adoptionok =   adoptionAgency("nobr");
-                   if (!adoptionok)
-                   {
-                       ///****COPY FROM AnyOtherEndTag
-                       //Any other start tag
-                       //Reconstruct the active formatting elements, if any.
-                       activeFormatingElements.Reconstruct();
+                    bool adoptionok = adoptionAgency("nobr");
+                    if (!adoptionok)
+                    {
+                        ///****COPY FROM AnyOtherEndTag
+                        //Any other start tag
+                        //Reconstruct the active formatting elements, if any.
+                        activeFormatingElements.Reconstruct();
 
-                       //Insert an HTML element for the token.
-                       insertElement(token);
-                   }
+                        //Insert an HTML element for the token.
+                        insertElement(token);
+                    }
                     activeFormatingElements.Reconstruct();
                 }
 
@@ -3185,33 +3014,29 @@ namespace Kooboo.Dom
                 activeFormatingElements.Push(element, token);
 
                 return;
-
             }
 
             //An end tag whose tag name is one of: "a", "b", "big", "code", "em", "font", "i", "nobr", "s", "small", "strike", "strong", "tt", "u"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName.isOneOf("a", "b", "big", "code", "em", "font", "i", "nobr", "s", "small", "strike", "strong", "tt", "u"))
             {
-
                 //Run the adoption agency algorithm for the token's tag name.
-              bool ok =  adoptionAgency(token.tagName);
-              if (!ok)
-              {
-                  ///****COPY FROM AnyOtherEndTag
-                  //Any other start tag
-                  //Reconstruct the active formatting elements, if any.
-                  activeFormatingElements.Reconstruct();
+                bool ok = adoptionAgency(token.tagName);
+                if (!ok)
+                {
+                    ///****COPY FROM AnyOtherEndTag
+                    //Any other start tag
+                    //Reconstruct the active formatting elements, if any.
+                    activeFormatingElements.Reconstruct();
 
-                  //Insert an HTML element for the token.
-                  insertElement(token);
-              }
-              return;
-
+                    //Insert an HTML element for the token.
+                    insertElement(token);
+                }
+                return;
             }
 
             //A start tag whose tag name is one of: "applet", "marquee", "object"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("applet", "marquee", "object"))
             {
-
                 //Reconstruct the active formatting elements, if any.
                 activeFormatingElements.Reconstruct();
 
@@ -3225,11 +3050,9 @@ namespace Kooboo.Dom
                 frameset_ok = false;
 
                 return;
-
             }
 
             //An end tag token whose tag name is one of: "applet", "marquee", "object"
-
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName.isOneOf("applet", "marquee", "object"))
             {
                 //If the stack of open elements does not have an element in scope that is an HTML element and with the same tag name as that of the token, then this is a parse error; ignore the token.
@@ -3240,7 +3063,6 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-
                     //Otherwise, run these steps:
 
                     //Generate implied end tags.
@@ -3284,10 +3106,8 @@ namespace Kooboo.Dom
             //An end tag whose tag name is "br"
             //Parse error. Act as described in the next entry, as if this was a "br" start tag token, rather than an end tag token.
             //A start tag whose tag name is one of: "area", "br", "embed", "img", "keygen", "wbr"
-
             else if ((token.type == enumHtmlTokenType.EndTag && token.tagName == "br") || token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("area", "br", "embed", "img", "keygen", "wbr"))
             {
-
                 //Reconstruct the active formatting elements, if any.
                 activeFormatingElements.Reconstruct();
 
@@ -3302,9 +3122,7 @@ namespace Kooboo.Dom
                 frameset_ok = false;
 
                 return;
-
             }
-
 
             //A start tag whose tag name is "input"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "input")
@@ -3347,7 +3165,6 @@ namespace Kooboo.Dom
                 acknowledgedSelfClosing(token);
                 return;
             }
-
 
             //A start tag whose tag name is "hr"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "hr")
@@ -3419,14 +3236,11 @@ namespace Kooboo.Dom
                 //Pop the current node (which will be the form element created earlier) off the stack of open elements, and, if there is no template element on the stack of open elements, set the form element pointer back to null.
 
                 //Prompt: If the token has an attribute with the name "prompt", then the first stream of characters must be the same string as given in that attribute, and the second stream of characters must be empty. Otherwise, the two streams of character tokens together should, together with the input element, express the equivalent of "This is a searchable index. Enter search keywords: (input field)" in the user's preferred language.
-
             }
-
 
             //A start tag whose tag name is "textarea"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "textarea")
             {
-
                 //Run these steps:
 
                 //Insert an HTML element for the token.
@@ -3473,7 +3287,6 @@ namespace Kooboo.Dom
                 //Follow the generic raw text element parsing algorithm.
                 rawTextParsing(token);
                 return;
-
             }
 
             //A start tag whose tag name is "iframe"
@@ -3556,10 +3369,9 @@ namespace Kooboo.Dom
                 return;
             }
 
-                //A start tag whose tag name is "rt"
+            //A start tag whose tag name is "rt"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "rt")
             {
-
                 //If the stack of open elements has a ruby element in scope, then generate implied end tags, except for rtc elements. If the current node is not then a ruby element or an rtc element, this is a parse error.
                 if (openElements.hasElementInScope("ruby", ScopeType.inScope))
                 {
@@ -3579,8 +3391,7 @@ namespace Kooboo.Dom
             //A start tag whose tag name is "math"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "math")
             {
-
-                 onError("");
+                onError("");
 
                 goto AnyOtherStartTag;
 
@@ -3593,7 +3404,6 @@ namespace Kooboo.Dom
                 //Insert a foreign element for the token, in the MathML namespace.
 
                 //If the token has its self-closing flag set, pop the current node off the stack of open elements and acknowledge the token's self-closing flag.
-
             }
 
             //A start tag whose tag name is "svg"
@@ -3612,7 +3422,6 @@ namespace Kooboo.Dom
                 //Insert a foreign element for the token, in the SVG namespace.
 
                 //If the token has its self-closing flag set, pop the current node off the stack of open elements and acknowledge the token's self-closing flag.
-
             }
 
             //A start tag whose tag name is one of: "caption", "col", "colgroup", "frame", "head", "tbody", "td", "tfoot", "th", "thead", "tr"
@@ -3620,25 +3429,21 @@ namespace Kooboo.Dom
             {
                 //Parse error. Ignore the token.
                 onError("unexpected start tag whose tag name is one of: caption, col, colgroup, frame, head, tbody, td, tfoot, th, thead, tr");
-                FixWithoutTable(token); 
+                FixWithoutTable(token);
                 return;
             }
             else if (token.type == enumHtmlTokenType.StartTag)
             {
-
                 goto AnyOtherStartTag;
-
             }
             else if (token.type == enumHtmlTokenType.EndTag)
             {
                 goto AnyOtherEndTag;
-
             }
             else
             {
                 return;
             }
-
 
         AnyOtherStartTag:
             {
@@ -3650,7 +3455,6 @@ namespace Kooboo.Dom
                 insertElement(token);
                 return;
                 //This element will be an ordinary element.
-
             }
 
         AnyOtherEndTag:
@@ -3667,14 +3471,13 @@ namespace Kooboo.Dom
 
                 Element node = openElements.item[itemindex];
 
-                //Loop: 
+            //Loop:
             myLoop:
 
                 //If node is an HTML element with the same tag name as the token, then:
 
                 if (node.tagName == token.tagName)
                 {
-
                     //Generate implied end tags, except for HTML elements with the same tag name as the token.
                     generateImpliedEndTags(token.tagName);
 
@@ -3696,9 +3499,7 @@ namespace Kooboo.Dom
                         onError("tag in special category");
                         return;
                     }
-
                 }
-
 
                 //Set node to the previous entry in the stack of open elements.
                 itemindex = itemindex - 1;
@@ -3711,11 +3512,7 @@ namespace Kooboo.Dom
 
                 goto myLoop;
                 //Return to the step labeled loop.
-
-
             }
-
-
         }
 
         /// <summary>
@@ -3724,7 +3521,6 @@ namespace Kooboo.Dom
         /// <param name="token"></param>
         private void Text(HtmlToken token)
         {
-
             //When the user agent is to apply the rules for the "text" insertion mode, the user agent must handle the token as follows:
 
             //A character token
@@ -3742,7 +3538,6 @@ namespace Kooboo.Dom
                 //Parse error.
                 onError("unexpected EOF");
 
-
                 //If the current node is a script element, mark the script element as "already started".
                 Element currentnode = openElements.currentNode();
 
@@ -3750,32 +3545,27 @@ namespace Kooboo.Dom
                 {
                     if (currentnode.GetType().IsEquivalentTo(typeof(HTMLScriptElement)))
                     {
-                        //TODO: Script not supported now.  
+                        //TODO: Script not supported now.
                     }
                     //Pop the current node off the stack of open elements.
                     openElements.popOffLast(currentnode);
 
                     //Switch the insertion mode to the original insertion mode and reprocess the token.
                     insertionMode = originalInsertionMode;
-                   ProcessToken(token);
+                    ProcessToken(token);
                 }
 
                 return;
-
             }
 
-
             //An end tag whose tag name is "script"
-
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName == "script")
             {
-                //TODO: Script execution will be hanlded later. 
-
+                //TODO: Script execution will be hanlded later.
 
                 //Perform a microtask checkpoint.
 
                 //Provide a stable state.
-
 
                 //Let script be the current node (which will be a script element).
                 Element script = openElements.currentNode();
@@ -3786,7 +3576,7 @@ namespace Kooboo.Dom
                 //Switch the insertion mode to the original insertion mode.
                 insertionMode = originalInsertionMode;
 
-                // GUOQI: looks like document bug. add below. 
+                // GUOQI: looks like document bug. add below.
                 tokenizer.ParseState = enumParseState.DATA;
 
                 return;
@@ -3835,10 +3625,8 @@ namespace Kooboo.Dom
 
                 //If there is once again a pending parsing-blocking script, then repeat these steps from step 1.
             }
-
             else
             {
-
                 //Any other end tag
                 //Pop the current node off the stack of open elements.
                 Element currentnode = openElements.currentNode();
@@ -3847,12 +3635,10 @@ namespace Kooboo.Dom
                 //Switch the insertion mode to the original insertion mode.
                 insertionMode = originalInsertionMode;
 
-                // GUOQI: looks like document bug. add below. 
-                tokenizer.ParseState = enumParseState.DATA; 
-
+                // GUOQI: looks like document bug. add below.
+                tokenizer.ParseState = enumParseState.DATA;
             }
         }
-
 
         /// <summary>
         /// 8.2.5.4.9 The "in table" insertion mode
@@ -3920,7 +3706,6 @@ namespace Kooboo.Dom
                 insertionMode = enumInsertionMode.inColumnGroup;
 
                 return;
-
             }
             //A start tag whose tag name is "col"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "col")
@@ -3932,7 +3717,7 @@ namespace Kooboo.Dom
                 HtmlToken faketoken = new HtmlToken(enumHtmlTokenType.StartTag);
                 faketoken.tagName = "colgroup";
                 faketoken.startIndex = token.startIndex;
-                faketoken.endIndex = -1; 
+                faketoken.endIndex = -1;
 
                 insertElement(faketoken);
 
@@ -3941,7 +3726,6 @@ namespace Kooboo.Dom
                 //Reprocess the current token.
                 inColumnGroup(token);
                 return;
-
             }
 
             //A start tag whose tag name is one of: "tbody", "tfoot", "thead"
@@ -3955,13 +3739,11 @@ namespace Kooboo.Dom
 
                 insertionMode = enumInsertionMode.inTableBody;
                 return;
-
             }
 
             //A start tag whose tag name is one of: "td", "th", "tr"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("td", "th", "tr"))
             {
-
                 //Clear the stack back to a table context. (See below.)
                 openElements.ClearStackBackToTableContext();
 
@@ -3970,7 +3752,7 @@ namespace Kooboo.Dom
                 HtmlToken faketoken = new HtmlToken(enumHtmlTokenType.StartTag);
                 faketoken.tagName = "tbody";
                 faketoken.startIndex = token.startIndex;
-                faketoken.endIndex = -1; 
+                faketoken.endIndex = -1;
                 insertElement(faketoken);
 
                 insertionMode = enumInsertionMode.inTableBody;
@@ -3978,21 +3760,17 @@ namespace Kooboo.Dom
                 //Reprocess the current token.
                 inTableBody(token);
                 return;
-
             }
 
             //A start tag whose tag name is "table"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "table")
             {
-
                 //Parse error.
                 onError("unexpected table start tag");
 
-
-                //If the stack of open elements does not have a table element in table scope, 
+                //If the stack of open elements does not have a table element in table scope,
                 if (!openElements.hasElementInScope("table", ScopeType.inTableScope))
                 {
-
                     //ignore the token.
                     return;
                 }
@@ -4027,17 +3805,15 @@ namespace Kooboo.Dom
 
                     //Reset the insertion mode appropriately.
                     resetInsertionMode();
-
                 }
                 return;
-
             }
 
             //An end tag whose tag name is one of: "body", "caption", "col", "colgroup", "html", "tbody", "td", "tfoot", "th", "thead", "tr"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName.isOneOf("body", "caption", "col", "colgroup", "html", "tbody", "td", "tfoot", "th", "thead", "tr"))
             {
                 //Parse error. Ignore the token.
-                onError(token.tagName + " unexpected"); 
+                onError(token.tagName + " unexpected");
                 return;
             }
             //A start tag whose tag name is one of: "style", "script", "template"
@@ -4051,16 +3827,13 @@ namespace Kooboo.Dom
             //A start tag whose tag name is "input"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "input")
             {
-
                 //If the token does not have an attribute with the name "type", or if it does, but that attribute's value is not an ASCII case-insensitive match for the string "hidden", then: act as described in the "anything else" entry below.
                 if (!token.attributes.ContainsKey("type") || token.attributes["type"].ToLower() != "hidden")
                 {
                     goto inTableAnythingElse;
-
                 }
                 else
                 {
-
                     //Otherwise:
 
                     //Parse error.
@@ -4081,7 +3854,6 @@ namespace Kooboo.Dom
             //A start tag whose tag name is "form"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "form")
             {
-
                 //Parse error.
                 onError("start tag form unexpected");
 
@@ -4092,7 +3864,6 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-
                     //Otherwise:
 
                     //Insert an HTML element for the token, and set the form element pointer to point to the element created.
@@ -4103,11 +3874,10 @@ namespace Kooboo.Dom
 
                     openElements.popOffLast(formelement);
                     return;
-
                 }
             }
 
-             //An end-of-file token
+            //An end-of-file token
             else if (token.type == enumHtmlTokenType.EOF)
             {
                 //Process the token using the rules for the "in body" insertion mode.
@@ -4116,12 +3886,10 @@ namespace Kooboo.Dom
             else
             {
                 goto inTableAnythingElse;
-
             }
 
         inTableAnythingElse:
             {
-
                 //Anything else
 
                 onError("non table element");
@@ -4130,11 +3898,8 @@ namespace Kooboo.Dom
                 fosterParent = true;
                 inBody(token);
                 fosterParent = false;
-
             }
-
         }
-
 
         /// <summary>
         /// 8.2.5.4.10 The "in table text" insertion mode
@@ -4151,10 +3916,8 @@ namespace Kooboo.Dom
                     onError("unexpected null character");
                     return;
                 }
-
                 else
                 {
-
                     //Any other character token
                     //Append the character token to the pending table character tokens list.
                     pendingTableCharacterTokens.Add(token);
@@ -4174,7 +3937,7 @@ namespace Kooboo.Dom
 
                 //Otherwise, insert the characters given by the pending table character tokens list.
 
-                ///TODO: please check whether we need to remove the items from pendingTable or not. 
+                ///TODO: please check whether we need to remove the items from pendingTable or not.
 
                 bool ifAny = false;
                 foreach (var item in pendingTableCharacterTokens)
@@ -4201,9 +3964,7 @@ namespace Kooboo.Dom
                     {
                         insertCharacter(item);
                     }
-
                 }
-
 
                 //Switch the insertion mode to the original insertion mode and reprocess the token.
                 insertionMode = originalInsertionMode;
@@ -4217,7 +3978,6 @@ namespace Kooboo.Dom
         /// <param name="token"></param>
         private void inCaption(HtmlToken token)
         {
-
             //An end tag whose tag name is "caption"
             if (token.type == enumHtmlTokenType.EndTag && token.tagName == "caption")
             {
@@ -4256,7 +4016,6 @@ namespace Kooboo.Dom
             //An end tag whose tag name is "table"
             else if ((token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("caption", "col", "colgroup", "tbody", "td", "tfoot", "th", "thead", "tr")) || (token.type == enumHtmlTokenType.EndTag && token.tagName == "table"))
             {
-
                 //Parse error.
                 onError(token.tagName + " not expected");
 
@@ -4284,7 +4043,6 @@ namespace Kooboo.Dom
                 }
             }
 
-
             //An end tag whose tag name is one of: "body", "col", "colgroup", "html", "tbody", "td", "tfoot", "th", "thead", "tr"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName.isOneOf("body", "col", "colgroup", "html", "tbody", "td", "tfoot", "th", "thead", "tr"))
             {
@@ -4299,7 +4057,6 @@ namespace Kooboo.Dom
                 inBody(token);
                 return;
             }
-
         }
 
         /// <summary>
@@ -4406,7 +4163,6 @@ namespace Kooboo.Dom
                 }
                 else
                 {
-
                     //Otherwise, pop the current node from the stack of open elements.
                     openElements.popOffLast(currentnode);
 
@@ -4418,7 +4174,6 @@ namespace Kooboo.Dom
                     return;
                 }
             }
-
         }
 
         /// <summary>
@@ -4451,15 +4206,14 @@ namespace Kooboo.Dom
                 //Insert an HTML element for a "tr" start tag token with no attributes, then switch the insertion mode to "in row".
                 HtmlToken faketoken = new HtmlToken(enumHtmlTokenType.StartTag);
                 faketoken.startIndex = token.startIndex;
-                faketoken.endIndex = -1; 
+                faketoken.endIndex = -1;
                 faketoken.tagName = "tr";
 
                 insertElement(faketoken);
                 insertionMode = enumInsertionMode.inRow;
                 //Reprocess the current token.
-                inRow(token); 
+                inRow(token);
                 return;
-
             }
             //An end tag whose tag name is one of: "tbody", "tfoot", "thead"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName.isOneOf("tbody", "tfoot", "thead"))
@@ -4469,7 +4223,6 @@ namespace Kooboo.Dom
                 {
                     onError("expect " + token.tagName + "in table scope");
                     return;
-
                 }
                 else
                 {
@@ -4488,13 +4241,11 @@ namespace Kooboo.Dom
             //An end tag whose tag name is "table"
             if ((token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("caption", "col", "colgroup", "tbody", "tfoot", "thead")) || (token.type == enumHtmlTokenType.EndTag && token.tagName == "table"))
             {
-
                 //If the stack of open elements does not have a tbody, thead, or tfoot element in table scope, this is a parse error; ignore the token.
                 if (!openElements.hasOneOfElementsInScope(ScopeType.inTableScope, "tbody", "thead", "tfoot"))
                 {
                     onError("expect tbody, thead or tfoot in table scope");
                     return;
-
                 }
                 else
                 {
@@ -4527,9 +4278,7 @@ namespace Kooboo.Dom
 
                 inTable(token);
                 return;
-
             }
-
         }
 
         /// <summary>
@@ -4562,11 +4311,9 @@ namespace Kooboo.Dom
                 if (!openElements.hasElementInScope("tr", ScopeType.inTableScope))
                 {
                     onError("expect an tr tag in table scope");
-
                 }
                 else
                 {
-
                     //Otherwise:
 
                     //Clear the stack back to a table row context. (See below.)
@@ -4575,7 +4322,6 @@ namespace Kooboo.Dom
                     //Pop the current node (which will be a tr element) from the stack of open elements. Switch the insertion mode to "in table body".
                     openElements.popOffLast(openElements.currentNode());
                     insertionMode = enumInsertionMode.inTableBody;
-
                 }
                 return;
             }
@@ -4588,10 +4334,8 @@ namespace Kooboo.Dom
                 {
                     onError("expect a tr in table scope");
                 }
-
                 else
                 {
-
                     //Otherwise:
 
                     //Clear the stack back to a table row context. (See below.)
@@ -4602,14 +4346,12 @@ namespace Kooboo.Dom
                     insertionMode = enumInsertionMode.inTableBody;
                     //Reprocess the token.
                     ProcessToken(token);
-
                 }
                 return;
             }
             //An end tag whose tag name is one of: "tbody", "tfoot", "thead"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName.isOneOf("tbody", "tfoot", "thead"))
             {
-
                 //If the stack of open elements does not have an element in table scope that is an HTML element and with the same tag name as the token, this is a parse error; ignore the token.
                 if (!openElements.hasElementInScope(token.tagName, ScopeType.inTableScope))
                 {
@@ -4620,7 +4362,6 @@ namespace Kooboo.Dom
                 //If the stack of open elements does not have a tr element in table scope, ignore the token.
                 if (!openElements.hasElementInScope("tr", ScopeType.inTableScope))
                 {
-
                     return;
                 }
                 else
@@ -4636,14 +4377,12 @@ namespace Kooboo.Dom
 
                     //Reprocess the token.
                     ProcessToken(token);
-    
                 }
                 return;
             }
             //An end tag whose tag name is one of: "body", "caption", "col", "colgroup", "html", "td", "th"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName.isOneOf("body", "caption", "col", "colgroup", "html", "td", "th"))
             {
-
                 //Parse error. Ignore the token.
                 onError("end tag " + token.tagName + " not expected");
                 return;
@@ -4655,7 +4394,6 @@ namespace Kooboo.Dom
                 inTable(token);
 
                 return;
-
             }
         }
 
@@ -4671,18 +4409,15 @@ namespace Kooboo.Dom
 
             if (token.type == enumHtmlTokenType.EndTag && token.tagName.isOneOf("td", "th"))
             {
-
                 //If the stack of open elements does not have an element in table scope that is an HTML element and with the same tag name as that of the token, then this is a parse error; ignore the token.
                 if (!openElements.hasElementInScope(token.tagName, ScopeType.inTableScope))
                 {
                     onError(token.tagName + " expected in table scope");
                     return;
-
                 }
                 //Otherwise:
                 else
                 {
-
                     //Generate implied end tags.
                     generateImpliedEndTags();
 
@@ -4707,7 +4442,6 @@ namespace Kooboo.Dom
             //A start tag whose tag name is one of: "caption", "col", "colgroup", "tbody", "td", "tfoot", "th", "thead", "tr"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("caption", "col", "colgroup", "tbody", "td", "tfoot", "th", "thead", "tr"))
             {
-
                 //If the stack of open elements does not have a td or th element in table scope, then this is a parse error; ignore the token. (fragment case)
                 if (!openElements.hasOneOfElementsInScope(ScopeType.inTableScope, "td", "th"))
                 {
@@ -4723,8 +4457,7 @@ namespace Kooboo.Dom
                 return;
             }
 
-
-                //An end tag whose tag name is one of: "body", "caption", "col", "colgroup", "html"
+            //An end tag whose tag name is one of: "body", "caption", "col", "colgroup", "html"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName.isOneOf("body", "caption", "col", "colgroup", "html"))
             {
                 //Parse error. Ignore the token.
@@ -4756,7 +4489,6 @@ namespace Kooboo.Dom
                 inBody(token);
                 return;
             }
-
         }
 
         /// <summary>
@@ -4764,7 +4496,6 @@ namespace Kooboo.Dom
         /// </summary>
         private void inSelect(HtmlToken token)
         {
-
             //A character token that is U+0000 NULL
             if (token.type == enumHtmlTokenType.Character)
             {
@@ -4773,18 +4504,14 @@ namespace Kooboo.Dom
                     //Parse error. Ignore the token.
                     onError("null character");
                     return;
-
                 }
                 else
                 {
-
                     //Any other character token
                     //Insert the token's character.
                     insertCharacter(token);
-
                 }
                 return;
-
             }
             //A comment token
             //Insert a comment.
@@ -4800,7 +4527,6 @@ namespace Kooboo.Dom
                 //Parse error. Ignore the token.
                 onError("unexpected doctype");
                 return;
-
             }
             //A start tag whose tag name is "html"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "html")
@@ -4843,13 +4569,11 @@ namespace Kooboo.Dom
                 //Insert an HTML element for the token.
                 insertElement(token);
                 return;
-
             }
 
             //An end tag whose tag name is "optgroup"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName == "optgroup")
             {
-
                 //First, if the current node is an option element, and the node immediately before it in the stack of open elements is an optgroup element, then pop the current node from the stack of open elements.
 
                 int index = openElements.length - 1;
@@ -4862,15 +4586,12 @@ namespace Kooboo.Dom
                     {
                         openElements.popOffLast(currentnode);
                     }
-
                 }
-
 
                 //If the current node is an optgroup element, then pop that node from the stack of open elements. Otherwise, this is a parse error; ignore the token.
                 if (openElements.currentNode().tagName == "optgroup")
                 {
                     openElements.popOffLast(openElements.currentNode());
-                
                 }
                 else
                 {
@@ -4882,7 +4603,6 @@ namespace Kooboo.Dom
             //An end tag whose tag name is "option"
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName == "option")
             {
-
                 //If the current node is an option element, then pop that node from the stack of open elements. Otherwise, this is a parse error; ignore the token.
                 if (openElements.currentNode().tagName == "option")
                 {
@@ -4891,7 +4611,6 @@ namespace Kooboo.Dom
                 else
                 {
                     onError("start tag option not found");
-
                 }
                 return;
             }
@@ -4922,7 +4641,6 @@ namespace Kooboo.Dom
             //A start tag whose tag name is "select"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "select")
             {
-
                 //Parse error.
                 onError("start tag select will be treated as end tag");
 
@@ -4956,14 +4674,12 @@ namespace Kooboo.Dom
                 //Reprocess the token.
                 ProcessToken(token);
                 return;
-
             }
             //A start tag whose tag name is one of: "script", "template"
             //An end tag whose tag name is "template"
             else if ((token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("script", "template")) |
                 (token.type == enumHtmlTokenType.EndTag && token.tagName == "template"))
             {
-
                 //Process the token using the rules for the "in head" insertion mode.
                 inHead(token);
                 return;
@@ -4996,7 +4712,6 @@ namespace Kooboo.Dom
 
             if (token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("caption", "table", "tbody", "tfoot", "thead", "tr", "td", "th"))
             {
-
                 //Parse error.
                 onError("unexpected tag");
 
@@ -5011,7 +4726,6 @@ namespace Kooboo.Dom
                 return;
             }
             //An end tag whose tag name is one of: "caption", "table", "tbody", "tfoot", "thead", "tr", "td", "th"
-
             else if (token.type == enumHtmlTokenType.EndTag && token.tagName.isOneOf("caption", "table", "tbody", "tfoot", "thead", "tr", "td", "th"))
             {
                 //Parse error.
@@ -5020,7 +4734,6 @@ namespace Kooboo.Dom
                 //If the stack of open elements does not have an element in table scope that is an HTML element and with the same tag name as that of the token, then ignore the token.
                 if (!openElements.hasElementInScope(token.tagName, ScopeType.inTableScope))
                 {
-
                     return;
                 }
                 else
@@ -5035,7 +4748,6 @@ namespace Kooboo.Dom
 
                     //Reprocess the token.
                     ProcessToken(token);
-
                 }
                 return;
             }
@@ -5048,14 +4760,12 @@ namespace Kooboo.Dom
             }
         }
 
-
         /// <summary>
         /// 8.2.5.4.18 The "in template" insertion mode
         /// </summary>
         /// <param name="token"></param>
         private void inTemplate(HtmlToken token)
         {
-
             //When the user agent is to apply the rules for the "in template" insertion mode, the user agent must handle the token as follows:
 
             //A character token
@@ -5074,20 +4784,17 @@ namespace Kooboo.Dom
                 //Process the token using the rules for the "in head" insertion mode.
                 inHead(token);
                 return;
-
             }
 
             //A start tag whose tag name is one of: "caption", "colgroup", "tbody", "tfoot", "thead"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("caption", "colgroup", "tbody", "tfoot", "thead"))
             {
-
                 //Pop the current template insertion mode off the stack of template insertion modes.
                 templateMode.popOffCurrent();
 
                 //Push "in table" onto the stack of template insertion modes so that it is the new current template insertion mode.
 
                 templateMode.push(enumInsertionMode.inTable);
-
 
                 //Switch the insertion mode to "in table", and reprocess the token.
                 insertionMode = enumInsertionMode.inTable;
@@ -5096,7 +4803,6 @@ namespace Kooboo.Dom
             }
 
             //A start tag whose tag name is "col"
-
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "col")
             {
                 //Pop the current template insertion mode off the stack of template insertion modes.
@@ -5111,10 +4817,8 @@ namespace Kooboo.Dom
                 return;
             }
             //A start tag whose tag name is "tr"
-
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "tr")
             {
-
                 //Pop the current template insertion mode off the stack of template insertion modes.
                 templateMode.popOffCurrent();
 
@@ -5125,10 +4829,8 @@ namespace Kooboo.Dom
                 insertionMode = enumInsertionMode.inTableBody;
                 ProcessToken(token);
                 return;
-
             }
             //A start tag whose tag name is one of: "td", "th"
-
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName.isOneOf("td", "th"))
             {
                 //Pop the current template insertion mode off the stack of template insertion modes.
@@ -5162,7 +4864,6 @@ namespace Kooboo.Dom
                 //Parse error. Ignore the token.
                 onError("unexpected end tag");
                 return;
-
             }
             //An end-of-file token
             else if (token.type == enumHtmlTokenType.EOF)
@@ -5193,24 +4894,20 @@ namespace Kooboo.Dom
             }
         }
 
-
         /// <summary>
         /// 8.2.5.4.19 The "after body" insertion mode
         /// </summary>
         /// <param name="token"></param>
         private void afterBody(HtmlToken token)
         {
-
             //When the user agent is to apply the rules for the "after body" insertion mode, the user agent must handle the token as follows:
 
             //A character token that is one of U+0009 CHARACTER TABULATION, "LF" (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
             if (token.type == enumHtmlTokenType.Character && token.data.isOneOf('\u0009', '\u000A', '\u000C', '\u000D', '\u0020'))
             {
-
                 //Process the token using the rules for the "in body" insertion mode.
                 inBody(token);
                 return;
-
             }
             //A comment token
             else if (token.type == enumHtmlTokenType.Comment)
@@ -5236,9 +4933,9 @@ namespace Kooboo.Dom
                 return;
             }
             //An end tag whose tag name is "html"
-            else if (token.type == enumHtmlTokenType.EndTag && token.tagName=="html")
+            else if (token.type == enumHtmlTokenType.EndTag && token.tagName == "html")
             {
-                //NON-W3C. 
+                //NON-W3C.
                 foreach (var item in openElements.item)
                 {
                     if (item.tagName == "html")
@@ -5247,7 +4944,6 @@ namespace Kooboo.Dom
                         item.location.endTokenEndIndex = token.endIndex;
                     }
                 }
-
 
                 //If the parser was originally created as part of the HTML fragment parsing algorithm, this is a parse error; ignore the token. (fragment case)
                 if (fragmentParsing)
@@ -5259,10 +4955,8 @@ namespace Kooboo.Dom
                 {
                     //Otherwise, switch the insertion mode to "after after body".
                     insertionMode = enumInsertionMode.afterAfterBody;
- 
                 }
                 return;
-
             }
             else if (token.type == enumHtmlTokenType.EOF)
             {
@@ -5298,7 +4992,6 @@ namespace Kooboo.Dom
                 return;
             }
             //A comment token
-
             else if (token.type == enumHtmlTokenType.Comment)
             {
                 //Insert a comment.
@@ -5334,7 +5027,6 @@ namespace Kooboo.Dom
                 {
                     onError("currentnode expect frameset");
                     return;
-
                 }
 
                 //Otherwise, pop the current node from the stack of open elements.
@@ -5345,7 +5037,7 @@ namespace Kooboo.Dom
                     {
                         insertionMode = enumInsertionMode.afterFrameset;
                     }
-                  }
+                }
 
                 return;
             }
@@ -5362,7 +5054,6 @@ namespace Kooboo.Dom
             //A start tag whose tag name is "noframes"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "noframes")
             {
-
                 //Process the token using the rules for the "in head" insertion mode.
                 inHead(token);
                 return;
@@ -5390,14 +5081,12 @@ namespace Kooboo.Dom
             }
         }
 
-
         /// <summary>
         /// 8.2.5.4.21 The "after frameset" insertion mode
         /// </summary>
         /// <param name="token"></param>
         private void afterFrameset(HtmlToken token)
         {
-
             //When the user agent is to apply the rules for the "after frameset" insertion mode, the user agent must handle the token as follows:
 
             //A character token that is one of U+0009 CHARACTER TABULATION, "LF" (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
@@ -5410,7 +5099,6 @@ namespace Kooboo.Dom
             //A comment token
             else if (token.type == enumHtmlTokenType.Comment)
             {
-
                 //Insert a comment.
                 insertComment(token);
                 return;
@@ -5418,7 +5106,6 @@ namespace Kooboo.Dom
             //A DOCTYPE token
             else if (token.type == enumHtmlTokenType.DocType)
             {
-
                 //Parse error. Ignore the token.
                 onError("unexpected doctype token");
                 return;
@@ -5460,14 +5147,12 @@ namespace Kooboo.Dom
             }
         }
 
-
         /// <summary>
         /// 8.2.5.4.22 The "after after body" insertion mode
         /// </summary>
         /// <param name="token"></param>
         private void afterAfterBody(HtmlToken token)
         {
-
             //When the user agent is to apply the rules for the "after after body" insertion mode, the user agent must handle the token as follows:
 
             //A comment token
@@ -5483,7 +5168,6 @@ namespace Kooboo.Dom
             //A start tag whose tag name is "html"
             else if (token.type == enumHtmlTokenType.DocType || (token.type == enumHtmlTokenType.StartTag && token.tagName == "html") || (token.type == enumHtmlTokenType.Character && token.data.isOneOf('\u0009', '\u000A', '\u000C', '\u000D', '\u0020')))
             {
-
                 //Process the token using the rules for the "in body" insertion mode.
                 inBody(token);
                 return;
@@ -5506,14 +5190,12 @@ namespace Kooboo.Dom
             }
         }
 
-
         /// <summary>
         /// 8.2.5.4.23 The "after after frameset" insertion mode
         /// </summary>
         /// <param name="token"></param>
         private void afterAfterFrameset(HtmlToken token)
         {
-
             //A comment token
             if (token.type == enumHtmlTokenType.Comment)
             {
@@ -5523,20 +5205,16 @@ namespace Kooboo.Dom
                 return;
             }
 
-
             //A DOCTYPE token
             //A character token that is one of U+0009 CHARACTER TABULATION, "LF" (U+000A), "FF" (U+000C), "CR" (U+000D), or U+0020 SPACE
             //A start tag whose tag name is "html"
             //Process the token using the rules for the "in body" insertion mode.
             else if (token.type == enumHtmlTokenType.DocType || (token.type == enumHtmlTokenType.StartTag && token.tagName == "html") || (token.type == enumHtmlTokenType.Character && token.data.isOneOf('\u0009', '\u000A', '\u000C', '\u000D', '\u0020')))
             {
-
                 //Process the token using the rules for the "in body" insertion mode.
                 inBody(token);
                 return;
             }
-
-
 
             //An end-of-file token
             //Stop parsing.
@@ -5545,7 +5223,6 @@ namespace Kooboo.Dom
                 stopParsing();
                 return;
             }
-
 
             //A start tag whose tag name is "noframes"
             else if (token.type == enumHtmlTokenType.StartTag && token.tagName == "noframes")
@@ -5561,9 +5238,7 @@ namespace Kooboo.Dom
                 onError("unexpected token");
                 return;
             }
-
         }
-
 
         #region "Fix Error"
 
@@ -5571,13 +5246,14 @@ namespace Kooboo.Dom
         {
             if (token.tagName == "tr")
             {
-                inTableBody(token); 
+                inTableBody(token);
             }
             else if (token.tagName == "td")
             {
-                inRow(token); 
+                inRow(token);
             }
         }
-        #endregion
+
+        #endregion "Fix Error"
     }
 }

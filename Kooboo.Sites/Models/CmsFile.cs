@@ -1,15 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Interface;
-using Kooboo.Extensions;
 using System;
 using System.Security.Cryptography;
 
 namespace Kooboo.Sites.Models
 {
-   [Kooboo.Attributes.Diskable(Kooboo.Attributes.DiskType.Binary)]
-   [Kooboo.Attributes.Routable]
-    public class CmsFile : CoreObject, IBinaryFile,  IExtensionable
+    [Kooboo.Attributes.Diskable(Kooboo.Attributes.DiskType.Binary)]
+    [Kooboo.Attributes.Routable]
+    public class CmsFile : CoreObject, IBinaryFile, IExtensionable
     {
         public CmsFile()
         {
@@ -17,6 +16,7 @@ namespace Kooboo.Sites.Models
         }
 
         private Guid _id;
+
         public override Guid Id
         {
             set { _id = value; }
@@ -34,35 +34,34 @@ namespace Kooboo.Sites.Models
         public string Extension { get; set; }
 
         /// <summary>
-        /// the content bytes of this file. 
+        /// the content bytes of this file.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public byte[] ContentBytes { get; set; }
 
         /// <summary>
-        ///  this is for some file like text file, etc... 
+        ///  this is for some file like text file, etc...
         /// </summary>
         public string ContentString { get; set; }
 
         /// <summary>
-        /// The content type of this file. like. application/flash. 
-        /// This is often used to save original content type saved from other location. 
+        /// The content type of this file. like. application/flash.
+        /// This is often used to save original content type saved from other location.
         /// </summary>
         public string ContentType { get; set; }
 
-        private int _size; 
+        private int _size;
+
         public int Size
         {
             get
             {
                 if (_size == default(int))
                 {
-
                     if (ContentBytes != null)
                     {
                         _size = ContentBytes.Length;
                     }
-
                 }
                 return _size;
             }
@@ -83,7 +82,7 @@ namespace Kooboo.Sites.Models
                 uniquestring += System.Text.Encoding.ASCII.GetString(data);
             }
 
-            return Lib.Security.Hash.ComputeIntCaseSensitive(uniquestring); 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(uniquestring);
         }
     }
 }

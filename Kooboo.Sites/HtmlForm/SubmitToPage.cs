@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
@@ -6,12 +6,9 @@ using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.HtmlForm
 {
-
     public class SubmitToPage : Data.Interface.IFormSubmitter
     {
         public string Name
@@ -21,7 +18,7 @@ namespace Kooboo.Sites.HtmlForm
 
         public string CustomActionUrl(RenderContext context, Dictionary<string, string> settings)
         {
-            return settings.First().Value; 
+            return settings.First().Value;
         }
 
         public List<SimpleSetting> Settings(RenderContext context)
@@ -31,7 +28,7 @@ namespace Kooboo.Sites.HtmlForm
             item.Name = "Url";
             item.ControlType = Data.ControlType.Selection;
 
-            var sitedb = context.WebSite.SiteDb(); 
+            var sitedb = context.WebSite.SiteDb();
 
             var allpages = sitedb.Pages.All();
 
@@ -39,30 +36,26 @@ namespace Kooboo.Sites.HtmlForm
             {
                 var url = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(sitedb, page);
 
-                if (url !=null)
+                if (url != null)
                 {
                     if (url.Contains("{") && url.Contains("}"))
                     {
-                        continue; 
+                        continue;
                     }
                     else
                     {
                         item.SelectionValues[url] = url;
-                    }     
+                    }
                 }
-       
-
-            }  
-            setting.Add(item); 
+            }
+            setting.Add(item);
             return setting;
         }
 
         public bool Submit(RenderContext context, Guid FormId, Dictionary<string, string> settings)
         {
-            // this will post directly to the url... 
-            return true; 
+            // this will post directly to the url...
+            return true;
         }
     }
-
-
 }

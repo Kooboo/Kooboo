@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data;
@@ -46,9 +46,8 @@ namespace Kooboo.Web.Api.Implementation
         public List<Data.Models.Dll> List(ApiCall call)
         {
             return Kooboo.Data.GlobalDb.Dlls.All().OrderBy(o => o.AssemblyName).ToList();
-
         }
-        
+
         public List<Dll> Post(ApiCall call)
         {
             var formresult = Kooboo.Lib.NETMultiplePart.FormReader.ReadForm(call.Context.Request.PostData);
@@ -79,9 +78,8 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             return dlls;
-
         }
-        
+
         public List<DataSourceViewModel> Datasource(ApiCall call)
         {
             List<DataSourceViewModel> dataSourceList = new List<DataSourceViewModel>();
@@ -155,7 +153,6 @@ namespace Kooboo.Web.Api.Implementation
                     GlobalDb.Dlls.Delete(item);
                 }
             }
-
         }
 
         public TypeTree TypeTree(ApiCall call)
@@ -181,7 +178,6 @@ namespace Kooboo.Web.Api.Implementation
             return tree;
         }
 
- 
         public static TypeTree CreateSubTree(List<Type> types, TypeTree root = null)
         {
             if (root == null)
@@ -265,8 +261,7 @@ namespace Kooboo.Web.Api.Implementation
             return root;
         }
 
-
-        static Dictionary<Type, string> _specialTypeDisplayNames = new Dictionary<Type, string>
+        private static Dictionary<Type, string> _specialTypeDisplayNames = new Dictionary<Type, string>
         {
             { typeof(void), "void" },
             { typeof(Int16), "short" },
@@ -299,7 +294,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public List<string> Thirdparty(ApiCall call)
         {
-            return GlobalDb.DataMethodSettings.Query.Where(o => o.IsThirdPartyType).SelectAll().Select(o => o.MethodSignatureHash.ToString()).ToList(); 
+            return GlobalDb.DataMethodSettings.Query.Where(o => o.IsThirdPartyType).SelectAll().Select(o => o.MethodSignatureHash.ToString()).ToList();
         }
 
         [Kooboo.Attributes.RequireModel(typeof(List<TypeModel>))]
@@ -345,15 +340,13 @@ namespace Kooboo.Web.Api.Implementation
                     }
                 }
             }
-
         }
 
         public DataMethodSetting GetSetting(ApiCall call)
         {
             DataMethodSetting settings = GlobalDb.DataMethodSettings.Get(call.ObjectId);
-            return settings; 
+            return settings;
         }
-
 
         [Kooboo.Attributes.RequireModel(typeof(Dictionary<string, ParameterBinding>))]
         public void UpdateSetting(ApiCall call)
@@ -363,13 +356,11 @@ namespace Kooboo.Web.Api.Implementation
             var model = GlobalDb.DataMethodSettings.Get(call.ObjectId);
             if (model == null)
             {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Setting not found", call.Context)); 
+                throw new Exception(Data.Language.Hardcoded.GetValue("Setting not found", call.Context));
             }
-            model.ParameterBinding = bindings; 
-            GlobalDb.DataMethodSettings.AddOrUpdate(model); 
+            model.ParameterBinding = bindings;
+            GlobalDb.DataMethodSettings.AddOrUpdate(model);
         }
-
-
 
         private static Regex RemoveAssemblyVersion = new Regex(@", (Version|Culture|PublicKeyToken)=[^,\]]*(?=,|$|\])", RegexOptions.IgnoreCase);
 

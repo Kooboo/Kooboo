@@ -1,37 +1,33 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Kooboo.Lib.Helper;
-using Kooboo.Lib.Compatible;
 
 namespace Kooboo.Lib.Compatible
 {
-//    public static class CompatibleManager
-//    {
-//        public static ISystem System;
+    //    public static class CompatibleManager
+    //    {
+    //        public static ISystem System;
 
-//        public static IFramework Framework;
+    //        public static IFramework Framework;
 
-//        static CompatibleManager()
-//        {
-//#if NET45
-//            System=new WindowSystem();
-//            Framework=new NET45();
-//#else
-//            Framework = new NetStandard();
-//            if (RuntimeSystemHelper.IsWindow())
-//            {
-//                System = new WindowSystem();
-//            }
-//            else
-//            {
-//                System = new LinuxSystem();
-//            }
-//#endif
-//        }
-//    }
+    //        static CompatibleManager()
+    //        {
+    //#if NET45
+    //            System=new WindowSystem();
+    //            Framework=new NET45();
+    //#else
+    //            Framework = new NetStandard();
+    //            if (RuntimeSystemHelper.IsWindow())
+    //            {
+    //                System = new WindowSystem();
+    //            }
+    //            else
+    //            {
+    //                System = new LinuxSystem();
+    //            }
+    //#endif
+    //        }
+    //    }
 
     //for best test
     public class CompatibleManager
@@ -48,7 +44,7 @@ namespace Kooboo.Lib.Compatible
         {
             get
             {
-                if(instance==null)
+                if (instance == null)
                 {
                     lock (_lockObj)
                     {
@@ -56,13 +52,12 @@ namespace Kooboo.Lib.Compatible
                         {
                             instance = new CompatibleManager();
                         }
-                        
                     }
-                    
                 }
                 return instance;
             }
         }
+
         public CompatibleManager()
         {
 #if NET45|| NET461

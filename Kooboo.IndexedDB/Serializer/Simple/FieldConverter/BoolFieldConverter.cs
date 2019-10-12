@@ -1,14 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.Helper;
 using System;
 
 namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
-   public class BoolFieldConverter<T> : IFieldConverter<T>
+    public class BoolFieldConverter<T> : IFieldConverter<T>
     {
-        Func<T, bool> getValue;
-        Action<T, bool> setValue;
+        private Func<T, bool> getValue;
+        private Action<T, bool> setValue;
 
         public BoolFieldConverter(string FieldName)
         {
@@ -32,7 +32,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         public void SetByteValues(T value, byte[] bytes)
         {
-            bool bytevalue = ValueConverter.ToBool(bytes); 
+            bool bytevalue = ValueConverter.ToBool(bytes);
             this.setValue(value, bytevalue);
         }
 
@@ -45,14 +45,14 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
     public class BoolFieldConverter : IFieldConverter
     {
-        Func<object, bool> getValue;
-        Action<object, bool> setValue;
+        private Func<object, bool> getValue;
+        private Action<object, bool> setValue;
 
         public BoolFieldConverter(string FieldName, Type ObjectType)
         {
             this.getValue = ObjectHelper.GetGetFieldValue<bool>(FieldName, ObjectType);
             this.setValue = ObjectHelper.GetSetFieldValue<bool>(FieldName, ObjectType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName); 
+            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
         }
 
         public int ByteLength
@@ -67,18 +67,17 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         {
             get; set;
         }
- 
+
         public void SetByteValues(object value, byte[] bytes)
         {
             bool bytevalue = ValueConverter.ToBool(bytes);
             this.setValue(value, bytevalue);
-        } 
+        }
 
         public byte[] ToBytes(object Value)
         {
             bool fieldvalue = this.getValue(Value);
             return ValueConverter.ToBytes(fieldvalue);
         }
-         
     }
 }

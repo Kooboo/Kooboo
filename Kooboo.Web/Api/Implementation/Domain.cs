@@ -1,14 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Api;
+using Kooboo.Data;
 using Kooboo.Data.Models;
+using Kooboo.Mail;
+using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Web.ViewModel;
-using Kooboo.Data;
-using Kooboo.Api;
-using Kooboo.Data.ViewModel;
-using Kooboo.Mail;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -40,39 +39,39 @@ namespace Kooboo.Web.Api.Implementation
 
         public virtual DomainInfo ServerInfo(ApiCall call)
         {
-           DomainInfo info = new DomainInfo();
-           // info.DnsServers = new List<string>(); 
-           // if (!string.IsNullOrEmpty(AppSettings.ServerSetting.Ns1))
-           // {
-           //     info.DnsServers.Add(Kooboo.Data.AppSettings.ServerSetting.Ns1);
-           // }
-           // if (Kooboo.Data.AppSettings.ServerSetting.Ns2 != null)
-           // {
-           //     info.DnsServers.Add(Kooboo.Data.AppSettings.ServerSetting.Ns2);
-           // }
+            DomainInfo info = new DomainInfo();
+            // info.DnsServers = new List<string>();
+            // if (!string.IsNullOrEmpty(AppSettings.ServerSetting.Ns1))
+            // {
+            //     info.DnsServers.Add(Kooboo.Data.AppSettings.ServerSetting.Ns1);
+            // }
+            // if (Kooboo.Data.AppSettings.ServerSetting.Ns2 != null)
+            // {
+            //     info.DnsServers.Add(Kooboo.Data.AppSettings.ServerSetting.Ns2);
+            // }
 
-           // if (info.DnsServers.Count < 2)
-           // {
-           //     info.DnsServers.Add("ns1.dnscall.org");
-           //     info.DnsServers.Add("ns2.dnscall.org");
-           // }
+            // if (info.DnsServers.Count < 2)
+            // {
+            //     info.DnsServers.Add("ns1.dnscall.org");
+            //     info.DnsServers.Add("ns2.dnscall.org");
+            // }
 
-           // var orgname = Kooboo.Data.GlobalDb.Organization.GetName(call.Context.User.Id);
+            // var orgname = Kooboo.Data.GlobalDb.Organization.GetName(call.Context.User.Id);
 
-           // string subname = null; 
-           // if (orgname !=null)
-           // {
-           //     subname = orgname; 
-           // }
-           // else
-           // {
-           //     subname = AppSettings.ServerSetting.ServerId.ToString(); 
-           // } 
-           // info.CName = subname + "." + AppSettings.ServerSetting.HostDomain; 
-           //if (Data.AppSettings.ServerSetting.Ips != null && Data.AppSettings.ServerSetting.Ips.Count > 0)
-           // {
-           //     info.IPAddress = AppSettings.ServerSetting.Ips.First();
-           // }
+            // string subname = null;
+            // if (orgname !=null)
+            // {
+            //     subname = orgname;
+            // }
+            // else
+            // {
+            //     subname = AppSettings.ServerSetting.ServerId.ToString();
+            // }
+            // info.CName = subname + "." + AppSettings.ServerSetting.HostDomain;
+            //if (Data.AppSettings.ServerSetting.Ips != null && Data.AppSettings.ServerSetting.Ips.Count > 0)
+            // {
+            //     info.IPAddress = AppSettings.ServerSetting.Ips.First();
+            // }
 
             return info;
         }
@@ -96,13 +95,12 @@ namespace Kooboo.Web.Api.Implementation
 
             var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(call.Context.User.CurrentOrgId);
 
-            List<EmailAddress> alladdress = null; 
+            List<EmailAddress> alladdress = null;
 
-            if (orgdb !=null)
+            if (orgdb != null)
             {
-                alladdress = orgdb.EmailAddress.All(); 
+                alladdress = orgdb.EmailAddress.All();
             }
-
 
             foreach (var item in GlobalDb.Domains.ListByUser(call.Context.User))
             {
@@ -121,12 +119,11 @@ namespace Kooboo.Web.Api.Implementation
                 var bindings = GlobalDb.Bindings.GetByDomain(item.Id);
                 model.Records = bindings.Count(o => o.OrganizationId == call.Context.User.CurrentOrgId); model.Sites = bindings.Select(o => o.WebSiteId).Distinct().Count();
 
-
-                if (alladdress != null && model.DomainName !=null)
+                if (alladdress != null && model.DomainName != null)
                 {
                     string domainname = model.DomainName.ToLower();
 
-                    model.Emails = alladdress.FindAll(o => o.Address.ToLower().EndsWith(domainname)).Count();  
+                    model.Emails = alladdress.FindAll(o => o.Address.ToLower().EndsWith(domainname)).Count();
                 }
 
                 result.Add(model);
@@ -230,8 +227,5 @@ namespace Kooboo.Web.Api.Implementation
 
             GlobalDb.Domains.AddOrUpdate(domain);
         }
-        
     }
-
-
 }

@@ -1,20 +1,17 @@
-﻿using System;
+﻿using Kooboo.Lib.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using Kooboo.Lib.Helper;
 
 namespace Kooboo.Web.Api.Implementation.Mails
 {
     public class EmailHttpHelper
     {
         public static readonly string DefaultUserAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 4.0.30319)";
-          
-        public static T Get<T>(string url, Dictionary<string, string> query, Dictionary<string,string> headers)
+
+        public static T Get<T>(string url, Dictionary<string, string> query, Dictionary<string, string> headers)
         {
             if (query != null)
             {
@@ -75,12 +72,10 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 }
                 catch (Exception ex)
                 {
-
                 }
                 return default(T);
             }
         }
-
 
         public static byte[] PostBytes(string url, byte[] data, Dictionary<string, string> headers)
         {
@@ -101,7 +96,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
             return null;
         }
 
-        private static void AddHeader(WebHeaderCollection webHeaderCollection, Dictionary<string,string> headers)
+        private static void AddHeader(WebHeaderCollection webHeaderCollection, Dictionary<string, string> headers)
         {
             if (headers != null)
             {

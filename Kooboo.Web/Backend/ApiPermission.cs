@@ -1,11 +1,8 @@
 ﻿using Kooboo.Data.Context;
-using Kooboo.Sites.Authorization;
 using Kooboo.Web.Authorization;
 using Kooboo.Web.Menus;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Kooboo.Web.Backend
 {
@@ -27,21 +24,18 @@ namespace Kooboo.Web.Backend
                 }
             }
 
-
             if (context.User.IsAdmin)
             {
                 return true;
             }
             else
             {
-
                 string PermissionString = null;
 
                 if (method.ClassInstance != null)
                 {
                     if (method.ClassInstance is IPermissionControl)
                     {
-
                         if (method.ClassInstance is IApiPermissionString)
                         {
                             var permissionclass = method.ClassInstance as IApiPermissionString;
@@ -64,7 +58,6 @@ namespace Kooboo.Web.Backend
                                     PermissionString = MenuManager.GetPermissionString(menuinstance);
                                 }
                             }
-
                         }
                     }
                 }
@@ -84,7 +77,6 @@ namespace Kooboo.Web.Backend
                     //}
                 }
 
-
                 if (string.IsNullOrWhiteSpace(PermissionString))
                 {
                     return true;
@@ -99,10 +91,8 @@ namespace Kooboo.Web.Backend
                     }
                     return Kooboo.Sites.Authorization.PermissionService.HasPermission(PermissionString, role.Tree);
                 }
-
             }
         }
-
 
         public static Type GetPerminssionLinkUndertype(Type ApiClassType)
         {
@@ -111,11 +101,9 @@ namespace Kooboo.Web.Backend
             if (interfaces.Any())
             {
                 return interfaces.First().GetGenericArguments().First();
-
             }
 
             return null;
         }
     }
-
 }

@@ -1,12 +1,10 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.IndexedDB;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Kooboo.IndexedDB;
-using System.Linq;
-using System;
 
 namespace Kooboo.App
 {
@@ -30,12 +28,10 @@ namespace Kooboo.App
 
         private void BtnClose_Click(object sender, RoutedEventArgs e)
         {
-            var btn = sender as Button;
-            if (btn != null && e.Source == btn)
+            if (sender is Button btn && Equals(e.Source, btn))
             {
                 var window = Window.GetWindow(btn);
-                var mainWindow = window as Kooboo.App.MainWindow;
-                if (mainWindow != null)
+                if (window is MainWindow mainWindow)
                 {
                     //kooboo will not close when click close btn.
                     //it will be put in system tray;
@@ -47,19 +43,17 @@ namespace Kooboo.App
 
         private void SidebarButton_Checked(object sender, RoutedEventArgs e)
         {
-            Dictionary<string, Page> PageMapping = new Dictionary<string, Page>
+            var pageMapping = new Dictionary<string, Page>
             {
                 ["site"] = new HomePage(),
                 ["server"] = new ServerPage(),
                 ["host"] = new HostPage(),
                 ["upgrade"] = new UpgradePage()
             };
-            var btn = sender as RadioButton;
-            if (btn != null && e.Source == btn)
+            if (sender is RadioButton btn && Equals(e.Source, btn))
             {
-                Page page;
                 var wind = Window.GetWindow(btn);
-                if (wind != null && PageMapping.TryGetValue(btn.Uid.ToLower(), out page))
+                if (wind != null && pageMapping.TryGetValue(btn.Uid.ToLower(), out var page))
                 {
                     wind.Content = page;
                 }
@@ -76,7 +70,7 @@ namespace Kooboo.App
             {
                 KoobooAutoStart.AutoStart(true);
             }
-            GlobalSettings.RootPath = Kooboo.Data.AppSettings.DatabasePath;
+            GlobalSettings.RootPath = Data.AppSettings.DatabasePath;
             KoobooStartUp.StartAll();
         }
 

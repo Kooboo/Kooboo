@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
@@ -121,6 +121,7 @@ namespace Microsoft.AspNet.WebUtilities
         {
             throw new NotSupportedException();
         }
+
 #if NET451
         public override IAsyncResult BeginWrite(byte[] buffer, int offset, int size, AsyncCallback callback, object state)
         {
@@ -132,6 +133,7 @@ namespace Microsoft.AspNet.WebUtilities
             throw new NotSupportedException();
         }
 #endif
+
         public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             throw new NotSupportedException();
@@ -159,6 +161,7 @@ namespace Microsoft.AspNet.WebUtilities
             }
             return read;
         }
+
 #if NET451
         public override IAsyncResult BeginRead(byte[] buffer, int offset, int size, AsyncCallback callback, object state)
         {
@@ -198,6 +201,7 @@ namespace Microsoft.AspNet.WebUtilities
             return task.GetAwaiter().GetResult();
         }
 #endif
+
         public override int Read(byte[] buffer, int offset, int count)
         {
             if (_finished)

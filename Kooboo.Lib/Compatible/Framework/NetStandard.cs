@@ -1,17 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 #if !NET45 &&!NET461
-using System;
-using System.Collections.Generic;
-using System.Text;
+
+using Kooboo.Lib.Helper;
 using Kooboo.Lib.Security;
 using Kooboo.Lib.Utilities;
-using System.Security.Cryptography;
-using System.Xml;
-using System.IO;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
-using Kooboo.Lib.Helper;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using System.Xml;
 
 namespace Kooboo.Lib.Compatible
 {
@@ -21,8 +22,9 @@ namespace Kooboo.Lib.Compatible
         {
             return MimeMapping.MimeUtility.GetMimeMapping(extension);
         }
-    
-#region
+
+        #region
+
         public RsaKeys GenerateKeys(int size)
         {
             RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(size);
@@ -127,7 +129,6 @@ namespace Kooboo.Lib.Compatible
 
         private String ToXmlString(RSACryptoServiceProvider rsa, bool includePrivateParameters)
         {
-
             // we extend appropriately for private components
             RSAParameters rsaParams = rsa.ExportParameters(includePrivateParameters);
             StringBuilder sb = new StringBuilder();
@@ -149,7 +150,8 @@ namespace Kooboo.Lib.Compatible
             sb.Append("</RSAKeyValue>");
             return (sb.ToString());
         }
-#endregion
+
+        #endregion
 
         public double GetDistance(double xLa, double xLong, double yLa, double yLong)
         {
@@ -158,7 +160,8 @@ namespace Kooboo.Lib.Compatible
             return cordx.GetDistanceTo(cordy);
         }
 
-#region image
+        #region image
+
         public SizeMeansurement GetImageSize(byte[] imagebytes)
         {
             SizeMeansurement measure = new SizeMeansurement();
@@ -172,7 +175,6 @@ namespace Kooboo.Lib.Compatible
             }
             catch (Exception ex)
             {
-
             }
             return measure;
         }
@@ -221,7 +223,7 @@ namespace Kooboo.Lib.Compatible
 
             using (MemoryStream ms = new MemoryStream())
             {
-                size = Kooboo.Lib.Helper.ImageHelper.GetEqualProportionSize(image.Width,image.Height, size);
+                size = Kooboo.Lib.Helper.ImageHelper.GetEqualProportionSize(image.Width, image.Height, size);
                 image.Mutate(x => x.Resize(size.Width, size.Height));
                 image.Save(ms, ImageFormats.Png);
 
@@ -234,7 +236,7 @@ namespace Kooboo.Lib.Compatible
             }
         }
 
-#endregion
+        #endregion
 
         public void OpenDefaultUrl(string url)
         {
@@ -258,8 +260,7 @@ namespace Kooboo.Lib.Compatible
         {
             return false;
         }
-
-
     }
 }
+
 #endif

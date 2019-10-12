@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 
 namespace Kooboo.Sites.Authorization.Model
@@ -15,8 +14,8 @@ namespace Kooboo.Sites.Authorization.Model
 
         public string DisplayName { get; set; }
 
-
         private List<PermissionViewModel> _subitems;
+
         public List<PermissionViewModel> SubItems
         {
             get
@@ -44,11 +43,11 @@ namespace Kooboo.Sites.Authorization.Model
             {
                 foreach (var item in _subitems)
                 {
-                    result.SubItems.Add(item.Clone()); 
+                    result.SubItems.Add(item.Clone());
                 }
             }
 
-            return result;  
+            return result;
         }
     }
 }

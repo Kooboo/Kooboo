@@ -1,13 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data.Models;
 using Kooboo.Web.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -37,7 +34,6 @@ namespace Kooboo.Web.Api.Implementation
             }
         }
 
-
         public List<UserPublishServer> List(ApiCall call)
         {
             List<UserPublishServer> result = GetServers(call);
@@ -66,11 +62,10 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
-
         public List<Data.Models.Domain> RemoteDomains(ApiCall call)
         {
-            // request to remote for domains...    
-            var serverurl = call.GetValue("ServerUrl"); 
+            // request to remote for domains...
+            var serverurl = call.GetValue("ServerUrl");
 
             if (serverurl != null)
             {
@@ -90,20 +85,19 @@ namespace Kooboo.Web.Api.Implementation
 
         public List<Data.Models.Domain> AvailableDomains(ApiCall call)
         {
-            Guid orgid = call.GetValue<Guid>("organizationid"); 
+            Guid orgid = call.GetValue<Guid>("organizationid");
             if (orgid == default(Guid))
             {
-                orgid = call.Context.User.CurrentOrgId; 
+                orgid = call.Context.User.CurrentOrgId;
             }
 
             return Kooboo.Data.GlobalDb.Domains.ListByOrg(orgid);
         }
 
-
         [Kooboo.Attributes.RequireParameters("id")]
         public void DeleteServer(ApiCall call)
         {
-            // need to verify the owner ship here... 
+            // need to verify the owner ship here...
             string url = Kooboo.Data.Helper.AccountUrlHelper.UserPublish("Delete");
             Dictionary<string, string> para = new Dictionary<string, string>();
             para.Add("Id", call.ObjectId.ToString());
@@ -143,6 +137,5 @@ namespace Kooboo.Web.Api.Implementation
                 return default(Guid);
             }
         }
-
     }
 }

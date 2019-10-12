@@ -1,12 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Kooboo.IndexedDB.ByteConverter;
 using Kooboo.IndexedDB.Columns;
 using Kooboo.IndexedDB.Indexs;
 using Kooboo.IndexedDB.Query;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Kooboo.IndexedDB
@@ -28,6 +28,7 @@ namespace Kooboo.IndexedDB
 
         private BlockFile _blockfile;
         private object _lockerBlockFile = new object();
+
         private BlockFile BlockFile
         {
             get
@@ -54,14 +55,14 @@ namespace Kooboo.IndexedDB
         {
             get
             {
-                List<TKey> result = new List<TKey>(); 
+                List<TKey> result = new List<TKey>();
 
                 foreach (var item in this.primaryIndex.AllKeyBytesCollection(true))
                 {
                     var key = this.KeyConverter.FromByte(item);
-                    result.Add(key); 
-                } 
-                return result; 
+                    result.Add(key);
+                }
+                return result;
             }
         }
 
@@ -120,7 +121,6 @@ namespace Kooboo.IndexedDB
             this.StoreSetting = setting;
             Init();
         }
-
 
         private void Init()
         {
@@ -195,7 +195,6 @@ namespace Kooboo.IndexedDB
 
                 return _settingColumns;
             }
-
         }
 
         public IColumn<TValue> GetColumn(string ColumnName)
@@ -215,8 +214,8 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// Create an additional index. The primary key index will be automatically created. 
-        /// When create a new index, it will trigger a rebuild of that index. 
+        /// Create an additional index. The primary key index will be automatically created.
+        /// When create a new index, it will trigger a rebuild of that index.
         /// </summary>
         /// <param name="fieldName"></param>
         /// <param name="unique"></param>
@@ -302,7 +301,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// Add a new record, 
+        /// Add a new record,
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
@@ -325,10 +324,10 @@ namespace Kooboo.IndexedDB
                 }
 
                 Int64 contentposition = addValueBlock(key, value);
-                // add the primary index first. 
+                // add the primary index first.
                 bool ok = this.primaryIndex.Add(key, contentposition);
                 // continue with the rest of indexes.
-                // 
+                //
                 if (ok)
                 {
                     bool updateindex = true;
@@ -340,7 +339,7 @@ namespace Kooboo.IndexedDB
 
                     if (updateindex)
                     {
-                        // if all ok, write to the log. 
+                        // if all ok, write to the log.
                         if (this.StoreSetting.EnableLog && EnableLog)
                         {
                             var log = new LogEntry() { Id = logid, EditType = EditType.Add, OldBlockPosition = 0, NewBlockPosition = contentposition, UserId = this.CurrentUserId, StoreName = this.Name, UpdateTime = DateTime.UtcNow, KeyBytes = this.KeyConverter.ToByte(key) };
@@ -349,7 +348,7 @@ namespace Kooboo.IndexedDB
                     }
                     else
                     {
-                        // should roll back primary index as well. 
+                        // should roll back primary index as well.
                         this.primaryIndex.Del(key);
                     }
                     return updateindex;
@@ -358,15 +357,14 @@ namespace Kooboo.IndexedDB
                 {
                     return false;
                 }
-
             }
         }
 
         private void updateindex(TKey key, TValue value, Int64 blockposition)
         {
-            // add the primary index first. 
+            // add the primary index first.
             bool ok = this.primaryIndex.Add(key, blockposition);
-            // continue with the rest of indexes. 
+            // continue with the rest of indexes.
             bool updateindex = true;
             if (ok)
             {
@@ -382,7 +380,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// Caution, this will only affect the query that use column data. does not update index or the real content body.. 
+        /// Caution, this will only affect the query that use column data. does not update index or the real content body..
         /// </summary>
         /// <typeparam name="TColumnType"></typeparam>
         /// <param name="key"></param>
@@ -458,7 +456,6 @@ namespace Kooboo.IndexedDB
 
                 foreach (var item in lastedit)
                 {
-
                     if (item.Value.EditType != EditType.Delete)
                     {
                         var key = this.KeyConverter.FromByte(item.Key);
@@ -475,12 +472,11 @@ namespace Kooboo.IndexedDB
                         }
                     }
                 }
-
             }
         }
 
         /// <summary>
-        /// add a new record. 
+        /// add a new record.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
@@ -498,7 +494,6 @@ namespace Kooboo.IndexedDB
             return put(key, value, Enablelog);
         }
 
-
         /// <summary>
         /// delete a record
         /// </summary>
@@ -512,13 +507,13 @@ namespace Kooboo.IndexedDB
 
                 if (blocklist.Count == 0)
                 {
-                    // key not found, not delete. 
+                    // key not found, not delete.
                     return;
                 }
                 bool delok = true;
                 foreach (Int64 item in blocklist)
                 {
-                    /// continue with the rest of indexes. 
+                    /// continue with the rest of indexes.
                     TValue recordvalue = this.getValue(item);
 
                     delok = this.Indexes.Del(recordvalue, item);
@@ -526,14 +521,14 @@ namespace Kooboo.IndexedDB
                     if (!delok)
                     {
                         // if del failed any reason, roll back.
-                        // TODO: this might be a problem without putting all del into one transaction. 
-                        // However, it is not a problem, because blocklist will only contains 1 record  max for now. 
+                        // TODO: this might be a problem without putting all del into one transaction.
+                        // However, it is not a problem, because blocklist will only contains 1 record  max for now.
                         this.primaryIndex.Add(key, item);
                         break;
                     }
                     else
                     {
-                        /// del ok, we need to insert the log. 
+                        /// del ok, we need to insert the log.
                         if (this.StoreSetting.EnableLog && EnableLog)
                         {
                             this.OwnerDatabase.Log.Add(new LogEntry() { EditType = EditType.Delete, OldBlockPosition = item, NewBlockPosition = item, UserId = this.CurrentUserId, StoreName = this.Name, UpdateTime = DateTime.UtcNow, KeyBytes = this.KeyConverter.ToByte(key) });
@@ -564,7 +559,7 @@ namespace Kooboo.IndexedDB
 
                 if (EqualityComparer<TValue>.Default.Equals(oldrecord, default(TValue)))
                 {
-                    /// if  this does not exists. 
+                    /// if  this does not exists.
                     this.put(key, newvalue);
                     return;
                 }
@@ -583,7 +578,7 @@ namespace Kooboo.IndexedDB
 
                 Int64 newblockposition = addValueBlock(key, newvalue);
 
-                //update the primary key. 
+                //update the primary key.
                 this.primaryIndex.Update(key, oldblockposition, newblockposition);
 
                 //now update the other indexes.
@@ -607,7 +602,6 @@ namespace Kooboo.IndexedDB
             }
         }
 
-
         public bool UpdateOnly(TKey key, TValue newvalue, bool EnableLog = true)
         {
             lock (_Locker)
@@ -623,7 +617,7 @@ namespace Kooboo.IndexedDB
 
                 if (EqualityComparer<TValue>.Default.Equals(oldrecord, default(TValue)))
                 {
-                    return false; 
+                    return false;
                 }
 
                 long logid = 0;
@@ -640,7 +634,7 @@ namespace Kooboo.IndexedDB
 
                 Int64 newblockposition = addValueBlock(key, newvalue);
 
-                //update the primary key. 
+                //update the primary key.
                 this.primaryIndex.Update(key, oldblockposition, newblockposition);
 
                 //now update the other indexes.
@@ -652,10 +646,9 @@ namespace Kooboo.IndexedDB
 
                     this.OwnerDatabase.Log.Add(log);
                 }
-                return true; 
+                return true;
             }
         }
-
 
         public Filter<TKey, TValue> Filter
         {
@@ -668,7 +661,7 @@ namespace Kooboo.IndexedDB
 
         /// <summary>
         /// This query convert all data back to object and use brute force to search.
-        /// For better performance, consider use manual query. 
+        /// For better performance, consider use manual query.
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
@@ -698,7 +691,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// Update the content to the record before that log. 
+        /// Update the content to the record before that log.
         /// </summary>
         /// <param name="log"></param>
         public void RollBack(LogEntry log)
@@ -716,14 +709,14 @@ namespace Kooboo.IndexedDB
             }
             else
             {
-                // this is delete of one item. 
+                // this is delete of one item.
                 TValue oldvalue = this.getValue(log.OldBlockPosition);
                 this.add(key, oldvalue);
             }
         }
 
         /// <summary>
-        /// roll back all the log entries. 
+        /// roll back all the log entries.
         /// </summary>
         /// <param name="loglist"></param>
         public void RollBack(List<LogEntry> loglist)
@@ -743,7 +736,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// roll back the object store to specified version number. 
+        /// roll back the object store to specified version number.
         /// </summary>
         /// <param name="LastVersionId"></param>
         /// <param name="SelfIncluded"></param>
@@ -763,11 +756,10 @@ namespace Kooboo.IndexedDB
             {
                 RollBack(logs);
             }
-
         }
 
         /// <summary>
-        /// Roll back the object store to special time tick. 
+        /// Roll back the object store to special time tick.
         /// </summary>
         /// <param name="TimeTick"></param>
         /// <param name="SelfIncluded"></param>
@@ -792,7 +784,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// Checkout a version to another object store. 
+        /// Checkout a version to another object store.
         /// </summary>
         /// <param name="TimeTick"></param>
         /// <param name="DestinationStore"></param>
@@ -815,7 +807,6 @@ namespace Kooboo.IndexedDB
             {
                 CheckOut(logs, DestinationStore);
             }
-
         }
 
         public void CheckOut(Int64 VersionId, ObjectStore<TKey, TValue> DestinationStore, bool SelfIncluded = true)
@@ -837,7 +828,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// Check out all the log entries to new object store. 
+        /// Check out all the log entries to new object store.
         /// </summary>
         /// <param name="logs"></param>
         /// <param name="DestinationStore"></param>
@@ -847,7 +838,6 @@ namespace Kooboo.IndexedDB
 
             foreach (var item in logs.OrderByDescending(o => o.TimeTick))
             {
-
                 byte[] fixedlengthkey = this.appendToKeyLength(item.KeyBytes);
 
                 if (KeysDone.Contains(fixedlengthkey, this.GenericBytesComparer))
@@ -863,10 +853,9 @@ namespace Kooboo.IndexedDB
                 }
                 else
                 {
-                    // this is delete of one item. 
+                    // this is delete of one item.
                     KeysDone.Add(fixedlengthkey);
                 }
-
             }
         }
 
@@ -896,7 +885,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// get object value, should use to replace getOjbect/getValue. 
+        /// get object value, should use to replace getOjbect/getValue.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -916,11 +905,11 @@ namespace Kooboo.IndexedDB
             else
             {
                 return default(TValue);
-            } 
+            }
         }
 
         /// <summary>
-        /// Get the object of a special version number. 
+        /// Get the object of a special version number.
         /// </summary>
         /// <param name="key"></param>
         /// <param name="versionid"></param>
@@ -948,7 +937,7 @@ namespace Kooboo.IndexedDB
 
         public int getLength(long blockposition)
         {
-            return this.BlockFile.GetLength(blockposition); 
+            return this.BlockFile.GetLength(blockposition);
         }
 
         public TValue GetFromColumns(TKey key)
@@ -958,7 +947,6 @@ namespace Kooboo.IndexedDB
             lock (_Locker)
             {
                 blockposition = this.primaryIndex.Get(key);
-
             }
             if (blockposition > 0)
             {
@@ -971,7 +959,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// Get the TValue based on the column data only. 
+        /// Get the TValue based on the column data only.
         /// </summary>
         /// <param name="blockposition"></param>
         /// <returns></returns>
@@ -993,8 +981,8 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// get the collection of all items, sorted by primary key. 
-        /// Warning, Thread-unsafe. used in a multithread sitaution is not guarantee. 
+        /// get the collection of all items, sorted by primary key.
+        /// Warning, Thread-unsafe. used in a multithread sitaution is not guarantee.
         /// </summary>
         /// <param name="ascending"></param>
         /// <returns></returns>
@@ -1005,7 +993,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// get the collection of all items, sorted by the provided index. 
+        /// get the collection of all items, sorted by the provided index.
         /// </summary>
         /// <param name="ascending"></param>
         /// <returns></returns>
@@ -1017,7 +1005,6 @@ namespace Kooboo.IndexedDB
 
             return collection;
         }
-
 
         internal byte[] getColumnsBytes(Int64 blockposition, int relativePosition, int length)
         {
@@ -1046,7 +1033,6 @@ namespace Kooboo.IndexedDB
                 return null;
             }
         }
-
 
         public byte[] GetColumnBytes(TKey key, string FieldName)
         {
@@ -1105,13 +1091,12 @@ namespace Kooboo.IndexedDB
             }
         }
 
-
         /// <summary>
-        /// delete this store object. Does not update the database config with the changes. 
+        /// delete this store object. Does not update the database config with the changes.
         /// </summary>
         public void DelSelf()
         {
-            //Additional indexes should be closed as well. 
+            //Additional indexes should be closed as well.
             lock (_Locker)
             {
                 Close();
@@ -1127,15 +1112,14 @@ namespace Kooboo.IndexedDB
             return Helper.KeyHelper.AppendToKeyLength(input, this.IsStringKey, this.StoreSetting.PrimaryKeyLen);
         }
 
-
         private void TrySetVersionFunction()
-        { 
+        {
             var VersionFieldType = Helper.TypeHelper.GetFieldType<TValue>(GlobalSettings.VersionFieldName);
 
             if (VersionFieldType != null && VersionFieldType == typeof(Int64))
-            { 
+            {
                 this.SetVersionNr = Helper.ObjectHelper.GetSetValue<TValue, Int64>(GlobalSettings.VersionFieldName);
-            } 
+            }
         }
 
         public bool add(object key, object value)
@@ -1148,8 +1132,6 @@ namespace Kooboo.IndexedDB
             }
             return false;
         }
-
-
 
         public bool update(object key, object value)
         {
@@ -1223,7 +1205,6 @@ namespace Kooboo.IndexedDB
                     TValue value = this.getValue(item.NewBlockPosition);
                     DestinationStore.add(key, value);
                 }
-
             }
         }
 

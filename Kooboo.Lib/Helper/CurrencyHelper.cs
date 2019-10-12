@@ -1,17 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Globalization;
 
 namespace Kooboo.Lib.Helper
 {
     public static class CurrencyHelper
     {
         private static Dictionary<string, string> CurrencyDic = new Dictionary<string, string>();
+
         static CurrencyHelper()
         {
             CurrencyDic.Add("USD", "$");//United States dollar
@@ -23,6 +20,7 @@ namespace Kooboo.Lib.Helper
             CurrencyDic.Add("CHF", "Fr");//Swiss franc
             CurrencyDic.Add("CNY", "¥");//Renminbi
         }
+
         public static string GetCurrencySymbol(string currency)
         {
             currency = currency.ToUpper();
@@ -30,49 +28,48 @@ namespace Kooboo.Lib.Helper
             {
                 return CurrencyDic[currency];
             }
-            throw new Exception(string.Format("currency:{0} is not supported.",currency));
+            throw new Exception(string.Format("currency:{0} is not supported.", currency));
 
-// 1
+            // 1
 
-//United States dollar
-//USD(US$)
-//87.6 %
-//2
+            //United States dollar
+            //USD(US$)
+            //87.6 %
+            //2
 
-//Euro
-//EUR(€)
-//31.4 %
-//3
+            //Euro
+            //EUR(€)
+            //31.4 %
+            //3
 
-//Japanese yen
-//JPY(¥)
-//21.6 %
-//4
+            //Japanese yen
+            //JPY(¥)
+            //21.6 %
+            //4
 
-//Pound sterling
-//GBP(£)
-//12.8 %
-//5
+            //Pound sterling
+            //GBP(£)
+            //12.8 %
+            //5
 
-//Australian dollar
-//AUD(A$)
-//6.9 %
-//6
+            //Australian dollar
+            //AUD(A$)
+            //6.9 %
+            //6
 
-//Canadian dollar
-//CAD(C$)
-//5.1 %
-//7
+            //Canadian dollar
+            //CAD(C$)
+            //5.1 %
+            //7
 
-//Swiss franc
-//CHF(Fr)
-//4.8 %
-//8
+            //Swiss franc
+            //CHF(Fr)
+            //4.8 %
+            //8
 
-//Renminbi
-//CNY(元)
-//4.0 %
-
+            //Renminbi
+            //CNY(元)
+            //4.0 %
         }
     }
 }

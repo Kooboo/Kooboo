@@ -1,14 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.App.Models;
+using Kooboo.Data;
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using Kooboo.App.Models;
-using System.Diagnostics;
-using Kooboo.Data;
-using Kooboo.Data.Upgrade;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace Kooboo.App
@@ -17,20 +14,22 @@ namespace Kooboo.App
     /// Interaction logic for UpgradePage.xaml
     /// </summary>
     public partial class UpgradePage : Page
-    { 
-        private readonly UpgradeViewModel vm;
-        private static bool IsUpgrade = false;
+    {
+        private readonly UpgradeViewModel _vm;
+        private static bool _isUpgrade = false;
+
         public UpgradePage()
         {
             InitializeComponent();
-            vm = new UpgradeViewModel
+            _vm = new UpgradeViewModel
             {
                 Title = Data.Language.Hardcoded.GetValue("Upgrade"),
                 From = this,
             };
-            DataContext = vm;
+            DataContext = _vm;
             Init();
         }
+
         private void Init()
         {
             update.Content = Data.Language.Hardcoded.GetValue("Upgrade");
@@ -38,6 +37,7 @@ namespace Kooboo.App
             title.Text = Data.Language.Hardcoded.GetValue("Setting");
 
             #region 语言设置
+
             langName.Text = Data.Language.Hardcoded.GetValue("Language");
 
             var systemLangCode = Data.Language.LanguageSetting.SystemLangCode;
@@ -52,22 +52,28 @@ namespace Kooboo.App
                 cbLang.SelectedValue = systemLangCode;
                 cbLang.SelectionChanged += LangSelectedChange;
             }
-            #endregion
+
+            #endregion 语言设置
 
             #region 自动升级
+
             lbupgrade.Text = Data.Language.Hardcoded.GetValue("Upgrade");
             chAutoUpgrade.Content = Data.Language.Hardcoded.GetValue("Auto Update");
             chAutoUpgrade.IsChecked = KoobooUpgrade.IsAutoUpgrade;
             chAutoUpgrade.Checked += AutoUpgradeEvent;
             chAutoUpgrade.Unchecked += AutoUpgradeEvent;
-            #endregion
+
+            #endregion 自动升级
+
             #region 开机启动设置
+
             lbstart.Text = Data.Language.Hardcoded.GetValue("Start-up");
             chAutoStart.Content = Data.Language.Hardcoded.GetValue("Auto Start");
             chAutoStart.IsChecked = KoobooAutoStart.IsAutoStart();
             chAutoStart.Checked += AutoStartEvent;
             chAutoStart.Unchecked += AutoStartEvent;
-            #endregion
+
+            #endregion 开机启动设置
 
             upgradetxt.Text = Data.Language.Hardcoded.GetValue("Version");
             var version = AppSettings.Version;
@@ -77,12 +83,12 @@ namespace Kooboo.App
             CheckVersion();
 
             right.Text = "© " + System.DateTime.Now.Year.ToString() + " Kooboo. " + Data.Language.Hardcoded.GetValue("All rights reserved");
-            vm.LinkText = "http://www.kooboo.com";
-
+            _vm.LinkText = "http://www.kooboo.com";
         }
+
         private void CheckVersion()
         {
-            if (IsUpgrade)
+            if (_isUpgrade)
             {
                 SetUpgradeBtnStatus();
                 return;
@@ -93,48 +99,57 @@ namespace Kooboo.App
         public async void UpdateVersionAsync()
         {
             var version = AppSettings.Version;
-            var newversion = await KoobooUpgrade.GetLatestVersion();  
+            var newversion = await KoobooUpgrade.GetLatestVersion();
 
-            Action action = () =>
+            void Action()
             {
                 if (newversion > version)
                 {
                     update.Visibility = Visibility.Visible;
                     update.Click += Upgrade_Click;
-                    update.Content = Data.Language.Hardcoded.GetValue("Upgrade") +string.Format("({0})",newversion.ToString());
+                    update.Content = Data.Language.Hardcoded.GetValue("Upgrade") + $"({newversion})";
                 }
                 else
                 {
                     update.Visibility = Visibility.Hidden;
-                    currentVersion.Text = string.Format("{0}", version);
+                    currentVersion.Text = $"{version}";
                 }
-            };
-            await this.Dispatcher.BeginInvoke(action);
+            }
+
+            await Dispatcher?.BeginInvoke((Action) Action);
         }
-        #region 自动升级 
+
+        #region 自动升级
+
         private void AutoUpgradeEvent(object sender, RoutedEventArgs e)
         {
             var auto = chAutoUpgrade.IsChecked.Value;
             KoobooUpgrade.SetAutoUpgrade(auto);
         }
-        #endregion
+
+        #endregion 自动升级
+
         #region 开机自动启动
+
         private void AutoStartEvent(object sender, RoutedEventArgs e)
         {
             var auto = chAutoStart.IsChecked.Value;
             KoobooAutoStart.AutoStart(auto);
         }
-        #endregion
+
+        #endregion 开机自动启动
 
         #region 语言设置
+
         private void LangSelectedChange(object sender, SelectionChangedEventArgs e)
         {
             var cmsLang = cbLang.SelectedValue.ToString();
             Data.Language.LanguageSetting.SystemLangCode = cmsLang;
-            AppSettings.SetConfigValue("CmsLang", cmsLang); 
-            this.Init();  
+            AppSettings.SetConfigValue("CmsLang", cmsLang);
+            this.Init();
         }
-        #endregion
+
+        #endregion 语言设置
 
         private void SetUpgradeBtnStatus()
         {
@@ -143,43 +158,45 @@ namespace Kooboo.App
             update.Content = Data.Language.Hardcoded.GetValue("Downloading") + "...";
             update.IsEnabled = false;
         }
+
         #region 自动升级程序
+
         private async void Upgrade_Click(object sender, RoutedEventArgs e)
         {
             //防止重复点击
-            if (!IsUpgrade)
+            if (!_isUpgrade)
             {
-                IsUpgrade = true;
+                _isUpgrade = true;
                 try
                 {
-                    Action action = () =>
+                    void Action()
                     {
                         SetUpgradeBtnStatus();
-                    };
+                    }
 
-                  await this.Dispatcher.BeginInvoke(action);
+                    await Dispatcher?.BeginInvoke((Action) Action);
 
-                  await  KoobooUpgrade.Upgrade(DownloadProgressChanged);
+                    await KoobooUpgrade.Upgrade(DownloadProgressChanged);
                 }
                 finally
                 {
-                    IsUpgrade = false;
+                    _isUpgrade = false;
                 }
             }
-            
-
         }
+
         private void DownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
         {
             int percentage = e.ProgressPercentage;
 
-            update.Content = Data.Language.Hardcoded.GetValue("Downloading") + string.Format("({0}%)",percentage);
+            update.Content = Data.Language.Hardcoded.GetValue("Downloading") + $"({percentage}%)";
         }
 
         private void HypeLink_OnClick(object sender, RoutedEventArgs e)
         {
             Process.Start("http://www.kooboo.com");
         }
-        #endregion
+
+        #endregion 自动升级程序
     }
 }

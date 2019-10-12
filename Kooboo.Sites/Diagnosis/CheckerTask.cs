@@ -1,25 +1,19 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.Extensions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Diagnosis
 {
- public   class CheckerTask
+    public class CheckerTask
     {
-
         public DiagnosisSession Session { get; set; }
-
 
         public void Exe()
         {
             foreach (var item in Session.AllCheckers)
             {
-                Session.Current = item; 
+                Session.Current = item;
                 if (!item.IsCode)
                 {
                     try
@@ -30,32 +24,28 @@ namespace Kooboo.Sites.Diagnosis
                         instance.Check();
                     }
                     catch (Exception ex)
-                    { 
-                        
-                    
-                    } 
+                    {
+                    }
                 }
                 else
-                { 
-
+                {
                     var sitedb = Session.context.WebSite.SiteDb();
-                    
-                    var code = sitedb.Code.Get(item.Name); 
-                                        
-                    if (code !=null)
+
+                    var code = sitedb.Code.Get(item.Name);
+
+                    if (code != null)
                     {
                         var kk = Kooboo.Sites.Scripting.Manager.GetOrSetK(this.Session.context);
-                        kk.diagnosis = new KDiagnosis(this.Session); 
+                        kk.diagnosis = new KDiagnosis(this.Session);
 
                         Kooboo.Sites.Scripting.Manager.ExecuteCode(this.Session.context, code.Body, code.Id);
 
-                        kk.diagnosis = null; 
+                        kk.diagnosis = null;
                     }
-                    
                 }
             }
 
-            Session.IsFinished = true; 
+            Session.IsFinished = true;
         }
     }
 }

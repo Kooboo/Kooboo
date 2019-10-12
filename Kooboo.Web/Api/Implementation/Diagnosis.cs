@@ -1,15 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Api;
 using System;
 using System.Collections.Generic;
-using System.Linq; 
-using Kooboo.Api;
- 
+using System.Linq;
 
 namespace Kooboo.Web.Api.Implementation
 {
     public class DiagnosisApi : IApi
-    { 
+    {
         public string ModelName
         {
             get
@@ -44,38 +43,35 @@ namespace Kooboo.Web.Api.Implementation
                 info.Name = item.Name;
                 info.Group = item.Group;
                 info.Id = item.Id;
-                result.Add(info); 
+                result.Add(info);
             }
-             
-            return result.ToList<object>(); 
-        }
 
+            return result.ToList<object>();
+        }
 
         public class CheckerInfo
         {
-            public string Group { get; set; } 
+            public string Group { get; set; }
             public string Name { get; set; }
             public Guid Id { get; set; }
         }
 
         public Guid StartSession(List<Guid> checkers, ApiCall call)
         {
-            return Kooboo.Sites.Diagnosis.Manager.StartSession(checkers, call.Context); 
+            return Kooboo.Sites.Diagnosis.Manager.StartSession(checkers, call.Context);
         }
 
         public Kooboo.Sites.Diagnosis.SessionStatus Status(Guid sessionid, ApiCall call)
         {
-            return Kooboo.Sites.Diagnosis.Manager.CheckStatus(sessionid); 
+            return Kooboo.Sites.Diagnosis.Manager.CheckStatus(sessionid);
         }
 
         public void Cancel(Guid sessionid, ApiCall call)
         {
-
         }
 
-
         //#region OLD
-         
+
         //public List<TypeEntry<DisplayMetaInfo, ISiteDiagnostic>> Items(ApiCall apiCall)
         //{
         //    var context = apiCall.Context;
@@ -121,6 +117,5 @@ namespace Kooboo.Web.Api.Implementation
         //}
 
         //#endregion
-    } 
-  
+    }
 }

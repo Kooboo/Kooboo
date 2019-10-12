@@ -1,22 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Schedule
 {
-
     /// <summary>
-    /// The scheduled objected. 
+    /// The scheduled objected.
     /// </summary>
     public class TimeSheet
     {
-
-        private ISchedule _schedule; 
+        private ISchedule _schedule;
 
         private object _object = new object();
 
@@ -33,7 +28,6 @@ namespace Kooboo.IndexedDB.Schedule
 
         private int DayInt { get; set; }
 
-
         public bool Exists()
         {
             return File.Exists(FullFileName);
@@ -41,7 +35,7 @@ namespace Kooboo.IndexedDB.Schedule
 
         public static bool isExists(int DayInt, ISchedule schedule)
         {
-           return File.Exists(FileNameGenerator.GetTimeFullFileName(DayInt, schedule)); 
+            return File.Exists(FileNameGenerator.GetTimeFullFileName(DayInt, schedule));
         }
 
         public bool IsToday()
@@ -50,7 +44,7 @@ namespace Kooboo.IndexedDB.Schedule
         }
 
         /// <summary>
-        /// create the time file, set length = total seconds of a day. 
+        /// create the time file, set length = total seconds of a day.
         /// </summary>
         private void Create()
         {
@@ -58,7 +52,7 @@ namespace Kooboo.IndexedDB.Schedule
             {
                 using (FileStream fs = File.Create(this.FullFileName))
                 {
-                    int len = 24 * 60 * 60 * 8 + 8;   // The first 8 byte for the counter. 
+                    int len = 24 * 60 * 60 * 8 + 8;   // The first 8 byte for the counter.
 
                     fs.SetLength(len);
                     fs.Position = 4;
@@ -71,19 +65,18 @@ namespace Kooboo.IndexedDB.Schedule
 
         public TimeSheet(int DayInt, ISchedule schedule)
         {
-            this._schedule = schedule; 
+            this._schedule = schedule;
 
             _positioncache = new Dictionary<int, long>();
             _positioncachecounter = 0;
 
-            this.FileName = FileNameGenerator.GetTimeFileName(DayInt); 
+            this.FileName = FileNameGenerator.GetTimeFileName(DayInt);
             this.DayInt = DayInt;
-            this.FullFileName = FileNameGenerator.GetTimeFullFileName(DayInt, schedule); 
+            this.FullFileName = FileNameGenerator.GetTimeFullFileName(DayInt, schedule);
 
             if (!File.Exists(this.FullFileName))
             {
-
-                int currentday = DateTime.Now.DayToInt(); 
+                int currentday = DateTime.Now.DayToInt();
 
                 if (DayInt >= currentday)
                 {
@@ -118,23 +111,22 @@ namespace Kooboo.IndexedDB.Schedule
             }
         }
 
-
         public Int64 GetItemPositionBySecondOfDay(int SecondOfDay)
         {
             if (SecondOfDay < 0)
             {
-                SecondOfDay = 0; 
+                SecondOfDay = 0;
             }
 
             int timesheetposition = SecondOfDay * 8 + 8;
-            return GetItemPosition(timesheetposition); 
+            return GetItemPosition(timesheetposition);
         }
 
         public Int64 GetItemPosition(int TimeSheetPosition)
         {
             Int64 ItemPosition = getcacheposition(TimeSheetPosition);
 
-            //Return -1 if not found, to be read from disk. 
+            //Return -1 if not found, to be read from disk.
             if (ItemPosition < 0)
             {
                 lock (_object)
@@ -153,8 +145,6 @@ namespace Kooboo.IndexedDB.Schedule
             }
             return ItemPosition;
         }
-
-    
 
         public int GetCounterWithoutModify()
         {
@@ -181,16 +171,16 @@ namespace Kooboo.IndexedDB.Schedule
         /// <returns></returns>
         public bool isStartRead()
         {
-            return this.GetCounter() >= 0; 
+            return this.GetCounter() >= 0;
         }
 
         /// <summary>
-        /// this file has finished all reading. 
+        /// this file has finished all reading.
         /// </summary>
         /// <returns></returns>
         public bool isFinishRead()
         {
-            return this.GetCounter() >= (24 * 60 * 60 - 1); 
+            return this.GetCounter() >= (24 * 60 * 60 - 1);
         }
 
         public bool isBeingRead()
@@ -199,7 +189,7 @@ namespace Kooboo.IndexedDB.Schedule
         }
 
         /// <summary>
-        /// Get the time of today for reading. 
+        /// Get the time of today for reading.
         /// </summary>
         /// <returns></returns>
         public int GetCounter()
@@ -238,7 +228,6 @@ namespace Kooboo.IndexedDB.Schedule
                     oldcounter = newcounter;
                 }
             }
-
         }
 
         public void Close()
@@ -256,22 +245,19 @@ namespace Kooboo.IndexedDB.Schedule
             }
         }
 
-
         public void DelSelf()
         {
             this.Close();
 
             try
             {
-                System.IO.File.Delete(this.FullFileName); 
+                System.IO.File.Delete(this.FullFileName);
             }
             catch (Exception)
             {
                 //
             }
-        
         }
-
 
         public FileStream Stream
         {
@@ -283,7 +269,7 @@ namespace Kooboo.IndexedDB.Schedule
                     {
                         if (_stream == null || _stream.CanRead == false)
                         {
-                            _stream = StreamManager.GetFileStream(this.FullFileName); 
+                            _stream = StreamManager.GetFileStream(this.FullFileName);
                         }
                     }
                 }
@@ -341,17 +327,15 @@ namespace Kooboo.IndexedDB.Schedule
             }
         }
 
-        #endregion
-
+        #endregion cache
 
         private static int GetTimeSheetSecondPosition(DateTime ExactScheduleTime)
         {
             int timeoftoday = (int)ExactScheduleTime.TimeOfDay.TotalSeconds;
 
             int position = timeoftoday * 8;
-            position = position + 8;  /// the first 8 bytes is the counter. 
+            position = position + 8;  /// the first 8 bytes is the counter.
             return position;
         }
-
     }
 }

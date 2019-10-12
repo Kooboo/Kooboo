@@ -1,10 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 
 namespace Kooboo.IndexedDB.Btree
-{ 
+{
     public class KeyBytesCollection : IEnumerable<byte[]>
     {
         private TreeFile treefile;
@@ -42,7 +42,6 @@ namespace Kooboo.IndexedDB.Btree
             return this.GetEnumerator();
         }
 
-
         public class Enumerator : IEnumerator<byte[]>
         {
             private TreeFile treefile;
@@ -79,14 +78,14 @@ namespace Kooboo.IndexedDB.Btree
             private MemoryTreeNode startnode;
             private MemoryTreeNode endnode;
             private MemoryTreeNode currentnode;
-             
+
             private bool isCurrentStartNode;
             private bool isCurrentEndNode;
 
             private int recordIndex;
             private List<NodePointer> recordlist = new List<NodePointer>();
 
-            private List<Records> newRecordList { get; set; } = new List<Records>(); 
+            private List<Records> newRecordList { get; set; } = new List<Records>();
 
             private int recordlistcount;
 
@@ -135,70 +134,65 @@ namespace Kooboo.IndexedDB.Btree
             {
                 //recordIndex = -1;
                 //recordlistcount = 0;
-                //recordlist.Clear(); 
+                //recordlist.Clear();
                 foreach (var item in currentnode.TreeNode.KeyArray.OrderBy(o => o.Key, this.comparer))
-                { 
+                {
                     if (isCurrentStartNode)
                     {
                         if (isCurrentEndNode)
                         {
-                            //both start and end in the same leaf. 
+                            //both start and end in the same leaf.
                             if ((this.comparer.Compare(startKeyBytes, item.Key) < 0 || (this.comparer.Compare(startKeyBytes, item.Key) == 0 && !this.lowerOpen)) && (this.comparer.Compare(endKeyBytes, item.Key) > 0 || (this.comparer.Compare(endKeyBytes, item.Key) == 0 && !this.upperOpen)))
                             {
                                 NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value; 
-                                recordlist.Add(pointer); 
-                                newRecordList.Add(new Records() { Key = item.Key, Pointer =  pointer }); 
+                                pointer.PointerBytes = item.Value;
+                                recordlist.Add(pointer);
+                                newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer });
                             }
                         }
                         else
                         {
-                            // the start node.  
+                            // the start node.
                             if (this.comparer.Compare(startKeyBytes, item.Key) < 0 || (this.comparer.Compare(startKeyBytes, item.Key) == 0 && !this.lowerOpen))
                             {
                                 NodePointer pointer = new NodePointer();
                                 pointer.PointerBytes = item.Value;
                                 recordlist.Add(pointer);
-                                newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer }); 
+                                newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer });
                             }
-
                         }
                     }
                     else
                     {
-                        // the end node. 
+                        // the end node.
 
                         if (isCurrentEndNode)
                         {
-
                             if (this.comparer.Compare(endKeyBytes, item.Key) > 0 || (this.comparer.Compare(endKeyBytes, item.Key) == 0 && !this.upperOpen))
                             {
                                 NodePointer pointer = new NodePointer();
                                 pointer.PointerBytes = item.Value;
                                 recordlist.Add(pointer);
-                                newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer }); 
+                                newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer });
                             }
-
                         }
                         else
                         {
-                            //not start, not end, the middle one, insert everything. 
+                            //not start, not end, the middle one, insert everything.
                             NodePointer pointer = new NodePointer();
                             pointer.PointerBytes = item.Value;
-                            recordlist.Add(pointer); 
-                            newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer });  
+                            recordlist.Add(pointer);
+                            newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer });
                         }
-
                     }
-
                 }
 
                 recordlistcount = recordlist.Count;
-                recordlistcount = newRecordList.Count(); 
+                recordlistcount = newRecordList.Count();
             }
 
             /// <summary>
-            /// load the record, this is in the DESC mode. 
+            /// load the record, this is in the DESC mode.
             /// </summary>
             /// <param name="currentnode"></param>
             private void loadNodeRecordDESC(MemoryTreeNode currentnode)
@@ -213,66 +207,63 @@ namespace Kooboo.IndexedDB.Btree
                     {
                         if (isCurrentEndNode)
                         {
-                            //both start and end in the same leaf. 
+                            //both start and end in the same leaf.
                             if ((this.comparer.Compare(startKeyBytes, item.Key) < 0 || (this.comparer.Compare(startKeyBytes, item.Key) == 0 && !this.lowerOpen)) && (this.comparer.Compare(endKeyBytes, item.Key) > 0 || (this.comparer.Compare(endKeyBytes, item.Key) == 0 && !this.upperOpen)))
                             {
                                 NodePointer pointer = new NodePointer();
                                 pointer.PointerBytes = item.Value;
                                 recordlist.Add(pointer);
-                                newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer }); 
+                                newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer });
                             }
                         }
                         else
                         {
-                            // the start node. 
+                            // the start node.
 
                             if (this.comparer.Compare(endKeyBytes, item.Key) > 0 || (this.comparer.Compare(endKeyBytes, item.Key) == 0 && !this.upperOpen))
                             {
                                 NodePointer pointer = new NodePointer();
                                 pointer.PointerBytes = item.Value;
                                 recordlist.Add(pointer);
-                                newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer }); 
+                                newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer });
                             }
-
                         }
                     }
                     else
                     {
-                        // the end node. 
+                        // the end node.
 
                         if (isCurrentEndNode)
                         {
-
                             if (this.comparer.Compare(startKeyBytes, item.Key) < 0 || (this.comparer.Compare(startKeyBytes, item.Key) == 0 && !this.lowerOpen))
                             {
                                 NodePointer pointer = new NodePointer();
                                 pointer.PointerBytes = item.Value;
                                 recordlist.Add(pointer);
-                                newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer }); 
+                                newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer });
                             }
-
                         }
                         else
                         {
-                            //not start, not end, the middle one, insert everything. 
+                            //not start, not end, the middle one, insert everything.
                             NodePointer pointer = new NodePointer();
                             pointer.PointerBytes = item.Value;
                             recordlist.Add(pointer);
-                            newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer });  
-                        } 
-                    } 
+                            newRecordList.Add(new Records() { Key = item.Key, Pointer = pointer });
+                        }
+                    }
                 }
 
                 recordlistcount = recordlist.Count;
-                recordlistcount = newRecordList.Count(); 
+                recordlistcount = newRecordList.Count();
             }
-             
+
             private void getnextnode()
             {
                 recordIndex = -1;
                 recordlistcount = 0;
                 recordlist.Clear();
-                newRecordList.Clear(); 
+                newRecordList.Clear();
 
                 if (this.currentnode.TreeNode.DiskPosition == this.endnode.TreeNode.DiskPosition)
                 {
@@ -319,7 +310,6 @@ namespace Kooboo.IndexedDB.Btree
                 {
                     loadNodeRecordDESC(currentnode);
                 }
-
             }
 
             private Records getnextpointer()
@@ -340,7 +330,6 @@ namespace Kooboo.IndexedDB.Btree
                     return getnextpointer();
                 }
             }
-              
 
             public byte[] Current
             {
@@ -349,7 +338,7 @@ namespace Kooboo.IndexedDB.Btree
 
             public void Dispose()
             {
-                //release the reference. 
+                //release the reference.
                 this.treefile = null;
                 this.startnode = null;
                 this.endnode = null;
@@ -365,9 +354,9 @@ namespace Kooboo.IndexedDB.Btree
             private BtreeIndexDuplicateReader duplicatereader;
 
             public bool MoveNext()
-            { 
-                /// if in duplicate mode. // TODO: this may not happend and should not care 
-                /// becaust it returns the keys only. 
+            {
+                /// if in duplicate mode. // TODO: this may not happend and should not care
+                /// becaust it returns the keys only.
                 if (inDuplicateMode)
                 {
                     byte[] nextdup = duplicatereader.ReadNextPointerBytes();
@@ -377,25 +366,25 @@ namespace Kooboo.IndexedDB.Btree
                         return true;
                     }
                     else
-                    {   // end of duplicate. 
+                    {   // end of duplicate.
                         this.inDuplicateMode = false;
                         this.duplicatereader = null;
                         // cotinue with the getnextpointer;
                     }
                 }
 
-                var record = getnextpointer();  
-                //  NodePointer  pointer = getnextpointer(); 
+                var record = getnextpointer();
+                //  NodePointer  pointer = getnextpointer();
                 if (record == null)
                 {
                     return false;
-                } 
+                }
                 else
                 {
                     this.currentValue = record.Key;
-                    return true; 
+                    return true;
                 }
-                ///// else 
+                ///// else
                 //if (record.Pointer.Indicator == EnumValues.TypeIndicator.block)
                 //{
                 //    this.currentValue = record.Key;
@@ -415,17 +404,17 @@ namespace Kooboo.IndexedDB.Btree
                 //    }
                 //    else
                 //    {
-                //        // there is no item in the duplicate, should not be possible, just to make sure. 
+                //        // there is no item in the duplicate, should not be possible, just to make sure.
                 //        this.duplicatereader = null;
                 //        this.inDuplicateMode = false;
-                //        // go to the next record again. 
+                //        // go to the next record again.
                 //        return MoveNext();
                 //    }
 
                 //}
                 //else
                 //{
-                //    /// should not be possible. 
+                //    /// should not be possible.
                 //    return false;
                 //}
             }
@@ -434,9 +423,7 @@ namespace Kooboo.IndexedDB.Btree
             {
                 init();
             }
-
         }
-
 
         public class Records
         {
@@ -444,7 +431,5 @@ namespace Kooboo.IndexedDB.Btree
 
             public NodePointer Pointer { get; set; }
         }
-
     }
-      
 }

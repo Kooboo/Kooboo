@@ -1,21 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Linq.Expressions; 
+using System.Linq.Expressions;
 
 namespace Kooboo.IndexedDB.Query
 {
- public   class ColumnMethodCallEvaluator : ColumnEvaluator
+    public class ColumnMethodCallEvaluator : ColumnEvaluator
     {
         public Func<byte[], object> GetColumnValue;
 
-        public Func<object, bool> Check; 
+        public Func<object, bool> Check;
 
-       
         public override bool isMatch(byte[] columnbytes)
         {
             object value = GetColumnValue(columnbytes);
@@ -25,8 +21,8 @@ namespace Kooboo.IndexedDB.Query
         public static ColumnMethodCallEvaluator GetMethodEvaluator(Type datatype, int columnLength, MethodCallExpression CallExpression)
         {
             ColumnMethodCallEvaluator evaluator = new ColumnMethodCallEvaluator();
-            evaluator.GetColumnValue = Serializer.Simple.ConverterHelper.GetBytesToValue(datatype); 
-            
+            evaluator.GetColumnValue = Serializer.Simple.ConverterHelper.GetBytesToValue(datatype);
+
             if (evaluator.GetColumnValue == null)
             {
                 throw new Exception(datatype.Name + " type does not supported to be used as a parameter yet.");
@@ -34,7 +30,7 @@ namespace Kooboo.IndexedDB.Query
 
             if (CallExpression.Method.ReturnType != typeof(bool))
             {
-                throw new Exception("Call method must return a boolean"); 
+                throw new Exception("Call method must return a boolean");
             }
 
             List<Expression> arguments = new List<Expression>();
@@ -52,13 +48,11 @@ namespace Kooboo.IndexedDB.Query
                 }
             }
 
-            MethodCallExpression newexpression = Expression.Call(CallExpression.Method, arguments.ToArray()); 
+            MethodCallExpression newexpression = Expression.Call(CallExpression.Method, arguments.ToArray());
 
-            evaluator.Check =  Expression.Lambda<Func<object, bool>>(newexpression, objectPara).Compile();
- 
-            return evaluator; 
+            evaluator.Check = Expression.Lambda<Func<object, bool>>(newexpression, objectPara).Compile();
+
+            return evaluator;
         }
-
-
     }
 }

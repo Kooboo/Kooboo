@@ -1,22 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Security.Cryptography;
 using System.Text;
-using System.IO;
-using System.Xml;
 
 namespace Kooboo.Lib.Security
-{ 
+{
     public static class Encryption
     {
         public static string Encrypt(string input, string key)
         {
-            byte[] inputArray =  Encoding.UTF8.GetBytes(input);
+            byte[] inputArray = Encoding.UTF8.GetBytes(input);
             TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
             tripleDES.Key = GetKeyBytes(key);
             tripleDES.Mode = CipherMode.ECB;
-            tripleDES.Padding = PaddingMode.PKCS7; 
+            tripleDES.Padding = PaddingMode.PKCS7;
             ICryptoTransform cTransform = tripleDES.CreateEncryptor();
             byte[] resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
             tripleDES.Clear();
@@ -29,9 +27,9 @@ namespace Kooboo.Lib.Security
             if (!string.IsNullOrEmpty(key))
             {
                 var bytes = Encoding.UTF8.GetBytes(key);
-                if (bytes.Length >24)
+                if (bytes.Length > 24)
                 {
-                    System.Buffer.BlockCopy(bytes, 0, result, 0, 24); 
+                    System.Buffer.BlockCopy(bytes, 0, result, 0, 24);
                 }
                 else
                 {
@@ -39,8 +37,7 @@ namespace Kooboo.Lib.Security
                 }
             }
 
-            return result; 
-            
+            return result;
         }
 
         public static string Decrypt(string input, string key)
@@ -65,7 +62,7 @@ namespace Kooboo.Lib.Security
         /// <param name="publickey"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string RSAEncrypt(string publickey,string content)
+        public static string RSAEncrypt(string publickey, string content)
         {
             return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.RSAEncrypt(publickey, content);
         }
@@ -76,26 +73,25 @@ namespace Kooboo.Lib.Security
         /// <param name="privatekey"></param>
         /// <param name="content"></param>
         /// <returns></returns>
-        public static string RSADecrypt(string privatekey,string content)
+        public static string RSADecrypt(string privatekey, string content)
         {
             return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.RSADecrypt(privatekey, content);
-            
         }
 
         /// <summary>
-        /// Generates 2 XML files (public and private key) 
-        /// </summary> 
-        /// <param name="privateKeyPath">RSA private key file path</param> 
+        /// Generates 2 XML files (public and private key)
+        /// </summary>
+        /// <param name="privateKeyPath">RSA private key file path</param>
         /// <param name="publicKeyPath">RSA private key file path</param> /
-        // <param name="size">secure size must be above 512</param> 
+        // <param name="size">secure size must be above 512</param>
         public static void GenerateRsa(string privateKeyPath, string publicKeyPath, int size)
         {
             Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GenerateRsa(privateKeyPath, publicKeyPath, size);
         }
 
-        public static RsaKeys GenerateKeys(int size=512)
+        public static RsaKeys GenerateKeys(int size = 512)
         {
-           return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GenerateKeys(size);
+            return Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.GenerateKeys(size);
         }
     }
 

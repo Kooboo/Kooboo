@@ -1,20 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.ViewModel
 {
-
     public class ViewItem
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-  
+
         public DateTime LastModified { get; set; }
 
         public string Preview { get; set; }
@@ -29,7 +25,7 @@ namespace Kooboo.Web.ViewModel
     }
 
     public class ViewViewModel
-    { 
+    {
         public string Name { get; set; }
 
         public string Body { get; set; }
@@ -38,7 +34,6 @@ namespace Kooboo.Web.ViewModel
 
         public Dictionary<string, List<string>> Layouts = new Dictionary<string, List<string>>();
     }
-
 
     public class ViewEditViewModel
     {
@@ -51,7 +46,5 @@ namespace Kooboo.Web.ViewModel
         public List<ViewDataMethod> DataSources { get; set; }
 
         /// public List<FormBinding> FormBindings { get; set; }
-
     }
-     
 }

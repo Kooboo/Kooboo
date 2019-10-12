@@ -1,7 +1,7 @@
-﻿using System;
-using System.Globalization;
-using Jint.Runtime;
+﻿using Jint.Runtime;
 using Jint.Runtime.Interop;
+using System;
+using System.Globalization;
 
 namespace Jint.Native.Date
 {
@@ -330,7 +330,7 @@ namespace Jint.Native.Date
                 return double.NaN;
             }
 
-            return (t - LocalTime(t))/MsPerMinute;
+            return (t - LocalTime(t)) / MsPerMinute;
         }
 
         private JsValue SetTime(JsValue thisObj, JsValue[] arguments)
@@ -524,7 +524,7 @@ namespace Jint.Native.Date
             return thisObj.TryCast<DateInstance>(x =>
             {
                 throw new JavaScriptException(Engine.TypeError);
-            } )
+            })
             .ToDateTime().ToUniversalTime().ToString("ddd MMM dd yyyy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture);
         }
 
@@ -549,7 +549,7 @@ namespace Jint.Native.Date
             if (ms < 0) { ms += MsPerSecond; }
             return string.Format("{0:0000}-{1:00}-{2:00}T{3:00}:{4:00}:{5:00}.{6:000}Z",
                 YearFromTime(t),
-                MonthFromTime(t)+1,
+                MonthFromTime(t) + 1,
                 DateFromTime(t),
                 h,
                 m,
@@ -611,22 +611,22 @@ namespace Jint.Native.Date
         /// </summary>
         public static double DaysInYear(double y)
         {
-            if (!(y%4).Equals(0))
+            if (!(y % 4).Equals(0))
             {
                 return 365;
             }
 
-            if ((y%4).Equals(0) && !(y%100).Equals(0))
+            if ((y % 4).Equals(0) && !(y % 100).Equals(0))
             {
                 return 366;
             }
 
-            if ((y%100).Equals(0) && !(y%400).Equals(0))
+            if ((y % 100).Equals(0) && !(y % 400).Equals(0))
             {
                 return 365;
             }
 
-            if ((y%400).Equals(0))
+            if ((y % 400).Equals(0))
             {
                 return 366;
             }
@@ -639,10 +639,10 @@ namespace Jint.Native.Date
         /// </summary>
         public static double DayFromYear(double y)
         {
-            return 365*(y - 1970)
-                + System.Math.Floor((y - 1969)/4)
-                - System.Math.Floor((y - 1901)/100)
-                + System.Math.Floor((y - 1601)/400);
+            return 365 * (y - 1970)
+                + System.Math.Floor((y - 1969) / 4)
+                - System.Math.Floor((y - 1901) / 100)
+                + System.Math.Floor((y - 1601) / 400);
         }
 
         /// <summary>
@@ -650,7 +650,7 @@ namespace Jint.Native.Date
         /// </summary>
         public static double TimeFromYear(double y)
         {
-            return MsPerDay*DayFromYear(y);
+            return MsPerDay * DayFromYear(y);
         }
 
         /// <summary>
@@ -868,7 +868,7 @@ namespace Jint.Native.Date
         /// </summary>
         public static double WeekDay(double t)
         {
-            return (Day(t) + 4)%7;
+            return (Day(t) + 4) % 7;
         }
 
         public double LocalTza
@@ -911,8 +911,10 @@ namespace Jint.Native.Date
             {
                 case DateTimeKind.Local:
                     return new DateTimeOffset(TimeZoneInfo.ConvertTime(t.ToUniversalTime(), Engine.Options._LocalTimeZone), Engine.Options._LocalTimeZone.GetUtcOffset(t));
+
                 case DateTimeKind.Utc:
                     return new DateTimeOffset(TimeZoneInfo.ConvertTime(t, Engine.Options._LocalTimeZone), Engine.Options._LocalTimeZone.GetUtcOffset(t));
+
                 default:
                     return t;
             }
@@ -954,11 +956,11 @@ namespace Jint.Native.Date
 
             if (month >= 7)
             {
-                day += month/2 - 1;
+                day += month / 2 - 1;
             }
             else if (month >= 2)
             {
-                day += (month - 1)/2 - 1;
+                day += (month - 1) / 2 - 1;
             }
             else
             {
@@ -973,12 +975,11 @@ namespace Jint.Native.Date
             return day;
         }
 
-
         public static double DaysInMonth(double month, double leap)
         {
-            month = month%12;
+            month = month % 12;
 
-            switch ((long) month)
+            switch ((long)month)
             {
                 case 0:
                 case 2:
@@ -988,16 +989,18 @@ namespace Jint.Native.Date
                 case 9:
                 case 11:
                     return 31;
+
                 case 3:
                 case 5:
                 case 8:
                 case 10:
                     return 30;
+
                 case 1:
                     return 28 + leap;
+
                 default:
                     throw new ArgumentOutOfRangeException("month");
-
             }
         }
 
@@ -1008,11 +1011,11 @@ namespace Jint.Native.Date
                 return double.NaN;
             }
 
-            var h = (long) hour;
-            var m = (long) min;
-            var s = (long) sec;
-            var milli = (long) ms;
-            var t = h*MsPerHour + m*MsPerMinute + s*MsPerSecond + milli;
+            var h = (long)hour;
+            var m = (long)min;
+            var s = (long)sec;
+            var milli = (long)ms;
+            var t = h * MsPerHour + m * MsPerMinute + s * MsPerSecond + milli;
 
             return t;
         }
@@ -1077,7 +1080,7 @@ namespace Jint.Native.Date
                 return double.NaN;
             }
 
-            return (long) time + 0;
+            return (long)time + 0;
         }
 
         private static bool AreFinite(params double[] values)

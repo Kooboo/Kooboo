@@ -2,9 +2,9 @@
 {
     using Infrastructure;
     using Infrastructure.Nodes;
-    using System.Collections.Generic;
-	using System.Linq;
     using Plugins;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class Selector : Node
     {
@@ -34,7 +34,7 @@
                 {
                     if (env.MediaPath.Any())
                     {
-                        env.MediaPath.Peek().AddExtension(this, (Extend)(((Extend)element.NodeValue).Evaluate(env)),env);
+                        env.MediaPath.Peek().AddExtension(this, (Extend)(((Extend)element.NodeValue).Evaluate(env)), env);
                     }
                     else //Global extend
                     {

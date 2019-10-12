@@ -1,10 +1,9 @@
 ﻿using Kooboo.Api;
+using Kooboo.Sites.Authorization.Model;
 using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using Kooboo.Sites.Authorization.Model;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -16,7 +15,6 @@ namespace Kooboo.Web.Api.Implementation
 
         public bool RequireUser => true;
 
-
         public List<Kooboo.Sites.Authorization.Model.PermissionViewModel> List(ApiCall call)
         {
             var db = call.WebSite.SiteDb();
@@ -26,10 +24,9 @@ namespace Kooboo.Web.Api.Implementation
             return items.Select(o => Sites.Authorization.PermissionService.ToViewModel(o, call.Context)).ToList();
         }
 
-
         public Kooboo.Sites.Authorization.Model.PermissionViewModel GetEdit(ApiCall call)
         {
-            RolePermission permission=null;
+            RolePermission permission = null;
             var db = call.WebSite.SiteDb();
             var repo = db.GetSiteRepository<Kooboo.Sites.Authorization.Model.RolePermissionRepository>();
 
@@ -54,7 +51,6 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
 
-
             if (permission != null)
             {
                 return Kooboo.Sites.Authorization.PermissionService.ToViewModel(permission, call.Context);
@@ -62,9 +58,9 @@ namespace Kooboo.Web.Api.Implementation
             else
             {
                 return Kooboo.Sites.Authorization.DefaultData.Available;
-            } 
+            }
         }
-         
+
         public void Post(ApiCall call, Sites.Authorization.Model.PermissionViewModel model)
         {
             var permission = Kooboo.Sites.Authorization.PermissionService.ExtractPermissionFromModel(model);
@@ -90,7 +86,6 @@ namespace Kooboo.Web.Api.Implementation
             return item == null;
         }
 
-
         public bool Deletes(ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
@@ -113,7 +108,5 @@ namespace Kooboo.Web.Api.Implementation
             }
             return false;
         }
-
-
     }
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
@@ -39,12 +39,10 @@ namespace Kooboo.Web.Api.Implementation
             return call.WebSite.SiteDb().GetSize();
         }
 
-
         public DiskSize Size(ApiCall call)
         {
             return call.WebSite.SiteDb().GetSize();
         }
-
 
         public void CleanLog(string storename, ApiCall call)
         {
@@ -124,10 +122,7 @@ namespace Kooboo.Web.Api.Implementation
 
             return storesize;
         }
-
     }
-
-
 
     public class storeSize
     {
@@ -173,9 +168,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     return "N/A";
                 }
-
             }
         }
     }
-
 }

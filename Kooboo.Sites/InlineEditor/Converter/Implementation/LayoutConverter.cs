@@ -1,13 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
+using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Models; 
 
 namespace Kooboo.Sites.InlineEditor.Converter
 {
@@ -47,7 +45,6 @@ namespace Kooboo.Sites.InlineEditor.Converter
                             string newtag = Service.DomService.ReSerializeElement(element, "");
 
                             updates.Add(new SourceUpdate { StartIndex = element.location.openTokenStartIndex, EndIndex = element.location.endTokenEndIndex, NewValue = newtag });
-
                         }
                     }
                 }
@@ -74,7 +71,6 @@ namespace Kooboo.Sites.InlineEditor.Converter
                             {
                                 endindex = element.location.endTokenEndIndex;
                             }
-
                         }
                     }
 
@@ -99,37 +95,35 @@ namespace Kooboo.Sites.InlineEditor.Converter
                 Layout layout = new Layout();
                 layout.Name = name;
                 layout.Body = layoutbody;
-                SiteDb.Layouts.AddOrUpdate(layout); 
+                SiteDb.Layouts.AddOrUpdate(layout);
             }
             return null;
         }
-         
-        private static string GetLayoutName(SiteDb sitedb, string currentName="")
+
+        private static string GetLayoutName(SiteDb sitedb, string currentName = "")
         {
             if (string.IsNullOrEmpty(currentName))
             {
-                currentName = "layout"; 
+                currentName = "layout";
             }
-             
-            var existing = sitedb.Layouts.GetByNameOrId(currentName); 
-            if (existing == null)
-            { return currentName;  }
 
-            for (int i =  1; i < 999; i++)
+            var existing = sitedb.Layouts.GetByNameOrId(currentName);
+            if (existing == null)
+            { return currentName; }
+
+            for (int i = 1; i < 999; i++)
             {
                 var newname = currentName + i.ToString();
-                existing = sitedb.Layouts.GetByNameOrId(newname); 
+                existing = sitedb.Layouts.GetByNameOrId(newname);
                 if (existing == null)
                 {
-                    return newname;  
+                    return newname;
                 }
             }
 
-            return null; 
+            return null;
         }
-  
     }
-
 
     public class LayoutResult
     {
@@ -137,8 +131,4 @@ namespace Kooboo.Sites.InlineEditor.Converter
         public bool IsContainer;
         public string Name;
     }
-
-
-
-
 }

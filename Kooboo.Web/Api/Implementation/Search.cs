@@ -1,10 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
+using Kooboo.Search;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
 using System.Collections.Generic;
-using Kooboo.Search;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -53,7 +53,6 @@ namespace Kooboo.Web.Api.Implementation
             var stat = call.WebSite.SiteDb().SearchIndex.GetIndexStat();
             stat.EnableFullTextSearch = call.Context.WebSite.EnableFullTextSearch;
             return stat;
-
         }
 
         public void Disable(ApiCall call)
@@ -68,10 +67,10 @@ namespace Kooboo.Web.Api.Implementation
 
         public IndexStat Rebuild(ApiCall call)
         {
-            call.Context.WebSite.SiteDb().SearchIndex.Rebuild(); 
+            call.Context.WebSite.SiteDb().SearchIndex.Rebuild();
             var stat = call.WebSite.SiteDb().SearchIndex.GetIndexStat();
             stat.EnableFullTextSearch = call.Context.WebSite.EnableFullTextSearch;
-            return stat; 
+            return stat;
         }
 
         public IndexStat Clean(ApiCall call)
@@ -92,16 +91,16 @@ namespace Kooboo.Web.Api.Implementation
         public List<SearchLog> Lastest(ApiCall call)
         {
             var sitedb = call.Context.WebSite.SiteDb();
-            return sitedb.SearchIndex.LastestSearch(50); 
-      
+            return sitedb.SearchIndex.LastestSearch(50);
+
             //List<SearchLog> fake = new List<SearchLog>();
             //fake.Add(new SearchLog() { Keywords = "long live", IP = "234.234.11.23", DocFound = 123, Time = System.DateTime.Now, ResultCount = 20 });
 
             //fake.Add(new SearchLog() { Keywords = "animal", IP = "234.234.44.23", DocFound = 14, Time = System.DateTime.Now, ResultCount = 20 });
-             
+
             //fake.Add(new SearchLog() { Keywords = "kooboo", IP = "234.44.44.23", DocFound = 16, Time = System.DateTime.Now, ResultCount = 20 });
 
-           // return fake;  
+            // return fake;
         }
 
         public Dictionary<string, int> SearchStat(ApiCall call)

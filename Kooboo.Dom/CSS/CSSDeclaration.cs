@@ -1,10 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-  
+
 namespace Kooboo.Dom.CSS
 {
-
     //http://dev.w3.org/csswg/cssom/#css-declaration
 
     /// <summary>
@@ -13,26 +12,27 @@ namespace Kooboo.Dom.CSS
     [Serializable]
     public class CSSDeclaration
     {
-        private string _propertyname; 
+        private string _propertyname;
 
         public string propertyname
-        { get
+        {
+            get
             {
-                return _propertyname; 
+                return _propertyname;
             }
-            set {
-                _propertyname = value; 
+            set
+            {
+                _propertyname = value;
                 if (!string.IsNullOrEmpty(_propertyname))
                 {
-                    _propertyname = _propertyname.Trim(); 
+                    _propertyname = _propertyname.Trim();
                 }
             }
         }
-        
 
         public string value
         {
-            get;set;
+            get; set;
         }
 
         public bool important { get; set; }
@@ -42,6 +42,5 @@ namespace Kooboo.Dom.CSS
         //Set if the property name is defined to be case-sensitive according to its specification, otherwise unset.
         /// </summary>
         public bool caseSensitive { get; set; }
-
     }
 }

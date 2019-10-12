@@ -1,8 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
-using Kooboo.Data.Template;
-using Kooboo.Sites.Extensions;    
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Sync;
 using System;
 
@@ -32,21 +31,21 @@ namespace Kooboo.Web.Api.Implementation
             {
                 return false;
             }
-        }       
- 
+        }
+
         //item push by remote client...
         [Kooboo.Attributes.RequireParameters("SiteId")]
         public void Push(ApiCall call)
         {
-            //must do the user validation here... 
+            //must do the user validation here...
             Guid SiteId = call.GetGuidValue("SiteId");
 
             Guid Hash = call.GetGuidValue("hash");
 
-            Guid userid = default(Guid); 
-            if (call.Context.User !=null)
+            Guid userid = default(Guid);
+            if (call.Context.User != null)
             {
-                userid = call.Context.User.Id; 
+                userid = call.Context.User.Id;
             }
 
             if (Hash != default(Guid))
@@ -67,12 +66,12 @@ namespace Kooboo.Web.Api.Implementation
                 var converter = new IndexedDB.Serializer.Simple.SimpleConverter<SyncObject>();
 
                 SyncObject sync = converter.FromBytes(call.Context.Request.PostData);
-             
+
                 SyncService.Receive(sitedb, sync, null, userid);
             }
             else
             {
-                throw new Exception(Data.Language.Hardcoded.GetValue("Website not found")); 
+                throw new Exception(Data.Language.Hardcoded.GetValue("Website not found"));
             }
         }
     }

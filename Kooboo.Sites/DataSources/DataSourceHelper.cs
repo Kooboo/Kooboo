@@ -1,18 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data;
+using Kooboo.Data.Interface;
+using Kooboo.Data.Models;
+using Kooboo.Extensions;
+using Kooboo.Lib.Reflection;
+using Kooboo.Sites.DataSources.New.Models;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.ViewModel;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Data;
-using Kooboo.Data.Models;
 using System.Reflection;
-using Kooboo.Extensions;
-using Kooboo.Data.Interface;
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.DataSources.New.Models;
-using Kooboo.Lib.Reflection;
-using Kooboo.Sites.ViewModel;
-using Newtonsoft.Json.Linq;
 using System.Xml.Linq;
 
 namespace Kooboo.Sites.DataSources
@@ -22,14 +22,14 @@ namespace Kooboo.Sites.DataSources
         public static void InitIDataSource()
         {
             var DataMethodStore = GlobalDb.DataMethodSettings;
-            // check all types have been loaded into system... 
+            // check all types have been loaded into system...
             var AllCurrentSettings = DataMethodStore.All();
             foreach (var TypeItem in AllCurrentSettings.GroupBy(o => o.DeclareType))
             {
                 var type = Kooboo.Data.TypeCache.GetType(TypeItem.Key);
                 if (type == null)
                 {
-                    foreach (var item in TypeItem)             
+                    foreach (var item in TypeItem)
                     {
                         DataMethodStore.Delete(item);
                     }
@@ -59,7 +59,6 @@ namespace Kooboo.Sites.DataSources
                     DataMethodStore.AddOrUpdate(MethodItem);
                 }
             }
-
         }
 
         internal static List<DataMethodSetting> GetDefaultMethodSettings(Type type, bool isThirdPartyType = false)
@@ -82,9 +81,9 @@ namespace Kooboo.Sites.DataSources
                     IsStatic = item.IsStatic,
                     IsVoid = (returntype == typeof(void)),
                     Parameters = GetMethodParametes(item),
-                    ReturnType = returntype.FullName, 
+                    ReturnType = returntype.FullName,
                     IsPagedResult = IsPagedResult(item),
-                    // set is pagedresult.  
+                    // set is pagedresult.
                     Description = (item.GetCustomAttribute(descriptionAttributeType) as System.ComponentModel.DescriptionAttribute)?.Description
                 };
 
@@ -154,10 +153,6 @@ namespace Kooboo.Sites.DataSources
             }
         }
 
-
-
-
-
         public static Dictionary<string, string> GetMethodParametes(MethodInfo method)
         {
             Dictionary<string, string> Parameters = new Dictionary<string, string>();
@@ -185,9 +180,7 @@ namespace Kooboo.Sites.DataSources
                     binding.IsProductType = IsProductType(item.Key);
                     binding.IsData = IsData(item.Key);
                     binding.IsOrderBy = IsOrderBy(item.Key);
-               
                 }
-
                 else if (TypeHelper.IsDictionary(itemtype))
                 {
                     binding.KeyType = TypeHelper.GetDictionaryKeyType(itemtype).FullName;
@@ -195,7 +188,6 @@ namespace Kooboo.Sites.DataSources
                     binding.IsDictionary = true;
                     binding.Binding = "{}";
                 }
-
                 else if (TypeHelper.IsGenericCollection(itemtype))
                 {
                     binding.IsCollection = true;
@@ -204,7 +196,6 @@ namespace Kooboo.Sites.DataSources
                     binding.Binding = "[]";
                     binding.KeyType = TypeHelper.GetEnumberableType(itemtype).FullName;
                 }
-
                 else if (itemtype.IsClass)
                 {
                     string ClassName = itemtype.Name;
@@ -226,7 +217,7 @@ namespace Kooboo.Sites.DataSources
                                 }
                             }
                             value.IsContentFolder = IsContentFolder(subitem.Key);
-                            value.IsProductType = IsProductType(subitem.Key); 
+                            value.IsProductType = IsProductType(subitem.Key);
                             value.IsData = IsData(subitem.Key);
                             value.IsOrderBy = IsOrderBy(subitem.Key);
                             Bindings.Add(key, value);
@@ -267,7 +258,6 @@ namespace Kooboo.Sites.DataSources
 
         private static Dictionary<string, ParameterBinding> GetSubBinding(string FieldName, Type FieldType)
         {
-
             Dictionary<string, ParameterBinding> bindings = new Dictionary<string, ParameterBinding>();
 
             if (TypeHelper.IsFieldType(FieldType))
@@ -286,14 +276,13 @@ namespace Kooboo.Sites.DataSources
                 binding.ValueType = Lib.Reflection.TypeHelper.GetDictionaryValueType(FieldType).FullName;
                 bindings.Add(FieldName, binding);
             }
-
             else if (TypeHelper.IsGenericCollection(FieldType))
             {
                 ParameterBinding binding = new ParameterBinding();
                 binding.FullTypeName = FieldType.FullName;
                 binding.IsCollection = true;
                 binding.IsContentFolder = IsContentFolder(FieldName);
-                binding.IsProductType = IsProductType(FieldName); 
+                binding.IsProductType = IsProductType(FieldName);
                 binding.KeyType = Lib.Reflection.TypeHelper.GetEnumberableType(FieldType).FullName;
                 bindings.Add(FieldName, binding);
             }
@@ -321,11 +310,10 @@ namespace Kooboo.Sites.DataSources
                 }
             }
             return bindings;
-
         }
 
         /// <summary>
-        /// Convert ArticleId into Article.Id for default binding. 
+        /// Convert ArticleId into Article.Id for default binding.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -364,6 +352,7 @@ namespace Kooboo.Sites.DataSources
             }
             return null;
         }
+
         public static TypeInfoModel GetFields(SiteDb siteDb, IDataMethodSetting setting)
         {
             var model = new TypeInfoModel();
@@ -428,8 +417,6 @@ namespace Kooboo.Sites.DataSources
                                     model.ItemFields.Add(fieldmodel);
                                 }
                             }
-
-
                         }
                     }
                 }
@@ -442,10 +429,9 @@ namespace Kooboo.Sites.DataSources
             //    model.ItemFields = GetProductTypeField(siteDb, alltype);
 
             //}
-
             else if (type == typeof(Data.Definition.IJson))
             {
-                // get sample and return.  
+                // get sample and return.
                 var sample = _GetSampleData(setting);
                 if (!string.IsNullOrEmpty(sample))
                 {
@@ -529,7 +515,6 @@ namespace Kooboo.Sites.DataSources
             return fields;
         }
 
-
         internal static List<TypeFieldModel> GetJsonTypeFields(string Json)
         {
             try
@@ -542,7 +527,6 @@ namespace Kooboo.Sites.DataSources
             }
             catch (Exception ex)
             {
-
             }
 
             return new List<TypeFieldModel>();
@@ -601,7 +585,6 @@ namespace Kooboo.Sites.DataSources
             return fields;
         }
 
-
         internal static List<TypeFieldModel> GetXmlTypeFields(string xml)
         {
             var xdoc = Lib.Helper.XmlHelper.DeSerialize(xml);
@@ -613,6 +596,7 @@ namespace Kooboo.Sites.DataSources
         }
 
         private static List<string> _xmldatatypes;
+
         private static List<string> XmlDataType
         {
             get
@@ -699,11 +683,11 @@ namespace Kooboo.Sites.DataSources
                         return true;
                     }
                 }
-
             }
 
             return false;
         }
+
         private static string SubNames(XElement el)
         {
             string name = el.Name.ToString();
@@ -765,7 +749,7 @@ namespace Kooboo.Sites.DataSources
             }
             return fields;
         }
-         
+
         public static List<TypeFieldModel> GetContentTypeField(SiteDb sitedb, Guid ContentTypeId)
         {
             List<TypeFieldModel> result = new List<TypeFieldModel>();
@@ -787,18 +771,16 @@ namespace Kooboo.Sites.DataSources
                         result.Add(model);
                     }
                 }
-
             }
             return result;
         }
-
 
         //public static List<TypeFieldModel> GetProductTypeField(SiteDb sitedb, List<Guid> ProductTypeIds)
         //{
         //    List<TypeFieldModel> result = new List<TypeFieldModel>();
 
         //    foreach (var producttypeid in ProductTypeIds)
-        //    {      
+        //    {
         //        var ProductType = sitedb.ProductType.Get(producttypeid);
         //        if (ProductType != null)
         //        {
@@ -826,12 +808,9 @@ namespace Kooboo.Sites.DataSources
         //        }
 
         //    }
-                   
+
         //    return result;
         //}
-
-
-
 
         public static Type ReturnType(MethodInfo MethodInfo)
         {
@@ -852,5 +831,4 @@ namespace Kooboo.Sites.DataSources
             return MethodInfo.ReturnType == typeof(Kooboo.Data.Models.PagedResult);
         }
     }
-
 }

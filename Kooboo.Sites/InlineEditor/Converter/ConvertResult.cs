@@ -1,10 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.InlineEditor.Converter
 {
@@ -13,7 +9,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
         public string ConvertToType { get; set; }
 
         /// <summary>
-        /// The name of this site object... 
+        /// The name of this site object...
         /// </summary>
         public string Name { get; set; }
 
@@ -31,5 +27,4 @@ namespace Kooboo.Sites.InlineEditor.Converter
         public string Type { get; set; }
         public string Value { get; set; }
     }
-
 }

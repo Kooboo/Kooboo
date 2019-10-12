@@ -1,68 +1,59 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.App.Models
 {
     internal class HomeViewModel : BaseModel
     {
         private bool _done;
+
         public bool Done
         {
-            get { return _done; }
+            get => _done;
             set
             {
-                if (_done != value)
-                {
-                    _done = value;
-                    OnPropertyChanged(nameof(Done));
-                }
+                if (_done == value) return;
+                _done = value;
+                OnPropertyChanged(nameof(Done));
             }
         }
 
         private string _description;
+
         public string Description
         {
-            get { return _description; }
+            get => _description;
             set
             {
-                if (_description!=value)
-                {
-                    _description = value;
-                    OnPropertyChanged(nameof(Description));
-                }
+                if (_description == value) return;
+                _description = value;
+                OnPropertyChanged(nameof(Description));
             }
         }
 
         private string _buttonText;
+
         public string ButtonText
         {
-            get { return _buttonText; }
+            get => _buttonText;
             set
             {
-                if (_buttonText != value)
-                {
-                    _buttonText = value;
-                    OnPropertyChanged(nameof(ButtonText));
-                }
+                if (_buttonText == value) return;
+                _buttonText = value;
+                OnPropertyChanged(nameof(ButtonText));
             }
         }
 
         private bool _ready;
+
         public bool Ready
         {
-            get { return _ready; }
+            get => _ready;
             set
             {
-                if (_ready != value)
-                {
-                    _ready = value;
-                    OnPropertyChanged(nameof(Ready));
-                }
+                if (_ready == value) return;
+                _ready = value;
+                OnPropertyChanged(nameof(Ready));
             }
         }
     }

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Jint.Native;
+﻿using Jint.Native;
 using Jint.Native.Function;
 using Jint.Native.Number;
 using Jint.Parser.Ast;
@@ -8,6 +6,8 @@ using Jint.Runtime.Descriptors;
 using Jint.Runtime.Environments;
 using Jint.Runtime.Interop;
 using Jint.Runtime.References;
+using System;
+using System.Linq;
 
 namespace Jint.Runtime
 {
@@ -52,8 +52,7 @@ namespace Jint.Runtime
 
             if (assignmentExpression.Operator == AssignmentOperator.Assign) // "="
             {
-
-                if(lref.IsStrict() && lref.GetBase().TryCast<EnvironmentRecord>() != null && (lref.GetReferencedName() == "eval" || lref.GetReferencedName() == "arguments"))
+                if (lref.IsStrict() && lref.GetBase().TryCast<EnvironmentRecord>() != null && (lref.GetReferencedName() == "eval" || lref.GetReferencedName() == "arguments"))
                 {
                     throw new JavaScriptException(_engine.SyntaxError);
                 }
@@ -135,7 +134,6 @@ namespace Jint.Runtime
 
                 default:
                     throw new NotImplementedException();
-
             }
 
             _engine.PutValue(lref, lval);
@@ -189,7 +187,7 @@ namespace Jint.Runtime
                     return lN > 0 ? double.PositiveInfinity : double.NegativeInfinity;
                 }
 
-                return lN/rN;
+                return lN / rN;
             }
         }
 
@@ -353,7 +351,6 @@ namespace Jint.Runtime
 
             switch (logicalExpression.Operator)
             {
-
                 case LogicalOperator.LogicalAnd:
                     if (!TypeConverter.ToBoolean(left))
                     {
@@ -382,7 +379,7 @@ namespace Jint.Runtime
 
             if (typex == typey)
             {
-				return StrictlyEqual(x, y);
+                return StrictlyEqual(x, y);
             }
 
             if (x == Null.Instance && y == Undefined.Instance)
@@ -476,16 +473,16 @@ namespace Jint.Runtime
                 return x.AsBoolean() == y.AsBoolean();
             }
 
-			if (typea == Types.Object)
-			{
-				var xw = x.AsObject() as IObjectWrapper;
+            if (typea == Types.Object)
+            {
+                var xw = x.AsObject() as IObjectWrapper;
 
-				if (xw != null)
-				{
-					var yw = y.AsObject() as IObjectWrapper;
-					return Object.Equals(xw.Target, yw.Target);
-				}
-			}
+                if (xw != null)
+                {
+                    var yw = y.AsObject() as IObjectWrapper;
+                    return Object.Equals(xw.Target, yw.Target);
+                }
+            }
 
             return x == y;
         }
@@ -608,22 +605,22 @@ namespace Jint.Runtime
 
         public JsValue EvaluateLiteral(Literal literal)
         {
-            if(literal.Cached)
+            if (literal.Cached)
             {
                 return literal.CachedValue;
             }
 
             if (literal.Type == SyntaxNodes.RegularExpressionLiteral)
             {
-				var regexp = _engine.RegExp.Construct(literal.Raw);
+                var regexp = _engine.RegExp.Construct(literal.Raw);
 
-				if (regexp.Global)
-				{
-					// A Global regexp literal can't be cached or its state would evolve
-					return regexp;
-				}
+                if (regexp.Global)
+                {
+                    // A Global regexp literal can't be cached or its state would evolve
+                    return regexp;
+                }
 
-				literal.CachedValue = regexp;
+                literal.CachedValue = regexp;
             }
             else
             {
@@ -672,7 +669,7 @@ namespace Jint.Runtime
                             );
                         }
 
-                        propDesc = new PropertyDescriptor(get: get, set: null, enumerable: true, configurable:true);
+                        propDesc = new PropertyDescriptor(get: get, set: null, enumerable: true, configurable: true);
                         break;
 
                     case PropertyKind.Set:
@@ -686,7 +683,6 @@ namespace Jint.Runtime
                         ScriptFunctionInstance set;
                         using (new StrictModeScope(setter.Strict))
                         {
-
                             set = new ScriptFunctionInstance(
                                 _engine,
                                 setter,
@@ -694,7 +690,7 @@ namespace Jint.Runtime
                                 StrictModeScope.IsStrictModeCode
                                 );
                         }
-                        propDesc = new PropertyDescriptor(get:null, set: set, enumerable: true, configurable: true);
+                        propDesc = new PropertyDescriptor(get: null, set: set, enumerable: true, configurable: true);
                         break;
 
                     default:
@@ -749,7 +745,6 @@ namespace Jint.Runtime
             var baseValue = _engine.GetValue(baseReference);
             Expression expression = memberExpression.Property;
 
-
             if (!memberExpression.Computed) // index accessor ?
             {
                 expression = new Literal { Type = SyntaxNodes.Literal, Value = memberExpression.Property.As<Identifier>().Name };
@@ -800,7 +795,6 @@ namespace Jint.Runtime
             JsValue thisObject;
 
             // todo: implement as in http://www.ecma-international.org/ecma-262/5.1/#sec-11.2.4
-
 
             JsValue[] arguments;
 
@@ -880,7 +874,7 @@ namespace Jint.Runtime
             // is it a direct call to eval ? http://www.ecma-international.org/ecma-262/5.1/#sec-15.1.2.1.1
             if (r != null && r.GetReferencedName() == "eval" && callable is EvalFunctionInstance)
             {
-                return ((EvalFunctionInstance) callable).Call(thisObject, arguments, true);
+                return ((EvalFunctionInstance)callable).Call(thisObject, arguments, true);
             }
 
             var result = callable.Call(thisObject, arguments);
@@ -947,10 +941,10 @@ namespace Jint.Runtime
                     _engine.PutValue(r, newValue);
 
                     return updateExpression.Prefix ? newValue : oldValue;
+
                 default:
                     throw new ArgumentException();
             }
-
         }
 
         public JsValue EvaluateThisExpression(ThisExpression thisExpression)
@@ -1006,7 +1000,7 @@ namespace Jint.Runtime
 
                 case UnaryOperator.Minus:
                     var n = TypeConverter.ToNumber(_engine.GetValue(value));
-                    return double.IsNaN(n) ? double.NaN : n*-1;
+                    return double.IsNaN(n) ? double.NaN : n * -1;
 
                 case UnaryOperator.BitwiseNot:
                     return ~TypeConverter.ToInt32(_engine.GetValue(value));

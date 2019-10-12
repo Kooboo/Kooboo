@@ -1,15 +1,15 @@
 ﻿using Kooboo.Lib.Reflection;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Web.Payment
 {
-   public static class PaymentContainer
+    public static class PaymentContainer
     {
         private static object _locker = new object();
 
         private static List<IPaymentCallbackWorker> _callbackworkers;
+
         public static List<IPaymentCallbackWorker> CallBackWorkers
         {
             get
@@ -20,13 +20,13 @@ namespace Kooboo.Web.Payment
                     {
                         if (_callbackworkers == null)
                         {
-                            _callbackworkers = new List<IPaymentCallbackWorker>(); 
+                            _callbackworkers = new List<IPaymentCallbackWorker>();
 
                             var alldefinedTypes = AssemblyLoader.LoadTypeByInterface(typeof(IPaymentCallbackWorker));
                             foreach (var item in alldefinedTypes)
-                            { 
+                            {
                                 var instance = Activator.CreateInstance(item) as IPaymentCallbackWorker;
-                                _callbackworkers.Add(instance); 
+                                _callbackworkers.Add(instance);
                             }
                         }
                     }
@@ -36,7 +36,7 @@ namespace Kooboo.Web.Payment
         }
 
         public static List<IPaymentRequestStore> _requestStore;
-         
+
         public static List<IPaymentRequestStore> RequestStore
         {
             get
@@ -47,7 +47,7 @@ namespace Kooboo.Web.Payment
                     {
                         if (_requestStore == null)
                         {
-                            _requestStore = new List<IPaymentRequestStore>(); 
+                            _requestStore = new List<IPaymentRequestStore>();
 
                             var alldefinedTypes = AssemblyLoader.LoadTypeByInterface(typeof(IPaymentRequestStore));
                             foreach (var item in alldefinedTypes)
@@ -89,7 +89,5 @@ namespace Kooboo.Web.Payment
                 return _paymentmethods;
             }
         }
-
-
     }
 }

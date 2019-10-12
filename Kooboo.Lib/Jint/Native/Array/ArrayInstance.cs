@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Jint.Native.Object;
+﻿using Jint.Native.Object;
 using Jint.Runtime;
 using Jint.Runtime.Descriptors;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Jint.Native.Array
 {
@@ -217,12 +217,12 @@ namespace Jint.Native.Array
 
         public override IEnumerable<KeyValuePair<string, PropertyDescriptor>> GetOwnProperties()
         {
-            foreach(var entry in _array)
+            foreach (var entry in _array)
             {
                 yield return new KeyValuePair<string, PropertyDescriptor>(entry.Key.ToString(), entry.Value);
             }
 
-            foreach(var entry in base.GetOwnProperties())
+            foreach (var entry in base.GetOwnProperties())
             {
                 yield return entry;
             }
@@ -256,7 +256,7 @@ namespace Jint.Native.Array
             }
             else
             {
-                if(propertyName == "length")
+                if (propertyName == "length")
                 {
                     _length = desc;
                 }
@@ -279,7 +279,7 @@ namespace Jint.Native.Array
         public override void RemoveOwnProperty(string p)
         {
             uint index;
-            if(IsArrayIndex(p, out index))
+            if (IsArrayIndex(p, out index))
             {
                 _array.Remove(index);
             }
@@ -306,7 +306,7 @@ namespace Jint.Native.Array
                 return uint.MaxValue;
             }
 
-            if(d == 0 && p.Length > 1)
+            if (d == 0 && p.Length > 1)
             {
                 // If p is a number that start with '0' and is not '0' then
                 // its ToString representation can't be the same a p. This is

@@ -1,18 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom.CSS
 {
     public static class MediaQuery
     {
-
         /// <summary>
-        /// check whether th user-agent match the media rule condition or not. 
+        /// check whether th user-agent match the media rule condition or not.
         /// TODO: to be implemented.
         /// </summary>
         /// <param name="medialist"></param>
@@ -20,7 +14,7 @@ namespace Kooboo.Dom.CSS
         /// <returns></returns>
         public static bool isMatch(MediaList medialist, string mediadevice)
         {
-            //if a media or import rule does not specify any device info, it applys to all. 
+            //if a media or import rule does not specify any device info, it applys to all.
             if (medialist == null || medialist.item.Count == 0)
             {
                 return true;
@@ -40,7 +34,5 @@ namespace Kooboo.Dom.CSS
 
             return false;
         }
-
-
     }
 }

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Jint.Native;
+﻿using Jint.Native;
 using Jint.Parser.Ast;
 using Jint.Runtime.Descriptors;
 using Jint.Runtime.Environments;
 using Jint.Runtime.References;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Jint.Runtime
 {
@@ -98,7 +98,6 @@ namespace Jint.Runtime
                 }
                 var exprRef = _engine.EvaluateExpression(doWhileStatement.Test);
                 iterating = TypeConverter.ToBoolean(_engine.GetValue(exprRef));
-
             } while (iterating);
 
             return new Completion(Completion.Normal, v, null);
@@ -150,7 +149,6 @@ namespace Jint.Runtime
         /// <returns></returns>
         public Completion ExecuteForStatement(ForStatement forStatement)
         {
-
             if (forStatement.Init != null)
             {
                 if (forStatement.Init.Type == SyntaxNodes.VariableDeclaration)
@@ -218,7 +216,6 @@ namespace Jint.Runtime
                 return new Completion(Completion.Normal, null, null);
             }
 
-
             var obj = TypeConverter.ToObject(_engine, experValue);
             JsValue v = Null.Instance;
 
@@ -246,7 +243,6 @@ namespace Jint.Runtime
                     {
                         continue;
                     }
-
 
                     var value = cursor.GetOwnProperty(p);
                     if (!value.Enumerable.HasValue || !value.Enumerable.Value)
@@ -393,7 +389,6 @@ namespace Jint.Runtime
 
                     v = r.Value != null ? r.Value : Undefined.Instance;
                 }
-
             }
 
             // do we need to execute the default case ?

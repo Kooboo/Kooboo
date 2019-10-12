@@ -1,13 +1,11 @@
 ﻿using Kooboo.Sites.Authorization.Model;
 using Kooboo.Web.Menus;
 using System;
- 
 
 namespace Kooboo.Sites.Authorization
 {
     public static class DefaultData
     {
-
         private static object _locker = new object();
 
         private static PermissionViewModel _availableData;
@@ -22,15 +20,14 @@ namespace Kooboo.Sites.Authorization
                     {
                         if (_availableData == null)
                         {
-                            _availableData = GetDefaultAvailable(); 
+                            _availableData = GetDefaultAvailable();
                         }
                     }
                 }
 
                 return _availableData.Clone();
-            } 
+            }
         }
-
 
         public static PermissionViewModel GetDefaultAvailable()
         {
@@ -67,11 +64,8 @@ namespace Kooboo.Sites.Authorization
             }
         }
 
-
- 
-
-
         private static RolePermission _master;
+
         public static RolePermission Master
         {
             get
@@ -91,6 +85,7 @@ namespace Kooboo.Sites.Authorization
         }
 
         private static RolePermission _developer;
+
         public static RolePermission Developer
         {
             get
@@ -109,6 +104,7 @@ namespace Kooboo.Sites.Authorization
         }
 
         private static RolePermission _contentmanager;
+
         public static RolePermission ContentManager
         {
             get
@@ -146,7 +142,6 @@ namespace Kooboo.Sites.Authorization
             }
 
             return null;
-
         }
 
         public static RolePermission GetDefault(Guid id)
@@ -165,7 +160,5 @@ namespace Kooboo.Sites.Authorization
             }
             return null;
         }
-
-
     }
 }

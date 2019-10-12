@@ -1,9 +1,9 @@
 namespace dotless.Core.configuration
 {
-    using System;
     using Input;
     using Loggers;
     using Plugins;
+    using System;
     using System.Collections.Generic;
 
     public enum DotlessSessionStateMode
@@ -32,7 +32,7 @@ namespace dotless.Core.configuration
 
         public static DotlessConfiguration GetDefault()
         {
-            return new DotlessConfiguration();;
+            return new DotlessConfiguration(); ;
         }
 
         public static DotlessConfiguration GetDefaultWeb()
@@ -45,7 +45,7 @@ namespace dotless.Core.configuration
 
         public DotlessConfiguration()
         {
-            LessSource = typeof (FileReader);
+            LessSource = typeof(FileReader);
             MinifyOutput = false;
             Debug = false;
             CacheEnabled = true;
@@ -124,7 +124,7 @@ namespace dotless.Core.configuration
         ///  This corresponds to 'rootpath' option of lessc.
         /// </summary>
         public string RootPath { get; set; }
-        
+
         /// <summary>
         ///  Disables variables being redefined, so less will search from the bottom of the input up.
         ///  Makes dotless behave like less.js with regard variables
@@ -168,8 +168,8 @@ namespace dotless.Core.configuration
         public bool CacheEnabled { get; set; }
 
         /// <summary>
-        /// When <seealso cref="CacheEnabled"/> is set to true, use this parameter to set how far in the future the expires header will be set. 
-        /// For example, to have the browser cache the CSS for five minutes, set this property to 5. 
+        /// When <seealso cref="CacheEnabled"/> is set to true, use this parameter to set how far in the future the expires header will be set.
+        /// For example, to have the browser cache the CSS for five minutes, set this property to 5.
         /// </summary>
         public int HttpExpiryInMinutes { get; set; }
 
@@ -207,7 +207,7 @@ namespace dotless.Core.configuration
         ///  Optimisation int
         ///  0 - do not chunk up the input
         ///  > 0 - chunk up output
-        ///  
+        ///
         ///  Recommended value - 1
         /// </summary>
         public int Optimization { get; set; }

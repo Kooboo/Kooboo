@@ -32,7 +32,6 @@ namespace Jint.Native.Error
 
         public void Configure()
         {
-            
         }
 
         public override JsValue Call(JsValue thisObject, JsValue[] arguments)

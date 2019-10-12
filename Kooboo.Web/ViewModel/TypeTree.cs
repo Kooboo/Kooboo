@@ -1,17 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.ViewModel
 {
     public class TypeTree
-    {  
+    {
         public string Id { get; set; }
 
         public string Name { get; set; }
@@ -23,7 +19,7 @@ namespace Kooboo.Web.ViewModel
         public string TypeAssemblyQualifiedName { get; set; }
 
         public string Text { get; set; }
-          
+
         public string Icon { get; set; }
 
         public bool IsOpen { get; set; }
@@ -31,24 +27,27 @@ namespace Kooboo.Web.ViewModel
         [JsonConverter(typeof(StringEnumConverter))]
         public NodeType NodeType { get; set; }
 
-        private List<TypeTree> _children; 
-        public List<TypeTree> Children {
-            get {
+        private List<TypeTree> _children;
+
+        public List<TypeTree> Children
+        {
+            get
+            {
                 if (_children == null)
                 {
-                    _children = new List<TypeTree>(); 
+                    _children = new List<TypeTree>();
                 }
-                return _children; 
+                return _children;
             }
-          set { _children = value;  }
+            set { _children = value; }
         }
-         
+
         public void AddChild(TypeTree node)
         {
             node.Parent = this;
-            this.Children.Add(node); 
+            this.Children.Add(node);
         }
-         
+
         [Kooboo.IndexedDB.CustomAttributes.KoobooIgnore]
         [Newtonsoft.Json.JsonIgnore]
         public TypeTree Parent { get; set; }
@@ -64,12 +63,10 @@ namespace Kooboo.Web.ViewModel
     }
 
     public enum NodeType
-    { 
-        Assembly, 
+    {
+        Assembly,
         NameSpace,
         Type,
         Method
     }
-
-
 }

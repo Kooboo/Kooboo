@@ -1,12 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.ViewModel
 {
@@ -20,7 +16,7 @@ namespace Kooboo.Web.ViewModel
         public ChangeType ChangeType { get; set; }
 
         public string ObjectType { get; set; }
-          
+
         public string Thumbnail { get; set; }
 
         public bool Selected { get; set; }
@@ -48,32 +44,30 @@ namespace Kooboo.Web.ViewModel
         public ChangeType ChangeType { get; set; }
 
         public string ObjectType { get; set; }
-           
+
         public DateTime LastModified { get; set; }
 
         public string Size { get; set; }
 
         public long Version { get; set; }
-  
+
         public long LogId { get; set; }
     }
-
 
     public class SyncCountViewModel
     {
         public Guid Id { get; set; }
 
-        public string Name { set; get;  }
+        public string Name { set; get; }
 
         public int Count { get; set; }
     }
 
-
     public class SyncItemViewModel
     {
         public Guid Id { get; set; }
-   
-        // only for display purpose.... 
+
+        // only for display purpose....
         public string RemoteSiteName { get; set; }
 
         /// <summary>
@@ -81,8 +75,7 @@ namespace Kooboo.Web.ViewModel
         /// </summary>
         public string RemoteServerUrl { get; set; }
 
-         public  int Difference { get; set; }
-
+        public int Difference { get; set; }
     }
 
     public class PullResult
@@ -96,17 +89,19 @@ namespace Kooboo.Web.ViewModel
 
     public class UserPublishServer
     {
-        private Guid _id; 
-        public Guid Id {
+        private Guid _id;
+
+        public Guid Id
+        {
             get
             {
                 if (_id == default(Guid))
                 {
-                    _id = Guid.NewGuid();  
+                    _id = Guid.NewGuid();
                 }
-                return _id;  
+                return _id;
             }
-            set { _id = value;  }
+            set { _id = value; }
         }
 
         public string Name { get; set; }

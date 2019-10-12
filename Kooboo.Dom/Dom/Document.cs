@@ -1,22 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Dom.CSS;
+using System;
+using System.Linq;
 
 namespace Kooboo.Dom
 {
-
     /// <summary>
     /// see:  http://www.w3.org/TR/dom/#document
     /// </summary>
     [Serializable]
-    public class Document : Node  
+    public class Document : Node
     {
-
         public Document()
         {
             nodeType = enumNodeType.DOCUMENT;
@@ -27,30 +22,29 @@ namespace Kooboo.Dom
         public string URL;
 
         public string documentURI;
-         
+
         private string _baseurl;
+
         /// <summary>
-        /// get the base href tag or document url when base is not defined. 
+        /// get the base href tag or document url when base is not defined.
         /// </summary>
         /// <returns></returns>
         public string getBaseUrl()
         {
             if (string.IsNullOrEmpty(_baseurl))
             {
-
-                string baseUri = this.baseURI; 
+                string baseUri = this.baseURI;
 
                 if (!string.IsNullOrEmpty(baseUri))
                 {
                     _baseurl = baseUri;
                 }
-                
 
                 if (!string.IsNullOrEmpty(_baseurl) && _baseurl.StartsWith("http"))
                 {
                     return _baseurl;
                 }
-                
+
                 _baseurl = this.URL;
 
                 if (!string.IsNullOrEmpty(_baseurl) && _baseurl.StartsWith("http"))
@@ -67,9 +61,7 @@ namespace Kooboo.Dom
             }
 
             return _baseurl;
-
         }
-
 
         public new string baseURI
         {
@@ -78,9 +70,9 @@ namespace Kooboo.Dom
                 var basehref = this.documentElement.getOneElementByTagName("base");
                 if (basehref == null)
                 {
-                    return null; 
+                    return null;
                 }
-                return basehref.getAttribute("href");             
+                return basehref.getAttribute("href");
             }
         }
 
@@ -88,6 +80,7 @@ namespace Kooboo.Dom
         /// The compatMode attribute must return "BackCompat" if the context object is in quirks mode, and "CSS1Compat" otherwise.
         /// </summary>
         public string compatMode = "CSS1Compat";
+
         public void setQuirksMode()
         {
             this.compatMode = "BackCompat";
@@ -137,7 +130,7 @@ namespace Kooboo.Dom
                     }
                 }
                 return null;
-            } 
+            }
         }
 
         /// <summary>
@@ -232,7 +225,7 @@ namespace Kooboo.Dom
             //Initialize the pointerBeforeReferenceNode attribute to true.
             //Set whatToShow to the whatToShow argument.
             //Set filter to filter.
-            //Return the newly created NodeIterator object. 
+            //Return the newly created NodeIterator object.
 
             NodeIterator iterator = new NodeIterator();
             iterator.filter = filter;
@@ -241,7 +234,6 @@ namespace Kooboo.Dom
             iterator.WhatToShow = whatToShow;
             return iterator;
         }
-
 
         public Comment createComment(string data)
         {
@@ -277,18 +269,14 @@ namespace Kooboo.Dom
             throw new NotImplementedException();
         }
 
-
         public TreeWalker createTreeWalker(Node root, enumWhatToShow whatToShow, NodeFilter filter)
         {
             throw new NotImplementedException();
         }
 
-
         public bool iframeSrcDoc = false;
 
-
         public StyleSheetList StyleSheets = new StyleSheetList();
-
 
         private HTMLCollection _links;
 
@@ -317,7 +305,6 @@ namespace Kooboo.Dom
 
                     foreach (var areaitem in this.getElementsByTagName("area").item)
                     {
-
                         if (areaitem.hasAttribute("href"))
                         {
                             string hrefvalue = areaitem.getAttribute("href");
@@ -326,13 +313,10 @@ namespace Kooboo.Dom
                                 _links.Add(areaitem);
                             }
                         }
-
                     }
-
                 }
                 return _links;
             }
-
         }
 
         /// <summary>
@@ -355,12 +339,10 @@ namespace Kooboo.Dom
             {
                 return this.getElementsByTagName("form");
             }
-
         }
 
-
         /// <summary>
-        /// parse and download the stylesheets and make them available at StyleSheets. 
+        /// parse and download the stylesheets and make them available at StyleSheets.
         /// </summary>
         public void ParseStyleSheet()
         {
@@ -372,10 +354,8 @@ namespace Kooboo.Dom
             {
                 if (item.tagName == "style")
                 {
-
                     availablesheets.Add(item);
                 }
-
                 else if (item.hasAttribute("type"))
                 {
                     if (item.getAttribute("type").ToLower().Contains("css"))
@@ -430,9 +410,7 @@ namespace Kooboo.Dom
                         }
                         this.StyleSheets.appendStyleSheet(newStyleSheet);
                     }
-
                 }
-
                 else if (item.tagName == "style")
                 {
                     string cssText = item.InnerHtml;
@@ -451,9 +429,7 @@ namespace Kooboo.Dom
                         }
                     }
                     this.StyleSheets.appendStyleSheet(newStyleSheet);
-
                 }
-
             }
 
             hasParseCSS = true;
@@ -462,7 +438,7 @@ namespace Kooboo.Dom
         public bool hasParseCSS = false;
 
         /// <summary>
-        /// this apply style for media query = all. 
+        /// this apply style for media query = all.
         /// TO BE Improved.
         /// </summary>
         public void ApplyStyleSheet(string mediadeviceinfo)
@@ -480,7 +456,6 @@ namespace Kooboo.Dom
                     this.ApplyCssRules(stylesheet.cssRules, mediadeviceinfo);
                 }
             }
-
         }
 
         public void ApplyStyleSheet()
@@ -489,7 +464,7 @@ namespace Kooboo.Dom
         }
 
         /// <summary>
-        /// apply css rules to current document. 
+        /// apply css rules to current document.
         /// </summary>
         /// <param name="dom"></param>
         /// <param name="rulelist"></param>
@@ -505,7 +480,6 @@ namespace Kooboo.Dom
             {
                 if (item.type == CSS.enumCSSRuleType.STYLE_RULE)
                 {
-
                     CSS.CSSStyleRule stylerule = item as CSS.CSSStyleRule;
 
                     foreach (var elemntitem in this.Select(stylerule.selectorText).item)
@@ -541,8 +515,7 @@ namespace Kooboo.Dom
                         }
                     }
                 }
-
-            }  
+            }
         }
 
         public void ApplyCssText(string cssText)
@@ -566,7 +539,7 @@ namespace Kooboo.Dom
 
             this.documentElement.Dispose();
 
-            this.StyleSheets = null; 
+            this.StyleSheets = null;
 
             base.Dispose();
         }

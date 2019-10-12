@@ -8,12 +8,11 @@ namespace Jint.Parser.Ast
         public string Raw;
 
         public bool Cached;
-        public JsValue CachedValue; 
+        public JsValue CachedValue;
 
         public string GetKey()
         {
             return Value.ToString();
         }
-
     }
 }

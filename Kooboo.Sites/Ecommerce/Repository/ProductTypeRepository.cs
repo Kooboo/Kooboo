@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Ecommerce.Models;
@@ -6,12 +6,9 @@ using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Ecommerce.Repository
 {
-  
     public class ProductTypeRepository : SiteRepositoryBase<ProductType>
     {
         public override ObjectStoreParameters StoreParameters
@@ -27,7 +24,6 @@ namespace Kooboo.Sites.Ecommerce.Repository
                 return paras;
             }
         }
-
 
         public List<ProductProperty> GetColumns(Guid ProductTypeId)
         {
@@ -51,7 +47,6 @@ namespace Kooboo.Sites.Ecommerce.Repository
         //    }
         //    return null;
         //}
-
 
         //public override bool AddOrUpdate(ContentType value)
         //{
@@ -92,7 +87,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
         //        }
         //    }
 
-        //    // remove duplicate system fields... 
+        //    // remove duplicate system fields...
         //    List<ContentProperty> removeProp = new List<ContentProperty>();
 
         //    bool hasuserkey = false;
@@ -140,7 +135,6 @@ namespace Kooboo.Sites.Ecommerce.Repository
         //    }
         //}
 
-
         public bool IsNameExists(string contentTypeName)
         {
             var type = this.GetByNameOrId(contentTypeName);
@@ -152,7 +146,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
             List<string> names = new List<string>();
             var contentType = this.Get(contentTypeId);
 
-            foreach (var item in contentType.Properties.Where(o =>  !o.IsSystemField))
+            foreach (var item in contentType.Properties.Where(o => !o.IsSystemField))
             {
                 names.Add(item.Name);
             }
@@ -165,9 +159,5 @@ namespace Kooboo.Sites.Ecommerce.Repository
             names.Add(contentType.Properties.OrderBy(o => o.Order).First().Name);
             return names;
         }
-
-     
     }
-           
-
 }

@@ -1,5 +1,5 @@
-﻿using System.Text.RegularExpressions;
-using Jint.Native.Object;
+﻿using Jint.Native.Object;
+using System.Text.RegularExpressions;
 
 namespace Jint.Native.RegExp
 {
@@ -19,8 +19,10 @@ namespace Jint.Native.RegExp
         }
 
         public Regex Value { get; set; }
+
         //public string Pattern { get; set; }
         public string Source { get; set; }
+
         public string Flags { get; set; }
         public bool Global { get; set; }
         public bool IgnoreCase { get; set; }
@@ -28,7 +30,7 @@ namespace Jint.Native.RegExp
 
         public Match Match(string input, double start)
         {
-            return Value.Match(input, (int) start);
+            return Value.Match(input, (int)start);
         }
     }
 }

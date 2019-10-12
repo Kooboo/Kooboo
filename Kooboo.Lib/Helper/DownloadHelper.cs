@@ -1,16 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using System.Net.Http;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Net.Http.Headers;
-using System.IO.Compression;
-using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Helper
 {
@@ -20,10 +17,9 @@ namespace Kooboo.Lib.Helper
         {
             // ServicePointManager.ServerCertificateValidationCallback += CheckValidationResult;
             //turn on tls12 and tls11,default is ssl3 and tls
-            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11; 
-            HttpHelper.SetCustomSslChecker(); 
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
+            HttpHelper.SetCustomSslChecker();
         }
- 
 
         public static byte[] DownloadFile(string absoluteUrl, string containsContentType = null)
         {
@@ -126,7 +122,6 @@ namespace Kooboo.Lib.Helper
             }
 
             return null;
-
         }
 
         public static async Task<DownloadContent> DownloadUrlAsync(string fullUrl, CookieContainer cookieContainer = null)
@@ -186,7 +181,7 @@ namespace Kooboo.Lib.Helper
                 downcontent.ContentType = contentType.ToLower();
             }
 
-            var databytes = await GetDataBytes(response); 
+            var databytes = await GetDataBytes(response);
             downcontent.DataBytes = databytes;
 
             if (string.IsNullOrEmpty(downcontent.ContentType) || IOHelper.IsStringType(downcontent.ContentType))
@@ -194,13 +189,13 @@ namespace Kooboo.Lib.Helper
                 downcontent.isString = true;
 
                 if (databytes != null)
-                { 
+                {
                     var encoding = EncodingDetector.GetEncoding(ref databytes, contentType);
                     if (encoding == null) return downcontent;
                     downcontent.ContentString = encoding.GetString(databytes);
-                    downcontent.Encoding = encoding.WebName; 
-                } 
-            } 
+                    downcontent.Encoding = encoding.WebName;
+                }
+            }
 
             return downcontent;
         }
@@ -232,7 +227,6 @@ namespace Kooboo.Lib.Helper
             }
             catch
             {
-
             }
             finally
             {
@@ -241,7 +235,6 @@ namespace Kooboo.Lib.Helper
             }
 
             return null;
-
         }
 
         private static DownloadContent ProcessResponse(HttpWebResponse httpWebResponse)
@@ -288,7 +281,6 @@ namespace Kooboo.Lib.Helper
                 }
 
                 return downcontent;
-
             }
         }
 
@@ -354,8 +346,6 @@ namespace Kooboo.Lib.Helper
 
     public class DownloadContent
     {
-
-
         public bool isString { get; set; }
 
         public string ContentType { get; set; }
@@ -387,7 +377,6 @@ namespace Kooboo.Lib.Helper
         public string Encoding { get; set; }
 
         public HttpResponseHeaders ResponseHeader { get; set; }
-
     }
 
     public class MyWebClient : WebClient

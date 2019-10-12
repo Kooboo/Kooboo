@@ -1,8 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.IndexedDB.Helper
 {
@@ -24,7 +21,6 @@ namespace Kooboo.IndexedDB.Helper
 #else
             return true;
 #endif
-
         }
     }
 }

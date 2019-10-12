@@ -1,23 +1,22 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using Kooboo.Data.Models;
 
 namespace Kooboo.Web.ViewModel
 {
-    public class TemplateItemViewModel  
-    { 
-        public Guid Id  {  get;set;   }
-  
+    public class TemplateItemViewModel
+    {
+        public Guid Id { get; set; }
+
         public string UserName { get; set; }
-          
+
         public string ThumbNail { get; set; }
-  
+
         public string Name { get; set; }
-  
+
         public string Category { get; set; }
-          
+
         public int Size { get; set; }
 
         public string Description { get; set; }
@@ -27,7 +26,7 @@ namespace Kooboo.Web.ViewModel
         public string Tags { get; set; }
 
         public DateTime LastModified { get; set; }
-        
+
         public long DownloadCount { get; set; }
 
         public int PageCount { get; set; }
@@ -43,19 +42,18 @@ namespace Kooboo.Web.ViewModel
         public int ViewCount { get; set; }
 
         public decimal Price { get; set; }
-        
-        public CurrencyViewModel Currency { get; set; }
 
+        public CurrencyViewModel Currency { get; set; }
     }
 
-    public class TemplateDetailViewModel 
-    { 
-        public Guid Id     {get;set;  }
- 
+    public class TemplateDetailViewModel
+    {
+        public Guid Id { get; set; }
+
         public Guid UserId { get; set; }
 
         public string UserName { get; set; }
-           
+
         public List<string> Images { get; set; } = new List<string>();
 
         public string Name { get; set; }
@@ -63,7 +61,7 @@ namespace Kooboo.Web.ViewModel
         public string Link { get; set; }
 
         public string Category { get; set; }
-          
+
         public int Size { get; set; }
 
         public string Description { get; set; }
@@ -74,7 +72,7 @@ namespace Kooboo.Web.ViewModel
 
         public DateTime LastModified { get; set; }
 
-        public string PreviewUrl  {  get; set; }
+        public string PreviewUrl { get; set; }
 
         public string DownloadUrl { get; set; }
 
@@ -84,7 +82,6 @@ namespace Kooboo.Web.ViewModel
 
         public bool IsPrivate { get; set; }
 
-
         public int PageCount { get; set; }
 
         public int ContentCount { get; set; }
@@ -97,13 +94,10 @@ namespace Kooboo.Web.ViewModel
 
         public int ViewCount { get; set; }
 
-
         public string ThumbNail { get; set; }
 
         public decimal Price { get; set; }
 
         public CurrencyViewModel Currency { get; set; }
-
     }
-      
 }

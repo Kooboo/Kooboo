@@ -35,10 +35,9 @@ namespace Jint.Native.Number.Dtoa
 {
     public class FastDtoa
     {
-
         // FastDtoa will produce at most kFastDtoaMaximalLength digits.
         public const int KFastDtoaMaximalLength = 17;
-        
+
         // The minimal and maximal target exponent define the range of w's binary
         // exponent, where 'w' is the result of multiplying the input by a cached power
         // of ten.
@@ -46,6 +45,7 @@ namespace Jint.Native.Number.Dtoa
         // A different range might be chosen on a different platform, to optimize digit
         // generation, but a smaller range requires more powers of ten to be cached.
         private const int MinimalTargetExponent = -60;
+
         private const int MaximalTargetExponent = -32;
 
         // Adjusts the last digit of the generated number, and screens out generated
@@ -165,9 +165,9 @@ namespace Jint.Native.Number.Dtoa
             //   Since too_low = too_high - unsafe_interval this is equivalent to
             //      [too_high - unsafe_interval + 4 ulp; too_high - 2 ulp]
             //   Conceptually we have: rest ~= too_high - buffer
-            return (2*unit <= rest) && (rest <= unsafeInterval - 4*unit);
+            return (2 * unit <= rest) && (rest <= unsafeInterval - 4 * unit);
         }
-        
+
         private const int KTen4 = 10000;
         private const int KTen5 = 100000;
         private const int KTen6 = 1000000;
@@ -293,6 +293,7 @@ namespace Jint.Native.Number.Dtoa
                     power = 0;
                     exponent = -1;
                     break;
+
                 default:
                     // Following assignments are here to silence compiler warnings.
                     power = 0;
@@ -300,7 +301,7 @@ namespace Jint.Native.Number.Dtoa
                     // UNREACHABLE();
                     break;
             }
-            return ((long) power << 32) | (0xffffffffL & exponent);
+            return ((long)power << 32) | (0xffffffffL & exponent);
         }
 
         // Generates the digits of input number w.
@@ -377,12 +378,12 @@ namespace Jint.Native.Number.Dtoa
             // If we stop early we effectively round down.
             var one = new DiyFp(1L << -w.E, w.E);
             // Division by one is a shift.
-            var integrals = (int) (tooHigh.F.UnsignedShift(-one.E) & 0xffffffffL);
+            var integrals = (int)(tooHigh.F.UnsignedShift(-one.E) & 0xffffffffL);
             // Modulo by one is an and.
             long fractionals = tooHigh.F & (one.F - 1);
             long result = BiggestPowerTen(integrals, DiyFp.KSignificandSize - (-one.E));
-            var divider = (int) (result.UnsignedShift(32) & 0xffffffffL);
-            var dividerExponent = (int) (result & 0xffffffffL);
+            var divider = (int)(result.UnsignedShift(32) & 0xffffffffL);
+            var dividerExponent = (int)(result & 0xffffffffL);
             var kappa = dividerExponent + 1;
             // Loop invariant: buffer = too_high / 10^kappa  (integer division)
             // The invariant holds for the first iteration: kappa has been initialized
@@ -390,14 +391,14 @@ namespace Jint.Native.Number.Dtoa
             // that is smaller than integrals.
             while (kappa > 0)
             {
-                int digit = integrals/divider;
-                buffer.Append((char) ('0' + digit));
+                int digit = integrals / divider;
+                buffer.Append((char)('0' + digit));
                 integrals %= divider;
                 kappa--;
                 // Note that kappa now equals the exponent of the divider and that the
                 // invariant thus holds again.
                 long rest =
-                    ((long) integrals << -one.E) + fractionals;
+                    ((long)integrals << -one.E) + fractionals;
                 // Invariant: too_high = buffer * 10^kappa + DiyFp(rest, one.e())
                 // Reminder: unsafe_interval.e() == one.e()
                 if (rest < unsafeInterval.F)
@@ -407,7 +408,7 @@ namespace Jint.Native.Number.Dtoa
                     buffer.Point = buffer.End - mk + kappa;
                     return RoundWeed(buffer, DiyFp.Minus(tooHigh, w).F,
                         unsafeInterval.F, rest,
-                        (long) divider << -one.E, unit);
+                        (long)divider << -one.E, unit);
                 }
                 divider /= 10;
             }
@@ -430,19 +431,19 @@ namespace Jint.Native.Number.Dtoa
             {
                 fractionals *= 5;
                 unit *= 5;
-                unsafeInterval.F = unsafeInterval.F*5;
+                unsafeInterval.F = unsafeInterval.F * 5;
                 unsafeInterval.E = unsafeInterval.E + 1; // Will be optimized out.
                 one.F = one.F.UnsignedShift(1);
                 one.E = one.E + 1;
                 // Integer division by one.
-                var digit = (int) ((fractionals.UnsignedShift(-one.E)) & 0xffffffffL);
-                buffer.Append((char) ('0' + digit));
+                var digit = (int)((fractionals.UnsignedShift(-one.E)) & 0xffffffffL);
+                buffer.Append((char)('0' + digit));
                 fractionals &= one.F - 1; // Modulo by one.
                 kappa--;
                 if (fractionals < unsafeInterval.F)
                 {
                     buffer.Point = buffer.End - mk + kappa;
-                    return RoundWeed(buffer, DiyFp.Minus(tooHigh, w).F*unit,
+                    return RoundWeed(buffer, DiyFp.Minus(tooHigh, w).F * unit,
                         unsafeInterval.F, fractionals, one.F, unit);
                 }
             }

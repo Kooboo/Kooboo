@@ -1,20 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Extensions;
 using Kooboo.Web.ViewModel;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
     public class LabelApi : SiteObjectApi<Label>
     {
-
         [Kooboo.Attributes.RequireParameters("id", "values")]
         public void Update(ApiCall call)
         {
@@ -22,14 +18,13 @@ namespace Kooboo.Web.Api.Implementation
             if (label != null)
             {
                 Dictionary<string, string> values = Lib.Helper.JsonHelper.Deserialize<Dictionary<string, string>>(call.GetValue("values"));
-                foreach( var item in values)
+                foreach (var item in values)
                 {
                     label.SetValue(item.Key, item.Value);
                 }
                 call.WebSite.SiteDb().Labels.AddOrUpdate(label, call.Context.User.Id);
             }
         }
-
 
         public override List<object> List(ApiCall call)
         {
@@ -63,6 +58,5 @@ namespace Kooboo.Web.Api.Implementation
             }
             return keys;
         }
-
     }
 }

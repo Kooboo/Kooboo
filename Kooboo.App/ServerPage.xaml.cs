@@ -1,20 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.App.Commands;
-using Kooboo.App.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 using Kooboo.App.Extensions;
+using Kooboo.App.Models;
 using Kooboo.Data;
 using Kooboo.Data.Models;
+using Kooboo.Sites.Extensions;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Kooboo.Sites.Extensions;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Kooboo.App
 {
@@ -27,7 +25,7 @@ namespace Kooboo.App
         {
             InitializeComponent();
 
-            context = new ListViewModel
+            _context = new ListViewModel
             {
                 Title = Data.Language.Hardcoded.GetValue("Server"),
                 Buttons = new[]
@@ -46,11 +44,11 @@ namespace Kooboo.App
             Reload();
         }
 
-        private readonly ListViewModel context;
+        private readonly ListViewModel _context;
 
         private void Reload()
         {
-            context.ItemsSource = GlobalDb.WebSites
+            _context.ItemsSource = GlobalDb.WebSites
                 .GetLocalSites()
                 .Select(it => new ListViewItemViewModel
                 {
@@ -67,13 +65,11 @@ namespace Kooboo.App
                             Icon="preview-btn",
                             Tooltip= Data.Language.Hardcoded.GetValue("View in browser"),
                             Command = new DelegateCommand<WebSite>(site=> {
-
                                 string url = site.BaseUrl();
                                 if (!string.IsNullOrEmpty(url) && url !="/" && url != "\\")
                                 { Process.Start(url); }
                                 else
                                 {  MessageBox.Show(Data.Language.Hardcoded.GetValue("Invalid website configuration"));}
-
                             })
                         },
                         new IconButton
@@ -128,7 +124,7 @@ namespace Kooboo.App
                     }
                 });
 
-            DataContext = context;
+            DataContext = _context;
         }
     }
 }

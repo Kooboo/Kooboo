@@ -1,9 +1,9 @@
 ﻿namespace dotless.Core.Parser.Infrastructure
 {
+    using Nodes;
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using Nodes;
 
     public class Output
     {
@@ -184,8 +184,8 @@
                 return this;
             }
 
-            while (trimLLength < length && 
-                    c.HasValue ? Builder[trimLLength] == c.Value : 
+            while (trimLLength < length &&
+                    c.HasValue ? Builder[trimLLength] == c.Value :
                                 char.IsWhiteSpace(Builder[trimLLength]))
             {
                 trimLLength++;
@@ -212,7 +212,7 @@
                 return this;
             }
 
-            while (trimRLength < length && 
+            while (trimRLength < length &&
                    c.HasValue ? Builder[length - (trimRLength + 1)] == c.Value :
                         char.IsWhiteSpace(Builder[length - (trimRLength + 1)]))
             {
@@ -226,7 +226,6 @@
 
             return this;
         }
-
 
         public override string ToString()
         {

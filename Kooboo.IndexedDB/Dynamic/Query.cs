@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.Btree;
 using Kooboo.IndexedDB.ByteConverter;
@@ -60,7 +60,7 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 item.Value = bytevalue;
 
-                //bool and guid, there is not > < =, only equal or not equal. 
+                //bool and guid, there is not > < =, only equal or not equal.
                 if (item.FieldType == typeof(bool) || item.FieldType == typeof(Guid))
                 {
                     if (item.Compare != Comparer.EqualTo && item.Compare != Comparer.NotEqualTo)
@@ -69,7 +69,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     }
                 }
 
-                //date time, must have specify comare till min, second, millsecond, etc. 
+                //date time, must have specify comare till min, second, millsecond, etc.
                 if (item.FieldType == typeof(DateTime))
                 {
                     if (item.TimeScope == default(DateTimeScope))
@@ -171,7 +171,6 @@ namespace Kooboo.IndexedDB.Dynamic
             return this;
         }
 
-
         public Query WhereEqual(string FieldOrPropertyName, Guid Value)
         {
             FilterItem item = new FilterItem();
@@ -217,8 +216,8 @@ namespace Kooboo.IndexedDB.Dynamic
             return this;
         }
 
-
         private string _primarykey;
+
         private string PrimaryKey
         {
             get
@@ -230,7 +229,6 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
                 return _primarykey;
             }
-
         }
 
         public Query OrderByAscending()
@@ -241,8 +239,8 @@ namespace Kooboo.IndexedDB.Dynamic
         }
 
         /// <summary>
-        /// Order by a field or property. This field should have an index on it. 
-        /// Order by a non-indexed field will have very bad performance. 
+        /// Order by a field or property. This field should have an index on it.
+        /// Order by a non-indexed field will have very bad performance.
         /// </summary>
         public Query OrderByAscending(string FieldOrPropertyName)
         {
@@ -263,7 +261,6 @@ namespace Kooboo.IndexedDB.Dynamic
             this.Ascending = false;
             this.OrderByFieldName = FieldOrPropertyName;
             return this;
-
         }
 
         public Query Skip(int count)
@@ -301,7 +298,7 @@ namespace Kooboo.IndexedDB.Dynamic
         }
 
         /// <summary>
-        /// check whether the filter condition match any record or not. 
+        /// check whether the filter condition match any record or not.
         /// </summary>
         /// <returns></returns>
         public bool Exists()
@@ -369,7 +366,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     }
                     var rightvalue = Convert.ChangeType(item.Value, col.ClrType);
 
-                    // For datetime col, need to have something different. 
+                    // For datetime col, need to have something different.
                     if (rightvalue != null)
                     {
                         filter.Value = col.ToBytes(rightvalue);
@@ -381,7 +378,7 @@ namespace Kooboo.IndexedDB.Dynamic
         }
 
         public List<IDictionary<string, object>> Take(int count)
-        { 
+        {
             ExecutionPlan executionplan = QueryPraser.GetExecutionPlan(this);
 
             List<long> list = GetList(executionplan, count);
@@ -392,39 +389,37 @@ namespace Kooboo.IndexedDB.Dynamic
                 var record = this.table._getvalue(item);
                 listvalue.Add(record);
             }
-      
+
             if (!executionplan.RequireOrderBy)
             {
                 return listvalue;
             }
             else
             {
-                if (!string.IsNullOrEmpty(this.OrderByFieldName) && this.table.Setting.Columns.Any(o=>o.Name == this.OrderByFieldName))
+                if (!string.IsNullOrEmpty(this.OrderByFieldName) && this.table.Setting.Columns.Any(o => o.Name == this.OrderByFieldName))
                 {
-                    var col = this.table.Setting.Columns.First(o => o.Name == this.OrderByFieldName); 
+                    var col = this.table.Setting.Columns.First(o => o.Name == this.OrderByFieldName);
 
-                    if (col !=null)
+                    if (col != null)
                     {
-                         if (this.Ascending)
+                        if (this.Ascending)
                         {
-                          return  listvalue.OrderBy(o => GetValue(o, this.OrderByFieldName, col.ClrType)).Skip(this.SkipCount).Take(count).ToList(); 
+                            return listvalue.OrderBy(o => GetValue(o, this.OrderByFieldName, col.ClrType)).Skip(this.SkipCount).Take(count).ToList();
                         }
-                       else
+                        else
                         {
-                           return listvalue.OrderByDescending(o => GetValue(o, this.OrderByFieldName, col.ClrType)).Skip(this.SkipCount).Take(count).ToList(); 
+                            return listvalue.OrderByDescending(o => GetValue(o, this.OrderByFieldName, col.ClrType)).Skip(this.SkipCount).Take(count).ToList();
                         }
-                        
-                    }  
-                     
+                    }
                 }
-              
+
                 return listvalue.Skip(this.SkipCount).Take(count).ToList();
-            } 
-        } 
-  
+            }
+        }
+
         public List<T> Take<T>(int count)
         {
-            List<T> result = new List<T>(); 
+            List<T> result = new List<T>();
 
             var dictvalues = this.Take(count);
 
@@ -434,17 +429,16 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 var type = typeof(T);
                 var cls = Activator.CreateInstance<T>();
-                 
+
                 foreach (var item in dict)
                 {
                     Accessor.GetSetter(type, item.Key)?.Invoke(cls, item.Value);
                 }
 
-                result.Add(cls); 
-            } 
-            return result;  
+                result.Add(cls);
+            }
+            return result;
         }
-         
 
         private object GetValue(IDictionary<string, object> obj, string fieldName, Type datatype)
         {
@@ -458,14 +452,11 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 return Kooboo.IndexedDB.Dynamic.IndexHelper.DefaultValue(datatype);
             }
-
             else
             {
                 return Dynamic.Accessor.ChangeType(value, datatype);
             }
         }
-
-
 
         internal List<long> GetList(int count)
         {
@@ -482,7 +473,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 foreach (var item in executionplan.indexRanges)
                 {
-                    /// check if the primary key is included.  
+                    /// check if the primary key is included.
                     List<long> blockpositionList = new List<long>();
 
                     var index = this.table.Indexs.Find(o => o.FieldName == item.Key);
@@ -501,7 +492,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 foreach (Int64 item in executionplan.startCollection)
                 {
-                    /// check matches. 
+                    /// check matches.
                     itemMatch = true;
                     foreach (List<long> rangeitem in rangelist)
                     {
@@ -517,7 +508,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         continue;
                     }
 
-                    /// check column matchs. 
+                    /// check column matchs.
                     foreach (ColumnScan plan in executionplan.scanColumns)
                     {
                         byte[] columnbytes = this.table.BlockFile.GetCol(item, plan.relativeStartPosition, plan.length);
@@ -536,12 +527,9 @@ namespace Kooboo.IndexedDB.Dynamic
 
                     if (executionplan.RequireOrderBy)
                     {
-
-
                     }
                     else
-                    { 
-
+                    {
                         if (skipped < this.SkipCount)
                         {
                             skipped += 1;
@@ -571,14 +559,14 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 int skipped = 0;
                 int taken = 0;
-                 
+
                 List<List<long>> rangelist = new List<List<long>>();
 
                 List<long> returnlist = new List<long>();
 
                 foreach (var item in executionplan.indexRanges)
                 {
-                    /// check if the primary key is included.  
+                    /// check if the primary key is included.
                     List<long> blockpositionList = new List<long>();
 
                     var index = this.table.Indexs.Find(o => o.FieldName == item.Key);
@@ -597,7 +585,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 foreach (Int64 item in executionplan.startCollection)
                 {
-                    /// check matches. 
+                    /// check matches.
                     itemMatch = true;
                     foreach (List<long> rangeitem in rangelist)
                     {
@@ -613,7 +601,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         continue;
                     }
 
-                    /// check column matchs. 
+                    /// check column matchs.
                     foreach (ColumnScan plan in executionplan.scanColumns)
                     {
                         byte[] columnbytes = this.table.BlockFile.GetCol(item, plan.relativeStartPosition, plan.length);
@@ -632,12 +620,10 @@ namespace Kooboo.IndexedDB.Dynamic
 
                     if (executionplan.RequireOrderBy)
                     {
-
-                        returnlist.Add(item); 
+                        returnlist.Add(item);
                     }
                     else
                     {
-
                         if (skipped < this.SkipCount)
                         {
                             skipped += 1;
@@ -654,11 +640,10 @@ namespace Kooboo.IndexedDB.Dynamic
                         }
                     }
                 }
-                 
+
                 return returnlist;
             }
         }
-
 
         public List<IDictionary<string, object>> SelectAll()
         {
@@ -670,12 +655,10 @@ namespace Kooboo.IndexedDB.Dynamic
             return Take<T>(5000);
         }
 
-
         public int Count()
         {
             lock (this.table._Locker)
             {
-
                 int skipped = 0;
                 int taken = 0;
 
@@ -700,7 +683,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 foreach (Int64 item in executionplan.startCollection)
                 {
-                    /// check matches. 
+                    /// check matches.
                     itemMatch = true;
                     foreach (List<long> rangeitem in rangelist)
                     {
@@ -716,7 +699,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         continue;
                     }
 
-                    /// check column matchs. 
+                    /// check column matchs.
                     foreach (ColumnScan plan in executionplan.scanColumns)
                     {
                         byte[] columnbytes = this.table.BlockFile.GetCol(item, plan.relativeStartPosition, plan.length);
@@ -732,7 +715,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     {
                         continue;
                     }
-                    /// pass all tests.  
+                    /// pass all tests.
                     if (skipped < this.SkipCount)
                     {
                         skipped += 1;

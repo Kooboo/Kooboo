@@ -1,14 +1,14 @@
-﻿using System.Linq;
-using Jint.Native.Object;
+﻿using Jint.Native.Object;
 using Jint.Parser;
 using Jint.Runtime;
 using Jint.Runtime.Descriptors;
 using Jint.Runtime.Environments;
+using System.Linq;
 
 namespace Jint.Native.Function
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public sealed class ScriptFunctionInstance : FunctionInstance, IConstructor
     {
@@ -30,11 +30,11 @@ namespace Jint.Native.Function
             Extensible = true;
             Prototype = engine.Function.PrototypeObject;
 
-            DefineOwnProperty("length", new PropertyDescriptor(new JsValue(FormalParameters.Length), false, false, false ), false);
+            DefineOwnProperty("length", new PropertyDescriptor(new JsValue(FormalParameters.Length), false, false, false), false);
 
             var proto = engine.Object.Construct(Arguments.Empty);
             proto.DefineOwnProperty("constructor", new PropertyDescriptor(this, true, false, true), false);
-            DefineOwnProperty("prototype", new PropertyDescriptor(proto, true, false, false ), false);
+            DefineOwnProperty("prototype", new PropertyDescriptor(proto, true, false, false), false);
             if (_functionDeclaration.Id != null)
             {
                 DefineOwnProperty("name", new PropertyDescriptor(_functionDeclaration.Id.Name, null, null, null), false);
@@ -85,8 +85,8 @@ namespace Jint.Native.Function
                 {
                     Engine.DeclarationBindingInstantiation(
                         DeclarationBindingType.FunctionCode,
-                        _functionDeclaration.FunctionDeclarations, 
-                        _functionDeclaration.VariableDeclarations, 
+                        _functionDeclaration.FunctionDeclarations,
+                        _functionDeclaration.VariableDeclarations,
                         this,
                         arguments);
 
@@ -130,7 +130,7 @@ namespace Jint.Native.Function
             {
                 return result;
             }
-            
+
             return obj;
         }
 

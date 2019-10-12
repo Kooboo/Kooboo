@@ -1,10 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using static Kooboo.IndexedDB.Helper.StringHelper;
 
 namespace Kooboo.IndexedDB.Dynamic
 {
@@ -77,7 +76,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     find.DataType = item.DataType;
                     find.Length = item.Length;
                     find.isComplex = item.isComplex;
-                    // TODO: if change datatype from fixed len = 0, we need to reorganize. 
+                    // TODO: if change datatype from fixed len = 0, we need to reorganize.
                 }
                 else
                 {
@@ -88,7 +87,6 @@ namespace Kooboo.IndexedDB.Dynamic
                     }
                 }
             }
-
 
             return exists;
         }
@@ -112,7 +110,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 return false;
             }
 
-            // change collength.... 
+            // change collength....
             if (ChangeColLen(oldsetting, newsetting))
             {
                 return true;
@@ -135,7 +133,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 return false;
             }
 
-            // only when oldsetting has mixed, require rebuild. 
+            // only when oldsetting has mixed, require rebuild.
             return ColHasMixFixed(oldsetting);
         }
 
@@ -178,8 +176,8 @@ namespace Kooboo.IndexedDB.Dynamic
             return false;
         }
 
-        // has new setting from columns that require a rebuild. 
-        // if only has new index, does not 
+        // has new setting from columns that require a rebuild.
+        // if only has new index, does not
         public static bool HasNew(Setting exists, Setting newsetting)
         {
             foreach (var item in newsetting.Columns)
@@ -349,7 +347,7 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 return false;
             }
-            return true; // the rest has to be consider as json data type... 
+            return true; // the rest has to be consider as json data type...
         }
 
         public static List<TableColumn> GetTypeColumns(object obj)
@@ -385,7 +383,6 @@ namespace Kooboo.IndexedDB.Dynamic
                     }
                 }
             }
-
             else if (obj is IDictionary<string, object>)
             {
                 var idict = obj as IDictionary<string, object>;
@@ -413,7 +410,6 @@ namespace Kooboo.IndexedDB.Dynamic
                     }
                 }
             }
-
             else
             {
                 var type = obj.GetType();
@@ -423,15 +419,11 @@ namespace Kooboo.IndexedDB.Dynamic
                 foreach (var item in AllProperties)
                 {
                     setting.AppendColumn(item.Key, item.Value, 0);
-
-
                 }
             }
 
             return setting.Columns.ToList();
         }
-
-
 
         private static bool QuickCheckChange(List<TableColumn> newcols, Setting setting)
         {
@@ -462,7 +454,6 @@ namespace Kooboo.IndexedDB.Dynamic
                     {
                         return true;
                     }
-
                 }
             }
 
@@ -480,7 +471,7 @@ namespace Kooboo.IndexedDB.Dynamic
             return result;
         }
 
-        // use for adding data, will only increase col, does not descrease col... 
+        // use for adding data, will only increase col, does not descrease col...
 
         public static CompareResult CompareColSetting(List<TableColumn> NewColumns, Setting CurrentSetting)
         {
@@ -511,13 +502,12 @@ namespace Kooboo.IndexedDB.Dynamic
                     {
                         if (item.DataType == typeof(double).FullName || item.DataType == typeof(decimal).FullName || item.DataType == typeof(long).FullName)
                         {
-                            continue; // does not change the datatime, because JS 
+                            continue; // does not change the datatime, because JS
                         }
                     }
-
                     else
                     {
-                        // allow change or datatype or length..... 
+                        // allow change or datatype or length.....
                         if (item.Length > find.Length && item.Length > 0 && item.Length != Constants.DefaultColLen)
                         {
                             find.Length = item.Length;
@@ -542,15 +532,12 @@ namespace Kooboo.IndexedDB.Dynamic
             return result;
         }
 
-
-
         public static bool CanConvertType(Type input, Type exists, object data = null)
         {
             if (exists == typeof(string))
             {
                 return true;
             }
-
             else if (input == typeof(float) || input == typeof(double) || input == typeof(decimal))
             {
                 if (exists == typeof(float) || exists == typeof(double) || input == typeof(decimal))
@@ -615,7 +602,7 @@ namespace Kooboo.IndexedDB.Dynamic
             return false;
         }
 
-        // user manually change the setting, remove col is allowed. 
+        // user manually change the setting, remove col is allowed.
         public static CompareResult UpdateSetting(List<TableColumn> columns, Setting setting)
         {
             CompareResult result = new CompareResult();
@@ -629,7 +616,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
             result.NewSetting.Columns = Clone(setting).Columns;
 
-            // remove cols. 
+            // remove cols.
             List<TableColumn> removecol = new List<TableColumn>();
 
             foreach (var item in result.NewSetting.Columns)
@@ -652,7 +639,6 @@ namespace Kooboo.IndexedDB.Dynamic
                 result.ShouldRebuild = true;
             }
 
-
             foreach (var item in columns)
             {
                 if (item.IsSystem)
@@ -674,7 +660,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
                 else
                 {
-                    // allow change or datatype or length..... 
+                    // allow change or datatype or length.....
                     if (item.Length != find.Length && item.Length > 0 && item.Length != Constants.DefaultColLen)
                     {
                         find.Length = item.Length;
@@ -743,7 +729,6 @@ namespace Kooboo.IndexedDB.Dynamic
             return result;
         }
 
-
         public static Setting Clone(Setting input)
         {
             var convert = new Kooboo.IndexedDB.Serializer.Simple.SimpleConverter<Setting>();
@@ -753,7 +738,6 @@ namespace Kooboo.IndexedDB.Dynamic
 
             return back;
         }
-
     }
 
     public class CompareResult

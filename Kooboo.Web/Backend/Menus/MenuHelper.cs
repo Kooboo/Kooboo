@@ -1,27 +1,25 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Reflection.Emit;
 
-
 namespace Kooboo.Web.Menus
 {
     public static class MenuHelper
-    { 
+    {
         public static string AdminUrl(string relativeUrl)
         {
             return "/_Admin/" + relativeUrl;
-        } 
-         
+        }
 
-        public static string ApiUrl<TApi>(string methodname) where TApi: Kooboo.Api.IApi
+        public static string ApiUrl<TApi>(string methodname) where TApi : Kooboo.Api.IApi
         {
             var modelname = GetApiName(typeof(TApi));
-            return ApiUrl(modelname, methodname); 
-        } 
+            return ApiUrl(modelname, methodname);
+        }
 
         public static string ApiUrl(string modelname, string methodname)
-        { 
+        {
             return "/_api/" + modelname + "/" + methodname;
         }
 
@@ -29,16 +27,16 @@ namespace Kooboo.Web.Menus
         {
             var apiprovider = Web.SystemStart.CurrentApiProvider;
 
-            var modelname = typeof(TSiteModel).Name; 
+            var modelname = typeof(TSiteModel).Name;
 
             foreach (var item in apiprovider.List)
             {
-               if (item.Value.ModelName == modelname)
+                if (item.Value.ModelName == modelname)
                 {
-                    return ApiUrl(modelname, methodname); 
+                    return ApiUrl(modelname, methodname);
                 }
             }
-            return null; 
+            return null;
         }
 
         private static string GetApiName(Type ApiType)
@@ -53,8 +51,6 @@ namespace Kooboo.Web.Menus
             var silly = (Func<string>)dynamicMethod.CreateDelegate(
                            typeof(Func<string>));
             return silly();
-        } 
-         
-
+        }
     }
 }

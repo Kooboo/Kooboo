@@ -1,15 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.InlineEditor.Model;
+using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Data.Context;
-using Kooboo.Data.Interface;
-using Kooboo.Sites.Models;
-using Kooboo.Extensions;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.InlineEditor.Model;
-using Kooboo.Mail.Imap.Commands;
 using System.Text.RegularExpressions;
 
 namespace Kooboo.Sites.InlineEditor.Executor
@@ -126,7 +124,6 @@ namespace Kooboo.Sites.InlineEditor.Executor
                 objectid = page.Id;
             }
 
-
             var element = Service.DomService.GetElementByKoobooId(domobject.Dom, StyleTagKoobooId);
             if (element != null)
             {
@@ -164,12 +161,14 @@ namespace Kooboo.Sites.InlineEditor.Executor
                             {
                                 if (!string.IsNullOrWhiteSpace(ruleitem.MediaRuleList))
                                 {
-                                    foundrules = foundrules.Where(w => {
-                                       var parent= allrules.FirstOrDefault(f => f.Id == w.ParentCssRuleId);
+                                    foundrules = foundrules.Where(w =>
+                                    {
+                                        var parent = allrules.FirstOrDefault(f => f.Id == w.ParentCssRuleId);
                                         return parent != null && removeSpace(parent.SelectorText) == removeSpace(ruleitem.MediaRuleList);
                                     }).ToList();
                                 }
-                                else {
+                                else
+                                {
                                     foundrules = foundrules.Where(e => e.ParentCssRuleId == default(Guid)).ToList();
                                 }
 
@@ -188,7 +187,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
         }
 
         public List<Model.StyleModel> AssignRuleId(Model.StyleModel item, List<CmsCssRule> foundrules)
-        { 
+        {
             List<Model.StyleModel> AdditionRules = new List<Model.StyleModel>();
 
             var matchrule = foundrules.OrderByDescending(o => o.DuplicateIndex).First();
@@ -203,26 +202,23 @@ namespace Kooboo.Sites.InlineEditor.Executor
             {
                 var copyitem = Lib.Serializer.Copy.DeepCopy<Model.StyleModel>(item);
                 copyitem.RuleId = rule.Id;
-                AdditionRules.Add(copyitem); 
+                AdditionRules.Add(copyitem);
             }
 
             if (IsWithinMedia)
             {
                 //outside should change the last index.
-                var otherNonMediaRules = foundrules.Where(o => o.ParentCssRuleId == default(Guid)).ToList(); 
-                if (otherNonMediaRules !=null && otherNonMediaRules.Count()>0)
+                var otherNonMediaRules = foundrules.Where(o => o.ParentCssRuleId == default(Guid)).ToList();
+                if (otherNonMediaRules != null && otherNonMediaRules.Count() > 0)
                 {
                     var lastNonMedia = otherNonMediaRules.OrderByDescending(o => o.DuplicateIndex).First();
                     var copyitem = Lib.Serializer.Copy.DeepCopy<Model.StyleModel>(item);
                     copyitem.RuleId = lastNonMedia.Id;
                     AdditionRules.Add(copyitem);
+                }
+            }
 
-                } 
-            } 
-
-            return AdditionRules; 
-
-
+            return AdditionRules;
         }
 
         public void Execute(RenderContext context, List<IInlineModel> updatelist)
@@ -249,17 +245,18 @@ namespace Kooboo.Sites.InlineEditor.Executor
             ProcessInlineCss(context, inlinechanges);
 
             EnsureStyleId(stylechanges, context);
-            EnsureCssRuleId(stylechanges, context);  
-            ProcessStyleRules(context, stylechanges); 
+            EnsureCssRuleId(stylechanges, context);
+            ProcessStyleRules(context, stylechanges);
         }
-        public   void ProcessInlineCss(RenderContext context, List<Model.StyleModel> changes)
+
+        public void ProcessInlineCss(RenderContext context, List<Model.StyleModel> changes)
         {
             List<IInlineModel> DomUpdates = ConvertToDomUpdate(context, changes);
 
             new DomExecutor().Execute(context, DomUpdates);
         }
 
-        public   List<IInlineModel> ConvertToDomUpdate(RenderContext context, List<StyleModel> changes)
+        public List<IInlineModel> ConvertToDomUpdate(RenderContext context, List<StyleModel> changes)
         {
             List<IInlineModel> DomUpdates = new List<IInlineModel>();
             foreach (var item in changes.GroupBy(o => o.ObjectType))
@@ -302,9 +299,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                                 model.AttributeName = "style";
                                 model.Value = newstylevalue;
                                 DomUpdates.Add(model);
-
                             }
-
                         }
                     }
                 }
@@ -313,7 +308,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
             return DomUpdates;
         }
 
-        private   void ProcessInline(RenderContext context, List<Model.StyleModel> changes, string ObjectType, string NameOrId)
+        private void ProcessInline(RenderContext context, List<Model.StyleModel> changes, string ObjectType, string NameOrId)
         {
             if (changes.Count() == 0 || string.IsNullOrEmpty(ObjectType) || string.IsNullOrEmpty(NameOrId))
             {
@@ -344,27 +339,25 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         {
                             current.PropertyValues.Add(item.Property, item.Value);
                         }
-                        
                     }
                 }
             }
-            
+
             var repo = context.WebSite.SiteDb().GetRepository(ObjectType);
 
             var koobooobject = repo.GetByNameOrId(NameOrId);
-             
+
             if (koobooobject is IDomObject && inlinechanges.Count() > 0)
             {
                 var domobject = koobooobject as IDomObject;
                 domobject.Body = Service.DomService.UpdateInlineStyle(domobject.Body, inlinechanges);
                 repo.AddOrUpdate(domobject);
             }
- 
         }
 
-        public  void ProcessStyleRules(RenderContext context, List<Model.StyleModel> changes)
+        public void ProcessStyleRules(RenderContext context, List<Model.StyleModel> changes)
         {
-            var page = context.GetItem<Page>(); 
+            var page = context.GetItem<Page>();
 
             var groupby = changes.GroupBy(o => o.StyleId);
             foreach (var item in groupby)
@@ -379,7 +372,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         Body = GetCssText(item.ToList()),
                         ItemIndex = -1
                     };
-                    context.WebSite.SiteDb().Styles.AddOrUpdate(newStyle,  true, true, context.User.Id);
+                    context.WebSite.SiteDb().Styles.AddOrUpdate(newStyle, true, true, context.User.Id);
                 }
                 else
                 {
@@ -387,7 +380,6 @@ namespace Kooboo.Sites.InlineEditor.Executor
                 }
             }
         }
-
 
         private static string GetCssText(List<Model.StyleModel> changes)
         {
@@ -417,7 +409,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
             return csstext;
         }
 
-        public  void ProcessStyleRules(RenderContext context, List<Model.StyleModel> changes, Guid StyleId)
+        public void ProcessStyleRules(RenderContext context, List<Model.StyleModel> changes, Guid StyleId)
         {
             if (!changes.Any()) return;
 
@@ -443,8 +435,8 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         else
                         {
                             current.RuleId = item.RuleId;
-                            current.Declarations = Service.CssService.ParseStyleDeclaration(cmscssrule); 
-                            if(current.Declarations==null)
+                            current.Declarations = Service.CssService.ParseStyleDeclaration(cmscssrule);
+                            if (current.Declarations == null)
                                 current.Declarations = new Dom.CSS.CSSDeclarationBlock();
                         }
                         if (current != null)
@@ -457,7 +449,6 @@ namespace Kooboo.Sites.InlineEditor.Executor
                     {
                         current.Selector = item.Selector;
                     }
-
                 }
                 else
                 {
@@ -469,7 +460,6 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         current.Declarations = new Dom.CSS.CSSDeclarationBlock();
                         prechanges.Add(current);
                     }
-
                 }
 
                 if (current != null)
@@ -477,8 +467,9 @@ namespace Kooboo.Sites.InlineEditor.Executor
                     if (!string.IsNullOrEmpty(item.Value))
                     {
                         current.Declarations.setProperty(item.Property, item.Value, item.Important);
-                        var prop= current.Declarations.item.FirstOrDefault(f => f != null && f.propertyname == item.Property);
-                        if (prop != null) {
+                        var prop = current.Declarations.item.FirstOrDefault(f => f != null && f.propertyname == item.Property);
+                        if (prop != null)
+                        {
                             current.Declarations.item.Remove(prop);
                             current.Declarations.item.Add(prop);
                         }
@@ -488,7 +479,6 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         current.Declarations.removeProperty(item.Property);
                     }
                 }
-
             }
 
             var changelist = new List<CmsCssRuleChanges>();
@@ -517,15 +507,13 @@ namespace Kooboo.Sites.InlineEditor.Executor
                 }
 
                 changelist.Add(onechange);
-
             }
 
             context.WebSite.SiteDb().CssRules.UpdateStyle(changelist, StyleId);
         }
-
     }
-    
-  public  class RuleChange
+
+    public class RuleChange
     {
         public Guid RuleId { get; set; }
         public string Selector { get; set; }

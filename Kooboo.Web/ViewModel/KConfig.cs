@@ -1,11 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.ViewModel
 {
@@ -28,14 +25,13 @@ namespace Kooboo.Web.ViewModel
         {
             get; set;
         }
+
         public Guid KeyHash { get; set; }
 
         public int StoreNameHash { get; set; }
 
         public Dictionary<string, int> Relations { get; set; }
-
     }
-
 
     public class KConfigEditModel
     {
@@ -60,6 +56,4 @@ namespace Kooboo.Web.ViewModel
 
         public string ControlType { get; set; } = "TextBox";
     }
-
-
 }

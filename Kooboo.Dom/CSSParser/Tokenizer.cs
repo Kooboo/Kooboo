@@ -1,35 +1,31 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Dom.CSS.Tokens;
 using System;
 using System.Collections.Generic;
-using Kooboo.Dom.CSS.Tokens;
-using Kooboo.Dom;
 
 namespace Kooboo.Dom.CSS
 {
-
     /// <summary>
     /// see: http://dev.w3.org/csswg/css-syntax/
     /// </summary>
- public   class Tokenizer
+    public class Tokenizer
     {
-
         private char[] chars;
         private int _readIndex;
         private int _length;
         private bool isEOF;
 
-        private char EOFChar = (Char)0x1a; 
-   
+        private char EOFChar = (Char)0x1a;
+
         public Tokenizer(string cssText)
         {
             chars = codePointSubstitutions(cssText);
             _length = chars.Length;
-            
-            isEOF = false;
-            _readIndex = -1; // set it to -1, so that the consumenext() will starts from 0 index. 
-        }
 
+            isEOF = false;
+            _readIndex = -1; // set it to -1, so that the consumenext() will starts from 0 index.
+        }
 
         private cssToken tokenbuffer;
         private cssToken currenttoken;
@@ -47,14 +43,12 @@ namespace Kooboo.Dom.CSS
                 currenttoken = ConsumeToken();
                 return currenttoken;
             }
-
         }
 
         public void ReconsumeToken()
         {
             tokenbuffer = currenttoken;
         }
-
 
         /// <summary>
         /// move the reading index one position ahead.
@@ -68,11 +62,10 @@ namespace Kooboo.Dom.CSS
             }
         }
 
-
-     /// <summary>
-     /// consume but do not return the current char, move the reading index one ahead.
-     /// </summary>
-     /// <param name="advanceCount"></param>
+        /// <summary>
+        /// consume but do not return the current char, move the reading index one ahead.
+        /// </summary>
+        /// <param name="advanceCount"></param>
         private void consumeIt(int advanceCount)
         {
             for (int i = 0; i < advanceCount; i++)
@@ -82,7 +75,7 @@ namespace Kooboo.Dom.CSS
         }
 
         /// <summary>
-        /// Lookup a char ahead, 
+        /// Lookup a char ahead,
         /// </summary>
         /// <param name="aheadcount">0=current char.</param>
         /// <returns></returns>
@@ -99,7 +92,7 @@ namespace Kooboo.Dom.CSS
         }
 
         /// <summary>
-        /// move the reading index location back one, in order for the next consumeNext to read current char. 
+        /// move the reading index location back one, in order for the next consumeNext to read current char.
         /// </summary>
         private void reConsume()
         {
@@ -128,14 +121,14 @@ namespace Kooboo.Dom.CSS
         /// <returns></returns>
         public char consumeNext()
         {
-            //TODO: handle  character inserted by JavaScript. 
+            //TODO: handle  character inserted by JavaScript.
             moveNext();
             return getCurrentChar();
         }
 
-     /// <summary>
+        /// <summary>
         /// 3.3. Preprocessing the input stream
-     /// </summary>
+        /// </summary>
         private char[] codePointSubstitutions(string input)
         {
             //The input stream consists of the code points pushed into it as the input byte stream is decoded.
@@ -143,24 +136,23 @@ namespace Kooboo.Dom.CSS
             //Replace any U+000D CARRIAGE RETURN (CR) code point, U+000C FORM FEED (FF) code point, or pairs of U+000D CARRIAGE RETURN (CR) followed by U+000A LINE FEED (LF) by a single U+000A LINE FEED (LF) code point.
             //Replace any U+0000 NULL code point with U+FFFD REPLACEMENT CHARACTER (�).
 
-            // not sure of the .NET implement, but it is safer and should be faster to keep all the position that needs to be replaced and replace at the end. 
+            // not sure of the .NET implement, but it is safer and should be faster to keep all the position that needs to be replaced and replace at the end.
 
             char[] chararray = input.ToCharArray();
 
             int charlen = chararray.Length;
-           
-            List<int> removeList = new List<int>();   // the replacement of CR + LF pair will be done by removing the CR position. 
-            bool lastwasCR = false;  // determine the last char was a CR, so that when next is LF, LF can be removed. 
+
+            List<int> removeList = new List<int>();   // the replacement of CR + LF pair will be done by removing the CR position.
+            bool lastwasCR = false;  // determine the last char was a CR, so that when next is LF, LF can be removed.
 
             for (int i = 0; i < charlen; i++)
             {
-
                 if (chararray[i] == '\u000D')
-                 {
-                     //U+000D CARRIAGE RETURN (CR)
-                     lastwasCR = true;
-                     chararray[i] = '\u000A';
-                 }
+                {
+                    //U+000D CARRIAGE RETURN (CR)
+                    lastwasCR = true;
+                    chararray[i] = '\u000A';
+                }
                 else if (chararray[i] == '\u000C')
                 {
                     //U+000C FORM FEED (FF) code point,
@@ -172,29 +164,25 @@ namespace Kooboo.Dom.CSS
                     chararray[i] = '\uFFFD';
                 }
 
-
                 if (lastwasCR)
                 {
                     if (chararray[i] == '\u000A')
                     {
-                        // mark this to be removed. 
+                        // mark this to be removed.
                         removeList.Add(i);
                     }
                     lastwasCR = false;
                 }
-
-
             }
 
             return chararray;
-
         }
 
-     /// <summary>
-     /// the reason to use this creatToken is insert other information like start index. 
-     /// </summary>
-     /// <param name="type"></param>
-     /// <returns></returns>
+        /// <summary>
+        /// the reason to use this creatToken is insert other information like start index.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         private cssToken createToken(enumTokenType type)
         {
             cssToken token = null;
@@ -203,99 +191,131 @@ namespace Kooboo.Dom.CSS
                 case enumTokenType.ident:
                     token = new ident_token();
                     break;
+
                 case enumTokenType.function:
                     token = new function_token();
                     break;
+
                 case enumTokenType.at_keyword:
                     token = new at_keyword_token();
                     break;
+
                 case enumTokenType.hash:
                     token = new hash_token();
                     break;
+
                 case enumTokenType.String:
                     token = new string_token();
                     break;
+
                 case enumTokenType.bad_string:
                     token = new bad_string_token();
                     break;
+
                 case enumTokenType.url:
                     token = new url_token();
                     break;
+
                 case enumTokenType.bad_url:
                     token = new bad_url_token();
                     break;
+
                 case enumTokenType.delim:
                     token = new delim_token();
                     break;
+
                 case enumTokenType.number:
                     token = new number_token();
                     break;
+
                 case enumTokenType.percentage:
                     token = new percentage_token();
                     break;
+
                 case enumTokenType.dimension:
                     token = new dimension_token();
                     break;
+
                 case enumTokenType.unicode_range:
                     token = new unicode_range_token();
                     break;
+
                 case enumTokenType.include_match:
                     token = new include_match_token();
                     break;
+
                 case enumTokenType.dash_match:
                     token = new dash_match_token();
                     break;
+
                 case enumTokenType.prefix_match:
                     token = new prefix_match_token();
                     break;
+
                 case enumTokenType.suffix_match:
                     token = new suffix_match_token();
                     break;
+
                 case enumTokenType.substring_match:
                     token = new substring_match_token();
                     break;
+
                 case enumTokenType.column:
                     token = new column_token();
                     break;
+
                 case enumTokenType.whitespace:
                     token = new whitespace_token();
                     break;
+
                 case enumTokenType.CDO:
                     token = new CDO_token();
                     break;
+
                 case enumTokenType.CDC:
                     token = new CDC_token();
                     break;
+
                 case enumTokenType.colon:
                     token = new colon_token();
                     break;
+
                 case enumTokenType.semicolon:
                     token = new semicolon_token();
                     break;
+
                 case enumTokenType.comma:
                     token = new comma_token();
                     break;
+
                 case enumTokenType.square_bracket_left:
                     token = new square_bracket_left_token();
                     break;
+
                 case enumTokenType.square_bracket_right:
                     token = new square_bracket_right_token();
                     break;
+
                 case enumTokenType.round_bracket_left:
                     token = new round_bracket_left_token();
                     break;
+
                 case enumTokenType.round_bracket_right:
                     token = new round_bracket_right_token();
                     break;
+
                 case enumTokenType.curly_bracket_left:
                     token = new curly_bracket_left_token();
                     break;
+
                 case enumTokenType.curly_bracket_right:
                     token = new curly_bracket_right_token();
                     break;
+
                 case enumTokenType.EOF:
                     token = new EOF_token();
                     break;
+
                 default:
                     break;
             }
@@ -311,13 +331,12 @@ namespace Kooboo.Dom.CSS
             return token;
         }
 
-     /// <summary>
+        /// <summary>
         /// 4.3.1. Consume a token. This section describes how to consume a token from a stream of code points. It will return a single token of any type
-     /// </summary>
-     /// <returns></returns>
+        /// </summary>
+        /// <returns></returns>
         private cssToken ConsumeToken()
         {
-
             //Consume comments.
             ConsumeComment();
 
@@ -334,7 +353,7 @@ namespace Kooboo.Dom.CSS
                 {
                     consumeIt(1);
                 }
-               
+
                 return emitToken(token);
             }
 
@@ -345,7 +364,7 @@ namespace Kooboo.Dom.CSS
                 return consumeStringToken('\u0022');
             }
 
-          //U+0023 NUMBER SIGN (#)
+            //U+0023 NUMBER SIGN (#)
             else if (current == '\u0023')
             {
                 //If the next input code point is a name code point or the next two input code points are a valid escape, then:
@@ -365,7 +384,6 @@ namespace Kooboo.Dom.CSS
                     hashtoken.value = ConsumeAName();
                     //Return the <hash-token>.
                     return emitToken(hashtoken);
-
                 }
                 else
                 {
@@ -375,7 +393,7 @@ namespace Kooboo.Dom.CSS
                     return emitToken(delimtoken);
                 }
             }
-             
+
             //U+0024 DOLLAR SIGN ($)
             else if (current == '\u0024')
             {
@@ -394,7 +412,6 @@ namespace Kooboo.Dom.CSS
                     return emitToken(delimtoken);
                 }
             }
-
 
             //U+0027 APOSTROPHE (‘)
             else if (current == '\u0027')
@@ -417,7 +434,6 @@ namespace Kooboo.Dom.CSS
                 //Return a <)-token>.
                 round_bracket_right_token brackettoken = createToken(enumTokenType.round_bracket_right) as round_bracket_right_token;
                 return emitToken(brackettoken);
-
             }
             //U+002A ASTERISK (*)
             else if (current == '\u002A')
@@ -435,7 +451,6 @@ namespace Kooboo.Dom.CSS
                     delim_token delimtoken = createToken(enumTokenType.delim) as delim_token;
                     delimtoken.value = current;
                     return emitToken(delimtoken);
-
                 }
             }
             //U+002B PLUS SIGN (+)
@@ -454,7 +469,6 @@ namespace Kooboo.Dom.CSS
                     token.value = current;
                     return emitToken(token);
                 }
-
             }
             //U+002C COMMA (,)
             else if (current == '\u002C')
@@ -483,10 +497,9 @@ namespace Kooboo.Dom.CSS
                 //Otherwise, if the next 2 input code points are U+002D HYPHEN-MINUS U+003E GREATER-THAN SIGN (->), consume them and return a <CDC-token>.
                 else if (LookupChar(1) == '\u002D' && LookupChar(2) == '\u003E')
                 {
-
                     CDC_token cdctoken = createToken(enumTokenType.CDC) as CDC_token;
-                     consumeIt(2);
-                     return cdctoken;
+                    consumeIt(2);
+                    return cdctoken;
                 }
                 else
                 {
@@ -495,7 +508,6 @@ namespace Kooboo.Dom.CSS
                     delimtoken.value = current;
                     return emitToken(delimtoken);
                 }
-
             }
 
             //U+002E FULL STOP (.)
@@ -511,8 +523,7 @@ namespace Kooboo.Dom.CSS
                 }
                 else
                 {
-
-                     //Otherwise, return a <delim-token> with its value set to the current input code point.
+                    //Otherwise, return a <delim-token> with its value set to the current input code point.
                     delim_token token = createToken(enumTokenType.delim) as delim_token;
                     token.value = current;
                     return emitToken(token);
@@ -540,7 +551,6 @@ namespace Kooboo.Dom.CSS
                     }
 
                     return ConsumeToken();
-
                 }
                 else
                 {
@@ -584,7 +594,6 @@ namespace Kooboo.Dom.CSS
                     delim_token token = createToken(enumTokenType.delim) as delim_token;
                     token.value = current;
                     return emitToken(token);
-
                 }
             }
             //U+0040 COMMERCIAL AT (@)
@@ -613,7 +622,6 @@ namespace Kooboo.Dom.CSS
                 square_bracket_left_token token = createToken(enumTokenType.square_bracket_left) as square_bracket_left_token;
 
                 return emitToken(token);
-
             }
 
             //U+005C REVERSE SOLIDUS (\)
@@ -623,8 +631,8 @@ namespace Kooboo.Dom.CSS
                 if (TokenizerHelper.isValidEscape(current, LookupChar(1)))
                 {
                     reConsume();
-                   cssToken token =  ConsumeAnIdentLike();
-                   return emitToken(token);
+                    cssToken token = ConsumeAnIdentLike();
+                    return emitToken(token);
                 }
                 else
                 {
@@ -642,7 +650,6 @@ namespace Kooboo.Dom.CSS
                 square_bracket_right_token token = createToken(enumTokenType.square_bracket_right) as square_bracket_right_token;
 
                 return emitToken(token);
-
             }
             //U+005E CIRCUMFLEX ACCENT (^)
             else if (current == '\u005E')
@@ -669,7 +676,6 @@ namespace Kooboo.Dom.CSS
                 curly_bracket_left_token token = createToken(enumTokenType.curly_bracket_left) as curly_bracket_left_token;
 
                 return emitToken(token);
-
             }
             //U+007D RIGHT CURLY BRACKET (})
             else if (current == '\u007D')
@@ -677,7 +683,7 @@ namespace Kooboo.Dom.CSS
                 //Return a <}-token>.
                 curly_bracket_right_token token = createToken(enumTokenType.curly_bracket_right) as curly_bracket_right_token;
                 return emitToken(token);
-                }
+            }
             //digit
             else if (current.isDigit())
             {
@@ -688,10 +694,9 @@ namespace Kooboo.Dom.CSS
             }
             //U+0055 LATIN CAPITAL LETTER U (U)
             //U+0075 LATIN SMALL LETTER U (u)
-             //NOTE: this part was removed from w3c on 2014-11-20
+            //NOTE: this part was removed from w3c on 2014-11-20
             //else if (current == '\u0055' || current == '\u0075')
             //{
-
             //    //If the next 2 input code points are U+002B PLUS SIGN (+) followed by a hex digit or U+003F QUESTION MARK (?), consume the next input code point. Note: don’t consume both of them. Consume a unicode-range token and return it.
             //    if (LookupChar(1) == '\u002B' && (LookupChar(2) == '\u003F' || LookupChar(2).isHexDigit()))
             //    {
@@ -721,7 +726,6 @@ namespace Kooboo.Dom.CSS
                 reConsume();
                 cssToken token = ConsumeAnIdentLike();
                 return emitToken(token);
-
             }
             //U+007C VERTICAL LINE (|)
             else if (current == '\u007C')
@@ -732,11 +736,10 @@ namespace Kooboo.Dom.CSS
                     dash_match_token token = createToken(enumTokenType.dash_match) as dash_match_token;
                     consumeIt(1);
                     return emitToken(token);
-
                 }
                 else if (LookupChar(1) == '\u0073')
                 {
-                   //Otherwise, if the next input code point is U+0073 VERTICAL LINE (|), consume it and return a <column-token>.
+                    //Otherwise, if the next input code point is U+0073 VERTICAL LINE (|), consume it and return a <column-token>.
                     column_token token = createToken(enumTokenType.column) as column_token;
                     consumeIt(1);
                     return emitToken(token);
@@ -748,7 +751,6 @@ namespace Kooboo.Dom.CSS
                     token.value = current;
                     return emitToken(token);
                 }
-
             }
             //U+007E TILDE (~)
             else if (current == '\u007E')
@@ -782,19 +784,16 @@ namespace Kooboo.Dom.CSS
                 token.value = current;
 
                 return emitToken(token);
-
             }
-      
         }
 
-
-     /// <summary>
+        /// <summary>
         /// 4.3.7. Consume an escaped code point.  It assumes that the U+005C REVERSE SOLIDUS (\) has already been consumed
-     /// </summary>
-     /// <returns></returns>
+        /// </summary>
+        /// <returns></returns>
         private char ConsumeEscapedCodePoint()
         {
-             //This section describes how to consume an escaped code point. It assumes that the U+005C REVERSE SOLIDUS (\) has already been consumed and that the next input code point has already been verified to not be a newline. It will return a code point.
+            //This section describes how to consume an escaped code point. It assumes that the U+005C REVERSE SOLIDUS (\) has already been consumed and that the next input code point has already been verified to not be a newline. It will return a code point.
 
             //Consume the next input code point.
             char next = consumeNext();
@@ -821,14 +820,14 @@ namespace Kooboo.Dom.CSS
                 consumeIt(maxi);
 
                 if (LookupChar(1).isWhiteSpace())
-                { 
+                {
                     //If the next input code point is whitespace, consume it as well
                     consumeIt(1);
                 }
                 int charcode = int.Parse(hex, System.Globalization.NumberStyles.HexNumber);
 
                 /// If this number is zero, or is for a surrogate code point, or is greater than the maximum allowed code point, return U+FFFD REPLACEMENT CHARACTER (�). Otherwise, return the code point with that value.
-                /// 
+                ///
 
                 if (charcode == 0)
                 {
@@ -845,7 +844,6 @@ namespace Kooboo.Dom.CSS
                 {
                     return hexchar;
                 }
-              
             }
             //EOF code point
             else if (next.isEOF())
@@ -859,20 +857,16 @@ namespace Kooboo.Dom.CSS
                 //Return the current input code point.
                 return next;
             }
-
         }
-
 
         private void onError(string errorMessage)
         {
-
         }
 
-
-     /// <summary>
+        /// <summary>
         /// 4.3.11. Consume a name. This section describes how to consume a name from a stream of code points. It returns a string containing the largest name that can be formed from adjacent code points in the stream, starting from the first.
-     /// </summary>
-     /// <returns></returns>
+        /// </summary>
+        /// <returns></returns>
         private string ConsumeAName()
         {
             //Note: This algorithm does not do the verification of the first few code points that are necessary to ensure the returned code points would constitute an <ident-token>. If that is the intended use, ensure that the stream starts with an identifier before calling this algorithm.
@@ -893,7 +887,7 @@ namespace Kooboo.Dom.CSS
                     //Append the code point to result.
                     result += current.ToString();
                 }
-                     //the stream starts with a valid escape
+                //the stream starts with a valid escape
                 else if (TokenizerHelper.isValidEscape(current, LookupChar(1)))
                 {
                     //Consume an escaped code point. Append the returned code point to result.
@@ -904,13 +898,12 @@ namespace Kooboo.Dom.CSS
                     //anything else
 
                     //Reconsume the current input code point. Return result.
-                    
+
                     this.reConsume();
 
                     return result;
                 }
             }
-
         }
 
         /// <summary>
@@ -939,7 +932,7 @@ namespace Kooboo.Dom.CSS
                     return emitToken(token);
                 }
 
-               //newline
+                //newline
                 else if (current.isNewLine())
                 {
                     //This is a parse error. Reconsume the current input code point, create a <bad-string-token>, and return it.
@@ -951,7 +944,6 @@ namespace Kooboo.Dom.CSS
                     return emitToken(badtoken);
                 }
 
-         
                 //U+005C REVERSE SOLIDUS (\)
                 else if (current == '\u005C')
                 {
@@ -961,15 +953,12 @@ namespace Kooboo.Dom.CSS
 
                     if (nextchar.isEOF())
                     {
-
-
                     }
                     else if (nextchar.isNewLine())
                     {
                         //Otherwise, if the next input code point is a newline,
                         // consume it.   //TODO: check the meaning of consume it (append the newline to string or not)
                         consumeIt(1);
-
                     }
                     else
                     {
@@ -979,8 +968,6 @@ namespace Kooboo.Dom.CSS
                             token.value += ConsumeEscapedCodePoint();
                         }
                     }
-
-
                 }
 
                 //anything else
@@ -989,10 +976,7 @@ namespace Kooboo.Dom.CSS
                 {
                     token.value += current.ToString();
                 }
-
             }
-
-
         }
 
         private cssToken consumeStringToken()
@@ -1010,8 +994,8 @@ namespace Kooboo.Dom.CSS
             //This section describes how to consume a numeric token from a stream of code points. It returns either a <number-token>, <percentage-token>, or <dimension-token>.
 
             ///WARNING, a  reconsume always occure before.
-            int currentindex = this._readIndex +1;
-            
+            int currentindex = this._readIndex + 1;
+
             //Consume a number.
             var number = ConsumeANumber();
 
@@ -1043,7 +1027,6 @@ namespace Kooboo.Dom.CSS
             }
             else
             {
-
                 //Otherwise, create a <number-token> with the same representation, value, and type flag as the returned number, and return it.
                 number_token token = createToken(enumTokenType.number) as number_token;
                 token.startIndex = currentindex;
@@ -1055,23 +1038,20 @@ namespace Kooboo.Dom.CSS
             }
         }
 
-
         /// <summary>
-        /// 4.3.12. Consume a number.   Ensure that the stream starts with a number before calling this algorithm. 
-     /// </summary>
-     /// <returns></returns>
+        /// 4.3.12. Consume a number.   Ensure that the stream starts with a number before calling this algorithm.
+        /// </summary>
+        /// <returns></returns>
         private Tuple<string, double, enumNumericType> ConsumeANumber()
         {
             //Note: This algorithm does not do the verification of the first few code points that are necessary to ensure a number can be obtained from the stream. Ensure that the stream starts with a number before calling this algorithm.
             //This section describes how to consume a number from a stream of code points. It returns a 3-tuple of a string representation, a numeric value, and a type flag which is either "integer" or "number".
-
 
             Tuple<string, double, enumNumericType> tuple;
 
             string repr = string.Empty;
 
             enumNumericType typeflag = enumNumericType.integer;
-          
 
             //Execute the following steps in order:
             // Initially set repr to the empty string and type to "integer".
@@ -1081,7 +1061,6 @@ namespace Kooboo.Dom.CSS
                 char next = consumeNext();
                 repr += next.ToString();
             }
-
 
             //While the next input code point is a digit, consume it and append it to repr.
             while (LookupChar(1).isDigit())
@@ -1109,13 +1088,11 @@ namespace Kooboo.Dom.CSS
                     char next = consumeNext();
                     repr += next.ToString();
                 }
-
             }
-                //If the next 2 or 3 input code points are U+0045 LATIN CAPITAL LETTER E (E) or U+0065 LATIN SMALL LETTER E (e), optionally followed by U+002D HYPHEN-MINUS (-) or U+002B PLUS SIGN (+), followed by a digit, then:
+            //If the next 2 or 3 input code points are U+0045 LATIN CAPITAL LETTER E (E) or U+0065 LATIN SMALL LETTER E (e), optionally followed by U+002D HYPHEN-MINUS (-) or U+002B PLUS SIGN (+), followed by a digit, then:
 
             if (LookupChar(1) == '\u0045' || LookupChar(1) == '\u0065')
             {
-
                 //Consume them.
                 //Append them to repr.
                 //Set type to "number".
@@ -1151,40 +1128,35 @@ namespace Kooboo.Dom.CSS
                         char next = consumeNext();
                         repr += next.ToString();
                     }
-
                 }
             }
-
 
             double value = TokenizerHelper.ConvertStringToNumber(repr);
 
             tuple = new Tuple<string, double, enumNumericType>(repr, value, typeflag);
 
-           //Convert repr to a number, and set the value to the returned value.
+            //Convert repr to a number, and set the value to the returned value.
             //Return a 3-tuple of repr, value, and type.
             return tuple;
-            
         }
 
-
-       /// <summary>
+        /// <summary>
         /// 4.3.3. Consume an ident-like token
-     /// </summary>
-     /// <returns></returns>
+        /// </summary>
+        /// <returns></returns>
         private cssToken ConsumeAnIdentLike()
         {
-
             //This section describes how to consume an ident-like token from a stream of code points. It returns an <ident-token>, <function-token>, <url-token>, or <bad-url-token>.
 
-            int startindex = this._readIndex +1;  // a reconsume always called before. 
+            int startindex = this._readIndex + 1;  // a reconsume always called before.
 
             //Consume a name.
             string name = ConsumeAName();
 
             //If the returned string’s value is an ASCII case-insensitive match for "url", and the next input code point is U+0028 LEFT PARENTHESIS ((), consume it.            Consume a url token, and return it.
 
-            // new as per 2014-11-20.             
-           //If the returned string’s value is an ASCII case-insensitive match for "url", and the next input code point is U+0028 LEFT PARENTHESIS ((), consume it. While the next two input code points are whitespace, consume the next input code point. If the next one or two input code points are U+0022 QUOTATION MARK ("), U+0027 APOSTROPHE ('), or whitespace followed by U+0022 QUOTATION MARK (") orU+0027 APOSTROPHE ('), then create a <function-token> with its value set to the returned string and return it. Otherwise, consume a url token, and return it.
+            // new as per 2014-11-20.
+            //If the returned string’s value is an ASCII case-insensitive match for "url", and the next input code point is U+0028 LEFT PARENTHESIS ((), consume it. While the next two input code points are whitespace, consume the next input code point. If the next one or two input code points are U+0022 QUOTATION MARK ("), U+0027 APOSTROPHE ('), or whitespace followed by U+0022 QUOTATION MARK (") orU+0027 APOSTROPHE ('), then create a <function-token> with its value set to the returned string and return it. Otherwise, consume a url token, and return it.
 
             if (name.ToLower() == "url" && LookupChar(1) == '\u0028')
             {
@@ -1231,10 +1203,10 @@ namespace Kooboo.Dom.CSS
             }
         }
 
-       /// <summary>
+        /// <summary>
         /// 4.3.5. Consume a url token
-     /// </summary>
-     /// <returns></returns>
+        /// </summary>
+        /// <returns></returns>
         private cssToken ConsumeAUrl()
         {
             //This section describes how to consume a url token from a stream of code points. It returns either a <url-token> or a <bad-url-token>.
@@ -1243,7 +1215,7 @@ namespace Kooboo.Dom.CSS
 
             //Execute the following steps in order:
 
-             //Initially create a <url-token> with its value set to the empty string.
+            //Initially create a <url-token> with its value set to the empty string.
             url_token token = createToken(enumTokenType.url) as url_token;
 
             //Consume as much whitespace as possible.
@@ -1272,20 +1244,17 @@ namespace Kooboo.Dom.CSS
                     bad_url_token urltoken = createToken(enumTokenType.bad_url) as bad_url_token;
                     return urltoken;
                 }
-                
+
                 string_token stringToken = returntoken as string_token;
 
                 //Set the <url-token>’s value to the returned <string-token>’s value.
                 token.value = stringToken.value;
-               
 
                 //Consume as much whitespace as possible.
                 while (LookupChar(1).isWhiteSpace())
                 {
                     consumeIt(1);
                 }
-
-
 
                 //If the next input code point is U+0029 RIGHT PARENTHESIS ()) or EOF, consume it and return the <url-token>; otherwise, consume the remnants of a bad url, create a <bad-url-token>, and return it.
                 if (LookupChar(1) == '\u0029' || LookupChar(1) == this.EOFChar)
@@ -1300,9 +1269,7 @@ namespace Kooboo.Dom.CSS
                     bad_url_token badtoken = createToken(enumTokenType.bad_url) as bad_url_token;
 
                     return badtoken;
-
                 }
-
             }
 
             char current;
@@ -1321,10 +1288,10 @@ namespace Kooboo.Dom.CSS
                 }
 
                 //whitespace
-                else   if (current.isWhiteSpace())
+                else if (current.isWhiteSpace())
                 {
                     //Consume as much whitespace as possible. If the next input code point is U+0029 RIGHT PARENTHESIS ()) or EOF, consume it and return the <url-token>; otherwise, consume the remnants of a bad url, create a <bad-url-token>, and return it.
-                    
+
                     while (LookupChar(1).isWhiteSpace())
                     {
                         consumeIt(1);
@@ -1341,20 +1308,17 @@ namespace Kooboo.Dom.CSS
                         bad_url_token urltoken = createToken(enumTokenType.bad_url) as bad_url_token;
                         return urltoken;
                     }
-
-
                 }
-                
+
                 //U+0022 QUOTATION MARK (")
                 //U+0027 APOSTROPHE (’)
                 //U+0028 LEFT PARENTHESIS (()
                 //non-printable code point
-                else  if (current == '\u0022' || current == '\u0027' || current == '\u0028' || current.isNonPrintableCodePoint())
+                else if (current == '\u0022' || current == '\u0027' || current == '\u0028' || current.isNonPrintableCodePoint())
                 {
                     //This is a parse error. Consume the remnants of a bad url, create a <bad-url-token>, and return it.
                     onError("bad url");
                     ConsumeTheRemnantOfBadUrl();
-
                 }
 
                 //U+005C REVERSE SOLIDUS
@@ -1373,26 +1337,22 @@ namespace Kooboo.Dom.CSS
                         bad_url_token badurltoken = createToken(enumTokenType.bad_url) as bad_url_token;
                         return badurltoken;
                     }
-
                 }
                 else
                 {
                     //anything else
                     //Append the current input code point to the <url-token>’s value.
                     token.value += current.ToString();
-
                 }
             }
         }
-
 
         /// <summary>
         /// 4.3.14. Consume the remnants of a bad url. its sole use is to consume enough of the input stream to reach a recovery point where normal tokenizing can resume.
         /// </summary>
         private void ConsumeTheRemnantOfBadUrl()
         {
-             //This section describes how to consume the remnants of a bad url from a stream of code points, "cleaning up" after the tokenizer realizes that it’s in the middle of a <bad-url-token>rather than a <url-token>. It returns nothing; its sole use is to consume enough of the input stream to reach a recovery point where normal tokenizing can resume.
-
+            //This section describes how to consume the remnants of a bad url from a stream of code points, "cleaning up" after the tokenizer realizes that it’s in the middle of a <bad-url-token>rather than a <url-token>. It returns nothing; its sole use is to consume enough of the input stream to reach a recovery point where normal tokenizing can resume.
 
             //Repeatedly consume the next input code point from the stream:
             char current;
@@ -1410,23 +1370,19 @@ namespace Kooboo.Dom.CSS
                 //the input stream starts with a valid escape
                 if (TokenizerHelper.isValidEscape(current, LookupChar(1)))
                 {
-                //Consume an escaped code point. This allows an escaped right parenthesis ("\)") to be encountered without ending the <bad-url-token>. This is otherwise identical to the "anything else" clause.
+                    //Consume an escaped code point. This allows an escaped right parenthesis ("\)") to be encountered without ending the <bad-url-token>. This is otherwise identical to the "anything else" clause.
                     ConsumeEscapedCodePoint();
                 }
 
                 //anything else
                 //Do nothing.
-
             }
-
-
-
         }
 
-       /// <summary>
+        /// <summary>
         /// 4.3.6. Consume a unicode-range token. This algorithm assumes that the initial "u+" has been consumed, and the next code point verified to be a hex digit or a "?".
-     /// </summary>
-     /// <returns></returns>
+        /// </summary>
+        /// <returns></returns>
         private cssToken ConsumeAUnicodeRange()
         {
             //This section describes how to consume a unicode-range token. It returns a <unicode-range-token>.
@@ -1468,7 +1424,6 @@ namespace Kooboo.Dom.CSS
             //If any U+003F QUESTION MARK (?) code points were consumed, then:
             if (QmarkCount > 0)
             {
-
                 //Interpret the consumed code points as a hexadecimal number, with the U+003F QUESTION MARK (?) code points replaced by U+0030 DIGIT ZERO (0) code points. This is the start of the range.
 
                 string start = strhex.Replace('\u003F', '\u0030');
@@ -1483,18 +1438,17 @@ namespace Kooboo.Dom.CSS
                 rangestart = Convert.ToInt32(start, 16);
                 rangeend = Convert.ToInt32(end, 16);
 
-                token.start =rangestart;
+                token.start = rangestart;
                 token.end = rangeend;
 
                 return token;
-
             }
             else
             {
                 //Otherwise, interpret the digits as a hexadecimal number. This is the start of the range.
                 rangestart = Convert.ToInt32(strhex, 16);
             }
-            
+
             //If the next 2 input code point are U+002D HYPHEN-MINUS (-) followed by a hex digit, then:
 
             if (LookupChar(1) == '\u002D' && LookupChar(2).isHexDigit())
@@ -1517,7 +1471,6 @@ namespace Kooboo.Dom.CSS
                 }
 
                 rangeend = Convert.ToInt32(endhex, 16);
-
             }
             else
             {
@@ -1525,22 +1478,19 @@ namespace Kooboo.Dom.CSS
                 rangeend = rangestart;
             }
 
-            
             //Return the <unicode-range-token> with the above start and end.
-            
+
             unicode_range_token unicodetoken = createToken(enumTokenType.unicode_range) as unicode_range_token;
 
             unicodetoken.start = rangestart;
             unicodetoken.end = rangeend;
 
             return unicodetoken;
-
         }
 
-
-     /// <summary>
+        /// <summary>
         /// 4.3.2. Consume comments
-     /// </summary>
+        /// </summary>
         private void ConsumeComment()
         {
             //This section describes how to consume comments from a stream of code points. It returns nothing.
@@ -1563,14 +1513,11 @@ namespace Kooboo.Dom.CSS
                         break;
                     }
                 }
-
             }
 
             //If the preceding paragraph ended by consuming an EOF code point, this is a parse error.
 
             //Return nothing.
-
-
         }
     }
 }

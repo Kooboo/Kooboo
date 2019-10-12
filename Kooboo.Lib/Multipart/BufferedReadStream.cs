@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
@@ -151,6 +151,7 @@ namespace Microsoft.AspNet.WebUtilities
         {
             _inner.Write(buffer, offset, count);
         }
+
 #if NET451
         public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
@@ -162,6 +163,7 @@ namespace Microsoft.AspNet.WebUtilities
             _inner.EndWrite(asyncResult);
         }
 #endif
+
         public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             return _inner.WriteAsync(buffer, offset, count, cancellationToken);
@@ -200,6 +202,7 @@ namespace Microsoft.AspNet.WebUtilities
 
             return await _inner.ReadAsync(buffer, offset, count, cancellationToken);
         }
+
 #if NET451
         // We only anticipate using ReadAsync
         public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
@@ -236,6 +239,7 @@ namespace Microsoft.AspNet.WebUtilities
             return _inner.EndRead(asyncResult);
         }
 #endif
+
         public bool EnsureBuffered()
         {
             if (_bufferCount > 0)

@@ -1,23 +1,23 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Interface;
+using Kooboo.Extensions;
+using Kooboo.Sites.DataSources;
 using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
-using Kooboo.Extensions;
-using Kooboo.Sites.DataSources;
 
 namespace Kooboo.Sites.Cache
 {
     public static class CompileMethodCache
-    { 
-        private static object _lock = new object(); 
+    {
+        private static object _lock = new object();
 
         public static Dictionary<Guid, DataMethodCompiled> MethodCache = new Dictionary<Guid, DataMethodCompiled>();
 
         public static DataMethodCompiled GetGlobalCompiledMethod(Guid MethodId)
         {
-            lock(_lock)
+            lock (_lock)
             {
                 DataMethodCompiled compiled;
                 if (MethodCache.TryGetValue(MethodId, out compiled))
@@ -33,20 +33,20 @@ namespace Kooboo.Sites.Cache
 
         public static DataMethodCompiled GetCompiledMethod(SiteDb SiteDb, Guid MethodId)
         {
-            Guid id = GetId(SiteDb, MethodId); 
-            lock(_lock)
-            { 
+            Guid id = GetId(SiteDb, MethodId);
+            lock (_lock)
+            {
                 DataMethodCompiled compiled;
                 if (MethodCache.TryGetValue(id, out compiled))
                 {
                     return compiled;
                 }
 
-                // Global does not have site id. 
+                // Global does not have site id.
 
                 if (MethodCache.TryGetValue(MethodId, out compiled))
                 {
-                    return compiled; 
+                    return compiled;
                 }
 
                 IDataMethodSetting DataMethod = SiteDb.DataMethodSettings.Get(MethodId);
@@ -63,16 +63,16 @@ namespace Kooboo.Sites.Cache
                     compiled = new DataMethodCompiled(DataMethod);
                     MethodCache[MethodId] = compiled;
                     return compiled;
-                } 
-            } 
+                }
+            }
             return null;
         }
 
         public static void Remove(SiteDb SiteDb, Guid MethodId)
         {
-            Guid id = GetId(SiteDb, MethodId); 
+            Guid id = GetId(SiteDb, MethodId);
 
-            lock(_lock)
+            lock (_lock)
             {
                 if (MethodCache.ContainsKey(id))
                 {
@@ -83,9 +83,8 @@ namespace Kooboo.Sites.Cache
 
         private static Guid GetId(SiteDb sitedb, Guid MethodId)
         {
-            string unique =  sitedb.WebSite.Id.ToString() + MethodId.ToString();
+            string unique = sitedb.WebSite.Id.ToString() + MethodId.ToString();
             return unique.ToHashGuid();
         }
-
     }
 }

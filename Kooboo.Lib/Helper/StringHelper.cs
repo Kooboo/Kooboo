@@ -1,17 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Helper
 {
     public static class StringHelper
     {
-
         public static string GetSummary(string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -44,7 +42,7 @@ namespace Kooboo.Lib.Helper
         public static string GetUniqueBoundary()
         {
             return IDHelper.NewLongId().ToString();
-        }             
+        }
 
         public static string ToValidFileName(string input)
         {
@@ -72,7 +70,6 @@ namespace Kooboo.Lib.Helper
             return string.Empty;
         }
 
-
         public static string ToValidUserNames(string input)
         {
             StringBuilder sb = new StringBuilder();
@@ -80,22 +77,21 @@ namespace Kooboo.Lib.Helper
             for (int i = 0; i < input.Length; i++)
             {
                 var current = input[i];
-                 
+
                 if (Helper.CharHelper.isAlphanumeric(current) || current == '_')
                 {
-                    sb.Append(current); 
+                    sb.Append(current);
                 }
                 else
                 {
-                  //sb.Append('~'); 
-                } 
-            }  
-            return sb.ToString(); 
+                    //sb.Append('~');
+                }
+            }
+            return sb.ToString();
         }
 
-
         /// <summary>
-        ///  check whether this is a string value or not. 
+        ///  check whether this is a string value or not.
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -139,10 +135,11 @@ namespace Kooboo.Lib.Helper
         }
 
         private static char[] _space;
+
         private static char[] SpaceChars
         {
             /// The space characters, for the purposes of this specification, are
-            /// U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), and "CR" (U+000D). 
+            /// U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), and "CR" (U+000D).
             get
             {
                 if (_space == null)
@@ -158,7 +155,7 @@ namespace Kooboo.Lib.Helper
                 return _space;
             }
         }
-         
+
         /// <summary>
         /// The space characters, for the purposes of this specification, are
         /// U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), and "CR" (U+000D).
@@ -169,7 +166,6 @@ namespace Kooboo.Lib.Helper
         {
             return (chr == '\u0020' || chr == '\u0009' || chr == '\u000a' || chr == '\u000c' || chr == '\u000d');
         }
-
 
         public static string SementicSubString(string input, int start, int count)
         {
@@ -183,13 +179,13 @@ namespace Kooboo.Lib.Helper
             var currentchar = input[start];
             while (isSpaceCharacters(currentchar))
             {
-                start = start + 1; 
-               
-                if (start > len -1)
+                start = start + 1;
+
+                if (start > len - 1)
                 {
-                    return null; 
+                    return null;
                 }
-                currentchar = input[start]; 
+                currentchar = input[start];
             }
 
             if (start + count >= len - 1)
@@ -198,32 +194,28 @@ namespace Kooboo.Lib.Helper
             }
 
             int i = start + count;
-             
-             while(i< len && IsNonBreakChar(input[i]))
+
+            while (i < len && IsNonBreakChar(input[i]))
             {
-                i += 1; 
+                i += 1;
             }
 
-            return input.Substring(start, i - start);  
+            return input.Substring(start, i - start);
         }
 
         private static bool IsNonBreakChar(char input)
-        { 
+        {
             if (input < 128)
             {
-                return  CharHelper.isAlphanumeric(input); 
+                return CharHelper.isAlphanumeric(input);
             }
 
-            return true;  
+            return true;
         }
-
 
         public static string StripHTML(string input)
         {
             return Regex.Replace(input, "<.*?>", String.Empty);
         }
-
-
-
     }
 }

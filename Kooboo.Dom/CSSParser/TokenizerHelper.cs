@@ -1,16 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom.CSS
 {
     public static class TokenizerHelper
     {
-
         /// <summary>
         /// 4.3.8. Check if two code points are a valid escape. the two code points in question are the current input code point and the next input code point, in that order.
         /// </summary>
@@ -39,7 +34,6 @@ namespace Kooboo.Dom.CSS
                 //Otherwise, return true.
                 return true;
             }
-
         }
 
         /// <summary>
@@ -59,7 +53,6 @@ namespace Kooboo.Dom.CSS
             {
                 //If the second code point is a name-start code point or the second and third code points are a valid escape, return true. Otherwise, return false.
                 return (two.isNameStartCodePoint() || isValidEscape(two, three));
-
             }
 
             //name-start code point
@@ -77,14 +70,13 @@ namespace Kooboo.Dom.CSS
             }
 
             return false;
-
         }
 
         /// <summary>
         /// 4.3.10. Check if three code points would start a number. the three code points in question are the current input code point and the next two input code points, in that order.
         /// </summary>
         /// <returns></returns>
-        public static bool isStartWithNumber(char one, char two,  char three)
+        public static bool isStartWithNumber(char one, char two, char three)
         {
             //This section describes how to check if three code points would start a number. The algorithm described here can be called explicitly with three code points, or can be called with the input stream itself. In the latter case, the three code points in question are the current input code point and the next two input code points, in that order.
 
@@ -103,7 +95,6 @@ namespace Kooboo.Dom.CSS
                 }
                 else
                 {
-
                     //Otherwise, if the second code point is a U+002E FULL STOP (.) and the third code point is a digit, return true.
                     if (two == '\u002E' && three.isDigit())
                     {
@@ -135,9 +126,7 @@ namespace Kooboo.Dom.CSS
                 //Return false.
                 return false;
             }
-
         }
-
 
         /// <summary>
         ///  4.3.13. Convert a string to a number. This section describes how to convert a string to a number. It returns a number.Ensure that the string contains only a valid CSS number before calling this algorithm.
@@ -153,7 +142,6 @@ namespace Kooboo.Dom.CSS
             int t = 1;
             int e = 0;    // default 0
 
-
             int index = 0;
             int len = input.Length;
 
@@ -168,7 +156,7 @@ namespace Kooboo.Dom.CSS
 
             //A sign: a single U+002B PLUS SIGN (+) or U+002D HYPHEN-MINUS (-), or the empty string. Let s be the number -1 if the sign is U+002D HYPHEN-MINUS (-); otherwise, let s be the number 1.
 
-         if (input[index] == '\u002B' || input[index] == '\u002D')
+            if (input[index] == '\u002B' || input[index] == '\u002D')
             {
                 if (input[index] == '\u002D')
                 {
@@ -183,9 +171,8 @@ namespace Kooboo.Dom.CSS
                 goto processdigit;
             }
 
-
             //An integer part: zero or more digits. If there is at least one digit, let i be the number formed by interpreting the digits as a base-10 integer; otherwise, let i be the number 0.
-            
+
             string intpart = string.Empty;
 
             while (input[index].isDigit())
@@ -195,7 +182,6 @@ namespace Kooboo.Dom.CSS
 
                 if (index >= len)
                 {
-
                     if (intpart.Length > 0)
                     {
                         i = Convert.ToInt64(intpart, 10);
@@ -209,7 +195,6 @@ namespace Kooboo.Dom.CSS
             {
                 i = Convert.ToInt64(intpart, 10);
             }
-
 
             //A decimal point: a single U+002E FULL STOP (.), or the empty string.
 
@@ -235,7 +220,6 @@ namespace Kooboo.Dom.CSS
                 index += 1;
                 if (index >= len)
                 {
-
                     d = fintpart.Length;
 
                     if (d > 0)
@@ -245,13 +229,12 @@ namespace Kooboo.Dom.CSS
                     goto processdigit;
                 }
             }
-             d = fintpart.Length;
+            d = fintpart.Length;
 
             if (d > 0)
             {
                 f = Convert.ToInt64(fintpart, 10);
             }
-
 
             //An exponent indicator: a single U+0045 LATIN CAPITAL LETTER E (E) or U+0065 LATIN SMALL LETTER E (e), or the empty string.
             string ExponentIndicator = string.Empty;
@@ -268,7 +251,7 @@ namespace Kooboo.Dom.CSS
 
             //An exponent sign: a single U+002B PLUS SIGN (+) or U+002D HYPHEN-MINUS (-), or the empty string. Let t be the number -1 if the sign is U+002D HYPHEN-MINUS (-); otherwise, let t be the number 1.
 
-             if (input[index] == '\u002B' || input[index] == '\u002D')
+            if (input[index] == '\u002B' || input[index] == '\u002D')
             {
                 if (input[index] == '\u002D')
                 {
@@ -283,9 +266,7 @@ namespace Kooboo.Dom.CSS
                 goto processdigit;
             }
 
-
             //An exponent: zero or more digits. If there is at least one digit, let e be the number formed by interpreting the digits as a base-10 integer; otherwise, let e be the number 0.
-
 
             string eintpart = string.Empty;
 
@@ -310,16 +291,12 @@ namespace Kooboo.Dom.CSS
                 e = Convert.ToInt32(eintpart, 10);
             }
 
-
-
         processdigit:
             //Return the number s·(i + f·10-d)·10te.
-          
-           double middle = i + f * Math.Pow(10, -1 * d);
-        double last = Math.Pow(10, t * e);
-        return s * middle * last;
 
+            double middle = i + f * Math.Pow(10, -1 * d);
+            double last = Math.Pow(10, t * e);
+            return s * middle * last;
         }
-
     }
 }

@@ -2,9 +2,6 @@
 using Kooboo.Api.ApiResponse;
 using Kooboo.Api.Methods;
 using Kooboo.Web.Payment;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Web.Api.Implementation.Commerce
 {
@@ -70,21 +67,18 @@ namespace Kooboo.Web.Api.Implementation.Commerce
                         {
                             return result.CallbackResponse;
                         }
-
                         else
-                        { 
+                        {
                             var response = new PlainResponse();
                             response.ContentType = "text/html";
-                            response.Content = ""; 
-                            return response; 
+                            response.Content = "";
+                            return response;
                         }
-
                     }
                 }
             }
 
             return null;
         }
-
     }
 }

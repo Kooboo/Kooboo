@@ -17,7 +17,7 @@
 
             return new Color(
                 Operate(color1.R, color2.R),
-                Operate(color1.G, color2.G), 
+                Operate(color1.G, color2.G),
                 Operate(color1.B, color2.B));
         }
 

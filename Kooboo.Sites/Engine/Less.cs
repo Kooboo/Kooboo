@@ -1,7 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Context;
 using dotless.Core;
+using Kooboo.Data.Context;
 
 namespace Kooboo.Sites.Engine
 {
@@ -9,7 +9,7 @@ namespace Kooboo.Sites.Engine
     {
         public string Name { get { return "less"; } }
 
-        public bool KeepTag { get { return true;  } }
+        public bool KeepTag { get { return true; } }
 
         public string Extension => "less";
 
@@ -17,7 +17,7 @@ namespace Kooboo.Sites.Engine
 
         public bool IsStyle => true;
 
-        // Less Css..   
+        // Less Css..
         public string Execute(RenderContext context, string input)
         {
             return LessEngine.Instance.Parse(input);

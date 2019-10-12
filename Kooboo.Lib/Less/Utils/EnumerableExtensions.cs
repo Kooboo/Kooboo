@@ -24,7 +24,7 @@ namespace dotless.Core.Utils
         /// - The subsequence element
         /// - Index of the parent sequence element within the parent sequence
         /// - The parent sequence element
-        /// 
+        ///
         /// This allows for equality comparisons where the conditions are different based on the position of each element.
         /// </summary>
         internal static bool IsSubsequenceOf<TElement>(

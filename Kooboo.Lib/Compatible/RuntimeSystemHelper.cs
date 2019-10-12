@@ -1,8 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Lib.Helper
 {
@@ -15,7 +12,6 @@ namespace Kooboo.Lib.Helper
 #else
              return false;
 #endif
-
         }
 
         public static bool IsWindow()
@@ -25,7 +21,6 @@ namespace Kooboo.Lib.Helper
 #else
             return true;
 #endif
-
         }
     }
 }

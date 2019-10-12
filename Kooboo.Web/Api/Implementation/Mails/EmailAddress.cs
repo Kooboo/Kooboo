@@ -1,13 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Api;
+using Kooboo.Data.Models;
+using Kooboo.Mail;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
-using Kooboo.Mail;
-using Kooboo.Data.Models;
-using Kooboo.Api;
-using Newtonsoft.Json.Converters;
 
 namespace Kooboo.Web.Api.Implementation.Mails
 {
@@ -51,14 +51,14 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(apiCall.Context))
             {
-                return EmailForwardManager.Get<List<AddressItemModel>>(this.ModelName, nameof(EmailAddressApi.List),apiCall.Context.User);
+                return EmailForwardManager.Get<List<AddressItemModel>>(this.ModelName, nameof(EmailAddressApi.List), apiCall.Context.User);
             }
             var user = apiCall.Context.User;
             var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(user.CurrentOrgId);
 
             var addlist = orgdb.EmailAddress.Query().Where(o => o.UserId == user.Id).SelectAll();
 
-            return addlist.Select(o => AddressItemModel.FromAddress(o)).OrderBy(o=>o.Address).ToList();
+            return addlist.Select(o => AddressItemModel.FromAddress(o)).OrderBy(o => o.Address).ToList();
         }
 
         [Kooboo.Attributes.RequireModel(typeof(AddressModel))]
@@ -79,7 +79,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
         {
             if (EmailForwardManager.RequireForward(apiCall.Context))
             {
-                var json= Kooboo.Lib.Helper.JsonHelper.Serialize(apiCall.Context.Request.Model);
+                var json = Kooboo.Lib.Helper.JsonHelper.Serialize(apiCall.Context.Request.Model);
                 return EmailForwardManager.Post<object>(this.ModelName, nameof(EmailAddressApi.Post), apiCall.Context.User, json, null);
             }
 
@@ -133,7 +133,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("ids", idsJson);
-                EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailAddressApi.Deletes), apiCall.Context.User,dic);
+                EmailForwardManager.Get<bool>(this.ModelName, nameof(EmailAddressApi.Deletes), apiCall.Context.User, dic);
                 return;
             }
 
@@ -152,13 +152,13 @@ namespace Kooboo.Web.Api.Implementation.Mails
             {
                 var dic = new Dictionary<string, string>();
                 dic.Add("addressId", call.GetValue("addressId"));
-               return EmailForwardManager.Get<List<string>>(this.ModelName, nameof(EmailAddressApi.MemberList), call.Context.User, dic);
+                return EmailForwardManager.Get<List<string>>(this.ModelName, nameof(EmailAddressApi.MemberList), call.Context.User, dic);
             }
 
             int addressid = call.GetValue<int>("addressId");
             var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(call.Context.User.CurrentOrgId);
 
-            return orgdb.EmailAddress.GetMembers(addressid).OrderBy(o => o).ToList(); 
+            return orgdb.EmailAddress.GetMembers(addressid).OrderBy(o => o).ToList();
         }
 
         [Kooboo.Attributes.RequireModel(typeof(ListMemberModel))]
@@ -172,12 +172,12 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 return EmailForwardManager.Post<object>(this.ModelName, nameof(EmailAddressApi.MemberPost), call.Context.User, json, dic);
             }
 
-            int addressid = call.GetValue<int>("addressId"); 
+            int addressid = call.GetValue<int>("addressId");
             var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(call.Context.User.CurrentOrgId);
 
             var member = call.Context.Request.Model as ListMemberModel;
             member.MemberAddress = member.MemberAddress.ToLower();
-              
+
             var address = orgdb.EmailAddress.Get(addressid);
             if (Lib.Helper.StringHelper.IsSameValue(member.MemberAddress, address.Address))
             {
@@ -202,7 +202,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
             int addressid = call.GetValue<int>("addressId");
             var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(call.Context.User.CurrentOrgId);
-             
+
             var memberAddress = call.GetValue("memberAddress");
             orgdb.EmailAddress.DeleteMember(addressid, memberAddress);
         }
@@ -219,20 +219,19 @@ namespace Kooboo.Web.Api.Implementation.Mails
             }
 
             int id = call.GetValue<int>("id");
-            string add = call.GetValue("forwardAddress"); 
-             
-            if (id !=0 && !string.IsNullOrEmpty(add))
+            string add = call.GetValue("forwardAddress");
+
+            if (id != 0 && !string.IsNullOrEmpty(add))
             {
                 var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(call.Context.User.CurrentOrgId);
-                var email = orgdb.EmailAddress.Get(id); 
-                if (email !=null && email.AddressType == EmailAddressType.Forward)
+                var email = orgdb.EmailAddress.Get(id);
+                if (email != null && email.AddressType == EmailAddressType.Forward)
                 {
                     email.ForwardAddress = add;
-                    orgdb.EmailAddress.AddOrUpdate(email); 
+                    orgdb.EmailAddress.AddOrUpdate(email);
                 }
             }
-                
-          }
+        }
 
         public class ListMemberModel
         {

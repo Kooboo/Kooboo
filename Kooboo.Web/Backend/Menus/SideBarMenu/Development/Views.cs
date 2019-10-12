@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
 using Kooboo.Data.Language;
+using System.Collections.Generic;
 
 namespace Kooboo.Web.Menus.SideBarMenu.Development
 {
     public class Views : ISideBarMenu
     {
-        public SideBarSection Parent =>  SideBarSection.Development;
+        public SideBarSection Parent => SideBarSection.Development;
 
         public string Name => "Views";
 
-        public string Icon =>"";
+        public string Icon => "";
 
         public string Url => "Development/Views";
 
@@ -26,6 +24,5 @@ namespace Kooboo.Web.Menus.SideBarMenu.Development
         }
     }
 }
-
 
 //  new MenuItem { Name = Hardcoded.GetValue("Views", context), Url = AdminUrl("Development/Views", siteDb), ActionRights = Sites.Authorization.Actions.Developments.Views },

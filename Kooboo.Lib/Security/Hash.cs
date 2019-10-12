@@ -1,16 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Lib.Security
 {
-  public static  class Hash
-    {              
+    public static class Hash
+    {
         public static Guid ComputeGuidIgnoreCase(string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -23,18 +19,17 @@ namespace Kooboo.Lib.Security
 
             // create the md5 hash
             MD5 md5Hasher = MD5.Create();
-            byte[] data = md5Hasher.ComputeHash(bytes); 
+            byte[] data = md5Hasher.ComputeHash(bytes);
             // convert the hash to a Guid
             return new Guid(data);
         }
-
 
         public static Guid ComputeHashGuid(string input)
         {
             if (string.IsNullOrEmpty(input))
             {
                 input = string.Empty;
-            }     
+            }
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(input);
 
             // create the md5 hash
@@ -44,12 +39,11 @@ namespace Kooboo.Lib.Security
             return new Guid(data);
         }
 
-
         public static Guid ComputeGuid(byte[] bytes)
-        { 
-            if (bytes ==null|| bytes.Length ==0)
+        {
+            if (bytes == null || bytes.Length == 0)
             {
-                return default(Guid); 
+                return default(Guid);
             }
             MD5 md5Hasher = MD5.Create();
             byte[] data = md5Hasher.ComputeHash(bytes);
@@ -63,9 +57,8 @@ namespace Kooboo.Lib.Security
             {
                 s = " ";
             }
-            s = s.ToLower(); 
-            return ComputeIntCaseSensitive(s); 
-           
+            s = s.ToLower();
+            return ComputeIntCaseSensitive(s);
         }
 
         public static int ComputeIntCaseSensitive(string s)
@@ -73,7 +66,7 @@ namespace Kooboo.Lib.Security
             if (string.IsNullOrEmpty(s))
             {
                 s = " ";
-            } 
+            }
             var chars = s.ToCharArray();
             var lastCharInd = chars.Length - 1;
             var num1 = 0x15051505;
@@ -91,6 +84,5 @@ namespace Kooboo.Lib.Security
             }
             return num1 + num2 * 0x5d588b65;
         }
-        
     }
 }

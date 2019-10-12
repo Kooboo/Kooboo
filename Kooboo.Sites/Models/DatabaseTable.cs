@@ -1,13 +1,9 @@
-﻿using Kooboo.Data.Interface;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Kooboo.Sites.Models
 {
     public class DatabaseTable : CoreObject
     {
-
         public DatabaseTable()
         {
             this.ConstType = ConstObjectType.DatabaseTable;
@@ -24,16 +20,14 @@ namespace Kooboo.Sites.Models
                     _columns = new List<DbTableColumn>();
                 }
 
-                return _columns; 
+                return _columns;
             }
             set
             {
                 _columns = value;
             }
         }
-
     }
-
 
     public class DbTableColumn
     {
@@ -52,8 +46,8 @@ namespace Kooboo.Sites.Models
 
         public bool IsIndex { get; set; }
 
-        // when this is set to an value non defined as "_id", it means the _id field will be hash from this value. 
-        // Then there will be at least two index instantly... Fine... 
+        // when this is set to an value non defined as "_id", it means the _id field will be hash from this value.
+        // Then there will be at least two index instantly... Fine...
         public bool IsPrimaryKey { get; set; }
 
         public bool IsUnique { get; set; }
@@ -66,6 +60,4 @@ namespace Kooboo.Sites.Models
 
         public int Length { get; set; }
     }
-
-
 }

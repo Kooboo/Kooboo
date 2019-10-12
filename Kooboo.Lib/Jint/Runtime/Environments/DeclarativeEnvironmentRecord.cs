@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Jint.Native;
+using System.Collections.Generic;
 using System.Linq;
-using Jint.Native;
 
 namespace Jint.Runtime.Environments
 {
@@ -26,11 +26,11 @@ namespace Jint.Runtime.Environments
         public override void CreateMutableBinding(string name, bool canBeDeleted = false)
         {
             _bindings.Add(name, new Binding
-                {
-                    Value = Undefined.Instance, 
-                    CanBeDeleted =  canBeDeleted,
-                    Mutable = true
-                });
+            {
+                Value = Undefined.Instance,
+                CanBeDeleted = canBeDeleted,
+                Mutable = true
+            });
         }
 
         public override void SetMutableBinding(string name, JsValue value, bool strict)
@@ -80,7 +80,7 @@ namespace Jint.Runtime.Environments
             }
 
             _bindings.Remove(name);
-            
+
             return true;
         }
 
@@ -96,11 +96,11 @@ namespace Jint.Runtime.Environments
         public void CreateImmutableBinding(string name)
         {
             _bindings.Add(name, new Binding
-                {
-                    Value = Undefined.Instance,
-                    Mutable = false,
-                    CanBeDeleted = false
-                });
+            {
+                Value = Undefined.Instance,
+                Mutable = false,
+                CanBeDeleted = false
+            });
         }
 
         /// <summary>

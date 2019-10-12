@@ -1,10 +1,10 @@
 ﻿namespace dotless.Core.Parser.Tree
 {
-    using System.Globalization;
     using Infrastructure;
     using Infrastructure.Nodes;
-    using Utils;
     using System;
+    using System.Globalization;
+    using Utils;
 
     public class Number : Node, IOperable, IComparable
     {
@@ -33,7 +33,7 @@
         /// </summary>
         private string FormatValue()
         {
-            return Value.ToString("0." +new string('#', GetPrecision()), CultureInfo.InvariantCulture);
+            return Value.ToString("0." + new string('#', GetPrecision()), CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -56,7 +56,6 @@
                 .Append(Unit);
         }
 
-
         // In an operation between two Dimensions,
         // we default to the first Number's unit,
         // so `1px + 2em` will yield `3px`.
@@ -67,14 +66,13 @@
         {
             Guard.ExpectNode<Number>(other, "right hand side of " + op.Operator, op.Location);
 
-            var dim = (Number) other;
+            var dim = (Number)other;
 
             var unit = Unit;
             var otherUnit = dim.Unit;
 
             if (string.IsNullOrEmpty(unit))
                 unit = otherUnit;
-
             else if (!string.IsNullOrEmpty(otherUnit))
             {
                 // convert units
@@ -86,7 +84,7 @@
 
         public Color ToColor()
         {
-            return new Color(new[] {Value, Value, Value});
+            return new Color(new[] { Value, Value, Value });
         }
 
         public double ToNumber()
@@ -96,7 +94,7 @@
 
         public double ToNumber(double max)
         {
-            return Unit == "%" ? Value*max/100d : Value;
+            return Unit == "%" ? Value * max / 100d : Value;
         }
 
         public static Number operator -(Number n)

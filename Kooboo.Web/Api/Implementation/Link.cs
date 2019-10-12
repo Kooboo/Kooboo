@@ -1,14 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Service;
 using Kooboo.Web.ViewModel;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -26,7 +23,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -34,14 +31,14 @@ namespace Kooboo.Web.Api.Implementation
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
-        public  LinkViewModel All(ApiCall call)
+        public LinkViewModel All(ApiCall call)
         {
-            LinkViewModel model = new LinkViewModel(); 
-             
+            LinkViewModel model = new LinkViewModel();
+
             var allpageroutes = call.WebSite.SiteDb().Routes.GetByType(ConstObjectType.Page);
 
             foreach (var item in allpageroutes)
@@ -53,7 +50,6 @@ namespace Kooboo.Web.Api.Implementation
                     linkitem.Parameters = item.Parameters.Keys.ToList();
                     model.Pages.Add(linkitem);
                 }
-
             }
 
             var allviews = call.WebSite.SiteDb().Views.All();
@@ -62,12 +58,11 @@ namespace Kooboo.Web.Api.Implementation
             {
                 LinkItem linkitem = new LinkItem();
                 linkitem.Url = ObjectService.GetObjectRelativeUrl(call.WebSite.SiteDb(), item);
-             //  linkitem.Parameters = Sites.Routing.PageRoute.GetViewParameters(call.SiteDb, item.Id);
-                model.Views.Add(linkitem);  
+                //  linkitem.Parameters = Sites.Routing.PageRoute.GetViewParameters(call.SiteDb, item.Id);
+                model.Views.Add(linkitem);
             }
 
-            return model;    
-
+            return model;
         }
     }
 }

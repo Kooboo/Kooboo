@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Jint.Native;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
-using Jint.Native;
-using System.Collections.Generic;
 using System.Reflection;
 
 namespace Jint.Runtime.Interop
@@ -169,7 +169,6 @@ namespace Jint.Runtime.Interop
                         return Expression.Lambda(type, dynamicExpression, new ReadOnlyCollection<ParameterExpression>(@params)).Compile();
                     }
                 }
-
             }
 
             if (type.IsArray)

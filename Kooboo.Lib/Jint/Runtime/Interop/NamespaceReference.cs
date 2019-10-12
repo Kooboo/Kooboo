@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Jint.Native;
+using Jint.Native.Object;
+using Jint.Runtime.Descriptors;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
-using Jint.Native;
-using Jint.Native.Object;
-using Jint.Runtime.Descriptors;
 
 namespace Jint.Runtime.Interop
 {
@@ -130,14 +130,14 @@ namespace Jint.Runtime.Interop
                 var trimPath = path.Substring(0, lastPeriodPos);
                 type = GetType(assembly, trimPath);
                 if (type != null)
-                  foreach (Type nType in GetAllNestedTypes(type))
-                  {
-                    if (nType.FullName.Replace("+", ".").Equals(path.Replace("+", ".")))
+                    foreach (Type nType in GetAllNestedTypes(type))
                     {
-                      Engine.TypeCache.Add(path.Replace("+", "."), nType);
-                      return TypeReference.CreateTypeReference(Engine, nType);
+                        if (nType.FullName.Replace("+", ".").Equals(path.Replace("+", ".")))
+                        {
+                            Engine.TypeCache.Add(path.Replace("+", "."), nType);
+                            return TypeReference.CreateTypeReference(Engine, nType);
+                        }
                     }
-                  }
             }
 
             // the new path doesn't represent a known class, thus return a new namespace instance
@@ -168,22 +168,22 @@ namespace Jint.Runtime.Interop
 
         private static IEnumerable<Type> GetAllNestedTypes(Type type)
         {
-          var types = new List<Type>();
-          AddNestedTypesRecursively(types, type);
-          return types.ToArray();
+            var types = new List<Type>();
+            AddNestedTypesRecursively(types, type);
+            return types.ToArray();
         }
 
         private static void AddNestedTypesRecursively(List<Type> types, Type type)
         {
-          Type[] nestedTypes = type.GetNestedTypes(BindingFlags.Public);
-          foreach (Type nestedType in nestedTypes)
-          {
-            types.Add(nestedType);
-            AddNestedTypesRecursively(types, nestedType);
-          }
+            Type[] nestedTypes = type.GetNestedTypes(BindingFlags.Public);
+            foreach (Type nestedType in nestedTypes)
+            {
+                types.Add(nestedType);
+                AddNestedTypesRecursively(types, nestedType);
+            }
         }
 
-      public override PropertyDescriptor GetOwnProperty(string propertyName)
+        public override PropertyDescriptor GetOwnProperty(string propertyName)
         {
             return PropertyDescriptor.Undefined;
         }

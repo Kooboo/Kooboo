@@ -1,6 +1,6 @@
-﻿using System;
-using Jint.Native.Object;
+﻿using Jint.Native.Object;
 using Jint.Runtime;
+using System;
 
 namespace Jint.Native.Date
 {

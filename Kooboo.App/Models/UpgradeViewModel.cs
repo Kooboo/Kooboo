@@ -1,40 +1,33 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.App.Models
 {
-    internal class UpgradeViewModel: BaseModel
+    internal class UpgradeViewModel : BaseModel
     {
         private string _description;
+
         public string Description
         {
-            get { return _description; }
+            get => _description;
             set
             {
-                if (_description != value)
-                {
-                    _description = value;
-                    OnPropertyChanged(nameof(Description));
-                }
+                if (_description == value) return;
+                _description = value;
+                OnPropertyChanged(nameof(Description));
             }
         }
 
         private string _buttonText;
+
         public string ButtonText
         {
-            get { return _buttonText; }
+            get => _buttonText;
             set
             {
-                if (_buttonText != value)
-                {
-                    _buttonText = value;
-                    OnPropertyChanged(nameof(ButtonText));
-                }
+                if (_buttonText == value) return;
+                _buttonText = value;
+                OnPropertyChanged(nameof(ButtonText));
             }
         }
 

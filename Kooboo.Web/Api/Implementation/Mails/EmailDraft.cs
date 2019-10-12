@@ -1,10 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.IO;
-using System.Collections.Generic; 
-using Kooboo.Mail; 
-using Kooboo.Api; 
+using Kooboo.Api;
+using Kooboo.Mail;
+using System.Collections.Generic;
 
 namespace Kooboo.Web.Api.Implementation.Mails
 {
@@ -13,15 +11,15 @@ namespace Kooboo.Web.Api.Implementation.Mails
         private const int MaxAttachmentSize = 10 * 1024 * 1024;
         private const int MaxImageSize = 1 * 1024 * 1024;
 
-        public   string ModelName
+        public string ModelName
         {
             get
             {
                 return "EmailDraft";
             }
         }
-         
-        public   bool RequireSite
+
+        public bool RequireSite
         {
             get
             {
@@ -29,7 +27,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
             }
         }
 
-        public   bool RequireUser
+        public bool RequireUser
         {
             get
             {
@@ -39,9 +37,9 @@ namespace Kooboo.Web.Api.Implementation.Mails
 
         public List<TargetAddress> TargetAddresses(ApiCall apiCall)
         {
-            //TODO: Return all potential suggestion address.. 
-            //var uc = apiCall.UserContext(); 
-            //return uc.MailDb.TargetAddresses.All().ToList(); 
+            //TODO: Return all potential suggestion address..
+            //var uc = apiCall.UserContext();
+            //return uc.MailDb.TargetAddresses.All().ToList();
             return new List<TargetAddress>();
         }
 
@@ -69,7 +67,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 return result;
             }
         }
-        
+
         [Kooboo.Attributes.RequireModel(typeof(Mail.ViewModel.ComposeViewModel))]
         public int Post(ApiCall apiCall)
         {
@@ -79,13 +77,13 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 return EmailForwardManager.Post<int>(this.ModelName, nameof(EmailDraft.Post), apiCall.Context.User, json, null);
             }
 
-            var user = apiCall.Context.User;  
+            var user = apiCall.Context.User;
             var model = apiCall.Context.Request.Model as Mail.ViewModel.ComposeViewModel;
             var msg = Kooboo.Mail.Utility.ComposeUtility.FromComposeViewModel(model, user);
 
-            msg.FolderId = Folder.ToId(Folder.Drafts);  
-              
-            var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user); 
+            msg.FolderId = Folder.ToId(Folder.Drafts);
+
+            var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user);
             if (msg.Id > 0)
             {
                 maildb.Messages.Update(msg, Kooboo.Mail.Utility.ComposeUtility.ComposeMessageBody(model, user));
@@ -95,7 +93,7 @@ namespace Kooboo.Web.Api.Implementation.Mails
                 maildb.Messages.Add(msg, Kooboo.Mail.Utility.ComposeUtility.ComposeMessageBody(model, user));
             }
 
-            return msg.Id; 
+            return msg.Id;
         }
     }
 }

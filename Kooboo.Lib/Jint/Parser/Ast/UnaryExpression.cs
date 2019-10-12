@@ -27,26 +27,33 @@ namespace Jint.Parser.Ast
             {
                 case "+":
                     return UnaryOperator.Plus;
+
                 case "-":
                     return UnaryOperator.Minus;
+
                 case "++":
                     return UnaryOperator.Increment;
+
                 case "--":
                     return UnaryOperator.Decrement;
+
                 case "~":
                     return UnaryOperator.BitwiseNot;
+
                 case "!":
                     return UnaryOperator.LogicalNot;
+
                 case "delete":
                     return UnaryOperator.Delete;
+
                 case "void":
                     return UnaryOperator.Void;
+
                 case "typeof":
                     return UnaryOperator.TypeOf;
 
                 default:
                     throw new ArgumentOutOfRangeException("Invalid unary operator: " + op);
-
             }
         }
     }

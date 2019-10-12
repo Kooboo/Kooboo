@@ -1,10 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
@@ -18,8 +13,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple
         {
             get; set;
         }
+
         /// <summary>
-        /// The length for this field,use 0 for uncertain field. 
+        /// The length for this field,use 0 for uncertain field.
         /// </summary>
         int ByteLength { get; }
 
@@ -29,13 +25,14 @@ namespace Kooboo.IndexedDB.Serializer.Simple
     }
 
     public interface IFieldConverter
-    {  
+    {
         int FieldNameHash
         {
             get; set;
         }
+
         /// <summary>
-        /// The length for this field,use 0 for uncertain field. 
+        /// The length for this field,use 0 for uncertain field.
         /// </summary>
         int ByteLength { get; }
 
@@ -43,5 +40,4 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
         byte[] ToBytes(object Value);
     }
-
 }

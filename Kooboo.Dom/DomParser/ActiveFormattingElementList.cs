@@ -1,27 +1,21 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom
 {
-
     /// <summary>
     /// Formatting The following HTML elements are those that end up in the list of active formatting elements: a, b, big, code, em, font, i, nobr, s, small, strike, strong, tt, and u.
     /// The formating elements can be element or a marker,  a marker has the tagName == "marker";
     /// </summary>
     public class ActiveFormattingElementList
     {
-
         private TreeConstruction _treeConstruction;
 
         public ActiveFormattingElementList(TreeConstruction tree)
         {
             _treeConstruction = tree;
-
         }
 
         public List<FormattingElement> item = new List<FormattingElement>();
@@ -49,7 +43,6 @@ namespace Kooboo.Dom
             {
                 return item[length - 1];
             }
-
         }
 
         public void insertMarker()
@@ -81,11 +74,10 @@ namespace Kooboo.Dom
                 IdToRemoved.Add(i);
             }
 
-            foreach (var removeid in IdToRemoved.OrderByDescending(o=>o))
+            foreach (var removeid in IdToRemoved.OrderByDescending(o => o))
             {
                 item.RemoveAt(removeid);
             }
-
         }
 
         public void Remove(string tagName, bool includeAllMatchedItems)
@@ -108,12 +100,11 @@ namespace Kooboo.Dom
                     {
                         item.RemoveAt(i);
                         return;
-
                     }
                 }
             }
 
-            foreach (var removeid in IdToRemoved.OrderByDescending(o=>o))
+            foreach (var removeid in IdToRemoved.OrderByDescending(o => o))
             {
                 item.RemoveAt(removeid);
             }
@@ -135,7 +126,6 @@ namespace Kooboo.Dom
 
             if (lastitem.isMarker || (lastitem.element != null && _treeConstruction.openElements.hasElement(lastitem.element.tagName)))
             {
-
                 return;
             }
 
@@ -144,14 +134,14 @@ namespace Kooboo.Dom
             //Let entry be the last (most recently added) element in the list of active formatting elements.
             FormattingElement entry = item[index];
 
-           //Rewind: If there are no entries before entry in the list of active formatting elements, then jump to the step labeled create.
+        //Rewind: If there are no entries before entry in the list of active formatting elements, then jump to the step labeled create.
         Rewind:
 
             if (index == 0)
             {
                 goto Create;
             }
-        
+
             //Let entry be the entry one earlier than entry in the list of active formatting elements.
             index = index - 1;
             entry = item[index];
@@ -162,13 +152,12 @@ namespace Kooboo.Dom
                 goto Rewind;
             }
 
-          //Advance: Let entry be the element one later than entry in the list of active formatting elements.
+        //Advance: Let entry be the element one later than entry in the list of active formatting elements.
 
-          Advance:
+        Advance:
 
             index = index + 1;
             entry = item[index];
-
 
         Create:
 
@@ -186,22 +175,19 @@ namespace Kooboo.Dom
             {
                 goto Advance;
             }
-            
+
             //This has the effect of reopening all the formatting elements that were opened in the current body, cell, or caption (whichever is youngest) that haven't been explicitly closed.
-            
         }
 
         public void Push(FormattingElement element)
         {
             //When the steps below require the UA to push onto the list of active formatting elements an element element, the UA must perform the following steps:
 
-            //If there are already three elements in the list of active formatting elements after the last list marker, if any, or anywhere in the list if there are no list markers, that have the same tag name, namespace, and attributes as element, then remove the earliest such element from the list of active formatting elements. 
+            //If there are already three elements in the list of active formatting elements after the last list marker, if any, or anywhere in the list if there are no list markers, that have the same tag name, namespace, and attributes as element, then remove the earliest such element from the list of active formatting elements.
             if (CounterAfterLastMarker() >= 3 || !HasMark())
             {
-
                 for (int i = 0; i < length; i++)
                 {
-
                     if (!item[i].isMarker)
                     {
                         if (isSameElementAndAttributes(item[i], element))
@@ -210,9 +196,7 @@ namespace Kooboo.Dom
                             break;
                         }
                     }
-
                 }
-
             }
 
             //For these purposes, the attributes must be compared as they were when the elements were created by the parser; two elements have the same attributes if all their parsed attributes can be paired such that the two attributes in each pair have identical names, namespaces, and values (the order of the attributes does not matter).
@@ -226,17 +210,16 @@ namespace Kooboo.Dom
         public void Push(Element element, HtmlToken token)
         {
             FormattingElement formatelement = new FormattingElement();
-            
+
             formatelement.element = element;
             formatelement.token = token;
             formatelement.isMarker = false;
 
             Push(formatelement);
-
         }
 
         /// <summary>
-        /// Compare two formatting elements. 
+        /// Compare two formatting elements.
         /// </summary>
         /// <param name="elementone"></param>
         /// <param name="elementtwo"></param>
@@ -254,7 +237,6 @@ namespace Kooboo.Dom
             Element two = elementtwo.element;
 
             return IsSameDomElement(one, two);
-
         }
 
         public static bool IsSameDomElement(Element one, Element two)
@@ -285,17 +267,15 @@ namespace Kooboo.Dom
 
                 if (valueInTwo != item.value)
                 {
-
                     return false;
                 }
-
             }
 
             return true;
         }
 
         /// <summary>
-        /// The number of elments in the list of active formating elements after last marker. 
+        /// The number of elments in the list of active formating elements after last marker.
         /// </summary>
         /// <returns></returns>
         private int CounterAfterLastMarker()
@@ -323,9 +303,9 @@ namespace Kooboo.Dom
             foreach (var one in item)
             {
                 if (one.isMarker)
-                { return true;  }
+                { return true; }
             }
-            return false; 
+            return false;
         }
 
         public bool hasElement(Element element)
@@ -337,7 +317,7 @@ namespace Kooboo.Dom
                     return true;
                 }
             }
-         return false;
+            return false;
         }
     }
 }

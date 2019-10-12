@@ -1,28 +1,25 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB.ByteConverter;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB.Schedule
 {
     public class RepeatTask<TValue>
     {
-        private object _object   = new object();
+        private object _object = new object();
 
         /// <summary>
-        /// The record block position that are free to insert new records. 
+        /// The record block position that are free to insert new records.
         /// </summary>
         private List<long> FreePositions;
 
         /// <summary>
-        /// The list of repeat task that is saved at memory. 
+        /// The list of repeat task that is saved at memory.
         /// </summary>
         private List<RepeatItem<TValue>> RepeatTaskList { get; set; }
 
@@ -30,19 +27,18 @@ namespace Kooboo.IndexedDB.Schedule
         private byte startbytetwo = 13;
 
         /// <summary>
-        /// To delete a reocord. update the isactive value to this value. 
+        /// To delete a reocord. update the isactive value to this value.
         /// </summary>
         private byte recordDeletedByteValue = 99;
 
         /// <summary>
-        /// The length per record. 
+        /// The length per record.
         /// </summary>
         private int recordlen = 44;
 
-
         /// <summary>
-        /// The record file that save the meta info of all repeating task. 
-        /// 
+        /// The record file that save the meta info of all repeating task.
+        ///
         /// </summary>
         private string RecordFile { get; set; }
 
@@ -55,7 +51,6 @@ namespace Kooboo.IndexedDB.Schedule
         {
             this.RecordFile = FileNameGenerator.GetRepeatRecordFileName(FolderName);
             this.ContentFile = FileNameGenerator.GetRepeatContentFileName(FolderName);
-             
 
             this.ValueConverter = ObjectContainer.GetConverter<TValue>();
 
@@ -78,14 +73,14 @@ namespace Kooboo.IndexedDB.Schedule
                 System.Buffer.BlockCopy(headers, 0, headerbytes, 0, headers.Count());
 
                 File.WriteAllBytes(this.RecordFile, headerbytes);
-            } 
+            }
             RepeatTaskList = new List<RepeatItem<TValue>>();
             FreePositions = new List<long>();
             Init();
         }
 
         /// <summary>
-        /// init the active items and free positions. 
+        /// init the active items and free positions.
         /// </summary>
         private void Init()
         {
@@ -112,15 +107,13 @@ namespace Kooboo.IndexedDB.Schedule
 
             if (current != length)
             {
-                // if the current is the not the end, there must be some bytes missing. 
+                // if the current is the not the end, there must be some bytes missing.
                 this.RecordStream.SetLength(current + this.recordlen);
             }
-
-
         }
 
         /// <summary>
-        /// Add a new item to the repeating task list. 
+        /// Add a new item to the repeating task list.
         /// </summary>
         /// <param name="Item"></param>
         public void Add(RepeatItem<TValue> Item)
@@ -132,115 +125,126 @@ namespace Kooboo.IndexedDB.Schedule
             {
                 Item.NextExecute = CalculateNextExecuteTime(Item);
             }
-           
+
             AddRecord(Item);
-            // also need to add to current list. 
+            // also need to add to current list.
             this.RepeatTaskList.Add(Item);
         }
 
         /// <summary>
-        /// Used when an item is get out for execution, calcuate the next execution time. 
+        /// Used when an item is get out for execution, calcuate the next execution time.
         /// </summary>
         /// <param name="item"></param>
         /// <param name="LastExecute"></param>
         /// <returns></returns>
         public DateTime CalculateNextExecuteTime(RepeatItem<TValue> item)
         {
-            return GetNextTryTime(item.Frequence, item.FrequenceUnit, item.StartTime, item.LastExecute); 
-             
+            return GetNextTryTime(item.Frequence, item.FrequenceUnit, item.StartTime, item.LastExecute);
         }
- 
-        private DateTime GetNextTryTime(RepeatFrequence Frequence, int FrequenceUnit, DateTime StartTime,  DateTime lastExecute)
-        { 
+
+        private DateTime GetNextTryTime(RepeatFrequence Frequence, int FrequenceUnit, DateTime StartTime, DateTime lastExecute)
+        {
             DateTime NextExecuteTime = default(DateTime);
 
             if (lastExecute == default(DateTime))
-            { NextExecuteTime = StartTime;  }
+            { NextExecuteTime = StartTime; }
             else
             {
-                NextExecuteTime = lastExecute; 
+                NextExecuteTime = lastExecute;
             }
 
-
-            while(true)
+            while (true)
             {
                 if (NextExecuteTime > DateTime.Now)
                 {
-                    break; 
+                    break;
                 }
                 switch (Frequence)
                 {
                     case RepeatFrequence.Day:
-                        NextExecuteTime = NextExecuteTime.AddDays(FrequenceUnit); 
+                        NextExecuteTime = NextExecuteTime.AddDays(FrequenceUnit);
                         break;
+
                     case RepeatFrequence.Hour:
-                        NextExecuteTime = NextExecuteTime.AddHours(FrequenceUnit); 
+                        NextExecuteTime = NextExecuteTime.AddHours(FrequenceUnit);
                         break;
+
                     case RepeatFrequence.Minutes:
-                        NextExecuteTime = NextExecuteTime.AddMinutes(FrequenceUnit); 
+                        NextExecuteTime = NextExecuteTime.AddMinutes(FrequenceUnit);
                         break;
+
                     case RepeatFrequence.Week:
-                        NextExecuteTime = NextExecuteTime.AddDays(FrequenceUnit * 7); 
+                        NextExecuteTime = NextExecuteTime.AddDays(FrequenceUnit * 7);
                         break;
+
                     case RepeatFrequence.Month:
-                        NextExecuteTime = NextExecuteTime.AddMonths(FrequenceUnit); 
+                        NextExecuteTime = NextExecuteTime.AddMonths(FrequenceUnit);
                         break;
+
                     case RepeatFrequence.Second:
-                        NextExecuteTime = NextExecuteTime.AddSeconds(FrequenceUnit);  
+                        NextExecuteTime = NextExecuteTime.AddSeconds(FrequenceUnit);
                         break;
+
                     default:
                         break;
                 }
 
                 if (NextExecuteTime > DateTime.Now)
                 {
-                    break; 
+                    break;
                 }
                 else
                 {
-                    DateTime now = DateTime.Now; 
+                    DateTime now = DateTime.Now;
                     switch (Frequence)
                     {
                         case RepeatFrequence.Day:
                             NextExecuteTime = new DateTime(now.Year, now.Month, now.Day, StartTime.Hour, StartTime.Minute, StartTime.Second);
                             break;
+
                         case RepeatFrequence.Hour:
                             NextExecuteTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, StartTime.Minute, StartTime.Second);
 
                             break;
+
                         case RepeatFrequence.Minutes:
                             NextExecuteTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, StartTime.Second);
 
                             break;
+
                         case RepeatFrequence.Week:
-                            break; 
+                            break;
+
                         case RepeatFrequence.Second:
-                            NextExecuteTime = now; 
-                            break; 
+                            NextExecuteTime = now;
+                            break;
+
                         case RepeatFrequence.Month:
-                            break;                         
+                            break;
+
                         default:
                             break;
                     }
                 }
             }
 
-            return NextExecuteTime; 
+            return NextExecuteTime;
         }
+
         /// <summary>
-        /// Delete a item. 
+        /// Delete a item.
         /// </summary>
         /// <param name="Item"></param>
         public void Del(RepeatItem<TValue> Item)
         {
-            Del(Item.id); 
+            Del(Item.id);
         }
 
         public void Del(long id)
         {
             if (id <= 0)
             {
-                // error. 
+                // error.
                 throw new Exception("wrong record position id or position id not assigned");
             }
 
@@ -259,12 +263,10 @@ namespace Kooboo.IndexedDB.Schedule
                     this.RepeatTaskList.Remove(existingitem);
                 }
             }
-
-
         }
 
         /// <summary>
-        /// Get all the items that in the repeating task list. 
+        /// Get all the items that in the repeating task list.
         /// </summary>
         /// <returns></returns>
         public List<RepeatItem<TValue>> GetItems()
@@ -284,7 +286,7 @@ namespace Kooboo.IndexedDB.Schedule
             {
                 if (item.id == id)
                 {
-                    return DeepCopy<RepeatItem<TValue>>(item); 
+                    return DeepCopy<RepeatItem<TValue>>(item);
                 }
             }
 
@@ -293,14 +295,14 @@ namespace Kooboo.IndexedDB.Schedule
             if (record != null)
             {
                 this.RepeatTaskList.Add(record);
-                return DeepCopy<RepeatItem<TValue>>(record); 
+                return DeepCopy<RepeatItem<TValue>>(record);
             }
 
-            return null; 
+            return null;
         }
 
         /// <summary>
-        /// Get the list of  all repeating task items that are due to be executed. and update their last execute time accordingly. 
+        /// Get the list of  all repeating task items that are due to be executed. and update their last execute time accordingly.
         /// </summary>
         /// <returns></returns>
         public List<RepeatItem<TValue>> DequeueItems()
@@ -315,7 +317,7 @@ namespace Kooboo.IndexedDB.Schedule
                 }
             }
 
-            // mark every item as executed. 
+            // mark every item as executed.
             foreach (var item in items)
             {
                 UpdateExecuteTime(item);
@@ -325,7 +327,7 @@ namespace Kooboo.IndexedDB.Schedule
         }
 
         /// <summary>
-        /// Dequeue one item from the list the due tasks, and update its last execute time. 
+        /// Dequeue one item from the list the due tasks, and update its last execute time.
         /// </summary>
         /// <returns></returns>
         public RepeatItem<TValue> DequeueItem()
@@ -334,7 +336,7 @@ namespace Kooboo.IndexedDB.Schedule
             {
                 if (item.NextExecute <= DateTime.Now)
                 {
-                    RepeatItem<TValue> one = DeepCopy<RepeatItem<TValue>>(item);                    
+                    RepeatItem<TValue> one = DeepCopy<RepeatItem<TValue>>(item);
                     UpdateExecuteTime(one);
                     return one;
                 }
@@ -343,7 +345,7 @@ namespace Kooboo.IndexedDB.Schedule
         }
 
         /// <summary>
-        /// Get the position that can be used to insert one more record. 
+        /// Get the position that can be used to insert one more record.
         /// </summary>
         /// <returns></returns>
         private long GetRecordInsertPosition()
@@ -367,7 +369,7 @@ namespace Kooboo.IndexedDB.Schedule
         }
 
         /// <summary>
-        /// Add new task object to the content block. 
+        /// Add new task object to the content block.
         /// </summary>
         /// <param name="repeattask"></param>
         /// <returns></returns>
@@ -391,7 +393,6 @@ namespace Kooboo.IndexedDB.Schedule
                 ContentStream.Write(bytes, 0, contentbytelen);
                 return currentposition;
             }
-
         }
 
         private TValue GetTask(long blockposition)
@@ -423,7 +424,7 @@ namespace Kooboo.IndexedDB.Schedule
         }
 
         /// <summary>
-        /// Add the record item to the record table. 
+        /// Add the record item to the record table.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -444,7 +445,7 @@ namespace Kooboo.IndexedDB.Schedule
         }
 
         /// <summary>
-        /// Update this task content of this record. 
+        /// Update this task content of this record.
         /// </summary>
         /// <param name="item"></param>
         public void UpdateTask(RepeatItem<TValue> item)
@@ -455,7 +456,7 @@ namespace Kooboo.IndexedDB.Schedule
         }
 
         /// <summary>
-        /// update the schedule info of this record. 
+        /// update the schedule info of this record.
         /// </summary>
         /// <param name="item"></param>
         public void UpdateSchedule(RepeatItem<TValue> item)
@@ -474,14 +475,13 @@ namespace Kooboo.IndexedDB.Schedule
 
                 if (currentitem != null)
                 {
-                    currentitem = item; 
+                    currentitem = item;
                 }
             }
-
         }
 
         /// <summary>
-        /// This item just get executed, and should be updated now. 
+        /// This item just get executed, and should be updated now.
         /// </summary>
         /// <param name="item"></param>
         private void UpdateExecuteTime(RepeatItem<TValue> item)
@@ -540,7 +540,7 @@ namespace Kooboo.IndexedDB.Schedule
         }
 
         /// <summary>
-        /// convert the meta info of a repeating task into bytes. 
+        /// convert the meta info of a repeating task into bytes.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -565,24 +565,23 @@ namespace Kooboo.IndexedDB.Schedule
 
             bytearray[3] = (byte)item.Frequence;
 
-            //frequence unit. 
+            //frequence unit.
             System.Buffer.BlockCopy(BitConverter.GetBytes(item.FrequenceUnit), 0, bytearray, 4, 4);
 
             long tickStartTime = item.StartTime.Ticks;
             long tickLastExecute = item.LastExecute.Ticks;
             long tickNextExecute = item.NextExecute.Ticks;
 
-            //starttime 
+            //starttime
             System.Buffer.BlockCopy(BitConverter.GetBytes(tickStartTime), 0, bytearray, 8, 8);
 
-            //last execute 
+            //last execute
             System.Buffer.BlockCopy(BitConverter.GetBytes(tickLastExecute), 0, bytearray, 16, 8);
 
-            //next execute 
+            //next execute
             System.Buffer.BlockCopy(BitConverter.GetBytes(tickLastExecute), 0, bytearray, 24, 8);
 
-
-            // block position. 
+            // block position.
             System.Buffer.BlockCopy(BitConverter.GetBytes(item.BlockPosition), 0, bytearray, 32, 8);
 
             return bytearray;
@@ -632,7 +631,6 @@ namespace Kooboo.IndexedDB.Schedule
             return item;
         }
 
-
         private FileStream _RecordStream;
 
         public FileStream RecordStream
@@ -673,17 +671,15 @@ namespace Kooboo.IndexedDB.Schedule
                         {
                             if (!File.Exists(this.ContentFile))
                             {
-                                Verify(); 
+                                Verify();
                             }
-                            _ContentStream = StreamManager.GetFileStream(this.ContentFile); 
+                            _ContentStream = StreamManager.GetFileStream(this.ContentFile);
                         }
                     }
                 }
 
                 return _ContentStream;
             }
-
-
         }
 
         public static T DeepCopy<T>(T input)
@@ -697,7 +693,6 @@ namespace Kooboo.IndexedDB.Schedule
             }
         }
 
-
         public void DelSelf()
         {
             lock (_object)
@@ -705,23 +700,22 @@ namespace Kooboo.IndexedDB.Schedule
                 this.RecordStream.Close();
                 this.ContentStream.Close();
                 File.Delete(this.RecordFile);
-                File.Delete(this.ContentFile); 
+                File.Delete(this.ContentFile);
             }
         }
 
-
         public void Close()
         {
-           if (_ContentStream !=null)
+            if (_ContentStream != null)
             {
                 _ContentStream.Close();
-                _ContentStream = null; 
+                _ContentStream = null;
             }
 
-           if (_RecordStream !=null)
+            if (_RecordStream != null)
             {
                 _RecordStream.Close();
-                _RecordStream = null; 
+                _RecordStream = null;
             }
         }
     }

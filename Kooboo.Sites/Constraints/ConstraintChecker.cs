@@ -1,15 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Lib;
+using Kooboo.Lib.Reflection;
+using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Models;
 using System.Reflection;
-using Kooboo.Lib.Reflection;
 
 namespace Kooboo.Sites.Constraints
 {
@@ -18,6 +15,7 @@ namespace Kooboo.Sites.Constraints
         private static object _locker = new object();
 
         private static List<CheckerInstance> _List;
+
         public static List<CheckerInstance> List
         {
             get
@@ -52,7 +50,6 @@ namespace Kooboo.Sites.Constraints
 
                                 instance.HasCheck = (bool)item.GetProperty("HasCheck").GetValue(iteminstance, null);
 
-
                                 instance.FixOnSave = (bool)item.GetProperty("AutoFixOnSave").GetValue(iteminstance, null);
 
                                 instance.Fix = item.GetMethod("Fix");
@@ -68,28 +65,28 @@ namespace Kooboo.Sites.Constraints
             }
         }
 
-        private static Dictionary<string, List<CheckerInstance>> SiteObjectCheckers = new Dictionary<string, List<CheckerInstance>>(); 
+        private static Dictionary<string, List<CheckerInstance>> SiteObjectCheckers = new Dictionary<string, List<CheckerInstance>>();
 
         private static List<CheckerInstance> GetCheckers(Type SiteObjectType)
         {
-            string name = SiteObjectType.FullName; 
-            
-           if (!SiteObjectCheckers.ContainsKey(name))
+            string name = SiteObjectType.FullName;
+
+            if (!SiteObjectCheckers.ContainsKey(name))
             {
-                lock(_locker)
+                lock (_locker)
                 {
-                    List<CheckerInstance> checkerlist = new List<CheckerInstance>(); 
+                    List<CheckerInstance> checkerlist = new List<CheckerInstance>();
                     foreach (var item in List)
                     {
                         if (TypeHelper.IsOfBaseTypeOrInterface(SiteObjectType, item.ModelType))
                         {
-                            checkerlist.Add(item);  
+                            checkerlist.Add(item);
                         }
-                    } 
-                    SiteObjectCheckers[name] = checkerlist; 
-                } 
-            } 
-            return SiteObjectCheckers[name];  
+                    }
+                    SiteObjectCheckers[name] = checkerlist;
+                }
+            }
+            return SiteObjectCheckers[name];
         }
 
         public static void FixOnSave(SiteDb SiteDb, SiteObject SiteObject, string Language = null)
@@ -107,7 +104,7 @@ namespace Kooboo.Sites.Constraints
                     paras.Add(SiteObject);
                     paras.Add(Language);
 
-                    item.Fix.Invoke(item.ClassInstance, paras.ToArray()); 
+                    item.Fix.Invoke(item.ClassInstance, paras.ToArray());
                 }
             }
         }
@@ -159,7 +156,7 @@ namespace Kooboo.Sites.Constraints
                         {
                             result.AddRange(listresult);
                         }
-                    } 
+                    }
                 }
             }
 
@@ -168,7 +165,6 @@ namespace Kooboo.Sites.Constraints
 
         public static List<ConstraintResponse> CheckConstraint(SiteDb SiteDb, SiteObject SiteObject, string ConstrainName, string Language = null)
         {
-
             List<ConstraintResponse> result = new List<ConstraintResponse>();
 
             if (SiteDb == null || SiteObject == null)
@@ -201,12 +197,9 @@ namespace Kooboo.Sites.Constraints
             }
 
             return result;
-
-
-
         }
     }
-     
+
     public class CheckerInstance
     {
         public string Name { get; set; }
@@ -222,14 +215,12 @@ namespace Kooboo.Sites.Constraints
         public object ClassInstance { get; set; }
 
         /// <summary>
-        /// The type or interface of the siteobject that this constraint is designed for... 
+        /// The type or interface of the siteobject that this constraint is designed for...
         /// </summary>
         public Type ModelType { get; set; }
 
         public MethodInfo Fix { get; set; }
 
         public MethodInfo Check { get; set; }
-
     }
-
 }

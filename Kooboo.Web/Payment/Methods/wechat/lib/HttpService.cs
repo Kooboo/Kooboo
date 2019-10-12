@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Web;
-using System.Net;
 using System.IO;
-using System.Text;
-using System.Net.Security;    
-using System.Security.Authentication;
+using System.Net;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Web;
 
 namespace WxPayAPI
 {
@@ -19,7 +17,7 @@ namespace WxPayAPI
 
         public static bool CheckValidationResult(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
         {
-            //直接确认，否则打不开    
+            //直接确认，否则打不开
             return true;
         }
 
@@ -115,7 +113,7 @@ namespace WxPayAPI
                 {
                     response.Close();
                 }
-                if(request != null)
+                if (request != null)
                 {
                     request.Abort();
                 }
@@ -165,7 +163,7 @@ namespace WxPayAPI
             }
             catch (System.Threading.ThreadAbortException e)
             {
-                Log.Error("HttpService","Thread - caught ThreadAbortException - resetting.");
+                Log.Error("HttpService", "Thread - caught ThreadAbortException - resetting.");
                 Log.Error("Exception message: {0}", e.Message);
                 System.Threading.Thread.ResetAbort();
             }

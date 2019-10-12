@@ -1,9 +1,8 @@
+using Jint.Native;
+using Jint.Native.Function;
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using Jint.Native;
-using Jint.Native.Function;
 using System.Reflection;
 
 namespace Jint.Runtime.Interop
@@ -40,7 +39,7 @@ namespace Jint.Runtime.Interop
             {
                 var parameterType = parameterInfos[i].ParameterType;
 
-                if (parameterType == typeof (JsValue))
+                if (parameterType == typeof(JsValue))
                 {
                     parameters[i] = jsArguments[i];
                 }
@@ -67,7 +66,7 @@ namespace Jint.Runtime.Interop
             }
 
             // assign params to array and converts each objet to expected type
-            if(delegateContainsParamsArgument)
+            if (delegateContainsParamsArgument)
             {
                 int paramsArgumentIndex = delegateArgumentsCount - 1;
                 int paramsCount = Math.Max(0, jsArgumentsCount - delegateNonParamsArgumentsCount);
@@ -107,7 +106,7 @@ namespace Jint.Runtime.Interop
                     throw new JavaScriptException(Engine.Error, meaningfulException.Message);
                 }
 
-                throw meaningfulException;         
+                throw meaningfulException;
             }
         }
     }

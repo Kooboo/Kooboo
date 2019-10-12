@@ -1,17 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.FrontEvent;
 using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
-  
+
 namespace Kooboo.Sites.Events.FrontFlow
 {
-  public static class FrontEventHelper
+    public static class FrontEventHelper
     {
         public static List<EventConditionSetting> GetPageSetting(SiteDb siteDb)
         {
-            List<EventConditionSetting> result = new List<EventConditionSetting>(); 
+            List<EventConditionSetting> result = new List<EventConditionSetting>();
 
             result.Add(new EventConditionSetting() { Name = "Page.Name" });
             result.Add(new EventConditionSetting() { Name = "Page.DefaultStart", ControlType = Data.ControlType.CheckBox, DataType = typeof(bool) });
@@ -26,7 +26,7 @@ namespace Kooboo.Sites.Events.FrontFlow
 
             result.Add(new EventConditionSetting() { Name = "Page.Id", ControlType = Data.ControlType.Selection, DataType = typeof(Guid), SelectionValues = pagenames });
 
-            return result; 
+            return result;
         }
 
         public static List<EventConditionSetting> GetViewSetting(SiteDb siteDb)

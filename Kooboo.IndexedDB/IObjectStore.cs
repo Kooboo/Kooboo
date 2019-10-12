@@ -1,10 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB
 {
@@ -12,8 +9,11 @@ namespace Kooboo.IndexedDB
     {
         string Name { get; set; }
         string ObjectFolder { get; set; }
+
         int Count();
+
         void Close();
+
         void DelSelf();
 
         void Flush();
@@ -43,6 +43,5 @@ namespace Kooboo.IndexedDB
         void CheckOut(List<LogEntry> logs, IObjectStore DestinationStore);
 
         int getLength(long blockposition);
-
     }
 }

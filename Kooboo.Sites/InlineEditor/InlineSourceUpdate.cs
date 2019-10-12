@@ -1,10 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.InlineEditor
 {
@@ -12,7 +7,7 @@ namespace Kooboo.Sites.InlineEditor
     {
         public string KoobooId { get; set; }
         public string AttributeName { get; set; }
-        public string Value { get; set;  }
+        public string Value { get; set; }
 
         public bool IsDelete { get; set; }
     }

@@ -32,12 +32,11 @@ using System.Diagnostics;
 
 namespace Jint.Native.Number.Dtoa
 {
-
-// This "Do It Yourself Floating Point" class implements a floating-point number
-// with a uint64 significand and an int exponent. Normalized DiyFp numbers will
-// have the most significant bit of the significand set.
-// Multiplication and Subtraction do not normalize their results.
-// DiyFp are not designed to contain special doubles (NaN and Infinity).
+    // This "Do It Yourself Floating Point" class implements a floating-point number
+    // with a uint64 significand and an int exponent. Normalized DiyFp numbers will
+    // have the most significant bit of the significand set.
+    // Multiplication and Subtraction do not normalize their results.
+    // DiyFp are not designed to contain special doubles (NaN and Infinity).
     internal class DiyFp
     {
         internal const int KSignificandSize = 64;
@@ -98,10 +97,10 @@ namespace Jint.Native.Number.Dtoa
             long b = F & kM32;
             long c = other.F.UnsignedShift(32);
             long d = other.F & kM32;
-            long ac = a*c;
-            long bc = b*c;
-            long ad = a*d;
-            long bd = b*d;
+            long ac = a * c;
+            long bc = b * c;
+            long ad = a * d;
+            long bd = b * d;
             long tmp = bd.UnsignedShift(32) + (ad & kM32) + (bc & kM32);
             // By adding 1U << 31 to tmp we round the final result.
             // Halfway cases will be round up.
@@ -132,7 +131,7 @@ namespace Jint.Native.Number.Dtoa
                 f <<= 10;
                 e -= 10;
             }
-            while (((ulong) f & KUint64MSB) == 0)
+            while (((ulong)f & KUint64MSB) == 0)
             {
                 f <<= 1;
                 e--;

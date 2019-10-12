@@ -1,14 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Dom.CSS
 {
-
     ///http://dev.w3.org/csswg/cssom/#cssrule
     ///http://wiki.csswg.org/spec/cssom-constants
     // 0	-	reserved; formerly UNKNOWN_RULE in DOM-Level-2-Style
@@ -33,7 +27,6 @@ namespace Kooboo.Dom.CSS
 
     public enum enumCSSRuleType
     {
-
         STYLE_RULE = 1,
         CHARSET_RULE = 2,
         IMPORT_RULE = 3,
@@ -53,6 +46,5 @@ namespace Kooboo.Dom.CSS
         CUSTOM_MEDIA_RULE = 17,
         reserved = 0,
         //… 999	- reserved for future standardization
-
     }
 }

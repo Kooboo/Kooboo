@@ -1,12 +1,12 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using Jint.Native;
+﻿using Jint.Native;
 using Jint.Native.Function;
 using Jint.Native.Object;
 using Jint.Runtime.Descriptors;
 using Jint.Runtime.Descriptors.Specialized;
+using System;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
 
 namespace Jint.Runtime.Interop
 {
@@ -63,7 +63,7 @@ namespace Jint.Runtime.Interop
                 {
                     for (var i = 0; i < arguments.Length; i++)
                     {
-                        var parameterType =  method.GetParameters()[i].ParameterType;
+                        var parameterType = method.GetParameters()[i].ParameterType;
 
                         if (parameterType == typeof(JsValue))
                         {
@@ -93,7 +93,6 @@ namespace Jint.Runtime.Interop
             }
 
             throw new JavaScriptException(Engine.TypeError, "No public methods with the specified arguments were found.");
-
         }
 
         public override bool DefineOwnProperty(string propertyName, PropertyDescriptor desc, bool throwOnError)

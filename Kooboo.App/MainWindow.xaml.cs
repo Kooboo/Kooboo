@@ -1,11 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.App.Models;
 using Kooboo.Data;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
-using System;
 
 namespace Kooboo.App
 {
@@ -15,6 +14,7 @@ namespace Kooboo.App
     public partial class MainWindow : Window
     {
         public bool NeedCancel = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -40,7 +40,6 @@ namespace Kooboo.App
                 Application.Current.Shutdown();
                 CommandManager.InvalidateRequerySuggested();
             }
-           
         }
 
         private void menuShow_Click(object sender, RoutedEventArgs e)
@@ -53,6 +52,7 @@ namespace Kooboo.App
             Application.Current.Shutdown();
             CommandManager.InvalidateRequerySuggested();
         }
+
         private void Window_Closed(object sender, EventArgs e)
         {
             taskBarIcon.Dispose();
