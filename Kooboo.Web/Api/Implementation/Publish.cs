@@ -229,20 +229,22 @@ namespace Kooboo.Web.Api.Implementation
                 if (item.IsTable)
                 {
 
-                    var table = kdb.GetOrCreateTable(item.TableName);
-                    var logdata = table.GetLogData(item);
-                    PushItemViewModel viewmodel = new PushItemViewModel
+                    var table = Data.DB.GetTable(kdb, item.TableName);
+                    if (table != null)
                     {
-                        Id = item.Id,
-                        ObjectType = Kooboo.Data.Language.Hardcoded.GetValue("Table", call.Context),
-                        Name = LogService.GetTableDisplayName(sitedb, item, call.Context),
-                        // KoobooType = siteojbect.ConstType,
-                        ChangeType = changetype,
-                        LastModified = item.UpdateTime,
-                        LogId = item.Id
-                    };
-
-                    result.Add(viewmodel);
+                        var logdata = table.GetLogData(item);
+                        PushItemViewModel viewmodel = new PushItemViewModel
+                        {
+                            Id = item.Id,
+                            ObjectType = Kooboo.Data.Language.Hardcoded.GetValue("Table", call.Context),
+                            Name = LogService.GetTableDisplayName(sitedb, item, call.Context),
+                            // KoobooType = siteojbect.ConstType,
+                            ChangeType = changetype,
+                            LastModified = item.UpdateTime,
+                            LogId = item.Id
+                        };
+                        result.Add(viewmodel);
+                    }
                 }
                 else
                 {
@@ -523,7 +525,7 @@ namespace Kooboo.Web.Api.Implementation
                     if (log.IsTable)
                     {
                         var kdb = Kooboo.Data.DB.GetKDatabase(sitedb.WebSite);
-                        var table = kdb.GetOrCreateTable(log.TableName);
+                        var table = Data.DB.GetTable(kdb, log.TableName);
 
                         if (table != null)
                         {

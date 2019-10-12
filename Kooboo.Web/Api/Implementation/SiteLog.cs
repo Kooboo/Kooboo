@@ -253,7 +253,7 @@ namespace Kooboo.Web.Api.Implementation
             if (prelog != null)
             {
                 var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
-                var table = db.GetOrCreateTable(prelog.TableName);
+                var table = Data.DB.GetTable(db, prelog.TableName);
 
                 LogEntry nextlog;
                 if (id2 == -1)

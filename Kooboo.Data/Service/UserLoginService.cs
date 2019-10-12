@@ -18,7 +18,7 @@ namespace Kooboo.Data.Service
             var setting = new Setting();
             setting.AppendColumn("Path", typeof(string), 800);
 
-            LastPath = GlobalDatabase.GetOrCreateTable("userpath", setting);
+            LastPath = Data.DB.GetOrCreateTable(GlobalDatabase, "userpath", setting);
 
             IgnorePath = new List<string>();
             IgnorePath.Add("/_admin/account");

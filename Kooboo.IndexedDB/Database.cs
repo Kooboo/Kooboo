@@ -138,6 +138,29 @@ namespace Kooboo.IndexedDB
             return System.IO.File.Exists(storesetting);
         }
 
+
+        public bool HasTable(string talbeName)
+        {
+            talbeName = talbeName.ToValidPath();
+
+            if (this.openTableList.ContainsKey(talbeName))
+            {
+                return true;
+            }
+
+            string folder = TableFolder(talbeName);
+
+            if (!System.IO.Directory.Exists(folder))
+            {
+                return false;
+            }
+
+            string tableSetting = TableSetitingFile(talbeName);
+
+            return System.IO.File.Exists(tableSetting);
+        }
+
+
         public ObjectStore<Tkey, TValue> GetOrCreateObjectStore<Tkey, TValue>(string StoreName, ObjectStoreParameters Parameters = null)
         {
             StoreName = StoreName.ToValidPath();

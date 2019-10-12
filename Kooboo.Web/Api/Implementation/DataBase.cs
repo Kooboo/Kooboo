@@ -44,7 +44,7 @@ namespace Kooboo.Web.Api.Implementation
         public PagedListViewModel<IDictionary<string, object>> Data(string table, ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
-            var dbtable = db.GetOrCreateTable(table);
+            var dbtable = Kooboo.Data.DB.GetOrCreateTable(db, table);
 
             string sortfield = call.GetValue("sort", "orderby", "order");
             // verify sortfield. 
@@ -101,25 +101,25 @@ namespace Kooboo.Web.Api.Implementation
 
             return result;
         }
-         
+
 
         public void CreateTable(string name, ApiCall call)
-        { 
+        {
             if (!Kooboo.IndexedDB.Helper.CharHelper.IsValidTableName(name))
             {
                 throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Only Alphanumeric are allowed to use as a table", call.Context));
             }
 
             var repo = call.Context.WebSite.SiteDb().GetSiteRepository<DatabaseTableRepository>();
-            repo.AddOrUpdate(new DatabaseTable() { Name = name }); 
+            repo.AddOrUpdate(new DatabaseTable() { Name = name });
             return;
         }
-         
+
         public void DeleteTables(string names, ApiCall call)
-        { 
+        {
             List<string> ids = Lib.Helper.JsonHelper.Deserialize<List<string>>(names);
             var repo = call.Context.WebSite.SiteDb().GetSiteRepository<DatabaseTableRepository>();
-            repo.DeleteTable(ids, call.Context.User.Id); 
+            repo.DeleteTable(ids, call.Context.User.Id);
         }
 
 
@@ -127,8 +127,8 @@ namespace Kooboo.Web.Api.Implementation
         {
             var repo = call.Context.WebSite.SiteDb().GetSiteRepository<DatabaseTableRepository>();
 
-            return repo.isUniqueName(name);  
- 
+            return repo.isUniqueName(name);
+
         }
 
         public List<string> AvailableControlTypes(ApiCall call)
@@ -140,9 +140,14 @@ namespace Kooboo.Web.Api.Implementation
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
-            var dbTable = db.GetOrCreateTable(table);
+            var dbTable = Kooboo.Data.DB.GetTable(db, table);
 
             List<DbTableColumn> result = new List<DbTableColumn>();
+
+            if (dbTable == null)
+            {
+                return result;
+            }
 
             foreach (var item in dbTable.Setting.Columns)
             {
@@ -171,7 +176,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
-            var dbTable = db.GetOrCreateTable(tablename);
+            var dbTable = Kooboo.Data.DB.GetTable(db, tablename);
 
             List<DatabaseItemEdit> result = new List<DatabaseItemEdit>();
 
@@ -202,7 +207,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
-            var dbTable = db.GetOrCreateTable(tablename);
+            var dbTable = Kooboo.Data.DB.GetOrCreateTable(db, tablename);
             dbTable.CurrentUserId = call.Context.User.Id;
 
             List<DatabaseItemEdit> result = new List<DatabaseItemEdit>();
@@ -260,7 +265,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
-            var dbTable = db.GetOrCreateTable(tablename);
+            var dbTable = Kooboo.Data.DB.GetTable(db, tablename);
             dbTable.CurrentUserId = call.Context.User.Id;
 
             foreach (var item in values)

@@ -223,7 +223,7 @@ namespace Kooboo.Sites.Sync
         private static string InterExtension { get; set; } = ".kbinary";
 
         private static string BatchSettingFileName { get; set; } = "kooboobacth.kbbatch.config";
-         
+
 
         public static WebSite ImportZip(Stream zipFile, WebSite newsite, Guid UserId = default(Guid))
         {
@@ -255,13 +255,13 @@ namespace Kooboo.Sites.Sync
 
             return newsite;
         }
-           
+
         public static WebSite ImportZip(Stream zipFile, Guid organizationId, string SiteName, string FullDomain, Guid UserId)
         {
             var newsite = Kooboo.Sites.Service.WebSiteService.AddNewSite(organizationId, SiteName, FullDomain, UserId);
             return ImportZip(zipFile, newsite, UserId);
         }
-         
+
         public static bool IsKoobooSite(ZipArchive archive)
         {
             int blockcount = 0;
@@ -418,7 +418,7 @@ namespace Kooboo.Sites.Sync
             }
             return siteDb.WebSite;
         }
- 
+
         public static string ExportInter(SiteDb SiteDb)
         {
             string strguid = System.Guid.NewGuid().ToString();
@@ -474,7 +474,7 @@ namespace Kooboo.Sites.Sync
             newstream.Dispose();
             return zipFile;
         }
-         
+
         // copy as the intermediate format of Kooboo db... 
         public static string InterCopy(SiteDb SiteDb)
         {
@@ -540,7 +540,7 @@ namespace Kooboo.Sites.Sync
 
             foreach (var item in Tables)
             {
-                var table = db.GetOrCreateTable(item);
+                var table = Data.DB.GetOrCreateTable(db, item);
 
                 if (table != null)
                 {
@@ -1008,7 +1008,7 @@ namespace Kooboo.Sites.Sync
 
                     if (!string.IsNullOrEmpty(tablename))
                     {
-                        var table = kdatabase.GetOrCreateTable(tablename);
+                        var table = Data.DB.GetOrCreateTable(kdatabase, tablename);
 
                         foreach (var data in item.ToList())
                         {
@@ -1123,14 +1123,14 @@ namespace Kooboo.Sites.Sync
             setting.EnableCache = site.EnableCache;
 
             setting.IsApp = site.IsApp;
-            setting.SiteType = site.SiteType; 
+            setting.SiteType = site.SiteType;
 
 
             return setting;
         }
 
         public static void SetSiteSetting(WebSite site, SiteSetting setting)
-        {             
+        {
             foreach (var item in setting.CustomErrors)
             {
                 site.CustomErrors[item.Key] = item.Value;
@@ -1179,9 +1179,9 @@ namespace Kooboo.Sites.Sync
                 site.Culture[item.Key] = item.Value;
             }
 
-            var notfoundculture = site.Culture.Where(o => !setting.Culture.ContainsKey(o.Key)).ToList(); 
+            var notfoundculture = site.Culture.Where(o => !setting.Culture.ContainsKey(o.Key)).ToList();
 
-            if (notfoundculture !=null)
+            if (notfoundculture != null)
             {
                 foreach (var item in notfoundculture)
                 {

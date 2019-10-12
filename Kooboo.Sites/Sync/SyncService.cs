@@ -313,8 +313,8 @@ namespace Kooboo.Sites.Sync
 
         private static void ReceiveTableData(SiteDb SiteDb, SyncObject SyncObject, SyncSetting setting, Guid UserId)
         {
-            var kdb = Kooboo.Data.DB.GetKDatabase(SiteDb.WebSite);
-            var table = kdb.GetOrCreateTable(SyncObject.TableName);
+
+            var table = Data.DB.GetOrCreateTable(SiteDb.WebSite, SyncObject.TableName);
 
             if (table != null)
             {
@@ -350,7 +350,7 @@ namespace Kooboo.Sites.Sync
                         else
                         {
                             table.Update(SyncObject.ObjectId, data);
-                        } 
+                        }
                     }
                     else
                     {
@@ -496,7 +496,7 @@ namespace Kooboo.Sites.Sync
                 bool isDelete = log.EditType == EditType.Delete;
 
                 var kdb = Kooboo.Data.DB.GetKDatabase(SiteDb.WebSite);
-                var ktable = kdb.GetOrCreateTable(log.TableName);
+                var ktable = Kooboo.Data.DB.GetOrCreateTable(kdb, log.TableName);
                 if (ktable != null)
                 {
                     var data = ktable.GetLogData(log);

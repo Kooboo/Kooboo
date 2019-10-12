@@ -231,7 +231,7 @@ namespace Kooboo.Sites.Service
         {
             Dictionary<string, object> logdata = null;
 
-            var table = sitedb.DatabaseDb.GetOrCreateTable(log.TableName);
+            var table = Data.DB.GetTable(sitedb.DatabaseDb, log.TableName);
 
             if (table !=null)
             {
