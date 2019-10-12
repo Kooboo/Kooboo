@@ -101,9 +101,7 @@ namespace Kooboo.Web.Api.Implementation
 
             return result;
         }
-
-
-
+         
 
         public void CreateTable(string name, ApiCall call)
         { 

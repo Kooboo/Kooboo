@@ -2,7 +2,7 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 using Kooboo.Sites.Models;
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Repository;
@@ -219,7 +219,7 @@ namespace Kooboo.Sites.Service
         {
             if (log.IsTable)
             {
-                return GetTableDisplayName(sitedb, log, context); 
+                return GetTableDisplayName(sitedb, log, context);
             }
             else
             {
@@ -229,32 +229,41 @@ namespace Kooboo.Sites.Service
 
         public static string GetTableDisplayName(SiteDb sitedb, LogEntry log, RenderContext context)
         {
-            string name = Data.Language.Hardcoded.GetValue("Table", context);
-            name += ": " + log.TableName; 
-            if (!string.IsNullOrWhiteSpace(log.TableColName))
-            {
-                name += ":" + log.TableColName; 
-            }
+            Dictionary<string, object> logdata = null;
 
             var table = sitedb.DatabaseDb.GetOrCreateTable(log.TableName);
 
-            var items = table.GetLogData(log.Id, log.NewBlockPosition);
-
-            if (items != null)
+            if (table !=null)
             {
-                items.Remove("_id");
+                logdata = table.GetLogData(log);  
+            } 
+            return GetTableDisplayName(sitedb, log, context, logdata);
+        }
 
-                string json = Lib.Helper.JsonHelper.Serialize(items);
+        public static string GetTableDisplayName(SiteDb sitedb, LogEntry log, RenderContext context, Dictionary<string, object> LogData)
+        {
+            string name = Data.Language.Hardcoded.GetValue("Table", context);
+            name += ": " + log.TableName;
+            if (!string.IsNullOrWhiteSpace(log.TableColName))
+            {
+                name += ":" + log.TableColName;
+            }
+
+            if (LogData != null)
+            {
+                LogData.Remove("_id");
+
+                string json = Lib.Helper.JsonHelper.Serialize(LogData);
 
                 if (!string.IsNullOrWhiteSpace(json))
                 {
-                    return name + " "  + Lib.Helper.StringHelper.GetSummary(json);
+                    return name + " " + Lib.Helper.StringHelper.GetSummary(json);
                 }
             }
 
             return name;
         }
-         
+
 
         public static Guid GetKeyHash(Guid key)
         {

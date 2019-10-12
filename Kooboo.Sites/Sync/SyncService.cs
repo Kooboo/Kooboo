@@ -334,15 +334,27 @@ namespace Kooboo.Sites.Sync
                 else
                 {
                     var data = Kooboo.Sites.Sync.SyncObjectConvertor.FromTableSyncObject(SyncObject);
-                     
+
                     var item = table.Get(SyncObject.ObjectId);
                     if (item != null)
                     {
-                        table.Update(SyncObject.ObjectId, data);
+                        if (!string.IsNullOrWhiteSpace(SyncObject.TableColName))
+                        {
+                            object value = null;
+                            if (data.ContainsKey(SyncObject.TableColName))
+                            {
+                                value = data[SyncObject.TableColName];
+                            }
+                            table.UpdateColumn(SyncObject.ObjectId, SyncObject.TableColName, value);
+                        }
+                        else
+                        {
+                            table.Update(SyncObject.ObjectId, data);
+                        } 
                     }
                     else
                     {
-                        table.Add(data);
+                        table.Add(data, true);
                     }
 
                 }
@@ -487,7 +499,7 @@ namespace Kooboo.Sites.Sync
                 var ktable = kdb.GetOrCreateTable(log.TableName);
                 if (ktable != null)
                 {
-                    var data = ktable.GetLogData(log.Id, log.NewBlockPosition);
+                    var data = ktable.GetLogData(log);
                     return Prepare(key, data, log.TableName, log.TableColName, log.Id, isDelete);
                 }
 

@@ -59,6 +59,10 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in items)
             {
+                if (item == null)
+                {
+                    continue;
+                }
                 SiteLogViewModel model = new SiteLogViewModel
                 {
                     LastModified = item.UpdateTime,
@@ -260,13 +264,13 @@ namespace Kooboo.Web.Api.Implementation
                 else
                 {
                     nextlog = sitedb.Log.Get(id2);
-                }  
-                var itemone = table.GetLogData(prelog.Id, prelog.NewBlockPosition);
+                }
+                var itemone = table.GetLogData(prelog);
                 Dictionary<string, object> itemtwo = null;
 
                 if (nextlog.EditType != EditType.Delete)
                 {
-                    itemtwo = table.GetLogData(nextlog.Id, nextlog.NewBlockPosition);
+                    itemtwo = table.GetLogData(nextlog);
                 }
 
                 model.Title1 = Data.Language.Hardcoded.GetValue("Table", call.Context) + ":" + prelog.TableName;
@@ -280,7 +284,7 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     model.Source2 = Sites.Service.ObjectService.GetSummaryText(itemtwo);
                 }
-                model.DataType = VersionDataType.String; 
+                model.DataType = VersionDataType.String;
             }
             return model;
         }

@@ -100,6 +100,19 @@ namespace Kooboo.IndexedDB
             }
         }
 
+        public List<LogEntry> GetByTableName(string tableName, int take, int skip = 0, bool ascending = false)
+        {
+            int namehash = tableName.GetHashCode32();
+            if (ascending)
+            {
+                return this.Store.Where(o => o.TableNameHash == namehash).OrderByAscending().Skip(skip).Take(take);
+            }
+            else
+            {
+                return this.Store.Where(o => o.TableNameHash == namehash).OrderByDescending().Skip(skip).Take(take);
+            }
+        }
+
         public List<LogEntry> GetByStoreName(string StoreName)
         {
             int namehash = StoreName.GetHashCode32();

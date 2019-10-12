@@ -158,8 +158,13 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public void RebuildTable(Setting newSetting)
         {
+            var isenable = newSetting.EnableLog;   
+
             string newname = "_koobootemp_" + System.Guid.NewGuid().ToString() + this.Name;
             var newtable = this.OwnerDatabase.GetOrCreateTable(newname, newSetting);
+
+            newtable.Setting.EnableLog = false; 
+
             var primaryindex = this.Indexs.Find(o => o.IsSystem);
 
             string errormsg = null;
@@ -191,6 +196,10 @@ namespace Kooboo.IndexedDB.Dynamic
             this.DelSelf();
             this._blockfile = null;
             System.IO.Directory.Move(newfolder, oldfolder);
+
+
+            newtable.Setting.EnableLog = isenable; 
+
             SettingHelper.WriteSetting(this.SettingFile, newSetting);
             Init(newSetting);
 
@@ -587,6 +596,11 @@ namespace Kooboo.IndexedDB.Dynamic
             this.OwnerDatabase.TableLog.Close(); // relese to enable delete. 
 
             return LogPos;
+        }
+
+        public Dictionary<string, object> GetLogData(LogEntry log)
+        {
+            return GetLogData(log.Id, log.NewBlockPosition); 
         }
 
         public Dictionary<string, object> GetLogData(long LogId, long DiskPosition)
@@ -1524,7 +1538,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
         private Dictionary<string, object> GetLastUpdateLogItem(LogEntry lastlog)
         {
-            if (lastlog.EditType == EditType.Update &&  !string.IsNullOrWhiteSpace(lastlog.TableColName))
+            if (lastlog.EditType == EditType.Update && !string.IsNullOrWhiteSpace(lastlog.TableColName))
             {
                 var previousLog = this.OwnerDatabase.Log.GetPreviousTableLog(lastlog);
                 if (previousLog == null)
@@ -1534,7 +1548,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 else
                 {
                     var item = GetLastUpdateLogItem(previousLog);
-                    var ColItem = this.GetLogData(lastlog.Id, lastlog.NewBlockPosition);
+                    var ColItem = this.GetLogData(lastlog);
                     if (item != null && ColItem != null)
                     {
                         foreach (var col in ColItem)
@@ -1548,11 +1562,11 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
             }
             else
-            { 
-                return this.GetLogData(lastlog.Id, lastlog.NewBlockPosition); 
+            {
+                return this.GetLogData(lastlog);
             }
 
-            return null; 
+            return null;
 
         }
     }
