@@ -1,17 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.App.Upgrade.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Xml.Linq;
-using System.Xml.Serialization;
-using Kooboo.App.Upgrade.Model;
 using System.Threading;
-using System.Diagnostics;
+using System.Xml.Serialization;
 
 namespace Kooboo.App.Upgrade
 {
@@ -21,19 +17,19 @@ namespace Kooboo.App.Upgrade
         {
             InitRootAndZip();
         }
+
         public static string UpgradeLogPath { get; set; }
 
         private static string _rootPath;
+
         public static string RootPath
         {
-            get { return _rootPath; }
+            get => _rootPath;
             set
             {
-                if(value!=null)
-                {
-                    _rootPath = value;
-                    InitOthers();
-                }
+                if (value == null) return;
+                _rootPath = value;
+                InitOthers();
             }
         }
 
@@ -51,12 +47,13 @@ namespace Kooboo.App.Upgrade
 
         public static string ConfigFile { get; set; }
 
-
         #region init
+
         public static void InitRootAndZip()
         {
             RootPath = GetRoot();
         }
+
         private static void InitOthers()
         {
             UpgradeLogPath = System.IO.Path.Combine(RootPath, "upgradePackage", "upgradeLog.txt");
@@ -81,7 +78,7 @@ namespace Kooboo.App.Upgrade
 
         public static void Log(string content)
         {
-            var log = string.Format("{0}-----{1}{2}", DateTime.Now.ToString(), content, Environment.NewLine);
+            var log = $"{DateTime.Now.ToString()}-----{content}{Environment.NewLine}";
             var fileInfo = new FileInfo(UpgradeLogPath);
             if (!Directory.Exists(fileInfo.DirectoryName))
             {
@@ -99,27 +96,27 @@ namespace Kooboo.App.Upgrade
             }
             var info = new System.IO.DirectoryInfo(basedir);
             var parent = info.Parent;
-            if (IsKoobooDiskRoot(parent.FullName))
+            if (IsKoobooDiskRoot(parent?.FullName))
             {
-                return parent.FullName;
+                return parent?.FullName;
             }
-            parent = parent.Parent;
-            if (IsKoobooDiskRoot(parent.FullName))
+            parent = parent?.Parent;
+            if (IsKoobooDiskRoot(parent?.FullName))
             {
-                return parent.FullName;
+                return parent?.FullName;
             }
             return null;
         }
 
-        private static bool IsKoobooDiskRoot(string FullPath)
+        private static bool IsKoobooDiskRoot(string fullPath)
         {
-            string ScriptFolder = System.IO.Path.Combine(FullPath, "_Admin", "Scripts");
-            if (!Directory.Exists(ScriptFolder))
+            string scriptFolder = System.IO.Path.Combine(fullPath, "_Admin", "Scripts");
+            if (!Directory.Exists(scriptFolder))
             {
                 return false;
             }
-            string ViewFolder = System.IO.Path.Combine(FullPath, "_Admin", "View");
-            if (!Directory.Exists(ViewFolder))
+            string viewFolder = System.IO.Path.Combine(fullPath, "_Admin", "View");
+            if (!Directory.Exists(viewFolder))
             {
                 return false;
             }
@@ -139,7 +136,7 @@ namespace Kooboo.App.Upgrade
             return null;
         }
 
-        #endregion
+        #endregion init
 
         public static void CloseKooboo()
         {
@@ -147,10 +144,10 @@ namespace Kooboo.App.Upgrade
             foreach (var process in dotnetProcesses)
             {
                 var processId = process.Id;
-                var cmd = string.Format("ps -ef|grep {0}", processId);
+                var cmd = $"ps -ef|grep {processId}";
                 Log(processId.ToString());
                 var str = CmdHelper.Excute(cmd, false);
-                if (str.IndexOf(KoobooAppName, StringComparison.OrdinalIgnoreCase)> -1)
+                if (str.IndexOf(KoobooAppName, StringComparison.OrdinalIgnoreCase) > -1)
                 {
                     var closeCmd = "kill " + processId;
                     CmdHelper.Excute(closeCmd, false);
@@ -171,13 +168,14 @@ namespace Kooboo.App.Upgrade
                 isClosed = IsKoobooClosed();
             }
         }
+
         private static bool IsKoobooClosed()
         {
             var dotnetProcesses = Process.GetProcessesByName("dotnet");
             foreach (var process in dotnetProcesses)
             {
                 var processId = process.Id;
-                var cmd = string.Format("ps -ef|grep {0}", processId);
+                var cmd = $"ps -ef|grep {processId}";
 
                 var str = CmdHelper.Excute(cmd, false);
                 if (str.IndexOf(KoobooAppName, StringComparison.OrdinalIgnoreCase) == -1) return true;
@@ -200,7 +198,7 @@ namespace Kooboo.App.Upgrade
 
             if (Directory.Exists(UnzipDownloadFilePath))
             {
-                Directory.Delete(UnzipDownloadFilePath,true);
+                Directory.Delete(UnzipDownloadFilePath, true);
             }
         }
 
@@ -214,6 +212,7 @@ namespace Kooboo.App.Upgrade
         }
 
         #region delete old files
+
         //test file is delete
         public static void DeleteOldFiles()
         {
@@ -237,7 +236,7 @@ namespace Kooboo.App.Upgrade
             {
                 var dirInfo = new DirectoryInfo(dir);
 
-                if (dirInfo != null && deleteFolders.Contains(dirInfo.Name))
+                if (deleteFolders.Contains(dirInfo.Name))
                 {
                     try
                     {
@@ -245,7 +244,7 @@ namespace Kooboo.App.Upgrade
                     }
                     catch (Exception ex)
                     {
-                        Log(string.Format("delete dir execption:{0}{1}", dir, ex.Message));
+                        Log($"delete dir execption:{dir}{ex.Message}");
                     }
                 }
             }
@@ -253,7 +252,6 @@ namespace Kooboo.App.Upgrade
 
         private static void DeleteLangFiles(List<string> deleteLangFiles)
         {
-            
             foreach (var file in deleteLangFiles)
             {
                 var path = System.IO.Path.Combine(RootPath, "Lang", file);
@@ -263,7 +261,7 @@ namespace Kooboo.App.Upgrade
                 }
                 catch (Exception ex)
                 {
-                    Log(string.Format("delete lang file execption:{0}{1}", path, ex.Message));
+                    Log($"delete lang file execption:{path}{ex.Message}");
                 }
             }
         }
@@ -276,30 +274,28 @@ namespace Kooboo.App.Upgrade
             {
                 var fileInfo = new FileInfo(file);
 
-                if (fileInfo != null)
+                try
                 {
-                    try
+                    if (!excludeFiles.Contains(fileInfo.Name))
                     {
-                        if (!excludeFiles.Contains(fileInfo.Name))
-                        {
-                            File.Delete(file);
-                        }
+                        File.Delete(file);
                     }
-                    catch (Exception ex)
-                    {
-                        Log(string.Format("delete file execption:{0}{1}", file, ex.Message));
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Log($"delete file execption:{file}{ex.Message}");
                 }
             }
         }
 
-        #endregion
+        #endregion delete old files
 
         public static bool UnzipDownloadPackage()
         {
             return UnzipDownloadPackage(DownloadZipFile, UnzipDownloadFilePath);
         }
-        public static bool UnzipDownloadPackage(string zipFile,string unzipPath)
+
+        public static bool UnzipDownloadPackage(string zipFile, string unzipPath)
         {
             if (!File.Exists(zipFile)) return false;
 
@@ -308,14 +304,14 @@ namespace Kooboo.App.Upgrade
                 ZipFile.ExtractToDirectory(zipFile, unzipPath);
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception)
             {
                 return false;
             }
-            
         }
 
         #region update files
+
         public static void UpdateFiles()
         {
             ResetUnzipPath();
@@ -332,17 +328,17 @@ namespace Kooboo.App.Upgrade
         private static void ResetUnzipPath()
         {
             var path = System.IO.Path.Combine(UnzipDownloadFilePath, "Kooboo");
-            if(System.IO.Directory.Exists(path))
+            if (System.IO.Directory.Exists(path))
             {
                 UnzipDownloadFilePath = path;
             }
-
         }
+
         private static void CopyFolders(List<string> copyFolders)
         {
             try
             {
-                foreach(var copyFolder in copyFolders)
+                foreach (var copyFolder in copyFolders)
                 {
                     var folder = System.IO.Path.Combine(UnzipDownloadFilePath, copyFolder);
                     var dirs = Directory.GetDirectories(folder, "*", SearchOption.AllDirectories);
@@ -356,12 +352,10 @@ namespace Kooboo.App.Upgrade
                         File.Copy(file, file.Replace(UnzipDownloadFilePath, RootPath), true);
                     }
                 }
-               
-                    
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                Log(string.Format("copy dir execption:{0}", ex.Message));
+                Log($"copy dir execption:{ex.Message}");
             }
         }
 
@@ -373,15 +367,14 @@ namespace Kooboo.App.Upgrade
                 {
                     var sourceFile = System.IO.Path.Combine(UnzipDownloadFilePath, "Lang", file);
                     var destFile = System.IO.Path.Combine(RootPath, "Lang", file);
-                    if(System.IO.File.Exists(sourceFile))
+                    if (System.IO.File.Exists(sourceFile))
                     {
                         File.Copy(sourceFile, destFile, true);
                     }
-                    
                 }
                 catch (Exception ex)
                 {
-                    Log(string.Format("copy lang file execption:{0}", ex.Message));
+                    Log($"copy lang file execption:{ex.Message}");
                 }
             }
         }
@@ -394,21 +387,17 @@ namespace Kooboo.App.Upgrade
             {
                 var fileInfo = new FileInfo(file);
 
-                if (fileInfo != null)
+                try
                 {
-                    try
+                    if (!excludeFiles.Contains(fileInfo.Name))
                     {
-                        if (!excludeFiles.Contains(fileInfo.Name))
-                        {
-                            var destFile = Path.Combine(RootPath, fileInfo.Name);
-                            File.Copy(fileInfo.FullName, destFile, true);
-                        }
-                        
+                        var destFile = Path.Combine(RootPath, fileInfo.Name);
+                        File.Copy(fileInfo.FullName, destFile, true);
                     }
-                    catch (Exception ex)
-                    {
-                        Log(string.Format("copy file execption:{0}{1}", file, ex.Message));
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Log($"copy file execption:{file}{ex.Message}");
                 }
             }
         }
@@ -419,12 +408,13 @@ namespace Kooboo.App.Upgrade
             var newConfig = Path.Combine(UnzipDownloadFilePath, ConfigFile);
             UpdateConfigFile(oldConfig, newConfig);
         }
-        public static void UpdateConfigFile(string oldConfig,string newConfig)
+
+        public static void UpdateConfigFile(string oldConfig, string newConfig)
         {
             XmlSerializer serializer = XmlSerializer.FromTypes(new[] { typeof(AppConfigModel) })[0];
             AppConfigModel oldSetting = ReadConfig(oldConfig);
-            
-            if(oldSetting==null)
+
+            if (oldSetting == null)
             {
                 if (File.Exists(newConfig))
                 {
@@ -452,7 +442,7 @@ namespace Kooboo.App.Upgrade
             serializer.Serialize(stream, oldSetting, ns);
             string xmlstring = System.Text.Encoding.UTF8.GetString(stream.ToArray());
 
-            System.IO.File.WriteAllText(oldConfig,xmlstring);
+            System.IO.File.WriteAllText(oldConfig, xmlstring);
         }
 
         public static AppConfigModel ReadConfig(string path)
@@ -467,20 +457,20 @@ namespace Kooboo.App.Upgrade
                     setting = serializer.Deserialize(reader) as AppConfigModel;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
+                // ignored
             }
+
             return setting;
         }
-        #endregion
+
+        #endregion update files
 
         public static void OpenKoobooApp()
         {
             var path = Path.Combine(RootPath, KoobooAppName);
             CmdHelper.StartDotnetApp(path);
         }
-
-
     }
 }

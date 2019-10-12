@@ -1,8 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 
 namespace Kooboo.App.Upgrade
@@ -11,9 +8,10 @@ namespace Kooboo.App.Upgrade
     {
         public static void StartDotnetApp(string path)
         {
-            var cmd = string.Format("dotnet {0}", path);
+            var cmd = $"dotnet {path}";
             Excute(cmd);
         }
+
         public static string Excute(string cmd, bool waitForExit)
         {
             var process = Excute(cmd);
@@ -45,6 +43,5 @@ namespace Kooboo.App.Upgrade
             process.Start();
             return process;
         }
-        
     }
 }
