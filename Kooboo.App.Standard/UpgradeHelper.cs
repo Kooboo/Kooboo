@@ -1,13 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using Kooboo.Data;
 using Kooboo.Lib.Helper;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace Kooboo.App
 {
     public class UpgradeHelper
@@ -33,9 +31,10 @@ namespace Kooboo.App
 
             UpgradeLogPath = System.IO.Path.Combine(RootPath, "upgradePackage", "upgradeLog.txt");
         }
+
         public static void Log(string content)
         {
-            var log = string.Format("{0}-----{1}{2}", DateTime.Now.ToString(), content, Environment.NewLine);
+            var log = $"{DateTime.Now.ToString()}-----{content}{Environment.NewLine}";
             Lib.Helper.IOHelper.EnsureFileDirectoryExists(UpgradeLogPath);
             System.IO.File.AppendAllText(UpgradeLogPath, log);
         }
@@ -54,12 +53,15 @@ namespace Kooboo.App
                     version = new Version(versionStr);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                // ignored
             }
-            Log(string.Format("new version:{0},oldersion:{1}", version, AppSettings.Version));
+
+            Log($"new version:{version},oldersion:{AppSettings.Version}");
             return version > AppSettings.Version;
         }
+
         public static void Download()
         {
             try
@@ -72,7 +74,6 @@ namespace Kooboo.App
             catch (Exception ex)
             {
                 Log("download failed" + ex.Message);
-
             }
             UpdateKoobooUpgradeDll();
         }
@@ -100,6 +101,7 @@ namespace Kooboo.App
                     System.IO.File.WriteAllBytes(KoobooZipFullName, package);
             }
         }
+
         private static async Task<byte[]> DownloadKoobooZip(string url)
         {
             var client = new System.Net.WebClient();
@@ -111,9 +113,7 @@ namespace Kooboo.App
                 var hash = client.ResponseHeaders["filehash"];
                 if (hash != null)
                 {
-                    Guid hashguid = default(Guid);
-
-                    if (Guid.TryParse(hash, out hashguid))
+                    if (Guid.TryParse(hash, out var hashguid))
                     {
                         var newhash = Lib.Security.Hash.ComputeGuid(bytes);
                         if (hashguid == newhash)

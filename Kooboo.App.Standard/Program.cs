@@ -1,20 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using Kooboo.Data;
-using Kooboo.Lib; 
 using Kooboo.IndexedDB;
+using Kooboo.Lib;
+using System;
 
 namespace Kooboo.App.CrossPlatform
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.RegisterEncoding();
 
             Kooboo.Data.AppSettings.SetCustomSslCheck();
-             
+
             GlobalSettings.RootPath = Kooboo.Data.AppSettings.DatabasePath;
             var settingPort = AppSettingsUtility.Get("Port");
             if (string.IsNullOrEmpty(settingPort))
@@ -29,15 +29,14 @@ namespace Kooboo.App.CrossPlatform
             }
             else if (int.TryParse(settingPort, out port) && Kooboo.Lib.Compatible.CompatibleManager.Instance.System.IsPortInUsed(port))
             {
-                string message = Data.Language.Hardcoded.GetValue("Port") + " " + port.ToString() + " " + Data.Language.Hardcoded.GetValue("is in use");
+                string message = Data.Language.Hardcoded.GetValue("Port") + " " + port + " " + Data.Language.Hardcoded.GetValue("is in use");
                 Console.WriteLine(message);
                 return;
             }
 
-            Kooboo.Data.Hosts.WindowsHost.change = new Data.Hosts.HostChange() { NoChange = true }; 
+            Kooboo.Data.Hosts.WindowsHost.change = new Data.Hosts.HostChange() { NoChange = true };
             Kooboo.Data.AppSettings.DefaultLocalHost = "localkooboo.com";
-            Kooboo.Data.AppSettings.StartHost = "127.0.0.1"; 
-          
+            Kooboo.Data.AppSettings.StartHost = "127.0.0.1";
 
             AppSettings.CurrentUsedPort = port;
 
@@ -45,14 +44,13 @@ namespace Kooboo.App.CrossPlatform
             Console.WriteLine("Web Server Started");
             Console.WriteLine("port:" + port);
 
-            Mail.EmailWorkers.Start(); 
+            Mail.EmailWorkers.Start();
 
             //if(UpgradeHelper.HasNewVersion())
             //{
             //    UpgradeHelper.Download();
-            //} 
-            Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.ConsoleWait(); 
+            //}
+            Kooboo.Lib.Compatible.CompatibleManager.Instance.Framework.ConsoleWait();
         }
-
     }
 }
