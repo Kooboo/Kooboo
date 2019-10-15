@@ -20,7 +20,7 @@ namespace Kooboo.IndexedDB.Dynamic
         public Converter.ObjectConverter ObjectConverter { get; set; }
 
         private BlockFile _blockfile;
-        private object _lockerBlockFile = new object();
+        private static object _lockerBlockFile = new object();
 
         public BlockFile BlockFile
         {

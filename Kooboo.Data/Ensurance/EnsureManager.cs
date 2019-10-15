@@ -23,23 +23,23 @@ namespace Kooboo.Data.Ensurance
             }
         }
 
-        private static Log.LogWriter _logging_out;
+        private static Log.LogWriter _loggingOut;
         private static Kooboo.Data.Log.LogWriter LoggingOut
         {
             get
             {
-                if (_logging_out == null)
+                if (_loggingOut == null)
                 {
                     lock (_locker)
                     {
-                        _logging_out = new Log.LogWriter("Ensurance_out");
+                        _loggingOut = new Log.LogWriter("Ensurance_out");
                     }
                 }
-                return _logging_out;
+                return _loggingOut;
             }
             set
             {
-                _logging_out = value;
+                _loggingOut = value;
             }
         }
          
@@ -50,9 +50,10 @@ namespace Kooboo.Data.Ensurance
         private static Dictionary<Guid, int> FailTimes = new Dictionary<Guid, int>();
         public static void Add(IQueueTask item)
         {
-            EnsureObject obj = new EnsureObject();
-            obj.ModelType = item.GetType().FullName;
-            obj.Json = Lib.Helper.JsonHelper.Serialize(item);
+            EnsureObject obj = new EnsureObject
+            {
+                ModelType = item.GetType().FullName, Json = Lib.Helper.JsonHelper.Serialize(item)
+            };
             GlobalDb.Ensurance.AddOrUpdate(obj);
 
             // add log
@@ -63,7 +64,7 @@ namespace Kooboo.Data.Ensurance
 
         public static void Execute(List<EnsureObject> queueitems)
         {
-            List<Guid> ItemToRemove = new List<Guid>();
+            List<Guid> itemToRemove = new List<Guid>();
             foreach (var item in queueitems)
             {
                 try
@@ -74,7 +75,7 @@ namespace Kooboo.Data.Ensurance
                     {
                         if (executor.Execute(item.Json))
                         { 
-                            ItemToRemove.Add(item.Id);
+                            itemToRemove.Add(item.Id);
                             // The out folder...
                             string log = item.ModelType + ":\r\n";
                             log += item.Json;
@@ -84,7 +85,7 @@ namespace Kooboo.Data.Ensurance
                         {
                             if (GetSetFailTimes(item))
                             {
-                                ItemToRemove.Add(item.Id);
+                                itemToRemove.Add(item.Id);
                             }
                         }
                     }
@@ -93,7 +94,7 @@ namespace Kooboo.Data.Ensurance
                 {
                     if (GetSetFailTimes(item))
                     {
-                        ItemToRemove.Add(item.Id);
+                        itemToRemove.Add(item.Id);
                     }
 
                     Kooboo.Data.Log.Instance.Exception.Write(ex.Message + ex.StackTrace); 
@@ -101,7 +102,7 @@ namespace Kooboo.Data.Ensurance
                 }
             }
 
-            foreach (var item in ItemToRemove)
+            foreach (var item in itemToRemove)
             {
                 RemoveItem(item);
             }
@@ -138,10 +139,8 @@ namespace Kooboo.Data.Ensurance
                 System.IO.File.WriteAllText(filename, Lib.Helper.JsonHelper.Serialize(item));
                 return true;
             }
-            else
-            {
-                FailTimes[item.Id] = failedtimes;
-            }
+
+            FailTimes[item.Id] = failedtimes;
             return false;
         }
 

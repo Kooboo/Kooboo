@@ -6,7 +6,7 @@ namespace Kooboo.Data.Interface
 {
     public interface ITwoFactorProvder
     {
-        Dictionary<string, string> GetHeaders(Guid UserId);
+        Dictionary<string, string> GetHeaders(Guid userId);
 
         Kooboo.Data.Models.User Validate(HttpRequest request);
     }

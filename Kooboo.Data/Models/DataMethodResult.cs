@@ -1,13 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Models
-{  
+{
     public class DataMethodResult
     {
         /// <summary>
@@ -15,12 +11,9 @@ namespace Kooboo.Data.Models
         /// </summary>
         public object Value { get; set; }
 
-        public bool HasValue
-        {
-            get { return Value != null; }
-        }
+        public bool HasValue => Value != null;
 
-        private string _ObjectType;
+        private string _objectType;
 
         /// <summary>
         /// The type of object that can be used render engine model binding. like News.Id. News is the ObjectType.
@@ -29,27 +22,15 @@ namespace Kooboo.Data.Models
         {
             get
             {
-                if (string.IsNullOrEmpty(_ObjectType) && this.HasValue)
+                if (string.IsNullOrEmpty(_objectType) && this.HasValue)
                 {
                     var valuetype = this.Value.GetType();
 
-                    if (Lib.Reflection.TypeHelper.IsGenericCollection(valuetype))
-                    {
-
-                        _ObjectType = Lib.Reflection.TypeHelper.GetEnumberableType(valuetype).Name.ToLower();
-                    }
-                    else
-                    {
-                        _ObjectType = valuetype.Name.ToLower();
-                    }
+                    _objectType = Lib.Reflection.TypeHelper.IsGenericCollection(valuetype) ? Lib.Reflection.TypeHelper.GetEnumberableType(valuetype).Name.ToLower() : valuetype.Name.ToLower();
                 }
-                return _ObjectType;
+                return _objectType;
             }
-            set
-            {
-                _ObjectType = value;
-            }
-
+            set => _objectType = value;
         }
 
         /// <summary>
@@ -59,41 +40,22 @@ namespace Kooboo.Data.Models
 
         private Dictionary<string, DataMethodResult> _children;
 
-        public bool HasChildren
-        {
-            get
-            { return _children != null; }
-        }
+        public bool HasChildren => _children != null;
 
-        public Dictionary<string, DataMethodResult> Children
-        {
-            get
-            {
-                if (_children == null)
-                {
-                    _children = new Dictionary<string, DataMethodResult>();
-                }
-                return _children;
-            }
-        }
+        public Dictionary<string, DataMethodResult> Children => _children ?? (_children = new Dictionary<string, DataMethodResult>());
 
-        public DataMethodResult() { }
+        public DataMethodResult()
+        {
+        }
 
         public DataMethodResult(object value)
         {
             Value = value;
-        } 
+        }
 
         public object GetValue(string expression)
         {
-            if (Value == null)
-            {
-                return null;
-            }
-
-            return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(Value, expression);
+            return Value == null ? null : Kooboo.Lib.Reflection.Dynamic.GetObjectMember(Value, expression);
         }
-          
-    } 
-    
+    }
 }

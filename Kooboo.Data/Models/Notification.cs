@@ -1,12 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Models
 {
@@ -44,18 +41,14 @@ namespace Kooboo.Data.Models
                 var ids = ReadUserIds.Split(',');
                 foreach (var id in ids)
                 {
-                    Guid tempId;
-                    if (Guid.TryParse(id, out tempId))
+                    if (Guid.TryParse(id, out var tempId))
                     {
                         list.Add(tempId);
                     }
                 }
                 return list;
             }
-            set
-            {
-                ReadUserIds = String.Join(",", value);
-            }
+            set => ReadUserIds = String.Join(",", value);
         }
 
         public string ReadUserIds { get; set; }
@@ -78,10 +71,10 @@ namespace Kooboo.Data.Models
         Error = 3
     }
 
-
     public class Notificationnew : IGolbalObject
     {
         private Guid _id;
+
         public Guid Id
         {
             get
@@ -92,18 +85,19 @@ namespace Kooboo.Data.Models
                 }
                 return _id;
             }
-            set { _id = value; }
+            set => _id = value;
         }
 
         public string Message { get; set; }
-         
+
         public Guid OrganizationId { get; set; }
 
         public Guid WebSiteId { get; set; }
 
-        public Guid UserId { get; set;  }
+        public Guid UserId { get; set; }
 
         private string _name;
+
         public string Name
         {
             get
@@ -117,7 +111,7 @@ namespace Kooboo.Data.Models
                 }
                 return _name;
             }
-            set { _name = value; }
+            set => _name = value;
         }
 
         public bool IsRead { get; set; }
@@ -134,7 +128,6 @@ namespace Kooboo.Data.Models
 
         [JsonConverter(typeof(StringEnumConverter))]
         public NotifyType NotifyType { get; set; }
-
     }
 
     public enum NotifyType
@@ -143,5 +136,4 @@ namespace Kooboo.Data.Models
         Warning,
         Error
     }
-
 }

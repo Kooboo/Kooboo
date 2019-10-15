@@ -1,40 +1,29 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Kooboo.Data.Hosts
 {
-
     /// <summary>
     /// Change directly into host file for DNS records.
     /// The host file can have some special block that mark with like #<kooboo> recordss.#</kooboo>
     /// </summary>
     public static class WindowsHost
     {
+        private static HostChange _change;
 
-        private static HostChange _change; 
-        public static HostChange change {
-            get
-            {
-                if (_change == null)
-                {
-                   if (System.IO.File.Exists(HostFile))
-                    {
-                        _change = new HostChange() { NoChange = false }; 
-                    }
-                   else
-                    {
-                        _change = new HostChange() { NoChange = true }; 
-                    }
-                }
-                return _change; 
-            }
-            set { _change = value;  }
+        public static HostChange Change
+        {
+            get =>
+                _change ?? (_change = System.IO.File.Exists(HostFile)
+                    ? new HostChange { NoChange = false }
+                    : new HostChange { NoChange = true });
+            set => _change = value;
         }
-         
 
         private static object _object = new object();
 
@@ -49,12 +38,12 @@ namespace Kooboo.Data.Hosts
             get
             {
                 if (string.IsNullOrEmpty(_hostfile))
-                { 
+                {
                     string systemfolder = Environment.GetEnvironmentVariable("SystemRoot");
                     if (!string.IsNullOrWhiteSpace(systemfolder))
                     {
                         _hostfile = System.IO.Path.Combine(systemfolder, "system32", "drivers", "etc", "hosts");
-                    } 
+                    }
                 }
                 return _hostfile;
             }
@@ -65,110 +54,100 @@ namespace Kooboo.Data.Hosts
             int count = input.Length;
             for (int i = 0; i < count; i++)
             {
-                var onechar = input[i]; 
+                var onechar = input[i];
                 if (!Lib.Helper.CharHelper.isAsciiDigit(onechar))
                 {
                     if (onechar == '.' || onechar == ':')
                     {
-                        continue; 
+                        continue;
                     }
-                    else
-                    {
-                        return false; 
-                    }
+
+                    return false;
                 }
             }
 
-            return true; 
+            return true;
         }
 
         /// <summary>
         /// add a new record and insert into host file.
         /// </summary>
-        /// <param name="FullDomain"></param>
-        /// <param name="IP"></param>
-        public static void AddOrUpdate(string FullDomain, string IP)
+        /// <param name="fullDomain"></param>
+        /// <param name="ip"></param>
+        public static void AddOrUpdate(string fullDomain, string ip)
         {
-            if (change.NoChange)
+            if (Change.NoChange)
             {
-                return; 
+                return;
             }
 
-            if (string.IsNullOrEmpty(FullDomain) || IsIp(FullDomain))
+            if (string.IsNullOrEmpty(fullDomain) || IsIp(fullDomain))
             {
-                return; 
+                return;
             }
 
-            FullDomain = FullDomain.ToLower();
+            fullDomain = fullDomain.ToLower();
 
             var list = GetList();
 
-            foreach (var item in list)
+            foreach (var item in list.Where(item => item.Domain == fullDomain))
             {
-                if (item.Domain == FullDomain)
+                if (item.IpAddress == ip)
                 {
-                    if (item.IpAddress == IP)
-                    {
-                        // already there. 
-                        return;
-                    }
-                    else
-                    {
-                        // already there, but different ip... need to update it. 
-                        string newline = item.LineString.Replace(item.IpAddress, IP);
-                        replacelines(item.LineString, newline);
-                        return; 
-                    }
+                    // already there.
+                    return;
                 }
+
+                // already there, but different ip... need to update it.
+                string newline = item.LineString.Replace(item.IpAddress, ip);
+                Replacelines(item.LineString, newline);
+                return;
             }
 
             // if there is not a reocrd. we append to the end of the #</kooboo>
-            string recordline = IP + " " + FullDomain + "\r\n" + koobooend;
-            replacelines(koobooend, recordline);
-        
-            return;
+            string recordline = ip + " " + fullDomain + "\r\n" + koobooend;
+            Replacelines(koobooend, recordline);
         }
 
         /// <summary>
-        /// Del a record from hostfile. 
+        /// Del a record from hostfile.
         /// </summary>
-        /// <param name="FullDomain"></param>
-        public static void Delete(string FullDomain)
+        /// <param name="fullDomain"></param>
+        public static void Delete(string fullDomain)
         {
-            if (change.NoChange)
+            if (Change.NoChange)
             {
-                return; 
+                return;
             }
 
-            if (string.IsNullOrEmpty(FullDomain))
+            if (string.IsNullOrEmpty(fullDomain))
             {
-                return; 
+                return;
             }
 
-            FullDomain = FullDomain.ToLower();
+            fullDomain = fullDomain.ToLower();
             var list = GetList();
             foreach (var item in list)
             {
-                if (item.Domain == FullDomain)
+                if (item.Domain == fullDomain)
                 {
-                    ///based on different hardwared, there are 3 possibilities. 
+                    ///based on different hardwared, there are 3 possibilities.
                     string fulllinestring = item.LineString + "\r\n";
                     string fulllinestring2 = item.LineString + "\r";
                     string fulllinestring3 = item.LineString + "\n";
 
-                    replacelines(fulllinestring, "");
-                    replacelines(fulllinestring2, "");
-                    replacelines(fulllinestring3, "");
-
+                    Replacelines(fulllinestring, "");
+                    Replacelines(fulllinestring2, "");
+                    Replacelines(fulllinestring3, "");
                 }
             }
         }
 
         public static void RemoveAll()
         {
-            if (change.NoChange)
+            if (Change.NoChange)
             {
-                return; 
+                return;
             }
 
             var list = GetList();
@@ -180,9 +159,9 @@ namespace Kooboo.Data.Hosts
 
         public static List<HostRecord> GetList()
         {
-            if (change.NoChange)
+            if (Change.NoChange)
             {
-                return new List<HostRecord>(); 
+                return new List<HostRecord>();
             }
 
             lock (_object)
@@ -191,14 +170,13 @@ namespace Kooboo.Data.Hosts
 
                 string[] hostfilelines = Regex.Split(System.IO.File.ReadAllText(HostFile, Encoding.UTF8), "\r\n|\r|\n");
 
-                bool HasStartTag = false;
+                bool hasStartTag = false;
 
                 foreach (var line in hostfilelines)
                 {
                     if (!string.IsNullOrWhiteSpace(line))
                     {
-
-                        if (HasStartTag)
+                        if (hasStartTag)
                         {
                             HostRecord record = HostRecord.Parse(line);
                             if (record != null)
@@ -209,9 +187,8 @@ namespace Kooboo.Data.Hosts
 
                         if (line.Contains(kooboostart))
                         {
-                            HasStartTag = true;
+                            hasStartTag = true;
                         }
-
 
                         if (line.Contains(koobooend))
                         {
@@ -220,21 +197,20 @@ namespace Kooboo.Data.Hosts
                     }
                 }
 
-                if (!HasStartTag)
+                if (!hasStartTag)
                 {
-                    ensureKoobooTag();
+                    EnsureKoobooTag();
                 }
                 return list;
             }
         }
 
-
         /// <summary>
-        /// replace a line in the host file. 
+        /// replace a line in the host file.
         /// </summary>
         /// <param name="oldline"></param>
         /// <param name="newline"></param>
-        private static void replacelines(string oldline, string newline)
+        private static void Replacelines(string oldline, string newline)
         {
             lock (_object)
             {
@@ -245,10 +221,10 @@ namespace Kooboo.Data.Hosts
         }
 
         /// <summary>
-        /// append a line to the host file. 
+        /// append a line to the host file.
         /// </summary>
         /// <param name="lines"></param>
-        private static void appendline(string lines)
+        private static void Appendline(string lines)
         {
             lock (_object)
             {
@@ -256,23 +232,22 @@ namespace Kooboo.Data.Hosts
             }
         }
 
-        private static void ensureKoobooTag()
+        private static void EnsureKoobooTag()
         {
             lock (_object)
             {
                 string alltext = System.IO.File.ReadAllText(HostFile, Encoding.UTF8);
                 if (alltext.IndexOf(kooboostart) < 0)
                 {
-                    appendline("\r\n\r\n" + kooboostart + "\r\n" + koobooend);
+                    Appendline("\r\n\r\n" + kooboostart + "\r\n" + koobooend);
                 }
             }
         }
-
     }
 
     public class HostChange
 
     {
-        public bool NoChange { get; set;  }
+        public bool NoChange { get; set; }
     }
 }

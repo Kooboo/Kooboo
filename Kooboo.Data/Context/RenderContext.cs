@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Data.Context
 {
@@ -13,51 +14,26 @@ namespace Kooboo.Data.Context
         private HttpRequest _request;
         public HttpRequest Request
         {
-            get
-            {
-                if (_request == null)
-                {
-                    _request = new HttpRequest();
-                }
-                return _request;
-            }
-            set { _request = value; }
+            get => _request ?? (_request = new HttpRequest());
+            set => _request = value;
         }
 
         private HttpResponse _response;
 
         public HttpResponse Response
         {
-            get
-            {
-                if (_response == null)
-                {
-                    _response = new HttpResponse();
-                }
-                return _response;
-            }
-            set
-            {
-                _response = value;
-            }
+            get { return _response ?? (_response = new HttpResponse()); }
+            set => _response = value;
         }
 
-        private DataContext _DataContext;
+        private DataContext _dataContext;
         public DataContext DataContext
         {
-            get
-            {
-                if (_DataContext == null)
-                {
-                    _DataContext = new DataContext(this);
-                    _DataContext.OnDataPush = AssignHeaderValue;
-                }
-                return _DataContext;
-            }
+            get => _dataContext ?? (_dataContext = new DataContext(this) {OnDataPush = AssignHeaderValue});
             set
             {
-                _DataContext = value;
-                _DataContext.OnDataPush = AssignHeaderValue;
+                _dataContext = value;
+                _dataContext.OnDataPush = AssignHeaderValue;
             }
         }
 
@@ -80,7 +56,7 @@ namespace Kooboo.Data.Context
                 }
                 return _website;
             }
-            set { _website = value; }
+            set => _website = value;
         }
 
         private bool HasUserCheck { get; set; } = false;
@@ -107,57 +83,32 @@ namespace Kooboo.Data.Context
         private string _culture = null;
         public string Culture
         {
-            get
-            {
-                if (_culture == null)
-                {             
-                    _culture = RequestManager.GetSetCulture(this.WebSite, this);
-                    if (_culture == null)
-                    {
-                        if (this.WebSite !=null)
-                        {
-                            _culture = this.WebSite.DefaultCulture;
-                        }
-                        else
-                        {
-                            _culture = AppSettings.CmsLang; // default
-                        } 
-                    } 
-                }
-                return _culture;
-            }
-            set { _culture = value; }
-
+            get =>
+                _culture ?? (_culture = RequestManager.GetSetCulture(this.WebSite, this) ??
+                                        (this.WebSite != null
+                                            ? this.WebSite.DefaultCulture
+                                            : AppSettings.CmsLang));
+            set => _culture = value;
         }
 
         private Dictionary<string, string> _placeholdercontents;
         public Dictionary<string, string> PlaceholderContents
         {
-            get
-            {
-                if (_placeholdercontents == null)
-                {
-                    _placeholdercontents = new Dictionary<string, string>();
-                }
-                return _placeholdercontents;
-            }
-            set
-            {
-                _placeholdercontents = value;
-            }
+            get => _placeholdercontents ?? (_placeholdercontents = new Dictionary<string, string>());
+            set => _placeholdercontents = value;
         }
 
-        public void AddPlaceHolderContent(string Key, string value)
+        public void AddPlaceHolderContent(string key, string value)
         {
-            if (_placeholdercontents == null || !this.PlaceholderContents.ContainsKey(Key))
+            if (_placeholdercontents == null || !this.PlaceholderContents.ContainsKey(key))
             {
-                this.PlaceholderContents.Add(Key, value);
+                this.PlaceholderContents.Add(key, value);
             }
             else
             {
-                var currentvalue = this.PlaceholderContents[Key];
+                var currentvalue = this.PlaceholderContents[key];
                 currentvalue += value;
-                this.PlaceholderContents[Key] = currentvalue;
+                this.PlaceholderContents[key] = currentvalue;
             }
         }
 
@@ -166,53 +117,46 @@ namespace Kooboo.Data.Context
         [JsonIgnore]
         public Dictionary<string, object> Items
         {
-            get
-            {
-                if (_items == null)
-                {
-                    _items = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _items;
-            }
-            set { _items = value; }
+            get => _items ?? (_items = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
+            set => _items = value;
         }
 
-        public void SetItem<T>(T value, string KeyName = null)
+        public void SetItem<T>(T value, string keyName = null)
         {
-            if (string.IsNullOrEmpty(KeyName))
+            if (string.IsNullOrEmpty(keyName))
             {
-                KeyName = typeof(T).Name;
+                keyName = typeof(T).Name;
             }
-            Items[KeyName] = value;
+            Items[keyName] = value;
         }
 
-        public T GetItem<T>(string KeyName = null)
+        public T GetItem<T>(string keyName = null)
         {
             if (this._items == null)
-            { return default(T); }
-            if (string.IsNullOrEmpty(KeyName))
+            { return default; }
+            if (string.IsNullOrEmpty(keyName))
             {
-                KeyName = typeof(T).Name;
+                keyName = typeof(T).Name;
             }
-            if (this.Items.ContainsKey(KeyName))
+            if (this.Items.ContainsKey(keyName))
             {
-                return (T)Items[KeyName];
+                return (T)Items[keyName];
             }
             return default(T);
         }
 
-        public bool HasItem<T>(string KeyName = null)
+        public bool HasItem<T>(string keyName = null)
         {
             if (this._items == null)
             {
                 return false;
             }
 
-            if (string.IsNullOrEmpty(KeyName))
+            if (string.IsNullOrEmpty(keyName))
             {
-                KeyName = typeof(T).Name;
+                keyName = typeof(T).Name;
             }
-            return this.Items.ContainsKey(KeyName);
+            return this.Items.ContainsKey(keyName);
         }
 
         private List<HeaderBindings> _headerBinding;
@@ -220,14 +164,7 @@ namespace Kooboo.Data.Context
         [JsonIgnore]
         public List<HeaderBindings> HeaderBindings
         {
-            get
-            {
-                if (_headerBinding == null)
-                {
-                    _headerBinding = new List<HeaderBindings>();
-                }
-                return _headerBinding;
-            }
+            get => _headerBinding ?? (_headerBinding = new List<HeaderBindings>());
             set
             {
                 _headerBinding = value;
@@ -242,12 +179,9 @@ namespace Kooboo.Data.Context
         {
             if (this._headerBinding != null)
             {
-                foreach (var item in this.HeaderBindings)
+                foreach (var item in this.HeaderBindings.Where(item => item.RequireBinding))
                 {
-                    if (item.RequireBinding)
-                    {
-                        item.ValueQuery.TryAssignValue(data, this);  
-                    }
+                    item.ValueQuery.TryAssignValue(data, this);
                 }
             }
         }
@@ -256,12 +190,9 @@ namespace Kooboo.Data.Context
         {
             if (_headerBinding != null)
             {
-                foreach (var item in this.HeaderBindings)
+                foreach (var item in this.HeaderBindings.Where(item => item.RequireBinding))
                 {
-                    if (item.RequireBinding)
-                    {
-                        item.ValueQuery.InitValue(this);  
-                    }
+                    item.ValueQuery.InitValue(this);
                 }
             }
         }

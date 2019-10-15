@@ -1,70 +1,67 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.GeoLocation;
 using System;
 using System.Collections.Generic;
-  
+
 namespace Kooboo.Data.Models
 {
     public class OnlineServer : IGolbalObject
     {
-        private Guid _id; 
+        private Guid _id;
 
-        public Guid Id {
+        public Guid Id
+        {
             get
             {
                 if (_id == default(Guid))
                 {
-                    if (ServerId !=default(int))
+                    if (ServerId != default(int))
                     {
-                        _id = Lib.Helper.IDHelper.NewIntGuid(ServerId); 
+                        _id = Lib.Helper.IDHelper.NewIntGuid(ServerId);
                     }
                     else if (!string.IsNullOrWhiteSpace(this.Name))
                     {
-                        _id = Lib.Security.Hash.ComputeGuidIgnoreCase(this.Name); 
+                        _id = Lib.Security.Hash.ComputeGuidIgnoreCase(this.Name);
                     }
                 }
-                return _id; 
+                return _id;
             }
-            set
-            {
-                _id = value; 
-            }
+            set => _id = value;
         }
 
-        // the old server id.. 
+        // the old server id..
         public int ServerId { get; set; }
 
         public string Name { get; set; }
-         
+
         public string PrimaryIp
         {
-            get;set;
-        } 
+            get; set;
+        }
 
-        // intranet ip. 
+        // intranet ip.
         public string InternalIP { get; set; }
 
         public int SubMask { get; set; }
- 
+
         public string Secondary
         {
-            get;set;
+            get; set;
         }
 
         [Obsolete]
         public string Country { get; set; }
-         
+
         [Obsolete]
         public string ForCountry
         {
-            get;set;
+            get; set;
         }
-          
-        //Only for the server that act as DNS server. 
+
+        //Only for the server that act as DNS server.
         public string NameServer
         {
-            get;set;
+            get; set;
         }
 
         public ServerType Type { get; set; }
@@ -79,69 +76,60 @@ namespace Kooboo.Data.Models
 
         public int EmailServerId { get; set; }
 
-        private Guid _privateorgid; 
-        public Guid PrivateOrgId {
-            get {
+        private Guid _privateorgid;
 
+        public Guid PrivateOrgId
+        {
+            get
+            {
                 if (_privateorgid == default(Guid))
                 {
                     if (!string.IsNullOrWhiteSpace(PrivateOrgName))
                     {
-                        _privateorgid = Lib.Security.Hash.ComputeGuidIgnoreCase(PrivateOrgName); 
+                        _privateorgid = Lib.Security.Hash.ComputeGuidIgnoreCase(PrivateOrgName);
                     }
                 }
-                return _privateorgid; 
+                return _privateorgid;
             }
-            set
-            {
-                _privateorgid = value; 
-            }
+            set => _privateorgid = value;
         }
-        
+
         // The agency name.....
         public string PrivateOrgName { get; set; }
 
         public int DesignOrgNumber { get; set; } = 999;
-         
+
         [Obsolete]
         public string DataCenter
         {
-            get;set;
-        } 
+            get; set;
+        }
 
-        private Guid _hostdomainhash; 
+        private Guid _hostdomainhash;
 
         [Newtonsoft.Json.JsonIgnore]
         public Guid HostDomainHash
         {
-           get
+            get
             {
-                if (_hostdomainhash== default(Guid))
+                if (_hostdomainhash == default(Guid))
                 {
                     if (!string.IsNullOrWhiteSpace(this.HostDomain))
                     {
-                        _hostdomainhash = Lib.Security.Hash.ComputeGuidIgnoreCase(this.HostDomain); 
+                        _hostdomainhash = Lib.Security.Hash.ComputeGuidIgnoreCase(this.HostDomain);
                     }
                 }
-                return _hostdomainhash; 
+                return _hostdomainhash;
             }
         }
 
         private System.Net.IPAddress _primaryipaddress;
+
         [Newtonsoft.Json.JsonIgnore]
-        public System.Net.IPAddress PrimaryIpAddress
-        {
-            get
-            {
-                if (_primaryipaddress == null)
-                {
-                    _primaryipaddress = System.Net.IPAddress.Parse(this.PrimaryIp.Trim());
-                }
-                return _primaryipaddress;
-            }
-        }
-   
+        public System.Net.IPAddress PrimaryIpAddress => _primaryipaddress ?? (_primaryipaddress = System.Net.IPAddress.Parse(this.PrimaryIp.Trim()));
+
         private HashSet<string> _allips;
+
         [Newtonsoft.Json.JsonIgnore]
         public HashSet<string> AllIPS
         {
@@ -149,10 +137,9 @@ namespace Kooboo.Data.Models
             {
                 if (_allips == null)
                 {
-                    _allips = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                    _allips.Add(this.PrimaryIp);
+                    _allips = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {this.PrimaryIp};
 
-                    var otherips =  Helper.ServerHelper.ParseIps(this.Secondary);
+                    var otherips = Helper.ServerHelper.ParseIps(this.Secondary);
                     foreach (var item in otherips)
                     {
                         _allips.Add(item);
@@ -161,14 +148,15 @@ namespace Kooboo.Data.Models
                 return _allips;
             }
         }
-         
+
         [Obsolete]
         [Newtonsoft.Json.JsonIgnore]
-        public string Continent {
-            get;set;
+        public string Continent
+        {
+            get; set;
         }
 
-        // the new data center id. 
+        // the new data center id.
         public int OnlineDataCenterId { get; set; }
 
         public override int GetHashCode()
@@ -178,9 +166,9 @@ namespace Kooboo.Data.Models
             unique += this.OrgCount.ToString() + this.PrimaryIp.ToString() + this.PTR + this.Secondary;
             unique += this.SubMask + this.Type.ToString();
             unique += this.PrivateOrgName;
-            unique += this.InternalIP;  
- 
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);  
+            unique += this.InternalIP;
+
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }
 
@@ -189,19 +177,18 @@ namespace Kooboo.Data.Models
         NormalHost = 0,
         Template = 1,
         AccountDns = 2,
-        Mta = 4, 
+        Mta = 4,
         DnsOnly = 5,
-        PrivateWeb = 6, 
+        PrivateWeb = 6,
         Converter = 8,
         TBD = 9,
-        TheTheme =11,
-        Root=16, 
-        Nginx = 32, 
-        SslServer = 64, 
+        TheTheme = 11,
+        Root = 16,
+        Nginx = 32,
+        SslServer = 64,
         MailServer = 128,
         Monitor = 256,
         Redirect = 512
-        // Nginx is for the www root redirect. Redirect for user custom domain redirect....  
+        // Nginx is for the www root redirect. Redirect for user custom domain redirect....
     }
-    
 }

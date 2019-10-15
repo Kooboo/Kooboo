@@ -1,11 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Context
 {
@@ -13,24 +10,16 @@ namespace Kooboo.Data.Context
     {
         public HttpResponse()
         {
-            this.StatusCode = 200;
+            StatusCode = 200;
         }
 
         private string _contenttype;
+
         public string ContentType
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_contenttype))
-                {
-                    return Kooboo.Constants.Site.DefaultContentType;
-                }
-                return _contenttype;
-            }
-            set
-            { _contenttype = value; }
+            get => string.IsNullOrEmpty(_contenttype) ? Kooboo.Constants.Site.DefaultContentType : _contenttype;
+            set => _contenttype = value;
         }
-
 
         public void AppendString(string output)
         {
@@ -39,14 +28,11 @@ namespace Kooboo.Data.Context
         }
 
         private byte[] _body;
-        // this is actually only for text body... for binary... file..this will break.. 
+
+        // this is actually only for text body... for binary... file..this will break..
         public byte[] Body
         {
-
-            get
-            {
-                return _body;
-            }
+            get => _body;
             set
             {
                 if (_body == null)
@@ -55,7 +41,7 @@ namespace Kooboo.Data.Context
                 }
                 else
                 {
-                    // append directly. 
+                    // append directly.
                     int newlen = value.Length;
                     int oldlen = _body.Length;
                     byte[] newvalue = new byte[newlen + oldlen];
@@ -65,72 +51,43 @@ namespace Kooboo.Data.Context
                     _body = newvalue;
                 }
             }
-
         }
 
         public System.IO.Stream Stream { get; set; }
 
         private Dictionary<string, string> _headers;
+
         public Dictionary<string, string> Headers
         {
-            get
-            {
-                if (_headers == null)
-                {
-                    _headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _headers;
-            }
-            set
-            {
-                _headers = value;
-            }
+            get => _headers ?? (_headers = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
+            set => _headers = value;
         }
 
-        private List<string> _DeletedCookieNames;
+        private List<string> _deletedCookieNames;
+
         public List<string> DeletedCookieNames
         {
-            get
-            {
-                if (_DeletedCookieNames == null)
-                {
-                    _DeletedCookieNames = new List<string>();
-                }
-                return _DeletedCookieNames;
-            }
-            set
-            {
-                _DeletedCookieNames = value;
-            }
+            get => _deletedCookieNames ?? (_deletedCookieNames = new List<string>());
+            set => _deletedCookieNames = value;
         }
 
         private List<Cookie> _appendcookies;
+
         public List<Cookie> AppendedCookies
         {
-            get
-            {
-                if (_appendcookies == null)
-                {
-                    _appendcookies = new List<Cookie>();
-                }
-                return _appendcookies;
-            }
-            set
-            {
-                _appendcookies = new List<Cookie>();
-            }
+            get => _appendcookies ?? (_appendcookies = new List<Cookie>());
+            set => _appendcookies = new List<Cookie>();
         }
 
-        public void AppendCookie(string CookieName, string CookieValue, int days = 1)
+        public void AppendCookie(string cookieName, string cookieValue, int days = 1)
         {
-            AppendCookie(CookieName, CookieValue, DateTime.Now.AddDays(days));
+            AppendCookie(cookieName, cookieValue, DateTime.Now.AddDays(days));
         }
 
-        public void AppendCookie(string CookieName, string CookieValue, DateTime expires)
+        public void AppendCookie(string cookieName, string cookieValue, DateTime expires)
         {
-            AddCookie(new Cookie() { Name = CookieName, Value = CookieValue, Expires = expires });
+            AddCookie(new Cookie { Name = cookieName, Value = cookieValue, Expires = expires });
         }
-
 
         public void AddCookie(Cookie cookie)
         {
@@ -138,30 +95,30 @@ namespace Kooboo.Data.Context
             AppendedCookies.Add(cookie);
         }
 
-        public void DeleteCookie(string CookieName)
+        public void DeleteCookie(string cookieName)
         {
-            if (!DeletedCookieNames.Contains(CookieName))
+            if (!DeletedCookieNames.Contains(cookieName))
             {
-                this.DeletedCookieNames.Add(CookieName);
+                DeletedCookieNames.Add(cookieName);
             }
         }
 
         public int StatusCode { get; set; } = 200;
 
         /// <summary>
-        /// Set to end the rendering and directly return back to client... 
+        /// Set to end the rendering and directly return back to client...
         /// </summary>
         public bool End { get; set; }
 
-        public void Redirect(int StatusCode, string FullOrRelativeUrl)
+        public void Redirect(int statusCode, string fullOrRelativeUrl)
         {
-            if (string.IsNullOrWhiteSpace(FullOrRelativeUrl))
+            if (string.IsNullOrWhiteSpace(fullOrRelativeUrl))
             {
                 return;
             }
 
-            this.StatusCode = StatusCode;
-            string url = Lib.Helper.UrlHelper.GetEncodedLocation(FullOrRelativeUrl);
+            this.StatusCode = statusCode;
+            string url = Lib.Helper.UrlHelper.GetEncodedLocation(fullOrRelativeUrl);
 
             this.Headers["location"] = url;
         }
@@ -186,13 +143,8 @@ namespace Kooboo.Data.Context
                 {
                     var url = Lib.Helper.UrlHelper.GetEncodedLocation(value);
                     this.Headers["location"] = url;
-                } 
+                }
             }
         }
-         
- 
-         
     }
-
-
 }

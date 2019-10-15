@@ -1,24 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Service
 {
     public static class StartService
     {
-
-        public static string AfterLoginPage(RenderContext Context)
+        public static string AfterLoginPage(RenderContext context)
         {
-            if (Context != null && Context.User != null)
+            if (context?.User != null)
             {
                 if (Data.AppSettings.IsOnlineServer)
-                { 
-                    var lasturl = Service.UserLoginService.GetLastPath(Context.User.Id);
+                {
+                    var lasturl = Service.UserLoginService.GetLastPath(context.User.Id);
                     if (!string.IsNullOrEmpty(lasturl) && !lasturl.ToLower().StartsWith("/_admin/sites/edit"))
                     {
                         return lasturl;
@@ -26,7 +20,7 @@ namespace Kooboo.Data.Service
                 }
             }
 
-            var host = Context.Request.Host;
+            var host = context?.Request.Host;
 
             if (host != null)
             {
@@ -46,22 +40,9 @@ namespace Kooboo.Data.Service
                 return false;
             }
 
-            if (relativeUrl.ToLower() == DefaultStartPage)
-            {
-                return true;
-            }
-            return false;
+            return relativeUrl.ToLower() == DefaultStartPage;
         }
 
-        public static string DefaultStartPage
-        {
-            get
-            {
-                return "/_admin/sites";
-            }
-        }
-
-
-
+        public static string DefaultStartPage => "/_admin/sites";
     }
 }

@@ -1,46 +1,42 @@
 ﻿using Kooboo.Data.Definition.KModel.Attributes;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Data.Definition
 {
     public static class KMetaProvider
     {
-        public static KModel.KMeta PraseMeta(Type ModelType)
+        public static KModel.KMeta PraseMeta(Type modelType)
         {
             KModel.KMeta meta = new KModel.KMeta();
 
-            foreach (var item in ModelType.GetProperties())
+            foreach (var item in modelType.GetProperties())
             {
                 if (item.CanRead && item.CanWrite && item.PropertyType.IsPublic)
                 {
-                    Kooboo.Data.Definition.KModel.Column col = new KModel.Column();
-                    col.Name = item.Name;
+                    Kooboo.Data.Definition.KModel.Column col = new KModel.Column {Name = item.Name};
 
                     var allattributes = item.GetCustomAttributes(false);
 
                     foreach (var att in allattributes)
                     {
-                        if (att is IMetaAttribute)
+                        if (att is IMetaAttribute metaAtt)
                         {
-                            var metaAtt = att as IMetaAttribute;
-
                             if (metaAtt.IsHeader)
                             {
                                 col.Header[metaAtt.PropertyName] = metaAtt.Value();
                             }
                             else
                             {
-                                col.Cell[metaAtt.PropertyName] = metaAtt.Value(); 
+                                col.Cell[metaAtt.PropertyName] = metaAtt.Value();
                             }
                         }
                     }
 
-                    meta.Columns.Add(col); 
+                    meta.Columns.Add(col);
                 }
             }
-            EnsureDefaultValues(meta);  
+            EnsureDefaultValues(meta);
             return meta;
         }
 

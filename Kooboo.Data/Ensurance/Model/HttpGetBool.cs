@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Kooboo.Data.Ensurance.Model
 {
-
     // this method must return bool.
-  public  class HttpGetBool : IQueueTask
+    public class HttpGetBool : IQueueTask
     {
         public string FullUrl { get; set; }
 

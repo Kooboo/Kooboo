@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 
@@ -7,9 +7,10 @@ namespace Kooboo.Data.Models
     public class Certificate
     {
         private Guid _id;
+
         public Guid Id
         {
-            set { _id = value; }
+            set => _id = value;
             get
             {
                 if (_id == default(Guid))
@@ -25,6 +26,7 @@ namespace Kooboo.Data.Models
         public DateTime BeginDate { get; set; }
 
         public DateTime ExpireDate { get; set; }
+
         /// <summary>
         /// certificate renew date
         /// </summary>
@@ -41,7 +43,5 @@ namespace Kooboo.Data.Models
         public DateTime CreateDate { get; set; } = DateTime.Now;
 
         public DateTime UpdateDate { get; set; }
-
-        
     }
 }

@@ -13,7 +13,7 @@ namespace Kooboo.Sites.Routing
     /// </summary>
     public class PathTree
     {
-        private object _locker = new object(); 
+        private static object _locker = new object(); 
 
         private string wildcard; 
         /// <summary>

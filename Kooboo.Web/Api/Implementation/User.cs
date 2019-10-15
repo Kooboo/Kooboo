@@ -51,7 +51,7 @@ namespace Kooboo.Web.Api.Implementation
             }
             else
             {
-                Data.Service.UserLoginProtection.AddLoginOK(UserName, apiCall.Context.Request.IP);
+                Data.Service.UserLoginProtection.AddLoginOk(UserName, apiCall.Context.Request.IP);
             }
 
             if (user != null)

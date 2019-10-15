@@ -109,15 +109,9 @@ namespace Kooboo.IndexedDB
 
         internal Dictionary<string, Dynamic.Table> openTableList { get; set; } = new Dictionary<string, Dynamic.Table>(StringComparer.OrdinalIgnoreCase);
 
-        private object _locker = new object();
+        private static object _locker = new object();
 
-        public bool Exists
-        {
-            get
-            {
-                return System.IO.Directory.Exists(this.AbsolutePath);
-            }
-        }
+        public bool Exists => System.IO.Directory.Exists(this.AbsolutePath);
 
         public bool HasObjectStore(string objectStoreName)
         {

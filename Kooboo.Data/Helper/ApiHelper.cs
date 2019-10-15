@@ -1,20 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Helper
 {
     public static class ApiHelper
     {
-        public static bool IsOnlineSever(string IP)
+        public static bool IsOnlineSever(string ip)
         {
             string url = Data.Helper.AccountUrlHelper.System("VerifyServer");
-            url = url += "?IP=" + IP;
+            url = url += "?IP=" + ip;
             return Lib.Helper.HttpHelper.Get<bool>(url);
         }
 
@@ -22,12 +18,13 @@ namespace Kooboo.Data.Helper
         {
             if (ShouldChangeToHttp(res))
             {
-                res.AccountUrl = ChangeHttpsToHttp(res.AccountUrl); 
+                res.AccountUrl = ChangeHttpsToHttp(res.AccountUrl);
             }
         }
+
         public static string ChangeHttpsToHttp(string url)
         {
-           return "http://" + url.Substring("https://".Length);
+            return "http://" + url.Substring("https://".Length);
         }
 
         public static bool TestAccountRequest(string baseurl, int trytime = 1)
@@ -36,7 +33,7 @@ namespace Kooboo.Data.Helper
 
             if (baseurl.EndsWith("/"))
             {
-                baseurl = baseurl.TrimEnd('/'); 
+                baseurl = baseurl.TrimEnd('/');
             }
 
             string url = baseurl + "/account/system/apiresource";
@@ -44,7 +41,7 @@ namespace Kooboo.Data.Helper
 
             for (int i = 0; i < trytime; i++)
             {
-                requestok = true; 
+                requestok = true;
                 try
                 {
                     testresult = Lib.Helper.HttpHelper.Get<ApiResource>(url);
@@ -57,8 +54,8 @@ namespace Kooboo.Data.Helper
                 {
                     return true;
                 }
-            }  
-            return false; 
+            }
+            return false;
         }
 
         public static bool ShouldChangeToHttp(ApiResource res)
@@ -70,17 +67,13 @@ namespace Kooboo.Data.Helper
                 string httpsurl = res.AccountUrl + "/account/system/apiresource";
                 if (TestAccountRequest(res.AccountUrl, 2))
                 {
-                    return false; 
-                } 
-                else
-                {
-                    return true; 
-                } 
+                    return false;
+                }
+
+                return true;
             }
-            else
-            {
-                return false;
-            }  
+
+            return false;
         }
     }
 }

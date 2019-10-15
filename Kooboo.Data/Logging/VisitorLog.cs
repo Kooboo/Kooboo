@@ -1,15 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Models
 {
     /// <summary>
-    /// The log of visitor activity in this website. 
+    /// The log of visitor activity in this website.
     /// </summary>
     public class VisitorLog
     {
@@ -20,11 +17,12 @@ namespace Kooboo.Data.Models
         public string UserAgent { get; set; }
 
         /// <summary>
-        /// The client user id, this can be for example used by Ecommerce, when client login to shop. 
+        /// The client user id, this can be for example used by Ecommerce, when client login to shop.
         /// </summary>
         public Guid UserId { get; set; }
 
         private DateTime _begin;
+
         public DateTime Begin
         {
             get
@@ -35,13 +33,11 @@ namespace Kooboo.Data.Models
                 }
                 return _begin;
             }
-            set
-            {
-                _begin = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-            }
+            set => _begin = DateTime.SpecifyKind(value, DateTimeKind.Utc);
         }
 
         private DateTime _end;
+
         public DateTime End
         {
             get
@@ -52,23 +48,14 @@ namespace Kooboo.Data.Models
                 }
                 return _end;
             }
-            set
-            {
-                _end = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-            }
+            set => _end = DateTime.SpecifyKind(value, DateTimeKind.Utc);
         }
 
         public int Size { get; set; }
 
         public double TimeSpan { get; set; }
 
-        public int MillionSecondTake
-        {
-            get
-            { 
-                return Convert.ToInt32(TimeSpan);
-            }
-        }
+        public int MillionSecondTake => Convert.ToInt32(TimeSpan);
 
         public string PageName { get; set; }
 
@@ -83,7 +70,7 @@ namespace Kooboo.Data.Models
         public Guid ObjectId { get; set; }
 
         /// <summary>
-        /// The request  urls. 
+        /// The request  urls.
         /// </summary>
         public string Url { get; set; }
 
@@ -93,87 +80,73 @@ namespace Kooboo.Data.Models
 
         public List<VisitorLogItem> Entries
         {
-            get
-            {
-                if (_entries == null)
-                {
-                    _entries = new List<VisitorLogItem>();
-                }
-                return _entries;
-            }
+            get => _entries ?? (_entries = new List<VisitorLogItem>());
 
-            set
-            {
-                _entries = value;
-            }
-
+            set => _entries = value;
         }
 
         /// <summary>
-        /// Add a new entry to the log, for example. 
+        /// Add a new entry to the log, for example.
         /// product: 234, DateTime.now, 200
         /// </summary>
-        /// <param name="name"></param>
         /// <param name="value"></param>
-        /// <param name="StartTime"></param>
-        /// <param name="StatusCode"></param>
-        public void AddEntry(string Name, string Value, DateTime StartTime, DateTime EndTime, Int16 StatusCode, string Detail = null)
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="statusCode"></param>
+        /// <param name="name"></param>
+        /// <param name="detail"></param>
+        public void AddEntry(string name, string value, DateTime startTime, DateTime endTime, Int16 statusCode, string detail = null)
         {
             this.Entries.Add(new VisitorLogItem()
             {
-                Name = Name,
-                Value = Value,
-                StartTime = StartTime,
-                EndTime = EndTime,
-                StatusCode = StatusCode,
-                Detail = Detail
+                Name = name,
+                Value = value,
+                StartTime = startTime,
+                EndTime = endTime,
+                StatusCode = statusCode,
+                Detail = detail
             });
         }
-
 
         public class VisitorLogItem
         {
             public string Name;
 
             public string Value;
-             
+
             public Int16 StatusCode;
 
             public string Detail { get; set; }
-             
-            private DateTime _StartTime;
+
+            private DateTime _startTime;
+
             public DateTime StartTime
             {
                 get
                 {
-                    if (_StartTime == default(DateTime))
+                    if (_startTime == default(DateTime))
                     {
-                        _StartTime = DateTime.UtcNow;
+                        _startTime = DateTime.UtcNow;
                     }
-                    return _StartTime;
+                    return _startTime;
                 }
-                set
-                {
-                    _StartTime = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-                }
+                set => _startTime = DateTime.SpecifyKind(value, DateTimeKind.Utc);
             }
 
-            private DateTime _EndTime;
+            private DateTime _endTime;
+
             public DateTime EndTime
             {
                 get
                 {
-                    if (_EndTime == default(DateTime))
+                    if (_endTime == default(DateTime))
                     {
-                        _EndTime = DateTime.UtcNow;
+                        _endTime = DateTime.UtcNow;
                     }
-                    return _EndTime;
+                    return _endTime;
                 }
-                set
-                {
-                    _EndTime = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-                }
+                set => _endTime = DateTime.SpecifyKind(value, DateTimeKind.Utc);
             }
-        } 
+        }
     }
 }

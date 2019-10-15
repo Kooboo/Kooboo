@@ -1,46 +1,44 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Models
-{ 
-    public  class DNSRecord : IGolbalObject
+{
+    public class DNSRecord : IGolbalObject
     {
+        private Guid _id;
 
-        private Guid _id;  
-        public Guid Id {
-            get {
+        public Guid Id
+        {
+            get
+            {
                 if (_id == default(Guid))
                 {
                     string unique = this.Domain + this.Host + this.Priority.ToString() + this.Type;
-                    _id = Lib.Security.Hash.ComputeGuidIgnoreCase(unique);  
-                   // _id = Guid.NewGuid(); 
+                    _id = Lib.Security.Hash.ComputeGuidIgnoreCase(unique);
+                    // _id = Guid.NewGuid();
                 }
-                return _id; 
+                return _id;
             }
-            set { _id = value;  }
+            set => _id = value;
         }
 
-        private Guid _domainid; 
-        public Guid DomainId {
-            get {
+        private Guid _domainid;
+
+        public Guid DomainId
+        {
+            get
+            {
                 if (_domainid == default(Guid))
                 {
                     if (!string.IsNullOrWhiteSpace(this.Domain))
                     {
-                        _domainid = Lib.Security.Hash.ComputeGuidIgnoreCase(this.Domain); 
+                        _domainid = Lib.Security.Hash.ComputeGuidIgnoreCase(this.Domain);
                     }
                 }
-                return _domainid; 
+                return _domainid;
             }
-            set
-            {
-                _domainid = value; 
-            }
+            set => _domainid = value;
         }
 
         public string Host { get; set; }
@@ -49,18 +47,14 @@ namespace Kooboo.Data.Models
 
         public string Type { get; set; } = "A";
 
-       
         public string Domain { get; set; }
 
         public int Priority { get; set; }
 
         public override int GetHashCode()
         {
-            string unique = this.DomainId.ToString() + this.Host + this.Value + this.Type + this.Priority.ToString(); 
+            string unique = this.DomainId.ToString() + this.Host + this.Value + this.Type + this.Priority.ToString();
             return base.GetHashCode();
         }
     }
-
-
-
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
@@ -12,6 +12,7 @@ namespace Kooboo.Sites.Scripting
         private static object _locker = new object();
 
         private static Dictionary<string, Type> _list;
+
         public static Dictionary<string, Type> List
         {
             get
@@ -26,21 +27,16 @@ namespace Kooboo.Sites.Scripting
 
                             foreach (var item in Lib.Reflection.AssemblyLoader.LoadTypeByInterface(typeof(IkScript)))
                             {
-                                var instance = Activator.CreateInstance(item) as IkScript;
-
-                                if (instance != null)
+                                if (Activator.CreateInstance(item) is IkScript instance)
                                 {
                                     _list.Add(instance.Name, item);
                                 }
-
                             }
                         }
                     }
-
                 }
                 return _list;
             }
-
         }
 
         public static IkScript Get(string name, RenderContext context)
@@ -52,21 +48,18 @@ namespace Kooboo.Sites.Scripting
             if (List.ContainsKey(name))
             {
                 var type = List[name];
-                var instance = Activator.CreateInstance(type) as IkScript;
 
-                if (instance !=null)
+                if (Activator.CreateInstance(type) is IkScript instance)
                 {
-                    instance.context = context;
-                    return instance; 
-                } 
+                    instance.Context = context;
+                    return instance;
+                }
             }
             return null;
         }
 
         public static void Set(IkScript script)
         {
-
         }
-
     }
 }

@@ -1,21 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Context
-{ 
+{
     public class HttpStringCollection : IEnumerable<KeyValuePair<string, string[]>>
     {
         private readonly Dictionary<string, string[]> _dic;
 
-        public HttpStringCollection() 
+        public HttpStringCollection()
         {
-            this._dic = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase); 
+            this._dic = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
         }
 
         public HttpStringCollection(IEnumerable<KeyValuePair<string, string[]>> values)
@@ -29,7 +26,7 @@ namespace Kooboo.Data.Context
                 }
             }
         }
-         
+
         public bool Contains(string key)
         {
             return _dic.ContainsKey(key);
@@ -64,8 +61,7 @@ namespace Kooboo.Data.Context
 
         public IList<string> GetValues(string key)
         {
-            string[] values;
-            if (_dic.TryGetValue(key, out values))
+            if (_dic.TryGetValue(key, out var values))
             {
                 return values;
             }

@@ -1,5 +1,7 @@
-﻿#if NETSTANDARD2_0
+﻿
  
+using Microsoft.Extensions.Primitives;
+#if NETSTANDARD2_0
 using System;
 using System.Net;
 using System.Linq;
@@ -68,15 +70,15 @@ namespace Kooboo.Data.Server
 
         private void OrganizeChain()
         {
-            bool HasEnd = false;
+            bool hasEnd = false;
             foreach (var item in this.MiddleWares)
             {
                 if (item.GetType() == typeof(EndMiddleWare))
                 {
-                    HasEnd = true;
+                    hasEnd = true;
                 }
             }
-            if (!HasEnd)
+            if (!hasEnd)
             {
                 this.MiddleWares.Add(new EndMiddleWare());
             }
@@ -107,28 +109,28 @@ namespace Kooboo.Data.Server
 
         public class KoobooServerOption : IOptions<KestrelServerOptions>
         {
-            int port { get; set; }
-            bool forcessl { get; set; }
+            int Port { get; set; }
+            bool Forcessl { get; set; }
 
             public KoobooServerOption(int port, bool forcessl)
             {
-                this.port = port;
-                this.forcessl = forcessl;
+                this.Port = port;
+                this.Forcessl = forcessl;
             }
 
-            public KestrelServerOptions op { get; set; }
+            public KestrelServerOptions Op { get; set; }
 
             public KestrelServerOptions Value
             {
                 get
                 {
-                    if (op == null)
+                    if (Op == null)
                     {
-                        op = new KestrelServerOptions();
-                        op.Limits.MaxRequestBodySize = 1024 * 1024 * 128;
-                        op.Listen(IPAddress.Any, port, Configure);
+                        Op = new KestrelServerOptions();
+                        Op.Limits.MaxRequestBodySize = 1024 * 1024 * 128;
+                        Op.Listen(IPAddress.Any, Port, Configure);
                     }
-                    return op;
+                    return Op;
                 }
             }
 
@@ -142,17 +144,23 @@ namespace Kooboo.Data.Server
 
                 lisOption.KestrelServerOptions.ApplicationServices = services.BuildServiceProvider(); 
 
-                if (port == 443 || forcessl)
+                if (Port == 443 || Forcessl)
                 {
                     // use https
-                    Microsoft.AspNetCore.Server.Kestrel.Https.HttpsConnectionAdapterOptions ssloption = new Microsoft.AspNetCore.Server.Kestrel.Https.HttpsConnectionAdapterOptions();
+                    Microsoft.AspNetCore.Server.Kestrel.Https.HttpsConnectionAdapterOptions ssloption =
+                        new Microsoft.AspNetCore.Server.Kestrel.Https.HttpsConnectionAdapterOptions
+                        {
+                            ServerCertificateSelector = SelectSsl,
+                            ClientCertificateMode = Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode
+                                .NoCertificate,
+                            ClientCertificateValidation = (x, y, z) => true,
+                            HandshakeTimeout = new TimeSpan(0, 0, 30),
+                            SslProtocols = System.Security.Authentication.SslProtocols.Tls12 |
+                                           System.Security.Authentication.SslProtocols.Tls11 |
+                                           System.Security.Authentication.SslProtocols.Tls
+                        };
 
-                    ssloption.ServerCertificateSelector = SelectSsl;
-                    ssloption.ClientCertificateMode = Microsoft.AspNetCore.Server.Kestrel.Https.ClientCertificateMode.NoCertificate;
-                    ssloption.ClientCertificateValidation = (x, y, z) => { return true; };
-                    ssloption.HandshakeTimeout = new TimeSpan(0, 0, 30);
 
-                    ssloption.SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls11 | System.Security.Authentication.SslProtocols.Tls;
 
                     lisOption.UseHttps(ssloption);
                 }
@@ -193,10 +201,9 @@ namespace Kooboo.Data.Server
                 await SetResponse(context);
             }
 
-            public static RenderContext GetRenderContext(IFeatureCollection Feature)
+            public static RenderContext GetRenderContext(IFeatureCollection feature)
             {
-                RenderContext context = new RenderContext();
-                context.Request = GetRequest(Feature);
+                RenderContext context = new RenderContext {Request = GetRequest(feature)};
                 return context;
             }
 
@@ -210,14 +217,12 @@ namespace Kooboo.Data.Server
                 httprequest.Port = connection.LocalPort;
                 httprequest.IP = connection.RemoteIpAddress.ToString();
 
-                Microsoft.Extensions.Primitives.StringValues forwardip;
-                if (req.Headers.TryGetValue("X-Forwarded-For", out forwardip))
+                if (req.Headers.TryGetValue("X-Forwarded-For", out var forwardip))
                 {
                     httprequest.IP = forwardip.First(); 
                 }
-                 
-                Microsoft.Extensions.Primitives.StringValues host;
-                req.Headers.TryGetValue("Host", out host);
+
+                req.Headers.TryGetValue("Host", out var host);
 
 
                 string domainhost = host.First().ToString();
@@ -290,19 +295,13 @@ namespace Kooboo.Data.Server
                 {
                     return "/";
                 }
-                else
-                {
-                    return System.Net.WebUtility.UrlDecode(target);
-                }
+
+                return System.Net.WebUtility.UrlDecode(target);
             }
 
             internal static NameValueCollection GetForm(byte[] inputstream, string contenttype = null)
             {
-                bool hasEncoded = false;
-                if (contenttype != null && contenttype.ToLower().Contains("urlencoded"))
-                {
-                    hasEncoded = true;
-                } 
+                bool hasEncoded = contenttype != null && contenttype.ToLower().Contains("urlencoded");
                 // The encoding type of a form is determined by the attribute enctype.It can have three values, 
                 //application / x - www - form - urlencoded - Represents an URL encoded form. This is the default value if enctype attribute is not set to anything. 
                 //multipart / form - data - Represents a Multipart form.This type of form is used when the user wants to upload files 
@@ -374,11 +373,7 @@ namespace Kooboo.Data.Server
             {
                 Dictionary<string, string> cookies = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-                var cookiefeture = feature.Get<IRequestCookiesFeature>();
-                if (cookiefeture == null)
-                {
-                    cookiefeture = new RequestCookiesFeature(feature);
-                }
+                var cookiefeture = feature.Get<IRequestCookiesFeature>() ?? new RequestCookiesFeature(feature);
 
                 if (cookiefeture.Cookies != null && cookiefeture.Cookies.Any())
                 {
@@ -397,11 +392,7 @@ namespace Kooboo.Data.Server
             {
                 NameValueCollection query = new NameValueCollection(); 
                  
-                var requestfeature = feature.Get<IQueryFeature>();
-                if (requestfeature == null)
-                {
-                    requestfeature = new QueryFeature(feature);
-                }
+                var requestfeature = feature.Get<IQueryFeature>() ?? new QueryFeature(feature);
 
                 if (requestfeature.Query !=null && requestfeature.Query.Any())
                 {
@@ -435,11 +426,7 @@ namespace Kooboo.Data.Server
 
                 if (response.DeletedCookieNames.Any() || response.AppendedCookies.Any())
                 {
-                    var cookieres = feature.Get<IResponseCookiesFeature>();
-                    if (cookieres == null)
-                    {
-                        cookieres = new ResponseCookiesFeature(feature);
-                    }
+                    var cookieres = feature.Get<IResponseCookiesFeature>() ?? new ResponseCookiesFeature(feature);
 
                     foreach (var item in response.DeletedCookieNames)
                     {
@@ -534,9 +521,9 @@ namespace Kooboo.Data.Server
                     {  
                         var host = renderContext.Request.Port == 80 || renderContext.Request.Port == 443
                             ? renderContext.Request.Host
-                            : string.Format("{0}:{1}", renderContext.Request.Host, renderContext.Request.Port);
-                        string BaseUrl = renderContext.Request.Scheme + "://" + host + renderContext.Request.Path;
-                        var newUrl = UrlHelper.Combine(BaseUrl, location);
+                            : $"{renderContext.Request.Host}:{renderContext.Request.Port}";
+                        string baseUrl = renderContext.Request.Scheme + "://" + host + renderContext.Request.Path;
+                        var newUrl = UrlHelper.Combine(baseUrl, location);
                         if (response.StatusCode != 200)
                         {
                             res.StatusCode = response.StatusCode;

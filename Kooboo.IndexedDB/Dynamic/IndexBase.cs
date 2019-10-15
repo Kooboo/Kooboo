@@ -51,7 +51,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
         private BtreeIndex<T> _index;
 
-        private object _locker = new object();
+        private static object _locker = new object();
 
         public BtreeIndex<T> index
         {

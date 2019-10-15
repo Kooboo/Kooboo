@@ -11,7 +11,7 @@ namespace Kooboo.Data.SSL
         public DateTime LastExecute { get; set; }
 
         public void Execute()
-        {   
+        {
             if (DateTime.Now.Hour == 2 || DateTime.Now.Hour == 3)
             {
                 foreach (var item in Kooboo.Data.GlobalDb.SslCertificate.All())
@@ -19,7 +19,7 @@ namespace Kooboo.Data.SSL
                     if (item.Expiration < DateTime.Now.AddDays(30))
                     {
                         // Renew the certificate...
-                         SslService.SetSsl(item.Domain, item.OrganizationId);  
+                        SslService.SetSsl(item.Domain, item.OrganizationId);
                     }
                 }
             }

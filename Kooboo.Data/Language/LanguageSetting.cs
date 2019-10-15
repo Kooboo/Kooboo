@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
@@ -12,8 +12,8 @@ namespace Kooboo.Data.Language
     public static class LanguageSetting
     {
         static LanguageSetting()
-        { 
-            ISOTwoLetterCode = initlangcode();
+        {
+            ISOTwoLetterCode = Initlangcode();
 
             string[] sep = new string[3];
             sep[0] = ";";
@@ -23,216 +23,209 @@ namespace Kooboo.Data.Language
             //sep[4] = "=";
             LangSep = sep;
 
-            if (string.IsNullOrEmpty(AppSettings.CmsLang))
-            {
-                SystemLangCode = "en";
-            }
-            else
-            {
-                SystemLangCode = AppSettings.CmsLang.ToLower();
-            }
+            SystemLangCode = string.IsNullOrEmpty(AppSettings.CmsLang) ? "en" : AppSettings.CmsLang.ToLower();
 
-            LangFiles = getLangFiles();
+            LangFiles = GetLangFiles();
 
-            CmsLangs = initcmsLangs();
-
+            CmsLangs = InitcmsLangs();
         }
 
-        private static Dictionary<string, string> initlangcode()
+        private static Dictionary<string, string> Initlangcode()
         {
-            var _dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            _dict.Add("aa", "Afaraf");
-            _dict.Add("ab", "аҧсуа бызшәа, аҧсшәа");
-            _dict.Add("ae", "avesta");
-            _dict.Add("af", "Afrikaans");
-            _dict.Add("ak", "Akan");
-            _dict.Add("am", "አማርኛ");
-            _dict.Add("an", "aragonés");
-            _dict.Add("ar", "العربية");
-            _dict.Add("as", "অসমীয়া");
-            _dict.Add("av", "авар мацӀ, магӀарул мацӀ");
-            _dict.Add("ay", "aymar aru");
-            _dict.Add("az", "azərbaycan dili");
-            _dict.Add("ba", "башҡорт теле");
-            _dict.Add("be", "беларуская мова");
-            _dict.Add("bg", "български език");
-            _dict.Add("bh", "भोजपुरी");
-            _dict.Add("bi", "Bislama");
-            _dict.Add("bm", "bamanankan");
-            _dict.Add("bn", "বাংলা");
-            _dict.Add("bo", "བོད་ཡིག");
-            _dict.Add("br", "brezhoneg");
-            _dict.Add("bs", "bosanski jezik");
-            _dict.Add("ca", "català");
-            _dict.Add("ce", "нохчийн мотт");
-            _dict.Add("ch", "Chamoru");
-            _dict.Add("co", "corsu, lingua corsa");
-            _dict.Add("cr", "ᓀᐦᐃᔭᐍᐏᐣ");
-            _dict.Add("cs", "čeština, český jazyk");
-            _dict.Add("cu", "ѩзыкъ словѣньскъ");
-            _dict.Add("cv", "чӑваш чӗлхи");
-            _dict.Add("cy", "Cymraeg");
-            _dict.Add("da", "dansk");
-            _dict.Add("de", "Deutsch");
-            _dict.Add("dv", "ދިވެހި");
-            _dict.Add("dz", "རྫོང་ཁ");
-            _dict.Add("ee", "Eʋegbe");
-            _dict.Add("el", "ελληνικά");
-            _dict.Add("en", "English");
-            _dict.Add("eo", "Esperanto");
-            _dict.Add("es", "Español");
-            _dict.Add("et", "eesti, eesti keel");
-            _dict.Add("eu", "euskara, euskera");
-            _dict.Add("fa", "فارسی");
-            _dict.Add("ff", "Fulfulde, Pulaar, Pular");
-            _dict.Add("fi", "suomi, suomen kieli");
-            _dict.Add("fj", "vosa Vakaviti");
-            _dict.Add("fo", "føroyskt");
-            _dict.Add("fr", "français, langue française");
-            _dict.Add("fy", "Frysk");
-            _dict.Add("ga", "Gaeilge");
-            _dict.Add("gd", "Gàidhlig");
-            _dict.Add("gl", "Galego");
-            _dict.Add("gn", "Avañe'ẽ");
-            _dict.Add("gu", "ગુજરાતી");
-            _dict.Add("gv", "Gaelg, Gailck");
-            _dict.Add("ha", "(Hausa) هَوُسَ");
-            _dict.Add("he", "עברית");
-            _dict.Add("hi", "हिन्दी, हिंदी");
-            _dict.Add("ho", "Hiri Motu");
-            _dict.Add("hr", "hrvatski jezik");
-            _dict.Add("ht", "Kreyòl ayisyen");
-            _dict.Add("hu", "magyar");
-            _dict.Add("hy", "Հայերեն");
-            _dict.Add("hz", "Otjiherero");
-            _dict.Add("ia", "Interlingua");
-            _dict.Add("id", "Bahasa Indonesia");
-            _dict.Add("ie", "Originally called Occidental; then Interlingue after WWII");
-            _dict.Add("ig", "Asụsụ Igbo");
-            _dict.Add("ii", "ꆈꌠ꒿ Nuosuhxop");
-            _dict.Add("ik", "Iñupiaq, Iñupiatun");
-            _dict.Add("io", "Ido");
-            _dict.Add("is", "Íslenska");
-            _dict.Add("it", "Italiano");
-            _dict.Add("iu", "ᐃᓄᒃᑎᑐᑦ");
-            _dict.Add("ja", "日本語 (にほんご)");
-            _dict.Add("jv", "ꦧꦱꦗꦮ, Basa Jawa");
-            _dict.Add("ka", "ქართული");
-            _dict.Add("kg", "Kikongo");
-            _dict.Add("ki", "Gĩkũyũ");
-            _dict.Add("kj", "Kuanyama");
-            _dict.Add("kk", "қазақ тілі");
-            _dict.Add("kl", "kalaallisut, kalaallit oqaasii");
-            _dict.Add("km", "ខ្មែរ, ខេមរភាសា, ភាសាខ្មែរ");
-            _dict.Add("kn", "ಕನ್ನಡ");
-            _dict.Add("ko", "한국어");
-            _dict.Add("kr", "Kanuri");
-            _dict.Add("ks", "कश्मीरी, كشميري‎");
-            _dict.Add("ku", "Kurdî, كوردی‎");
-            _dict.Add("kv", "коми кыв");
-            _dict.Add("kw", "Kernewek");
-            _dict.Add("ky", "Кыргызча, Кыргыз тили");
-            _dict.Add("la", "latine, lingua latina");
-            _dict.Add("lb", "Lëtzebuergesch");
-            _dict.Add("lg", "Luganda");
-            _dict.Add("li", "Limburgs");
-            _dict.Add("ln", "Lingála");
-            _dict.Add("lo", "ພາສາລາວ");
-            _dict.Add("lt", "lietuvių kalba");
-            _dict.Add("lu", "Kiluba");
-            _dict.Add("lv", "Latviešu Valoda");
-            _dict.Add("mg", "fiteny malagasy");
-            _dict.Add("mh", "Kajin M̧ajeļ");
-            _dict.Add("mi", "te reo Māori");
-            _dict.Add("mk", "македонски јазик");
-            _dict.Add("ml", "മലയാളം");
-            _dict.Add("mn", "Монгол хэл");
-            _dict.Add("mr", "मराठी");
-            _dict.Add("ms", "Bahasa Melayu, بهاس ملايو‎");
-            _dict.Add("mt", "Malti");
-            _dict.Add("my", "ဗမာစာ");
-            _dict.Add("na", "Dorerin Naoero");
-            _dict.Add("nb", "Norsk Bokmål");
-            _dict.Add("nd", "isiNdebele");
-            _dict.Add("ne", "नेपाली");
-            _dict.Add("ng", "Owambo");
-            _dict.Add("nl", "Nederlands, Vlaams");
-            _dict.Add("nn", "Norsk Nynorsk");
-            _dict.Add("no", "Norsk");
-            _dict.Add("nr", "isiNdebele");
-            _dict.Add("nv", "Diné bizaad");
-            _dict.Add("ny", "chiCheŵa, chinyanja");
-            _dict.Add("oc", "occitan, lenga d'òc");
-            _dict.Add("oj", "ᐊᓂᔑᓈᐯᒧᐎᓐ");
-            _dict.Add("om", "Afaan Oromoo");
-            _dict.Add("or", "ଓଡ଼ିଆ");
-            _dict.Add("os", "ирон æвзаг");
-            _dict.Add("pa", "ਪੰਜਾਬੀ");
-            _dict.Add("pi", "पाऴि");
-            _dict.Add("pl", "Język Polski, Polszczyzna");
-            _dict.Add("ps", "پښتو");
-            _dict.Add("pt", "Português");
-            _dict.Add("qu", "Runa Simi, Kichwa");
-            _dict.Add("rm", "Rumantsch Grischun");
-            _dict.Add("rn", "Ikirundi");
-            _dict.Add("ro", "Română");
-            _dict.Add("ru", "Русский");
-            _dict.Add("rw", "Ikinyarwanda");
-            _dict.Add("sa", "संस्कृतम्");
-            _dict.Add("sc", "sardu");
-            _dict.Add("sd", "सिन्धी, سنڌي، سندھی‎");
-            _dict.Add("se", "Davvisámegiella");
-            _dict.Add("sg", "yângâ tî sängö");
-            _dict.Add("si", "සිංහල");
-            _dict.Add("sk", "Slovenčina, Slovenský Jazyk");
-            _dict.Add("sl", "Slovenski Jezik, Slovenščina");
-            _dict.Add("sm", "gagana fa'a Samoa");
-            _dict.Add("sn", "chiShona");
-            _dict.Add("so", "Soomaaliga, af Soomaali");
-            _dict.Add("sq", "Shqip");
-            _dict.Add("sr", "српски језик");
-            _dict.Add("ss", "SiSwati");
-            _dict.Add("st", "Sesotho");
-            _dict.Add("su", "Basa Sunda");
-            _dict.Add("sv", "Svenska");
-            _dict.Add("sw", "Kiswahili");
-            _dict.Add("ta", "தமிழ்");
-            _dict.Add("te", "తెలుగు");
-            _dict.Add("tg", "тоҷикӣ, toçikī, تاجیکی‎");
-            _dict.Add("th", "ไทย");
-            _dict.Add("ti", "ትግርኛ");
-            _dict.Add("tk", "Türkmen, Түркмен");
-            _dict.Add("tl", "Wikang Tagalog");
-            _dict.Add("tn", "Setswana");
-            _dict.Add("to", "Faka Tonga");
-            _dict.Add("tr", "Türkçe");
-            _dict.Add("ts", "Xitsonga");
-            _dict.Add("tt", "татар теле, tatar tele");
-            _dict.Add("tw", "Twi");
-            _dict.Add("ty", "Reo Tahiti");
-            _dict.Add("ug", "ئۇيغۇرچە‎, Uyghurche");
-            _dict.Add("uk", "Українська");
-            _dict.Add("ur", "اردو");
-            _dict.Add("uz", "Oʻzbek, Ўзбек, أۇزبېك‎");
-            _dict.Add("ve", "Tshivenḓa");
-            _dict.Add("vi", "Tiếng Việt");
-            _dict.Add("vo", "Volapük");
-            _dict.Add("wa", "Walon");
-            _dict.Add("wo", "Wollof");
-            _dict.Add("xh", "isiXhosa");
-            _dict.Add("yi", "ייִדיש");
-            _dict.Add("yo", "Yorùbá");
-            _dict.Add("za", "Saɯ cueŋƅ, Saw cuengh");
-            _dict.Add("zh", "中文(Zhōngwén), 汉语, 漢語");
-            _dict.Add("zu", "isiZulu");
+            var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                {"aa", "Afaraf"},
+                {"ab", "аҧсуа бызшәа, аҧсшәа"},
+                {"ae", "avesta"},
+                {"af", "Afrikaans"},
+                {"ak", "Akan"},
+                {"am", "አማርኛ"},
+                {"an", "aragonés"},
+                {"ar", "العربية"},
+                {"as", "অসমীয়া"},
+                {"av", "авар мацӀ, магӀарул мацӀ"},
+                {"ay", "aymar aru"},
+                {"az", "azərbaycan dili"},
+                {"ba", "башҡорт теле"},
+                {"be", "беларуская мова"},
+                {"bg", "български език"},
+                {"bh", "भोजपुरी"},
+                {"bi", "Bislama"},
+                {"bm", "bamanankan"},
+                {"bn", "বাংলা"},
+                {"bo", "བོད་ཡིག"},
+                {"br", "brezhoneg"},
+                {"bs", "bosanski jezik"},
+                {"ca", "català"},
+                {"ce", "нохчийн мотт"},
+                {"ch", "Chamoru"},
+                {"co", "corsu, lingua corsa"},
+                {"cr", "ᓀᐦᐃᔭᐍᐏᐣ"},
+                {"cs", "čeština, český jazyk"},
+                {"cu", "ѩзыкъ словѣньскъ"},
+                {"cv", "чӑваш чӗлхи"},
+                {"cy", "Cymraeg"},
+                {"da", "dansk"},
+                {"de", "Deutsch"},
+                {"dv", "ދިވެހި"},
+                {"dz", "རྫོང་ཁ"},
+                {"ee", "Eʋegbe"},
+                {"el", "ελληνικά"},
+                {"en", "English"},
+                {"eo", "Esperanto"},
+                {"es", "Español"},
+                {"et", "eesti, eesti keel"},
+                {"eu", "euskara, euskera"},
+                {"fa", "فارسی"},
+                {"ff", "Fulfulde, Pulaar, Pular"},
+                {"fi", "suomi, suomen kieli"},
+                {"fj", "vosa Vakaviti"},
+                {"fo", "føroyskt"},
+                {"fr", "français, langue française"},
+                {"fy", "Frysk"},
+                {"ga", "Gaeilge"},
+                {"gd", "Gàidhlig"},
+                {"gl", "Galego"},
+                {"gn", "Avañe'ẽ"},
+                {"gu", "ગુજરાતી"},
+                {"gv", "Gaelg, Gailck"},
+                {"ha", "(Hausa) هَوُسَ"},
+                {"he", "עברית"},
+                {"hi", "हिन्दी, हिंदी"},
+                {"ho", "Hiri Motu"},
+                {"hr", "hrvatski jezik"},
+                {"ht", "Kreyòl ayisyen"},
+                {"hu", "magyar"},
+                {"hy", "Հայերեն"},
+                {"hz", "Otjiherero"},
+                {"ia", "Interlingua"},
+                {"id", "Bahasa Indonesia"},
+                {"ie", "Originally called Occidental; then Interlingue after WWII"},
+                {"ig", "Asụsụ Igbo"},
+                {"ii", "ꆈꌠ꒿ Nuosuhxop"},
+                {"ik", "Iñupiaq, Iñupiatun"},
+                {"io", "Ido"},
+                {"is", "Íslenska"},
+                {"it", "Italiano"},
+                {"iu", "ᐃᓄᒃᑎᑐᑦ"},
+                {"ja", "日本語 (にほんご)"},
+                {"jv", "ꦧꦱꦗꦮ, Basa Jawa"},
+                {"ka", "ქართული"},
+                {"kg", "Kikongo"},
+                {"ki", "Gĩkũyũ"},
+                {"kj", "Kuanyama"},
+                {"kk", "қазақ тілі"},
+                {"kl", "kalaallisut, kalaallit oqaasii"},
+                {"km", "ខ្មែរ, ខេមរភាសា, ភាសាខ្មែរ"},
+                {"kn", "ಕನ್ನಡ"},
+                {"ko", "한국어"},
+                {"kr", "Kanuri"},
+                {"ks", "कश्मीरी, كشميري‎"},
+                {"ku", "Kurdî, كوردی‎"},
+                {"kv", "коми кыв"},
+                {"kw", "Kernewek"},
+                {"ky", "Кыргызча, Кыргыз тили"},
+                {"la", "latine, lingua latina"},
+                {"lb", "Lëtzebuergesch"},
+                {"lg", "Luganda"},
+                {"li", "Limburgs"},
+                {"ln", "Lingála"},
+                {"lo", "ພາສາລາວ"},
+                {"lt", "lietuvių kalba"},
+                {"lu", "Kiluba"},
+                {"lv", "Latviešu Valoda"},
+                {"mg", "fiteny malagasy"},
+                {"mh", "Kajin M̧ajeļ"},
+                {"mi", "te reo Māori"},
+                {"mk", "македонски јазик"},
+                {"ml", "മലയാളം"},
+                {"mn", "Монгол хэл"},
+                {"mr", "मराठी"},
+                {"ms", "Bahasa Melayu, بهاس ملايو‎"},
+                {"mt", "Malti"},
+                {"my", "ဗမာစာ"},
+                {"na", "Dorerin Naoero"},
+                {"nb", "Norsk Bokmål"},
+                {"nd", "isiNdebele"},
+                {"ne", "नेपाली"},
+                {"ng", "Owambo"},
+                {"nl", "Nederlands, Vlaams"},
+                {"nn", "Norsk Nynorsk"},
+                {"no", "Norsk"},
+                {"nr", "isiNdebele"},
+                {"nv", "Diné bizaad"},
+                {"ny", "chiCheŵa, chinyanja"},
+                {"oc", "occitan, lenga d'òc"},
+                {"oj", "ᐊᓂᔑᓈᐯᒧᐎᓐ"},
+                {"om", "Afaan Oromoo"},
+                {"or", "ଓଡ଼ିଆ"},
+                {"os", "ирон æвзаг"},
+                {"pa", "ਪੰਜਾਬੀ"},
+                {"pi", "पाऴि"},
+                {"pl", "Język Polski, Polszczyzna"},
+                {"ps", "پښتو"},
+                {"pt", "Português"},
+                {"qu", "Runa Simi, Kichwa"},
+                {"rm", "Rumantsch Grischun"},
+                {"rn", "Ikirundi"},
+                {"ro", "Română"},
+                {"ru", "Русский"},
+                {"rw", "Ikinyarwanda"},
+                {"sa", "संस्कृतम्"},
+                {"sc", "sardu"},
+                {"sd", "सिन्धी, سنڌي، سندھی‎"},
+                {"se", "Davvisámegiella"},
+                {"sg", "yângâ tî sängö"},
+                {"si", "සිංහල"},
+                {"sk", "Slovenčina, Slovenský Jazyk"},
+                {"sl", "Slovenski Jezik, Slovenščina"},
+                {"sm", "gagana fa'a Samoa"},
+                {"sn", "chiShona"},
+                {"so", "Soomaaliga, af Soomaali"},
+                {"sq", "Shqip"},
+                {"sr", "српски језик"},
+                {"ss", "SiSwati"},
+                {"st", "Sesotho"},
+                {"su", "Basa Sunda"},
+                {"sv", "Svenska"},
+                {"sw", "Kiswahili"},
+                {"ta", "தமிழ்"},
+                {"te", "తెలుగు"},
+                {"tg", "тоҷикӣ, toçikī, تاجیکی‎"},
+                {"th", "ไทย"},
+                {"ti", "ትግርኛ"},
+                {"tk", "Türkmen, Түркмен"},
+                {"tl", "Wikang Tagalog"},
+                {"tn", "Setswana"},
+                {"to", "Faka Tonga"},
+                {"tr", "Türkçe"},
+                {"ts", "Xitsonga"},
+                {"tt", "татар теле, tatar tele"},
+                {"tw", "Twi"},
+                {"ty", "Reo Tahiti"},
+                {"ug", "ئۇيغۇرچە‎, Uyghurche"},
+                {"uk", "Українська"},
+                {"ur", "اردو"},
+                {"uz", "Oʻzbek, Ўзбек, أۇزبېك‎"},
+                {"ve", "Tshivenḓa"},
+                {"vi", "Tiếng Việt"},
+                {"vo", "Volapük"},
+                {"wa", "Walon"},
+                {"wo", "Wollof"},
+                {"xh", "isiXhosa"},
+                {"yi", "ייִדיש"},
+                {"yo", "Yorùbá"},
+                {"za", "Saɯ cueŋƅ, Saw cuengh"},
+                {"zh", "中文(Zhōngwén), 汉语, 漢語"},
+                {"zu", "isiZulu"}
+            };
 
-            return _dict;
-
+            return dict;
         }
 
         public static string[] LangSep { get; set; }
 
-        private static Dictionary<string, string> getLangFiles()
+        private static Dictionary<string, string> GetLangFiles()
         {
             Dictionary<string, string> langfile = new Dictionary<string, string>();
 
@@ -244,7 +237,7 @@ namespace Kooboo.Data.Language
             {
                 var allfiles = System.IO.Directory.GetFiles(langpath, "*.xml");
 
-                if (allfiles != null && allfiles.Count() > 0)
+                if (allfiles != null && allfiles.Length > 0)
                 {
                     foreach (var item in allfiles)
                     {
@@ -263,13 +256,12 @@ namespace Kooboo.Data.Language
             {
 #if Release
             {
-             throw new Exception("lang file not found");  
+             throw new Exception("lang file not found");
             }
 #endif
             }
 
             return langfile;
-
         }
 
         private static object _locker = new object();
@@ -279,19 +271,17 @@ namespace Kooboo.Data.Language
             get; set;
         }
 
-        private static Dictionary<string, List<string>> _regionCulture { get; set; } = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase); 
-
+        private static Dictionary<string, List<string>> RegionCulture { get; set; } = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
         public static List<string> GetRegionLangCodes(string regionCode)
         {
-            if (!_regionCulture.ContainsKey(regionCode))
+            if (!RegionCulture.ContainsKey(regionCode))
             {
                 var result = _GetRegionLangcode(regionCode);
-                _regionCulture[regionCode] = result; 
+                RegionCulture[regionCode] = result;
             }
 
-            return _regionCulture[regionCode]; 
-
+            return RegionCulture[regionCode];
         }
 
         private static List<string> _GetRegionLangcode(string regionCode)
@@ -320,13 +310,9 @@ namespace Kooboo.Data.Language
                         }
                     }
                 }
-
             }
             return list;
-
-
         }
-
 
         public static Dictionary<string, string> LangFiles
         {
@@ -338,9 +324,9 @@ namespace Kooboo.Data.Language
             get; set;
         }
 
-        private static Dictionary<string, string> initcmsLangs()
+        private static Dictionary<string, string> InitcmsLangs()
         {
-            var _cmslang = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            var cmslang = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             if (LangFiles.Count() > 0)
             {
@@ -351,16 +337,16 @@ namespace Kooboo.Data.Language
                     if (ISOTwoLetterCode.ContainsKey(langkey))
                     {
                         var value = ISOTwoLetterCode[langkey];
-                        _cmslang.Add(langkey, value);
+                        cmslang.Add(langkey, value);
                     }
                 }
             }
 
-            if (!_cmslang.ContainsKey("en"))
+            if (!cmslang.ContainsKey("en"))
             {
-                _cmslang.Add("en", "English");
+                cmslang.Add("en", "English");
             }
-            return _cmslang;
+            return cmslang;
         }
 
         public static string SystemLangCode
@@ -379,15 +365,10 @@ namespace Kooboo.Data.Language
                 }
             }
 
-            // based on accept langs.. 
+            // based on accept langs..
             var acceptlangs = context.Request.Headers.Get("Accept-Language");
 
-            if (!string.IsNullOrWhiteSpace(acceptlangs))
-            {
-                return GetByAcceptLangHeader(acceptlangs);
-            }     
-              
-            return SystemLangCode;
+            return !string.IsNullOrWhiteSpace(acceptlangs) ? GetByAcceptLangHeader(acceptlangs) : SystemLangCode;
         }
 
         public static string GetCmsSiteLangCode(RenderContext context, WebSite website)
@@ -400,19 +381,19 @@ namespace Kooboo.Data.Language
                     return lang;
                 }
             }
-            return website.DefaultCulture; 
+            return website.DefaultCulture;
         }
 
-        public static string GetByAcceptLangHeader(string AcceptLangHeader)
+        public static string GetByAcceptLangHeader(string acceptLangHeader)
         {
-            if (string.IsNullOrEmpty(AcceptLangHeader))
+            if (string.IsNullOrEmpty(acceptLangHeader))
             {
                 return SystemLangCode;
             }
 
-            string[] parts = AcceptLangHeader.Split(LangSep, StringSplitOptions.RemoveEmptyEntries);
+            string[] parts = acceptLangHeader.Split(LangSep, StringSplitOptions.RemoveEmptyEntries);
 
-            bool HasEn = false;
+            bool hasEn = false;
 
             foreach (var item in parts)
             {
@@ -431,7 +412,7 @@ namespace Kooboo.Data.Language
 
                     if (lang == "en")
                     {
-                        HasEn = true;
+                        hasEn = true;
                         continue;
                     }
 
@@ -442,12 +423,7 @@ namespace Kooboo.Data.Language
                 }
             }
 
-            if (HasEn)
-            {
-                return "en";
-            }
-
-            return SystemLangCode;
+            return hasEn ? "en" : SystemLangCode;
         }
     }
 }

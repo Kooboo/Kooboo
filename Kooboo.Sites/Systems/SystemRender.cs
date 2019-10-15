@@ -1,16 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Interface;
+using Kooboo.Extensions;
+using Kooboo.Lib.Helper;
+using Kooboo.Sites.Models;
 using Kooboo.Sites.Render;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Extensions;
-using Kooboo.Sites.Models;
-using Kooboo.Data.Interface;
-using Kooboo.Sites.Repository;
-using Kooboo.Lib.Helper;
 
 namespace Kooboo.Sites.Systems
 {
@@ -18,7 +16,7 @@ namespace Kooboo.Sites.Systems
     {
         public static void Render(FrontContext context)
         {
-            //systemroute.Name = "__kb/{objecttype}/{nameorid}"; defined in Routes. 
+            //systemroute.Name = "__kb/{objecttype}/{nameorid}"; defined in Routes.
             var paras = context.Route.Parameters;
             var strObjectType = paras.GetValue("objecttype");
             byte constType = ConstObjectType.Unknown;
@@ -33,9 +31,11 @@ namespace Kooboo.Sites.Systems
                 case ConstObjectType.ResourceGroup:
                     ResourceGroupRender(context, id);
                     return;
+
                 case ConstObjectType.View:
                     ViewRender(context, id, paras);
                     return;
+
                 case ConstObjectType.Image:
                     {
                         ImageRender(context, id, paras);
@@ -69,7 +69,8 @@ namespace Kooboo.Sites.Systems
             {
                 return parameters["objecttype"];
             }
-            else if (parameters.ContainsKey("type"))
+
+            if (parameters.ContainsKey("type"))
             {
                 return parameters["type"];
             }
@@ -79,15 +80,8 @@ namespace Kooboo.Sites.Systems
         public static void ResourceGroupRender(FrontContext context, string id)
         {
             var db = context.SiteDb;
-            var group = db.ResourceGroups.GetByNameOrId(id, ConstObjectType.Style);
-            if (group == null)
-            {
-                group = db.ResourceGroups.GetByNameOrId(id, ConstObjectType.Script);
-            }
-            if (group == null)
-            {
-                group = db.ResourceGroups.TableScan.Where(o => Lib.Helper.StringHelper.IsSameValue(o.Name, id)).FirstOrDefault();
-            }
+            var group = (db.ResourceGroups.GetByNameOrId(id, ConstObjectType.Style) ?? db.ResourceGroups.GetByNameOrId(id, ConstObjectType.Script)) ??
+                        db.ResourceGroups.TableScan.Where(o => Lib.Helper.StringHelper.IsSameValue(o.Name, id)).FirstOrDefault();
             if (group == null)
             {
                 return;
@@ -100,12 +94,11 @@ namespace Kooboo.Sites.Systems
                     context.RenderContext.Response.ContentType = "text/css;charset=utf-8";
                     repo = context.SiteDb.Styles as IRepository;
                     break;
+
                 case ConstObjectType.Script:
                     context.RenderContext.Response.ContentType = "text/javascript;charset=utf-8";
                     repo = context.SiteDb.Scripts as IRepository;
                     spliter = ";";
-                    break;
-                default:
                     break;
             }
 
@@ -117,9 +110,8 @@ namespace Kooboo.Sites.Systems
                 if (route != null)
                 {
                     var siteobject = repo.Get(route.objectId);
-                    if (siteobject != null && siteobject is ITextObject)
+                    if (siteobject != null && siteobject is ITextObject text)
                     {
-                        var text = siteobject as ITextObject;
                         sb.Append(text.Body);
                         sb.Append(spliter);
                     }
@@ -129,17 +121,17 @@ namespace Kooboo.Sites.Systems
             context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(sb.ToString());
         }
 
-        public static void ViewRender(FrontContext context, string NameOrId, Dictionary<string, string> Parameters)
+        public static void ViewRender(FrontContext context, string nameOrId, Dictionary<string, string> parameters)
         {
-            var action = Parameters.GetValue("action");
+            var action = parameters.GetValue("action");
 
             if (string.IsNullOrEmpty(action) || action == "render")
             {
-                System.Guid viewid = default(Guid);
-                System.Guid.TryParse(NameOrId, out viewid);
+                System.Guid viewid = default;
+                System.Guid.TryParse(nameOrId, out viewid);
                 if (viewid == default(Guid))
                 {
-                    viewid = Kooboo.Data.IDGenerator.Generate(NameOrId, ConstObjectType.View);
+                    viewid = Kooboo.Data.IDGenerator.Generate(nameOrId, ConstObjectType.View);
                 }
                 context.Route.DestinationConstType = ConstObjectType.View;
                 context.Route.objectId = viewid;
@@ -147,7 +139,7 @@ namespace Kooboo.Sites.Systems
             }
             else
             {
-                var view = context.SiteDb.Views.GetByNameOrId(NameOrId);
+                var view = context.SiteDb.Views.GetByNameOrId(nameOrId);
                 if (view != null)
                 {
                     context.RenderContext.Response.ContentType = "text/html;charset=utf-8";
@@ -156,20 +148,18 @@ namespace Kooboo.Sites.Systems
             }
         }
 
-        public static void ImageRender(FrontContext context, string NameOrId, Dictionary<string, string> Parameters)
+        public static void ImageRender(FrontContext context, string nameOrId, Dictionary<string, string> parameters)
         {
-
-            Guid ImageId;
             Image image = null;
 
-            if (System.Guid.TryParse(NameOrId, out ImageId))
+            if (System.Guid.TryParse(nameOrId, out var ImageId))
             {
                 image = context.SiteDb.Images.Get(ImageId) as Image;
             }
 
             long logid = -1;
 
-            if (long.TryParse(NameOrId, out logid))
+            if (long.TryParse(nameOrId, out logid))
             {
                 var logentry = context.SiteDb.Log.Get(logid);
                 var repo = context.SiteDb.Images as IRepository;
@@ -182,19 +172,18 @@ namespace Kooboo.Sites.Systems
             }
         }
 
-        public static void FileRender(FrontContext context, string NameOrId, Dictionary<string, string> Parameters)
+        public static void FileRender(FrontContext context, string nameOrId, Dictionary<string, string> parameters)
         {
-            Guid FileId;
             CmsFile file = null;
 
-            if (System.Guid.TryParse(NameOrId, out FileId))
+            if (System.Guid.TryParse(nameOrId, out var FileId))
             {
                 file = context.SiteDb.Files.Get(FileId) as CmsFile;
             }
 
             long logid = -1;
 
-            if (long.TryParse(NameOrId, out logid))
+            if (long.TryParse(nameOrId, out logid))
             {
                 var logentry = context.SiteDb.Log.Get(logid);
                 var repo = context.SiteDb.Images as IRepository;
@@ -207,32 +196,30 @@ namespace Kooboo.Sites.Systems
             }
         }
 
-        public static void TextContentRender(FrontContext context, string NameOrId, Dictionary<string, string> Parameters)
+        public static void TextContentRender(FrontContext context, string nameOrId, Dictionary<string, string> parameters)
         {
             throw new NotImplementedException();
         }
 
-        public static void DefaultRender(FrontContext context, byte ConstType, string objectType, string NameOrId, Dictionary<string, string> Parameters)
+        public static void DefaultRender(FrontContext context, byte constType, string objectType, string nameOrId, Dictionary<string, string> parameters)
         {
-
-            var modeltype = Service.ConstTypeService.GetModelType(ConstType);
+            var modeltype = Service.ConstTypeService.GetModelType(constType);
             if (modeltype == null)
             {
-                  SpecialRender(context, ConstType, objectType, NameOrId, Parameters);
+                SpecialRender(context, constType, objectType, nameOrId, parameters);
             }
             else
             {
-
                 var repo = context.SiteDb.GetRepository(modeltype);
 
-                ISiteObject siteobject = null;
-                siteobject = repo?.GetByNameOrId(NameOrId) as ISiteObject;
+                ISiteObject siteobject;
+                siteobject = repo?.GetByNameOrId(nameOrId) as ISiteObject;
 
                 if (siteobject == null)
                 {
                     long logid = -1;
 
-                    if (long.TryParse(NameOrId, out logid))
+                    if (long.TryParse(nameOrId, out logid))
                     {
                         var logentry = context.SiteDb.Log.Get(logid);
                         siteobject = repo.GetByLog(logentry) as ISiteObject;
@@ -241,18 +228,16 @@ namespace Kooboo.Sites.Systems
 
                 if (siteobject != null)
                 {
-                    var contenttype = Service.ConstTypeService.GetContentType(ConstType);
+                    var contenttype = Service.ConstTypeService.GetContentType(constType);
                     context.RenderContext.Response.ContentType = contenttype;
 
-                    if (siteobject is ITextObject)
+                    if (siteobject is ITextObject textobject)
                     {
                         context.RenderContext.Response.ContentType += ";charset=utf-8";
-                        var textobject = siteobject as ITextObject;
                         context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(textobject.Body);
                     }
-                    else if (siteobject is IBinaryFile)
+                    else if (siteobject is IBinaryFile binary)
                     {
-                        var binary = siteobject as IBinaryFile;
                         context.RenderContext.Response.Body = binary.ContentBytes;
                     }
                     else
@@ -265,15 +250,15 @@ namespace Kooboo.Sites.Systems
             }
         }
 
-        public static void SpecialRender(FrontContext context, byte ConstType, string strObjectType, string NameOrId, Dictionary<string, string> Parameters)
+        public static void SpecialRender(FrontContext context, byte constType, string strObjectType, string nameOrId, Dictionary<string, string> parameters)
         {
             if (strObjectType != null && strObjectType.ToLower() == "kexternalcache")
             {
-                Sites.Render.Renderers.ExternalCacheRender.Render(context, NameOrId);
+                Sites.Render.Renderers.ExternalCacheRender.Render(context, nameOrId);
             }
         }
 
-        public static void KFileRender(FrontContext context, Dictionary<string, string> Parameters)
+        public static void KFileRender(FrontContext context, Dictionary<string, string> parameters)
         {
             if (!context.RenderContext.WebSite.EnableFileIOUrl)
             {
@@ -285,7 +270,7 @@ namespace Kooboo.Sites.Systems
 
             relative = Lib.Helper.StringHelper.ReplaceIgnoreCase(relative, "__kb/kfile/", "");
 
-            var root = Kooboo.Data.AppSettings.GetFileIORoot(context.RenderContext.WebSite);
+            var root = Kooboo.Data.AppSettings.GetFileIoRoot(context.RenderContext.WebSite);
 
             string fullpath = Kooboo.Lib.Helper.IOHelper.CombinePath(root, relative);
 
@@ -302,7 +287,5 @@ namespace Kooboo.Sites.Systems
                 context.RenderContext.Response.Body = allbytes;
             }
         }
-
-
     }
 }

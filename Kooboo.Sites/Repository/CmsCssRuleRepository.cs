@@ -18,7 +18,7 @@ namespace Kooboo.Sites.Repository
 {
     public class CmsCssRuleRepository : SiteRepositoryBase<CmsCssRule>
     {
-        private object _locker = new object();
+        private static object _locker = new object();
 
         public override ObjectStoreParameters StoreParameters
         {

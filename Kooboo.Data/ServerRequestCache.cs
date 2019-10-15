@@ -1,28 +1,24 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
-using Kooboo.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data
 {
-
     public static class ServerCache
     {
-        public static ServerRequestCache<User> User = new ServerRequestCache<User>(); 
-        public static ServerRequestCache<Domain> Domain = new ServerRequestCache<Models.Domain>(); 
+        public static ServerRequestCache<User> User = new ServerRequestCache<User>();
+        public static ServerRequestCache<Domain> Domain = new ServerRequestCache<Models.Domain>();
     }
-
 
     public class ServerRequestCache<TValue> where TValue : IGolbalObject
     {
-        private object _locker = new object();
+        private static object _locker = new object();
 
         private Type _valuetype;
+
         private Type ValueType
         {
             get
@@ -35,8 +31,7 @@ namespace Kooboo.Data
             }
         }
 
-        private Dictionary<Guid, TValue> SiteObjects = new Dictionary<Guid, TValue>();
-         
+        private Dictionary<Guid, TValue> _siteObjects = new Dictionary<Guid, TValue>();
 
         public void AddOrUpdate(TValue Value)
         {
@@ -46,37 +41,35 @@ namespace Kooboo.Data
             }
             lock (_locker)
             {
-                SiteObjects[Value.Id] = Value;
+                _siteObjects[Value.Id] = Value;
             }
         }
 
-        public TValue Get(Guid ObjectId)
+        public TValue Get(Guid objectId)
         {
-            if (SiteObjects.ContainsKey(ObjectId))
+            if (_siteObjects.ContainsKey(objectId))
             {
-                return (TValue)SiteObjects[ObjectId];
+                return (TValue)_siteObjects[objectId];
             }
             return default(TValue);
         }
 
-        public TValue Get(string NameOrGuid)
+        public TValue Get(string nameOrGuid)
         {
-            Guid Key = default(Guid);
+            Guid Key = default;
 
-            if (System.Guid.TryParse(NameOrGuid, out Key))
+            if (System.Guid.TryParse(nameOrGuid, out Key))
             {
                 return Get(Key);
             }
-            else
-            {
-                var id = GetId(NameOrGuid);
-                return Get(id);
-            }
+
+            var id = GetId(nameOrGuid);
+            return Get(id);
         }
 
         public List<TValue> List()
         {
-            return SiteObjects.Values.ToList();
+            return _siteObjects.Values.ToList();
         }
 
         public Guid GetId(string name)
@@ -85,6 +78,4 @@ namespace Kooboo.Data
             return IDGenerator.GetId(uniqu);
         }
     }
-
-
 }

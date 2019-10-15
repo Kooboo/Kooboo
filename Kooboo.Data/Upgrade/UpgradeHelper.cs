@@ -1,25 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using System.Security.Cryptography;
 using System.IO.Compression;
+using System.Linq;
 using System.Reflection;
 
- 
 namespace Kooboo.Data.Upgrade
 {
     public static class UpgradeHelper
-    {  
+    {
         public static string GetKoobooVersion(string koobooZipFile)
-        {  
+        {
             if (!System.IO.Path.IsPathRooted(koobooZipFile))
             {
-                koobooZipFile = System.IO.Path.GetFullPath(koobooZipFile); 
+                koobooZipFile = System.IO.Path.GetFullPath(koobooZipFile);
             }
 
             if (System.IO.File.Exists(koobooZipFile))
@@ -32,8 +27,8 @@ namespace Kooboo.Data.Upgrade
         }
 
         public static string GetKoobooVersion(byte[] allbytes)
-        {                              
-            var koobooextbytes = ExtractFileFromZip(allbytes, "kooboo.exe");   
+        {
+            var koobooextbytes = ExtractFileFromZip(allbytes, "kooboo.exe");
             return GetVersionFromKoobooExe(koobooextbytes);
         }
 
@@ -47,59 +42,59 @@ namespace Kooboo.Data.Upgrade
             }
             return null;
         }
-                   
+
         //TODO: should move to Kooboo.Lib
-        public static byte[] ExtractFileFromZip(byte[] ZipBytes, string ContainsName)
-        {       
-            System.IO.MemoryStream mo = new MemoryStream(ZipBytes);
-                                    
+        public static byte[] ExtractFileFromZip(byte[] zipBytes, string containsName)
+        {
+            System.IO.MemoryStream mo = new MemoryStream(zipBytes);
+
             using (var archive = new ZipArchive(mo, ZipArchiveMode.Read))
             {
                 if (archive.Entries.Count > 0)
                 {
                     foreach (var entry in archive.Entries)
                     {
-                        if (entry.FullName.IndexOf(ContainsName, StringComparison.OrdinalIgnoreCase) > -1)
+                        if (entry.FullName.IndexOf(containsName, StringComparison.OrdinalIgnoreCase) > -1)
                         {
                             System.IO.MemoryStream part = new MemoryStream();
                             entry.Open().CopyTo(part);
-                            return part.ToArray();   
+                            return part.ToArray();
                         }
                     }
-                }  
+                }
             }
 
-            return null; 
+            return null;
         }
-                                                            
-        public static string GetVersionFromKoobooExe(byte[] DllBytes)
+
+        public static string GetVersionFromKoobooExe(byte[] dllBytes)
         {
-            // use kooboo.data.dll to define the version. 
-            var kooboodatabytes = GetManifestResourceFile(DllBytes, "Kooboo.Data.dll"); 
-            if (kooboodatabytes !=null)
+            // use kooboo.data.dll to define the version.
+            var kooboodatabytes = GetManifestResourceFile(dllBytes, "Kooboo.Data.dll");
+            if (kooboodatabytes != null)
             {
                 var version = GetDllVersion(kooboodatabytes);
-                return version != null ? version.ToString() : null; 
+                return version != null ? version.ToString() : null;
             }
-            return null; 
+            return null;
         }
 
         // TODO: can move to kooboo.lib.
-        public static byte[] GetManifestResourceFile(byte[] ContainterBinary, string FileName)
+        public static byte[] GetManifestResourceFile(byte[] containterBinary, string fileName)
         {
-            var assembely = Assembly.Load(ContainterBinary); 
-            var resource = assembely.GetManifestResourceNames().First(n => n.Equals(FileName, StringComparison.OrdinalIgnoreCase));
+            var assembely = Assembly.Load(containterBinary);
+            var resource = assembely.GetManifestResourceNames().First(n => n.Equals(fileName, StringComparison.OrdinalIgnoreCase));
 
             if (resource != null)
             {
                 using (var stream = assembely.GetManifestResourceStream(resource))
                 {
-                    if (stream !=null)
-                    {    
+                    if (stream != null)
+                    {
                         var memoryStream = new MemoryStream();
                         stream.CopyTo(memoryStream);
-                        return memoryStream.ToArray(); 
-                    }  
+                        return memoryStream.ToArray();
+                    }
                 }
             }
             return null;
@@ -108,12 +103,12 @@ namespace Kooboo.Data.Upgrade
         public static Version GetDllVersion(byte[] dllbytes)
         {
             var dataAssembly = Assembly.Load(dllbytes);
-            if (dataAssembly !=null)
+            if (dataAssembly != null)
             {
                 return dataAssembly.GetName().Version;
             }
 
-            return null;    
+            return null;
         }
-    } 
+    }
 }

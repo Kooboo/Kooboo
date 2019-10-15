@@ -1,26 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Helper
 {
-public static    class DomHelper
+    public static class DomHelper
     {
-
         public static bool IsSelfCloseTag(string tagName)
         {
             string lower = tagName.ToLower();
 
-            if (lower == "img" || lower == "input" || lower == "link" || lower == "br" || lower == "area" || lower == "base" || lower == "col" || lower == "command" || lower == "embed" || lower == "hr" || lower == "keygen" || lower == "meta" || lower == "param" || lower == "source" || lower == "track" || lower == "wbr")
-            {
-                return true;
-            }
-            return false;
+            return lower == "img" || lower == "input" || lower == "link" || lower == "br" || lower == "area" || lower == "base" || lower == "col" || lower == "command" || lower == "embed" || lower == "hr" || lower == "keygen" || lower == "meta" || lower == "param" || lower == "source" || lower == "track" || lower == "wbr";
         }
 
         public static string GetElementDisplayName(Element element)
@@ -47,8 +38,7 @@ public static    class DomHelper
         /// <returns></returns>
         public static string ReSerializeElement(Element element)
         {
-            string ehtml = string.Empty;
-            ehtml = "<" + element.tagName;
+            var ehtml = "<" + element.tagName;
             foreach (var item in element.attributes)
             {
                 ehtml += " " + item.name;
@@ -74,8 +64,7 @@ public static    class DomHelper
 
         public static string GetHalfOpenTag(Element element)
         {
-            string ehtml = string.Empty;
-            ehtml = "<" + element.tagName;
+            var ehtml = "<" + element.tagName;
             foreach (var item in element.attributes)
             {
                 ehtml += " " + item.name;
@@ -83,15 +72,13 @@ public static    class DomHelper
                 {
                     ehtml += "=\"" + item.value + "\"";
                 }
-            } 
-            return ehtml;  
+            }
+            return ehtml;
         }
-
 
         public static string ReSerializeOpenTag(Element element)
         {
-            string ehtml = string.Empty;
-            ehtml = "<" + element.tagName;
+            string ehtml =  "<" + element.tagName;
             foreach (var item in element.attributes)
             {
                 ehtml += " " + item.name;
@@ -115,8 +102,7 @@ public static    class DomHelper
 
         public static string GenerateOpenTag(Dictionary<string, string> attributes, string tagName)
         {
-            string ehtml = string.Empty;
-            ehtml = "<" + tagName;
+            string ehtml =  "<" + tagName;
             foreach (var item in attributes)
             {
                 ehtml += " " + item.Key;
@@ -130,7 +116,7 @@ public static    class DomHelper
         }
 
         /// <summary>
-        /// get the open tag part of this element without reserialize the element. 
+        /// get the open tag part of this element without reserialize the element.
         /// </summary>
         /// <param name="element"></param>
         /// <returns></returns>
@@ -140,11 +126,8 @@ public static    class DomHelper
             {
                 return string.Empty;
             }
-            else
-            {
-                return element.ownerDocument.HtmlSource.Substring(element.location.openTokenStartIndex, element.location.openTokenEndIndex - element.location.openTokenStartIndex + 1);
-            }
 
+            return element.ownerDocument.HtmlSource.Substring(element.location.openTokenStartIndex, element.location.openTokenEndIndex - element.location.openTokenStartIndex + 1);
         }
 
         public static bool HasHeadTag(Dom.Document doc)
@@ -152,13 +135,12 @@ public static    class DomHelper
             var head = doc.head;
 
             return !IsFakeElement(head);
-
         }
 
         /// <summary>
-        /// Is Fake and generated element, like Head.. without the <head> tag. 
+        /// Is Fake and generated element, like Head.. without the <head> tag.
         /// </summary>
-        /// <param name="doc"></param>
+        /// <param name="el"></param>
         /// <returns></returns>
         public static bool IsFakeElement(Element el)
         {
@@ -178,18 +160,12 @@ public static    class DomHelper
                 return true;
             }
 
-            if (el.location.endTokenEndIndex > 1)
-            {
-                return false;
-            }
-
-            return true;
+            return el.location.endTokenEndIndex <= 1;
         }
 
         public static string ReSerializeElement(Element element, string innerHtml)
         {
-            string ehtml = string.Empty;
-            ehtml = "<" + element.tagName;
+            var ehtml = "<" + element.tagName;
             foreach (var item in element.attributes)
             {
                 ehtml += " " + item.name;
@@ -211,6 +187,5 @@ public static    class DomHelper
             }
             return ehtml;
         }
-
     }
 }

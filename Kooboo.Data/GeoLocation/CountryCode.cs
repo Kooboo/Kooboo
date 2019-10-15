@@ -10,256 +10,258 @@ namespace Kooboo.Data.GeoLocation
 	{
 	 	static CountryCode()
 		{
-			  CodeNameList = new Dictionary<string, string>();
-			CodeNameList.Add("AF", "Afghanistan");
-			CodeNameList.Add("AX", "Aland Islands");
-			CodeNameList.Add("AL", "Albania");
-			CodeNameList.Add("DZ", "Algeria");
-			CodeNameList.Add("AS", "American Samoa");
-			CodeNameList.Add("AD", "Andorra");
-			CodeNameList.Add("AO", "Angola");
-			CodeNameList.Add("AI", "Anguilla");
-			CodeNameList.Add("AQ", "Antarctica");
-			CodeNameList.Add("AG", "Antigua and Barbuda");
-			CodeNameList.Add("AR", "Argentina");
-			CodeNameList.Add("AM", "Armenia");
-			CodeNameList.Add("AW", "Aruba");
-			CodeNameList.Add("AU", "Australia");
-			CodeNameList.Add("AT", "Austria");
-			CodeNameList.Add("AZ", "Azerbaijan");
-			CodeNameList.Add("BS", "Bahamas");
-			CodeNameList.Add("BH", "Bahrain");
-			CodeNameList.Add("BD", "Bangladesh");
-			CodeNameList.Add("BB", "Barbados");
-			CodeNameList.Add("BY", "Belarus");
-			CodeNameList.Add("BE", "Belgium");
-			CodeNameList.Add("BZ", "Belize");
-			CodeNameList.Add("BJ", "Benin");
-			CodeNameList.Add("BM", "Bermuda");
-			CodeNameList.Add("BT", "Bhutan");
-			CodeNameList.Add("BO", "Bolivia");
-			CodeNameList.Add("BA", "Bosnia and Herzegovina");
-			CodeNameList.Add("BW", "Botswana");
-			CodeNameList.Add("BV", "Bouvet Island");
-			CodeNameList.Add("BR", "Brazil");
-			CodeNameList.Add("VG", "British Virgin Islands");
-			CodeNameList.Add("IO", "British Indian Ocean Territory");
-			CodeNameList.Add("BN", "Brunei Darussalam");
-			CodeNameList.Add("BG", "Bulgaria");
-			CodeNameList.Add("BF", "Burkina Faso");
-			CodeNameList.Add("BI", "Burundi");
-			CodeNameList.Add("KH", "Cambodia");
-			CodeNameList.Add("CM", "Cameroon");
-			CodeNameList.Add("CA", "Canada");
-			CodeNameList.Add("CV", "Cape Verde");
-			CodeNameList.Add("KY", "Cayman Islands");
-			CodeNameList.Add("CF", "Central African Republic");
-			CodeNameList.Add("TD", "Chad");
-			CodeNameList.Add("CL", "Chile");
-			CodeNameList.Add("CN", "China");
-			CodeNameList.Add("HK", "Hong Kong, SAR China");
-			CodeNameList.Add("MO", "Macao, SAR China");
-			CodeNameList.Add("CX", "Christmas Island");
-			CodeNameList.Add("CC", "Cocos (Keeling) Islands");
-			CodeNameList.Add("CO", "Colombia");
-			CodeNameList.Add("KM", "Comoros");
-			CodeNameList.Add("CG", "Congo\u00a0(Brazzaville)");
-			CodeNameList.Add("CD", "Congo, (Kinshasa)");
-			CodeNameList.Add("CK", "Cook Islands");
-			CodeNameList.Add("CR", "Costa Rica");
-			CodeNameList.Add("CI", "Côte d'Ivoire");
-			CodeNameList.Add("HR", "Croatia");
-			CodeNameList.Add("CU", "Cuba");
-			CodeNameList.Add("CY", "Cyprus");
-			CodeNameList.Add("CZ", "Czech Republic");
-			CodeNameList.Add("DK", "Denmark");
-			CodeNameList.Add("DJ", "Djibouti");
-			CodeNameList.Add("DM", "Dominica");
-			CodeNameList.Add("DO", "Dominican Republic");
-			CodeNameList.Add("EC", "Ecuador");
-			CodeNameList.Add("EG", "Egypt");
-			CodeNameList.Add("SV", "El Salvador");
-			CodeNameList.Add("GQ", "Equatorial Guinea");
-			CodeNameList.Add("ER", "Eritrea");
-			CodeNameList.Add("EE", "Estonia");
-			CodeNameList.Add("ET", "Ethiopia");
-			CodeNameList.Add("FK", "Falkland Islands (Malvinas)");
-			CodeNameList.Add("FO", "Faroe Islands");
-			CodeNameList.Add("FJ", "Fiji");
-			CodeNameList.Add("FI", "Finland");
-			CodeNameList.Add("FR", "France");
-			CodeNameList.Add("GF", "French Guiana");
-			CodeNameList.Add("PF", "French Polynesia");
-			CodeNameList.Add("TF", "French Southern Territories");
-			CodeNameList.Add("GA", "Gabon");
-			CodeNameList.Add("GM", "Gambia");
-			CodeNameList.Add("GE", "Georgia");
-			CodeNameList.Add("DE", "Germany");
-			CodeNameList.Add("GH", "Ghana");
-			CodeNameList.Add("GI", "Gibraltar");
-			CodeNameList.Add("GR", "Greece");
-			CodeNameList.Add("GL", "Greenland");
-			CodeNameList.Add("GD", "Grenada");
-			CodeNameList.Add("GP", "Guadeloupe");
-			CodeNameList.Add("GU", "Guam");
-			CodeNameList.Add("GT", "Guatemala");
-			CodeNameList.Add("GG", "Guernsey");
-			CodeNameList.Add("GN", "Guinea");
-			CodeNameList.Add("GW", "Guinea-Bissau");
-			CodeNameList.Add("GY", "Guyana");
-			CodeNameList.Add("HT", "Haiti");
-			CodeNameList.Add("HM", "Heard and Mcdonald Islands");
-			CodeNameList.Add("VA", "Holy See\u00a0(Vatican City State)");
-			CodeNameList.Add("HN", "Honduras");
-			CodeNameList.Add("HU", "Hungary");
-			CodeNameList.Add("IS", "Iceland");
-			CodeNameList.Add("IN", "India");
-			CodeNameList.Add("ID", "Indonesia");
-			CodeNameList.Add("IR", "Iran, Islamic Republic of");
-			CodeNameList.Add("IQ", "Iraq");
-			CodeNameList.Add("IE", "Ireland");
-			CodeNameList.Add("IM", "Isle of Man");
-			CodeNameList.Add("IL", "Israel");
-			CodeNameList.Add("IT", "Italy");
-			CodeNameList.Add("JM", "Jamaica");
-			CodeNameList.Add("JP", "Japan");
-			CodeNameList.Add("JE", "Jersey");
-			CodeNameList.Add("JO", "Jordan");
-			CodeNameList.Add("KZ", "Kazakhstan");
-			CodeNameList.Add("KE", "Kenya");
-			CodeNameList.Add("KI", "Kiribati");
-			CodeNameList.Add("KP", "Korea\u00a0(North)");
-			CodeNameList.Add("KR", "Korea\u00a0(South)");
-			CodeNameList.Add("KW", "Kuwait");
-			CodeNameList.Add("KG", "Kyrgyzstan");
-			CodeNameList.Add("LA", "Lao PDR");
-			CodeNameList.Add("LV", "Latvia");
-			CodeNameList.Add("LB", "Lebanon");
-			CodeNameList.Add("LS", "Lesotho");
-			CodeNameList.Add("LR", "Liberia");
-			CodeNameList.Add("LY", "Libya");
-			CodeNameList.Add("LI", "Liechtenstein");
-			CodeNameList.Add("LT", "Lithuania");
-			CodeNameList.Add("LU", "Luxembourg");
-			CodeNameList.Add("MK", "Macedonia, Republic of");
-			CodeNameList.Add("MG", "Madagascar");
-			CodeNameList.Add("MW", "Malawi");
-			CodeNameList.Add("MY", "Malaysia");
-			CodeNameList.Add("MV", "Maldives");
-			CodeNameList.Add("ML", "Mali");
-			CodeNameList.Add("MT", "Malta");
-			CodeNameList.Add("MH", "Marshall Islands");
-			CodeNameList.Add("MQ", "Martinique");
-			CodeNameList.Add("MR", "Mauritania");
-			CodeNameList.Add("MU", "Mauritius");
-			CodeNameList.Add("YT", "Mayotte");
-			CodeNameList.Add("MX", "Mexico");
-			CodeNameList.Add("FM", "Micronesia, Federated States of");
-			CodeNameList.Add("MD", "Moldova");
-			CodeNameList.Add("MC", "Monaco");
-			CodeNameList.Add("MN", "Mongolia");
-			CodeNameList.Add("ME", "Montenegro");
-			CodeNameList.Add("MS", "Montserrat");
-			CodeNameList.Add("MA", "Morocco");
-			CodeNameList.Add("MZ", "Mozambique");
-			CodeNameList.Add("MM", "Myanmar");
-			CodeNameList.Add("NA", "Namibia");
-			CodeNameList.Add("NR", "Nauru");
-			CodeNameList.Add("NP", "Nepal");
-			CodeNameList.Add("NL", "Netherlands");
-			CodeNameList.Add("AN", "Netherlands Antilles");
-			CodeNameList.Add("NC", "New Caledonia");
-			CodeNameList.Add("NZ", "New Zealand");
-			CodeNameList.Add("NI", "Nicaragua");
-			CodeNameList.Add("NE", "Niger");
-			CodeNameList.Add("NG", "Nigeria");
-			CodeNameList.Add("NU", "Niue");
-			CodeNameList.Add("NF", "Norfolk Island");
-			CodeNameList.Add("MP", "Northern Mariana Islands");
-			CodeNameList.Add("NO", "Norway");
-			CodeNameList.Add("OM", "Oman");
-			CodeNameList.Add("PK", "Pakistan");
-			CodeNameList.Add("PW", "Palau");
-			CodeNameList.Add("PS", "Palestinian Territory");
-			CodeNameList.Add("PA", "Panama");
-			CodeNameList.Add("PG", "Papua New Guinea");
-			CodeNameList.Add("PY", "Paraguay");
-			CodeNameList.Add("PE", "Peru");
-			CodeNameList.Add("PH", "Philippines");
-			CodeNameList.Add("PN", "Pitcairn");
-			CodeNameList.Add("PL", "Poland");
-			CodeNameList.Add("PT", "Portugal");
-			CodeNameList.Add("PR", "Puerto Rico");
-			CodeNameList.Add("QA", "Qatar");
-			CodeNameList.Add("RE", "Réunion");
-			CodeNameList.Add("RO", "Romania");
-			CodeNameList.Add("RU", "Russian Federation");
-			CodeNameList.Add("RW", "Rwanda");
-			CodeNameList.Add("BL", "Saint-Barthélemy");
-			CodeNameList.Add("SH", "Saint Helena");
-			CodeNameList.Add("KN", "Saint Kitts and Nevis");
-			CodeNameList.Add("LC", "Saint Lucia");
-			CodeNameList.Add("MF", "Saint-Martin (French part)");
-			CodeNameList.Add("PM", "Saint Pierre and Miquelon");
-			CodeNameList.Add("VC", "Saint Vincent and Grenadines");
-			CodeNameList.Add("WS", "Samoa");
-			CodeNameList.Add("SM", "San Marino");
-			CodeNameList.Add("ST", "Sao Tome and Principe");
-			CodeNameList.Add("SA", "Saudi Arabia");
-			CodeNameList.Add("SN", "Senegal");
-			CodeNameList.Add("RS", "Serbia");
-			CodeNameList.Add("SC", "Seychelles");
-			CodeNameList.Add("SL", "Sierra Leone");
-			CodeNameList.Add("SG", "Singapore");
-			CodeNameList.Add("SK", "Slovakia");
-			CodeNameList.Add("SI", "Slovenia");
-			CodeNameList.Add("SB", "Solomon Islands");
-			CodeNameList.Add("SO", "Somalia");
-			CodeNameList.Add("ZA", "South Africa");
-			CodeNameList.Add("GS", "South Georgia and the South Sandwich Islands");
-			CodeNameList.Add("SS", "South Sudan");
-			CodeNameList.Add("ES", "Spain");
-			CodeNameList.Add("LK", "Sri Lanka");
-			CodeNameList.Add("SD", "Sudan");
-			CodeNameList.Add("SR", "Suriname");
-			CodeNameList.Add("SJ", "Svalbard and Jan Mayen Islands");
-			CodeNameList.Add("SZ", "Swaziland");
-			CodeNameList.Add("SE", "Sweden");
-			CodeNameList.Add("CH", "Switzerland");
-			CodeNameList.Add("SY", "Syrian Arab Republic\u00a0(Syria)");
-			CodeNameList.Add("TW", "Taiwan, Republic of China");
-			CodeNameList.Add("TJ", "Tajikistan");
-			CodeNameList.Add("TZ", "Tanzania, United Republic of");
-			CodeNameList.Add("TH", "Thailand");
-			CodeNameList.Add("TL", "Timor-Leste");
-			CodeNameList.Add("TG", "Togo");
-			CodeNameList.Add("TK", "Tokelau");
-			CodeNameList.Add("TO", "Tonga");
-			CodeNameList.Add("TT", "Trinidad and Tobago");
-			CodeNameList.Add("TN", "Tunisia");
-			CodeNameList.Add("TR", "Turkey");
-			CodeNameList.Add("TM", "Turkmenistan");
-			CodeNameList.Add("TC", "Turks and Caicos Islands");
-			CodeNameList.Add("TV", "Tuvalu");
-			CodeNameList.Add("UG", "Uganda");
-			CodeNameList.Add("UA", "Ukraine");
-			CodeNameList.Add("AE", "United Arab Emirates");
-			CodeNameList.Add("GB", "United Kingdom");
-			CodeNameList.Add("US", "United States of America");
-			CodeNameList.Add("UM", "US Minor Outlying Islands");
-			CodeNameList.Add("UY", "Uruguay");
-			CodeNameList.Add("UZ", "Uzbekistan");
-			CodeNameList.Add("VU", "Vanuatu");
-			CodeNameList.Add("VE", "Venezuela\u00a0(Bolivarian Republic)");
-			CodeNameList.Add("VN", "Viet Nam");
-			CodeNameList.Add("VI", "Virgin Islands, US");
-			CodeNameList.Add("WF", "Wallis and Futuna Islands");
-			CodeNameList.Add("EH", "Western Sahara");
-			CodeNameList.Add("YE", "Yemen");
-			CodeNameList.Add("ZM", "Zambia");
-			CodeNameList.Add("ZW", "Zimbabwe");
-             
-		}
+            CodeNameList = new Dictionary<string, string>
+            {
+                {"AF", "Afghanistan"},
+                {"AX", "Aland Islands"},
+                {"AL", "Albania"},
+                {"DZ", "Algeria"},
+                {"AS", "American Samoa"},
+                {"AD", "Andorra"},
+                {"AO", "Angola"},
+                {"AI", "Anguilla"},
+                {"AQ", "Antarctica"},
+                {"AG", "Antigua and Barbuda"},
+                {"AR", "Argentina"},
+                {"AM", "Armenia"},
+                {"AW", "Aruba"},
+                {"AU", "Australia"},
+                {"AT", "Austria"},
+                {"AZ", "Azerbaijan"},
+                {"BS", "Bahamas"},
+                {"BH", "Bahrain"},
+                {"BD", "Bangladesh"},
+                {"BB", "Barbados"},
+                {"BY", "Belarus"},
+                {"BE", "Belgium"},
+                {"BZ", "Belize"},
+                {"BJ", "Benin"},
+                {"BM", "Bermuda"},
+                {"BT", "Bhutan"},
+                {"BO", "Bolivia"},
+                {"BA", "Bosnia and Herzegovina"},
+                {"BW", "Botswana"},
+                {"BV", "Bouvet Island"},
+                {"BR", "Brazil"},
+                {"VG", "British Virgin Islands"},
+                {"IO", "British Indian Ocean Territory"},
+                {"BN", "Brunei Darussalam"},
+                {"BG", "Bulgaria"},
+                {"BF", "Burkina Faso"},
+                {"BI", "Burundi"},
+                {"KH", "Cambodia"},
+                {"CM", "Cameroon"},
+                {"CA", "Canada"},
+                {"CV", "Cape Verde"},
+                {"KY", "Cayman Islands"},
+                {"CF", "Central African Republic"},
+                {"TD", "Chad"},
+                {"CL", "Chile"},
+                {"CN", "China"},
+                {"HK", "Hong Kong, SAR China"},
+                {"MO", "Macao, SAR China"},
+                {"CX", "Christmas Island"},
+                {"CC", "Cocos (Keeling) Islands"},
+                {"CO", "Colombia"},
+                {"KM", "Comoros"},
+                {"CG", "Congo\u00a0(Brazzaville)"},
+                {"CD", "Congo, (Kinshasa)"},
+                {"CK", "Cook Islands"},
+                {"CR", "Costa Rica"},
+                {"CI", "Côte d'Ivoire"},
+                {"HR", "Croatia"},
+                {"CU", "Cuba"},
+                {"CY", "Cyprus"},
+                {"CZ", "Czech Republic"},
+                {"DK", "Denmark"},
+                {"DJ", "Djibouti"},
+                {"DM", "Dominica"},
+                {"DO", "Dominican Republic"},
+                {"EC", "Ecuador"},
+                {"EG", "Egypt"},
+                {"SV", "El Salvador"},
+                {"GQ", "Equatorial Guinea"},
+                {"ER", "Eritrea"},
+                {"EE", "Estonia"},
+                {"ET", "Ethiopia"},
+                {"FK", "Falkland Islands (Malvinas)"},
+                {"FO", "Faroe Islands"},
+                {"FJ", "Fiji"},
+                {"FI", "Finland"},
+                {"FR", "France"},
+                {"GF", "French Guiana"},
+                {"PF", "French Polynesia"},
+                {"TF", "French Southern Territories"},
+                {"GA", "Gabon"},
+                {"GM", "Gambia"},
+                {"GE", "Georgia"},
+                {"DE", "Germany"},
+                {"GH", "Ghana"},
+                {"GI", "Gibraltar"},
+                {"GR", "Greece"},
+                {"GL", "Greenland"},
+                {"GD", "Grenada"},
+                {"GP", "Guadeloupe"},
+                {"GU", "Guam"},
+                {"GT", "Guatemala"},
+                {"GG", "Guernsey"},
+                {"GN", "Guinea"},
+                {"GW", "Guinea-Bissau"},
+                {"GY", "Guyana"},
+                {"HT", "Haiti"},
+                {"HM", "Heard and Mcdonald Islands"},
+                {"VA", "Holy See\u00a0(Vatican City State)"},
+                {"HN", "Honduras"},
+                {"HU", "Hungary"},
+                {"IS", "Iceland"},
+                {"IN", "India"},
+                {"ID", "Indonesia"},
+                {"IR", "Iran, Islamic Republic of"},
+                {"IQ", "Iraq"},
+                {"IE", "Ireland"},
+                {"IM", "Isle of Man"},
+                {"IL", "Israel"},
+                {"IT", "Italy"},
+                {"JM", "Jamaica"},
+                {"JP", "Japan"},
+                {"JE", "Jersey"},
+                {"JO", "Jordan"},
+                {"KZ", "Kazakhstan"},
+                {"KE", "Kenya"},
+                {"KI", "Kiribati"},
+                {"KP", "Korea\u00a0(North)"},
+                {"KR", "Korea\u00a0(South)"},
+                {"KW", "Kuwait"},
+                {"KG", "Kyrgyzstan"},
+                {"LA", "Lao PDR"},
+                {"LV", "Latvia"},
+                {"LB", "Lebanon"},
+                {"LS", "Lesotho"},
+                {"LR", "Liberia"},
+                {"LY", "Libya"},
+                {"LI", "Liechtenstein"},
+                {"LT", "Lithuania"},
+                {"LU", "Luxembourg"},
+                {"MK", "Macedonia, Republic of"},
+                {"MG", "Madagascar"},
+                {"MW", "Malawi"},
+                {"MY", "Malaysia"},
+                {"MV", "Maldives"},
+                {"ML", "Mali"},
+                {"MT", "Malta"},
+                {"MH", "Marshall Islands"},
+                {"MQ", "Martinique"},
+                {"MR", "Mauritania"},
+                {"MU", "Mauritius"},
+                {"YT", "Mayotte"},
+                {"MX", "Mexico"},
+                {"FM", "Micronesia, Federated States of"},
+                {"MD", "Moldova"},
+                {"MC", "Monaco"},
+                {"MN", "Mongolia"},
+                {"ME", "Montenegro"},
+                {"MS", "Montserrat"},
+                {"MA", "Morocco"},
+                {"MZ", "Mozambique"},
+                {"MM", "Myanmar"},
+                {"NA", "Namibia"},
+                {"NR", "Nauru"},
+                {"NP", "Nepal"},
+                {"NL", "Netherlands"},
+                {"AN", "Netherlands Antilles"},
+                {"NC", "New Caledonia"},
+                {"NZ", "New Zealand"},
+                {"NI", "Nicaragua"},
+                {"NE", "Niger"},
+                {"NG", "Nigeria"},
+                {"NU", "Niue"},
+                {"NF", "Norfolk Island"},
+                {"MP", "Northern Mariana Islands"},
+                {"NO", "Norway"},
+                {"OM", "Oman"},
+                {"PK", "Pakistan"},
+                {"PW", "Palau"},
+                {"PS", "Palestinian Territory"},
+                {"PA", "Panama"},
+                {"PG", "Papua New Guinea"},
+                {"PY", "Paraguay"},
+                {"PE", "Peru"},
+                {"PH", "Philippines"},
+                {"PN", "Pitcairn"},
+                {"PL", "Poland"},
+                {"PT", "Portugal"},
+                {"PR", "Puerto Rico"},
+                {"QA", "Qatar"},
+                {"RE", "Réunion"},
+                {"RO", "Romania"},
+                {"RU", "Russian Federation"},
+                {"RW", "Rwanda"},
+                {"BL", "Saint-Barthélemy"},
+                {"SH", "Saint Helena"},
+                {"KN", "Saint Kitts and Nevis"},
+                {"LC", "Saint Lucia"},
+                {"MF", "Saint-Martin (French part)"},
+                {"PM", "Saint Pierre and Miquelon"},
+                {"VC", "Saint Vincent and Grenadines"},
+                {"WS", "Samoa"},
+                {"SM", "San Marino"},
+                {"ST", "Sao Tome and Principe"},
+                {"SA", "Saudi Arabia"},
+                {"SN", "Senegal"},
+                {"RS", "Serbia"},
+                {"SC", "Seychelles"},
+                {"SL", "Sierra Leone"},
+                {"SG", "Singapore"},
+                {"SK", "Slovakia"},
+                {"SI", "Slovenia"},
+                {"SB", "Solomon Islands"},
+                {"SO", "Somalia"},
+                {"ZA", "South Africa"},
+                {"GS", "South Georgia and the South Sandwich Islands"},
+                {"SS", "South Sudan"},
+                {"ES", "Spain"},
+                {"LK", "Sri Lanka"},
+                {"SD", "Sudan"},
+                {"SR", "Suriname"},
+                {"SJ", "Svalbard and Jan Mayen Islands"},
+                {"SZ", "Swaziland"},
+                {"SE", "Sweden"},
+                {"CH", "Switzerland"},
+                {"SY", "Syrian Arab Republic\u00a0(Syria)"},
+                {"TW", "Taiwan, Republic of China"},
+                {"TJ", "Tajikistan"},
+                {"TZ", "Tanzania, United Republic of"},
+                {"TH", "Thailand"},
+                {"TL", "Timor-Leste"},
+                {"TG", "Togo"},
+                {"TK", "Tokelau"},
+                {"TO", "Tonga"},
+                {"TT", "Trinidad and Tobago"},
+                {"TN", "Tunisia"},
+                {"TR", "Turkey"},
+                {"TM", "Turkmenistan"},
+                {"TC", "Turks and Caicos Islands"},
+                {"TV", "Tuvalu"},
+                {"UG", "Uganda"},
+                {"UA", "Ukraine"},
+                {"AE", "United Arab Emirates"},
+                {"GB", "United Kingdom"},
+                {"US", "United States of America"},
+                {"UM", "US Minor Outlying Islands"},
+                {"UY", "Uruguay"},
+                {"UZ", "Uzbekistan"},
+                {"VU", "Vanuatu"},
+                {"VE", "Venezuela\u00a0(Bolivarian Republic)"},
+                {"VN", "Viet Nam"},
+                {"VI", "Virgin Islands, US"},
+                {"WF", "Wallis and Futuna Islands"},
+                {"EH", "Western Sahara"},
+                {"YE", "Yemen"},
+                {"ZM", "Zambia"},
+                {"ZW", "Zimbabwe"}
+            };
+
+        }
 
        public static Dictionary<string, string> CodeNameList { get; set; } 
 		 
@@ -292,11 +294,7 @@ namespace Kooboo.Data.GeoLocation
 
         public static string GetCountryName(string code)
         {
-            if (CodeNameList.ContainsKey(code))
-            {
-                return CodeNameList[code]; 
-            }
-            return null; 
+            return CodeNameList.ContainsKey(code) ? CodeNameList[code] : null;
         }
  
 	 

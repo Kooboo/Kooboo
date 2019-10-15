@@ -10,7 +10,7 @@ namespace Kooboo.Sites.Repository
 {
     public class RouteRepository : SiteRepositoryBase<Kooboo.Sites.Routing.Route>
     {
-        private object _locker = new object();
+        private static object _locker = new object();
 
         public override ObjectStoreParameters StoreParameters
         {

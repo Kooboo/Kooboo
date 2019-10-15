@@ -3,6 +3,7 @@
 using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Kooboo.Lib.Helper;
 using Kooboo.Data.Helper;
 
@@ -10,47 +11,47 @@ namespace Kooboo.Data.Repository
 {
     public class UserRepository
     {
-        private string ValidateUrl = AccountUrlHelper.User("validate");
-        private string ProfileUrl = AccountUrlHelper.User("profile");
-        private string GetUserUrl = AccountUrlHelper.User("get");
+        private string _validateUrl = AccountUrlHelper.User("validate");
+        private string _profileUrl = AccountUrlHelper.User("profile");
+        private string _getUserUrl = AccountUrlHelper.User("get");
 
-        private string GetUserByEmailUrl = AccountUrlHelper.User("GetByEmail");
+        private string _getUserByEmailUrl = AccountUrlHelper.User("GetByEmail");
 
-        private string ChangePasswordUrl = AccountUrlHelper.User("changepassword");
-        private string ChangePasswordUrl2 = AccountUrlHelper.User("changepassword2");
-        private string AddOrUpdateUserUrl = AccountUrlHelper.User("post");
-        private string IsAdminUrl = AccountUrlHelper.User("isadmin");
-        private string ChangeOrgUrl = AccountUrlHelper.User("ChangeOrg");
-        private string OrganizationsUrl = AccountUrlHelper.User("Organizations");
-        private string GetByTokenUrl = AccountUrlHelper.User("GetByToken");
-        private string RegisterUrl = AccountUrlHelper.User("Register");
+        private string _changePasswordUrl = AccountUrlHelper.User("changepassword");
+        private string _changePasswordUrl2 = AccountUrlHelper.User("changepassword2");
+        private string _addOrUpdateUserUrl = AccountUrlHelper.User("post");
+        private string _isAdminUrl = AccountUrlHelper.User("isadmin");
+        private string _changeOrgUrl = AccountUrlHelper.User("ChangeOrg");
+        private string _organizationsUrl = AccountUrlHelper.User("Organizations");
+        private string _getByTokenUrl = AccountUrlHelper.User("GetByToken");
+        private string _registerUrl = AccountUrlHelper.User("Register");
 
-        private string ForgotPasswordTokenUrl = AccountUrlHelper.User("ForgotPasswordToken");
+        private string _forgotPasswordTokenUrl = AccountUrlHelper.User("ForgotPasswordToken");
         public string ResetPasswordUrl = AccountUrlHelper.User("ResetPassword");
 
         public string GetOnlineServerUrlUrl = AccountUrlHelper.User("GetOnlineServerUrl");
 
 
-        private Dictionary<Guid, User> Cache = new Dictionary<Guid, User>();
-        private Dictionary<string, Guid> AccessToken = new Dictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
+        private Dictionary<Guid, User> _cache = new Dictionary<Guid, User>();
+        private Dictionary<string, Guid> _accessToken = new Dictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
 
 
-        public void AddOrUpdateTemp(User user, bool Overwrite = false)
+        public void AddOrUpdateTemp(User user, bool overwrite = false)
         {
             user.IsAdmin = GlobalDb.Users.IsAdmin(user.CurrentOrgId, user.Id);
-            AddOrUpdateCache(user, Overwrite);
-            AddOrUpdateLocal(user, Overwrite);
+            AddOrUpdateCache(user, overwrite);
+            AddOrUpdateLocal(user, overwrite);
         }
 
 
-        public bool RemoveLocal(Guid UserId)
+        public bool RemoveLocal(Guid userId)
         {
-            if (Cache.ContainsKey(UserId))
+            if (_cache.ContainsKey(userId))
             {
-                Cache.Remove(UserId); 
+                _cache.Remove(userId); 
             }
 
-            GlobalDb.LocalUser.Delete(UserId);
+            GlobalDb.LocalUser.Delete(userId);
 
             return true; 
 
@@ -62,12 +63,12 @@ namespace Kooboo.Data.Repository
             {
                 if (overwrite)
                 {
-                    Cache[user.Id] = user;
+                    _cache[user.Id] = user;
                     return;
                 }
-                if (!Cache.ContainsKey(user.Id))
+                if (!_cache.ContainsKey(user.Id))
                 {
-                    Cache[user.Id] = user;
+                    _cache[user.Id] = user;
                 }
             }
         }
@@ -91,8 +92,7 @@ namespace Kooboo.Data.Repository
 
         public User Get(string nameOrGuid)
         {
-            Guid userid;
-            if (!Guid.TryParse(nameOrGuid, out userid))
+            if (!Guid.TryParse(nameOrGuid, out var userid))
             {
                 userid = IDGenerator.GetId(nameOrGuid);
             }
@@ -106,9 +106,9 @@ namespace Kooboo.Data.Repository
                 return null;
             }
 
-            if (this.Cache.ContainsKey(id))
+            if (this._cache.ContainsKey(id))
             {
-                return this.Cache[id];
+                return this._cache[id];
             }
 
             var user = GlobalDb.LocalUser.Get(id);
@@ -118,16 +118,15 @@ namespace Kooboo.Data.Repository
                 user = Kooboo.Data.Service.UserLoginService.GetDefaultUser(id.ToString());
                 if (user != null)
                 {
-                    this.Cache[user.Id] = user;
+                    this._cache[user.Id] = user;
                 }
             }
 
             if (user == null)
             {
                 // string hashcode = RSAHelper.Encrypt(id.ToString());
-                Dictionary<string, string> para = new Dictionary<string, string>();
-                para.Add("id", id.ToString());
-                user = HttpHelper.Post<User>(this.GetUserUrl, para);
+                Dictionary<string, string> para = new Dictionary<string, string> {{"id", id.ToString()}};
+                user = HttpHelper.Post<User>(this._getUserUrl, para);
 
                 if (user != null)
                 {
@@ -140,15 +139,13 @@ namespace Kooboo.Data.Repository
 
         public User GetByEmail(string email)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("email", email);
-            return HttpHelper.Get<User>(this.GetUserByEmailUrl, para);
+            Dictionary<string, string> para = new Dictionary<string, string> {{"email", email}};
+            return HttpHelper.Get<User>(this._getUserByEmailUrl, para);
         }
 
         public string GetServerUrl(string email)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("email", email);
+            Dictionary<string, string> para = new Dictionary<string, string> {{"email", email}};
             string url = HttpHelper.Get<string>(this.GetOnlineServerUrlUrl, para);
 
             if (!string.IsNullOrWhiteSpace(url) && !url.ToLower().StartsWith("http"))
@@ -161,26 +158,25 @@ namespace Kooboo.Data.Repository
         public User Profile(Guid id)
         {
             User user = null;
-            if (this.Cache.ContainsKey(id))
+            if (this._cache.ContainsKey(id))
             {
-                user = this.Cache[id];
-                if (user != null && user.PasswordHash != default(Guid) && user.CurrentOrgId != default(Guid))
+                user = this._cache[id];
+                if (user != null && user.PasswordHash != default(Guid) && user.CurrentOrgId != default)
                 {
                     return user;
                 }
             }
             user = GlobalDb.LocalUser.Get(id);
 
-            if (user != null && (user.PasswordHash != default(Guid) || !string.IsNullOrWhiteSpace(user.Password)) && user.CurrentOrgId != default(Guid))
+            if (user != null && (user.PasswordHash != default || !string.IsNullOrWhiteSpace(user.Password)) && user.CurrentOrgId != default)
             {
                 return user;
             }
 
             if (user == null)
             {
-                Dictionary<string, string> para = new Dictionary<string, string>();
-                para.Add("id", id.ToString());
-                user = Lib.Helper.HttpHelper.Post<User>(this.ProfileUrl, para);
+                Dictionary<string, string> para = new Dictionary<string, string> {{"id", id.ToString()}};
+                user = Lib.Helper.HttpHelper.Post<User>(this._profileUrl, para);
 
                 if (user != null)
                 {
@@ -197,11 +193,7 @@ namespace Kooboo.Data.Repository
             {
                 return false;
             }
-            if (user.UserName.ToUpper() == Data.AppSettings.DefaultUser.UserName.ToUpper())
-            {
-                return true;
-            }
-            return false;
+            return user.UserName.ToUpper() == Data.AppSettings.DefaultUser.UserName.ToUpper();
         }
 
         public bool AddOrUpdate(User user)
@@ -211,14 +203,7 @@ namespace Kooboo.Data.Repository
             string userJson = Lib.Helper.JsonHelper.Serialize(updateuser);
 
             bool isSuccess = false;
-            if (IsDefaultUser(user))
-            {
-                isSuccess = true;
-            }
-            else
-            {
-                isSuccess = HttpHelper.Post<bool>(AddOrUpdateUserUrl, userJson);
-            }
+            isSuccess = IsDefaultUser(user) || HttpHelper.Post<bool>(_addOrUpdateUserUrl, userJson);
 
             if (isSuccess)
             {
@@ -229,31 +214,31 @@ namespace Kooboo.Data.Repository
         }
 
         // register and return url. 
-        public bool Register(User User)
+        public bool Register(User user)
         {
-            User updateuser = Kooboo.Lib.Serializer.Copy.DeepCopy<User>(User);
+            User updateuser = Kooboo.Lib.Serializer.Copy.DeepCopy<User>(user);
             string userJson = Lib.Helper.JsonHelper.Serialize(updateuser);
-            return HttpHelper.Post<bool>(RegisterUrl, userJson);
+            return HttpHelper.Post<bool>(_registerUrl, userJson);
         }
 
         public bool ChangePassword(string username, string oldPassword, string newPassword)
         {
             //clean local cache and local user.           
-            Dictionary<string, string> query = new Dictionary<string, string>();
+            Dictionary<string, string> query = new Dictionary<string, string>
+            {
+                {"UserName", username}, {"oldPassword", oldPassword}, {"newPassword", newPassword}
+            };
 
-            query.Add("UserName", username);
-            query.Add("oldPassword", oldPassword);
-            query.Add("newPassword", newPassword);
 
-            var user = HttpHelper.Post<User>(this.ChangePasswordUrl2, query);
+            var user = HttpHelper.Post<User>(this._changePasswordUrl2, query);
 
             if (user != null)
             {
                 user.Password = newPassword;
 
-                if (this.Cache.ContainsKey(user.Id))
+                if (this._cache.ContainsKey(user.Id))
                 {
-                    this.Cache[user.Id] = user;
+                    this._cache[user.Id] = user;
                 }
                 GlobalDb.LocalUser.AddOrUpdate(user);
                 return true;
@@ -274,34 +259,28 @@ namespace Kooboo.Data.Repository
                 return null;
             }
 
-            Dictionary<String, string> para = new Dictionary<string, string>();
-            para.Add("UserName", username);
-            para.Add("Password", password);
+            Dictionary<String, string> para = new Dictionary<string, string>
+            {
+                {"UserName", username}, {"Password", password}
+            };
 
             // check cache first for performance. 
             Guid userid = IDGenerator.GetId(username);
 
-            if (this.Cache.ContainsKey(userid) && !Data.AppSettings.IsOnlineServer)
+            if (this._cache.ContainsKey(userid) && !Data.AppSettings.IsOnlineServer)
             {
-                var cacheuser = this.Cache[userid];
+                var cacheuser = this._cache[userid];
                 if (cacheuser.Password != null && cacheuser.Password == password)
                 {
                     return cacheuser;
                 }
             }
 
-            var user = Lib.Helper.HttpHelper.Post<User>(ValidateUrl, para);
+            var user = Lib.Helper.HttpHelper.Post<User>(_validateUrl, para);
 
             if (user == null)
             {
-                if (this.Cache.ContainsKey(userid))
-                {
-                    user = this.Cache[userid];
-                }
-                else
-                {
-                    user = GlobalDb.LocalUser.Get(username);
-                }
+                user = this._cache.ContainsKey(userid) ? this._cache[userid] : GlobalDb.LocalUser.Get(username);
 
                 if (user == null || string.IsNullOrWhiteSpace(user.Password))
                 {
@@ -314,10 +293,8 @@ namespace Kooboo.Data.Repository
                     {
                         return user;
                     }
-                    else
-                    {
-                        return null;
-                    }
+
+                    return null;
                 }
             }
             else
@@ -342,10 +319,10 @@ namespace Kooboo.Data.Repository
             return string.Empty;
         }
 
-        public bool IsAdmin(Guid organizationId, Guid UserId)
+        public bool IsAdmin(Guid organizationId, Guid userId)
         {
             var org = GlobalDb.Organization.Get(organizationId);
-            if (org != null && org.AdminUser == UserId)
+            if (org != null && org.AdminUser == userId)
             {
                 return true;
             }
@@ -358,18 +335,19 @@ namespace Kooboo.Data.Repository
             //return HttpHelper.Post<bool>(IsAdminUrl, paramStr);
         }
 
-        public User ChangeOrg(Guid UserId, Guid organizationId)
+        public User ChangeOrg(Guid userId, Guid organizationId)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("UserId", UserId.ToString());
-            para.Add("organizationId", organizationId.ToString());
+            Dictionary<string, string> para = new Dictionary<string, string>
+            {
+                {"UserId", userId.ToString()}, {"organizationId", organizationId.ToString()}
+            };
 
-            var user = HttpHelper.Post<User>(ChangeOrgUrl, para);
+            var user = HttpHelper.Post<User>(_changeOrgUrl, para);
             if (user != null)
             {
-                if (this.Cache.ContainsKey(user.Id))
+                if (this._cache.ContainsKey(user.Id))
                 {
-                    var olduser = this.Cache[user.Id];
+                    var olduser = this._cache[user.Id];
                     olduser.CurrentOrgId = user.CurrentOrgId;
                     olduser.CurrentOrgName = user.CurrentOrgName;
                     olduser.IsAdmin = GlobalDb.Users.IsAdmin(user.CurrentOrgId, user.Id);
@@ -390,13 +368,12 @@ namespace Kooboo.Data.Repository
 
         public List<Organization> Organizations(Guid userId)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("userId", userId.ToString());
-            return HttpHelper.Post<List<Organization>>(OrganizationsUrl, para);
+            Dictionary<string, string> para = new Dictionary<string, string> {{"userId", userId.ToString()}};
+            return HttpHelper.Post<List<Organization>>(_organizationsUrl, para);
         }
 
         private User _defaultUser;
-        private object _locker = new object();
+        private static object _locker = new object();
         public User DefaultUser
         {
             get
@@ -407,7 +384,7 @@ namespace Kooboo.Data.Repository
                     {
                         if (_defaultUser == null)
                         {
-                            _defaultUser = new User()
+                            _defaultUser = new User
                             {
                                 UserName = DataConstants.DefaultUserName,
                                 CurrentOrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(DataConstants.DefaultUserName),
@@ -421,57 +398,42 @@ namespace Kooboo.Data.Repository
         }
 
         // this is to get orgname for folder. 
-        internal User GetLocalUserByOrgId(Guid OrgId)
+        internal User GetLocalUserByOrgId(Guid orgId)
         {
-            foreach (var item in this.Cache)
+            foreach (var item in this._cache)
             {
-                if (item.Value.CurrentOrgId == OrgId)
+                if (item.Value.CurrentOrgId == orgId)
                 {
                     return item.Value;
                 }
             }
 
-            foreach (var item in GlobalDb.LocalUser.All())
-            {
-                if (item.CurrentOrgId == OrgId)
-                {
-                    return item;
-                }
-            }
-            return null;
+            return GlobalDb.LocalUser.All().FirstOrDefault(item => item.CurrentOrgId == orgId);
         }
 
         public User GetByToken(string token)
-        { 
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("mytoken", token);
-            var user = HttpHelper.Post<User>(GetByTokenUrl, para);
+        {
+            Dictionary<string, string> para = new Dictionary<string, string> {{"mytoken", token}};
+            var user = HttpHelper.Post<User>(_getByTokenUrl, para);
             if (user != null)
             {
-                if (user.PasswordHash != default(Guid))
-                {
-                    AddOrUpdateTemp(user, true);
-                }
-                else
-                {
-                    AddOrUpdateTemp(user, false);
-                }
+                AddOrUpdateTemp(user, user.PasswordHash != default);
             }
             return user;
         }
 
         public Guid ForgotPasswordToken(string email)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("email", email);
-            return HttpHelper.Get<Guid>(this.ForgotPasswordTokenUrl, para);
+            Dictionary<string, string> para = new Dictionary<string, string> {{"email", email}};
+            return HttpHelper.Get<Guid>(this._forgotPasswordTokenUrl, para);
         }
 
-        public bool ResetPassword(Guid Token, string newpasspord)
+        public bool ResetPassword(Guid token, string newpasspord)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("Token", Token.ToString());
-            para.Add("newpasspord", newpasspord);
+            Dictionary<string, string> para = new Dictionary<string, string>
+            {
+                {"Token", token.ToString()}, {"newpasspord", newpasspord}
+            };
             return HttpHelper.Post<bool>(this.ResetPasswordUrl, para);
         } 
     }

@@ -40,13 +40,13 @@ namespace Kooboo.Sites.Routing
                         }
                         
                     }
-                    if (foundroute != null && foundroute.objectId != default(Guid))
+                    if (foundroute != null && foundroute.objectId != default)
                     // if (foundroute != null)
                     {
                         var foundRouteEventResult = FrontEvent.Manager.RaiseRouteEvent(FrontEvent.enumEventType.RouteFound, context.RenderContext, foundroute);
 
 
-                        if (foundRouteEventResult != null && foundRouteEventResult.objectId != default(Guid))
+                        if (foundRouteEventResult != null && foundRouteEventResult.objectId != default)
                         {
                             foundroute = foundRouteEventResult;
                         }
@@ -88,77 +88,64 @@ namespace Kooboo.Sites.Routing
             context.Log.ObjectId = foundroute.objectId;
         }
 
-        public static Route VerifyRoute(SiteDb siteDb, Route OriginalRoute)
+        public static Route VerifyRoute(SiteDb siteDb, Route originalRoute)
         {
-            if (OriginalRoute.DestinationConstType == ConstObjectType.Route)
+            if (originalRoute.DestinationConstType == ConstObjectType.Route)
             {
                 int counter = 0;
-                var dest = GetDestinationRoute(siteDb, OriginalRoute, ref counter);
+                var dest = GetDestinationRoute(siteDb, originalRoute, ref counter);
                 if (dest != null)
                 {
                     if (dest.DestinationConstType == ConstObjectType.Route)
                     {
-                        if (string.IsNullOrEmpty(OriginalRoute.Name) || OriginalRoute.Name == "/" || OriginalRoute.Name == "\\" || OriginalRoute.Name.StartsWith("/?"))
+                        if (string.IsNullOrEmpty(originalRoute.Name) || originalRoute.Name == "/" || originalRoute.Name == "\\" || originalRoute.Name.StartsWith("/?"))
                         {
                             return GetDefaultRoute(siteDb);
                         }
-                        else
-                        {
-                            return null;
-                        }
+
+                        return null;
                     }
-                    else
-                    {
-                        return dest;
-                    }
+
+                    return dest;
 
                 }
             }
             else
             {
-                return OriginalRoute;
+                return originalRoute;
             }
             return null;
         }
 
-        public static Route GetDestinationRoute(SiteDb sitedb, Route OriginalRoute, ref int counter)
+        public static Route GetDestinationRoute(SiteDb sitedb, Route originalRoute, ref int counter)
         {
 
-            if (OriginalRoute.Id == OriginalRoute.objectId)
+            if (originalRoute.Id == originalRoute.objectId)
             {
-                return OriginalRoute;
+                return originalRoute;
             }
 
-            Route destinationroute = sitedb.Routes.Get(OriginalRoute.objectId);
+            Route destinationroute = sitedb.Routes.Get(originalRoute.objectId);
 
             if (destinationroute != null)
             {
                 if (destinationroute.DestinationConstType == ConstObjectType.Route)
                 {
                     counter += 1;
-                    if (counter > 5)
-                    {
-                        return destinationroute;
-                    }
-                    else
-                    {
-                        return GetDestinationRoute(sitedb, destinationroute, ref counter);
-                    }
+                    return counter > 5 ? destinationroute : GetDestinationRoute(sitedb, destinationroute, ref counter);
                 }
-                else
-                {
-                    return destinationroute;
-                }
+
+                return destinationroute;
             }
 
-            return OriginalRoute;
+            return originalRoute;
         }
 
         private static Route GetRoute(Render.FrontContext context, string url)
         {
             Route foundroute = GetRoute(context.WebSite.SiteDb(), url);
 
-            if (foundroute == null || foundroute.objectId == default(Guid))
+            if (foundroute == null || foundroute.objectId == default)
             {
                 if (string.IsNullOrEmpty(url) || url == "/" || url == "\\" || url.StartsWith("/?"))
                 {
@@ -176,10 +163,12 @@ namespace Kooboo.Sites.Routing
 
         private static Route CopyRouteWithoutParameter(Route original)
         {
-            Route newroute = new Route();
-            newroute.Name = original.Name;
-            newroute.DestinationConstType = original.DestinationConstType;
-            newroute.objectId = original.objectId;
+            Route newroute = new Route
+            {
+                Name = original.Name,
+                DestinationConstType = original.DestinationConstType,
+                objectId = original.objectId
+            };
             return newroute;
         }
 
@@ -210,13 +199,13 @@ namespace Kooboo.Sites.Routing
         {
             var tempid = Kooboo.Data.IDGenerator.GetRouteId(relativeurl);
             var temproute = sitedb.Routes.GetFromCache(tempid);
-            if (temproute != null && temproute.objectId != default(Guid))
+            if (temproute != null && temproute.objectId != default)
             {
                 return temproute;
             }
 
             var routeid = sitedb.RouteTree().FindRouteId(relativeurl, true);
-            if (routeid != default(Guid))
+            if (routeid != default)
             {
                 return sitedb.Routes.Get(routeid);
             }
@@ -247,9 +236,11 @@ namespace Kooboo.Sites.Routing
 
             var start = segments[0];
 
-            Routing.Route sysRoute = new Routing.Route();
-            sysRoute.objectId = Lib.Security.Hash.ComputeGuidIgnoreCase("___tempid_fake____");
-            sysRoute.DestinationConstType = ConstObjectType.KoobooSystem;
+            Routing.Route sysRoute = new Routing.Route
+            {
+                objectId = Lib.Security.Hash.ComputeGuidIgnoreCase("___tempid_fake____"),
+                DestinationConstType = ConstObjectType.KoobooSystem
+            };
 
             if (start == "__kb")
             {
@@ -268,12 +259,10 @@ namespace Kooboo.Sites.Routing
             }
             else
             {
-                byte output = 0;
-
                 Kooboo.Data.Interface.IRepository repo = null;
                 string nameorid = null;
 
-                if (byte.TryParse(start, out output))
+                if (byte.TryParse(start, out var output))
                 {
                     if (ConstTypeContainer.ByteTypes.ContainsKey(output))
                     {
@@ -296,7 +285,7 @@ namespace Kooboo.Sites.Routing
                 }
                 else
                 {
-                    if (ConstTypeContainer.nameTypes.ContainsKey(start))
+                    if (ConstTypeContainer.NameTypes.ContainsKey(start))
                     {
                         if (sitedb != null)
                         {
@@ -333,13 +322,7 @@ namespace Kooboo.Sites.Routing
             }
 
 
-            if (sysRoute.Name != null)
-            {
-                return sysRoute;
-            }
-
-            return null;
-
+            return sysRoute.Name != null ? sysRoute : null;
         }
 
         public static Route GetSystemRoute(string relativeUrl, SiteDb sitedb = null)
@@ -351,10 +334,10 @@ namespace Kooboo.Sites.Routing
 
         public static string[] GetSegments(string relativeurl)
         {
-            int QuestionMark = relativeurl.IndexOf("?");
-            if (QuestionMark > 0)
+            int questionMark = relativeurl.IndexOf("?");
+            if (questionMark > 0)
             {
-                relativeurl = relativeurl.Substring(0, QuestionMark);
+                relativeurl = relativeurl.Substring(0, questionMark);
             }
 
             relativeurl = relativeurl.Replace("\\", "/").ToLower();
@@ -421,7 +404,7 @@ namespace Kooboo.Sites.Routing
             {
                 return null;
             }
-            List<string> SourceKeys = new List<string>();
+            List<string> sourceKeys = new List<string>();
             List<string> RealKeys = new List<string>();
 
             int sourceposition = 0;
@@ -449,22 +432,22 @@ namespace Kooboo.Sites.Routing
                     startwith = ParaPattern.Substring(sourceposition, len);
 
                     string sourcekey = ParaPattern.Substring(SourceindexStart + 1, SourceindexEnd - SourceindexStart - 1);
-                    SourceKeys.Add(sourcekey);
+                    sourceKeys.Add(sourcekey);
 
-                    var RealIndexStart = RealUrl.IndexOf(startwith, StringComparison.OrdinalIgnoreCase);
+                    var realIndexStart = RealUrl.IndexOf(startwith, StringComparison.OrdinalIgnoreCase);
 
-                    if (RealIndexStart == -1)
+                    if (realIndexStart == -1)
                     {
                         break;
                     }
-                    if (RealIndexStart > 0)
+                    if (realIndexStart > 0)
                     {
-                        string part = RealUrl.Substring(0, RealIndexStart);
+                        string part = RealUrl.Substring(0, realIndexStart);
                         RealKeys.Add(part);
                     }
-                    if (RealUrl.Length > RealIndexStart + startwith.Length)
+                    if (RealUrl.Length > realIndexStart + startwith.Length)
                     {
-                        RealUrl = RealUrl.Substring(RealIndexStart + startwith.Length);
+                        RealUrl = RealUrl.Substring(realIndexStart + startwith.Length);
                     }
                     else
                     { RealUrl = string.Empty; }
@@ -472,7 +455,7 @@ namespace Kooboo.Sites.Routing
                 else
                 {
                     string sourcekey = ParaPattern.Substring(SourceindexStart + 1, SourceindexEnd - SourceindexStart - 1);
-                    SourceKeys.Add(sourcekey);
+                    sourceKeys.Add(sourcekey);
                 }
 
                 sourceposition = SourceindexEnd + 1;
@@ -488,23 +471,16 @@ namespace Kooboo.Sites.Routing
                 if (RealUrl.EndsWith(endstring, StringComparison.OrdinalIgnoreCase))
                 {
                     int leftlen = RealUrl.Length - endstring.Length;
-                    if (leftlen > 0)
-                    {
-                        RealUrl = RealUrl.Substring(0, leftlen);
-                    }
-                    else
-                    {
-                        RealUrl = string.Empty;
-                    }
+                    RealUrl = leftlen > 0 ? RealUrl.Substring(0, leftlen) : string.Empty;
                 }
 
             }
 
             RealKeys.Add(RealUrl);
 
-            for (int i = 0; i < SourceKeys.Count; i++)
+            for (int i = 0; i < sourceKeys.Count; i++)
             {
-                var key = SourceKeys[i];
+                var key = sourceKeys[i];
                 var value = RealKeys[i];
                 result.Add(key, value);
             }
@@ -513,37 +489,18 @@ namespace Kooboo.Sites.Routing
 
         public static Route GetDefaultRoute(SiteDb sitedb)
         {
-            var pages = sitedb.Pages.Query.Where(o => o.DefaultStart == true).SelectAll();
+            var pages = sitedb.Pages.Query.Where(o => o.DefaultStart).SelectAll();
 
-            foreach (var item in pages)
+            foreach (var route in pages.Select(item => sitedb.Routes.GetByObjectId(item.Id)).Where(route => route != null))
             {
-                var route = sitedb.Routes.GetByObjectId(item.Id);
-                if (route != null)
-                {
-                    return route;
-                }
+                return route;
             }
             List<string> startNameConventions = new List<string>();
 
             var allpageroutes = sitedb.Routes.Query.Where(o => o.DestinationConstType == ConstObjectType.Page).SelectAll();
-            List<Route> foundresult = new List<Route>();
-            foreach (var item in allpageroutes)
-            {
-                if (!string.IsNullOrEmpty(item.Name))
-                {
-                    string lower = item.Name.ToLower();
-                    if (lower.StartsWith("/index") || lower.StartsWith("/default") || lower.StartsWith("/home"))
-                    {
-                        foundresult.Add(item);
-                    }
-                }
-            }
+            List<Route> foundresult = (from item in allpageroutes where !string.IsNullOrEmpty(item.Name) let lower = item.Name.ToLower() where lower.StartsWith("/index") || lower.StartsWith("/default") || lower.StartsWith("/home") select item).ToList();
 
-            if (foundresult.Count > 0)
-            {
-                return foundresult.OrderBy(o => o.Name.Length).First();
-            }
-            return null;
+            return foundresult.Count > 0 ? foundresult.OrderBy(o => o.Name.Length).First() : null;
         }
     }
 }

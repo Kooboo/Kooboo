@@ -1,13 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Helper;
+using Kooboo.Data.Hosts;
 using Kooboo.Data.Models;
+using Kooboo.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Data.Hosts;
-using Kooboo.Extensions;
-using Kooboo.Lib.Helper;
-using Kooboo.Data.Helper;
 
 namespace Kooboo.Data.Repository
 {
@@ -15,67 +14,57 @@ namespace Kooboo.Data.Repository
     {
         List<Domain> ListByUser(User user);
 
-        List<Domain> ListByOrg(Guid OrganizationId); 
+        List<Domain> ListByOrg(Guid organizationId);
 
         List<Domain> ListForEmail(User user);
 
-        Domain Get(Guid Id);
+        Domain Get(Guid id);
 
-        Domain Get(string NameOrGuid);
+        Domain Get(string nameOrGuid);
 
-        bool AddOrUpdate(Domain Domain);
+        bool AddOrUpdate(Domain domain);
 
-        bool Delete(Domain Domain);
-
+        bool Delete(Domain domain);
     }
 
     public class LocalDomainRepository : IDomainRepository
     {
         public LocalDomainRepository()
         {
-            this.localcache = new Dictionary<Guid, Domain>();
-            DomainRepositoryHelper.InitGlobal(this.localcache);
+            this.Localcache = new Dictionary<Guid, Domain>();
+            DomainRepositoryHelper.InitGlobal(this.Localcache);
         }
 
         private object locker = new object();
 
-        internal Dictionary<Guid, Domain> localcache { get; set; }
+        internal Dictionary<Guid, Domain> Localcache { get; set; }
 
         private RepositoryBase<Domain> _domainstore;
-        internal RepositoryBase<Domain> domainstore
-        {
-            get
-            {
-                if (_domainstore == null)
-                {
-                    _domainstore = new RepositoryBase<Domain>();
-                }
-                return _domainstore;
-            }
-        }
 
-        public bool AddOrUpdate(Domain Domain)
+        internal RepositoryBase<Domain> Domainstore => _domainstore ?? (_domainstore = new RepositoryBase<Domain>());
+
+        public bool AddOrUpdate(Domain domain)
         {
             string localip = "127.0.0.1";
-            WindowsHost.AddOrUpdate(Domain.DomainName, localip);
-            this.domainstore.AddOrUpdate(Domain);
+            WindowsHost.AddOrUpdate(domain.DomainName, localip);
+            this.Domainstore.AddOrUpdate(domain);
             return true;
         }
 
-        public bool Delete(Domain Domain)
+        public bool Delete(Domain domain)
         {
             try
             {
-                var records = WindowsHost.GetList().Where(it => it.Domain.EndsWith(Domain.DomainName));
+                var records = WindowsHost.GetList().Where(it => it.Domain.EndsWith(domain.DomainName));
                 foreach (var item in records)
                 {
                     WindowsHost.Delete(item.Domain);
                     var domainid = IDGenerator.GetDomainId(item.Domain);
-                    this.domainstore.Delete(domainid);
+                    this.Domainstore.Delete(domainid);
                 }
 
-                var id = IDGenerator.GetDomainId(Domain.DomainName);
-                this.domainstore.Delete(id);
+                var id = IDGenerator.GetDomainId(domain.DomainName);
+                this.Domainstore.Delete(id);
 
                 return true;
             }
@@ -85,73 +74,68 @@ namespace Kooboo.Data.Repository
             }
         }
 
-        public Domain Get(string NameOrGuid)
+        public Domain Get(string nameOrGuid)
         {
-            Guid key;
-
-            if (!System.Guid.TryParse(NameOrGuid, out key))
+            if (!System.Guid.TryParse(nameOrGuid, out var key))
             {
-                key = IDGenerator.GetDomainId(NameOrGuid);
+                key = IDGenerator.GetDomainId(nameOrGuid);
             }
             return Get(key);
         }
 
-        public Domain Get(Guid Id)
+        public Domain Get(Guid id)
         {
-            if (!localcache.ContainsKey(Id))
+            if (!Localcache.ContainsKey(id))
             {
                 lock (locker)
                 {
-                    if (!localcache.ContainsKey(Id))
+                    if (!Localcache.ContainsKey(id))
                     {
-                        var domain = this.domainstore.Get(Id);
+                        var domain = this.Domainstore.Get(id);
                         if (domain != null)
                         {
-                            localcache[Id] = domain;
+                            Localcache[id] = domain;
                         }
                         else
                         {
                             var alllocals = LocalHostDomains();
 
-                            if (alllocals.ContainsKey(Id))
+                            if (alllocals.ContainsKey(id))
                             {
-                                localcache[Id] = new Domain() { DomainName = alllocals[Id] };
+                                Localcache[id] = new Domain() { DomainName = alllocals[id] };
                             }
                         }
                     }
                 }
             }
-            if (localcache.ContainsKey(Id))
+            if (Localcache.ContainsKey(id))
             {
-                return localcache[Id];
+                return Localcache[id];
             }
             return null;
         }
 
         public List<Domain> ListByUser(User user)
         {
-
-            List<Domain> result = new List<Domain>();
-
-            result.Add(new Domain() { Id = IDGenerator.GetDomainId(AppSettings.DefaultLocalHost), DomainName = AppSettings.DefaultLocalHost }); 
-              
-
-            var all = this.domainstore.All();
-            foreach (var item in all.Where(o=>o.OrganizationId == user.CurrentOrgId))
+            List<Domain> result = new List<Domain>
             {
-                if (!string.IsNullOrEmpty(item.DomainName) && !item.DomainName.ToLower().EndsWith(AppSettings.DefaultLocalHost))
+                new Domain()
                 {
-                    result.Add(item); 
-                     
+                    Id = IDGenerator.GetDomainId(AppSettings.DefaultLocalHost),
+                    DomainName = AppSettings.DefaultLocalHost
                 }
-            }
+            };
 
-            return result; 
+
+            var all = this.Domainstore.All();
+            result.AddRange(all.Where(o => o.OrganizationId == user.CurrentOrgId).Where(item => !string.IsNullOrEmpty(item.DomainName) && !item.DomainName.ToLower().EndsWith(AppSettings.DefaultLocalHost)));
+
+            return result;
         }
 
         private Dictionary<Guid, string> LocalHostDomains()
         {
-            var LocalDomains = new Dictionary<Guid, string>();
+            var localDomains = new Dictionary<Guid, string>();
 
             var domains = Kooboo.Data.Hosts.WindowsHost.GetList();
             foreach (var item in domains)
@@ -161,49 +145,45 @@ namespace Kooboo.Data.Repository
                 if (!string.IsNullOrEmpty(domainresult.Domain))
                 {
                     Guid id = domainresult.Domain.ToHashGuid();
-                    if (!LocalDomains.ContainsKey(id))
+                    if (!localDomains.ContainsKey(id))
                     {
-                        LocalDomains.Add(id, domainresult.Domain);
+                        localDomains.Add(id, domainresult.Domain);
                     }
                 }
             }
 
             var localhostid = AppSettings.DefaultLocalHost.ToHashGuid();
-            if (!LocalDomains.ContainsKey(localhostid))
+            if (!localDomains.ContainsKey(localhostid))
             {
-                LocalDomains.Add(localhostid, AppSettings.DefaultLocalHost);
+                localDomains.Add(localhostid, AppSettings.DefaultLocalHost);
             }
 
-            return LocalDomains;
+            return localDomains;
         }
 
         public List<Domain> ListForEmail(User user)
         {
-            return this.domainstore.All().Where(o => o.OrganizationId == user.CurrentOrgId).ToList();
+            return this.Domainstore.All().Where(o => o.OrganizationId == user.CurrentOrgId).ToList();
         }
 
-        public List<Domain> ListByOrg(Guid OrganizationId)
+        public List<Domain> ListByOrg(Guid organizationId)
         {
-
-            List<Domain> result = new List<Domain>();
-
-            result.Add(new Domain() { Id = IDGenerator.GetDomainId(AppSettings.DefaultLocalHost), DomainName = AppSettings.DefaultLocalHost });
-
-
-            var all = this.domainstore.All();
-            foreach (var item in all.Where(o => o.OrganizationId == OrganizationId))
+            List<Domain> result = new List<Domain>
             {
-                if (!string.IsNullOrEmpty(item.DomainName) && !item.DomainName.ToLower().EndsWith(AppSettings.DefaultLocalHost))
+                new Domain()
                 {
-                    result.Add(item);
-
+                    Id = IDGenerator.GetDomainId(AppSettings.DefaultLocalHost),
+                    DomainName = AppSettings.DefaultLocalHost
                 }
-            }
+            };
+
+
+            var all = this.Domainstore.All();
+            result.AddRange(all.Where(o => o.OrganizationId == organizationId).Where(item => !string.IsNullOrEmpty(item.DomainName) && !item.DomainName.ToLower().EndsWith(AppSettings.DefaultLocalHost)));
 
             return result;
         }
     }
-                        
 
     public static class DomainRepositoryHelper
     {
@@ -234,6 +214,6 @@ namespace Kooboo.Data.Repository
                 Domain domain = new Domain() { DomainName = name, ExpirationDate = DateTime.Now.AddYears(100) };
                 localcachelist[hash] = domain;
             }
-        } 
+        }
     }
 }

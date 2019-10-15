@@ -1,55 +1,47 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Nager.PublicSuffix;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Helper
 {
- public static  class DomainHelper
+    public static class DomainHelper
     {
-
         static DomainHelper()
         {
-           parser = new DomainParser();
+            parser = new DomainParser();
         }
 
         private static DomainParser parser { get; set; }
 
-        public static DomainResult Parse(string FullDomain)
+        public static DomainResult Parse(string fullDomain)
         {
-            DomainResult result = new DomainResult(); 
-            if (string.IsNullOrWhiteSpace(FullDomain))
+            DomainResult result = new DomainResult();
+            if (string.IsNullOrWhiteSpace(fullDomain))
             {
-                return result; 
+                return result;
             }
 
-            if (FullDomain.ToLower().EndsWith(".kooboo"))
+            if (fullDomain.ToLower().EndsWith(".kooboo"))
             {
                 result.Domain = "kooboo";
-                result.SubDomain = FullDomain.Substring(0, FullDomain.Length - 7);
-                return result; 
+                result.SubDomain = fullDomain.Substring(0, fullDomain.Length - 7);
+                return result;
             }
 
-            var parserResult = parser.Get(FullDomain); 
+            var parserResult = parser.Get(fullDomain);
             if (parserResult != null)
             {
                 result.SubDomain = parserResult.SubDomain;
-                result.Domain = parserResult.RegistrableDomain; 
+                result.Domain = parserResult.RegistrableDomain;
             }
-            return result; 
+            return result;
         }
 
-        public static string GetRootDomain(string FullDomain)
+        public static string GetRootDomain(string fullDomain)
         {
-            var result = Parse(FullDomain);
-            return result.Domain; 
+            var result = Parse(fullDomain);
+            return result.Domain;
         }
-                    
-
     }
 
     public class DomainResult
@@ -61,13 +53,10 @@ namespace Kooboo.Data.Helper
         {
             if (string.IsNullOrWhiteSpace(this.SubDomain))
             {
-                return this.Domain; 
+                return this.Domain;
             }
 
-            else
-            {
-                return SubDomain + "." + Domain; 
-             } 
+            return SubDomain + "." + Domain;
         }
     }
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Linq;
@@ -34,7 +34,6 @@ namespace Nager.PublicSuffix
                     throw new FormatException("Wildcard syntax not correct");
                 }
             }
-
 
             if (ruleData.StartsWith("!", StringComparison.InvariantCultureIgnoreCase))
             {

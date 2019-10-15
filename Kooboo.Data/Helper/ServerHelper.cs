@@ -1,23 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Helper
 {
     public static class ServerHelper
     {
-        public static List<ReverseDns> PraseReverseDns(string PTRText)
+        public static List<ReverseDns> PraseReverseDns(string ptrText)
         {
             List<ReverseDns> result = new List<ReverseDns>();
-            if (!string.IsNullOrWhiteSpace(PTRText))
+            if (!string.IsNullOrWhiteSpace(ptrText))
             {
                 var sep = ";,".ToCharArray();
-                var splited = PTRText.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+                var splited = ptrText.Split(sep, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var item in splited)
                 {
@@ -26,24 +23,23 @@ namespace Kooboo.Data.Helper
                         var index = item.IndexOf(":");
                         var ip = item.Substring(0, index);
                         var domain = item.Substring(index + 1);
-                        ReverseDns record = new ReverseDns() { IP = ip.Trim(), HostName = domain.Trim() };
+                        ReverseDns record = new ReverseDns { IP = ip.Trim(), HostName = domain.Trim() };
                         result.Add(record);
                     }
                 }
             }
 
             return result;
-
         }
 
-        public static HashSet<string> ParseIps(string IPListText)
+        public static HashSet<string> ParseIps(string ipListText)
         {
-            HashSet<String> result = new HashSet<string>();
+            var result = new HashSet<string>();
 
-            if (!string.IsNullOrEmpty(IPListText))
+            if (!string.IsNullOrEmpty(ipListText))
             {
                 var sep = ";,".ToCharArray();
-                var splited = IPListText.Split(sep, StringSplitOptions.RemoveEmptyEntries);
+                var splited = ipListText.Split(sep, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var item in splited)
                 {
@@ -56,7 +52,5 @@ namespace Kooboo.Data.Helper
             }
             return result;
         }
-                                       
-
     }
 }

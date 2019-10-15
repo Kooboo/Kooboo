@@ -1,22 +1,22 @@
 ﻿using System;
 using System.IO;
+
 namespace Kooboo.Data.Log
 {
     public class LogWriter
-    { 
+    {
         private string Folder { get; set; }
 
-        public LogWriter(string FolderName)
+        public LogWriter(string folderName)
         {
-            this.Folder = FolderName;
+            this.Folder = folderName;
             _date = DateTime.UtcNow.Date;
             _writer = CreateWriter(_date);
         }
 
         private StreamWriter _writer;
         private DateTime _date;
-        private object _createLock = new object();
-
+        private static object _createLock = new object();
 
         public void Write(string line)
         {
@@ -53,7 +53,6 @@ namespace Kooboo.Data.Log
 
                 return _writer;
             }
-
         }
 
         private StreamWriter CreateWriter(DateTime utcdate)
@@ -66,11 +65,5 @@ namespace Kooboo.Data.Log
             wr.AutoFlush = true;
             return wr;
         }
-
-    }  
-
+    }
 }
-
-
-
-

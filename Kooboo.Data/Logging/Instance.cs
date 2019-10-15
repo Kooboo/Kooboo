@@ -1,13 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 
 namespace Kooboo.Data.Log
-{ 
+{
     public static class Instance
     {
-
         static Instance()
         {
             Cache = new Dictionary<string, LogWriter>(StringComparer.OrdinalIgnoreCase);
@@ -15,47 +14,48 @@ namespace Kooboo.Data.Log
 
         private static object _locker = new object();
 
-        private static LogWriter _http; 
+        private static LogWriter _http;
+
         public static LogWriter Http
         {
             get
             {
                 if (_http == null)
                 {
-                    lock(_locker)
+                    lock (_locker)
                     {
                         if (_http == null)
                         {
-                            _http = new LogWriter("http"); 
+                            _http = new LogWriter("http");
                         }
                     }
                 }
-                return _http; 
+                return _http;
             }
         }
 
-
-        private static LogWriter _exception; 
+        private static LogWriter _exception;
 
         public static LogWriter Exception
         {
             get
             {
-                if (_exception== null)
+                if (_exception == null)
                 {
-                    lock(_locker)
+                    lock (_locker)
                     {
-                        if (_exception== null)
+                        if (_exception == null)
                         {
-                            _exception = new LogWriter("exception"); 
+                            _exception = new LogWriter("exception");
                         }
                     }
                 }
-                return _exception; 
+                return _exception;
             }
         }
 
         private static LogWriter _trace;
+
         public static LogWriter Trace
         {
             get
@@ -74,22 +74,20 @@ namespace Kooboo.Data.Log
             }
         }
 
-
         private static Dictionary<string, LogWriter> Cache { get; set; }
 
-        public static void WriteLine(string LogFolderName, string message)
+        public static void WriteLine(string logFolderName, string message)
         {
-           if (Cache.TryGetValue(LogFolderName, out LogWriter writer))
+            if (Cache.TryGetValue(logFolderName, out LogWriter writer))
             {
-                writer.Write(message); 
+                writer.Write(message);
             }
-           else
+            else
             {
-                var newwriter = new LogWriter(LogFolderName);
-                Cache[LogFolderName] = newwriter;
-                newwriter.Write(message); 
+                var newwriter = new LogWriter(logFolderName);
+                Cache[logFolderName] = newwriter;
+                newwriter.Write(message);
             }
         }
     }
- 
 }

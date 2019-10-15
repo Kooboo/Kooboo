@@ -9,38 +9,37 @@ namespace Kooboo
     {
         private static object _locker = new object();
 
-        private static Dictionary<byte, Type> _ByteTypes;
+        private static Dictionary<byte, Type> _byteTypes;
         public static Dictionary<byte, Type> ByteTypes
         {
             get
             {
-                if (_ByteTypes == null)
+                if (_byteTypes == null)
                 {
                     lock (_locker)
                     {
-                        if (_ByteTypes == null)
+                        if (_byteTypes == null)
                         {
-                            _ByteTypes = new Dictionary<byte, Type>();
+                            _byteTypes = new Dictionary<byte, Type>();
 
                             var allSiteObjectTypes = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(typeof(ISiteObject));
 
                             foreach (var item in allSiteObjectTypes)
                             {
                                 // TODO: find a way to improve performance.
-                                var instance = Activator.CreateInstance(item) as ISiteObject; 
-                                if (instance !=null && instance.ConstType >0)
+                                if (Activator.CreateInstance(item) is ISiteObject instance && instance.ConstType >0)
                                 {
-                                    if (_ByteTypes.ContainsKey(instance.ConstType))
+                                    if (_byteTypes.ContainsKey(instance.ConstType))
                                     {
-                                        var current = _ByteTypes[instance.ConstType]; 
+                                        var current = _byteTypes[instance.ConstType]; 
                                         if (Lib.Reflection.TypeHelper.HasBaseType(current, item))
                                         {
-                                            _ByteTypes[instance.ConstType] = item; 
+                                            _byteTypes[instance.ConstType] = item; 
                                         }
                                     }
                                     else
                                     {
-                                        _ByteTypes.Add(instance.ConstType, item);
+                                        _byteTypes.Add(instance.ConstType, item);
                                     }
                                    
                                 }  
@@ -48,14 +47,14 @@ namespace Kooboo
                         }
                     }
                 }
-                return _ByteTypes;
+                return _byteTypes;
             }
         }
 
          
         private static Dictionary<string, Type> _nametypes;
         private static object _namelocker = new object(); 
-        public static Dictionary<string, Type> nameTypes
+        public static Dictionary<string, Type> NameTypes
         {
             get
             {
@@ -102,39 +101,23 @@ namespace Kooboo
          
         public static Type GetModelType(byte constType)
         {
-            if (ByteTypes.ContainsKey(constType))
-            {
-                return ByteTypes[constType];
-            }
-            return null;
+            return ByteTypes.ContainsKey(constType) ? ByteTypes[constType] : null;
         }
 
         public static Type GetModelType(string modelname)
         {
-            if (nameTypes.ContainsKey(modelname))
-            {
-                return nameTypes[modelname];
-            }
-            return null;
+            return NameTypes.ContainsKey(modelname) ? NameTypes[modelname] : null;
         }
          
         public static byte GetConstType(Type modeltype)
         {
             var name = modeltype.Name;
-            if (NameBytes.ContainsKey(name))
-            {
-                return NameBytes[name];
-            }
-            return 0;
+            return NameBytes.ContainsKey(name) ? NameBytes[name] : (byte) 0;
         }
 
-        public static byte GetConstType(string ModelName)
-        { 
-            if (NameBytes.ContainsKey(ModelName))
-            {
-                return NameBytes[ModelName];
-            }
-            return 0;
+        public static byte GetConstType(string modelName)
+        {
+            return NameBytes.ContainsKey(modelName) ? NameBytes[modelName] : (byte) 0;
         }
 
 

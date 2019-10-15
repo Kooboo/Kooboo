@@ -1,15 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
-//All rights reserved. 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
+//All rights reserved.
 
 namespace Kooboo.Web.Menus
 {
-  public interface ISideBarMenu : ISitePermissionMenu
+    public interface ISideBarMenu : ISitePermissionMenu
     {
-       SideBarSection Parent { get;  }
-    }  
+        SideBarSection Parent { get; }
+    }
 }

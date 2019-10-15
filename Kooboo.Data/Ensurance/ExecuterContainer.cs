@@ -1,13 +1,9 @@
 ﻿using Kooboo.Lib.Reflection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Ensurance
 {
-      
     public class ExecuterContainer
     {
         private static object _locker = new object();
@@ -29,12 +25,11 @@ namespace Kooboo.Data.Ensurance
                             var alltypes = AssemblyLoader.LoadTypeByGenericInterface(typeof(IExecutor<>));
                             foreach (var item in alltypes)
                             {
-                                var iteminstance = Activator.CreateInstance(item) as IExecutor;
-                                if (iteminstance != null)
+                                if (Activator.CreateInstance(item) is IExecutor iteminstance)
                                 {
-                                    string FullTypeName = TypeHelper.GetGenericType(item).FullName;
+                                    string fullTypeName = TypeHelper.GetGenericType(item).FullName;
 
-                                    _list[FullTypeName] = iteminstance;
+                                    _list[fullTypeName] = iteminstance;
                                 }
                             }
                         }
@@ -45,15 +40,13 @@ namespace Kooboo.Data.Ensurance
             }
         }
 
-        public static IExecutor GetExecutor(string FullTypeName)
+        public static IExecutor GetExecutor(string fullTypeName)
         {
-            if (List.ContainsKey(FullTypeName))
+            if (List.ContainsKey(fullTypeName))
             {
-                return List[FullTypeName];
+                return List[fullTypeName];
             }
             return null;
         }
     }
-
-
 }

@@ -1,66 +1,60 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Cache
 {
-   public static class RenderCache
+    public static class RenderCache
     {
         private static object _bianrylocker = new object();
 
         private static object _htmlcachelock = new object();
 
-        private static Dictionary<Guid, string> HtmlCache = new Dictionary<Guid, string>();
+        private static Dictionary<Guid, string> _htmlCache = new Dictionary<Guid, string>();
 
-        private static Dictionary<Guid, byte[]> BinaryCache = new Dictionary<Guid, byte[]>(); 
-          
-        public static string GetHtml(Guid Key)
+        private static Dictionary<Guid, byte[]> _binaryCache = new Dictionary<Guid, byte[]>();
+
+        public static string GetHtml(Guid key)
         {
-            if (HtmlCache.ContainsKey(Key))
-            {
-                return HtmlCache[Key]; 
-            } 
-            return null;
+            return _htmlCache.ContainsKey(key) ? _htmlCache[key] : null;
         }
-        public static void SetHtml(Guid Key, string source)
+
+        public static void SetHtml(Guid key, string source)
         {
-            if (!HtmlCache.ContainsKey(Key))
+            if (!_htmlCache.ContainsKey(key))
             {
                 lock (_htmlcachelock)
                 {
-                    if (!HtmlCache.ContainsKey(Key))
+                    if (!_htmlCache.ContainsKey(key))
                     {
-                        HtmlCache[Key] = source; 
+                        _htmlCache[key] = source;
                     }
                 }
             }
         }
-         
-        public static byte[] GetBinary(Guid Key)
+
+        public static byte[] GetBinary(Guid key)
         {
-            if (BinaryCache.ContainsKey(Key))
+            if (_binaryCache.ContainsKey(key))
             {
-                return BinaryCache[Key];
+                return _binaryCache[key];
             }
             return null;
         }
-        public static void SetBinary(Guid Key, byte[] source)
+
+        public static void SetBinary(Guid key, byte[] source)
         {
-            if (!BinaryCache.ContainsKey(Key))
+            if (!_binaryCache.ContainsKey(key))
             {
                 lock (_htmlcachelock)
                 {
-                    if (!BinaryCache.ContainsKey(Key))
+                    if (!_binaryCache.ContainsKey(key))
                     {
-                        BinaryCache[Key] = source;
+                        _binaryCache[key] = source;
                     }
                 }
             }
-        }  
+        }
     }
-      
 }

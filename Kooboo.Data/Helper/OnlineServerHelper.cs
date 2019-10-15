@@ -2,9 +2,6 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Data.Models;
 using System.Configuration;
 
@@ -13,17 +10,17 @@ namespace Kooboo.Data.Helper
     public class OnlineServerHelper
     {
         private static string RootUrl = ConfigurationManager.AppSettings.Get("RootUrl");
-        private static List<OnlineServer> cacheServers { get; set; }
+        private static List<OnlineServer> CacheServers { get; set; }
         private static DateTime NextCheck { get; set; }
 
         public static List<OnlineServer> AllServers()
         {
             if (NextCheck < DateTime.Now)
             {
-                cacheServers = GetAllServers();
+                CacheServers = GetAllServers();
                 NextCheck = DateTime.Now.AddHours(1);
             }
-            return cacheServers;
+            return CacheServers;
         }
 
         public static List<OnlineServer> GetAllServers()
@@ -33,10 +30,11 @@ namespace Kooboo.Data.Helper
                 string serverurl = RootUrl + "Server/all";
                 return Lib.Helper.HttpHelper.Get<List<OnlineServer>>(serverurl);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
+                // ignored
             }
+
             List<OnlineServer> result = new List<OnlineServer>();
             return result;
         }

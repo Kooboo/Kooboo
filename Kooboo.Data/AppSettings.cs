@@ -1,13 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using Kooboo.Lib;
-using System.IO;
-using System.Configuration;
-using Kooboo.Lib.Helper;
-using Kooboo.Data.Models;
-using System.Collections.Generic;
 using Kooboo.Data.Context;
+using Kooboo.Data.Models;
+using Kooboo.Lib;
+using Kooboo.Lib.Helper;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 
 namespace Kooboo.Data
@@ -27,42 +27,33 @@ namespace Kooboo.Data
             IsOnlineServer = GetBool("IsOnlineServer");
 
             string quotavalue = ConfigurationManager.AppSettings.Get("QuotaControl");
-            if (string.IsNullOrEmpty(quotavalue))
+            QuotaControl = string.IsNullOrEmpty(quotavalue) || GetBool("QuotaControl");
+
+            Global = new GlobalInfo
             {
-                QuotaControl = true;
-            }
-            else { QuotaControl = GetBool("QuotaControl"); }
+                IsOnlineServer = GetBool("IsOnlineServer"),
+                EnableLog = GetBool("Log"),
+                LogPath = System.IO.Path.Combine(RootPath, "Log")
+            };
 
-            Global = new GlobalInfo();
-            Global.IsOnlineServer = GetBool("IsOnlineServer");
-            Global.EnableLog = GetBool("Log");
-
-            Global.LogPath = System.IO.Path.Combine(RootPath, "Log");
 
             IOHelper.EnsureDirectoryExists(Global.LogPath);
 
-            if (IsOnlineServer)
-            {
-                MaxVisitorLogRead = 3000;
-            }
-            else
-            {
-                MaxVisitorLogRead = 10000;
-            }
+            MaxVisitorLogRead = IsOnlineServer ? 3000 : 10000;
 
-            // users  
+            // users
             SetUser();
 
             _accountApiUrl = ConfigurationManager.AppSettings.Get("AccountApiUrl");
             _themeurl = ConfigurationManager.AppSettings.Get("ThemeUrl");
 
-            // for some servers that does not have hostfile. 
+            // for some servers that does not have hostfile.
             if (!System.IO.File.Exists(Kooboo.Data.Hosts.WindowsHost.HostFile))
             {
                 DefaultLocalHost = "localkooboo.com";
             }
 
-            _serversetting = null; // reset server setting. 
+            _serversetting = null; // reset server setting.
         }
 
         private static void SetUser()
@@ -85,15 +76,8 @@ namespace Kooboo.Data
             {
                 if (alloweUsers != "*")
                 {
-                    List<string> userlist = new List<string>();
                     string[] users = alloweUsers.Split(',');
-                    foreach (var item in users)
-                    {
-                        if (!string.IsNullOrWhiteSpace(item))
-                        {
-                            userlist.Add(item.ToLower().Trim());
-                        }
-                    }
+                    List<string> userlist = (from item in users where !string.IsNullOrWhiteSpace(item) select item.ToLower().Trim()).ToList();
 
                     if (userlist.Any())
                     {
@@ -107,9 +91,7 @@ namespace Kooboo.Data
             }
         }
 
-
         public static bool QuotaControl { get; set; }
-
 
         public static BasicUser DefaultUser { get; set; }
 
@@ -117,7 +99,7 @@ namespace Kooboo.Data
 
         public static int MaxVisitorLogRead { get; set; } = 3000;  // only read the last  3000
 
-        public static string GetFileIORoot(WebSite website)
+        public static string GetFileIoRoot(WebSite website)
         {
             var orgid = website.OrganizationId;
 
@@ -140,21 +122,19 @@ namespace Kooboo.Data
 
         public static void SetCustomSslCheck()
         {
-            if (!CustomSslCheck)
-            {
-                Kooboo.Lib.Helper.HttpHelper.SetCustomSslChecker();
-                CustomSslCheck = true;
-            } 
+            if (CustomSslCheck) return;
+            Kooboo.Lib.Helper.HttpHelper.SetCustomSslChecker();
+            CustomSslCheck = true;
         }
 
-        public static string GetMailDbName(Guid OrganizationId)
+        public static string GetMailDbName(Guid organizationId)
         {
-            return GetDbName(OrganizationId, "__kooboomailstore");
+            return GetDbName(organizationId, "__kooboomailstore");
         }
 
-        public static string GetDbName(Guid OrganizationId, string websitename)
+        public static string GetDbName(Guid organizationId, string websitename)
         {
-            string orgfolder = GetOrganizationFolder(OrganizationId);
+            string orgfolder = GetOrganizationFolder(organizationId);
             return Path.Combine(orgfolder, websitename);
         }
 
@@ -177,14 +157,14 @@ namespace Kooboo.Data
             }
         }
 
-        public static string GetOrganizationFolder(Guid OrganizationId)
+        public static string GetOrganizationFolder(Guid organizationId)
         {
-            return GetOrganizationFolder(OrganizationId, IsOnlineServer);
+            return GetOrganizationFolder(organizationId, IsOnlineServer);
         }
 
-        public static string GetOrganizationFolder(Guid OrganizationId, bool IsOnlineServer)
+        public static string GetOrganizationFolder(Guid organizationId, bool isOnlineServer)
         {
-            var organizationName = GlobalDb.Organization.GetName(OrganizationId);
+            var organizationName = GlobalDb.Organization.GetName(organizationId);
 
             string foldername = null;
 
@@ -197,7 +177,7 @@ namespace Kooboo.Data
                 }
             }
 
-            string folderidname = Path.Combine(DatabasePath, OrganizationId.ToString()); ;
+            string folderidname = Path.Combine(DatabasePath, organizationId.ToString()); ;
 
             if (Directory.Exists(folderidname))
             {
@@ -213,25 +193,22 @@ namespace Kooboo.Data
                 return foldername;
             }
 
-            else
+            if (!Directory.Exists(folderidname))
             {
-                if (!Directory.Exists(folderidname))
-                {
-                    Directory.CreateDirectory(folderidname);
-                }
-                return folderidname;
+                Directory.CreateDirectory(folderidname);
             }
+            return folderidname;
         }
 
-        private static bool IsKoobooDiskRoot(string FullPath)
+        private static bool IsKoobooDiskRoot(string fullPath)
         {
-            string ScriptFolder = System.IO.Path.Combine(FullPath, "_Admin", "Scripts");
+            string ScriptFolder = System.IO.Path.Combine(fullPath, "_Admin", "Scripts");
             if (!Directory.Exists(ScriptFolder))
             {
                 return false;
             }
-            string ViewFolder = System.IO.Path.Combine(FullPath, "_Admin", "View");
-            if (!Directory.Exists(ViewFolder))
+            string viewFolder = System.IO.Path.Combine(fullPath, "_Admin", "View");
+            if (!Directory.Exists(viewFolder))
             {
                 return false;
             }
@@ -265,19 +242,14 @@ namespace Kooboo.Data
             get; set;
         }
 
-        public static string CmsLang
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings.Get("CmsLang");
-            }
-        }
-          
+        public static string CmsLang => ConfigurationManager.AppSettings.Get("CmsLang");
+
         public static string DefaultLocalHost { get; set; } = "kooboo";
 
         public static int CurrentUsedPort { get; set; } = 80;
 
         private static string _starthost;
+
         public static string StartHost
         {
             get
@@ -288,16 +260,10 @@ namespace Kooboo.Data
                 }
                 return _starthost;
             }
-            set
-            {
-                _starthost = value;
-            }
+            set => _starthost = value;
         }
 
-        public static bool SupportSiteDeviceBinding
-        {
-            get { return false; }
-        }
+        public static bool SupportSiteDeviceBinding => false;
 
         private static string _hostdomain;
 
@@ -309,38 +275,21 @@ namespace Kooboo.Data
                 {
                     return ServerSetting.HostDomain;
                 }
-                else
-                {
-                    if (_hostdomain == null)
-                    {
-                        _hostdomain = ConfigurationManager.AppSettings.Get("HostDomain");
-                        if (_hostdomain == null)
-                        {
-                            _hostdomain = string.Empty;
-                        }
-                    }
-                    return _hostdomain;
-                }
+
+                return _hostdomain ??
+                       (_hostdomain = ConfigurationManager.AppSettings.Get("HostDomain") ?? string.Empty);
             }
-            set { _hostdomain = value; }
+            set => _hostdomain = value;
         }
 
         private static string _screenShotUrl;
+
         public static string ScreenShotUrl
         {
-            get
-            {
-                if (_screenShotUrl == null)
-                {
-                    _screenShotUrl = ConfigurationManager.AppSettings["ScreenShotUrl"];
-                    if (_screenShotUrl == null)
-                    {
-                        _screenShotUrl = string.Empty;
-                    }
-                }
-                return _screenShotUrl;
-            }
-            set { _screenShotUrl = value; }
+            get =>
+                _screenShotUrl ??
+                (_screenShotUrl = ConfigurationManager.AppSettings["ScreenShotUrl"] ?? string.Empty);
+            set => _screenShotUrl = value;
         }
 
         #region "resource url"
@@ -381,94 +330,94 @@ namespace Kooboo.Data
 
             if (localvalue != null && localvalue.Expiration > DateTime.Now && localvalue.HasKey("AccountUrl"))
             {
-                var res = new ApiResource();
-                res.AccountUrl = localvalue.KeyValues["AccountUrl"];
-                res.ThemeUrl = localvalue.KeyValues["ThemeUrl"];
-                res.ConvertUrl = localvalue.KeyValues["ConvertUrl"];
-                res.Expiration = localvalue.Expiration;
+                var res = new ApiResource
+                {
+                    AccountUrl = localvalue.KeyValues["AccountUrl"],
+                    ThemeUrl = localvalue.KeyValues["ThemeUrl"],
+                    ConvertUrl = localvalue.KeyValues["ConvertUrl"],
+                    Expiration = localvalue.Expiration
+                };
                 return res;
             }
-            else
+
+            List<string> apis = new List<string>();
+
+            // add the local value.
+            if (localvalue != null && localvalue.HasKey("AccountUrl"))
             {
-                List<string> apis = new List<string>();
-
-                // add the local value. 
-                if (localvalue != null && localvalue.HasKey("AccountUrl"))
+                var accounturl = localvalue.GetValue("AccountUrl");
+                if (!string.IsNullOrWhiteSpace(accounturl))
                 {
-                    var accounturl = localvalue.GetValue("AccountUrl");
-                    if (!string.IsNullOrWhiteSpace(accounturl))
+                    if (accounturl.ToLower().StartsWith("https://"))
                     {
-                        if (accounturl.ToLower().StartsWith("https://"))
-                        {
-                            accounturl = accounturl.Replace("https://", "http://"); 
-                        }
-                        apis.Add(accounturl);
+                        accounturl = accounturl.Replace("https://", "http://");
                     }
+                    apis.Add(accounturl);
+                }
+            }
+
+            apis.Add("http://159.138.24.241");
+            apis.Add("http://51.15.11.145");
+            apis.Add("http://us.koobooapi.com");
+            apis.Add("http://eu.koobooapi.com");
+
+            ApiResource apires = null;
+
+            string apiurl = "/account/system/apiresource";
+            if (IsOnlineServer)
+            {
+                apiurl += apiurl += "?online=true";
+            }
+
+            foreach (var url in apis.Select(item => item + apiurl))
+            {
+                try
+                {
+                    apires = HttpHelper.Get<ApiResource>(url);
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
 
-                apis.Add("http://159.138.24.241");
-                apis.Add("http://51.15.11.145");
-                apis.Add("http://us.koobooapi.com");
-                apis.Add("http://eu.koobooapi.com");
-
-                ApiResource apires = null;
-
-                string apiurl = "/account/system/apiresource";
-                if (IsOnlineServer)
+                if (apires != null && !string.IsNullOrWhiteSpace(apires.AccountUrl))
                 {
-                    apiurl += apiurl += "?online=true"; 
+                    break;
+                }
+            }
+
+            if (apires != null)
+            {
+                if (!CustomSslCheck)
+                {
+                    apires.AccountUrl = apires.AcccountDomain;
                 }
 
-                foreach (var item in apis)
-                {
-                    string url = item + apiurl; 
-                    try
-                    {
-                        apires = HttpHelper.Get<ApiResource>(url);
-                    }
-                    catch (Exception ex)
-                    { 
-                    }
-                    if (apires != null && !string.IsNullOrWhiteSpace(apires.AccountUrl))
-                    {
-                        break;
-                    }
-                }
+                //Kooboo.Data.Helper.ApiHelper.EnsureAccountUrl(apires);
 
-                if (apires != null)
-                {
-                    if(!CustomSslCheck)
-                    {
-                        apires.AccountUrl = apires.AcccountDomain; 
-                    }
+                var localsetting = new GlobalSetting() { Name = "ApiResource", LastModified = DateTime.Now };
+                localsetting.KeyValues["AccountUrl"] = apires.AccountUrl;
+                localsetting.KeyValues["ThemeUrl"] = apires.ThemeUrl;
+                localsetting.KeyValues["ConvertUrl"] = apires.ConvertUrl;
+                localsetting.Expiration = apires.Expiration;
+                GlobalDb.GlobalSetting.AddOrUpdate(localsetting);
+                return apires;
+            }
 
-                    //Kooboo.Data.Helper.ApiHelper.EnsureAccountUrl(apires);
-
-                    var localsetting = new GlobalSetting() { Name = "ApiResource", LastModified = DateTime.Now };
-                    localsetting.KeyValues["AccountUrl"] = apires.AccountUrl;
-                    localsetting.KeyValues["ThemeUrl"] = apires.ThemeUrl;
-                    localsetting.KeyValues["ConvertUrl"] = apires.ConvertUrl;
-                    localsetting.Expiration = apires.Expiration;
-                    GlobalDb.GlobalSetting.AddOrUpdate(localsetting);
-                    return apires;
-                }
-                else
+            if (localvalue != null)
+            {
+                var res = new ApiResource
                 {
-                    if (localvalue != null)
-                    {
-                        var res = new ApiResource();
-                        res.AccountUrl = localvalue.KeyValues["AccountUrl"];
-                        res.ThemeUrl = localvalue.KeyValues["ThemeUrl"];
-                        res.ConvertUrl = localvalue.KeyValues["ConvertUrl"];
-                        res.Expiration = DateTime.Now.AddDays(1);
-                        return res;
-                    }
-                }
+                    AccountUrl = localvalue.KeyValues["AccountUrl"],
+                    ThemeUrl = localvalue.KeyValues["ThemeUrl"],
+                    ConvertUrl = localvalue.KeyValues["ConvertUrl"],
+                    Expiration = DateTime.Now.AddDays(1)
+                };
+                return res;
             }
 
             return new ApiResource() { AccountUrl = "http://159.138.24.241", Expiration = DateTime.Now.AddMinutes(10) };
         }
-
 
         public static string RootUrl { get; set; }
 
@@ -481,24 +430,24 @@ namespace Kooboo.Data
                 if (_serversetting == null)
                 {
                     if (IsOnlineServer)
-                    { 
-                        string CurrentRooturl = RootUrl; 
-                        
-                        if (string.IsNullOrWhiteSpace(CurrentRooturl))
+                    {
+                        string currentRooturl = RootUrl;
+
+                        if (string.IsNullOrWhiteSpace(currentRooturl))
                         {
-                            CurrentRooturl = ConfigurationManager.AppSettings.Get("RootUrl");
+                            currentRooturl = ConfigurationManager.AppSettings.Get("RootUrl");
                         }
-                      
+
                         string url = null;
 
-                        if (string.IsNullOrEmpty(CurrentRooturl))
+                        if (string.IsNullOrEmpty(currentRooturl))
                         {
                             url = Helper.AccountUrlHelper.System("GetSetting");
                         }
                         else
                         {
-                            CurrentRooturl = CurrentRooturl + "/_api/";
-                            url = Lib.Helper.UrlHelper.Combine(CurrentRooturl, "system/GetSetting");
+                            currentRooturl = currentRooturl + "/_api/";
+                            url = Lib.Helper.UrlHelper.Combine(currentRooturl, "system/GetSetting");
                         }
                         try
                         {
@@ -506,7 +455,7 @@ namespace Kooboo.Data
                         }
                         catch (Exception)
                         {
-
+                            // ignored
                         }
 
                         if (_serversetting == null)
@@ -531,16 +480,14 @@ namespace Kooboo.Data
             {
                 return false;
             }
-            else
-            {
-                bool boolValue;
-                bool.TryParse(value, out boolValue);
 
-                return boolValue;
-            }
+            bool.TryParse(value, out var boolValue);
+
+            return boolValue;
         }
 
         private static string _themeurl;
+
         public static string ThemeUrl
         {
             get
@@ -554,42 +501,17 @@ namespace Kooboo.Data
                 {
                     return ApiResource.ThemeUrl;
                 }
-                else
-                {
-                    return "http://5.thetheme.com";
-                }
+
+                return "http://5.thetheme.com";
             }
         }
 
         private static string _themedomain;
-        public static string ThemeDomain
-        {
-            get
-            {
-                if (_themedomain == null)
-                {
-                    if (!IsOnlineServer)
-                    {
-                        _themedomain = "kooboo";
-                    }
-                    else
-                    {
-                        // template server must be an online server as well.  
-                        _themedomain = ServerSetting.ServerId + "." + ServerSetting.HostDomain;
-                    }
 
-                    if (_themedomain == null)
-                    {
-                        _themedomain = "thetheme.com";
-                    }
-                }
-                return _themedomain;
-            }
-            set
-            {
-                _themedomain = value;
-            }
-        }
+        public static string ThemeDomain =>
+            _themedomain ?? (_themedomain =
+                (!IsOnlineServer ? "kooboo" : ServerSetting.ServerId + "." + ServerSetting.HostDomain) ??
+                "thetheme.com");
 
         private static string _accountApiUrl;
 
@@ -606,10 +528,8 @@ namespace Kooboo.Data
                 {
                     return ApiResource.AccountUrl;
                 }
-                else
-                {
-                    return "http://us.koobooapi.com";
-                }
+
+                return "http://us.koobooapi.com";
             }
         }
 
@@ -621,16 +541,15 @@ namespace Kooboo.Data
                 {
                     return ApiResource.ConvertUrl;
                 }
-                else
-                {
-                    return ThemeUrl;
-                }
+
+                return ThemeUrl;
             }
         }
 
-        #endregion
+        #endregion "resource url"
 
         private static string _databasepath;
+
         public static string DatabasePath
         {
             get
@@ -646,6 +565,7 @@ namespace Kooboo.Data
         }
 
         private static string _tempdatapath;
+
         public static string TempDataPath
         {
             get
@@ -668,6 +588,7 @@ namespace Kooboo.Data
                 return path;
             }
         }
+
         public static string AppFolder
         {
             get
@@ -684,17 +605,9 @@ namespace Kooboo.Data
             return Path.Combine(AppSettings.RootPath, path);
         }
 
-        public static int MaxTemplateSize
-        {
-            get
-            {
-                return 1024 * 1024 * 20;
-            }
-        }
-
+        public static int MaxTemplateSize => 1024 * 1024 * 20;
 
         public static bool IsOnlineServer { get; set; }
-         
 
         public static GlobalInfo Global { get; set; }
 

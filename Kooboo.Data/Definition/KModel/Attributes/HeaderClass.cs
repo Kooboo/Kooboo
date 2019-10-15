@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Data.Definition.KModel.Attributes
 {
-     
     [AttributeUsage(AttributeTargets.Property)]
     public class HeaderClass : Attribute, IMetaAttribute
     {
@@ -16,14 +13,12 @@ namespace Kooboo.Data.Definition.KModel.Attributes
 
         public HeaderClass(string classname)
         {
-            this.name = classname;
+            name = classname;
         }
 
         public string Value()
         {
-            return this.name;
+            return name;
         }
     }
-
-
 }

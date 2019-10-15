@@ -1,7 +1,6 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +18,10 @@ namespace Kooboo.Data.Server
 
         private int maxcount { get; set; } = 100;
 
-        public TextLogMiddleware(int CacheItemCount, int MaxTimeEclipseSeconds)
+        public TextLogMiddleware(int cacheItemCount, int maxTimeEclipseSeconds)
         {
-            maxcount = CacheItemCount;
-            maxseconds = MaxTimeEclipseSeconds;  
+            maxcount = cacheItemCount;
+            maxseconds = maxTimeEclipseSeconds;  
         }
 
 
@@ -43,15 +42,9 @@ namespace Kooboo.Data.Server
         {
             string content = context.Request.IP + " " + context.Request.RawRelativeUrl + " " + context.Request.Body+ "::::";
 
-            foreach (var item in context.Request.QueryString.Keys)
-            {
-                content += item.ToString(); 
-            }
+            content = context.Request.QueryString.Keys.Cast<object>().Aggregate(content, (current, item) => current + item.ToString());
 
-            foreach (var item in context.Request.Forms)
-            {
-                content += item.ToString();
-            }
+            content = context.Request.Forms.Cast<object>().Aggregate(content, (current, item) => current + item.ToString());
 
             content += "\r\n\r\n"; 
 

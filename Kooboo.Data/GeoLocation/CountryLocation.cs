@@ -1,24 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.GeoLocation
 {
-     
     public static class CountryLocation
     {
         static CountryLocation()
         {
-
             Items = new Dictionary<short, CountryLocationModel>();
 
             StreamReader reader = Embedded.EmbeddedHelper.GetStreamReader("CountryLocation", typeof(CountryLocationModel));
-
 
             var line = reader.ReadLine();
 
@@ -26,77 +20,67 @@ namespace Kooboo.Data.GeoLocation
             {
                 string[] segs = line.Split(',');
 
-                if (segs != null)
+                if (segs.Length == 4)
                 {
-                    if (segs.Length == 4)
+                    CountryLocationModel location = new CountryLocationModel
                     {
-                        CountryLocationModel location = new CountryLocationModel();
-                        location.CountryCode = segs[0];
-                        location.Continent = segs[1];
-                        double latitude;
-                        if (double.TryParse(segs[2], out latitude))
-                        {
-                            location.Latitude = latitude;
-                        }
-
-                        double longtitude;
-                        if (double.TryParse(segs[3], out longtitude))
-                        {
-                            location.Longtitude = longtitude;
-                        }
-
-                        short intcode = Kooboo.Data.GeoLocation.CountryCode.ToShort(location.CountryCode);
-
-                        Items[intcode] = location;
-
-                    }
-                    else if (segs.Length > 2)
+                        CountryCode = segs[0], Continent = segs[1]
+                    };
+                    if (double.TryParse(segs[2], out var latitude))
                     {
-                        CountryLocationModel location = new CountryLocationModel();
-                        location.CountryCode = segs[0];
-                        location.Continent = segs[1];
-
-                        short intcode = Kooboo.Data.GeoLocation.CountryCode.ToShort(location.CountryCode);
-
-                        Items[intcode] = location;
-
+                        location.Latitude = latitude;
                     }
+
+                    if (double.TryParse(segs[3], out var longtitude))
+                    {
+                        location.Longtitude = longtitude;
+                    }
+
+                    short intcode = Kooboo.Data.GeoLocation.CountryCode.ToShort(location.CountryCode);
+
+                    Items[intcode] = location;
+                }
+                else if (segs.Length > 2)
+                {
+                    CountryLocationModel location = new CountryLocationModel
+                    {
+                        CountryCode = segs[0], Continent = segs[1]
+                    };
+
+                    short intcode = Kooboo.Data.GeoLocation.CountryCode.ToShort(location.CountryCode);
+
+                    Items[intcode] = location;
                 }
 
                 line = reader.ReadLine();
             }
-
         }
-         
+
         // int is the hash of countrycode.
         public static Dictionary<short, CountryLocationModel> Items
         {
             get; set;
         }
 
-        public static CountryLocationModel FindCountryLocation(string CountryCode)
+        public static CountryLocationModel FindCountryLocation(string countryCode)
         {
-            var intcode = Kooboo.Data.GeoLocation.CountryCode.ToShort(CountryCode);
+            var intcode = Kooboo.Data.GeoLocation.CountryCode.ToShort(countryCode);
 
-            if (Items.ContainsKey(intcode))
-            {
-                return Items[intcode];
-            }
-            return null;
+            return Items.ContainsKey(intcode) ? Items[intcode] : null;
         }
 
-        public static string FindNearByCountry(string TargetCode, List<string> Available)
+        public static string FindNearByCountry(string targetCode, List<string> available)
         {
-            var target = FindCountryLocation(TargetCode);
+            var target = FindCountryLocation(targetCode);
             if (target == null)
             {
-                return Available.First();
+                return available.First();
             }
 
             double distance = double.MaxValue;
             string result = null;
 
-            foreach (var item in Available)
+            foreach (var item in available)
             {
                 var dest = FindCountryLocation(item);
 
@@ -129,6 +113,4 @@ namespace Kooboo.Data.GeoLocation
 
         public double Longtitude { get; set; }
     }
-
-
 }

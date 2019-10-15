@@ -1,20 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Xml;
-using System.IO; 
 
 namespace Kooboo.Data.Language
 {
     public static class MultiLingualHelper
     {
-   
         public static HashSet<string> GetDomKeys(string html)
         {
             HashSet<string> result = new HashSet<string>();
@@ -29,6 +23,7 @@ namespace Kooboo.Data.Language
             }
             return result;
         }
+
         private static HashSet<string> GetDomText(string html)
         {
             var dom = Kooboo.Dom.DomParser.CreateDom(html);
@@ -37,13 +32,11 @@ namespace Kooboo.Data.Language
             return keys;
         }
 
-
         private static void _getDomText(Node node, ref HashSet<string> keys)
         {
             if (node.nodeType == enumNodeType.TEXT)
             {
-                var text = node as Kooboo.Dom.Text;
-                if (!string.IsNullOrWhiteSpace(text.data))
+                if (node is Text text && !string.IsNullOrWhiteSpace(text.data))
                 {
                     string value = Kooboo.Lib.Helper.StringHelper.TrimSpace(text.data);
                     if (!string.IsNullOrWhiteSpace(value))
@@ -55,19 +48,19 @@ namespace Kooboo.Data.Language
             else if (node.nodeType == enumNodeType.ELEMENT)
             {
                 var el = node as Element;
-                string placeholder = el.getAttribute("placeholder");
+                string placeholder = el?.getAttribute("placeholder");
                 if (!string.IsNullOrWhiteSpace(placeholder))
                 {
                     keys.Add(placeholder);
                 }
 
-                string title = el.getAttribute("title");
+                string title = el?.getAttribute("title");
                 if (!string.IsNullOrWhiteSpace(title))
                 {
                     keys.Add(title);
                 }
 
-                if (el.tagName != "script" && el.tagName != "link" && el.tagName != "style" && el.tagName != "meta")
+                if (el?.tagName != "script" && el?.tagName != "link" && el?.tagName != "style" && el?.tagName != "meta")
                 {
                     foreach (var item in node.childNodes.item)
                     {
@@ -84,7 +77,7 @@ namespace Kooboo.Data.Language
                 return false;
             }
 
-            key = key.ToLower(); 
+            key = key.ToLower();
 
             if (key.StartsWith("<%") && key.EndsWith("%>"))
             {
@@ -101,15 +94,14 @@ namespace Kooboo.Data.Language
 
             if (key == "&nbsp;" || key == "@media" || key == "@import")
             {
-                return false; 
+                return false;
             }
 
             if (key.StartsWith("https://") || key.StartsWith("http://") || key.StartsWith("mailto:"))
             {
-                return false; 
+                return false;
             }
-           
-              
+
             bool hasascii = false;
             int len = key.Length;
             for (int i = 0; i < len; i++)
@@ -132,7 +124,7 @@ namespace Kooboo.Data.Language
         {
             int len = input.Length;
 
-            HashSet<string> Result = new HashSet<string>();
+            HashSet<string> result = new HashSet<string>();
 
             string value = string.Empty;
             bool inValue = false;
@@ -147,33 +139,32 @@ namespace Kooboo.Data.Language
                     {
                         if (!string.IsNullOrWhiteSpace(value))
                         {
-                            // check if next is a : 
+                            // check if next is a :
                             bool isJsKey = false;
                             int lookaheadmax = i + 7;
-                            for (int j = i +1; j < lookaheadmax; j++)
+                            for (int j = i + 1; j < lookaheadmax; j++)
                             {
-                                if (j > len -1)
+                                if (j > len - 1)
                                 {
-                                    break; 
+                                    break;
                                 }
-                                var jitem = input[j]; 
+                                var jitem = input[j];
                                 if (jitem == ':')
                                 {
                                     isJsKey = true;
-                                    break; 
-                                }
-                                
-                                if (!Lib.Helper.CharHelper.isSpaceCharacters(jitem))
-                                {
-                                    break; 
+                                    break;
                                 }
 
+                                if (!Lib.Helper.CharHelper.isSpaceCharacters(jitem))
+                                {
+                                    break;
+                                }
                             }
-                            
+
                             if (!isJsKey)
                             {
-                                Result.Add(value);
-                            } 
+                                result.Add(value);
+                            }
                             value = string.Empty;
                             inValue = false;
                         }
@@ -192,9 +183,9 @@ namespace Kooboo.Data.Language
                 }
             }
 
-            return Result;
+            return result;
         }
-         
+
         public static HashSet<string> GetHardCodeValue(string text)
         {
             string method = "Hardcoded.GetValue(";
@@ -228,102 +219,98 @@ namespace Kooboo.Data.Language
 
                 string key = _getStringKey(middlestring);
 
-                 if (!string.IsNullOrEmpty(key))
+                if (!string.IsNullOrEmpty(key))
                 {
                     result.Add(key);
-                } 
+                }
             }
 
-            return result; 
+            return result;
         }
-          
+
         private static string _getStringKey(string input)
         {
             int len = input.Length;
 
-            bool InValue = false;
-            string value = string.Empty; 
+            bool inValue = false;
+            string value = string.Empty;
 
             for (int i = 0; i < len; i++)
             {
-                var onechar = input[i]; 
-                  
+                var onechar = input[i];
+
                 if (onechar == '"')
                 {
-                    if (!InValue)
+                    if (!inValue)
                     {
-                        InValue = true;
-                        continue; 
+                        inValue = true;
+                        continue;
+                    }
+
+                    if (i == len - 1)
+                    {
+                        return value;
+                    }
+
+                    var nextchar = input[i + 1];
+                    if (nextchar == '"')
+                    {
+                        value += '"';
+                        i += 1;
                     }
                     else
                     {
-                        if (i == len-1)
-                        {
-                            return value; 
-                        }
-
-                        var nextchar = input[i + 1]; 
-                        if (nextchar == '"')
-                        {
-                            value += '"';
-                            i = i + 1; 
-                        }
-                        else
-                        {
-                            return value; 
-                        }  
+                        return value;
                     }
-                } 
+                }
                 else
                 {
-                    value = value + onechar; 
-                    if (!InValue)
+                    value += onechar;
+                    if (!inValue)
                     {
-                        InValue = true; 
+                        inValue = true;
                     }
                 }
             }
-            return value; 
+            return value;
         }
-
 
         public static Dictionary<string, string> Deserialize(string alltext)
         {
             Dictionary<string, string> result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-          
+
             try
             {
-                XElement rootElement = XElement.Parse(alltext); 
+                XElement rootElement = XElement.Parse(alltext);
                 foreach (var el in rootElement.Elements())
                 {
-                    var id = el.Attribute("id").Value;
+                    var id = el.Attribute("id")?.Value;
                     if (!string.IsNullOrWhiteSpace(id))
-                    { 
+                    {
                         result[id] = el.Value;
                     }
                 }
             }
             catch (Exception)
             {
+                // ignored
             }
+
             return result;
         }
 
         public static string Serialize(Dictionary<string, string> langtext)
         {
-            
             XElement root = new XElement("Lang");
-              
+
             foreach (var pair in langtext)
             {
-                XElement cElement = new XElement("key");
-                cElement.Value = pair.Value; 
+                XElement cElement = new XElement("key") {Value = pair.Value};
 
                 cElement.SetAttributeValue("id", pair.Key);
                 root.Add(cElement);
-            } 
+            }
             return root.ToString();
         }
-         
     }
 }

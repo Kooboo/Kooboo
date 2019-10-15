@@ -1,18 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Interface
 {
     public interface IDataMethodSetting : IGolbalObject, ICoreObject
     {
         /// <summary>
-        /// By default,this is same as the OriginalMethodName. 
+        /// By default,this is same as the OriginalMethodName.
         /// </summary>
         string MethodName { get; set; }
 
@@ -52,25 +49,21 @@ namespace Kooboo.Data.Interface
         bool IsPost { get; set; }
 
         /// <summary>
-        /// Awaitable tasks. 
+        /// Awaitable tasks.
         /// </summary>
         bool IsTask { get; set; }
 
-
         bool IsPublic { get; set; }
 
-          Guid CodeId { get; set; }
+        Guid CodeId { get; set; }
 
-          bool IsKScript { get; }
+        bool IsKScript { get; }
 
         Dictionary<string, string> Parameters { get; set; }
 
         /// <summary>
-        /// The flat fields of parameter bindings... 
+        /// The flat fields of parameter bindings...
         /// </summary>
         Dictionary<string, ParameterBinding> ParameterBinding { get; set; }
-
-
-
     }
 }

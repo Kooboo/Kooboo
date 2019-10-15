@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Ensurance;
 using Kooboo.Data.Models;
-using System;
 using Kooboo.Data.Repository;
 using Kooboo.IndexedDB;
 using Kooboo.IndexedDB.Schedule;
-using Kooboo.Data.Ensurance;
+using System;
 
 namespace Kooboo.Data
 {
@@ -14,13 +14,8 @@ namespace Kooboo.Data
         private static object _lock = new object();
 
         private static BindingRepository _bindings;
-        public static BindingRepository Bindings
-        {
-            get
-            {
-                return EnsureRepository<BindingRepository, Binding>(ref _bindings);
-            }
-        }
+
+        public static BindingRepository Bindings => EnsureRepository<BindingRepository, Binding>(ref _bindings);
 
         private static OrganizationRepository _organization;
 
@@ -44,14 +39,7 @@ namespace Kooboo.Data
 
         private static TaskQueueRepository _queue;
 
-        public static TaskQueueRepository TaskQueue
-        {
-            get
-            {
-                return EnsureRepository<TaskQueueRepository, Queue>(ref _queue);
-            }
-        }
-
+        public static TaskQueueRepository TaskQueue => EnsureRepository<TaskQueueRepository, Queue>(ref _queue);
 
         private static IDomainRepository _domains;
 
@@ -65,21 +53,12 @@ namespace Kooboo.Data
                 }
                 return _domains;
             }
-            set
-            {
-                _domains = value;
-            }
+            set => _domains = value;
         }
 
-        private static WebSiteRepository _Website;
+        private static WebSiteRepository _website;
 
-        public static WebSiteRepository WebSites
-        {
-            get
-            {
-                return EnsureRepository<WebSiteRepository, WebSite>(ref _Website);
-            }
-        }
+        public static WebSiteRepository WebSites => EnsureRepository<WebSiteRepository, WebSite>(ref _website);
 
         private static UserRepository _users;
 
@@ -102,6 +81,7 @@ namespace Kooboo.Data
         }
 
         private static LocalUserRepository _localuser;
+
         public static LocalUserRepository LocalUser
         {
             get
@@ -120,8 +100,8 @@ namespace Kooboo.Data
             }
         }
 
-
         private static LocalOrganizationRepository _localorg;
+
         public static LocalOrganizationRepository LocalOrganization
         {
             get
@@ -132,7 +112,7 @@ namespace Kooboo.Data
                     {
                         if (_localorg == null)
                         {
-                            _localorg = new LocalOrganizationRepository(); 
+                            _localorg = new LocalOrganizationRepository();
                         }
                     }
                 }
@@ -142,53 +122,23 @@ namespace Kooboo.Data
 
         private static DllRepository _dlls;
 
-        public static DllRepository Dlls
-        {
-            get
-            {
-                return EnsureRepository<DllRepository, Dll>(ref _dlls);
-            }
-        }
+        public static DllRepository Dlls => EnsureRepository<DllRepository, Dll>(ref _dlls);
 
         private static DataMethodRepository _datamethods;
 
-        public static DataMethodRepository DataMethodSettings
-        {
-            get
-            {
-                return EnsureRepository<DataMethodRepository, DataMethodSetting>(ref _datamethods);
-            }
-        }
+        public static DataMethodRepository DataMethodSettings => EnsureRepository<DataMethodRepository, DataMethodSetting>(ref _datamethods);
 
-        private static GlobalSettingRepository _GlobalSetting;
-        public static GlobalSettingRepository GlobalSetting
-        {
-            get
-            {
-                return EnsureRepository<GlobalSettingRepository, GlobalSetting>(ref _GlobalSetting);
-            }
-        }
+        private static GlobalSettingRepository _globalSetting;
+
+        public static GlobalSettingRepository GlobalSetting => EnsureRepository<GlobalSettingRepository, GlobalSetting>(ref _globalSetting);
 
         private static ClusterRepository _cluster;
 
-        public static ClusterRepository Cluster
-        {
-            get
-            {
-                return EnsureRepository<ClusterRepository, Cluster>(ref _cluster);
-            }
-        }
-
+        public static ClusterRepository Cluster => EnsureRepository<ClusterRepository, Cluster>(ref _cluster);
 
         private static SslCertificateRepository _sslcert;
 
-        public static SslCertificateRepository SslCertificate
-        {
-            get
-            {
-                return EnsureRepository<SslCertificateRepository, SslCertificate>(ref _sslcert);
-            }
-        }
+        public static SslCertificateRepository SslCertificate => EnsureRepository<SslCertificateRepository, SslCertificate>(ref _sslcert);
 
         private static Schedule<Job> _schedule;
 
@@ -208,6 +158,7 @@ namespace Kooboo.Data
         }
 
         private static RepeatTask<Job> _repeating;
+
         public static RepeatTask<Job> RepeatingJob()
         {
             if (_repeating == null)
@@ -245,25 +196,11 @@ namespace Kooboo.Data
 
         private static NotificationRepository _notification;
 
-        public static NotificationRepository Notification
-        {
-            get
-            {
-                return EnsureRepository<NotificationRepository, Notificationnew>(ref _notification);
-            }
-        }
+        public static NotificationRepository Notification => EnsureRepository<NotificationRepository, Notificationnew>(ref _notification);
 
         private static EnsureObjbectRepository _ensurance;
 
-        public static EnsureObjbectRepository Ensurance
-        {
-            get
-            {
-                return EnsureRepository<EnsureObjbectRepository, EnsureObject>(ref _ensurance); 
-            }
-
-        }
-
+        public static EnsureObjbectRepository Ensurance => EnsureRepository<EnsureObjbectRepository, EnsureObject>(ref _ensurance);
 
         private static TRepository EnsureRepository<TRepository, TGlobalObject>(ref TRepository repository)
           where TRepository : RepositoryBase<TGlobalObject>
@@ -281,10 +218,5 @@ namespace Kooboo.Data
             }
             return repository;
         }
-
-
-
-    
-
     }
 }

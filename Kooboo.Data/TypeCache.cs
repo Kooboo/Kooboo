@@ -1,76 +1,67 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data
 {
     public static class TypeCache
     {
+        private static readonly object Writelock = new object();
 
-        private static readonly object writelock = new object();
+        private static Dictionary<string, Type> _typelist = new Dictionary<string, Type>();
 
-        private static Dictionary<string, Type> typelist = new Dictionary<string, Type>();
+        private static Dictionary<string, Action<object, object>> _setValues = new Dictionary<string, Action<object, object>>();
 
-        private static Dictionary<string, Action<object, object>> SetValues = new Dictionary<string, Action<object, object>>();
-
-        public static Type GetType(string TypeName)
+        public static Type GetType(string typeName)
         {
-            if (string.IsNullOrEmpty(TypeName))
+            if (string.IsNullOrEmpty(typeName))
             {
                 return null;
             }
-            Type type;
-            lock (writelock)
+
+            lock (Writelock)
             {
-                if (typelist.TryGetValue(TypeName, out type))
+                if (_typelist.TryGetValue(typeName, out var type))
                 {
                     return type;
                 }
-                else
+
+                type = Lib.Reflection.TypeHelper.GetType(typeName);
+                if (type != null)
                 {
-                    type = Lib.Reflection.TypeHelper.GetType(TypeName);
-                    if (type != null)
-                    {
-                        typelist.Add(TypeName, type);
-                        return type; 
-                    }
-
-                    //if (TypeName == "Kooboo.Sites.DataSources.FilterDefinition")
-                    //{
-                    //    return typeof(Kooboo.Data.Definition.Filter); 
-                    //} 
+                    _typelist.Add(typeName, type);
                     return type;
-
                 }
+
+                //if (TypeName == "Kooboo.Sites.DataSources.FilterDefinition")
+                //{
+                //    return typeof(Kooboo.Data.Definition.Filter);
+                //}
+                return null;
             }
         }
 
-        public static Action<object, object> GetSetValue(string FullTypeName, Type type, string FieldOrProperty)
+        public static Action<object, object> GetSetValue(string fullTypeName, Type type, string fieldOrProperty)
         {
-            string uniquekey = FullTypeName + FieldOrProperty;
-            Action<object, object> SetValue = null;
+            string uniquekey = fullTypeName + fieldOrProperty;
+            Action<object, object> setValue = null;
 
-            if (SetValues.ContainsKey(uniquekey))
+            if (_setValues.ContainsKey(uniquekey))
             {
-                return SetValues[uniquekey];
+                return _setValues[uniquekey];
             }
 
             var propertylist = Lib.Reflection.TypeHelper.GetPublicFieldOrProperties(type);
 
-            Type fieldtype;
-
-            if (propertylist.TryGetValue(FieldOrProperty, out fieldtype))
+            if (propertylist.TryGetValue(fieldOrProperty, out var fieldtype))
             {
-                SetValue = Lib.Reflection.TypeHelper.GetSetObjectValue(FieldOrProperty, type, fieldtype);
+                setValue = Lib.Reflection.TypeHelper.GetSetObjectValue(fieldOrProperty, type, fieldtype);
             }
 
-            SetValues[uniquekey] = SetValue;
+            _setValues[uniquekey] = setValue;
 
-            return SetValue;
+            return setValue;
         }
     }
 }

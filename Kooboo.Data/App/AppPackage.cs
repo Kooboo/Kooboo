@@ -1,30 +1,23 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.App
 {
-    public class AppPackage:IGolbalObject
+    public class AppPackage : IGolbalObject
     {
         private Guid _id;
+
         public Guid Id
         {
             get
             {
-                if (_id == default(Guid))
-                {
-                    _id = System.Guid.NewGuid();
-                }
+                if (_id != default) return _id;
+                _id = System.Guid.NewGuid();
                 return _id;
             }
-            set
-            {
-                _id = value;
-            }
+            set => _id = value;
         }
 
         public Int64 EditVersion { get; set; }
@@ -41,16 +34,10 @@ namespace Kooboo.Data.App
         public string ThumbNail { get; set; }
 
         private List<string> _images;
+
         public List<string> Images
         {
-            get
-            {
-                if (_images == null)
-                {
-                    _images = new List<string>();
-                }
-                return _images;
-            }
+            get { return _images ?? (_images = new List<string>()); }
             set { _images = value; }
         }
 
@@ -63,7 +50,7 @@ namespace Kooboo.Data.App
         {
             get
             {
-                string file = this.Id.ToString().Replace("-", "") + ".zip";
+                string file = Id.ToString().Replace("-", "") + ".zip";
                 string fullfilename = System.IO.Path.Combine(Data.AppSettings.AppFolder, "package", file);
                 Lib.Helper.IOHelper.EnsureFileDirectoryExists(fullfilename);
                 return fullfilename;

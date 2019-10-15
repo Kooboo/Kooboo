@@ -1,78 +1,72 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Helper
 {
- public static   class AccountUrlHelper
+    public static class AccountUrlHelper
     {
-        public static string AccountBase = AppSettings.AccountApiUrl; 
-         
+        public static string AccountBase = AppSettings.AccountApiUrl;
+
         public static string User(string relativeUrl)
-        { 
-            return AccountBase + "/account/user" + ensureRelative(relativeUrl);
+        {
+            return AccountBase + "/account/user" + EnsureRelative(relativeUrl);
         }
 
-        public static string UserPublish(string RelativeUrl)
+        public static string UserPublish(string relativeUrl)
         {
-            return AccountBase + "/account/userpublish" + ensureRelative(RelativeUrl); 
+            return AccountBase + "/account/userpublish" + EnsureRelative(relativeUrl);
         }
 
         public static string Org(string relativeUrl)
-        {   
-            return AccountBase + "/account/organization" + ensureRelative(relativeUrl);
+        {
+            return AccountBase + "/account/organization" + EnsureRelative(relativeUrl);
         }
 
         public static string Cluster(string relativeUrl)
         {
-            return AccountBase + "/account/cluster" + ensureRelative(relativeUrl);
+            return AccountBase + "/account/cluster" + EnsureRelative(relativeUrl);
         }
 
         public static string Domain(string relativeUrl)
-        {  
-            return AccountBase + "/account/domain" + ensureRelative(relativeUrl);
-        } 
+        {
+            return AccountBase + "/account/domain" + EnsureRelative(relativeUrl);
+        }
 
         public static string System(string relativeUrl)
         {
-            return AccountBase + "/account/system" + ensureRelative(relativeUrl);
+            return AccountBase + "/account/system" + EnsureRelative(relativeUrl);
         }
 
         public static string Template(string relativeUrl)
         {
-            return AccountBase + "/account/template" + ensureRelative(relativeUrl);
+            return AccountBase + "/account/template" + EnsureRelative(relativeUrl);
         }
 
         public static string Certificate(string relativeUrl)
         {
-            return AccountBase + "/account/certificate" + ensureRelative(relativeUrl); 
+            return AccountBase + "/account/certificate" + EnsureRelative(relativeUrl);
         }
 
         public static string Ssl(string relativeUrl)
         {
-            return AccountBase + "/account/ssl" + ensureRelative(relativeUrl); 
-        } 
+            return AccountBase + "/account/ssl" + EnsureRelative(relativeUrl);
+        }
 
         public static string OnlineDataCenter(string relativeUrl)
         {
-            return AccountBase + "/account/OnlineDataCenter" + ensureRelative(relativeUrl); 
+            return AccountBase + "/account/OnlineDataCenter" + EnsureRelative(relativeUrl);
         }
 
-
-        private static string ensureRelative(string relativeurl)
+        private static string EnsureRelative(string relativeurl)
         {
             if (string.IsNullOrEmpty(relativeurl))
             {
-                return null; 
+                return null;
             }
             if (!relativeurl.StartsWith("/"))
             { relativeurl = "/" + relativeurl; }
 
-            return relativeurl; 
+            return relativeurl;
         }
     }
 }

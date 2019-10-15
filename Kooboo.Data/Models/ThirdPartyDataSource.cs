@@ -1,21 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo;
-using Kooboo.Extensions;
 
 namespace Kooboo.Data.Models
 {
     /// <summary>
-    ///  third party dlls that did not implement IDatasource, but can be used directly as datasource to provide data for views. 
+    ///  third party dlls that did not implement IDatasource, but can be used directly as datasource to provide data for views.
     /// </summary>
     public class ThirdPartyDataSource
     {
-
         private Guid _id;
 
         public Guid Id
@@ -28,19 +21,16 @@ namespace Kooboo.Data.Models
                 }
                 return _id;
             }
-            set
-            {
-                _id = value;
-            }
+            set => _id = value;
         }
 
         /// <summary>
-        /// The full name of this datasource class name. 
+        /// The full name of this datasource class name.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// The CLR type with full assembly information. 
+        /// The CLR type with full assembly information.
         /// </summary>
         public string ClrType { get; set; }
 
@@ -48,7 +38,5 @@ namespace Kooboo.Data.Models
         /// DataSource 所在的程序集。
         /// </summary>
         public string Assembly { get; set; }
-
     }
-
 }

@@ -1,11 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Data.Models;
+using System.Collections.Generic;
 
 namespace Kooboo.Data.ViewModel
 {
@@ -14,12 +10,10 @@ namespace Kooboo.Data.ViewModel
         public string Domain { get; set; }
 
         private decimal _price;
+
         public decimal Price
         {
-            get
-            {
-                return _price;
-            }
+            get => _price;
             set
             {
                 _price = value;
@@ -35,11 +29,10 @@ namespace Kooboo.Data.ViewModel
                 }
             }
         }
+
         public Currency Currency { get; set; }
 
-
         public List<DomainOption> Options { get; set; }
-
     }
 
     public class DomainOption

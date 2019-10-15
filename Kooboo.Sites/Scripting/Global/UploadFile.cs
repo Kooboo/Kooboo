@@ -1,18 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Scripting.Global
 {
     public class UploadFile
     {
         private RenderContext context { get; set; }
-
 
         public UploadFile(RenderContext context)
         {
@@ -28,8 +22,7 @@ namespace Kooboo.Sites.Scripting.Global
         public FileInfo Save(string filename)
         {
             FileIO io = new FileIO(this.context);
-           return  io.writeBinary(filename, this.Bytes);     
+            return io.WriteBinary(filename, this.Bytes);
         }
-
     }
 }

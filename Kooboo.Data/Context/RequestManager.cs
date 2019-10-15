@@ -1,17 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
+using Kooboo.Extensions;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using Kooboo.Extensions;
 using System.Linq;
 
 namespace Kooboo.Data.Context
 {
     public class RequestManager
     {
-        // get the value in query string or form only... 
+        // get the value in query string or form only...
         public static string GetHttpValue(HttpRequest request, string name)
         {
             string value = request.QueryString.Get(name);
@@ -21,11 +21,7 @@ namespace Kooboo.Data.Context
             }
 
             value = request.Forms.Get(name);
-            if (!string.IsNullOrEmpty(value))
-            {
-                return value;
-            }
-            return request.Headers.Get(name);
+            return !string.IsNullOrEmpty(value) ? value : request.Headers.Get(name);
         }
 
         private static string TryGetValue(HttpRequest request, string name)
@@ -63,39 +59,29 @@ namespace Kooboo.Data.Context
                     {
                         var converted = Lib.Helper.JsonHelper.DeserializeObject(body);
 
-                        if (converted is JArray)
+                        if (converted is JArray array)
                         {
-                            var array = (JArray)converted;
                             foreach (var item in array)
                             {
-                                if (item is JObject)
+                                if (item is JObject itemobject)
                                 {
-                                    var itemobject = (JObject)item;
-                                    if (itemobject != null)
+                                    foreach (var itemproperty in itemobject.Properties())
                                     {
-                                        foreach (var itemproperty in itemobject.Properties())
+                                        if (itemproperty.Name.ToLower() == name.ToLower() && !string.IsNullOrEmpty(itemproperty.Value.ToString()))
                                         {
-                                            if (itemproperty.Name.ToLower() == name.ToLower() && !string.IsNullOrEmpty(itemproperty.Value.ToString()))
-                                            {
-                                                return itemproperty.Value.ToString();
-                                            }
+                                            return itemproperty.Value.ToString();
                                         }
                                     }
                                 }
                             }
                         }
-                        else if (converted is JObject)
+                        else if (converted is JObject data)
                         {
-                            var data = (JObject)converted;
-
-                            if (data != null)
+                            foreach (var item in data.Properties())
                             {
-                                foreach (var item in data.Properties())
+                                if (item.Name.ToLower() == name.ToLower() && !string.IsNullOrEmpty(item.Value.ToString()))
                                 {
-                                    if (item.Name.ToLower() == name.ToLower() && !string.IsNullOrEmpty(item.Value.ToString()))
-                                    {
-                                        return item.Value.ToString();
-                                    }
+                                    return item.Value.ToString();
                                 }
                             }
                         }
@@ -132,28 +118,19 @@ namespace Kooboo.Data.Context
 
         public static string GetValue(HttpRequest request, params string[] names)
         {
-            for (int i = 0; i < names.Length; i++)
-            {
-                string name = names[i];
-                var value = GetValue(request, name);
-                if (!string.IsNullOrEmpty(value))
-                {
-                    return value;
-                }
-            }
-            return null;
+            return names.Select(name => GetValue(request, name)).FirstOrDefault(value => !string.IsNullOrEmpty(value));
         }
 
-        public static string GetSetCulture(WebSite WebSite, RenderContext context)
+        public static string GetSetCulture(WebSite webSite, RenderContext context)
         {
-            if (WebSite == null)
+            if (webSite == null)
             {
                 return null;
             }
 
-            if (!WebSite.EnableMultilingual)
+            if (!webSite.EnableMultilingual)
             {
-                return WebSite.DefaultCulture; 
+                return webSite.DefaultCulture;
             }
 
             var request = context.Request;
@@ -165,70 +142,53 @@ namespace Kooboo.Data.Context
             }
             string culture = request.GetValue("lang", "language");
 
-            if (!string.IsNullOrEmpty(culture) && WebSite.Culture.ContainsKeyIgnoreCase(culture))
+            if (!string.IsNullOrEmpty(culture) && webSite.Culture.ContainsKeyIgnoreCase(culture))
             {
                 return culture;
             }
 
-            if (WebSite.EnableSitePath)
+            if (webSite.EnableSitePath)
             {
                 if (context.Request.RawRelativeUrl.Length > 3)
                 {
-                    int NextSlash = request.RawRelativeUrl.IndexOf("/", 1);
+                    int nextSlash = request.RawRelativeUrl.IndexOf("/", 1);
                     string path = string.Empty;
-                    if (NextSlash > 0)
-                    {
-                        path = request.RawRelativeUrl.Substring(1, NextSlash - 1);
-                    }
-                    else
-                    {
-                        path = request.RawRelativeUrl.Substring(1);
-                    }
+                    path = nextSlash > 0 ? request.RawRelativeUrl.Substring(1, nextSlash - 1) : request.RawRelativeUrl.Substring(1);
 
                     if (!string.IsNullOrEmpty(path))
                     {
                         string lowerpath = path.ToLower();
-                        foreach (var item in WebSite.SitePath)
+                        foreach (var item in webSite.SitePath.Where(item => !string.IsNullOrEmpty(item.Value)).Where(item => item.Value.ToLower() == lowerpath))
                         {
-                            if (!string.IsNullOrEmpty(item.Value))
-                            {
-                                if (item.Value.ToLower() == lowerpath)
-                                {
-                                    request.RelativeUrl = request.RawRelativeUrl.Substring(NextSlash);
+                            request.RelativeUrl = request.RawRelativeUrl.Substring(nextSlash);
 
-                                    SetCultureCookie(context, item.Key);
-                                    return item.Key;
-                                }
-                            }
+                            SetCultureCookie(context, item.Key);
+                            return item.Key;
                         }
-
                     }
-
                 }
             }
-
 
             if (context.Request.Cookies.ContainsKey("_kooboo_culture"))
             {
-                var cookieculture = context.Request.Cookies.GetValue("_kooboo_culture"); 
+                var cookieculture = context.Request.Cookies.GetValue("_kooboo_culture");
 
-                if (WebSite.Culture.ContainsKey(cookieculture))
+                if (webSite.Culture.ContainsKey(cookieculture))
                 {
-                    return cookieculture; 
+                    return cookieculture;
                 }
-
             }
 
             // Auto Detect culture .
-            if (WebSite.AutoDetectCulture)
+            if (webSite.AutoDetectCulture)
             {
-                string detected = DetectCulture(WebSite, context.Request);
+                string detected = DetectCulture(webSite, context.Request);
                 SetCultureCookie(context, detected);
-                return detected; 
+                return detected;
             }
             else
             {
-                return WebSite.DefaultCulture;
+                return webSite.DefaultCulture;
             }
         }
 
@@ -274,12 +234,12 @@ namespace Kooboo.Data.Context
 
             if (request.QueryString.AllKeys.Contains("kooboodebug"))
             {
-                request.Channel = RequestChannel.InlineDesign;    
+                request.Channel = RequestChannel.InlineDesign;
                 request.QueryString.Remove("kooboodebug");
                 hasquery = true;
             }
-                
-            // alternative view. 
+
+            // alternative view.
             string stralterview = request.QueryString.Get(Constants.Site.AlternativeViewQueryName);
 
             if (!string.IsNullOrEmpty(stralterview))
@@ -290,9 +250,7 @@ namespace Kooboo.Data.Context
 
                 foreach (var item in valuearray)
                 {
-                    int intvalue = 0;
-
-                    if (int.TryParse(item, out intvalue))
+                    if (int.TryParse(item, out var intvalue))
                     {
                         if (intvalue != 0)
                         {
@@ -309,7 +267,7 @@ namespace Kooboo.Data.Context
 
             if (hasquery)
             {
-                // rebuild relative url. 
+                // rebuild relative url.
                 Dictionary<string, string> querystring = new Dictionary<string, string>();
                 foreach (var item in request.QueryString.Keys)
                 {
@@ -338,53 +296,36 @@ namespace Kooboo.Data.Context
                     int NextSlash = relativeUrl.IndexOf("/", 1);
                     if (NextSlash == -1)
                     {
-                        NextSlash = relativeUrl.IndexOf("?", 1); 
+                        NextSlash = relativeUrl.IndexOf("?", 1);
                     }
                     string path = string.Empty;
-                    if (NextSlash > 0)
-                    {
-                        path = relativeUrl.Substring(1, NextSlash - 1);
-                    }
-                    else
-                    {
-                        path = relativeUrl.Substring(1);
-                    }
+                    path = NextSlash > 0 ? relativeUrl.Substring(1, NextSlash - 1) : relativeUrl.Substring(1);
                     if (!string.IsNullOrEmpty(path))
                     {
                         string lowerpath = path.ToLower();
 
-                        foreach (var item in website.SitePath)
+                        foreach (var item in website.SitePath.Where(item => !string.IsNullOrEmpty(item.Value)).Where(item => item.Value.ToLower() == lowerpath))
                         {
-                            if (!string.IsNullOrEmpty(item.Value))
+                            request.SitePath = path;
+                            request.Culture = item.Key;
+                            if (NextSlash > -1)
                             {
-                                if (item.Value.ToLower() == lowerpath)
+                                request.RelativeUrl = relativeUrl.Substring(NextSlash);
+                                if (request.RelativeUrl.StartsWith("?"))
                                 {
-                                    request.SitePath = path;
-                                    request.Culture = item.Key;
-                                    if (NextSlash > -1)
-                                    {
-                                        request.RelativeUrl = relativeUrl.Substring(NextSlash);
-                                        if (request.RelativeUrl.StartsWith("?"))
-                                        {
-                                            request.RelativeUrl = "/" + request.RelativeUrl; 
-                                        }
-                                    }
-                                    else
-                                    {
-                                        request.RelativeUrl = "/";
-                                    }
-                                    break;
+                                    request.RelativeUrl = "/" + request.RelativeUrl;
                                 }
                             }
+                            else
+                            {
+                                request.RelativeUrl = "/";
+                            }
+                            break;
                         }
-
-
                     }
-
                 }
             }
         }
-
 
         public static string DetectCulture(WebSite website, HttpRequest request)
         {
@@ -416,22 +357,13 @@ namespace Kooboo.Data.Context
             return website.DefaultCulture;
         }
 
-
-
         public static string DetectCultureByCountryCode(WebSite website, string countrycode)
         {
-
             var langlist = Language.LanguageSetting.GetRegionLangCodes(countrycode);
 
             if (langlist != null && langlist.Any())
             {
-                foreach (var item in langlist)
-                {
-                    if (website.Culture.ContainsKeyIgnoreCase(item))
-                    {
-                        return item.ToLower();
-                    }
-                }
+                return (from item in langlist where website.Culture.ContainsKeyIgnoreCase(item) select item.ToLower()).FirstOrDefault();
             }
             return null;
         }
@@ -440,14 +372,14 @@ namespace Kooboo.Data.Context
         {
             if (acceptLanguageHeader == null)
             {
-                return null; 
+                return null;
             }
 
             string lowerdefault = website.DefaultCulture.ToLower();
 
             string[] parts = acceptLanguageHeader.Split(Language.LanguageSetting.LangSep, StringSplitOptions.RemoveEmptyEntries);
 
-            /// bool hasdefault = false; 
+            /// bool hasdefault = false;
             foreach (var item in parts)
             {
                 if (!string.IsNullOrEmpty(item) && item.Length >= 2)
@@ -471,8 +403,5 @@ namespace Kooboo.Data.Context
             //}
             return null;
         }
-
-
-
     }
 }

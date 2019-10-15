@@ -1,20 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Models
 {
     public class BackendLog
     {
-
         public Guid UserId { get; set; }
 
         public string UserName { get; set; }
-
 
         private Dictionary<string, string> _data;
 
@@ -28,10 +23,7 @@ namespace Kooboo.Data.Models
                 }
                 return _data;
             }
-            set
-            {
-                _data = value;
-            }
+            set => _data = value;
         }
 
         public string Url { get; set; }
@@ -43,6 +35,5 @@ namespace Kooboo.Data.Models
         public int StatusCode { get; set; } = 200;
 
         public bool IsApi { get; set; }
-
     }
 }

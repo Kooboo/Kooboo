@@ -1,9 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data;
 using System;
-using Kooboo.IndexedDB.Schedule;
-using Kooboo.Data.Models;
 using System.Timers;
 
 namespace Kooboo.Jobs
@@ -37,9 +34,7 @@ namespace Kooboo.Jobs
 
             try
             {
-
                 RunSystemWorker();
-
             }
             catch (Exception)
             {
@@ -49,18 +44,16 @@ namespace Kooboo.Jobs
             _running = false;
         }
 
+        private bool _systemworkerRunning;
 
-        private bool _SystemworkerRunning;
         private void RunSystemWorker()
         {
-            if (_SystemworkerRunning)
+            if (_systemworkerRunning)
             {
                 return;
             }
-            else
-            {
-                _SystemworkerRunning = true;
-            }
+
+            _systemworkerRunning = true;
 
             foreach (var item in JobContainer.BackgroundWorkers)
             {
@@ -79,9 +72,8 @@ namespace Kooboo.Jobs
                 }
             }
 
-            _SystemworkerRunning = false;
+            _systemworkerRunning = false;
         }
-
 
         public void Stop()
         {

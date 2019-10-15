@@ -1,17 +1,11 @@
 ﻿using Kooboo.Data.Interface;
-using System; 
+using System;
 
 namespace Kooboo.Data.Ensurance
-{ 
+{
     public class QueueWorker : IBackgroundWorker
     {
-        public int Interval
-        {
-            get
-            {
-                return 60;
-            }
-        }
+        public int Interval => 60;
 
         public DateTime LastExecute
         {
@@ -20,9 +14,7 @@ namespace Kooboo.Data.Ensurance
 
         public void Execute()
         {
-            EnsureManager.Execute(); 
+            EnsureManager.Execute();
         }
     }
-
-
 }

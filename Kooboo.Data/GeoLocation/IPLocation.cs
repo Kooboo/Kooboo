@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.IO;
-using System.Linq;
 using Kooboo.IndexedDB;
 using Kooboo.Lib.Helper;
 using Kooboo.Lib.Security;
+using System;
+using System.IO;
+using System.Linq;
 
 namespace Kooboo.Data.GeoLocation
 {
@@ -26,18 +26,18 @@ namespace Kooboo.Data.GeoLocation
 
         public static Database Database { get; set; }
 
-        public static void InitDatabase(bool CreateFolder = false)
+        public static void InitDatabase(bool createFolder = false)
         {
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string path = Path.Combine(baseDirectory, "IpData");
-            if (CreateFolder)
+            if (createFolder)
             {
                 IOHelper.EnsureDirectoryExists(path);
             }
 
             if (Directory.Exists(path))
             {
-                if (!CreateFolder)
+                if (!createFolder)
                 {
                     string[] files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
 
@@ -51,7 +51,6 @@ namespace Kooboo.Data.GeoLocation
                 {
                     Database = new Database(path);
                 }
-
 
                 if (CityStore == null)
                 {
@@ -84,7 +83,6 @@ namespace Kooboo.Data.GeoLocation
                     IpCityStore = Database.GetOrCreateObjectStore<int, IPCity>("IpCity", paracity);
                 }
 
-
                 if (IPCountryStore == null)
                 {
                     ObjectStoreParameters paracountry = new ObjectStoreParameters();
@@ -94,47 +92,43 @@ namespace Kooboo.Data.GeoLocation
                     paracountry.EnableLog = false;
 
                     IPCountryStore = Database.GetOrCreateObjectStore<int, IPCountry>("IpCountry", paracountry);
-                } 
+                }
             }
         }
 
-        public static int GetOrAddStateId(string StateName, string CountryName)
+        public static int GetOrAddStateId(string stateName, string countryName)
         {
             if (StateStore == null)
             {
                 return 0;
             }
 
-            if (string.IsNullOrWhiteSpace(StateName) && !string.IsNullOrWhiteSpace(CountryName))
+            if (string.IsNullOrWhiteSpace(stateName) && !string.IsNullOrWhiteSpace(countryName))
             {
-                StateName = CountryName;
+                stateName = countryName;
             }
 
-            string s = StateName + CountryName;
+            string s = stateName + countryName;
             int id = Hash.ComputeIntCaseSensitive(s);
 
             StateInfo stateInfo = IPLocation.StateStore.get(id);
 
             if (stateInfo == null)
             {
-                stateInfo = new StateInfo();
-                stateInfo.StateName = StateName;
-                stateInfo.Country = CountryCode.ToShort(CountryName);
-                stateInfo.Id = id;
-                IPLocation.StateStore.add(id, stateInfo, false);
+                stateInfo = new StateInfo {StateName = stateName, Country = CountryCode.ToShort(countryName), Id = id};
+                StateStore.add(id, stateInfo, false);
             }
 
             return id;
-
         }
 
-        public static int GetOrAddCityId(string cityname, string state, string Country)
+        public static int GetOrAddCityId(string cityname, string state, string country)
         {
             if (CityStore == null)
             {
                 return 0;
             }
-            int stateid = IPLocation.GetOrAddStateId(state, Country);
+            int stateid = IPLocation.GetOrAddStateId(state, country);
 
             int cityid = Hash.ComputeIntCaseSensitive(cityname);
 
@@ -146,45 +140,33 @@ namespace Kooboo.Data.GeoLocation
                 {
                     return cityinfo.Id;
                 }
-                else
-                {
-                    cityid = Hash.ComputeIntCaseSensitive(cityid.ToString());
-                    cityinfo = CityStore.get(cityid);
-                }
+
+                cityid = Hash.ComputeIntCaseSensitive(cityid.ToString());
+                cityinfo = CityStore.get(cityid);
             }
 
-
-            cityinfo = new CityInfo();
-            cityinfo.Id = cityid;
-            cityinfo.State = stateid;
-            cityinfo.CityName = cityname;
+            cityinfo = new CityInfo {Id = cityid, State = stateid, CityName = cityname};
 
             IPLocation.CityStore.add(cityid, cityinfo, false);
             return cityid;
-
         }
 
         public static CityInfo GetCity(int cityid)
         {
-            if (CityStore != null)
-            {
-                return CityStore.get(cityid);
-            }
-            return null;
+            return CityStore?.get(cityid);
         }
 
-
-        public static IPViewModel GetIpCity(string ClientIp)
+        public static IPViewModel GetIpCity(string clientIp)
         {
-            var intip = Lib.Helper.IPHelper.ToInt(ClientIp);
+            var intip = Lib.Helper.IPHelper.ToInt(clientIp);
             return GetIpCity(intip);
         }
 
-        public static IPViewModel GetIpCity(int IntIP)
+        public static IPViewModel GetIpCity(int intIp)
         {
             if (IpCityStore != null)
             {
-                var item = GetIpCityRecord(IntIP); 
+                var item = GetIpCityRecord(intIp);
 
                 if (item != null && item.CityId != 0)
                 {
@@ -194,10 +176,11 @@ namespace Kooboo.Data.GeoLocation
                     {
                         var stateinfo = StateStore.get(cityinfo.State);
 
-                        IPViewModel model = new IPViewModel();
-                        model.Ip = Lib.Helper.IPHelper.FromInt(IntIP);
+                        IPViewModel model = new IPViewModel
+                        {
+                            Ip = Lib.Helper.IPHelper.FromInt(intIp), City = cityinfo.CityName
+                        };
 
-                        model.City = cityinfo.CityName;
 
                         if (stateinfo != null)
                         {
@@ -208,26 +191,23 @@ namespace Kooboo.Data.GeoLocation
 
                         return model;
                     }
-
-
                 }
-
             }
 
-            return GetIpCountry(IntIP);
+            return GetIpCountry(intIp);
         }
 
-        public static IPViewModel GetIpCountry(string ClientIp)
+        public static IPViewModel GetIpCountry(string clientIp)
         {
-            var intip = Lib.Helper.IPHelper.ToInt(ClientIp);
+            var intip = Lib.Helper.IPHelper.ToInt(clientIp);
             return GetIpCountry(intip);
         }
 
-        public static IPViewModel GetIpCountry(int IntIP)
+        public static IPViewModel GetIpCountry(int intIp)
         {
             if (IPCountryStore != null)
             {
-                var item = GetIPCountryRecord(IntIP); 
+                var item = GetIPCountryRecord(intIp);
 
                 if (item != null && item.CountryId != 0)
                 {
@@ -237,11 +217,13 @@ namespace Kooboo.Data.GeoLocation
 
                     if (!string.IsNullOrWhiteSpace(countryname))
                     {
-                        IPViewModel model = new IPViewModel();
-                        model.Ip = Lib.Helper.IPHelper.FromInt(IntIP);
+                        IPViewModel model = new IPViewModel
+                        {
+                            Ip = Lib.Helper.IPHelper.FromInt(intIp),
+                            CountryCode = countrycode,
+                            CountryName = countryname
+                        };
 
-                        model.CountryCode = countrycode;
-                        model.CountryName = countryname;
 
                         return model;
                     }
@@ -249,7 +231,6 @@ namespace Kooboo.Data.GeoLocation
             }
 
             return null;
-
         }
 
         private static IPCountry GetIPCountryRecord(int intip)
@@ -257,25 +238,7 @@ namespace Kooboo.Data.GeoLocation
             if (IPCountryStore != null)
             {
                 var last = IPCountryStore.Where(o => o.IpStart <= intip).OrderByDescending().Take(1);
-                if (last != null && last.Count() >= 1)
-                {
-                    if (last[0].IpEnd >= intip)
-                    {
-                        return last[0];
-                    }
-                }
-            }
-            return null;   
-        }
-
-        private static IPCity GetIpCityRecord(int intip)
-        {
-            //var item = IpCityStore.Where(o => o.IpStart <= IntIP && o.IpEnd >= IntIP).OrderByDescending().FirstOrDefault();
-
-            if (IpCityStore != null)
-            {
-                var last = IpCityStore.Where(o => o.IpStart <= intip).OrderByDescending().Take(1);
-                if (last != null && last.Count() >= 1)
+                if (last != null && last.Count >= 1)
                 {
                     if (last[0].IpEnd >= intip)
                     {
@@ -284,24 +247,33 @@ namespace Kooboo.Data.GeoLocation
                 }
             }
             return null;
+        }
 
+        private static IPCity GetIpCityRecord(int intip)
+        {
+            //var item = IpCityStore.Where(o => o.IpStart <= IntIP && o.IpEnd >= IntIP).OrderByDescending().FirstOrDefault();
+
+            var last = IpCityStore?.Where(o => o.IpStart <= intip).OrderByDescending().Take(1);
+            if (last != null && last.Count >= 1)
+            {
+                if (last[0].IpEnd >= intip)
+                {
+                    return last[0];
+                }
+            }
+            return null;
         }
 
         public static string GetCountryCode(string clientIP)
         {
-            var model = GetIpCountry(clientIP); 
+            var model = GetIpCountry(clientIP);
 
-            if (model !=null)
-            {
-                return model.CountryCode; 
-            }
-
-            return null; 
+            return model?.CountryCode;
         }
 
         public static void RenewDataBase()
         {
-            IPLocation.InitDatabase(false);
+            InitDatabase(false);
         }
     }
 }

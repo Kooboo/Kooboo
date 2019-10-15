@@ -1,15 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public   class ActivityEvent : Attribute
+    public class ActivityEvent : Attribute
     {
         public string GroupName { get; set; }
 
@@ -18,7 +14,7 @@ namespace Kooboo.Attributes
         public ActivityEvent(string GroupName, string ActivityName)
         {
             this.GroupName = GroupName;
-            this.ActivityName = ActivityName; 
+            this.ActivityName = ActivityName;
         }
     }
 
@@ -28,7 +24,4 @@ namespace Kooboo.Attributes
 
         public string ActivityName { get; set; }
     }
-
-
-   
 }

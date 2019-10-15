@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System.Collections.Generic;
 
@@ -8,7 +8,7 @@ namespace Nager.PublicSuffix
     {
         public IEnumerable<TldRule> ParseRules(string data)
         {
-            var lines = data.Split(new char[] { '\n', '\r' });
+            var lines = data.Split('\n', '\r');
             return this.ParseRules(lines);
         }
 
@@ -24,7 +24,7 @@ namespace Nager.PublicSuffix
                 {
                     continue;
                 }
-                 
+
                 //Ignore comments (and set Division)
                 if (line.StartsWith("//"))
                 {

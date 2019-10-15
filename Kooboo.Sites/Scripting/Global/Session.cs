@@ -11,7 +11,7 @@ namespace Kooboo.Sites.Scripting.Global
 {
     public class Session : IDictionary<string, object>
     {
-        private object _locker = new object(); 
+        private static object _locker = new object(); 
 
         private RenderContext context { get; set; }
 

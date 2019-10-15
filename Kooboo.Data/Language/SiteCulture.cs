@@ -1,10 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Language
 {
@@ -13,6 +11,7 @@ namespace Kooboo.Data.Language
         private static object _culturelock = new object();
 
         private static Dictionary<string, string> _initcultures;
+
         public static Dictionary<string, string> InitCultures
         {
             get
@@ -23,37 +22,37 @@ namespace Kooboo.Data.Language
                     {
                         if (_initcultures == null)
                         {
-
-                            List<string> startlist = new List<string>();
-                            startlist.Add("zh");
-                            startlist.Add("es");
-                            startlist.Add("en");
-                            startlist.Add("es");
-                            startlist.Add("hi");
-                            startlist.Add("ar");
-                            startlist.Add("pt");
-                            startlist.Add("bn");
-                            startlist.Add("ru");
-                            startlist.Add("ja");
-                            startlist.Add("pa");
-                            startlist.Add("de");
-                            startlist.Add("jv");
-                            startlist.Add("ms");
-                            startlist.Add("jv");
-                            startlist.Add("te");
-                            startlist.Add("vi");
-                            startlist.Add("ko");
-                            startlist.Add("fr");
-                            startlist.Add("mr");
-                            startlist.Add("ta");
-                            startlist.Add("ur");
-                            startlist.Add("tr");
-                            startlist.Add("it");
-                            startlist.Add("th");
-                            startlist.Add("nl");
-                            startlist.Add("el");
-                            startlist.Add("sv");
-
+                            List<string> startlist = new List<string>
+                            {
+                                "zh",
+                                "es",
+                                "en",
+                                "es",
+                                "hi",
+                                "ar",
+                                "pt",
+                                "bn",
+                                "ru",
+                                "ja",
+                                "pa",
+                                "de",
+                                "jv",
+                                "ms",
+                                "jv",
+                                "te",
+                                "vi",
+                                "ko",
+                                "fr",
+                                "mr",
+                                "ta",
+                                "ur",
+                                "tr",
+                                "it",
+                                "th",
+                                "nl",
+                                "el",
+                                "sv"
+                            };
 
                             _initcultures = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                             foreach (var item in startlist)
@@ -67,7 +66,6 @@ namespace Kooboo.Data.Language
                                     }
                                 }
                             }
-
                         }
                     }
                 }
@@ -75,11 +73,11 @@ namespace Kooboo.Data.Language
             }
         }
 
-        public static Dictionary<string, string> List(Guid SiteId)
+        public static Dictionary<string, string> List(Guid siteId)
         {
             Dictionary<string, string> result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            var site = GlobalDb.WebSites.Get(SiteId);
+            var site = GlobalDb.WebSites.Get(siteId);
 
             if (site != null)
             {

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -16,22 +16,12 @@ namespace Kooboo.Data.Context
 
         public List<Lib.NETMultiplePart.File> Files { get; set; }
 
-
         private Dictionary<string, string> _cookies;
+
         public Dictionary<string, string> Cookies
         {
-            get
-            {
-                if (_cookies == null)
-                {
-                    _cookies = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _cookies;
-            }
-            set
-            {
-                _cookies = value;
-            }
+            get => _cookies ?? (_cookies = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
+            set => _cookies = value;
         }
 
         public string Path { get; set; }
@@ -41,69 +31,49 @@ namespace Kooboo.Data.Context
         public string Url { get; set; }
 
         private string _relativeurl;
+
         public string RelativeUrl
         {
             get
             {
                 if (string.IsNullOrEmpty(_relativeurl))
                 {
-                    if (string.IsNullOrEmpty(this.RawRelativeUrl))
-                    { return ""; }
-                    else
-                    {
-                        return this.RawRelativeUrl;
-                    }
+                    return string.IsNullOrEmpty(this.RawRelativeUrl) ? "" : this.RawRelativeUrl;
                 }
-                else
-                {
-                    return _relativeurl;
-                }
+
+                return _relativeurl;
             }
-            set
-            {
-                _relativeurl = value;
-            }
+            set => _relativeurl = value;
         }
 
         private string _rawrelativeurl;
 
         public string RawRelativeUrl
         {
-            get
-            {
-                if (_rawrelativeurl == null)
-                {
-                    return "/";
-                }
-                else { return _rawrelativeurl; }
-            }
-            set
-            {
-                _rawrelativeurl = value; 
-            }
+            get => _rawrelativeurl ?? "/";
+            set => _rawrelativeurl = value;
         }
 
-        private string _method; 
-        public string Method {
-            get { return _method;  }
+        private string _method;
+
+        public string Method
+        {
+            get => _method;
             set
             {
-                _method = value; 
-                if (_method !=null)
-                {
-                    _method = _method.ToUpper(); 
-                }
+                _method = value;
+                _method = _method?.ToUpper();
             }
         }
 
         public string Host { get; set; }
-
 
         public string Scheme { get; set; }
 
         public byte[] PostData { get; set; }
 
         private string _body = null;
+
         public string Body
         {
             get
@@ -122,7 +92,7 @@ namespace Kooboo.Data.Context
                 }
                 return _body;
             }
-            set { _body = value; }
+            set => _body = value;
         }
 
         public object Model { get; set; }
@@ -136,7 +106,7 @@ namespace Kooboo.Data.Context
 
         public string Get(string name)
         {
-            return this.GetValue(name); 
+            return GetValue(name);
         }
 
         public string GetValue(params string[] names)
@@ -147,17 +117,11 @@ namespace Kooboo.Data.Context
         public string DiskRoot { get; set; }
 
         private HashSet<int> _alternativeViews;
+
         public HashSet<int> AltervativeViews
         {
-            get
-            {
-                if (_alternativeViews == null)
-                {
-                    _alternativeViews = new HashSet<int>();
-                }
-                return _alternativeViews;
-            }
-            set { _alternativeViews = value; }
+            get => _alternativeViews ?? (_alternativeViews = new HashSet<int>());
+            set => _alternativeViews = value;
         }
 
         public string Culture { get; set; }
@@ -170,9 +134,7 @@ namespace Kooboo.Data.Context
 
         public HttpRequest Clone()
         {
-            HttpRequest newrequest = new HttpRequest();
-            newrequest.Body = this.Body;
-            newrequest.Channel = this.Channel;
+            HttpRequest newrequest = new HttpRequest {Body = this.Body, Channel = this.Channel};
             foreach (var item in this.Cookies)
             {
                 newrequest.Cookies.Add(item.Key, item.Value);
@@ -201,7 +163,6 @@ namespace Kooboo.Data.Context
             newrequest.Host = this.Host;
 
             return newrequest;
-
         }
     }
 }

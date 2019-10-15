@@ -7,66 +7,64 @@ namespace Kooboo.Data
 {
     public static class IDGenerator
     {
-        public static Guid GetOrGenerate(string NameOrValueOrId, byte ConstType)
+        public static Guid GetOrGenerate(string nameOrValueOrId, byte constType)
         {
-            if (string.IsNullOrEmpty(NameOrValueOrId))
+            if (string.IsNullOrEmpty(nameOrValueOrId))
             {
                 return System.Guid.NewGuid();
-            } 
-            Guid id; 
-            if (System.Guid.TryParse(NameOrValueOrId, out id))
+            }
+
+            if (System.Guid.TryParse(nameOrValueOrId, out var id))
             {
                 return id;
             }
-            return Generate(NameOrValueOrId, ConstType);
+            return Generate(nameOrValueOrId, constType);
         }
 
-        public static Guid Generate(string NameOrValue, byte ConstType)
+        public static Guid Generate(string nameOrValue, byte constType)
         {
-            if (string.IsNullOrEmpty(NameOrValue))
+            if (string.IsNullOrEmpty(nameOrValue))
             {
                 return System.Guid.NewGuid();
             }
-            else
+
+            string name = nameOrValue;
+            if (constType == ConstObjectType.Route)
             {
-                string name = NameOrValue;
-                if (ConstType == ConstObjectType.Route)
+                name = name.RemoveCurlyBracketContent();
+                if (!name.StartsWith("/"))
                 {
-                    name = name.RemoveCurlyBracketContent();
-                    if (!name.StartsWith("/"))
-                    {
-                        name = "/" + name;
-                    }
+                    name = "/" + name;
                 }
-                name = ConstType.ToString() + name;
-                return Kooboo.Data.IDGenerator.GetId(name);
             }
+            name = constType.ToString() + name;
+            return Kooboo.Data.IDGenerator.GetId(name);
         }
 
-        public static Guid GetRouteId(string NameOrValue)
+        public static Guid GetRouteId(string nameOrValue)
         {
-            if (string.IsNullOrEmpty(NameOrValue))
+            if (string.IsNullOrEmpty(nameOrValue))
             {
-                NameOrValue = "/";
+                nameOrValue = "/";
             }
-            NameOrValue = NameOrValue.RemoveCurlyBracketContent();
-            if (!NameOrValue.StartsWith("/"))
+            nameOrValue = nameOrValue.RemoveCurlyBracketContent();
+            if (!nameOrValue.StartsWith("/"))
             {
-                NameOrValue = "/" + NameOrValue;
+                nameOrValue = "/" + nameOrValue;
             }
-            return GetId(ConstObjectType.Route.ToString() + NameOrValue);
+            return GetId(ConstObjectType.Route.ToString() + nameOrValue);
         }
 
-        public static Guid GetResourceGroupId(string Name, byte ResourceType)
+        public static Guid GetResourceGroupId(string name, byte resourceType)
         {
-            string unique = Name + ResourceType.ToString() + ConstObjectType.ResourceGroup.ToString();
+            string unique = name + resourceType.ToString() + ConstObjectType.ResourceGroup.ToString();
 
             return Data.IDGenerator.GetId(unique);
         }
 
-        public static Guid GetFolderId(string Name, byte FolderObjectConstType)
+        public static Guid GetFolderId(string name, byte folderObjectConstType)
         {
-            string unique = Name + ConstObjectType.Folder.ToString() + FolderObjectConstType.ToString();
+            string unique = name + ConstObjectType.Folder.ToString() + folderObjectConstType.ToString();
 
             return Data.IDGenerator.GetId(unique);
         }
@@ -92,9 +90,9 @@ namespace Kooboo.Data
             return System.Guid.NewGuid();
         }
         
-        public static Guid GetImageThumbNailId(Guid ImageId, int Height, int Width)
+        public static Guid GetImageThumbNailId(Guid imageId, int height, int width)
         {
-            string uniquestring = ImageId.ToString() + Height.ToString() + Width.ToString();
+            string uniquestring = imageId.ToString() + height.ToString() + width.ToString();
 
             return uniquestring.ToHashGuid();
         }
@@ -105,9 +103,9 @@ namespace Kooboo.Data
             return uniquestring.ToHashGuid();
         }
           
-        public static Guid GetCmsCssDeclarationId(Guid CmsRuleId, string propertyname)
+        public static Guid GetCmsCssDeclarationId(Guid cmsRuleId, string propertyname)
         {
-            string uniquetext = CmsRuleId.ToString() + propertyname; 
+            string uniquetext = cmsRuleId.ToString() + propertyname; 
             return uniquetext.ToHashGuid();
         }
 
@@ -117,44 +115,41 @@ namespace Kooboo.Data
             return uniquestring.ToHashGuid();
         }
 
-        public static Guid GetExternalResourceId(Guid OwnerObjectId, string FullUrl, byte DestinationObjectType)
+        public static Guid GetExternalResourceId(Guid ownerObjectId, string fullUrl, byte destinationObjectType)
         {
-            string unique = ConstObjectType.ExternalResource.ToString() + OwnerObjectId.ToString() + FullUrl + DestinationObjectType.ToString();
+            string unique = ConstObjectType.ExternalResource.ToString() + ownerObjectId.ToString() + fullUrl + destinationObjectType.ToString();
             return unique.ToHashGuid(); 
         }
 
-        public static Guid GetAssemblyId(string AssemblyFullName)
+        public static Guid GetAssemblyId(string assemblyFullName)
         {
-            return AssemblyFullName.ToHashGuid();
+            return assemblyFullName.ToHashGuid();
         }
 
   
 
-        public static Guid GetDataSourceMethodSettingsId(string DataSourceName, Guid MethodSignagtureHash, string NewMethodName)
+        public static Guid GetDataSourceMethodSettingsId(string dataSourceName, Guid methodSignagtureHash, string newMethodName)
         {
-            string uniquestring = DataSourceName + MethodSignagtureHash.ToString() + NewMethodName;
+            string uniquestring = dataSourceName + methodSignagtureHash.ToString() + newMethodName;
 
             return uniquestring.ToHashGuid();
         }
          
-        public static Guid GetFormId(Guid OwnerObjectId, string koobooid)
+        public static Guid GetFormId(Guid ownerObjectId, string koobooid)
         {
-            string uniquestring;
             if (!string.IsNullOrEmpty(koobooid))
             {
-                uniquestring = OwnerObjectId.ToString() + koobooid;
+                var uniquestring = ownerObjectId.ToString() + koobooid;
                 return uniquestring.ToHashGuid();
             }
-            else
-            {
-                /// this should not happen. 
-                return GetNewGuid();
-            }
+
+            /// this should not happen. 
+            return GetNewGuid();
         }
 
-        public static Guid GetPageElementId(Guid OwnerObjectId, byte OwnerConstType, string KoobooId)
+        public static Guid GetPageElementId(Guid ownerObjectId, byte ownerConstType, string koobooId)
         {
-            string unique = OwnerObjectId.ToString() + OwnerConstType.ToString() + KoobooId;
+            string unique = ownerObjectId.ToString() + ownerConstType.ToString() + koobooId;
 
             return unique.ToHashGuid(); 
 

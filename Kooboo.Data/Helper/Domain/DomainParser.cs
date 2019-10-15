@@ -1,9 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace Nager.PublicSuffix
 {
@@ -24,23 +23,18 @@ namespace Nager.PublicSuffix
 
         public DomainParser(ITldRuleProvider ruleProvider)
         {
-            if (ruleProvider == null)
-            {
-                throw new ArgumentNullException("ruleProvider");
-            }
-
-            this._ruleProvider = ruleProvider;
+            this._ruleProvider = ruleProvider ?? throw new ArgumentNullException("ruleProvider");
             this.AddRules(ruleProvider.BuildAsync().Result);
         }
 
         public DomainParser()
         {
             var reader = Kooboo.Data.Embedded.EmbeddedHelper.GetStreamReader("Kooboo.Data.tld.dat", typeof(Kooboo.Data.Models.WebSite));
-            string data = reader.ReadToEnd(); 
+            string data = reader.ReadToEnd();
 
             var ruleParser = new TldRuleParser();
             var rules = ruleParser.ParseRules(data);
-            this.AddRules(rules); 
+            this.AddRules(rules);
         }
 
         public void AddRules(IEnumerable<TldRule> tldRules)
@@ -93,20 +87,19 @@ namespace Nager.PublicSuffix
                 return null;
             }
 
-            string fullurl; 
+            string fullurl;
             if (domain.ToLower().StartsWith("http://") || domain.ToLower().StartsWith("https://"))
             {
-                fullurl = domain; 
+                fullurl = domain;
             }
             else
             {
-                fullurl = string.Concat("https://", domain); 
+                fullurl = string.Concat("https://", domain);
             }
 
             //We use Uri methods to normalize host (So Punycode is converted to UTF-8
-            Uri uri;
 
-            if (!Uri.TryCreate(fullurl, UriKind.RelativeOrAbsolute, out uri))
+            if (!Uri.TryCreate(fullurl, UriKind.RelativeOrAbsolute, out var uri))
             {
                 return null;
             }
@@ -128,7 +121,7 @@ namespace Nager.PublicSuffix
             var matches = new List<TldRule>();
             this.FindMatches(parts, structure, matches);
 
-            //Sort so exceptions are first, then by biggest label count (with wildcards at bottom) 
+            //Sort so exceptions are first, then by biggest label count (with wildcards at bottom)
             var sortedMatches = matches.OrderByDescending(x => x.Type == TldRuleType.WildcardException ? 1 : 0)
                 .ThenByDescending(x => x.LabelCount)
                 .ThenByDescending(x => x.Name);
@@ -162,8 +155,7 @@ namespace Nager.PublicSuffix
                 return;
             }
 
-            DomainDataStructure foundStructure;
-            if (structure.Nested.TryGetValue(part, out foundStructure))
+            if (structure.Nested.TryGetValue(part, out var foundStructure))
             {
                 FindMatches(parts.Skip(1), foundStructure, matches);
             }

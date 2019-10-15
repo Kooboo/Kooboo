@@ -1,21 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Context
 {
-
     public class HeaderValueQuery
     {
         public string KeyOrExpression;
+
         /// <summary>
-        /// check whether it is an expression or not. 
+        /// check whether it is an expression or not.
         /// </summary>
         public bool IsExpression { get; set; }
 
@@ -48,26 +45,22 @@ namespace Kooboo.Data.Context
                 {
                     string value = item.Groups["Name"].Value;
 
-                    ItemQuery itemquery = new ItemQuery();
-                    itemquery.Query = new GetValueQuery(value);
+                    ItemQuery itemquery = new ItemQuery {Query = new GetValueQuery(value)};
                     this.ItemValues.Add(itemquery);
 
                     this.KeyOrExpression = this.KeyOrExpression.Replace("{" + value + "}", "{" + counter.ToString() + "}");
                     counter += 1;
                 }
                 this.RequireRender = true;
-
             }
             else
             {
-
                 if (Lib.Helper.StringHelper.IsString(KeyOrExpression))
                 {
                     this.IsString = true;
                     if (KeyOrExpression.StartsWith("'"))
                     {
                         this.KeyOrExpression = KeyOrExpression.Trim('\'');
-
                     }
                     else if (KeyOrExpression.StartsWith("\""))
                     {
@@ -83,18 +76,18 @@ namespace Kooboo.Data.Context
                     this.IsString = true;
                     this.KeyOrExpression = KeyOrExpression;
                 }
-
             }
         }
 
-        // the final output... 
+        // the final output...
         public string Render(RenderContext context)
         {
             if (this.IsString)
             {
                 return this.KeyOrExpression;
             }
-            else if (this.RequireRender)
+
+            if (this.RequireRender)
             {
                 foreach (var item in ItemValues)
                 {
@@ -114,16 +107,12 @@ namespace Kooboo.Data.Context
                 var valuePara = ItemValues.Select(o => o.Value).ToArray();
                 return string.Format(this.KeyOrExpression, valuePara);
             }
-            else
-            {
-                return this.KeyOrExpression;
-            }
-        }
 
+            return this.KeyOrExpression;
+        }
 
         public void TryAssignValue(IDictionary data, RenderContext context)
         {
-
             if (this.RequireRender)
             {
                 bool allhasvalue = true;
@@ -148,17 +137,13 @@ namespace Kooboo.Data.Context
                 {
                     this.RequireRender = false;
                 }
-
             }
-
         }
 
         public void InitValue(RenderContext context)
         {
-
             if (this.RequireRender)
             {
-
                 bool allhasvalue = true;
 
                 foreach (var item in this.ItemValues)
@@ -181,16 +166,9 @@ namespace Kooboo.Data.Context
                 {
                     this.RequireRender = false;
                 }
-
-
             }
-
-
-
-        }           
-
+        }
     }
-
 
     public class ItemQuery
     {
@@ -198,6 +176,4 @@ namespace Kooboo.Data.Context
 
         public GetValueQuery Query { get; set; }
     }
-
-
 }

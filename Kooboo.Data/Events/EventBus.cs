@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Lib.Reflection;
 using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 using System.Reflection;
-  
+
 namespace Kooboo.Data.Events
 {
     public static class EventBus
@@ -18,20 +18,20 @@ namespace Kooboo.Data.Events
 
         private static object _locker = new object();
 
-        public static void Raise(IEvent theEvent, RenderContext context =null)
+        public static void Raise(IEvent theEvent, RenderContext context = null)
         {
             var type = theEvent.GetType();
 
-            List<HandlerInstance> handlers = new List<HandlerInstance>(); 
+            List<HandlerInstance> handlers = new List<HandlerInstance>();
 
-            // execute handler. 
+            // execute handler.
             var directhandlers = List.FindAll(o => o.EventType == type);
             if (directhandlers != null)
             {
-                handlers.AddRange(directhandlers); 
+                handlers.AddRange(directhandlers);
             }
 
-            // get base class 
+            // get base class
             var basetype = type.BaseType;
             while (basetype != null && basetype != typeof(object))
             {
@@ -40,7 +40,7 @@ namespace Kooboo.Data.Events
                 {
                     handlers.AddRange(basehandlers);
                 }
-                basetype = basetype.BaseType; 
+                basetype = basetype.BaseType;
             }
 
             var allinterfaces = type.GetInterfaces();
@@ -60,13 +60,13 @@ namespace Kooboo.Data.Events
             {
                 List<object> paras = new List<object>();
                 paras.Add(theEvent);
-                paras.Add(context); 
+                paras.Add(context);
                 item.Handle.Invoke(item.ClassInstance, paras.ToArray());
             }
-             
         }
 
         private static List<HandlerInstance> _List;
+
         public static List<HandlerInstance> List
         {
             get
@@ -101,9 +101,8 @@ namespace Kooboo.Data.Events
                 return _List;
             }
         }
-         
     }
-     
+
     public class HandlerInstance
     {
         public object ClassInstance { get; set; }
@@ -111,7 +110,5 @@ namespace Kooboo.Data.Events
         public Type EventType { get; set; }
 
         public MethodInfo Handle { get; set; }
-
     }
-
 }

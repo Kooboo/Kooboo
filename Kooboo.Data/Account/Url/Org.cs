@@ -1,122 +1,48 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Helper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Account.Url
 {
-   public static class Org
+    public static class Org
     {
-        private static string _geturl; 
-        public static string GetUrl { get {  if (_geturl == null) { _geturl  = AccountUrlHelper.Org("get"); };  return _geturl;  } }
+        private static string _geturl;
+        public static string GetUrl { get { if (_geturl == null) { _geturl = AccountUrlHelper.Org("get"); }; return _geturl; } }
 
         private static string _addurl;
 
-        public static string Add  {
-            get 
-            { 
-               if (_addurl == null)
-                {
-                    _addurl = AccountUrlHelper.Org("add");
-                }
-                return _addurl; 
-            }
-        }
+        public static string Add => _addurl ?? (_addurl = AccountUrlHelper.Org("add"));
 
         private static string _updateurl;
-        public static string Update
-        {
-            get
-            {
-                if (_updateurl == null)
-                {
-                    _updateurl = AccountUrlHelper.Org("update");
-                }
-                return _updateurl;
-            }
-        }
 
-        private static string _delurl; 
-        public static string Delete
-        {
-            get
-            {
-                if (_delurl == null)
-                {
-                    _delurl = AccountUrlHelper.Org("delete");
-                }
-                return _delurl;
-            }
-        }
+        public static string Update => _updateurl ?? (_updateurl = AccountUrlHelper.Org("update"));
 
-        private static string _users; 
-        public static string Users
-        {
-            get
-            {
-                if (_users == null)
-                {
-                    _users = AccountUrlHelper.Org("Users");
-                }
-                return _users;
-            }
-        }
+        private static string _delurl;
+
+        public static string Delete => _delurl ?? (_delurl = AccountUrlHelper.Org("delete"));
+
+        private static string _users;
+
+        public static string Users => _users ?? (_users = AccountUrlHelper.Org("Users"));
 
         private static string _Addurl;
-        public static string AddUser 
-        {
-            get
-            {
-                if (_Addurl == null)
-                {
-                    _Addurl = AccountUrlHelper.Org("adduser");
-                }
-                return _Addurl;
-            }
-        }
 
-        private static string _deleteuser; 
-        public static string DeleteUser
-        {
-            get
-            {
-                if (_deleteuser == null)
-                {
-                    _deleteuser = AccountUrlHelper.Org("deleteuser");
-                }
-                return _deleteuser;
-            }
-        }
+        public static string AddUser => _Addurl ?? (_Addurl = AccountUrlHelper.Org("adduser"));
+
+        private static string _deleteuser;
+
+        public static string DeleteUser => _deleteuser ?? (_deleteuser = AccountUrlHelper.Org("deleteuser"));
 
         private static string _changedemandUserBalance;
-        public static string ChangeDemandUserBalance
-        {
-            get
-            {
-                if (_changedemandUserBalance == null)
-                {
-                    _changedemandUserBalance = AccountUrlHelper.Org("ChangedemandUserBalance");
-                }
-                return _changedemandUserBalance;
-            }
-        }
+
+        public static string ChangeDemandUserBalance =>
+            _changedemandUserBalance ??
+            (_changedemandUserBalance = AccountUrlHelper.Org("ChangedemandUserBalance"));
 
         private static string _addProposalUserBalance;
-        public static string AddProposalUserBalance
-        {
-            get
-            {
-                if (_addProposalUserBalance == null)
-                {
-                    _addProposalUserBalance = AccountUrlHelper.Org("AddProposalUserBalance");
-                }
-                return _addProposalUserBalance;
-            }
-        }
 
+        public static string AddProposalUserBalance =>
+            _addProposalUserBalance ??
+            (_addProposalUserBalance = AccountUrlHelper.Org("AddProposalUserBalance"));
     }
 }

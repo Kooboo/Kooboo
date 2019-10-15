@@ -1,44 +1,29 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Language
 {
-
-   
-  public   class LanguageTask
+    public class LanguageTask
     {
         public string Key { get; set; }
 
-        public string Content { get; set;  }
+        public string Content { get; set; }
 
-        public LanguageTask(string value, bool Iskey)
+        public LanguageTask(string value, bool iskey)
         {
-            if (Iskey)
+            if (iskey)
             {
                 this.Key = value;
             }
             else
             {
-                Content = value; 
+                Content = value;
             }
         }
 
-        public string Render(string LangCode)
+        public string Render(string langCode)
         {
-            if (Content !=null)
-            {
-                return Content; 
-            }
-            else
-            {
-                return LanguageProvider.GetValue(this.Key, LangCode); 
-            }
+            return Content ?? LanguageProvider.GetValue(this.Key, langCode);
         }
-
     }
 }

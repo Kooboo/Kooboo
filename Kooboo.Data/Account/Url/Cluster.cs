@@ -1,11 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Helper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Account.Url
 {
@@ -15,13 +10,11 @@ namespace Kooboo.Data.Account.Url
 
         public static string GetDataCenter { get { if (_getavailable == null) { _getavailable = AccountUrlHelper.Cluster("GetDataCenter"); }; return _getavailable; } }
 
+        private static string _savesetting;
 
-        private static string _savesetting; 
         public static string SaveSetting
         {
             get { if (_savesetting == null) { _savesetting = AccountUrlHelper.Cluster("SaveSetting"); }; return _savesetting; }
-
         }
-
     }
 }

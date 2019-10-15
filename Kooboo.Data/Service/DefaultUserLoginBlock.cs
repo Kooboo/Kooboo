@@ -1,7 +1,6 @@
 ﻿using Kooboo.Data.Interface;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Data.Service
 {
@@ -13,23 +12,22 @@ namespace Kooboo.Data.Service
 
         public Dictionary<Guid, List<DateTime>> UserNameFailure { get; set; } = new Dictionary<Guid, List<DateTime>>();
 
-        public virtual void AddIpFailure(string IP)
+        public virtual void AddIpFailure(string ip)
         {
-            if (!IPFailure.ContainsKey(IP))
+            if (!IPFailure.ContainsKey(ip))
             {
-                var list = new List<DateTime>();
-                list.Add(DateTime.Now);
+                var list = new List<DateTime> { DateTime.Now };
 
-                IPFailure[IP] = list;
+                IPFailure[ip] = list;
             }
             else
             {
-                var list = IPFailure[IP];
+                var list = IPFailure[ip];
                 list.Add(DateTime.Now);
             }
         }
 
-        public void AddLoginOK(string username, string ip)
+        public void AddLoginOk(string username, string ip)
         {
             if (ip != null)
             {
@@ -39,25 +37,24 @@ namespace Kooboo.Data.Service
                 }
             }
 
-            if (username !=null)
+            if (username != null)
             {
                 var userid = Lib.Security.Hash.ComputeGuidIgnoreCase(username);
-                UserNameFailure.Remove(userid);  
+                UserNameFailure.Remove(userid);
             }
         }
 
-        public void AddUserNameFailure(string UserName)
+        public void AddUserNameFailure(string userName)
         {
-            if (UserName == null)
+            if (userName == null)
             {
                 return;
             }
-            var userid = Lib.Security.Hash.ComputeGuidIgnoreCase(UserName);
+            var userid = Lib.Security.Hash.ComputeGuidIgnoreCase(userName);
 
             if (!UserNameFailure.ContainsKey(userid))
             {
-                var list = new List<DateTime>();
-                list.Add(DateTime.Now);
+                var list = new List<DateTime> { DateTime.Now };
 
                 UserNameFailure[userid] = list;
             }
@@ -68,11 +65,11 @@ namespace Kooboo.Data.Service
             }
         }
 
-        public virtual bool IsIpBlocked(string IP)
+        public virtual bool IsIpBlocked(string ip)
         {
-            if (IPFailure.ContainsKey(IP))
+            if (IPFailure.ContainsKey(ip))
             {
-                var items = IPFailure[IP];
+                var items = IPFailure[ip];
 
                 items.RemoveAll(o => o < DateTime.Now.AddHours(-4));
 
@@ -84,14 +81,13 @@ namespace Kooboo.Data.Service
             return false;
         }
 
-        public bool IsUserNameBlocked(string UserName)
+        public bool IsUserNameBlocked(string userName)
         {
-            if (UserName == null)
+            if (userName == null)
             {
                 return false;
             }
-            var userid = Lib.Security.Hash.ComputeGuidIgnoreCase(UserName);
-
+            var userid = Lib.Security.Hash.ComputeGuidIgnoreCase(userName);
 
             if (UserNameFailure.ContainsKey(userid))
             {
@@ -107,5 +103,4 @@ namespace Kooboo.Data.Service
             return false;
         }
     }
-
 }

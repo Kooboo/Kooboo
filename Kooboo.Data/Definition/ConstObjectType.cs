@@ -1,13 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace Kooboo
 {
     /// <summary>
-    /// the defined object type of entire kooboo system. 
+    /// the defined object type of entire kooboo system.
     /// </summary>
     public class ConstObjectType
     {
@@ -31,8 +28,10 @@ namespace Kooboo
         public const byte ContentFolder = 24;
         public const byte Domain = 25;
         public const byte UserGroup = 26;
-        //public const byte SyncItem = 27; 
+
+        //public const byte SyncItem = 27;
         public const byte ExternalResource = 28;
+
         public const byte Thumbnail = 29;
         public const byte Folder = 30;
         public const byte CssDeclaration = 31;

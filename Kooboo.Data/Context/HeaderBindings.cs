@@ -1,10 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Context
 {
@@ -18,18 +13,18 @@ namespace Kooboo.Data.Context
         private string _content;
 
         /// <summary>
-        ///  The content value. 
+        ///  The content value.
         /// </summary>
         public string Content
         {
-            get { return _content; }
+            get => _content;
             set
             {
                 _content = value;
 
-                if (!string.IsNullOrEmpty(_content) && !this.IsCustomHeader)
-                {                       
-                    this.ValueQuery = new HeaderValueQuery(_content);    
+                if (!string.IsNullOrEmpty(_content) && !IsCustomHeader)
+                {
+                    ValueQuery = new HeaderValueQuery(_content);
                 }
             }
         }
@@ -38,34 +33,18 @@ namespace Kooboo.Data.Context
 
         public string HttpEquiv { get; set; }
 
-        public bool RequireBinding {
-            get
-            {
-                if (this.ValueQuery !=null)
-                {
-                    return this.ValueQuery.RequireRender; 
-                }
-                return false; 
-            }
-        }          
-                                                      
+        public bool RequireBinding => ValueQuery != null && ValueQuery.RequireRender;
+
         public HeaderValueQuery ValueQuery { get; set; }
 
         public string GetContent(RenderContext context)
         {
-            if (this.IsCustomHeader)
+            if (IsCustomHeader)
             {
-                return this.Content;
+                return Content;
             }
-            else
-            {
-                if (this.ValueQuery != null)
-                {
-                    return this.ValueQuery.Render(context);
-                }
-                return null;
-            }
-        }
 
+            return ValueQuery?.Render(context);
+        }
     }
 }

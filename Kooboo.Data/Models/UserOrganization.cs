@@ -1,19 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Models
 {
-  public  class UserOrganization : IGolbalObject
+    public class UserOrganization : IGolbalObject
     {
+        private Guid _id;
 
-        private Guid _id; 
-
-        public Guid Id {
+        public Guid Id
+        {
             get
             {
                 if (_id == default(Guid))
@@ -23,16 +19,12 @@ namespace Kooboo.Data.Models
                         string unique = this.UserId.ToString() + this.OrganizationId.ToString();
                         _id = Lib.Security.Hash.ComputeGuidIgnoreCase(unique);
                     }
-                   
                 }
-                return _id; 
+                return _id;
             }
-            set
-            {
-                _id = value; 
-            }
+            set => _id = value;
         }
-         
+
         public Guid UserId { get; set; }
 
         public Guid OrganizationId { get; set; }
@@ -41,14 +33,7 @@ namespace Kooboo.Data.Models
         {
             string unique = this.UserId.ToString() + this.OrganizationId.ToString();
 
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
-
     }
-
- 
-
 }
-
-
-

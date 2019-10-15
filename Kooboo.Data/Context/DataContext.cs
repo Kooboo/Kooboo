@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using Jint.Native;
 
 namespace Kooboo.Data.Context
 {
@@ -23,26 +24,16 @@ namespace Kooboo.Data.Context
 
         public DataContext(RenderContext context)
         {
-            this.renderContext = context;
+            renderContext = context;
         }
 
-        private LinkedList<IDictionary> stack = new LinkedList<IDictionary>();
+        private LinkedList<IDictionary> _stack = new LinkedList<IDictionary>();
 
         private RepeatCondition _repeatcounter;
         public RepeatCondition RepeatCounter
         {
-            get
-            {
-                if (_repeatcounter == null)
-                {
-                    _repeatcounter = new RepeatCondition();
-                }
-                return _repeatcounter;
-            }
-            set
-            {
-                _repeatcounter = value;
-            }
+            get => _repeatcounter ?? (_repeatcounter = new RepeatCondition());
+            set => _repeatcounter = value;
         }
 
         /// <summary>
@@ -56,7 +47,7 @@ namespace Kooboo.Data.Context
             {
                 List<string> keylist = new List<string>();
 
-                foreach (var dic in this.stack)
+                foreach (var dic in _stack)
                 {
                     foreach (string key in dic.Keys)
                     {
@@ -79,43 +70,43 @@ namespace Kooboo.Data.Context
         /// <summary>
         /// Get Value by object Type, like News.Title. return any datasource that has the object type of news, and the title. 
         /// </summary>
-        /// <param name="FullPropertyName"></param>
+        /// <param name="fullPropertyName"></param>
         /// <returns></returns>
-        public object GetValueByObjectType(string FullPropertyName)
+        public object GetValueByObjectType(string fullPropertyName)
         {
             // We assume that the {} has been taken off. 
             // It must be in the format of News.Title. 
-            string ObjectType = null;
-            string PropertyName = null;
+            string objectType;
+            string propertyName = null;
 
-            int dotindex = FullPropertyName.IndexOf(".");
+            int dotindex = fullPropertyName.IndexOf(".");
             if (dotindex < 1)
             {
-                ObjectType = FullPropertyName.ToLower();
+                objectType = fullPropertyName.ToLower();
             }
             else
             {
-                ObjectType = FullPropertyName.Substring(0, dotindex).ToLower();
-                PropertyName = FullPropertyName.Substring(dotindex + 1);
+                objectType = fullPropertyName.Substring(0, dotindex).ToLower();
+                propertyName = fullPropertyName.Substring(dotindex + 1);
             }
-            foreach (var dictitems in this.stack)
+            foreach (var dictitems in _stack)
             {
                 foreach (var item in dictitems.Values)
                 {
-                    if (item is DataMethodResult)
+                    if (item is DataMethodResult methodResult)
                     {
-                        var result = GetValueFromMethodResultByObjectType(item as DataMethodResult, ObjectType, PropertyName);
+                        var result = GetValueFromMethodResultByObjectType(methodResult, objectType, propertyName);
                         if (result != null)
                         { return result; }
                     }
                     else if (item.GetType().IsClass)
                     {
                         var type = item.GetType();
-                        if (type.Name.ToLower() == ObjectType)
+                        if (type.Name.ToLower() == objectType)
                         {
-                            if (!string.IsNullOrEmpty(PropertyName))
+                            if (!string.IsNullOrEmpty(propertyName))
                             {
-                                var result = getMember(item, PropertyName);
+                                var result = GetMember(item, propertyName);
                                 if (result != null)
                                 {
                                     return result;
@@ -134,14 +125,14 @@ namespace Kooboo.Data.Context
 
         }
 
-        public object GetValueByMemberName(string MemberName)
+        public object GetValueByMemberName(string memberName)
         {
-            if (MemberName.Contains("."))
+            if (memberName.Contains("."))
             {
                 return null;
             }
 
-            foreach (var dictitems in this.stack)
+            foreach (var dictitems in _stack)
             {
                 foreach (var item in dictitems.Values)
                 {
@@ -149,14 +140,13 @@ namespace Kooboo.Data.Context
                     {
                         continue;
                     }
-                    if (item is DataMethodResult)
+                    if (item is DataMethodResult methodresult)
                     {
-                        var methodresult = item as DataMethodResult;
                         var objectvalue = methodresult.Value;
 
                         if (objectvalue != null)
                         {
-                            var result = getMember(objectvalue, MemberName);
+                            var result = GetMember(objectvalue, memberName);
                             if (result != null)
                             {
                                 return result;
@@ -167,7 +157,7 @@ namespace Kooboo.Data.Context
                     else if (item.GetType().IsClass)
                     {
 
-                        var result = getMember(item, MemberName);
+                        var result = GetMember(item, memberName);
                         if (result != null)
                         {
                             return result;
@@ -181,22 +171,22 @@ namespace Kooboo.Data.Context
 
         }
 
-        internal object GetValueFromMethodResultByObjectType(DataMethodResult MethodResult, string ObjectType, string PropertyName)
+        internal object GetValueFromMethodResultByObjectType(DataMethodResult methodResult, string objectType, string propertyName)
         {
-            ObjectType = ObjectType.ToLower();
+            objectType = objectType.ToLower();
             // the closest children first. 
-            if (MethodResult.HasChildren)
+            if (methodResult.HasChildren)
             {
-                foreach (var item in MethodResult.Children)
+                foreach (var item in methodResult.Children)
                 {
-                    var result = GetValueFromMethodResultByObjectType(item.Value, ObjectType, PropertyName);
+                    var result = GetValueFromMethodResultByObjectType(item.Value, objectType, propertyName);
                     if (result != null)
                     { return result; }
                 }
             }
-            if (MethodResult.ObjectType == ObjectType)
+            if (methodResult.ObjectType == objectType)
             {
-                var result = getMember(MethodResult.Value, PropertyName);
+                var result = GetMember(methodResult.Value, propertyName);
                 if (result != null)
                 {
                     return result;
@@ -205,21 +195,21 @@ namespace Kooboo.Data.Context
             return null;
         }
 
-        private object getDictProperty(IDictionary dic, string FullPropertyName)
+        private object GetDictProperty(IDictionary dic, string fullPropertyName)
         {
-            var result = _getDictValueCaseInsensitive(dic, FullPropertyName);
+            var result = _getDictValueCaseInsensitive(dic, fullPropertyName);
             if (result != null)
             {
                 return result;
             }
 
-            int dotindex = FullPropertyName.IndexOf(".");
+            int dotindex = fullPropertyName.IndexOf(".");
 
             if (dotindex > -1)
             {
-                string key = FullPropertyName.Substring(0, dotindex);
+                string key = fullPropertyName.Substring(0, dotindex);
 
-                string subProperty = FullPropertyName.Substring(dotindex + 1);
+                string subProperty = fullPropertyName.Substring(dotindex + 1);
 
                 result = _getDictValueCaseInsensitive(dic, key);
 
@@ -227,29 +217,25 @@ namespace Kooboo.Data.Context
                 {
                     return null;
                 }
-                else
-                {
-                    return getObjectProperty(result, subProperty);
-                }
+
+                return GetObjectProperty(result, subProperty);
 
             }
             return null;
         }
 
-        private object _getDictValueCaseInsensitive(IDictionary dict, string FullKey)
+        private object _getDictValueCaseInsensitive(IDictionary dict, string fullKey)
         {
-            if (FullKey == "")
+            if (fullKey == "")
             {
                 if (dict.Contains(""))
                 {
                     return dict[""];
                 }
-                else
-                {
-                    return null;
-                }
+
+                return null;
             }
-            string lowerkey = FullKey.ToLower();
+            string lowerkey = fullKey.ToLower();
             foreach (var item in dict.Keys)
             {
                 if (item.ToString().ToLower() == lowerkey)
@@ -260,190 +246,135 @@ namespace Kooboo.Data.Context
             return null;
         }
 
-        private object getObjectProperty(object obj, string PropertyName)
+        private object GetObjectProperty(object obj, string propertyName)
         {
-            if (obj is DataMethodResult)
+            if (obj is DataMethodResult methodresult)
             {
-                DataMethodResult methodresult = obj as DataMethodResult;
-
-                object value = getObjectProperty(methodresult.Value, PropertyName);
-
-                if (value == null)
-                {
-                    value = getDictProperty(methodresult.Children, PropertyName);
-                }
+                object value = GetObjectProperty(methodresult.Value, propertyName) ?? GetDictProperty(methodresult.Children, propertyName);
 
                 return value;
             }
-            else
+
+            int dotindex = propertyName.IndexOf(".");
+            if (dotindex > -1)
             {
-                int dotindex = PropertyName.IndexOf(".");
-                if (dotindex > -1)
-                {
-                    string key = PropertyName.Substring(0, dotindex);
-                    string subProperty = PropertyName.Substring(dotindex + 1);
+                string key = propertyName.Substring(0, dotindex);
+                string subProperty = propertyName.Substring(dotindex + 1);
 
-                    object value = getMember(obj, key);
+                object value = GetMember(obj, key);
 
-                    if (value == null)
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        return getObjectProperty(value, subProperty);
-                    }
-                }
-                else
+                if (value == null)
                 {
-                    return getMember(obj, PropertyName);
+                    return null;
                 }
+
+                return GetObjectProperty(value, subProperty);
             }
+
+            return GetMember(obj, propertyName);
         }
 
-        private object getMember(object obj, string PropertyName)
+        private object GetMember(object obj, string propertyName)
         {
-            if (obj is IDynamic)
+            if (obj is IDynamic content1)
             {
-                var content = obj as IDynamic;
-                if (this.renderContext == null)
+                if (renderContext == null)
                 {
-                    return content.GetValue(PropertyName);
+                    return content1.GetValue(propertyName);
                 }
-                else
-                {
-                    return content.GetValue(PropertyName, renderContext);
-                }
+
+                return content1.GetValue(propertyName, renderContext);
             }
-            else if (obj is IDictionary)
+
+            if (obj is IDictionary dict)
             {
-                var dict = obj as IDictionary;
-                if (dict.Contains(PropertyName))
+                if (dict.Contains(propertyName))
                 {
-                    return dict[PropertyName];
+                    return dict[propertyName];
                 }
                 return null;
             }
 
-            else if (obj is JObject)
+            if (obj is JObject jObject)
             {
-                return Lib.Helper.JsonHelper.GetObject(obj as JObject, PropertyName);
-            }
-            else if (obj is XDocument)
-            {
-                return Lib.Helper.XmlHelper.GetMember(obj as XDocument, PropertyName);
-            }
-            else if (obj is XElement)
-            {
-                return Lib.Helper.XmlHelper.GetMember(obj as XElement, PropertyName);
+                return Lib.Helper.JsonHelper.GetObject(jObject, propertyName);
             }
 
-            else if (obj is System.Dynamic.ExpandoObject)
+            if (obj is XDocument document)
             {
-                IDictionary<String, Object> value = obj as IDictionary<String, Object>;
-                if (value != null)
+                return Lib.Helper.XmlHelper.GetMember(document, propertyName);
+            }
+
+            if (obj is XElement element)
+            {
+                return Lib.Helper.XmlHelper.GetMember(element, propertyName);
+            }
+
+            if (obj is System.Dynamic.ExpandoObject)
+            {
+                IDictionary<String, Object> value = (IDictionary<String, Object>) obj;
                 {
-                    object result;
-                    value.TryGetValue(PropertyName, out result);
+                    value.TryGetValue(propertyName, out var result);
                     return result;
                 }
-                return null;
-            }
-            else if (obj is IDictionary<string, object>)
-            {
-                IDictionary<string, object> value = obj as IDictionary<string, object>;
-                if (value != null)
-                {
-                    object result;
-                    value.TryGetValue(PropertyName, out result);
-                    return result;
-                }
-                return null;
             }
 
-            else if (obj is IDictionary<string, string>)
+            if (obj is IDictionary<string, object> value1)
             {
-                IDictionary<string, string> value = obj as IDictionary<string, string>;
-                if (value != null)
                 {
-                    string result;
-                    value.TryGetValue(PropertyName, out result);
+                    value1.TryGetValue(propertyName, out var result);
                     return result;
                 }
-                return null;
             }
-            else if (obj is Jint.Native.JsValue)
-            {
-                var value = obj as Jint.Native.JsValue;
 
-                var jsObject = value.ToObject();
+            if (obj is IDictionary<string, string> value2)
+            {
+                {
+                    value2.TryGetValue(propertyName, out var result);
+                    return result;
+                }
+            }
+
+            if (obj is JsValue value3)
+            {
+                var jsObject = value3.ToObject();
                 if (jsObject == null)
                 {
                     return null;
                 }
 
-                if (jsObject is IDynamic)
+                if (jsObject is IDynamic content)
                 {
-                    var content = jsObject as IDynamic;
-                    if (this.renderContext == null)
-                    {
-                        return content.GetValue(PropertyName);
-                    }
-                    else
-                    {
-                        return content.GetValue(PropertyName, renderContext);
-                    }
+                    return renderContext == null ? content.GetValue(propertyName) : content.GetValue(propertyName, renderContext);
                 }
 
-                else  if (jsObject is IDictionary<string, object>)
+                if (jsObject is IDictionary<string, object> rightvalue1)
                 {
-                    IDictionary<String, Object> rightvalue = jsObject as IDictionary<String, Object>;
-                    if (rightvalue != null)
                     {
-                        object result;
-                        rightvalue.TryGetValue(PropertyName, out result);
-                        return result;
-                    }
-                }
-                else if (jsObject is IDictionary<string, string>)
-                {
-                    IDictionary<String, string> rightvalue = jsObject as IDictionary<String, string>;
-                    if (rightvalue != null)
-                    {
-                        string result;
-                        rightvalue.TryGetValue(PropertyName, out result);
+                        rightvalue1.TryGetValue(propertyName, out var result);
                         return result;
                     }
                 }
 
-                else
+                if (jsObject is IDictionary<string, string> rightvalue)
                 {
-                    if (jsObject is System.Dynamic.ExpandoObject)
                     {
-                        IDictionary<String, Object> expvalue = obj as IDictionary<String, Object>;
-                        if (expvalue != null)
-                        {
-                            object result;
-                            expvalue.TryGetValue(PropertyName, out result);
-                            return result;
-                        }
-                        return null;
-                    }
-                    else
-                    {
-                        return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(jsObject, PropertyName);
+                        rightvalue.TryGetValue(propertyName, out var result);
+                        return result;
                     }
                 }
+
+                return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(jsObject, propertyName);
 
             }
 
-            return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(obj, PropertyName);
+            return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(obj, propertyName);
         }
 
-        internal object GetValueFromStackItem(IDictionary StackItem, GetValueQuery query)
+        internal object GetValueFromStackItem(IDictionary stackItem, GetValueQuery query)
         {
             object result;
-            result = _getDictValueCaseInsensitive(StackItem, query.FullPropertyName);
+            result = _getDictValueCaseInsensitive(stackItem, query.FullPropertyName);
             if (result != null)
             {
                 return result;
@@ -451,20 +382,19 @@ namespace Kooboo.Data.Context
 
             if (query.IsMember)
             {
-                foreach (var item in StackItem.Values)
+                foreach (var item in stackItem.Values)
                 {
                     if (item == null)
                     {
                         continue;
                     }
-                    if (item is DataMethodResult)
+                    if (item is DataMethodResult methodresult)
                     {
-                        var methodresult = item as DataMethodResult;
                         var objectvalue = methodresult.Value;
 
                         if (objectvalue != null)
                         {
-                            result = getMember(objectvalue, query.MemberName);
+                            result = GetMember(objectvalue, query.MemberName);
                             if (result != null)
                             {
                                 return result;
@@ -475,9 +405,8 @@ namespace Kooboo.Data.Context
                     else
                     {
 
-                        if (item is IDictionary)
+                        if (item is IDictionary idic)
                         {
-                            var idic = item as IDictionary;
                             result = _getDictValueCaseInsensitive(idic, query.MemberName);
                             if (result != null)
                             {
@@ -490,7 +419,7 @@ namespace Kooboo.Data.Context
 
                             if (!type.IsValueType || !type.IsPrimitive)
                             {
-                                result = getMember(item, query.MemberName);
+                                result = GetMember(item, query.MemberName);
                                 if (result != null)
                                 {
                                     return result;
@@ -505,25 +434,25 @@ namespace Kooboo.Data.Context
             else
             {
 
-                result = _getDictValueCaseInsensitive(StackItem, query.Key);
+                result = _getDictValueCaseInsensitive(stackItem, query.Key);
 
                 if (result != null)
                 {
-                    return getObjectProperty(result, query.SubProperty);
+                    return GetObjectProperty(result, query.SubProperty);
                 }
 
                 // by object type...
                 string objectType = query.Key.ToLower();
 
-                foreach (var item in StackItem.Values)
+                foreach (var item in stackItem.Values)
                 {
                     if (item == null)
                     {
                         continue;
                     }
-                    if (item is DataMethodResult)
+                    if (item is DataMethodResult methodResult)
                     {
-                        result = GetValueFromMethodResultByObjectType(item as DataMethodResult, query.Key, query.SubProperty);
+                        result = GetValueFromMethodResultByObjectType(methodResult, query.Key, query.SubProperty);
                         if (result != null)
                         { return result; }
                     }
@@ -534,7 +463,7 @@ namespace Kooboo.Data.Context
                         {
                             if (!string.IsNullOrEmpty(query.SubProperty))
                             {
-                                result = getMember(item, query.SubProperty);
+                                result = GetMember(item, query.SubProperty);
                                 if (result != null)
                                 {
                                     return result;
@@ -556,7 +485,7 @@ namespace Kooboo.Data.Context
 
         internal object GetValueFromKScript(GetValueQuery query)
         {
-            var item = this.renderContext.GetItem<Jint.Engine>();
+            var item = renderContext.GetItem<Jint.Engine>();
             if (item == null)
             {
                 var debugger = this.renderContext.GetItem<Jint.Engine>("__kooboodebugger");
@@ -575,16 +504,13 @@ namespace Kooboo.Data.Context
                 {
                     return result;
                 }
-                else
+
+                var debugger = renderContext.GetItem<Jint.Engine>("__kooboodebugger");
+                result = GetValueFromJsEngine(query, debugger);
+
+                if (result != null)
                 {
-                    var debugger = this.renderContext.GetItem<Jint.Engine>("__kooboodebugger");
-                    result = GetValueFromJsEngine(query, debugger);
-
-                    if (result != null)
-                    {
-                        return result;
-                    }
-
+                    return result;
                 }
             }
 
@@ -619,7 +545,7 @@ namespace Kooboo.Data.Context
 
                     foreach (var sub in subs)
                     {
-                        rightvalue = getMember(rightvalue, sub);
+                        rightvalue = GetMember(rightvalue, sub);
                         if (rightvalue == null)
                         {
                             break;
@@ -631,7 +557,7 @@ namespace Kooboo.Data.Context
                         if (rightvalue is Jint.Native.JsValue)
                         {
                             var jsvalue = rightvalue as Jint.Native.JsValue;
-                            if (jsvalue != null && jsvalue.Type != Jint.Runtime.Types.Undefined)
+                            if (jsvalue.Type != Jint.Runtime.Types.Undefined)
                             {
                                 return jsvalue.ToObject();
                             }
@@ -649,17 +575,17 @@ namespace Kooboo.Data.Context
 
         }
 
-        public object GetValue(string FullPropertyName)
+        public object GetValue(string fullPropertyName)
         {
-            var query = new GetValueQuery(FullPropertyName);
+            var query = new GetValueQuery(fullPropertyName);
             return GetValueByQuery(query);
         }
 
         public object GetValueByQuery(GetValueQuery query)
         {
-            object result = null;
+            object result;
 
-            foreach (var item in this.stack)
+            foreach (var item in _stack)
             {
                 result = GetValueFromStackItem(item, query);
                 if (result != null)
@@ -669,7 +595,7 @@ namespace Kooboo.Data.Context
             }
 
             // Get Value from KScript variables... 
-            if (hasvalidchar(query))
+            if (Hasvalidchar(query))
             {
                 var jsresult  =  GetValueFromKScript(query);
                 if (jsresult !=null)
@@ -685,32 +611,11 @@ namespace Kooboo.Data.Context
             return null;
         }
 
-        private bool hasvalidchar(GetValueQuery query)
+        private bool Hasvalidchar(GetValueQuery query)
         {
-            string checkkey = null;
-            if (query.IsMember)
-            {
-                checkkey = query.MemberName;
-            }
-            else
-            {
-                checkkey = query.Key;
-            }
+            var checkkey = query.IsMember ? query.MemberName : query.Key;
 
-            if (!string.IsNullOrEmpty(checkkey))
-            {
-                for (int i = 0; i < checkkey.Length; i++)
-                {
-                    var currentchar = checkkey[i];
-                    if (!Lib.Helper.CharHelper.isAlphanumeric(currentchar) && currentchar != '_')
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            return false;
+            return !string.IsNullOrEmpty(checkkey) && checkkey.All(currentchar => Lib.Helper.CharHelper.isAlphanumeric(currentchar) || currentchar == '_');
         }
 
         public void Push(string key, object value)
@@ -727,15 +632,15 @@ namespace Kooboo.Data.Context
                     var fuck = item;
                 }
             }
-            stack.AddFirst(data);
+            _stack.AddFirst(data);
             OnDataPush?.Invoke(data);
         }
 
         public void Pop()
         {
-            if (stack.Count > 0)
+            if (_stack.Count > 0)
             {
-                stack.RemoveFirst();
+                _stack.RemoveFirst();
             }
         }
 
@@ -744,36 +649,36 @@ namespace Kooboo.Data.Context
 
     public class GetValueQuery
     {
-        public GetValueQuery(string FullPropertyName)
+        public GetValueQuery(string fullPropertyName)
         {
-            if (FullPropertyName.IndexOf("{") > -1 && FullPropertyName.IndexOf("}") > -1)
+            if (fullPropertyName.IndexOf("{") > -1 && fullPropertyName.IndexOf("}") > -1)
             {
-                int start = FullPropertyName.IndexOf("{");
-                int end = FullPropertyName.LastIndexOf("}");
+                int start = fullPropertyName.IndexOf("{");
+                int end = fullPropertyName.LastIndexOf("}");
 
-                this.FullPropertyName = FullPropertyName.Substring(start + 1, end - start - 1);
+                FullPropertyName = fullPropertyName.Substring(start + 1, end - start - 1);
 
-                if (start > 0 || end < FullPropertyName.Length - 1)
+                if (start > 0 || end < fullPropertyName.Length - 1)
                 {
-                    this.PartialMerge = true;
-                    this.OriginalMergeField = "{" + this.FullPropertyName + "}";
+                    PartialMerge = true;
+                    OriginalMergeField = "{" + FullPropertyName + "}";
                 }
             }
             else
             {
-                this.FullPropertyName = FullPropertyName;
+                FullPropertyName = fullPropertyName;
             }
 
-            int dotindex = this.FullPropertyName.IndexOf(".");
+            int dotindex = FullPropertyName.IndexOf(".");
             if (dotindex < 1)
             {
-                this.IsMember = true;
-                this.MemberName = this.FullPropertyName;
+                IsMember = true;
+                MemberName = FullPropertyName;
             }
             else
             {
-                this.Key = this.FullPropertyName.Substring(0, dotindex);
-                this.SubProperty = this.FullPropertyName.Substring(dotindex + 1);
+                Key = FullPropertyName.Substring(0, dotindex);
+                SubProperty = FullPropertyName.Substring(dotindex + 1);
             }
 
         }
@@ -797,30 +702,20 @@ namespace Kooboo.Data.Context
 
         public Stack<RepeaterCounter> stack = new Stack<RepeaterCounter>();
 
-        public void Push(int Total)
+        public void Push(int total)
         {
-            RepeaterCounter counter = new RepeaterCounter();
-            counter.Total = Total;
-            counter.Current = 0;
+            RepeaterCounter counter = new RepeaterCounter {Total = total, Current = 0};
 
-            this.stack.Push(counter);
+            stack.Push(counter);
         }
 
         public void Pop()
         {
-            this.stack.Pop();
+            stack.Pop();
         }
 
 
-        public RepeaterCounter CurrentCounter
-        {
-            get
-            {
-                if (this.stack.Count == 0)
-                { return new RepeaterCounter(); }
-                return this.stack.First();
-            }
-        }
+        public RepeaterCounter CurrentCounter => stack.Count == 0 ? new RepeaterCounter() : stack.First();
 
 
         public bool Check(string condition)
@@ -833,47 +728,38 @@ namespace Kooboo.Data.Context
 
             string lower = condition.ToLower().Trim();
 
-            if (lower == "odd")
+            switch (lower)
             {
-                return IsOdd(this.CurrentCounter.Current);
-            }
-            else if (lower == "even")
-            {
-                return !IsOdd(this.CurrentCounter.Current);
-            }
-            else if (lower == "first")
-            {
-                return this.CurrentCounter.Current == 1;
-            }
-           else if (lower == "!first" || lower == "nonfirst")
-            {
-                return this.CurrentCounter.Current != 1; 
-            }
-            else if (lower == "last")
-            {
-                return this.CurrentCounter.Current == this.CurrentCounter.Total;
-            }
-            else if (lower == "!last" || lower == "nonlast")
-            {
-                return this.CurrentCounter.Current != this.CurrentCounter.Total;
-            }
-            else
-            {
-                int counter;
-
-                if (int.TryParse(lower, out counter))
+                case "odd":
+                    return IsOdd(CurrentCounter.Current);
+                case "even":
+                    return !IsOdd(CurrentCounter.Current);
+                case "first":
+                    return CurrentCounter.Current == 1;
+                case "!first":
+                case "nonfirst":
+                    return CurrentCounter.Current != 1;
+                case "last":
+                    return CurrentCounter.Current == CurrentCounter.Total;
+                case "!last":
+                case "nonlast":
+                    return CurrentCounter.Current != CurrentCounter.Total;
+                default:
                 {
-                    return counter == this.CurrentCounter.Current;
-                }
+                    if (int.TryParse(lower, out var counter))
+                    {
+                        return counter == CurrentCounter.Current;
+                    }
 
-                var nth = GetNth(lower);
-                if (nth != null)
-                {
-                    var left = this.CurrentCounter.Current % nth.N;
-                    return left == nth.Th;
-                }
+                    var nth = GetNth(lower);
+                    if (nth != null)
+                    {
+                        var left = CurrentCounter.Current % nth.N;
+                        return left == nth.Th;
+                    }
 
-                return false;
+                    return false;
+                }
             }
         }
 
@@ -913,19 +799,16 @@ namespace Kooboo.Data.Context
 
             Nth result = new Nth();
 
-            int beginint = 0;
-            if (!int.TryParse(begin.Trim(), out beginint))
+            if (!int.TryParse(begin.Trim(), out var beginint))
             {
                 return null;
             }
 
             result.N = beginint;
 
-            int thint = 0;
-
             if (!string.IsNullOrWhiteSpace(end))
             {
-                int.TryParse(end.Trim(), out thint);
+                int.TryParse(end.Trim(), out var thint);
                 result.Th = thint;
             }
             return result;

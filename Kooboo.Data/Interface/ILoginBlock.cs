@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kooboo.Data.Interface
+﻿namespace Kooboo.Data.Interface
 {
     public interface ILoginBlock
     {
-        bool IsIpBlocked(string IP); 
+        bool IsIpBlocked(string IP);
 
         void AddIpFailure(string IP);
 
-        void AddUserNameFailure(string UserName);
+        void AddUserNameFailure(string userName);
 
         bool IsUserNameBlocked(string name);
 
-        void AddLoginOK(string username, string ip); 
+        void AddLoginOk(string username, string ip);
     }
-} 
+}

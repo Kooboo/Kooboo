@@ -11,30 +11,30 @@ namespace Kooboo.Web.Backend.Events.Hanlders
         {
             if (theEvent.ChangeType == ChangeType.Add)
             {
-                if (theEvent.binding.Port > 0)
+                if (theEvent.Binding.Port > 0)
                 {
-                    SystemStart.StartNewWebServer(theEvent.binding.Port);
+                    SystemStart.StartNewWebServer(theEvent.Binding.Port);
                 }
             }
             else if (theEvent.ChangeType == ChangeType.Update)
             {
-                if (theEvent.OldBinding.Port != theEvent.binding.Port)
+                if (theEvent.OldBinding.Port != theEvent.Binding.Port)
                 {
                     if (theEvent.OldBinding.Port > 0)
                     {
                         //SystemStart.Stop(theEvent.OldBinding.Port);
                     }
 
-                    if (theEvent.binding.Port > 0)
+                    if (theEvent.Binding.Port > 0)
                     {
-                        SystemStart.StartNewWebServer(theEvent.binding.Port);
+                        SystemStart.StartNewWebServer(theEvent.Binding.Port);
                     }
                 }
             }
             else
             {
                 // it is a deletion.
-                if (theEvent.binding.Port > 0)
+                if (theEvent.Binding.Port > 0)
                 {
                     // SystemStart.Stop(theEvent.binding.Port);
                 }

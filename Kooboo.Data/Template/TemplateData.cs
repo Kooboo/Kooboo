@@ -19,7 +19,7 @@ namespace Kooboo.Data.Template
                 }
                 return _bodyhash; 
             }
-            set { _bodyhash = value;  }
+            set => _bodyhash = value;
         }
 
         public string Name { get; set; }
@@ -38,13 +38,7 @@ namespace Kooboo.Data.Template
 
         public string Currency { get; set; } = "CNY";
 
-        public string Symbol
-        {
-            get
-            {
-                return Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Currency);
-            }
-        }
+        public string Symbol => Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Currency);
 
         public List<TemplateUserImages> Images { get; set; } = new List<TemplateUserImages>();
 
@@ -86,20 +80,14 @@ namespace Kooboo.Data.Template
                 }
                 return _bodyhash;
             }
-            set { _bodyhash = value; }
+            set => _bodyhash = value;
         }
 
         public decimal Price { get; set; } = 0;
 
         public string Currency { get; set; } = "CNY";
 
-        public string Symbol
-        {
-            get
-            {
-                return Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Currency);
-            }
-        }
+        public string Symbol => Kooboo.Lib.Helper.CurrencyHelper.GetCurrencySymbol(Currency);
     }
 
     public class TemplateUserImages

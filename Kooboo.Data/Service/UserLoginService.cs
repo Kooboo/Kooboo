@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
 using Kooboo.IndexedDB.Dynamic;
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 
 namespace Kooboo.Data.Service
 {
@@ -20,18 +20,18 @@ namespace Kooboo.Data.Service
 
             LastPath = GlobalDatabase.GetOrCreateTable("userpath", setting);
 
-            IgnorePath = new List<string>();
-            IgnorePath.Add("/_admin/account");
-            IgnorePath.Add("/_admin/scripts");
-            IgnorePath.Add("/_admin/styles");
-            IgnorePath.Add("/_admin/images");
-            IgnorePath.Add("/_admin/help");
-            IgnorePath.Add("_ddmin/sites/edit");
-
+            IgnorePath = new List<string>
+            {
+                "/_admin/account",
+                "/_admin/scripts",
+                "/_admin/styles",
+                "/_admin/images",
+                "/_admin/help",
+                "_ddmin/sites/edit"
+            };
         }
 
         public static Database GlobalDatabase { get; set; }
-
 
         public static Table LastPath { get; set; }
 
@@ -40,31 +40,20 @@ namespace Kooboo.Data.Service
         public static void UpdateLastPath(BackendLog log)
         {
             if (log == null || log.UserId == default(Guid) || log.Url == null)
-            {
                 return;
-            }
 
             if (log.Url.Length > 700)
-            {
-                return;  // too long. 
-            }
+                return; // too long.
 
             var lower = log.Url.ToLower();
 
             if (lower.StartsWith("/_admin"))
             {
-                foreach (var item in IgnorePath)
-                {
-                    if (lower.StartsWith(item))
-                    {
-                        return;
-                    }
-                }
+                if (IgnorePath.Any(item => lower.StartsWith(item)))
+                    return;
 
                 if (lower.EndsWith(".html") || lower.EndsWith(".js") || lower.EndsWith(".css") || lower.EndsWith(".png"))
-                {
                     return;
-                }
 
                 var find = LastPath.Get(log.UserId);
                 if (find != null && find.ContainsKey("_id"))
@@ -73,21 +62,20 @@ namespace Kooboo.Data.Service
                 }
                 else
                 {
-                    Dictionary<string, object> data = new Dictionary<string, object>();
-                    data["_id"] = log.UserId;
-                    data["Path"] = log.Url;
+                    Dictionary<string, object> data = new Dictionary<string, object>
+                    {
+                        ["_id"] = log.UserId, ["Path"] = log.Url
+                    };
                     LastPath.Add(data);
                 }
 
                 LastPath.Close();
-
             }
-
         }
 
-        public static string GetLastPath(Guid UserId)
+        public static string GetLastPath(Guid userId)
         {
-            var find = LastPath.Get(UserId);
+            var find = LastPath.Get(userId);
             if (find != null && find.ContainsKey("Path"))
             {
                 var obj = find["Path"];
@@ -144,15 +132,7 @@ namespace Kooboo.Data.Service
             if (index > -1)
             {
                 var andindex = path.IndexOf("&", index);
-                if (andindex > -1)
-                {
-                    siteid = path.Substring(index + 7, andindex - index - 7);
-                }
-                else
-
-                {
-                    siteid = path.Substring(index + 7);
-                }
+                siteid = andindex > -1 ? path.Substring(index + 7, andindex - index - 7) : path.Substring(index + 7);
             }
 
             if (siteid != null)
@@ -193,28 +173,20 @@ namespace Kooboo.Data.Service
             {
                 user.UserName = AppSettings.DefaultUser.UserName;
                 user.Password = AppSettings.DefaultUser.Password;
-
             }
             user.CurrentOrgName = user.UserName;
             user.CurrentOrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(user.UserName);
 
-            if (!string.IsNullOrWhiteSpace(AppSettings.CmsLang))
-            {
-                user.Language = AppSettings.CmsLang;
-            }
-            else
-            {
-                user.Language = "en";
-            }
+            user.Language = !string.IsNullOrWhiteSpace(AppSettings.CmsLang) ? AppSettings.CmsLang : "en";
 
-            user.PasswordHash = System.Guid.NewGuid();  // Fake. 
+            user.PasswordHash = System.Guid.NewGuid();  // Fake.
 
             return user;
         }
 
-        public static User GetDefaultUser(string NameOrId)
+        public static User GetDefaultUser(string nameOrId)
         {
-            if (NameOrId == null)
+            if (nameOrId == null)
             {
                 return null;
             }
@@ -222,9 +194,9 @@ namespace Kooboo.Data.Service
             if (Data.AppSettings.DefaultUser != null)
             {
                 Guid userid = default(Guid);
-                if (!System.Guid.TryParse(NameOrId, out userid))
+                if (!System.Guid.TryParse(nameOrId, out userid))
                 {
-                    userid = Lib.Security.Hash.ComputeGuidIgnoreCase(NameOrId);
+                    userid = Lib.Security.Hash.ComputeGuidIgnoreCase(nameOrId);
                 }
 
                 if (userid == Data.AppSettings.DefaultUser.Id)
@@ -252,59 +224,51 @@ namespace Kooboo.Data.Service
                 return true;
             }
 
-            Guid UserId = Lib.Security.Hash.ComputeGuidIgnoreCase(username);
+            Guid userId = Lib.Security.Hash.ComputeGuidIgnoreCase(username);
 
-            return IsAllow(UserId); 
+            return IsAllow(userId);
         }
 
-        public static bool IsAllow(Guid UserId)
+        public static bool IsAllow(Guid userId)
         {
             if (Data.AppSettings.AllowUsers == null || !Data.AppSettings.AllowUsers.Any())
             {
                 return true;
             }
 
-            if (Data.AppSettings.AllowUsers.Contains(UserId))
+            if (Data.AppSettings.AllowUsers.Contains(userId))
             {
                 return true;
             }
-             
+
             if (Data.AppSettings.DefaultUser != null)
             {
                 var defaultid = Lib.Security.Hash.ComputeGuidIgnoreCase(Data.AppSettings.DefaultUser.UserName);
-                if (defaultid == UserId)
+                if (defaultid == userId)
                 {
                     return true;
                 }
-
             }
 
             return false;
         }
 
-
         public static string GetUserPassword(User user)
         {
             if (user == null)
             {
-                return null; 
+                return null;
             }
             if (!string.IsNullOrWhiteSpace(user.Password))
             {
-                var hash = Lib.Helper.IDHelper.ParseKey(user.Password); 
+                var hash = Lib.Helper.IDHelper.ParseKey(user.Password);
                 if (hash != default(Guid))
                 {
-                    return user.Password;  
+                    return user.Password;
                 }
             }
 
-            if (user.PasswordHash != default(Guid))
-            {
-                return user.PasswordHash.ToString(); 
-            }
-            return null; 
+            return user.PasswordHash != default(Guid) ? user.PasswordHash.ToString() : null;
         }
-
-
     }
 }

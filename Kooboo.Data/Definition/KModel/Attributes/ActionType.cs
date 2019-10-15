@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Data.Definition.KModel.Attributes
-{ 
+{
     [AttributeUsage(AttributeTargets.Property)]
     public class ActionType : Attribute, IMetaAttribute
     {
@@ -11,7 +9,7 @@ namespace Kooboo.Data.Definition.KModel.Attributes
 
         public ActionType(EnumActionType action)
         {
-            this.actionType = action; 
+            actionType = action;
         }
 
         public bool IsHeader => false;
@@ -20,7 +18,7 @@ namespace Kooboo.Data.Definition.KModel.Attributes
 
         public string Value()
         {
-            return this.actionType.ToString(); 
+            return actionType.ToString();
         }
     }
 }

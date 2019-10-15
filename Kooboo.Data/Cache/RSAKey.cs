@@ -1,47 +1,44 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Cache
 {
-   public static class RSAKey
-    { 
-
+    public static class RSAKey
+    {
         private static string _publickey;
-        public static DateTime _lastModified = DateTime.Now; 
+        public static DateTime LastModified = DateTime.Now;
+
         public static string PublicKey
         {
-           get
+            get
             {
                 if (string.IsNullOrEmpty(_publickey))
                 {
-                    _publickey = _GetPublicKey();  
+                    _publickey = _GetPublicKey();
                 }
                 else
                 {
-                    var span = DateTime.Now - _lastModified;
+                    var span = DateTime.Now - LastModified;
                     if (span.TotalHours > 24)
                     {
-                        _publickey = _GetPublicKey(); 
-                    } 
-                }  
-                return _publickey; 
-            } 
+                        _publickey = _GetPublicKey();
+                    }
+                }
+                return _publickey;
+            }
         }
 
         internal static string _GetPublicKey()
         {
-            // TODO: get from remote server... 
+            // TODO: get from remote server...
             return @"<RSAKeyValue><Modulus>lz3PVfCAOcWx89KbDBABjF1YZZFHs+eEHmh9ElkBHkS2kt1R1s5h6fIAq9bj/LABXK49QfeirihMPMjW6zNtuBxFt2WsrSuwMbiCG7eNm7uhbYVNifevf+nLjFXo9kYcX6+CKDzID7AutSQ6OMjCC4khh/q8M9j0abJpoMJfAy3gnvAcPdfTSQii7OsYi9YbMGqV965dQWj+JdfgCzkSvoLzKaHl+L9Ur5p0C5zcW5eBBfgUfRXi9ukQ8UaFw1z5zsAyyi+13MGeliqV49vMtDwmAJ4113jXTcx1xMCzyx+GoXN31YaMKbCf4x/6XExfV4kJvJSeaZjLRn/zwto3Kw==</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
         }
-         
+
         public static List<string> PrivateKeys
         {
-            // TODO: this should update from local setting. 
+            // TODO: this should update from local setting.
             get
             {
                 List<string> result = new List<string>();
@@ -51,9 +48,7 @@ namespace Kooboo.Data.Cache
                 result.Add(last);
 
                 return result;
-
             }
         }
-
     }
 }

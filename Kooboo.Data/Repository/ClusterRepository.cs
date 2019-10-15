@@ -1,9 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Data.Repository
 {
@@ -22,15 +22,15 @@ namespace Kooboo.Data.Repository
             }
         }
 
-        private object _locker = new object();
+        private static object _locker = new object();
 
-        internal Dictionary<Guid, List<Cluster>> cache = new Dictionary<Guid, List<Cluster>>();
+        internal Dictionary<Guid, List<Cluster>> Cache = new Dictionary<Guid, List<Cluster>>();
 
         internal void AddUpdateCache(Cluster newCluster)
         {
-            if (cache.ContainsKey(newCluster.WebSiteId))
+            if (Cache.ContainsKey(newCluster.WebSiteId))
             {
-                var list = cache[newCluster.WebSiteId];
+                var list = Cache[newCluster.WebSiteId];
 
                 for (int i = 0; i < list.Count; i++)
                 {
@@ -45,46 +45,35 @@ namespace Kooboo.Data.Repository
             }
             else
             {
-                var currentresult = this.Query.Where(o => o.WebSiteId == newCluster.WebSiteId).SelectAll(); 
-
-                if (currentresult == null)
-                {
-                    currentresult = new List<Cluster>(); 
-                }
+                var currentresult = this.Query.Where(o => o.WebSiteId == newCluster.WebSiteId).SelectAll() ?? new List<Cluster>();
 
                 currentresult.Add(newCluster);
-                cache[newCluster.WebSiteId] = currentresult;
+                Cache[newCluster.WebSiteId] = currentresult;
             }
         }
 
         public List<Cluster> ListByWebSite(Guid websiteid)
         {
-           lock(_locker)
+            lock (_locker)
             {
-                if (this.cache.ContainsKey(websiteid))
+                if (this.Cache.ContainsKey(websiteid))
                 {
-                    return this.cache[websiteid]; 
+                    return this.Cache[websiteid];
                 }
-                else
-                {
-                    var result = this.Query.Where(o => o.WebSiteId == websiteid).SelectAll();
-                    if (result == null)
-                    {
-                        result = new List<Cluster>(); 
-                    }
-                    this.cache[websiteid] = result; 
-                    return result; 
-                }  
+
+                var result = this.Query.Where(o => o.WebSiteId == websiteid).SelectAll() ?? new List<Cluster>();
+                this.Cache[websiteid] = result;
+                return result;
             }
         }
 
-        internal void Removecache(Guid WebSiteId, Guid CluserId)
+        internal void Removecache(Guid webSiteId, Guid cluserId)
         {
-            if (cache.ContainsKey(WebSiteId))
+            if (Cache.ContainsKey(webSiteId))
             {
-                var list = cache[WebSiteId];
+                var list = Cache[webSiteId];
 
-                var item = list.Find(o => o.Id == CluserId);
+                var item = list.Find(o => o.Id == cluserId);
                 if (item != null)
                 {
                     list.Remove(item);
@@ -101,22 +90,20 @@ namespace Kooboo.Data.Repository
 
                 Store.add(value.Id, value);
                 RaiseEvent(value, ChangeType.Add, default(Cluster));
-                  
+
                 Store.Close();
                 return true;
             }
-            else
-            {
-                if (!IsEqual(old, value))
-                {
-                    AddUpdateCache(value);
 
-                    Store.update(value.Id, value);
-                    RaiseEvent(value, ChangeType.Update, old);
-                     
-                    Store.Close();
-                    return true;
-                }
+            if (!IsEqual(old, value))
+            {
+                AddUpdateCache(value);
+
+                Store.update(value.Id, value);
+                RaiseEvent(value, ChangeType.Update, old);
+
+                Store.Close();
+                return true;
             }
 
             Store.Close();
@@ -129,10 +116,10 @@ namespace Kooboo.Data.Repository
             Removecache(value.WebSiteId, value.Id);
         }
 
-        public void Delete(Guid WebSiteId, Guid ClusterId)
+        public void Delete(Guid webSiteId, Guid clusterId)
         {
-            base.Delete(ClusterId);
-            Removecache(WebSiteId, ClusterId);
+            base.Delete(clusterId);
+            Removecache(webSiteId, clusterId);
         }
 
         public override void Delete(Guid id)

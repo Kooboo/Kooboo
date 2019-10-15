@@ -1,18 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Hosts;
+using Kooboo.Data.Models;
+using Kooboo.Extensions;
+using Kooboo.IndexedDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.IndexedDB;
-using Kooboo.Data.Models;
-using Kooboo.Extensions;
-using Kooboo.Data.Hosts;
 
 namespace Kooboo.Data.Repository
 {
     public class BindingRepository : RepositoryBase<Binding>
     {
-        private readonly object writelock = new object();
+        private static readonly object writelock = new object();
 
         protected override ObjectStoreParameters StoreParameters
         {
@@ -28,8 +28,8 @@ namespace Kooboo.Data.Repository
             }
         }
 
-
         private Dictionary<Guid, Binding> _localcache;
+
         public Dictionary<Guid, Binding> LocalCache
         {
             get
@@ -132,20 +132,18 @@ namespace Kooboo.Data.Repository
             {
                 throw new Exception("binding already exists");
             }
-            else
-            {
-                AddOrUpdate(binding);
-            }
+
+            AddOrUpdate(binding);
         }
 
-        public void AddOrUpdate(string FullHostName, Guid WebSiteId, Guid OrgId)
+        public void AddOrUpdate(string fullHostName, Guid webSiteId, Guid orgId)
         {
-            if (FullHostName.StartsWith("."))
+            if (fullHostName.StartsWith("."))
             {
-                FullHostName = FullHostName.Substring(1);
+                fullHostName = fullHostName.Substring(1);
             }
-            var domainresult = Kooboo.Data.Helper.DomainHelper.Parse(FullHostName);
-            AddOrUpdate(domainresult.Domain, domainresult.SubDomain, WebSiteId, OrgId);
+            var domainresult = Kooboo.Data.Helper.DomainHelper.Parse(fullHostName);
+            AddOrUpdate(domainresult.Domain, domainresult.SubDomain, webSiteId, orgId);
         }
 
         public List<Binding> GetByWebSite(Guid webSiteId)
@@ -158,8 +156,7 @@ namespace Kooboo.Data.Repository
 
         public List<Binding> GetByDomain(string topDomain)
         {
-            Guid domainid;
-            if (!Guid.TryParse(topDomain, out domainid))
+            if (!Guid.TryParse(topDomain, out var domainid))
             {
                 domainid = IDGenerator.GetDomainId(topDomain);
             }
@@ -172,7 +169,7 @@ namespace Kooboo.Data.Repository
         }
 
         /// <summary>
-        /// Get all the bindings that belong to the full domains. 
+        /// Get all the bindings that belong to the full domains.
         /// </summary>
         /// <param name="fullDomain"></param>
         /// <returns></returns>
@@ -199,15 +196,9 @@ namespace Kooboo.Data.Repository
 
             var allresults = GetByDomain(domainresult.Domain);
 
-            foreach (var item in allresults)
-            {
-                if (Lib.Helper.StringHelper.IsSameValue(item.SubDomain, domainresult.SubDomain))
-                {
-                    result.Add(item);
-                }
-            }
+            result.AddRange(allresults.Where(item => Lib.Helper.StringHelper.IsSameValue(item.SubDomain, domainresult.SubDomain)));
 
-            if (result.Count() == 0 && allresults.Count() > 0 && string.IsNullOrEmpty(domainresult.SubDomain))
+            if (result.Count == 0 && allresults.Count > 0 && string.IsNullOrEmpty(domainresult.SubDomain))
             {
                 foreach (var item in allresults)
                 {
@@ -238,7 +229,6 @@ namespace Kooboo.Data.Repository
                         WindowsHost.AddOrUpdate(fullname, "127.0.0.1");
                     }
                 }
-
             }
 
             WindowsHost.AddOrUpdate(AppSettings.DefaultLocalHost, "127.0.0.1");

@@ -1,21 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 
 namespace Kooboo.Data.Models
 {
-   public class ServerSetting
-    {  
+    public class ServerSetting
+    {
         public string HostDomain { get; set; }
 
-        public int SmtpPort { get; set; } = 587; 
+        public int SmtpPort { get; set; } = 587;
 
         public int OnlineDataCenterId { get; set; }
 
         public int ServerId { get; set; }
 
-        // in case that this is a an Dns server. 
+        // in case that this is a an Dns server.
         public string NameServer { get; set; }
 
         public string ServerName { get; set; }
@@ -24,38 +23,23 @@ namespace Kooboo.Data.Models
 
         public string ThemeDomain { get; set; }
 
-        private List<ReverseDns> _reversedns; 
+        private List<ReverseDns> _reversedns;
 
-        public List<ReverseDns> ReverseDns {
-            get
-            {
-                if (_reversedns == null)
-                {
-                    _reversedns = new List<Models.ReverseDns>();
-                }
-                return _reversedns; 
-            }
-            set { _reversedns = value;  }
+        public List<ReverseDns> ReverseDns
+        {
+            get => _reversedns ?? (_reversedns = new List<Models.ReverseDns>());
+            set => _reversedns = value;
         }
 
-        private HashSet<string> _ips; 
+        private HashSet<string> _ips;
 
-        public HashSet<string> Ips {
-            get
-            {
-                if (_ips == null)
-                {
-                    _ips = new HashSet<string>(); 
-                }
-                return _ips; 
-            }
-            set
-            {
-                _ips = value; 
-            }
-        } 
+        public HashSet<string> Ips
+        {
+            get => _ips ?? (_ips = new HashSet<string>());
+            set => _ips = value;
+        }
 
-        // Dns server used for people to set their own domain. 
+        // Dns server used for people to set their own domain.
         public string Ns1 { get; set; }
 
         public string Ns2 { get; set; }

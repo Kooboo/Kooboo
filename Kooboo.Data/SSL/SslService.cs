@@ -2,59 +2,51 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Kooboo.Data.SSL
 {
-
     public static class SslService
     {
         static SslService()
         {
-            tokenurl = "http://www.sslgenerator.com";
+            Tokenurl = "http://www.sslgenerator.com";
         }
 
-        public static string tokenurl { get; set; }
+        public static string Tokenurl { get; set; }
 
-
-        // this is used to self verify token. 
+        // this is used to self verify token.
         public static bool Verify(string domain, string code)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("domain", domain);
-            para.Add("code", code);
-            string vefiryurl = tokenurl + "/_api/validator/SelfCheck";
+            Dictionary<string, string> para = new Dictionary<string, string> {{"domain", domain}, {"code", code}};
+            string vefiryurl = Tokenurl + "/_api/validator/SelfCheck";
             return Lib.Helper.HttpHelper.TryGet<bool>(vefiryurl, para);
         }
 
-
         public static bool EnsureCheck(string domain)
         {
-            string vefiryurl = tokenurl + "/_api/validator/ensurecheck?domain=" + domain;
+            string vefiryurl = Tokenurl + "/_api/validator/ensurecheck?domain=" + domain;
             return Lib.Helper.HttpHelper.TryGet<bool>(vefiryurl);
         }
 
         public static string GetToken(string domain)
         {
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("domain", domain);
-            var url = tokenurl + "/_api/validator/HttpToken";
+            Dictionary<string, string> para = new Dictionary<string, string> {{"domain", domain}};
+            var url = Tokenurl + "/_api/validator/HttpToken";
             return Lib.Helper.HttpHelper.TryGet<string>(url, para);
         }
 
-        public static void SetSsl(string domain, Guid Organizationid)
+        public static void SetSsl(string domain, Guid organizationid)
         {
-            // check if exists. 
+            // check if exists.
             var cert = Kooboo.Data.GlobalDb.SslCertificate.GetByDomain(domain);
             if (cert != null && cert.Expiration > DateTime.Now.AddDays(10))
             {
                 return;
             }
 
-            Dictionary<string, string> para = new Dictionary<string, string>();
-            para.Add("domain", domain);
+            Dictionary<string, string> para = new Dictionary<string, string> {{"domain", domain}};
 
-            string url = tokenurl + "/_api/SSL/GetPfx";
+            string url = Tokenurl + "/_api/SSL/GetPfx";
 
             try
             {
@@ -63,7 +55,7 @@ namespace Kooboo.Data.SSL
                 if (certbytes != null && certbytes.Validate())
                 {
                     var orgbytes = Convert.FromBase64String(certbytes.Base64String);
-                    Kooboo.Data.GlobalDb.SslCertificate.AddCert(Organizationid, domain, orgbytes);
+                    Kooboo.Data.GlobalDb.SslCertificate.AddCert(organizationid, domain, orgbytes);
                 }
                 else
                 {
@@ -74,19 +66,16 @@ namespace Kooboo.Data.SSL
             {
                 Kooboo.Data.Log.Instance.Exception.Write(ex.Message + ex.StackTrace);
             }
-
-
         }
 
-
-        public static void AddSslMiddleWare(List<IKoobooMiddleWare> MiddleWareList)
+        public static void AddSslMiddleWare(List<IKoobooMiddleWare> middleWareList)
         {
-            if (MiddleWareList == null)
+            if (middleWareList == null)
             {
                 return;
             }
 
-            int len = MiddleWareList.Count();
+            int len = middleWareList.Count();
 
             var pos = len - 1;
             if (pos <= 0)
@@ -94,9 +83,8 @@ namespace Kooboo.Data.SSL
                 pos = 0;
             }
 
-            MiddleWareList.Insert(pos, new SslCertMiddleWare());
+            middleWareList.Insert(pos, new SslCertMiddleWare());
         }
-
 
         public static void EnsureServerHostDomain()
         {
@@ -118,5 +106,4 @@ namespace Kooboo.Data.SSL
             }
         }
     }
-
 }

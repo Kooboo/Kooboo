@@ -1,16 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Models
 {
     public class IPCity
     {
-        public string strBegin { get; set; }
+        public string StrBegin { get; set; }
         public string StrEnd { get; set; }
         public int Begin { get; set; } = int.MinValue;
 

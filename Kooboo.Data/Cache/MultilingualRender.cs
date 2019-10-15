@@ -14,24 +14,24 @@ namespace Kooboo.Data.Cache
 
         private static object _htmlcachelock = new object(); 
 
-        private static Dictionary<Guid, List<LanguageTask>> Cache = new Dictionary<Guid, List<LanguageTask>>();
+        private static Dictionary<Guid, List<LanguageTask>> _cache = new Dictionary<Guid, List<LanguageTask>>();
 
-        private static Dictionary<string, Dictionary<Guid, string>> HtmlCache = new Dictionary<string, Dictionary<Guid, string>>(StringComparer.OrdinalIgnoreCase); 
+        private static Dictionary<string, Dictionary<Guid, string>> _htmlCache = new Dictionary<string, Dictionary<Guid, string>>(StringComparer.OrdinalIgnoreCase); 
 
         private static Dictionary<Guid, string> GetLangHtmlCache(string lang)
         {
-            if (!HtmlCache.ContainsKey(lang))
+            if (!_htmlCache.ContainsKey(lang))
             {
                 lock(_htmlcachelock)
                 {
-                    if (!HtmlCache.ContainsKey(lang))
+                    if (!_htmlCache.ContainsKey(lang))
                     { 
                         Dictionary<Guid, string> langcache = new Dictionary<Guid, string>();
-                        HtmlCache[lang] = langcache; 
+                        _htmlCache[lang] = langcache; 
                     }  
                 } 
             }
-            return HtmlCache[lang]; 
+            return _htmlCache[lang]; 
         }
 
         
@@ -50,7 +50,7 @@ namespace Kooboo.Data.Cache
             var lang = LanguageSetting.GetCmsLangCode(context);
             var cache = GetLangHtmlCache(lang);
 
-            string langhtml = null;
+            string langhtml;
 
             if (!cache.ContainsKey(Key))
             {

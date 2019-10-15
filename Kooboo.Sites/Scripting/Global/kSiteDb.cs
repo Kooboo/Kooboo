@@ -15,7 +15,7 @@ namespace Kooboo.Sites.Scripting.Global
             _locker = new object();
         }
 
-        private object _locker;
+        private static object _locker;
 
         SiteItem.RoutableTextRepository _page;
 

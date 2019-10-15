@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Data.Definition.KModel.Attributes
 {
-    
     [AttributeUsage(AttributeTargets.Property)]
     public class HeaderDisplayName : Attribute, IMetaAttribute
     {
@@ -24,6 +21,4 @@ namespace Kooboo.Data.Definition.KModel.Attributes
             return this.name;
         }
     }
-
-
 }

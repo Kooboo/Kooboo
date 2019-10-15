@@ -1,12 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
- 
 
 namespace Kooboo.Data
 {
     /// <summary>
-    /// The log of schedule or repeating job execution result. 
+    /// The log of schedule or repeating job execution result.
     /// </summary>
     public class JobLog
     {

@@ -1,34 +1,27 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Helper
 {
-  public static class SettingHelper
+    public static class SettingHelper
     {
         public static KoobooSetting GetKoobooSetting()
         {
-            KoobooSetting setting = new KoobooSetting();
-            setting.IsLocal = !AppSettings.IsOnlineServer;
+            KoobooSetting setting = new KoobooSetting {IsLocal = !AppSettings.IsOnlineServer};
 
 #if DEBUG
             {
-
-                setting.IsDebug = true; 
+                setting.IsDebug = true;
             }
 #endif
 
-            return setting; 
-        } 
+            return setting;
+        }
     }
 
     public class KoobooSetting
     {
-        public bool IsLocal { get; set; }  
+        public bool IsLocal { get; set; }
         public bool IsDebug { get; set; }
     }
 }

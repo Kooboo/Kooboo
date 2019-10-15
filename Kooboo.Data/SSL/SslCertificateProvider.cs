@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 
 namespace Kooboo.Data.Server
 {
@@ -9,21 +8,20 @@ namespace Kooboo.Data.Server
     {
         static SslCertificateProvider()
         {
-            diskcache = LoadDisk();
+            _diskcache = LoadDisk();
         }
 
-        private static Dictionary<string, X509Certificate2> diskcache = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);
+        private static Dictionary<string, X509Certificate2> _diskcache = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);
 
-
-        private static Dictionary<string, X509Certificate2> cache = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);
+        private static Dictionary<string, X509Certificate2> _cache = new Dictionary<string, X509Certificate2>(StringComparer.OrdinalIgnoreCase);
 
         public static X509Certificate SelectCertificate(string hostName)
         {
             if (hostName != null)
             {
-                if (cache.ContainsKey(hostName))
+                if (_cache.ContainsKey(hostName))
                 {
-                    var item = cache[hostName];
+                    var item = _cache[hostName];
                     if (item.NotAfter > DateTime.Now)
                     {
                         return item;
@@ -37,34 +35,34 @@ namespace Kooboo.Data.Server
                     var certificate = TryGetCert(cert.Content);
                     if (certificate != null)
                     {
-                        cache[hostName] = certificate;
+                        _cache[hostName] = certificate;
                     }
 
                     return certificate;
                 }
 
-                if (diskcache.ContainsKey(hostName))
+                if (_diskcache.ContainsKey(hostName))
                 {
-                    var diskcert = diskcache[hostName];
+                    var diskcert = _diskcache[hostName];
                     if (diskcert != null)
                     {
-                        cache[hostName] = diskcert;
+                        _cache[hostName] = diskcert;
                     }
                     return diskcert;
                 }
             }
 
             return Kooboo.Data.Server.SslCertificate.DefaultCert;
-            // return null;    
+            // return null;
         }
 
         public static X509Certificate2 SelectCertificate2(string hostName)
         {
             if (hostName != null)
             {
-                if (cache.ContainsKey(hostName))
+                if (_cache.ContainsKey(hostName))
                 {
-                    var item = cache[hostName];
+                    var item = _cache[hostName];
                     if (item.NotAfter > DateTime.Now)
                     {
                         return item;
@@ -78,27 +76,26 @@ namespace Kooboo.Data.Server
                     var certificate = TryGetCert(cert.Content);
                     if (certificate != null)
                     {
-                        cache[hostName] = certificate;
+                        _cache[hostName] = certificate;
                     }
 
                     return certificate;
                 }
 
-                if (diskcache.ContainsKey(hostName))
+                if (_diskcache.ContainsKey(hostName))
                 {
-                    var diskcert = diskcache[hostName];
+                    var diskcert = _diskcache[hostName];
                     if (diskcert != null)
                     {
-                        cache[hostName] = diskcert;
+                        _cache[hostName] = diskcert;
                     }
                     return diskcert;
                 }
             }
 
             return Kooboo.Data.Server.SslCertificate.DefaultCert;
-            // return null;    
+            // return null;
         }
-
 
         public static Dictionary<string, X509Certificate2> LoadDisk()
         {
@@ -127,14 +124,11 @@ namespace Kooboo.Data.Server
                 }
             }
             return result;
-
         }
 
         public static X509Certificate2 TryGetCert(byte[] content)
         {
-            List<string> trypass = new List<string>();
-            trypass.Add("kooboo");
-            trypass.Add("");
+            List<string> trypass = new List<string> {"kooboo", ""};
 
             foreach (var item in trypass)
             {
@@ -148,18 +142,11 @@ namespace Kooboo.Data.Server
                 }
                 catch (Exception)
                 {
+                    // ignored
                 }
-
             }
 
             return null;
-
         }
-
     }
-
-
-
-
-
 }

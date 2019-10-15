@@ -1,6 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
 using System.Collections.Generic;
@@ -12,17 +11,8 @@ namespace Kooboo.Sites.Scripting.Global
     public class FileIO
     {
         private string _rootfolder;
-        private string RootFolder
-        {
-            get
-            {
-                if (_rootfolder == null)
-                {
-                    _rootfolder = Kooboo.Data.AppSettings.GetFileIORoot(this.context.WebSite);
-                }
-                return _rootfolder;
-            }
-        }
+
+        private string RootFolder => _rootfolder ?? (_rootfolder = Kooboo.Data.AppSettings.GetFileIoRoot(this.context.WebSite));
 
         private RenderContext context { get; set; }
 
@@ -31,19 +21,19 @@ namespace Kooboo.Sites.Scripting.Global
             this.context = context;
         }
 
-        public FileInfo write(string fileName, string content)
+        public FileInfo Write(string fileName, string content)
         {
             var name = _getfullname(fileName);
 
             if (!string.IsNullOrEmpty(name))
             {
                 System.IO.File.WriteAllText(name, content);
-                return GetFileInfo(name); 
-            }              
-            return null; 
+                return GetFileInfo(name);
+            }
+            return null;
         }
 
-        public FileInfo writeBinary(string fileName, byte[] binary)
+        public FileInfo WriteBinary(string fileName, byte[] binary)
         {
             if (binary != null && binary.Length > 0)
             {
@@ -52,37 +42,36 @@ namespace Kooboo.Sites.Scripting.Global
                 if (!string.IsNullOrEmpty(name))
                 {
                     System.IO.File.WriteAllBytes(name, binary);
-                    return GetFileInfo(name); 
+                    return GetFileInfo(name);
                 }
             }
-            return null;    
+            return null;
         }
 
-        public void append(string FileName, string content)
+        public void Append(string fileName, string content)
         {
-            var name = _getfullname(FileName);
+            var name = _getfullname(fileName);
             if (!string.IsNullOrWhiteSpace(name))
             {
                 System.IO.File.AppendAllText(name, content);
             }
         }
 
-        private string _getfullname(string FileName)
+        private string _getfullname(string fileName)
         {
-            var valid = ToValidPath(FileName);
+            var valid = ToValidPath(fileName);
 
             string filename = Lib.Helper.IOHelper.CombinePath(this.RootFolder, valid);
 
             if (!filename.StartsWith(this.RootFolder))
             {
-                return null; // this is not allowed, as it may try to write to other folders. 
+                return null; // this is not allowed, as it may try to write to other folders.
             }
 
             Lib.Helper.IOHelper.EnsureFileDirectoryExists(filename);
 
             return filename;
         }
-
 
         public string ToValidPath(string input)
         {
@@ -94,7 +83,7 @@ namespace Kooboo.Sites.Scripting.Global
             char[] invalid = System.IO.Path.GetInvalidPathChars();
 
             for (int i = 0; i < input.Length; i++)
-            {    
+            {
                 if (!invalid.Contains(input[i]) || (input[i] == '\\' || input[i] == '/'))
                 {
                     sb.Append(input[i]);
@@ -109,9 +98,8 @@ namespace Kooboo.Sites.Scripting.Global
             }
             return result;
         }
-            
 
-        public string url(string filename)
+        public string Url(string filename)
         {
             if (filename.StartsWith(this.RootFolder))
             {
@@ -121,7 +109,7 @@ namespace Kooboo.Sites.Scripting.Global
             return Lib.Helper.UrlHelper.Combine(url, filename);
         }
 
-        public string read(string FileName)
+        public string Read(string FileName)
         {
             var name = _getfullname(FileName);
             if (!string.IsNullOrWhiteSpace(name) && System.IO.File.Exists(name))
@@ -131,7 +119,7 @@ namespace Kooboo.Sites.Scripting.Global
             return null;
         }
 
-        public byte[] readBinary(string FileName)
+        public byte[] ReadBinary(string FileName)
         {
             var name = _getfullname(FileName);
             if (!string.IsNullOrWhiteSpace(name) && System.IO.File.Exists(name))
@@ -148,7 +136,7 @@ namespace Kooboo.Sites.Scripting.Global
             return System.IO.File.Exists(name);
         }
 
-        public void delete(string FileName)
+        public void Delete(string FileName)
         {
             var name = _getfullname(FileName);
             if (System.IO.File.Exists(name))
@@ -165,14 +153,7 @@ namespace Kooboo.Sites.Scripting.Global
             if (System.IO.Directory.Exists(this.RootFolder))
             {
                 var files = System.IO.Directory.GetFiles(this.RootFolder, "*.*", System.IO.SearchOption.AllDirectories);
-                foreach (var file in files)
-                {
-                    var info = this.GetFileInfo(file);
-                    if (info != null)
-                    {
-                        fileList.Add(info);
-                    }
-                }
+                fileList.AddRange(files.Select(this.GetFileInfo).Where(info => info != null));
             }
             return fileList.ToArray();
         }
@@ -194,25 +175,16 @@ namespace Kooboo.Sites.Scripting.Global
             if (System.IO.Directory.Exists(folder))
             {
                 var files = System.IO.Directory.GetFiles(folder, "*.*", System.IO.SearchOption.TopDirectoryOnly);
-                foreach (var file in files)
-                {
-                    var info = this.GetFileInfo(file);
-                    if (info != null)
-                    {
-                        fileList.Add(info);
-                    }
-                }
+                fileList.AddRange(files.Select(this.GetFileInfo).Where(info => info != null));
             }
             return fileList.ToArray();
         }
 
-
         public FileInfo[] FolderFiles()
         {
-            var list= FolderFiles(null);
+            var list = FolderFiles(null);
             return list.ToArray();
         }
-
 
         private FileInfo GetFileInfo(string fullfilename)
         {
@@ -226,16 +198,11 @@ namespace Kooboo.Sites.Scripting.Global
                     string name = fullfilename.Substring(lastslash + 1);
                     string fullname = fullfilename.Substring(this.RootFolder.Length + 1);
 
-                    FileInfo info = new FileInfo();
-                    info.Name = name;
-                    info.FullName = fullname;
+                    FileInfo info = new FileInfo {Name = name, FullName = fullname};
                     var iofile = new System.IO.FileInfo(fullfilename);
-                    if (iofile != null)
-                    {
-                        info.Size = iofile.Length;
-                        info.LastModified = iofile.LastWriteTime;
-                        info.StringSize = Lib.Utilities.CalculateUtility.GetSizeString(iofile.Length);
-                    }
+                    info.Size = iofile.Length;
+                    info.LastModified = iofile.LastWriteTime;
+                    info.StringSize = Lib.Utilities.CalculateUtility.GetSizeString(iofile.Length);
 
                     string url = fullname.Replace("\\", "/");
                     url = Lib.Helper.UrlHelper.Combine("/__kb/kfile/", url);
@@ -269,48 +236,46 @@ namespace Kooboo.Sites.Scripting.Global
                 {
                     string fullname = item.Substring(this.RootFolder.Length + 1);
                     string name = item.Substring(folder.Length + 1);
-                    FolderInfo info = new FolderInfo();
-                    info.Name = name;
-                    info.FullName = fullname;
+                    FolderInfo info = new FolderInfo {Name = name, FullName = fullname};
                     subs.Add(info);
                 }
             }
             return subs.ToArray();
         }
 
-        public void CreateFolder(string Folder, string ParentFolder)
+        public void CreateFolder(string folder, string parentFolder)
         {
-            if (string.IsNullOrEmpty(Folder))
+            if (string.IsNullOrEmpty(folder))
             {
                 return;
             }
 
-            string fulldir = null;
-            if (string.IsNullOrEmpty(ParentFolder))
+            string fulldir;
+            if (string.IsNullOrEmpty(parentFolder))
             {
-                fulldir = Lib.Helper.IOHelper.CombinePath(this.RootFolder, Folder);
+                fulldir = Lib.Helper.IOHelper.CombinePath(this.RootFolder, folder);
             }
             else
             {
-                string parentdir = Lib.Helper.IOHelper.CombinePath(this.RootFolder, ParentFolder);
-                fulldir = Lib.Helper.IOHelper.CombinePath(parentdir, Folder);
+                string parentdir = Lib.Helper.IOHelper.CombinePath(this.RootFolder, parentFolder);
+                fulldir = Lib.Helper.IOHelper.CombinePath(parentdir, folder);
             }
             Lib.Helper.IOHelper.EnsureDirectoryExists(fulldir);
         }
 
-        public void CreateFolder(string Folder)
+        public void CreateFolder(string folder)
         {
-            CreateFolder(Folder, ""); 
+            CreateFolder(folder, "");
         }
 
-        public void DeleteFolder(string Folder)
+        public void DeleteFolder(string folder)
         {
-            if (string.IsNullOrEmpty(Folder))
+            if (string.IsNullOrEmpty(folder))
             {
                 return;
             }
 
-            string fulldir = Lib.Helper.IOHelper.CombinePath(this.RootFolder, Folder);
+            string fulldir = Lib.Helper.IOHelper.CombinePath(this.RootFolder, folder);
             if (System.IO.Directory.Exists(fulldir))
             {
                 bool ok = true;
@@ -333,12 +298,9 @@ namespace Kooboo.Sites.Scripting.Global
 
                     System.Threading.Thread.Sleep(50);
                 }
-
             }
-
         }
     }
-
 
     public class FolderInfo
     {
@@ -361,7 +323,7 @@ namespace Kooboo.Sites.Scripting.Global
 
         public string AbsoluteUrl { get; set; }
 
-        public string url { get { return this.RelativeUrl;  } }
+        public string Url { get { return this.RelativeUrl; } }
 
         public System.DateTime LastModified { get; set; }
     }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace Kooboo.Data.Definition
 {
@@ -39,7 +38,6 @@ namespace Kooboo.Data.Definition
 
         public const string RadioBox = "RadioBox";
 
-
         private static List<string> _list;
 
         public static List<string> List
@@ -63,7 +61,5 @@ namespace Kooboo.Data.Definition
                 return _list;
             }
         }
-
-
     }
 }

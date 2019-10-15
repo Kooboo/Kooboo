@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
@@ -8,7 +8,6 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Kooboo.Data.Repository
 {
-
     public class SslCertificateRepository : RepositoryBase<SslCertificate>
     {
         protected override ObjectStoreParameters StoreParameters
@@ -22,7 +21,7 @@ namespace Kooboo.Data.Repository
             }
         }
 
-        public void AddCert(Guid Organizationid, string domain, byte[] cert)
+        public void AddCert(Guid organizationid, string domain, byte[] cert)
         {
             bool iswildcard = false;
             if (domain.StartsWith("*."))
@@ -44,12 +43,14 @@ namespace Kooboo.Data.Repository
                 }
             }
 
-            SslCertificate ssl = new SslCertificate();
-            ssl.Domain = domain;
-            ssl.IsWildCard = iswildcard;
-            ssl.Expiration = certificate.NotAfter;
-            ssl.OrganizationId = Organizationid;
-            ssl.Content = cert;
+            SslCertificate ssl = new SslCertificate
+            {
+                Domain = domain,
+                IsWildCard = iswildcard,
+                Expiration = certificate.NotAfter,
+                OrganizationId = organizationid,
+                Content = cert
+            };
             this.AddOrUpdate(ssl);
         }
 
@@ -104,8 +105,4 @@ namespace Kooboo.Data.Repository
             return this.Query.Where(o => o.OrganizationId == OrganizationId).SelectAll();
         }
     }
-
 }
-
-
-

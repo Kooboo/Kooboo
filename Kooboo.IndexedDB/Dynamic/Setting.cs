@@ -35,7 +35,7 @@ namespace Kooboo.IndexedDB.Dynamic
             }
         }
 
-        private object _locker = new object();
+        private static object _locker = new object();
 
         public void AddIndex(string FieldName, Type DataType, int length = 0, bool IsUnique = false)
         {

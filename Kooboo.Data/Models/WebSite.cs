@@ -1,11 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Extensions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Kooboo.Data.Models
 {
@@ -13,6 +12,7 @@ namespace Kooboo.Data.Models
     public class WebSite : IGolbalObject
     {
         private Guid _id;
+
         public Guid Id
         {
             set { _id = value; }
@@ -33,7 +33,7 @@ namespace Kooboo.Data.Models
 
         public string Name
         {
-            get { return _name; }
+            get => _name;
             set
             {
                 _name = value;
@@ -52,31 +52,21 @@ namespace Kooboo.Data.Models
 
         public string DisplayName
         {
-            get { return String.IsNullOrEmpty(_displayName) ? Name : _displayName; }
-            set { _displayName = value; }
+            get => String.IsNullOrEmpty(_displayName) ? Name : _displayName;
+            set => _displayName = value;
         }
 
-        private HashSet<string> _Cultures;
+        private HashSet<string> _cultures;
 
         [Obsolete]
         public HashSet<string> Cultures
         {
-            get
-            {
-                if (_Cultures == null)
-                {
-                    _Cultures = new HashSet<string>();
-                    // _Cultures.Add(this.DefaultCulture);
-                }
-                return _Cultures;
-            }
-            set
-            {
-                _Cultures = value;
-            }
+            get => _cultures ?? (_cultures = new HashSet<string>());
+            set => _cultures = value;
         }
 
         private Dictionary<string, string> _culture;
+
         public virtual Dictionary<string, string> Culture
         {
             get
@@ -86,7 +76,7 @@ namespace Kooboo.Data.Models
                     _culture = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 }
 
-                foreach (var item in this.Cultures)
+                foreach (var item in Cultures)
                 {
                     string langcode = item;
                     if (!string.IsNullOrEmpty(langcode))
@@ -110,7 +100,7 @@ namespace Kooboo.Data.Models
                     }
                 }
 
-                if (_culture.Count() == 0)
+                if (_culture.Count == 0)
                 {
                     string defaultlang = Kooboo.Data.Language.LanguageSetting.SystemLangCode;
 
@@ -123,42 +113,22 @@ namespace Kooboo.Data.Models
                 }
                 return _culture;
             }
-            set
-            {
-                _culture = value;
-            }
+            set => _culture = value;
         }
 
         private Dictionary<string, string> _sitepath;
 
         public Dictionary<string, string> SitePath
         {
-            get
-            {
-                if (_sitepath == null)
-                {
-                    _sitepath = new Dictionary<string, string>();
-                }
-                return _sitepath;
-            }
-            set
-            {
-                _sitepath = value;
-            }
+            get => _sitepath ?? (_sitepath = new Dictionary<string, string>());
+            set => _sitepath = value;
         }
 
         private string _defaultculture;
 
         public string DefaultCulture
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_defaultculture))
-                {
-                    return Language.LanguageSetting.SystemLangCode;
-                }
-                return _defaultculture;
-            }
+            get => string.IsNullOrEmpty(_defaultculture) ? Language.LanguageSetting.SystemLangCode : _defaultculture;
             set
             {
                 _defaultculture = value;
@@ -176,8 +146,8 @@ namespace Kooboo.Data.Models
         public bool Published { get; set; } = true;
 
         /// <summary>
-        /// If set, this is a local Http server. 
-        /// The local file disk path or the absolutely file path + name. 
+        /// If set, this is a local Http server.
+        /// The local file disk path or the absolutely file path + name.
         /// </summary>
         public string LocalRootPath { get; set; }
 
@@ -192,9 +162,8 @@ namespace Kooboo.Data.Models
 
         public bool EnableImageLog { get; set; } = true;
 
-
-
         private bool _enabledisksync;
+
         public bool EnableDiskSync
         {
             get
@@ -227,12 +196,12 @@ namespace Kooboo.Data.Models
 
         public bool EnableECommerce { get; set; }
 
-        //Enable direct access to view, htmlblock etc, via system routes. 
+        //Enable direct access to view, htmlblock etc, via system routes.
         public bool EnableSystemRoute { get; set; }
 
         public bool EnableFileIOUrl { get; set; } = true;
 
-        // the version of Kooboo application. 
+        // the version of Kooboo application.
         // public int KoobooVersion { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.UtcNow;
 
@@ -249,7 +218,7 @@ namespace Kooboo.Data.Models
             return false;
         }
 
-        private string _LocalDiskSyncFolder;
+        private string _localDiskSyncFolder;
 
         public string DiskSyncFolder
         {
@@ -260,52 +229,30 @@ namespace Kooboo.Data.Models
                     return null;
                 }
 
-                if (string.IsNullOrEmpty(this._LocalDiskSyncFolder))
+                if (string.IsNullOrEmpty(this._localDiskSyncFolder))
                 {
-                    _LocalDiskSyncFolder = System.IO.Path.Combine(AppSettings.GetOrganizationFolder(this.OrganizationId), "___disksync", this.Name);
-                    Kooboo.Lib.Helper.IOHelper.EnsureDirectoryExists(_LocalDiskSyncFolder);
+                    _localDiskSyncFolder = System.IO.Path.Combine(AppSettings.GetOrganizationFolder(this.OrganizationId), "___disksync", this.Name);
+                    Kooboo.Lib.Helper.IOHelper.EnsureDirectoryExists(_localDiskSyncFolder);
                 }
-                return _LocalDiskSyncFolder;
+                return _localDiskSyncFolder;
             }
-            set
-            {
-                _LocalDiskSyncFolder = value;
-            }
+            set => _localDiskSyncFolder = value;
         }
-        internal Dictionary<int, string> _customererrors;
+
+        internal Dictionary<int, string> Customererrors;
 
         public Dictionary<int, string> CustomErrors
         {
-            get
-            {
-                if (_customererrors == null)
-                {
-                    _customererrors = new Dictionary<int, string>();
-                }
-                return _customererrors;
-            }
-            set
-            {
-                _customererrors = value;
-            }
+            get => Customererrors ?? (Customererrors = new Dictionary<int, string>());
+            set => Customererrors = value;
         }
 
-        internal Dictionary<string, string> _customsettings;
+        internal Dictionary<string, string> Customsettings;
 
         public Dictionary<string, string> CustomSettings
         {
-            get
-            {
-                if (_customsettings == null)
-                {
-                    _customsettings = new Dictionary<string, string>();
-                }
-                return _customsettings;
-            }
-            set
-            {
-                _customsettings = value;
-            }
+            get => Customsettings ?? (Customsettings = new Dictionary<string, string>());
+            set => Customsettings = value;
         }
 
         public bool ForceSSL { get; set; }
@@ -327,13 +274,12 @@ namespace Kooboo.Data.Models
 
             unique += this.EnableFileIOUrl.ToString();
 
-            //public bool EnableECommerce { get; set; } 
-            //Enable direct access to view, htmlblock etc, via system routes. 
+            //public bool EnableECommerce { get; set; }
+            //Enable direct access to view, htmlblock etc, via system routes.
             //public bool EnableSystemRoute { get; set; }
             //public bool EnableFileIOUrl { get; set; } = true;
 
-
-            unique += this.LocalRootPath + this.MirrorWebSiteBaseUrl + this._LocalDiskSyncFolder;
+            unique += this.LocalRootPath + this.MirrorWebSiteBaseUrl + this._localDiskSyncFolder;
 
             unique += this.DefaultCulture + this.AutoDetectCulture.ToString();
 
@@ -347,18 +293,17 @@ namespace Kooboo.Data.Models
                 unique += item.Key + item.Value;
             }
 
-
-            if (_customsettings != null)
+            if (Customsettings != null)
             {
-                foreach (var item in _customsettings)
+                foreach (var item in Customsettings)
                 {
                     unique += item.Key + item.Value;
                 }
             }
 
-            if (_customererrors != null)
+            if (Customererrors != null)
             {
-                foreach (var item in _customererrors)
+                foreach (var item in Customererrors)
                 {
                     unique += item.Key.ToString() + item.Value;
                 }

@@ -7,7 +7,7 @@ namespace Kooboo.Web.Payment
     {
         public string Name => "Payment";
 
-        public RenderContext context { get; set; }
+        public RenderContext Context { get; set; }
 
         public KPaymentMethod this[string key]
         {
@@ -16,9 +16,7 @@ namespace Kooboo.Web.Payment
                 var paymentmethod = Kooboo.Web.Payment.PaymentManager.GetMethod(key);
                 if (paymentmethod != null)
                 {
-                    KPaymentMethod method = new KPaymentMethod();
-                    method.Context = this.context;
-                    method.PaymentMethod = paymentmethod;
+                    KPaymentMethod method = new KPaymentMethod { Context = this.Context, PaymentMethod = paymentmethod };
                     return method;
                 }
                 return null;

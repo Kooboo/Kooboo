@@ -1,10 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Interface
 {
@@ -15,10 +11,10 @@ namespace Kooboo.Data.Interface
         byte OwnerConstType { get; set; }
 
         bool IsEmbedded { get; set; }
-        
+
         int BodyHash { get; set; }
 
-        string KoobooOpenTag { get; set; } 
+        string KoobooOpenTag { get; set; }
 
         string Engine { get; set; }
 
@@ -28,10 +24,8 @@ namespace Kooboo.Data.Interface
         int ItemIndex { get; set; }
 
         /// <summary>
-        /// The dom html tag name of this object, it is script or style now. 
+        /// The dom html tag name of this object, it is script or style now.
         /// </summary>
-        string DomTagName { get;   }
-         
-
+        string DomTagName { get; }
     }
 }

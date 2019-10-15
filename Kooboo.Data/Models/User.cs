@@ -1,12 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System; 
+using System;
 
 namespace Kooboo.Data.Models
 {
     public class User : IGolbalObject
-    { 
+    {
         private Guid _id;
+
         public Guid Id
         {
             set { _id = value; }
@@ -22,28 +23,32 @@ namespace Kooboo.Data.Models
 
         public Guid CurrentOrgId { get; set; }
 
- 
         // redundant
         public string CurrentOrgName { get; set; }
 
-        private bool _isadmin; 
-        public bool IsAdmin {
-            get {
+        private bool _isadmin;
+
+        public bool IsAdmin
+        {
+            get
+            {
                 if (_isadmin)
                 {
-                    return true; 
+                    return true;
                 }
-                return this.Id == this.CurrentOrgId; 
+                return this.Id == this.CurrentOrgId;
             }
-            set {
-                _isadmin = value; 
+            set
+            {
+                _isadmin = value;
             }
         }
 
         private string _username;
+
         public string UserName
         {
-            get { return _username; }
+            get => _username;
             set
             {
                 _username = value;
@@ -51,48 +56,45 @@ namespace Kooboo.Data.Models
             }
         }
 
-        private string _emailaddress; 
-        public string EmailAddress {
-            get
-            {
-                return _emailaddress; 
-            }
+        private string _emailaddress;
+
+        public string EmailAddress
+        {
+            get => _emailaddress;
             set
             {
                 _emailaddress = value;
-                _emailId = default(Guid); 
+                _emailId = default(Guid);
             }
-
         }
 
-        private Guid _emailId; 
+        private Guid _emailId;
+
         public Guid EmailId
         {
-            get {
+            get
+            {
                 if (_emailId == default(Guid))
                 {
                     if (!string.IsNullOrWhiteSpace(EmailAddress))
                     {
-                        _emailId = Lib.Security.Hash.ComputeGuidIgnoreCase(EmailAddress); 
+                        _emailId = Lib.Security.Hash.ComputeGuidIgnoreCase(EmailAddress);
                     }
                 }
-                return _emailId; 
+                return _emailId;
             }
-            set
-            {
-                _emailId = value; 
-            }
+            set => _emailId = value;
         }
 
         public bool IsEmailVerified { get; set; }
-        
+
         public string Password { get; set; }
 
         public Guid PasswordHash { get; set; }
 
         public string FirstName { get; set; }
         public string LastName { get; set; }
-     
+
         public string FullName
         {
             get
@@ -104,65 +106,57 @@ namespace Kooboo.Data.Models
                 return String.Concat(FirstName, " ", LastName);
             }
         }
-     
+
         private string _language;
+
         public string Language
         {
-            get
+            get => string.IsNullOrEmpty(_language) ? "en" : _language;
+            set
             {
-                if (string.IsNullOrEmpty(_language))
-                {
-                    return "en"; 
-                }
-                return _language;
-            }
-            set {
-                string input = value; 
+                string input = value;
                 if (!string.IsNullOrWhiteSpace(input))
                 {
-                    input = input.Trim(); 
-                    if (input.Length> 2)
+                    input = input.Trim();
+                    if (input.Length > 2)
                     {
-                        input = input.Substring(0, 2); 
+                        input = input.Substring(0, 2);
                     }
-                    
-                    _language = input.ToLower(); 
-                }
 
+                    _language = input.ToLower();
+                }
             }
         }
 
         public string RegisterIp { get; set; }
-         
-        public string  TempRedirectUrl { get; set; }
-         
-       // public string TempServerIp { get; set; }
 
-        private DateTime _registerdate; 
+        public string TempRedirectUrl { get; set; }
 
-        public DateTime RegistrationDate {
+        // public string TempServerIp { get; set; }
+
+        private DateTime _registerdate;
+
+        public DateTime RegistrationDate
+        {
             get
             {
                 if (_registerdate == default(DateTime))
                 {
-                    _registerdate = DateTime.Now; 
+                    _registerdate = DateTime.Now;
                 }
-                return _registerdate; 
+                return _registerdate;
             }
-            set
-            {
-                _registerdate = value; 
-            } 
+            set => _registerdate = value;
         }
 
         public override int GetHashCode()
         {
-            string unique =  this.CurrentOrgId.ToString() + this.CurrentOrgName;
+            string unique = this.CurrentOrgId.ToString() + this.CurrentOrgName;
             unique += this.EmailAddress + this.FirstName + this.LastName + this.Language;
             unique += this.Password + this.PasswordHash.ToString();
             unique += this.IsEmailVerified.ToString();
-            unique += this.EmailId.ToString(); 
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);  
+            unique += this.EmailId.ToString();
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }
 }

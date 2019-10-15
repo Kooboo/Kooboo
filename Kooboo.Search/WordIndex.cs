@@ -9,7 +9,7 @@ namespace Kooboo.Search
 {
     public class WordIndex
     {
-        private object _locker = new object();
+        private static object _locker = new object();
 
         internal string FullFileName { get; set; }
 

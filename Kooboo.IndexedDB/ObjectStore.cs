@@ -27,7 +27,7 @@ namespace Kooboo.IndexedDB
         private IEqualityComparer<byte[]> GenericBytesComparer;
 
         private BlockFile _blockfile;
-        private object _lockerBlockFile = new object();
+        private static object _lockerBlockFile = new object();
 
         private BlockFile BlockFile
         {

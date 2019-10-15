@@ -1,31 +1,31 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 
 namespace Kooboo.Data.Language
 {
-  public static class Hardcoded
+    public static class Hardcoded
     {
-        private static object _locker = new object(); 
+        private static object _locker = new object();
 
-        private static HashSet<string> _langkeys; 
+        private static HashSet<string> _langkeys;
 
-        // make sure all dynamic lang values are defined here.. otherwise, it might not be translated. 
-        // this is only for keys that are defined during runtime. 
+        // make sure all dynamic lang values are defined here.. otherwise, it might not be translated.
+        // this is only for keys that are defined during runtime.
         public static HashSet<string> HardCodeLangKeys
         {
             get
             {
                 if (_langkeys == null)
                 {
-                   lock(_locker)
+                    lock (_locker)
                     {
                         _langkeys = new HashSet<string>();
-                        // Data center names... 
-                       // _langkeys.Add("HK(China)");
-                         
-                        // kooboo app.  
+                        // Data center names...
+                        // _langkeys.Add("HK(China)");
+
+                        // kooboo app.
                         //_langkeys.Add("Confirm");
                         //_langkeys.Add("is in use");
                         //_langkeys.Add("Kooboo at port");
@@ -37,8 +37,8 @@ namespace Kooboo.Data.Language
                         //_langkeys.Add("Upgrade");
                         //_langkeys.Add("Upgrade in progress, please stand by");
                         //_langkeys.Add("Software up to date");
-                        //_langkeys.Add("New version ready to be updated"); 
-                        /// menu items.  
+                        //_langkeys.Add("New version ready to be updated");
+                        /// menu items.
                         //_langkeys.Add("Domains");
                         //_langkeys.Add("Sites");
                         //_langkeys.Add("Emails");
@@ -64,19 +64,19 @@ namespace Kooboo.Data.Language
                         //_langkeys.Add("SiteLogs");
                         //_langkeys.Add("VisitorLogs");
                     }
-                } 
-                return _langkeys; 
+                }
+                return _langkeys;
             }
         }
 
         public static string GetValue(string key, RenderContext context)
         {
-            return LanguageProvider.GetValue(key, context); 
+            return LanguageProvider.GetValue(key, context);
         }
 
         public static string GetValue(string key)
         {
-            return LanguageProvider.GetValue(key); 
-        }  
+            return LanguageProvider.GetValue(key);
+        }
     }
 }

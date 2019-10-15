@@ -2,37 +2,27 @@
 using Kooboo.Data.Interface;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Data.Service
 {
-
     // this is only for the online server...
     public static class TwoFactorService
     {
-        static ITwoFactorProvder provider { get; set; }
+        private static ITwoFactorProvder provider { get; set; }
+
         static TwoFactorService()
         {
-            provider = Lib.IOC.Service.GetSingleTon<ITwoFactorProvder>(false); 
+            provider = Lib.IOC.Service.GetSingleTon<ITwoFactorProvder>(false);
         }
 
-        public static Dictionary<string, string> GetHeaders(Guid UserId)
+        public static Dictionary<string, string> GetHeaders(Guid userId)
         {
-            if (provider != null)
-            {
-                return provider.GetHeaders(UserId);
-            } 
-            return null;
+            return provider?.GetHeaders(userId);
         }
 
         public static Kooboo.Data.Models.User Validate(HttpRequest request)
         {
-            if (provider != null)
-            {
-                return provider.Validate(request);
-            }
-            return null;
+            return provider?.Validate(request);
         }
-
     }
 }

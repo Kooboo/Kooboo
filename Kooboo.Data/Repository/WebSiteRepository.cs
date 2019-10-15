@@ -1,16 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
+using Kooboo.IndexedDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.IndexedDB;
 using System.Linq.Expressions;
 
 namespace Kooboo.Data.Repository
 {
     public class WebSiteRepository : RepositoryBase<WebSite>
-    { 
+    {
         protected override ObjectStoreParameters StoreParameters
         {
             get
@@ -22,17 +22,17 @@ namespace Kooboo.Data.Repository
                 paras.AddColumn<WebSite>(o => o.EnableFullTextSearch);
                 paras.AddColumn<WebSite>(o => o.EnableDiskSync);
                 paras.AddColumn<WebSite>(o => o.EnableECommerce);
-                paras.SetPrimaryKeyField<WebSite>(o => o.Id);  
+                paras.SetPrimaryKeyField<WebSite>(o => o.Id);
                 return paras;
             }
         }
 
-        private object _locker = new object(); 
-         
-        public  Dictionary<Guid, WebSite> Cachedsites;
+        private static object _locker = new object();
 
-        //cache of all local websites... 
-        public  Dictionary<Guid, WebSite> AllSites
+        public Dictionary<Guid, WebSite> Cachedsites;
+
+        //cache of all local websites...
+        public Dictionary<Guid, WebSite> AllSites
         {
             get
             {
@@ -51,26 +51,25 @@ namespace Kooboo.Data.Repository
                         }
                     }
                 }
-                return Cachedsites; 
-            } 
-        } 
-         
+                return Cachedsites;
+            }
+        }
+
         public override WebSite Get(Guid id, bool getColumnDataOnly = false)
         {
-            WebSite site;
-            AllSites.TryGetValue(id, out site);
+            AllSites.TryGetValue(id, out var site);
             if (site == null)
             {
                 site = this.Store.get(id);
                 if (site != null)
                 {
-                    this.AllSites[site.Id] = site; 
+                    this.AllSites[site.Id] = site;
                 }
-            } 
+            }
             return site;
         }
 
-        public void UpdateBoolColumn(Guid Id,  Expression<Func<WebSite, object>> expression, bool Value)
+        public void UpdateBoolColumn(Guid id, Expression<Func<WebSite, object>> expression, bool Value)
         {
             string fieldname = Kooboo.IndexedDB.Helper.ExpressionHelper.GetFieldName<WebSite>(expression);
 
@@ -80,36 +79,35 @@ namespace Kooboo.Data.Repository
 
             if (fieldname == null)
             {
-                return; 
-            } 
-            var site = this.Get(Id); 
-            if (site !=null)
+                return;
+            }
+            var site = this.Get(id);
+            if (site != null)
             {
-                this.Store.UpdateColumn<bool>(Id, expression, Value);
-                 
+                this.Store.UpdateColumn<bool>(id, expression, Value);
+
                 if (fieldname == enablecluser)
                 {
-                    site.EnableCluster = Value; 
+                    site.EnableCluster = Value;
                 }
                 else if (fieldname == enabledisksync)
                 {
-                    site.EnableDiskSync = Value; 
+                    site.EnableDiskSync = Value;
                 }
                 else if (fieldname == enablefulltext)
                 {
-                    site.EnableFullTextSearch = Value; 
-                } 
-            } 
+                    site.EnableFullTextSearch = Value;
+                }
+            }
         }
-          
 
         public override bool AddOrUpdate(WebSite value)
         {
             // check quota control.
-            var maxsites = Kooboo.Data.Authorization.QuotaControl.MaxSites(value.OrganizationId); 
+            var maxsites = Kooboo.Data.Authorization.QuotaControl.MaxSites(value.OrganizationId);
             if (maxsites != int.MaxValue)
             {
-                var counts = this.ListByOrg(value.OrganizationId).Count(); 
+                var counts = this.ListByOrg(value.OrganizationId).Count;
                 if (counts >= maxsites)
                 {
                     var found = this.Get(value.Id);
@@ -117,19 +115,18 @@ namespace Kooboo.Data.Repository
                     if (found == null)
                     {
                         throw new Exception(Kooboo.Data.Language.Hardcoded.GetValue("Max number of sites has been reached, require service level upgrade"));
-                    }  
+                    }
                 }
             }
 
-            var ok= base.AddOrUpdate(value);
+            var ok = base.AddOrUpdate(value);
 
             lock (_locker)
             {
-                this.AllSites[value.Id] = value;   
-            } 
+                this.AllSites[value.Id] = value;
+            }
             return ok;
         }
-
 
         public override void Delete(Guid id)
         {
@@ -143,44 +140,42 @@ namespace Kooboo.Data.Repository
                     Data.GlobalDb.Bindings.Delete(item);
                 }
 
-                this.AllSites.Remove(id); 
+                this.AllSites.Remove(id);
             }
         }
-         
-        public bool CheckNameAvailable(string WebSiteName, Guid OrganizationId)
+
+        public bool CheckNameAvailable(string webSiteName, Guid organizationId)
         {
-            string LowerCaseSiteName = WebSiteName.ToLower();
-             
-            return !this.AllSites.Values.ToList().Where(o => o.OrganizationId == OrganizationId &&  o.Name.ToLower() == LowerCaseSiteName).Any();
+            string lowerCaseSiteName = webSiteName.ToLower();
+
+            return !this.AllSites.Values.ToList().Any(o => o.OrganizationId == organizationId && o.Name.ToLower() == lowerCaseSiteName);
         }
-         
+
         public List<WebSite> ListByOrg(Guid orgId)
         {
-            return  this.AllSites.Values.Where(o => o.OrganizationId == orgId).OrderByDescending(it => it.CreationDate).ToList();
-        } 
-    
+            return this.AllSites.Values.Where(o => o.OrganizationId == orgId).OrderByDescending(it => it.CreationDate).ToList();
+        }
+
         public IEnumerable<WebSite> GetLocalSites()
         {
             return TableScan.Where(o => !string.IsNullOrEmpty(o.LocalRootPath))
                 .SelectAll()
                 .OrderBy(it => it.Name);
         }
-         
-        public WebSite AddNewWebSite(Guid OrganiztionId, string websitename, string hostName)
-        { 
+
+        public WebSite AddNewWebSite(Guid organiztionId, string websitename, string hostName)
+        {
             WebSite newsite = new WebSite
             {
                 Name = websitename,
-                OrganizationId = OrganiztionId
+                OrganizationId = organiztionId
             };
 
             Data.GlobalDb.WebSites.AddOrUpdate(newsite);
 
-            Data.GlobalDb.Bindings.AddOrUpdate(hostName, newsite.Id, OrganiztionId);
-              
+            Data.GlobalDb.Bindings.AddOrUpdate(hostName, newsite.Id, organiztionId);
+
             return newsite;
         }
-         
     }
 }
- 

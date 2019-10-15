@@ -1,122 +1,114 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Data.Language
 {
-   public class LanguageProvider
+    public class LanguageProvider
     {
-        private static object _locker = new object(); 
+        private static object _locker = new object();
 
-        private static Dictionary<string, Dictionary<string, string>> langtext = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase); 
-        public static string GetValue(string Key, string LangCode)
+        private static Dictionary<string, Dictionary<string, string>> langtext = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
+
+        public static string GetValue(string key, string langCode)
         {
-            var langvalues = GetLangValues(LangCode); 
+            var langvalues = GetLangValues(langCode);
 
-            if (langvalues.ContainsKey(Key))
-            {
-                return langvalues[Key]; 
-            } 
-            return Key;  
-        } 
+            return langvalues.ContainsKey(key) ? langvalues[key] : key;
+        }
 
         public static string GetValue(string key)
         {
             var langcode = LanguageSetting.SystemLangCode;
-            return GetValue(key, langcode); 
+            return GetValue(key, langcode);
         }
 
         public static string GetValue(string key, RenderContext context)
         {
-            string langcode = null; 
-            if (context!=null && context.User !=null && !string.IsNullOrWhiteSpace(context.User.Language)) 
+            string langcode;
+            if (context?.User != null && !string.IsNullOrWhiteSpace(context.User.Language))
             {
-                langcode = context.User.Language; 
+                langcode = context.User.Language;
             }
             else
             {
-                langcode = LanguageSetting.SystemLangCode; 
+                langcode = LanguageSetting.SystemLangCode;
             }
-            return GetValue(key, langcode);  
+            return GetValue(key, langcode);
         }
 
-       public static Dictionary<string, string> GetLangValues(string LangCode)
+        public static Dictionary<string, string> GetLangValues(string langCode)
         {
-           if (LangCode == null)
+            if (langCode == null)
             {
-                LangCode = LanguageSetting.SystemLangCode; 
+                langCode = LanguageSetting.SystemLangCode;
             }
-           if (LangCode.Length >2)
+            if (langCode.Length > 2)
             {
-                LangCode = LangCode.Substring(0, 2); 
+                langCode = langCode.Substring(0, 2);
             }
-            if (!langtext.ContainsKey(LangCode))
+            if (!langtext.ContainsKey(langCode))
             {
-                lock(_locker)
+                lock (_locker)
                 {
-                    if (!langtext.ContainsKey(LangCode))
+                    if (!langtext.ContainsKey(langCode))
                     {
-                        if (LanguageSetting.LangFiles.ContainsKey(LangCode))
+                        if (LanguageSetting.LangFiles.ContainsKey(langCode))
                         {
-                            var file = LanguageSetting.LangFiles[LangCode]; 
+                            var file = LanguageSetting.LangFiles[langCode];
 
                             if (System.IO.File.Exists(file))
                             {
                                 string alltext = System.IO.File.ReadAllText(file);
 
-                                var values = Language.MultiLingualHelper.Deserialize(alltext); 
+                                var values = Language.MultiLingualHelper.Deserialize(alltext);
 
-                                langtext[LangCode] = EscapeQuote(values);
+                                langtext[langCode] = EscapeQuote(values);
                             }
-
                         }
                         else
                         {
-                            langtext[LangCode] = new Dictionary<string, string>(); 
+                            langtext[langCode] = new Dictionary<string, string>();
                         }
-                    } 
+                    }
                 }
             }
 
-            return langtext[LangCode]; 
+            return langtext[langCode];
         }
 
-        private static Dictionary<string,string> EscapeQuote(Dictionary<string, string> values)
+        private static Dictionary<string, string> EscapeQuote(Dictionary<string, string> values)
         {
             var newValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var item in values)
-            {  
-                //change " to \",because " will cause js error. 
-                newValues[item.Key] = item.Value.Replace("\"", "\\\"") ;
+            {
+                //change " to \",because " will cause js error.
+                newValues[item.Key] = item.Value.Replace("\"", "\\\"");
             }
             return newValues;
         }
 
-        public static void SetValue(string LangCode, Dictionary<string, string> Values)
+        public static void SetValue(string LangCode, Dictionary<string, string> values)
         {
-            Values = EscapeQuote(Values); 
+            values = EscapeQuote(values);
 
             lock (_locker)
             {
                 var langcontent = GetLangValues(LangCode);
-                if (langcontent.Count() == 0)
+                if (langcontent.Count == 0)
                 {
-                    langtext[LangCode] = Values;
+                    langtext[LangCode] = values;
                 }
                 else
                 {
-                    foreach (var item in Values)
+                    foreach (var item in values)
                     {
                         langcontent[item.Key] = item.Value;
                     }
                 }
-
             }
         }
-
-
     }
 }

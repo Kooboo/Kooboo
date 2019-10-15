@@ -1,23 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Infrastructure
 {
     public static class InfraManager
     {
-
         private static IInfrastructure _instance;
 
         private static object _locker = new object();
 
-        public static IInfrastructure instance
+        public static IInfrastructure Instance
         {
-
             get
             {
                 if (_instance == null)
@@ -26,28 +20,23 @@ namespace Kooboo.Data.Infrastructure
                     {
                         if (_instance == null)
                         {
-                            _instance = new LocalInfra(); 
+                            _instance = new LocalInfra();
                         }
                     }
                 }
-                return _instance; 
+                return _instance;
             }
-            set
-            {
-                _instance = value;
-            }
-
-        }
-                                                
-        public static bool Test(Guid OrganizationId, InfraType InfraType, long amount)
-        {
-            return instance.Test(OrganizationId, InfraType, amount); 
+            set => _instance = value;
         }
 
-        public static void Add(Guid OrganizationId, InfraType InfraType, long amount, string message)
+        public static bool Test(Guid organizationId, InfraType infraType, long amount)
         {
-            instance.Add(OrganizationId, InfraType, amount, message); 
+            return Instance.Test(organizationId, infraType, amount);
         }
-                  
+
+        public static void Add(Guid organizationId, InfraType infraType, long amount, string message)
+        {
+            Instance.Add(organizationId, infraType, amount, message);
+        }
     }
 }

@@ -1,45 +1,42 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Data.Cache
 {
-  public static  class OrganizationUserCache
+    public static class OrganizationUserCache
     {
-        private static object _locker = new object(); 
-        
+        private static object _locker = new object();
+
         public static Dictionary<Guid, OrgUser> CacheItems { get; set; }
 
         static OrganizationUserCache()
         {
-            CacheItems = new Dictionary<Guid, OrgUser>(); 
+            CacheItems = new Dictionary<Guid, OrgUser>();
         }
 
-        private static OrgUser GetOrg(Guid OrgId)
+        private static OrgUser GetOrg(Guid orgId)
         {
-            if (!CacheItems.ContainsKey(OrgId))
-            {   
-                lock(_locker)
+            if (!CacheItems.ContainsKey(orgId))
+            {
+                lock (_locker)
                 {
-                    if (!CacheItems.ContainsKey(OrgId))
+                    if (!CacheItems.ContainsKey(orgId))
                     {
-                        OrgUser orguser = getOrgUserIds(OrgId);
-                        CacheItems[OrgId] = orguser;
+                        OrgUser orguser = GetOrgUserIds(orgId);
+                        CacheItems[orgId] = orguser;
                     }
                 }
             }
 
-            return CacheItems[OrgId]; 
+            return CacheItems[orgId];
         }
 
-        private static OrgUser getOrgUserIds(Guid OrgId)
+        private static OrgUser GetOrgUserIds(Guid orgId)
         {
             OrgUser orguser = new OrgUser();
-            var users = GetOrgUsers(OrgId);
+            var users = GetOrgUsers(orgId);
             if (users != null)
             {
                 foreach (var item in users)
@@ -51,39 +48,39 @@ namespace Kooboo.Data.Cache
             return orguser;
         }
 
-        public static void AddUser(Guid OrgId, Guid UserId)
+        public static void AddUser(Guid orgId, Guid userId)
         {
-            var orguser = GetOrg(OrgId);
-            orguser.Users.Add(UserId);
-            orguser.LastModified = DateTime.Now; 
+            var orguser = GetOrg(orgId);
+            orguser.Users.Add(userId);
+            orguser.LastModified = DateTime.Now;
         }
 
-        public static void RemoveUser(Guid OrgId, Guid UserId)
+        public static void RemoveUser(Guid orgId, Guid userId)
         {
-            var orguser = GetOrg(OrgId);
-            orguser.Users.Remove(UserId);
-            orguser.LastModified = DateTime.Now; 
+            var orguser = GetOrg(orgId);
+            orguser.Users.Remove(userId);
+            orguser.LastModified = DateTime.Now;
         }
 
-        public static bool HasUser(Guid OrgId, Guid UserId)
-        {  
-            var orgusr = GetOrg(OrgId); 
+        public static bool HasUser(Guid orgId, Guid userId)
+        {
+            var orgusr = GetOrg(orgId);
 
-            if (orgusr !=null && orgusr.Users.Contains(UserId))
+            if (orgusr != null && orgusr.Users.Contains(userId))
             {
-                return true; 
-            } 
+                return true;
+            }
 
-            if (orgusr.LastModified < DateTime.Now.AddHours(-1))
+            if (orgusr != null && orgusr.LastModified < DateTime.Now.AddHours(-1))
             {
-                var neworguser = getOrgUserIds(OrgId); 
-                if (neworguser !=null)
+                var neworguser = GetOrgUserIds(orgId);
+                if (neworguser != null)
                 {
-                    CacheItems[OrgId] = neworguser;    
+                    CacheItems[orgId] = neworguser;
 
-                    if (neworguser.Users.Contains(UserId))
+                    if (neworguser.Users.Contains(userId))
                     {
-                        return true; 
+                        return true;
                     }
                 }
             }
@@ -91,19 +88,17 @@ namespace Kooboo.Data.Cache
             return false;
         }
 
-        public static List<Kooboo.Data.Models.User> GetOrgUsers(Guid OrgId)
+        public static List<Kooboo.Data.Models.User> GetOrgUsers(Guid orgId)
         {
-            return GlobalDb.Organization.Users(OrgId); 
-        }   
-
+            return GlobalDb.Organization.Users(orgId);
+        }
     }
-
 
     public class OrgUser
     {
         public OrgUser()
         {
-            this.Users = new HashSet<Guid>(); 
+            Users = new HashSet<Guid>();
         }
 
         public Guid OrgId { get; set; }
@@ -112,7 +107,4 @@ namespace Kooboo.Data.Cache
 
         public DateTime LastModified { get; set; }
     }
-
-
 }
-

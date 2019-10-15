@@ -1,28 +1,28 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-  
+
 namespace Kooboo.Data.Models
 {
-
     [Serializable]
     public class Binding : IGolbalObject
-    { 
+    {
         private Guid _id;
+
         public Guid Id
         {
-            set { _id = value; }
+            set => _id = value;
             get
             {
                 if (_id == default(Guid))
                 {
-                    string unique = this.DomainId.ToString().ToLower() + this.SubDomain + this.Device; 
+                    string unique = this.DomainId.ToString().ToLower() + this.SubDomain + this.Device;
                     if (this.DefaultPortBinding)
                     {
-                        unique += this.Port.ToString(); 
+                        unique += this.Port.ToString();
                     }
 
-                    _id = Lib.Security.Hash.ComputeHashGuid(unique);  
+                    _id = Lib.Security.Hash.ComputeHashGuid(unique);
                 }
                 return _id;
             }
@@ -31,13 +31,13 @@ namespace Kooboo.Data.Models
         public Guid OrganizationId { get; set; }
 
         /// <summary>
-        ///  the name key of the website. used as a foreign key. 
+        ///  the name key of the website. used as a foreign key.
         /// </summary>
         // public string websiteName;
         public Guid WebSiteId;
 
         /// <summary>
-        /// Subdomain, includes www or others. 
+        /// Subdomain, includes www or others.
         /// </summary>
         public string SubDomain { get; set; }
 
@@ -64,28 +64,25 @@ namespace Kooboo.Data.Models
                         {
                             return domain.DomainName.Substring(1);
                         }
-                        else
-                        {
-                            return domain.DomainName;
-                        }
+
+                        return domain.DomainName;
                     }
                     return SubDomain + "." + domain.DomainName;
                 }
 
-
-                if (DefaultPortBinding && Port >0)
+                if (DefaultPortBinding && Port > 0)
                 {
                     string ip = Kooboo.Lib.Helper.NetworkHelper.GetLocalIpAddress();
-                    return ip + ":" + Port.ToString();  
+                    return ip + ":" + Port.ToString();
                 }
 
-                return null; 
+                return null;
             }
         }
-         
+
         /// <summary>
         /// Device is the user agent. It used a contains to match the user agent.
-        /// blank = match all. 
+        /// blank = match all.
         /// </summary>
         public string Device { get; set; }
 
@@ -104,22 +101,19 @@ namespace Kooboo.Data.Models
                 }
                 return _ipaddress;
             }
-            set
-            {
-                _ipaddress = value;
-            }
+            set => _ipaddress = value;
         }
 
         // for default port binding..
-        public int Port { get; set; } = 0; 
-         
-        public bool DefaultPortBinding { get; set;  }
+        public int Port { get; set; } = 0;
+
+        public bool DefaultPortBinding { get; set; }
 
         public override int GetHashCode()
         {
             string unique = this.OrganizationId.ToString() + this.WebSiteId.ToString();
-            unique += this.IpAddress; 
-             return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+            unique += this.IpAddress;
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }
 }

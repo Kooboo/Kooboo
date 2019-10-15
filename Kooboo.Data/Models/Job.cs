@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -9,6 +9,7 @@ namespace Kooboo.Data.Models
     public class Job
     {
         private Guid _id;
+
         public Guid Id
         {
             get
@@ -19,31 +20,20 @@ namespace Kooboo.Data.Models
                 }
                 return _id;
             }
-            set
-            {
-
-                _id = value;
-            }
+            set => _id = value;
         }
 
         public string Description { get; set; }
-         
+
         public Guid WebSiteId { get; set; }
 
-        private Dictionary<string, object> _config; 
+        private Dictionary<string, object> _config;
 
         [Obsolete]
-        public Dictionary<string, object> Config {
-            get {
-                if (_config == null)
-                {
-                    _config = new Dictionary<string, object>(); 
-                }
-                return _config; 
-            }
-            set {
-                _config = value; 
-            }
+        public Dictionary<string, object> Config
+        {
+            get => _config ?? (_config = new Dictionary<string, object>());
+            set => _config = value;
         }
 
         public string JobName { get; set; }

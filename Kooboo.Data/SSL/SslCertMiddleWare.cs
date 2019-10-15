@@ -10,21 +10,22 @@ namespace Kooboo.Data.SSL
         {
             get; set;
         }
+
         public async Task Invoke(RenderContext context)
         {
             /// http://your.domain.name/.well-known/acme-challenge/
             if (context.Request.RelativeUrl != null && context.Request.RelativeUrl.ToLower().StartsWith("/.well-known/acme-challenge"))
             {
                 var host = context.Request.Host;
-  
+
                 string validate = context.Request.QueryString.Get("validate");
 
                 if (string.IsNullOrWhiteSpace(validate))
                 {
-                    // this is for real... not for validation check. 
+                    // this is for real... not for validation check.
                     string token = SslService.GetToken(host);
                     if (!string.IsNullOrWhiteSpace(token))
-                    { 
+                    {
                         context.Response.Body = System.Text.Encoding.UTF8.GetBytes(token);
                         context.Response.ContentType = "text/html;charset=utf-8; ";
                         context.Response.End = true;
@@ -32,7 +33,7 @@ namespace Kooboo.Data.SSL
                 }
                 else
                 {
-                    var checkok =  SslService.Verify(host, validate);
+                    var checkok = SslService.Verify(host, validate);
 
                     if (checkok)
                     {
@@ -47,18 +48,12 @@ namespace Kooboo.Data.SSL
                         context.Response.ContentType = "text/html;charset=utf-8; ";
                         context.Response.End = true;
                     }
-                } 
+                }
             }
             else
             {
                 await Next.Invoke(context);
             }
         }
-
-
-   
     }
 }
-
-
-

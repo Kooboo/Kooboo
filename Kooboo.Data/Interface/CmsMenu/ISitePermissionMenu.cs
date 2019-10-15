@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kooboo.Web.Menus
+﻿namespace Kooboo.Web.Menus
 {
-  public  interface ISitePermissionMenu : ICmsMenu
+    public interface ISitePermissionMenu : ICmsMenu
     {
     }
 }
