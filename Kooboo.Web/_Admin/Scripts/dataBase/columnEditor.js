@@ -40,12 +40,16 @@
               });
             self._optionRequired("");
             self.showError(false);
-            setTimeout(function() {
-              if (self.showStringLengthForm()) {
-                !self.data().length() && self.data().length(1024);
-              }
-            }, 200);
+            if (self.showStringLengthForm()) {
+              !self.data().length() && self.data().length(1024);
+            }
           });
+
+          setTimeout(function() {
+            if (self.showStringLengthForm()) {
+              !self.data().length() && self.data().length(1024);
+            }
+          }, 200);
         }
       });
       this.data = params.data;
@@ -98,7 +102,7 @@
           );
         }
       };
-      this.showStringLengthForm = function() {
+      this.showStringLengthForm = ko.pureComputed(function() {
         if (self.data()) {
           if (!self.data().controlType()) {
             return false;
@@ -115,7 +119,7 @@
         } else {
           return false;
         }
-      };
+      });
       this.isValid = function() {
         self._optionRequired(self.data().options().length ? "requried" : "");
 
@@ -133,7 +137,6 @@
             flag && self.data().seed.isValid() && self.data().scale.isValid();
         }
 
-        debugger;
         if (self.showStringLengthForm()) {
           flag = flag && self.data().length.isValid();
         }

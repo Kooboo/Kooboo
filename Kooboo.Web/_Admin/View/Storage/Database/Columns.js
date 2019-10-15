@@ -151,10 +151,9 @@ $(function() {
       self.scale(1);
     });
     this.length = ko.validateField(data ? data.length : 1024, {
+      required: "",
       min: { value: 1 },
-      regex: {
-        pattern: /[0-9]/
-      }
+      dataType: { type: "Integer" }
     });
     this.controlTypeName = ko.pureComputed(function() {
       return self.controlType()
