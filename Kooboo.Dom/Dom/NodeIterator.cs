@@ -195,7 +195,6 @@ namespace Kooboo.Dom
         /// <summary>
         /// return the node following current node.
         /// </summary>
-        /// <param name="node"></param>
         /// <returns></returns>
         public Node Following()
         {

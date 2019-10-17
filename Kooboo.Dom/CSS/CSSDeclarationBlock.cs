@@ -34,10 +34,7 @@ namespace Kooboo.Dom.CSS
         /// </summary>
         public string cssText
         {
-            set
-            {
-                _cssText = value;
-            }
+            set => _cssText = value;
             get
             {
                 initializeCssText();
@@ -58,7 +55,7 @@ namespace Kooboo.Dom.CSS
                         {
                             declarationText = declarationText + " !important";
                         }
-                        declarationText = declarationText + ";";
+                        declarationText += ";";
 
                         _cssText += declarationText;
                     }
@@ -84,7 +81,7 @@ namespace Kooboo.Dom.CSS
                     {
                         declarationText = declarationText + " !important";
                     }
-                    declarationText = declarationText + ";";
+                    declarationText += ";";
 
                     result += declarationText;
                 }
@@ -149,7 +146,7 @@ namespace Kooboo.Dom.CSS
                         if (important)
                         {
                             onedeclaration.value = value;
-                            onedeclaration.important = important;
+                            onedeclaration.important = true;
                         }
                     }
                     else

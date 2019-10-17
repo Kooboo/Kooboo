@@ -141,10 +141,7 @@ namespace Kooboo.Dom
         /// </summary>
         internal void CleanAttributeValue()
         {
-            if (sb != null)
-            {
-                sb.Clear();
-            }
+            sb?.Clear();
         }
     }
 }

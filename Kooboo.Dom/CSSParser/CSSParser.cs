@@ -16,6 +16,7 @@ namespace Kooboo.Dom
         /// </summary>
         /// <param name="cssText"></param>
         /// <param name="baseurl"></param>
+        /// <param name="downloadImportRule"></param>
         /// <returns></returns>
         public static CSSStyleSheet ParseCSSStyleSheet(string cssText, string baseurl, bool downloadImportRule)
         {
@@ -44,24 +45,22 @@ namespace Kooboo.Dom
             return ParseCSSStyleSheetFromUrl(url, false);
         }
 
-        public static CSSStyleSheet ParseCSSStyleSheetFromUrl(string url, bool DownloadImportRule)
+        public static CSSStyleSheet ParseCSSStyleSheetFromUrl(string url, bool downloadImportRule)
         {
             string webstring = Loader.DownloadCss(url);
 
             if (!string.IsNullOrEmpty(webstring))
             {
-                return ParseCSSStyleSheet(webstring, url, DownloadImportRule);
+                return ParseCSSStyleSheet(webstring, url, downloadImportRule);
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         public static CSSRule ParseOneCssRule(string CssText)
         {
             var stylesheet = ParseCSSStyleSheet(CssText);
-            if (stylesheet != null && stylesheet.cssRules != null && stylesheet.cssRules.length > 0)
+            if (stylesheet?.cssRules != null && stylesheet.cssRules.length > 0)
             {
                 return stylesheet.cssRules.item[0];
             }
@@ -72,8 +71,11 @@ namespace Kooboo.Dom
         /// The parsing algo from W3C does not parse CSS into right CSS object model, this is to convert to right CSSOM.
         /// </summary>
         /// <param name="rawstylesheet"></param>
+        /// <param name="baseurl"></param>
+        /// <param name="downloadImportRule"></param>
+        /// <param name="originalCss"></param>
         /// <returns></returns>
-        private static CSSStyleSheet ParseCSSStyleSheet(stylesheet rawstylesheet, string baseurl, bool downloadImportRule, ref string OriginalCss)
+        private static CSSStyleSheet ParseCSSStyleSheet(stylesheet rawstylesheet, string baseurl, bool downloadImportRule, ref string originalCss)
         {
             CSSStyleSheet CssStyleSheet = new CSSStyleSheet();
 
@@ -81,7 +83,7 @@ namespace Kooboo.Dom
             {
                 if (item.Type == enumRuleType.QualifiedRule)
                 {
-                    CSSRule rule = ParseQualifiedRule(item as QualifiedRule, ref OriginalCss);
+                    CSSRule rule = ParseQualifiedRule(item as QualifiedRule, ref originalCss);
                     if (rule != null)
                     {
                         rule.parentStyleSheet = CssStyleSheet;
@@ -90,7 +92,7 @@ namespace Kooboo.Dom
                 }
                 else if (item.Type == enumRuleType.AtRule)
                 {
-                    CSSRule rule = ParseAtRule(item as AtRule, CssStyleSheet, baseurl, downloadImportRule, ref OriginalCss);
+                    CSSRule rule = ParseAtRule(item as AtRule, CssStyleSheet, baseurl, downloadImportRule, ref originalCss);
 
                     if (rule != null)
                     {
@@ -107,8 +109,9 @@ namespace Kooboo.Dom
         /// From W3C, in most case, th preclude matchs to Selector and block value contains declaration.
         /// </summary>
         /// <param name="rule"></param>
+        /// <param name="originalCss"></param>
         /// <returns></returns>
-        private static CSSRule ParseQualifiedRule(QualifiedRule rule, ref string OriginalCss)
+        private static CSSRule ParseQualifiedRule(QualifiedRule rule, ref string originalCss)
         {
             CSSStyleRule cssrule = new CSSStyleRule();
             string selectorText = string.Empty;
@@ -118,11 +121,11 @@ namespace Kooboo.Dom
 
             int endindexselector = -1;
 
-            selectorText = ComponentValueExtension.getString(rule.prelude, ref startindex, ref endindexselector, ref OriginalCss);
+            selectorText = ComponentValueExtension.getString(rule.prelude, ref startindex, ref endindexselector, ref originalCss);
 
             cssrule.selectorText = selectorText;
 
-            cssrule.style = ParseDeclarations(rule.block, ref endindex, ref OriginalCss);
+            cssrule.style = ParseDeclarations(rule.block, ref endindex, ref originalCss);
 
             cssrule.StartIndex = rule.startindex;
             cssrule.EndIndex = rule.endindex;
@@ -131,7 +134,7 @@ namespace Kooboo.Dom
             return cssrule;
         }
 
-        private static CSSRule ParseAtRule(AtRule rule, CSSStyleSheet parentSheet, string baseurl, bool downloadImportRule, ref string OriginalCss)
+        private static CSSRule ParseAtRule(AtRule rule, CSSStyleSheet parentSheet, string baseurl, bool downloadImportRule, ref string originalCss)
         {
             /// the first item in rule is the atkeyword.
 
@@ -144,15 +147,15 @@ namespace Kooboo.Dom
 
                     if (keywordToken.value.ToLower() == "import")
                     {
-                        return ParseImportRule(rule, baseurl, downloadImportRule, ref OriginalCss);
+                        return ParseImportRule(rule, baseurl, downloadImportRule, ref originalCss);
                     }
                     else if (keywordToken.value.ToLower() == "media")
                     {
-                        return ParseMediaRule(rule, parentSheet, ref OriginalCss);
+                        return ParseMediaRule(rule, parentSheet, ref originalCss);
                     }
                     else if (keywordToken.value.ToLower() == "font-face")
                     {
-                        return ParseFontFace(rule, ref OriginalCss);
+                        return ParseFontFace(rule, ref originalCss);
                     }
                 }
             }
@@ -164,8 +167,9 @@ namespace Kooboo.Dom
         /// The @import at-rule is a simple statement. After its name, it takes a single string or url() function to indicate the stylesheet that it should import.
         /// </summary>
         /// <param name="rule"></param>
+        /// <param name="originalCss"></param>
         /// <returns></returns>
-        private static CSSRule ParseImportRule(AtRule rule, string baseurl, bool downloadImportRule, ref string OriginalCss)
+        private static CSSRule ParseImportRule(AtRule rule, string baseurl, bool downloadImportRule, ref string originalCss)
         {
             /// the import starts with import atkeyword token.
             /// it should have been checked before calling this method, can be ignored.
@@ -267,7 +271,7 @@ namespace Kooboo.Dom
                             }
                             else
                             {
-                                media += preservedToken.token.GetString(ref OriginalCss);
+                                media += preservedToken.token.GetString(ref originalCss);
                             }
                         }
                     }
@@ -308,7 +312,7 @@ namespace Kooboo.Dom
                         if (item.Type == CompoenentValueType.preservedToken)
                         {
                             PreservedToken pretoken = item as PreservedToken;
-                            mediarule += pretoken.token.GetString(ref OriginalCss);
+                            mediarule += pretoken.token.GetString(ref originalCss);
 
                             if (token.token.endIndex > endindex)
                             {
@@ -503,7 +507,7 @@ namespace Kooboo.Dom
                                 else
                                 {
                                     state = MediaRuleParseState.stylerule;
-                                    i = i - 1; // reconsume.
+                                    i -= 1; // reconsume.
                                 }
                             }
                             break;

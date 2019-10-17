@@ -20,21 +20,12 @@ namespace Kooboo.Dom.CSS
         /// </summary>
         public List<CSSRule> item = new List<CSSRule>();
 
-        public int length
-        {
-            get { return item.Count(); }
-        }
+        public int length => item.Count;
 
         public CSSRule this[int index]
         {
-            get
-            {
-                return this.item[index];
-            }
-            set
-            {
-                this.item[index] = value;
-            }
+            get => this.item[index];
+            set => this.item[index] = value;
         }
 
         /// <summary>
@@ -50,11 +41,9 @@ namespace Kooboo.Dom.CSS
                 item.Add(rule);
                 return item.Count() - 1;
             }
-            else
-            {
-                item.Insert(insertIndex, rule);
-                return insertIndex;
-            }
+
+            item.Insert(insertIndex, rule);
+            return insertIndex;
         }
 
         /// <summary>

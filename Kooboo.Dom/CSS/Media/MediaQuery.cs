@@ -26,7 +26,8 @@ namespace Kooboo.Dom.CSS
                 {
                     return true;
                 }
-                else if (subitem.ToLower().Contains(mediadevice))
+
+                if (subitem.ToLower().Contains(mediadevice))
                 {
                     return true;
                 }

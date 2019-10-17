@@ -34,15 +34,13 @@ namespace Kooboo.Dom.CSS
                 stop = true;
                 return (Char)0x1a;   //EOF
             }
-            else
-            {
-                return _selectorText[readIndex];
-            }
+
+            return _selectorText[readIndex];
         }
 
         private void reConsume()
         {
-            readIndex = readIndex - 1;
+            readIndex -= 1;
         }
 
         private void Reset()
@@ -58,10 +56,8 @@ namespace Kooboo.Dom.CSS
             {
                 return (Char)0x1a;   //EOF
             }
-            else
-            {
-                return _selectorText[nextindex];
-            }
+
+            return _selectorText[nextindex];
         }
 
         internal bool IsCombinatorSelector(string selectorText)
@@ -135,10 +131,8 @@ namespace Kooboo.Dom.CSS
                         _buffer.Append(currentChar);
                         continue;
                     }
-                    else
-                    {
-                        return new universalSelector();
-                    }
+
+                    return new universalSelector();
                 }
                 ///Working with HTML, authors may use the "period" notation (also known as "full stop", U+002E, .) as an alternative to the ~= notation when representing the class attribute.
                 else if (currentChar == '\u002E')
@@ -567,14 +561,7 @@ namespace Kooboo.Dom.CSS
             if (buffer.Length > 0)
             {
                 value = buffer.ToString();
-                if (!string.IsNullOrWhiteSpace(value))
-                {
-                    value = value.Trim();
-                }
-                else
-                {
-                    value = null;
-                }
+                value = !string.IsNullOrWhiteSpace(value) ? value.Trim() : null;
             }
             buffer.Clear();
             return value;

@@ -26,20 +26,18 @@ namespace Kooboo.Dom.Dom
         public static List<string> MetaData()
         {
             // base link meta noscript script style template title
-            if (_metadata == null)
+            // base and title can only have one, the rest can have multiple.
+            return _metadata ?? (_metadata = new List<string>
             {
-                ///base and title can only have one, the rest can have multiple.
-                _metadata = new List<string>();
-                _metadata.Add("base");
-                _metadata.Add("link");
-                _metadata.Add("meta");
-                _metadata.Add("noscript");
-                _metadata.Add("script");
-                _metadata.Add("style");
-                _metadata.Add("template");
-                _metadata.Add("title");
-            }
-            return _metadata;
+                "base",
+                "link",
+                "meta",
+                "noscript",
+                "script",
+                "style",
+                "template",
+                "title"
+            });
         }
 
         private static List<string> _flow;
@@ -71,7 +69,7 @@ namespace Kooboo.Dom.Dom
             return _flow;
         }
 
-        private static List<string> _Sectioning;
+        private static List<string> _sectioning;
 
         /// <summary>
         /// Sectioning content is content that defines the scope of headings and footers.
@@ -85,18 +83,10 @@ namespace Kooboo.Dom.Dom
             //Each sectioning content element potentially has a heading and an outline. See the section on headings and sections for further details.
             //There are also certain elements that are sectioning roots. These are distinct from sectioning content, but they can also have an outline.
 
-            if (_Sectioning == null)
-            {
-                _Sectioning = new List<string>();
-                _Sectioning.Add("article");
-                _Sectioning.Add("aside");
-                _Sectioning.Add("nav");
-                _Sectioning.Add("section");
-            }
-            return _Sectioning;
+            return _sectioning ?? (_sectioning = new List<string> {"article", "aside", "nav", "section"});
         }
 
-        private static List<string> _Heading;
+        private static List<string> _heading;
 
         /// <summary>
         ///  Heading content defines the header of a section (whether explicitly marked up using sectioning content elements, or implied by the heading content itself).
@@ -104,18 +94,15 @@ namespace Kooboo.Dom.Dom
         /// <returns></returns>
         public static List<string> Heading()
         {
-            if (_Heading == null)
+            return _heading ?? (_heading = new List<string>
             {
-                _Heading = new List<string>();
-                _Heading.Add("h1");
-                _Heading.Add("h2");
-                _Heading.Add("h3");
-                _Heading.Add("h4");
-                _Heading.Add("h5");
-                _Heading.Add("h6");
-            }
-
-            return _Heading;
+                "h1",
+                "h2",
+                "h3",
+                "h4",
+                "h5",
+                "h6"
+            });
         }
 
         private static List<string> _phrase;
@@ -146,7 +133,7 @@ namespace Kooboo.Dom.Dom
             return _phrase;
         }
 
-        private static List<string> _Embedded;
+        private static List<string> _embedded;
 
         /// <summary>
         /// Embedded content is content that imports another resource into the document, or content from another vocabulary that is inserted into the document.
@@ -154,22 +141,19 @@ namespace Kooboo.Dom.Dom
         /// <returns></returns>
         public static List<string> Embedded()
         {
-            if (_Embedded == null)
+            //audio canvas embed iframe img math object svg video
+            return _embedded ?? (_embedded = new List<string>
             {
-                //audio canvas embed iframe img math object svg video
-                _Embedded = new List<string>();
-                _Embedded.Add("audio");
-                _Embedded.Add("canvas");
-                _Embedded.Add("embed");
-                _Embedded.Add("iframe");
-                _Embedded.Add("img");
-                _Embedded.Add("math");
-                _Embedded.Add("object");
-                _Embedded.Add("svg");
-                _Embedded.Add("video");
-            }
-
-            return _Embedded;
+                "audio",
+                "canvas",
+                "embed",
+                "iframe",
+                "img",
+                "math",
+                "object",
+                "svg",
+                "video"
+            });
         }
 
         private static List<string> _interactive;
@@ -181,26 +165,22 @@ namespace Kooboo.Dom.Dom
         public static List<string> Interactive()
         {
             ///a audio (if the controls attribute is present) button embed iframe img (if the usemap attribute is present) input (if the type attribute is not in the hidden state) keygen label object (if the usemap attribute is present) select textarea video (if the controls attribute is present)
-            if (_interactive == null)
+            return _interactive ?? (_interactive = new List<string>
             {
-                _interactive = new List<string>();
-
-                _interactive.Add("a");
-                _interactive.Add("audio");
-                _interactive.Add("button");
-                _interactive.Add("embed");
-                _interactive.Add("iframe");
-                _interactive.Add("img");
-                _interactive.Add("input");
-                _interactive.Add("keygen");
-                _interactive.Add("label");
-                _interactive.Add("object");
-                _interactive.Add("select");
-                _interactive.Add("textarea");
-                _interactive.Add("video");
-            }
-
-            return _interactive;
+                "a",
+                "audio",
+                "button",
+                "embed",
+                "iframe",
+                "img",
+                "input",
+                "keygen",
+                "label",
+                "object",
+                "select",
+                "textarea",
+                "video"
+            });
         }
     }
 }

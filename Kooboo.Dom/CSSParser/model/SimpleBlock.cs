@@ -21,7 +21,7 @@ namespace Kooboo.Dom.CSS.rawmodel
 
         public List<ComponentValue> value = new List<ComponentValue>();
 
-        public string getString(ref string CssText)
+        public string getString(ref string cssText)
         {
             string valuelist = string.Empty;
 
@@ -30,17 +30,17 @@ namespace Kooboo.Dom.CSS.rawmodel
                 if (item.Type == CompoenentValueType.preservedToken)
                 {
                     PreservedToken pretoken = item as PreservedToken;
-                    valuelist += pretoken.token.GetString(ref CssText);
+                    valuelist += pretoken?.token.GetString(ref cssText);
                 }
                 else if (item.Type == CompoenentValueType.function)
                 {
                     Function func = item as Function;
-                    valuelist += func.getString(ref CssText);
+                    valuelist += func?.getString(ref cssText);
                 }
                 else if (item.Type == CompoenentValueType.simpleBlock)
                 {
                     SimpleBlock simpleblock = item as SimpleBlock;
-                    valuelist += simpleblock.getString(ref CssText);
+                    valuelist += simpleblock?.getString(ref cssText);
                 }
             }
 

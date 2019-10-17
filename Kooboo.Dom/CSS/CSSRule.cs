@@ -45,10 +45,7 @@ namespace Kooboo.Dom.CSS
                 }
                 return _csstext;
             }
-            set
-            {
-                _csstext = value;
-            }
+            set => _csstext = value;
         }
 
         private string _csstext;
@@ -63,10 +60,7 @@ namespace Kooboo.Dom.CSS
                 }
                 return _styleDeclerationText;
             }
-            set
-            {
-                _styleDeclerationText = value;
-            }
+            set => _styleDeclerationText = value;
         }
 
         private string _styleDeclerationText;
@@ -87,10 +81,7 @@ namespace Kooboo.Dom.CSS
                 return _selectorText;
             }
 
-            set
-            {
-                _selectorText = value;
-            }
+            set => _selectorText = value;
         }
 
         public CSSRule parentRule;

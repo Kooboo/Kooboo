@@ -15,16 +15,14 @@ namespace Kooboo.Dom.CSS
         {
             /// Only the characters "space" (U+0020), "tab" (U+0009), "line feed" (U+000A), "carriage return" (U+000D), and "form feed" (U+000C) can occur in whitespace.
 
-            if (_whitespace == null)
+            return _whitespace ?? (_whitespace = new List<char>
             {
-                _whitespace = new List<char>();
-                _whitespace.Add('\u0020');
-                _whitespace.Add('\u0009');
-                _whitespace.Add('\u000A');
-                _whitespace.Add('\u000D');
-                _whitespace.Add('\u000C');
-            }
-            return _whitespace;
+                '\u0020',
+                '\u0009',
+                '\u000A',
+                '\u000D',
+                '\u000C'
+            });
         }
 
         private static List<char> _combinator;

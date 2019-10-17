@@ -63,14 +63,12 @@ namespace Kooboo.Dom.CSS
                             {
                                 continue;
                             }
-                            else
-                            {
-                                CSSFileScannerResult result = new CSSFileScannerResult();
-                                result.type = type;
-                                result.cssText = ruletext;
 
-                                return result;
-                            }
+                            CSSFileScannerResult result = new CSSFileScannerResult();
+                            result.type = type;
+                            result.cssText = ruletext;
+
+                            return result;
                         }
                         else
                         {

@@ -15,17 +15,7 @@ namespace Kooboo.Dom.CSS
 
         public string href;
 
-        public string urlToken
-        {
-            get
-            {
-                if (cssText.Length < 8)
-                {
-                    return string.Empty;
-                }
-                return cssText.Substring(8).TrimEnd(new[] { ';', ' ' });
-            }
-        }
+        public string urlToken => cssText.Length < 8 ? string.Empty : cssText.Substring(8).TrimEnd(';', ' ');
 
         /// <summary>
         /// The media attribute must return the value of the media attribute of the associated CSS style sheet.

@@ -7,7 +7,7 @@ namespace Kooboo.Dom.CSS.rawmodel
 {
     public static class ComponentValueExtension
     {
-        public static string getString(List<ComponentValue> valuelist, ref int startindex, ref int endindex, ref string CssText)
+        public static string getString(List<ComponentValue> valuelist, ref int startindex, ref int endindex, ref string cssText)
         {
             string returnstring = string.Empty;
 
@@ -26,17 +26,17 @@ namespace Kooboo.Dom.CSS.rawmodel
                 if (item.Type == CompoenentValueType.preservedToken)
                 {
                     PreservedToken pretoken = item as PreservedToken;
-                    returnstring += pretoken.token.GetString(ref CssText);
+                    returnstring += pretoken?.token.GetString(ref cssText);
                 }
                 else if (item.Type == CompoenentValueType.function)
                 {
                     Function func = item as Function;
-                    returnstring += func.getString(ref CssText);
+                    returnstring += func?.getString(ref cssText);
                 }
                 else if (item.Type == CompoenentValueType.simpleBlock)
                 {
                     SimpleBlock simpleblock = item as SimpleBlock;
-                    returnstring += simpleblock.getString(ref CssText);
+                    returnstring += simpleblock?.getString(ref cssText);
                 }
             }
 

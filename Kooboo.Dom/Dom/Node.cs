@@ -373,23 +373,17 @@ namespace Kooboo.Dom
                 if (currentCount > otherCount)
                 {
                     // check containby
-                    foreach (var item in currentPath)
+                    if (currentPath.Any(item => item.isEqualNode(other)))
                     {
-                        if (item.isEqualNode(other))
-                        {
-                            return enumNodeComparePosition.DOCUMENT_POSITION_CONTAINED_BY;
-                        }
+                        return enumNodeComparePosition.DOCUMENT_POSITION_CONTAINED_BY;
                     }
                 }
                 else
                 {
                     // check if it contains.
-                    foreach (var item in otherPath)
+                    if (otherPath.Any(item => item.isEqualNode(this)))
                     {
-                        if (item.isEqualNode(this))
-                        {
-                            return enumNodeComparePosition.DOCUMENT_POSITION_CONTAINS;
-                        }
+                        return enumNodeComparePosition.DOCUMENT_POSITION_CONTAINS;
                     }
                 }
             }
@@ -427,12 +421,12 @@ namespace Kooboo.Dom
 
             Node nextNode = child.nextSibling();
 
-            child.siblingIndex = child.siblingIndex + 1;
+            child.siblingIndex += 1;
 
             while (nextNode != null)
             {
                 Node newnode = nextNode.nextSibling();
-                nextNode.siblingIndex = nextNode.siblingIndex + 1;
+                nextNode.siblingIndex += 1;
 
                 nextNode = newnode;
             }
@@ -542,10 +536,8 @@ namespace Kooboo.Dom
                 {
                     return null;
                 }
-                else
-                {
-                    return this.ownerDocument.HtmlSource.Substring(start, len);
-                }
+
+                return this.ownerDocument.HtmlSource.Substring(start, len);
             }
         }
 
@@ -571,10 +563,8 @@ namespace Kooboo.Dom
                 {
                     return null;
                 }
-                else
-                {
-                    return this.ownerDocument.HtmlSource.Substring(start, len);
-                }
+
+                return this.ownerDocument.HtmlSource.Substring(start, len);
             }
         }
 

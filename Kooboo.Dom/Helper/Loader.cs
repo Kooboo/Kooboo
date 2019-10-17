@@ -32,25 +32,25 @@ namespace Kooboo.Dom
         /// <summary>
         /// load css from internet or local file.
         /// </summary>
-        /// <param name="FullUrlOrPath"></param>
+        /// <param name="fullUrlOrPath"></param>
         /// <returns></returns>
-        public static string LoadCss(string FullUrlOrPath)
+        public static string LoadCss(string fullUrlOrPath)
         {
             string csstext = string.Empty;
 
-            if (FullUrlOrPath.ToLower().StartsWith("http://") || FullUrlOrPath.ToLower().StartsWith("https://"))
+            if (fullUrlOrPath.ToLower().StartsWith("http://") || fullUrlOrPath.ToLower().StartsWith("https://"))
             {
-                csstext = Loader.DownloadCss(FullUrlOrPath);
+                csstext = Loader.DownloadCss(fullUrlOrPath);
             }
             else
             {
-                if (FullUrlOrPath.Contains(":"))
+                if (fullUrlOrPath.Contains(":"))
                 {
-                    if (System.IO.File.Exists(FullUrlOrPath))
+                    if (System.IO.File.Exists(fullUrlOrPath))
                     {
                         try
                         {
-                            csstext = System.IO.File.ReadAllText(FullUrlOrPath);
+                            csstext = System.IO.File.ReadAllText(fullUrlOrPath);
                         }
                         catch (Exception)
                         {
@@ -76,23 +76,23 @@ namespace Kooboo.Dom
             }
         }
 
-        public static string LoadHtml(string FullUrlOrPath)
+        public static string LoadHtml(string fullUrlOrPath)
         {
             string text = string.Empty;
 
-            if (FullUrlOrPath.ToLower().StartsWith("http://") || FullUrlOrPath.ToLower().StartsWith("https://"))
+            if (fullUrlOrPath.ToLower().StartsWith("http://") || fullUrlOrPath.ToLower().StartsWith("https://"))
             {
-                text = DownloadHtml(FullUrlOrPath);
+                text = DownloadHtml(fullUrlOrPath);
             }
             else
             {
-                if (FullUrlOrPath.Contains(":"))
+                if (fullUrlOrPath.Contains(":"))
                 {
-                    if (System.IO.File.Exists(FullUrlOrPath))
+                    if (System.IO.File.Exists(fullUrlOrPath))
                     {
                         try
                         {
-                            text = System.IO.File.ReadAllText(FullUrlOrPath);
+                            text = System.IO.File.ReadAllText(fullUrlOrPath);
                         }
                         catch (Exception)
                         {
@@ -153,7 +153,7 @@ namespace Kooboo.Dom
                 {
                     e = Encoding.GetEncoding(charset);
                 }
-                catch (Exception ee)
+                catch (Exception)
                 {
                     e = Encoding.UTF8;
                 }
@@ -216,17 +216,18 @@ namespace Kooboo.Dom
 
                 var webResponse = httpWebRequest.GetResponse();
 
-                if (webResponse is HttpWebResponse)
+                if (webResponse is HttpWebResponse httpWebResponse)
                 {
-                    down = ProcessResponse((HttpWebResponse)webResponse);
+                    down = ProcessResponse(httpWebResponse);
                     if (down != null)
                     {
                         return down;
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
+                // ignored
             }
 
             return down;
@@ -258,12 +259,9 @@ namespace Kooboo.Dom
 
                 if (string.IsNullOrEmpty(downcontent.ContentType) || downcontent.ContentType.Contains("text"))
                 {
-                    string text = string.Empty;
-                    Encoding encoding = Encoding.Default;
+                    var encoding = ParseEncoding(databytes, contentType);
 
-                    encoding = ParseEncoding(databytes, contentType);
-
-                    text = encoding.GetString(databytes).Trim(new[] { '\uFEFF', '\u200B' });
+                    var text = encoding.GetString(databytes).Trim('\uFEFF', '\u200B');
 
                     downcontent.isString = true;
                     downcontent.ContentString = text;

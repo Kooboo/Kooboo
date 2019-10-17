@@ -10,40 +10,37 @@ namespace Kooboo.Dom.CSS
 
         public static List<string> InheritedPeroptyList()
         {
-            if (_inheritedpropertylist == null)
+            return _inheritedpropertylist ?? (_inheritedpropertylist = new List<string>
             {
-                _inheritedpropertylist = new List<string>();
-                _inheritedpropertylist.Add("border-collapse");
-                _inheritedpropertylist.Add("border-spacing");
-                _inheritedpropertylist.Add("caption-side");
-                _inheritedpropertylist.Add("color");
-                _inheritedpropertylist.Add("cursor");
-                _inheritedpropertylist.Add("direction");
-                _inheritedpropertylist.Add("empty-cells");
-                _inheritedpropertylist.Add("font-family");
-                _inheritedpropertylist.Add("font-size");
-                _inheritedpropertylist.Add("font-style");
-                _inheritedpropertylist.Add("font-variant");
-                _inheritedpropertylist.Add("font-weight");
-                _inheritedpropertylist.Add("font");
-                _inheritedpropertylist.Add("letter-spacing");
-                _inheritedpropertylist.Add("line-height");
-                _inheritedpropertylist.Add("list-style-image");
-                _inheritedpropertylist.Add("list-style-position");
-                _inheritedpropertylist.Add("list-style-type");
-                _inheritedpropertylist.Add("list-style");
-                _inheritedpropertylist.Add("orphans");
-                _inheritedpropertylist.Add("quotes");
-                _inheritedpropertylist.Add("text-align");
-                _inheritedpropertylist.Add("text-indent");
-                _inheritedpropertylist.Add("text-transform");
-                _inheritedpropertylist.Add("visibility");
-                _inheritedpropertylist.Add("white-space");
-                _inheritedpropertylist.Add("widows");
-                _inheritedpropertylist.Add("word-spacing");
-            }
-
-            return _inheritedpropertylist;
+                "border-collapse",
+                "border-spacing",
+                "caption-side",
+                "color",
+                "cursor",
+                "direction",
+                "empty-cells",
+                "font-family",
+                "font-size",
+                "font-style",
+                "font-variant",
+                "font-weight",
+                "font",
+                "letter-spacing",
+                "line-height",
+                "list-style-image",
+                "list-style-position",
+                "list-style-type",
+                "list-style",
+                "orphans",
+                "quotes",
+                "text-align",
+                "text-indent",
+                "text-transform",
+                "visibility",
+                "white-space",
+                "widows",
+                "word-spacing"
+            });
         }
     }
 

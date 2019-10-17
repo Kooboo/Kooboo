@@ -123,15 +123,11 @@ namespace Kooboo.Dom.CSS
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
+
                 return false;
             }
+
+            return false;
         }
 
         private static bool matchAttribute(Element element, attributeSelector attSelector)
@@ -193,10 +189,8 @@ namespace Kooboo.Dom.CSS
                         {
                             return true;
                         }
-                        else
-                        {
-                            return false;
-                        }
+
+                        return false;
                     }
                 case enumAttributeType.exactlyEnd:
                     {
@@ -211,10 +205,8 @@ namespace Kooboo.Dom.CSS
                         {
                             return true;
                         }
-                        else
-                        {
-                            return false;
-                        }
+
+                        return false;
                     }
                 case enumAttributeType.contains:
                     {
@@ -229,10 +221,8 @@ namespace Kooboo.Dom.CSS
                         {
                             return true;
                         }
-                        else
-                        {
-                            return false;
-                        }
+
+                        return false;
                     }
                 case enumAttributeType.hyphenSeperated:
                     {
@@ -314,10 +304,8 @@ namespace Kooboo.Dom.CSS
                             {
                                 continue;
                             }
-                            else
-                            {
-                                return false;
-                            }
+
+                            return false;
                         }
                     case combinator.Child:
                         {
@@ -328,10 +316,8 @@ namespace Kooboo.Dom.CSS
                                 matched = parentElement;
                                 continue;
                             }
-                            else
-                            {
-                                return false;
-                            }
+
+                            return false;
                         }
                     case combinator.AdjacentSibling:
                         {
@@ -352,18 +338,14 @@ namespace Kooboo.Dom.CSS
                             {
                                 return false;
                             }
-                            else
+
+                            if (selectorMatch.matchOneSelector(previouselement, upMatchSelector))
                             {
-                                if (selectorMatch.matchOneSelector(previouselement, upMatchSelector))
-                                {
-                                    matched = previouselement;
-                                    continue;
-                                }
-                                else
-                                {
-                                    return false;
-                                }
+                                matched = previouselement;
+                                continue;
                             }
+
+                            return false;
                         }
                     case combinator.Sibling:
                         {
@@ -390,10 +372,8 @@ namespace Kooboo.Dom.CSS
                             {
                                 continue;
                             }
-                            else
-                            {
-                                return false;
-                            }
+
+                            return false;
                         }
 
                     default:
@@ -423,10 +403,8 @@ namespace Kooboo.Dom.CSS
                 {
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
 
             //E:nth-child(n)	an E element, the n-th child of its parent	Structural pseudo-classes	3
@@ -575,58 +553,53 @@ namespace Kooboo.Dom.CSS
                 int nth = Convert.ToInt32(strnumber);
                 return (nth == (counter + 1));
             }
-            else
+
+            if (strnumber.Contains("n"))
             {
-                if (strnumber.Contains("n"))
-                {
-                    int beforen = 0;
-                    int aftern = 0;
-                    string strbefore = strnumber.Substring(0, strnumber.IndexOf("n")).Trim();
-                    if (string.IsNullOrEmpty(strbefore))
-                    { return false; }
-                    if (!int.TryParse(strbefore, out beforen))
-                    {
-                        return false;
-                    }
-
-                    if (CommonIdoms.isAsciiDigit(strbefore))
-                    {
-                        beforen = Convert.ToInt32(strbefore);
-                    }
-
-                    if (strnumber.IndexOf("+") > 0)
-                    {
-                        string strafter = strnumber.Substring(strnumber.IndexOf("+") + 1).Trim();
-                        if (!string.IsNullOrEmpty(strafter))
-                        {
-                            if (!int.TryParse(strafter, out aftern))
-                            {
-                                return false;
-                            }
-                        }
-                    }
-
-                    if (beforen == 0)
-                    {
-                        return (counter + 1) == aftern;
-                    }
-                    else
-                    {
-                        return ((counter + 1) % beforen == aftern);
-                    }
-                }
-                else if (strnumber == "odd")
-                {
-                    return ((counter + 1) % 2 == 1);
-                }
-                else if (strnumber == "even")
-                {
-                    return ((counter + 1) % 2 == 0);
-                }
-                else
+                int aftern = 0;
+                string strbefore = strnumber.Substring(0, strnumber.IndexOf("n")).Trim();
+                if (string.IsNullOrEmpty(strbefore))
+                { return false; }
+                if (!int.TryParse(strbefore, out var beforen))
                 {
                     return false;
                 }
+
+                if (CommonIdoms.isAsciiDigit(strbefore))
+                {
+                    beforen = Convert.ToInt32(strbefore);
+                }
+
+                if (strnumber.IndexOf("+") > 0)
+                {
+                    string strafter = strnumber.Substring(strnumber.IndexOf("+") + 1).Trim();
+                    if (!string.IsNullOrEmpty(strafter))
+                    {
+                        if (!int.TryParse(strafter, out aftern))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                if (beforen == 0)
+                {
+                    return (counter + 1) == aftern;
+                }
+
+                return ((counter + 1) % beforen == aftern);
+            }
+            else if (strnumber == "odd")
+            {
+                return ((counter + 1) % 2 == 1);
+            }
+            else if (strnumber == "even")
+            {
+                return ((counter + 1) % 2 == 0);
+            }
+            else
+            {
+                return false;
             }
         }
 
@@ -634,14 +607,7 @@ namespace Kooboo.Dom.CSS
         {
             int counter = 0;
             Node siblingNode;
-            if (last)
-            {
-                siblingNode = element.nextSibling();
-            }
-            else
-            {
-                siblingNode = element.previousSibling();
-            }
+            siblingNode = last ? element.nextSibling() : element.previousSibling();
 
             while (siblingNode != null)
             {
@@ -660,14 +626,7 @@ namespace Kooboo.Dom.CSS
                     }
                 }
 
-                if (last)
-                {
-                    siblingNode = siblingNode.nextSibling();
-                }
-                else
-                {
-                    siblingNode = siblingNode.previousSibling();
-                }
+                siblingNode = last ? siblingNode.nextSibling() : siblingNode.previousSibling();
             }
             return counter;
         }

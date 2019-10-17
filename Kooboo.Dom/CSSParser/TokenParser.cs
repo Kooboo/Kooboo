@@ -36,12 +36,12 @@ namespace Kooboo.Dom.CSS
         {
         }
 
-        private cssToken currentToken;
+        private cssToken _currentToken;
 
         private cssToken ConsumeNextToken()
         {
-            currentToken = tokenizer.ConsumeNextToken();
-            return currentToken;
+            _currentToken = tokenizer.ConsumeNextToken();
+            return _currentToken;
         }
 
         private void ReconsumeToken()
@@ -73,7 +73,6 @@ namespace Kooboo.Dom.CSS
         /// <summary>
         /// 5.4.1. Consume a list of rules
         /// </summary>
-        /// <param name="tokenizer"></param>
         /// <param name="top_level_flag"></param>
         /// <returns></returns>
         private List<Rule> ConsumeListOfRules(bool top_level_flag)
@@ -217,15 +216,15 @@ namespace Kooboo.Dom.CSS
 
             enumTokenType endTokenType = enumTokenType.curly_bracket_right;
 
-            if (currentToken.Type == enumTokenType.curly_bracket_left)
+            if (_currentToken.Type == enumTokenType.curly_bracket_left)
             {
                 endTokenType = enumTokenType.curly_bracket_right;
             }
-            else if (currentToken.Type == enumTokenType.round_bracket_left)
+            else if (_currentToken.Type == enumTokenType.round_bracket_left)
             {
                 endTokenType = enumTokenType.round_bracket_right;
             }
-            else if (currentToken.Type == enumTokenType.square_bracket_left)
+            else if (_currentToken.Type == enumTokenType.square_bracket_left)
             {
                 endTokenType = enumTokenType.square_bracket_right;
             }
@@ -234,7 +233,7 @@ namespace Kooboo.Dom.CSS
 
             SimpleBlock simpleblock = new SimpleBlock();
 
-            simpleblock.token = currentToken;
+            simpleblock.token = _currentToken;
 
             cssToken token;
             while (true)
@@ -309,7 +308,7 @@ namespace Kooboo.Dom.CSS
             //Create a function with a name equal to the value of the current input token, and with a value which is initially an empty list.
 
             /// before calling this method, the calling method must already check that current token is a function token.
-            function_token token = currentToken as function_token;
+            function_token token = _currentToken as function_token;
 
             Function func = new Function();
             func.name = token.Value;

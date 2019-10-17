@@ -31,17 +31,17 @@ namespace Kooboo.Dom.CSS.Selector
             }
         }
 
-        private simpleSelector _InnerNotSelector;
+        private simpleSelector _innerNotSelector;
 
         public simpleSelector InnerNotSelector
         {
             get
             {
-                if (_InnerNotSelector == null && !string.IsNullOrEmpty(matchText))
+                if (_innerNotSelector == null && !string.IsNullOrEmpty(matchText))
                 {
-                    _InnerNotSelector = SelectorParser.parseOneSelector(matchText);
+                    _innerNotSelector = SelectorParser.parseOneSelector(matchText);
                 }
-                return _InnerNotSelector;
+                return _innerNotSelector;
             }
         }
     }

@@ -15,14 +15,14 @@ namespace Kooboo.Dom
             return doc;
         }
 
-        public static Document CreateDom(string htmlText, List<string> ParserErrors)
+        public static Document CreateDom(string htmlText, List<string> parserErrors)
         {
             TreeConstruction treeParser = new TreeConstruction();
             treeParser.EnableErrorLogging = true;
             Document doc = treeParser.Parse(htmlText);
             doc.HtmlSource = htmlText;
 
-            ParserErrors.AddRange(_getErrors(treeParser.Errors, htmlText));
+            parserErrors.AddRange(_getErrors(treeParser.Errors, htmlText));
             return doc;
         }
 
@@ -52,12 +52,11 @@ namespace Kooboo.Dom
         /// <summary>
         /// create dom and apply css to dom elements
         /// </summary>
-        /// <param name="FullUrlOrPath"></param>
-        /// <param name="applyCss">parse and apply css to dom elements</param>
+        /// <param name="fullUrlOrPath"></param>
         /// <returns></returns>
-        public static Document CreateDomFromUri(string FullUrlOrPath)
+        public static Document CreateDomFromUri(string fullUrlOrPath)
         {
-            string htmlstring = Loader.LoadHtml(FullUrlOrPath);
+            string htmlstring = Loader.LoadHtml(fullUrlOrPath);
 
             if (string.IsNullOrEmpty(htmlstring))
             {
@@ -65,7 +64,7 @@ namespace Kooboo.Dom
             }
 
             Document doc = CreateDom(htmlstring);
-            doc.URL = FullUrlOrPath;
+            doc.URL = fullUrlOrPath;
 
             return doc;
         }

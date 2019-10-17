@@ -9,15 +9,16 @@ namespace Kooboo.Dom.CSS.Tokens
         /// this is only used to insert like selectorText into the CssRule. It is not so much of useful.
         /// </summary>
         /// <param name="input"></param>
+        /// <param name="originalCss"></param>
         /// <returns></returns>
-        public static string GetString(this cssToken input, ref string OriginalCss)
+        public static string GetString(this cssToken input, ref string originalCss)
         {
-            if (input.startIndex > -1 && input.endIndex > -1 && input.endIndex < OriginalCss.Length)
+            if (input.startIndex > -1 && input.endIndex > -1 && input.endIndex < originalCss.Length)
             {
                 int len = input.endIndex - input.startIndex;
                 if (len >= 0)
                 {
-                    return OriginalCss.Substring(input.startIndex, len + 1);
+                    return originalCss.Substring(input.startIndex, len + 1);
                 }
             }
 
@@ -25,50 +26,50 @@ namespace Kooboo.Dom.CSS.Tokens
             {
                 case enumTokenType.ident:
                     ident_token token = input as ident_token;
-                    return token.value;
+                    return token?.value;
 
                 case enumTokenType.function:
                     function_token functoken = input as function_token;
-                    return functoken.Value;
+                    return functoken?.Value;
 
                 case enumTokenType.at_keyword:
                     at_keyword_token keywordtoken = input as at_keyword_token;
-                    return keywordtoken.value;
+                    return keywordtoken?.value;
 
                 case enumTokenType.hash:
                     hash_token hashtoken = input as hash_token;
-                    return "#" + hashtoken.value;
+                    return "#" + hashtoken?.value;
 
                 ///TOBE considered, should not without "
                 case enumTokenType.String:
                     string_token stringtoken = input as string_token;
-                    return "\"" + stringtoken.value + "\"";
+                    return "\"" + stringtoken?.value + "\"";
 
                 case enumTokenType.bad_string:
                     return string.Empty;
 
                 case enumTokenType.url:
                     url_token urltoken = input as url_token;
-                    return urltoken.value;
+                    return urltoken?.value;
 
                 case enumTokenType.bad_url:
                     return string.Empty;
 
                 case enumTokenType.delim:
                     delim_token delim = input as delim_token;
-                    return delim.value.ToString();
+                    return delim?.value.ToString();
 
                 case enumTokenType.number:
                     number_token number = input as number_token;
-                    return number.representation;
+                    return number?.representation;
 
                 case enumTokenType.percentage:
                     percentage_token percentage = input as percentage_token;
-                    return percentage.representation;
+                    return percentage?.representation;
 
                 case enumTokenType.dimension:
                     dimension_token dimension = input as dimension_token;
-                    return dimension.representation + dimension.unit;
+                    return dimension?.representation + dimension?.unit;
 
                 //TODO: to be checked.
                 case enumTokenType.unicode_range:

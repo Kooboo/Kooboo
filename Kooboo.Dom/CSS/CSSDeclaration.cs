@@ -16,10 +16,7 @@ namespace Kooboo.Dom.CSS
 
         public string propertyname
         {
-            get
-            {
-                return _propertyname;
-            }
+            get => _propertyname;
             set
             {
                 _propertyname = value;
