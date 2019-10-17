@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Kooboo.IndexedDB;
 using System;
 using Kooboo.Data.Models;
-
+using Kooboo.IndexedDB.Dynamic;
 
 namespace Kooboo.Data
 {
@@ -13,56 +13,14 @@ namespace Kooboo.Data
 
         private static object _dbobject = new object();
 
-        private static Dictionary<string, Database> _databasedictionary = new Dictionary<string, Database>();
+        private static Dictionary<string, Database> _databasedictionary { get; set; } = new Dictionary<string, Database>();
 
-        private static Dictionary<string, Database> _tabledb = new Dictionary<string, Database>();
-
-        public static Database GetTableDatabase(string fullpath)
-        {
-            fullpath = fullpath.ToValidPath();
-
-            if (!_tabledb.ContainsKey(fullpath))
-            {
-                lock (_dbobject)
-                {
-                    if (!_tabledb.ContainsKey(fullpath))
-                    {
-                        Database db = new Database(fullpath);
-                     
-                        _tabledb.Add(fullpath, db);
-                    }
-                }
-            }
-
-            return _tabledb[fullpath];
-        }
-
-        public static bool HasKDatabase(WebSite website)
-        {
-            string orgfolder = AppSettings.GetOrganizationFolder(website.OrganizationId);
-            string sitefolder = System.IO.Path.Combine(orgfolder, website.Name);
-            string name = System.IO.Path.Combine(sitefolder, "Tables");
-
-            name = name.ToValidPath();
-
-            return _tabledb.ContainsKey(name); 
-
-        }
 
         public static Database GetKDatabase(WebSite website)
-        {  
-            string orgfolder = AppSettings.GetOrganizationFolder(website.OrganizationId);
-            string sitefolder = System.IO.Path.Combine(orgfolder, website.Name);
-            string name = System.IO.Path.Combine(sitefolder, "Tables"); 
-            return Kooboo.Data.DB.GetTableDatabase(name);
+        {
+            return GetDatabase(website);
         }
 
-        /// <summary>
-        /// the name of database,normally it is the site name. 
-        /// If database not exists, it will be created. 
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
         public static Database GetDatabase(string name)
         {
             name = name.ToValidPath();
@@ -80,6 +38,12 @@ namespace Kooboo.Data
             }
 
             return _databasedictionary[name];
+        }
+
+        public static Database GetDatabase(WebSite site)
+        {
+            var dbName = AppSettings.GetDbName(site.OrganizationId, site.Name);
+            return GetDatabase(dbName);
         }
 
         public static void DeleteDatabase(string name)
@@ -104,9 +68,6 @@ namespace Kooboo.Data
 
         }
 
-        private static object _bindingobject = new object();
-        private static object _websiteobject = new object();
-
         /// <summary>
         /// the global databsae for global setting. 
         /// </summary>
@@ -116,19 +77,57 @@ namespace Kooboo.Data
             return GetDatabase(DataConstants.KoobooGlobalDb);
         }
 
-        public static ObjectStore<Guid, Notification> Notifications()
+        public static Table GetOrCreateTable(Database database, string tablename, IndexedDB.Dynamic.Setting setting = null)
         {
-            string storename = typeof(Notification).Name;
-
-            lock (_websiteobject)
+            if (setting == null)
             {
-                var paras = new ObjectStoreParameters();
-                paras.AddColumn<Notification>(o => o.Id);
-                paras.AddColumn<Notification>(o => o.UserId);
-                paras.AddColumn<Notification>(o => o.WebSiteId);
-                return Global().GetOrCreateObjectStore<Guid, Notification>(storename, paras);
+                setting = GetDefaultTableSetting(tablename);
             }
+
+            return database.GetOrCreateTable(tablename, setting);
         }
+
+        public static Table GetOrCreateTable(WebSite site, string tablename, IndexedDB.Dynamic.Setting setting = null)
+        {
+            var kdb = GetKDatabase(site);
+
+            return GetOrCreateTable(kdb, tablename, setting);
+        }
+
+        private static IndexedDB.Dynamic.Setting GetDefaultTableSetting(string tablename)
+        {
+            string lower = tablename.ToLower();
+            if (lower == "_sys_keyvalues")
+            {
+                IndexedDB.Dynamic.Setting setting = new IndexedDB.Dynamic.Setting();
+                setting.AppendColumn("key", typeof(string), 256);
+                setting.AppendColumn("value", typeof(string), int.MaxValue);
+                //setting.SetPrimaryKey("key", typeof(string), 256);
+                return setting;
+            }
+            return null;
+        }
+
+        public static Table GetTable(Database database, string tableName)
+        {  
+            if (!database.HasTable(tableName))
+            {
+                return null;
+            }
+            else
+            {
+                return database.GetOrCreateTable(tableName);
+            } 
+        }
+
+
+        public static Table GetTable(WebSite site, string tableName)
+        {
+            var database = GetKDatabase(site);
+
+            return GetTable(database, tableName); 
+        }
+
     }
 
 }

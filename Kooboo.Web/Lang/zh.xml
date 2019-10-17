@@ -139,7 +139,6 @@
   <key id="privacy policy">隐私政策</key>
   <key id="Sign up">注册</key>
   <key id="Reset">重置</key>
-  <key id="s">s</key>
   <key id="Continue">继续</key>
   <key id="Click the &quot;New field&quot; below to create first content field for your content type.">点击下方按钮，为您的数据类型创建新字段。</key>
   <key id="New field">新建字段</key>
@@ -641,9 +640,6 @@
   <key id="Data type">数据类型</key>
   <key id="Error message">错误信息</key>
   <key id="Length">Length</key>
-  <key id="Click to collapse actions">收起</key>
-  <key id="Redo">重做</key>
-  <key id="NOTE!">说明!</key>
   <key id="Current page">当前页</key>
   <key id="Meta">Meta</key>
   <key id="HTTP-equiv">HTTP-equiv</key>
@@ -847,6 +843,7 @@
   <key id="please check your server.">请检查您的服务器</key>
   <key id="This site is still downloading, please wait.">站点还在下载中， 请稍等...</key>
   <key id="Please select the content you want before exporting.">导出前请选择要导出的内容</key>
+  <key id="Domain missing">Domain missing</key>
   <key id="Reply content goes here">此处输入评论内容</key>
   <key id="Input a amount large than 0.01">输入值需大于0.01</key>
   <key id="Add relative source">新增相对资源</key>
@@ -1056,6 +1053,7 @@
   <key id="Day(s)">天</key>
   <key id="Bidder">报价人</key>
   <key id="Day">天</key>
+  <key id="s">s</key>
   <key id="Change the datacenter only when the assigned datacenter is far from your primary location. You need to backup and restore your site data manually.">仅当分配的数据中心离你的主要服务区距离过远时再改变数据中心。你需要手动备份和存储所有网站的数据。</key>
   <key id="Verify">验证</key>
   <key id="Take offline">网站离线</key>
@@ -1256,7 +1254,6 @@
   <key id="Delete label">删除标签</key>
   <key id="Domain has been taken">域名已被使用</key>
   <key id="Domain must use Kooboo DNS server">域名必须使用 Kooboo 的 DNS 服务器</key>
-  <key id="SSL generation failed">SSL 生成失败</key>
   <key id="user or ip temporarily lockout">user or ip temporarily lockout</key>
   <key id="Old and New Password are the same">新旧密码相同</key>
   <key id="is in use">正在使用</key>
@@ -1270,7 +1267,7 @@
   <key id="port in use">端口被占用</key>
   <key id="Domain does not owned by current user">用户没有域名权限</key>
   <key id="Your certificate already exists">证书已经存在</key>
-  <key id="Your ssl has been generated">Your ssl has been generated</key>
+  <key id="Your ssl has been generated">你的安全证书已经生成</key>
   <key id="Unexpected error">未知错误</key>
   <key id="Target Url is Protected">目标地址被保护</key>
   <key id="user not found">没有找到用户</key>
@@ -1353,8 +1350,10 @@
   <key id="Advance">高级</key>
   <key id="System">系统</key>
   <key id="Development">开发</key>
+  <key id="Commerce">Commerce</key>
   <key id="SiteBindings">网站绑定</key>
   <key id="SiteMirror">站点镜像</key>
+  <key id="Only internet enabled domain that use Kooboo DNS or hosted by Kooboo can generate SSL certificates">只有使用Kooboo DNS或是架设在Kooboo线上服务器上的域名可以生成证书</key>
   <key id="Request IP not allowed">请求IP不被允许</key>
   <key id="Root">Root</key>
   <key id="Website not found">网站未找到</key>
@@ -1410,6 +1409,7 @@
   <key id="Member address should not be same as group address">组员地址不能是组地址</key>
   <key id="you have no enough credit to send emails">邮件发送信誉值不够</key>
   <key id="HtmlBlocks">HTML 代码块</key>
+  <key id="Products">Products</key>
   <key id="ContentTypes">数据类型</key>
   <key id="Key-Value">键值存储</key>
   <key id="Table">表格</key>

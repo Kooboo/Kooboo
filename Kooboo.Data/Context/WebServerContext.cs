@@ -263,14 +263,17 @@ namespace Kooboo.Data.Context
                     {
                         if (context.Request.Scheme != null && context.Request.Scheme.ToLower() != "https")
                         {
-                            string newurl = "https://" + context.Request.Host;
-                            if (context.Request.Port != 80)
+                            if (!context.Request.Headers.AllKeys.Contains("https") && !context.Request.Headers.AllKeys.Contains("ishttp"))
                             {
-                                newurl += newurl + ":" + context.Request.Port;
-                            }
-                            newurl += context.Request.RawRelativeUrl;
-                            context.Response.Redirect(301, newurl);
-                            context.Response.End = true;
+                                string newurl = "https://" + context.Request.Host;
+                                if (context.Request.Port != 80)
+                                {
+                                    newurl += newurl + ":" + context.Request.Port;
+                                }
+                                newurl += context.Request.RawRelativeUrl;
+                                context.Response.Redirect(301, newurl);
+                                context.Response.End = true; 
+                            } 
                         }
                     }
 

@@ -5,7 +5,7 @@ using Kooboo.IndexedDB;
 using Kooboo.IndexedDB.Dynamic;
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 
 namespace Kooboo.Data.Service
 {
@@ -18,7 +18,7 @@ namespace Kooboo.Data.Service
             var setting = new Setting();
             setting.AppendColumn("Path", typeof(string), 800);
 
-            LastPath = GlobalDatabase.GetOrCreateTable("userpath", setting);
+            LastPath = Data.DB.GetOrCreateTable(GlobalDatabase, "userpath", setting);
 
             IgnorePath = new List<string>();
             IgnorePath.Add("/_admin/account");
@@ -254,7 +254,7 @@ namespace Kooboo.Data.Service
 
             Guid UserId = Lib.Security.Hash.ComputeGuidIgnoreCase(username);
 
-            return IsAllow(UserId); 
+            return IsAllow(UserId);
         }
 
         public static bool IsAllow(Guid UserId)
@@ -268,7 +268,7 @@ namespace Kooboo.Data.Service
             {
                 return true;
             }
-             
+
             if (Data.AppSettings.DefaultUser != null)
             {
                 var defaultid = Lib.Security.Hash.ComputeGuidIgnoreCase(Data.AppSettings.DefaultUser.UserName);
@@ -281,30 +281,47 @@ namespace Kooboo.Data.Service
 
             return false;
         }
-
-
+         
         public static string GetUserPassword(User user)
         {
             if (user == null)
             {
-                return null; 
+                return null;
             }
             if (!string.IsNullOrWhiteSpace(user.Password))
             {
-                var hash = Lib.Helper.IDHelper.ParseKey(user.Password); 
+                var hash = Lib.Helper.IDHelper.ParseKey(user.Password);
                 if (hash != default(Guid))
                 {
-                    return user.Password;  
+                    return user.Password;
                 }
             }
 
             if (user.PasswordHash != default(Guid))
             {
-                return user.PasswordHash.ToString(); 
+                return user.PasswordHash.ToString();
             }
-            return null; 
+            return null;
         }
-
+         
+        public static bool IsValidPassword(User user, string password)
+        {
+            if (Guid.TryParse(password, out Guid PassHash))
+            {
+                if (user.PasswordHash == PassHash)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if (user.Password == password)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
     }
 }

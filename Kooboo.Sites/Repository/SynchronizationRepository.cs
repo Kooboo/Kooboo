@@ -47,7 +47,7 @@ namespace Kooboo.Sites.Repository
             var allversion = this.SiteDb.Synchronization.Query.Where(o => o.SyncSettingId == SyncSettingId).SelectAll();
            var pastversion =  allversion.Select(o => o.Version).Distinct().ToList();
 
-            alllogs = alllogs.Where(o=>!pastversion.Contains(o.Id)).ToList(); 
+            alllogs = alllogs.Where(o=> o !=null && !pastversion.Contains(o.Id)).ToList(); 
 
             foreach (var item in alllogs.OrderByDescending(o => o.Id))
             { 

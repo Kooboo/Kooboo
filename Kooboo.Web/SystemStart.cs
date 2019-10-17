@@ -66,6 +66,8 @@ namespace Kooboo.Web
             }
 
             JobWorker.Instance.Start();
+
+            Service.UpGradeService.UpgradeFix(); 
         }
 
 

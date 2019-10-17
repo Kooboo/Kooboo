@@ -2,28 +2,30 @@
 //All rights reserved.
 using Newtonsoft.Json;
 using Kooboo.Data.Interface;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Sync
 {
-   public class SyncObjectConvertor
-    { 
+    public class SyncObjectConvertor
+    {
         public static Sync.SyncObject ToSyncObject(ISiteObject SiteObject)
         {
             if (SiteObject == null)
-            { return null;  }
+            { return null; }
 
             SyncObject SyncObj = new SyncObject();
             SyncObj.ObjectId = SiteObject.Id;
             SyncObj.ObjectConstType = SiteObject.ConstType;
-             
+
             SyncObj.JsonData = Lib.Helper.JsonHelper.Serialize(SiteObject);
 
             return SyncObj;
         }
 
         public static ISiteObject FromSyncObject(SyncObject SyncObject)
-        { 
-           var modeltype = Service.ConstTypeService.GetModelType(SyncObject.ObjectConstType);
+        {
+            var modeltype = Service.ConstTypeService.GetModelType(SyncObject.ObjectConstType);
 
             var result = Lib.Helper.JsonHelper.Deserialize(SyncObject.JsonData, modeltype);
 
@@ -46,8 +48,23 @@ namespace Kooboo.Sites.Sync
             {
                 return result as ISiteObject;
             }
-            return null; 
+            return null;
         }
-         
+
+        public static Sync.SyncObject ToTableSyncObject(string tablename, System.Guid id, string colName, Dictionary<string, object> tableData)
+        {
+            SyncObject SyncObj = new SyncObject();
+            SyncObj.TableName = tablename;
+            SyncObj.TableColName = colName;
+            SyncObj.ObjectId = id;
+            SyncObj.JsonData = Lib.Helper.JsonHelper.Serialize(tableData);
+            return SyncObj;
+        }
+
+        public static Dictionary<string, object> FromTableSyncObject(SyncObject SyncObject)
+        {
+            return Lib.Helper.JsonHelper.Deserialize<Dictionary<string, object>>(SyncObject.JsonData);
+        }
+
     }
 }

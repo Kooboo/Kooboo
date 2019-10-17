@@ -11,6 +11,10 @@ namespace Kooboo.IndexedDB.Dynamic
     {
         public Setting Setting { get; set; }
 
+        private bool TempDisableLog { get; set; }
+
+        public Guid CurrentUserId { get; set; }
+
         internal object _Locker = new object();
 
         public Converter.ObjectConverter ObjectConverter { get; set; }
@@ -113,8 +117,8 @@ namespace Kooboo.IndexedDB.Dynamic
         public Table(string name, Database ownerdatabase, Setting setting)
         {
             this.Name = name;
-            this.ObjectFolder = ownerdatabase.objectFolder(name);
-            this.SettingFile = ownerdatabase.SettingFile(name, "table.config");
+            this.ObjectFolder = ownerdatabase.TableFolder(name);
+            this.SettingFile = ownerdatabase.TableSetitingFile(name);
 
             setting = SettingHelper.GetOrSetTableSetting(this.SettingFile, setting);
 
@@ -125,8 +129,8 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             Setting setting = null;
             this.Name = name;
-            this.ObjectFolder = ownerdatabase.objectFolder(name);
-            this.SettingFile = ownerdatabase.SettingFile(name, "table.config");
+            this.ObjectFolder = ownerdatabase.TableFolder(name);
+            this.SettingFile = ownerdatabase.TableSetitingFile(name);
 
             setting = SettingHelper.GetOrSetTableSetting(this.SettingFile, setting);
 
@@ -154,8 +158,13 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public void RebuildTable(Setting newSetting)
         {
+            var isenable = newSetting.EnableLog;   
+
             string newname = "_koobootemp_" + System.Guid.NewGuid().ToString() + this.Name;
             var newtable = this.OwnerDatabase.GetOrCreateTable(newname, newSetting);
+
+            newtable.Setting.EnableLog = false; 
+
             var primaryindex = this.Indexs.Find(o => o.IsSystem);
 
             string errormsg = null;
@@ -187,6 +196,10 @@ namespace Kooboo.IndexedDB.Dynamic
             this.DelSelf();
             this._blockfile = null;
             System.IO.Directory.Move(newfolder, oldfolder);
+
+
+            newtable.Setting.EnableLog = isenable; 
+
             SettingHelper.WriteSetting(this.SettingFile, newSetting);
             Init(newSetting);
 
@@ -315,7 +328,7 @@ namespace Kooboo.IndexedDB.Dynamic
             Type objecttype = null;
 
             if (idict == null)
-            { 
+            {
                 dynamicobj = dataobj as IDictionary<string, object>;
             }
 
@@ -409,7 +422,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                     if (item.IsIncremental && !Update)
                     {
-                        if (Value == null || Accessor.ChangeType<long>(Value) ==0)
+                        if (Value == null || Accessor.ChangeType<long>(Value) == 0)
                         {
                             var index = this.Indexs.Find(o => o.FieldName == item.Name);
                             Value = index.NextIncrement();
@@ -419,7 +432,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         {
                             var keyvalue = _ParseKey(Value);
                             data[Dynamic.Constants.DefaultIdFieldName] = keyvalue;
-                        } 
+                        }
                     }
 
                     if (Value == null)
@@ -440,8 +453,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         Value = IndexHelper.DefaultValue(item.ClrType);
                     }
 
-                    // var rightvalue = Accessor.ChangeType(Value, item.ClrType); 
-
+                    // var rightvalue = Accessor.ChangeType(Value, item.ClrType);  
                     data.Add(item.Name, Value);
                 }
             }
@@ -516,6 +528,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     CallBackPos(contentposition);
                 }
 
+
                 foreach (var item in this.Indexs)
                 {
                     object key = null;
@@ -535,13 +548,79 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 this.Close();
 
+                Guid ReturnId = default(Guid);
+
                 if (data.ContainsKey(Constants.DefaultIdFieldName))
                 {
-                    return (Guid)data[Constants.DefaultIdFieldName];
+                    ReturnId = (Guid)data[Constants.DefaultIdFieldName];
+
+                    if (this.Setting.EnableLog)
+                    {
+                        var logid = this.OwnerDatabase.Log.GetNewLogId(this.OwnerDatabase.Name);
+
+                        var logpos = AddLogData(logid, data);
+
+                        var log = new LogEntry()
+                        {
+                            Id = logid,
+                            EditType = EditType.Add,
+                            OldBlockPosition = logpos,
+                            NewBlockPosition = logpos,
+                            UserId = this.CurrentUserId,
+                            TableName = this.Name,
+                            UpdateTime = DateTime.UtcNow,
+                            KeyBytes = ObjectContainer.GuidConverter.ToByte(ReturnId)
+                        };
+
+                        this.OwnerDatabase.Log.Add(log);
+                    }
                 }
 
+                return ReturnId;
             }
-            return default(Guid);
+
+        }
+
+        public long AddLogData(long LogId, Dictionary<string, object> data)
+        {
+            byte[] valuebyte = Kooboo.IndexedDB.Serializer.Simple.TableDataLogConverter.Instance.ToBytes(data);
+            int len = valuebyte.Length;
+
+            var logidbytes = BitConverter.GetBytes(LogId);
+
+            byte[] totalbytes = new byte[len + 8];
+            System.Buffer.BlockCopy(logidbytes, 0, totalbytes, 0, 8);
+            System.Buffer.BlockCopy(valuebyte, 0, totalbytes, 8, len);
+
+            var LogPos = this.OwnerDatabase.TableLog.Add(totalbytes, totalbytes.Length);
+            this.OwnerDatabase.TableLog.Close(); // relese to enable delete. 
+
+            return LogPos;
+        }
+
+        public Dictionary<string, object> GetLogData(LogEntry log)
+        {
+            return GetLogData(log.Id, log.NewBlockPosition); 
+        }
+
+        public Dictionary<string, object> GetLogData(long LogId, long DiskPosition)
+        {
+            var databytes = this.OwnerDatabase.TableLog.Get(DiskPosition);
+
+            if (databytes != null)
+            {
+                var dbLogId = BitConverter.ToInt64(databytes, 0);
+                if (dbLogId == LogId)
+                {
+                    var valuebytes = new byte[databytes.Length - 8];
+                    System.Buffer.BlockCopy(databytes, 8, valuebytes, 0, databytes.Length - 8);
+
+                    return Kooboo.IndexedDB.Serializer.Simple.TableDataLogConverter.Instance.FromBytes(valuebytes);
+                }
+            }
+
+            return null;
+
         }
 
         private Guid _ParseKey(object key)
@@ -679,6 +758,30 @@ namespace Kooboo.IndexedDB.Dynamic
                     }
                 }
 
+
+
+                if (this.Setting.EnableLog)
+                {
+                    var logid = this.OwnerDatabase.Log.GetNewLogId(this.OwnerDatabase.Name);
+
+                    var diskposition = this.AddLogData(logid, data);
+
+                    var log = new LogEntry()
+                    {
+                        Id = logid,
+                        EditType = EditType.Delete,
+                        UserId = this.CurrentUserId,
+                        TableName = this.Name,
+                        UpdateTime = DateTime.UtcNow,
+                        OldBlockPosition = diskposition,
+                        NewBlockPosition = diskposition,
+                        KeyBytes = ObjectContainer.GuidConverter.ToByte(guidkey)
+                    };
+
+                    this.OwnerDatabase.Log.Add(log);
+                }
+
+
                 this.Close();
             }
         }
@@ -714,6 +817,105 @@ namespace Kooboo.IndexedDB.Dynamic
             }
 
         }
+
+
+        public void UpdateOrAdd(object newvalue)
+        {
+            lock (_Locker)
+            {
+                var primary = this.Indexs.Find(o => o.IsPrimaryKey);
+                if (primary.IsSystem)
+                {
+                    throw new Exception("Update requires a primary key");
+                }
+
+                var newdata = this.PrepareData(newvalue, true);
+
+                if (newdata.ContainsKey(Constants.DefaultIdFieldName))
+                {
+                    var key = newdata[Constants.DefaultIdFieldName];
+                    var id = _ParseKey(key);
+
+                    var sys = this.Indexs.Find(o => o.IsSystem);
+
+                    var blockposition = sys.Get(id);
+
+                    if (blockposition <= 0)
+                    {
+                        this.Add(newvalue);
+                    }
+                    else
+                    {
+                        var oldvalue = this._getvalue(blockposition);
+
+                        long newblock = blockposition;
+
+                        // verify that update does not change primary key. 
+                        if (IsPrimaryKeyChange(oldvalue, newdata))
+                        {
+                            throw new Exception("primary key can not be changed or null");
+                        }
+
+                        newdata[Dynamic.Constants.DefaultIdFieldName] = key;
+
+
+                        if (oldvalue != null && newvalue is IDictionary<string, object>)
+                        {
+                            var newdict = newvalue as IDictionary<string, object>;
+
+                            foreach (var item in oldvalue)
+                            {
+                                if (!newdict.ContainsKey(item.Key))
+                                {
+                                    newdata[item.Key] = item.Value;
+                                }
+                            }
+                        }
+
+
+                        CheckUpdateConstraints(oldvalue, newdata);
+
+                        byte[] valuebyte = ObjectConverter.ToBytes(newdata);
+
+                        int tolanrance = this.BlockFile.GetTolerance(blockposition);
+
+                        if (tolanrance > valuebyte.Length)
+                        {
+                            this.BlockFile.UpdateBlock(valuebyte, blockposition);
+                        }
+                        else
+                        {
+                            newblock = this.BlockFile.Add(valuebyte, valuebyte.Length);
+                        }
+
+                        foreach (var item in this.Indexs)
+                        {
+                            if (oldvalue.ContainsKey(item.FieldName))
+                            {
+                                var old = oldvalue[item.FieldName];
+                                var newer = newdata[item.FieldName];
+                                item.Update(old, newer, blockposition, newblock);
+                            }
+                            else
+                            {
+                                var newer = newdata[item.FieldName];
+                                item.Update(newer, blockposition, newblock);
+                            }
+                        }
+
+                        this.Close();
+                        CreateUpdateLog(newdata, id);
+                    }
+                }
+                else
+                {
+                    throw new Exception("Update requires a primary key");
+                }
+
+                this.Close();
+            }
+        }
+
 
         private bool IsPrimaryKeyChange(IDictionary<string, object> old, IDictionary<string, object> newer)
         {
@@ -815,103 +1017,14 @@ namespace Kooboo.IndexedDB.Dynamic
                     }
                 }
 
+
                 this.Close();
+
+
+                CreateUpdateLog(newdata, key);
             }
         }
 
-        public void UpdateOrAdd(object newvalue)
-        {
-            lock (_Locker)
-            {
-                var primary = this.Indexs.Find(o => o.IsPrimaryKey);
-                if (primary.IsSystem)
-                {
-                    throw new Exception("Update requires a primary key");
-                }
-
-                var newdata = this.PrepareData(newvalue, true);
-
-                if (newdata.ContainsKey(Constants.DefaultIdFieldName))
-                {
-                    var key = newdata[Constants.DefaultIdFieldName];
-                    var id = _ParseKey(key);
-
-                    var sys = this.Indexs.Find(o => o.IsSystem);
-
-                    var blockposition = sys.Get(id);
-
-                    if (blockposition <= 0)
-                    {
-                        this.Add(newvalue);
-                    }
-                    else
-                    {
-                        var oldvalue = this._getvalue(blockposition);
-
-                        long newblock = blockposition;
-
-                        // verify that update does not change primary key. 
-                        if (IsPrimaryKeyChange(oldvalue, newdata))
-                        {
-                            throw new Exception("primary key can not be changed or null");
-                        }
-
-                        newdata[Dynamic.Constants.DefaultIdFieldName] = key;
-
-
-                        if (oldvalue != null && newvalue is IDictionary<string, object>)
-                        {
-                            var newdict = newvalue as IDictionary<string, object>;
-
-                            foreach (var item in oldvalue)
-                            {
-                                if (!newdict.ContainsKey(item.Key))
-                                {
-                                    newdata[item.Key] = item.Value;
-                                }
-                            }
-                        }
-
-
-                        CheckUpdateConstraints(oldvalue, newdata);
-
-                        byte[] valuebyte = ObjectConverter.ToBytes(newdata);
-
-                        int tolanrance = this.BlockFile.GetTolerance(blockposition);
-
-                        if (tolanrance > valuebyte.Length)
-                        {
-                            this.BlockFile.UpdateBlock(valuebyte, blockposition);
-                        }
-                        else
-                        {
-                            newblock = this.BlockFile.Add(valuebyte, valuebyte.Length);
-                        }
-
-                        foreach (var item in this.Indexs)
-                        {
-                            if (oldvalue.ContainsKey(item.FieldName))
-                            {
-                                var old = oldvalue[item.FieldName];
-                                var newer = newdata[item.FieldName];
-                                item.Update(old, newer, blockposition, newblock);
-                            }
-                            else
-                            {
-                                var newer = newdata[item.FieldName];
-                                item.Update(newer, blockposition, newblock);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    throw new Exception("Update requires a primary key");
-                }
-
-                this.Close();
-            }
-        }
 
         public void Update(object newvalue)
         {
@@ -994,6 +1107,11 @@ namespace Kooboo.IndexedDB.Dynamic
                                 item.Update(newer, blockposition, newblock);
                             }
                         }
+
+
+                        this.Close();
+
+                        CreateUpdateLog(newdata, id);
                     }
                 }
                 else
@@ -1001,6 +1119,33 @@ namespace Kooboo.IndexedDB.Dynamic
                     throw new Exception("Update requires a primary key");
                 }
             }
+        }
+
+
+        private void CreateUpdateLog(Dictionary<string, object> data, Guid key, string colname = null)
+        {
+            if (!this.Setting.EnableLog)
+            {
+                return;
+            }
+            var logid = this.OwnerDatabase.Log.GetNewLogId(this.OwnerDatabase.Name);
+
+            var LogPos = this.AddLogData(logid, data);
+
+            var log = new LogEntry()
+            {
+                Id = logid,
+                EditType = EditType.Update,
+                OldBlockPosition = LogPos,
+                NewBlockPosition = LogPos,
+                UserId = this.CurrentUserId,
+                TableName = this.Name,
+                TableColName = colname,
+                UpdateTime = DateTime.UtcNow,
+                KeyBytes = ObjectContainer.GuidConverter.ToByte(key)
+            };
+
+            this.OwnerDatabase.Log.Add(log);
         }
 
         private void AssignIncremental(IDictionary<string, object> old, IDictionary<string, object> newer)
@@ -1102,6 +1247,12 @@ namespace Kooboo.IndexedDB.Dynamic
                 if (blockposition > 0)
                 {
                     this.BlockFile.UpdateCol(blockposition, col.relativePosition, col.Length, valuebytes);
+
+                    this.BlockFile.Close();
+                    Dictionary<string, object> coldata = new Dictionary<string, object>();
+                    coldata.Add(ColumnName, colvalue);
+                    CreateUpdateLog(coldata, guidkey, ColumnName);
+                    // 
                 }
             }
         }
@@ -1300,8 +1451,126 @@ namespace Kooboo.IndexedDB.Dynamic
             }
         }
 
+        /// <summary>
+        /// Update the content to the record before that log. 
+        /// </summary>
+        /// <param name="log"></param>
+        public void RollBack(LogEntry log)
+        {
+            //just double confirm. 
+            if (log.TableName == this.Name)
+            {
+                Guid key = ObjectContainer.GuidConverter.FromByte(log.KeyBytes);
 
+                if (log.EditType == EditType.Add)
+                {
+                    // undo of add == delete. 
+                    this.Delete(key);
+                }
+                else if (log.EditType == EditType.Delete)
+                {
+                    var lastlog = this.OwnerDatabase.Log.GetPreviousTableLog(log);
+                    if (lastlog == null || lastlog.EditType == EditType.Delete)
+                    {
+                        this.Delete(key);
+                    }
+                    else
+                    {
+                        Dictionary<string, object> item = GetLastUpdateLogItem(lastlog);
 
-        #endregion
+                        if (item != null)
+                        {
+                            if (item.ContainsKey(Constants.DefaultIdFieldName))
+                            {
+                                var idkey = item[Constants.DefaultIdFieldName];
+                                var id = _ParseKey(idkey);
+
+                                if (this.Get(id) != null)
+                                {
+                                    this.Update(id, item);
+                                }
+                                else
+                                {
+                                    this.Add(item);
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+                else if (log.EditType == EditType.Update)
+                {
+                    var lastlog = this.OwnerDatabase.Log.GetPreviousTableLog(log);
+                    if (lastlog != null)
+                    {
+                        if (lastlog.EditType == EditType.Delete)
+                        {
+                            this.Delete(key);
+                        }
+                        else if (lastlog.EditType == EditType.Add || lastlog.EditType == EditType.Update)
+                        {
+                            Dictionary<string, object> item = GetLastUpdateLogItem(lastlog);
+
+                            if (item != null)
+                            {
+
+                                if (item.ContainsKey(Constants.DefaultIdFieldName))
+                                {
+                                    var idkey = item[Constants.DefaultIdFieldName];
+                                    var id = _ParseKey(idkey);
+                                    if (this.Get(id) != null)
+                                    {
+                                        this.Update(id, item);
+                                    }
+                                    else
+                                    {
+                                        this.Add(item);
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private Dictionary<string, object> GetLastUpdateLogItem(LogEntry lastlog)
+        {
+            if (lastlog.EditType == EditType.Update && !string.IsNullOrWhiteSpace(lastlog.TableColName))
+            {
+                var previousLog = this.OwnerDatabase.Log.GetPreviousTableLog(lastlog);
+                if (previousLog == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    var item = GetLastUpdateLogItem(previousLog);
+                    var ColItem = this.GetLogData(lastlog);
+                    if (item != null && ColItem != null)
+                    {
+                        foreach (var col in ColItem)
+                        {
+                            item[col.Key] = col.Value;
+                        }
+
+                        return item;
+                    }
+
+                }
+            }
+            else
+            {
+                return this.GetLogData(lastlog);
+            }
+
+            return null;
+
+        }
     }
+
+    #endregion
 }
+

@@ -38,6 +38,8 @@ namespace Kooboo.IndexedDB
         /// </summary>
         public static string QueuePath { get; set; } = "__koobooqueue";
 
+        public static bool EnableTableLog { get; set; } = true; 
+
         /// <summary>
         /// The field name that must be in the object when enable versioning. 
         /// </summary>
@@ -45,6 +47,7 @@ namespace Kooboo.IndexedDB
 
         public static string EditLogUniqueName { get; set; } = "_koobooeditlog";
 
+        public static string TableLogName { get; set; } = "_koobootablelog"; 
 
         /// <summary>
         /// the folder that contains all sequence of this database. 

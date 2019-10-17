@@ -519,6 +519,31 @@ namespace Kooboo.Sites.Events
                     }
                 }
             } 
+
+
+            if (CodeEvent.Value.CodeType == CodeType.Event)
+            {
+                var website = CodeEvent.SiteDb.WebSite; 
+
+                if (CodeEvent.ChangeType == ChangeType.Delete)
+                {
+                    // check if there is any event.... 
+                    if (website.EnableFrontEvents)
+                    {
+                        var events = CodeEvent.SiteDb.Code.Query.Where(o => o.CodeType == CodeType.Event).Count(); 
+                        if (events == 0)
+                        {
+                            website.EnableFrontEvents = false;
+                            Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(website); 
+                        }
+                    } 
+                }
+                else
+                { 
+                    CodeEvent.SiteDb.WebSite.EnableFrontEvents = true;
+                    Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(website); 
+                }
+            }
         }
 
 

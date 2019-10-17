@@ -52,7 +52,8 @@ namespace Kooboo.Sites.Render
         SiteLayout = 14,
         Url = 15,
         KFrom = 16, 
-        kConfig=17      
+        kConfig=17, 
+        kCache = 18
     }
 
 }

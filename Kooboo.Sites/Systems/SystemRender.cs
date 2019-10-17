@@ -20,11 +20,11 @@ namespace Kooboo.Sites.Systems
         {
             //systemroute.Name = "__kb/{objecttype}/{nameorid}"; defined in Routes. 
             var paras = context.Route.Parameters;
-            var constTypeString = paras.GetValue("objecttype");
+            var strObjectType = paras.GetValue("objecttype");
             byte constType = ConstObjectType.Unknown;
-            if (!byte.TryParse(constTypeString, out constType))
+            if (!byte.TryParse(strObjectType, out constType))
             {
-                constType = ConstTypeContainer.GetConstType(constTypeString);
+                constType = ConstTypeContainer.GetConstType(strObjectType);
             }
             var id = paras.GetValue("nameorid");
 
@@ -49,7 +49,7 @@ namespace Kooboo.Sites.Systems
                 case ConstObjectType.kfile:
                     {
                         KFileRender(context, paras);
-                        return; 
+                        return;
                     }
 
                 //case ConstObjectType.TextContent:
@@ -58,7 +58,7 @@ namespace Kooboo.Sites.Systems
                 //        return;
                 //    }
                 default:
-                    DefaultRender(context, constType, id, paras);
+                    DefaultRender(context, constType, strObjectType, id, paras);
                     break;
             }
         }
@@ -209,57 +209,72 @@ namespace Kooboo.Sites.Systems
 
         public static void TextContentRender(FrontContext context, string NameOrId, Dictionary<string, string> Parameters)
         {
-
             throw new NotImplementedException();
         }
 
-        public static void DefaultRender(FrontContext context, byte ConstType, string NameOrId, Dictionary<string, string> Parameters)
+        public static void DefaultRender(FrontContext context, byte ConstType, string objectType, string NameOrId, Dictionary<string, string> Parameters)
         {
 
             var modeltype = Service.ConstTypeService.GetModelType(ConstType);
-            var repo = context.SiteDb.GetRepository(modeltype);
-
-            ISiteObject siteobject = null;
-            siteobject = repo?.GetByNameOrId(NameOrId) as ISiteObject;
-
-            if (siteobject == null)
+            if (modeltype == null)
             {
-                long logid = -1;
+                  SpecialRender(context, ConstType, objectType, NameOrId, Parameters);
+            }
+            else
+            {
 
-                if (long.TryParse(NameOrId, out logid))
+                var repo = context.SiteDb.GetRepository(modeltype);
+
+                ISiteObject siteobject = null;
+                siteobject = repo?.GetByNameOrId(NameOrId) as ISiteObject;
+
+                if (siteobject == null)
                 {
-                    var logentry = context.SiteDb.Log.Get(logid);
-                    siteobject = repo.GetByLog(logentry) as ISiteObject;
+                    long logid = -1;
+
+                    if (long.TryParse(NameOrId, out logid))
+                    {
+                        var logentry = context.SiteDb.Log.Get(logid);
+                        siteobject = repo.GetByLog(logentry) as ISiteObject;
+                    }
+                }
+
+                if (siteobject != null)
+                {
+                    var contenttype = Service.ConstTypeService.GetContentType(ConstType);
+                    context.RenderContext.Response.ContentType = contenttype;
+
+                    if (siteobject is ITextObject)
+                    {
+                        context.RenderContext.Response.ContentType += ";charset=utf-8";
+                        var textobject = siteobject as ITextObject;
+                        context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(textobject.Body);
+                    }
+                    else if (siteobject is IBinaryFile)
+                    {
+                        var binary = siteobject as IBinaryFile;
+                        context.RenderContext.Response.Body = binary.ContentBytes;
+                    }
+                    else
+                    {
+                        context.RenderContext.Response.ContentType += ";charset=utf-8";
+                        var json = Lib.Helper.JsonHelper.Serialize(siteobject);
+                        context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(json);
+                    }
                 }
             }
+        }
 
-            if (siteobject != null)
+        public static void SpecialRender(FrontContext context, byte ConstType, string strObjectType, string NameOrId, Dictionary<string, string> Parameters)
+        {
+            if (strObjectType != null && strObjectType.ToLower() == "kexternalcache")
             {
-                var contenttype = Service.ConstTypeService.GetContentType(ConstType);
-                context.RenderContext.Response.ContentType = contenttype;
-
-                if (siteobject is ITextObject)
-                {
-                    context.RenderContext.Response.ContentType += ";charset=utf-8";
-                    var textobject = siteobject as ITextObject;
-                    context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(textobject.Body);
-                }
-                else if (siteobject is IBinaryFile)
-                {
-                    var binary = siteobject as IBinaryFile;
-                    context.RenderContext.Response.Body = binary.ContentBytes;
-                }
-                else
-                {
-                    context.RenderContext.Response.ContentType += ";charset=utf-8";
-                    var json = Lib.Helper.JsonHelper.Serialize(siteobject);
-                    context.RenderContext.Response.Body = DataConstants.DefaultEncoding.GetBytes(json);
-                }
+                Sites.Render.Renderers.ExternalCacheRender.Render(context, NameOrId);
             }
         }
 
         public static void KFileRender(FrontContext context, Dictionary<string, string> Parameters)
-        {     
+        {
             if (!context.RenderContext.WebSite.EnableFileIOUrl)
             {
                 context.RenderContext.Response.StatusCode = 503;
@@ -284,8 +299,10 @@ namespace Kooboo.Sites.Systems
                 }
                 context.RenderContext.Response.ContentType = contentType;
                 var allbytes = Lib.Helper.IOHelper.ReadAllBytes(fullpath);
-                context.RenderContext.Response.Body = allbytes; 
-            }   
-        }    
+                context.RenderContext.Response.Body = allbytes;
+            }
+        }
+
+
     }
 }

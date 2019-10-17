@@ -23,8 +23,8 @@ namespace Kooboo.Web.Api.Implementation
             foreach (var item in tablelist)
             {
                 if (!item.StartsWith("_sys_"))
-                { 
-                    var table = db.GetOrCreateTable(item);
+                {
+                    var table = Data.DB.GetTable(db, item);
                     if (table != null)
                     {
                         TableFieldsViewModel model = new TableFieldsViewModel();
@@ -106,7 +106,7 @@ namespace Kooboo.Web.Api.Implementation
         }
     }
 
-    public class TableRelationViewModel  
+    public class TableRelationViewModel
     {
         public TableRelationViewModel(TableRelation relation)
         {
@@ -116,7 +116,7 @@ namespace Kooboo.Web.Api.Implementation
             this.TableA = relation.TableA;
             this.TableB = relation.TableB;
             this.Id = relation.Id;
-            this.Name = relation.Name; 
+            this.Name = relation.Name;
         }
 
         public string Name { get; set; }

@@ -23,6 +23,10 @@ namespace Kooboo.Web.ViewModel
         public Guid KeyHash { get; set; }
 
         public int StoreNameHash { get; set; } 
+
+        public int TableNameHash { get; set; }
+
+        public string TableName { get; set; }
         /// <summary>
         /// insert, update, delete. 
         /// </summary>

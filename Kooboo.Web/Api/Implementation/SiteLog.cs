@@ -59,6 +59,10 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in items)
             {
+                if (item == null)
+                {
+                    continue;
+                }
                 SiteLogViewModel model = new SiteLogViewModel
                 {
                     LastModified = item.UpdateTime,
@@ -78,10 +82,20 @@ namespace Kooboo.Web.Api.Implementation
                     model.ItemName += "...";
                 }
 
-                model.StoreName = item.StoreName;
+                if (!string.IsNullOrEmpty(item.StoreName))
+                {
+                    model.StoreName = item.StoreName;
+                }
+                else if (item.IsTable)
+                {
+                    model.StoreName = Kooboo.Data.Language.Hardcoded.GetValue("Table", apiCall.Context);
+                }
 
                 model.KeyHash = item.KeyHash;
                 model.StoreNameHash = item.StoreNameHash;
+                model.TableNameHash = item.TableNameHash;
+                model.TableName = item.TableName;
+
                 model.ActionType = item.EditType.ToString();
 
                 model.UserName = Data.GlobalDb.Users.GetUserName(item.UserId);
@@ -114,14 +128,25 @@ namespace Kooboo.Web.Api.Implementation
 
         public List<ItemVersionViewModel> Versions(ApiCall call)
         {
-            Guid KeyHash = call.GetGuidValue("KeyHash");
-            int StoreNameHash = call.GetIntValue("StoreNameHash");
+            var sitedb = call.Context.WebSite.SiteDb();
+            Guid KeyHash = call.GetValue<Guid>("KeyHash");
+            int StoreNameHash = call.GetValue<int>("StoreNameHash");
+            int TableNameHash = call.GetValue<int>("TableNameHash");
 
-            if (KeyHash == default(Guid) || StoreNameHash == 0)
+            if (KeyHash == default(Guid) || (StoreNameHash == 0 && TableNameHash == 0))
             {
                 return null;
             }
-            var logs = call.WebSite.SiteDb().Log.Store.Where(o => o.KeyHash == KeyHash && o.StoreNameHash == StoreNameHash).SelectAll();
+
+            List<LogEntry> logs = null;
+            if (StoreNameHash == 0)
+            {
+                logs = sitedb.Log.Store.Where(o => o.KeyHash == KeyHash && o.TableNameHash == TableNameHash).SelectAll();
+            }
+            else
+            {
+                logs = sitedb.Log.Store.Where(o => o.KeyHash == KeyHash && o.StoreNameHash == StoreNameHash).SelectAll();
+            }
 
             List<ItemVersionViewModel> list = new List<ItemVersionViewModel>();
 
@@ -153,6 +178,25 @@ namespace Kooboo.Web.Api.Implementation
                     id2 = id3;
                 }
             }
+
+            LogEntry prelog = sitedb.Log.Get(id1);
+            if (prelog != null)
+            {
+                if (prelog.IsTable)
+                {
+                    return GetTableCompareModel(call, sitedb, id1, id2);
+                }
+                else
+                {
+                    return GetStoreCompareModel(call, sitedb, id1, id2);
+                }
+            }
+
+            return new VersionCompareViewModel();
+        }
+
+        private VersionCompareViewModel GetStoreCompareModel(ApiCall call, Sites.Repository.SiteDb sitedb, long id1, long id2)
+        {
             VersionCompareViewModel model = new VersionCompareViewModel() { Id1 = id1, Id2 = id2 };
 
             LogEntry prelog = sitedb.Log.Get(id1);
@@ -197,6 +241,50 @@ namespace Kooboo.Web.Api.Implementation
                     model.Source2 = Sites.Service.ObjectService.GetSummaryText(itemtwo);
                     model.DataType = VersionDataType.String;
                 }
+            }
+            return model;
+        }
+
+        private VersionCompareViewModel GetTableCompareModel(ApiCall call, Sites.Repository.SiteDb sitedb, long id1, long id2)
+        {
+            VersionCompareViewModel model = new VersionCompareViewModel() { Id1 = id1, Id2 = id2 };
+
+            LogEntry prelog = sitedb.Log.Get(id1);
+            if (prelog != null)
+            {
+                var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
+                var table = Data.DB.GetTable(db, prelog.TableName);
+
+                LogEntry nextlog;
+                if (id2 == -1)
+                {
+                    nextlog = sitedb.Log.Store.Where(o => o.KeyHash == prelog.KeyHash && o.TableNameHash == prelog.TableNameHash).OrderByDescending().FirstOrDefault();
+                    model.Id2 = nextlog.Id;
+                }
+                else
+                {
+                    nextlog = sitedb.Log.Get(id2);
+                }
+                var itemone = table.GetLogData(prelog);
+                Dictionary<string, object> itemtwo = null;
+
+                if (nextlog.EditType != EditType.Delete)
+                {
+                    itemtwo = table.GetLogData(nextlog);
+                }
+
+                model.Title1 = Data.Language.Hardcoded.GetValue("Table", call.Context) + ":" + prelog.TableName;
+                model.Title2 = model.Title1;
+
+                if (itemone != null)
+                {
+                    model.Source1 = Sites.Service.ObjectService.GetSummaryText(itemone);
+                }
+                if (itemtwo != null)
+                {
+                    model.Source2 = Sites.Service.ObjectService.GetSummaryText(itemtwo);
+                }
+                model.DataType = VersionDataType.String;
             }
             return model;
         }
@@ -352,7 +440,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             List<long> ids = new List<long>();
             ids.Add(id);
-            return ExportItems(ids, call); 
+            return ExportItems(ids, call);
         }
 
         public BinaryResponse DownloadBatch(Guid id, ApiCall call)
@@ -371,6 +459,6 @@ namespace Kooboo.Web.Api.Implementation
             }
 
             return null;
-        }    
+        }
     }
-}               
+}

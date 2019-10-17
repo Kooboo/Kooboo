@@ -25,7 +25,7 @@ namespace Kooboo.Web.Service
             var setting = new Setting();
             setting.AppendColumn("Path", typeof(string), 800);
 
-            LastPath = GlobalDatabase.GetOrCreateTable("userpath", setting);
+            LastPath = Kooboo.Data.DB.GetOrCreateTable(GlobalDatabase, "userpath", setting);
         }
 
         public static Database GlobalDatabase { get; set; }

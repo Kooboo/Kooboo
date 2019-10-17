@@ -62,11 +62,7 @@ namespace Kooboo.Sites.Scripting.Global
             {
                 if (_table == null)
                 {
-                    var db =  DB.GetKDatabase(this.context.WebSite);
-                    IndexedDB.Dynamic.Setting setting = new IndexedDB.Dynamic.Setting();
-                    setting.AppendColumn("key", typeof(string), 256);
-                    setting.AppendColumn("value", typeof(string), MaxValueLen);
-                    _table = db.GetOrCreateTable("_sys_keyvalues", setting);
+                    _table = Kooboo.Data.DB.GetOrCreateTable(this.context.WebSite, "_sys_keyvalues");   
                 }
                 return _table;
             }

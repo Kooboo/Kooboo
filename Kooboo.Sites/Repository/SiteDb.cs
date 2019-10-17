@@ -31,9 +31,8 @@ namespace Kooboo.Sites.Repository
 
         public SiteDb(WebSite website)
         {
-            this.WebSite = website;
-            var dbName = AppSettings.GetDbName(website.OrganizationId, website.Name);
-            this.DatabaseDb = DB.GetDatabase(dbName);
+            this.WebSite = website; 
+            this.DatabaseDb = DB.GetDatabase(website);
             this.SiteRepos = new Dictionary<string, IRepository>(StringComparer.OrdinalIgnoreCase);
         }
 

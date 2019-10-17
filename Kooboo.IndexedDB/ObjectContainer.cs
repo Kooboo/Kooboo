@@ -10,6 +10,20 @@ namespace Kooboo.IndexedDB
     public static class ObjectContainer
     {
 
+        private static GuidConverter _guidConverter; 
+        public static GuidConverter GuidConverter
+        {
+            get
+            {
+                if (_guidConverter == null)
+                {
+                    _guidConverter = new GuidConverter(); 
+                }
+                return _guidConverter; 
+            }
+        }
+
+
         private static Dictionary<Type, object> _ByteConverterList;
 
         private static Dictionary<Type, object> byteconverterlist()

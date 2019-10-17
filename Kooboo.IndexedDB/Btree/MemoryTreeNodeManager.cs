@@ -383,7 +383,8 @@ namespace Kooboo.IndexedDB.Btree
             previousPointer.PointerBytes = ParentNode.Parent.TreeNode.PreviousPointer;
 
             var PreviousPointerNode = GetOrLoadNode(TreeFile, ParentNode.Parent, previousPointer);
-            if (PreviousPointerNode != null)
+            //parentNode.Parent.PreviousPointerNode can't be the same with ParentNode,otherwise it will cause a dead cycle.
+            if (PreviousPointerNode != null && ParentNode != PreviousPointerNode)
             {
                 var result = FindContainerLastLeaf(TreeFile, PreviousPointerNode);
                 if (result != null)
@@ -403,25 +404,8 @@ namespace Kooboo.IndexedDB.Btree
                 return ContainerNode;
             }
 
-            NodePointer pointer = new NodePointer();
-
-            pointer.PointerBytes = ContainerNode.TreeNode.PreviousPointer;
-
-            if (pointer.PositionPointer > 0)
-            {
-                var subnode = GetOrLoadNode(TreeFile, ContainerNode, pointer);
-                if (subnode != null)
-                {
-                    var result = FindContainerFirstLeaf(TreeFile, subnode);
-                    if (result != null)
-                    {
-                        return result;
-                    }
-                }
-            }
-
             // did not get return, try one key by one key. 
-            byte[] key = KeyFinder.FindSmallestBiggerKey(null, ContainerNode.TreeNode.KeyArray, TreeFile.comparer);
+            byte[] key = KeyFinder.FindLastKey(ContainerNode.TreeNode.KeyArray, TreeFile.comparer);
 
             while (key != null)
             {
@@ -440,7 +424,24 @@ namespace Kooboo.IndexedDB.Btree
                     }
                 }
 
-                key = KeyFinder.FindSmallestBiggerKey(key, ContainerNode.TreeNode.KeyArray, TreeFile.comparer);
+                key = KeyFinder.FindBiggestSmallerKey(key, ContainerNode.TreeNode.KeyArray, TreeFile.comparer);
+            }
+
+            NodePointer pointer = new NodePointer();
+
+            pointer.PointerBytes = ContainerNode.TreeNode.PreviousPointer;
+
+            if (pointer.PositionPointer > 0)
+            {
+                var subnode = GetOrLoadNode(TreeFile, ContainerNode, pointer);
+                if (subnode != null)
+                {
+                    var result = FindContainerFirstLeaf(TreeFile, subnode);
+                    if (result != null)
+                    {
+                        return result;
+                    }
+                }
             }
 
             return null;

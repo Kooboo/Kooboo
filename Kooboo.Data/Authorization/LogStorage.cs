@@ -87,7 +87,7 @@ namespace Kooboo.Data.Authorization
         {
             get
             { 
-                return DB.GetOrCreateTable("EmailLog", emailsetting); 
+                return  Data.DB.GetOrCreateTable(DB, "EmailLog", emailsetting); 
             }
         }
 

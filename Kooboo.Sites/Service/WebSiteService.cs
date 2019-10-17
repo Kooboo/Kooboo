@@ -3,6 +3,7 @@
 using Kooboo.Data;
 using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Models;
 using Kooboo.Sites.Render;
 using System;
 using System.Collections.Generic;
@@ -47,13 +48,7 @@ namespace Kooboo.Sites.Service
                 website.EnableSitePath = false;
                 website.EnableVisitorLog = false;
                 website.ContinueDownload = false;
-                website.Published = false;
-
-                if (Kooboo.Data.DB.HasKDatabase(website))
-                {
-                    var kdb = Kooboo.Data.DB.GetKDatabase(website);
-                    kdb.deleteDatabase();
-                }
+                website.Published = false; 
 
                 sitedb.SearchIndex.DelSelf();
                 sitedb.ImagePool.ClearAll();
@@ -63,13 +58,7 @@ namespace Kooboo.Sites.Service
                 sitedb.DatabaseDb.Close();
 
                 sitedb.DatabaseDb.deleteDatabase();
-
-                if (Kooboo.Data.DB.HasKDatabase(website))
-                {
-                    var kdb = Kooboo.Data.DB.GetKDatabase(website);
-                    kdb.deleteDatabase();
-                }
-
+                  
                 Thread.Sleep(20);
 
                 Cache.WebSiteCache.RemoveWebSitePlan(website.Id);
@@ -346,7 +335,22 @@ namespace Kooboo.Sites.Service
 
             return "Internal Server Error";
         }
+ 
+        public static void VerifyFrontendEvent(WebSite website)
+        { 
+            // check if there is any event.... 
+            if (website.EnableFrontEvents)
+            {
+                var sitedb = website.SiteDb(); 
 
-
+                var events = sitedb.Code.Query.Where(o => o.CodeType == CodeType.Event).Count();
+                if (events == 0)
+                {
+                    website.EnableFrontEvents = false;
+                    Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(website);
+                }
+            }
+        }
+         
     }
 }
