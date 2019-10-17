@@ -1,8 +1,10 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
 
     [Flags]
-    public enum ScriptTypeLibFlags : uint {
+    public enum ScriptTypeLibFlags : uint
+    {
         /// <summary>
         /// No flags.
         /// </summary>

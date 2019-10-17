@@ -1,24 +1,24 @@
-﻿namespace SassAndCoffee.JavaScript.CoffeeScript {
-    using System.Text.RegularExpressions;
+﻿namespace SassAndCoffee.JavaScript.CoffeeScript
+{
     using SassAndCoffee.Core;
+    using System.Text.RegularExpressions;
 
-    public class CoffeeScriptCompilerContentTransform : JavaScriptCompilerContentTransformBase {
+    public class CoffeeScriptCompilerContentTransform : JavaScriptCompilerContentTransformBase
+    {
         public const string StateKey = "CoffeeScript_Bare";
 
         public static readonly Regex BareModeDetection = new Regex(
             @"\.bare(\.min)?\.js$",
             RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
-        public override string InputMimeType {
-            get { return "text/coffeescript"; }
-        }
+        public override string InputMimeType => "text/coffeescript";
 
-        public override string OutputMimeType {
-            get { return "text/javascript"; }
-        }
+        public override string OutputMimeType => "text/javascript";
 
-        public override void PreExecute(ContentTransformState state) {
-            if (BareModeDetection.IsMatch(state.Path)) {
+        public override void PreExecute(ContentTransformState state)
+        {
+            if (BareModeDetection.IsMatch(state.Path))
+            {
                 state.Items.Add(StateKey, true);
                 var newPath = state.Path
                     .ToLowerInvariant()
@@ -29,7 +29,8 @@
             base.PreExecute(state);
         }
 
-        public override void Execute(ContentTransformState state) {
+        public override void Execute(ContentTransformState state)
+        {
             bool bare = false;  // Default to non-bare mode like CoffeeScript compiler
             if (state.Items.ContainsKey(StateKey))
                 bare = true;
@@ -38,7 +39,8 @@
         }
 
         protected override IInstanceProvider<IJavaScriptCompiler> CreateCompilerProvider(
-            IInstanceProvider<IJavaScriptRuntime> jsRuntimeProvider) {
+            IInstanceProvider<IJavaScriptRuntime> jsRuntimeProvider)
+        {
             return new InstanceProvider<IJavaScriptCompiler>(
                 () => new CoffeeScriptCompiler(jsRuntimeProvider));
         }

@@ -41,10 +41,8 @@
                 && append.MimeType != null
                 && MimeType != null
                 && MimeType != append.MimeType) {
-                throw new InvalidOperationException(string.Format(
-                    "Invalid attempt to combine content with different MimeType {0} and {1}",
-                    MimeType,
-                    append.MimeType));
+                throw new InvalidOperationException(
+                    $"Invalid attempt to combine content with different MimeType {MimeType} and {append.MimeType}");
             }
 
             _content.AppendLine(append.Content);

@@ -1,4 +1,5 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
     using System.Runtime.InteropServices;
 
@@ -10,7 +11,8 @@
     /// </summary>
     [Guid("AA5B6A80-B834-11d0-932F-00A0C90DCAA9")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IActiveScriptParseProcedure32 {
+    public interface IActiveScriptParseProcedure32
+    {
         /// <summary>
         /// Parses the given code procedure and adds the procedure to the name space.
         /// </summary>

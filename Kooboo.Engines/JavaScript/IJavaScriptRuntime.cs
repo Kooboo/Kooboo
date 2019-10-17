@@ -1,11 +1,16 @@
-﻿namespace SassAndCoffee.JavaScript {
+﻿namespace SassAndCoffee.JavaScript
+{
     using System;
 
-    public interface IJavaScriptRuntime : IDisposable {
+    public interface IJavaScriptRuntime : IDisposable
+    {
         void Initialize();
+
         void LoadLibrary(string libraryCode);
+
         //Task LoadLibraryAsync(string libraryCode);
         T ExecuteFunction<T>(string functionName, params object[] args);
+
         //Task<T> ExecuteFunctionAsync<T>(string functionName, params object[] args);
         //T ExecuteStatement<T>(string statement);
         //Task<T> ExecuteStatementAsync<T>(string statement);

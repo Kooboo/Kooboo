@@ -1,4 +1,5 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
     using System.Runtime.InteropServices;
     using ComTypes = System.Runtime.InteropServices.ComTypes;
@@ -9,7 +10,8 @@
     /// </summary>
     [Guid("BB1A2AE1-A4F9-11cf-8F20-00805F2CD064")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IActiveScript {
+    public interface IActiveScript
+    {
         /// <summary>
         /// Informs the scripting engine of the IActiveScriptSite interface site provided by the host.
         /// Call this method before any other IActiveScript interface methods is used.

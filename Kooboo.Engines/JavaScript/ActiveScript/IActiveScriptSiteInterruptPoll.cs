@@ -1,4 +1,5 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
     using System.Runtime.InteropServices;
 
@@ -7,7 +8,8 @@
     /// </summary>
     [Guid("539698A0-CDCA-11CF-A5EB-00AA0047A063")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IActiveScriptSiteInterruptPoll {
+    public interface IActiveScriptSiteInterruptPoll
+    {
         /// <summary>
         /// Allows a host to specify that a script should terminate.
         /// </summary>

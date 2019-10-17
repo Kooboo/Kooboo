@@ -1,4 +1,5 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
     using System.Runtime.InteropServices;
     using ComTypes = System.Runtime.InteropServices.ComTypes;
@@ -22,7 +23,8 @@
     /// </remarks>
     [Guid("BB1A2AE2-A4F9-11cf-8F20-00805F2CD064")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IActiveScriptParse32 {
+    public interface IActiveScriptParse32
+    {
         /// <summary>
         /// Initializes the scripting engine.
         /// </summary>
@@ -101,7 +103,7 @@
         /// <param name="delimiter">The end-of-scriptlet delimiter. When pstrCode is parsed
         /// from a stream of text, the host typically uses a delimiter, such as two single
         /// quotation marks (''), to detect the end of the scriptlet. This parameter specifies
-        /// the delimiter that the host used, allowing the scripting engine to provide some 
+        /// the delimiter that the host used, allowing the scripting engine to provide some
         /// conditional primitive preprocessing (for example, replacing a single quotation
         /// mark ['] with two single quotation marks for use as a delimiter). Exactly how
         /// (and if) the scripting engine makes use of this information depends on the

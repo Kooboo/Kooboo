@@ -1,10 +1,8 @@
-﻿using System.Text.RegularExpressions;
-using SassAndCoffee.Core;
-using SassAndCoffee.JavaScript;
+﻿using SassAndCoffee.Core;
+using System.Text.RegularExpressions;
 
 namespace SassAndCoffee.JavaScript.TypeScript
 {
-
     public class TypeScriptCompilerContentTransform : JavaScriptCompilerContentTransformBase
     {
         public const string StateKey = "TypeScript_Bare";
@@ -13,16 +11,14 @@ namespace SassAndCoffee.JavaScript.TypeScript
             @"\.bare(\.min)?\.js$",
             RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
-        public override string InputMimeType {
-            get { return "text/typescript"; }
-        }
+        public override string InputMimeType => "text/typescript";
 
-        public override string OutputMimeType {
-            get { return "text/javascript"; }
-        }
+        public override string OutputMimeType => "text/javascript";
 
-        public override void PreExecute(ContentTransformState state) {
-            if (BareModeDetection.IsMatch(state.Path)) {
+        public override void PreExecute(ContentTransformState state)
+        {
+            if (BareModeDetection.IsMatch(state.Path))
+            {
                 state.Items.Add(StateKey, true);
                 var newPath = state.Path
                     .ToLowerInvariant()
@@ -33,16 +29,16 @@ namespace SassAndCoffee.JavaScript.TypeScript
             base.PreExecute(state);
         }
 
-        public override void Execute(ContentTransformState state) {
-            bool bare = false;
-            if (state.Items.ContainsKey(StateKey))
-                bare = true;
+        public override void Execute(ContentTransformState state)
+        {
+            bool bare = state.Items.ContainsKey(StateKey);
 
             base.Execute(state, bare);
         }
 
         protected override IInstanceProvider<IJavaScriptCompiler> CreateCompilerProvider(
-            IInstanceProvider<IJavaScriptRuntime> jsRuntimeProvider) {
+            IInstanceProvider<IJavaScriptRuntime> jsRuntimeProvider)
+        {
             return new InstanceProvider<IJavaScriptCompiler>(
                 () => new TypeScriptCompiler(jsRuntimeProvider));
         }

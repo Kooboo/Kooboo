@@ -1,4 +1,5 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
     using System.Runtime.InteropServices;
 
@@ -7,7 +8,8 @@
     /// </summary>
     [Guid("63CDBCB0-C1B1-11d0-9336-00A0C90DCAA9")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IBindEventHandler {
+    public interface IBindEventHandler
+    {
         /// <summary>
         /// Binds an event to an object.
         /// </summary>

@@ -1,4 +1,5 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
     using System.Runtime.InteropServices;
 
@@ -8,7 +9,8 @@
     /// </summary>
     [Guid("B8DA6310-E19B-11d0-933C-00A0C90DCAA9")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IActiveScriptStats {
+    public interface IActiveScriptStats
+    {
         /// <summary>
         /// Returns one of the standard script statistics.
         /// </summary>

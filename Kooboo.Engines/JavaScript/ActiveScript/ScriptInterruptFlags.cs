@@ -1,11 +1,13 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
 
     /// <summary>
     /// Thread interruption options.
     /// </summary>
     [Flags]
-    public enum ScriptInterruptFlags : uint {
+    public enum ScriptInterruptFlags : uint
+    {
         /// <summary>
         /// No flags.
         /// </summary>

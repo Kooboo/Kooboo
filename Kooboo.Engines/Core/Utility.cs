@@ -12,8 +12,8 @@
 
         public static Stream GetManifestResourceStream(Assembly assembly, Type type, string resource)
         {
-            var nameSpace = type.Namespace.Replace("SassAndCoffee", "Kooboo.Engines");
-            var resourceName = string.Format("{0}.{1}", nameSpace, resource);
+            var nameSpace = type.Namespace?.Replace("SassAndCoffee", "Kooboo.Engines");
+            var resourceName = $"{nameSpace}.{resource}";
             return assembly.GetManifestResourceStream(resourceName);
         }
     }

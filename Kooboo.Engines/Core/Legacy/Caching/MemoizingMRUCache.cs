@@ -20,12 +20,12 @@ namespace SassAndCoffee.Core
     /// function.</typeparam>
     public class MemoizingMRUCache<TParam, TVal>
     {
-        readonly Func<TParam, object, TVal> calculationFunction;
-        readonly Action<TVal> releaseFunction;
-        readonly int maxCacheSize;
+        readonly Func<TParam, object, TVal> _calculationFunction;
+        readonly Action<TVal> _releaseFunction;
+        readonly int _maxCacheSize;
 
-        LinkedList<TParam> cacheMRUList;
-        Dictionary<TParam, Tuple<LinkedListNode<TParam>, TVal>> cacheEntries;
+        LinkedList<TParam> _cacheMruList;
+        Dictionary<TParam, Tuple<LinkedListNode<TParam>, TVal>> _cacheEntries;
         ReaderWriterLockSlim gate = new ReaderWriterLockSlim();
 
         /// <summary>
@@ -44,9 +44,9 @@ namespace SassAndCoffee.Core
             Contract.Requires(calculationFunc != null);
             Contract.Requires(maxSize > 0);
 
-            calculationFunction = calculationFunc;
-            releaseFunction = onRelease;
-            maxCacheSize = maxSize;
+            _calculationFunction = calculationFunc;
+            _releaseFunction = onRelease;
+            _maxCacheSize = maxSize;
             InvalidateAll();
         }
 
@@ -69,10 +69,10 @@ namespace SassAndCoffee.Core
                 hasReadLock = true;
                 gate.EnterReadLock();
 
-                if (cacheEntries.ContainsKey(key)) {
-                    var found = cacheEntries[key];
-                    cacheMRUList.Remove(found.Item1);
-                    cacheMRUList.AddFirst(found.Item1);
+                if (_cacheEntries.ContainsKey(key)) {
+                    var found = _cacheEntries[key];
+                    _cacheMruList.Remove(found.Item1);
+                    _cacheMruList.AddFirst(found.Item1);
 
                     return found.Item2;
                 }
@@ -80,14 +80,14 @@ namespace SassAndCoffee.Core
                 hasReadLock = false;
                 gate.ExitReadLock();
 
-                var result = calculationFunction(key, context);
+                var result = _calculationFunction(key, context);
 
                 hasWriteLock = true;
                 gate.EnterWriteLock();
 
                 var node = new LinkedListNode<TParam>(key);
-                cacheMRUList.AddFirst(node);
-                cacheEntries[key] = new Tuple<LinkedListNode<TParam>, TVal>(node, result);
+                _cacheMruList.AddFirst(node);
+                _cacheEntries[key] = new Tuple<LinkedListNode<TParam>, TVal>(node, result);
                 maintainCache();
     
                 return result;
@@ -107,12 +107,11 @@ namespace SassAndCoffee.Core
             try {
                 gate.EnterReadLock();
 
-                Tuple<LinkedListNode<TParam>, TVal> output;
-                var ret = cacheEntries.TryGetValue(key, out output);
+                var ret = _cacheEntries.TryGetValue(key, out var output);
 
                 if (ret && output != null) {
-                    cacheMRUList.Remove(output.Item1);
-                    cacheMRUList.AddFirst(output.Item1);
+                    _cacheMruList.Remove(output.Item1);
+                    _cacheMruList.AddFirst(output.Item1);
                     result = output.Item2;
                 } else {
                     result = default(TVal);
@@ -135,15 +134,14 @@ namespace SassAndCoffee.Core
             try {
                 gate.EnterWriteLock();
 
-                if (!cacheEntries.ContainsKey(key))
+                if (!_cacheEntries.ContainsKey(key))
                     return;
     
-                var to_remove = cacheEntries[key];
-                if (releaseFunction != null)
-                    releaseFunction(to_remove.Item2);
-    
-                cacheMRUList.Remove(to_remove.Item1);
-                cacheEntries.Remove(key);
+                var toRemove = _cacheEntries[key];
+                _releaseFunction?.Invoke(toRemove.Item2);
+
+                _cacheMruList.Remove(toRemove.Item1);
+                _cacheEntries.Remove(key);
             } finally {
                 gate.ExitWriteLock();
             }
@@ -157,19 +155,19 @@ namespace SassAndCoffee.Core
             try {
                 gate.EnterWriteLock();
 
-                if (releaseFunction == null || cacheEntries == null) {
-                    cacheMRUList = new LinkedList<TParam>();
-                    cacheEntries = new Dictionary<TParam, Tuple<LinkedListNode<TParam>, TVal>>();
+                if (_releaseFunction == null || _cacheEntries == null) {
+                    _cacheMruList = new LinkedList<TParam>();
+                    _cacheEntries = new Dictionary<TParam, Tuple<LinkedListNode<TParam>, TVal>>();
                     return;
                 }
     
-                if (cacheEntries.Count == 0)
+                if (_cacheEntries.Count == 0)
                     return;
     
                 /* We have to remove them one-by-one to call the release function
                  * We ToArray() this so we don't get a "modifying collection while
                  * enumerating" exception. */
-                foreach (var v in cacheEntries.Keys.ToArray()) { Invalidate(v); }
+                foreach (var v in _cacheEntries.Keys.ToArray()) { Invalidate(v); }
             } finally {
                 gate.ExitWriteLock();
             }
@@ -183,7 +181,7 @@ namespace SassAndCoffee.Core
         {
             try {
                 gate.EnterReadLock();
-                return cacheEntries.Select(x => x.Value.Item2).ToArray();
+                return _cacheEntries.Select(x => x.Value.Item2).ToArray();
             } finally {
                 gate.ExitReadLock();
             }
@@ -192,21 +190,20 @@ namespace SassAndCoffee.Core
         void maintainCache()
         {
             //this.Log().DebugFormat("Maintain: [{0}]", String.Join(",", cacheMRUList));
-            while (cacheMRUList.Count > maxCacheSize) {
-                var to_remove = cacheMRUList.Last.Value;
-                if (releaseFunction != null)
-                    releaseFunction(cacheEntries[to_remove].Item2);
+            while (_cacheMruList.Count > _maxCacheSize) {
+                var toRemove = _cacheMruList.Last.Value;
+                _releaseFunction?.Invoke(_cacheEntries[toRemove].Item2);
 
-                cacheEntries.Remove(cacheMRUList.Last.Value);
-                cacheMRUList.RemoveLast();
+                _cacheEntries.Remove(_cacheMruList.Last.Value);
+                _cacheMruList.RemoveLast();
             }
         }
 
         [ContractInvariantMethod]
         void Invariants()
         {
-            Contract.Invariant(cacheEntries.Count == cacheMRUList.Count);
-            Contract.Invariant(cacheEntries.Count <= maxCacheSize);
+            Contract.Invariant(_cacheEntries.Count == _cacheMruList.Count);
+            Contract.Invariant(_cacheEntries.Count <= _maxCacheSize);
         }
     }
 

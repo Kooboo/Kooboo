@@ -1,4 +1,5 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
     using System.Runtime.InteropServices;
     using ComTypes = System.Runtime.InteropServices.ComTypes;
@@ -10,7 +11,8 @@
     /// </summary>
     [Guid("EAE1BA61-A4ED-11cf-8F20-00805F2CD064")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IActiveScriptError {
+    public interface IActiveScriptError
+    {
         /// <summary>
         /// Retrieves information about an error that occurred while the scripting engine was running
         /// a script.

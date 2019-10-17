@@ -9,9 +9,9 @@ namespace Kooboo.Engines
 {
     public class TypeScript: IEngine
     {
-        public string Name { get { return "typpescript"; } }
+        public string Name => "typpescript";
 
-        public bool KeepTag { get { return true; } }
+        public bool KeepTag => true;
 
         public string Extension => "ts";
 

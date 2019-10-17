@@ -1,5 +1,5 @@
-﻿using Kooboo.Sites.Engine;
-using Kooboo.Data.Context;
+﻿using Kooboo.Data.Context;
+using Kooboo.Sites.Engine;
 using SassAndCoffee.Core;
 using SassAndCoffee.JavaScript;
 using SassAndCoffee.JavaScript.CoffeeScript;
@@ -8,9 +8,9 @@ namespace Kooboo.Engines
 {
     public class CoffeeScript : IEngine
     {
-        public string Name { get { return "coffeescript"; } }
+        public string Name => "coffeescript";
 
-        public bool KeepTag { get { return true; } }
+        public bool KeepTag => true;
 
         public string Extension => "coffee";
 
@@ -24,11 +24,9 @@ namespace Kooboo.Engines
             var jsRuntimeProvider = new InstanceProvider<IJavaScriptRuntime>(
                 () => new IEJavaScriptRuntime());
 
-            
-            var instance= new InstanceProvider<IJavaScriptCompiler>(
+            var instance = new InstanceProvider<IJavaScriptCompiler>(
                () => new CoffeeScriptCompiler(jsRuntimeProvider));
             return instance.GetInstance().Compile(input);
-            
         }
     }
 }

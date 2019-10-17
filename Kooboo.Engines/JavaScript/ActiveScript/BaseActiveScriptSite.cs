@@ -1,11 +1,12 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
     using System.Globalization;
     using System.Runtime.InteropServices;
     using ComTypes = System.Runtime.InteropServices.ComTypes;
 
-    public abstract class BaseActiveScriptSite : IActiveScriptSite {
-
+    public abstract class BaseActiveScriptSite : IActiveScriptSite
+    {
         private const int TYPE_E_ELEMENTNOTFOUND = unchecked((int)(0x8002802B));
 
         private ActiveScriptException _lastException = null;
@@ -25,7 +26,8 @@
         /// Initializes a new instance of the <see cref="BaseActiveScriptSite"/> class.
         /// </summary>
         /// <param name="documentVersion">The host-defined document version string.</param>
-        public BaseActiveScriptSite(string documentVersion) {
+        public BaseActiveScriptSite(string documentVersion)
+        {
             DocumentVersion = documentVersion;
         }
 
@@ -36,7 +38,8 @@
         /// </summary>
         /// <param name="lcid">A variable that receives the locale identifier for user-interface
         /// elements displayed by the scripting engine.</param>
-        public void GetLCID(out int lcid) {
+        public void GetLCID(out int lcid)
+        {
             lcid = CultureInfo.CurrentCulture.LCID;
         }
 
@@ -66,18 +69,25 @@
         /// multiple interfaces and event interfaces. If the item supports the IProvideMultipleTypeInfo
         /// interface, the ITypeInfo interface retrieved is the same as the index zero ITypeInfo that
         /// would be obtained using the IProvideMultipleTypeInfo.GetInfoOfIndex method.</param>
-        public void GetItemInfo(string name, ScriptInfoFlags returnMask, out object item, out IntPtr typeInfo) {
-            if ((returnMask & ScriptInfoFlags.IUnknown) > 0) {
+        public void GetItemInfo(string name, ScriptInfoFlags returnMask, out object item, out IntPtr typeInfo)
+        {
+            if ((returnMask & ScriptInfoFlags.IUnknown) > 0)
+            {
                 item = GetItem(name);
                 if (item == null) throw new COMException(string.Format("{0} not found.", name), TYPE_E_ELEMENTNOTFOUND);
-            } else {
+            }
+            else
+            {
                 item = null;
             }
 
-            if ((returnMask & ScriptInfoFlags.ITypeInfo) > 0) {
+            if ((returnMask & ScriptInfoFlags.ITypeInfo) > 0)
+            {
                 typeInfo = GetTypeInfo(name);
                 if (typeInfo == null) throw new COMException(string.Format("{0} not found.", name), TYPE_E_ELEMENTNOTFOUND);
-            } else {
+            }
+            else
+            {
                 typeInfo = IntPtr.Zero;
             }
         }
@@ -105,7 +115,8 @@
         /// persisted state, forcing a recompile the next time the script is loaded.
         /// </summary>
         /// <param name="versionString">The host-defined document version string.</param>
-        public void GetDocVersionString(out string versionString) {
+        public void GetDocVersionString(out string versionString)
+        {
             versionString = DocumentVersion;
         }
 
@@ -116,14 +127,16 @@
         /// produced no result.</param>
         /// <param name="exceptionInfo">Contains exception information generated when the script
         /// terminated, or null if no exception was generated.</param>
-        public virtual void OnScriptTerminate(object result, ComTypes.EXCEPINFO exceptionInfo) {
+        public virtual void OnScriptTerminate(object result, ComTypes.EXCEPINFO exceptionInfo)
+        {
         }
 
         /// <summary>
         /// Informs the host that the scripting engine has changed states.
         /// </summary>
         /// <param name="scriptState">Indicates the new script state.</param>
-        public virtual void OnStateChange(ScriptState scriptState) {
+        public virtual void OnStateChange(ScriptState scriptState)
+        {
         }
 
         /// <summary>
@@ -131,7 +144,8 @@
         /// </summary>
         /// <param name="scriptError">A host can use this interface to obtain information about the
         /// execution error.</param>
-        public void OnScriptError(IActiveScriptError scriptError) {
+        public void OnScriptError(IActiveScriptError scriptError)
+        {
             _lastException = ActiveScriptException.Create(scriptError);
             OnScriptError(_lastException);
         }
@@ -139,7 +153,8 @@
         /// <summary>
         /// Gets and resets the last exception.  Returns null for none.
         /// </summary>
-        protected ActiveScriptException GetAndResetLastException() {
+        protected ActiveScriptException GetAndResetLastException()
+        {
             var temp = _lastException;
             _lastException = null;
             return temp;
@@ -149,19 +164,22 @@
         /// Informs the host that an execution error occurred while the engine was running the script.
         /// </summary>
         /// <param name="exception">The exception.</param>
-        protected virtual void OnScriptError(ActiveScriptException exception) {
+        protected virtual void OnScriptError(ActiveScriptException exception)
+        {
         }
 
         /// <summary>
         /// Informs the host that the scripting engine has begun executing the script code.
         /// </summary>
-        public virtual void OnEnterScript() {
+        public virtual void OnEnterScript()
+        {
         }
 
         /// <summary>
         /// Informs the host that the scripting engine has returned from executing script code.
         /// </summary>
-        public virtual void OnLeaveScript() {
+        public virtual void OnLeaveScript()
+        {
         }
     }
 }

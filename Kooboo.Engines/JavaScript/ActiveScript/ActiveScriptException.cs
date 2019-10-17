@@ -1,14 +1,17 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
     using System.Runtime.Serialization;
     using ComTypes = System.Runtime.InteropServices.ComTypes;
 
     [Serializable]
-    public class ActiveScriptException : Exception {
+    public class ActiveScriptException : Exception
+    {
         /// <summary>
         /// Initializes a new instance of the <see cref="ActiveScriptException"/> class.
         /// </summary>
-        public ActiveScriptException() {
+        public ActiveScriptException()
+        {
         }
 
         /// <summary>
@@ -16,7 +19,8 @@
         /// </summary>
         /// <param name="message">The message.</param>
         public ActiveScriptException(string message)
-            : base(message) {
+            : base(message)
+        {
         }
 
         /// <summary>
@@ -24,7 +28,8 @@
         /// </summary>
         /// <param name="innerException">The inner exception.</param>
         public ActiveScriptException(Exception innerException)
-            : base(null, innerException) {
+            : base(null, innerException)
+        {
         }
 
         /// <summary>
@@ -33,7 +38,8 @@
         /// <param name="message">The message.</param>
         /// <param name="innerException">The inner exception.</param>
         public ActiveScriptException(string message, Exception innerException)
-            : base(message, innerException) {
+            : base(message, innerException)
+        {
         }
 
         /// <summary>
@@ -44,15 +50,17 @@
         /// <exception cref="T:System.ArgumentNullException">
         /// The <paramref name="info"/> parameter is null.
         ///   </exception>
-        ///   
+        ///
         /// <exception cref="T:System.Runtime.Serialization.SerializationException">
         /// The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0).
         ///   </exception>
         protected ActiveScriptException(SerializationInfo info, StreamingContext context)
-            : base(info, context) {
+            : base(info, context)
+        {
         }
 
-        public static ActiveScriptException Create(IActiveScriptError error) {
+        public static ActiveScriptException Create(IActiveScriptError error)
+        {
             string source = "";
             uint sourceContext = 0;
             uint lineNumber = 0;
@@ -61,17 +69,22 @@
 
             string message = "";
 
-            try {
+            try
+            {
                 error.GetSourceLineText(out source);
-            } catch { }
+            }
+            catch { }
 
-            try {
+            try
+            {
                 error.GetSourcePosition(out sourceContext, out lineNumber, out characterPosition);
                 ++lineNumber;
                 ++characterPosition;
-            } catch { }
+            }
+            catch { }
 
-            try {
+            try
+            {
                 error.GetExceptionInfo(out excepInfo);
                 message = string.Format(
                     "Error in [{1}]:\n{0}\nat line {4}({5})\nError Code: {2} (0x{2:X8})\nError WCode: {3}",
@@ -82,9 +95,11 @@
                     /* 4 */ lineNumber,
                     /* 5 */ characterPosition,
                     /* 6 */ source);
-            } catch { }
+            }
+            catch { }
 
-            return new ActiveScriptException(message) {
+            return new ActiveScriptException(message)
+            {
                 LineContent = source,
                 SourceContext = sourceContext,
                 LineNumber = lineNumber,

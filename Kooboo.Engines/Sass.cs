@@ -1,15 +1,15 @@
 ﻿using Kooboo.Data.Context;
 using Kooboo.Sites.Engine;
-using LibSass.Compiler.Options;
 using LibSass.Compiler;
+using LibSass.Compiler.Options;
 
 namespace Kooboo.Engines
 {
-    public class Sass:IEngine
+    public class Sass : IEngine
     {
-        public string Name { get { return "sass"; } }
+        public string Name => "sass";
 
-        public bool KeepTag { get { return true; } }
+        public bool KeepTag => true;
 
         public string Extension => "sass";
 
@@ -17,13 +17,13 @@ namespace Kooboo.Engines
 
         public bool IsStyle => true;
 
-        // Less Css..   
+        // Less Css..
         public string Execute(RenderContext context, string input)
         {
             var sassOptions = new SassOptions
             {
                 Data = input,
-                IsIndentedSyntax=true //sass
+                IsIndentedSyntax = true //sass
             };
             var sass = new SassCompiler(sassOptions);
             var result = sass.Compile();

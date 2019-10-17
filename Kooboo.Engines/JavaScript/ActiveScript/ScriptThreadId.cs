@@ -1,9 +1,10 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
-
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     /// <summary>
     /// Signifies a special thread or class of threads.
     /// </summary>
-    public enum ScriptThreadId : uint {
+    public enum ScriptThreadId : uint
+    {
         /// <summary>
         /// The currently executing thread.
         /// </summary>

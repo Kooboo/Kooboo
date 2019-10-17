@@ -1,8 +1,10 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
 
     [Flags]
-    public enum ScriptTextFlags : uint {
+    public enum ScriptTextFlags : uint
+    {
         DelayExecution = 0x00000001,
 
         /// <summary>
@@ -27,6 +29,7 @@
         /// Engine States.
         /// </summary>
         IsPersistent = 0x00000040,
+
         HostManagesSource = 0x00000080,
         IsCrossDomain = 0x00000100,
     }

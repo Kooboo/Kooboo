@@ -1,4 +1,5 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
     using System.Runtime.InteropServices;
 
@@ -20,7 +21,8 @@
     /// than once.
     /// </remarks>
     [ComVisible(false)]
-    public interface IActiveScriptParseWrapper {
+    public interface IActiveScriptParseWrapper
+    {
         /// <summary>
         /// Initializes the scripting engine.
         /// </summary>

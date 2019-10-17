@@ -1,4 +1,5 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
     using System.Runtime.InteropServices;
 
@@ -12,7 +13,8 @@
     /// </summary>
     [Guid("DB01A1E3-A42B-11cf-8F20-00805F2CD064")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IActiveScriptSite {
+    public interface IActiveScriptSite
+    {
         /// <summary>
         /// Retrieves the locale identifier associated with the host's user interface. The scripting
         /// engine uses the identifier to ensure that error strings and other user-interface elements

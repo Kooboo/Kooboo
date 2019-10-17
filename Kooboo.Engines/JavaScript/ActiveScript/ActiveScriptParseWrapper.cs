@@ -1,9 +1,10 @@
-﻿namespace SassAndCoffee.JavaScript.ActiveScript {
+﻿namespace SassAndCoffee.JavaScript.ActiveScript
+{
     using System;
     using ComTypes = System.Runtime.InteropServices.ComTypes;
 
-    public sealed class ActiveScriptParseWrapper : IActiveScriptParseWrapper {
-
+    public sealed class ActiveScriptParseWrapper : IActiveScriptParseWrapper
+    {
         private const string NeitherValidMessage = "The parser you passed implements neither IActiveScriptParse32 nor IActiveScriptParse64";
 
         private IActiveScriptParse32 _parse32;
@@ -20,7 +21,8 @@
         /// Initializes a new instance of the <see cref="ActiveScriptParseWrapper"/> class.
         /// </summary>
         /// <param name="parser">The parser.  Must implement IActiveScriptParse32 or IActiveScriptParse64.</param>
-        public ActiveScriptParseWrapper(object parser) {
+        public ActiveScriptParseWrapper(object parser)
+        {
             _parse32 = parser as IActiveScriptParse32;
             _parse64 = parser as IActiveScriptParse64;
         }
@@ -28,7 +30,8 @@
         /// <summary>
         /// Initializes the scripting engine.
         /// </summary>
-        public void InitNew() {
+        public void InitNew()
+        {
             if (_parse32 != null)
                 _parse32.InitNew();
             else if (_parse64 != null)
@@ -89,8 +92,8 @@
             string delimiter,
             IntPtr sourceContextCookie,
             uint startingLineNumber,
-            ScriptTextFlags flags) {
-
+            ScriptTextFlags flags)
+        {
             string name;
 
             if (_parse32 != null)
@@ -162,8 +165,8 @@
             string delimiter,
             IntPtr sourceContextCookie,
             uint startingLineNumber,
-            ScriptTextFlags flags) {
-
+            ScriptTextFlags flags)
+        {
             object result;
 
             if (_parse32 != null)
