@@ -15,7 +15,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
-using Kooboo.HttpServer;
 
 namespace Kooboo.HttpServer.Http
 {
@@ -122,20 +121,15 @@ namespace Kooboo.HttpServer.Http
         public bool AllowSynchronousIO { get; set; }
 
         /// <summary>
-        /// The request id. <seealso cref="HttpContext.TraceIdentifier"/>
+        /// The request id. <seealso>
+        ///     <cref>HttpContext.TraceIdentifier</cref>
+        /// </seealso>
         /// </summary>
         public string TraceIdentifier
         {
             set => _requestId = value;
-            get
-            {
-                // don't generate an ID until it is requested
-                if (_requestId == null)
-                {
-                    _requestId = CreateRequestId();
-                }
-                return _requestId;
-            }
+            // don't generate an ID until it is requested
+            get => _requestId ?? (_requestId = CreateRequestId());
         }
 
         public abstract bool IsUpgradableRequest { get; }
@@ -151,20 +145,17 @@ namespace Kooboo.HttpServer.Http
         {
             get
             {
-                if (_httpVersion == Http.HttpVersion.Http11)
+                switch (_httpVersion)
                 {
-                    return HttpUtilities.Http11Version;
+                    case Http.HttpVersion.Http11:
+                        return HttpUtilities.Http11Version;
+                    case Http.HttpVersion.Http10:
+                        return HttpUtilities.Http10Version;
+                    case Http.HttpVersion.Http2:
+                        return HttpUtilities.Http2Version;
+                    default:
+                        return string.Empty;
                 }
-                if (_httpVersion == Http.HttpVersion.Http10)
-                {
-                    return HttpUtilities.Http10Version;
-                }
-                if (_httpVersion == Http.HttpVersion.Http2)
-                {
-                    return HttpUtilities.Http2Version;
-                }
-
-                return string.Empty;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -194,21 +185,20 @@ namespace Kooboo.HttpServer.Http
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void HttpVersionSetSlow(string value)
         {
-            if (value == HttpUtilities.Http11Version)
+            switch (value)
             {
-                _httpVersion = Http.HttpVersion.Http11;
-            }
-            else if (value == HttpUtilities.Http10Version)
-            {
-                _httpVersion = Http.HttpVersion.Http10;
-            }
-            else if (value == HttpUtilities.Http2Version)
-            {
-                _httpVersion = Http.HttpVersion.Http2;
-            }
-            else
-            {
-                _httpVersion = Http.HttpVersion.Unknown;
+                case HttpUtilities.Http11Version:
+                    _httpVersion = Http.HttpVersion.Http11;
+                    break;
+                case HttpUtilities.Http10Version:
+                    _httpVersion = Http.HttpVersion.Http10;
+                    break;
+                case HttpUtilities.Http2Version:
+                    _httpVersion = Http.HttpVersion.Http2;
+                    break;
+                default:
+                    _httpVersion = Http.HttpVersion.Unknown;
+                    break;
             }
         }
 
@@ -228,9 +218,8 @@ namespace Kooboo.HttpServer.Http
                 // don't have one, and return its token.
                 var cts = _abortedCts;
                 return
-                    cts != null ? cts.Token :
-                    (_requestAborted == 1) ? new CancellationToken(true) :
-                    RequestAbortedSource.Token;
+                    cts?.Token ?? ((_requestAborted == 1) ? new CancellationToken(true) :
+                        RequestAbortedSource.Token);
             }
             set
             {

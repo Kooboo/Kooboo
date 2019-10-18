@@ -4,11 +4,8 @@
 using System;
 using System.Buffers;
 using System.Collections;
-using System.Collections.Sequences;
-using System.IO.Pipelines;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Kooboo.HttpServer;
 
 namespace Kooboo.HttpServer.Http
 {
@@ -75,9 +72,8 @@ namespace Kooboo.HttpServer.Http
 
         private unsafe void ParseRequestLine(TRequestHandler handler, byte* data, int length)
         {
-            int offset;
             // Get Method and set the offset
-            var method = HttpUtilities.GetKnownMethod(data, length, out offset);
+            var method = HttpUtilities.GetKnownMethod(data, length, out var offset);
 
             Span<byte> customMethod = method == HttpMethod.Custom ?
                 GetUnknownMethod(data, length, out offset) :

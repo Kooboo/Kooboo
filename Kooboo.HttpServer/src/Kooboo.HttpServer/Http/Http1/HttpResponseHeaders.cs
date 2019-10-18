@@ -14,8 +14,8 @@ namespace Kooboo.HttpServer.Http
 {
     public partial class HttpResponseHeaders : HttpHeaders
     {
-        private static readonly byte[] _CrLf = new[] { (byte)'\r', (byte)'\n' };
-        private static readonly byte[] _colonSpace = new[] { (byte)':', (byte)' ' };
+        private static readonly byte[] _CrLf = { (byte)'\r', (byte)'\n' };
+        private static readonly byte[] _colonSpace = { (byte)':', (byte)' ' };
 
         public bool HasConnection => HeaderConnection.Count != 0;
 
@@ -58,8 +58,7 @@ namespace Kooboo.HttpServer.Http
 
         private static long ParseContentLength(string value)
         {
-            long parsed;
-            if (!HeaderUtilities.TryParseNonNegativeInt64(value, out parsed))
+            if (!HeaderUtilities.TryParseNonNegativeInt64(value, out var parsed))
             {
                 ThrowInvalidContentLengthException(value);
             }

@@ -3,13 +3,11 @@
 
 using System;
 using System.Buffers;
-using System.Diagnostics;
 using System.IO.Pipelines;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Kooboo.HttpServer;
 
 namespace Kooboo.HttpServer.Http
 {
@@ -56,12 +54,7 @@ namespace Kooboo.HttpServer.Http
 
         public Task WriteDataAsync(ArraySegment<byte> buffer, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return TaskHelpers.FromCancellation(cancellationToken);
-            }
-
-            return WriteAsync(buffer, cancellationToken);
+            return cancellationToken.IsCancellationRequested ? TaskHelpers.FromCancellation(cancellationToken) : WriteAsync(buffer, cancellationToken);
         }
 
         public Task WriteStreamSuffixAsync(CancellationToken cancellationToken)

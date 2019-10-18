@@ -15,8 +15,7 @@ namespace Kooboo.HttpServer.Http
     {
         private static long ParseContentLength(string value)
         {
-            long parsed;
-            if (!HeaderUtilities.TryParseNonNegativeInt64(value, out parsed))
+            if (!HeaderUtilities.TryParseNonNegativeInt64(value, out var parsed))
             {
                 ThrowInvalidContentLengthException(value);
             }
@@ -50,8 +49,7 @@ namespace Kooboo.HttpServer.Http
                 }
             }
 
-            StringValues existing;
-            Unknown.TryGetValue(key, out existing);
+            Unknown.TryGetValue(key, out var existing);
             Unknown[key] = AppendValue(existing, value);
         }
 

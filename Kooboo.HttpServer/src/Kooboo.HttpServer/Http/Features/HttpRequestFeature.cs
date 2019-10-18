@@ -88,14 +88,7 @@ namespace Kooboo.HttpServer.Http
 
                     var result = QueryHelpers.ParseNullableQuery(current);
 
-                    if (result == null)
-                    {
-                        _query = QueryCollection.Empty;
-                    }
-                    else
-                    {
-                        _query = new QueryCollection(result);
-                    }
+                    _query = result == null ? QueryCollection.Empty : new QueryCollection(result);
                 }
                 return _query;
             }

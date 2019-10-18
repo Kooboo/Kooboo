@@ -9,7 +9,9 @@ namespace Kooboo.HttpServer.Http
     public interface IRequestProcessor
     {
         Task ProcessRequestsAsync<TContext>(IHttpApplication<TContext> application);
+
         void StopProcessingNextRequest();
+
         void Abort(Exception ex);
     }
 }

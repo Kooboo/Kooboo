@@ -14,7 +14,6 @@ namespace Kooboo.HttpServer.Http
         Patch,
         Connect,
         Options,
-
-        Custom,
+        Custom
     }
 }

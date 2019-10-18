@@ -4,7 +4,6 @@
 using System;
 using System.Text;
 using System.Threading;
-using Kooboo.HttpServer;
 using Microsoft.Net.Http.Headers;
 
 namespace Kooboo.HttpServer.Http

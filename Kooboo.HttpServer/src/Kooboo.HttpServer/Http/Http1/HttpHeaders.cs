@@ -35,8 +35,7 @@ namespace Kooboo.HttpServer.Http
         {
             get
             {
-                StringValues value;
-                TryGetValueFast(key, out value);
+                TryGetValueFast(key, out var value);
                 return value;
             }
             set
@@ -189,8 +188,7 @@ namespace Kooboo.HttpServer.Http
 
         bool IDictionary<string, StringValues>.ContainsKey(string key)
         {
-            StringValues value;
-            return TryGetValueFast(key, out value);
+            return TryGetValueFast(key, out var value);
         }
 
         void ICollection<KeyValuePair<string, StringValues>>.CopyTo(KeyValuePair<string, StringValues>[] array, int arrayIndex)
@@ -213,9 +211,8 @@ namespace Kooboo.HttpServer.Http
 
         bool ICollection<KeyValuePair<string, StringValues>>.Remove(KeyValuePair<string, StringValues> item)
         {
-            StringValues value;
             return
-                TryGetValueFast(item.Key, out value) &&
+                TryGetValueFast(item.Key, out var value) &&
                 value.Equals(item.Value) &&
                 RemoveFast(item.Key);
         }

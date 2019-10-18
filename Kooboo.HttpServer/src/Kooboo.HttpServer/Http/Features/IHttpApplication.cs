@@ -15,7 +15,7 @@ namespace Kooboo.HttpServer
         /// <summary>
         /// Create a TContext given a collection of HTTP features.
         /// </summary>
-        /// <param name="contextFeatures">A collection of HTTP features to be used for creating the TContext.</param>
+        /// <param name="protocal"></param>
         /// <returns>The created TContext.</returns>
         TContext CreateContext(HttpProtocol protocal);
 

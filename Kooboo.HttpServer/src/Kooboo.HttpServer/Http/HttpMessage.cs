@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.HttpServer
 {
@@ -11,6 +9,7 @@ namespace Kooboo.HttpServer
         public string StartLine { get; set; }
 
         private Dictionary<string, string> _header;
+
         public Dictionary<string, string> Header
         {
             get
