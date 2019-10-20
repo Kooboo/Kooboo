@@ -292,6 +292,16 @@ namespace Kooboo.IndexedDB
             return this.openTableList[name];
         }
 
+        public Dynamic.Table GetTable(string name)
+        {
+            if (!HasTable(name))
+            {
+                return null;
+            }
+
+            return GetOrCreateTable(name);
+        }
+
 
         public void DeleteTable(string name)
         {
@@ -509,9 +519,9 @@ namespace Kooboo.IndexedDB
         }
 
         internal string StoreSetitingFile(string storename)
-        {  
+        {
             string folder = objectFolder(storename);
-            string filename = System.IO.Path.Combine(folder, "store.config"); 
+            string filename = System.IO.Path.Combine(folder, "store.config");
 
             if (!Directory.Exists(folder))
             {
@@ -521,7 +531,7 @@ namespace Kooboo.IndexedDB
         }
 
         internal string TableSetitingFile(string tableName)
-        { 
+        {
             string folder = TableFolder(tableName);
             string filename = System.IO.Path.Combine(folder, "table.config");
 
@@ -542,7 +552,7 @@ namespace Kooboo.IndexedDB
             {
                 this.Log.DelSelf();
 
-                this.TableLog.DelSelf(); 
+                this.TableLog.DelSelf();
 
                 foreach (var item in this.openStoreList)
                 {
@@ -784,6 +794,11 @@ namespace Kooboo.IndexedDB
 
             foreach (var item in subfolders)
             {
+                if (item.Contains("_koobootemp_"))
+                {
+                    continue;
+                }
+
                 // verify as subfolder.  
                 var tablepath = System.IO.Path.Combine(tablefolder, item);
 

@@ -49,8 +49,8 @@
         </Param>
         <Param>
           <Name>newbody</Name>
-          <Description>New body text</Description>
-          <Type>string</Type>
+          <Description>New binary body</Description>
+          <Type>Byte[]</Type>
         </Param>
       </Params>
     </Method>
@@ -79,14 +79,14 @@
 
     <Method>
       <Name>update</Name>
-      <Description>update the text object</Description>
+      <Description>update the binary content</Description>
       <Example>
         <![CDATA[
   <script engine="kscript"> 
    if (k.request.files.length>0)
    {
          var image = k.site.images.getByUrl("/kooboo.png");
-         image.ContentBytes = k.request.files[0].bytes; 
+         image.Bytes = k.request.files[0].bytes; 
          k.site.images.update(image); 
    }  
     </script>

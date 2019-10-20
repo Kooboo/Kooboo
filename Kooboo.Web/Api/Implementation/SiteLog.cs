@@ -289,21 +289,10 @@ namespace Kooboo.Web.Api.Implementation
             return model;
         }
 
-        public bool Revert(ApiCall apiCall)
-        {
-            string strid = apiCall.GetValue("id");
-            if (string.IsNullOrEmpty(strid))
-            {
-                return false;
-            }
-
-            long id = 0;
-            if (long.TryParse(strid, out id))
-            {
-                Sites.Service.LogService.RollBack(apiCall.WebSite.SiteDb(), id);
-                return true;
-            }
-            return false;
+        public bool Revert(long id, ApiCall apiCall)
+        { 
+            Sites.Service.LogService.RollBack(apiCall.WebSite.SiteDb(), id);
+            return true; 
         }
 
         public bool Blame(ApiCall call)
@@ -322,22 +311,8 @@ namespace Kooboo.Web.Api.Implementation
             return false;
         }
 
-        public bool Restore(ApiCall apicall)
-        {
-            string strid = apicall.GetValue("id");
-            long id = -1;
-
-            if (!string.IsNullOrEmpty(strid))
-            {
-                if (!long.TryParse(strid, out id))
-                {
-                    return false;
-                }
-            }
-            else
-            { return false; }
-
-
+        public bool Restore(long id, ApiCall apicall)
+        { 
             if (id > -1)
             {
                 Kooboo.Sites.Service.LogService.RollBackFrom(apicall.WebSite.SiteDb(), id);

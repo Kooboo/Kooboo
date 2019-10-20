@@ -118,5 +118,16 @@ namespace Kooboo.IndexedDB.Helper
             // convert the hash to a Guid
             return new Guid(data);
         }
+         
+        public static Guid ComputeGuid(byte[] bytes)
+        {
+            if (bytes == null)
+            {
+                return default(Guid);
+            }
+            MD5 md5Hasher = MD5.Create();
+            byte[] data = md5Hasher.ComputeHash(bytes);
+            return new Guid(data);
+        }
     }
 }

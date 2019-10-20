@@ -25,10 +25,19 @@ namespace Kooboo.Sites.Service
         {
             if (logentry == null) { return; }
 
-            var repo = SiteDb.GetRepository(logentry.StoreName);
-            if (repo != null)
+            if (logentry.IsTable)
             {
-                repo.RollBack(logentry);
+                var kdb = Kooboo.Data.DB.GetKDatabase(SiteDb.WebSite);
+                var table = kdb.GetOrCreateTable(logentry.TableName);
+                table.RollBack(logentry);
+            }
+            else
+            {
+                var repo = SiteDb.GetRepository(logentry.StoreName);
+                if (repo != null)
+                {
+                    repo.RollBack(logentry);
+                }
             }
         }
 
@@ -119,7 +128,9 @@ namespace Kooboo.Sites.Service
 
         public static void RollBack(SiteDb SiteDb, List<LogEntry> loglist)
         {
-            foreach (var item in loglist.GroupBy(o => o.StoreName))
+            var stores = loglist.Where(o => o.IsTable == false).ToList();
+
+            foreach (var item in stores.GroupBy(o => o.StoreName))
             {
                 var SingleStoreList = item.ToList();
 
@@ -130,6 +141,18 @@ namespace Kooboo.Sites.Service
                     repo.RollBack(SingleStoreList);
                 }
             }
+
+            var tables = loglist.Where(o => o.IsTable).ToList();
+
+            var kdb = Kooboo.Data.DB.GetKDatabase(SiteDb.WebSite);
+
+            foreach (var item in tables.GroupBy(o => o.TableName))
+            {
+                var tablelist = item.ToList();
+                var table = kdb.GetOrCreateTable(item.Key);
+                table.RollBack(tablelist);
+            }
+
         }
 
         public static void RollBack(SiteDb SiteDb, List<long> loglist)
@@ -183,12 +206,25 @@ namespace Kooboo.Sites.Service
                 NewDb.TransferTasks.AddOrUpdate(item);
             }
 
+            var kdb = Kooboo.Data.DB.GetKDatabase(OldDb.WebSite);
+            var newkdb = Data.DB.GetKDatabase(NewDb.WebSite);
+
+            var alltables = kdb.GetTables();
+
+            foreach (var item in alltables)
+            {
+                var currentable = kdb.GetTable(item);
+                if (currentable != null)
+                {
+                    var table = newkdb.GetOrCreateTable(item);
+                    currentable.CheckOut(LatestLogId, table, SelfInclude);
+                }
+            }
+
             var setting = Sync.ImportExport.GetSiteSetting(OldDb.WebSite);
             Sync.ImportExport.SetSiteSetting(NewDb.WebSite, setting);
             Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(NewDb.WebSite);
         }
-
-
 
         public static string GetStoreDisplayName(SiteDb sitedb, LogEntry log)
         {
@@ -233,16 +269,16 @@ namespace Kooboo.Sites.Service
 
             var table = Data.DB.GetTable(sitedb.DatabaseDb, log.TableName);
 
-            if (table !=null)
+            if (table != null)
             {
-                logdata = table.GetLogData(log);  
-            } 
+                logdata = table.GetLogData(log);
+            }
             return GetTableDisplayName(sitedb, log, context, logdata);
         }
 
         public static string GetTableDisplayName(SiteDb sitedb, LogEntry log, RenderContext context, Dictionary<string, object> LogData)
         {
-            string name =  log.TableName;
+            string name = log.TableName;
             if (!string.IsNullOrWhiteSpace(log.TableColName))
             {
                 name += ":" + log.TableColName;
