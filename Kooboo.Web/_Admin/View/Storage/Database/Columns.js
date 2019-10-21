@@ -137,6 +137,11 @@ $(function() {
 
     this.name = ko.validateField(data ? data.name : "", {
       required: "",
+      stringlength: {
+        min: 1,
+        max: 64,
+        message: Kooboo.text.validation.maxLength + " 64"
+      },
       localUnique: {
         compare: function() {
           return self.name ? USED_NAMES.concat(self.name()) : USED_NAMES;

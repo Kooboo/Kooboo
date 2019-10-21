@@ -10,8 +10,8 @@ $(function() {
       required: "",
       stringlength: {
         min: 1,
-        max: 128,
-        message: Kooboo.text.validation.maxLength + " 128"
+        max: 64,
+        message: Kooboo.text.validation.maxLength + " 64"
       },
       remote: {
         url: Kooboo.Database.isUniqueTableName(),
