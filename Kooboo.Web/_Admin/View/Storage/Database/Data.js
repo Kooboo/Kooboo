@@ -47,11 +47,14 @@ $(function() {
                 }
                 model[col.name] = data;
               });
-              model._origId = obj._id;
+              let id = obj.find(function(item) {
+                return item.key == "_id";
+              }).value;
+              model._origId = id;
               model.edit = {
                 text: Kooboo.text.common.edit,
                 url: Kooboo.Route.Get(Kooboo.Route.Database.EditDataPage, {
-                  id: obj._id,
+                  id: id,
                   table: self.name()
                 })
               };
