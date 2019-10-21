@@ -41,7 +41,7 @@ namespace Kooboo.Web.Api.Implementation
             return list;
         }
 
-        public PagedListViewModel<IDictionary<string, object>> Data(string table, ApiCall call)
+        public PagedListViewModel<List<DataValue>> Data(string table, ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
             var dbtable = Kooboo.Data.DB.GetOrCreateTable(db, table);
@@ -70,7 +70,7 @@ namespace Kooboo.Web.Api.Implementation
 
             var pager = ApiHelper.GetPager(call, 30);
 
-            PagedListViewModel<IDictionary<string, object>> result = new PagedListViewModel<IDictionary<string, object>>();
+            PagedListViewModel<List<DataValue>> result = new PagedListViewModel<List<DataValue>>(); 
 
             int totalcount = (int)dbtable.length;
 
@@ -96,12 +96,36 @@ namespace Kooboo.Web.Api.Implementation
 
             if (items != null && items.Count() > 0)
             {
-                result.List = items;
+                result.List = ConvertDataValue(items);
             }
 
             return result;
         }
 
+        public List<List<DataValue>> ConvertDataValue(List<IDictionary<string, object>> input)
+        {
+            List<List<DataValue>> result = new List<List<DataValue>>();
+
+            foreach (var dict in input)
+            {
+                List<DataValue> model = new List<DataValue>();
+                foreach (var item in dict)
+                {
+                    model.Add(new DataValue() { key = item.Key, value = item.Value });
+                }
+
+                result.Add(model);
+            }
+            return result;
+        }
+
+        public class DataValue
+        {
+            public string key { get; set; }
+
+            public object value { get; set; }
+
+        }
 
         public void CreateTable(string name, ApiCall call)
         {
