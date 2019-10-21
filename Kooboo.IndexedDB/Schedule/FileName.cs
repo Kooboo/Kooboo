@@ -47,11 +47,11 @@ namespace Kooboo.IndexedDB.Schedule
             return System.IO.Path.Combine(schedule.Folder, GetItemFileName(dayint));
         }
 
-        public static string GetRepeatRecordFileName(string Folder)
+        public static string GetRepeatRecordFileName(string folder)
         {
             string repeatfolder = System.IO.Path.Combine(GlobalSettings.RootPath, GlobalSettings.scheduleRepeatingPath);
 
-            repeatfolder = System.IO.Path.Combine(repeatfolder, Folder);
+            repeatfolder = System.IO.Path.Combine(repeatfolder, folder);
 
             if (!System.IO.Directory.Exists(repeatfolder))
             {
@@ -61,11 +61,11 @@ namespace Kooboo.IndexedDB.Schedule
             return System.IO.Path.Combine(repeatfolder, "record.repeat");
         }
 
-        public static string GetRepeatContentFileName(string Folder)
+        public static string GetRepeatContentFileName(string folder)
         {
             string repeatfolder = System.IO.Path.Combine(GlobalSettings.RootPath, GlobalSettings.scheduleRepeatingPath);
 
-            repeatfolder = System.IO.Path.Combine(repeatfolder, Folder);
+            repeatfolder = System.IO.Path.Combine(repeatfolder, folder);
 
             if (!System.IO.Directory.Exists(repeatfolder))
             {

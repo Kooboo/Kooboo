@@ -11,15 +11,15 @@ namespace Kooboo.IndexedDB.Dynamic
     {
         internal static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        public static object ChangeType(object value, Type ConversionType)
+        public static object ChangeType(object value, Type conversionType)
         {
             if (value == null)
             {
-                if (ConversionType.IsValueType)
+                if (conversionType.IsValueType)
                 {
-                    return Activator.CreateInstance(ConversionType);
+                    return Activator.CreateInstance(conversionType);
                 }
-                else if (ConversionType == typeof(string))
+                else if (conversionType == typeof(string))
                 {
                     return "";
                 }
@@ -32,12 +32,12 @@ namespace Kooboo.IndexedDB.Dynamic
             object result;
 
             Type valuetype = value.GetType();
-            if (valuetype == ConversionType)
+            if (valuetype == conversionType)
             {
                 return value;
             }
 
-            if (ConversionType == typeof(String))
+            if (conversionType == typeof(String))
             {
                 if (!(value is String))
                 {
@@ -55,7 +55,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     result = value;
                 }
             }
-            else if (ConversionType == typeof(Guid))
+            else if (conversionType == typeof(Guid))
             {
                 Guid id;
                 if (Guid.TryParse(value.ToString(), out id))
@@ -67,7 +67,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     return Helper.KeyHelper.ComputeGuid(value.ToString());
                 }
             }
-            else if (ConversionType == typeof(bool))
+            else if (conversionType == typeof(bool))
             {
                 bool ok;
                 if (bool.TryParse(value.ToString(), out ok))
@@ -76,7 +76,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
                 return false;
             }
-            else if (ConversionType == typeof(DateTime))
+            else if (conversionType == typeof(DateTime))
             {
                 if (valuetype == typeof(double))
                 {
@@ -92,7 +92,7 @@ namespace Kooboo.IndexedDB.Dynamic
             }
             else
             {
-                result = Convert.ChangeType(value, ConversionType);
+                result = Convert.ChangeType(value, conversionType);
             }
 
             return result;
@@ -109,55 +109,51 @@ namespace Kooboo.IndexedDB.Dynamic
             return default(T);
         }
 
-        public static object GetValue(IDictionary<string, object> Dynamic, string FieldName, Type ClrType)
+        public static object GetValue(IDictionary<string, object> dynamic, string fieldName, Type clrType)
         {
-            if (Dynamic.ContainsKey(FieldName))
+            if (dynamic.ContainsKey(fieldName))
             {
-                var itemvalue = Dynamic[FieldName];
+                var itemvalue = dynamic[fieldName];
                 if (itemvalue != null)
                 {
-                    return ChangeType(itemvalue, ClrType);
+                    return ChangeType(itemvalue, clrType);
                 }
             }
             return null;
         }
 
-        public static object GetValueIDict(IDictionary Dynamic, string FieldName, Type ClrType)
+        public static object GetValueIDict(IDictionary dynamic, string fieldName, Type clrType)
         {
-            if (Dynamic.Contains(FieldName))
+            if (dynamic.Contains(fieldName))
             {
-                var itemvalue = Dynamic[FieldName];
+                var itemvalue = dynamic[fieldName];
                 if (itemvalue != null)
                 {
-                    return ChangeType(itemvalue, ClrType);
+                    return ChangeType(itemvalue, clrType);
                 }
             }
             return null;
         }
 
-        public static object GetValue(object obj, Type objectType, string FieldName, Type clrType)
+        public static object GetValue(object obj, Type objectType, string fieldName, Type clrType)
         {
-            var getter = GetGettter(objectType, FieldName);
-            if (getter != null)
+            var getter = GetGettter(objectType, fieldName);
+            var value = getter?.Invoke(obj);
+            if (value != null)
             {
-                var value = getter(obj);
-                if (value != null)
-                {
-                    return ChangeType(value, clrType);
-                }
+                return ChangeType(value, clrType);
             }
             return null;
         }
 
         public static Guid _ParseKey(object key)
         {
-            if (key is System.Guid)
+            if (key is Guid guid)
             {
-                return (Guid)key;
+                return guid;
             }
             string strkey = key.ToString();
-            Guid guidkey;
-            if (System.Guid.TryParse(strkey, out guidkey))
+            if (System.Guid.TryParse(strkey, out var guidkey))
             {
                 return guidkey;
             }
@@ -171,9 +167,9 @@ namespace Kooboo.IndexedDB.Dynamic
 
         private static Dictionary<string, Func<object, object>> GetValueFuncs { get; set; } = new Dictionary<string, Func<object, object>>();
 
-        private static Func<object, object> GetGettter(Type objectType, string FieldName)
+        private static Func<object, object> GetGettter(Type objectType, string fieldName)
         {
-            string key = objectType.FullName + FieldName;
+            string key = objectType.FullName + fieldName;
 
             if (!GetValueFuncs.ContainsKey(key))
             {
@@ -181,7 +177,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 {
                     if (!GetValueFuncs.ContainsKey(key))
                     {
-                        var func = ObjectHelper.GetGetObjectValue(FieldName, objectType);
+                        var func = ObjectHelper.GetGetObjectValue(fieldName, objectType);
                         GetValueFuncs[key] = func;
                     }
                 }
@@ -190,13 +186,13 @@ namespace Kooboo.IndexedDB.Dynamic
             return GetValueFuncs[key];
         }
 
-        private static object _SetterLock = new object();
+        private static object _setterLock = new object();
 
         private static Dictionary<string, Action<object, object>> SetValueActions { get; set; } = new Dictionary<string, Action<object, object>>();
 
-        public static Action<object, object> GetSetter(Type objectType, string FieldName)
+        public static Action<object, object> GetSetter(Type objectType, string fieldName)
         {
-            string key = objectType.FullName + FieldName;
+            string key = objectType.FullName + fieldName;
 
             if (!SetValueActions.ContainsKey(key))
             {
@@ -204,7 +200,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 {
                     if (!SetValueActions.ContainsKey(key))
                     {
-                        var fieldtype = ObjectHelper.GetFieldType(objectType, FieldName);
+                        var fieldtype = ObjectHelper.GetFieldType(objectType, fieldName);
 
                         if (fieldtype == null)
                         {
@@ -212,7 +208,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         }
                         else
                         {
-                            var action = ObjectHelper.GetSetObjectValue(FieldName, objectType, fieldtype);
+                            var action = ObjectHelper.GetSetObjectValue(fieldName, objectType, fieldtype);
                             SetValueActions[key] = action;
                         }
                     }

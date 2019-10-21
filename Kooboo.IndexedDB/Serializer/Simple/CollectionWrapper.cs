@@ -50,14 +50,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
         public virtual bool Contains(T item)
         {
-            if (_genericCollection != null)
-            {
-                return _genericCollection.Contains(item);
-            }
-            else
-            {
-                return _list.Contains(item);
-            }
+            return _genericCollection?.Contains(item) ?? _list.Contains(item);
         }
 
         public virtual void CopyTo(T[] array, int arrayIndex)
@@ -74,32 +67,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
         public virtual int Count
         {
-            get
-            {
-                if (_genericCollection != null)
-                {
-                    return _genericCollection.Count;
-                }
-                else
-                {
-                    return _list.Count;
-                }
-            }
+            get { return _genericCollection?.Count ?? _list.Count; }
         }
 
         public virtual bool IsReadOnly
         {
-            get
-            {
-                if (_genericCollection != null)
-                {
-                    return _genericCollection.IsReadOnly;
-                }
-                else
-                {
-                    return _list.IsReadOnly;
-                }
-            }
+            get { return _genericCollection?.IsReadOnly ?? _list.IsReadOnly; }
         }
 
         public virtual bool Remove(T item)
@@ -123,24 +96,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
         public virtual IEnumerator<T> GetEnumerator()
         {
-            if (_genericCollection != null)
-            {
-                return _genericCollection.GetEnumerator();
-            }
-
-            return _list.Cast<T>().GetEnumerator();
+            return _genericCollection != null ? _genericCollection.GetEnumerator() : _list.Cast<T>().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            if (_genericCollection != null)
-            {
-                return _genericCollection.GetEnumerator();
-            }
-            else
-            {
-                return _list.GetEnumerator();
-            }
+            return _genericCollection?.GetEnumerator() ?? _list.GetEnumerator();
         }
 
         int IList.Add(object value)
@@ -153,12 +114,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
         bool IList.Contains(object value)
         {
-            if (IsCompatibleObject(value))
-            {
-                return Contains((T)value);
-            }
-
-            return false;
+            return IsCompatibleObject(value) && Contains((T)value);
         }
 
         int IList.IndexOf(object value)
@@ -201,15 +157,8 @@ namespace Kooboo.IndexedDB.Serializer.Simple
         {
             get
             {
-                if (_genericCollection != null)
-                {
-                    // ICollection<T> only has IsReadOnly
-                    return _genericCollection.IsReadOnly;
-                }
-                else
-                {
-                    return _list.IsFixedSize;
-                }
+                // ICollection<T> only has IsReadOnly
+                return _genericCollection?.IsReadOnly ?? _list.IsFixedSize;
             }
         }
 
@@ -277,12 +226,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
         private static bool IsCompatibleObject(object value)
         {
-            if (!(value is T) && (value != null || (typeof(T).IsValueType)))
-            {
-                return false;
-            }
-
-            return true;
+            return value is T || (value == null && (!typeof(T).IsValueType));
         }
 
         public object UnderlyingCollection

@@ -12,7 +12,7 @@ namespace Kooboo.Data.Repository
 {
     public class RepositoryBase<TValue> : IRepository<TValue> where TValue : IGolbalObject
     {
-        private static object _locker = new object();
+        private object _locker = new object();
 
         public Database DatabaseDb => DB.Global();
 

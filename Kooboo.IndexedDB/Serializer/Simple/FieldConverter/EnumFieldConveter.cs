@@ -12,12 +12,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         private Type EnumClassType { get; set; }
 
-        public EnumFieldConveter(string FieldName, Type EnumClassType)
+        public EnumFieldConveter(string fieldName, Type enumClassType)
         {
-            this.getValue = ObjectHelper.GetGetEnumObjectValue<T>(FieldName);
-            this.setValue = ObjectHelper.GetSetObjectValue<T>(FieldName, EnumClassType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
-            this.EnumClassType = EnumClassType;
+            this.getValue = ObjectHelper.GetGetEnumObjectValue<T>(fieldName);
+            this.setValue = ObjectHelper.GetSetObjectValue<T>(fieldName, enumClassType);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
+            this.EnumClassType = enumClassType;
         }
 
         public int ByteLength
@@ -37,9 +37,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytevalue);
         }
 
-        public byte[] ToBytes(T Value)
+        public byte[] ToBytes(T value)
         {
-            object fieldvalue = this.getValue(Value);
+            object fieldvalue = this.getValue(value);
             int enumvalue = (int)fieldvalue;
             return ValueConverter.ToBytes(enumvalue);
         }
@@ -52,13 +52,13 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         private Type EnumType { get; set; }
 
-        public EnumFieldConveter(string FieldName, Type ObjectType, Type EnumFieldType)
+        public EnumFieldConveter(string fieldName, Type objectType, Type enumFieldType)
         {
-            this.getValue = ObjectHelper.GetGetObjectValue(FieldName, ObjectType);
-            this.setValue = ObjectHelper.GetSetObjectValue(FieldName, ObjectType, EnumFieldType);
+            this.getValue = ObjectHelper.GetGetObjectValue(fieldName, objectType);
+            this.setValue = ObjectHelper.GetSetObjectValue(fieldName, objectType, enumFieldType);
 
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
-            this.EnumType = EnumFieldType;
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
+            this.EnumType = enumFieldType;
         }
 
         public int ByteLength
@@ -78,9 +78,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytevalue);
         }
 
-        public byte[] ToBytes(object Value)
+        public byte[] ToBytes(object value)
         {
-            object fieldvalue = this.getValue(Value);
+            object fieldvalue = this.getValue(value);
             int enumvalue = (int)fieldvalue;
             return ValueConverter.ToBytes(enumvalue);
         }

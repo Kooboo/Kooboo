@@ -9,7 +9,7 @@ namespace Kooboo.Search
 {
     public class Index
     {
-        private static object _locker = new object();
+        private object _locker = new object();
 
         public string Folder { get; set; }
 

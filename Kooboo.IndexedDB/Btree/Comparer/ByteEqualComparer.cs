@@ -10,6 +10,7 @@ namespace Kooboo.IndexedDB.Btree.Comparer
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
+        /// <param name="len"></param>
         /// <returns></returns>
         public static bool isEqual(byte[] x, byte[] y, int len)
         {

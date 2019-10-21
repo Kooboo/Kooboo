@@ -16,9 +16,7 @@ namespace Kooboo.IndexedDB
         {
             string storename = GlobalSettings.EditLogUniqueName;
 
-            ObjectStoreParameters paras = new ObjectStoreParameters();
-            paras.EnableLog = false;
-            paras.EnableVersion = false;
+            ObjectStoreParameters paras = new ObjectStoreParameters {EnableLog = false, EnableVersion = false};
             paras.AddIndex<LogEntry>(o => o.KeyHash);
             paras.AddColumn<LogEntry>(o => o.StoreNameHash);
             paras.AddColumn<LogEntry>(o => o.TableNameHash);
@@ -80,14 +78,14 @@ namespace Kooboo.IndexedDB
             return filter.Take(take);
         }
 
-        public LogEntry Get(long VersionId)
+        public LogEntry Get(long versionId)
         {
-            return this.Store.get(VersionId);
+            return this.Store.get(versionId);
         }
 
-        public List<LogEntry> GetByStoreName(string StoreName, int take, int skip = 0, bool ascending = false)
+        public List<LogEntry> GetByStoreName(string storeName, int take, int skip = 0, bool ascending = false)
         {
-            int namehash = StoreName.GetHashCode32();
+            int namehash = storeName.GetHashCode32();
             if (ascending)
             {
                 return this.Store.Where(o => o.StoreNameHash == namehash).OrderByAscending().Skip(skip).Take(take);
@@ -98,15 +96,15 @@ namespace Kooboo.IndexedDB
             }
         }
 
-        public List<LogEntry> GetByStoreName(string StoreName)
+        public List<LogEntry> GetByStoreName(string storeName)
         {
-            int namehash = StoreName.GetHashCode32();
+            int namehash = storeName.GetHashCode32();
             return this.Store.Where(o => o.StoreNameHash == namehash).SelectAll();
         }
 
-        public void DeleteByStoreName(string StoreName)
+        public void DeleteByStoreName(string storeName)
         {
-            int namehash = StoreName.GetHashCode32();
+            int namehash = storeName.GetHashCode32();
             var allitems = this.Store.Where(o => o.StoreNameHash == namehash).SelectAll();
             foreach (var item in allitems)
             {
@@ -114,82 +112,82 @@ namespace Kooboo.IndexedDB
             }
         }
 
-        public List<LogEntry> GetByStoreNameAndKey(string StoreName, byte[] Keys, int take, int skip = 0, bool ascending = false)
+        public List<LogEntry> GetByStoreNameAndKey(string storeName, byte[] keys, int take, int skip = 0, bool ascending = false)
         {
-            Guid HashKey = LogEntry.ToHashGuid(Keys);
-            int namehash = StoreName.GetHashCode32();
+            Guid hashKey = LogEntry.ToHashGuid(keys);
+            int namehash = storeName.GetHashCode32();
             if (ascending)
             {
-                return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == HashKey).OrderByAscending().Skip(skip).Take(take);
+                return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == hashKey).OrderByAscending().Skip(skip).Take(take);
             }
             else
             {
-                return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().Skip(skip).Take(take);
+                return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == hashKey).OrderByDescending().Skip(skip).Take(take);
             }
         }
 
-        public LogEntry GetLastLogByStoreNameAndKey(string StoreName, byte[] Keys)
+        public LogEntry GetLastLogByStoreNameAndKey(string storeName, byte[] keys)
         {
-            Guid HashKey = LogEntry.ToHashGuid(Keys);
-            int namehash = StoreName.GetHashCode32();
+            Guid hashKey = LogEntry.ToHashGuid(keys);
+            int namehash = storeName.GetHashCode32();
 
-            return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().FirstOrDefault();
+            return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == hashKey).OrderByDescending().FirstOrDefault();
         }
 
-        public List<LogEntry> GetByTableNameAndKey(string TableName, Guid Id, int take, int skip = 0, bool ascending = false)
+        public List<LogEntry> GetByTableNameAndKey(string tableName, Guid id, int take, int skip = 0, bool ascending = false)
         {
-            var keys = ObjectContainer.GuidConverter.ToByte(Id);
-            return GetByTableNameAndKey(TableName, keys, take, skip, ascending);
+            var keys = ObjectContainer.GuidConverter.ToByte(id);
+            return GetByTableNameAndKey(tableName, keys, take, skip, ascending);
         }
 
-        public List<LogEntry> GetByTableNameAndKey(string TableName, byte[] Keys, int take, int skip = 0, bool ascending = false)
+        public List<LogEntry> GetByTableNameAndKey(string tableName, byte[] keys, int take, int skip = 0, bool ascending = false)
         {
-            Guid HashKey = LogEntry.ToHashGuid(Keys);
-            int namehash = TableName.GetHashCode32();
+            Guid hashKey = LogEntry.ToHashGuid(keys);
+            int namehash = tableName.GetHashCode32();
             if (ascending)
             {
-                return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == HashKey).OrderByAscending().Skip(skip).Take(take);
+                return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == hashKey).OrderByAscending().Skip(skip).Take(take);
             }
             else
             {
-                return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().Skip(skip).Take(take);
+                return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == hashKey).OrderByDescending().Skip(skip).Take(take);
             }
         }
 
-        public LogEntry GetLastLogByTableNameAndKey(string TableName, Guid Id)
+        public LogEntry GetLastLogByTableNameAndKey(string tableName, Guid id)
         {
-            var keys = ObjectContainer.GuidConverter.ToByte(Id);
-            return GetLastLogByTableNameAndKey(TableName, keys);
+            var keys = ObjectContainer.GuidConverter.ToByte(id);
+            return GetLastLogByTableNameAndKey(tableName, keys);
         }
 
-        public LogEntry GetLastLogByTableNameAndKey(string TableName, byte[] Keys)
+        public LogEntry GetLastLogByTableNameAndKey(string tableName, byte[] keys)
         {
-            Guid HashKey = LogEntry.ToHashGuid(Keys);
-            int namehash = TableName.GetHashCode32();
+            Guid hashKey = LogEntry.ToHashGuid(keys);
+            int namehash = tableName.GetHashCode32();
 
-            return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().FirstOrDefault();
+            return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == hashKey).OrderByDescending().FirstOrDefault();
         }
 
         public LogEntry GetPreviousTableLog(LogEntry current)
         {
-            Guid HashKey = LogEntry.ToHashGuid(current.KeyBytes);
+            Guid hashKey = LogEntry.ToHashGuid(current.KeyBytes);
 
-            return this.Store.Where(o => o.TableNameHash == current.TableNameHash && o.KeyHash == HashKey && o.Id < current.Id).OrderByDescending().FirstOrDefault();
+            return this.Store.Where(o => o.TableNameHash == current.TableNameHash && o.KeyHash == hashKey && o.Id < current.Id).OrderByDescending().FirstOrDefault();
         }
 
-        public long GetJustDeletedVersion(string StoreName, byte[] key)
+        public long GetJustDeletedVersion(string storeName, byte[] key)
         {
-            int namehash = StoreName.GetHashCode32();
-            Guid HashKey = LogEntry.ToHashGuid(key);
+            int namehash = storeName.GetHashCode32();
+            Guid hashKey = LogEntry.ToHashGuid(key);
 
-            var log = this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().FirstOrDefault();
+            var log = this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == hashKey).OrderByDescending().FirstOrDefault();
 
             if (log != null && log.EditType == EditType.Delete)
             {
                 return log.Id;
             }
 
-            var last = this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().Take(10);
+            var last = this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == hashKey).OrderByDescending().Take(10);
 
             foreach (var item in last)
             {

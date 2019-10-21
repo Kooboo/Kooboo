@@ -29,13 +29,13 @@ namespace Kooboo.IndexedDB.Indexs
 
         private Func<TValue, TKey> GetValue;
 
-        public IndexBase(string FieldOrPropertyName, string FullIndexFileName, bool unique, int keylength, int MaxCacheLevel)
+        public IndexBase(string fieldOrPropertyName, string fullIndexFileName, bool unique, int keylength, int maxCacheLevel)
         {
             this.keyType = typeof(TKey);
-            this.FieldName = FieldOrPropertyName;
+            this.FieldName = fieldOrPropertyName;
 
             this.GetValue = Helper.ObjectHelper.GetGetValue<TValue, TKey>(FieldName);
-            index = new Btree.BtreeIndex<TKey>(this.FieldName, unique, keylength, FullIndexFileName, MaxCacheLevel);
+            index = new Btree.BtreeIndex<TKey>(this.FieldName, unique, keylength, fullIndexFileName, maxCacheLevel);
 
             this.Length = index.keylength;
         }
@@ -46,10 +46,10 @@ namespace Kooboo.IndexedDB.Indexs
             return index.Add(fieldvalue, blockPosition);
         }
 
-        public void Update(TValue oldRecord, TValue NewRecord, long oldBlockPosition, long newBlockPosition)
+        public void Update(TValue oldRecord, TValue newRecord, long oldBlockPosition, long newBlockPosition)
         {
             TKey oldvalue = GetValue(oldRecord);
-            TKey newvalue = GetValue(NewRecord);
+            TKey newvalue = GetValue(newRecord);
             this.index.Update(oldvalue, newvalue, oldBlockPosition, newBlockPosition);
         }
 

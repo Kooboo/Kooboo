@@ -21,7 +21,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
         void SetByteValues(T value, byte[] bytes);
 
-        byte[] ToBytes(T Value);
+        byte[] ToBytes(T value);
     }
 
     public interface IFieldConverter
@@ -38,6 +38,6 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
         void SetByteValues(object value, byte[] bytes);
 
-        byte[] ToBytes(object Value);
+        byte[] ToBytes(object value);
     }
 }

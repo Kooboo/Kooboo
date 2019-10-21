@@ -8,19 +8,19 @@ namespace Kooboo.IndexedDB.Dynamic
 {
     public static class IndexHelper
     {
-        public static List<ITableIndex> CreatIndexs(Setting Setting, string tableFolder)
+        public static List<ITableIndex> CreatIndexs(Setting setting, string tableFolder)
         {
             List<ITableIndex> result = new List<ITableIndex>();
 
-            foreach (var item in Setting.Columns.Where(o => o.IsIndex || o.IsPrimaryKey || o.IsSystem || o.IsIncremental || o.IsUnique))
+            foreach (var item in setting.Columns.Where(o => o.IsIndex || o.IsPrimaryKey || o.IsSystem || o.IsIncremental || o.IsUnique))
             {
-                string IndexFile = GetIndexFile(tableFolder, item.Name);
+                string indexFile = GetIndexFile(tableFolder, item.Name);
 
                 var type = Helper.TypeHelper.GetType(item.DataType);
 
                 if (type != null)
                 {
-                    var index = CreateIndex(item.Name, type, IndexFile, item.IsUnique, item.Length);
+                    var index = CreateIndex(item.Name, type, indexFile, item.IsUnique, item.Length);
                     if (index != null)
                     {
                         index.IsPrimaryKey = item.IsPrimaryKey;
@@ -39,42 +39,42 @@ namespace Kooboo.IndexedDB.Dynamic
             return result;
         }
 
-        public static ITableIndex CreateIndex(string FieldName, Type keytype, string indexfile, bool isunique, int keylen)
+        public static ITableIndex CreateIndex(string fieldName, Type keytype, string indexfile, bool isunique, int keylen)
         {
             // can create an generic constructor....
             ITableIndex index = null;
 
             if (keytype == typeof(string))
             {
-                index = new TableIndexBase<string>(FieldName, indexfile, isunique, keylen);
+                index = new TableIndexBase<string>(fieldName, indexfile, isunique, keylen);
             }
             else if (keytype == typeof(Int32))
             {
-                index = new TableIndexBase<Int32>(FieldName, indexfile, isunique, keylen);
+                index = new TableIndexBase<Int32>(fieldName, indexfile, isunique, keylen);
             }
             else if (keytype == typeof(long))
             {
-                index = new TableIndexBase<long>(FieldName, indexfile, isunique, keylen);
+                index = new TableIndexBase<long>(fieldName, indexfile, isunique, keylen);
             }
             else if (keytype == typeof(Int16))
             {
-                index = new TableIndexBase<Int16>(FieldName, indexfile, isunique, keylen);
+                index = new TableIndexBase<Int16>(fieldName, indexfile, isunique, keylen);
             }
             else if (keytype == typeof(byte))
             {
-                index = new TableIndexBase<byte>(FieldName, indexfile, isunique, keylen);
+                index = new TableIndexBase<byte>(fieldName, indexfile, isunique, keylen);
             }
             else if (keytype == typeof(Guid))
             {
-                index = new TableIndexBase<Guid>(FieldName, indexfile, isunique, keylen);
+                index = new TableIndexBase<Guid>(fieldName, indexfile, isunique, keylen);
             }
             else if (keytype == typeof(float))
             {
-                index = new TableIndexBase<float>(FieldName, indexfile, isunique, keylen);
+                index = new TableIndexBase<float>(fieldName, indexfile, isunique, keylen);
             }
             else if (keytype == typeof(double))
             {
-                index = new TableIndexBase<double>(FieldName, indexfile, isunique, keylen);
+                index = new TableIndexBase<double>(fieldName, indexfile, isunique, keylen);
             }
             // TODO: add more here...
             else

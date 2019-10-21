@@ -8,9 +8,9 @@ namespace Kooboo.IndexedDB
     {
         private const FileOptions FileFlagNoBuffering = (FileOptions)0x20000000;
 
-        public static FileStream GetFileStream(string FullFileName)
+        public static FileStream GetFileStream(string fullFileName)
         {
-            return File.Open(FullFileName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
+            return File.Open(fullFileName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete);
 
             // return new FileStream(FullFileName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite | FileShare.Delete, 4096, FileOptions.WriteThrough);
         }

@@ -15,9 +15,9 @@ namespace Kooboo.IndexedDB.ByteConverter
             converter = new SimpleConverter<T>();
         }
 
-        public KoobooSimpleConverter(Dictionary<string, int> Columns)
+        public KoobooSimpleConverter(Dictionary<string, int> columns)
         {
-            converter = new SimpleConverter<T>(Columns);
+            converter = new SimpleConverter<T>(columns);
         }
 
         public byte[] ToByte(T input)
@@ -30,9 +30,9 @@ namespace Kooboo.IndexedDB.ByteConverter
             return converter.FromBytes(inputbytes);
         }
 
-        public IColumn<T> GetColumn(string ColumnName)
+        public IColumn<T> GetColumn(string columnName)
         {
-            return this.converter.GetColumn(ColumnName);
+            return this.converter.GetColumn(columnName);
         }
     }
 }

@@ -22,16 +22,16 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         private string FieldName { get; set; }
 
-        public CollectionFieldConverter(Type CollectionType, string FieldName)
+        public CollectionFieldConverter(Type collectionType, string fieldName)
         {
-            this.CollectionType = CollectionType;
-            this.DataType = ObjectHelper.GetEnumberableType(CollectionType);
-            this.FieldName = FieldName;
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.CollectionType = collectionType;
+            this.DataType = ObjectHelper.GetEnumberableType(collectionType);
+            this.FieldName = fieldName;
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
             this.FieldLength = ConverterHelper.GetTypeLength(this.DataType);
 
-            this.GetFieldValue = ObjectHelper.GetGetObjectValue<T>(FieldName);
-            this.SetFieldValue = ObjectHelper.GetSetObjectValue<T>(FieldName, this.CollectionType);
+            this.GetFieldValue = ObjectHelper.GetGetObjectValue<T>(fieldName);
+            this.SetFieldValue = ObjectHelper.GetSetObjectValue<T>(fieldName, this.CollectionType);
 
             this.GetObjectBytes = ConverterHelper.GetValueToBytes(this.DataType);
             this.GetObjectValue = ConverterHelper.GetBytesToValue(this.DataType);
@@ -57,11 +57,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         public void SetByteValues(T value, byte[] bytes)
         {
-            var GenericHashSet = typeof(CollectionWrapper<>).MakeGenericType(DataType);
+            var genericHashSet = typeof(CollectionWrapper<>).MakeGenericType(DataType);
 
-            var OriginalInstance = Activator.CreateInstance(this.CollectionType);
+            var originalInstance = Activator.CreateInstance(this.CollectionType);
 
-            var list = Activator.CreateInstance(GenericHashSet, OriginalInstance) as System.Collections.IList;
+            var list = Activator.CreateInstance(genericHashSet, originalInstance) as System.Collections.IList;
 
             int startposition = 0;
             int totallength = bytes.Length;
@@ -70,10 +70,10 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             {
                 if (this.FieldLength > 0)
                 {
-                    byte[] FieldValueBytes = new byte[this.FieldLength];
-                    System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, this.FieldLength);
+                    byte[] fieldValueBytes = new byte[this.FieldLength];
+                    System.Buffer.BlockCopy(bytes, startposition, fieldValueBytes, 0, this.FieldLength);
                     startposition += this.FieldLength;
-                    var objectvalue = this.GetObjectValue(FieldValueBytes);
+                    var objectvalue = this.GetObjectValue(fieldValueBytes);
                     list.Add(objectvalue);
                 }
                 else
@@ -83,10 +83,10 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
                     if (len > 0)
                     {
-                        byte[] FieldValueBytes = new byte[len];
-                        System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, len);
+                        byte[] fieldValueBytes = new byte[len];
+                        System.Buffer.BlockCopy(bytes, startposition, fieldValueBytes, 0, len);
                         startposition += len;
-                        var objectvalue = this.GetObjectValue(FieldValueBytes);
+                        var objectvalue = this.GetObjectValue(fieldValueBytes);
                         list.Add(objectvalue);
                     }
                     else
@@ -99,7 +99,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                 { break; }
             }
 
-            this.SetFieldValue(value, OriginalInstance);
+            this.SetFieldValue(value, originalInstance);
         }
 
         public byte[] ToBytes(T value)
@@ -140,50 +140,50 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                 }
             }
 
-            byte[] BackValue = new byte[totallen];
+            byte[] backValue = new byte[totallen];
             int currentposition = 0;
 
             foreach (var item in results)
             {
                 int len = item.Length;
-                System.Buffer.BlockCopy(item, 0, BackValue, currentposition, len);
+                System.Buffer.BlockCopy(item, 0, backValue, currentposition, len);
                 currentposition += len;
             }
 
-            return BackValue;
+            return backValue;
         }
     }
 
     public class CollectionFieldConverter : IFieldConverter
     {
-        private Type DataType;
-        private Type CollectionType;
+        private Type _dataType;
+        private Type _collectionType;
 
-        private int FieldLength;
+        private int _fieldLength;
 
-        private CollectionConverter converter;
+        private CollectionConverter _converter;
 
-        private Func<object, object> GetFieldValue;
-        private Action<object, object> SetFieldValue;
+        private Func<object, object> _getFieldValue;
+        private Action<object, object> _setFieldValue;
 
         private string FieldName { get; set; }
 
-        public CollectionFieldConverter(Type ObjectType, Type CollectionType, string FieldName)
+        public CollectionFieldConverter(Type objectType, Type collectionType, string fieldName)
         {
-            this.CollectionType = CollectionType;
-            this.DataType = ObjectHelper.GetEnumberableType(CollectionType);
-            this.FieldName = FieldName;
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
-            this.FieldLength = ConverterHelper.GetTypeLength(this.DataType);
+            this._collectionType = collectionType;
+            this._dataType = ObjectHelper.GetEnumberableType(collectionType);
+            this.FieldName = fieldName;
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
+            this._fieldLength = ConverterHelper.GetTypeLength(this._dataType);
 
-            this.GetFieldValue = ObjectHelper.GetGetObjectValue(FieldName, ObjectType);
-            this.SetFieldValue = ObjectHelper.GetSetObjectValue(FieldName, ObjectType, this.CollectionType);
+            this._getFieldValue = ObjectHelper.GetGetObjectValue(fieldName, objectType);
+            this._setFieldValue = ObjectHelper.GetSetObjectValue(fieldName, objectType, this._collectionType);
 
-            this.converter = new CollectionConverter(this.CollectionType);
+            this._converter = new CollectionConverter(this._collectionType);
 
-            if (this.converter == null)
+            if (this._converter == null)
             {
-                throw new Exception(this.CollectionType.Name + " is not yet supported.");
+                throw new Exception(this._collectionType.Name + " is not yet supported.");
             }
         }
 
@@ -202,14 +202,14 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         public void SetByteValues(object value, byte[] bytes)
         {
-            object fieldvalue = converter.FromBytes(bytes);
-            SetFieldValue(value, fieldvalue);
+            object fieldvalue = _converter.FromBytes(bytes);
+            _setFieldValue(value, fieldvalue);
         }
 
         public byte[] ToBytes(object value)
         {
-            object fieldvalue = this.GetFieldValue(value);
-            return converter.ToBytes(fieldvalue);
+            object fieldvalue = this._getFieldValue(value);
+            return _converter.ToBytes(fieldvalue);
         }
     }
 }

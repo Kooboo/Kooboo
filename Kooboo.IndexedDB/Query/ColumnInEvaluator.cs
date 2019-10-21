@@ -26,16 +26,14 @@ namespace Kooboo.IndexedDB.Query
             return InValues.Contains(columnbytes, EqualCompare);
         }
 
-        public static ColumnInEvaluator GetInEvaluator(Type datatype, List<byte[]> ValueBytes, int columnLength)
+        public static ColumnInEvaluator GetInEvaluator(Type datatype, List<byte[]> valueBytes, int columnLength)
         {
             IComparer<byte[]> compare = ObjectContainer.getComparer(datatype, columnLength);
 
             byteEquality bytecompare = new byteEquality(compare);
 
-            ColumnInEvaluator Evaluator = new ColumnInEvaluator();
-            Evaluator.EqualCompare = bytecompare;
-            Evaluator.InValues = ValueBytes;
-            return Evaluator;
+            ColumnInEvaluator evaluator = new ColumnInEvaluator {EqualCompare = bytecompare, InValues = valueBytes};
+            return evaluator;
         }
     }
 

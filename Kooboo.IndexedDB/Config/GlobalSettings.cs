@@ -15,11 +15,8 @@ namespace Kooboo.IndexedDB
         {
             get
             {
-                if (_rootpath == null)
-                {
-                    _rootpath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AppData", "KoobooDB");
-                }
-                return _rootpath;
+                return _rootpath ?? (_rootpath =
+                           System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "AppData", "KoobooDB"));
             }
             set
             {

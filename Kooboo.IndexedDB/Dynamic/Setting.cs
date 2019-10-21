@@ -22,12 +22,20 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             get
             {
-                if (_columns == null)
+                return _columns ?? (_columns = new HashSet<TableColumn>
                 {
-                    _columns = new HashSet<TableColumn>();
-                    _columns.Add(new TableColumn() { Name = Constants.DefaultIdFieldName, DataType = typeof(Guid).FullName, relativePosition = 0, Length = 16, IsPrimaryKey = true, IsSystem = true, IsUnique = true, IsIndex = true });
-                }
-                return _columns;
+                    new TableColumn()
+                    {
+                        Name = Constants.DefaultIdFieldName,
+                        DataType = typeof(Guid).FullName,
+                        relativePosition = 0,
+                        Length = 16,
+                        IsPrimaryKey = true,
+                        IsSystem = true,
+                        IsUnique = true,
+                        IsIndex = true
+                    }
+                });
             }
             set
             {
@@ -35,34 +43,36 @@ namespace Kooboo.IndexedDB.Dynamic
             }
         }
 
-        private static object _locker = new object();
+        private object _locker = new object();
 
-        public void AddIndex(string FieldName, Type DataType, int length = 0, bool IsUnique = false)
+        public void AddIndex(string fieldName, Type dataType, int length = 0, bool isUnique = false)
         {
             lock (_locker)
             {
-                var find = this.Columns.FirstOrDefault(o => IsSameValue(o.Name, FieldName));
+                var find = this.Columns.FirstOrDefault(o => IsSameValue(o.Name, fieldName));
                 if (find == null)
                 {
                     if (length == 0)
                     {
-                        length = Helper.KeyHelper.GetKeyLen(DataType, Constants.DefaultKeyLen);
+                        length = Helper.KeyHelper.GetKeyLen(dataType, Constants.DefaultKeyLen);
                     }
 
-                    TableColumn col = new TableColumn();
-                    col.DataType = DataType.FullName;
-                    col.Length = length;
-                    col.Name = FieldName;
-                    col.IsIndex = true;
-                    col.IsUnique = IsUnique;
+                    TableColumn col = new TableColumn
+                    {
+                        DataType = dataType.FullName,
+                        Length = length,
+                        Name = fieldName,
+                        IsIndex = true,
+                        IsUnique = isUnique,
+                        isComplex = SettingHelper.IsComplexType(dataType)
+                    };
 
-                    col.isComplex = SettingHelper.IsComplexType(DataType);
 
                     AddColumn(col);
                 }
                 else
                 {
-                    find.IsUnique = IsUnique;
+                    find.IsUnique = isUnique;
                     find.IsIndex = true;
                 }
             }
@@ -102,33 +112,32 @@ namespace Kooboo.IndexedDB.Dynamic
             }
         }
 
-        public void SetPrimaryKey(string FieldName, Type DataType, int length = 0)
+        public void SetPrimaryKey(string fieldName, Type dataType, int length = 0)
         {
-            var find = this.Columns.FirstOrDefault(o => o.Name == FieldName);
+            var find = this.Columns.FirstOrDefault(o => o.Name == fieldName);
             if (find == null)
             {
-                length = Helper.KeyHelper.GetKeyLen(DataType, length);
-                TableColumn newcol = new TableColumn();
-                newcol.isComplex = SettingHelper.IsComplexType(DataType);
+                length = Helper.KeyHelper.GetKeyLen(dataType, length);
+                TableColumn newcol = new TableColumn {isComplex = SettingHelper.IsComplexType(dataType)};
                 if (newcol.isComplex)
                 {
                     throw new Exception("Index must be a value datatype with fixed length.");
                 }
 
-                newcol.DataType = DataType.FullName;
+                newcol.DataType = dataType.FullName;
                 newcol.Length = length;
-                newcol.Name = FieldName;
+                newcol.Name = fieldName;
                 newcol.IsUnique = true;
                 newcol.IsPrimaryKey = true;
                 AddColumn(newcol);
             }
 
-            EnsurePrimaryKey(FieldName);
+            EnsurePrimaryKey(fieldName);
         }
 
-        public void EnsurePrimaryKey(string FieldName)
+        public void EnsurePrimaryKey(string fieldName)
         {
-            var find = this.Columns.FirstOrDefault(o => IsSameValue(o.Name, FieldName));
+            var find = this.Columns.FirstOrDefault(o => IsSameValue(o.Name, fieldName));
 
             if (find != null)
             {
@@ -136,7 +145,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 foreach (var item in currents)
                 {
-                    if (!IsSameValue(item.Name, FieldName))
+                    if (!IsSameValue(item.Name, fieldName))
                     {
                         item.IsPrimaryKey = false;
                         if (item.Name != Constants.DefaultIdFieldName)
@@ -255,21 +264,21 @@ namespace Kooboo.IndexedDB.Dynamic
             return "TextBox";
         }
 
-        public void AppendColumn(string FieldOrPropertyName, Type DataType, int length)
+        public void AppendColumn(string fieldOrPropertyName, Type dataType, int length)
         {
             lock (_locker)
             {
-                var exists = this.Columns.FirstOrDefault(o => IsSameValue(o.Name, FieldOrPropertyName));
+                var exists = this.Columns.FirstOrDefault(o => IsSameValue(o.Name, fieldOrPropertyName));
                 if (exists != null)
                 {
                     return;
                 }
-                bool isComplex = SettingHelper.IsComplexType(DataType);
+                bool isComplex = SettingHelper.IsComplexType(dataType);
 
-                TableColumn newcol = new TableColumn();
-                newcol.DataType = DataType.FullName;
-                newcol.Name = FieldOrPropertyName;
-                newcol.Length = length;
+                TableColumn newcol = new TableColumn
+                {
+                    DataType = dataType.FullName, Name = fieldOrPropertyName, Length = length
+                };
                 if (isComplex)
                 {
                     newcol.isComplex = true;

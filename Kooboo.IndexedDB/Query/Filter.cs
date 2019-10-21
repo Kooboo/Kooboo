@@ -28,7 +28,7 @@ namespace Kooboo.IndexedDB.Query
         /// Use the column data to generate object only, but not read entire object from disk.
         /// This is used for faster performance in senarios like MailMessage contains a raw body that is not needed most of the time.
         /// </summary>
-        private bool ColumnDataOnly;
+        private bool _columnDataOnly;
 
         internal ObjectStore<TKey, TValue> store;
 
@@ -44,15 +44,15 @@ namespace Kooboo.IndexedDB.Query
             this.SkipCount = 0;
             this.OrderByPrimaryKey = false;
             this.Ascending = true;
-            this.ColumnDataOnly = false;
+            this._columnDataOnly = false;
         }
 
-        public Filter<TKey, TValue> Where(string FieldOrPropertyName, Comparer comparer, object CompareValue)
+        public Filter<TKey, TValue> Where(string fieldOrPropertyName, Comparer comparer, object compareValue)
         {
             FilterItem item = new FilterItem();
 
             // check to see if there is in the column.
-            IColumn<TValue> column = this.store.GetColumn(FieldOrPropertyName);
+            IColumn<TValue> column = this.store.GetColumn(fieldOrPropertyName);
 
             if (column != null)
             {
@@ -61,7 +61,7 @@ namespace Kooboo.IndexedDB.Query
             }
             else
             {
-                IIndex<TValue> index = this.store.Indexes.getIndex(FieldOrPropertyName);
+                IIndex<TValue> index = this.store.Indexes.getIndex(fieldOrPropertyName);
 
                 if (index != null)
                 {
@@ -70,7 +70,7 @@ namespace Kooboo.IndexedDB.Query
                 }
                 else
                 {
-                    if (FieldOrPropertyName.IsSameValue(this.store.StoreSetting.PrimaryKey))
+                    if (fieldOrPropertyName.IsSameValue(this.store.StoreSetting.PrimaryKey))
                     {
                         var keytype = Helper.TypeHelper.GetFieldType(this.store.StoreSetting.ValueType, this.store.StoreSetting.PrimaryKey);
 
@@ -87,9 +87,9 @@ namespace Kooboo.IndexedDB.Query
 
             item.Compare = comparer;
 
-            item.FieldOrProperty = FieldOrPropertyName;
+            item.FieldOrProperty = fieldOrPropertyName;
 
-            byte[] bytevalue = getByteValue(item.FieldType, CompareValue);
+            byte[] bytevalue = getByteValue(item.FieldType, compareValue);
 
             if (bytevalue != null)
             {
@@ -119,18 +119,18 @@ namespace Kooboo.IndexedDB.Query
             return this;
         }
 
-        public Filter<TKey, TValue> WhereEqual(string FieldOrPropertyName, bool Value)
+        public Filter<TKey, TValue> WhereEqual(string fieldOrPropertyName, bool value)
         {
             FilterItem item = new FilterItem();
 
             item.Compare = Comparer.EqualTo;
 
-            item.FieldOrProperty = FieldOrPropertyName;
+            item.FieldOrProperty = fieldOrPropertyName;
             item.FieldType = typeof(bool);
             item.Length = 1;
 
             byte[] valuebyte = new byte[1];
-            if (Value)
+            if (value)
             {
                 valuebyte[0] = 1;
             }
@@ -145,9 +145,9 @@ namespace Kooboo.IndexedDB.Query
             return this;
         }
 
-        public Filter<TKey, TValue> WhereIn(string FieldOrPropertyName, List<object> Values)
+        public Filter<TKey, TValue> WhereIn(string fieldOrPropertyName, List<object> values)
         {
-            IColumn<TValue> column = this.store.GetColumn(FieldOrPropertyName);
+            IColumn<TValue> column = this.store.GetColumn(fieldOrPropertyName);
 
             if (column == null)
             {
@@ -156,13 +156,13 @@ namespace Kooboo.IndexedDB.Query
 
             List<byte[]> invalues = new List<byte[]>();
 
-            foreach (var item in Values)
+            foreach (var item in values)
             {
                 byte[] value = getByteValue(column.DataType, item);
                 invalues.Add(value);
             }
 
-            this.InItems[FieldOrPropertyName] = invalues;
+            this.InItems[fieldOrPropertyName] = invalues;
 
             return this;
         }
@@ -173,9 +173,9 @@ namespace Kooboo.IndexedDB.Query
             return this;
         }
 
-        public Filter<TKey, TValue> WhereIn<Type>(string FieldOrPropertyName, List<Type> Values)
+        public Filter<TKey, TValue> WhereIn<Type>(string fieldOrPropertyName, List<Type> values)
         {
-            IColumn<TValue> column = this.store.GetColumn(FieldOrPropertyName);
+            IColumn<TValue> column = this.store.GetColumn(fieldOrPropertyName);
 
             if (column == null)
             {
@@ -184,38 +184,38 @@ namespace Kooboo.IndexedDB.Query
 
             List<byte[]> invalues = new List<byte[]>();
 
-            foreach (var item in Values)
+            foreach (var item in values)
             {
                 byte[] value = getByteValue(column.DataType, item);
                 invalues.Add(value);
             }
 
-            this.InItems[FieldOrPropertyName] = invalues;
+            this.InItems[fieldOrPropertyName] = invalues;
 
             return this;
         }
 
-        public Filter<TKey, TValue> WhereIn<T>(Expression<Func<TValue, object>> FieldExpression, List<T> Values)
+        public Filter<TKey, TValue> WhereIn<T>(Expression<Func<TValue, object>> fieldExpression, List<T> values)
         {
-            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(FieldExpression);
+            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(fieldExpression);
 
             if (!string.IsNullOrEmpty(fieldname))
             {
-                this.WhereIn<T>(fieldname, Values);
+                this.WhereIn<T>(fieldname, values);
             }
             return this;
         }
 
-        public Filter<TKey, TValue> WhereEqual(string FieldOrPropertyName, Guid Value)
+        public Filter<TKey, TValue> WhereEqual(string fieldOrPropertyName, Guid value)
         {
-            FilterItem item = new FilterItem();
+            FilterItem item = new FilterItem
+            {
+                Compare = Comparer.EqualTo, FieldOrProperty = fieldOrPropertyName, FieldType = typeof(Guid)
+            };
 
-            item.Compare = Comparer.EqualTo;
 
-            item.FieldOrProperty = FieldOrPropertyName;
-            item.FieldType = typeof(Guid);
             IByteConverter<Guid> x = ObjectContainer.GetConverter<Guid>();
-            item.Value = x.ToByte(Value);
+            item.Value = x.ToByte(value);
 
             item.Length = 16;
 
@@ -224,27 +224,29 @@ namespace Kooboo.IndexedDB.Query
             return this;
         }
 
-        public Filter<TKey, TValue> WhereEqual(string FieldOrPropertyName, object Value)
+        public Filter<TKey, TValue> WhereEqual(string fieldOrPropertyName, object value)
         {
-            return Where(FieldOrPropertyName, Comparer.EqualTo, Value);
+            return Where(fieldOrPropertyName, Comparer.EqualTo, value);
         }
 
-        public Filter<TKey, TValue> Where(string FieldOrPropertyName, Comparer comparer, DateTime CompareValue, DateTimeScope scope)
+        public Filter<TKey, TValue> Where(string fieldOrPropertyName, Comparer comparer, DateTime compareValue, DateTimeScope scope)
         {
-            FilterItem item = new FilterItem();
+            FilterItem item = new FilterItem
+            {
+                Compare = comparer,
+                TimeScope = scope,
+                FieldOrProperty = fieldOrPropertyName,
+                FieldType = typeof(DateTime),
+                Length = 8
+            };
 
-            item.Compare = comparer;
 
-            item.TimeScope = scope;
 
-            item.FieldOrProperty = FieldOrPropertyName;
-            item.FieldType = typeof(DateTime);
 
-            item.Length = 8;
 
             IByteConverter<DateTime> x = ObjectContainer.GetConverter<DateTime>();
 
-            item.Value = x.ToByte(CompareValue);
+            item.Value = x.ToByte(compareValue);
 
             this.items.Add(item);
 
@@ -254,22 +256,23 @@ namespace Kooboo.IndexedDB.Query
         /// <summary>
         /// Filter based on the object primary key.
         /// </summary>
-        /// <param name="FieldOrPropertyName"></param>
         /// <param name="comparer"></param>
-        /// <param name="CompareValue"></param>
+        /// <param name="compareValue"></param>
         /// <returns></returns>
-        public Filter<TKey, TValue> WhereKey(Comparer comparer, object CompareValue)
+        public Filter<TKey, TValue> WhereKey(Comparer comparer, object compareValue)
         {
-            FilterItem item = new FilterItem();
+            FilterItem item = new FilterItem
+            {
+                FieldType = typeof(TKey),
+                Length = this.store.StoreSetting.PrimaryKeyLen,
+                Compare = comparer,
+                FieldOrProperty = this.store.StoreSetting.PrimaryKey
+            };
 
-            item.FieldType = typeof(TKey);
-            item.Length = this.store.StoreSetting.PrimaryKeyLen;
 
-            item.Compare = comparer;
 
-            item.FieldOrProperty = this.store.StoreSetting.PrimaryKey;
 
-            byte[] bytevalue = this.getByteValue(typeof(TKey), CompareValue);
+            byte[] bytevalue = this.getByteValue(typeof(TKey), compareValue);
 
             if (bytevalue != null)
             {
@@ -396,16 +399,16 @@ namespace Kooboo.IndexedDB.Query
         /// Order by a field or property. This field should have an index on it.
         /// Order by a non-indexed field will have very bad performance.
         /// </summary>
-        public Filter<TKey, TValue> OrderByAscending(string FieldOrPropertyName)
+        public Filter<TKey, TValue> OrderByAscending(string fieldOrPropertyName)
         {
-            if (FieldOrPropertyName.IsSameValue(this.store.StoreSetting.PrimaryKey))
+            if (fieldOrPropertyName.IsSameValue(this.store.StoreSetting.PrimaryKey))
             {
                 return this.OrderByAscending();
             }
             else
             {
                 this.Ascending = true;
-                this.OrderByFieldName = FieldOrPropertyName;
+                this.OrderByFieldName = fieldOrPropertyName;
                 this.OrderByPrimaryKey = false;
                 return this;
             }
@@ -425,16 +428,16 @@ namespace Kooboo.IndexedDB.Query
         /// <summary>
         /// Order by descending on a field or property. This field should have an index on it.
         /// </summary>
-        public Filter<TKey, TValue> OrderByDescending(string FieldOrPropertyName)
+        public Filter<TKey, TValue> OrderByDescending(string fieldOrPropertyName)
         {
-            if (FieldOrPropertyName.IsSameValue(this.store.StoreSetting.PrimaryKey))
+            if (fieldOrPropertyName.IsSameValue(this.store.StoreSetting.PrimaryKey))
             {
                 return this.OrderByDescending();
             }
             else
             {
                 this.Ascending = false;
-                this.OrderByFieldName = FieldOrPropertyName;
+                this.OrderByFieldName = fieldOrPropertyName;
                 this.OrderByPrimaryKey = false;
                 return this;
             }
@@ -446,7 +449,7 @@ namespace Kooboo.IndexedDB.Query
         /// </summary>
         public Filter<TKey, TValue> UseColumnData()
         {
-            this.ColumnDataOnly = true;
+            this._columnDataOnly = true;
             return this;
         }
 
@@ -460,7 +463,7 @@ namespace Kooboo.IndexedDB.Query
         {
             List<TValue> x = Take(1);
 
-            if (x != null && x.Count() > 0)
+            if (x != null && x.Any())
             {
                 return x[0];
             }
@@ -494,7 +497,7 @@ namespace Kooboo.IndexedDB.Query
 
             List<long> list = GetList(count);
 
-            if (this.ColumnDataOnly)
+            if (this._columnDataOnly)
             {
                 foreach (var item in list)
                 {
@@ -547,7 +550,7 @@ namespace Kooboo.IndexedDB.Query
 
                 foreach (Int64 item in executionplan.startCollection)
                 {
-                    /// check matches.
+                    // check matches.
                     itemMatch = true;
                     foreach (List<long> rangeitem in rangelist)
                     {
@@ -563,7 +566,7 @@ namespace Kooboo.IndexedDB.Query
                         continue;
                     }
 
-                    /// check column matchs.
+                    // check column matchs.
                     foreach (ColumnScan plan in executionplan.scanColumns)
                     {
                         byte[] columnbytes = this.store.getColumnsBytes(item, plan.relativeStartPosition, plan.length);
@@ -609,7 +612,7 @@ namespace Kooboo.IndexedDB.Query
         /// <returns></returns>
         public List<TValue> SelectAll()
         {
-            ///default limits to 5000 records.
+            //default limits to 5000 records.
             return Take(5000);
         }
 
@@ -645,7 +648,7 @@ namespace Kooboo.IndexedDB.Query
 
                 foreach (Int64 item in executionplan.startCollection)
                 {
-                    /// check matches.
+                    // check matches.
                     itemMatch = true;
                     foreach (List<long> rangeitem in rangelist)
                     {
@@ -661,7 +664,7 @@ namespace Kooboo.IndexedDB.Query
                         continue;
                     }
 
-                    /// check column matchs.
+                    // check column matchs.
                     foreach (ColumnScan plan in executionplan.scanColumns)
                     {
                         byte[] columnbytes = this.store.getColumnsBytes(item, plan.relativeStartPosition, plan.length);
@@ -678,7 +681,7 @@ namespace Kooboo.IndexedDB.Query
                         continue;
                     }
 
-                    /// pass all tests.
+                    // pass all tests.
 
                     if (skipped < this.SkipCount)
                     {

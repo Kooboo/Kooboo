@@ -205,7 +205,7 @@ namespace Kooboo.IndexedDB.Btree
                 startposition = startposition + this.tree.config.PointerLen;
             }
 
-            /// the position that we can start to write new record.
+            // the position that we can start to write new record.
             _startwriteposition = startposition;
         }
 

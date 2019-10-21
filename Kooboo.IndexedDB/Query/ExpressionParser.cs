@@ -12,10 +12,10 @@ namespace Kooboo.IndexedDB.Query
         {
             BinaryExpression binary = expression as BinaryExpression;
 
-            MemberExpression member = binary.Left as MemberExpression;
-            string name = member.Member.Name;
+            MemberExpression member = binary?.Left as MemberExpression;
+            string name = member?.Member.Name;
 
-            ConstantExpression value = binary.Right as ConstantExpression;
+            ConstantExpression value = binary?.Right as ConstantExpression;
 
             return null;
         }

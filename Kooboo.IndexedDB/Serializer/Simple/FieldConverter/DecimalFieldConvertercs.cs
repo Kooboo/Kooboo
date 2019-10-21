@@ -10,11 +10,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<T, decimal> getValue;
         private Action<T, decimal> setValue;
 
-        public DecimalFieldConvertercs(string FieldName)
+        public DecimalFieldConvertercs(string fieldName)
         {
-            this.getValue = ObjectHelper.GetGetValue<T, decimal>(FieldName);
-            this.setValue = ObjectHelper.GetSetValue<T, decimal>(FieldName);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetValue<T, decimal>(fieldName);
+            this.setValue = ObjectHelper.GetSetValue<T, decimal>(fieldName);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -33,9 +33,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytevalue);
         }
 
-        public byte[] ToBytes(T Value)
+        public byte[] ToBytes(T value)
         {
-            decimal fieldvalue = this.getValue(Value);
+            decimal fieldvalue = this.getValue(value);
             return ValueConverter.ToBytes(fieldvalue);
         }
     }
@@ -45,11 +45,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<object, decimal> getValue;
         private Action<object, decimal> setValue;
 
-        public DecimalFieldConverter(string FieldName, Type ObjectType)
+        public DecimalFieldConverter(string fieldName, Type objectType)
         {
-            this.getValue = ObjectHelper.GetGetFieldValue<decimal>(FieldName, ObjectType);
-            this.setValue = ObjectHelper.GetSetFieldValue<decimal>(FieldName, ObjectType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetFieldValue<decimal>(fieldName, objectType);
+            this.setValue = ObjectHelper.GetSetFieldValue<decimal>(fieldName, objectType);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -68,9 +68,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytevalue);
         }
 
-        public byte[] ToBytes(object Value)
+        public byte[] ToBytes(object value)
         {
-            decimal fieldvalue = this.getValue(Value);
+            decimal fieldvalue = this.getValue(value);
             return ValueConverter.ToBytes(fieldvalue);
         }
     }

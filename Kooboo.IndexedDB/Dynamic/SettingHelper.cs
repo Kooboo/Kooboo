@@ -1,6 +1,7 @@
 //Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,9 +12,9 @@ namespace Kooboo.IndexedDB.Dynamic
     {
         private static Kooboo.IndexedDB.Serializer.Simple.SimpleConverter<Setting> converter = new Serializer.Simple.SimpleConverter<Setting>();
 
-        public static Setting GetOrSetTableSetting(string SettingFile, Setting setting)
+        public static Setting GetOrSetTableSetting(string settingFile, Setting setting)
         {
-            var old = ReadSetting(SettingFile);
+            var old = ReadSetting(settingFile);
 
             if (setting == null && old != null)
             {
@@ -27,7 +28,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     setting = CombineSetting(old, setting);
                     setting.EnableLog = setting.EnableLog;
                     var allbytes = converter.ToBytes(setting);
-                    File.WriteAllBytes(SettingFile, allbytes);
+                    File.WriteAllBytes(settingFile, allbytes);
                     return setting;
                 }
                 else
@@ -36,7 +37,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     {
                         old.EnableLog = setting.EnableLog;
                         var allbytes = converter.ToBytes(old);
-                        File.WriteAllBytes(SettingFile, allbytes);
+                        File.WriteAllBytes(settingFile, allbytes);
                     }
                     return old;
                 }
@@ -49,15 +50,15 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
 
                 var allbytes = converter.ToBytes(setting);
-                File.WriteAllBytes(SettingFile, allbytes);
+                File.WriteAllBytes(settingFile, allbytes);
                 return setting;
             }
         }
 
-        public static void WriteSetting(string SettingFile, Setting setting)
+        public static void WriteSetting(string settingFile, Setting setting)
         {
             var allbytes = converter.ToBytes(setting);
-            File.WriteAllBytes(SettingFile, allbytes);
+            File.WriteAllBytes(settingFile, allbytes);
         }
 
         public static Setting CombineSetting(Setting exists, Setting newsetting)
@@ -225,7 +226,7 @@ namespace Kooboo.IndexedDB.Dynamic
             }
             else if (colType == typeof(decimal))
             {
-                ///decimal is not available, will be converted to double directly on byteconverter.
+                //decimal is not available, will be converted to double directly on byteconverter.
                 return 8;
             }
             else if (colType == typeof(double))
@@ -289,7 +290,7 @@ namespace Kooboo.IndexedDB.Dynamic
             }
             else if (colType == typeof(decimal))
             {
-                ///decimal is not available, will be converted to double directly on byteconverter.
+                //decimal is not available, will be converted to double directly on byteconverter.
                 return 8;
             }
             else if (colType == typeof(double))
@@ -354,13 +355,11 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             var setting = new Setting();
 
-            if (obj is System.Collections.IDictionary)
+            if (obj is IDictionary idict1)
             {
-                var idict = obj as System.Collections.IDictionary;
-
-                foreach (var item in idict.Keys)
+                foreach (var item in idict1.Keys)
                 {
-                    var value = idict[item];
+                    var value = idict1[item];
 
                     if (value != null)
                     {
@@ -368,12 +367,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         int len = 0;
                         if (valuetype == typeof(string))
                         {
-                            if (value.ToString().Length > (Constants.DefaultColLen - 300))
-                            {
-                                len = int.MaxValue;
-                            }
-                            else
-                            { len = Constants.DefaultColLen; }
+                            len = value.ToString().Length > (Constants.DefaultColLen - 300) ? int.MaxValue : Constants.DefaultColLen;
                         }
                         else
                         {
@@ -383,10 +377,8 @@ namespace Kooboo.IndexedDB.Dynamic
                     }
                 }
             }
-            else if (obj is IDictionary<string, object>)
+            else if (obj is IDictionary<string, object> idict)
             {
-                var idict = obj as IDictionary<string, object>;
-
                 foreach (var item in idict)
                 {
                     if (item.Value != null)
@@ -395,12 +387,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         int len = 0;
                         if (valuetype == typeof(string))
                         {
-                            if (item.Value.ToString().Length > (Constants.DefaultColLen - 300))
-                            {
-                                len = int.MaxValue;
-                            }
-                            else
-                            { len = Constants.DefaultColLen; }
+                            len = item.Value.ToString().Length > (Constants.DefaultColLen - 300) ? int.MaxValue : Constants.DefaultColLen;
                         }
                         else
                         {
@@ -414,9 +401,9 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 var type = obj.GetType();
 
-                var AllProperties = Helper.TypeHelper.GetPublicPropertyOrFields(type);
+                var allProperties = Helper.TypeHelper.GetPublicPropertyOrFields(type);
 
-                foreach (var item in AllProperties)
+                foreach (var item in allProperties)
                 {
                     setting.AppendColumn(item.Key, item.Value, 0);
                 }
@@ -473,18 +460,18 @@ namespace Kooboo.IndexedDB.Dynamic
 
         // use for adding data, will only increase col, does not descrease col...
 
-        public static CompareResult CompareColSetting(List<TableColumn> NewColumns, Setting CurrentSetting)
+        public static CompareResult CompareColSetting(List<TableColumn> newColumns, Setting currentSetting)
         {
             CompareResult result = new CompareResult();
 
-            if (!QuickCheckChange(NewColumns, CurrentSetting))
+            if (!QuickCheckChange(newColumns, currentSetting))
             {
                 return result;
             }
 
-            result.NewSetting.Columns = CurrentSetting.Columns;
+            result.NewSetting.Columns = currentSetting.Columns;
 
-            foreach (var item in NewColumns)
+            foreach (var item in newColumns)
             {
                 var find = result.NewSetting.Columns.FirstOrDefault(o => o.Name == item.Name);
                 if (find == null)

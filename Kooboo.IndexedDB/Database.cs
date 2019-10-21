@@ -13,14 +13,7 @@ namespace Kooboo.IndexedDB
 
         public EditLog Log
         {
-            get
-            {
-                if (_log == null)
-                {
-                    _log = new EditLog(this);
-                }
-                return _log;
-            }
+            get { return _log ?? (_log = new EditLog(this)); }
         }
 
         private BlockFile _tablelog;
@@ -88,18 +81,9 @@ namespace Kooboo.IndexedDB
         {
             get
             {
-                if (_absolutepath == null)
-                {
-                    if (System.IO.Path.IsPathRooted(this.Name))
-                    {
-                        _absolutepath = this.Name;
-                    }
-                    else
-                    {
-                        _absolutepath = System.IO.Path.Combine(GlobalSettings.RootPath, Name);
-                    }
-                }
-                return _absolutepath;
+                return _absolutepath ?? (_absolutepath = System.IO.Path.IsPathRooted(this.Name)
+                           ? this.Name
+                           : System.IO.Path.Combine(GlobalSettings.RootPath, Name));
             }
         }
 
@@ -109,7 +93,7 @@ namespace Kooboo.IndexedDB
 
         internal Dictionary<string, Dynamic.Table> openTableList { get; set; } = new Dictionary<string, Dynamic.Table>(StringComparer.OrdinalIgnoreCase);
 
-        private static object _locker = new object();
+        private object _locker = new object();
 
         public bool Exists => System.IO.Directory.Exists(this.AbsolutePath);
 
@@ -134,25 +118,25 @@ namespace Kooboo.IndexedDB
             return System.IO.File.Exists(storesetting);
         }
 
-        public ObjectStore<Tkey, TValue> GetOrCreateObjectStore<Tkey, TValue>(string StoreName, ObjectStoreParameters Parameters = null)
+        public ObjectStore<Tkey, TValue> GetOrCreateObjectStore<Tkey, TValue>(string storeName, ObjectStoreParameters parameters = null)
         {
-            StoreName = StoreName.ToValidPath();
+            storeName = storeName.ToValidPath();
 
-            if (this.HasObjectStore(StoreName))
+            if (this.HasObjectStore(storeName))
             {
-                return this.GetObjectStore<Tkey, TValue>(StoreName);
+                return this.GetObjectStore<Tkey, TValue>(storeName);
             }
             else
             {
                 lock (_locker)
                 {
-                    if (!HasObjectStore(StoreName))
+                    if (!HasObjectStore(storeName))
                     {
                         // Should be removed.
 
                         #region TempUpgrade2017end
 
-                        var oldsettingfile = objectSettingFile(StoreName);
+                        var oldsettingfile = objectSettingFile(storeName);
                         if (System.IO.File.Exists(oldsettingfile))
                         {
                             var oldsetting = SettingSerializer.DeserializeObjectStoreSetting(oldsettingfile);
@@ -160,9 +144,9 @@ namespace Kooboo.IndexedDB
                             if (oldsetting.UseDefaultNETBinaryFormater)
                             {
                                 //clean everything. does not want to upgrade those....
-                                var folder = objectFolder(StoreName);
+                                var folder = objectFolder(storeName);
                                 System.IO.Directory.Delete(folder, true);
-                                return GetOrCreateObjectStore<Tkey, TValue>(StoreName, Parameters);
+                                return GetOrCreateObjectStore<Tkey, TValue>(storeName, parameters);
                             }
 
                             int keyoffset = oldsetting.primaryKeyLength;
@@ -178,7 +162,7 @@ namespace Kooboo.IndexedDB
                                 }
                             }
 
-                            var oldfolder = this.objectFolder(StoreName);
+                            var oldfolder = this.objectFolder(storeName);
 
                             // primary key.
                             var primaryIndex = new Btree.BtreeIndex<Tkey>(oldsetting.primaryKeyFieldName, true, oldsetting.primaryKeyLength, Helper.IndexHelper.GetIndexFileName(oldfolder, oldsetting.primaryKeyFieldName), oldsetting.MaxCacheLevel);
@@ -189,11 +173,11 @@ namespace Kooboo.IndexedDB
 
                             var converter = new Serializer.Simple.SimpleConverter<TValue>();
 
-                            string newname = "_koobootemp" + StoreName;
+                            string newname = "_koobootemp" + storeName;
 
                             var newfolder = this.objectFolder(newname);
 
-                            var upStore = this.GetOrCreateObjectStore<Tkey, TValue>(newname, Parameters);
+                            var upStore = this.GetOrCreateObjectStore<Tkey, TValue>(newname, parameters);
 
                             lock (_locker)
                             {
@@ -208,7 +192,7 @@ namespace Kooboo.IndexedDB
                                 primaryIndex.Close();
                                 upStore.Close();
 
-                                this.DeleteObjectStore(StoreName);
+                                this.DeleteObjectStore(storeName);
 
                                 if (System.IO.Directory.Exists(oldfolder))
                                 {
@@ -217,30 +201,30 @@ namespace Kooboo.IndexedDB
 
                                 System.IO.Directory.Move(newfolder, oldfolder);
 
-                                if (this.openStoreList.ContainsKey(StoreName))
+                                if (this.openStoreList.ContainsKey(storeName))
                                 {
-                                    this.openStoreList.Remove(StoreName);
+                                    this.openStoreList.Remove(storeName);
                                 }
                             }
 
-                            return this.GetOrCreateObjectStore<Tkey, TValue>(StoreName, Parameters);
+                            return this.GetOrCreateObjectStore<Tkey, TValue>(storeName, parameters);
                         }
 
                         #endregion TempUpgrade2017end
 
                         clearOpenStoreCache();
-                        if (Parameters == null)
+                        if (parameters == null)
                         {
-                            Parameters = new ObjectStoreParameters();
+                            parameters = new ObjectStoreParameters();
                         }
 
-                        ObjectStore<Tkey, TValue> newstore = new ObjectStore<Tkey, TValue>(StoreName, this, Parameters);
+                        ObjectStore<Tkey, TValue> newstore = new ObjectStore<Tkey, TValue>(storeName, this, parameters);
 
-                        this.openStoreList.Add(StoreName, newstore);
+                        this.openStoreList.Add(storeName, newstore);
                     }
                 }
 
-                return this.openStoreList[StoreName] as ObjectStore<Tkey, TValue>;
+                return this.openStoreList[storeName] as ObjectStore<Tkey, TValue>;
             }
         }
 
@@ -364,10 +348,10 @@ namespace Kooboo.IndexedDB
             return new ObjectStore<TKey, TValue>(storename, this, paras);
         }
 
-        public ObjectStore<OKey, OValue> RebuildObjectStore<OKey, OValue>(ObjectStore<OKey, OValue> currentStore, ObjectStoreParameters newparas)
+        public ObjectStore<TOKey, TOValue> RebuildObjectStore<TOKey, TOValue>(ObjectStore<TOKey, TOValue> currentStore, ObjectStoreParameters newparas)
         {
             string storename = currentStore.Name;
-            string newname = "_koobootemp" + storename;
+            string newname = $"_koobootemp{storename}";
 
             if (currentStore == null)
             {
@@ -380,7 +364,7 @@ namespace Kooboo.IndexedDB
             }
             else
             {
-                var valuetype = typeof(OValue);
+                var valuetype = typeof(TOValue);
                 var fieldtype = valuetype.GetField(newparas.PrimaryKey);
                 if (fieldtype == null)
                 {
@@ -392,7 +376,7 @@ namespace Kooboo.IndexedDB
                 }
             }
 
-            var newstore = this.GetOrCreateObjectStore<OKey, OValue>(newname, newparas);
+            var newstore = this.GetOrCreateObjectStore<TOKey, TOValue>(newname, newparas);
             lock (_locker)
             {
                 foreach (var item in currentStore.ItemCollection())
@@ -425,7 +409,7 @@ namespace Kooboo.IndexedDB
                 this.openStoreList.Remove(newname);
             }
 
-            return this.GetObjectStore<OKey, OValue>(storename);
+            return this.GetObjectStore<TOKey, TOValue>(storename);
         }
 
         public void DeleteObjectStore(string name)
@@ -644,10 +628,7 @@ namespace Kooboo.IndexedDB
 
                         Type genericListType = typeof(ObjectStore<,>).MakeGenericType(keytype, setting.ValueType);
 
-                        List<object> paras = new List<object>();
-                        paras.Add(storename);
-                        paras.Add(this);
-                        paras.Add(setting);
+                        List<object> paras = new List<object> {storename, this, setting};
                         var store = Activator.CreateInstance(genericListType, paras.ToArray()) as IObjectStore;
 
                         if (store == null)

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Kooboo.IndexedDB.Columns;
 
 namespace Kooboo.IndexedDB.Query
 {
@@ -81,16 +82,18 @@ namespace Kooboo.IndexedDB.Query
             // now parse columns. All query where condition item must be in columns, otherwise this will be a problem.
             foreach (var item in filter.items)
             {
-                Columns.IColumn<TValue> column;
-                column = filter.store.GetColumn(item.FieldOrProperty);
+                var column = filter.store.GetColumn(item.FieldOrProperty);
                 if (column != null)
                 {
-                    ColumnScan colplan = new ColumnScan();
+                    ColumnScan colplan = new ColumnScan
+                    {
+                        ColumnName = column.FieldName,
+                        relativeStartPosition = column.relativePosition,
+                        length = column.Length,
+                        Evaluator = ColumnEvaluator.GetEvaluator(column.DataType, item.Compare, item.Value,
+                            column.Length)
+                    };
 
-                    colplan.ColumnName = column.FieldName;
-                    colplan.relativeStartPosition = column.relativePosition;
-                    colplan.length = column.Length;
-                    colplan.Evaluator = ColumnEvaluator.GetEvaluator(column.DataType, item.Compare, item.Value, column.Length);
 
                     executionplan.scanColumns.Add(colplan);
                 }
@@ -106,12 +109,14 @@ namespace Kooboo.IndexedDB.Query
                 column = filter.store.GetColumn(item.Key);
                 if (column != null)
                 {
-                    ColumnScan colplan = new ColumnScan();
+                    ColumnScan colplan = new ColumnScan
+                    {
+                        ColumnName = column.FieldName,
+                        relativeStartPosition = column.relativePosition,
+                        length = column.Length,
+                        Evaluator = ColumnInEvaluator.GetInEvaluator(column.DataType, item.Value, column.Length)
+                    };
 
-                    colplan.ColumnName = column.FieldName;
-                    colplan.relativeStartPosition = column.relativePosition;
-                    colplan.length = column.Length;
-                    colplan.Evaluator = ColumnInEvaluator.GetInEvaluator(column.DataType, item.Value, column.Length);
 
                     executionplan.scanColumns.Add(colplan);
                 }
@@ -121,7 +126,7 @@ namespace Kooboo.IndexedDB.Query
                 }
             }
 
-            /// for the methods calls.
+            // for the methods calls.
             foreach (var item in filter.calls)
             {
                 MemberExpression memberaccess = null;
@@ -139,17 +144,19 @@ namespace Kooboo.IndexedDB.Query
 
                 string fieldname = memberaccess.Member.Name;
 
-                Columns.IColumn<TValue> column;
-                column = filter.store.GetColumn(fieldname);
+                var column = filter.store.GetColumn(fieldname);
                 if (column != null)
                 {
-                    ColumnScan colplan = new ColumnScan();
+                    ColumnScan colplan = new ColumnScan
+                    {
+                        ColumnName = column.FieldName,
+                        relativeStartPosition = column.relativePosition,
+                        length = column.Length,
+                        Evaluator = ColumnMethodCallEvaluator.GetMethodEvaluator(column.DataType, column.Length,
+                            item)
+                    };
 
-                    colplan.ColumnName = column.FieldName;
-                    colplan.relativeStartPosition = column.relativePosition;
-                    colplan.length = column.Length;
 
-                    colplan.Evaluator = ColumnMethodCallEvaluator.GetMethodEvaluator(column.DataType, column.Length, item);
 
                     executionplan.scanColumns.Add(colplan);
                 }
@@ -158,7 +165,7 @@ namespace Kooboo.IndexedDB.Query
                     throw new Exception("methed call parameter must be a column, add the field to colomn creating creating the store, otherwise use the fullscan option");
                 }
             }
-            /// verify the plan. or optimize it.
+            // verify the plan. or optimize it.
             if (!executionplan.hasStartCollection)
             {
                 //make one of the range. pick any one now. should be pick by the optimizer.
@@ -187,16 +194,16 @@ namespace Kooboo.IndexedDB.Query
         /// get the range query collection of index fields.for looping.  this can be OrderBy fields or fields that has more sparnse. this only works for index fields.
         /// after get, the related field or property item will be removed from the item collection.
         /// </summary>
-        /// <param name="FieldOrPropertyName"></param>
+        /// <param name="fieldOrPropertyName"></param>
         /// <returns></returns>
-        private static Range<byte[]> getRange(string FieldOrPropertyName, List<FilterItem> items)
+        private static Range<byte[]> getRange(string fieldOrPropertyName, List<FilterItem> items)
         {
-            if (string.IsNullOrWhiteSpace(FieldOrPropertyName))
+            if (string.IsNullOrWhiteSpace(fieldOrPropertyName))
             {
                 return null;
             }
 
-            FieldOrPropertyName = FieldOrPropertyName.ToLower();
+            fieldOrPropertyName = fieldOrPropertyName.ToLower();
 
             Range<byte[]> range = new Range<byte[]>();
 
@@ -204,7 +211,7 @@ namespace Kooboo.IndexedDB.Query
 
             for (int i = 0; i < items.Count; i++)
             {
-                if (items[i].FieldOrProperty.ToLower() == FieldOrPropertyName)
+                if (items[i].FieldOrProperty.ToLower() == fieldOrPropertyName)
                 {
                     switch (items[i].Compare)
                     {
@@ -266,14 +273,7 @@ namespace Kooboo.IndexedDB.Query
                 items.RemoveAt(item);
             }
 
-            if (hasmatch)
-            {
-                return range;
-            }
-            else
-            {
-                return null;
-            }
+            return hasmatch ? range : null;
         }
     }
 }

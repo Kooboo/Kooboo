@@ -13,15 +13,15 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<T, object> getValue;
         private Action<T, object> setValue;
 
-        public ClassFieldConverter(string FieldName)
+        public ClassFieldConverter(string fieldName)
         {
             Type type = typeof(T);
-            this.ClassType = ObjectHelper.GetFieldType(type, FieldName);
+            this.ClassType = ObjectHelper.GetFieldType(type, fieldName);
 
             this.Items = new List<IFieldConverter>();
-            this.getValue = ObjectHelper.GetGetObjectValue<T>(FieldName);
-            this.setValue = ObjectHelper.GetSetObjectValue<T>(FieldName, ClassType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetObjectValue<T>(fieldName);
+            this.setValue = ObjectHelper.GetSetObjectValue<T>(fieldName, ClassType);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
 
             var allfields = TypeHelper.GetPublicPropertyOrFields(ClassType);
 
@@ -31,9 +31,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             }
         }
 
-        private void AddFields(Type ClassType, Type FieldType, string FieldName)
+        private void AddFields(Type classType, Type fieldType, string fieldName)
         {
-            var converter = ConverterHelper.GetFieldConverter(ClassType, FieldType, FieldName);
+            var converter = ConverterHelper.GetFieldConverter(classType, fieldType, fieldName);
 
             if (converter != null)
             {
@@ -56,26 +56,26 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         public void SetByteValues(T value, byte[] bytes)
         {
-            var FieldObject = Activator.CreateInstance(this.ClassType);
+            var fieldObject = Activator.CreateInstance(this.ClassType);
 
             int startposition = 0;
             int totallength = bytes.Length;
             while (true)
             {
-                int FieldNameHash = BitConverter.ToInt32(bytes, startposition);
+                int fieldNameHash = BitConverter.ToInt32(bytes, startposition);
 
                 startposition += 4;
 
                 int len = BitConverter.ToInt32(bytes, startposition);
                 startposition += 4;
 
-                var item = Items.Find(o => o.FieldNameHash == FieldNameHash);
+                var item = Items.Find(o => o.FieldNameHash == fieldNameHash);
 
                 if (item != null)
                 {
-                    byte[] FieldValueBytes = new byte[len];
-                    System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, len);
-                    item.SetByteValues(FieldObject, FieldValueBytes);
+                    byte[] fieldValueBytes = new byte[len];
+                    System.Buffer.BlockCopy(bytes, startposition, fieldValueBytes, 0, len);
+                    item.SetByteValues(fieldObject, fieldValueBytes);
                 }
 
                 startposition += len;
@@ -84,15 +84,15 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                 { break; }
             }
 
-            this.setValue(value, FieldObject);
+            this.setValue(value, fieldObject);
         }
 
-        public byte[] ToBytes(T Value)
+        public byte[] ToBytes(T value)
         {
-            object fieldvalue = this.getValue(Value);
+            object fieldvalue = this.getValue(value);
 
-            List<byte[]> Results = new List<byte[]>();
-            int TotalLength = 0;
+            List<byte[]> results = new List<byte[]>();
+            int totalLength = 0;
 
             if (fieldvalue != null)
             {
@@ -104,8 +104,8 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                         continue;
                     }
 
-                    Results.Add(BitConverter.GetBytes(item.FieldNameHash));
-                    TotalLength += 4;
+                    results.Add(BitConverter.GetBytes(item.FieldNameHash));
+                    totalLength += 4;
 
                     int bytelen = item.ByteLength;
                     if (bytelen == 0)
@@ -113,25 +113,25 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                         bytelen = result.Length;
                     }
 
-                    Results.Add(BitConverter.GetBytes(bytelen));
-                    TotalLength += 4;
+                    results.Add(BitConverter.GetBytes(bytelen));
+                    totalLength += 4;
 
-                    Results.Add(result);
-                    TotalLength += result.Length;
+                    results.Add(result);
+                    totalLength += result.Length;
                 }
             }
 
-            byte[] BackValue = new byte[TotalLength];
+            byte[] backValue = new byte[totalLength];
             int currentposition = 0;
 
-            foreach (var item in Results)
+            foreach (var item in results)
             {
                 int len = item.Length;
-                System.Buffer.BlockCopy(item, 0, BackValue, currentposition, len);
+                System.Buffer.BlockCopy(item, 0, backValue, currentposition, len);
                 currentposition += len;
             }
 
-            return BackValue;
+            return backValue;
         }
 
         private List<IFieldConverter> Items
@@ -147,18 +147,18 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<object, object> getValue;
         private Action<object, object> setValue;
 
-        public ClassFieldConverter(Type ObjectType, string FieldName)
+        public ClassFieldConverter(Type objectType, string fieldName)
         {
-            this.ClassType = ObjectHelper.GetFieldType(ObjectType, FieldName);
+            this.ClassType = ObjectHelper.GetFieldType(objectType, fieldName);
         }
 
-        public ClassFieldConverter(Type ObjectType, Type ClassFieldType, string FieldName)
+        public ClassFieldConverter(Type objectType, Type classFieldType, string fieldName)
         {
-            ClassType = ClassFieldType;
+            ClassType = classFieldType;
             Items = new List<IFieldConverter>();
-            getValue = ObjectHelper.GetGetObjectValue(FieldName, ObjectType);
-            setValue = ObjectHelper.GetSetObjectValue(FieldName, ObjectType, ClassType);
-            FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            getValue = ObjectHelper.GetGetObjectValue(fieldName, objectType);
+            setValue = ObjectHelper.GetSetObjectValue(fieldName, objectType, ClassType);
+            FieldNameHash = ObjectHelper.GetHashCode(fieldName);
 
             foreach (var item in ClassType.GetProperties())
             {
@@ -177,15 +177,15 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             }
         }
 
-        private void AddFields(Type ClassType, Type FieldType, string FieldName)
+        private void AddFields(Type classType, Type fieldType, string fieldName)
         {
-            if (ClassType == FieldType)
+            if (classType == fieldType)
             {
                 Items.Add(this);
             }
             else
             {
-                var converter = ConverterHelper.GetFieldConverter(ClassType, FieldType, FieldName);
+                var converter = ConverterHelper.GetFieldConverter(classType, fieldType, fieldName);
 
                 if (converter != null)
                 {
@@ -209,26 +209,26 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         public void SetByteValues(object value, byte[] bytes)
         {
-            var FieldObject = Activator.CreateInstance(this.ClassType);
+            var fieldObject = Activator.CreateInstance(this.ClassType);
 
             int startposition = 0;
             int totallength = bytes.Length;
             while (true)
             {
-                int FieldNameHash = BitConverter.ToInt32(bytes, startposition);
+                int fieldNameHash = BitConverter.ToInt32(bytes, startposition);
 
                 startposition += 4;
 
                 int len = BitConverter.ToInt32(bytes, startposition);
                 startposition += 4;
 
-                var item = Items.Find(o => o.FieldNameHash == FieldNameHash);
+                var item = Items.Find(o => o.FieldNameHash == fieldNameHash);
 
                 if (item != null)
                 {
-                    byte[] FieldValueBytes = new byte[len];
-                    System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, len);
-                    item.SetByteValues(FieldObject, FieldValueBytes);
+                    byte[] fieldValueBytes = new byte[len];
+                    System.Buffer.BlockCopy(bytes, startposition, fieldValueBytes, 0, len);
+                    item.SetByteValues(fieldObject, fieldValueBytes);
                 }
 
                 startposition += len;
@@ -237,15 +237,15 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                 { break; }
             }
 
-            this.setValue(value, FieldObject);
+            this.setValue(value, fieldObject);
         }
 
-        public byte[] ToBytes(object Value)
+        public byte[] ToBytes(object value)
         {
-            object fieldvalue = this.getValue(Value);
+            object fieldvalue = this.getValue(value);
 
-            List<byte[]> Results = new List<byte[]>();
-            int TotalLength = 0;
+            List<byte[]> results = new List<byte[]>();
+            int totalLength = 0;
 
             if (fieldvalue != null)
             {
@@ -257,8 +257,8 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                         continue;
                     }
 
-                    Results.Add(BitConverter.GetBytes(item.FieldNameHash));
-                    TotalLength += 4;
+                    results.Add(BitConverter.GetBytes(item.FieldNameHash));
+                    totalLength += 4;
 
                     int bytelen = item.ByteLength;
                     if (bytelen == 0)
@@ -266,25 +266,25 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                         bytelen = result.Length;
                     }
 
-                    Results.Add(BitConverter.GetBytes(bytelen));
-                    TotalLength += 4;
+                    results.Add(BitConverter.GetBytes(bytelen));
+                    totalLength += 4;
 
-                    Results.Add(result);
-                    TotalLength += result.Length;
+                    results.Add(result);
+                    totalLength += result.Length;
                 }
             }
 
-            byte[] BackValue = new byte[TotalLength];
+            byte[] backValue = new byte[totalLength];
             int currentposition = 0;
 
-            foreach (var item in Results)
+            foreach (var item in results)
             {
                 int len = item.Length;
-                System.Buffer.BlockCopy(item, 0, BackValue, currentposition, len);
+                System.Buffer.BlockCopy(item, 0, backValue, currentposition, len);
                 currentposition += len;
             }
 
-            return BackValue;
+            return backValue;
         }
 
         private List<IFieldConverter> Items

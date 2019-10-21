@@ -14,7 +14,7 @@ namespace Kooboo.IndexedDB.Schedule
     {
         public RepeatItem()
         {
-            ///some default values
+            //some default values
             this.FrequenceUnit = 1;
             this.Frequence = RepeatFrequence.Day;
             this.IsActive = true;

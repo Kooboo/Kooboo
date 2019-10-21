@@ -7,33 +7,33 @@ namespace Kooboo.IndexedDB.Sequence
 {
     public class SequenceCollection<TValue> : IEnumerable<TValue>
     {
-        private Sequence<TValue> sequence;
-        private bool ascending;
-        private Int64 start;
-        private Int64 end;
+        private Sequence<TValue> _sequence;
+        private bool _ascending;
+        private Int64 _start;
+        private Int64 _end;
 
-        public SequenceCollection(Sequence<TValue> sequence, bool Ascending, Int64 start, Int64 end)
+        public SequenceCollection(Sequence<TValue> sequence, bool @ascending, Int64 start, Int64 end)
         {
-            this.sequence = sequence;
-            this.ascending = Ascending;
+            this._sequence = sequence;
+            this._ascending = @ascending;
 
-            ///make sure start smaller than end.
+            //make sure start smaller than end.
 
             if (start > end)
             {
-                this.start = end;
-                this.end = start;
+                this._start = end;
+                this._end = start;
             }
             else
             {
-                this.start = start;
-                this.end = end;
+                this._start = start;
+                this._end = end;
             }
         }
 
         private IEnumerator<TValue> GetEnumerator()
         {
-            return new Enumerator<TValue>(sequence, ascending, start, end);
+            return new Enumerator<TValue>(_sequence, _ascending, _start, _end);
         }
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -46,107 +46,100 @@ namespace Kooboo.IndexedDB.Sequence
             return this.GetEnumerator();
         }
 
-        public class Enumerator<EValue> : IEnumerator<EValue>
+        public class Enumerator<TEValue> : IEnumerator<TEValue>
         {
-            private Sequence<EValue> sequence;
-            private bool ascending;
-            private Int64 start;
-            private Int64 end;
+            private Sequence<TEValue> _sequence;
+            private bool _ascending;
+            private Int64 _start;
+            private Int64 _end;
 
-            private long currentindex = 0;
-            private int currentcount = 0;
+            private long _currentindex = 0;
+            private int _currentcount = 0;
 
-            public Enumerator(Sequence<EValue> sequence, bool Ascending, Int64 start, Int64 end)
+            public Enumerator(Sequence<TEValue> sequence, bool Ascending, Int64 start, Int64 end)
             {
-                this.sequence = sequence;
-                this.ascending = Ascending;
-                this.start = start;
-                this.end = end;
+                this._sequence = sequence;
+                this._ascending = Ascending;
+                this._start = start;
+                this._end = end;
             }
 
-            public EValue Current
+            public TEValue Current
             {
                 get
                 {
                     long startindex = 0;
 
-                    if (this.ascending)
+                    if (this._ascending)
                     {
-                        startindex = this.currentindex;
+                        startindex = this._currentindex;
                     }
                     else
                     {
-                        startindex = this.currentindex - 12 - this.currentcount;
+                        startindex = this._currentindex - 12 - this._currentcount;
                     }
 
-                    return this.sequence.Get(startindex, this.currentcount);
+                    return this._sequence.Get(startindex, this._currentcount);
                 }
             }
 
             public void Dispose()
             {
-                this.sequence = null;
+                this._sequence = null;
             }
 
             public bool MoveNext()
             {
-                if (this.start == this.end)
+                if (this._start == this._end)
                 {
                     return false;
                 }
 
-                if (this.ascending)
+                if (this._ascending)
                 {
-                    if (currentindex == 0)
+                    if (_currentindex == 0)
                     {
-                        currentindex = this.start;
-                        currentcount = this.sequence.GetValueBytesCount(currentindex, this.ascending);
+                        _currentindex = this._start;
+                        _currentcount = this._sequence.GetValueBytesCount(_currentindex, this._ascending);
                         return true;
                     }
                     else
                     {
-                        if ((currentindex + currentcount + 12 + 6) >= this.end)
+                        if ((_currentindex + _currentcount + 12 + 6) >= this._end)
                         {
                             return false;
                         }
                         else
                         {
-                            currentindex = currentindex + 12 + currentcount;
-                            currentcount = this.sequence.GetValueBytesCount(currentindex, this.ascending);
+                            _currentindex = _currentindex + 12 + _currentcount;
+                            _currentcount = this._sequence.GetValueBytesCount(_currentindex, this._ascending);
                             return true;
                         }
                     }
                 }
                 else
                 {
-                    ///DESC
-                    if (currentindex == 0)
+                    //DESC
+                    if (_currentindex == 0)
                     {
-                        currentindex = this.end;
-                        currentcount = this.sequence.GetValueBytesCount(currentindex, this.ascending);
+                        _currentindex = this._end;
+                        _currentcount = this._sequence.GetValueBytesCount(_currentindex, this._ascending);
                         return true;
                     }
                     else
                     {
-                        if ((currentindex - currentcount - 12 - 6) <= this.start)
+                        if ((_currentindex - _currentcount - 12 - 6) <= this._start)
                         {
                             return false;
                         }
                         else
                         {
-                            currentindex = currentindex - 12 - currentcount;
+                            _currentindex = _currentindex - 12 - _currentcount;
 
-                            /// get the next current count.
-                            currentcount = this.sequence.GetValueBytesCount(currentindex, this.ascending);
+                            // get the next current count.
+                            _currentcount = this._sequence.GetValueBytesCount(_currentindex, this._ascending);
 
-                            if ((currentindex - currentcount - 12) < this.start)
-                            {
-                                return false;
-                            }
-                            else
-                            {
-                                return true;
-                            }
+                            return (_currentindex - _currentcount - 12) >= this._start;
                         }
                     }
                 }
@@ -157,8 +150,8 @@ namespace Kooboo.IndexedDB.Sequence
             /// </summary>
             public void Reset()
             {
-                this.currentindex = 0;
-                this.currentcount = 0;
+                this._currentindex = 0;
+                this._currentcount = 0;
             }
 
             object System.Collections.IEnumerator.Current

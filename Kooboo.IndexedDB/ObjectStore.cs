@@ -17,17 +17,17 @@ namespace Kooboo.IndexedDB
 
         public StoreSetting StoreSetting { get; set; }
 
-        private Action<TValue, long> SetVersionNr;
+        private Action<TValue, long> _setVersionNr;
 
         internal object _Locker = new object();
 
         public IByteConverter<TKey> KeyConverter { get; set; }
         public IByteConverter<TValue> ValueConverter { get; set; }
 
-        private IEqualityComparer<byte[]> GenericBytesComparer;
+        private IEqualityComparer<byte[]> _genericBytesComparer;
 
         private BlockFile _blockfile;
-        private static object _lockerBlockFile = new object();
+        private object _lockerBlockFile = new object();
 
         private BlockFile BlockFile
         {
@@ -73,7 +73,7 @@ namespace Kooboo.IndexedDB
         /// <summary>
         /// string key has varies length, the rest has fixed length.
         /// </summary>
-        private bool IsStringKey = false;
+        private bool _isStringKey = false;
 
         public string ObjectFolder { get; set; }
 
@@ -124,7 +124,7 @@ namespace Kooboo.IndexedDB
 
         private void Init()
         {
-            this.GenericBytesComparer = new Kooboo.IndexedDB.Btree.Comparer.EqualityComparer(this.StoreSetting.PrimaryKeyLen);
+            this._genericBytesComparer = new Kooboo.IndexedDB.Btree.Comparer.EqualityComparer(this.StoreSetting.PrimaryKeyLen);
 
             this.TrySetVersionFunction();
 
@@ -132,7 +132,7 @@ namespace Kooboo.IndexedDB
 
             Helper.IndexHelper.VerifyIndexType(keytype);
 
-            this.IsStringKey = keytype == typeof(string);
+            this._isStringKey = keytype == typeof(string);
 
             // StoreVersionUpgrade.Upgrade(this);
 
@@ -148,14 +148,7 @@ namespace Kooboo.IndexedDB
 
             if (ValueConverter == null)
             {
-                if (this.StoreSetting.UseDefaultNETBinaryFormater)
-                {
-                    ValueConverter = ObjectContainer.GetBinaryConverter<TValue>();
-                }
-                else
-                {
-                    ValueConverter = ObjectContainer.GetConverter<TValue>(this.SettingColumns);
-                }
+                ValueConverter = this.StoreSetting.UseDefaultNETBinaryFormater ? ObjectContainer.GetBinaryConverter<TValue>() : ObjectContainer.GetConverter<TValue>(this.SettingColumns);
             }
 
             this.primaryIndex = new Btree.BtreeIndex<TKey>(this.StoreSetting.PrimaryKey, true, this.StoreSetting.PrimaryKeyLen, Helper.IndexHelper.GetIndexFileName(this.ObjectFolder, this.StoreSetting.PrimaryKey), this.StoreSetting.MaxCacheLevel);
@@ -197,19 +190,18 @@ namespace Kooboo.IndexedDB
             }
         }
 
-        public IColumn<TValue> GetColumn(string ColumnName)
+        public IColumn<TValue> GetColumn(string columnName)
         {
-            var koobooconverter = this.ValueConverter as KoobooSimpleConverter<TValue>;
-            if (koobooconverter != null)
+            if (this.ValueConverter is KoobooSimpleConverter<TValue> koobooconverter)
             {
-                return koobooconverter.GetColumn(ColumnName);
+                return koobooconverter.GetColumn(columnName);
             }
             return null;
         }
 
-        public bool CheckSameSetting(ObjectStoreParameters ParametersToCheck)
+        public bool CheckSameSetting(ObjectStoreParameters parametersToCheck)
         {
-            var parasetting = Helper.SettingHelper.GetSetting<TValue>(ParametersToCheck);
+            var parasetting = Helper.SettingHelper.GetSetting<TValue>(parametersToCheck);
             return Helper.SettingHelper.IsSameSetting(this.StoreSetting, parasetting);
         }
 
@@ -259,15 +251,15 @@ namespace Kooboo.IndexedDB
             }
         }
 
-        public void CreateIndex(Expression<Func<TValue, object>> FieldNameExpression, bool unique = false)
+        public void CreateIndex(Expression<Func<TValue, object>> fieldNameExpression, bool unique = false)
         {
-            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(FieldNameExpression);
+            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(fieldNameExpression);
             CreateIndex(fieldname, unique);
         }
 
-        public void RemoveIndex(Expression<Func<TValue, object>> FieldNameExpression)
+        public void RemoveIndex(Expression<Func<TValue, object>> fieldNameExpression)
         {
-            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(FieldNameExpression);
+            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(fieldNameExpression);
 
             var index = this.Indexes.getIndex(fieldname);
             if (index != null)
@@ -305,21 +297,21 @@ namespace Kooboo.IndexedDB
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        /// <param name="EnableLog">set to false to disable the log per records</param>
+        /// <param name="enableLog">set to false to disable the log per records</param>
         /// <returns></returns>
-        public bool put(TKey key, TValue value, bool EnableLog = true)
+        public bool put(TKey key, TValue value, bool enableLog = true)
         {
             lock (_Locker)
             {
                 long logid = 0;
 
-                if (this.StoreSetting.EnableLog && EnableLog)
+                if (this.StoreSetting.EnableLog && enableLog)
                 {
                     logid = this.OwnerDatabase.Log.GetNewLogId(this.OwnerDatabase.Name);
 
-                    if (this.StoreSetting.EnableVersion && this.SetVersionNr != null)
+                    if (this.StoreSetting.EnableVersion)
                     {
-                        this.SetVersionNr(value, logid);
+                        _setVersionNr?.Invoke(value, logid);
                     }
                 }
 
@@ -340,7 +332,7 @@ namespace Kooboo.IndexedDB
                     if (updateindex)
                     {
                         // if all ok, write to the log.
-                        if (this.StoreSetting.EnableLog && EnableLog)
+                        if (this.StoreSetting.EnableLog && enableLog)
                         {
                             var log = new LogEntry() { Id = logid, EditType = EditType.Add, OldBlockPosition = 0, NewBlockPosition = contentposition, UserId = this.CurrentUserId, StoreName = this.Name, UpdateTime = DateTime.UtcNow, KeyBytes = this.KeyConverter.ToByte(key) };
                             this.OwnerDatabase.Log.Add(log);
@@ -384,16 +376,16 @@ namespace Kooboo.IndexedDB
         /// </summary>
         /// <typeparam name="TColumnType"></typeparam>
         /// <param name="key"></param>
-        /// <param name="ColumnName"></param>
+        /// <param name="columnName"></param>
         /// <param name="value"></param>
-        private void UpdateColumn<TColumnType>(TKey key, string ColumnName, TColumnType value)
+        private void UpdateColumn<TColumnType>(TKey key, string columnName, TColumnType value)
         {
-            if (ColumnName == null)
+            if (columnName == null)
             {
                 throw new Exception("column name is required");
             }
 
-            var col = this.GetColumn(ColumnName);
+            var col = this.GetColumn(columnName);
             if (col == null || col.DataType != typeof(TColumnType))
             {
                 throw new Exception("Column name not found or data type not match");
@@ -480,26 +472,26 @@ namespace Kooboo.IndexedDB
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        /// <param name="Enablelog">set to false to disable the log per records</param>
+        /// <param name="enablelog">set to false to disable the log per records</param>
         /// <returns></returns>
-        public bool add(TKey key, TValue value, bool Enablelog = true)
+        public bool add(TKey key, TValue value, bool enablelog = true)
         {
-            return put(key, value, Enablelog);
+            return put(key, value, enablelog);
         }
 
-        public bool add(TValue value, bool Enablelog = true)
+        public bool add(TValue value, bool enablelog = true)
         {
             TKey key = GetKeyValue(value);
 
-            return put(key, value, Enablelog);
+            return put(key, value, enablelog);
         }
 
         /// <summary>
         /// delete a record
         /// </summary>
         /// <param name="key"></param>
-        /// <param name="EnableLog">set to false to disable the log per records</param>
-        public void delete(TKey key, bool EnableLog = true)
+        /// <param name="enableLog">set to false to disable the log per records</param>
+        public void delete(TKey key, bool enableLog = true)
         {
             lock (_Locker)
             {
@@ -513,7 +505,7 @@ namespace Kooboo.IndexedDB
                 bool delok = true;
                 foreach (Int64 item in blocklist)
                 {
-                    /// continue with the rest of indexes.
+                    // continue with the rest of indexes.
                     TValue recordvalue = this.getValue(item);
 
                     delok = this.Indexes.Del(recordvalue, item);
@@ -528,8 +520,8 @@ namespace Kooboo.IndexedDB
                     }
                     else
                     {
-                        /// del ok, we need to insert the log.
-                        if (this.StoreSetting.EnableLog && EnableLog)
+                        // del ok, we need to insert the log.
+                        if (this.StoreSetting.EnableLog && enableLog)
                         {
                             this.OwnerDatabase.Log.Add(new LogEntry() { EditType = EditType.Delete, OldBlockPosition = item, NewBlockPosition = item, UserId = this.CurrentUserId, StoreName = this.Name, UpdateTime = DateTime.UtcNow, KeyBytes = this.KeyConverter.ToByte(key) });
                         }
@@ -543,8 +535,8 @@ namespace Kooboo.IndexedDB
         /// </summary>
         /// <param name="key"></param>
         /// <param name="newvalue"></param>
-        /// <param name="EnableLog">set to false to disable the log per records</param>
-        public void update(TKey key, TValue newvalue, bool EnableLog = true)
+        /// <param name="enableLog">set to false to disable the log per records</param>
+        public void update(TKey key, TValue newvalue, bool enableLog = true)
         {
             lock (_Locker)
             {
@@ -559,20 +551,20 @@ namespace Kooboo.IndexedDB
 
                 if (EqualityComparer<TValue>.Default.Equals(oldrecord, default(TValue)))
                 {
-                    /// if  this does not exists.
+                    // if  this does not exists.
                     this.put(key, newvalue);
                     return;
                 }
 
                 long logid = 0;
 
-                if (this.StoreSetting.EnableLog && EnableLog)
+                if (this.StoreSetting.EnableLog && enableLog)
                 {
                     logid = this.OwnerDatabase.Log.GetNewLogId(this.OwnerDatabase.Name);
 
-                    if (this.StoreSetting.EnableVersion && this.SetVersionNr != null)
+                    if (this.StoreSetting.EnableVersion)
                     {
-                        this.SetVersionNr(newvalue, logid);
+                        _setVersionNr?.Invoke(newvalue, logid);
                     }
                 }
 
@@ -584,7 +576,7 @@ namespace Kooboo.IndexedDB
                 //now update the other indexes.
                 this.Indexes.Update(oldrecord, newvalue, oldblockposition, newblockposition);
 
-                if (this.StoreSetting.EnableLog && EnableLog)
+                if (this.StoreSetting.EnableLog && enableLog)
                 {
                     LogEntry log = new LogEntry() { Id = logid, EditType = EditType.Update, OldBlockPosition = oldblockposition, NewBlockPosition = newblockposition, UserId = this.CurrentUserId, StoreName = this.Name, UpdateTime = DateTime.UtcNow, KeyBytes = this.KeyConverter.ToByte(key) };
 
@@ -602,7 +594,7 @@ namespace Kooboo.IndexedDB
             }
         }
 
-        public bool UpdateOnly(TKey key, TValue newvalue, bool EnableLog = true)
+        public bool UpdateOnly(TKey key, TValue newvalue, bool enableLog = true)
         {
             lock (_Locker)
             {
@@ -622,13 +614,13 @@ namespace Kooboo.IndexedDB
 
                 long logid = 0;
 
-                if (this.StoreSetting.EnableLog && EnableLog)
+                if (this.StoreSetting.EnableLog && enableLog)
                 {
                     logid = this.OwnerDatabase.Log.GetNewLogId(this.OwnerDatabase.Name);
 
-                    if (this.StoreSetting.EnableVersion && this.SetVersionNr != null)
+                    if (this.StoreSetting.EnableVersion)
                     {
-                        this.SetVersionNr(newvalue, logid);
+                        _setVersionNr?.Invoke(newvalue, logid);
                     }
                 }
 
@@ -640,7 +632,7 @@ namespace Kooboo.IndexedDB
                 //now update the other indexes.
                 this.Indexes.Update(oldrecord, newvalue, oldblockposition, newblockposition);
 
-                if (this.StoreSetting.EnableLog && EnableLog)
+                if (this.StoreSetting.EnableLog && enableLog)
                 {
                     LogEntry log = new LogEntry() { Id = logid, EditType = EditType.Update, OldBlockPosition = oldblockposition, NewBlockPosition = newblockposition, UserId = this.CurrentUserId, StoreName = this.Name, UpdateTime = DateTime.UtcNow, KeyBytes = this.KeyConverter.ToByte(key) };
 
@@ -727,7 +719,7 @@ namespace Kooboo.IndexedDB
             {
                 byte[] fixedlengthkey = this.appendToKeyLength(item.KeyBytes);
 
-                if (!finished.Contains(fixedlengthkey, this.GenericBytesComparer))
+                if (!finished.Contains(fixedlengthkey, this._genericBytesComparer))
                 {
                     RollBack(item);
                     finished.Add(fixedlengthkey);
@@ -738,19 +730,19 @@ namespace Kooboo.IndexedDB
         /// <summary>
         /// roll back the object store to specified version number.
         /// </summary>
-        /// <param name="LastVersionId"></param>
-        /// <param name="SelfIncluded"></param>
-        public void RollBack(Int64 LastVersionId, bool SelfIncluded = true)
+        /// <param name="lastVersionId"></param>
+        /// <param name="selfIncluded"></param>
+        public void RollBack(Int64 lastVersionId, bool selfIncluded = true)
         {
             List<LogEntry> logs;
             int namehash = this.Name.GetHashCode32();
-            if (SelfIncluded)
+            if (selfIncluded)
             {
-                logs = this.OwnerDatabase.Log.Store.Where(o => o.Id >= LastVersionId && o.StoreNameHash == namehash).Take(99999);
+                logs = this.OwnerDatabase.Log.Store.Where(o => o.Id >= lastVersionId && o.StoreNameHash == namehash).Take(99999);
             }
             else
             {
-                logs = this.OwnerDatabase.Log.Store.Where(o => o.Id > LastVersionId && o.StoreNameHash == namehash).Take(99999);
+                logs = this.OwnerDatabase.Log.Store.Where(o => o.Id > lastVersionId && o.StoreNameHash == namehash).Take(99999);
             }
             if (logs.Count > 0)
             {
@@ -761,20 +753,20 @@ namespace Kooboo.IndexedDB
         /// <summary>
         /// Roll back the object store to special time tick.
         /// </summary>
-        /// <param name="TimeTick"></param>
-        /// <param name="SelfIncluded"></param>
-        public void RollBackTimeTick(Int64 TimeTick, bool SelfIncluded = true)
+        /// <param name="timeTick"></param>
+        /// <param name="selfIncluded"></param>
+        public void RollBackTimeTick(Int64 timeTick, bool selfIncluded = true)
         {
             List<LogEntry> logs;
             int namehash = this.Name.GetHashCode32();
 
-            if (SelfIncluded)
+            if (selfIncluded)
             {
-                logs = this.OwnerDatabase.Log.Store.Where(o => o.TimeTick >= TimeTick && o.StoreNameHash == namehash).Take(99999);
+                logs = this.OwnerDatabase.Log.Store.Where(o => o.TimeTick >= timeTick && o.StoreNameHash == namehash).Take(99999);
             }
             else
             {
-                logs = this.OwnerDatabase.Log.Store.Where(o => o.TimeTick > TimeTick && o.StoreNameHash == namehash).Take(99999);
+                logs = this.OwnerDatabase.Log.Store.Where(o => o.TimeTick > timeTick && o.StoreNameHash == namehash).Take(99999);
             }
 
             if (logs.Count > 0)
@@ -786,44 +778,44 @@ namespace Kooboo.IndexedDB
         /// <summary>
         /// Checkout a version to another object store.
         /// </summary>
-        /// <param name="TimeTick"></param>
-        /// <param name="DestinationStore"></param>
-        /// <param name="SelfIncluded"></param>
-        public void CheckOutTimeTick(Int64 TimeTick, ObjectStore<TKey, TValue> DestinationStore, bool SelfIncluded = true)
+        /// <param name="timeTick"></param>
+        /// <param name="destinationStore"></param>
+        /// <param name="selfIncluded"></param>
+        public void CheckOutTimeTick(Int64 timeTick, ObjectStore<TKey, TValue> destinationStore, bool selfIncluded = true)
         {
             List<LogEntry> logs;
             int namehash = this.Name.GetHashCode32();
 
-            if (SelfIncluded)
+            if (selfIncluded)
             {
-                logs = this.OwnerDatabase.Log.Store.Where(o => o.TimeTick <= TimeTick && o.StoreNameHash == namehash).Take(99999);
+                logs = this.OwnerDatabase.Log.Store.Where(o => o.TimeTick <= timeTick && o.StoreNameHash == namehash).Take(99999);
             }
             else
             {
-                logs = this.OwnerDatabase.Log.Store.Where(o => o.TimeTick < TimeTick && o.StoreNameHash == namehash).Take(99999);
+                logs = this.OwnerDatabase.Log.Store.Where(o => o.TimeTick < timeTick && o.StoreNameHash == namehash).Take(99999);
             }
 
             if (logs.Count > 0)
             {
-                CheckOut(logs, DestinationStore);
+                CheckOut(logs, destinationStore);
             }
         }
 
-        public void CheckOut(Int64 VersionId, ObjectStore<TKey, TValue> DestinationStore, bool SelfIncluded = true)
+        public void CheckOut(Int64 versionId, ObjectStore<TKey, TValue> destinationStore, bool selfIncluded = true)
         {
             List<LogEntry> logs;
             int namehash = this.Name.GetHashCode32();
-            if (SelfIncluded)
+            if (selfIncluded)
             {
-                logs = this.OwnerDatabase.Log.Store.Where(o => o.Id <= VersionId && o.StoreNameHash == namehash).Take(99999);
+                logs = this.OwnerDatabase.Log.Store.Where(o => o.Id <= versionId && o.StoreNameHash == namehash).Take(99999);
             }
             else
             {
-                logs = this.OwnerDatabase.Log.Store.Where(o => o.Id < VersionId && o.StoreNameHash == namehash).Take(99999);
+                logs = this.OwnerDatabase.Log.Store.Where(o => o.Id < versionId && o.StoreNameHash == namehash).Take(99999);
             }
             if (logs.Count > 0)
             {
-                CheckOut(logs, DestinationStore);
+                CheckOut(logs, destinationStore);
             }
         }
 
@@ -831,8 +823,8 @@ namespace Kooboo.IndexedDB
         /// Check out all the log entries to new object store.
         /// </summary>
         /// <param name="logs"></param>
-        /// <param name="DestinationStore"></param>
-        public void CheckOut(List<LogEntry> logs, ObjectStore<TKey, TValue> DestinationStore)
+        /// <param name="destinationStore"></param>
+        public void CheckOut(List<LogEntry> logs, ObjectStore<TKey, TValue> destinationStore)
         {
             HashSet<byte[]> KeysDone = new HashSet<byte[]>();
 
@@ -840,7 +832,7 @@ namespace Kooboo.IndexedDB
             {
                 byte[] fixedlengthkey = this.appendToKeyLength(item.KeyBytes);
 
-                if (KeysDone.Contains(fixedlengthkey, this.GenericBytesComparer))
+                if (KeysDone.Contains(fixedlengthkey, this._genericBytesComparer))
                 {
                     continue;
                 }
@@ -848,7 +840,7 @@ namespace Kooboo.IndexedDB
                 if (item.EditType == EditType.Add || item.EditType == EditType.Update)
                 {
                     TValue value = this.getValue(item.NewBlockPosition);
-                    DestinationStore.add(this.KeyConverter.FromByte(item.KeyBytes), value);
+                    destinationStore.add(this.KeyConverter.FromByte(item.KeyBytes), value);
                     KeysDone.Add(fixedlengthkey);
                 }
                 else
@@ -995,6 +987,7 @@ namespace Kooboo.IndexedDB
         /// <summary>
         /// get the collection of all items, sorted by the provided index.
         /// </summary>
+        /// <param name="indexFieldOrPropertyName"></param>
         /// <param name="ascending"></param>
         /// <returns></returns>
         public ValueCollection<TKey, TValue> ItemCollection(string indexFieldOrPropertyName, bool ascending)
@@ -1034,18 +1027,11 @@ namespace Kooboo.IndexedDB
             }
         }
 
-        public byte[] GetColumnBytes(TKey key, string FieldName)
+        public byte[] GetColumnBytes(TKey key, string fieldName)
         {
-            var column = GetColumn(FieldName);
+            var column = GetColumn(fieldName);
 
-            if (column == null)
-            {
-                return null;
-            }
-            else
-            {
-                return getColumnsBytes(key, column.relativePosition, column.Length);
-            }
+            return column == null ? null : getColumnsBytes(key, column.relativePosition, column.Length);
         }
 
         public void Close()
@@ -1058,15 +1044,9 @@ namespace Kooboo.IndexedDB
                     this._blockfile = null;
                 }
 
-                if (this.primaryIndex != null)
-                {
-                    this.primaryIndex.Close();
-                }
+                primaryIndex?.Close();
 
-                if (this.Indexes != null)
-                {
-                    this.Indexes.CloseAll();
-                }
+                Indexes?.CloseAll();
             }
         }
 
@@ -1074,20 +1054,11 @@ namespace Kooboo.IndexedDB
         {
             lock (_Locker)
             {
-                if (this._blockfile != null)
-                {
-                    this._blockfile.Flush();
-                }
+                _blockfile?.Flush();
 
-                if (this.primaryIndex != null)
-                {
-                    this.primaryIndex.Flush();
-                }
+                primaryIndex?.Flush();
 
-                if (this.Indexes != null)
-                {
-                    this.Indexes.FlushAll();
-                }
+                Indexes?.FlushAll();
             }
         }
 
@@ -1109,7 +1080,7 @@ namespace Kooboo.IndexedDB
 
         private byte[] appendToKeyLength(byte[] input)
         {
-            return Helper.KeyHelper.AppendToKeyLength(input, this.IsStringKey, this.StoreSetting.PrimaryKeyLen);
+            return Helper.KeyHelper.AppendToKeyLength(input, this._isStringKey, this.StoreSetting.PrimaryKeyLen);
         }
 
         private void TrySetVersionFunction()
@@ -1118,7 +1089,7 @@ namespace Kooboo.IndexedDB
 
             if (VersionFieldType != null && VersionFieldType == typeof(Int64))
             {
-                this.SetVersionNr = Helper.ObjectHelper.GetSetValue<TValue, Int64>(GlobalSettings.VersionFieldName);
+                this._setVersionNr = Helper.ObjectHelper.GetSetValue<TValue, Int64>(GlobalSettings.VersionFieldName);
             }
         }
 
@@ -1165,25 +1136,25 @@ namespace Kooboo.IndexedDB
             return null;
         }
 
-        public void CheckOut(long VersionId, IObjectStore DestinationStore, bool SelfIncluded = true)
+        public void CheckOut(long versionId, IObjectStore destinationStore, bool selfIncluded = true)
         {
             List<LogEntry> logs;
             int namehash = this.Name.GetHashCode32();
-            if (SelfIncluded)
+            if (selfIncluded)
             {
-                logs = this.OwnerDatabase.Log.Store.Where(o => o.Id <= VersionId && o.StoreNameHash == namehash).Take(99999);
+                logs = this.OwnerDatabase.Log.Store.Where(o => o.Id <= versionId && o.StoreNameHash == namehash).Take(99999);
             }
             else
             {
-                logs = this.OwnerDatabase.Log.Store.Where(o => o.Id < VersionId && o.StoreNameHash == namehash).Take(99999);
+                logs = this.OwnerDatabase.Log.Store.Where(o => o.Id < versionId && o.StoreNameHash == namehash).Take(99999);
             }
             if (logs.Count > 0)
             {
-                CheckOut(logs, DestinationStore);
+                CheckOut(logs, destinationStore);
             }
         }
 
-        public void CheckOut(List<LogEntry> logs, IObjectStore DestinationStore)
+        public void CheckOut(List<LogEntry> logs, IObjectStore destinationStore)
         {
             HashSet<TKey> tkeysdone = new HashSet<TKey>();
 
@@ -1203,7 +1174,7 @@ namespace Kooboo.IndexedDB
                 if (item.EditType == EditType.Add || item.EditType == EditType.Update)
                 {
                     TValue value = this.getValue(item.NewBlockPosition);
-                    DestinationStore.add(key, value);
+                    destinationStore.add(key, value);
                 }
             }
         }

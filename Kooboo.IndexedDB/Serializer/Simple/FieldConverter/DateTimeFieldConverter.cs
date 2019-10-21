@@ -10,11 +10,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<T, DateTime> getValue;
         private Action<T, DateTime> setValue;
 
-        public DateTimeFieldConverter(string FieldName)
+        public DateTimeFieldConverter(string fieldName)
         {
-            this.getValue = ObjectHelper.GetGetValue<T, DateTime>(FieldName);
-            this.setValue = ObjectHelper.GetSetValue<T, DateTime>(FieldName);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetValue<T, DateTime>(fieldName);
+            this.setValue = ObjectHelper.GetSetValue<T, DateTime>(fieldName);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -33,9 +33,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytevalue);
         }
 
-        public byte[] ToBytes(T Value)
+        public byte[] ToBytes(T value)
         {
-            DateTime fieldvalue = this.getValue(Value);
+            DateTime fieldvalue = this.getValue(value);
             return ValueConverter.ToBytes(fieldvalue);
         }
     }
@@ -45,11 +45,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<object, DateTime> getValue;
         private Action<object, DateTime> setValue;
 
-        public DateTimeFieldConverter(string FieldName, Type objectType)
+        public DateTimeFieldConverter(string fieldName, Type objectType)
         {
-            this.getValue = ObjectHelper.GetGetFieldValue<DateTime>(FieldName, objectType);
-            this.setValue = ObjectHelper.GetSetFieldValue<DateTime>(FieldName, objectType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetFieldValue<DateTime>(fieldName, objectType);
+            this.setValue = ObjectHelper.GetSetFieldValue<DateTime>(fieldName, objectType);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -68,9 +68,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytevalue);
         }
 
-        public byte[] ToBytes(object Value)
+        public byte[] ToBytes(object value)
         {
-            DateTime fieldvalue = this.getValue(Value);
+            DateTime fieldvalue = this.getValue(value);
             return ValueConverter.ToBytes(fieldvalue);
         }
     }

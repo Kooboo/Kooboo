@@ -18,9 +18,9 @@ namespace Kooboo.Sites.Repository
 {
     public class SearchIndexRepository
     {
-        private static object _locker = new object();
+        private object _locker = new object();
 
-        private static object _loglocker = new object();
+        private object _loglocker = new object();
 
         private List<byte> _IndexType;
         private List<byte> IndexType

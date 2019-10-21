@@ -13,18 +13,20 @@ namespace Kooboo.IndexedDB.Helper
     {
         public static ObjectStoreSetting GetOldSetting<TValue, TKey>(ObjectStoreParameters para)
         {
-            var newsettings = new ObjectStoreSetting();
-            newsettings.headerRemark = "store setting in binary form, do not modify";
-            newsettings.primaryKeyType = typeof(TKey);
-            newsettings.MaxCacheLevel = para.MaxCacheLevel;
+            var newsettings = new ObjectStoreSetting
+            {
+                headerRemark = "store setting in binary form, do not modify",
+                primaryKeyType = typeof(TKey),
+                MaxCacheLevel = para.MaxCacheLevel,
+                primaryKeyLength = Helper.KeyHelper.GetKeyLen(typeof(TKey), para.PrimaryKeyLength),
+                ValueType = typeof(TValue),
+                UseDefaultNETBinaryFormater = para.UseDefaultNETBinaryFormater,
+                EnableLog = para.EnableLog,
+                EnableVersion = para.EnableVersion,
+                primaryKeyFieldName = TryGuessPrimaryKey<TValue, TKey>(para.PrimaryKey)
+            };
 
-            newsettings.primaryKeyLength = Helper.KeyHelper.GetKeyLen(typeof(TKey), para.PrimaryKeyLength);
-            newsettings.ValueType = typeof(TValue);
-            newsettings.UseDefaultNETBinaryFormater = para.UseDefaultNETBinaryFormater;
-            newsettings.EnableLog = para.EnableLog;
-            newsettings.EnableVersion = para.EnableVersion;
 
-            newsettings.primaryKeyFieldName = TryGuessPrimaryKey<TValue, TKey>(para.PrimaryKey);
 
             newsettings.IndexList = Helper.IndexHelper.GenerateIndexsFromParameters(newsettings.ValueType, para);
 
@@ -66,8 +68,7 @@ namespace Kooboo.IndexedDB.Helper
             {
                 foreach (var item in parameters.ColumnList)
                 {
-                    ColumnSetting column = new ColumnSetting();
-                    column.FieldName = item.Key;
+                    ColumnSetting column = new ColumnSetting {FieldName = item.Key};
 
                     FieldInfo fieldinfo = valuetype.GetField(item.Key);
 

@@ -10,11 +10,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<T, byte[]> getValue;
         private Action<T, byte[]> setValue;
 
-        public ByteArrayFieldConverter(string FieldName)
+        public ByteArrayFieldConverter(string fieldName)
         {
-            this.getValue = ObjectHelper.GetGetValue<T, byte[]>(FieldName);
-            this.setValue = ObjectHelper.GetSetValue<T, byte[]>(FieldName);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetValue<T, byte[]>(fieldName);
+            this.setValue = ObjectHelper.GetSetValue<T, byte[]>(fieldName);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -35,9 +35,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytes);
         }
 
-        public byte[] ToBytes(T Value)
+        public byte[] ToBytes(T value)
         {
-            return this.getValue(Value);
+            return this.getValue(value);
         }
     }
 
@@ -46,11 +46,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<object, byte[]> getValue;
         private Action<object, byte[]> setValue;
 
-        public ByteArrayFieldConverter(string FieldName, Type ObjectType)
+        public ByteArrayFieldConverter(string fieldName, Type objectType)
         {
-            this.getValue = ObjectHelper.GetGetFieldValue<byte[]>(FieldName, ObjectType);
-            this.setValue = ObjectHelper.GetSetFieldValue<byte[]>(FieldName, ObjectType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetFieldValue<byte[]>(fieldName, objectType);
+            this.setValue = ObjectHelper.GetSetFieldValue<byte[]>(fieldName, objectType);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -71,9 +71,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytes);
         }
 
-        public byte[] ToBytes(object Value)
+        public byte[] ToBytes(object value)
         {
-            return this.getValue(Value);
+            return this.getValue(value);
         }
     }
 }

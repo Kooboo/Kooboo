@@ -9,50 +9,50 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 {
     public class CollectionConverter
     {
-        private Type DataType;
-        private Type CollectionType;
+        private Type _dataType;
+        private Type _collectionType;
 
-        private int FieldLength;
+        private int _fieldLength;
 
-        private Func<object, byte[]> GetObjectBytes;
-        private Func<byte[], object> GetObjectValue;
+        private Func<object, byte[]> _getObjectBytes;
+        private Func<byte[], object> _getObjectValue;
 
-        public CollectionConverter(Type CollectionType)
+        public CollectionConverter(Type collectionType)
         {
-            this.CollectionType = CollectionType;
-            this.DataType = ObjectHelper.GetEnumberableType(CollectionType);
+            this._collectionType = collectionType;
+            this._dataType = ObjectHelper.GetEnumberableType(collectionType);
 
-            this.FieldLength = ConverterHelper.GetTypeLength(this.DataType);
+            this._fieldLength = ConverterHelper.GetTypeLength(this._dataType);
 
-            this.GetObjectBytes = ConverterHelper.GetValueToBytes(this.DataType);
-            this.GetObjectValue = ConverterHelper.GetBytesToValue(this.DataType);
+            this._getObjectBytes = ConverterHelper.GetValueToBytes(this._dataType);
+            this._getObjectValue = ConverterHelper.GetBytesToValue(this._dataType);
 
-            if (this.GetObjectBytes == null || this.GetObjectValue == null)
+            if (this._getObjectBytes == null || this._getObjectValue == null)
             {
-                throw new Exception(this.DataType.Name + " is not yet supported.");
+                throw new Exception(this._dataType.Name + " is not yet supported.");
             }
         }
 
         public object FromBytes(byte[] bytes)
         {
-            var GenericHashSet = typeof(CollectionWrapper<>).MakeGenericType(DataType);
+            var genericHashSet = typeof(CollectionWrapper<>).MakeGenericType(_dataType);
 
-            var OriginalInstance = Activator.CreateInstance(this.CollectionType);
+            var originalInstance = Activator.CreateInstance(this._collectionType);
 
-            var list = Activator.CreateInstance(GenericHashSet, OriginalInstance) as System.Collections.IList;
+            var list = Activator.CreateInstance(genericHashSet, originalInstance) as System.Collections.IList;
 
             int startposition = 0;
             int totallength = bytes.Length;
 
             while (true)
             {
-                if (this.FieldLength > 0)
+                if (this._fieldLength > 0)
                 {
-                    byte[] FieldValueBytes = new byte[this.FieldLength];
-                    System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, this.FieldLength);
-                    startposition += this.FieldLength;
+                    byte[] fieldValueBytes = new byte[this._fieldLength];
+                    System.Buffer.BlockCopy(bytes, startposition, fieldValueBytes, 0, this._fieldLength);
+                    startposition += this._fieldLength;
 
-                    var objectvalue = this.GetObjectValue(FieldValueBytes);
+                    var objectvalue = this._getObjectValue(fieldValueBytes);
 
                     list.Add(objectvalue);
                 }
@@ -63,10 +63,10 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
                     if (len > 0)
                     {
-                        byte[] FieldValueBytes = new byte[len];
-                        System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, len);
+                        byte[] fieldValueBytes = new byte[len];
+                        System.Buffer.BlockCopy(bytes, startposition, fieldValueBytes, 0, len);
                         startposition += len;
-                        var objectvalue = this.GetObjectValue(FieldValueBytes);
+                        var objectvalue = this._getObjectValue(fieldValueBytes);
                         list.Add(objectvalue);
                     }
                     else
@@ -79,7 +79,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 { break; }
             }
 
-            return OriginalInstance;
+            return originalInstance;
         }
 
         public byte[] ToBytes(object value)
@@ -95,12 +95,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
             foreach (var item in (IEnumerable)value)
             {
-                var result = this.GetObjectBytes(item);
+                var result = this._getObjectBytes(item);
 
-                if (this.FieldLength > 0)
+                if (this._fieldLength > 0)
                 {
                     results.Add(result);
-                    totallen += this.FieldLength;
+                    totallen += this._fieldLength;
                 }
                 else
                 {
@@ -118,17 +118,17 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 }
             }
 
-            byte[] BackValue = new byte[totallen];
+            byte[] backValue = new byte[totallen];
             int currentposition = 0;
 
             foreach (var item in results)
             {
                 int len = item.Length;
-                System.Buffer.BlockCopy(item, 0, BackValue, currentposition, len);
+                System.Buffer.BlockCopy(item, 0, backValue, currentposition, len);
                 currentposition += len;
             }
 
-            return BackValue;
+            return backValue;
         }
     }
 }

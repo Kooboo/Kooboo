@@ -14,12 +14,14 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 if (_singleoperator == null)
                 {
-                    _singleoperator = new HashSet<char>();
-                    _singleoperator.Add('>');
-                    _singleoperator.Add('<');
-                    _singleoperator.Add('=');
-                    _singleoperator.Add('!');
-                    _singleoperator.Add('&');
+                    _singleoperator = new HashSet<char>
+                    {
+                        '>',
+                        '<',
+                        '=',
+                        '!',
+                        '&'
+                    };
                 }
                 return _singleoperator;
             }
@@ -31,16 +33,14 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             get
             {
-                if (_doubleoperator == null)
+                return _doubleoperator ?? (_doubleoperator = new HashSet<string>
                 {
-                    _doubleoperator = new HashSet<string>();
-                    _doubleoperator.Add(">=");
-                    _doubleoperator.Add("<=");
-                    _doubleoperator.Add("==");
-                    _doubleoperator.Add("!=");
-                    _doubleoperator.Add("&&");
-                }
-                return _doubleoperator;
+                    ">=",
+                    "<=",
+                    "==",
+                    "!=",
+                    "&&"
+                });
             }
         }
 

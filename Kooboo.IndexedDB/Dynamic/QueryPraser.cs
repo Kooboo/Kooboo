@@ -37,14 +37,7 @@ namespace Kooboo.IndexedDB.Dynamic
             if (!string.IsNullOrEmpty(query.OrderByFieldName) && !executionplan.RequireOrderBy)
             {
                 Range<byte[]> range = getRange(query.OrderByFieldName, query.items);
-                if (range != null)
-                {
-                    executionplan.startCollection = startindex.GetCollection(range.lower, range.upper, range.lowerOpen, range.upperOpen, query.Ascending);
-                }
-                else
-                {
-                    executionplan.startCollection = startindex.AllItems(query.Ascending);
-                }
+                executionplan.startCollection = range != null ? startindex.GetCollection(range.lower, range.upper, range.lowerOpen, range.upperOpen, query.Ascending) : startindex.AllItems(query.Ascending);
             }
             else
             {
@@ -71,12 +64,15 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 if (column != null)
                 {
-                    ColumnScan colplan = new ColumnScan();
+                    ColumnScan colplan = new ColumnScan
+                    {
+                        ColumnName = column.FieldName,
+                        relativeStartPosition = column.RelativePosition,
+                        length = column.Length,
+                        Evaluator = ColumnEvaluator.GetEvaluator(column.ClrType, item.Compare, item.Value,
+                            column.Length)
+                    };
 
-                    colplan.ColumnName = column.FieldName;
-                    colplan.relativeStartPosition = column.RelativePosition;
-                    colplan.length = column.Length;
-                    colplan.Evaluator = ColumnEvaluator.GetEvaluator(column.ClrType, item.Compare, item.Value, column.Length);
 
                     executionplan.scanColumns.Add(colplan);
                 }
@@ -93,12 +89,14 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 if (column != null)
                 {
-                    ColumnScan colplan = new ColumnScan();
+                    ColumnScan colplan = new ColumnScan
+                    {
+                        ColumnName = column.FieldName,
+                        relativeStartPosition = column.RelativePosition,
+                        length = column.Length,
+                        Evaluator = ColumnInEvaluator.GetInEvaluator(column.ClrType, item.Value, column.Length)
+                    };
 
-                    colplan.ColumnName = column.FieldName;
-                    colplan.relativeStartPosition = column.RelativePosition;
-                    colplan.length = column.Length;
-                    colplan.Evaluator = ColumnInEvaluator.GetInEvaluator(column.ClrType, item.Value, column.Length);
 
                     executionplan.scanColumns.Add(colplan);
                 }
@@ -108,7 +106,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 }
             }
 
-            /// for the methods calls.
+            // for the methods calls.
             foreach (var item in query.calls)
             {
                 MemberExpression memberaccess = null;
@@ -130,13 +128,16 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 if (column != null)
                 {
-                    ColumnScan colplan = new ColumnScan();
+                    ColumnScan colplan = new ColumnScan
+                    {
+                        ColumnName = column.FieldName,
+                        relativeStartPosition = column.RelativePosition,
+                        length = column.Length,
+                        Evaluator = ColumnMethodCallEvaluator.GetMethodEvaluator(column.ClrType, column.Length,
+                            item)
+                    };
 
-                    colplan.ColumnName = column.FieldName;
-                    colplan.relativeStartPosition = column.RelativePosition;
-                    colplan.length = column.Length;
 
-                    colplan.Evaluator = ColumnMethodCallEvaluator.GetMethodEvaluator(column.ClrType, column.Length, item);
 
                     executionplan.scanColumns.Add(colplan);
                 }
@@ -153,16 +154,16 @@ namespace Kooboo.IndexedDB.Dynamic
         /// get the range query collection of index fields.for looping.  this can be OrderBy fields or fields that has more sparnse. this only works for index fields.
         /// after get, the related field or property item will be removed from the item collection.
         /// </summary>
-        /// <param name="FieldOrPropertyName"></param>
+        /// <param name="fieldOrPropertyName"></param>
         /// <returns></returns>
-        private static Range<byte[]> getRange(string FieldOrPropertyName, List<FilterItem> items)
+        private static Range<byte[]> getRange(string fieldOrPropertyName, List<FilterItem> items)
         {
-            if (string.IsNullOrWhiteSpace(FieldOrPropertyName))
+            if (string.IsNullOrWhiteSpace(fieldOrPropertyName))
             {
                 return null;
             }
 
-            FieldOrPropertyName = FieldOrPropertyName.ToLower();
+            fieldOrPropertyName = fieldOrPropertyName.ToLower();
 
             Range<byte[]> range = new Range<byte[]>();
 
@@ -170,7 +171,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
             for (int i = 0; i < items.Count; i++)
             {
-                if (items[i].FieldOrProperty.ToLower() == FieldOrPropertyName)
+                if (items[i].FieldOrProperty.ToLower() == fieldOrPropertyName)
                 {
                     switch (items[i].Compare)
                     {
@@ -266,18 +267,18 @@ namespace Kooboo.IndexedDB.Dynamic
                     {
                         if (value != null)
                         {
-                            ConditionItem item = new ConditionItem();
-                            item.Field = field;
-                            item.Comparer = GetComparer(compare);
-                            item.Value = value;
+                            ConditionItem item = new ConditionItem
+                            {
+                                Field = field, Comparer = GetComparer(compare), Value = value
+                            };
                             result.Add(item);
                         }
                         else
                         {
-                            ConditionItem item = new ConditionItem();
-                            item.Field = field;
-                            item.Comparer = Comparer.EqualTo;
-                            item.Value = compare;
+                            ConditionItem item = new ConditionItem
+                            {
+                                Field = field, Comparer = Comparer.EqualTo, Value = compare
+                            };
                             result.Add(item);
                         }
 
@@ -307,10 +308,10 @@ namespace Kooboo.IndexedDB.Dynamic
 
                     if (field != null && compare != null && value != null)
                     {
-                        ConditionItem item = new ConditionItem();
-                        item.Field = field;
-                        item.Comparer = GetComparer(compare);
-                        item.Value = value;
+                        ConditionItem item = new ConditionItem
+                        {
+                            Field = field, Comparer = GetComparer(compare), Value = value
+                        };
                         result.Add(item);
 
                         field = null;
@@ -324,10 +325,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
             if (field != null && compare != null)
             {
-                ConditionItem item = new ConditionItem();
-                item.Field = field;
-                item.Comparer = Comparer.EqualTo;
-                item.Value = compare;
+                ConditionItem item = new ConditionItem {Field = field, Comparer = Comparer.EqualTo, Value = compare};
                 result.Add(item);
             }
 

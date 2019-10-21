@@ -29,64 +29,64 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
             List<byte[]> valuebytes = new List<byte[]>();
 
-            int KeyByteLen = BitConverter.ToInt32(bytes, 0);
-            int ValueByteLen = BitConverter.ToInt32(bytes, 4);
-            if (KeyByteLen == 0) { return null; }
+            int keyByteLen = BitConverter.ToInt32(bytes, 0);
+            int valueByteLen = BitConverter.ToInt32(bytes, 4);
+            if (keyByteLen == 0) { return null; }
 
-            byte[] KeyTotalBytes = new byte[KeyByteLen];
-            byte[] ValueTotalBytes = new byte[ValueByteLen];
+            byte[] keyTotalBytes = new byte[keyByteLen];
+            byte[] valueTotalBytes = new byte[valueByteLen];
 
-            System.Buffer.BlockCopy(bytes, 8, KeyTotalBytes, 0, KeyByteLen);
-            System.Buffer.BlockCopy(bytes, 8 + KeyByteLen, ValueTotalBytes, 0, ValueByteLen);
+            System.Buffer.BlockCopy(bytes, 8, keyTotalBytes, 0, keyByteLen);
+            System.Buffer.BlockCopy(bytes, 8 + keyByteLen, valueTotalBytes, 0, valueByteLen);
 
-            int KeyStartPos = 0;
+            int keyStartPos = 0;
 
             while (true)
             {
-                int len = BitConverter.ToInt32(KeyTotalBytes, KeyStartPos);
-                KeyStartPos += 4;
+                int len = BitConverter.ToInt32(keyTotalBytes, keyStartPos);
+                keyStartPos += 4;
 
                 if (len > 0)
                 {
                     byte[] onekey = new byte[len];
-                    System.Buffer.BlockCopy(KeyTotalBytes, KeyStartPos, onekey, 0, len);
-                    KeyStartPos += len;
+                    System.Buffer.BlockCopy(keyTotalBytes, keyStartPos, onekey, 0, len);
+                    keyStartPos += len;
                     keys.Add(System.Text.Encoding.UTF8.GetString(onekey));
                 }
                 else
                 {
                     keys.Add(null);
                 }
-                if (KeyStartPos >= KeyByteLen)
+                if (keyStartPos >= keyByteLen)
                 { break; }
             }
 
-            int ValueStartPos = 0;
+            int valueStartPos = 0;
 
             while (true)
             {
-                int len = BitConverter.ToInt32(ValueTotalBytes, ValueStartPos);
-                ValueStartPos += 4;
+                int len = BitConverter.ToInt32(valueTotalBytes, valueStartPos);
+                valueStartPos += 4;
 
                 if (len > 0)
                 {
-                    byte[] ItemBytes = new byte[len];
-                    System.Buffer.BlockCopy(ValueTotalBytes, ValueStartPos, ItemBytes, 0, len);
-                    ValueStartPos += len;
+                    byte[] itemBytes = new byte[len];
+                    System.Buffer.BlockCopy(valueTotalBytes, valueStartPos, itemBytes, 0, len);
+                    valueStartPos += len;
 
                     // valuebytes.Add(OneValueBytes);
-                    var LenTypeName = BitConverter.ToInt32(ItemBytes, 0);
-                    var LenValueBytes = BitConverter.ToInt32(ItemBytes, 4);
+                    var lenTypeName = BitConverter.ToInt32(itemBytes, 0);
+                    var lenValueBytes = BitConverter.ToInt32(itemBytes, 4);
 
-                    var typenameBytes = new byte[LenTypeName];
-                    System.Buffer.BlockCopy(ItemBytes, 8, typenameBytes, 0, LenTypeName);
-                    var TypeName = System.Text.Encoding.UTF8.GetString(typenameBytes);
+                    var typenameBytes = new byte[lenTypeName];
+                    System.Buffer.BlockCopy(itemBytes, 8, typenameBytes, 0, lenTypeName);
+                    var typeName = System.Text.Encoding.UTF8.GetString(typenameBytes);
 
-                    if (LenValueBytes > 0)
+                    if (lenValueBytes > 0)
                     {
-                        var valueBytes = new byte[LenValueBytes];
-                        System.Buffer.BlockCopy(ItemBytes, 8 + LenTypeName, valueBytes, 0, LenValueBytes);
-                        var value = BytesToValue(TypeName, valueBytes);
+                        var valueBytes = new byte[lenValueBytes];
+                        System.Buffer.BlockCopy(itemBytes, 8 + lenTypeName, valueBytes, 0, lenValueBytes);
+                        var value = BytesToValue(typeName, valueBytes);
                         values.Add(value);
                     }
                     else
@@ -99,11 +99,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                     values.Add(null);
                 }
 
-                if (ValueStartPos >= ValueByteLen)
+                if (valueStartPos >= valueByteLen)
                 { break; }
             }
 
-            Dictionary<string, object> Result = new Dictionary<string, object>();
+            Dictionary<string, object> result = new Dictionary<string, object>();
 
             int count = keys.Count;
 
@@ -112,10 +112,10 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 var key = keys[i];
                 var value = values[i];
 
-                Result[key] = value;
+                result[key] = value;
             }
 
-            return Result;
+            return result;
         }
 
         public byte[] ToBytes(object value)
@@ -146,26 +146,26 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                 keytotallen += 4 + keyresult.Length;
             }
 
-            byte[] KeyBytes = new byte[keytotallen];
+            byte[] keyBytes = new byte[keytotallen];
             int currentposition = 0;
 
             foreach (var item in keyresults)
             {
                 int len = item.Length;
-                System.Buffer.BlockCopy(item, 0, KeyBytes, currentposition, len);
+                System.Buffer.BlockCopy(item, 0, keyBytes, currentposition, len);
                 currentposition += len;
             }
 
-            List<byte[]> ValueResults = new List<byte[]>();
+            List<byte[]> valueResults = new List<byte[]>();
 
-            int ValueTotalLen = 0;
+            int valueTotalLen = 0;
 
             foreach (var item in dict.Values)
             {
                 if (item == null)
                 {
-                    ValueResults.Add(BitConverter.GetBytes(0));
-                    ValueTotalLen += 4;
+                    valueResults.Add(BitConverter.GetBytes(0));
+                    valueTotalLen += 4;
                 }
                 else
                 {
@@ -175,41 +175,41 @@ namespace Kooboo.IndexedDB.Serializer.Simple
                     var typename = type.Name;
                     var typenamebytes = System.Text.Encoding.UTF8.GetBytes(typename);
 
-                    ValueResults.Add(BitConverter.GetBytes(typenamebytes.Length + bytes.Length + 8));
-                    ValueResults.Add(BitConverter.GetBytes(typenamebytes.Length));
-                    ValueResults.Add(BitConverter.GetBytes(bytes.Length));
+                    valueResults.Add(BitConverter.GetBytes(typenamebytes.Length + bytes.Length + 8));
+                    valueResults.Add(BitConverter.GetBytes(typenamebytes.Length));
+                    valueResults.Add(BitConverter.GetBytes(bytes.Length));
 
-                    ValueResults.Add(typenamebytes);
-                    ValueResults.Add(bytes);
+                    valueResults.Add(typenamebytes);
+                    valueResults.Add(bytes);
 
-                    ValueTotalLen += 4 + 4 + 4 + typenamebytes.Length + bytes.Length;
+                    valueTotalLen += 4 + 4 + 4 + typenamebytes.Length + bytes.Length;
                 }
             }
 
-            byte[] ValueBytes = new byte[ValueTotalLen];
+            byte[] valueBytes = new byte[valueTotalLen];
 
             int valuecurrentposition = 0;
 
-            foreach (var item in ValueResults)
+            foreach (var item in valueResults)
             {
                 int len = item.Length;
-                System.Buffer.BlockCopy(item, 0, ValueBytes, valuecurrentposition, len);
+                System.Buffer.BlockCopy(item, 0, valueBytes, valuecurrentposition, len);
                 valuecurrentposition += len;
             }
 
-            int total = KeyBytes.Length + ValueBytes.Length + 8;
+            int total = keyBytes.Length + valueBytes.Length + 8;
 
             byte[] totalbytes = new byte[total];
 
-            System.Buffer.BlockCopy(BitConverter.GetBytes(KeyBytes.Length), 0, totalbytes, 0, 4);
-            System.Buffer.BlockCopy(BitConverter.GetBytes(ValueBytes.Length), 0, totalbytes, 4, 4);
-            if (KeyBytes.Length > 0)
+            System.Buffer.BlockCopy(BitConverter.GetBytes(keyBytes.Length), 0, totalbytes, 0, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(valueBytes.Length), 0, totalbytes, 4, 4);
+            if (keyBytes.Length > 0)
             {
-                System.Buffer.BlockCopy(KeyBytes, 0, totalbytes, 8, KeyBytes.Length);
+                System.Buffer.BlockCopy(keyBytes, 0, totalbytes, 8, keyBytes.Length);
             }
-            if (ValueBytes.Length > 0)
+            if (valueBytes.Length > 0)
             {
-                System.Buffer.BlockCopy(ValueBytes, 0, totalbytes, 8 + KeyBytes.Length, ValueBytes.Length);
+                System.Buffer.BlockCopy(valueBytes, 0, totalbytes, 8 + keyBytes.Length, valueBytes.Length);
             }
             return totalbytes;
         }
@@ -227,12 +227,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
         }
 
-        public object BytesToValue(string typename, byte[] ValueBytes)
+        public object BytesToValue(string typename, byte[] valueBytes)
         {
             if (ConverterHelper.TypeNameConverter.ContainsKey(typename))
             {
                 var convert = ConverterHelper.TypeNameConverter[typename];
-                return convert(ValueBytes);
+                return convert(valueBytes);
             }
 
             var type = TypeHelper.GetType(typename);
@@ -242,14 +242,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
 
             var converter = ConverterHelper.GetBytesToValue(type);
-            if (converter != null)
-            {
-                return converter(ValueBytes);
-            }
-            else
-            {
-                return null;
-            }
+            return converter?.Invoke(valueBytes);
         }
     }
 }

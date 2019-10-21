@@ -37,7 +37,7 @@ namespace Kooboo.Web.Api
             return defaultlist;
         }
 
-        private static object _locker = new object();
+        private object _locker = new object();
 
         public Dictionary<string, IApi> List
         {

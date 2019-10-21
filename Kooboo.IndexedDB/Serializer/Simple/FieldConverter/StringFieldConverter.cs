@@ -10,11 +10,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<T, string> getValue;
         private Action<T, string> setValue;
 
-        public StringFieldConverter(string FieldName)
+        public StringFieldConverter(string fieldName)
         {
-            this.getValue = ObjectHelper.GetGetValue<T, string>(FieldName);
-            this.setValue = ObjectHelper.GetSetValue<T, string>(FieldName);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetValue<T, string>(fieldName);
+            this.setValue = ObjectHelper.GetSetValue<T, string>(fieldName);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -53,11 +53,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<object, string> getValue;
         private Action<object, string> setValue;
 
-        public StringFieldConverter(string FieldName, Type ObjectType)
+        public StringFieldConverter(string fieldName, Type objectType)
         {
-            this.getValue = ObjectHelper.GetGetFieldValue<string>(FieldName, ObjectType);
-            this.setValue = ObjectHelper.GetSetFieldValue<string>(FieldName, ObjectType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetFieldValue<string>(fieldName, objectType);
+            this.setValue = ObjectHelper.GetSetFieldValue<string>(fieldName, objectType);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -79,9 +79,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             setValue(value, fieldvalue);
         }
 
-        public byte[] ToBytes(object Value)
+        public byte[] ToBytes(object value)
         {
-            string fieldvalue = this.getValue(Value);
+            string fieldvalue = this.getValue(value);
 
             if (string.IsNullOrEmpty(fieldvalue))
             {

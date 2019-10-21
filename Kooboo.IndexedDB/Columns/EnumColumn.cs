@@ -22,15 +22,15 @@ namespace Kooboo.IndexedDB.Columns
             get; set;
         }
 
-        public EnumColumn(string FieldName, Type EnumClassType)
+        public EnumColumn(string fieldName, Type enumClassType)
         {
-            this.FieldName = FieldName;
-            this.Get = ObjectHelper.GetGetEnumObjectValue<TValue>(FieldName);
-            this.Set = ObjectHelper.GetSetObjectValue<TValue>(FieldName, EnumClassType);
+            this.FieldName = fieldName;
+            this.Get = ObjectHelper.GetGetEnumObjectValue<TValue>(fieldName);
+            this.Set = ObjectHelper.GetSetObjectValue<TValue>(fieldName, enumClassType);
 
             byteConverter = ObjectContainer.GetConverter<Int32>();
 
-            this.DataType = EnumClassType;
+            this.DataType = enumClassType;
 
             this.FieldNameHash = Helper.ObjectHelper.GetHashCode(this.FieldName);
             var fieldnamehashbytes = BitConverter.GetBytes(FieldNameHash);

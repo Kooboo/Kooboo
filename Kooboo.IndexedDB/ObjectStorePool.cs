@@ -12,18 +12,11 @@ namespace Kooboo.IndexedDB
 
         private object _lock = new object();
 
-        public ObjectStorePool(Database Database, string StoreName, ObjectStoreParameters Parameters)
+        public ObjectStorePool(Database database, string storeName, ObjectStoreParameters parameters)
         {
-            this.database = Database;
-            this.storeName = StoreName;
-            if (parameters != null)
-            {
-                this.parameters = Parameters;
-            }
-            else
-            {
-                this.parameters = new ObjectStoreParameters();
-            }
+            this.database = database;
+            this.storeName = storeName;
+            this.parameters = this.parameters != null ? parameters : new ObjectStoreParameters();
         }
 
         public ObjectStore<TKey, TValue> Current
@@ -48,13 +41,13 @@ namespace Kooboo.IndexedDB
             }
         }
 
-        public void ReleaseObject(ObjectStore<TKey, TValue> UsedStore)
+        public void ReleaseObject(ObjectStore<TKey, TValue> usedStore)
         {
             lock (_lock)
             {
-                if (UsedStore != null)
+                if (usedStore != null)
                 {
-                    myqueue.Enqueue(UsedStore);
+                    myqueue.Enqueue(usedStore);
                 }
             }
         }

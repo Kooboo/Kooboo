@@ -57,10 +57,10 @@ namespace Kooboo.IndexedDB
         /// Add a new column, if it is a string, consider using the overload method to specify a length.
         /// An column can not be altered after created, an index can be deleted or rebuilt.
         /// </summary>
-        /// <param name="FieldOrPropertyName"></param>
-        public void AddColumn(string FieldOrPropertyName)
+        /// <param name="fieldOrPropertyName"></param>
+        public void AddColumn(string fieldOrPropertyName)
         {
-            AddColumn(FieldOrPropertyName, GlobalSettings.defaultKeyLength);
+            AddColumn(fieldOrPropertyName, GlobalSettings.defaultKeyLength);
         }
 
         public void AddColumn<TValue>(Expression<Func<TValue, object>> expression)
@@ -94,13 +94,13 @@ namespace Kooboo.IndexedDB
         /// Add an additional index.
         /// An column can not be altered after created, an index can be deleted or rebuilt.
         /// </summary>
-        /// <param name="FieldOrPropertyName"></param>
+        /// <param name="fieldOrPropertyName"></param>
         /// <param name="maxlength"></param>
-        public void AddIndex(string FieldOrPropertyName, int maxlength)
+        public void AddIndex(string fieldOrPropertyName, int maxlength)
         {
-            if (!IndexList.ContainsKey(FieldOrPropertyName))
+            if (!IndexList.ContainsKey(fieldOrPropertyName))
             {
-                IndexList.Add(FieldOrPropertyName, maxlength);
+                IndexList.Add(fieldOrPropertyName, maxlength);
             }
         }
 
@@ -108,10 +108,10 @@ namespace Kooboo.IndexedDB
         /// Add a new index, if it is a string, consider using the overload method to specify a length.
         /// An column can not be altered after created, an index can be deleted or rebuilt.
         /// </summary>
-        /// <param name="FieldOrPropertyName"></param>
-        public void AddIndex(string FieldOrPropertyName)
+        /// <param name="fieldOrPropertyName"></param>
+        public void AddIndex(string fieldOrPropertyName)
         {
-            AddIndex(FieldOrPropertyName, GlobalSettings.defaultKeyLength);
+            AddIndex(fieldOrPropertyName, GlobalSettings.defaultKeyLength);
         }
 
         public void AddIndex<TValue>(Expression<Func<TValue, object>> expression)

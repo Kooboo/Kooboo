@@ -58,7 +58,7 @@ namespace Kooboo.IndexedDB.Btree
         ///only string key has the keylength, the rest does not have.
         private bool isString = false;
 
-        public BtreeIndex(string fieldname, bool unique, int keylength, string fullIndexFileName, int MaxCacheLevel = 0)
+        public BtreeIndex(string fieldname, bool unique, int keylength, string fullIndexFileName, int maxCacheLevel = 0)
         {
             this.fieldname = fieldname;
             this.unique = unique;
@@ -67,7 +67,7 @@ namespace Kooboo.IndexedDB.Btree
 
             this.fullindexfilename = fullIndexFileName;
 
-            this.MaxCacheLevel = MaxCacheLevel;
+            this.MaxCacheLevel = maxCacheLevel;
 
             this.fullduplicatefilename = fullindexfilename + ".duplicate";
 
@@ -127,10 +127,7 @@ namespace Kooboo.IndexedDB.Btree
         {
             lock (_object)
             {
-                if (_tree != null)
-                {
-                    _tree.IndexStream.Flush();
-                }
+                _tree?.IndexStream.Flush();
             }
         }
 
@@ -155,8 +152,6 @@ namespace Kooboo.IndexedDB.Btree
         /// <summary>
         /// update key and blockposition.
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="value"></param>
         public void Update(T oldkey, T newkey, Int64 oldBlockPosition, Int64 newBlockPosition)
         {
             if (oldkey == null)
@@ -389,8 +384,7 @@ namespace Kooboo.IndexedDB.Btree
                         {
                             if (!distinct)
                             {
-                                NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value;
+                                NodePointer pointer = new NodePointer {PointerBytes = item.Value};
 
                                 if (pointer.Indicator == EnumValues.TypeIndicator.duplicate)
                                 {
@@ -414,8 +408,7 @@ namespace Kooboo.IndexedDB.Btree
                         {
                             if (!distinct)
                             {
-                                NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value;
+                                NodePointer pointer = new NodePointer {PointerBytes = item.Value};
 
                                 if (pointer.Indicator == EnumValues.TypeIndicator.duplicate)
                                 {
@@ -441,8 +434,7 @@ namespace Kooboo.IndexedDB.Btree
                         {
                             if (!distinct)
                             {
-                                NodePointer pointer = new NodePointer();
-                                pointer.PointerBytes = item.Value;
+                                NodePointer pointer = new NodePointer {PointerBytes = item.Value};
 
                                 if (pointer.Indicator == EnumValues.TypeIndicator.duplicate)
                                 {

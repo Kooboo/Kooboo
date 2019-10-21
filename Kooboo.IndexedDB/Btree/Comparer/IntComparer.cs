@@ -8,13 +8,13 @@ namespace Kooboo.IndexedDB.Btree.Comparer
     {
         private int bytelen;
 
-        public IntComparer(IntType IntBit)
+        public IntComparer(IntType intBit)
         {
-            if (IntBit == IntType.Int32)
+            if (intBit == IntType.Int32)
             {
                 bytelen = 4;
             }
-            else if (IntBit == IntType.Int16)
+            else if (intBit == IntType.Int16)
             {
                 bytelen = 2;
             }
@@ -26,18 +26,9 @@ namespace Kooboo.IndexedDB.Btree.Comparer
 
         public int Compare(byte[] x, byte[] y)
         {
-            bool xpositive = false;
-            if (x[bytelen - 1] < 128)
-            {
-                xpositive = true;
-            }
+            bool xpositive = x[bytelen - 1] < 128;
 
-            bool yposition = false;
-
-            if (y[bytelen - 1] < 128)
-            {
-                yposition = true;
-            }
+            bool yposition = y[bytelen - 1] < 128;
 
             if (xpositive && !yposition)
             {

@@ -2,6 +2,7 @@
 //All rights reserved.
 using Kooboo.IndexedDB.Helper;
 using System;
+using System.Net;
 
 namespace Kooboo.IndexedDB.Serializer.Simple
 {
@@ -28,16 +29,16 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
             else
             {
-                var ValueBytes = tobytes(value);
+                var valueBytes = tobytes(value);
                 var enumtype = ConverterHelper.GetEnumType(type);
                 byte enumbyte = (byte)enumtype;
 
-                byte[] Result = new byte[ValueBytes.Length + 1];
+                byte[] result = new byte[valueBytes.Length + 1];
 
-                Result[0] = enumbyte;
-                System.Buffer.BlockCopy(ValueBytes, 0, Result, 1, ValueBytes.Length);
+                result[0] = enumbyte;
+                System.Buffer.BlockCopy(valueBytes, 0, result, 1, valueBytes.Length);
 
-                return Result;
+                return result;
             }
         }
 
@@ -52,9 +53,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             if (converter != null)
             {
                 int valuelen = bytes.Length - 1;
-                byte[] ValueBytes = new byte[valuelen];
-                System.Buffer.BlockCopy(bytes, 1, ValueBytes, 0, valuelen);
-                return converter(ValueBytes);
+                byte[] valueBytes = new byte[valuelen];
+                System.Buffer.BlockCopy(bytes, 1, valueBytes, 0, valuelen);
+                return converter(valueBytes);
             }
 
             return null;
@@ -110,20 +111,18 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
         public static byte[] IpAddressToBytes(object value)
         {
-            var Ipaddress = value as System.Net.IPAddress;
-
-            if (Ipaddress != null)
+            if (value is IPAddress ipaddress)
             {
-                return Ipaddress.GetAddressBytes();
+                return ipaddress.GetAddressBytes();
             }
             return null;
         }
 
         public static object FromBytesToIpaddress(byte[] bytes)
         {
-            var Ipaddress = new System.Net.IPAddress(bytes);
+            var ipaddress = new System.Net.IPAddress(bytes);
 
-            return Ipaddress;
+            return ipaddress;
         }
 
         public static byte[] ToBytes(int value)
@@ -179,16 +178,8 @@ namespace Kooboo.IndexedDB.Serializer.Simple
 
         public static byte[] GuidToBytes(object value)
         {
-            Guid guidvalue;
             string guidstring = Convert.ToString(value);
-            if (System.Guid.TryParse(guidstring, out guidvalue))
-            {
-                return guidvalue.ToByteArray();
-            }
-            else
-            {
-                return default(Guid).ToByteArray();
-            }
+            return System.Guid.TryParse(guidstring, out var guidvalue) ? guidvalue.ToByteArray() : default(Guid).ToByteArray();
         }
 
         public static object FromGuidBytes(byte[] bytes)

@@ -15,13 +15,13 @@ namespace Kooboo.IndexedDB.Indexs
             items.Add(index);
         }
 
-        public void ParseSetting(Dictionary<string, int> indexs, string objectFolder, int MaxCacheLevel)
+        public void ParseSetting(Dictionary<string, int> indexs, string objectFolder, int maxCacheLevel)
         {
             if (indexs != null && indexs.Count() > 0)
             {
                 foreach (var item in indexs)
                 {
-                    var index = GetIndexInstance(objectFolder, item.Key, item.Value, MaxCacheLevel);
+                    var index = GetIndexInstance(objectFolder, item.Key, item.Value, maxCacheLevel);
                     if (index != null)
                     {
                         this.AddIndex(index);
@@ -30,57 +30,57 @@ namespace Kooboo.IndexedDB.Indexs
             }
         }
 
-        internal static IIndex<TValue> GetIndexInstance(string objectFolder, string FieldName, int keyLength, int MaxCacheLevel)
+        internal static IIndex<TValue> GetIndexInstance(string objectFolder, string fieldName, int keyLength, int maxCacheLevel)
         {
-            var KeyType = Helper.TypeHelper.GetFieldType<TValue>(FieldName);
-            if (KeyType == null)
+            var keyType = Helper.TypeHelper.GetFieldType<TValue>(fieldName);
+            if (keyType == null)
             {
                 return null;
             }
 
-            if (KeyType == typeof(Int32))
+            if (keyType == typeof(Int32))
             {
-                return new IndexBase<TValue, Int32>(FieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, FieldName), false, keyLength, MaxCacheLevel);
+                return new IndexBase<TValue, Int32>(fieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, fieldName), false, keyLength, maxCacheLevel);
             }
-            else if (KeyType == typeof(Int64))
+            else if (keyType == typeof(Int64))
             {
-                return new IndexBase<TValue, Int64>(FieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, FieldName), false, keyLength, MaxCacheLevel);
+                return new IndexBase<TValue, Int64>(fieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, fieldName), false, keyLength, maxCacheLevel);
             }
-            else if (KeyType == typeof(Int16))
+            else if (keyType == typeof(Int16))
             {
-                return new IndexBase<TValue, Int16>(FieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, FieldName), false, keyLength, MaxCacheLevel);
+                return new IndexBase<TValue, Int16>(fieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, fieldName), false, keyLength, maxCacheLevel);
             }
-            else if (KeyType == typeof(DateTime))
+            else if (keyType == typeof(DateTime))
             {
-                return new IndexBase<TValue, DateTime>(FieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, FieldName), false, keyLength, MaxCacheLevel);
+                return new IndexBase<TValue, DateTime>(fieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, fieldName), false, keyLength, maxCacheLevel);
             }
-            else if (KeyType == typeof(byte))
+            else if (keyType == typeof(byte))
             {
-                return new IndexBase<TValue, byte>(FieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, FieldName), false, keyLength, MaxCacheLevel);
+                return new IndexBase<TValue, byte>(fieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, fieldName), false, keyLength, maxCacheLevel);
             }
-            else if (KeyType == typeof(float))
+            else if (keyType == typeof(float))
             {
-                return new IndexBase<TValue, float>(FieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, FieldName), false, keyLength, MaxCacheLevel);
+                return new IndexBase<TValue, float>(fieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, fieldName), false, keyLength, maxCacheLevel);
             }
-            else if (KeyType == typeof(string))
+            else if (keyType == typeof(string))
             {
-                return new IndexBase<TValue, string>(FieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, FieldName), false, keyLength, MaxCacheLevel);
+                return new IndexBase<TValue, string>(fieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, fieldName), false, keyLength, maxCacheLevel);
             }
-            else if (KeyType == typeof(double))
+            else if (keyType == typeof(double))
             {
-                return new IndexBase<TValue, double>(FieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, FieldName), false, keyLength, MaxCacheLevel);
+                return new IndexBase<TValue, double>(fieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, fieldName), false, keyLength, maxCacheLevel);
             }
-            else if (KeyType == typeof(Decimal))
+            else if (keyType == typeof(Decimal))
             {
-                return new DecimalIndex<TValue>(FieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, FieldName), false, keyLength, MaxCacheLevel);
+                return new DecimalIndex<TValue>(fieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, fieldName), false, keyLength, maxCacheLevel);
             }
-            else if (KeyType == typeof(Guid))
+            else if (keyType == typeof(Guid))
             {
-                return new IndexBase<TValue, Guid>(FieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, FieldName), false, keyLength, MaxCacheLevel);
+                return new IndexBase<TValue, Guid>(fieldName, Helper.IndexHelper.GetIndexFileName(objectFolder, fieldName), false, keyLength, maxCacheLevel);
             }
             else
             {
-                if (KeyType == typeof(bool))
+                if (keyType == typeof(bool))
                 {
                     throw new Exception("you better place a bool data type in column instead of index.");
                 }
@@ -120,19 +120,19 @@ namespace Kooboo.IndexedDB.Indexs
 
         public void Update(TValue oldrecord, TValue newrecord, Int64 oldblockposition, Int64 newblockposition)
         {
-            /// update is more complicate to roll back.
-            /// Rollback to be implemented.
+            // update is more complicate to roll back.
+            // Rollback to be implemented.
             foreach (var item in items)
             {
                 item.Update(oldrecord, newrecord, oldblockposition, newblockposition);
             }
         }
 
-        public bool HasIndex(string FieldName)
+        public bool HasIndex(string fieldName)
         {
             foreach (var item in items)
             {
-                if (item.FieldName.ToLower() == FieldName.ToLower())
+                if (item.FieldName.ToLower() == fieldName.ToLower())
                 {
                     return true;
                 }
@@ -167,11 +167,11 @@ namespace Kooboo.IndexedDB.Indexs
             return true;
         }
 
-        public IIndex<TValue> getIndex(string FieldOrPropertyName)
+        public IIndex<TValue> getIndex(string fieldOrPropertyName)
         {
             foreach (var item in items)
             {
-                if (item.FieldName.ToLower() == FieldOrPropertyName.ToLower())
+                if (item.FieldName.ToLower() == fieldOrPropertyName.ToLower())
                 {
                     return item;
                 }

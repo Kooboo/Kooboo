@@ -14,7 +14,7 @@ namespace Kooboo.IndexedDB
         /// </summary>
         public string Folder { get; set; }
 
-        private IByteConverter<TValue> ValueConverter;
+        private IByteConverter<TValue> _valueConverter;
 
         private Dictionary<int, ScheduleContent<TValue>> _contentdictionary;
         private Dictionary<int, TimeSheet> _timesheetdictionary;
@@ -76,7 +76,7 @@ namespace Kooboo.IndexedDB
                 this.Folder = System.IO.Path.Combine(globalschedulefolder, scheduleNameOrFolder);
             }
 
-            this.ValueConverter = ObjectContainer.GetConverter<TValue>();
+            this._valueConverter = ObjectContainer.GetConverter<TValue>();
 
             _initialize();
         }
@@ -92,17 +92,8 @@ namespace Kooboo.IndexedDB
 
             foreach (var item in files)
             {
-                string temp = string.Empty;
-
                 int lastSlash = Kooboo.IndexedDB.Helper.PathHelper.GetLastSlash(item);
-                if (lastSlash > 0)
-                {
-                    temp = item.Substring(lastSlash + 1);
-                }
-                else
-                {
-                    temp = item;
-                }
+                var temp = lastSlash > 0 ? item.Substring(lastSlash + 1) : item;
 
                 temp = temp.Replace(".time", "");
                 int dayint = Convert.ToInt32(temp);
@@ -214,7 +205,7 @@ namespace Kooboo.IndexedDB
         /// Add an item to the schedule. Note, an item can not be schedule to past.
         /// Only allowed to schedule an item for future.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="input"></param>
         /// <param name="scheduletime"></param>
         public void Add(TValue input, DateTime scheduletime)
         {
@@ -222,20 +213,20 @@ namespace Kooboo.IndexedDB
             {
                 scheduletime = EnsureScheduleTime(scheduletime);
 
-                int DayInt = scheduletime.DayToInt();
+                int dayInt = scheduletime.DayToInt();
 
-                Int64 blockposition = GetContentFile(DayInt).Add(input);
+                Int64 blockposition = GetContentFile(dayInt).Add(input);
 
-                Int64 TimeItemLocation = GetTimeFile(DayInt).GetItemPositionBySecondOfDay((int)scheduletime.TimeOfDay.TotalSeconds);
+                Int64 timeItemLocation = GetTimeFile(dayInt).GetItemPositionBySecondOfDay((int)scheduletime.TimeOfDay.TotalSeconds);
 
-                if (TimeItemLocation > 0)
+                if (timeItemLocation > 0)
                 {
-                    GetItemFile(DayInt).Add(TimeItemLocation, blockposition);
+                    GetItemFile(dayInt).Add(timeItemLocation, blockposition);
                 }
                 else
                 {
-                    Int64 itemlocation = GetItemFile(DayInt).AddFirst(blockposition);
-                    GetTimeFile(DayInt).Add(scheduletime, itemlocation);
+                    Int64 itemlocation = GetItemFile(dayInt).AddFirst(blockposition);
+                    GetTimeFile(dayInt).Add(scheduletime, itemlocation);
                 }
             }
         }
@@ -257,11 +248,11 @@ namespace Kooboo.IndexedDB
 
                 Int64 blockposition = GetContentFile(dayint).Add(item.Item);
 
-                Int64 TimeItemLocation = GetTimeFile(dayint).GetItemPositionBySecondOfDay(secondofday);
+                Int64 timeItemLocation = GetTimeFile(dayint).GetItemPositionBySecondOfDay(secondofday);
 
-                if (TimeItemLocation > 0)
+                if (timeItemLocation > 0)
                 {
-                    GetItemFile(dayint).Add(TimeItemLocation, blockposition);
+                    GetItemFile(dayint).Add(timeItemLocation, blockposition);
                 }
                 else
                 {
@@ -338,31 +329,31 @@ namespace Kooboo.IndexedDB
 
         public void Delete(ScheduleItem<TValue> item)
         {
-            Int64 TimeItemLocation = GetTimeFile(item.DayInt).GetItemPositionBySecondOfDay(item.SecondOfDay);
-            GetItemFile(item.DayInt).Del(TimeItemLocation, item.BlockPosition);
+            Int64 timeItemLocation = GetTimeFile(item.DayInt).GetItemPositionBySecondOfDay(item.SecondOfDay);
+            GetItemFile(item.DayInt).Del(timeItemLocation, item.BlockPosition);
         }
 
-        public void Delete(int DayInt, int SecondOfDay, Int64 blockposition)
+        public void Delete(int dayInt, int secondOfDay, Int64 blockposition)
         {
-            Int64 TimeItemLocation = GetTimeFile(DayInt).GetItemPositionBySecondOfDay(SecondOfDay);
-            GetItemFile(DayInt).Del(TimeItemLocation, blockposition);
+            Int64 timeItemLocation = GetTimeFile(dayInt).GetItemPositionBySecondOfDay(secondOfDay);
+            GetItemFile(dayInt).Del(timeItemLocation, blockposition);
         }
 
-        public ScheduleItem<TValue> Get(int dayint, int SecondOfDay, Int64 BlockPosition)
+        public ScheduleItem<TValue> Get(int dayint, int secondOfDay, Int64 blockPosition)
         {
-            TValue content = GetValue(BlockPosition, dayint);
+            TValue content = GetValue(blockPosition, dayint);
             return new ScheduleItem<TValue>()
             {
                 DayInt = dayint,
-                SecondOfDay = SecondOfDay,
-                BlockPosition = BlockPosition,
+                SecondOfDay = secondOfDay,
+                BlockPosition = blockPosition,
                 Item = content
             };
         }
 
-        internal TValue GetValue(long BlockPosition, int DayInt)
+        internal TValue GetValue(long blockPosition, int dayInt)
         {
-            return GetContentFile(DayInt).Get(BlockPosition);
+            return GetContentFile(dayInt).Get(blockPosition);
         }
 
         /// <summary>
@@ -415,7 +406,7 @@ namespace Kooboo.IndexedDB
             int skipped = 0;
             int taken = 0;
 
-            List<ScheduleItem<TValue>> Items = new List<ScheduleItem<TValue>>();
+            List<ScheduleItem<TValue>> items = new List<ScheduleItem<TValue>>();
 
             int currentdate = this.ReadingDay;
             int currentcounter = this.ReadingSeconds;
@@ -449,13 +440,13 @@ namespace Kooboo.IndexedDB
                                 Item = content
                             };
 
-                            Items.Add(scheduleitem);
+                            items.Add(scheduleitem);
 
                             taken = taken + 1;
 
                             if (taken >= take)
                             {
-                                return Items;
+                                return items;
                             }
                         }
                     }
@@ -468,7 +459,7 @@ namespace Kooboo.IndexedDB
 
                 if (nextday <= 0)
                 {
-                    return Items;
+                    return items;
                 }
                 else
                 {
@@ -530,55 +521,55 @@ namespace Kooboo.IndexedDB
             return GetNextDay(nextday);
         }
 
-        internal TimeSheet GetTimeFile(int DayInt)
+        internal TimeSheet GetTimeFile(int dayInt)
         {
-            if (!_timesheetdictionary.ContainsKey(DayInt))
+            if (!_timesheetdictionary.ContainsKey(dayInt))
             {
                 lock (_object)
                 {
-                    if (!_timesheetdictionary.ContainsKey(DayInt))
+                    if (!_timesheetdictionary.ContainsKey(dayInt))
                     {
-                        TimeSheet time = new TimeSheet(DayInt, this);
-                        _timesheetdictionary.Add(DayInt, time);
+                        TimeSheet time = new TimeSheet(dayInt, this);
+                        _timesheetdictionary.Add(dayInt, time);
                     }
                 }
             }
 
-            return _timesheetdictionary[DayInt];
+            return _timesheetdictionary[dayInt];
         }
 
-        internal SecondItem GetItemFile(int DayInt)
+        internal SecondItem GetItemFile(int dayInt)
         {
-            if (!_itemsdictionary.ContainsKey(DayInt))
+            if (!_itemsdictionary.ContainsKey(dayInt))
             {
                 lock (_object)
                 {
-                    if (!_itemsdictionary.ContainsKey(DayInt))
+                    if (!_itemsdictionary.ContainsKey(dayInt))
                     {
-                        SecondItem item = new SecondItem(DayInt, this);
-                        _itemsdictionary.Add(DayInt, item);
+                        SecondItem item = new SecondItem(dayInt, this);
+                        _itemsdictionary.Add(dayInt, item);
                     }
                 }
             }
 
-            return _itemsdictionary[DayInt];
+            return _itemsdictionary[dayInt];
         }
 
-        internal ScheduleContent<TValue> GetContentFile(int DayInt)
+        internal ScheduleContent<TValue> GetContentFile(int dayInt)
         {
-            if (!_contentdictionary.ContainsKey(DayInt))
+            if (!_contentdictionary.ContainsKey(dayInt))
             {
                 lock (_object)
                 {
-                    if (!_contentdictionary.ContainsKey(DayInt))
+                    if (!_contentdictionary.ContainsKey(dayInt))
                     {
-                        ScheduleContent<TValue> content = new ScheduleContent<TValue>(DayInt, this);
-                        _contentdictionary.Add(DayInt, content);
+                        ScheduleContent<TValue> content = new ScheduleContent<TValue>(dayInt, this);
+                        _contentdictionary.Add(dayInt, content);
                     }
                 }
             }
 
-            return _contentdictionary[DayInt];
+            return _contentdictionary[dayInt];
         }
 
         /// <summary>
@@ -588,13 +579,13 @@ namespace Kooboo.IndexedDB
         /// <returns></returns>
         private DateTime EnsureScheduleTime(DateTime scheduletime)
         {
-            int DayScheduleTime = scheduletime.DayToInt();
+            int dayScheduleTime = scheduletime.DayToInt();
 
-            if (DayScheduleTime > this.ReadingDay)
+            if (dayScheduleTime > this.ReadingDay)
             {
                 return scheduletime;
             }
-            else if (DayScheduleTime == this.ReadingDay)
+            else if (dayScheduleTime == this.ReadingDay)
             {
                 if (scheduletime.TimeOfDay.TotalSeconds > this.ReadingSeconds)
                 {
@@ -609,7 +600,7 @@ namespace Kooboo.IndexedDB
             }
             else
             {
-                /// schedule in the past is not allowed. Make it schduled to now and 10 seconds.
+                // schedule in the past is not allowed. Make it schduled to now and 10 seconds.
                 return DateTime.Now.AddSeconds(2);
             }
         }

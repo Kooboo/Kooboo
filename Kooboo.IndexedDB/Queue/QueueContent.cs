@@ -17,7 +17,7 @@ namespace Kooboo.IndexedDB.Queue
         public string FullFileName;
         private FileStream _stream;
 
-        private IByteConverter<TValue> ValueConverter;
+        private IByteConverter<TValue> _valueConverter;
 
         private void _initialize()
         {
@@ -43,7 +43,7 @@ namespace Kooboo.IndexedDB.Queue
         {
             this.FullFileName = fullfilename;
             _initialize();
-            this.ValueConverter = ObjectContainer.GetConverter<TValue>();
+            this._valueConverter = ObjectContainer.GetConverter<TValue>();
         }
 
         public bool Exists()
@@ -54,33 +54,32 @@ namespace Kooboo.IndexedDB.Queue
         /// <summary>
         /// Write the byte value and return the disk position pointer.
         /// </summary>
-        /// <param name="value"></param>
         /// <returns></returns>
         public Int64 Add(TValue T)
         {
-            byte[] valueytes = this.ValueConverter.ToByte(T);
+            byte[] valueytes = this._valueConverter.ToByte(T);
             int count = valueytes.Length;
 
             lock (_object)
             {
                 Int64 startwriteposition = Stream.Length;
 
-                Int64 ReturnPosition = startwriteposition;  // to be return for outside.
-                Stream.Position = ReturnPosition;
+                Int64 returnPosition = startwriteposition;  // to be return for outside.
+                Stream.Position = returnPosition;
                 Stream.Write(BitConverter.GetBytes(count), 0, 4);   // the value length counter.
 
-                Stream.Position = ReturnPosition + 4;
+                Stream.Position = returnPosition + 4;
                 Stream.Write(valueytes, 0, valueytes.Length);
 
-                return ReturnPosition;
+                return returnPosition;
             }
         }
 
-        public TValue Get(Int64 Position)
+        public TValue Get(Int64 position)
         {
             lock (_object)
             {
-                Stream.Position = Position;
+                Stream.Position = position;
 
                 byte[] counterbyte = new byte[4];
 
@@ -92,16 +91,13 @@ namespace Kooboo.IndexedDB.Queue
 
                 Stream.Read(contentbytes, 0, counter);
 
-                return this.ValueConverter.FromByte(contentbytes);
+                return this._valueConverter.FromByte(contentbytes);
             }
         }
 
         public void close()
         {
-            if (_stream != null)
-            {
-                _stream.Close();
-            }
+            _stream?.Close();
         }
 
         public FileStream Stream

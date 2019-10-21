@@ -373,7 +373,7 @@ namespace Kooboo.Data.Repository
         }
 
         private User _defaultUser;
-        private static object _locker = new object();
+        private object _locker = new object();
         public User DefaultUser
         {
             get

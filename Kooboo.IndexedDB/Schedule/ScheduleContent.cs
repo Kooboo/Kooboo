@@ -22,13 +22,13 @@ namespace Kooboo.IndexedDB.Schedule
 
         private int DayInt { get; set; }
 
-        public ScheduleContent(int DayInt, ISchedule schedule)
+        public ScheduleContent(int dayInt, ISchedule schedule)
         {
             this._schedule = schedule;
 
-            this.FileName = FileNameGenerator.GetContentFileName(DayInt);
-            this.DayInt = DayInt;
-            this.FullFileName = FileNameGenerator.GetContentFullFileName(DayInt, schedule);
+            this.FileName = FileNameGenerator.GetContentFileName(dayInt);
+            this.DayInt = dayInt;
+            this.FullFileName = FileNameGenerator.GetContentFullFileName(dayInt, schedule);
 
             if (!File.Exists(this.FullFileName))
             {
@@ -41,7 +41,7 @@ namespace Kooboo.IndexedDB.Schedule
         /// <summary>
         /// Add a new record and return the block position.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="input"></param>
         /// <returns></returns>
         public long Add(TValue input)
         {

@@ -11,11 +11,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<T, IPAddress> getValue;
         private Action<T, IPAddress> setValue;
 
-        public IpAddressFieldConverter(string FieldName)
+        public IpAddressFieldConverter(string fieldName)
         {
-            this.getValue = ObjectHelper.GetGetValue<T, IPAddress>(FieldName);
-            this.setValue = ObjectHelper.GetSetValue<T, IPAddress>(FieldName);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetValue<T, IPAddress>(fieldName);
+            this.setValue = ObjectHelper.GetSetValue<T, IPAddress>(fieldName);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -40,14 +40,10 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             }
         }
 
-        public byte[] ToBytes(T Value)
+        public byte[] ToBytes(T value)
         {
-            IPAddress fieldvalue = this.getValue(Value);
-            if (fieldvalue != null)
-            {
-                return fieldvalue.GetAddressBytes();
-            }
-            return null;
+            IPAddress fieldvalue = this.getValue(value);
+            return fieldvalue?.GetAddressBytes();
         }
     }
 
@@ -56,11 +52,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<object, IPAddress> getValue;
         private Action<object, IPAddress> setValue;
 
-        public IpAddressFieldConverter(string FieldName, Type ObjectType)
+        public IpAddressFieldConverter(string fieldName, Type objectType)
         {
-            this.getValue = ObjectHelper.GetGetFieldValue<IPAddress>(FieldName, ObjectType);
-            this.setValue = ObjectHelper.GetSetFieldValue<IPAddress>(FieldName, ObjectType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetFieldValue<IPAddress>(fieldName, objectType);
+            this.setValue = ObjectHelper.GetSetFieldValue<IPAddress>(fieldName, objectType);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -85,14 +81,10 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             }
         }
 
-        public byte[] ToBytes(object Value)
+        public byte[] ToBytes(object value)
         {
-            IPAddress fieldvalue = this.getValue(Value);
-            if (fieldvalue != null)
-            {
-                return fieldvalue.GetAddressBytes();
-            }
-            return null;
+            IPAddress fieldvalue = this.getValue(value);
+            return fieldvalue?.GetAddressBytes();
         }
     }
 }

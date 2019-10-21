@@ -15,7 +15,7 @@ namespace Kooboo.Sites.Repository
 {
     public class IEmbeddableRepositoryBase<T> : SiteRepositoryBase<T>, IEmbeddableRepository where T : class, IEmbeddable
     {
-        private static object _locker = new object();
+        private object _locker = new object();
 
         public override bool AddOrUpdate(T Value, Guid UserId = default(Guid))
         {

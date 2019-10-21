@@ -18,7 +18,7 @@ namespace Kooboo.IndexedDB.Query
             return Check(value);
         }
 
-        public static ColumnMethodCallEvaluator GetMethodEvaluator(Type datatype, int columnLength, MethodCallExpression CallExpression)
+        public static ColumnMethodCallEvaluator GetMethodEvaluator(Type datatype, int columnLength, MethodCallExpression callExpression)
         {
             ColumnMethodCallEvaluator evaluator = new ColumnMethodCallEvaluator();
             evaluator.GetColumnValue = Serializer.Simple.ConverterHelper.GetBytesToValue(datatype);
@@ -28,14 +28,14 @@ namespace Kooboo.IndexedDB.Query
                 throw new Exception(datatype.Name + " type does not supported to be used as a parameter yet.");
             }
 
-            if (CallExpression.Method.ReturnType != typeof(bool))
+            if (callExpression.Method.ReturnType != typeof(bool))
             {
                 throw new Exception("Call method must return a boolean");
             }
 
             List<Expression> arguments = new List<Expression>();
             ParameterExpression objectPara = Expression.Parameter(typeof(object));
-            foreach (var item in CallExpression.Arguments)
+            foreach (var item in callExpression.Arguments)
             {
                 if (item.NodeType == ExpressionType.MemberAccess)
                 {
@@ -48,7 +48,7 @@ namespace Kooboo.IndexedDB.Query
                 }
             }
 
-            MethodCallExpression newexpression = Expression.Call(CallExpression.Method, arguments.ToArray());
+            MethodCallExpression newexpression = Expression.Call(callExpression.Method, arguments.ToArray());
 
             evaluator.Check = Expression.Lambda<Func<object, bool>>(newexpression, objectPara).Compile();
 

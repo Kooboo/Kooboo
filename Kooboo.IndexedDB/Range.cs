@@ -42,7 +42,6 @@ namespace Kooboo.IndexedDB
         /// <summary>
         /// Creates and returns a new key range with lower set to lower, lowerOpen set to open, upper set to undefined and and upperOpen set to true.
         /// </summary>
-        /// <param name="value"></param>
         /// <returns></returns>
         public static Range<T> lowerBound(T lower, bool open)
         {

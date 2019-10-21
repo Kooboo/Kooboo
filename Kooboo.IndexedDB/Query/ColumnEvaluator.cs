@@ -8,22 +8,22 @@ namespace Kooboo.IndexedDB.Query
 {
     public class ColumnEvaluator
     {
-        private Type DataType;
-        private Comparer compareType;
-        private IComparer<byte[]> byteCompare;
-        private byte[] ValueBytes;
+        private Type _dataType;
+        private Comparer _compareType;
+        private IComparer<byte[]> _byteCompare;
+        private byte[] _valueBytes;
 
-        private int columnLength; // the actually column length. Maybe adjusted by different compare type.
-        private int maxColumnLength;   // the setting defined column length.
+        private int _columnLength; // the actually column length. Maybe adjusted by different compare type.
+        private int _maxColumnLength;   // the setting defined column length.
 
         public ColumnEvaluator(Type datatype, Comparer comparertype, IComparer<byte[]> bytecompare, byte[] valuebytes, int columnlength, int maxcolumnlength)
         {
-            this.DataType = datatype;
-            this.compareType = comparertype;
-            this.byteCompare = bytecompare;
-            this.ValueBytes = valuebytes;
-            this.columnLength = columnlength;
-            this.maxColumnLength = maxcolumnlength;
+            this._dataType = datatype;
+            this._compareType = comparertype;
+            this._byteCompare = bytecompare;
+            this._valueBytes = valuebytes;
+            this._columnLength = columnlength;
+            this._maxColumnLength = maxcolumnlength;
         }
 
         public ColumnEvaluator()
@@ -36,37 +36,37 @@ namespace Kooboo.IndexedDB.Query
         /// <returns></returns>
         public virtual bool isMatch(byte[] columnbytes)
         {
-            if (this.DataType == typeof(DateTime))
+            if (this._dataType == typeof(DateTime))
             {
                 columnbytes = ConvertDatetimeBytes(columnbytes);
             }
 
-            switch (compareType)
+            switch (_compareType)
             {
                 case Comparer.EqualTo:
-                    return this.byteCompare.Compare(columnbytes, this.ValueBytes) == 0;
+                    return this._byteCompare.Compare(columnbytes, this._valueBytes) == 0;
 
                 case Comparer.GreaterThan:
-                    return this.byteCompare.Compare(columnbytes, this.ValueBytes) > 0;
+                    return this._byteCompare.Compare(columnbytes, this._valueBytes) > 0;
 
                 case Comparer.GreaterThanOrEqual:
-                    return this.byteCompare.Compare(columnbytes, this.ValueBytes) >= 0;
+                    return this._byteCompare.Compare(columnbytes, this._valueBytes) >= 0;
 
                 case Comparer.LessThan:
-                    return this.byteCompare.Compare(columnbytes, this.ValueBytes) < 0;
+                    return this._byteCompare.Compare(columnbytes, this._valueBytes) < 0;
 
                 case Comparer.LessThanOrEqual:
-                    return this.byteCompare.Compare(columnbytes, this.ValueBytes) <= 0;
+                    return this._byteCompare.Compare(columnbytes, this._valueBytes) <= 0;
 
                 case Comparer.NotEqualTo:
 
-                    return !Btree.Comparer.ByteEqualComparer.isEqual(columnbytes, this.ValueBytes, columnLength);
+                    return !Btree.Comparer.ByteEqualComparer.isEqual(columnbytes, this._valueBytes, _columnLength);
 
                 case Comparer.StartWith:
-                    return Btree.Comparer.MoreComparer.StartWith(columnbytes, this.ValueBytes, this.columnLength);
+                    return Btree.Comparer.MoreComparer.StartWith(columnbytes, this._valueBytes, this._columnLength);
 
                 case Comparer.Contains:
-                    return Btree.Comparer.MoreComparer.Contains(columnbytes, this.ValueBytes, this.columnLength, this.maxColumnLength);
+                    return Btree.Comparer.MoreComparer.Contains(columnbytes, this._valueBytes, this._columnLength, this._maxColumnLength);
 
                 default:
                     return false;
@@ -88,14 +88,14 @@ namespace Kooboo.IndexedDB.Query
             return columnbytes;
         }
 
-        public static ColumnEvaluator GetEvaluator(Type datatype, Comparer comparetype, byte[] ValueBytes, int columnLength)
+        public static ColumnEvaluator GetEvaluator(Type datatype, Comparer comparetype, byte[] valueBytes, int columnLength)
         {
             int orginalLength = columnLength;
 
-            ///StartWith, Contains & ... are exception, not need the apppend space.
+            //StartWith, Contains & ... are exception, not need the apppend space.
             if (comparetype == Comparer.Contains || comparetype == Comparer.StartWith)
             {
-                columnLength = ValueBytes.Length;
+                columnLength = valueBytes.Length;
             }
 
             IComparer<byte[]> compare = ObjectContainer.getComparer(datatype, columnLength);
@@ -104,33 +104,26 @@ namespace Kooboo.IndexedDB.Query
 
             if (datatype == typeof(string))
             {
-                int currentbytecount = ValueBytes.Count();
+                int currentbytecount = valueBytes.Count();
 
-                if (columnLength != int.MaxValue)
-                {
-                    fixedbytes = new byte[columnLength];
-                }
-                else
-                {
-                    fixedbytes = new byte[currentbytecount];
-                }
+                fixedbytes = columnLength != int.MaxValue ? new byte[columnLength] : new byte[currentbytecount];
 
                 if (currentbytecount > columnLength)
                 {
-                    System.Buffer.BlockCopy(ValueBytes, 0, fixedbytes, 0, columnLength);
+                    System.Buffer.BlockCopy(valueBytes, 0, fixedbytes, 0, columnLength);
                 }
                 else if (currentbytecount < columnLength)
                 {
-                    System.Buffer.BlockCopy(ValueBytes, 0, fixedbytes, 0, currentbytecount);
+                    System.Buffer.BlockCopy(valueBytes, 0, fixedbytes, 0, currentbytecount);
                 }
                 else
                 {
-                    fixedbytes = ValueBytes;
+                    fixedbytes = valueBytes;
                 }
             }
             else
             {
-                fixedbytes = ValueBytes;
+                fixedbytes = valueBytes;
             }
 
             return new ColumnEvaluator(datatype, comparetype, compare, fixedbytes, columnLength, orginalLength);

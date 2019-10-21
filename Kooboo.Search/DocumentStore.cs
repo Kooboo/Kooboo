@@ -11,7 +11,7 @@ namespace Kooboo.Search
     //TODO: allow some 10% extra space for update doc in the same disk position. 
     public class DocumentStore
     {
-        private static object _locker = new object();
+        private object _locker = new object();
 
         private Encoding Encoding { get; set; } = Encoding.UTF8;
 

@@ -35,7 +35,7 @@ namespace Kooboo.IndexedDB.Helper
             }
             else if (keytype == typeof(decimal))
             {
-                ///decimal is not available, will be converted to double directly on byteconverter.
+                //decimal is not available, will be converted to double directly on byteconverter.
                 return 8;
             }
             else if (keytype == typeof(double))
@@ -72,23 +72,23 @@ namespace Kooboo.IndexedDB.Helper
             }
         }
 
-        public static byte[] AppendToKeyLength(byte[] input, bool IsString, int KeyLen)
+        public static byte[] AppendToKeyLength(byte[] input, bool isString, int keyLen)
         {
-            if (!IsString)
+            if (!isString)
             {
                 return input;
             }
             int currentbytecount = input.Count();
 
-            if (currentbytecount > KeyLen)
+            if (currentbytecount > keyLen)
             {
-                byte[] fixedlenbytes = new byte[KeyLen];
-                System.Buffer.BlockCopy(input, 0, fixedlenbytes, 0, KeyLen);
+                byte[] fixedlenbytes = new byte[keyLen];
+                System.Buffer.BlockCopy(input, 0, fixedlenbytes, 0, keyLen);
                 return fixedlenbytes;
             }
-            else if (currentbytecount < KeyLen)
+            else if (currentbytecount < keyLen)
             {
-                byte[] fixedlenbytes = new byte[KeyLen];
+                byte[] fixedlenbytes = new byte[keyLen];
                 System.Buffer.BlockCopy(input, 0, fixedlenbytes, 0, currentbytecount);
                 return fixedlenbytes;
             }

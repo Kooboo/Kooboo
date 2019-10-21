@@ -61,7 +61,7 @@ namespace Kooboo.IndexedDB.Queue
         {
             byte[] recordbyte = new byte[10];
             recordbyte[0] = this.sanitybyte;
-            recordbyte[1] = 1;    /// 1 = record ok, 0 = record deleted.
+            recordbyte[1] = 1;    // 1 = record ok, 0 = record deleted.
 
             lock (_object)
             {
@@ -70,7 +70,7 @@ namespace Kooboo.IndexedDB.Queue
                 long leftbyte = startwriteposition % 10;
                 if (leftbyte != 0)
                 {
-                    /// ok, we fuck, previous reocrds was not write corrected.
+                    // ok, we fuck, previous reocrds was not write corrected.
                     startwriteposition = startwriteposition - leftbyte;
                 }
 
@@ -128,7 +128,7 @@ namespace Kooboo.IndexedDB.Queue
         /// get the record index  block position.
         /// it must be checked already that recordindex  smaller than total count.
         /// </summary>
-        /// <param name="PreviousCount"></param>
+        /// <param name="recordindex"></param>
         /// <returns></returns>
         public long GetBlockPosition(int recordindex)
         {
@@ -154,10 +154,7 @@ namespace Kooboo.IndexedDB.Queue
 
         public void close()
         {
-            if (_stream != null)
-            {
-                _stream.Close();
-            }
+            _stream?.Close();
         }
 
         public FileStream Stream

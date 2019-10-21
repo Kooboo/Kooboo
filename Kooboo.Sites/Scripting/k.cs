@@ -14,7 +14,7 @@ namespace Kooboo.Sites.Scripting
 {
     public class k
     {
-        private static object _locker = new object();
+        private object _locker = new object();
 
         public RenderContext RenderContext { get; set; }
 

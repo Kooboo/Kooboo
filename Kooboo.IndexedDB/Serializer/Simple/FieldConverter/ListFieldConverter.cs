@@ -22,16 +22,16 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         private string FieldName { get; set; }
 
-        public ListFieldConverter(Type ListType, string FieldName)
+        public ListFieldConverter(Type listType, string fieldName)
         {
-            this.ListType = ListType;
-            this.DataType = ObjectHelper.GetEnumberableType(ListType);
-            this.FieldName = FieldName;
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.ListType = listType;
+            this.DataType = ObjectHelper.GetEnumberableType(listType);
+            this.FieldName = fieldName;
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
             this.FieldLength = ConverterHelper.GetTypeLength(this.DataType);
 
-            this.GetFieldValue = ObjectHelper.GetGetObjectValue<T>(FieldName);
-            this.SetFieldValue = ObjectHelper.GetSetObjectValue<T>(FieldName, this.ListType);
+            this.GetFieldValue = ObjectHelper.GetGetObjectValue<T>(fieldName);
+            this.SetFieldValue = ObjectHelper.GetSetObjectValue<T>(fieldName, this.ListType);
 
             this.GetObjectBytes = ConverterHelper.GetValueToBytes(this.DataType);
             this.GetObjectValue = ConverterHelper.GetBytesToValue(this.DataType);
@@ -66,10 +66,10 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             {
                 if (this.FieldLength > 0)
                 {
-                    byte[] FieldValueBytes = new byte[this.FieldLength];
-                    System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, this.FieldLength);
+                    byte[] fieldValueBytes = new byte[this.FieldLength];
+                    System.Buffer.BlockCopy(bytes, startposition, fieldValueBytes, 0, this.FieldLength);
                     startposition += this.FieldLength;
-                    var objectvalue = this.GetObjectValue(FieldValueBytes);
+                    var objectvalue = this.GetObjectValue(fieldValueBytes);
                     list.Add(objectvalue);
                 }
                 else
@@ -79,10 +79,10 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
                     if (len > 0)
                     {
-                        byte[] FieldValueBytes = new byte[len];
-                        System.Buffer.BlockCopy(bytes, startposition, FieldValueBytes, 0, len);
+                        byte[] fieldValueBytes = new byte[len];
+                        System.Buffer.BlockCopy(bytes, startposition, fieldValueBytes, 0, len);
                         startposition += len;
-                        var objectvalue = this.GetObjectValue(FieldValueBytes);
+                        var objectvalue = this.GetObjectValue(fieldValueBytes);
                         list.Add(objectvalue);
                     }
                     else
@@ -136,17 +136,17 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                 }
             }
 
-            byte[] BackValue = new byte[totallen];
+            byte[] backValue = new byte[totallen];
             int currentposition = 0;
 
             foreach (var item in results)
             {
                 int len = item.Length;
-                System.Buffer.BlockCopy(item, 0, BackValue, currentposition, len);
+                System.Buffer.BlockCopy(item, 0, backValue, currentposition, len);
                 currentposition += len;
             }
 
-            return BackValue;
+            return backValue;
         }
     }
 
@@ -157,12 +157,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
         private ListConverter converter;
 
-        public ListFieldConverter(string FieldName, Type ObjectType, Type ListType)
+        public ListFieldConverter(string fieldName, Type objectType, Type listType)
         {
-            this.getValue = ObjectHelper.GetGetObjectValue(FieldName, ObjectType);
-            this.setValue = ObjectHelper.GetSetObjectValue(FieldName, ObjectType, ListType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
-            converter = new ListConverter(ListType);
+            this.getValue = ObjectHelper.GetGetObjectValue(fieldName, objectType);
+            this.setValue = ObjectHelper.GetSetObjectValue(fieldName, objectType, listType);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
+            converter = new ListConverter(listType);
         }
 
         public int ByteLength
@@ -184,9 +184,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             setValue(value, fieldvalue);
         }
 
-        public byte[] ToBytes(object Value)
+        public byte[] ToBytes(object value)
         {
-            object fieldvalue = this.getValue(Value);
+            object fieldvalue = this.getValue(value);
             return converter.ToBytes(fieldvalue);
         }
     }

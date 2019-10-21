@@ -27,7 +27,7 @@ namespace Kooboo.Data.Repository
             }
         }
 
-        private static object _locker = new object();
+        private object _locker = new object();
 
         public Dictionary<Guid, WebSite> Cachedsites;
 

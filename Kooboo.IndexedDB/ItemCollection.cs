@@ -35,37 +35,37 @@ namespace Kooboo.IndexedDB
 
         public class Enumerator : IEnumerator<TValue>
         {
-            private ObjectStore<TKey, TValue> store;
-            private IEnumerator<long> enumerator;
+            private ObjectStore<TKey, TValue> _store;
+            private IEnumerator<long> _enumerator;
 
             public Enumerator(ObjectStore<TKey, TValue> store, IEnumerator<long> enumerator)
             {
-                this.store = store;
-                this.enumerator = enumerator;
+                this._store = store;
+                this._enumerator = enumerator;
             }
 
             public TValue Current
             {
                 get
                 {
-                    return store.getValue(enumerator.Current);
+                    return _store.getValue(_enumerator.Current);
                 }
             }
 
             public void Dispose()
             {
-                this.store = null;
-                this.enumerator = null;
+                this._store = null;
+                this._enumerator = null;
             }
 
             public bool MoveNext()
             {
-                return enumerator.MoveNext();
+                return _enumerator.MoveNext();
             }
 
             public void Reset()
             {
-                enumerator.Reset();
+                _enumerator.Reset();
             }
 
             object System.Collections.IEnumerator.Current

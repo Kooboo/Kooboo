@@ -13,43 +13,33 @@ namespace Kooboo.IndexedDB
 
         public static GuidConverter GuidConverter
         {
-            get
-            {
-                if (_guidConverter == null)
-                {
-                    _guidConverter = new GuidConverter();
-                }
-                return _guidConverter;
-            }
+            get { return _guidConverter ?? (_guidConverter = new GuidConverter()); }
         }
 
-        private static Dictionary<Type, object> _ByteConverterList;
+        private static Dictionary<Type, object> _byteConverterList;
 
-        private static Dictionary<Type, object> byteconverterlist()
+        private static Dictionary<Type, object> Byteconverterlist()
         {
-            if (_ByteConverterList == null)
+            return _byteConverterList ?? (_byteConverterList = new Dictionary<Type, object>
             {
-                _ByteConverterList = new Dictionary<Type, object>();
-                _ByteConverterList.Add(typeof(bool), new BoolConverter());
-                _ByteConverterList.Add(typeof(byte), new IndexedDB.ByteConverter.ByteConverter());
-                _ByteConverterList.Add(typeof(byte[]), new BytesConverter());
-                _ByteConverterList.Add(typeof(DateTime), new DateTimeConverter());
-                _ByteConverterList.Add(typeof(decimal), new DecimalConverter());
-                _ByteConverterList.Add(typeof(double), new DoubleConverter());
-                _ByteConverterList.Add(typeof(float), new FloatConverter());
-                _ByteConverterList.Add(typeof(Guid), new GuidConverter());
-                _ByteConverterList.Add(typeof(short), new Int16Converter());
-                _ByteConverterList.Add(typeof(int), new Int32Converter());
-                _ByteConverterList.Add(typeof(long), new Int64Converter());
-                _ByteConverterList.Add(typeof(string), new StringConverter());
-            }
-
-            return _ByteConverterList;
+                {typeof(bool), new BoolConverter()},
+                {typeof(byte), new IndexedDB.ByteConverter.ByteConverter()},
+                {typeof(byte[]), new BytesConverter()},
+                {typeof(DateTime), new DateTimeConverter()},
+                {typeof(decimal), new DecimalConverter()},
+                {typeof(double), new DoubleConverter()},
+                {typeof(float), new FloatConverter()},
+                {typeof(Guid), new GuidConverter()},
+                {typeof(short), new Int16Converter()},
+                {typeof(int), new Int32Converter()},
+                {typeof(long), new Int64Converter()},
+                {typeof(string), new StringConverter()}
+            });
         }
 
         public static IByteConverter<T> GetConverter<T>(Dictionary<string, int> columns = null)
         {
-            Dictionary<Type, object> list = byteconverterlist();
+            Dictionary<Type, object> list = Byteconverterlist();
 
             if (list.ContainsKey(typeof(T)))
             {
@@ -96,22 +86,24 @@ namespace Kooboo.IndexedDB
 
         private static Dictionary<Type, IComparer<byte[]>> _comparelist;
 
-        private static Dictionary<Type, IComparer<byte[]>> comparelist
+        private static Dictionary<Type, IComparer<byte[]>> Comparelist
         {
             get
             {
                 if (_comparelist == null)
                 {
-                    _comparelist = new Dictionary<Type, IComparer<byte[]>>();
-                    _comparelist.Add(typeof(Int32), new IntComparer(IntType.Int32));
-                    _comparelist.Add(typeof(Int64), new IntComparer(IntType.Int64));
-                    _comparelist.Add(typeof(Int16), new IntComparer(IntType.Int16));
-                    _comparelist.Add(typeof(decimal), new DoubleComparer());
-                    _comparelist.Add(typeof(double), new DoubleComparer());
-                    _comparelist.Add(typeof(float), new FloatComparer());
-                    _comparelist.Add(typeof(DateTime), new DateTimeComparer());
-                    _comparelist.Add(typeof(byte), new ByteComparer());
-                    _comparelist.Add(typeof(Guid), new GuidComparer());
+                    _comparelist = new Dictionary<Type, IComparer<byte[]>>
+                    {
+                        {typeof(Int32), new IntComparer(IntType.Int32)},
+                        {typeof(Int64), new IntComparer(IntType.Int64)},
+                        {typeof(Int16), new IntComparer(IntType.Int16)},
+                        {typeof(decimal), new DoubleComparer()},
+                        {typeof(double), new DoubleComparer()},
+                        {typeof(float), new FloatComparer()},
+                        {typeof(DateTime), new DateTimeComparer()},
+                        {typeof(byte), new ByteComparer()},
+                        {typeof(Guid), new GuidComparer()}
+                    };
                 }
 
                 return _comparelist;
@@ -120,9 +112,9 @@ namespace Kooboo.IndexedDB
 
         public static IComparer<byte[]> getComparer(Type keytype, int keylength)
         {
-            if (comparelist.ContainsKey(keytype))
+            if (Comparelist.ContainsKey(keytype))
             {
-                return comparelist[keytype];
+                return Comparelist[keytype];
             }
             else
             {

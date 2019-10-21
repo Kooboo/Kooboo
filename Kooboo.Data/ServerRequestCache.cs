@@ -15,7 +15,7 @@ namespace Kooboo.Data
 
     public class ServerRequestCache<TValue> where TValue : IGolbalObject
     {
-        private static object _locker = new object();
+        private object _locker = new object();
 
         private Type _valuetype;
 

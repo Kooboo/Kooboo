@@ -45,7 +45,7 @@ namespace Kooboo.Sites.SiteTransfer.Download
             { return this.CurrentThreadCount < MaxThread; }
         }
 
-        private static object _locker = new object();
+        private object _locker = new object();
 
         public Queue<DownloadTask> Queue { get; set; } = new Queue<DownloadTask>();
 

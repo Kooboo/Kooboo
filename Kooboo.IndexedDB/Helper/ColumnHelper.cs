@@ -8,63 +8,63 @@ namespace Kooboo.IndexedDB.Helper
 {
     public static class ColumnHelper
     {
-        public static IColumn<T> GetColumn<T>(string FieldName, Type FieldType, int len = 0)
+        public static IColumn<T> GetColumn<T>(string fieldName, Type fieldType, int len = 0)
         {
-            if (FieldType == null)
+            if (fieldType == null)
             {
                 throw new Exception("Field Type is required");
             }
-            if (FieldType == typeof(string))
+            if (fieldType == typeof(string))
             {
-                return new ColumnBase<T, string>(FieldName, len);
+                return new ColumnBase<T, string>(fieldName, len);
             }
-            else if (FieldType == typeof(Int32))
+            else if (fieldType == typeof(Int32))
             {
-                return new ColumnBase<T, int>(FieldName);
+                return new ColumnBase<T, int>(fieldName);
             }
-            else if (FieldType == typeof(Int64))
+            else if (fieldType == typeof(Int64))
             {
-                return new ColumnBase<T, Int64>(FieldName);
+                return new ColumnBase<T, Int64>(fieldName);
             }
-            else if (FieldType == typeof(Int16))
+            else if (fieldType == typeof(Int16))
             {
-                return new ColumnBase<T, Int16>(FieldName);
+                return new ColumnBase<T, Int16>(fieldName);
             }
-            else if (FieldType == typeof(decimal))
+            else if (fieldType == typeof(decimal))
             {
-                return new ColumnBase<T, decimal>(FieldName);
+                return new ColumnBase<T, decimal>(fieldName);
             }
-            else if (FieldType == typeof(double))
+            else if (fieldType == typeof(double))
             {
-                return new ColumnBase<T, double>(FieldName);
+                return new ColumnBase<T, double>(fieldName);
             }
-            else if (FieldType == typeof(float))
+            else if (fieldType == typeof(float))
             {
-                return new ColumnBase<T, float>(FieldName);
+                return new ColumnBase<T, float>(fieldName);
             }
-            else if (FieldType == typeof(DateTime))
+            else if (fieldType == typeof(DateTime))
             {
-                return new DateTimeColumn<T>(FieldName);
+                return new DateTimeColumn<T>(fieldName);
             }
-            else if (FieldType == typeof(Guid))
+            else if (fieldType == typeof(Guid))
             {
-                return new ColumnBase<T, Guid>(FieldName);
+                return new ColumnBase<T, Guid>(fieldName);
             }
-            else if (FieldType == typeof(byte))
+            else if (fieldType == typeof(byte))
             {
-                return new ColumnBase<T, byte>(FieldName);
+                return new ColumnBase<T, byte>(fieldName);
             }
-            else if (FieldType == typeof(bool))
+            else if (fieldType == typeof(bool))
             {
-                return new ColumnBase<T, bool>(FieldName);
+                return new ColumnBase<T, bool>(fieldName);
             }
-            else if (FieldType.IsEnum)
+            else if (fieldType.IsEnum)
             {
-                return new EnumColumn<T>(FieldName, FieldType);
+                return new EnumColumn<T>(fieldName, fieldType);
             }
             else
             {
-                throw new Exception(FieldType.ToString() + " data type not supported");
+                throw new Exception(fieldType.ToString() + " data type not supported");
             }
         }
 
@@ -73,11 +73,10 @@ namespace Kooboo.IndexedDB.Helper
             string fieldname = string.Empty;
             Type type;
 
-            if (expression.Body is MemberExpression)
+            if (expression.Body is MemberExpression exp1)
             {
-                var exp = (MemberExpression)expression.Body;
-                fieldname = exp.Member.Name;
-                type = GetType(exp);
+                fieldname = exp1.Member.Name;
+                type = GetType(exp1);
             }
             else if (expression.Body is UnaryExpression)
             {
@@ -100,12 +99,12 @@ namespace Kooboo.IndexedDB.Helper
             if (x.MemberType == System.Reflection.MemberTypes.Property)
             {
                 var prop = x as System.Reflection.PropertyInfo;
-                return prop.PropertyType;
+                return prop?.PropertyType;
             }
             else if (x.MemberType == System.Reflection.MemberTypes.Field)
             {
                 var field = x as System.Reflection.FieldInfo;
-                return field.FieldType;
+                return field?.FieldType;
             }
             return null;
         }

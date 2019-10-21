@@ -34,7 +34,7 @@ namespace Kooboo.Sites.Diagnosis
             AddMessage(new Message() { body = msg, Type = type });
         }
 
-        private static object _locker = new object();
+        private object _locker = new object();
 
         public void AddMessage(Message message)
         {

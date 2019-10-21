@@ -31,11 +31,12 @@ namespace Kooboo.IndexedDB.Btree.Comparer
         /// </summary>
         /// <param name="input"></param>
         /// <param name="comparevalue"></param>
-        /// <param name="length"></param>
+        /// <param name="valueLength"></param>
+        /// <param name="maxInputLength"></param>
         /// <returns></returns>
-        public static bool Contains(byte[] input, byte[] comparevalue, int ValueLength, int MaxInputLength)
+        public static bool Contains(byte[] input, byte[] comparevalue, int valueLength, int maxInputLength)
         {
-            int maxi = MaxInputLength - ValueLength + 1;   // when this i reach, return false.
+            int maxi = maxInputLength - valueLength + 1;   // when this i reach, return false.
 
             byte startbyte = comparevalue[0];
 
@@ -45,7 +46,7 @@ namespace Kooboo.IndexedDB.Btree.Comparer
                 {
                     bool allmatched;
                     allmatched = true;
-                    for (int j = 0; j < ValueLength; j++)
+                    for (int j = 0; j < valueLength; j++)
                     {
                         if (input[i + j] != comparevalue[j])
                         {

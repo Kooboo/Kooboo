@@ -24,11 +24,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
         }
 
-        public static void Add(Type ClassType, ClassConverter converter)
+        public static void Add(Type classType, ClassConverter converter)
         {
             lock (_locker)
             {
-                var key = GetKey(ClassType);
+                var key = GetKey(classType);
                 if (Cache.ContainsKey(key))
                 {
                     return;

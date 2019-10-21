@@ -10,11 +10,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<T, bool> getValue;
         private Action<T, bool> setValue;
 
-        public BoolFieldConverter(string FieldName)
+        public BoolFieldConverter(string fieldName)
         {
-            this.getValue = ObjectHelper.GetGetValue<T, bool>(FieldName);
-            this.setValue = ObjectHelper.GetSetValue<T, bool>(FieldName);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetValue<T, bool>(fieldName);
+            this.setValue = ObjectHelper.GetSetValue<T, bool>(fieldName);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -36,9 +36,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytevalue);
         }
 
-        public byte[] ToBytes(T Value)
+        public byte[] ToBytes(T value)
         {
-            bool fieldvalue = this.getValue(Value);
+            bool fieldvalue = this.getValue(value);
             return ValueConverter.ToBytes(fieldvalue);
         }
     }
@@ -48,11 +48,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<object, bool> getValue;
         private Action<object, bool> setValue;
 
-        public BoolFieldConverter(string FieldName, Type ObjectType)
+        public BoolFieldConverter(string fieldName, Type objectType)
         {
-            this.getValue = ObjectHelper.GetGetFieldValue<bool>(FieldName, ObjectType);
-            this.setValue = ObjectHelper.GetSetFieldValue<bool>(FieldName, ObjectType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetFieldValue<bool>(fieldName, objectType);
+            this.setValue = ObjectHelper.GetSetFieldValue<bool>(fieldName, objectType);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -74,9 +74,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytevalue);
         }
 
-        public byte[] ToBytes(object Value)
+        public byte[] ToBytes(object value)
         {
-            bool fieldvalue = this.getValue(Value);
+            bool fieldvalue = this.getValue(value);
             return ValueConverter.ToBytes(fieldvalue);
         }
     }

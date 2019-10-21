@@ -9,7 +9,7 @@ namespace Kooboo.Mail.Repositories
     public abstract class RepositoryBase<TValue> : IRepository<TValue> where
         TValue : class, IMailObject
     {
-        private static object _locker = new object();
+        private object _locker = new object();
 
         public RepositoryBase(Database db)
         {

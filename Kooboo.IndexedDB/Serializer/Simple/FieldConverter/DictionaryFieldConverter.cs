@@ -8,57 +8,57 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 {
     public class DictionaryFieldConverter<T> : IFieldConverter<T>
     {
-        private Type KeyType;
-        private Type ValueType;
-        private Type DictionaryType;
+        private Type _keyType;
+        private Type _valueType;
+        private Type _dictionaryType;
 
-        private int KeyLength;
-        private int Valuelength;
+        private int _keyLength;
+        private int _valuelength;
 
-        private Func<object, byte[]> GetKeyObjectBytes;
-        private Func<byte[], object> GetKeyObjectValue;
+        private Func<object, byte[]> _getKeyObjectBytes;
+        private Func<byte[], object> _getKeyObjectValue;
 
-        private Func<object, byte[]> GetValueObjectBytes;
-        private Func<byte[], object> GetValueObjectValue;
+        private Func<object, byte[]> _getValueObjectBytes;
+        private Func<byte[], object> _getValueObjectValue;
 
-        private Func<T, object> GetFieldValue;
-        private Action<T, object> SetFieldValue;
+        private Func<T, object> _getFieldValue;
+        private Action<T, object> _setFieldValue;
 
         private string FieldName { get; set; }
 
         private bool IsIgnoreCase { get; set; }
 
-        public DictionaryFieldConverter(Type DictionaryType, string FieldName)
+        public DictionaryFieldConverter(Type dictionaryType, string fieldName)
         {
-            this.IsIgnoreCase = Helper.TypeHelper.IsDictIgnoreCase(typeof(T), FieldName);
+            this.IsIgnoreCase = Helper.TypeHelper.IsDictIgnoreCase(typeof(T), fieldName);
 
-            this.DictionaryType = DictionaryType;
-            KeyType = ObjectHelper.GetDictionaryKeyType(DictionaryType);
-            ValueType = ObjectHelper.GetDictionaryValueType(DictionaryType);
+            this._dictionaryType = dictionaryType;
+            _keyType = ObjectHelper.GetDictionaryKeyType(dictionaryType);
+            _valueType = ObjectHelper.GetDictionaryValueType(dictionaryType);
 
-            this.FieldName = FieldName;
-            FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.FieldName = fieldName;
+            FieldNameHash = ObjectHelper.GetHashCode(fieldName);
 
-            KeyLength = ConverterHelper.GetTypeLength(KeyType);
-            Valuelength = ConverterHelper.GetTypeLength(ValueType);
+            _keyLength = ConverterHelper.GetTypeLength(_keyType);
+            _valuelength = ConverterHelper.GetTypeLength(_valueType);
 
-            GetFieldValue = ObjectHelper.GetGetObjectValue<T>(FieldName);
-            SetFieldValue = ObjectHelper.GetSetObjectValue<T>(FieldName, this.DictionaryType);
+            _getFieldValue = ObjectHelper.GetGetObjectValue<T>(fieldName);
+            _setFieldValue = ObjectHelper.GetSetObjectValue<T>(fieldName, this._dictionaryType);
 
-            GetKeyObjectBytes = ConverterHelper.GetValueToBytes(KeyType);
-            GetKeyObjectValue = ConverterHelper.GetBytesToValue(KeyType);
+            _getKeyObjectBytes = ConverterHelper.GetValueToBytes(_keyType);
+            _getKeyObjectValue = ConverterHelper.GetBytesToValue(_keyType);
 
-            GetValueObjectBytes = ConverterHelper.GetValueToBytes(ValueType);
-            GetValueObjectValue = ConverterHelper.GetBytesToValue(ValueType);
+            _getValueObjectBytes = ConverterHelper.GetValueToBytes(_valueType);
+            _getValueObjectValue = ConverterHelper.GetBytesToValue(_valueType);
 
-            if (GetKeyObjectBytes == null || GetKeyObjectValue == null)
+            if (_getKeyObjectBytes == null || _getKeyObjectValue == null)
             {
-                throw new Exception(KeyType.Name + " is not yet supported.");
+                throw new Exception(_keyType.Name + " is not yet supported.");
             }
 
-            if (GetValueObjectBytes == null || GetValueObjectValue == null)
+            if (_getValueObjectBytes == null || _getValueObjectValue == null)
             {
-                throw new Exception(ValueType.Name + " is not yet supported.");
+                throw new Exception(_valueType.Name + " is not yet supported.");
             }
         }
 
@@ -80,36 +80,36 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             List<byte[]> keybytes = new List<byte[]>();
             List<byte[]> valuebytes = new List<byte[]>();
 
-            int KeyByteLen = BitConverter.ToInt32(bytes, 0);
-            int ValueByteLen = BitConverter.ToInt32(bytes, 4);
-            if (KeyByteLen == 0) { return; }
+            int keyByteLen = BitConverter.ToInt32(bytes, 0);
+            int valueByteLen = BitConverter.ToInt32(bytes, 4);
+            if (keyByteLen == 0) { return; }
 
-            byte[] KeyTotalBytes = new byte[KeyByteLen];
-            byte[] ValueTotalBytes = new byte[ValueByteLen];
+            byte[] keyTotalBytes = new byte[keyByteLen];
+            byte[] valueTotalBytes = new byte[valueByteLen];
 
-            System.Buffer.BlockCopy(bytes, 8, KeyTotalBytes, 0, KeyByteLen);
-            System.Buffer.BlockCopy(bytes, 8 + KeyByteLen, ValueTotalBytes, 0, ValueByteLen);
+            System.Buffer.BlockCopy(bytes, 8, keyTotalBytes, 0, keyByteLen);
+            System.Buffer.BlockCopy(bytes, 8 + keyByteLen, valueTotalBytes, 0, valueByteLen);
 
             int keystartposition = 0;
 
             while (true)
             {
-                if (this.KeyLength > 0)
+                if (this._keyLength > 0)
                 {
-                    byte[] onekeybytes = new byte[this.KeyLength];
-                    System.Buffer.BlockCopy(KeyTotalBytes, keystartposition, onekeybytes, 0, this.KeyLength);
-                    keystartposition += this.KeyLength;
+                    byte[] onekeybytes = new byte[this._keyLength];
+                    System.Buffer.BlockCopy(keyTotalBytes, keystartposition, onekeybytes, 0, this._keyLength);
+                    keystartposition += this._keyLength;
                     keybytes.Add(onekeybytes);
                 }
                 else
                 {
-                    int len = BitConverter.ToInt32(KeyTotalBytes, keystartposition);
+                    int len = BitConverter.ToInt32(keyTotalBytes, keystartposition);
                     keystartposition += 4;
 
                     if (len > 0)
                     {
                         byte[] onekeybytes = new byte[len];
-                        System.Buffer.BlockCopy(KeyTotalBytes, keystartposition, onekeybytes, 0, len);
+                        System.Buffer.BlockCopy(keyTotalBytes, keystartposition, onekeybytes, 0, len);
                         keystartposition += len;
                         keybytes.Add(onekeybytes);
                     }
@@ -119,7 +119,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                     }
                 }
 
-                if (keystartposition >= KeyByteLen)
+                if (keystartposition >= keyByteLen)
                 { break; }
             }
 
@@ -127,22 +127,22 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
             while (true)
             {
-                if (this.Valuelength > 0)
+                if (this._valuelength > 0)
                 {
-                    byte[] onebytes = new byte[this.Valuelength];
-                    System.Buffer.BlockCopy(ValueTotalBytes, valuestartposition, onebytes, 0, this.Valuelength);
-                    valuestartposition += this.Valuelength;
+                    byte[] onebytes = new byte[this._valuelength];
+                    System.Buffer.BlockCopy(valueTotalBytes, valuestartposition, onebytes, 0, this._valuelength);
+                    valuestartposition += this._valuelength;
                     valuebytes.Add(onebytes);
                 }
                 else
                 {
-                    int len = BitConverter.ToInt32(ValueTotalBytes, valuestartposition);
+                    int len = BitConverter.ToInt32(valueTotalBytes, valuestartposition);
                     valuestartposition += 4;
 
                     if (len > 0)
                     {
                         byte[] onebytes = new byte[len];
-                        System.Buffer.BlockCopy(ValueTotalBytes, valuestartposition, onebytes, 0, len);
+                        System.Buffer.BlockCopy(valueTotalBytes, valuestartposition, onebytes, 0, len);
                         valuestartposition += len;
                         valuebytes.Add(onebytes);
                     }
@@ -152,20 +152,19 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                     }
                 }
 
-                if (valuestartposition >= ValueByteLen)
+                if (valuestartposition >= valueByteLen)
                 { break; }
             }
 
             System.Collections.IDictionary dict = null;
             if (this.IsIgnoreCase)
             {
-                List<object> para = new List<object>();
-                para.Add(StringComparer.OrdinalIgnoreCase);
-                dict = Activator.CreateInstance(this.DictionaryType, para.ToArray()) as System.Collections.IDictionary;
+                List<object> para = new List<object> {StringComparer.OrdinalIgnoreCase};
+                dict = Activator.CreateInstance(this._dictionaryType, para.ToArray()) as System.Collections.IDictionary;
             }
             else
             {
-                dict = Activator.CreateInstance(this.DictionaryType) as System.Collections.IDictionary;
+                dict = Activator.CreateInstance(this._dictionaryType) as System.Collections.IDictionary;
             }
 
             int count = keybytes.Count;
@@ -176,18 +175,18 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                 var valuebyte = valuebytes[i];
                 if (keybyte != null)
                 {
-                    var dictkey = this.GetKeyObjectValue(keybyte);
+                    var dictkey = this._getKeyObjectValue(keybyte);
                     if (valuebyte == null)
                     {
                         dict.Add(dictkey, null);
                     }
                     else
                     {
-                        var dictvalue = this.GetValueObjectValue(valuebyte);
+                        var dictvalue = this._getValueObjectValue(valuebyte);
                         dict.Add(dictkey, dictvalue);
                     }
                 }
-                else if (KeyType == typeof(string))
+                else if (_keyType == typeof(string))
                 {
                     if (valuebyte == null)
                     {
@@ -195,18 +194,18 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                     }
                     else
                     {
-                        var dictvalue = this.GetValueObjectValue(valuebyte);
+                        var dictvalue = this._getValueObjectValue(valuebyte);
                         dict.Add(string.Empty, dictvalue);
                     }
                 }
             }
 
-            this.SetFieldValue(value, dict);
+            this._setFieldValue(value, dict);
         }
 
         public byte[] ToBytes(T value)
         {
-            var dictvale = GetFieldValue(value);
+            var dictvale = _getFieldValue(value);
 
             var dict = dictvale as System.Collections.IDictionary;
             if (dict == null)
@@ -219,12 +218,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
 
             foreach (var item in dict.Keys)
             {
-                var keyresult = this.GetKeyObjectBytes(item);
+                var keyresult = this._getKeyObjectBytes(item);
 
-                if (this.KeyLength > 0)
+                if (this._keyLength > 0)
                 {
                     keyresults.Add(keyresult);
-                    keytotallen += this.KeyLength;
+                    keytotallen += this._keyLength;
                 }
                 else
                 {
@@ -244,58 +243,58 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
                 currentposition += len;
             }
 
-            List<byte[]> ValueResults = new List<byte[]>();
-            int ValueTotalLen = 0;
+            List<byte[]> valueResults = new List<byte[]>();
+            int valueTotalLen = 0;
 
             foreach (var item in dict.Values)
             {
-                var ValueResult = this.GetValueObjectBytes(item);
+                var valueResult = this._getValueObjectBytes(item);
 
-                if (this.Valuelength > 0)
+                if (this._valuelength > 0)
                 {
-                    ValueResults.Add(ValueResult);
-                    ValueTotalLen += this.Valuelength;
+                    valueResults.Add(valueResult);
+                    valueTotalLen += this._valuelength;
                 }
                 else
                 {
-                    if (ValueResult == null)
+                    if (valueResult == null)
                     {
-                        ValueResults.Add(BitConverter.GetBytes(0));
+                        valueResults.Add(BitConverter.GetBytes(0));
                         //ValueResults.Add(ValueResult);
-                        ValueTotalLen += 4;
+                        valueTotalLen += 4;
                     }
                     else
                     {
-                        ValueResults.Add(BitConverter.GetBytes(ValueResult.Length));
-                        ValueResults.Add(ValueResult);
-                        ValueTotalLen += 4 + ValueResult.Length;
+                        valueResults.Add(BitConverter.GetBytes(valueResult.Length));
+                        valueResults.Add(valueResult);
+                        valueTotalLen += 4 + valueResult.Length;
                     }
                 }
             }
 
-            byte[] ValueBytes = new byte[ValueTotalLen];
+            byte[] valueBytes = new byte[valueTotalLen];
             int valuecurrentposition = 0;
 
-            foreach (var item in ValueResults)
+            foreach (var item in valueResults)
             {
                 int len = item.Length;
-                System.Buffer.BlockCopy(item, 0, ValueBytes, valuecurrentposition, len);
+                System.Buffer.BlockCopy(item, 0, valueBytes, valuecurrentposition, len);
                 valuecurrentposition += len;
             }
 
-            int total = KeyBytes.Length + ValueBytes.Length + 8;
+            int total = KeyBytes.Length + valueBytes.Length + 8;
 
             byte[] totalbytes = new byte[total];
 
             System.Buffer.BlockCopy(BitConverter.GetBytes(KeyBytes.Length), 0, totalbytes, 0, 4);
-            System.Buffer.BlockCopy(BitConverter.GetBytes(ValueBytes.Length), 0, totalbytes, 4, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(valueBytes.Length), 0, totalbytes, 4, 4);
             if (KeyBytes.Length > 0)
             {
                 System.Buffer.BlockCopy(KeyBytes, 0, totalbytes, 8, KeyBytes.Length);
             }
-            if (ValueBytes.Length > 0)
+            if (valueBytes.Length > 0)
             {
-                System.Buffer.BlockCopy(ValueBytes, 0, totalbytes, 8 + KeyBytes.Length, ValueBytes.Length);
+                System.Buffer.BlockCopy(valueBytes, 0, totalbytes, 8 + KeyBytes.Length, valueBytes.Length);
             }
             return totalbytes;
         }
@@ -307,12 +306,12 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Action<object, object> setValue;
         private DictionaryConverter converter;
 
-        public DictionaryFieldConverter(string FieldName, Type ObjectType, Type DictionaryType)
+        public DictionaryFieldConverter(string fieldName, Type objectType, Type dictionaryType)
         {
-            this.getValue = ObjectHelper.GetGetObjectValue(FieldName, ObjectType);
-            this.setValue = ObjectHelper.GetSetObjectValue(FieldName, ObjectType, DictionaryType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
-            converter = new DictionaryConverter(DictionaryType, Helper.TypeHelper.IsDictIgnoreCase(ObjectType, FieldName));
+            this.getValue = ObjectHelper.GetGetObjectValue(fieldName, objectType);
+            this.setValue = ObjectHelper.GetSetObjectValue(fieldName, objectType, dictionaryType);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
+            converter = new DictionaryConverter(dictionaryType, Helper.TypeHelper.IsDictIgnoreCase(objectType, fieldName));
         }
 
         public int ByteLength
@@ -334,9 +333,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             setValue(value, fieldvalue);
         }
 
-        public byte[] ToBytes(object Value)
+        public byte[] ToBytes(object value)
         {
-            object fieldvalue = this.getValue(Value);
+            object fieldvalue = this.getValue(value);
             return converter.ToBytes(fieldvalue);
         }
     }

@@ -34,11 +34,11 @@ namespace Kooboo.IndexedDB.Dynamic
             this.Ascending = true;
         }
 
-        public Query Where(string FieldOrPropertyName, Comparer comparer, object CompareValue)
+        public Query Where(string fieldOrPropertyName, Comparer comparer, object compareValue)
         {
             FilterItem item = new FilterItem();
 
-            var field = this.table.ObjectConverter.Fields.Find(o => o.FieldName == FieldOrPropertyName);
+            var field = this.table.ObjectConverter.Fields.Find(o => o.FieldName == fieldOrPropertyName);
 
             if (field != null)
             {
@@ -52,9 +52,9 @@ namespace Kooboo.IndexedDB.Dynamic
 
             item.Compare = comparer;
 
-            item.FieldOrProperty = FieldOrPropertyName;
+            item.FieldOrProperty = fieldOrPropertyName;
 
-            byte[] bytevalue = field.ToBytes(CompareValue);
+            byte[] bytevalue = field.ToBytes(compareValue);
 
             if (bytevalue != null)
             {
@@ -84,15 +84,17 @@ namespace Kooboo.IndexedDB.Dynamic
             return this;
         }
 
-        public Query WhereEqual(string FieldOrPropertyName, bool Value)
+        public Query WhereEqual(string fieldOrPropertyName, bool Value)
         {
-            FilterItem item = new FilterItem();
+            FilterItem item = new FilterItem
+            {
+                Compare = Comparer.EqualTo,
+                FieldOrProperty = fieldOrPropertyName,
+                FieldType = typeof(bool),
+                Length = 1
+            };
 
-            item.Compare = Comparer.EqualTo;
 
-            item.FieldOrProperty = FieldOrPropertyName;
-            item.FieldType = typeof(bool);
-            item.Length = 1;
 
             byte[] valuebyte = new byte[1];
             if (Value)
@@ -110,9 +112,9 @@ namespace Kooboo.IndexedDB.Dynamic
             return this;
         }
 
-        public Query WhereIn(string FieldOrPropertyName, List<object> Values)
+        public Query WhereIn(string fieldOrPropertyName, List<object> Values)
         {
-            var field = this.table.ObjectConverter.Fields.Find(o => o.FieldName == FieldOrPropertyName);
+            var field = this.table.ObjectConverter.Fields.Find(o => o.FieldName == fieldOrPropertyName);
 
             if (field == null)
             {
@@ -127,7 +129,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 invalues.Add(value);
             }
 
-            this.InItems[FieldOrPropertyName] = invalues;
+            this.InItems[fieldOrPropertyName] = invalues;
 
             return this;
         }
@@ -138,9 +140,9 @@ namespace Kooboo.IndexedDB.Dynamic
             return this;
         }
 
-        public Query WhereIn<Type>(string FieldOrPropertyName, List<Type> Values)
+        public Query WhereIn<Type>(string fieldOrPropertyName, List<Type> Values)
         {
-            var field = this.table.ObjectConverter.Fields.Find(o => o.FieldName == FieldOrPropertyName);
+            var field = this.table.ObjectConverter.Fields.Find(o => o.FieldName == fieldOrPropertyName);
 
             if (field == null)
             {
@@ -155,14 +157,14 @@ namespace Kooboo.IndexedDB.Dynamic
                 invalues.Add(value);
             }
 
-            this.InItems[FieldOrPropertyName] = invalues;
+            this.InItems[fieldOrPropertyName] = invalues;
 
             return this;
         }
 
-        public Query WhereIn<TValue, T>(Expression<Func<TValue, object>> FieldExpression, List<T> Values)
+        public Query WhereIn<TValue, T>(Expression<Func<TValue, object>> fieldExpression, List<T> Values)
         {
-            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(FieldExpression);
+            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(fieldExpression);
 
             if (!string.IsNullOrEmpty(fieldname))
             {
@@ -171,14 +173,14 @@ namespace Kooboo.IndexedDB.Dynamic
             return this;
         }
 
-        public Query WhereEqual(string FieldOrPropertyName, Guid Value)
+        public Query WhereEqual(string fieldOrPropertyName, Guid Value)
         {
-            FilterItem item = new FilterItem();
+            FilterItem item = new FilterItem
+            {
+                Compare = Comparer.EqualTo, FieldOrProperty = fieldOrPropertyName, FieldType = typeof(Guid)
+            };
 
-            item.Compare = Comparer.EqualTo;
 
-            item.FieldOrProperty = FieldOrPropertyName;
-            item.FieldType = typeof(Guid);
             IByteConverter<Guid> x = ObjectContainer.GetConverter<Guid>();
             item.Value = x.ToByte(Value);
 
@@ -189,27 +191,29 @@ namespace Kooboo.IndexedDB.Dynamic
             return this;
         }
 
-        public Query WhereEqual(string FieldOrPropertyName, object Value)
+        public Query WhereEqual(string fieldOrPropertyName, object Value)
         {
-            return Where(FieldOrPropertyName, Comparer.EqualTo, Value);
+            return Where(fieldOrPropertyName, Comparer.EqualTo, Value);
         }
 
-        public Query Where(string FieldOrPropertyName, Comparer comparer, DateTime CompareValue, DateTimeScope scope)
+        public Query Where(string fieldOrPropertyName, Comparer comparer, DateTime compareValue, DateTimeScope scope)
         {
-            FilterItem item = new FilterItem();
+            FilterItem item = new FilterItem
+            {
+                Compare = comparer,
+                TimeScope = scope,
+                FieldOrProperty = fieldOrPropertyName,
+                FieldType = typeof(DateTime),
+                Length = 8
+            };
 
-            item.Compare = comparer;
 
-            item.TimeScope = scope;
 
-            item.FieldOrProperty = FieldOrPropertyName;
-            item.FieldType = typeof(DateTime);
 
-            item.Length = 8;
 
             IByteConverter<DateTime> x = ObjectContainer.GetConverter<DateTime>();
 
-            item.Value = x.ToByte(CompareValue);
+            item.Value = x.ToByte(compareValue);
 
             this.items.Add(item);
 
@@ -225,7 +229,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 if (_primarykey == null)
                 {
                     var key = this.table.Setting.Columns.FirstOrDefault(o => o.IsPrimaryKey);
-                    _primarykey = key.Name;
+                    _primarykey = key?.Name;
                 }
                 return _primarykey;
             }
@@ -242,10 +246,10 @@ namespace Kooboo.IndexedDB.Dynamic
         /// Order by a field or property. This field should have an index on it.
         /// Order by a non-indexed field will have very bad performance.
         /// </summary>
-        public Query OrderByAscending(string FieldOrPropertyName)
+        public Query OrderByAscending(string fieldOrPropertyName)
         {
             this.Ascending = true;
-            this.OrderByFieldName = FieldOrPropertyName;
+            this.OrderByFieldName = fieldOrPropertyName;
             return this;
         }
 
@@ -256,10 +260,10 @@ namespace Kooboo.IndexedDB.Dynamic
             return this;
         }
 
-        public Query OrderByDescending(string FieldOrPropertyName)
+        public Query OrderByDescending(string fieldOrPropertyName)
         {
             this.Ascending = false;
-            this.OrderByFieldName = FieldOrPropertyName;
+            this.OrderByFieldName = fieldOrPropertyName;
             return this;
         }
 
@@ -273,7 +277,7 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             List<IDictionary<string, object>> x = Take(1);
 
-            if (x != null && x.Count() > 0)
+            if (x != null && x.Any())
             {
                 return x[0];
             }
@@ -358,8 +362,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 var col = this.table.ObjectConverter.Fields.Find(o => o.FieldName == item.Field);
                 if (col != null)
                 {
-                    FilterItem filter = new FilterItem() { FieldOrProperty = col.FieldName };
-                    filter.Compare = item.Comparer;
+                    FilterItem filter = new FilterItem {FieldOrProperty = col.FieldName, Compare = item.Comparer};
                     if (!col.ClrType.IsValueType && col.ClrType != typeof(string))
                     {
                         throw new Exception("only value type column are allowed to use on search condition");
@@ -473,7 +476,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 foreach (var item in executionplan.indexRanges)
                 {
-                    /// check if the primary key is included.
+                    // check if the primary key is included.
                     List<long> blockpositionList = new List<long>();
 
                     var index = this.table.Indexs.Find(o => o.FieldName == item.Key);
@@ -492,7 +495,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 foreach (Int64 item in executionplan.startCollection)
                 {
-                    /// check matches.
+                    // check matches.
                     itemMatch = true;
                     foreach (List<long> rangeitem in rangelist)
                     {
@@ -508,7 +511,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         continue;
                     }
 
-                    /// check column matchs.
+                    // check column matchs.
                     foreach (ColumnScan plan in executionplan.scanColumns)
                     {
                         byte[] columnbytes = this.table.BlockFile.GetCol(item, plan.relativeStartPosition, plan.length);
@@ -585,7 +588,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 foreach (Int64 item in executionplan.startCollection)
                 {
-                    /// check matches.
+                    // check matches.
                     itemMatch = true;
                     foreach (List<long> rangeitem in rangelist)
                     {
@@ -601,7 +604,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         continue;
                     }
 
-                    /// check column matchs.
+                    // check column matchs.
                     foreach (ColumnScan plan in executionplan.scanColumns)
                     {
                         byte[] columnbytes = this.table.BlockFile.GetCol(item, plan.relativeStartPosition, plan.length);
@@ -683,7 +686,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 foreach (Int64 item in executionplan.startCollection)
                 {
-                    /// check matches.
+                    // check matches.
                     itemMatch = true;
                     foreach (List<long> rangeitem in rangelist)
                     {
@@ -699,7 +702,7 @@ namespace Kooboo.IndexedDB.Dynamic
                         continue;
                     }
 
-                    /// check column matchs.
+                    // check column matchs.
                     foreach (ColumnScan plan in executionplan.scanColumns)
                     {
                         byte[] columnbytes = this.table.BlockFile.GetCol(item, plan.relativeStartPosition, plan.length);
@@ -715,7 +718,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     {
                         continue;
                     }
-                    /// pass all tests.
+                    // pass all tests.
                     if (skipped < this.SkipCount)
                     {
                         skipped += 1;

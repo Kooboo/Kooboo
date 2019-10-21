@@ -22,7 +22,7 @@ namespace Kooboo.Data.Repository
             }
         }
 
-        private static object _locker = new object();
+        private object _locker = new object();
 
         internal Dictionary<Guid, List<Cluster>> Cache = new Dictionary<Guid, List<Cluster>>();
 

@@ -55,19 +55,12 @@ namespace Kooboo.IndexedDB
             set { _indexs = value; }
         }
 
-        private Dictionary<string, int> _Columns;
+        private Dictionary<string, int> _columns;
 
         public Dictionary<string, int> Columns
         {
-            get
-            {
-                if (_Columns == null)
-                {
-                    _Columns = new Dictionary<string, int>();
-                }
-                return _Columns;
-            }
-            set { _Columns = value; }
+            get { return _columns ?? (_columns = new Dictionary<string, int>()); }
+            set { _columns = value; }
         }
 
         public bool UseDefaultNETBinaryFormater { get; set; }

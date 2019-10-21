@@ -26,40 +26,33 @@ namespace Kooboo.IndexedDB.Columns
             set { _datatype = value; }
         }
 
-        public ColumnBase(string FieldName, int len)
+        public ColumnBase(string fieldName, int len)
         {
-            init(FieldName, len);
+            init(fieldName, len);
         }
 
-        public ColumnBase(string FieldName)
+        public ColumnBase(string fieldName)
         {
             int len;
-            if (this.DataType == typeof(string))
-            {
-                len = 50;
-            }
-            else
-            {
-                len = Helper.KeyHelper.GetKeyLen(this.DataType);
-            }
-            init(FieldName, len);
+            len = this.DataType == typeof(string) ? 50 : Helper.KeyHelper.GetKeyLen(this.DataType);
+            init(fieldName, len);
         }
 
-        private void init(string FieldName, int len)
+        private void init(string fieldName, int len)
         {
             if (len <= 0)
             {
                 throw new Exception("Len must be at least 1");
             }
 
-            this.FieldName = FieldName;
+            this.FieldName = fieldName;
             this.Length = len;
 
             this.FieldNameHash = Helper.ObjectHelper.GetHashCode(this.FieldName);
             var fieldnamehashbytes = BitConverter.GetBytes(FieldNameHash);
 
-            this.Get = Helper.ObjectHelper.GetGetValue<TValue, TColumn>(FieldName);
-            this.Set = Helper.ObjectHelper.GetSetValue<TValue, TColumn>(FieldName);
+            this.Get = Helper.ObjectHelper.GetGetValue<TValue, TColumn>(fieldName);
+            this.Set = Helper.ObjectHelper.GetSetValue<TValue, TColumn>(fieldName);
             ByteConverter = ObjectContainer.GetConverter<TColumn>();
 
             this.IsString = this.DataType == typeof(string);

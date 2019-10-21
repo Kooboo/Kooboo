@@ -34,13 +34,13 @@ namespace Kooboo.IndexedDB
 
         void RollBack(List<LogEntry> loglist);
 
-        void RollBack(Int64 LastVersionId, bool SelfIncluded = true);
+        void RollBack(Int64 lastVersionId, bool selfIncluded = true);
 
-        void RollBackTimeTick(Int64 TimeTick, bool SelfIncluded = true);
+        void RollBackTimeTick(Int64 timeTick, bool selfIncluded = true);
 
-        void CheckOut(Int64 VersionId, IObjectStore DestinationStore, bool SelfIncluded = true);
+        void CheckOut(Int64 versionId, IObjectStore destinationStore, bool selfIncluded = true);
 
-        void CheckOut(List<LogEntry> logs, IObjectStore DestinationStore);
+        void CheckOut(List<LogEntry> logs, IObjectStore destinationStore);
 
         int getLength(long blockposition);
     }

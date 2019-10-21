@@ -11,19 +11,19 @@ namespace Kooboo.IndexedDB.Btree
         /// If keybytes == null, return the first key.
         /// </summary>
         /// <param name="keybytes"></param>
-        /// <param name="KeyArray"></param>
+        /// <param name="keyArray"></param>
         /// <returns></returns>
-        public static byte[] FindSmallestBiggerKey(byte[] keybytes, Dictionary<byte[], byte[]> KeyArray, IComparer<byte[]> comparer)
+        public static byte[] FindSmallestBiggerKey(byte[] keybytes, Dictionary<byte[], byte[]> keyArray, IComparer<byte[]> comparer)
         {
             if (keybytes == null)
             {
-                return KeyFinder.FindFirstKey(KeyArray, comparer);
+                return KeyFinder.FindFirstKey(keyArray, comparer);
             }
 
             byte[] currentkey = null;
             bool found = false;
 
-            foreach (var item in KeyArray)
+            foreach (var item in keyArray)
             {
                 if (comparer.Compare(item.Key, keybytes) > 0)
                 {
@@ -52,7 +52,7 @@ namespace Kooboo.IndexedDB.Btree
             }
         }
 
-        public static byte[] FindBiggestSmallerKey(byte[] keybytes, Dictionary<byte[], byte[]> KeyArray, IComparer<byte[]> comparer)
+        public static byte[] FindBiggestSmallerKey(byte[] keybytes, Dictionary<byte[], byte[]> keyArray, IComparer<byte[]> comparer)
         {
             if (keybytes == null)
             {
@@ -63,7 +63,7 @@ namespace Kooboo.IndexedDB.Btree
             byte[] currentkey = null;
             bool found = false;
 
-            foreach (var item in KeyArray)
+            foreach (var item in keyArray)
             {
                 if (comparer.Compare(keybytes, item.Key) > 0)
                 {
@@ -95,13 +95,14 @@ namespace Kooboo.IndexedDB.Btree
         /// <summary>
         /// Find the smallest key in the keyarray.
         /// </summary>
-        /// <param name="KeyArray"></param>
+        /// <param name="keyArray"></param>
+        /// <param name="comparer"></param>
         /// <returns></returns>
-        public static byte[] FindFirstKey(Dictionary<byte[], byte[]> KeyArray, IComparer<byte[]> comparer)
+        public static byte[] FindFirstKey(Dictionary<byte[], byte[]> keyArray, IComparer<byte[]> comparer)
         {
             byte[] foundkey = null;
 
-            foreach (var item in KeyArray)
+            foreach (var item in keyArray)
             {
                 if (foundkey == null)
                 {
@@ -122,13 +123,14 @@ namespace Kooboo.IndexedDB.Btree
         /// <summary>
         /// Find the biggest key in the keyarray.
         /// </summary>
-        /// <param name="KeyArray"></param>
+        /// <param name="keyArray"></param>
+        /// <param name="comparer"></param>
         /// <returns></returns>
-        public static byte[] FindLastKey(Dictionary<byte[], byte[]> KeyArray, IComparer<byte[]> comparer)
+        public static byte[] FindLastKey(Dictionary<byte[], byte[]> keyArray, IComparer<byte[]> comparer)
         {
             byte[] foundkey = null;
 
-            foreach (var item in KeyArray)
+            foreach (var item in keyArray)
             {
                 if (foundkey == null)
                 {

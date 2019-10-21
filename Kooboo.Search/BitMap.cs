@@ -11,7 +11,7 @@ namespace Kooboo.Search
     public class BitMap
     {
         // naming convention... main.{id}.data.  batch.{id}.data;  
-        private static object _locker = new object();
+        private object _locker = new object();
         private Dictionary<int, BitArray> Changes = new Dictionary<int, BitArray>();
 
         private string _filepath;

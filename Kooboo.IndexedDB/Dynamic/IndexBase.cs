@@ -38,11 +38,11 @@ namespace Kooboo.IndexedDB.Dynamic
 
         private int KeyLen { get; set; }
 
-        public TableIndexBase(string FieldName, string indexfile, bool IsUnique, int keyLen)
+        public TableIndexBase(string fieldName, string indexfile, bool isUnique, int keyLen)
         {
             this.IndexFile = indexfile;
-            this.IsUnique = IsUnique;
-            this.FieldName = FieldName;
+            this.IsUnique = isUnique;
+            this.FieldName = fieldName;
             this.KeyLen = Helper.KeyHelper.GetKeyLen(this.keyType, keyLen);
 
             this.Seed = 1;
@@ -51,7 +51,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
         private BtreeIndex<T> _index;
 
-        private static object _locker = new object();
+        private object _locker = new object();
 
         public BtreeIndex<T> index
         {
@@ -91,8 +91,8 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public bool Add(object key, long blockPosition)
         {
-            var Tkey = ParseKey(key);
-            return this.index.Add(Tkey, blockPosition);
+            var tkey = ParseKey(key);
+            return this.index.Add(tkey, blockPosition);
         }
 
         public long Get(object key)
@@ -109,13 +109,13 @@ namespace Kooboo.IndexedDB.Dynamic
 
         private T ParseKey(object key)
         {
-            var Tkey = (T)key;
-            if (Tkey == null)
+            var tkey = (T)key;
+            if (tkey == null)
             {
                 var newvalue = Convert.ChangeType(key, this.keyType);
-                Tkey = (T)newvalue;
+                tkey = (T)newvalue;
             }
-            return Tkey;
+            return tkey;
         }
 
         public ItemCollection AllItems(bool ascending)

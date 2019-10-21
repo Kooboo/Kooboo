@@ -258,7 +258,7 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
             else if (type == typeof(decimal))
             {
-                ///decimal is not available, will be converted to double directly.
+                //decimal is not available, will be converted to double directly.
                 return 8;
             }
             else if (type == typeof(double))
@@ -445,171 +445,171 @@ namespace Kooboo.IndexedDB.Serializer.Simple
             }
         }
 
-        public static IFieldConverter<T> GetFieldConverter<T>(Type FieldType, string FieldName)
+        public static IFieldConverter<T> GetFieldConverter<T>(Type fieldType, string fieldName)
         {
-            if (ObjectHelper.IsDictionary(FieldType))
+            if (ObjectHelper.IsDictionary(fieldType))
             {
-                return new DictionaryFieldConverter<T>(FieldType, FieldName);
+                return new DictionaryFieldConverter<T>(fieldType, fieldName);
             }
-            else if (ObjectHelper.IsList(FieldType))
+            else if (ObjectHelper.IsList(fieldType))
             {
-                return new ListFieldConverter<T>(FieldType, FieldName);
+                return new ListFieldConverter<T>(fieldType, fieldName);
             }
-            else if (ObjectHelper.IsCollection(FieldType))
+            else if (ObjectHelper.IsCollection(fieldType))
             {
-                return new CollectionFieldConverter<T>(FieldType, FieldName);
+                return new CollectionFieldConverter<T>(fieldType, fieldName);
             }
-            else if (FieldType == typeof(int))
+            else if (fieldType == typeof(int))
             {
-                return new IntFieldConverter<T>(FieldName);
+                return new IntFieldConverter<T>(fieldName);
             }
-            else if (FieldType == typeof(string))
+            else if (fieldType == typeof(string))
             {
-                return new StringFieldConverter<T>(FieldName);
+                return new StringFieldConverter<T>(fieldName);
             }
-            else if (FieldType == typeof(bool))
+            else if (fieldType == typeof(bool))
             {
-                return new BoolFieldConverter<T>(FieldName);
+                return new BoolFieldConverter<T>(fieldName);
             }
-            else if (FieldType == typeof(DateTime))
+            else if (fieldType == typeof(DateTime))
             {
-                return new DateTimeFieldConverter<T>(FieldName);
+                return new DateTimeFieldConverter<T>(fieldName);
             }
-            else if (FieldType == typeof(Guid))
+            else if (fieldType == typeof(Guid))
             {
-                return new GuidFieldConverter<T>(FieldName);
+                return new GuidFieldConverter<T>(fieldName);
             }
-            else if (FieldType == typeof(byte))
+            else if (fieldType == typeof(byte))
             {
-                return new ByteFieldConverter<T>(FieldName);
+                return new ByteFieldConverter<T>(fieldName);
             }
-            else if (FieldType == typeof(byte[]))
+            else if (fieldType == typeof(byte[]))
             {
-                return new ByteArrayFieldConverter<T>(FieldName);
+                return new ByteArrayFieldConverter<T>(fieldName);
             }
-            else if (FieldType == typeof(decimal))
+            else if (fieldType == typeof(decimal))
             {
-                return new DecimalFieldConvertercs<T>(FieldName);
+                return new DecimalFieldConvertercs<T>(fieldName);
             }
-            else if (FieldType == typeof(double))
+            else if (fieldType == typeof(double))
             {
-                return new DoubleFieldConverter<T>(FieldName);
+                return new DoubleFieldConverter<T>(fieldName);
             }
-            else if (FieldType == typeof(float))
+            else if (fieldType == typeof(float))
             {
-                return new FloatFieldConverter<T>(FieldName);
+                return new FloatFieldConverter<T>(fieldName);
             }
-            else if (FieldType == typeof(Int16))
+            else if (fieldType == typeof(Int16))
             {
-                return new ShortFieldConverter<T>(FieldName);
+                return new ShortFieldConverter<T>(fieldName);
             }
-            else if (FieldType == typeof(Int64))
+            else if (fieldType == typeof(Int64))
             {
-                return new LongFieldConverter<T>(FieldName);
+                return new LongFieldConverter<T>(fieldName);
             }
-            else if (FieldType == typeof(System.Net.IPAddress))
+            else if (fieldType == typeof(System.Net.IPAddress))
             {
-                return new IpAddressFieldConverter<T>(FieldName);
+                return new IpAddressFieldConverter<T>(fieldName);
             }
-            else if (FieldType == typeof(object))
+            else if (fieldType == typeof(object))
             {
-                return new ObjectFieldConverter<T>(FieldName);
+                return new ObjectFieldConverter<T>(fieldName);
             }
-            else if (FieldType.IsClass)
+            else if (fieldType.IsClass)
             {
-                return new ClassFieldConverter<T>(FieldName);
+                return new ClassFieldConverter<T>(fieldName);
             }
-            else if (FieldType.IsEnum)
+            else if (fieldType.IsEnum)
             {
-                return new EnumFieldConveter<T>(FieldName, FieldType);
+                return new EnumFieldConveter<T>(fieldName, fieldType);
             }
             else
             {
-                throw new Exception(FieldType.Name + " can not be identified.");
+                throw new Exception(fieldType.Name + " can not be identified.");
             }
         }
 
-        public static IFieldConverter GetFieldConverter(Type ObjectType, Type FieldType, string FieldName)
+        public static IFieldConverter GetFieldConverter(Type objectType, Type fieldType, string fieldName)
         {
-            if (ObjectHelper.IsDictionary(FieldType))
+            if (ObjectHelper.IsDictionary(fieldType))
             {
-                return new DictionaryFieldConverter(FieldName, ObjectType, FieldType);
+                return new DictionaryFieldConverter(fieldName, objectType, fieldType);
             }
-            else if (ObjectHelper.IsList(FieldType))
+            else if (ObjectHelper.IsList(fieldType))
             {
-                return new ListFieldConverter(FieldName, ObjectType, FieldType);
+                return new ListFieldConverter(fieldName, objectType, fieldType);
             }
-            else if (ObjectHelper.IsCollection(FieldType))
+            else if (ObjectHelper.IsCollection(fieldType))
             {
-                return new CollectionFieldConverter(ObjectType, FieldType, FieldName);
+                return new CollectionFieldConverter(objectType, fieldType, fieldName);
             }
-            else if (FieldType == typeof(int))
+            else if (fieldType == typeof(int))
             {
-                return new IntFieldConverter(FieldName, ObjectType);
+                return new IntFieldConverter(fieldName, objectType);
             }
-            else if (FieldType == typeof(string))
+            else if (fieldType == typeof(string))
             {
-                return new StringFieldConverter(FieldName, ObjectType);
+                return new StringFieldConverter(fieldName, objectType);
             }
-            else if (FieldType == typeof(bool))
+            else if (fieldType == typeof(bool))
             {
-                return new BoolFieldConverter(FieldName, ObjectType);
+                return new BoolFieldConverter(fieldName, objectType);
             }
-            else if (FieldType == typeof(DateTime))
+            else if (fieldType == typeof(DateTime))
             {
-                return new DateTimeFieldConverter(FieldName, ObjectType);
+                return new DateTimeFieldConverter(fieldName, objectType);
             }
-            else if (FieldType == typeof(Guid))
+            else if (fieldType == typeof(Guid))
             {
-                return new GuidFieldConverter(FieldName, ObjectType);
+                return new GuidFieldConverter(fieldName, objectType);
             }
-            else if (FieldType == typeof(byte))
+            else if (fieldType == typeof(byte))
             {
-                return new ByteFieldConverter(FieldName, ObjectType);
+                return new ByteFieldConverter(fieldName, objectType);
             }
-            else if (FieldType == typeof(byte[]))
+            else if (fieldType == typeof(byte[]))
             {
-                return new ByteArrayFieldConverter(FieldName, ObjectType);
+                return new ByteArrayFieldConverter(fieldName, objectType);
             }
-            else if (FieldType == typeof(decimal))
+            else if (fieldType == typeof(decimal))
             {
-                return new DecimalFieldConverter(FieldName, ObjectType);
+                return new DecimalFieldConverter(fieldName, objectType);
             }
-            else if (FieldType == typeof(double))
+            else if (fieldType == typeof(double))
             {
-                return new DoubleFieldConverter(FieldName, ObjectType);
+                return new DoubleFieldConverter(fieldName, objectType);
             }
-            else if (FieldType == typeof(float))
+            else if (fieldType == typeof(float))
             {
-                return new FloatFieldConverter(FieldName, ObjectType);
+                return new FloatFieldConverter(fieldName, objectType);
             }
-            else if (FieldType == typeof(Int16))
+            else if (fieldType == typeof(Int16))
             {
-                return new ShortFieldConverter(FieldName, ObjectType);
+                return new ShortFieldConverter(fieldName, objectType);
             }
-            else if (FieldType == typeof(Int64))
+            else if (fieldType == typeof(Int64))
             {
-                return new LongFieldConverter(FieldName, ObjectType);
+                return new LongFieldConverter(fieldName, objectType);
             }
-            else if (FieldType == typeof(System.Net.IPAddress))
+            else if (fieldType == typeof(System.Net.IPAddress))
             {
-                return new IpAddressFieldConverter(FieldName, ObjectType);
+                return new IpAddressFieldConverter(fieldName, objectType);
             }
-            else if (FieldType == typeof(object))
+            else if (fieldType == typeof(object))
             {
-                return new ObjectFieldConverter(FieldName, ObjectType);
+                return new ObjectFieldConverter(fieldName, objectType);
             }
-            else if (FieldType.IsClass)
+            else if (fieldType.IsClass)
             {
-                return new ClassFieldConverter(ObjectType, FieldType, FieldName);
+                return new ClassFieldConverter(objectType, fieldType, fieldName);
             }
-            else if (FieldType.IsEnum)
+            else if (fieldType.IsEnum)
             {
-                return new EnumFieldConveter(FieldName, ObjectType, FieldType);
+                return new EnumFieldConveter(fieldName, objectType, fieldType);
             }
             else
             {
-                throw new Exception(FieldType.Name + " can not be identified.");
+                throw new Exception(fieldType.Name + " can not be identified.");
             }
         }
 

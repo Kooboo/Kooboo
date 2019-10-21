@@ -10,11 +10,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<T, long> getValue;
         private Action<T, long> setValue;
 
-        public LongFieldConverter(string FieldName)
+        public LongFieldConverter(string fieldName)
         {
-            this.getValue = ObjectHelper.GetGetValue<T, long>(FieldName);
-            this.setValue = ObjectHelper.GetSetValue<T, long>(FieldName);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetValue<T, long>(fieldName);
+            this.setValue = ObjectHelper.GetSetValue<T, long>(fieldName);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -52,9 +52,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             }
         }
 
-        public byte[] ToBytes(T Value)
+        public byte[] ToBytes(T value)
         {
-            long fieldvalue = this.getValue(Value);
+            long fieldvalue = this.getValue(value);
             return ValueConverter.ToBytes(fieldvalue);
         }
     }
@@ -64,11 +64,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<object, long> getValue;
         private Action<object, long> setValue;
 
-        public LongFieldConverter(string FieldName, Type ObjectType)
+        public LongFieldConverter(string fieldName, Type objectType)
         {
-            this.getValue = ObjectHelper.GetGetFieldValue<long>(FieldName, ObjectType);
-            this.setValue = ObjectHelper.GetSetFieldValue<long>(FieldName, ObjectType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetFieldValue<long>(fieldName, objectType);
+            this.setValue = ObjectHelper.GetSetFieldValue<long>(fieldName, objectType);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -90,9 +90,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytevalue);
         }
 
-        public byte[] ToBytes(object Value)
+        public byte[] ToBytes(object value)
         {
-            long fieldvalue = this.getValue(Value);
+            long fieldvalue = this.getValue(value);
             return ValueConverter.ToBytes(fieldvalue);
         }
     }

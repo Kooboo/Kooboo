@@ -52,12 +52,12 @@ namespace Kooboo.IndexedDB
         /// <summary>
         /// the global sequence.
         /// </summary>
-        /// <param name="sequencename"></param>
-        public Sequence(string SequenceNameOrFullFileName)
+        /// <param name="sequenceNameOrFullFileName"></param>
+        public Sequence(string sequenceNameOrFullFileName)
         {
-            if (System.IO.Path.IsPathRooted(SequenceNameOrFullFileName))
+            if (System.IO.Path.IsPathRooted(sequenceNameOrFullFileName))
             {
-                this.FullFileName = SequenceNameOrFullFileName;
+                this.FullFileName = sequenceNameOrFullFileName;
             }
             else
             {
@@ -68,7 +68,7 @@ namespace Kooboo.IndexedDB
                     System.IO.Directory.CreateDirectory(globalSequencefolder);
                 }
 
-                this.FullFileName = System.IO.Path.Combine(globalSequencefolder, SequenceNameOrFullFileName + ".seq");
+                this.FullFileName = System.IO.Path.Combine(globalSequencefolder, sequenceNameOrFullFileName + ".seq");
             }
 
             _initialize();
@@ -121,7 +121,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// get the valud bytes count of current record.
+        /// get the value bytes count of current record.
         /// </summary>
         /// <param name="position"></param>
         /// <param name="ascending">check forward or backward.</param>
@@ -226,17 +226,13 @@ namespace Kooboo.IndexedDB
 
         public SequenceQuery<TValue> QueryAscending(Predicate<TValue> Query)
         {
-            SequenceQuery<TValue> query = new SequenceQuery<TValue>(this);
-            query.Ascending = true;
-            query.Predicate = Query;
+            SequenceQuery<TValue> query = new SequenceQuery<TValue>(this) {Ascending = true, Predicate = Query};
             return query;
         }
 
         public SequenceQuery<TValue> QueryDescending(Predicate<TValue> Query)
         {
-            SequenceQuery<TValue> query = new SequenceQuery<TValue>(this);
-            query.Ascending = false;
-            query.Predicate = Query;
+            SequenceQuery<TValue> query = new SequenceQuery<TValue>(this) {Ascending = false, Predicate = Query};
             return query;
         }
 
@@ -259,7 +255,7 @@ namespace Kooboo.IndexedDB
             {
                 return endposition;
             }
-            /// else we have some problems here. The record was not end, need to be cut off.
+            // else we have some problems here. The record was not end, need to be cut off.
             for (int i = 0; i < 999; i++)
             {
                 if (endposition - (i + 1) * 100 < 0)
@@ -305,10 +301,7 @@ namespace Kooboo.IndexedDB
         {
             lock (_object)
             {
-                if (_stream != null)
-                {
-                    _stream.Flush();
-                }
+                _stream?.Flush();
             }
         }
 

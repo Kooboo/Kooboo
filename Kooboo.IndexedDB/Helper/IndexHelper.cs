@@ -26,17 +26,16 @@ namespace Kooboo.IndexedDB.Helper
             }
         }
 
-        public static List<IndexSetting> GenerateIndexsFromParameters(Type ValueType, ObjectStoreParameters parameters)
+        public static List<IndexSetting> GenerateIndexsFromParameters(Type valueType, ObjectStoreParameters parameters)
         {
             List<IndexSetting> indexlist = new List<IndexSetting>();
 
             // create the index setting.
             foreach (var item in parameters.IndexList)
             {
-                IndexSetting index = new IndexSetting();
-                index.FieldName = item.Key;
+                IndexSetting index = new IndexSetting {FieldName = item.Key};
 
-                FieldInfo fieldinfo = ValueType.GetField(item.Key);
+                FieldInfo fieldinfo = valueType.GetField(item.Key);
 
                 if (fieldinfo != null)
                 {
@@ -45,7 +44,7 @@ namespace Kooboo.IndexedDB.Helper
                 else
                 {
                     //try get property.
-                    PropertyInfo propertyinfo = ValueType.GetProperty(item.Key);
+                    PropertyInfo propertyinfo = valueType.GetProperty(item.Key);
                     if (propertyinfo != null)
                     {
                         index.KeyType = propertyinfo.PropertyType;
@@ -56,7 +55,7 @@ namespace Kooboo.IndexedDB.Helper
                     }
                 }
 
-                index.unique = false;  /// this should always be false for all additional index.unique should be checked by contraints.
+                index.unique = false;  // this should always be false for all additional index.unique should be checked by contraints.
 
                 index.keyLength = Helper.KeyHelper.GetKeyLen(index.KeyType, index.keyLength);
 

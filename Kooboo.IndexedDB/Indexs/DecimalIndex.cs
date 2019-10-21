@@ -29,14 +29,14 @@ namespace Kooboo.IndexedDB.Indexs
 
         private Func<TValue, decimal> getValue;
 
-        public DecimalIndex(string FieldOrPropertyName, string FullIndexFileName, bool unique, int keylength, int MaxCacheLevel)
+        public DecimalIndex(string fieldOrPropertyName, string fullIndexFileName, bool unique, int keylength, int maxCacheLevel)
         {
             this.keyType = typeof(decimal);
 
-            this.FieldName = FieldOrPropertyName;
+            this.FieldName = fieldOrPropertyName;
 
             getValue = Helper.ObjectHelper.GetGetValue<TValue, decimal>(FieldName);
-            index = new Btree.BtreeIndex<double>(this.FieldName, unique, keylength, FullIndexFileName, MaxCacheLevel);
+            index = new Btree.BtreeIndex<double>(this.FieldName, unique, keylength, fullIndexFileName, maxCacheLevel);
 
             this.Length = index.keylength;
         }
@@ -48,10 +48,10 @@ namespace Kooboo.IndexedDB.Indexs
             return index.Add(doublevalue, blockPosition);
         }
 
-        public void Update(TValue oldRecord, TValue NewRecord, long oldBlockPosition, long newBlockPosition)
+        public void Update(TValue oldRecord, TValue newRecord, long oldBlockPosition, long newBlockPosition)
         {
             decimal oldvalue = getValue(oldRecord);
-            decimal newvalue = getValue(NewRecord);
+            decimal newvalue = getValue(newRecord);
 
             double doldvalue = Convert.ToDouble(oldvalue);
             double dnewvalue = Convert.ToDouble(newvalue);

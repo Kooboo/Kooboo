@@ -351,9 +351,9 @@ namespace Kooboo.IndexedDB.Btree
             return false;
         }
 
-        public List<Int64> Get(Int64 SectionStartPosition, int skip, int take)
+        public List<Int64> Get(Int64 sectionStartPosition, int skip, int take)
         {
-            JumpRecord start = getStartPointerRecord(SectionStartPosition);
+            JumpRecord start = getStartPointerRecord(sectionStartPosition);
             while (start.Buttom > 0)
             {
                 start = getJumpRecord(start.Buttom);
@@ -392,9 +392,9 @@ namespace Kooboo.IndexedDB.Btree
             return recordlist;
         }
 
-        public Int64 GetOne(Int64 SectionStartPosition)
+        public Int64 GetOne(Int64 sectionStartPosition)
         {
-            JumpRecord start = getStartPointerRecord(SectionStartPosition);
+            JumpRecord start = getStartPointerRecord(sectionStartPosition);
             while (start.Buttom > 0)
             {
                 start = getJumpRecord(start.Buttom);
@@ -412,9 +412,9 @@ namespace Kooboo.IndexedDB.Btree
             }
         }
 
-        public List<Int64> GetAll(Int64 SectionStartPosition)
+        public List<Int64> GetAll(Int64 sectionStartPosition)
         {
-            JumpRecord start = getStartPointerRecord(SectionStartPosition);
+            JumpRecord start = getStartPointerRecord(sectionStartPosition);
             while (start.Buttom > 0)
             {
                 start = getJumpRecord(start.Buttom);
@@ -436,9 +436,9 @@ namespace Kooboo.IndexedDB.Btree
             return recordlist;
         }
 
-        public List<long> GetSome(Int64 SectionStartPosition, int takecount)
+        public List<long> GetSome(Int64 sectionStartPosition, int takecount)
         {
-            JumpRecord start = getStartPointerRecord(SectionStartPosition);
+            JumpRecord start = getStartPointerRecord(sectionStartPosition);
             while (start.Buttom > 0)
             {
                 start = getJumpRecord(start.Buttom);
@@ -467,9 +467,9 @@ namespace Kooboo.IndexedDB.Btree
             return recordlist;
         }
 
-        public BtreeIndexDuplicateCollection getCollection(Int64 SectionStartPosition)
+        public BtreeIndexDuplicateCollection getCollection(Int64 sectionStartPosition)
         {
-            JumpRecord start = getStartPointerRecord(SectionStartPosition);
+            JumpRecord start = getStartPointerRecord(sectionStartPosition);
             while (start.Buttom > 0)
             {
                 start = getJumpRecord(start.Buttom);
@@ -480,9 +480,9 @@ namespace Kooboo.IndexedDB.Btree
             return collection;
         }
 
-        public BtreeIndexDuplicateReader getReader(Int64 SectionStartPosition)
+        public BtreeIndexDuplicateReader getReader(Int64 sectionStartPosition)
         {
-            JumpRecord start = getStartPointerRecord(SectionStartPosition);
+            JumpRecord start = getStartPointerRecord(sectionStartPosition);
             while (start != null && start.Buttom > 0)
             {
                 start = getJumpRecord(start.Buttom);
@@ -493,9 +493,9 @@ namespace Kooboo.IndexedDB.Btree
             return reader;
         }
 
-        public int count(Int64 SectionStartPosition)
+        public int count(Int64 sectionStartPosition)
         {
-            return getTotalCounter(SectionStartPosition);
+            return getTotalCounter(sectionStartPosition);
 
             //JumpRecord start = getStartPointerRecord(SectionStartPosition);
 
@@ -520,11 +520,11 @@ namespace Kooboo.IndexedDB.Btree
         /// <summary>
         /// used to determine that there are more than one record so that it can NOT be removed yet.
         /// </summary>
-        /// <param name="SectionStartPosition"></param>
+        /// <param name="sectionStartPosition"></param>
         /// <returns></returns>
-        public bool hasMoreThanOne(Int64 SectionStartPosition)
+        public bool hasMoreThanOne(Int64 sectionStartPosition)
         {
-            JumpRecord start = getStartPointerRecord(SectionStartPosition);
+            JumpRecord start = getStartPointerRecord(sectionStartPosition);
 
             while (start.Buttom > 0)
             {
@@ -613,7 +613,7 @@ namespace Kooboo.IndexedDB.Btree
             return record;
         }
 
-        private void updateNavigator(Int64 recorddiskposition, Int64 PointerDiskPosition, enumPosition position)
+        private void updateNavigator(Int64 recorddiskposition, Int64 pointerDiskPosition, enumPosition position)
         {
             int relativeposition = 0;
             switch (position)
@@ -642,7 +642,7 @@ namespace Kooboo.IndexedDB.Btree
             lock (_object)
             {
                 IndexStream.Position = recorddiskposition + relativeposition;
-                IndexStream.Write(BitConverter.GetBytes(PointerDiskPosition), 0, 8);
+                IndexStream.Write(BitConverter.GetBytes(pointerDiskPosition), 0, 8);
             }
         }
 
@@ -654,23 +654,23 @@ namespace Kooboo.IndexedDB.Btree
         /// <param name="blockposition"></param>
         private void promoteItems(Int64 sectionStartPosition, Dictionary<int, JumpRecord> loadchains, Int64 blockposition)
         {
-            /// we now use a temp counter on each level, and reset that temp counter when item promoted.
+            // we now use a temp counter on each level, and reset that temp counter when item promoted.
             foreach (var item in loadchains.OrderByDescending(o => o.Key))
             {
                 int level = item.Key;
 
                 JumpRecord newrecord = insertNewRecord(blockposition);
 
-                JumpRecord ItemCurrentLevel = item.Value;
+                JumpRecord itemCurrentLevel = item.Value;
 
-                updateNavigator(ItemCurrentLevel.diskLocation, newrecord.diskLocation, enumPosition.next);
+                updateNavigator(itemCurrentLevel.diskLocation, newrecord.diskLocation, enumPosition.next);
 
-                updateNavigator(newrecord.diskLocation, ItemCurrentLevel.diskLocation, enumPosition.previous);
+                updateNavigator(newrecord.diskLocation, itemCurrentLevel.diskLocation, enumPosition.previous);
 
-                if (ItemCurrentLevel.Next > 0)
+                if (itemCurrentLevel.Next > 0)
                 {
-                    updateNavigator(ItemCurrentLevel.Next, newrecord.diskLocation, enumPosition.previous);
-                    updateNavigator(newrecord.diskLocation, ItemCurrentLevel.Next, enumPosition.next);
+                    updateNavigator(itemCurrentLevel.Next, newrecord.diskLocation, enumPosition.previous);
+                    updateNavigator(newrecord.diskLocation, itemCurrentLevel.Next, enumPosition.next);
                 }
 
                 int counter = getLevelCounter(sectionStartPosition, level);
@@ -691,9 +691,9 @@ namespace Kooboo.IndexedDB.Btree
 
         private Int64 createNewStartSection()
         {
-            /// in the format of
-            /// [8] start search pointer. Pointer to the highest jump table.
-            /// [2] * = number of counter of each level.  start pointer =
+            // in the format of
+            // [8] start search pointer. Pointer to the highest jump table.
+            // [2] * = number of counter of each level.  start pointer =
 
             // header section + number levels.
             int totallen = sectionlen + this.maxJumpTableLevel * sectionlen;
@@ -714,10 +714,10 @@ namespace Kooboo.IndexedDB.Btree
 
             for (int i = 0; i < this.maxJumpTableLevel; i++)
             {
-                JumpRecord newrecord = new JumpRecord();
-                newrecord.BlockPosition = Int64.MinValue;
-                newrecord.Indicator = enumSectionType.Record;
-                newrecord.level = (byte)i;
+                JumpRecord newrecord = new JumpRecord
+                {
+                    BlockPosition = Int64.MinValue, Indicator = enumSectionType.Record, level = (byte) i
+                };
 
                 tablelist.Add(newrecord);
             }
@@ -790,7 +790,7 @@ namespace Kooboo.IndexedDB.Btree
             }
             // }
 
-            /// Check to make sure that POS is the right spot.
+            // Check to make sure that POS is the right spot.
             return pos;
         }
 
@@ -833,10 +833,7 @@ namespace Kooboo.IndexedDB.Btree
             {
                 lock (_object)
                 {
-                    if (_indexstream != null)
-                    {
-                        _indexstream.Flush();
-                    }
+                    _indexstream?.Flush();
                 }
             }
         }
@@ -891,10 +888,8 @@ namespace Kooboo.IndexedDB.Btree
                 IndexStream.Read(recordbyte, 0, 46);
             }
 
-            JumpRecord record = new JumpRecord();
-            record.pointerBytes = recordbyte;
+            JumpRecord record = new JumpRecord {pointerBytes = recordbyte, diskLocation = sectionposition};
 
-            record.diskLocation = sectionposition;
 
             if (record.Indicator == enumSectionType.DeletedAvailable)
             {
@@ -939,7 +934,7 @@ namespace Kooboo.IndexedDB.Btree
             }
         }
 
-        private void updateTotalCounter(Int64 startSectionPosition, int PlusOrMinusDigit)
+        private void updateTotalCounter(Int64 startSectionPosition, int plusOrMinusDigit)
         {
             Int64 readposition = startSectionPosition + this.totalCounterPositionIndex;
 
@@ -954,7 +949,7 @@ namespace Kooboo.IndexedDB.Btree
 
             int counter = BitConverter.ToInt32(counterbyte, 0);
 
-            counter = counter + PlusOrMinusDigit;
+            counter = counter + plusOrMinusDigit;
 
             counterbyte = BitConverter.GetBytes(counter);
 
@@ -1001,7 +996,7 @@ namespace Kooboo.IndexedDB.Btree
     }
 }
 
-/// Bytes format as below.
+// Bytes format as below.
 
 //start
 

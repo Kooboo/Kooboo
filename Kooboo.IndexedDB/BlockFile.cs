@@ -45,16 +45,16 @@ namespace Kooboo.IndexedDB
         }
 
         // keep for upgrade.. not used any more.
-        public byte[] GetContent(long position, int KeyColumnOffset)
+        public byte[] GetContent(long position, int keyColumnOffset)
         {
             byte[] counterbytes = GetPartial(position, 26, 4);
             int counter = BitConverter.ToInt32(counterbytes, 0);
-            return GetPartial(position, 30 + KeyColumnOffset, counter);
+            return GetPartial(position, 30 + keyColumnOffset, counter);
         }
 
-        public byte[] GetKey(long position, int ColumnOffset, int KeyLength)
+        public byte[] GetKey(long position, int columnOffset, int keyLength)
         {
-            return GetPartial(position, 30 + ColumnOffset, KeyLength);
+            return GetPartial(position, 30 + columnOffset, keyLength);
         }
 
         #region NewAPI

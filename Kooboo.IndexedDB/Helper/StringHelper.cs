@@ -92,18 +92,20 @@ namespace Kooboo.IndexedDB.Helper
 
         private static char[] SpaceChars
         {
-            /// The space characters, for the purposes of this specification, are
-            /// U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), and "CR" (U+000D).
+            // The space characters, for the purposes of this specification, are
+            // U+0020 SPACE, "tab" (U+0009), "LF" (U+000A), "FF" (U+000C), and "CR" (U+000D).
             get
             {
                 if (_space == null)
                 {
-                    List<char> spacelist = new List<char>();
-                    spacelist.Add('\u0020');
-                    spacelist.Add('\u0009');
-                    spacelist.Add('\u000a');
-                    spacelist.Add('\u000c');
-                    spacelist.Add('\u000d');
+                    List<char> spacelist = new List<char>
+                    {
+                        '\u0020',
+                        '\u0009',
+                        '\u000a',
+                        '\u000c',
+                        '\u000d'
+                    };
                     _space = spacelist.ToArray();
                 }
                 return _space;

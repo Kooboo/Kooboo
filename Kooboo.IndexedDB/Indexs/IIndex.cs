@@ -18,7 +18,7 @@ namespace Kooboo.IndexedDB.Indexs
 
         bool Add(TValue input, Int64 blockPosition);
 
-        void Update(TValue oldRecord, TValue NewRecord, Int64 oldBlockPosition, Int64 newBlockPosition);
+        void Update(TValue oldRecord, TValue newRecord, Int64 oldBlockPosition, Int64 newBlockPosition);
 
         bool Del(TValue record, Int64 blockPosition);
 

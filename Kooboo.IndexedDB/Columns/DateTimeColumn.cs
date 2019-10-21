@@ -21,11 +21,11 @@ namespace Kooboo.IndexedDB.Columns
             get; set;
         }
 
-        public DateTimeColumn(string FieldName)
+        public DateTimeColumn(string fieldName)
         {
-            this.FieldName = FieldName;
-            this.Get = Helper.ObjectHelper.GetGetValue<TValue, DateTime>(FieldName);
-            this.Set = Helper.ObjectHelper.GetSetValue<TValue, DateTime>(FieldName);
+            this.FieldName = fieldName;
+            this.Get = Helper.ObjectHelper.GetGetValue<TValue, DateTime>(fieldName);
+            this.Set = Helper.ObjectHelper.GetSetValue<TValue, DateTime>(fieldName);
 
             byteConverter = ObjectContainer.GetConverter<Int64>();
 

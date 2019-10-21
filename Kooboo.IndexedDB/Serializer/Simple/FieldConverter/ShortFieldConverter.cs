@@ -10,11 +10,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<T, short> getValue;
         private Action<T, short> setValue;
 
-        public ShortFieldConverter(string FieldName)
+        public ShortFieldConverter(string fieldName)
         {
-            this.getValue = ObjectHelper.GetGetValue<T, short>(FieldName);
-            this.setValue = ObjectHelper.GetSetValue<T, short>(FieldName);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetValue<T, short>(fieldName);
+            this.setValue = ObjectHelper.GetSetValue<T, short>(fieldName);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -36,9 +36,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytevalue);
         }
 
-        public byte[] ToBytes(T Value)
+        public byte[] ToBytes(T value)
         {
-            short fieldvalue = this.getValue(Value);
+            short fieldvalue = this.getValue(value);
             return ValueConverter.ToBytes(fieldvalue);
         }
     }
@@ -48,11 +48,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<object, short> getValue;
         private Action<object, short> setValue;
 
-        public ShortFieldConverter(string FieldName, Type ObjectType)
+        public ShortFieldConverter(string fieldName, Type objectType)
         {
-            this.getValue = ObjectHelper.GetGetFieldValue<short>(FieldName, ObjectType);
-            this.setValue = ObjectHelper.GetSetFieldValue<short>(FieldName, ObjectType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetFieldValue<short>(fieldName, objectType);
+            this.setValue = ObjectHelper.GetSetFieldValue<short>(fieldName, objectType);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -74,9 +74,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytevalue);
         }
 
-        public byte[] ToBytes(object Value)
+        public byte[] ToBytes(object value)
         {
-            short fieldvalue = this.getValue(Value);
+            short fieldvalue = this.getValue(value);
             return ValueConverter.ToBytes(fieldvalue);
         }
     }

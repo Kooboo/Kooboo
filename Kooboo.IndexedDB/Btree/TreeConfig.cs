@@ -131,7 +131,7 @@ namespace Kooboo.IndexedDB.Btree
                 starti = 5;
             }
 
-            /// this test the most space saving, but it actually should test the fastest speed.
+            // this test the most space saving, but it actually should test the fastest speed.
             for (int i = starti; i < GlobalSettings.MaxTreeNodeSizeMultiplier; i++)
             {
                 tempbufferedsize = i * sectorsize;
@@ -229,14 +229,7 @@ namespace Kooboo.IndexedDB.Btree
             // now convert them back to value one by one.
 
             byte uniquebyte = diskbytes[1];
-            if (uniquebyte == 1)
-            {
-                newconfig.unique = true;
-            }
-            else
-            {
-                newconfig.unique = false;
-            }
+            newconfig.unique = uniquebyte == 1;
 
             newconfig.ConfigDiskBytes = BitConverter.ToInt16(diskbytes, 2);
             newconfig.KeyLength = BitConverter.ToInt16(diskbytes, 4);

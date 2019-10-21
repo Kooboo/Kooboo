@@ -14,17 +14,17 @@ namespace Kooboo.IndexedDB.Query
     /// <typeparam name="TValue"></typeparam>
     public class WhereFilter<TKey, TValue>
     {
-        private ObjectStore<TKey, TValue> store;
+        private ObjectStore<TKey, TValue> _store;
 
-        private string OrderByFieldName;
-        private int skip;
+        private string _orderByFieldName;
+        private int _skip;
 
         public Filter<TKey, TValue> filter;
 
         public WhereFilter(ObjectStore<TKey, TValue> store, Expression<Predicate<TValue>> predicate)
         {
-            this.store = store;
-            this.skip = 0;
+            this._store = store;
+            this._skip = 0;
             filter = store.Filter;
             LambdaExpression lambda = predicate as LambdaExpression;
             ParseLambda(lambda);
@@ -32,8 +32,8 @@ namespace Kooboo.IndexedDB.Query
 
         public WhereFilter(ObjectStore<TKey, TValue> store)
         {
-            this.store = store;
-            this.skip = 0;
+            this._store = store;
+            this._skip = 0;
             filter = store.Filter;
         }
 
@@ -44,25 +44,25 @@ namespace Kooboo.IndexedDB.Query
             return this;
         }
 
-        public WhereFilter<TKey, TValue> WhereIn(string FieldOrPropertyName, List<object> Values)
+        public WhereFilter<TKey, TValue> WhereIn(string fieldOrPropertyName, List<object> values)
         {
-            this.filter.WhereIn(FieldOrPropertyName, Values);
+            this.filter.WhereIn(fieldOrPropertyName, values);
             return this;
         }
 
-        public WhereFilter<TKey, TValue> WhereIn<T>(string FieldOrPropertyName, List<T> Values)
+        public WhereFilter<TKey, TValue> WhereIn<T>(string fieldOrPropertyName, List<T> values)
         {
-            this.filter.WhereIn<T>(FieldOrPropertyName, Values);
+            this.filter.WhereIn<T>(fieldOrPropertyName, values);
             return this;
         }
 
-        public WhereFilter<TKey, TValue> WhereIn<T>(Expression<Func<TValue, object>> FieldExpression, List<T> Values)
+        public WhereFilter<TKey, TValue> WhereIn<T>(Expression<Func<TValue, object>> fieldExpression, List<T> values)
         {
-            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(FieldExpression);
+            string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(fieldExpression);
 
             if (!string.IsNullOrEmpty(fieldname))
             {
-                this.filter.WhereIn<T>(fieldname, Values);
+                this.filter.WhereIn<T>(fieldname, values);
             }
             return this;
         }
@@ -85,11 +85,11 @@ namespace Kooboo.IndexedDB.Query
         /// Order by a field or property. This field should have an index on it.
         /// Order by a non-indexed field will have very bad performance.
         /// </summary>
-        public WhereFilter<TKey, TValue> OrderByAscending(string FieldOrPropertyName)
+        public WhereFilter<TKey, TValue> OrderByAscending(string fieldOrPropertyName)
         {
-            this.OrderByFieldName = FieldOrPropertyName;
+            this._orderByFieldName = fieldOrPropertyName;
 
-            this.filter.OrderByAscending(FieldOrPropertyName);
+            this.filter.OrderByAscending(fieldOrPropertyName);
             return this;
         }
 
@@ -97,12 +97,7 @@ namespace Kooboo.IndexedDB.Query
         {
             string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(expression);
 
-            if (!string.IsNullOrEmpty(fieldname))
-            {
-                return OrderByAscending(fieldname);
-            }
-
-            return this;
+            return !string.IsNullOrEmpty(fieldname) ? OrderByAscending(fieldname) : this;
         }
 
         /// <summary>
@@ -117,10 +112,10 @@ namespace Kooboo.IndexedDB.Query
         /// <summary>
         /// Order by descending on a field or property. This field should have an index on it.
         /// </summary>
-        public WhereFilter<TKey, TValue> OrderByDescending(string FieldOrPropertyName)
+        public WhereFilter<TKey, TValue> OrderByDescending(string fieldOrPropertyName)
         {
-            this.OrderByFieldName = FieldOrPropertyName;
-            this.filter.OrderByDescending(FieldOrPropertyName);
+            this._orderByFieldName = fieldOrPropertyName;
+            this.filter.OrderByDescending(fieldOrPropertyName);
             return this;
         }
 
@@ -128,12 +123,7 @@ namespace Kooboo.IndexedDB.Query
         {
             string fieldname = Helper.ExpressionHelper.GetFieldName<TValue>(expression);
 
-            if (!string.IsNullOrEmpty(fieldname))
-            {
-                return OrderByDescending(fieldname);
-            }
-
-            return this;
+            return !string.IsNullOrEmpty(fieldname) ? OrderByDescending(fieldname) : this;
         }
 
         /// <summary>
@@ -148,7 +138,7 @@ namespace Kooboo.IndexedDB.Query
 
         public WhereFilter<TKey, TValue> Skip(int count)
         {
-            this.skip = count;
+            this._skip = count;
             this.filter.Skip(count);
             return this;
         }
@@ -237,7 +227,7 @@ namespace Kooboo.IndexedDB.Query
         private void ParseMemberAccess(Expression expression)
         {
             MemberExpression member = expression as MemberExpression;
-            string name = member.Member.Name;
+            string name = member?.Member.Name;
             this.filter.WhereEqual(name, true);
         }
 
@@ -253,7 +243,7 @@ namespace Kooboo.IndexedDB.Query
             if (unary.Operand.NodeType == ExpressionType.MemberAccess)
             {
                 MemberExpression member = unary.Operand as MemberExpression;
-                string name = member.Member.Name;
+                string name = member?.Member.Name;
 
                 this.filter.WhereEqual(name, false);
             }
@@ -270,20 +260,20 @@ namespace Kooboo.IndexedDB.Query
             if (binary.Left.NodeType == ExpressionType.MemberAccess)
             {
                 MemberExpression member = binary.Left as MemberExpression;
-                name = member.Member.Name;
+                name = member?.Member.Name;
             }
             else if (binary.Left.NodeType == ExpressionType.Convert)
             {
                 UnaryExpression unary = binary.Left as UnaryExpression;
                 MemberExpression member = unary.Operand as MemberExpression;
-                name = member.Member.Name;
+                name = member?.Member.Name;
             }
 
             object constatvalue;
             if (binary.Right.NodeType == ExpressionType.Constant)
             {
                 ConstantExpression value = binary.Right as ConstantExpression;
-                constatvalue = value.Value;
+                constatvalue = value?.Value;
             }
             else if (binary.Right.NodeType == ExpressionType.MemberAccess)
             {
@@ -292,7 +282,7 @@ namespace Kooboo.IndexedDB.Query
             else if (binary.Right.NodeType == ExpressionType.Convert)
             {
                 UnaryExpression unary = binary.Right as UnaryExpression;
-                MemberExpression member = unary.Operand as MemberExpression;
+                MemberExpression member = unary?.Operand as MemberExpression;
 
                 constatvalue = Expression.Lambda<Func<object>>(Expression.Convert(member, typeof(object))).Compile().Invoke();
             }

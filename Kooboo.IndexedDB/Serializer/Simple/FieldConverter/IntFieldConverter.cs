@@ -10,11 +10,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<T, int> getValue;
         private Action<T, int> setValue;
 
-        public IntFieldConverter(string FieldName)
+        public IntFieldConverter(string fieldName)
         {
-            this.getValue = ObjectHelper.GetGetValue<T, int>(FieldName);
-            this.setValue = ObjectHelper.GetSetValue<T, int>(FieldName);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetValue<T, int>(fieldName);
+            this.setValue = ObjectHelper.GetSetValue<T, int>(fieldName);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -33,9 +33,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytevalue);
         }
 
-        public byte[] ToBytes(T Value)
+        public byte[] ToBytes(T value)
         {
-            int fieldvalue = this.getValue(Value);
+            int fieldvalue = this.getValue(value);
             return ValueConverter.ToBytes(fieldvalue);
         }
     }
@@ -45,11 +45,11 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
         private Func<object, int> getValue;
         private Action<object, int> setValue;
 
-        public IntFieldConverter(string FieldName, Type ObjectType)
+        public IntFieldConverter(string fieldName, Type objectType)
         {
-            this.getValue = ObjectHelper.GetGetFieldValue<int>(FieldName, ObjectType);
-            this.setValue = ObjectHelper.GetSetFieldValue<int>(FieldName, ObjectType);
-            this.FieldNameHash = ObjectHelper.GetHashCode(FieldName);
+            this.getValue = ObjectHelper.GetGetFieldValue<int>(fieldName, objectType);
+            this.setValue = ObjectHelper.GetSetFieldValue<int>(fieldName, objectType);
+            this.FieldNameHash = ObjectHelper.GetHashCode(fieldName);
         }
 
         public int ByteLength
@@ -68,9 +68,9 @@ namespace Kooboo.IndexedDB.Serializer.Simple.FieldConverter
             this.setValue(value, bytevalue);
         }
 
-        public byte[] ToBytes(object Value)
+        public byte[] ToBytes(object value)
         {
-            int fieldvalue = this.getValue(Value);
+            int fieldvalue = this.getValue(value);
             return ValueConverter.ToBytes(fieldvalue);
         }
     }

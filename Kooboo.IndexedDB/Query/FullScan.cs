@@ -12,38 +12,37 @@ namespace Kooboo.IndexedDB.Query
     /// </summary>
     public class FullScan<TKey, TValue>
     {
-        private Predicate<TValue> predicate;
+        private Predicate<TValue> _predicate;
 
-        private ObjectStore<TKey, TValue> store;
+        private ObjectStore<TKey, TValue> _store;
 
-        private bool ascending;
-        private string OrderByFieldName;
-        private int skip;
+        private bool _ascending;
+        private string _orderByFieldName;
+        private int _skip;
 
         public FullScan(ObjectStore<TKey, TValue> store, Predicate<TValue> predicate)
         {
-            this.store = store;
-            this.predicate = predicate;
-            this.ascending = true;
-            this.skip = 0;
+            this._store = store;
+            this._predicate = predicate;
+            this._ascending = true;
+            this._skip = 0;
         }
 
         public FullScan(ObjectStore<TKey, TValue> store)
         {
-            this.store = store;
-            this.ascending = true;
-            this.skip = 0;
+            this._store = store;
+            this._ascending = true;
+            this._skip = 0;
         }
 
         /// <summary>
         /// The where predicate<T> condition, only one predicate can be used.
         /// For multiple conditions, use || && inside the predicate.
         /// </summary>
-        /// <param name="store"></param>
         /// <param name="predicate"></param>
         public FullScan<TKey, TValue> Where(Predicate<TValue> predicate)
         {
-            this.predicate = predicate;
+            this._predicate = predicate;
             return this;
         }
 
@@ -52,7 +51,7 @@ namespace Kooboo.IndexedDB.Query
         /// </summary>
         public FullScan<TKey, TValue> OrderByAscending()
         {
-            this.ascending = true;
+            this._ascending = true;
             return this;
         }
 
@@ -60,10 +59,10 @@ namespace Kooboo.IndexedDB.Query
         /// Order by a field or property. This field should have an index on it.
         /// Order by a non-indexed field will have very bad performance.
         /// </summary>
-        public FullScan<TKey, TValue> OrderByAscending(string FieldOrPropertyName)
+        public FullScan<TKey, TValue> OrderByAscending(string fieldOrPropertyName)
         {
-            this.ascending = true;
-            this.OrderByFieldName = FieldOrPropertyName;
+            this._ascending = true;
+            this._orderByFieldName = fieldOrPropertyName;
 
             return this;
         }
@@ -73,7 +72,7 @@ namespace Kooboo.IndexedDB.Query
         /// </summary>
         public FullScan<TKey, TValue> OrderByDescending()
         {
-            this.ascending = false;
+            this._ascending = false;
 
             return this;
         }
@@ -81,35 +80,28 @@ namespace Kooboo.IndexedDB.Query
         /// <summary>
         /// Order by descending on a field or property. This field should have an index on it.
         /// </summary>
-        public FullScan<TKey, TValue> OrderByDescending(string FieldOrPropertyName)
+        public FullScan<TKey, TValue> OrderByDescending(string fieldOrPropertyName)
         {
-            this.ascending = false;
-            this.OrderByFieldName = FieldOrPropertyName;
+            this._ascending = false;
+            this._orderByFieldName = fieldOrPropertyName;
             return this;
         }
 
         public FullScan<TKey, TValue> Skip(int count)
         {
-            this.skip = count;
+            this._skip = count;
             return this;
         }
 
         public TValue FirstOrDefault()
         {
             List<TValue> list = Take(1);
-            if (list.Count == 0)
-            {
-                return default(TValue);
-            }
-            else
-            {
-                return list[0];
-            }
+            return list.Count == 0 ? default(TValue) : list[0];
         }
 
         public List<TValue> Take(int count)
         {
-            lock (this.store._Locker)
+            lock (this._store._Locker)
             {
                 List<TValue> valuelist = new List<TValue>();
 
@@ -121,14 +113,14 @@ namespace Kooboo.IndexedDB.Query
                 int skipped = 0;
                 int taken = 0;
 
-                if (string.IsNullOrEmpty(this.OrderByFieldName))
+                if (string.IsNullOrEmpty(this._orderByFieldName))
                 {
                     // if there is not an order by field, use the primary key.
-                    foreach (TValue item in store.ItemCollection(this.ascending))
+                    foreach (TValue item in _store.ItemCollection(this._ascending))
                     {
-                        if (this.predicate(item))
+                        if (this._predicate(item))
                         {
-                            if (skipped < this.skip)
+                            if (skipped < this._skip)
                             {
                                 skipped += 1;
                                 continue;
@@ -148,17 +140,17 @@ namespace Kooboo.IndexedDB.Query
                 {
                     // there is an order by field.
                     // check whether this is an index or not.
-                    if (store.Indexes.HasIndex(this.OrderByFieldName))
+                    if (_store.Indexes.HasIndex(this._orderByFieldName))
                     {
-                        IIndex<TValue> index = store.Indexes.getIndex(this.OrderByFieldName);
+                        IIndex<TValue> index = _store.Indexes.getIndex(this._orderByFieldName);
 
-                        foreach (Int64 blockposition in index.AllItems(this.ascending))
+                        foreach (Int64 blockposition in index.AllItems(this._ascending))
                         {
-                            TValue record = store.getValue(blockposition);
+                            TValue record = _store.getValue(blockposition);
 
-                            if (this.predicate(record))
+                            if (this._predicate(record))
                             {
-                                if (skipped < this.skip)
+                                if (skipped < this._skip)
                                 {
                                     skipped += 1;
                                     continue;
@@ -177,7 +169,7 @@ namespace Kooboo.IndexedDB.Query
                     }
                     else
                     {
-                        /// the most expensive and brutal way.
+                        // the most expensive and brutal way.
 
                         throw new NotImplementedException("order by non-index field is not support yet");
                     }

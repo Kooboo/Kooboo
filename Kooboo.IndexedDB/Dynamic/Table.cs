@@ -20,7 +20,7 @@ namespace Kooboo.IndexedDB.Dynamic
         public Converter.ObjectConverter ObjectConverter { get; set; }
 
         private BlockFile _blockfile;
-        private static object _lockerBlockFile = new object();
+        private object _lockerBlockFile = new object();
 
         public BlockFile BlockFile
         {
@@ -48,7 +48,7 @@ namespace Kooboo.IndexedDB.Dynamic
             {
                 var find = this.Indexs.Find(o => o.FieldName == Dynamic.Constants.DefaultIdFieldName);
                 var right = find as TableIndexBase<Guid>;
-                return right.index;
+                return right?.index;
             }
         }
 
@@ -480,11 +480,11 @@ namespace Kooboo.IndexedDB.Dynamic
             }
         }
 
-        public Guid Add(object Value, bool CheckCol = false, Action<long> CallBackPos = null)
+        public Guid Add(object Value, bool checkCol = false, Action<long> callBackPos = null)
         {
             lock (_Locker)
             {
-                if (CheckCol)
+                if (checkCol)
                 {
                     var check = SettingHelper.CompareSetting(Value, this.Setting);
 
@@ -508,10 +508,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 Int64 contentposition = _addBlock(data);
 
-                if (CallBackPos != null)
-                {
-                    CallBackPos(contentposition);
-                }
+                callBackPos?.Invoke(contentposition);
 
                 foreach (var item in this.Indexs)
                 {
@@ -532,11 +529,11 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 this.Close();
 
-                Guid ReturnId = default(Guid);
+                Guid returnId = default(Guid);
 
                 if (data.ContainsKey(Constants.DefaultIdFieldName))
                 {
-                    ReturnId = (Guid)data[Constants.DefaultIdFieldName];
+                    returnId = (Guid)data[Constants.DefaultIdFieldName];
 
                     if (this.Setting.EnableLog)
                     {
@@ -553,42 +550,42 @@ namespace Kooboo.IndexedDB.Dynamic
                             UserId = this.CurrentUserId,
                             TableName = this.Name,
                             UpdateTime = DateTime.UtcNow,
-                            KeyBytes = ObjectContainer.GuidConverter.ToByte(ReturnId)
+                            KeyBytes = ObjectContainer.GuidConverter.ToByte(returnId)
                         };
 
                         this.OwnerDatabase.Log.Add(log);
                     }
                 }
 
-                return ReturnId;
+                return returnId;
             }
         }
 
-        public long AddLogData(long LogId, Dictionary<string, object> data)
+        public long AddLogData(long logId, Dictionary<string, object> data)
         {
             byte[] valuebyte = Kooboo.IndexedDB.Serializer.Simple.TableDataLogConverter.Instance.ToBytes(data);
             int len = valuebyte.Length;
 
-            var logidbytes = BitConverter.GetBytes(LogId);
+            var logidbytes = BitConverter.GetBytes(logId);
 
             byte[] totalbytes = new byte[len + 8];
             System.Buffer.BlockCopy(logidbytes, 0, totalbytes, 0, 8);
             System.Buffer.BlockCopy(valuebyte, 0, totalbytes, 8, len);
 
-            var LogPos = this.OwnerDatabase.TableLog.Add(totalbytes, totalbytes.Length);
+            var logPos = this.OwnerDatabase.TableLog.Add(totalbytes, totalbytes.Length);
             this.OwnerDatabase.TableLog.Close(); // relese to enable delete.
 
-            return LogPos;
+            return logPos;
         }
 
-        public Dictionary<string, object> GetLogData(long LogId, long DiskPosition)
+        public Dictionary<string, object> GetLogData(long logId, long diskPosition)
         {
-            var databytes = this.OwnerDatabase.TableLog.Get(DiskPosition);
+            var databytes = this.OwnerDatabase.TableLog.Get(diskPosition);
 
             if (databytes != null)
             {
                 var dbLogId = BitConverter.ToInt64(databytes, 0);
-                if (dbLogId == LogId)
+                if (dbLogId == logId)
                 {
                     var valuebytes = new byte[databytes.Length - 8];
                     System.Buffer.BlockCopy(databytes, 8, valuebytes, 0, databytes.Length - 8);
@@ -607,13 +604,12 @@ namespace Kooboo.IndexedDB.Dynamic
                 return default(Guid);
             }
 
-            if (key is System.Guid)
+            if (key is Guid guid)
             {
-                return (Guid)key;
+                return guid;
             }
             string strkey = key.ToString();
-            Guid guidkey;
-            if (System.Guid.TryParse(strkey, out guidkey))
+            if (System.Guid.TryParse(strkey, out var guidkey))
             {
                 return guidkey;
             }
@@ -828,10 +824,8 @@ namespace Kooboo.IndexedDB.Dynamic
 
                         newdata[Dynamic.Constants.DefaultIdFieldName] = key;
 
-                        if (oldvalue != null && newvalue is IDictionary<string, object>)
+                        if (oldvalue != null && newvalue is IDictionary<string, object> newdict)
                         {
-                            var newdict = newvalue as IDictionary<string, object>;
-
                             foreach (var item in oldvalue)
                             {
                                 if (!newdict.ContainsKey(item.Key))
@@ -942,7 +936,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
                 if (oldvalue != null && newvalue is IDictionary<string, object>)
                 {
-                    var newdict = newvalue as IDictionary<string, object>;
+                    var newdict = (IDictionary<string, object>) newvalue;
 
                     foreach (var item in oldvalue)
                     {
@@ -1028,10 +1022,8 @@ namespace Kooboo.IndexedDB.Dynamic
 
                         newdata[Dynamic.Constants.DefaultIdFieldName] = key;
 
-                        if (oldvalue != null && newvalue is IDictionary<string, object>)
+                        if (oldvalue != null && newvalue is IDictionary<string, object> newdict)
                         {
-                            var newdict = newvalue as IDictionary<string, object>;
-
                             foreach (var item in oldvalue)
                             {
                                 if (!newdict.ContainsKey(item.Key))
@@ -1091,14 +1083,14 @@ namespace Kooboo.IndexedDB.Dynamic
             }
             var logid = this.OwnerDatabase.Log.GetNewLogId(this.OwnerDatabase.Name);
 
-            var LogPos = this.AddLogData(logid, data);
+            var logPos = this.AddLogData(logid, data);
 
             var log = new LogEntry()
             {
                 Id = logid,
                 EditType = EditType.Update,
-                OldBlockPosition = LogPos,
-                NewBlockPosition = LogPos,
+                OldBlockPosition = logPos,
+                NewBlockPosition = logPos,
                 UserId = this.CurrentUserId,
                 TableName = this.Name,
                 TableColName = colname,
@@ -1163,14 +1155,14 @@ namespace Kooboo.IndexedDB.Dynamic
             return result;
         }
 
-        public void UpdateColumn(object key, string ColumnName, object value)
+        public void UpdateColumn(object key, string columnName, object value)
         {
-            if (ColumnName == null)
+            if (columnName == null)
             {
                 throw new Exception("column name is required");
             }
 
-            var col = this.Setting.Columns.FirstOrDefault(o => o.Name == ColumnName);
+            var col = this.Setting.Columns.FirstOrDefault(o => o.Name == columnName);
 
             if (col == null)
             {
@@ -1188,7 +1180,7 @@ namespace Kooboo.IndexedDB.Dynamic
 
             if (col.Length == int.MaxValue)
             {
-                throw new Exception("columns wiht unlimited length can not be update by this method");
+                throw new Exception("columns with unlimited length can not be update by this method");
             }
 
             var valuebytes = fieldConverter.ToBytes(colvalue);
@@ -1209,9 +1201,8 @@ namespace Kooboo.IndexedDB.Dynamic
                     this.BlockFile.UpdateCol(blockposition, col.relativePosition, col.Length, valuebytes);
 
                     this.BlockFile.Close();
-                    Dictionary<string, object> coldata = new Dictionary<string, object>();
-                    coldata.Add(ColumnName, colvalue);
-                    CreateUpdateLog(coldata, guidkey, ColumnName);
+                    Dictionary<string, object> coldata = new Dictionary<string, object> {{columnName, colvalue}};
+                    CreateUpdateLog(coldata, guidkey, columnName);
                     //
                 }
             }
@@ -1239,10 +1230,7 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             lock (_Locker)
             {
-                if (this._blockfile != null)
-                {
-                    this._blockfile.Close();
-                }
+                _blockfile?.Close();
                 foreach (var item in this.Indexs)
                 {
                     item.Close();
@@ -1254,10 +1242,7 @@ namespace Kooboo.IndexedDB.Dynamic
         {
             lock (_Locker)
             {
-                if (this._blockfile != null)
-                {
-                    this._blockfile.Flush();
-                }
+                _blockfile?.Flush();
 
                 foreach (var item in this.Indexs)
                 {
@@ -1275,10 +1260,7 @@ namespace Kooboo.IndexedDB.Dynamic
                     item.DelSelf();
                 }
 
-                if (this._blockfile != null)
-                {
-                    this._blockfile.Close();
-                }
+                _blockfile?.Close();
 
                 if (System.IO.Directory.Exists(this.ObjectFolder))
                 {
