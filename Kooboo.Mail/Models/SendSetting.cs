@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Kooboo.Mail.Models
 {
-
     public class SendSetting
     {
         public bool OkToSend { get; set; }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System.Collections.Generic;
 
@@ -10,7 +10,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return "LSUB"; 
+                return "LSUB";
             }
         }
 
@@ -56,16 +56,9 @@ namespace Kooboo.Mail.Imap.Commands
 //      from the subscription list even if a mailbox by that name no
 //      longer exists.
 
-
-
-
-
-
-
 //Crispin Standards Track[Page 43]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //   Example:    C: A002 LSUB "#news." "comp.mail.*"
 //               S: * LSUB () "." #news.comp.mail.mime

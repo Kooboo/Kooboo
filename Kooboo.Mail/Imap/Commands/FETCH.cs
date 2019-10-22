@@ -1,9 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap.Commands
@@ -19,7 +16,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return "FETCH"; 
+                return "FETCH";
             }
         }
 
@@ -27,7 +24,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -35,7 +32,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -43,7 +40,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 

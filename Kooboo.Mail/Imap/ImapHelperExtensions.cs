@@ -1,13 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 
 namespace Kooboo.Mail.Imap
 {
     public static class ImapHelperExtensions
-    {  
+    {
         public static string[] GetFlags(this Message message)
         {
             var flags = new List<string>();
@@ -81,6 +81,5 @@ namespace Kooboo.Mail.Imap
                 message.Deleted = false;
             }
         }
-         
     }
 }

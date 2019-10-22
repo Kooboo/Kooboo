@@ -1,33 +1,23 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Helper
 {
-  public static  class IDHelper
+    public static class IDHelper
     {
-
-        public static  int ToInt(string input)
+        public static int ToInt(string input)
         {
             if (string.IsNullOrEmpty(input))
             {
-                return 0; 
-            } 
-            var id =  Lib.Security.Hash.ComputeInt(input);  
-            if (id <0 )
-            {
-                return 0 - id; 
+                return 0;
             }
-            
-            if (id ==0)
+            var id = Lib.Security.Hash.ComputeInt(input);
+            if (id < 0)
             {
-                return ToInt(input + "0"); 
+                return 0 - id;
             }
-            return id; 
+
+            return id == 0 ? ToInt(input + "0") : id;
         }
     }
 }

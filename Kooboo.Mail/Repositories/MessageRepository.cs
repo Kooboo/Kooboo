@@ -1,20 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB;
 using Kooboo.IndexedDB.Query;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Mail.Repositories
 {
     public class MessageRepository : RepositoryBase<Message>
     {
-        private MailDb maildb { get; set; }
+        private MailDb Maildb { get; set; }
 
         public MessageRepository(MailDb db) : base(db.Db)
         {
-            this.maildb = db;
+            this.Maildb = db;
         }
 
         protected override ObjectStoreParameters StoreParameters
@@ -40,21 +40,21 @@ namespace Kooboo.Mail.Repositories
             }
         }
 
-        public void Add(Message Message, string MessageBody)
+        public void Add(Message message, string messageBody)
         {
-            Message.Id = 0; // to reset the message id. 
-            var bodyposition = this.maildb.MsgBody.Add(MessageBody);
-            Message.BodyPosition = bodyposition;
-            this.maildb.MsgBody.Close();
-            this.Add(Message);
+            message.Id = 0; // to reset the message id.
+            var bodyposition = this.Maildb.MsgBody.Add(messageBody);
+            message.BodyPosition = bodyposition;
+            this.Maildb.MsgBody.Close();
+            this.Add(message);
         }
 
-        public void Update(Message Message, string MessageBody)
+        public void Update(Message message, string messageBody)
         {
-            var bodyposition = this.maildb.MsgBody.Add(MessageBody);
-            Message.BodyPosition = bodyposition;
-            this.maildb.MsgBody.Close();
-            this.Update(Message);
+            var bodyposition = this.Maildb.MsgBody.Add(messageBody);
+            message.BodyPosition = bodyposition;
+            this.Maildb.MsgBody.Close();
+            this.Update(message);
         }
 
         public override bool Add(Message value)
@@ -70,17 +70,16 @@ namespace Kooboo.Mail.Repositories
         {
             // this is strange for now, and should be solved by database.
 
-            var columnMsg = this.Store.GetFromColumns(value.Id); 
-            if (columnMsg !=null)
+            var columnMsg = this.Store.GetFromColumns(value.Id);
+            if (columnMsg != null)
             {
                 value.Read = columnMsg.Read;
                 value.Flagged = columnMsg.Flagged;
                 value.Answered = columnMsg.Answered;
                 value.Deleted = columnMsg.Deleted;
-                value.Recent = columnMsg.Recent;  
+                value.Recent = columnMsg.Recent;
             }
             return base.AddOrUpdate(value);
-      
         }
 
         public override bool Update(Message value)
@@ -92,19 +91,19 @@ namespace Kooboo.Mail.Repositories
                 value.Flagged = columnMsg.Flagged;
                 value.Answered = columnMsg.Answered;
                 value.Deleted = columnMsg.Deleted;
-                value.Recent = columnMsg.Recent; 
+                value.Recent = columnMsg.Recent;
             }
             return base.Update(value);
         }
 
-        public List<Message> ByFolder(string FolderName)
+        public List<Message> ByFolder(string folderName)
         {
-            return FolderQuery(FolderName).SelectAll();
+            return FolderQuery(folderName).SelectAll();
         }
 
-        public WhereFilter<int, Message> FolderQuery(string FolderName)
+        public WhereFilter<int, Message> FolderQuery(string folderName)
         {
-            var model = Kooboo.Mail.Utility.FolderUtility.ParseFolder(FolderName);
+            var model = Kooboo.Mail.Utility.FolderUtility.ParseFolder(folderName);
 
             var query = this.Query().OrderByDescending(o => o.Id).Where(o => o.FolderId == model.FolderId);
             if (model.AddressId != default(int))
@@ -122,47 +121,47 @@ namespace Kooboo.Mail.Repositories
                 .Take(Int32.MaxValue);
         }
 
-        public Message GetBySeqNo(string FolderName, int LastMaxId, int MessageCount, int SeqNo)
+        public Message GetBySeqNo(string folderName, int lastMaxId, int messageCount, int seqNo)
         {
-            if (SeqNo < 1)
+            if (seqNo < 1)
             {
-                SeqNo = 1;
+                seqNo = 1;
             }
 
-            int skip = MessageCount - SeqNo;
+            int skip = messageCount - seqNo;
             if (skip < 0)
             {
                 skip = 0;
             }
-            return FolderQuery(FolderName).Where(o => o.Id <= LastMaxId).Skip(skip).FirstOrDefault();
+            return FolderQuery(folderName).Where(o => o.Id <= lastMaxId).Skip(skip).FirstOrDefault();
         }
 
-        public List<Message> GetBySeqNos(string FolderName, int LastMaxId, int MessageCount, int lower, int upper)
+        public List<Message> GetBySeqNos(string folderName, int lastMaxId, int messageCount, int lower, int upper)
         {
             if (lower < 1)
             {
                 lower = 1;
             }
 
-            int skip = MessageCount - upper;
+            int skip = messageCount - upper;
             if (skip < 0)
             {
                 skip = 0;
             }
 
-            var result = FolderQuery(FolderName).Where(o => o.Id <= LastMaxId).Skip(skip).Take(upper - lower + 1);
+            var result = FolderQuery(folderName).Where(o => o.Id <= lastMaxId).Skip(skip).Take(upper - lower + 1);
 
             result.Reverse();
             return result;
         }
 
-        public int GetSeqNo(string FolderName, int LastMaxId, int MessagetCount, int MsgId)
+        public int GetSeqNo(string folderName, int lastMaxId, int messagetCount, int msgId)
         {
-            var query = FolderQuery(FolderName).Where(o => o.Id <= LastMaxId).Where(o => o.Id > MsgId);
+            var query = FolderQuery(folderName).Where(o => o.Id <= lastMaxId).Where(o => o.Id > msgId);
 
             int count = query.Count();
 
-            return MessagetCount - count;
+            return messagetCount - count;
         }
 
         public string GetContent(int id)
@@ -171,28 +170,27 @@ namespace Kooboo.Mail.Repositories
 
             if (mail != null)
             {
-                return this.maildb.MsgBody.Get(mail.BodyPosition);
+                return this.Maildb.MsgBody.Get(mail.BodyPosition);
             }
             return null;
         }
-         
 
-        public void MarkAsRead(int MsgId, bool read = true)
+        public void MarkAsRead(int msgId, bool read = true)
         {
-            this.Store.UpdateColumn<bool>(MsgId, o => o.Read, read);
+            this.Store.UpdateColumn<bool>(msgId, o => o.Read, read);
         }
 
-        public void UpdateRecent(int Id)
+        public void UpdateRecent(int id)
         {
-            this.Store.UpdateColumn<bool>(Id, o => o.Recent, false);
+            this.Store.UpdateColumn<bool>(id, o => o.Recent, false);
         }
 
-        // used with select.... select command should update the recent... 
+        // used with select.... select command should update the recent...
         public void UpdateRecentByMaxId(int maxMsgId)
         {
             DateTime maxBeforeDate = DateTime.Now.AddMonths(-10);
             long tickbefore = maxBeforeDate.Ticks;
-            var query = this.Query().OrderByAscending(o => o.Id).Where(o => o.CreationTimeTick > tickbefore && o.Recent == true && o.Id <= maxMsgId);
+            var query = this.Query().OrderByAscending(o => o.Id).Where(o => o.CreationTimeTick > tickbefore && o.Recent && o.Id <= maxMsgId);
 
             var all = query.SelectAll();
 
@@ -208,20 +206,20 @@ namespace Kooboo.Mail.Repositories
             Update(message);
         }
 
-        public Models.MessageStat GetStat(string FolderName)
+        public Models.MessageStat GetStat(string folderName)
         {
-            if (string.IsNullOrEmpty(FolderName))
+            if (string.IsNullOrEmpty(folderName))
             {
                 return new Models.MessageStat();
             }
-            int folderid = Folder.ToId(FolderName);
-            if (FolderName.Contains("@"))
+            int folderid = Folder.ToId(folderName);
+            if (folderName.Contains("@"))
             {
                 // our special folder with emailaddress.
-                int index = FolderName.IndexOf("/");
-                string realfolder = FolderName.Substring(0, index);
+                int index = folderName.IndexOf("/");
+                string realfolder = folderName.Substring(0, index);
                 folderid = Folder.ToId(realfolder);
-                string emailaddress = FolderName.Substring(index + 1);
+                string emailaddress = folderName.Substring(index + 1);
                 var address = Kooboo.Mail.Utility.AddressUtility.GetLocalEmailAddress(emailaddress);
 
                 if (address != null)
@@ -233,7 +231,7 @@ namespace Kooboo.Mail.Repositories
             return GetStat(folderid);
         }
 
-        public Models.MessageStat GetStat(int FolderId, int AddressId = 0)
+        public Models.MessageStat GetStat(int folderId, int addressId = 0)
         {
             DateTime maxBeforeDate = DateTime.Now.AddMonths(-10);
             long tickbefore = maxBeforeDate.Ticks;
@@ -241,26 +239,26 @@ namespace Kooboo.Mail.Repositories
 
             var query = this.Query().UseColumnData();
 
-            query.Where(o => o.FolderId == FolderId);
+            query.Where(o => o.FolderId == folderId);
 
-            if (AddressId != 0)
+            if (addressId != 0)
             {
-                query.Where(o => o.AddressId == AddressId);
+                query.Where(o => o.AddressId == addressId);
             }
 
             var lastestRecord = query.Take(maxrecord);
 
             var result = new Models.MessageStat();
             result.NextUid = this.Store.LastKey + 1;
-            result.FolderUid = FolderId;
+            result.FolderUid = folderId;
             if (lastestRecord == null || lastestRecord.Count == 0)
             {
                 return result;
             }
 
             result.Exists = query.Count();
-            result.UnSeen = lastestRecord.Where(o => !o.Read).Count();
-            result.Recent = lastestRecord.Where(o => o.Recent).Count();
+            result.UnSeen = lastestRecord.Count(o => !o.Read);
+            result.Recent = lastestRecord.Count(o => o.Recent);
 
             if (result.UnSeen > 0)
             {
@@ -273,10 +271,10 @@ namespace Kooboo.Mail.Repositories
             return result;
         }
 
-        public string[] GetFlags(int MsgId)
+        public string[] GetFlags(int msgId)
         {
-            var msg = this.Store.GetFromColumns(MsgId);
-              
+            var msg = this.Store.GetFromColumns(msgId);
+
             var flags = new List<string>();
             if (msg.Recent)
             {
@@ -301,9 +299,9 @@ namespace Kooboo.Mail.Repositories
             return flags.ToArray();
         }
 
-        public void AddFlags(int MsgId, string[] flags)
+        public void AddFlags(int msgId, string[] flags)
         {
-            var msg = this.Store.GetFromColumns(MsgId);
+            var msg = this.Store.GetFromColumns(msgId);
             if (msg == null)
             {
                 return;
@@ -406,8 +404,6 @@ namespace Kooboo.Mail.Repositories
                     this.Store.UpdateColumn<bool>(msg.Id, o => o.Deleted, false);
                 }
             }
-
-
         }
 
         public void RemoveFlags(int msgid, string[] flags)
@@ -448,6 +444,4 @@ namespace Kooboo.Mail.Repositories
             }
         }
     }
-
-
 }

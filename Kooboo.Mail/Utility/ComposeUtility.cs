@@ -1,10 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
 using System.Net.Mime;
 
 namespace Kooboo.Mail.Utility
@@ -48,7 +47,7 @@ namespace Kooboo.Mail.Utility
 
             if (model.Attachments != null && model.Attachments.Count > 0)
             {
-                // fill in the attachment info.  
+                // fill in the attachment info.
                 foreach (var item in model.Attachments)
                 {
                     if (item.Size <= 0)
@@ -118,27 +117,27 @@ namespace Kooboo.Mail.Utility
 
             return strHeader + bodycomposer.Body();
         }
-             
+
         public static string ComposeTextEmailBody(string from, string to, string subject, string textbody)
         {
             Dictionary<string, string> headers = new Dictionary<string, string>();
-            headers.Add("From", from);  
+            headers.Add("From", from);
             headers.Add("To", to);
             headers.Add("Subject", subject);
             string strHeader = Kooboo.Mail.Multipart.HeaderComposer.Compose(headers);
 
-            string contenttype = "Content-Type:text/plain"; 
-                        
-            var charset = Lib.Helper.EncodingDetector.GetTextCharset(textbody); 
-            if (charset !=null && charset.ToLower() != "ascii")
+            string contenttype = "Content-Type:text/plain";
+
+            var charset = Lib.Helper.EncodingDetector.GetTextCharset(textbody);
+            if (charset != null && charset.ToLower() != "ascii")
             {
-                contenttype += "; CharSet=" + charset + ";\r\n Content-Transfer-Encoding: 8bit"; 
+                contenttype += "; CharSet=" + charset + ";\r\n Content-Transfer-Encoding: 8bit";
             }
 
-            strHeader += contenttype + "\r\n"; 
-                                                               
+            strHeader += contenttype + "\r\n";
+
             string body = strHeader + "\r\n" + textbody;
-            return body; 
+            return body;
         }
 
         public static string ComposeHtmlTextEmailBody(string from, string to, string subject, string htmlbody, string textbody)
@@ -148,12 +147,11 @@ namespace Kooboo.Mail.Utility
             headers.Add("To", to);
             headers.Add("Subject", subject);
             string strHeader = Kooboo.Mail.Multipart.HeaderComposer.Compose(headers);
-                
+
             var bodycomposer = new Kooboo.Mail.Multipart.BodyComposer(htmlbody, textbody);
 
-            return strHeader + bodycomposer.Body();  
+            return strHeader + bodycomposer.Body();
         }
-
 
         public static string RestoreHtmlOrText(User user, int MsgId)
         {
@@ -195,7 +193,6 @@ namespace Kooboo.Mail.Utility
             {
                 return "<pre>" + body + "</pre>";
             }
-
         }
 
         internal static string ToAddress(List<string> address)
@@ -210,23 +207,22 @@ namespace Kooboo.Mail.Utility
                 return new List<string>();
             }
 
-            var seprator = new List<char>();
-            seprator.Add(';');
+            var seprator = new List<char> {';'};
             return address.Split(seprator.ToArray(), StringSplitOptions.RemoveEmptyEntries).ToList();
         }
 
-        // For forward type email address. 
-        public static string ComposeForwardAddressMessage(string MessageSource)
+        // For forward type email address.
+        public static string ComposeForwardAddressMessage(string messageSource)
         {
             string kforwardheader = "x-kforward";
 
-            var newbody = GetMessageBodyPart(ref MessageSource);
+            var newbody = GetMessageBodyPart(ref messageSource);
             if (string.IsNullOrEmpty(newbody))
             {
                 return null;
             }
-            // recompose the email header... 
-            var mime = Mail.Utility.MessageUtility.ParseMineMessage(MessageSource);
+            // recompose the email header...
+            var mime = Mail.Utility.MessageUtility.ParseMineMessage(messageSource);
             var forwardheader = MessageUtility.GetHeaderValue(mime, kforwardheader);
             if (!string.IsNullOrEmpty(forwardheader))
             {
@@ -237,9 +233,9 @@ namespace Kooboo.Mail.Utility
 
             string prefix = "(Forwarded By Kooboo)";
 
-            var From = MessageUtility.GetHeaderValue(mime, "From");
+            var from = MessageUtility.GetHeaderValue(mime, "From");
 
-            if (From.Contains(prefix))
+            if (from.Contains(prefix))
             {
                 return null;
             }
@@ -247,11 +243,11 @@ namespace Kooboo.Mail.Utility
             var to = MessageUtility.GetHeaderValue(mime, "To");
             var subject = MessageUtility.GetHeaderValue(mime, "Subject");
 
-            string fromaddress = Utility.AddressUtility.GetAddress(From);
+            string fromaddress = Utility.AddressUtility.GetAddress(from);
 
-            From = "\"" + prefix + "\"<" + fromaddress + ">";
+            from = "\"" + prefix + "\"<" + fromaddress + ">";
 
-            headers.Add("From", From);
+            headers.Add("From", from);
             headers.Add("to", to);
             headers.Add("subject", subject);
 
@@ -270,11 +266,10 @@ namespace Kooboo.Mail.Utility
                 headers.Add("MIME-Version", mime.MimeVersion);
             }
 
-            List<string> optionalFields = new List<string>();
+            List<string> optionalFields = new List<string> {"Charset"};
             //optionalFields.Add("Content-Type");
             //optionalFields.Add("MIME-Version");
             //optionalFields.Add("Content-Transfer-Encoding");
-            optionalFields.Add("Charset");
 
             foreach (var item in optionalFields)
             {
@@ -289,27 +284,27 @@ namespace Kooboo.Mail.Utility
             return newheader + "\r\n" + newbody;
         }
 
-
-        public static string ComposeGroupMail(string MessageSource, string NewReplyTo)
+        public static string ComposeGroupMail(string messageSource, string newReplyTo)
         {
-            // send the group mail... 
-            // Change reply-to header to the group email address... ReGenerate the emai.... 
-            return HeaderUtility.RepalceRepyTo(MessageSource, NewReplyTo);
+            // send the group mail...
+            // Change reply-to header to the group email address... ReGenerate the emai....
+            return HeaderUtility.RepalceRepyTo(messageSource, newReplyTo);
         }
 
-
-        public static string ComposeDeliveryFailed(string MailFrom, string RcptTo, string OrginalMessageBody, string errorMessage)
+        public static string ComposeDeliveryFailed(string mailFrom, string rcptTo, string orginalMessageBody, string errorMessage)
         {
             // string mailfrom, string rcptto, string messagebody, string errorreason
-            Dictionary<string, string> headers = new Dictionary<string, string>();
-            headers.Add("Subject", "Delivery Status Notification (Failure)");
-            headers.Add("From", "postmaster@noreply.kooboo.com");
-            headers.Add("To", MailFrom);
+            Dictionary<string, string> headers = new Dictionary<string, string>
+            {
+                {"Subject", "Delivery Status Notification (Failure)"},
+                {"From", "postmaster@noreply.kooboo.com"},
+                {"To", mailFrom}
+            };
 
             var newheader = Multipart.HeaderComposer.Compose(headers);
 
             string html = "<p>This is an automatically generated Delivery Status Notification.</p>";
-            html += "<p>Delivery to recipient " + RcptTo + " failed for: </p>";
+            html += "<p>Delivery to recipient " + rcptTo + " failed for: </p>";
             html += "<p>" + errorMessage + "</p>";
 
             var bodycomposer = new Multipart.BodyComposer(html);
@@ -317,13 +312,12 @@ namespace Kooboo.Mail.Utility
             return newheader + bodycomposer.Body();
         }
 
-
-        private static string GetMessageBodyPart(ref string MessageSource)
+        private static string GetMessageBodyPart(ref string messageSource)
         {
-            int index = MessageSource.IndexOf("\r\n\r\n");
+            int index = messageSource.IndexOf("\r\n\r\n");
             if (index > 0)
             {
-                return MessageSource.Substring(index + 4);
+                return messageSource.Substring(index + 4);
             }
             return null;
         }
@@ -343,7 +337,6 @@ namespace Kooboo.Mail.Utility
                     {
                         biggercount += 1;
                     }
-
                 }
             }
             if (htmlbody != null)
@@ -365,7 +358,7 @@ namespace Kooboo.Mail.Utility
             }
             else
             {
-                // 5% of bigger char, make it into base64. 
+                // 5% of bigger char, make it into base64.
 
                 int percent5 = (int)totallen / 10;
 
@@ -378,15 +371,13 @@ namespace Kooboo.Mail.Utility
                     return TransferEncoding.QuotedPrintable;
                 }
             }
-
         }
-
 
         public static string GetTransferEncodingHeader(TransferEncoding transferEncoding)
         {
             //Content - Transfer - Encoding := "BASE64" / "QUOTED-PRINTABLE" /
             //  "8BIT" / "7BIT" /
-            // "BINARY" / x - token 
+            // "BINARY" / x - token
             if (transferEncoding == TransferEncoding.QuotedPrintable)
             {
                 return "Content-Transfer-Encoding: QUOTED-PRINTABLE";
@@ -424,7 +415,6 @@ namespace Kooboo.Mail.Utility
             return null;
         }
 
-
         public static string Encode(string input, TransferEncoding transferEncoding)
         {
             if (transferEncoding == TransferEncoding.QuotedPrintable)
@@ -439,8 +429,5 @@ namespace Kooboo.Mail.Utility
 
             return input;
         }
-
     }
-
-
 }

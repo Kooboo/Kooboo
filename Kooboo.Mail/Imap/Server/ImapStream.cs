@@ -1,14 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using LumiSoft.Net;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-
-using LumiSoft.Net; 
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap
 {
@@ -32,8 +30,7 @@ namespace Kooboo.Mail.Imap
 
             _stream = stream;
             _reader = new StreamReader(_stream);
-            _writer = new StreamWriter(_stream);
-            _writer.AutoFlush = true;
+            _writer = new StreamWriter(_stream) {AutoFlush = true};
         }
 
         public virtual async Task ReadAsync(byte[] buffer, int offset, int count)
@@ -89,7 +86,6 @@ namespace Kooboo.Mail.Imap
 
             LogWrite(line);
         }
-        
 
         public void Dispose()
         {
@@ -98,6 +94,7 @@ namespace Kooboo.Mail.Imap
         }
 
         private static Logging.ILogger _logger;
+
         static ImapStream()
         {
             _logger = Logging.LogProvider.GetLogger("imap", "imap");

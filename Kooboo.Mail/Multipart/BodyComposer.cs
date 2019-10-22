@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using System;
@@ -6,13 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Multipart
 {
     public class BodyComposer
     {
-        //always should be below format. 
+        //always should be below format.
         //mixed
         //alternative
         //text
@@ -23,45 +22,43 @@ namespace Kooboo.Mail.Multipart
         //attachment
         //attachment
 
-        public BodyComposer(string HtmlBody, List<Models.Attachment> Attachments = null, User User = null)
+        public BodyComposer(string htmlBody, List<Models.Attachment> attachments = null, User user = null)
         {
-            init(HtmlBody, null, User, Attachments);
+            init(htmlBody, null, user, attachments);
         }
 
-        public BodyComposer(string htmlbody, string TextBody, List<Models.Attachment> attachments = null, User user = null)
+        public BodyComposer(string htmlbody, string textBody, List<Models.Attachment> attachments = null, User user = null)
         {
-            init(htmlbody, TextBody, user, attachments);
+            init(htmlbody, textBody, user, attachments);
         }
 
-        private void init(string HtmlBody, string TextBody, User user, List<Models.Attachment> attachments)
+        private void init(string htmlBody, string textBody, User user, List<Models.Attachment> attachments)
         {
             if (user != null)
             {
-                this.InlineImages = ParseInlineImages(user, ref HtmlBody);
+                this.InlineImages = ParseInlineImages(user, ref htmlBody);
             }
 
-
-            if (string.IsNullOrEmpty(TextBody))
+            if (string.IsNullOrEmpty(textBody))
             {
-                TextBody = Kooboo.Search.Utility.RemoveHtml(HtmlBody);
+                textBody = Kooboo.Search.Utility.RemoveHtml(htmlBody);
             }
 
-            this.CharSet = Utility.ComposeUtility.GetEncoding(ref TextBody, ref HtmlBody);
-            this.TransferEncoding = Utility.ComposeUtility.GetTransferEncoding(ref TextBody, ref HtmlBody);
+            this.CharSet = Utility.ComposeUtility.GetEncoding(ref textBody, ref htmlBody);
+            this.TransferEncoding = Utility.ComposeUtility.GetTransferEncoding(ref textBody, ref htmlBody);
 
-            this.HtmlBody = HtmlBody;
-            this.TextBody = TextBody;
+            this.HtmlBody = htmlBody;
+            this.TextBody = textBody;
             this.Attachments = attachments;
 
-            this.user = user;
-
+            this.User = user;
         }
 
         private string HtmlBody { get; set; }
 
         private string TextBody { get; set; }
 
-        private User user { get; set; }
+        private User User { get; set; }
 
         private List<InlineImageModel> InlineImages { get; set; }
 
@@ -71,44 +68,25 @@ namespace Kooboo.Mail.Multipart
 
         public TransferEncoding TransferEncoding { get; set; }
 
-
         private string _mixedBoundary;
+
         private string MixedBondary
         {
-            get
-            {
-                if (_mixedBoundary == null)
-                {
-                    _mixedBoundary = Kooboo.Lib.Security.ShortGuid.GetNewShortId();
-                }
-                return _mixedBoundary;
-            }
+            get { return _mixedBoundary ?? (_mixedBoundary = Kooboo.Lib.Security.ShortGuid.GetNewShortId()); }
         }
 
         private string _alterBoundary;
+
         private string AlterBoundary
         {
-            get
-            {
-                if (_alterBoundary == null)
-                {
-                    _alterBoundary = Kooboo.Lib.Security.ShortGuid.GetNewShortId();
-                }
-                return _alterBoundary;
-            }
+            get { return _alterBoundary ?? (_alterBoundary = Kooboo.Lib.Security.ShortGuid.GetNewShortId()); }
         }
 
         private string _relatedBoundary;
+
         private string RelatedBoundary
         {
-            get
-            {
-                if (_relatedBoundary == null)
-                {
-                    _relatedBoundary = Kooboo.Lib.Security.ShortGuid.GetNewShortId();
-                }
-                return _relatedBoundary;
-            }
+            get { return _relatedBoundary ?? (_relatedBoundary = Kooboo.Lib.Security.ShortGuid.GetNewShortId()); }
         }
 
         public string HeaderContentType()
@@ -128,7 +106,6 @@ namespace Kooboo.Mail.Multipart
                     header += "Charset=" + this.CharSet + ";";
                 }
                 header += "boundary=\"" + this.MixedBondary + "\"; ";
-
             }
             else
             {
@@ -151,10 +128,9 @@ namespace Kooboo.Mail.Multipart
 
         public string Body()
         {
-
-            if (this.Attachments != null && this.Attachments.Count() > 0)
+            if (this.Attachments != null && this.Attachments.Any())
             {
-                // has attachmented with mixed.   
+                // has attachmented with mixed.
                 string body = "MIME-Version: 1.0\r\nContent-Type: multipart/Mixed; boundary=" + this.MixedBondary;
 
                 if (this.CharSet != null)
@@ -171,7 +147,7 @@ namespace Kooboo.Mail.Multipart
 
                 foreach (var item in this.Attachments)
                 {
-                    string contenttype = null;
+                    string contenttype;
                     if (!string.IsNullOrWhiteSpace(item.Type) && !string.IsNullOrWhiteSpace(item.SubType))
                     {
                         contenttype = item.Type + "/" + item.SubType;
@@ -187,7 +163,7 @@ namespace Kooboo.Mail.Multipart
                     body += "Content-Transfer-Encoding:base64\r\n";
                     body += "\r\n";
 
-                    var bytes = Kooboo.Mail.MultiPart.FileService.Get(user, item.FileName);
+                    var bytes = Kooboo.Mail.MultiPart.FileService.Get(User, item.FileName);
 
                     body += ToBase64(bytes);
                     body += "\r\n\r\n";
@@ -238,7 +214,6 @@ namespace Kooboo.Mail.Multipart
                 body += "\r\n";
                 body += Utility.ComposeUtility.GetTransferEncodingHeader(this.TransferEncoding);
             }
-
 
             body += "\r\n\r\n";
             body += Utility.ComposeUtility.Encode(this.TextBody, this.TransferEncoding);
@@ -346,7 +321,7 @@ namespace Kooboo.Mail.Multipart
                 {
                     continue;
                 }
-                src = src.Trim(); 
+                src = src.Trim();
 
                 string filename = null;
                 byte[] bytes = null;
@@ -358,10 +333,10 @@ namespace Kooboo.Mail.Multipart
                 }
                 else if (src.StartsWith(InlineImageMessageFilePrefix))
                 {
-                    filename = src.Substring(InlineImageMessageFilePrefix.Length); 
-                    bytes = MsgFile(user, filename);  
+                    filename = src.Substring(InlineImageMessageFilePrefix.Length);
+                    bytes = MsgFile(user, filename);
                 }
-                else 
+                else
                 {
                     string relative = Kooboo.Lib.Helper.UrlHelper.RelativePath(src);
 
@@ -376,16 +351,15 @@ namespace Kooboo.Mail.Multipart
                         bytes = MsgFile(user, filename);
                     }
                 }
-                 
 
                 if (bytes != null)
                 {
                     sb.Append(html.Substring(currentindex, item.location.openTokenStartIndex - currentindex));
 
-                    InlineImageModel model = new InlineImageModel();
-                    model.Binary = bytes;
-                    model.FileName = filename;
-                    model.ContentId = Lib.Security.ShortGuid.GetNewShortId();
+                    InlineImageModel model = new InlineImageModel
+                    {
+                        Binary = bytes, FileName = filename, ContentId = Lib.Security.ShortGuid.GetNewShortId()
+                    };
                     result.Add(model);
 
                     string newsrc = "cid:" + model.ContentId;
@@ -407,7 +381,6 @@ namespace Kooboo.Mail.Multipart
             return result;
         }
 
-
         private static byte[] MsgFile(User user, string path)
         {
             if (string.IsNullOrWhiteSpace(path))
@@ -418,21 +391,19 @@ namespace Kooboo.Mail.Multipart
             path = path.Trim();
             path = path.Replace("\\", "/");
 
-            var spe = "/".ToCharArray(); 
+            var spe = "/".ToCharArray();
 
-            string[] para = path.Split(spe,StringSplitOptions.RemoveEmptyEntries); 
-              
+            string[] para = path.Split(spe, StringSplitOptions.RemoveEmptyEntries);
+
             string filename = null;
             int messageid = 0;
-
-    
 
             if (para.Count() == 2)
             {
                 messageid = Convert.ToInt32(para[0]);
                 filename = System.Web.HttpUtility.UrlDecode(para[1]);
             }
-            else if (para.Count() ==1)
+            else if (para.Count() == 1)
             {
                 messageid = Convert.ToInt32(para[0]);
             }
@@ -440,25 +411,16 @@ namespace Kooboo.Mail.Multipart
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user);
 
             var content = maildb.Messages.GetContent(messageid);
-             
+
             if (!string.IsNullOrEmpty(content))
             {
-                if (!string.IsNullOrEmpty(filename))
-                {
-                   return Kooboo.Mail.Utility.MessageUtility.GetFileBinary(content, filename);
-               
-                }
-                else
-                {
-                    return Mail.Utility.MessageUtility.GenerateAllAttachmentZip(content); 
-                }
+                return !string.IsNullOrEmpty(filename) ? Kooboo.Mail.Utility.MessageUtility.GetFileBinary(content, filename) : Mail.Utility.MessageUtility.GenerateAllAttachmentZip(content);
             }
 
             return null;
         }
-            
 
-        public static string RestoreInlineImages(string html, User user, int MsgId)
+        public static string RestoreInlineImages(string html, User user, int msgId)
         {
             var cidImages = GetCidImageElements(html);
 
@@ -467,7 +429,7 @@ namespace Kooboo.Mail.Multipart
                 return html;
             }
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user);
-            var msgbody = maildb.Messages.GetContent(MsgId);
+            var msgbody = maildb.Messages.GetContent(msgId);
             if (string.IsNullOrEmpty(msgbody))
             {
                 return html;
@@ -489,10 +451,9 @@ namespace Kooboo.Mail.Multipart
 
                 if (!string.IsNullOrEmpty(filename))
                 {
-
                     sb.Append(html.Substring(currentindex, item.location.openTokenStartIndex - currentindex));
 
-                    string newsrc = InlineImageMessageFilePrefix + MsgId.ToString() + "/" + System.Web.HttpUtility.UrlEncode(filename);
+                    string newsrc = InlineImageMessageFilePrefix + msgId.ToString() + "/" + System.Web.HttpUtility.UrlEncode(filename);
                     string outerhtml = item.OuterHtml;
 
                     outerhtml = outerhtml.Replace(src, newsrc);
@@ -517,7 +478,7 @@ namespace Kooboo.Mail.Multipart
         {
             List<Kooboo.Dom.Element> result = new List<Dom.Element>();
 
-            // format = "/_api/emailattachment/file/{filename};  
+            // format = "/_api/emailattachment/file/{filename};
             var dom = Kooboo.Dom.DomParser.CreateDom(htmlbody);
 
             foreach (var item in dom.images.item)
@@ -538,13 +499,13 @@ namespace Kooboo.Mail.Multipart
                 {
                     if (src.ToLower().StartsWith("http"))
                     {
-                        var relative = Kooboo.Lib.Helper.UrlHelper.RelativePath(src);  
+                        var relative = Kooboo.Lib.Helper.UrlHelper.RelativePath(src);
 
-                        if (relative !=null && (relative.StartsWith(InlineImagePrefix) || relative.StartsWith(InlineImageMessageFilePrefix)))
+                        if (relative != null && (relative.StartsWith(InlineImagePrefix) || relative.StartsWith(InlineImageMessageFilePrefix)))
                         {
-                            result.Add(item); 
+                            result.Add(item);
                         }
-                    } 
+                    }
                 }
             }
             return result;
@@ -594,16 +555,11 @@ namespace Kooboo.Mail.Multipart
                 }
                 else
                 {
-                    sb.Append(value.Substring(index,254)).Append("\r\n");
+                    sb.Append(value.Substring(index, 254)).Append("\r\n");
                     index = index + 254;
                 }
             }
             return sb.ToString();
         }
-
-
     }
-
-
-
 }

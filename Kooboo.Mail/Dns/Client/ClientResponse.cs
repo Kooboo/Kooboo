@@ -5,8 +5,8 @@ using DNS.Protocol.ResourceRecords;
 
 namespace DNS.Client {
     public class ClientResponse : IResponse {
-        private Response response;
-        private byte[] message;
+        private Response _response;
+        private byte[] _message;
 
         public static ClientResponse FromArray(ClientRequest request, byte[] message) {
             Response response = Response.FromArray(message);
@@ -16,15 +16,15 @@ namespace DNS.Client {
         internal ClientResponse(ClientRequest request, Response response, byte[] message) {
             Request = request;
 
-            this.message = message;
-            this.response = response;
+            this._message = message;
+            this._response = response;
         }
 
         internal ClientResponse(ClientRequest request, Response response) {
             Request = request;
 
-            this.message = response.ToArray();
-            this.response = response;
+            this._message = response.ToArray();
+            this._response = response;
         }
 
         public ClientRequest Request {
@@ -33,61 +33,61 @@ namespace DNS.Client {
         }
 
         public int Id {
-            get { return response.Id; }
+            get { return _response.Id; }
             set { }
         }
 
         public IList<IResourceRecord> AnswerRecords {
-            get { return response.AnswerRecords; }
+            get { return _response.AnswerRecords; }
         }
 
         public IList<IResourceRecord> AuthorityRecords {
-            get { return new ReadOnlyCollection<IResourceRecord>(response.AuthorityRecords); }
+            get { return new ReadOnlyCollection<IResourceRecord>(_response.AuthorityRecords); }
         }
 
         public IList<IResourceRecord> AdditionalRecords {
-            get { return new ReadOnlyCollection<IResourceRecord>(response.AdditionalRecords); }
+            get { return new ReadOnlyCollection<IResourceRecord>(_response.AdditionalRecords); }
         }
 
         public bool RecursionAvailable {
-            get { return response.RecursionAvailable; }
+            get { return _response.RecursionAvailable; }
             set { }
         }
 
         public bool AuthorativeServer {
-            get { return response.AuthorativeServer; }
+            get { return _response.AuthorativeServer; }
             set { }
         }
 
         public bool Truncated {
-            get { return response.Truncated; }
+            get { return _response.Truncated; }
             set { }
         }
 
         public OperationCode OperationCode {
-            get { return response.OperationCode; }
+            get { return _response.OperationCode; }
             set { }
         }
 
         public ResponseCode ResponseCode {
-            get { return response.ResponseCode; }
+            get { return _response.ResponseCode; }
             set { }
         }
 
         public IList<Question> Questions {
-            get { return new ReadOnlyCollection<Question>(response.Questions); }
+            get { return new ReadOnlyCollection<Question>(_response.Questions); }
         }
 
         public int Size {
-            get { return message.Length; }
+            get { return _message.Length; }
         }
 
         public byte[] ToArray() {
-            return message;
+            return _message;
         }
 
         public override string ToString() {
-            return response.ToString();
+            return _response.ToString();
         }
     }
 }

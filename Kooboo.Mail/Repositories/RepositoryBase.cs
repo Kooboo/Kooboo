@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB;
 using Kooboo.IndexedDB.Query;
@@ -41,6 +41,7 @@ namespace Kooboo.Mail.Repositories
 
         private object _storeCreateLock = new object();
         private ObjectStore<int, TValue> _store;
+
         public ObjectStore<int, TValue> Store
         {
             get
@@ -65,27 +66,27 @@ namespace Kooboo.Mail.Repositories
 
         public virtual bool Add(TValue value)
         {
-            bool ok = false; 
+            bool ok = false;
             if (value.Id == 0)
             {
                 lock (_locker)
                 {
                     value.Id = this.Store.LastKey + 1;
-                    ok =  Store.add(value.Id, value);
+                    ok = Store.add(value.Id, value);
                 }
             }
             else
             {
-                ok =  Store.add(value.Id, value);
+                ok = Store.add(value.Id, value);
             }
-            Store.Close(); 
+            Store.Close();
             return ok;
         }
 
         public virtual bool Update(TValue value)
         {
             Store.update(value.Id, value);
-            Store.Close(); 
+            Store.Close();
             return true;
         }
 
@@ -108,8 +109,8 @@ namespace Kooboo.Mail.Repositories
                 {
                     if (old.GetHashCode() != value.GetHashCode())
                     {
-                        Store.update(value.Id, value);        
-                        Store.Close(); 
+                        Store.update(value.Id, value);
+                        Store.Close();
                         return true;
                     }
                 }
@@ -118,10 +119,9 @@ namespace Kooboo.Mail.Repositories
         }
 
         /// <summary>
-        /// Delete the item. 
+        /// Delete the item.
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="enableLog">Only some store has log enabled. This is used to disable log per action.</param>
         public virtual bool Delete(int id)
         {
             Store.delete(id);
@@ -146,14 +146,7 @@ namespace Kooboo.Mail.Repositories
         /// <returns></returns>
         public virtual List<TValue> All(bool useColumnData = false)
         {
-            if (useColumnData)
-            {
-                return this.Store.Filter.UseColumnData().SelectAll();
-            }
-            else
-            {
-                return this.Store.Filter.SelectAll();
-            }
+            return useColumnData ? this.Store.Filter.UseColumnData().SelectAll() : this.Store.Filter.SelectAll();
         }
 
         internal FullScan<int, TValue> TableScan()
@@ -165,6 +158,5 @@ namespace Kooboo.Mail.Repositories
         {
             return new WhereFilter<int, TValue>(Store);
         }
-
     }
 }

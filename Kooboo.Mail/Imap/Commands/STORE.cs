@@ -1,12 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Mail.Imap.Commands.FetchCommand;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-
-using Kooboo.Mail.Imap.Commands.FetchCommand;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -71,26 +69,32 @@ namespace Kooboo.Mail.Imap.Commands
                     result.DataItem = "FLAGS";
                     result.Silent = false;
                     break;
+
                 case "FLAGS.SILENT":
                     result.DataItem = "FLAGS";
                     result.Silent = true;
                     break;
+
                 case "+FLAGS":
                     result.DataItem = "+FLAGS";
                     result.Silent = false;
                     break;
+
                 case "+FLAGS.SILENT":
                     result.DataItem = "+FLAGS";
                     result.Silent = true;
                     break;
+
                 case "-FLAGS":
                     result.DataItem = "-FLAGS";
                     result.Silent = false;
                     break;
+
                 case "-FLAGS.SILENT":
                     result.DataItem = "-FLAGS";
                     result.Silent = false;
                     break;
+
                 default:
                     throw new Exception("Error in arguments.");
             }
@@ -130,12 +134,15 @@ namespace Kooboo.Mail.Imap.Commands
                 case "FLAGS":
                     action = o => o.ReplaceFlags(flags);
                     break;
+
                 case "+FLAGS":
                     action = o => o.AddFlags(flags);
                     break;
+
                 case "-FLAGS":
                     action = o => o.RemoveFlags(flags);
                     break;
+
                 default:
                     throw new Exception("Error in argument");
             }
@@ -154,36 +161,39 @@ namespace Kooboo.Mail.Imap.Commands
             return response;
         }
 
-        public static List<ImapResponse> ExecuteNew(MailDb Maildb, List<FetchMessage> messages, string dataItem, string[] flags, bool silent)
-        {  
+        public static List<ImapResponse> ExecuteNew(MailDb maildb, List<FetchMessage> messages, string dataItem, string[] flags, bool silent)
+        {
             var response = new List<ImapResponse>();
             foreach (var each in messages)
-            { 
+            {
                 switch (dataItem)
                 {
                     case "FLAGS":
-                        Maildb.Messages.ReplaceFlags(each.Message.Id, flags);  
+                        maildb.Messages.ReplaceFlags(each.Message.Id, flags);
                         break;
+
                     case "+FLAGS":
-                        Maildb.Messages.AddFlags(each.Message.Id, flags);
+                        maildb.Messages.AddFlags(each.Message.Id, flags);
                         break;
+
                     case "-FLAGS":
-                        Maildb.Messages.RemoveFlags(each.Message.Id, flags);  
+                        maildb.Messages.RemoveFlags(each.Message.Id, flags);
                         break;
+
                     default:
                         throw new Exception("Error in argument");
                 }
-                  
+
                 if (!silent)
                 {
-                    var eachflags = Maildb.Messages.GetFlags(each.Message.Id); 
+                    var eachflags = maildb.Messages.GetFlags(each.Message.Id);
                     var flagStr = String.Join(" ", eachflags.Select(o => "\\" + o));
                     response.Add(new ImapResponse($"* {each.SeqNo} FETCH ({flagStr})"));
                 }
             }
             return response;
         }
-         
+
         public class StoreArgs
         {
             public List<ImapHelper.Range> Ranges { get; set; }
@@ -196,7 +206,6 @@ namespace Kooboo.Mail.Imap.Commands
         }
     }
 }
-
 
 //6.4.6.  STORE Command
 
@@ -224,20 +233,9 @@ namespace Kooboo.Mail.Imap.Commands
 //           status of the flags is determinate without a race
 //           condition.
 
-
-
-
-
-
-
-
-
-
-
 //Crispin Standards Track[Page 58]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //      The currently defined data items that can be stored are:
 
@@ -263,7 +261,6 @@ namespace Kooboo.Mail.Imap.Commands
 
 //      -FLAGS.SILENT<flag list>
 //         Equivalent to -FLAGS, but without returning a new value.
-
 
 //   Example:    C: A003 STORE 2:4 +FLAGS(\Deleted)
 //               S: * 2 FETCH(FLAGS (\Deleted \Seen))

@@ -1,18 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Mail.Utility;
+using LumiSoft.Net;
+using LumiSoft.Net.IMAP;
+using LumiSoft.Net.Mail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.IO;
 using System.Threading.Tasks;
-
-using LumiSoft.Net;
-using LumiSoft.Net.Mail;
-using LumiSoft.Net.IMAP;
-
-using Kooboo.Mail.Utility;
-using Kooboo.Mail.Imap.Commands.FetchCommand;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -151,8 +146,6 @@ namespace Kooboo.Mail.Imap.Commands
     }
 }
 
-
-
 //6.3.11. APPEND Command
 
 //   Arguments:  mailbox name
@@ -171,7 +164,7 @@ namespace Kooboo.Mail.Imap.Commands
 //      to the end of the specified destination mailbox.This argument
 //      SHOULD be in the format of an[RFC - 2822] message.  8-bit
 //       characters are permitted in the message.A server implementation
- 
+
 //       that is unable to preserve 8-bit data properly MUST be able to
 //       reversibly convert 8-bit APPEND data to 7-bit using a [MIME-IMB]
 //content transfer encoding.
@@ -203,12 +196,9 @@ namespace Kooboo.Mail.Imap.Commands
 //      client that it can attempt a CREATE command and retry the APPEND
 //      if the CREATE is successful.
 
-
-
 //Crispin Standards Track[Page 46]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //      If the mailbox is currently selected, the normal new message
 //      actions SHOULD occur.Specifically, the server SHOULD notify the

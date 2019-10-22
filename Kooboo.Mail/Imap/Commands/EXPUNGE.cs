@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,14 +9,14 @@ namespace Kooboo.Mail.Imap.Commands
     {
         public string AdditionalResponse
         {
-            get;set;
+            get; set;
         }
 
         public string CommandName
         {
             get
             {
-                return "EXPUNGE"; 
+                return "EXPUNGE";
             }
         }
 
@@ -24,7 +24,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -32,7 +32,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -40,7 +40,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
@@ -52,14 +52,12 @@ namespace Kooboo.Mail.Imap.Commands
 
             foreach (var item in deletedSeqNo)
             {
-                result.Add(new ImapResponse(ResultLine.EXPUNGE(item)));  
+                result.Add(new ImapResponse(ResultLine.EXPUNGE(item)));
             }
             return Task.FromResult(result);
         }
     }
 }
-
-
 
 //6.4.3.  EXPUNGE Command
 

@@ -1,13 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
-using System;
-
-using LumiSoft.Net.IMAP;
 using LumiSoft.Net;
-
+using LumiSoft.Net.IMAP;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -15,7 +13,7 @@ namespace Kooboo.Mail.Imap.Commands
     {
         public string AdditionalResponse
         {
-            get;set;
+            get; set;
         }
 
         public string CommandName
@@ -26,13 +24,12 @@ namespace Kooboo.Mail.Imap.Commands
             }
         }
 
-        public bool RequireAuth 
+        public bool RequireAuth
         {
             get
             {
                 return true;
             }
-
         }
 
         public bool RequireFolder
@@ -77,8 +74,6 @@ namespace Kooboo.Mail.Imap.Commands
     }
 }
 
-
-
 //6.3.4.  DELETE Command
 
 //   Arguments:  mailbox name
@@ -89,16 +84,9 @@ namespace Kooboo.Mail.Imap.Commands
 //               NO - delete failure: can't delete mailbox with that name
 //               BAD - command unknown or arguments invalid
 
-
-
-
-
-
-
 //Crispin                     Standards Track                    [Page 35]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //      The DELETE command permanently removes the mailbox with the given
 //      name.A tagged OK response is returned only if the mailbox has
@@ -142,19 +130,9 @@ namespace Kooboo.Mail.Imap.Commands
 //               C: A687 DELETE foo
 //               S: A687 OK DELETE Completed
 
-
-
-
-
-
-
-
-
-
 //Crispin Standards Track[Page 36]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //               C: A82 LIST "" *
 //               S: * LIST() "." blurdybloop

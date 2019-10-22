@@ -1,30 +1,22 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
-using Kooboo.Mail.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Data;
 using Kooboo.Data.Language;
-using LumiSoft.Net.MIME;
-using Kooboo.Data.Models;
+using Kooboo.Mail.Utility;
 using Kooboo.Mail.ViewModel;
+using LumiSoft.Net.MIME;
 
 namespace Kooboo.Mail.Multipart
 {
     public static class ReferenceComposer
     {
-
-        public static ComposeViewModel ComposeForward(int MsgId, RenderContext context)
+        public static ComposeViewModel ComposeForward(int msgId, RenderContext context)
         {
             ComposeViewModel model = new ComposeViewModel();
 
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(context.User);
 
-            var msg = maildb.Messages.Get(MsgId);
+            var msg = maildb.Messages.Get(msgId);
 
             model.Subject = msg.Subject;
             // model.Attachments = msg.Attachments;
@@ -35,21 +27,21 @@ namespace Kooboo.Mail.Multipart
                 model.Subject = "Fw:" + model.Subject;
             }
 
-            model.Html = ComposeRefMsg(MsgId, context); 
+            model.Html = ComposeRefMsg(msgId, context);
 
             return model;
         }
 
-        public static ComposeViewModel ComposeReply(int MsgId, RenderContext context)
+        public static ComposeViewModel ComposeReply(int msgId, RenderContext context)
         {
             ComposeViewModel model = new ComposeViewModel();
 
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(context.User);
 
-            var msg = maildb.Messages.Get(MsgId);
+            var msg = maildb.Messages.Get(msgId);
 
             model.Subject = msg.Subject;
-           // model.Attachments = msg.Attachments;
+            // model.Attachments = msg.Attachments;
             model.From = msg.AddressId;
 
             if (!model.Subject.ToLower().StartsWith("re:"))
@@ -61,7 +53,7 @@ namespace Kooboo.Mail.Multipart
 
             var mime = MessageUtility.ParseMineMessage(msgbody);
 
-            model.Html = ComposeRefMsg(mime, context, MsgId);
+            model.Html = ComposeRefMsg(mime, context, msgId);
 
             var replyto = GetHeader(mime, "reply-to");
             if (string.IsNullOrEmpty(replyto))
@@ -76,52 +68,43 @@ namespace Kooboo.Mail.Multipart
 
             return model;
         }
-         
-        public static string ComposeRefMsg(int MsgId, RenderContext context)
+
+        public static string ComposeRefMsg(int msgId, RenderContext context)
         {
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(context.User);
 
-            var msgbody = maildb.Messages.GetContent(MsgId);
+            var msgbody = maildb.Messages.GetContent(msgId);
             if (msgbody == null)
             {
                 return null;
             }
 
-            return ComposeRefMsg(context, msgbody, MsgId);
+            return ComposeRefMsg(context, msgbody, msgId);
         }
 
-        public static string ComposeRefMsg(RenderContext context, string msgbody, int MsgId)
+        public static string ComposeRefMsg(RenderContext context, string msgbody, int msgId)
         {
             var mime = MessageUtility.ParseMineMessage(msgbody);
-            return ComposeRefMsg(mime, context, MsgId);
+            return ComposeRefMsg(mime, context, msgId);
         }
 
-        public static string ComposeRefMsg(MIME_Message mime, RenderContext context, int MsgId)
+        public static string ComposeRefMsg(MIME_Message mime, RenderContext context, int msgId)
         {
             var bodywithheader = ComposeHeader(mime, context);
 
-            string mailbody = MessageUtility.GetHtmlBody(mime); 
-            if (mailbody == null)
-            {
-                mailbody = MessageUtility.GetTextBody(mime); 
-            }
+            string mailbody = (MessageUtility.GetHtmlBody(mime) ?? MessageUtility.GetTextBody(mime)) ?? MessageUtility.GetAnyTextBody(mime);
 
-            if (mailbody == null)
-            {
-                mailbody = MessageUtility.GetAnyTextBody(mime);
-            } 
-
-            string htmlbody = BodyComposer.RestoreInlineImages(mailbody, context.User, MsgId);
+            string htmlbody = BodyComposer.RestoreInlineImages(mailbody, context.User, msgId);
             return bodywithheader.Replace("{{htmlbody}}", htmlbody);
         }
 
-        public static string ComposeHeader(string OrginalMessageBody, RenderContext context)
+        public static string ComposeHeader(string orginalMessageBody, RenderContext context)
         {
-            if (string.IsNullOrEmpty(OrginalMessageBody))
+            if (string.IsNullOrEmpty(orginalMessageBody))
             {
                 return null;
             }
-            var mime = Kooboo.Mail.Utility.MessageUtility.ParseMineMessage(OrginalMessageBody);
+            var mime = Kooboo.Mail.Utility.MessageUtility.ParseMineMessage(orginalMessageBody);
             return ComposeHeader(mime, context);
         }
 
@@ -147,6 +130,5 @@ namespace Kooboo.Mail.Multipart
             }
             return value;
         }
-
     }
 }

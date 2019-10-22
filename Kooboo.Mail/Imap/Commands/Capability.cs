@@ -1,9 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap.Commands
@@ -12,14 +9,14 @@ namespace Kooboo.Mail.Imap.Commands
     {
         public string AdditionalResponse
         {
-            get;set;
+            get; set;
         }
 
         public string CommandName
         {
             get
             {
-                return "CAPABILITY"; 
+                return "CAPABILITY";
             }
         }
 
@@ -43,7 +40,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
@@ -56,8 +53,6 @@ namespace Kooboo.Mail.Imap.Commands
         }
     }
 }
-
-
 
 //6.1.1.  CAPABILITY Command
 
@@ -80,13 +75,11 @@ namespace Kooboo.Mail.Imap.Commands
 //      "blurdybloop" authenticator would be "AUTH=XBLURDYBLOOP" and not
 //      "XAUTH=BLURDYBLOOP" or "XAUTH=XBLURDYBLOOP".
 
-
 //     Other capability names refer to extensions, revisions, or
 //     amendments to this specification.See the documentation of the
 //     CAPABILITY response for additional information.  No capabilities,
 //     beyond the base IMAP4rev1 set defined in this specification, are
 //     enabled without explicit client action to invoke the capability.
-
 
 //     Client and server implementations MUST implement the STARTTLS,
 //     LOGINDISABLED, and AUTH = PLAIN(described in [IMAP - TLS])
@@ -97,14 +90,9 @@ namespace Kooboo.Mail.Imap.Commands
 //      Experimental/Expansion" for information about the form of site or
 //      implementation-specific capabilities.
 
-
-           
-
-
 //Crispin Standards Track[Page 24]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //   Example:    C: abcd CAPABILITY
 //               S: * CAPABILITY IMAP4rev1 STARTTLS AUTH = GSSAPI

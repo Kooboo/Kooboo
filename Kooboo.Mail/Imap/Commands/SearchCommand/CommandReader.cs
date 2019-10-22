@@ -1,10 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static Kooboo.Mail.Imap.Commands.SearchCommand.SearchKeyword.Argument;
 
 namespace Kooboo.Mail.Imap.Commands.SearchCommand
@@ -17,12 +14,12 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 
         internal int TotalLen { get; set; }
 
-        public CommandReader(string CommandText)
+        public CommandReader(string commandText)
         {
-            this.WholeText = CommandText;
+            this.WholeText = commandText;
             this.TotalLen = this.WholeText.Length;
         }
-         
+
         internal bool IsLookupCharEnd(int currentindex)
         {
             while (currentindex < TotalLen)
@@ -53,22 +50,21 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
             return null;
         }
 
-
         public void ReConsume(string token)
         {
-            this._retoken = token;
+            this.Retoken = token;
         }
 
-        private string _retoken { get; set; }
+        private string Retoken { get; set; }
 
         public string ConsumeNextToken()
         {
             string token = null;
 
-            if (this._retoken != null)
+            if (this.Retoken != null)
             {
-                token = this._retoken;
-                this._retoken = null;
+                token = this.Retoken;
+                this.Retoken = null;
                 return token;
             }
 
@@ -90,7 +86,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                     var value = ReadQuoted(currentChar, this.CurrentIndex);
                     token += value;
                 }
-                // todo, read the ""  quoted text. 
+                // todo, read the ""  quoted text.
                 else
                 {
                     token += currentChar;
@@ -100,7 +96,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
             return token;
         }
 
-        internal string ReadQuoted(char QuoteChar, int index)
+        internal string ReadQuoted(char quoteChar, int index)
         {
             string result = null;
 
@@ -110,7 +106,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
             {
                 var currentChar = this.WholeText[index];
 
-                if (currentChar == QuoteChar)
+                if (currentChar == quoteChar)
                 {
                     result += currentChar;
                     if (orgindex == index)
@@ -162,7 +158,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                 }
                 else
                 {
-                    if (keyword.Arguments == null || keyword.Arguments.Count() == 0)
+                    if (keyword.Arguments == null || keyword.Arguments.Count == 0)
                     {
                         return result;
                     }
@@ -190,8 +186,8 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                                 }
                                 else
                                 {
-                                    // convert to right DataType.  
-                                    var rightvalue = ToRightDataType(next, item.DataType); 
+                                    // convert to right DataType.
+                                    var rightvalue = ToRightDataType(next, item.DataType);
                                     result.Parameters.Add(item.FieldName, rightvalue);
                                 }
                             }
@@ -209,31 +205,29 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
         {
             if (string.IsNullOrEmpty(value))
             {
-                return null; 
+                return null;
             }
 
-           if (type == SearchDataType.Text)
+            if (type == SearchDataType.Text)
             {
-                return value; 
+                return value;
             }
-           else if  (type == SearchDataType.Number)
+            else if (type == SearchDataType.Number)
             {
-                int intvalue = 0; 
-
-                if (int.TryParse(value, out intvalue))
+                if (int.TryParse(value, out var intvalue))
                 {
-                    return intvalue; 
+                    return intvalue;
                 }
                 else
                 {
                     return null;
-                } 
+                }
             }
-           else if (type == SearchDataType.Date)
+            else if (type == SearchDataType.Date)
             {
-              return  ImapHelper.ParseRfc2822Time(value); 
+                return ImapHelper.ParseRfc2822Time(value);
             }
-            return null; 
+            return null;
         }
 
         public List<SearchItem> ReadAllDataItems()
@@ -241,20 +235,16 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
             List<SearchItem> items = new List<SearchItem>();
             var next = this.ReadItem();
 
-            while (next != null && next.Name !=null)
-            {  
+            while (next?.Name != null)
+            {
                 items.Add(next);
 
                 next = this.ReadItem();
             }
             return items;
         }
-         
     }
 }
-
-
-
 
 //The defined search keys are as follows.Refer to the Formal
 //      Syntax section for the precise syntactic definitions of the
@@ -367,18 +357,16 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 
 //      SMALLER<n>
 //         Messages with an[RFC - 2822] size smaller than the specified
-//          number of octets. 
+//          number of octets.
 
 // Crispin                     Standards Track                    [Page 52]
 
 //RFC 3501                         IMAPv4 March 2003
 
-
 //       SUBJECT<string>
 //          Messages that contain the specified string in the envelope
 
 //          structure's SUBJECT field.
-
 
 //       TEXT<string>
 //          Messages that contain the specified string in the header or
@@ -387,7 +375,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 //       TO<string>
 //          Messages that contain the specified string in the envelope
 
-//          structure's TO field. 
+//          structure's TO field.
 //       UID<sequence set>
 //          Messages with unique identifiers corresponding to the specified
 //          unique identifier set.  Sequence set ranges are permitted.

@@ -1,16 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Kooboo.Mail.Imap.Commands.FetchCommand.CommandReader;
-
 using LumiSoft.Net;
-using LumiSoft.Net.MIME;
 using LumiSoft.Net.Mail;
+using LumiSoft.Net.MIME;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using static Kooboo.Mail.Imap.Commands.FetchCommand.CommandReader;
 
 namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
 {
@@ -20,8 +16,8 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
         {
             get
             {
-                return "ENVELOPE"; 
-            } 
+                return "ENVELOPE";
+            }
         }
 
         public List<ImapResponse> Render(MailDb maildb, FetchMessage message, DataItem dataItem)
@@ -39,22 +35,16 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
         public static void ConstructEnvelope(StructureBuilder builder, Mail_Message entity)
         {
             // date, subject, from, sender, reply-to, to, cc, bcc, in-reply-to, and message-id
-            var wordEncoder = new MIME_Encoding_EncodedWord(MIME_EncodedWordEncoding.B, Encoding.UTF8);
-            wordEncoder.Split = false;
+            var wordEncoder = new MIME_Encoding_EncodedWord(MIME_EncodedWordEncoding.B, Encoding.UTF8) {Split = false};
 
             builder.Append("ENVELOPE").SpaceNBracket();
 
             // date
             try
             {
-                if (entity.Date != DateTime.MinValue)
-                {
-                    builder.Append(TextUtils.QuoteString(MIME_Utils.DateTimeToRfc2822(entity.Date)));
-                }
-                else
-                {
-                    builder.Append("NIL");
-                }
+                builder.Append(entity.Date != DateTime.MinValue
+                    ? TextUtils.QuoteString(MIME_Utils.DateTimeToRfc2822(entity.Date))
+                    : "NIL");
             }
             catch
             {
@@ -84,7 +74,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
                 builder.AppendNil();
             }
 
-            // sender	
+            // sender
             //	NOTE: There is confusing part, according rfc 2822 Sender: is MailboxAddress and not AddressList.
             if (entity.Sender != null)
             {
@@ -143,7 +133,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
                 builder.AppendNil();
             }
 
-            // in-reply-to			
+            // in-reply-to
             if (entity.InReplyTo != null)
             {
                 builder.Append(" ").Append(TextUtils.QuoteString(wordEncoder.Encode(entity.InReplyTo)));

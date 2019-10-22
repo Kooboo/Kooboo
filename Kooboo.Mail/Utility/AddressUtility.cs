@@ -1,11 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
 
 namespace Kooboo.Mail.Utility
 {
@@ -21,9 +16,8 @@ namespace Kooboo.Mail.Utility
             if (seg.Address == null || seg.Host == null)
             {
                 return false;
-            } 
+            }
             return IsValidEmailDomain(seg.Host) && IsValidEmailChar(seg.Address);
-
         }
 
         internal static bool IsValidEmailDomain(string domain)
@@ -37,12 +31,12 @@ namespace Kooboo.Mail.Utility
             for (int i = 0; i < input.Length; i++)
             {
                 var currentchar = input[i];
-                ///  48 - 57   0x30 - 0x39   0 - 9 OK Allowed without restrictions.
+                //  48 - 57   0x30 - 0x39   0 - 9 OK Allowed without restrictions.
                 if (currentchar <= 57 && currentchar >= 48)
                 {
                     continue;
                 }
-                //  97 - 122   0x61 - 0x7a   a - z OK Allowed without restrictions. 
+                //  97 - 122   0x61 - 0x7a   a - z OK Allowed without restrictions.
                 else if (currentchar <= 122 && currentchar >= 97)
                 {
                     continue;
@@ -52,7 +46,7 @@ namespace Kooboo.Mail.Utility
                 {
                     continue;
                 }
-                else if (currentchar == '.' || currentchar == '+' || currentchar == '_' || currentchar == '*' || currentchar == '-' || currentchar == '=' || currentchar =='&')
+                else if (currentchar == '.' || currentchar == '+' || currentchar == '_' || currentchar == '*' || currentchar == '-' || currentchar == '=' || currentchar == '&')
                 {
                     continue;
                 }
@@ -71,9 +65,9 @@ namespace Kooboo.Mail.Utility
             int start = address.IndexOf("<");
             int end = address.IndexOf(">");
 
-            if (start > -1 && end > -1 &&  end > start +1)
+            if (start > -1 && end > -1 && end > start + 1)
             {
-                return address.Substring(start+1, end - start-1);
+                return address.Substring(start + 1, end - start - 1);
             }
 
             return address;
@@ -81,9 +75,8 @@ namespace Kooboo.Mail.Utility
 
         public static bool IsLocalEmailAddress(string input)
         {
-            return GetLocalEmailAddress(input) != null; 
+            return GetLocalEmailAddress(input) != null;
         }
-
 
         public static bool IsOrganizationOk(string emailaddress)
         {
@@ -99,24 +92,23 @@ namespace Kooboo.Mail.Utility
             }
 
             var domain = Kooboo.Data.GlobalDb.Domains.Get(segs.Host);
-             
+
             if (domain == null || domain.OrganizationId == default(Guid))
             {
                 return false;
             }
 
-            return true;  
+            return true;
         }
 
-
-        public static EmailAddress GetLocalEmailAddress(string Address)
+        public static EmailAddress GetLocalEmailAddress(string address)
         {
-            if (string.IsNullOrEmpty(Address))
+            if (string.IsNullOrEmpty(address))
             {
                 return null;
             }
 
-            var segs = ParseSegment(Address);
+            var segs = ParseSegment(address);
             if (segs.Address == null || segs.Host == null)
             {
                 return null;
@@ -131,39 +123,36 @@ namespace Kooboo.Mail.Utility
 
             var orgdb = Kooboo.Mail.Factory.DBFactory.OrgDb(domain.OrganizationId);
 
-            var add =  orgdb.EmailAddress.Find(Address); 
-            if (add !=null)
+            var add = orgdb.EmailAddress.Find(address);
+            if (add != null)
             {
-                add.OrgId = orgdb.OrganizationId; 
+                add.OrgId = orgdb.OrganizationId;
             }
-            return add; 
+            return add;
         }
 
-   
         public static EmailAddress GetEmailAddress(string emailaddress)
         {
             string rightaddress = GetAddress(emailaddress);
 
             return GetLocalEmailAddress(rightaddress);
-         
         }
 
-
-        public static bool WildcardMatch(string NormalAddress, string WildcardAddress)
+        public static bool WildcardMatch(string normalAddress, string wildcardAddress)
         {
-            var normal = ParseSegment(NormalAddress);
-            return WildcardMatch(normal, WildcardAddress);
+            var normal = ParseSegment(normalAddress);
+            return WildcardMatch(normal, wildcardAddress);
         }
 
-        public static bool WildcardMatch(EmailSegment NormalAddress, string WildcardAddress)
+        public static bool WildcardMatch(EmailSegment normalAddress, string wildcardAddress)
         {
-            var wildcardseg = ParseSegment(WildcardAddress);
+            var wildcardseg = ParseSegment(wildcardAddress);
             if (wildcardseg.Address == null)
             {
                 return false;
             }
 
-            if (!Lib.Helper.StringHelper.IsSameValue(NormalAddress.Host, wildcardseg.Host))
+            if (!Lib.Helper.StringHelper.IsSameValue(normalAddress.Host, wildcardseg.Host))
             {
                 return false;
             }
@@ -174,7 +163,7 @@ namespace Kooboo.Mail.Utility
             }
 
             string wildcard = wildcardseg.Address;
-            string normal = NormalAddress.Address;
+            string normal = normalAddress.Address;
             int index = wildcard.IndexOf("*");
             if (index == -1)
             {

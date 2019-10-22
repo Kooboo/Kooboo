@@ -1,11 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
+using LumiSoft.Net.MIME;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using static Kooboo.Mail.Imap.Commands.FetchCommand.CommandReader;
-using LumiSoft.Net.MIME;
 
 namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
 {
@@ -15,8 +14,8 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
         {
             get
             {
-                return "RFC822.HEADER"; 
-            } 
+                return "RFC822.HEADER";
+            }
         }
 
         public List<ImapResponse> Render(MailDb maildb, FetchMessage message, DataItem dataItem)

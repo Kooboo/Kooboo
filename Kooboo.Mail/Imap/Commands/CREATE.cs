@@ -1,13 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using LumiSoft.Net;
+using LumiSoft.Net.IMAP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using LumiSoft.Net.IMAP;
-using LumiSoft.Net;
-using System.Security.Principal;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -15,7 +13,7 @@ namespace Kooboo.Mail.Imap.Commands
     {
         public string AdditionalResponse
         {
-            get;set;
+            get; set;
         }
 
         public string CommandName
@@ -32,7 +30,6 @@ namespace Kooboo.Mail.Imap.Commands
             {
                 return true;
             }
-
         }
 
         public bool RequireFolder
@@ -69,8 +66,6 @@ namespace Kooboo.Mail.Imap.Commands
     }
 }
 
-
-
 //6.3.3.  CREATE Command
 
 //   Arguments:  mailbox name
@@ -87,12 +82,9 @@ namespace Kooboo.Mail.Imap.Commands
 //      with a name that refers to an extant mailbox.Any error in
 //      creation will return a tagged NO response.
 
-
-
 //Crispin                     Standards Track                    [Page 34]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //      If the mailbox name is suffixed with the server's hierarchy
 //      separator character (as returned from the server by a LIST

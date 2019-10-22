@@ -1,88 +1,78 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Smtp
 {
-   
-    public class CommandScanner  
+    public class CommandScanner
     {
         public CommandScanner(string commandLine)
         {
-            this.CommmandLine = commandLine;
-            this.totalLength = commandLine == null ? 0 : commandLine.Length; 
+            this.CommandLine = commandLine;
+            this.TotalLength = commandLine?.Length ?? 0;
         }
-        
-        private string CommmandLine { get; set; }
 
-        private int currentIndex { get; set; }
+        private string CommandLine { get; set; }
 
-        private string currentValue { get; set; }
+        private int CurrentIndex { get; set; }
 
-        private int totalLength { get; set; }
-         
+        private string CurrentValue { get; set; }
+
+        private int TotalLength { get; set; }
+
         public string ConsumeRest()
         {
-            while (currentIndex < totalLength)
+            while (CurrentIndex < TotalLength)
             {
-                var currentChar = this.CommmandLine[currentIndex];
+                var currentChar = this.CommandLine[CurrentIndex];
                 if (!Lib.Helper.CharHelper.isSpaceCharacters(currentChar))
                 {
-                    return this.CommmandLine.Substring(currentIndex).Trim(); 
+                    return this.CommandLine.Substring(CurrentIndex).Trim();
                 }
-                currentIndex += 1; 
+                CurrentIndex += 1;
             }
             return null;
         }
 
         public string ConsumeRestAfterComma()
         {
-            while (currentIndex < totalLength)
+            while (CurrentIndex < TotalLength)
             {
-                var currentChar = this.CommmandLine[currentIndex];
+                var currentChar = this.CommandLine[CurrentIndex];
                 if (currentChar == ':')
                 {
-                    this.currentIndex += 1;
-                    return ConsumeRest();  
-                } 
-                currentIndex += 1;
-            } 
-            return null; 
+                    this.CurrentIndex += 1;
+                    return ConsumeRest();
+                }
+                CurrentIndex += 1;
+            }
+            return null;
         }
 
         public string ConsumeNext()
-        { 
-            while (currentIndex < totalLength)
+        {
+            while (CurrentIndex < TotalLength)
             {
-                var currentChar = this.CommmandLine[currentIndex];
+                var currentChar = this.CommandLine[CurrentIndex];
 
                 if (Lib.Helper.CharHelper.IsAscii(currentChar))
-                { 
-                    this.currentValue += currentChar; 
+                {
+                    this.CurrentValue += currentChar;
                 }
                 else
-                { 
-                    if (!string.IsNullOrEmpty(this.currentValue))
-                    { 
-                        string returnvalue = this.currentValue; 
-                        this.currentValue = string.Empty;
-                      
+                {
+                    if (!string.IsNullOrEmpty(this.CurrentValue))
+                    {
+                        string returnvalue = this.CurrentValue;
+                        this.CurrentValue = string.Empty;
+
                         return returnvalue;
                     }
-                } 
+                }
 
-                currentIndex += 1;
+                CurrentIndex += 1;
             }
-             
-            if (!string.IsNullOrEmpty(this.currentValue))
-            {
-                return this.currentValue; 
-            }
-            return null; 
-        } 
+
+            return !string.IsNullOrEmpty(this.CurrentValue) ? this.CurrentValue : null;
+        }
     }
 }

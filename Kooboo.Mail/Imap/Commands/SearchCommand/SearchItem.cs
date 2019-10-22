@@ -1,10 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap.Commands.SearchCommand
 {
@@ -25,15 +22,12 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
         public SearchItem ORTwo { get; set; }
 
         private Dictionary<string, object> _parameters;
+
         public Dictionary<string, object> Parameters
         {
             get
             {
-                if (_parameters == null)
-                {
-                    _parameters = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _parameters;
+                return _parameters ?? (_parameters = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
             }
             set
             {
@@ -41,7 +35,6 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
             }
         }
 
-        public int SeqCompareUid { get; set; } = -1; 
-
+        public int SeqCompareUid { get; set; } = -1;
     }
 }

@@ -1,6 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,46 +13,46 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
         /// <summary>
         /// UID FETCH
         /// </summary>
-        public static List<ImapResponse> GenerateByUid(MailDb mailDb, SelectFolder Folder, string Cmd)
+        public static List<ImapResponse> GenerateByUid(MailDb mailDb, SelectFolder folder, string cmd)
         {
-            var cmdReader = new CommandReader(Cmd); 
+            var cmdReader = new CommandReader(cmd);
             var set = cmdReader.SequenceSet;
-            var range = GetSequenceRange(set); 
+            var range = GetSequenceRange(set);
 
-            var AllDataItems = cmdReader.ReadAllDataItems();
+            var allDataItems = cmdReader.ReadAllDataItems();
 
-            var messages = ImapHelper.GetMessagesByUid(mailDb, Folder, range);
+            var messages = ImapHelper.GetMessagesByUid(mailDb, folder, range);
 
             // Auto include UID data item
-            if (!AllDataItems.Any(o => o.Name == "UID"))
+            if (!allDataItems.Any(o => o.Name == "UID"))
             {
-                AllDataItems.Insert(0, new DataItem
+                allDataItems.Insert(0, new DataItem
                 {
                     Name = "UID",
                     FullItemName = "UID"
                 });
             }
 
-            return Generate(mailDb, Folder, AllDataItems, messages);
+            return Generate(mailDb, folder, allDataItems, messages);
         }
 
         /// <summary>
         /// FETCH
         /// </summary>
-        public static List<ImapResponse> GenerateBySeqId(MailDb mailDb, SelectFolder Folder, string Cmd)
+        public static List<ImapResponse> GenerateBySeqId(MailDb mailDb, SelectFolder folder, string cmd)
         {
-            var cmdReader = new CommandReader(Cmd);
+            var cmdReader = new CommandReader(cmd);
             var set = cmdReader.SequenceSet;
             var range = GetSequenceRange(set);
 
-            var AllDataItems = cmdReader.ReadAllDataItems();
+            var allDataItems = cmdReader.ReadAllDataItems();
 
-            var messages = ImapHelper.GetMessagesBySeqNo(mailDb, Folder, range);
+            var messages = ImapHelper.GetMessagesBySeqNo(mailDb, folder, range);
 
-            return Generate(mailDb, Folder, AllDataItems, messages);
+            return Generate(mailDb, folder, allDataItems, messages);
         }
 
-        public static List<ImapResponse> Generate(MailDb maildb, SelectFolder Folder, List<DataItem> DataItems, List<FetchMessage> messages)
+        public static List<ImapResponse> Generate(MailDb maildb, SelectFolder folder, List<DataItem> dataItems, List<FetchMessage> messages)
         {
             var response = new List<ImapResponse>();
 
@@ -63,7 +62,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
                     .Append("* " + message.SeqNo + " FETCH (");
 
                 bool firstDataItem = true;
-                foreach (var dataitem in DataItems)
+                foreach (var dataitem in dataItems)
                 {
                     var itemResponse = ResponseManager.GetResponse(dataitem, maildb, message);
                     foreach (var each in itemResponse)
@@ -98,14 +97,14 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
 
             return response;
         }
-          
+
         public static void CorrectDataItem(List<DataItem> dataItems)
         {
-            // make all name, section. upper case. 
+            // make all name, section. upper case.
             foreach (var item in dataItems)
             {
                 item.Name = item.Name.ToUpper();
-                if (item.Section != null && item.Section.PartSpecifier != null)
+                if (item.Section?.PartSpecifier != null)
                 {
                     item.Section.PartSpecifier = item.Section.PartSpecifier.ToUpper();
                 }
@@ -116,9 +115,9 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
             //used by itself, and not in conjunction with other macros or data
             //items.
             // ALL
-            //Macro equivalent to: (FLAGS INTERNALDATE RFC822.SIZE ENVELOPE) 
+            //Macro equivalent to: (FLAGS INTERNALDATE RFC822.SIZE ENVELOPE)
             // FAST
-            //    Macro equivalent to: (FLAGS INTERNALDATE RFC822.SIZE) 
+            //    Macro equivalent to: (FLAGS INTERNALDATE RFC822.SIZE)
             // FULL
             //    Macro equivalent to: (FLAGS INTERNALDATE RFC822.SIZE ENVELOPE
             //    BODY)
@@ -136,7 +135,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
                 dataItems.Clear();
                 dataItems.Add(new DataItem() { Name = "FLAGS", FullItemName = "FLAGS" });
                 dataItems.Add(new DataItem() { Name = "INTERNALDATE", FullItemName = "INTERNALDATE" });
-                dataItems.Add(new DataItem() { Name = "RFC822.SIZE", FullItemName = "RFC822.SIZE" }); 
+                dataItems.Add(new DataItem() { Name = "RFC822.SIZE", FullItemName = "RFC822.SIZE" });
             }
             else if (dataItems.Find(o => o.Name == "FULL") != null)
             {
@@ -149,12 +148,8 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
             }
             //TODO: consider move body to the end...???
         }
-         
-
     }
 }
-
-
 
 /* RFC 3501
               seq-number     = nz-number / "*"

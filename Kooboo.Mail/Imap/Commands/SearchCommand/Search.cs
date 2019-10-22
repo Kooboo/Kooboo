@@ -1,35 +1,32 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Kooboo.Mail.Imap.Commands.SearchCommand.CommandReader;
 
 namespace Kooboo.Mail.Imap.Commands.SearchCommand
 {
     public static class Search
     {
-        public static List<ImapResponse> ExecuteBySeqNo(MailDb maildb, SelectFolder Folder, string args)
+        public static List<ImapResponse> ExecuteBySeqNo(MailDb maildb, SelectFolder folder, string args)
         {
-            return Execute(maildb, Folder, args, (d, f, m) =>
+            return Execute(maildb, folder, args, (d, f, m) =>
                 d.Messages.GetSeqNo(f.Folder, f.Stat.LastestMsgId, f.Stat.Exists, m.Id)
             );
         }
 
-        public static List<ImapResponse> ExecuteByUid(MailDb maildb, SelectFolder Folder, string args)
+        public static List<ImapResponse> ExecuteByUid(MailDb maildb, SelectFolder folder, string args)
         {
-            return Execute(maildb, Folder, args, (d, f, m) => m.Id);
+            return Execute(maildb, folder, args, (d, f, m) => m.Id);
         }
 
-        public static List<ImapResponse> Execute(MailDb maildb, SelectFolder Folder, string args, Func<MailDb, SelectFolder, Message, int> toResult)
+        public static List<ImapResponse> Execute(MailDb maildb, SelectFolder folder, string args, Func<MailDb, SelectFolder, Message, int> toResult)
         {
             var cmdreader = new SearchCommand.CommandReader(args);
 
             var allitems = cmdreader.ReadAllDataItems();
 
-            var searchResult = Execute(maildb, Folder, allitems, toResult);
+            var searchResult = Execute(maildb, folder, allitems, toResult);
 
             List<ImapResponse> result = new List<ImapResponse>();
 
@@ -39,56 +36,56 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
             return result;
         }
 
-        public static List<int> ExecuteBySeqNo(MailDb maildb, SelectFolder Folder, List<SearchItem> SearchItems)
+        public static List<int> ExecuteBySeqNo(MailDb maildb, SelectFolder folder, List<SearchItem> searchItems)
         {
-            return Execute(maildb, Folder, SearchItems, (d, f, m) =>
+            return Execute(maildb, folder, searchItems, (d, f, m) =>
                 d.Messages.GetSeqNo(f.Folder, f.Stat.LastestMsgId, f.Stat.Exists, m.Id)
             );
         }
 
-        public static List<int> Execute(MailDb maildb, SelectFolder Folder, List<SearchItem> SearchItems, Func<MailDb, SelectFolder, Message, int> toResult)
+        public static List<int> Execute(MailDb maildb, SelectFolder folder, List<SearchItem> searchItems, Func<MailDb, SelectFolder, Message, int> toResult)
         {
-            // return list of seqno.  
-            var StartCol = FindStartCollectionItems(ref SearchItems);
+            // return list of seqno.
+            var startCol = FindStartCollectionItems(ref searchItems);
 
-            var Msgs = GetCollection(maildb, Folder, StartCol);
+            var msgs = GetCollection(maildb, folder, startCol);
 
             List<int> result = new List<int>();
 
-            foreach (var msg in Msgs)
+            foreach (var msg in msgs)
             {
-                bool match = true; 
+                bool match = true;
 
-                foreach (var searchitem in SearchItems)
+                foreach (var searchitem in searchItems)
                 {
-                    if (!Check(maildb, Folder, searchitem, msg))
+                    if (!Check(maildb, folder, searchitem, msg))
                     {
                         match = false;
-                        break; 
+                        break;
                     }
-                } 
+                }
 
                 if (match)
                 {
-                    result.Add(toResult(maildb, Folder, msg));
+                    result.Add(toResult(maildb, folder, msg));
                 }
             }
 
-            return result; 
+            return result;
         }
 
-        public static List<Message> GetCollection(MailDb maildb, SelectFolder Folder, SearchItem item)
+        public static List<Message> GetCollection(MailDb maildb, SelectFolder folder, SearchItem item)
         {
-            if (item == null || item.Name == null)
+            if (item?.Name == null)
             {
-                return maildb.Messages.FolderQuery(Folder.Folder).SelectAll();
+                return maildb.Messages.FolderQuery(folder.Folder).SelectAll();
             }
 
             if (item.Name == "LARGER" || item.Name == "SMALLER")
             {
                 int value = (int)item.Parameters["N"];
 
-                var msg = maildb.Messages.GetBySeqNo(Folder.Folder, Folder.Stat.LastestMsgId, Folder.Stat.Exists, value);
+                var msg = maildb.Messages.GetBySeqNo(folder.Folder, folder.Stat.LastestMsgId, folder.Stat.Exists, value);
 
                 if (msg == null)
                 {
@@ -97,18 +94,18 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 
                 if (item.Name == "LARGER")
                 {
-                    return maildb.Messages.FolderQuery(Folder.Folder).Where(o => o.Id > msg.Id).SelectAll();
+                    return maildb.Messages.FolderQuery(folder.Folder).Where(o => o.Id > msg.Id).SelectAll();
                 }
                 else if (item.Name == "SMALLER")
                 {
-                    return maildb.Messages.FolderQuery(Folder.Folder).Where(o => o.Id < msg.Id).SelectAll();
+                    return maildb.Messages.FolderQuery(folder.Folder).Where(o => o.Id < msg.Id).SelectAll();
                 }
             }
             else if (item.Name == "UID")
             {
                 var set = item.Parameters["SEQUENCE-SET"].ToString();
                 var range = Kooboo.Mail.Imap.ImapHelper.GetSequenceRange(set);
-                ImapHelper.CorrectRange(range, Folder, true);
+                ImapHelper.CorrectRange(range, folder, true);
 
                 List<Message> result = new List<Message>();
                 foreach (var uidrange in range)
@@ -121,7 +118,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                             result.Add(msg);
                         }
                     }
-                } 
+                }
                 return result;
             }
             else
@@ -129,36 +126,35 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                 if (item.Name == "BEFORE" || item.Name == "SENTBEFORE")
                 {
                     var date = (DateTime)item.Parameters["DATE"];
-                    var tick = date.Ticks; 
-                    return maildb.Messages.FolderQuery(Folder.Folder).Where(o => o.CreationTimeTick < tick).SelectAll(); 
-                } 
-               else if (item.Name == "SENTSINCE" || item.Name == "SINCE")
+                    var tick = date.Ticks;
+                    return maildb.Messages.FolderQuery(folder.Folder).Where(o => o.CreationTimeTick < tick).SelectAll();
+                }
+                else if (item.Name == "SENTSINCE" || item.Name == "SINCE")
                 {
                     var date = (DateTime)item.Parameters["DATE"];
                     var tick = date.Ticks;
-                    return maildb.Messages.FolderQuery(Folder.Folder).Where(o => o.CreationTimeTick > tick).SelectAll();
+                    return maildb.Messages.FolderQuery(folder.Folder).Where(o => o.CreationTimeTick > tick).SelectAll();
                 }
                 else if (item.Name == "ON" || item.Name == "SENTON")
                 {
                     var date = (DateTime)item.Parameters["DATE"];
-                    // get the day before and after, then filter... I think this has better performance because there is an index on tick. 
+                    // get the day before and after, then filter... I think this has better performance because there is an index on tick.
                     var before = date.AddDays(-1);
                     var after = date.AddDays(1);
-                    
-                   var allmessages = maildb.Messages.FolderQuery(Folder.Folder).Where(o => o.CreationTimeTick > before.Ticks && o.CreationTimeTick < after.Ticks).SelectAll();
 
-                    if (allmessages !=null && allmessages.Count() > 0)
+                    var allmessages = maildb.Messages.FolderQuery(folder.Folder).Where(o => o.CreationTimeTick > before.Ticks && o.CreationTimeTick < after.Ticks).SelectAll();
+
+                    if (allmessages != null && allmessages.Any())
                     {
-                        return allmessages.Where(o => o.CreationTime.DayOfYear == date.DayOfYear && o.CreationTime.Year == date.Year).ToList(); 
+                        return allmessages.Where(o => o.CreationTime.DayOfYear == date.DayOfYear && o.CreationTime.Year == date.Year).ToList();
                     }
-                     
                 }
                 // string dateKey = "BEFORE SENTBEFORE SENTON SENTSINCE SINCE ON";
-                // only those left... 
+                // only those left...
             }
 
-            // not collection found, loop all.   
-            return maildb.Messages.FolderQuery(Folder.Folder).SelectAll(); 
+            // not collection found, loop all.
+            return maildb.Messages.FolderQuery(folder.Folder).SelectAll();
         }
 
         public static SearchItem FindStartCollectionItems(ref List<SearchItem> items)
@@ -188,7 +184,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 
         public static bool Check(MailDb maildb, SelectFolder folder, SearchItem item, Message message)
         {
-            //ALL ANSWERED DELETED DRAFT FLAGGED NEW OLD RECENT SEEN UNANSWERED UNDELETED UNDRAFT UNFLAGGED UNSEEN 
+            //ALL ANSWERED DELETED DRAFT FLAGGED NEW OLD RECENT SEEN UNANSWERED UNDELETED UNDRAFT UNFLAGGED UNSEEN
             switch (item.Name)
             {
                 case "ALL":
@@ -227,7 +223,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                     {
                         return message.Read;
                     }
-                ///UNANSWERED UNDELETED UNDRAFT UNFLAGGED UNSEEN 
+                //UNANSWERED UNDELETED UNDRAFT UNFLAGGED UNSEEN
                 case "UNANSWERED":
                     {
                         return !message.Answered;
@@ -252,7 +248,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                     {
                         return CheckText(maildb, message, item.Name, item.Parameters.First().Value.ToString());
                     }
-                ///"BCC BODY CC FROM SUBJECT TEXT TO"; 
+                //"BCC BODY CC FROM SUBJECT TEXT TO";
                 case "CC":
                     {
                         return CheckText(maildb, message, item.Name, item.Parameters.First().Value.ToString());
@@ -287,7 +283,7 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                         }
                         return CheckText(maildb, message, field, value);
                     }
-                ///string dateKey = "BEFORE SENTBEFORE SENTON SENTSINCE SINCE ON";
+                //string dateKey = "BEFORE SENTBEFORE SENTON SENTSINCE SINCE ON";
                 case "BEFORE":
                     {
                         return CheckDate(maildb, message, item.Name, (DateTime)item.Parameters["DATE"]);
@@ -317,15 +313,8 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                         if (item.SeqCompareUid == -1)
                         {
                             int value = (int)item.Parameters["N"];
-                            var msg = maildb.Messages.GetBySeqNo(folder.Folder, folder.Stat.LastestMsgId, folder.Stat.Exists, value); 
-                            if (msg != null)
-                            {
-                                item.SeqCompareUid = msg.Id;
-                            }
-                            else
-                            {
-                                item.SeqCompareUid = 0;
-                            }
+                            var msg = maildb.Messages.GetBySeqNo(folder.Folder, folder.Stat.LastestMsgId, folder.Stat.Exists, value);
+                            item.SeqCompareUid = msg?.Id ?? 0;
                         }
                         return message.Id < item.SeqCompareUid;
                     }
@@ -337,54 +326,47 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                             int value = (int)item.Parameters["N"];
                             var msg = maildb.Messages.GetBySeqNo(folder.Folder, folder.Stat.LastestMsgId, folder.Stat.Exists, value);
 
-                            if (msg != null)
-                            {
-                                item.SeqCompareUid = msg.Id;
-                            }
-                            else
-                            {
-                                item.SeqCompareUid = 0;
-                            }
+                            item.SeqCompareUid = msg?.Id ?? 0;
                         }
                         return message.Id > item.SeqCompareUid;
                     }
 
                 case "NOT":
                     {
-                        if (item.NOT !=null)
+                        if (item.NOT != null)
                         {
-                            return !Check(maildb, folder, item.NOT, message); 
+                            return !Check(maildb, folder, item.NOT, message);
                         }
-                       else 
+                        else
                         {
-                            return true; 
-                        }  
+                            return true;
+                        }
                     }
 
                 case "OR":
                     {
                         if (item.OROne == null && item.ORTwo == null)
                         {
-                            return false; 
+                            return false;
                         }
 
-                        bool match = false; 
-                        if (item.OROne !=null)
+                        bool match = false;
+                        if (item.OROne != null)
                         {
                             if (Check(maildb, folder, item.OROne, message))
                             {
-                                match = true; 
+                                match = true;
                             }
                         }
 
-                        if (item.ORTwo !=null)
+                        if (item.ORTwo != null)
                         {
                             if (Check(maildb, folder, item.ORTwo, message))
                             {
-                                match = true; 
+                                match = true;
                             }
-                        } 
-                        return match;  
+                        }
+                        return match;
                     }
 
                 case "KEYWORD":
@@ -395,10 +377,10 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                         {
                             if (flag.ToUpper() == value)
                             {
-                                return true; 
+                                return true;
                             }
                         }
-                        return false;  
+                        return false;
                     }
 
                 default:
@@ -419,49 +401,47 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
             return default(DateTime);
         }
 
-        public static bool CheckText(MailDb maildb, Message message, string HeaderField, string CompareValue)
+        public static bool CheckText(MailDb maildb, Message message, string headerField, string compareValue)
         {
             // BCC BODY CC FROM SUBJECT TEXT TO
-            var upper = HeaderField.ToUpper();
+            var upper = headerField.ToUpper();
             if (upper == "TO")
             {
-                if (!string.IsNullOrEmpty(CompareValue))
+                if (!string.IsNullOrEmpty(compareValue))
                 {
-                    return message.To.Contains(CompareValue);
+                    return message.To.Contains(compareValue);
                 }
                 return true;
             }
             else if ((upper == "CC"))
             {
-                if (!string.IsNullOrEmpty(CompareValue))
+                if (!string.IsNullOrEmpty(compareValue))
                 {
-                    return message.Cc.IndexOf(CompareValue, StringComparison.OrdinalIgnoreCase) >= 0;
+                    return message.Cc.IndexOf(compareValue, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
                 return true;
             }
             else if (upper == "FROM")
             {
-                if (!string.IsNullOrEmpty(CompareValue))
+                if (!string.IsNullOrEmpty(compareValue))
                 {
-                    return message.From.IndexOf(CompareValue, StringComparison.OrdinalIgnoreCase) >= 0;
+                    return message.From.IndexOf(compareValue, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
                 return true;
             }
-
             else if ((upper == "BCC"))
             {
-                if (!string.IsNullOrEmpty(CompareValue))
+                if (!string.IsNullOrEmpty(compareValue))
                 {
-                    return message.Bcc.IndexOf(CompareValue, StringComparison.OrdinalIgnoreCase) >= 0;
+                    return message.Bcc.IndexOf(compareValue, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
                 return true;
             }
-
             else if ((upper == "SUBJECT"))
             {
-                if (!string.IsNullOrEmpty(CompareValue))
+                if (!string.IsNullOrEmpty(compareValue))
                 {
-                    return message.Subject.IndexOf(CompareValue, StringComparison.OrdinalIgnoreCase) >= 0;
+                    return message.Subject.IndexOf(compareValue, StringComparison.OrdinalIgnoreCase) >= 0;
                 }
                 return true;
             }
@@ -471,9 +451,9 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 
                 if (upper == "TEXT")
                 {
-                    if (!string.IsNullOrEmpty(CompareValue))
+                    if (!string.IsNullOrEmpty(compareValue))
                     {
-                        return content.IndexOf(CompareValue, StringComparison.OrdinalIgnoreCase) >= 0;
+                        return content.IndexOf(compareValue, StringComparison.OrdinalIgnoreCase) >= 0;
                     }
                 }
                 else
@@ -482,12 +462,12 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 
                     if (upper == "BODY")
                     {
-                        if (!string.IsNullOrEmpty(CompareValue))
+                        if (!string.IsNullOrEmpty(compareValue))
                         {
                             if (index >= 0)
                             {
                                 string body = content.Substring(index);
-                                return body.IndexOf(CompareValue, StringComparison.OrdinalIgnoreCase) >= 0;
+                                return body.IndexOf(compareValue, StringComparison.OrdinalIgnoreCase) >= 0;
                             }
                         }
                         return true;
@@ -495,92 +475,71 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
                     else
                     {
                         string headerpart = null;
-                        if (index > -1)
-                        {
-                            headerpart = content.Substring(0, index);
-                        }
-                        else
-                        { headerpart = content; }
+                        headerpart = index > -1 ? content.Substring(0, index) : content;
 
-                        var headerline = GetHeaderFieldLine(headerpart, HeaderField);
+                        var headerline = GetHeaderFieldLine(headerpart, headerField);
 
                         if (string.IsNullOrEmpty(headerline))
                         {
                             return false;
                         }
 
-                        if (!string.IsNullOrEmpty(CompareValue))
+                        if (!string.IsNullOrEmpty(compareValue))
                         {
-                            return headerline.IndexOf(CompareValue, StringComparison.OrdinalIgnoreCase) >= 0;
+                            return headerline.IndexOf(compareValue, StringComparison.OrdinalIgnoreCase) >= 0;
                         }
 
                         return true;
                     }
-
                 }
             }
             return false;
         }
 
-        internal static string GetHeaderFieldLine(string header, string Field)
+        internal static string GetHeaderFieldLine(string header, string field)
         {
-            if (header.StartsWith(Field, StringComparison.OrdinalIgnoreCase))
+            if (header.StartsWith(field, StringComparison.OrdinalIgnoreCase))
             {
-                int nextend = header.IndexOf("\r\n", Field.Length);
-                if (nextend > -1)
-                {
-                    return header.Substring(0, nextend);
-                }
-                else
-                {
-                    return header;
-                }
+                int nextend = header.IndexOf("\r\n", field.Length);
+                return nextend > -1 ? header.Substring(0, nextend) : header;
             }
 
-            if (!Field.StartsWith("\r\n"))
+            if (!field.StartsWith("\r\n"))
             {
-                Field = "\r\n" + Field;
+                field = "\r\n" + field;
             }
 
-            int start = header.IndexOf(Field, StringComparison.OrdinalIgnoreCase);
+            int start = header.IndexOf(field, StringComparison.OrdinalIgnoreCase);
 
             if (start > -1)
             {
                 string line = null;
-                int end = header.IndexOf("\r\n", start + Field.Length);
-                if (end > -1)
-                {
-                    line = header.Substring(start, end - start);
-                }
-                else
-                {
-                    line = header.Substring(start);
-                }
+                int end = header.IndexOf("\r\n", start + field.Length);
+                line = end > -1 ? header.Substring(start, end - start) : header.Substring(start);
                 return line;
             }
             return null;
         }
 
-        public static bool CheckDate(MailDb maildb, Message message, string Keyword, DateTime Value)
+        public static bool CheckDate(MailDb maildb, Message message, string keyword, DateTime value)
         {
-            /// BEFORE SENTBEFORE SENTON SENTSINCE SINCE ON 
-            if (Keyword == "BEFORE" || Keyword == "SENTBEFORE")
+            // BEFORE SENTBEFORE SENTON SENTSINCE SINCE ON
+            if (keyword == "BEFORE" || keyword == "SENTBEFORE")
             {
-                return message.CreationTime < Value;
+                return message.CreationTime < value;
             }
-            else if (Keyword == "SINCE" || Keyword == "SENTSINCE")
+            else if (keyword == "SINCE" || keyword == "SENTSINCE")
             {
-                return message.CreationTime > Value;
+                return message.CreationTime > value;
             }
-            else if (Keyword == "ON" || Keyword == "SENTON")
+            else if (keyword == "ON" || keyword == "SENTON")
             {
-                return message.CreationTime.DayOfYear == Value.DayOfYear && message.CreationTime.Year == Value.Year;
+                return message.CreationTime.DayOfYear == value.DayOfYear && message.CreationTime.Year == value.Year;
             }
             return false;
         }
     }
 }
-
 
 //ALL
 //   All messages in the mailbox; the default initial key for
@@ -588,11 +547,10 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 
 //      ANSWERED
 //         Messages with the \Answered flag set.
- 
+
 //Crispin Standards Track[Page 50]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //      BCC<string>
 //         Messages that contain the specified string in the envelope
@@ -642,13 +600,9 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 //         Messages that have the \Recent flag set but not the \Seen flag.
 //         This is functionally equivalent to "(RECENT UNSEEN)".
 
-
-
-
 //Crispin Standards Track[Page 51]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //      NOT<search-key>
 //         Messages that do not match the specified search key.
@@ -692,27 +646,14 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 //         Messages with an[RFC - 2822] size smaller than the specified
 //          number of octets.
 
-
-
-
-
-
-
-
-
-
-
 // Crispin                     Standards Track                    [Page 52]
 
 //RFC 3501                         IMAPv4 March 2003
-
-
 
 //       SUBJECT<string>
 //          Messages that contain the specified string in the envelope
 
 //          structure's SUBJECT field.
-
 
 //       TEXT<string>
 //          Messages that contain the specified string in the header or
@@ -722,7 +663,6 @@ namespace Kooboo.Mail.Imap.Commands.SearchCommand
 //          Messages that contain the specified string in the envelope
 
 //          structure's TO field.
-
 
 //       UID<sequence set>
 //          Messages with unique identifiers corresponding to the specified

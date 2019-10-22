@@ -1,9 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Kooboo.Mail
 {
@@ -22,17 +21,7 @@ namespace Kooboo.Mail
 
         public new TValue this[TKey key]
         {
-            get
-            {
-                if (this.ContainsKey(key))
-                {
-                    return base[key];
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            get { return this.ContainsKey(key) ? base[key] : null; }
             set
             {
                 if (this.ContainsKey(key))
@@ -65,7 +54,6 @@ namespace Kooboo.Mail
             }
         }
     }
-
 
     public static class DictionaryExtensions
     {
@@ -115,5 +103,4 @@ namespace Kooboo.Mail
             }
         }
     }
-
 }

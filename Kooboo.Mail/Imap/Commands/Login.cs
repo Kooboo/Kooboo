@@ -1,13 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using LumiSoft.Net;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Security.Principal;
-
-using LumiSoft.Net;
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -32,7 +29,6 @@ namespace Kooboo.Mail.Imap.Commands
             {
                 return false;
             }
-
         }
 
         public bool RequireFolder
@@ -58,15 +54,15 @@ namespace Kooboo.Mail.Imap.Commands
                 throw new Exception("User Or Password not provided");
             }
 
-            string[] user_pass = TextUtils.SplitQuotedString(args, ' ', true);
-            if (user_pass.Length != 2)
+            string[] userPass = TextUtils.SplitQuotedString(args, ' ', true);
+            if (userPass.Length != 2)
             {
                 throw new Exception("Error in arguments");
             }
 
-            Guid OrganizationId = default(Guid);    // user may have multiple orgs. 
+            Guid organizationId = default(Guid);    // user may have multiple orgs.
 
-            string username = user_pass[0];
+            string username = userPass[0];
 
             if (username.IndexOf("@") > -1 && Utility.AddressUtility.IsValidEmailAddress(username))
             {
@@ -78,34 +74,31 @@ namespace Kooboo.Mail.Imap.Commands
                 }
                 else
                 {
-                    username =  Data.GlobalDb.Users.GetUserName(emailadd.UserId);
-                    OrganizationId = emailadd.OrgId; 
+                    username = Data.GlobalDb.Users.GetUserName(emailadd.UserId);
+                    organizationId = emailadd.OrgId;
                 }
             }
 
-            var user = Kooboo.Data.GlobalDb.Users.Validate(username, user_pass[1]);
+            var user = Kooboo.Data.GlobalDb.Users.Validate(username, userPass[1]);
 
             if (user == null)
             {
                 throw new Exception("LOGIN Failed");
             }
 
-           
-            if (OrganizationId == default(Guid))
+            if (organizationId == default(Guid))
             {
-                OrganizationId = user.CurrentOrgId; 
+                organizationId = user.CurrentOrgId;
             }
 
             session.AuthenticatedUserIdentity = new GenericIdentity(user.UserName, "IMAP-LOGIN");
 
-            session.MailDb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user.Id,OrganizationId);
+            session.MailDb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user.Id, organizationId);
 
             return this.NullResult();
         }
     }
 }
-
-
 
 //6.2.3.  LOGIN Command
 
@@ -121,15 +114,9 @@ namespace Kooboo.Mail.Imap.Commands
 //      The LOGIN command identifies the client to the server and carries
 //      the plaintext password authenticating this user.
 
-
-
-
-
-
 //Crispin Standards Track[Page 30]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //      A server MAY include a CAPABILITY response code in the tagged OK
 //      response to a successful LOGIN command in order to send

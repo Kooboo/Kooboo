@@ -1,7 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Collections.Generic;   
 using Kooboo.Tasks;
+using System.Collections.Generic;
 
 namespace Kooboo.Mail
 {
@@ -9,15 +9,14 @@ namespace Kooboo.Mail
     {
         static EmailWorkers()
         {
-            Workers = new List<IWorkerStarter>();
-            Workers.Add(new Smtp.SmtpServer("Receive"));
-             
+            Workers = new List<IWorkerStarter> {new Smtp.SmtpServer("Receive")};
+
             var imapServer = new Imap.ImapServer(143);
             Workers.Add(imapServer);
 
             if (Data.AppSettings.IsOnlineServer)
             {
-                var serverdomain =   Data.AppSettings.ServerSetting.ServerId + "." + Data.AppSettings.ServerSetting.HostDomain;
+                var serverdomain = Data.AppSettings.ServerSetting.ServerId + "." + Data.AppSettings.ServerSetting.HostDomain;
 
                 var dbcert = Kooboo.Data.GlobalDb.SslCertificate.GetByDomain(serverdomain)?.Content;
 
@@ -30,11 +29,11 @@ namespace Kooboo.Mail
                         Workers.Add(sslimapServer);
 
                         var sslSmtp = new Kooboo.Mail.Smtp.SmtpServer("sslreceive", 465, cert);
-                        Workers.Add(sslSmtp); 
-                    }   
-                }    
+                        Workers.Add(sslSmtp);
+                    }
+                }
             }
-                  
+
             Workers.Add(new Smtp.SmtpServer("Relay", 587));
         }
 
@@ -45,9 +44,9 @@ namespace Kooboo.Mail
             foreach (var each in Workers)
             {
                 each.Start();
-            } 
+            }
 
-            Mail.Queue.MailQueueWorker.Instance.Start(); 
+            Mail.Queue.MailQueueWorker.Instance.Start();
         }
 
         public static void Stop()

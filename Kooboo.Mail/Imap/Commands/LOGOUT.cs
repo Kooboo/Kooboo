@@ -1,9 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap.Commands
@@ -12,7 +9,7 @@ namespace Kooboo.Mail.Imap.Commands
     {
         public string AdditionalResponse
         {
-            get;set;
+            get; set;
         }
 
         public string CommandName
@@ -29,7 +26,6 @@ namespace Kooboo.Mail.Imap.Commands
             {
                 return false;
             }
-
         }
 
         public bool RequireFolder
@@ -50,8 +46,7 @@ namespace Kooboo.Mail.Imap.Commands
 
         public Task<List<ImapResponse>> Execute(ImapSession session, string args)
         {
-             
-           var result = new   List<ImapResponse>()
+            var result = new List<ImapResponse>()
             {
                 new ImapResponse("* BYE IMAP4rev1 Server logging out")
             };
@@ -60,8 +55,6 @@ namespace Kooboo.Mail.Imap.Commands
         }
     }
 }
-
-
 
 //6.2.3.  LOGIN Command
 
@@ -77,15 +70,9 @@ namespace Kooboo.Mail.Imap.Commands
 //      The LOGIN command identifies the client to the server and carries
 //      the plaintext password authenticating this user.
 
-
-
-
-
-
 //Crispin Standards Track[Page 30]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //      A server MAY include a CAPABILITY response code in the tagged OK
 //      response to a successful LOGIN command in order to send

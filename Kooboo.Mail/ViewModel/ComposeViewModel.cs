@@ -1,14 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.ViewModel
 {
-  public  class ComposeViewModel
+    public class ComposeViewModel
     {
         public int? MessageId { get; set; }
 
@@ -16,75 +12,50 @@ namespace Kooboo.Mail.ViewModel
 
         public int From { get; set; }
 
+        private List<string> _to;
 
-        private List<string> _to; 
-
-        public List<string> To {
-            get
-            {
-                if (_to == null)
-                {
-                    _to = new List<string>(); 
-                }
-                return _to; 
-            }
+        public List<string> To
+        {
+            get { return _to ?? (_to = new List<string>()); }
             set
             {
-                _to = value; 
+                _to = value;
             }
         }
 
-        private List<string> _Cc; 
+        private List<string> _cc;
 
-        public List<string> Cc  {
-            get
-            {
-                if (_Cc == null)
-                {
-                    _Cc = new List<string>(); 
-                }
-                return _Cc; 
-            }
+        public List<string> Cc
+        {
+            get { return _cc ?? (_cc = new List<string>()); }
             set
             {
-                _Cc = value; 
+                _cc = value;
             }
         }
 
-        private List<string> _Bcc; 
+        private List<string> _bcc;
 
-        public List<string> Bcc {
-            get
-            {
-                if (_Bcc == null)
-                {
-                    _Bcc = new List<string>();
-                }
-                return _Bcc; 
-            }
+        public List<string> Bcc
+        {
+            get { return _bcc ?? (_bcc = new List<string>()); }
             set
             {
-                _Bcc = value; 
+                _bcc = value;
             }
         }
 
-        private List<Models.Attachment> _attachments; 
+        private List<Models.Attachment> _attachments;
 
-        public List<Models.Attachment> Attachments {
-            get 
-            {
-                if (_attachments == null)
-                {
-                    _attachments = new List<Models.Attachment>(); 
-                }
-                return _attachments;
-            }
+        public List<Models.Attachment> Attachments
+        {
+            get { return _attachments ?? (_attachments = new List<Models.Attachment>()); }
             set
             {
-                _attachments = value; 
+                _attachments = value;
             }
         }
-          
+
         public string Html { get; set; }
     }
 }

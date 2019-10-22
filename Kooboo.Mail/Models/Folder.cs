@@ -1,17 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-
-using Kooboo.Extensions;
 
 namespace Kooboo.Mail
 {
     /// <summary>
-    /// Folder belong to user. one user can create mutiple folders. 
-    /// Folder can be used to store message from one or more email address. 
-    /// 
+    /// Folder belong to user. one user can create mutiple folders.
+    /// Folder can be used to store message from one or more email address.
+    ///
     /// </summary>
     public class Folder : IMailObject
     {
@@ -19,38 +15,40 @@ namespace Kooboo.Mail
         public const string Drafts = "Drafts";
         public const string Sent = "Sent";
         public const string Spam = "Spam";
-        public const string Trash = "Trash"; 
+        public const string Trash = "Trash";
 
+        private static Dictionary<int, string> _reservedFolder;
 
-        private static Dictionary<int, string> _ReservedFolder; 
         public static Dictionary<int, string> ReservedFolder
         {
             get
             {
-                if (_ReservedFolder == null)
+                if (_reservedFolder == null)
                 {
-                    _ReservedFolder = new Dictionary<int, string>();
-                    _ReservedFolder.Add(ToId(Inbox), Inbox);
-                    _ReservedFolder.Add(ToId(Drafts), Drafts);
-                    _ReservedFolder.Add(ToId(Sent), Sent);
-                    _ReservedFolder.Add(ToId(Spam), Spam);
-                    _ReservedFolder.Add(ToId(Trash), Trash);
-                } 
-                return _ReservedFolder; 
+                    _reservedFolder = new Dictionary<int, string>
+                    {
+                        {ToId(Inbox), Inbox},
+                        {ToId(Drafts), Drafts},
+                        {ToId(Sent), Sent},
+                        {ToId(Spam), Spam},
+                        {ToId(Trash), Trash}
+                    };
+                }
+                return _reservedFolder;
             }
         }
-         
+
         public Folder()
         {
-
         }
-          
+
         public Folder(string name)
         {
-            this.Name = name; 
+            this.Name = name;
         }
-          
+
         private int _id;
+
         public int Id
         {
             get
@@ -63,26 +61,24 @@ namespace Kooboo.Mail
             }
             set { _id = value; }
         }
-          
-        // name with heriachy. 
+
+        // name with heriachy.
         public string Name { get; set; }
 
         /// <summary>
         /// IMAP中的订阅概念会用到
         /// </summary>
         public bool Subscribed { get; set; } = true;
-          
+
         public static int ToId(string name)
         {
-            return Helper.IDHelper.ToInt(name);  
+            return Helper.IDHelper.ToInt(name);
         }
 
         public override int GetHashCode()
         {
             string unique = this.Name + this.Subscribed.ToString();
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
-
     }
-     
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -8,13 +8,13 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
 {
     // ABNF Syntax Format.
     //    fetch       = "FETCH" SP sequence-set SP("ALL" / "FULL" / "FAST" /
-    //                  fetch-att / "(" fetch-att*(SP fetch-att) ")") 
+    //                  fetch-att / "(" fetch-att*(SP fetch-att) ")")
     //fetch-att       = "ENVELOPE" / "FLAGS" / "INTERNALDATE" /
     //                  "RFC822" [".HEADER" / ".SIZE" / ".TEXT"] /
     //                  "BODY" ["STRUCTURE"] / "UID" /
     //                  "BODY" section["<" number "." nz - number ">"] /
     //                  "BODY.PEEK" section["<" number "." nz - number ">"]
-     
+
     public class CommandReader
     {
         internal string WholeText { get; set; }
@@ -26,9 +26,9 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
         internal int CurrentIndex { get; set; } = 0;
 
         private int _totallen;
+
         internal int TotalLen
         {
-
             get
             {
                 if (_totallen == default(int))
@@ -39,7 +39,6 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
                     }
                 }
                 return _totallen;
-
             }
             set
             {
@@ -47,10 +46,10 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
             }
         }
 
-        public CommandReader(string CommandText)
+        public CommandReader(string commandText)
         {
-            this.WholeText = CommandText;
-            this.TotalLen = this.WholeText.Length; 
+            this.WholeText = commandText;
+            this.TotalLen = this.WholeText.Length;
             this.ParseSequenceSet();
         }
 
@@ -63,7 +62,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
 
                 if (Lib.Helper.CharHelper.IsAscii(currentChar))
                 {
-                    return; // ASCII char only for body, not for sequence... this is an error... 
+                    return; // ASCII char only for body, not for sequence... this is an error...
                 }
 
                 if (Lib.Helper.CharHelper.isSpaceCharacters(currentChar))
@@ -88,28 +87,21 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
             if (!string.IsNullOrEmpty(this.SequenceSet))
             {
                 string newwholetext = this.WholeText.Substring(this.CurrentIndex);
-                this.CurrentIndex = 0; 
+                this.CurrentIndex = 0;
 
                 if (string.IsNullOrEmpty(newwholetext))
                 {
-                    newwholetext = "FULL"; 
+                    newwholetext = "FULL";
                 }
 
-                newwholetext = newwholetext.Trim(); 
+                newwholetext = newwholetext.Trim();
                 if (newwholetext.StartsWith("("))
                 {
-                   if (newwholetext.EndsWith(")"))
-                    {
-                        newwholetext = newwholetext.Substring(1, newwholetext.Length - 2); 
-                    }
-                   else
-                    {
-                        newwholetext = newwholetext.Substring(1); 
-                    }
+                    newwholetext = newwholetext.EndsWith(")") ? newwholetext.Substring(1, newwholetext.Length - 2) : newwholetext.Substring(1);
                 }
 
                 this.TotalLen = newwholetext.Length;
-                this.WholeText = newwholetext; 
+                this.WholeText = newwholetext;
             }
         }
 
@@ -132,7 +124,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
             return true;
         }
 
-        internal string ReadToNext(char StartChar, char EndChar, int index)
+        internal string ReadToNext(char startChar, char endChar, int index)
         {
             string result = null;
 
@@ -140,14 +132,14 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
             {
                 var currentChar = this.WholeText[index];
 
-                if (currentChar == StartChar)
+                if (currentChar == startChar)
                 {
                     index += 1;
                     continue;
                 }
-                else if (currentChar == EndChar)
+                else if (currentChar == endChar)
                 {
-                    this.CurrentIndex = index; 
+                    this.CurrentIndex = index;
                     return result;
                 }
                 else
@@ -155,7 +147,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
                     result += currentChar;
                 }
                 index += 1;
-            } 
+            }
             return null;
         }
 
@@ -164,7 +156,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
             DataItem item = new DataItem();
             bool inSection = false;
 
-            int startread = this.CurrentIndex; 
+            int startread = this.CurrentIndex;
 
             while (CurrentIndex < TotalLen)
             {
@@ -211,26 +203,21 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
                             var seprators = ",;.".ToCharArray();
                             var partialParts = parts.Split(seprators, StringSplitOptions.RemoveEmptyEntries);
 
-                            if (partialParts.Count() > 0)
+                            if (partialParts.Any())
                             {
-                                int offset = 0;
-                                if (int.TryParse(partialParts[0], out offset))
+                                if (int.TryParse(partialParts[0], out var offset))
                                 {
-                                    item.Partial = new DataItem.Part();
-                                    item.Partial.OffSet = offset;
+                                    item.Partial = new DataItem.Part {OffSet = offset};
 
                                     if (partialParts.Count() > 1)
                                     {
-                                        int count = 0;
-
-                                        if (int.TryParse(partialParts[1], out count))
+                                        if (int.TryParse(partialParts[1], out var count))
                                         {
                                             item.Partial.Count = count;
                                         }
                                     }
                                 }
                             }
-                             
                         }
                         else if (Lib.Helper.CharHelper.isAlphanumeric(currentChar) || currentChar == '.')
                         {
@@ -239,15 +226,15 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
                     }
                     else
                     {
-                        if (currentChar == ']') // section end mark... 
-                        { 
-                            inSection = false;  
+                        if (currentChar == ']') // section end mark...
+                        {
+                            inSection = false;
                         }
                         else
                         {
                             if (currentChar == '(')
                             {
-                                // read para. 
+                                // read para.
                                 var paras = this.ReadToNext('(', ')', this.CurrentIndex);
                                 if (!string.IsNullOrWhiteSpace(paras))
                                 {
@@ -263,43 +250,43 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
                     CurrentIndex += 1;
                 }
             }
-            
+
             if (item.Name != null)
             {
                 return EmitItem(item, startread);
             }
             return null;
         }
-         
+
         private DataItem EmitItem(DataItem item, int startread)
         {
             string text = this.WholeText.Substring(startread, this.CurrentIndex - startread);
-            text = text.Trim();  
+            text = text.Trim();
             item.FullItemName = text;
-            return item; 
+            return item;
         }
 
         public List<DataItem> ReadAllDataItems()
         {
-            List<DataItem> items = new List<DataItem>(); 
-            var next = this.ReadDataItem(); 
+            List<DataItem> items = new List<DataItem>();
+            var next = this.ReadDataItem();
 
-            while(next !=null)
+            while (next != null)
             {
                 items.Add(next);
 
-                next = this.ReadDataItem(); 
+                next = this.ReadDataItem();
             }
 
-            return items;  
+            return items;
         }
 
         public class DataItem
-        {  
+        {
             // Data item or Marco name
             public string Name { get; set; }
 
-            // for body...    
+            // for body...
             public BodySection Section { get; set; }
 
             public Part Partial { get; set; }
@@ -320,15 +307,14 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
                     get; set;
                 }
             }
-              
+
             public string FullItemName
             {
-                get;set;
+                get; set;
             }
         }
     }
 }
-
 
 //6.4.5.  FETCH Command
 
@@ -360,14 +346,9 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
 //      used by itself, and not in conjunction with other macros or data
 //      items.
 
-
-
-
-
 //Crispin Standards Track[Page 54]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //      ALL
 //         Macro equivalent to: (FLAGS INTERNALDATE RFC822.SIZE ENVELOPE)
@@ -418,13 +399,9 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
 //         HEADER.FIELDS and HEADER.FIELDS.NOT are followed by a list of
 //         field-name (as defined in [RFC-2822]) names, and return a
 
-
-
 //Crispin                     Standards Track[Page 55]
 
-
 //RFC 3501                         IMAPv4 March 2003
-
 
 //         subset of the header.The subset returned by HEADER.FIELDS
 //         contains only those header fields with a field-name that
@@ -472,7 +449,6 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
 //       4.2.2.1    TEXT/PLAIN
 //       4.2.2.2    TEXT/RICHTEXT
 
-
 //         It is possible to fetch a substring of the designated text.
 //         This is done by appending an open angle bracket ("<"), the
 //         octet position of the first desired octet, a period, the
@@ -480,13 +456,9 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
 //         (">") to the part specifier.  If the starting octet is beyond
 //         the end of the text, an empty string is returned.
 
-
-
-
 //Crispin Standards Track [Page 56]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //         Any partial fetch that attempts to read beyond the end of the
 //         text is truncated as appropriate.  A partial fetch that starts
@@ -537,14 +509,9 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
 //      RFC822.SIZE
 //         The[RFC - 2822] size of the message.
 
-
-
-
 // Crispin                     Standards Track                    [Page 57]
 
 //RFC 3501                         IMAPv4 March 2003
-
-
 
 //       RFC822.TEXT
 //          Functionally equivalent to BODY[TEXT], differing in the syntax
@@ -553,7 +520,6 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
 
 //      UID
 //         The unique identifier for the message.
-
 
 //   Example:    C: A654 FETCH 2:4 (FLAGS BODY[HEADER.FIELDS(DATE FROM)])
 //               S: * 2 FETCH....

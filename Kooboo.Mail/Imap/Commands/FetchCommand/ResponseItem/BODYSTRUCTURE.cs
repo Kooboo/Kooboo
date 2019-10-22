@@ -1,14 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Kooboo.Mail.Imap.Commands.FetchCommand.CommandReader;
-
 using LumiSoft.Net.MIME;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using static Kooboo.Mail.Imap.Commands.FetchCommand.CommandReader;
 
 namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
 {
@@ -18,8 +15,8 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
         {
             get
             {
-                return "BODYSTRUCTURE"; 
-            } 
+                return "BODYSTRUCTURE";
+            }
         }
 
         public List<ImapResponse> Render(MailDb maildb, FetchMessage message, DataItem dataItem)
@@ -51,7 +48,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
                     ConstructParts(builder, child, includeExtensions);
                 }
 
-                if (entity.ContentType != null && entity.ContentType.SubType != null)
+                if (entity.ContentType?.SubType != null)
                 {
                     builder.SpaceNQuoted(entity.ContentType.SubType.ToUpperInvariant());
                 }
@@ -90,7 +87,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             // NOTE: all header fields and parameters must in ENCODED form !!!
 
             // Add contentTypeMainMediaType
-            if (entity.ContentType != null && entity.ContentType.Type != null)
+            if (entity.ContentType?.Type != null)
             {
                 builder.AppendQuoted(entity.ContentType.Type.ToUpperInvariant());
             }
@@ -100,7 +97,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             }
 
             // Add contentTypeSubMediaType
-            if (entity.ContentType != null && entity.ContentType.SubType != null)
+            if (entity.ContentType?.SubType != null)
             {
                 builder.SpaceNQuoted(entity.ContentType.SubType.ToUpperInvariant());
             }
@@ -171,11 +168,8 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             // contentLines ---> FOR ContentType: text/xxx ONLY ###
             if (entity.Body is MIME_b_Text)
             {
-
-
                 builder.Append(" ").Append(GetLines(entity).ToString());
             }
-
 
             #region BODYSTRUCTURE extention fields
 
@@ -194,7 +188,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
                 builder.AppendNil();
             }
 
-            #endregion
+            #endregion BODYSTRUCTURE extention fields
 
             builder.EndBracket();
         }

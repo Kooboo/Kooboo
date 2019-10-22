@@ -1,9 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System; 
-using System.Threading.Tasks;
+using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Smtp
 {
@@ -16,7 +16,7 @@ namespace Kooboo.Mail.Smtp
         {
             _tcpClient = new TcpClient(new IPEndPoint(ip, 0));
             _tcpClient.SendTimeout = 15000;
-            _tcpClient.ReceiveTimeout = 10000; 
+            _tcpClient.ReceiveTimeout = 10000;
         }
 
         public int Timeout
@@ -90,8 +90,8 @@ namespace Kooboo.Mail.Smtp
         {
             var reply = await Command("DATA", SmtpStatusCode.StartMailInput);
             if (!reply.Ok)
-                return reply; 
-            return await Data(DoubleDot(content) +   "\r\n.", SmtpStatusCode.Ok);
+                return reply;
+            return await Data(DoubleDot(content) + "\r\n.", SmtpStatusCode.Ok);
         }
 
         public static string DoubleDot(string content)
@@ -115,8 +115,8 @@ namespace Kooboo.Mail.Smtp
         }
 
         public void Release()
-        {                
-            this.Dispose(); 
+        {
+            this.Dispose();
         }
 
         private async Task<SmtpReply> Command(string command, SmtpStatusCode ok)
@@ -158,10 +158,7 @@ namespace Kooboo.Mail.Smtp
 
         private void LogRead(string message)
         {
-            if (Logger == null)
-                return;
-
-            Logger.LogRead(
+            Logger?.LogRead(
                 _tcpClient.Client.LocalEndPoint as IPEndPoint,
                 _tcpClient.Client.RemoteEndPoint as IPEndPoint,
                 message);
@@ -169,39 +166,27 @@ namespace Kooboo.Mail.Smtp
 
         private void LogWrite(string message)
         {
-            if (Logger == null)
-                return;
-
-            Logger.LogWrite(
-                _tcpClient.Client.LocalEndPoint as IPEndPoint, 
-                _tcpClient.Client.RemoteEndPoint as IPEndPoint, 
+            Logger?.LogWrite(
+                _tcpClient.Client.LocalEndPoint as IPEndPoint,
+                _tcpClient.Client.RemoteEndPoint as IPEndPoint,
                 message);
         }
 
         private void LogTryConnect(string host)
         {
-            if (Logger == null)
-                return;
-
-            Logger.LogTryConnect(host);
+            Logger?.LogTryConnect(host);
         }
 
         private void LogConnected()
         {
-            if (Logger == null)
-                return;
-
-            Logger.LogConnected(
+            Logger?.LogConnected(
                 _tcpClient.Client.LocalEndPoint as IPEndPoint,
                 _tcpClient.Client.RemoteEndPoint as IPEndPoint);
         }
 
         private void LogConnectionFailed()
         {
-            if (Logger == null)
-                return;
-
-            Logger.LogConnectionFailed();
+            Logger?.LogConnectionFailed();
         }
     }
 }

@@ -4,7 +4,7 @@ using DNS.Protocol;
 namespace DNS.Client {
     public class ResponseException : Exception {
         private static string Format(IResponse response) {
-            return string.Format("Invalid response received with code {0}", response.ResponseCode);
+            return $"Invalid response received with code {response.ResponseCode}";
         }
 
         public ResponseException() { }

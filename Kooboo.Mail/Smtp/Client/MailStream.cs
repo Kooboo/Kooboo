@@ -1,13 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Smtp
 {
@@ -66,7 +63,7 @@ namespace Kooboo.Mail.Smtp
                 return new ReadResult { Text = line, EndLine = line };
 
             var builder = new StringBuilder();
-            while (!isEndLine(line))    
+            while (!isEndLine(line))
             {
                 builder.AppendLine(line);
                 line = await ReadLineAsync();
@@ -96,14 +93,14 @@ namespace Kooboo.Mail.Smtp
                 throw new SocketException((int)SocketError.TimedOut);
         }
 
-        #endregion
+        #endregion Async
 
         #region Sync
 
         public string ReadLine()
         {
             return _reader.ReadLine();
-        }   
+        }
 
         public ReadResult ReadBeforeEnd(Func<string, bool> isEndLine)
         {
@@ -159,7 +156,7 @@ namespace Kooboo.Mail.Smtp
             _writer.Flush();
         }
 
-        #endregion
+        #endregion Sync
 
         public class ReadResult
         {

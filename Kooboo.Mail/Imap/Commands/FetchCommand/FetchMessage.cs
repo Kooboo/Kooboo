@@ -1,12 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 using LumiSoft.Net.Mail;
+using System.Text;
 
 namespace Kooboo.Mail.Imap.Commands.FetchCommand
 {
@@ -22,16 +17,10 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
         public int SeqNo { get; set; }
 
         private string _content;
+
         public string Content
         {
-            get
-            {
-                if (_content == null)
-                {
-                    _content = MailDb.Messages.GetContent(Message.Id);
-                }
-                return _content;
-            }
+            get { return _content ?? (_content = MailDb.Messages.GetContent(Message.Id)); }
             set
             {
                 _content = value;
@@ -39,29 +28,17 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand
         }
 
         private byte[] _bytes;
+
         public byte[] Bytes
         {
-            get
-            {
-                if (_bytes == null)
-                {
-                    _bytes = Encoding.UTF8.GetBytes(Content);
-                }
-                return _bytes;
-            }
+            get { return _bytes ?? (_bytes = Encoding.UTF8.GetBytes(Content)); }
         }
 
         private Mail_Message _parsed;
+
         public Mail_Message Parsed
         {
-            get
-            {
-                if (_parsed == null)
-                {
-                    _parsed = Mail_Message.ParseFromByte(Bytes);
-                }
-                return _parsed;
-            }
+            get { return _parsed ?? (_parsed = Mail_Message.ParseFromByte(Bytes)); }
         }
     }
 }

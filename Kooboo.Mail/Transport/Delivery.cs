@@ -1,12 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
 using Kooboo.Mail.Models;
-using Kooboo.Mail.Utility;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Transport
 {
@@ -19,31 +16,26 @@ namespace Kooboo.Mail.Transport
             _logger = Logging.LogProvider.GetLogger("smtp", "send");
         }
 
-        public static async Task<ActionResponse> Send(string MailFrom, string RcptTo, string MessageContent)
+        public static async Task<ActionResponse> Send(string mailFrom, string rcptTo, string messageContent)
         {
             try
             {
-                var result = await DoSend(MailFrom, RcptTo, MessageContent);
-                if (result.Success)
-                {
-                    _logger.LogInformation($"{MailFrom},{RcptTo},Delivered,");
-                }
-                else
-                {
-                    _logger.LogInformation($"{MailFrom},{RcptTo},Bounced,{result.Message}");
-                }
+                var result = await DoSend(mailFrom, rcptTo, messageContent);
+                _logger.LogInformation(result.Success
+                    ? $"{mailFrom},{rcptTo},Delivered,"
+                    : $"{mailFrom},{rcptTo},Bounced,{result.Message}");
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"{MailFrom},{RcptTo},Exception,{ex.Message}");
+                _logger.LogInformation($"{mailFrom},{rcptTo},Exception,{ex.Message}");
                 throw;
             }
         }
 
-        private static async Task<ActionResponse> DoSend(string MailFrom, string RcptTo, string MessageContent)
+        private static async Task<ActionResponse> DoSend(string mailFrom, string rcptTo, string messageContent)
         {
-            var setting = await  Settings.GetSendSetting(Data.AppSettings.ServerSetting, Data.AppSettings.IsOnlineServer, MailFrom, RcptTo);
+            var setting = await Settings.GetSendSetting(Data.AppSettings.ServerSetting, Data.AppSettings.IsOnlineServer, mailFrom, rcptTo);
 
             if (!setting.OkToSend)
             {
@@ -78,7 +70,7 @@ namespace Kooboo.Mail.Transport
                     return new ActionResponse() { Success = false, ShouldRetry = true, Message = msg };
                 }
 
-                return await Send(sendClient, MailFrom, RcptTo, MessageContent, setting);
+                return await Send(sendClient, mailFrom, rcptTo, messageContent, setting);
             }
         }
 
@@ -114,9 +106,9 @@ namespace Kooboo.Mail.Transport
                 client.Release();
                 return new ActionResponse() { Success = false, ShouldRetry = false, Message = reply.Reply };
             }
-              
+
             reply = await client.Data(content);
-                           
+
             if (!reply.Ok)
             {
                 client.Release();
@@ -124,17 +116,14 @@ namespace Kooboo.Mail.Transport
                 return new ActionResponse() { Success = false, ShouldRetry = false, Message = reply.Reply };
             }
 
-
             await client.Quit();
 
             return new ActionResponse() { Success = true };
         }
 
-
-
-        public static async Task Send(string mailfrom, List<string> RctpTos, string MessageBody)
-        {  
-            if (RctpTos == null || RctpTos.Count == 0)
+        public static async Task Send(string mailfrom, List<string> rctpTos, string messageBody)
+        {
+            if (rctpTos == null || rctpTos.Count == 0)
             {
                 return;
             }
@@ -162,24 +151,22 @@ namespace Kooboo.Mail.Transport
             //}
             //else
             //{
-
             //_logger.Log($"{mailfrom},{String.Join("|", RctpTos)},Queued");
 
-            foreach (var item in RctpTos)
+            foreach (var item in rctpTos)
             {
-                Kooboo.Mail.Queue.QueueManager.AddSendQueue(mailfrom, item, MessageBody);
+                Kooboo.Mail.Queue.QueueManager.AddSendQueue(mailfrom, item, messageBody);
             }
-
 
             await Kooboo.Mail.Queue.QueueManager.Execute();
             //}
         }
 
-        public static async Task NotifyFailure(string OrgMailFrom, string rcptto, string messagebody, string errorreason)
+        public static async Task NotifyFailure(string orgMailFrom, string rcptto, string messagebody, string errorreason)
         {
-            var emailbody = Utility.ComposeUtility.ComposeDeliveryFailed(OrgMailFrom, rcptto, messagebody, errorreason);
+            var emailbody = Utility.ComposeUtility.ComposeDeliveryFailed(orgMailFrom, rcptto, messagebody, errorreason);
 
-            var fromaddress = Utility.AddressUtility.GetAddress(OrgMailFrom);  // only to be sure. 
+            var fromaddress = Utility.AddressUtility.GetAddress(orgMailFrom);  // only to be sure.
 
             Message msg = Utility.MessageUtility.ParseMeta(emailbody);
 
@@ -203,9 +190,8 @@ namespace Kooboo.Mail.Transport
             }
             else
             {
-                await Send(msg.From, OrgMailFrom, emailbody);
+                await Send(msg.From, orgMailFrom, emailbody);
             }
         }
     }
-
 }

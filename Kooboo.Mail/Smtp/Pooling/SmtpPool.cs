@@ -1,10 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
 using System.Collections.Concurrent;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Smtp
@@ -35,8 +32,7 @@ namespace Kooboo.Mail.Smtp
         {
             var hostPool = EnsureHostPool(ip, host);
 
-            SmtpPoolItem result;
-            if (hostPool.TryDequeue(out result) && result.Client.Connected)
+            if (hostPool.TryDequeue(out var result) && result.Client.Connected)
             {
                 try
                 {
@@ -45,6 +41,7 @@ namespace Kooboo.Mail.Smtp
                 }
                 catch
                 {
+                    // ignored
                 }
             }
 
@@ -75,7 +72,6 @@ namespace Kooboo.Mail.Smtp
                 var hostPool = EnsureHostPool(item.IP, item.Host);
                 hostPool.Enqueue(item);
             }
-
         }
 
         private ConcurrentQueue<SmtpPoolItem> EnsureHostPool(string ip, string host)

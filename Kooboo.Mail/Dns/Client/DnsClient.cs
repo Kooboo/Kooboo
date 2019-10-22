@@ -12,12 +12,12 @@ namespace DNS.Client {
         private const int DEFAULT_PORT = 53;
         private static readonly Random RANDOM = new Random();
 
-        private IPEndPoint dns;
-        private IRequestResolver resolver;
+        private IPEndPoint _dns;
+        private IRequestResolver _resolver;
 
         public DnsClient(IPEndPoint dns, IRequestResolver resolver = null) {
-            this.dns = dns;
-            this.resolver = resolver == null ? new UdpRequestResolver(new TcpRequestResolver()) : resolver;
+            this._dns = dns;
+            this._resolver = resolver ?? new UdpRequestResolver(new TcpRequestResolver());
         }
 
         public DnsClient(IPAddress ip, int port = DEFAULT_PORT, IRequestResolver resolver = null) :
@@ -28,11 +28,11 @@ namespace DNS.Client {
 
         public ClientRequest FromArray(byte[] message) {
             Request request = Request.FromArray(message);
-            return new ClientRequest(dns, request, resolver);
+            return new ClientRequest(_dns, request, _resolver);
         }
 
         public ClientRequest Create(IRequest request = null) {
-            return new ClientRequest(dns, request, resolver);
+            return new ClientRequest(_dns, request, _resolver);
         }
 
         public async Task<IList<IPAddress>> Lookup(string domain, RecordType type = RecordType.A) {

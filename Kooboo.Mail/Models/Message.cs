@@ -1,37 +1,33 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks; 
-using Kooboo.Mail;
 
 namespace Kooboo.Mail
 {
     public class Message : IMailObject
     {
         public Message()
-        { 
-  
-        } 
+        {
+        }
 
         public int Id { get; set; }
 
         public string SmtpMessageId { get; set; }
 
-        // User id is not needed, because every user has access to his own mail storage only. 
+        // User id is not needed, because every user has access to his own mail storage only.
         public Guid UserId { get; set; }
-         
+
         public int AddressId { get; set; }
-        
+
         public bool OutGoing { get; set; }
-          
+
         public int FolderId { get; set; }
 
         /// <summary>
         /// The SMTP Mail From. The envelope address.
-        /// The return Address. 
+        /// The return Address.
         /// </summary>
         public string MailFrom { get; set; }
 
@@ -43,14 +39,14 @@ namespace Kooboo.Mail
 
         public string Cc { get; set; }
 
-        public string  Bcc { get; set; }
+        public string Bcc { get; set; }
 
         public string Subject { get; set; }
 
-        public long BodyPosition { get; set;  }
-      
+        public long BodyPosition { get; set; }
+
         public string Summary { get; set; }
-  
+
         public int Size { get; set; }
 
         public bool Read { get; set; }
@@ -61,11 +57,10 @@ namespace Kooboo.Mail
 
         public bool Flagged { get; set; }
 
-        public bool Recent { get; set; } = true; 
-         
-        
+        public bool Recent { get; set; } = true;
+
         private DateTime _creationtime;
- 
+
         public DateTime CreationTime
         {
             get
@@ -79,13 +74,12 @@ namespace Kooboo.Mail
             set
             {
                 _creationtime = DateTime.SpecifyKind(value, DateTimeKind.Utc);
-                _creationTimetick = default(long); 
+                _creationTimetick = default(long);
             }
         }
 
-   
         private long _creationTimetick;
- 
+
         public long CreationTimeTick
         {
             get
@@ -103,6 +97,7 @@ namespace Kooboo.Mail
         }
 
         private DateTime _date;
+
         public DateTime Date
         {
             get
@@ -117,41 +112,29 @@ namespace Kooboo.Mail
 
         public bool Draft
         {
-            get 
+            get
             {
                 return this.FolderId == Folder.ToId("Draft");
             }
         }
 
-        private List<Models.Attachment> _attachments; 
-        public List<Models.Attachment> Attachments {
-            get
-            {
-                if (_attachments ==  null)
-                {
-                    _attachments = new List<Models.Attachment>();
-                }
-                return _attachments; 
-            }
+        private List<Models.Attachment> _attachments;
+
+        public List<Models.Attachment> Attachments
+        {
+            get { return _attachments ?? (_attachments = new List<Models.Attachment>()); }
             set
             {
-                _attachments = value; 
+                _attachments = value;
             }
-        } 
+        }
 
         public bool HasAttachment
         {
             get
             {
-                if(_attachments !=null && _attachments.Count()>0)
-                {
-                    return true; 
-                }
-                return false; 
+                return _attachments != null && _attachments.Any();
             }
         }
-        
     }
-
-   
 }

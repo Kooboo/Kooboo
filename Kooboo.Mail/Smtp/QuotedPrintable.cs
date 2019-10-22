@@ -1,13 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Kooboo.Mail.Smtp
 {
-    public class QuotedPrintable 
+    public class QuotedPrintable
     {
         private const int MaxLineLength = 76;
         private const string SoftLinebreak = "=\r\n";
@@ -78,28 +75,27 @@ namespace Kooboo.Mail.Smtp
             return builder.ToString();
         }
 
-        static bool IsEqualChar(byte ch)
+        private static bool IsEqualChar(byte ch)
         {
             return ch == 61;
         }
 
-        static bool IsPrintableChar(byte ch)
+        private static bool IsPrintableChar(byte ch)
         {
             return (ch >= 33 && ch <= 126);
         }
 
-        static bool IsSpaceChar(byte ch)
+        private static bool IsSpaceChar(byte ch)
         {
             return (ch == 32 || ch == 9);
         }
 
-        static bool IsLinebreak(byte ch)
+        private static bool IsLinebreak(byte ch)
         {
             return (ch == 13 || ch == 10);
         }
     }
 }
-
 
 /*
       Rule #1: (General 8-bit representation) Any octet, except those

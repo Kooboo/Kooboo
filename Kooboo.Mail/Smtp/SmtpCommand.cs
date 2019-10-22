@@ -1,14 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Smtp
-{ 
-
+{
     public class SmtpCommand
     {
         public SmtpCommandName Name { get; set; }
@@ -17,114 +11,111 @@ namespace Kooboo.Mail.Smtp
 
         public string CommandLine { get; set; }
 
-        public static SmtpCommand Parse(string CommandLine)
+        public static SmtpCommand Parse(string commandLine)
         {
-            if (string.IsNullOrWhiteSpace(CommandLine))
+            if (string.IsNullOrWhiteSpace(commandLine))
             {
-                return new SmtpCommand() { Name = SmtpCommandName.UNKNOWN, CommandLine = CommandLine };
+                return new SmtpCommand() { Name = SmtpCommandName.UNKNOWN, CommandLine = commandLine };
             }
 
-            var scanner = new CommandScanner(CommandLine);
-            var token = scanner.ConsumeNext(); 
-             
+            var scanner = new CommandScanner(commandLine);
+            var token = scanner.ConsumeNext();
+
             if (token == null)
             {
-                return new SmtpCommand() { Name = SmtpCommandName.UNKNOWN, CommandLine = CommandLine };  
+                return new SmtpCommand() { Name = SmtpCommandName.UNKNOWN, CommandLine = commandLine };
             }
-            token = token.ToUpper(); 
+            token = token.ToUpper();
 
-            var result = new SmtpCommand() { CommandLine = CommandLine, Name = SmtpCommandName.UNKNOWN }; 
+            var result = new SmtpCommand() { CommandLine = commandLine, Name = SmtpCommandName.UNKNOWN };
 
             if (token == "HELO")
             {
                 result.Name = SmtpCommandName.HELO;
-                result.Value = scanner.ConsumeRest();  
+                result.Value = scanner.ConsumeRest();
             }
             else if (token == "EHLO")
             {
                 result.Name = SmtpCommandName.EHLO;
-                result.Value = scanner.ConsumeRest();  
+                result.Value = scanner.ConsumeRest();
             }
             else if (token == "AUTH")
             {
-                var next = scanner.ConsumeNext(); 
-                if (next !=null && next.ToUpper() == "LOGIN")
+                var next = scanner.ConsumeNext();
+                if (next != null && next.ToUpper() == "LOGIN")
                 {
                     result.Name = SmtpCommandName.AUTHLOGIN;
-                    result.Value = scanner.ConsumeRest();  
+                    result.Value = scanner.ConsumeRest();
                 }
             }
             else if (token == "MAIL")
             {
-                var next = scanner.ConsumeNext(); 
-                if (next !=null && next.ToUpper() == "FROM")
+                var next = scanner.ConsumeNext();
+                if (next != null && next.ToUpper() == "FROM")
                 {
                     result.Name = SmtpCommandName.MAILFROM;
-                    result.Value = scanner.ConsumeRestAfterComma();  
+                    result.Value = scanner.ConsumeRestAfterComma();
                 }
             }
             else if (token == "RCPT")
             {
-                var next = scanner.ConsumeNext(); 
-                if (next !=null && next.ToUpper() == "TO")
+                var next = scanner.ConsumeNext();
+                if (next != null && next.ToUpper() == "TO")
                 {
                     result.Name = SmtpCommandName.RCPTTO;
-                    result.Value = scanner.ConsumeRestAfterComma();  
+                    result.Value = scanner.ConsumeRestAfterComma();
                 }
             }
             else if (token == "DATA")
             {
                 result.Name = SmtpCommandName.DATA;
-                result.Value = scanner.ConsumeRest();  
+                result.Value = scanner.ConsumeRest();
             }
             else if (token == "QUIT")
             {
                 result.Name = SmtpCommandName.QUIT;
-                result.Value = scanner.ConsumeRest();  
+                result.Value = scanner.ConsumeRest();
             }
             else if (token == "RSET")
             {
                 result.Name = SmtpCommandName.RSET;
-                result.Value = scanner.ConsumeRest();  
+                result.Value = scanner.ConsumeRest();
             }
             else if (token == "HELP")
             {
                 result.Name = SmtpCommandName.HELP;
-                result.Value = scanner.ConsumeRest();  
+                result.Value = scanner.ConsumeRest();
             }
             else if (token == "VRFY")
             {
                 result.Name = SmtpCommandName.VRFY;
-                result.Value = scanner.ConsumeRest();  
+                result.Value = scanner.ConsumeRest();
             }
-             
+
             return result;
         }
-
     }
 
     public enum SmtpCommandName
     {
-        UNKNOWN =0,
-        HELO =1,
-        EHLO =2, 
-        MAILFROM =3,
-        RCPTTO =4,
-        DATA =5,
-        RSET=6,
-        TURN =7,
-        SIZE =8,
-        PIPELINING=9,
+        UNKNOWN = 0,
+        HELO = 1,
+        EHLO = 2,
+        MAILFROM = 3,
+        RCPTTO = 4,
+        DATA = 5,
+        RSET = 6,
+        TURN = 7,
+        SIZE = 8,
+        PIPELINING = 9,
         VRFY = 10,
-        HELP =11,
-        AUTHLOGIN =12,
-        QUIT =13,
+        HELP = 11,
+        AUTHLOGIN = 12,
+        QUIT = 13,
         BDAT = 14,
         ENDDOT = 15
     }
 }
-
-
 
 //HELO
 //Sent by a client to identify itself, usually with a domain name.

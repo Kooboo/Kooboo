@@ -35,12 +35,11 @@ namespace Kooboo.Mail
             }
         }
 
-        public static async Task<SendSetting> GetSendSetting(Data.Models.ServerSetting serverSetting, bool IsOnlineServer, string MailFrom, string RcptTo)
+        public static async Task<SendSetting> GetSendSetting(Data.Models.ServerSetting serverSetting, bool isOnlineServer, string mailFrom, string rcptTo)
         {
-
             SendSetting setting = new SendSetting();
 
-            if (IsOnlineServer)
+            if (isOnlineServer)
             {
                 if (HasDefineMta)
                 {
@@ -51,7 +50,6 @@ namespace Kooboo.Mail
                     setting.LocalIp = System.Net.IPAddress.Any;
                     setting.OkToSend = true;
                 }
-
                 else if (!string.IsNullOrEmpty(serverSetting.SmtpServerIP))
                 {
                     setting.UseKooboo = true;
@@ -70,12 +68,11 @@ namespace Kooboo.Mail
                     setting.OkToSend = false;
                     setting.ErrorMessage = "Email Sending is prevented";
                 }
-
             }
             else
             {
-                var mxs = await Kooboo.Mail.Utility.SmtpUtility.GetMxRecords(RcptTo);
-                if (mxs == null || mxs.Count() == 0)
+                var mxs = await Kooboo.Mail.Utility.SmtpUtility.GetMxRecords(rcptTo);
+                if (mxs == null || mxs.Count == 0)
                 {
                     setting.OkToSend = false;
                     setting.ErrorMessage = "Mx records not found";
@@ -85,9 +82,9 @@ namespace Kooboo.Mail
                     setting.OkToSend = true;
                     setting.Mxs = mxs;
 
-                    if (serverSetting.ReverseDns != null && serverSetting.ReverseDns.Count() > 0)
+                    if (serverSetting.ReverseDns != null && serverSetting.ReverseDns.Count > 0)
                     {
-                        var dns = serverSetting.ReverseDns[0];  //TODO: random it.  
+                        var dns = serverSetting.ReverseDns[0];  //TODO: random it.
                         setting.LocalIp = System.Net.IPAddress.Parse(dns.IP);
                         setting.HostName = dns.HostName;
                     }
@@ -100,14 +97,13 @@ namespace Kooboo.Mail
             }
             return setting;
         }
-         
+
         public static bool ForwardRequired
         {
             get
             {
-
-               return false; 
-             ///   return !HasDefineMta; 
+                return false;
+                //   return !HasDefineMta;
             }
         }
 

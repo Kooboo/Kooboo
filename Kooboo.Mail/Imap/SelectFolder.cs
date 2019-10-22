@@ -1,18 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap
 {
-   public class SelectFolder
-    {   
+    public class SelectFolder
+    {
         private MailDb mailDb { get; set; }
 
-        public  Models.MessageStat Stat { get; set; }
+        public Models.MessageStat Stat { get; set; }
 
         public int FolderId { get; set; }
 
@@ -20,15 +16,11 @@ namespace Kooboo.Mail.Imap
 
         public SelectFolder(string folder, MailDb maildb)
         {
-            if (folder == null)
-            {
-                throw new CommandException("BAD", "Folder not provided"); 
-            } 
-            this.mailDb =  maildb;
-            this.Folder = folder;
+            this.mailDb = maildb;
+            this.Folder = folder ?? throw new CommandException("BAD", "Folder not provided");
 
             var prasedfolder = Utility.FolderUtility.ParseFolder(folder);
-             
+
             var dbfolder = this.mailDb.Folders.Get(prasedfolder.FolderId);
 
             if (dbfolder == null)
@@ -37,9 +29,9 @@ namespace Kooboo.Mail.Imap
             }
 
             this.FolderId = prasedfolder.FolderId;
-            this.AddressId = prasedfolder.AddressId; 
-             
-            this.Stat =this.mailDb.Messages.GetStat(this.FolderId, this.AddressId);
+            this.AddressId = prasedfolder.AddressId;
+
+            this.Stat = this.mailDb.Messages.GetStat(this.FolderId, this.AddressId);
         }
 
         public List<int> EXPUNGE()
@@ -69,13 +61,13 @@ namespace Kooboo.Mail.Imap
              Note: In this example, messages 3, 4, 7, and 11 had the
              \Deleted flag set.  See the description of the EXPUNGE
              response for further explanation.
-     */   
-            var query = this.mailDb.Messages.Query().UseColumnData().Where(o => o.FolderId == this.FolderId).Where(o => o.Deleted == true); 
-             
+     */
+            var query = this.mailDb.Messages.Query().UseColumnData().Where(o => o.FolderId == this.FolderId).Where(o => o.Deleted == true);
+
             if (this.AddressId != default(int))
             {
-                query.Where(o => o.AddressId == this.AddressId); 
-            } 
+                query.Where(o => o.AddressId == this.AddressId);
+            }
             var all = query.SelectAll();
 
             List<int> result = new List<int>();
@@ -83,15 +75,15 @@ namespace Kooboo.Mail.Imap
             foreach (var item in all)
             {
                 var seqno = this.mailDb.Messages.GetSeqNo(this.Folder, this.Stat.LastestMsgId, this.Stat.Exists, item.Id);
-                result.Add(seqno); 
+                result.Add(seqno);
             }
-             
+
             foreach (var item in all)
             {
-                this.mailDb.Messages.Delete(item.Id); 
-            } 
-            this.Stat = this.mailDb.Messages.GetStat(this.FolderId, this.AddressId); 
-            return result; 
+                this.mailDb.Messages.Delete(item.Id);
+            }
+            this.Stat = this.mailDb.Messages.GetStat(this.FolderId, this.AddressId);
+            return result;
         }
 
         internal void Reset()
@@ -106,12 +98,9 @@ namespace Kooboo.Mail.Imap
         /// </summary>
         public string Folder
         {
-            get;set;
+            get; set;
         }
 
-        #endregion
-
+        #endregion Properties implementation
     }
-
-
 }

@@ -1,8 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.IO;
 using System.Collections.Concurrent;
+using System.IO;
 using System.Threading;
 
 namespace Kooboo.Mail.Smtp
@@ -27,8 +27,9 @@ namespace Kooboo.Mail.Smtp
                 var writer = GetWriter();
                 writer.WriteLine(DateTime.UtcNow.ToString("MM-dd HH:mm:ss.fff") + " " + message);
             }
-            catch   
+            catch
             {
+                // ignored
             }
         }
 
@@ -39,8 +40,7 @@ namespace Kooboo.Mail.Smtp
                 var writerDate = DateTime.Parse(key.Substring(key.IndexOf('-') + 1));
                 if (DateTime.UtcNow.Subtract(writerDate).TotalDays > 2)
                 {
-                    StreamWriter writer;
-                    _writers.TryRemove(key, out writer);
+                    _writers.TryRemove(key, out var writer);
                     writer.BaseStream.Dispose();
                     writer.Dispose();
                 }
@@ -51,8 +51,7 @@ namespace Kooboo.Mail.Smtp
         {
             // eg. Receive-2014-08-15.log
             var fileName = "Info-" + DateTime.UtcNow.ToString("yyyy-MM-dd");
-            StreamWriter writer;
-            if (_writers.TryGetValue(fileName, out writer))
+            if (_writers.TryGetValue(fileName, out var writer))
                 return writer;
 
             lock (_infoWriterCreationLock)
@@ -70,50 +69,47 @@ namespace Kooboo.Mail.Smtp
             }
         }
 
-        #endregion
+        #endregion Info
 
         #region Exception
 
         private static object _exceptionWriteLock = new object();
 
         /// <summary>
-        /// append the log record to the error.txt file. 
+        /// append the log record to the error.txt file.
         /// 
         /// </summary>
-        /// <param name="ErrorMessage"></param>
+        /// <param name="ex"></param>
         public static void LogError(Exception ex)
         {
             lock (_exceptionWriteLock)
             {
                 string logfolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs", "smtpserver");
-                string LogFile = System.IO.Path.Combine(logfolder, System.DateTime.Now.Year.ToString() + System.DateTime.Now.Month.ToString() + System.DateTime.Now.Day.ToString() + "r.txt");
+                string logFile = System.IO.Path.Combine(logfolder, System.DateTime.Now.Year.ToString() + System.DateTime.Now.Month.ToString() + System.DateTime.Now.Day.ToString() + "r.txt");
 
-
-                string directory = System.IO.Path.GetDirectoryName(LogFile);
+                string directory = System.IO.Path.GetDirectoryName(logFile);
                 if (!System.IO.Directory.Exists(directory))
                 {
                     System.IO.Directory.CreateDirectory(directory);
                 }
 
-
-                if (!System.IO.File.Exists(LogFile))
+                if (!System.IO.File.Exists(logFile))
                 {
-                    using (StreamWriter w = new StreamWriter(LogFile))
+                    using (StreamWriter w = new StreamWriter(logFile))
                     {
                         OutputException(w, ex);
                     }
                 }
                 else
                 {
-                    using (StreamWriter w = new StreamWriter(LogFile, true))
+                    using (StreamWriter w = new StreamWriter(logFile, true))
                     {
                         OutputException(w, ex);
                         // Close the writer and underlying file.
                     }
                 }
-
             }
-            //TODO: implements Email notification. 
+            //TODO: implements Email notification.
         }
 
         private static void OutputException(StreamWriter w, Exception ex)
@@ -128,6 +124,6 @@ namespace Kooboo.Mail.Smtp
             w.WriteLine(output);
         }
 
-        #endregion
+        #endregion Exception
     }
 }

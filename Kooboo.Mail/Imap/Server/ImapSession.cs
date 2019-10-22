@@ -1,25 +1,23 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using LumiSoft.Net;
+using LumiSoft.Net.AUTH;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Security.Principal;
 using System.Security.Authentication;
-
-using LumiSoft.Net.AUTH;
-using LumiSoft.Net;
+using System.Security.Principal;
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap
 {
     public class ImapSession
-    {     
+    {
         public ImapSession(ImapServer server, TcpClient client)
         {
             Server = server;
-            TcpClient = client; 
+            TcpClient = client;
         }
 
         public ImapServer Server { get; private set; }
@@ -29,16 +27,10 @@ namespace Kooboo.Mail.Imap
         public ImapStream Stream { get; set; }
 
         private List<string> _capabilities;
+
         public List<string> Capabilities
         {
-            get
-            {
-                if (_capabilities == null)
-                {
-                    _capabilities = EnsureCapabilities();
-                }
-                return _capabilities;
-            }
+            get { return _capabilities ?? (_capabilities = EnsureCapabilities()); }
         }
 
         public bool IsAuthenticated
@@ -48,23 +40,16 @@ namespace Kooboo.Mail.Imap
                 return AuthenticatedUserIdentity != null;
             }
         }
-         
 
         public GenericIdentity AuthenticatedUserIdentity { get; set; }
 
         public bool IsSecureConnection { get; set; }
 
         private Dictionary<string, AUTH_SASL_ServerMechanism> _authentications;
+
         public Dictionary<string, AUTH_SASL_ServerMechanism> Authentications
         {
-            get
-            {
-                if (_authentications == null)
-                {
-                    _authentications = new Dictionary<string, AUTH_SASL_ServerMechanism>();
-                }
-                return _authentications;
-            }
+            get { return _authentications ?? (_authentications = new Dictionary<string, AUTH_SASL_ServerMechanism>()); }
             set
             {
                 _authentications = value;
@@ -74,6 +59,7 @@ namespace Kooboo.Mail.Imap
         public SelectFolder SelectFolder { get; set; }
 
         private MailDb _db;
+
         public MailDb MailDb
         {
             get
@@ -91,8 +77,7 @@ namespace Kooboo.Mail.Imap
                 }
                 return _db;
             }
-            set { _db = value;  }
-
+            set { _db = value; }
         }
 
         public async Task Start()
@@ -115,7 +100,7 @@ namespace Kooboo.Mail.Imap
                     var commandLine = await Stream.ReadCommandAsync();
                     if (commandLine == null)
                     {
-                        await Stream.WriteStatusAsync("BAD", "Error: Command not recognized."); 
+                        await Stream.WriteStatusAsync("BAD", "Error: Command not recognized.");
                     }
                     else
                     {
@@ -127,7 +112,7 @@ namespace Kooboo.Mail.Imap
             {
                 Close();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await Stream.WriteLineAsync("Local server error occured, bye!");
 
@@ -163,7 +148,7 @@ namespace Kooboo.Mail.Imap
 
         private List<string> EnsureCapabilities()
         {
-            /* RFC 3501 6.1.1. CAPABILITY Command.  
+            /* RFC 3501 6.1.1. CAPABILITY Command.
                 Example:  C: abcd CAPABILITY
                 S: * CAPABILITY IMAP4rev1 STARTTLS AUTH=GSSAPI LOGINDISABLED
                 S: abcd OK CAPABILITY completed
@@ -199,4 +184,3 @@ namespace Kooboo.Mail.Imap
         }
     }
 }
-

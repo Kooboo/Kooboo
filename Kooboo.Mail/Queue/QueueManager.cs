@@ -30,9 +30,10 @@ namespace Kooboo.Mail.Queue
 
         public static void AddQueue(object input)
         {
-            Kooboo.Data.Models.MailQueue value = new Data.Models.MailQueue();
-            value.TaskModelType = input.GetType().FullName;
-            value.JsonModel = Lib.Helper.JsonHelper.Serialize(input);
+            Kooboo.Data.Models.MailQueue value = new Data.Models.MailQueue
+            {
+                TaskModelType = input.GetType().FullName, JsonModel = Lib.Helper.JsonHelper.Serialize(input)
+            };
 
             QueueStore.AddQueue(value);   
         }

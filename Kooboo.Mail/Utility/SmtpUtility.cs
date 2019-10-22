@@ -1,21 +1,19 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using DNS.Client;
+using DNS.Protocol.ResourceRecords;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Net.NetworkInformation;
-using System.Threading.Tasks; 
-using DNS.Client;
-using DNS.Protocol.ResourceRecords;
-using System.Configuration;
+using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Utility
 {
-   public static class SmtpUtility
-    {  
-
+    public static class SmtpUtility
+    {
         public static string GetString(byte[] data)
         {
             var encodingresult = Lib.Helper.EncodingDetector.GetEmailEncoding(data);
@@ -43,19 +41,17 @@ namespace Kooboo.Mail.Utility
 
         public static async Task<List<string>> GetMxRecords(string RcptTo)
         {
-            string To = Utility.AddressUtility.GetAddress(RcptTo); 
-            int index = To.IndexOf("@");  
-            if (index >-1)
+            string to = Utility.AddressUtility.GetAddress(RcptTo);
+            int index = to.IndexOf("@");
+            if (index > -1)
             {
-                string domain = To.Substring(index + 1); 
-                var mxs = await DnsLookup.ResolveCachedMX(domain); 
-                return mxs.ToList(); 
-            } 
-            return null; 
+                string domain = to.Substring(index + 1);
+                var mxs = await DnsLookup.ResolveCachedMX(domain);
+                return mxs.ToList();
+            }
+            return null;
         }
-                 
     }
-
 
     public class DnsLookup
     {
@@ -87,15 +83,15 @@ namespace Kooboo.Mail.Utility
         {
             var key = "MXCache_" + domainName;
             CacheItem mxsItem = null;
-            if(DefaultCache.ContainsKey(key))
+            if (DefaultCache.ContainsKey(key))
             {
                 mxsItem = DefaultCache[key];
             }
 
-            if (mxsItem == null || mxsItem.CacheTime.Add(MXCacheExpire)>DateTime.UtcNow)
+            if (mxsItem == null || mxsItem.CacheTime.Add(MXCacheExpire) > DateTime.UtcNow)
             {
                 var mxs = await ResolveMX(domainName);
-                
+
                 lock (mxResolveLock)
                 {
                     if (mxsItem == null || mxsItem.CacheTime.Add(MXCacheExpire) > DateTime.UtcNow)
@@ -114,7 +110,6 @@ namespace Kooboo.Mail.Utility
                             DefaultCache.Add(key, mxsItem);
                         }
                     }
-                        
                 }
                 return mxs;
             }
@@ -183,12 +178,11 @@ namespace Kooboo.Mail.Utility
             return null;
         }
 
-        class CacheItem
+        private class CacheItem
         {
             public string[] MXs { get; set; }
 
             public DateTime CacheTime { get; set; }
         }
     }
-     
 }

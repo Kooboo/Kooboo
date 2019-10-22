@@ -1,14 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using LumiSoft.Net;
+using LumiSoft.Net.IMAP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-
-using LumiSoft.Net.IMAP;
-using LumiSoft.Net;
-
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -16,7 +13,7 @@ namespace Kooboo.Mail.Imap.Commands
     {
         public string AdditionalResponse
         {
-            get;set;
+            get; set;
         }
 
         public string CommandName
@@ -33,7 +30,6 @@ namespace Kooboo.Mail.Imap.Commands
             {
                 return true;
             }
-
         }
 
         public bool RequireFolder

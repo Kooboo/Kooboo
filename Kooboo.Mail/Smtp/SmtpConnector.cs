@@ -1,12 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Threading.Tasks;
-using System.Net;
-using System.Net.Sockets;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Security;
+using System.Net.Sockets;
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Smtp
 {
@@ -44,8 +44,7 @@ namespace Kooboo.Mail.Smtp
                     _stream = ssl;
                 }
                 _reader = new System.IO.StreamReader(_stream);
-                _writer = new System.IO.StreamWriter(_stream);
-                _writer.AutoFlush = true;
+                _writer = new System.IO.StreamWriter(_stream) {AutoFlush = true};
 
                 Kooboo.Mail.Smtp.SmtpSession session = new Smtp.SmtpSession(this.Client.Address.ToString());
 
@@ -54,16 +53,16 @@ namespace Kooboo.Mail.Smtp
 
                 var commandline = await _reader.ReadLineAsync();
                 while (commandline != null)
-                {      
+                {
                     var response = session.Command(commandline);
                     if (response.SendResponse)
                     {
-                        var responseline = response.Render();   
+                        var responseline = response.Render();
                         await _writer.WriteLineAsync(responseline);
                     }
 
                     if (response.SessionCompleted)
-                    {        
+                    {
                         await Kooboo.Mail.Transport.Incoming.Receive(session);
                         session.ReSet();
                     }
@@ -74,10 +73,10 @@ namespace Kooboo.Mail.Smtp
                         break;
                     }
 
-                    // When enter the session state, read till the end . 
+                    // When enter the session state, read till the end .
                     if (session.State == SmtpSession.CommandState.Data)
-                    {                  
-                        var reptcounts = session.Log.Keys.Where(o => o.Name == SmtpCommandName.RCPTTO).Count();
+                    {
+                        var reptcounts = session.Log.Keys.Count(o => o.Name == SmtpCommandName.RCPTTO);
 
                         if (!Kooboo.Data.Infrastructure.InfraManager.Test(session.OrganizationId, Data.Infrastructure.InfraType.Email, reptcounts))
                         {
@@ -101,19 +100,19 @@ namespace Kooboo.Mail.Smtp
 
                             var tos = session.Log.Keys.Where(o => o.Name == SmtpCommandName.RCPTTO);
 
-                            string subject = "TO: "; 
-                            if (tos !=null)
+                            string subject = "TO: ";
+                            if (tos != null)
                             {
                                 foreach (var item in tos)
                                 {
-                                    if (item !=null && !string.IsNullOrWhiteSpace(item.Value))
+                                    if (item != null && !string.IsNullOrWhiteSpace(item.Value))
                                     {
                                         subject += item.Value;
-                                    } 
+                                    }
                                 }
                             }
 
-                            Kooboo.Data.Infrastructure.InfraManager.Add(session.OrganizationId, Data.Infrastructure.InfraType.Email, reptcounts, subject); 
+                            Kooboo.Data.Infrastructure.InfraManager.Add(session.OrganizationId, Data.Infrastructure.InfraType.Email, reptcounts, subject);
 
                             session.ReSet();
                         }
@@ -126,15 +125,12 @@ namespace Kooboo.Mail.Smtp
                     }
 
                     commandline = await _reader.ReadLineAsync();
-
                 }
-
             }
             catch (Exception ex)
             {
                 exception = ex;
-                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace +"\r\n" +ex.Source);    
- 
+                Kooboo.Data.Log.Instance.Exception.Write(ex.Message + "\r\n" + ex.StackTrace + "\r\n" + ex.Source);
             }
 
             if (exception != null)
@@ -150,11 +146,11 @@ namespace Kooboo.Mail.Smtp
                 }
                 catch
                 {
+                    // ignored
                 }
             }
         }
 
-    
         private IPEndPoint CopyIPEndPoint(IPEndPoint ip)
         {
             return new IPEndPoint(ip.Address, ip.Port);

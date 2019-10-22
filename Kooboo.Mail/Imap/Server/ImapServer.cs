@@ -1,14 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
-
-using LumiSoft.Net;
-using Newtonsoft.Json;
+using System.Threading;
 
 namespace Kooboo.Mail.Imap
 {
@@ -69,10 +65,11 @@ namespace Kooboo.Mail.Imap
                     var tcpClient = await _listener.AcceptTcpClientAsync();
 
                     var session = new ImapSession(this, tcpClient);
-                    session.Start();
+                    await session.Start();
                 }
                 catch
                 {
+                    // ignored
                 }
             }
         }
@@ -82,15 +79,9 @@ namespace Kooboo.Mail.Imap
             if (_listener == null)
                 return;
 
-            if (_cancellationTokenSource != null)
-            {
-                _cancellationTokenSource.Cancel();
-            }
+            _cancellationTokenSource?.Cancel();
 
-            if (_listener != null)
-            {
-                _listener.Stop();
-            }
+            _listener?.Stop();
         }
     }
 }

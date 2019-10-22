@@ -1,9 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Kooboo.Mail
 {
@@ -73,7 +71,7 @@ namespace Kooboo.Mail
 
         public override string ToString()
         {
-            return String.Join(";", this.Select(o => String.Format("{0}={1}", o.Key, o.Value)));
+            return String.Join(";", this.Select(o => $"{o.Key}={o.Value}"));
         }
 
         public void ParseSelf(string str)
@@ -116,8 +114,7 @@ namespace Kooboo.Mail
             Server = splitted[0];
             if (splitted.Length > 1)
             {
-                int port;
-                if (Int32.TryParse(splitted[1], out port))
+                if (Int32.TryParse(splitted[1], out var port))
                 {
                     Port = port;
                 }

@@ -1,16 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Queue
 {
     public class DiskQueueStore
     {
-
         public HashSet<Guid> Retrys { get; set; }
 
         public DiskQueueStore(string rootpath)
@@ -100,12 +96,10 @@ namespace Kooboo.Mail.Queue
                         name = System.IO.Path.Combine(this.ErrorFolder, name);
                         System.IO.File.WriteAllText(name, text);
                     }
-
                 }
             }
             return result;
         }
-
 
         public void SendOk(Data.Models.MailQueue model)
         {
@@ -133,7 +127,6 @@ namespace Kooboo.Mail.Queue
                 }
 
                 return new SendFailResponse() { WillRetry = false, LogOk = true };
-
             }
             else
             {
@@ -141,7 +134,6 @@ namespace Kooboo.Mail.Queue
 
                 return new SendFailResponse() { WillRetry = true, LogOk = true };
             }
-
         }
 
         public void SendFailNoRetry(Data.Models.MailQueue model)
@@ -158,7 +150,6 @@ namespace Kooboo.Mail.Queue
                 System.IO.File.Move(file, GetBadMailFileName(model));
             }
         }
-
 
         public string GetIncomingFileName(Data.Models.MailQueue model)
         {
@@ -200,9 +191,8 @@ namespace Kooboo.Mail.Queue
                 filename = System.Guid.NewGuid().ToString() + ".mail";
                 path = System.IO.Path.Combine(this.SentFolder, filename);
                 return path;
-            }        
+            }
         }
-
     }
 
     public class SendFailResponse

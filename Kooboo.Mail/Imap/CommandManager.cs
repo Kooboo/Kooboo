@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using LumiSoft.Net;
 using System;
@@ -9,88 +9,79 @@ using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap.Commands
 {
-  public static   class CommandManager
+    public static class CommandManager
     {
-        private static List<ICommand> _list; 
+        private static List<ICommand> _list;
 
         private static List<ICommand> List
         {
             get
             {
-                if (_list == null)
+                return _list ?? (_list = new List<ICommand>
                 {
-                    // Common
-                    _list = new List<ICommand>();
-                    _list.Add(new LOGIN());
-                    _list.Add(new CAPABILITY());
-                    _list.Add(new STARTTLS());
-                    _list.Add(new LOGOUT());
-                    _list.Add(new CLOSE());
-                    _list.Add(new NOOP());
-                    _list.Add(new CHECK());
-
-                    // Folder
-                    _list.Add(new SELECT()); 
-                    _list.Add(new ListCommand());
-                    _list.Add(new LSUB());  
-                    _list.Add(new STATUS());
-                    _list.Add(new CREATE());
-                    _list.Add(new RENAME());
-                    _list.Add(new DELETE());
-                    _list.Add(new SUBSCRIBE());
-                    _list.Add(new UNSUBSCRIBE());
-
-                    // Message
-                    _list.Add(new UID());
-                    _list.Add(new FETCH());
-                    _list.Add(new STORE());
-                    _list.Add(new COPY());
-                    _list.Add(new APPEND());
-                    _list.Add(new EXPUNGE());
-                    _list.Add(new SEARCHCmd());
-
-                }
-                return _list; 
-            } 
+                    new LOGIN(),
+                    new CAPABILITY(),
+                    new STARTTLS(),
+                    new LOGOUT(),
+                    new CLOSE(),
+                    new NOOP(),
+                    new CHECK(),
+                    new SELECT(),
+                    new ListCommand(),
+                    new LSUB(),
+                    new STATUS(),
+                    new CREATE(),
+                    new RENAME(),
+                    new DELETE(),
+                    new SUBSCRIBE(),
+                    new UNSUBSCRIBE(),
+                    new UID(),
+                    new FETCH(),
+                    new STORE(),
+                    new COPY(),
+                    new APPEND(),
+                    new EXPUNGE(),
+                    new SEARCHCmd()
+                });
+            }
         }
-        
 
-        public static ICommand GetCommand(string CmdName)
+        public static ICommand GetCommand(string cmdName)
         {
-            return List.Find(o => o.CommandName == CmdName.ToUpper());  
+            return List.Find(o => o.CommandName == cmdName.ToUpper());
         }
 
-        public static async Task Execute(ImapSession session, string RequestTag, string CommandName, string arg)
-        {  
-            var command = GetCommand(CommandName);
+        public static async Task Execute(ImapSession session, string requestTag, string commandName, string arg)
+        {
+            var command = GetCommand(commandName);
 
             if (command == null)
             {
-                await ResponseEnd(session, RequestTag, "NO",  CommandName +  " Command Not Supported");
-                return; 
-            }
-
-           if (command.RequireAuth && !session.IsAuthenticated)
-            {
-                await ResponseEnd(session, RequestTag, "NO", CommandName +  " Authentication required");
-                return; 
-            }
-
-           if (command.RequireFolder &&  session.SelectFolder == null)
-            {
-                await ResponseEnd(session, RequestTag, "NO", CommandName + " Command requires Select state");
+                await ResponseEnd(session, requestTag, "NO", commandName + " Command Not Supported");
                 return;
             }
-            
-           if (command.RequireTwoPartCommand)
-            {  
+
+            if (command.RequireAuth && !session.IsAuthenticated)
+            {
+                await ResponseEnd(session, requestTag, "NO", commandName + " Authentication required");
+                return;
+            }
+
+            if (command.RequireFolder && session.SelectFolder == null)
+            {
+                await ResponseEnd(session, requestTag, "NO", commandName + " Command requires Select state");
+                return;
+            }
+
+            if (command.RequireTwoPartCommand)
+            {
                 string[] parts = TextUtils.SplitQuotedString(arg, ' ', true);
                 if (parts.Length != 2)
                 {
-                    await ResponseEnd(session, RequestTag, "BAD", "Error in arguments, " + arg);  
+                    await ResponseEnd(session, requestTag, "BAD", "Error in arguments, " + arg);
                     return;
-                } 
-            } 
+                }
+            }
 
             try
             {
@@ -102,41 +93,39 @@ namespace Kooboo.Mail.Imap.Commands
                 {
                     message.Append(command.AdditionalResponse).Append(" ");
                 }
-                message.Append(CommandName).Append(" Command Completed!");
+                message.Append(commandName).Append(" Command Completed!");
 
-                await ResponseEnd(session, RequestTag, "OK", message.ToString());
-
+                await ResponseEnd(session, requestTag, "OK", message.ToString());
             }
             catch (StartTlsException)
             {
-                await session.Stream.WriteLineAsync($"{RequestTag} OK Begin TLS negotiation now");
+                await session.Stream.WriteLineAsync($"{requestTag} OK Begin TLS negotiation now");
 
                 await session.StartSecureConnection();
             }
             catch (SessionCloseException ex)
             {
                 await SendResponse(session, ex.Response);
-                await ResponseEnd(session, RequestTag, "OK", $"{CommandName} Command Completed!");
+                await ResponseEnd(session, requestTag, "OK", $"{commandName} Command Completed!");
                 throw;
             }
             catch (CommandException ex)
             {
                 if (ex.Tag == null)
                 {
-                    ex.Tag = "BAD"; 
-                } 
-                await ResponseEnd(session, RequestTag, ex.Tag, ex.ErrorMessage);
+                    ex.Tag = "BAD";
+                }
+                await ResponseEnd(session, requestTag, ex.Tag, ex.ErrorMessage);
             }
             catch (Exception ex)
             {
-                await ResponseEnd(session, RequestTag, "BAD", ex.Message);
-            } 
+                await ResponseEnd(session, requestTag, "BAD", ex.Message);
+            }
         }
 
-         
-        public static Task ResponseEnd(ImapSession session, string RequestTag, string TagResult, string message)
+        public static Task ResponseEnd(ImapSession session, string requestTag, string tagResult, string message)
         {
-            return session.Stream.WriteLineAsync(RequestTag + " " + TagResult + " " + message);
+            return session.Stream.WriteLineAsync(requestTag + " " + tagResult + " " + message);
         }
 
         public static async Task SendResponse(ImapSession session, ImapResponse response)
@@ -153,11 +142,11 @@ namespace Kooboo.Mail.Imap.Commands
 
         public static async Task SendResponse(ImapSession session, List<ImapResponse> response)
         {
-            if (response != null && response.Count() > 0)
+            if (response != null && response.Any())
             {
                 foreach (var item in response)
                 {
-                    // send partial response..   
+                    // send partial response..
                     await SendResponse(session, item);
                 }
             }

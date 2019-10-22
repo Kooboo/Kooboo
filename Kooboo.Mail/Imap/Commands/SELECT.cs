@@ -1,11 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
-
-using LumiSoft.Net.IMAP;
 using LumiSoft.Net;
+using LumiSoft.Net.IMAP;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -16,8 +15,8 @@ namespace Kooboo.Mail.Imap.Commands
             get
             {
                 return "[READ-WRITE]";
-            } 
-            set { } 
+            }
+            set { }
         }
 
         public string CommandName
@@ -70,7 +69,7 @@ namespace Kooboo.Mail.Imap.Commands
                 }
             }
 
-            List<ImapResponse> Result = new List<ImapResponse>();
+            List<ImapResponse> result = new List<ImapResponse>();
 
             string foldername = TextUtils.UnQuoteString(IMAP_Utils.DecodeMailbox(args));
 
@@ -80,24 +79,23 @@ namespace Kooboo.Mail.Imap.Commands
 
             var stat = session.SelectFolder.Stat;
 
-            session.MailDb.Messages.UpdateRecentByMaxId(stat.LastestMsgId); 
+            session.MailDb.Messages.UpdateRecentByMaxId(stat.LastestMsgId);
 
-            Result.Add(new ImapResponse(ResultLine.EXISTS(stat.Exists)));
-            Result.Add(new ImapResponse(ResultLine.RECENT(stat.Recent)));  
+            result.Add(new ImapResponse(ResultLine.EXISTS(stat.Exists)));
+            result.Add(new ImapResponse(ResultLine.RECENT(stat.Recent)));
 
             if (stat.FirstUnSeen > -1)
             {
-                Result.Add(new ImapResponse(ResultLine.UNSEEN(stat.FirstUnSeen))); 
+                result.Add(new ImapResponse(ResultLine.UNSEEN(stat.FirstUnSeen)));
             }
 
-            Result.Add(new ImapResponse(ResultLine.UIDNEXT(stat.NextUid)));
+            result.Add(new ImapResponse(ResultLine.UIDNEXT(stat.NextUid)));
 
-            Result.Add(new ImapResponse(ResultLine.UIDVALIDAITY(stat.FolderUid)));
-             
-            Result.Add(new ImapResponse(ResultLine.FLAGS(Setting.SupportFlags.ToList())));
+            result.Add(new ImapResponse(ResultLine.UIDVALIDAITY(stat.FolderUid)));
 
-            return Task.FromResult(Result);
+            result.Add(new ImapResponse(ResultLine.FLAGS(Setting.SupportFlags.ToList())));
+
+            return Task.FromResult(result);
         }
-
     }
 }

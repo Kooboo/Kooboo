@@ -1,10 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Smtp
 {
@@ -12,10 +8,7 @@ namespace Kooboo.Mail.Smtp
     {
         public SmtpPoolItem(SmtpClient client, int allowedMails)
         {
-            if (client == null)
-                throw new ArgumentNullException();
-
-            Client = client;
+            Client = client ?? throw new ArgumentNullException();
             SentMails = 0;
             AllowedMails = allowedMails;
         }

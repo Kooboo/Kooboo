@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using LumiSoft.Net.MIME;
@@ -35,7 +35,7 @@ namespace Kooboo.Mail.Utility
                 }
             }
 
-            needToFix = needToFix | CheckNFixEntity(message);
+            needToFix |= CheckNFixEntity(message);
 
             if (needToFix)
             {
@@ -55,24 +55,23 @@ namespace Kooboo.Mail.Utility
 
         public static Kooboo.Mail.Message ParseMeta(string body)
         {
-            var MimeMsg = ParseMineMessage(body);
-            if (MimeMsg == null)
+            var mimeMsg = ParseMineMessage(body);
+            if (mimeMsg == null)
             {
                 return null;
             }
-            return ParseMeta(MimeMsg);
+            return ParseMeta(mimeMsg);
         }
 
-        public static string GetHtmlBody(MIME_Message MimeMsg)
+        public static string GetHtmlBody(MIME_Message mimeMsg)
         {
-            foreach (var item in MimeMsg.AllEntities)
+            foreach (var item in mimeMsg.AllEntities)
             {
                 if (item.ContentType != null)
                 {
                     if (Lib.Helper.StringHelper.IsSameValue(item.ContentType.Type, "text") && Lib.Helper.StringHelper.IsSameValue(item.ContentType.SubType, "html"))
                     {
-                        var btext = item.Body as MIME_b_Text;
-                        if (btext != null)
+                        if (item.Body is MIME_b_Text btext)
                         {
                             return btext.Text;
                         }
@@ -82,16 +81,15 @@ namespace Kooboo.Mail.Utility
             return null;
         }
 
-        internal static string GetTextBody(MIME_Message MimeMsg)
+        internal static string GetTextBody(MIME_Message mimeMsg)
         {
-            foreach (var item in MimeMsg.AllEntities)
+            foreach (var item in mimeMsg.AllEntities)
             {
                 if (item.ContentType != null)
                 {
                     if (Lib.Helper.StringHelper.IsSameValue(item.ContentType.Type, "text") && Lib.Helper.StringHelper.IsSameValue(item.ContentType.SubType, "plain"))
                     {
-                        var btext = item.Body as MIME_b_Text;
-                        if (btext != null)
+                        if (item.Body is MIME_b_Text btext)
                         {
                             return btext.Text;
                         }
@@ -101,16 +99,15 @@ namespace Kooboo.Mail.Utility
             return null;
         }
 
-        internal static string GetAnyTextBody(MIME_Message MimeMsg)
+        internal static string GetAnyTextBody(MIME_Message mimeMsg)
         {
-            foreach (var item in MimeMsg.AllEntities)
+            foreach (var item in mimeMsg.AllEntities)
             {
                 if (item.ContentType != null)
                 {
                     if (Lib.Helper.StringHelper.IsSameValue(item.ContentType.Type, "text"))
                     {
-                        var btext = item.Body as MIME_b_Text;
-                        if (btext != null)
+                        if (item.Body is MIME_b_Text btext)
                         {
                             return btext.Text;
                         }
@@ -120,16 +117,18 @@ namespace Kooboo.Mail.Utility
             return null;
         }
 
-        public static Kooboo.Mail.Message ParseMeta(MIME_Message MimeMsg)
+        public static Kooboo.Mail.Message ParseMeta(MIME_Message mimeMsg)
         {
-            Kooboo.Mail.Message message = new Message();
-            message.From = GetHeaderValue(MimeMsg, "from");
-            message.To = GetHeaderValue(MimeMsg, "to");
-            message.SmtpMessageId = GetHeaderValue(MimeMsg, "Message-Id");
-            message.Subject = GetHeaderValue(MimeMsg, "subject");
-            message.Date = GetSentDate(MimeMsg);
-            message.Attachments = ParseAttachment(MimeMsg);
-            message.Summary = ParseSummary(MimeMsg);
+            Kooboo.Mail.Message message = new Message
+            {
+                From = GetHeaderValue(mimeMsg, "from"),
+                To = GetHeaderValue(mimeMsg, "to"),
+                SmtpMessageId = GetHeaderValue(mimeMsg, "Message-Id"),
+                Subject = GetHeaderValue(mimeMsg, "subject"),
+                Date = GetSentDate(mimeMsg),
+                Attachments = ParseAttachment(mimeMsg),
+                Summary = ParseSummary(mimeMsg)
+            };
             return message;
         }
 
@@ -140,45 +139,42 @@ namespace Kooboo.Mail.Utility
             {
                 return LumiSoft.Net.MIME.MIME_Utils.ParseRfc2822DateTime(value).ToUniversalTime();
             }
-            return DateTime.UtcNow; 
+            return DateTime.UtcNow;
         }
 
         public static string GetHeaderValue(MIME_Message msg, string headername)
         {
             foreach (var item in msg.Header)
             {
-                var header = item as MIME_h_Unstructured;
-
-                if (header != null && Lib.Helper.StringHelper.IsSameValue(header.Name, headername))
+                if (item is MIME_h_Unstructured header && Lib.Helper.StringHelper.IsSameValue(header.Name, headername))
                 {
                     return header.Value;
                 }
-
             }
             return null;
         }
 
-        public static List<Models.Attachment> ParseAttachment(MIME_Message MineMessage)
+        public static List<Models.Attachment> ParseAttachment(MIME_Message mineMessage)
         {
             List<Mail.Models.Attachment> result = new List<Models.Attachment>();
-            foreach (var item in MineMessage.AllEntities)
+            foreach (var item in mineMessage.AllEntities)
             {
-                if (item.ContentDisposition != null && item.ContentDisposition.DispositionType != null && item.ContentDisposition.DispositionType.ToLower() == "attachment")
+                if (item.ContentDisposition?.DispositionType != null && item.ContentDisposition.DispositionType.ToLower() == "attachment")
                 {
-                    var attachmentbody = item.Body as LumiSoft.Net.MIME.MIME_b_SinglepartBase;
-
-                    if (attachmentbody != null)
+                    if (item.Body is MIME_b_SinglepartBase attachmentbody)
                     {
-                        Models.Attachment attach = new Models.Attachment();
-                        attach.FileName = item.ContentDisposition.Param_FileName;
-                        attach.Type = item.ContentType.Type;
-                        attach.SubType = item.ContentType.SubType;
+                        Models.Attachment attach = new Models.Attachment
+                        {
+                            FileName = item.ContentDisposition.Param_FileName,
+                            Type = item.ContentType.Type,
+                            SubType = item.ContentType.SubType
+                        };
 
                         long size = item.ContentDisposition.Param_Size;
 
                         if (size <= 0)
                         {
-                            var x = item.Body as LumiSoft.Net.MIME.MIME_b_SinglepartBase;
+                            var x = attachmentbody;
                             size = x.Data.Length;
                         }
                         attach.Size = size;
@@ -188,8 +184,6 @@ namespace Kooboo.Mail.Utility
                             result.Add(attach);
                         }
                     }
-
-
                 }
             }
             return result;
@@ -227,28 +221,25 @@ namespace Kooboo.Mail.Utility
             return null;
         }
 
-        public static byte[] GetFileBinary(string MessageBody, string FileName)
+        public static byte[] GetFileBinary(string messageBody, string fileName)
         {
-            return GetFileBinary(ParseMineMessage(MessageBody), FileName);
+            return GetFileBinary(ParseMineMessage(messageBody), fileName);
         }
 
-        public static byte[] GetFileBinary(MIME_Message MimeMsg, string FileName)
+        public static byte[] GetFileBinary(MIME_Message mimeMsg, string fileName)
         {
-            if (MimeMsg == null)
+            if (mimeMsg == null)
             {
                 return null;
             }
             List<Mail.Models.Attachment> result = new List<Models.Attachment>();
-            foreach (var item in MimeMsg.AllEntities)
+            foreach (var item in mimeMsg.AllEntities)
             {
-                if ((item.ContentDisposition != null && item.ContentDisposition.DispositionType != null && item.ContentDisposition.Param_FileName == FileName)
-                    || (item.ContentType != null && item.ContentType.Param_Name == FileName))
+                if ((item.ContentDisposition?.DispositionType != null && item.ContentDisposition.Param_FileName == fileName)
+                    || (item.ContentType != null && item.ContentType.Param_Name == fileName))
                 {
-                    var attachmentbody = item.Body as LumiSoft.Net.MIME.MIME_b_SinglepartBase;
-
-                    if (attachmentbody != null)
+                    if (item.Body is MIME_b_SinglepartBase attachmentbody)
                     {
-
                         if (attachmentbody.Data != null)
                         {
                             return attachmentbody.Data;
@@ -263,18 +254,18 @@ namespace Kooboo.Mail.Utility
             return null;
         }
 
-        public static string GetFileNameByContentId(MIME_Message MimeMsg, string ContentId)
+        public static string GetFileNameByContentId(MIME_Message mimeMsg, string contentId)
         {
-            if (MimeMsg == null)
+            if (mimeMsg == null)
             {
                 return null;
             }
             List<Mail.Models.Attachment> result = new List<Models.Attachment>();
-            foreach (var item in MimeMsg.AllEntities)
+            foreach (var item in mimeMsg.AllEntities)
             {
                 if (item.ContentID != null)
                 {
-                    if (item.ContentID == ContentId || item.ContentID == "<" + ContentId + ">")
+                    if (item.ContentID == contentId || item.ContentID == "<" + contentId + ">")
                     {
                         if (item.ContentDisposition != null)
                         {
@@ -290,9 +281,9 @@ namespace Kooboo.Mail.Utility
             return null;
         }
 
-        public static byte[] GenerateAllAttachmentZip(string MessageBody)
+        public static byte[] GenerateAllAttachmentZip(string messageBody)
         {
-            var mime = ParseMineMessage(MessageBody);
+            var mime = ParseMineMessage(messageBody);
             if (mime == null)
             {
                 return null;
@@ -301,7 +292,7 @@ namespace Kooboo.Mail.Utility
             var memorystream = new MemoryStream();
             var allattachments = ParseAttachment(mime);
 
-            if (allattachments == null || allattachments.Count() == 0)
+            if (allattachments == null || allattachments.Count == 0)
             {
                 return null;
             }
@@ -321,43 +312,37 @@ namespace Kooboo.Mail.Utility
                         filestream.Write(filebinary, 0, filebinary.Length);
                         filestream.Close();
                     }
-
                 }
-
             }
 
             return memorystream.ToArray();
         }
 
-        public static Kooboo.Mail.ViewModel.ContentViewModel GetContentViewModel(User user, int MsgId)
+        public static Kooboo.Mail.ViewModel.ContentViewModel GetContentViewModel(User user, int msgId)
         {
             var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user);
 
-            var msg = maildb.Messages.Get(MsgId);
+            var msg = maildb.Messages.Get(msgId);
             if (msg == null)
             {
                 return null;
             }
-            var model = new Kooboo.Mail.ViewModel.ContentViewModel();
 
-            model.Id = msg.Id;
-            model.From = GetAddressModel(msg.From);
-            model.To = GetAddressModels(msg.To);
-            model.Cc = GetAddressModels(msg.Cc);
-            model.Bcc = GetAddressModels(msg.Bcc);
-            model.Subject = msg.Subject;
-            if (msg.Date == default(DateTime))
+            var model = new Kooboo.Mail.ViewModel.ContentViewModel
             {
-                model.Date = msg.CreationTime; 
-            }
-            else
-            {
-                model.Date = msg.Date; 
-            }
- 
+                Id = msg.Id,
+                From = GetAddressModel(msg.From),
+                To = GetAddressModels(msg.To),
+                Cc = GetAddressModels(msg.Cc),
+                Bcc = GetAddressModels(msg.Bcc),
+                Subject = msg.Subject
+            };
+
+            model.Date = msg.Date == default(DateTime) ? msg.CreationTime : msg.Date;
+
             model.Attachments = msg.Attachments;
 
-            model.Html = Kooboo.Mail.Utility.ComposeUtility.RestoreHtmlOrText(user, MsgId);
+            model.Html = Kooboo.Mail.Utility.ComposeUtility.RestoreHtmlOrText(user, msgId);
 
             return model;
         }
@@ -385,13 +370,12 @@ namespace Kooboo.Mail.Utility
             }
 
             return model;
-
         }
 
-        private static List<ViewModel.AddressModel> GetAddressModels(List<string> Addresses)
+        private static List<ViewModel.AddressModel> GetAddressModels(List<string> addresses)
         {
             List<ViewModel.AddressModel> result = new List<ViewModel.AddressModel>();
-            foreach (var item in Addresses)
+            foreach (var item in addresses)
             {
                 var model = GetAddressModel(item);
                 result.Add(model);
@@ -406,8 +390,7 @@ namespace Kooboo.Mail.Utility
                 return new List<ViewModel.AddressModel>();
             }
 
-            List<char> seprator = new List<char>();
-            seprator.Add(';');
+            List<char> seprator = new List<char> {';'};
             var list = addressstring.Split(seprator.ToArray(), StringSplitOptions.RemoveEmptyEntries);
             return GetAddressModels(list.ToList());
         }
@@ -423,8 +406,7 @@ namespace Kooboo.Mail.Utility
                 entity.ContentType.Param_Boundary = Guid.NewGuid().ToString().ToLower();
             }
 
-            var multipart = entity.Body as MIME_b_Multipart;
-            if (multipart != null)
+            if (entity.Body is MIME_b_Multipart multipart)
             {
                 foreach (MIME_Entity each in multipart.BodyParts)
                 {

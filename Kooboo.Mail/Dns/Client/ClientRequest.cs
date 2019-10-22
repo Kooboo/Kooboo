@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using DNS.Protocol;
 using DNS.Client.RequestResolver;
 using System.Threading.Tasks;
@@ -9,15 +11,15 @@ namespace DNS.Client {
     public class ClientRequest : IRequest {
         private const int DEFAULT_PORT = 53;
 
-        private IPEndPoint dns;
-        private IRequestResolver resolver;
-        private IRequest request;
+        private IPEndPoint _dns;
+        private IRequestResolver _resolver;
+        private IRequest _request;
         public IPEndPoint RemoteEndPoint { get; set; }
 
         public ClientRequest(IPEndPoint dns, IRequest request = null, IRequestResolver resolver = null) {
-            this.dns = dns;
-            this.request = request == null ? new Request() : new Request(request);
-            this.resolver = resolver == null ? new UdpRequestResolver() : resolver;
+            this._dns = dns;
+            this._request = request == null ? new Request() : new Request(request);
+            this._resolver = resolver ?? new UdpRequestResolver();
         }
 
         public ClientRequest(IPAddress ip, int port = DEFAULT_PORT, IRequest request = null, IRequestResolver resolver = null) :
@@ -27,39 +29,39 @@ namespace DNS.Client {
             this(IPAddress.Parse(ip), port, request, resolver) { }
 
         public int Id {
-            get { return request.Id; }
-            set { request.Id = value; }
+            get { return _request.Id; }
+            set { _request.Id = value; }
         }
 
         public OperationCode OperationCode {
-            get { return request.OperationCode; }
-            set { request.OperationCode = value; }
+            get { return _request.OperationCode; }
+            set { _request.OperationCode = value; }
         }
 
         public bool RecursionDesired {
-            get { return request.RecursionDesired; }
-            set { request.RecursionDesired = value; }
+            get { return _request.RecursionDesired; }
+            set { _request.RecursionDesired = value; }
         }
 
         public IList<Question> Questions {
-            get { return request.Questions; }
+            get { return _request.Questions; }
         }
 
         public int Size {
-            get { return request.Size; }
+            get { return _request.Size; }
         }
 
         public byte[] ToArray() {
-            return request.ToArray();
+            return _request.ToArray();
         }
 
         public override string ToString() {
-            return request.ToString();
+            return _request.ToString();
         }
 
         public IPEndPoint Dns {
-            get { return dns; }
-            set { dns = value; }
+            get { return _dns; }
+            set { _dns = value; }
         }
 
         /// <summary>
@@ -73,7 +75,7 @@ namespace DNS.Client {
         /// <returns>The response received from server</returns>
         public async Task<ClientResponse> Resolve() {
             try {
-                ClientResponse response = await resolver.Request(this);
+                ClientResponse response = await _resolver.Request(this);
 
                 if (response.Id != this.Id) {
                     throw new ResponseException(response, "Mismatching request/response IDs");

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 
 namespace Kooboo.Mail.Imap.Commands
@@ -19,7 +19,6 @@ namespace Kooboo.Mail.Imap.Commands
             {
                 return true;
             }
-
         }
 
         public override bool RequireFolder
@@ -31,8 +30,6 @@ namespace Kooboo.Mail.Imap.Commands
         }
     }
 }
-
-
 
 //6.4.1.  CHECK Command
 
@@ -48,12 +45,9 @@ namespace Kooboo.Mail.Imap.Commands
 //      housekeeping associated with the mailbox (e.g., resolving the
 //      server's in-memory state of the mailbox with the state on its
 
-
-
 //Crispin Standards Track[Page 47]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //      disk) that is not normally executed as part of each command.  A
 //      checkpoint MAY take a non-instantaneous amount of real time to

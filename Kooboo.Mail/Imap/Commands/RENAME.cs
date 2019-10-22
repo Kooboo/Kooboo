@@ -1,13 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using LumiSoft.Net;
+using LumiSoft.Net.IMAP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using LumiSoft.Net.IMAP;
-using LumiSoft.Net;
-
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -15,7 +13,7 @@ namespace Kooboo.Mail.Imap.Commands
     {
         public string AdditionalResponse
         {
-            get;set;
+            get; set;
         }
 
         public string CommandName
@@ -32,7 +30,6 @@ namespace Kooboo.Mail.Imap.Commands
             {
                 return true;
             }
-
         }
 
         public bool RequireFolder
@@ -78,8 +75,6 @@ namespace Kooboo.Mail.Imap.Commands
     }
 }
 
-
-
 //6.2.3.  LOGIN Command
 
 //   Arguments:  user name
@@ -94,15 +89,9 @@ namespace Kooboo.Mail.Imap.Commands
 //      The LOGIN command identifies the client to the server and carries
 //      the plaintext password authenticating this user.
 
-
-
-
-
-
 //Crispin Standards Track[Page 30]
 
 //RFC 3501                         IMAPv4 March 2003
-
 
 //      A server MAY include a CAPABILITY response code in the tagged OK
 //      response to a successful LOGIN command in order to send

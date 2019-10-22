@@ -1,11 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using LumiSoft.Net.IMAP;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap
 {
@@ -19,13 +16,13 @@ namespace Kooboo.Mail.Imap
 
         public static string EXISTS(int MsgCount)
         {
-            // Example:  S: * 23 EXISTS 
+            // Example:  S: * 23 EXISTS
             return "* " + MsgCount.ToString() + " EXISTS";
         }
 
         public static string RECENT(int MsgCount)
         {
-            // Example:    S: * 5 RECENT 
+            // Example:    S: * 5 RECENT
             return "* " + MsgCount.ToString() + " RECENT";
         }
 
@@ -46,29 +43,9 @@ namespace Kooboo.Mail.Imap
 
         public static string FLAGS(List<string> flags)
         {
-            // Example:   S: * FLAGS (\Answered \Flagged \Deleted \Seen \Draft) 
-            string result = "* FLAGS ("; 
-            if (flags != null && flags.Count() > 0)
-            {
-                for (int i = 0; i < flags.Count; i++)
-                {
-                    var value = flags[i];
-                    if (!value.StartsWith("\\"))
-                    {
-                        flags[i] = "\\" + value;
-                    }
-                } 
-                result += string.Join(" ", flags);
-            }
-            result += ")";
-            return result; 
-        }
-
-        public static string PERMANENTFLAGS(List<string> flags)
-        {
-            // Example:   S: * FLAGS (\Answered \Flagged \Deleted \Seen \Draft) 
-            string result = "* PERMANENTFLAGS (";
-            if (flags != null && flags.Count() > 0)
+            // Example:   S: * FLAGS (\Answered \Flagged \Deleted \Seen \Draft)
+            string result = "* FLAGS (";
+            if (flags != null && flags.Any())
             {
                 for (int i = 0; i < flags.Count; i++)
                 {
@@ -83,7 +60,27 @@ namespace Kooboo.Mail.Imap
             result += ")";
             return result;
         }
-  
+
+        public static string PERMANENTFLAGS(List<string> flags)
+        {
+            // Example:   S: * FLAGS (\Answered \Flagged \Deleted \Seen \Draft)
+            string result = "* PERMANENTFLAGS (";
+            if (flags != null && flags.Any())
+            {
+                for (int i = 0; i < flags.Count; i++)
+                {
+                    var value = flags[i];
+                    if (!value.StartsWith("\\"))
+                    {
+                        flags[i] = "\\" + value;
+                    }
+                }
+                result += string.Join(" ", flags);
+            }
+            result += ")";
+            return result;
+        }
+
         public static string LIST(string FolderName, char delimiter, List<string> attributes)
         {
             //   Example:    C: A101 LIST "" ""
@@ -107,7 +104,7 @@ namespace Kooboo.Mail.Imap
             else
             {
                 string result = "* LIST (";
-                if (attributes != null && attributes.Count() > 0)
+                if (attributes != null && attributes.Any())
                 {
                     result += string.Join(" ", attributes);
                 }
@@ -116,13 +113,12 @@ namespace Kooboo.Mail.Imap
             }
         }
 
-
         public static string LSUB(string FolderName, char delimiter, List<string> attributes)
         {
             // Example:    S: * LSUB (\Noselect) "/" ~/Mail/foo
             string result = "* LSUB (";
 
-            if (attributes != null && attributes.Count() > 0)
+            if (attributes != null && attributes.Any())
             {
                 result += string.Join(" ", attributes);
             }
@@ -130,20 +126,19 @@ namespace Kooboo.Mail.Imap
             return result;
         }
 
-
         public static string SEARCH(List<int> searchResults)
         {
-            //7.2.5.SEARCH Response 
-            //Contents:   zero or more numbers 
+            //7.2.5.SEARCH Response
+            //Contents:   zero or more numbers
             //     The SEARCH response occurs as a result of a SEARCH or UID SEARCH
             //     command.The number(s)refer to those messages that match the
             //     search criteria.For SEARCH, these are message sequence numbers;
             //           for UID SEARCH, these are unique identifiers.Each number is
-            //           delimited by a space. 
+            //           delimited by a space.
             //     Example:    S: *SEARCH 2 3 6
 
             string result = "* SEARCH ";
-            if (searchResults != null && searchResults.Count() > 0)
+            if (searchResults != null && searchResults.Any())
             {
                 result += string.Join(" ", searchResults.ToArray());
             }
@@ -152,7 +147,7 @@ namespace Kooboo.Mail.Imap
 
         public static string CAPABILITY(List<string> abilities)
         {
-            // Example:    S: * CAPABILITY IMAP4rev1 STARTTLS AUTH=GSSAPI XPIG-LATIN 
+            // Example:    S: * CAPABILITY IMAP4rev1 STARTTLS AUTH=GSSAPI XPIG-LATIN
             string result = "* CAPABILITY";
             foreach (string capability in abilities)
             {

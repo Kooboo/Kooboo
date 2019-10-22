@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using LumiSoft.Net.MIME;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using static Kooboo.Mail.Imap.Commands.FetchCommand.CommandReader;
-using LumiSoft.Net.MIME;
 
 namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
 {
@@ -15,8 +15,8 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
         {
             get
             {
-                return "BODY"; 
-            } 
+                return "BODY";
+            }
         }
 
         public List<ImapResponse> Render(MailDb maildb, FetchMessage message, DataItem dataItem)
@@ -46,14 +46,17 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
                         case "MIME":
                             bytes = entity.Header.ToByte(new MIME_Encoding_EncodedWord(MIME_EncodedWordEncoding.B, Encoding.UTF8), Encoding.UTF8);
                             break;
+
                         case "HEADER":
                             bytes = entity.Header.ToByte(new MIME_Encoding_EncodedWord(MIME_EncodedWordEncoding.B, Encoding.UTF8), Encoding.UTF8);
                             bytes = bytes.Concat(new byte[] { 0x0D, 0x0A }).ToArray();
                             break;
+
                         case "HEADER.FIELDS":
                             bytes = PickHeaderToBytes(entity, new HashSet<string>(dataItem.Section.Paras, StringComparer.OrdinalIgnoreCase), true);
                             bytes = bytes.Concat(new byte[] { 0x0D, 0x0A }).ToArray();
                             break;
+
                         case "HEADER.FIELDS.NOT":
                             bytes = PickHeaderToBytes(entity, new HashSet<string>(dataItem.Section.Paras, StringComparer.OrdinalIgnoreCase), false);
                             bytes = bytes.Concat(new byte[] { 0x0D, 0x0A }).ToArray();
@@ -136,7 +139,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
             var builder = new StringBuilder();
             foreach (MIME_h header in entity.Header)
             {
-                if ((includeOrExclude && fieldNames.Contains(header.Name)) || 
+                if ((includeOrExclude && fieldNames.Contains(header.Name)) ||
                     (!includeOrExclude && !fieldNames.Contains(header.Name)))
                 {
                     builder.Append(header.ToString(new MIME_Encoding_EncodedWord(MIME_EncodedWordEncoding.B, Encoding.UTF8), Encoding.UTF8));
@@ -159,8 +162,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
 
             for (int i = 0; i < numbers.Length; i++)
             {
-                var parts = entity.Body as LumiSoft.Net.MIME.MIME_b_Multipart;
-                if (parts == null)
+                if (!(entity.Body is MIME_b_Multipart parts))
                     return null;
 
                 var num = numbers[i] - 1;
@@ -187,8 +189,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
                 int i = 0;
                 for (; i < specifiers.Length; i++)
                 {
-                    int num;
-                    if (!Int32.TryParse(specifiers[i], out num))
+                    if (!Int32.TryParse(specifiers[i], out var num))
                         break;
 
                     numbers.Add(num);
@@ -203,7 +204,7 @@ namespace Kooboo.Mail.Imap.Commands.FetchCommand.ResponseItem
         }
     }
 
-    static class MIME_b_Extensions
+    internal static class MIME_b_Extensions
     {
         public static byte[] ToByte(this MIME_b body)
         {

@@ -1,15 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using Kooboo.Mail.Imap.Commands.FetchCommand;
 using LumiSoft.Net;
 using LumiSoft.Net.IMAP;
-
-using Kooboo.Mail.Imap.Commands.FetchCommand;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap.Commands
 {
@@ -24,7 +21,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return "STATUS"; 
+                return "STATUS";
             }
         }
 
@@ -32,7 +29,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return true; 
+                return true;
             }
         }
 
@@ -40,7 +37,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
@@ -48,7 +45,7 @@ namespace Kooboo.Mail.Imap.Commands
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
@@ -73,13 +70,13 @@ namespace Kooboo.Mail.Imap.Commands
             var stat = folder.Stat;
 
             var commandReader = new CommandReader(parts[1]);
-            var AllDataItems = commandReader.ReadAllDataItems();
+            var allDataItems = commandReader.ReadAllDataItems();
 
             var builder = new StringBuilder()
                 .Append("* STATUS ").Append(folderArg).Append(" (");
 
             var first = true;
-            foreach (var each in AllDataItems)
+            foreach (var each in allDataItems)
             {
                 if (!first)
                 {
@@ -90,18 +87,23 @@ namespace Kooboo.Mail.Imap.Commands
                     case "MESSAGES":
                         builder.Append("MESSAGES ").Append(stat.Exists);
                         break;
+
                     case "RECENT":
                         builder.Append("RECENT ").Append(stat.Recent);
                         break;
+
                     case "UIDNEXT":
                         builder.Append("UIDNEXT ").Append(stat.NextUid);
                         break;
+
                     case "UIDVALIDITY":
                         builder.Append("UIDVALIDITY ").Append(stat.FolderUid);
                         break;
+
                     case "UNSEEN":
                         builder.Append("UNSEEN ").Append(stat.UnSeen);
                         break;
+
                     default:
                         break;
                 }

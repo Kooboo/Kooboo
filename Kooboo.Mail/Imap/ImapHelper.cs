@@ -1,17 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Mail.Imap
 {
     public static class ImapHelper
     {
-        public static List<Range> GetSequenceRange(string SequenceSet)
+        public static List<Range> GetSequenceRange(string sequenceSet)
         {
             /* RFC 3501
                seq-number     = nz-number / "*"
@@ -54,17 +52,16 @@ namespace Kooboo.Mail.Imap
 
              */
 
-
             List<Range> result = new List<Range>();
 
-            if (string.IsNullOrEmpty(SequenceSet))
+            if (string.IsNullOrEmpty(sequenceSet))
             {
                 return null;
             }
-            ///A sequence set depicts a range of numbers between start and end. The starting and ending numbers in the sequence are separated by a : (colon).In the example command with tag A2, mails with sequence numbers 2 to 4 are being requested.If the command is prefixed with UID, the sequence set is a range of unique identifiers of the email and not the sequence number.
+            //A sequence set depicts a range of numbers between start and end. The starting and ending numbers in the sequence are separated by a : (colon).In the example command with tag A2, mails with sequence numbers 2 to 4 are being requested.If the command is prefixed with UID, the sequence set is a range of unique identifiers of the email and not the sequence number.
 
             var seps = ",;".ToCharArray();
-            string[] values = SequenceSet.Split(seps, StringSplitOptions.RemoveEmptyEntries);
+            string[] values = sequenceSet.Split(seps, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var item in values)
             {
@@ -83,14 +80,9 @@ namespace Kooboo.Mail.Imap
                     {
                         int one = GetNumber(parts[0]);
                         int two = GetNumber(parts[1]);
-                        if (one < two)
-                        {
-                            result.Add(new Range() { LowBound = one, UpBound = two });
-                        }
-                        else
-                        {
-                            result.Add(new Range() { LowBound = two, UpBound = one });
-                        }
+                        result.Add(one < two
+                            ? new Range() {LowBound = one, UpBound = two}
+                            : new Range() {LowBound = two, UpBound = one});
                     }
                 }
                 else
@@ -106,31 +98,24 @@ namespace Kooboo.Mail.Imap
             return result;
         }
 
-        public static void CorrectRange(List<Range> range, SelectFolder Folder, bool IsUid = true)
+        public static void CorrectRange(List<Range> range, SelectFolder folder, bool isUid = true)
         {
-            // correct *, before = int.max; 
+            // correct *, before = int.max;
             foreach (var item in range)
             {
                 if (item.UpBound == int.MaxValue)
                 {
-                    item.UpBound = getStarNumber(Folder, IsUid);
+                    item.UpBound = getStarNumber(folder, isUid);
                 }
             }
         }
 
-        private static int getStarNumber(SelectFolder folder, bool Uid = false)
+        private static int getStarNumber(SelectFolder folder, bool uid = false)
         {
-            // See   RFC seq-number. 
-            if (Uid)
-            {
-                return folder.Stat.LastestMsgId;
-            }
-            else
-            {
-                return folder.Stat.Exists;
-            }
+            // See   RFC seq-number.
+            return uid ? folder.Stat.LastestMsgId : folder.Stat.Exists;
         }
-         
+
         public class Range
         {
             public int LowBound { get; set; }
@@ -144,27 +129,24 @@ namespace Kooboo.Mail.Imap
             {
                 return int.MaxValue;
             }
-            else
-            {
-                int value = 0;
-                int.TryParse(intstring, out value);
 
-                return value;
-            }
+            int.TryParse(intstring, out var value);
+
+            return value;
         }
 
-        public static bool IsSequenceSet(string SequenceSet)
+        public static bool IsSequenceSet(string sequenceSet)
         {
-            if (string.IsNullOrWhiteSpace(SequenceSet))
+            if (string.IsNullOrWhiteSpace(sequenceSet))
             {
                 return false;
             }
 
             bool hasnumber = false;
 
-            for (int i = 0; i < SequenceSet.Length; i++)
+            for (int i = 0; i < sequenceSet.Length; i++)
             {
-                var currentchar = SequenceSet[i];
+                var currentchar = sequenceSet[i];
 
                 if (Lib.Helper.CharHelper.isAsciiDigit(currentchar))
                 {
@@ -190,21 +172,20 @@ namespace Kooboo.Mail.Imap
             return ToImapFolders(user, allfolder);
         }
 
-        public static List<ImapFolder> GetAllFolder(User User)
+        public static List<ImapFolder> GetAllFolder(User user)
         {
-            var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(User);
+            var maildb = Kooboo.Mail.Factory.DBFactory.UserMailDb(user);
 
             var allfolder = maildb.Folders.All();
 
-            return ToImapFolders(User, allfolder);
+            return ToImapFolders(user, allfolder);
         }
 
         public static List<ImapFolder> ToImapFolders(User user, List<Folder> folders)
         {
-            var attributes = new List<string>();
-            attributes.Add("\\NoInferiors");
+            var attributes = new List<string> {"\\NoInferiors"};
 
-            List<ImapFolder> AllImapFolder = new List<ImapFolder>();
+            List<ImapFolder> allImapFolder = new List<ImapFolder>();
 
             foreach (var item in folders)
             {
@@ -220,7 +201,7 @@ namespace Kooboo.Mail.Imap
                 {
                     newfolder.Attributes = attributes;
                 }
-                AllImapFolder.Add(newfolder);
+                allImapFolder.Add(newfolder);
             }
 
             var orgdb = Factory.DBFactory.OrgDb(user.CurrentOrgId);
@@ -231,15 +212,15 @@ namespace Kooboo.Mail.Imap
 
             foreach (var item in defaults)
             {
-                if (!AllImapFolder.Contains(item))
+                if (!allImapFolder.Contains(item))
                 {
-                    AllImapFolder.Add(item);
+                    allImapFolder.Add(item);
                 }
             }
-            return AllImapFolder;
+            return allImapFolder;
         }
 
-        internal static List<ImapFolder> GetDefaultFolders(List<EmailAddress> Address)
+        internal static List<ImapFolder> GetDefaultFolders(List<EmailAddress> address)
         {
             List<ImapFolder> result = new List<ImapFolder>();
             foreach (var item in Folder.ReservedFolder)
@@ -259,9 +240,9 @@ namespace Kooboo.Mail.Imap
                     });
 
                     // Add address sub folders to Inbox
-                    if (Address != null && Address.Count() > 1)
+                    if (address != null && address.Count > 1)
                     {
-                        foreach (var add in Address)
+                        foreach (var add in address)
                         {
                             result.Add(new ImapFolder
                             {
@@ -302,27 +283,24 @@ namespace Kooboo.Mail.Imap
             return result;
         }
 
-
         public static string DateTimeToRfc2822(DateTime dateTime)
         {
             return dateTime.ToString("ddd, dd MMM yyyy HH':'mm':'ss ", System.Globalization.DateTimeFormatInfo.InvariantInfo) + dateTime.ToString("zzz").Replace(":", "");
         }
-
 
         public static DateTime ParseRfc2822Time(string timestring)
         {
             return DateTimeOffset.Parse(timestring).LocalDateTime.ToUniversalTime();
         }
 
-
-        public static List<Commands.FetchCommand.FetchMessage> GetMessagesBySeqNo(MailDb mailDb, SelectFolder Folder, List<Range> ranges)
+        public static List<Commands.FetchCommand.FetchMessage> GetMessagesBySeqNo(MailDb mailDb, SelectFolder folder, List<Range> ranges)
         {
-            CorrectRange(ranges, Folder, false);
+            CorrectRange(ranges, folder, false);
 
             var messages = new List<Commands.FetchCommand.FetchMessage>();
             foreach (var item in ranges)
             {
-                var dbMessages = mailDb.Messages.GetBySeqNos(Folder.Folder, Folder.Stat.LastestMsgId, Folder.Stat.Exists, item.LowBound, item.UpBound);
+                var dbMessages = mailDb.Messages.GetBySeqNos(folder.Folder, folder.Stat.LastestMsgId, folder.Stat.Exists, item.LowBound, item.UpBound);
                 var seqNo = item.LowBound;
                 messages.AddRange(dbMessages.Select(o => new Commands.FetchCommand.FetchMessage
                 {
@@ -335,21 +313,21 @@ namespace Kooboo.Mail.Imap
             return messages;
         }
 
-        public static List<Commands.FetchCommand.FetchMessage> GetMessagesByUid(MailDb mailDb, SelectFolder Folder, List<Range> ranges)
+        public static List<Commands.FetchCommand.FetchMessage> GetMessagesByUid(MailDb mailDb, SelectFolder folder, List<Range> ranges)
         {
-            CorrectRange(ranges, Folder, true);
+            CorrectRange(ranges, folder, true);
 
             var messages = new List<Commands.FetchCommand.FetchMessage>();
             foreach (var item in ranges)
             {
-                var messagesInRange = mailDb.Messages.ByUidRange(Folder.Folder, item.LowBound, item.UpBound);
+                var messagesInRange = mailDb.Messages.ByUidRange(folder.Folder, item.LowBound, item.UpBound);
                 foreach (var message in messagesInRange)
                 {
                     messages.Add(new Commands.FetchCommand.FetchMessage
                     {
                         MailDb = mailDb,
                         Message = message,
-                        SeqNo = mailDb.Messages.GetSeqNo(Folder.Folder, Folder.Stat.LastestMsgId, Folder.Stat.Exists, message.Id)
+                        SeqNo = mailDb.Messages.GetSeqNo(folder.Folder, folder.Stat.LastestMsgId, folder.Stat.Exists, message.Id)
                     });
                 }
             }
@@ -357,11 +335,7 @@ namespace Kooboo.Mail.Imap
             return messages;
         }
     }
-
-
-
 }
-
 
 public class ImapFolder : IEqualityComparer<ImapFolder>
 {
@@ -369,16 +343,10 @@ public class ImapFolder : IEqualityComparer<ImapFolder>
     public char Delimiter { get; set; }
 
     private List<string> _attributes;
+
     public List<string> Attributes
     {
-        get
-        {
-            if (_attributes == null)
-            {
-                _attributes = new List<string>();
-            }
-            return _attributes;
-        }
+        get { return _attributes ?? (_attributes = new List<string>()); }
         set
         {
             _attributes = value;
@@ -387,7 +355,7 @@ public class ImapFolder : IEqualityComparer<ImapFolder>
 
     public bool Equals(ImapFolder x, ImapFolder y)
     {
-        return Kooboo.Lib.Helper.StringHelper.IsSameValue(x.Name, y.Name);
+        return Kooboo.Lib.Helper.StringHelper.IsSameValue(x?.Name, y?.Name);
     }
 
     public int GetHashCode(ImapFolder obj)
@@ -395,4 +363,3 @@ public class ImapFolder : IEqualityComparer<ImapFolder>
         throw new NotImplementedException();
     }
 }
-

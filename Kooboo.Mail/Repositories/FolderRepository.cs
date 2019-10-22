@@ -1,43 +1,41 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using Kooboo.IndexedDB;
+using System.Collections.Generic;
 
 namespace Kooboo.Mail.Repositories
 {
-    public  class FolderRepository : RepositoryBase<Folder>
+    public class FolderRepository : RepositoryBase<Folder>
     {
-        private MailDb maildb { get; set; }
+        private MailDb Maildb { get; set; }
 
-        public FolderRepository(MailDb db) 
+        public FolderRepository(MailDb db)
             : base(db.Db)
         {
-            this.maildb = db; 
+            this.Maildb = db;
         }
 
         protected override ObjectStoreParameters StoreParameters
         {
             get
             {
-                ObjectStoreParameters paras = new ObjectStoreParameters(); 
+                ObjectStoreParameters paras = new ObjectStoreParameters();
                 paras.SetPrimaryKeyField<Folder>(o => o.Id);
                 return paras;
             }
         }
 
         public Folder Get(string name)
-        {  
+        {
             if (name.Contains("@"))
             {
                 var prasedFolder = Utility.FolderUtility.ParseFolder(name);
-                return Get(prasedFolder.FolderId); 
+                return Get(prasedFolder.FolderId);
             }
             else
             {
-                return Get(Folder.ToId(name)); 
-            }  
+                return Get(Folder.ToId(name));
+            }
         }
 
         public override Folder Get(int id)
@@ -47,50 +45,50 @@ namespace Kooboo.Mail.Repositories
                 return new Folder(Folder.ReservedFolder[id]);
             }
             return base.Get(id);
-        } 
+        }
 
-        public void Rename(Folder folder, string newName, bool Recursive= true)
+        public void Rename(Folder folder, string newName, bool Recursive = true)
         {
-            /// create new folder, move all message there.  
-            var newfolder = new Folder(newName); 
+            // create new folder, move all message there.
+            var newfolder = new Folder(newName);
 
-            if (Get(newfolder.Id) !=null)
+            if (Get(newfolder.Id) != null)
             {
-                return; // folder already exists. 
-            } 
-            this.AddOrUpdate(newfolder); 
-            var allmessage = this.maildb.Messages.Query().Where(o => o.FolderId == folder.Id).SelectAll();
+                return; // folder already exists.
+            }
+            this.AddOrUpdate(newfolder);
+            var allmessage = this.Maildb.Messages.Query().Where(o => o.FolderId == folder.Id).SelectAll();
             foreach (var item in allmessage)
             {
                 item.FolderId = newfolder.Id;
-                this.maildb.Messages.AddOrUpdate(item);  
-            } 
+                this.Maildb.Messages.AddOrUpdate(item);
+            }
             if (!Folder.ReservedFolder.ContainsKey(folder.Id))
             {
-                // not reserverd folder, remove it. 
-                this.Delete(folder.Id); 
+                // not reserverd folder, remove it.
+                this.Delete(folder.Id);
             }
-             
-            // get all children folder, and rename. 
+
+            // get all children folder, and rename.
             if (Recursive)
-            { 
+            {
                 foreach (var item in this.All())
                 {
                     if (item.Name.StartsWith(folder.Name + "/"))
                     {
                         string newname = newfolder.Name + "/" + item.Name.Substring(folder.Name.Length + 2);
-                        this.Rename(item, newname, false); 
-                    } 
+                        this.Rename(item, newname, false);
+                    }
                 }
             }
         }
 
         public void Delete(Folder folder)
-        { 
+        {
             if (Folder.ReservedFolder.ContainsKey(folder.Id))
             {
-                return; 
-            } 
+                return;
+            }
             Delete(folder.Id);
         }
 
@@ -98,11 +96,11 @@ namespace Kooboo.Mail.Repositories
         {
             var folder = new Folder
             {
-                Name = name 
+                Name = name
             };
             Add(folder);
         }
-         
+
         public void Subscribe(Folder folder)
         {
             folder.Subscribed = true;
@@ -114,15 +112,15 @@ namespace Kooboo.Mail.Repositories
             folder.Subscribed = false;
             Update(folder);
         }
-          
+
         public List<Folder> AllFolders()
         {
-            List<Folder> result = this.All(); 
+            List<Folder> result = this.All();
             foreach (var item in Folder.ReservedFolder)
             {
                 result.Add(new Folder(item.Value));
-            } 
-            return result;  
+            }
+            return result;
         }
     }
 }
