@@ -72,7 +72,7 @@ namespace Kooboo.Lib.Helper.EncodingHelper
                 return Input[index];
             };
 
-            /// 1. If the byte at position is one of 0x09(ASCII TAB), 0x0A(ASCII LF), 0x0C(ASCII FF), 0x0D(ASCII CR), 0x20(ASCII space), or 0x2F(ASCII /) then advance position to the next byte and redo this step.
+            // 1. If the byte at position is one of 0x09(ASCII TAB), 0x0A(ASCII LF), 0x0C(ASCII FF), 0x0D(ASCII CR), 0x20(ASCII space), or 0x2F(ASCII /) then advance position to the next byte and redo this step.
             var currentbyte = GetByte(Index);
             while (currentbyte == 0x09 || currentbyte == 0x0A || currentbyte == 0x0C || currentbyte == 0x0D || currentbyte == 0x20 || currentbyte == 0x2F)
             {
@@ -86,7 +86,7 @@ namespace Kooboo.Lib.Helper.EncodingHelper
                 Index += 1;
                 currentbyte = GetByte(Index);
 
-                /// 1. If the byte at position is one of 0x09(ASCII TAB), 0x0A(ASCII LF), 0x0C(ASCII FF), 0x0D(ASCII CR), 0x20(ASCII space), or 0x2F(ASCII /) then advance position to the next byte and redo this step.
+                // 1. If the byte at position is one of 0x09(ASCII TAB), 0x0A(ASCII LF), 0x0C(ASCII FF), 0x0D(ASCII CR), 0x20(ASCII space), or 0x2F(ASCII /) then advance position to the next byte and redo this step.
                 while (currentbyte == 0x09 || currentbyte == 0x0A || currentbyte == 0x0C || currentbyte == 0x0D || currentbyte == 0x20 || currentbyte == 0x2F)
                 {
                     Index += 1;
@@ -111,7 +111,7 @@ namespace Kooboo.Lib.Helper.EncodingHelper
                         currentbyte = GetByte(Index);
                     }
 
-                    if (bytes.Count() > 0)
+                    if (bytes.Any())
                     {
                         end = Index;
                         return System.Text.Encoding.ASCII.GetString(bytes.ToArray()).Trim();
@@ -141,7 +141,7 @@ namespace Kooboo.Lib.Helper.EncodingHelper
                         }
                     }
 
-                    if (bytes.Count() > 0)
+                    if (bytes.Any())
                     {
                         end = Index - 1;
                         return System.Text.Encoding.ASCII.GetString(bytes.ToArray()).Trim();

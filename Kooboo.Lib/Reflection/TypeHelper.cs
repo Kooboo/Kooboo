@@ -27,14 +27,9 @@ namespace Kooboo.Lib.Reflection
             return result;
         }
 
-        private static bool IsObjectName(string Name)
+        private static bool IsObjectName(string name)
         {
-            if (Name == "GetType" || Name == "ToString" || Name == "GetHashCode" || Name == "Equals" || Name == "ReferenceEquals")
-            {
-                return true;
-            }
-
-            return false;
+            return name == "GetType" || name == "ToString" || name == "GetHashCode" || name == "Equals" || name == "ReferenceEquals";
         }
 
         public static Type GetGenericType(Type typeinfo)
@@ -83,7 +78,7 @@ namespace Kooboo.Lib.Reflection
 
         public static List<Type> GetGenericTypes(Type typeinfo)
         {
-            List<Type> Result = new List<Type>();
+            List<Type> result = new List<Type>();
 
             if (typeinfo == null)
             {
@@ -92,7 +87,7 @@ namespace Kooboo.Lib.Reflection
             var argus = typeinfo.GetGenericArguments();
             if (argus != null && argus.Length > 0)
             {
-                Result.Add(argus[0]);
+                result.Add(argus[0]);
             }
 
             var basetype = typeinfo;
@@ -109,7 +104,7 @@ namespace Kooboo.Lib.Reflection
                 argus = basetype.GetGenericArguments();
                 if (argus != null && argus.Length > 0)
                 {
-                    Result.Add(argus[0]);
+                    result.Add(argus[0]);
                 }
             }
 
@@ -120,16 +115,16 @@ namespace Kooboo.Lib.Reflection
                 argus = item.GetGenericArguments();
                 if (argus != null && argus.Length > 0)
                 {
-                    Result.Add(argus[0]);
+                    result.Add(argus[0]);
                 }
             }
 
-            return Result;
+            return result;
         }
 
-        public static MethodInfo GetRightMethodInfo(List<MethodInfo> MethodList, string MethodName, Guid MethodHash)
+        public static MethodInfo GetRightMethodInfo(List<MethodInfo> methodList, string methodName, Guid methodHash)
         {
-            var methods = MethodList.FindAll(o => o.Name == MethodName);
+            var methods = methodList.FindAll(o => o.Name == methodName);
             int count = methods.Count();
             if (count == 1)
             {
@@ -143,7 +138,7 @@ namespace Kooboo.Lib.Reflection
             {
                 foreach (var item in methods)
                 {
-                    if (TypeHelper.GetMethodSignatureHash(item) == MethodHash)
+                    if (TypeHelper.GetMethodSignatureHash(item) == methodHash)
                     {
                         return item;
                     }
@@ -221,7 +216,7 @@ namespace Kooboo.Lib.Reflection
         /// The the list of field or property of this object.
         /// This is used to generate like property list from like config type.
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="objectType"></param>
         /// <returns></returns>
         public static Dictionary<string, Type> GetPublicFieldOrProperties(this Type objectType)
         {
@@ -247,11 +242,11 @@ namespace Kooboo.Lib.Reflection
             return fieldlist;
         }
 
-        public static List<MemberInfo> GetPublicPropertyOrFields(Type ClassType)
+        public static List<MemberInfo> GetPublicPropertyOrFields(Type classType)
         {
             List<MemberInfo> result = new List<MemberInfo>();
 
-            foreach (var item in ClassType.GetProperties())
+            foreach (var item in classType.GetProperties())
             {
                 if (item.CanRead && item.CanWrite)
                 {
@@ -259,7 +254,7 @@ namespace Kooboo.Lib.Reflection
                 }
             }
 
-            foreach (var item in ClassType.GetFields())
+            foreach (var item in classType.GetFields())
             {
                 if (item.IsPublic && !item.IsStatic)
                 {
@@ -328,11 +323,11 @@ namespace Kooboo.Lib.Reflection
             if (!type.IsGenericType)
             { return false; }
 
-            var EnumeGenericDefi = typeof(IList<>);
+            var enumeGenericDefi = typeof(IList<>);
 
             foreach (var item in type.GetInterfaces())
             {
-                if (item.IsGenericType && item.GetGenericTypeDefinition() == EnumeGenericDefi)
+                if (item.IsGenericType && item.GetGenericTypeDefinition() == enumeGenericDefi)
                 {
                     return true;
                 }
@@ -346,7 +341,7 @@ namespace Kooboo.Lib.Reflection
             if (!type.IsGenericType)
             { return false; }
 
-            var EnumeGenericDefi = typeof(ICollection<>);
+            var enumeGenericDefi = typeof(ICollection<>);
             var enumEnumable = typeof(IEnumerable<>);
 
             foreach (var item in type.GetInterfaces())
@@ -354,7 +349,7 @@ namespace Kooboo.Lib.Reflection
                 if (item.IsGenericType)
                 {
                     var inter = item.GetGenericTypeDefinition();
-                    if (inter == EnumeGenericDefi || inter == enumEnumable)
+                    if (inter == enumeGenericDefi || inter == enumEnumable)
                     {
                         return true;
                     }
@@ -379,11 +374,11 @@ namespace Kooboo.Lib.Reflection
             return false;
         }
 
-        public static bool HasInterface(Type CheckType, Type InterfaceType)
+        public static bool HasInterface(Type checkType, Type interfaceType)
         {
-            foreach (var item in CheckType.GetInterfaces())
+            foreach (var item in checkType.GetInterfaces())
             {
-                if (item == InterfaceType)
+                if (item == interfaceType)
                 {
                     return true;
                 }
@@ -391,20 +386,20 @@ namespace Kooboo.Lib.Reflection
             return false;
         }
 
-        public static bool HasGenericInterface(Type CheckType, Type GenericInterfaceType)
+        public static bool HasGenericInterface(Type checkType, Type genericInterfaceType)
         {
-            if (CheckType.IsGenericType && CheckType.GetGenericTypeDefinition() == GenericInterfaceType)
+            if (checkType.IsGenericType && checkType.GetGenericTypeDefinition() == genericInterfaceType)
             {
                 return true;
             }
 
-            foreach (var item in CheckType.GetInterfaces())
+            foreach (var item in checkType.GetInterfaces())
             {
                 if (item.IsGenericType)
                 {
                     var genericdefinition = item.GetGenericTypeDefinition();
 
-                    if (genericdefinition == GenericInterfaceType)
+                    if (genericdefinition == genericInterfaceType)
                     {
                         return true;
                     }
@@ -413,12 +408,12 @@ namespace Kooboo.Lib.Reflection
             return false;
         }
 
-        public static bool HasBaseType(Type CheckType, Type BaseType)
+        public static bool HasBaseType(Type checkType, Type baseType)
         {
-            Type currentbase = CheckType.BaseType;
+            Type currentbase = checkType.BaseType;
             while (currentbase != null && currentbase != typeof(object))
             {
-                if (currentbase == BaseType)
+                if (currentbase == baseType)
                 {
                     return true;
                 }
@@ -427,54 +422,50 @@ namespace Kooboo.Lib.Reflection
             return false;
         }
 
-        public static bool IsOfBaseTypeOrInterface(Type CheckType, Type BaseOrInterface)
+        public static bool IsOfBaseTypeOrInterface(Type checkType, Type baseOrInterface)
         {
-            if (HasBaseType(CheckType, BaseOrInterface))
+            if (HasBaseType(checkType, baseOrInterface))
             {
                 return true;
             }
 
-            if (HasInterface(CheckType, BaseOrInterface))
+            if (HasInterface(checkType, baseOrInterface))
             {
                 return true;
             }
 
-            if (CheckType == BaseOrInterface)
-            {
-                return true;
-            }
-            return false;
+            return checkType == baseOrInterface;
         }
 
         /// <summary>
         /// Get the datatype within the eg LIST<T>
         /// </summary>
-        /// <param name="EnumberableType"></param>
+        /// <param name="enumberableType"></param>
         /// <returns></returns>
-        public static Type GetEnumberableType(Type EnumberableType)
+        public static Type GetEnumberableType(Type enumberableType)
         {
-            return EnumberableType.GetGenericArguments().Single();
+            return enumberableType.GetGenericArguments().Single();
         }
 
-        public static Type GetDictionaryKeyType(Type DictionaryType)
+        public static Type GetDictionaryKeyType(Type dictionaryType)
         {
-            return DictionaryType.GetGenericArguments()[0];
+            return dictionaryType.GetGenericArguments()[0];
         }
 
-        public static Type GetDictionaryValueType(Type DictionaryType)
+        public static Type GetDictionaryValueType(Type dictionaryType)
         {
-            return DictionaryType.GetGenericArguments()[1];
+            return dictionaryType.GetGenericArguments()[1];
         }
 
-        public static Type GetFieldType(Type ObjectType, string FieldName)
+        public static Type GetFieldType(Type objectType, string fieldName)
         {
-            var property = ObjectType.GetProperty(FieldName);
+            var property = objectType.GetProperty(fieldName);
             if (property != null)
             {
                 return property.PropertyType;
             }
 
-            var field = ObjectType.GetField(FieldName);
+            var field = objectType.GetField(fieldName);
             if (field != null)
             {
                 return field.FieldType;
@@ -482,26 +473,26 @@ namespace Kooboo.Lib.Reflection
             return null;
         }
 
-        public static Func<TValue, TFieldType> GetGetValue<TValue, TFieldType>(string FieldName)
+        public static Func<TValue, TFieldType> GetGetValue<TValue, TFieldType>(string fieldName)
         {
             ParameterExpression arg = Expression.Parameter(typeof(TValue));
-            Expression expr = Expression.PropertyOrField(arg, FieldName);
+            Expression expr = Expression.PropertyOrField(arg, fieldName);
             return Expression.Lambda<Func<TValue, TFieldType>>(expr, arg).Compile();
         }
 
-        public static Action<TValue, TFieldType> GetSetValue<TValue, TFieldType>(string FieldName)
+        public static Action<TValue, TFieldType> GetSetValue<TValue, TFieldType>(string fieldName)
         {
             ParameterExpression arg = Expression.Parameter(typeof(TValue));
-            Expression expr = Expression.PropertyOrField(arg, FieldName);
+            Expression expr = Expression.PropertyOrField(arg, fieldName);
             var valueExp = Expression.Parameter(typeof(TFieldType));
             return Expression.Lambda<Action<TValue, TFieldType>>(Expression.Assign(expr, valueExp), arg, valueExp).Compile();
         }
 
-        public static Action<TValue, object> GetSetObjectValue<TValue>(string FieldName, Type fieldtype)
+        public static Action<TValue, object> GetSetObjectValue<TValue>(string fieldName, Type fieldtype)
         {
             ParameterExpression arg = Expression.Parameter(typeof(TValue));
 
-            Expression expr = Expression.PropertyOrField(arg, FieldName);
+            Expression expr = Expression.PropertyOrField(arg, fieldName);
 
             var objectpara = Expression.Parameter(typeof(object));
 
@@ -512,24 +503,24 @@ namespace Kooboo.Lib.Reflection
             return Expression.Lambda<Action<TValue, object>>(Expression.Assign(expr, righttype), arg, objectpara).Compile();
         }
 
-        public static Func<TValue, object> GetGetObjectValue<TValue>(string FieldName)
+        public static Func<TValue, object> GetGetObjectValue<TValue>(string fieldName)
         {
             ParameterExpression arg = Expression.Parameter(typeof(TValue));
-            Expression expr = Expression.PropertyOrField(arg, FieldName);
+            Expression expr = Expression.PropertyOrField(arg, fieldName);
             return Expression.Lambda<Func<TValue, object>>(expr, arg).Compile();
         }
 
-        public static Action<object, object> GetSetObjectValue(string FieldName, Type ObjectType, Type fieldtype)
+        public static Action<object, object> GetSetObjectValue(string fieldName, Type objectType, Type fieldtype)
         {
             var objectpara = Expression.Parameter(typeof(object));
             var fieldpara = Expression.Parameter(typeof(object));
-            var rightObjectType = Expression.Convert(objectpara, ObjectType);
-            Expression expr = Expression.PropertyOrField(rightObjectType, FieldName);
+            var rightObjectType = Expression.Convert(objectpara, objectType);
+            Expression expr = Expression.PropertyOrField(rightObjectType, fieldName);
             var righttype = Expression.Convert(fieldpara, fieldtype);
             return Expression.Lambda<Action<object, object>>(Expression.Assign(expr, righttype), objectpara, fieldpara).Compile();
         }
 
-        public static Func<object, object> GetGetObjectValue(string FieldName, Type objecttype)
+        public static Func<object, object> GetGetObjectValue(string fieldName, Type objecttype)
         {
             ParameterExpression objectPara = Expression.Parameter(typeof(object));
 
@@ -538,19 +529,19 @@ namespace Kooboo.Lib.Reflection
             //Expression expr = Expression.PropertyOrField(expression, FieldName);
 
             Expression expr;
-            if (objecttype.GetField(FieldName) != null)
+            if (objecttype.GetField(fieldName) != null)
             {
-                expr = Expression.Field(expression, FieldName);
+                expr = Expression.Field(expression, fieldName);
             }
             else
             {
-                if (objecttype.GetProperty(FieldName) != null)
+                if (objecttype.GetProperty(fieldName) != null)
                 {
-                    expr = Expression.Property(expression, FieldName);
+                    expr = Expression.Property(expression, fieldName);
                 }
                 else
                 {
-                    var name = GetPropertyName(objecttype, FieldName);
+                    var name = GetPropertyName(objecttype, fieldName);
                     if (name != null)
                     {
                         expr = Expression.PropertyOrField(expression, name);
@@ -593,26 +584,26 @@ namespace Kooboo.Lib.Reflection
             return null;
         }
 
-        public static Action<object, TFieldType> GetSetFieldValue<TFieldType>(string FieldName, Type ObjectType)
+        public static Action<object, TFieldType> GetSetFieldValue<TFieldType>(string fieldName, Type objectType)
         {
             var objectpara = Expression.Parameter(typeof(object));
             var fieldpara = Expression.Parameter(typeof(TFieldType));
-            var rightObjectType = Expression.Convert(objectpara, ObjectType);
-            Expression expr = Expression.PropertyOrField(rightObjectType, FieldName);
+            var rightObjectType = Expression.Convert(objectpara, objectType);
+            Expression expr = Expression.PropertyOrField(rightObjectType, fieldName);
             var righttype = Expression.Convert(fieldpara, typeof(TFieldType));
             return Expression.Lambda<Action<object, TFieldType>>(Expression.Assign(expr, righttype), objectpara, fieldpara).Compile();
         }
 
-        public static Func<object, TFieldType> GetGetFieldValue<TFieldType>(string FieldName, Type objecttype)
+        public static Func<object, TFieldType> GetGetFieldValue<TFieldType>(string fieldName, Type objecttype)
         {
             ParameterExpression objectPara = Expression.Parameter(typeof(object));
             var expression = Expression.Convert(objectPara, objecttype);
-            Expression expr = Expression.PropertyOrField(expression, FieldName);
+            Expression expr = Expression.PropertyOrField(expression, fieldName);
 
             return Expression.Lambda<Func<object, TFieldType>>(expr, objectPara).Compile();
         }
 
-        public static Func<object[], object> CompileStaticFunc(Type InvokeClassType, string MethodName, List<Type> paratypes)
+        public static Func<object[], object> CompileStaticFunc(Type invokeClassType, string methodName, List<Type> paratypes)
         {
             var argsParam = Expression.Parameter(typeof(object[]));
 
@@ -633,7 +624,7 @@ namespace Kooboo.Lib.Reflection
                 }
             }
 
-            var methodCall = Expression.Call(InvokeClassType, MethodName, null, castedArgs);
+            var methodCall = Expression.Call(invokeClassType, methodName, null, castedArgs);
 
             Expression lambdaBody = Expression.Convert(methodCall, typeof(object));
 
@@ -694,7 +685,7 @@ namespace Kooboo.Lib.Reflection
             return Expression.Lambda<Action<object[]>>(methodCall, argsParam).Compile();
         }
 
-        public static Action<object[]> CompileStaticAction(Type InvokeClassType, string MethodName, List<Type> paratypes)
+        public static Action<object[]> CompileStaticAction(Type invokeClassType, string methodName, List<Type> paratypes)
         {
             var argsParam = Expression.Parameter(typeof(object[]), "arguments");
 
@@ -715,7 +706,7 @@ namespace Kooboo.Lib.Reflection
                 }
             }
 
-            var methodCall = Expression.Call(InvokeClassType, MethodName, null, castedArgs);
+            var methodCall = Expression.Call(invokeClassType, methodName, null, castedArgs);
 
             return Expression.Lambda<Action<object[]>>(methodCall, argsParam).Compile();
         }
@@ -777,10 +768,10 @@ namespace Kooboo.Lib.Reflection
             return Expression.Lambda<Action<object, object[]>>(methodCall, instanceParam, argsParam).Compile();
         }
 
-        public static Func<object, object[], object> CompileFunc(Type InvokeClassType, string MethodName, List<Type> paratypes)
+        public static Func<object, object[], object> CompileFunc(Type invokeClassType, string methodName, List<Type> paratypes)
         {
             var instanceParam = Expression.Parameter(typeof(object));
-            var castedInstance = Expression.TypeAs(instanceParam, InvokeClassType);
+            var castedInstance = Expression.TypeAs(instanceParam, invokeClassType);
 
             var argsParam = Expression.Parameter(typeof(object[]));
 
@@ -801,18 +792,18 @@ namespace Kooboo.Lib.Reflection
                 }
             }
 
-            var methodCall = Expression.Call(castedInstance, MethodName, null, castedArgs);
+            var methodCall = Expression.Call(castedInstance, methodName, null, castedArgs);
 
             Expression lambdaBody = Expression.Convert(methodCall, typeof(object));
 
             return Expression.Lambda<Func<object, object[], object>>(lambdaBody, instanceParam, argsParam).Compile();
         }
 
-        public static Action<object, object[]> CompileAction(Type InvokeClassType, string MethodName, List<Type> paratypes)
+        public static Action<object, object[]> CompileAction(Type invokeClassType, string methodName, List<Type> paratypes)
         {
             var argsParam = Expression.Parameter(typeof(object[]));
             var instanceParam = Expression.Parameter(typeof(object));
-            var castedInstance = Expression.TypeAs(instanceParam, InvokeClassType);
+            var castedInstance = Expression.TypeAs(instanceParam, invokeClassType);
 
             int counter = paratypes.Count;
             var castedArgs = new Expression[counter];
@@ -831,7 +822,7 @@ namespace Kooboo.Lib.Reflection
                 }
             }
 
-            var methodCall = Expression.Call(castedInstance, MethodName, null, castedArgs);
+            var methodCall = Expression.Call(castedInstance, methodName, null, castedArgs);
 
             return Expression.Lambda<Action<object, object[]>>(methodCall, instanceParam, argsParam).Compile();
         }
@@ -854,19 +845,19 @@ namespace Kooboo.Lib.Reflection
             return false;
         }
 
-        public static object ChangeType(object value, Type ConversionType)
+        public static object ChangeType(object value, Type conversionType)
         {
             if (value == null)
             {
-                if (ConversionType.IsValueType)
+                if (conversionType.IsValueType)
                 {
-                    return Activator.CreateInstance(ConversionType);
+                    return Activator.CreateInstance(conversionType);
                 }
             }
 
             object result;
 
-            if (ConversionType == typeof(String))
+            if (conversionType == typeof(String))
             {
                 if (!(value is String))
                 {
@@ -884,7 +875,7 @@ namespace Kooboo.Lib.Reflection
                     result = value;
                 }
             }
-            else if (ConversionType == typeof(Guid))
+            else if (conversionType == typeof(Guid))
             {
                 Guid id;
                 if (Guid.TryParse(value.ToString(), out id))
@@ -893,10 +884,9 @@ namespace Kooboo.Lib.Reflection
                 }
                 return default(Guid);
             }
-            else if (ConversionType == typeof(bool))
+            else if (conversionType == typeof(bool))
             {
-                bool ok;
-                if (bool.TryParse(value.ToString(), out ok))
+                if (bool.TryParse(value.ToString(), out var ok))
                 {
                     return ok;
                 }
@@ -904,7 +894,7 @@ namespace Kooboo.Lib.Reflection
             }
             else
             {
-                result = Convert.ChangeType(value, ConversionType);
+                result = Convert.ChangeType(value, conversionType);
             }
 
             return result;
@@ -916,12 +906,12 @@ namespace Kooboo.Lib.Reflection
             return (T)result;
         }
 
-        public static object ToObject(IDictionary<string, object> source, Type ObjectType)
+        public static object ToObject(IDictionary<string, object> source, Type objectType)
         {
-            var result = Activator.CreateInstance(ObjectType);
+            var result = Activator.CreateInstance(objectType);
 
-            var allproperties = _GetProperties(ObjectType);
-            var allfields = _GetFields(ObjectType);
+            var allproperties = _GetProperties(objectType);
+            var allfields = _GetFields(objectType);
 
             foreach (var item in source)
             {

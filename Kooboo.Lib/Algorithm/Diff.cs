@@ -161,7 +161,7 @@ namespace Kooboo.Lib.Algorithm
                                     break;
                                 }
                             }
-                            /// if not found, the j is the next shortest path. go down now.
+                            // if not found, the j is the next shortest path. go down now.
                             // add the y, and keep current.
                             if (!foundshorter)
                             {

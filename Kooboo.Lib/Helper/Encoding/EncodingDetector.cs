@@ -7,12 +7,12 @@ namespace Kooboo.Lib.Helper
 {
     public class EncodingDetector
     {
-        public static Encoding GetEncoding(ref byte[] databytes, string ContentType = null)
+        public static Encoding GetEncoding(ref byte[] databytes, string contentType = null)
         {
             Encoding encoding = null;
-            if (!string.IsNullOrEmpty(ContentType))
+            if (!string.IsNullOrEmpty(contentType))
             {
-                var charset = Kooboo.Lib.Helper.W3Encoding.ExtractCharset(ContentType);
+                var charset = Kooboo.Lib.Helper.W3Encoding.ExtractCharset(contentType);
                 if (!string.IsNullOrEmpty(charset))
                 {
                     encoding = System.Text.Encoding.GetEncoding(charset);
@@ -38,12 +38,7 @@ namespace Kooboo.Lib.Helper
                 encoding = System.Text.Encoding.GetEncoding(detector.Charset);
             }
 
-            if (encoding == null)
-            {
-                encoding = System.Text.Encoding.GetEncoding(W3Encoding.SystemDefaultEncoding);
-            }
-
-            return encoding;
+            return encoding ?? (encoding = System.Text.Encoding.GetEncoding(W3Encoding.SystemDefaultEncoding));
         }
 
         // this only return ascii or utf8, only for the email usage now.
@@ -83,9 +78,9 @@ namespace Kooboo.Lib.Helper
             return null;
         }
 
-        public static bool IsValidEncoding(string EncodingName)
+        public static bool IsValidEncoding(string encodingName)
         {
-            return System.Text.Encoding.GetEncoding(EncodingName) != null;
+            return System.Text.Encoding.GetEncoding(encodingName) != null;
         }
     }
 }

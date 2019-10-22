@@ -36,10 +36,7 @@ namespace Kooboo.Reflection
 
         public virtual void Add(T item)
         {
-            if (_genericCollection != null)
-            {
-                _genericCollection.Add(item);
-            }
+            _genericCollection?.Add(item);
         }
 
         public virtual void Clear()

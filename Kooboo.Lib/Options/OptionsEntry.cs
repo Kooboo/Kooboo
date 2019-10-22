@@ -15,14 +15,7 @@ namespace Kooboo
 
         public List<Action<object>> Configure
         {
-            get
-            {
-                if (_configure == null)
-                {
-                    _configure = new List<Action<object>>();
-                }
-                return _configure;
-            }
+            get { return _configure ?? (_configure = new List<Action<object>>()); }
         }
 
         private object _value;

@@ -14,9 +14,9 @@ namespace Kooboo.Lib.Helper
     {
         private static JsonSerializerSettings camelsetting = new JsonSerializerSettings() { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
-        public static string Serialize(object Model)
+        public static string Serialize(object model)
         {
-            return JsonConvert.SerializeObject(Model, Formatting.Indented, camelsetting);
+            return JsonConvert.SerializeObject(model, Formatting.Indented, camelsetting);
         }
 
         public static string SerializeCaseSensitive(object model)
@@ -88,12 +88,7 @@ namespace Kooboo.Lib.Helper
         public static string GetString(JObject jobject, string memberName)
         {
             var token = GetObject(jobject, memberName);
-            if (token == null)
-            {
-                return null;
-            }
-            else
-            { return token.ToString(); }
+            return token?.ToString();
         }
 
         public static Object GetObject(JObject jobject, string memberName)

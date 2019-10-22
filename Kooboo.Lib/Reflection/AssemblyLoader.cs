@@ -35,10 +35,7 @@ namespace Kooboo.Lib.Reflection
             dlls = LoadKoobooDlls(dlls, path);
 
             // load dll from modules or dll.
-            List<string> subfolders = new List<string>();
-            subfolders.Add("dll");
-            subfolders.Add("modules");
-            subfolders.Add("packages");
+            List<string> subfolders = new List<string> {"dll", "modules", "packages"};
 
             foreach (var item in subfolders)
             {
@@ -57,8 +54,9 @@ namespace Kooboo.Lib.Reflection
                                 dlls.Add(otherAssembly);
                             }
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
+                            // ignored
                         }
                     }
                 }
@@ -128,20 +126,15 @@ namespace Kooboo.Lib.Reflection
             return otherAssemblies;
         }
 
-        private static bool IsIgnoredName(string FullName)
+        private static bool IsIgnoredName(string fullName)
         {
-            if (string.IsNullOrEmpty(FullName))
+            if (string.IsNullOrEmpty(fullName))
             {
                 return true;
             }
 
-            string lower = FullName.ToLower();
-            if (lower.StartsWith("mscorlib") || lower.StartsWith("microsoft") || lower.StartsWith("anonymously") || lower.StartsWith("kooboo.dom") || lower.StartsWith("kooboo.indexeddb") || lower.StartsWith("newtonsoft") || lower.StartsWith("vshost") || lower.StartsWith("kooboo.httpserver"))
-            {
-                return true;
-            }
-
-            return false;
+            string lower = fullName.ToLower();
+            return lower.StartsWith("mscorlib") || lower.StartsWith("microsoft") || lower.StartsWith("anonymously") || lower.StartsWith("kooboo.dom") || lower.StartsWith("kooboo.indexeddb") || lower.StartsWith("newtonsoft") || lower.StartsWith("vshost") || lower.StartsWith("kooboo.httpserver");
         }
 
         public static List<Type> LoadTypeByInterface(Type interfaceType)
@@ -162,7 +155,7 @@ namespace Kooboo.Lib.Reflection
             return typelist;
         }
 
-        public static List<Type> LoadTypeByGenericInterface(Type GenericInterface)
+        public static List<Type> LoadTypeByGenericInterface(Type genericInterface)
         {
             List<Type> typelist = new List<Type>();
 
@@ -170,7 +163,7 @@ namespace Kooboo.Lib.Reflection
             {
                 foreach (var type in item.GetTypes())
                 {
-                    if (!type.IsAbstract && !type.IsInterface && !type.IsGenericType && Lib.Reflection.TypeHelper.HasGenericInterface(type, GenericInterface))
+                    if (!type.IsAbstract && !type.IsInterface && !type.IsGenericType && Lib.Reflection.TypeHelper.HasGenericInterface(type, genericInterface))
                     {
                         typelist.Add(type);
                     }

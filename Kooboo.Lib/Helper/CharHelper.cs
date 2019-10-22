@@ -104,13 +104,7 @@ namespace Kooboo.Lib.Helper
                 return true;
             }
 
-            if (chr >= 97 && chr <= 102)
-            //  if (chr >= 61 && chr <= 66)
-            {
-                return true;
-            }
-
-            return false;
+            return chr >= 97 && chr <= 102;
         }
 
         /// <summary>
@@ -126,12 +120,7 @@ namespace Kooboo.Lib.Helper
             }
 
             // if (chr >= 41 && chr <= 46)
-            if (chr >= 65 && chr <= 70)
-            {
-                return true;
-            }
-
-            return false;
+            return chr >= 65 && chr <= 70;
         }
 
         /// <summary>
@@ -147,12 +136,7 @@ namespace Kooboo.Lib.Helper
             }
 
             //if (chr >= 61 && chr <= 66)
-            if (chr >= 97 && chr <= 102)
-            {
-                return true;
-            }
-
-            return false;
+            return chr >= 97 && chr <= 102;
         }
     }
 }

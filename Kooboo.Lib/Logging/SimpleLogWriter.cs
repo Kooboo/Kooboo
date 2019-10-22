@@ -7,9 +7,9 @@ namespace Kooboo.Lib.Logging
     {
         private string Folder { get; set; }
 
-        public SimpleLogWriter(string FolderName)
+        public SimpleLogWriter(string folderName)
         {
-            this.Folder = FolderName;
+            this.Folder = folderName;
             _date = DateTime.UtcNow.Date;
             _writer = CreateWriter(_date);
         }
@@ -64,8 +64,10 @@ namespace Kooboo.Lib.Logging
 
             string filename = System.IO.Path.Combine(path, utcdate.ToString("yy-MM-dd") + ".log");
             Lib.Helper.IOHelper.EnsureFileDirectoryExists(filename);
-            var wr = new StreamWriter(new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite));
-            wr.AutoFlush = true;
+            var wr = new StreamWriter(new FileStream(filename, FileMode.Append, FileAccess.Write, FileShare.ReadWrite))
+            {
+                AutoFlush = true
+            };
             return wr;
         }
     }

@@ -10,14 +10,7 @@ namespace Kooboo
 
         public string Id
         {
-            get
-            {
-                if (_id == null)
-                {
-                    _id = Name.ToHashGuid().ToString();
-                }
-                return _id;
-            }
+            get { return _id ?? (_id = Name.ToHashGuid().ToString()); }
         }
 
         public string ShortName { get; set; }

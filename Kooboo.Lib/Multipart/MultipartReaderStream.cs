@@ -41,14 +41,7 @@ namespace Microsoft.AspNet.WebUtilities
 
             _innerStream = stream;
             _innerOffset = _innerStream.CanSeek ? _innerStream.Position : 0;
-            if (expectLeadingCrlf)
-            {
-                _boundaryBytes = Encoding.UTF8.GetBytes("\r\n--" + boundary);
-            }
-            else
-            {
-                _boundaryBytes = Encoding.UTF8.GetBytes("--" + boundary);
-            }
+            _boundaryBytes = expectLeadingCrlf ? Encoding.UTF8.GetBytes("\r\n--" + boundary) : Encoding.UTF8.GetBytes("--" + boundary);
             _finalBoundaryLength = _boundaryBytes.Length + 2; // Include the final '--' terminator.
         }
 
@@ -97,18 +90,20 @@ namespace Microsoft.AspNet.WebUtilities
 
         public override long Seek(long offset, SeekOrigin origin)
         {
-            if (origin == SeekOrigin.Begin)
+            switch (origin)
             {
-                Position = offset;
+                case SeekOrigin.Begin:
+                    Position = offset;
+                    break;
+                case SeekOrigin.Current:
+                    Position = Position + offset;
+                    break;
+                // if (origin == SeekOrigin.End)
+                default:
+                    Position = Length + offset;
+                    break;
             }
-            else if (origin == SeekOrigin.Current)
-            {
-                Position = Position + offset;
-            }
-            else // if (origin == SeekOrigin.End)
-            {
-                Position = Length + offset;
-            }
+
             return Position;
         }
 

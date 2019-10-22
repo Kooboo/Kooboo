@@ -156,11 +156,7 @@ namespace Kooboo.Lib.Compatible
 
         public List<string> GetTryPaths()
         {
-            List<string> trypaths = new List<string>();
-            trypaths.Add(@"../../../Github/Kooboo.Web");
-            trypaths.Add(@"../");
-            trypaths.Add(@"../../");
-            trypaths.Add(@"../../../");
+            List<string> trypaths = new List<string> {@"../../../Github/Kooboo.Web", @"../", @"../../", @"../../../"};
             return trypaths;
         }
 

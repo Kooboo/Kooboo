@@ -42,7 +42,7 @@ namespace Kooboo.Lib.Helper
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 downloadok = false;
             }
@@ -59,10 +59,7 @@ namespace Kooboo.Lib.Helper
 
         public static async Task<byte[]> DownloadFileAsync(string absoluteUrl, System.Net.CookieContainer cookiecontainer = null, string contenttype = null)
         {
-            if (contenttype != null)
-            {
-                contenttype = contenttype.ToLower();
-            }
+            contenttype = contenttype?.ToLower();
 
             var download = await DownloadUrlAsync(absoluteUrl, cookiecontainer);
 
@@ -116,7 +113,7 @@ namespace Kooboo.Lib.Helper
 
                 return ProcessResponse(response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // throw ex;
             }
@@ -151,7 +148,7 @@ namespace Kooboo.Lib.Helper
                 }
                 return await ProcessResponse1(response);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // throw ex;
             }
@@ -160,9 +157,8 @@ namespace Kooboo.Lib.Helper
 
         internal static async Task<DownloadContent> ProcessResponse1(HttpResponseMessage response)
         {
-            DownloadContent downcontent = new DownloadContent();
+            DownloadContent downcontent = new DownloadContent {ResponseHeader = response.Headers};
 
-            downcontent.ResponseHeader = response.Headers;
 
             if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.Moved && response.StatusCode != HttpStatusCode.Found)
             {
@@ -227,6 +223,7 @@ namespace Kooboo.Lib.Helper
             }
             catch
             {
+                // ignored
             }
             finally
             {
@@ -243,7 +240,7 @@ namespace Kooboo.Lib.Helper
             {
                 DownloadContent downcontent = new DownloadContent();
                 MemoryStream memorystream = new MemoryStream();
-                responseStream.CopyTo(memorystream);
+                responseStream?.CopyTo(memorystream);
                 byte[] databytes = memorystream.ToArray();
 
                 if (httpWebResponse.StatusCode != HttpStatusCode.OK && httpWebResponse.StatusCode != HttpStatusCode.Moved && httpWebResponse.StatusCode != HttpStatusCode.Found)
@@ -300,9 +297,9 @@ namespace Kooboo.Lib.Helper
             httpWebRequest.Headers.Add("Upgrade-Insecure-Requests", "1");
             var webResponse = httpWebRequest.GetResponse();
 
-            if (webResponse is HttpWebResponse)
+            if (webResponse is HttpWebResponse response)
             {
-                return (HttpWebResponse)webResponse;
+                return response;
             }
             return null;
         }
@@ -310,7 +307,7 @@ namespace Kooboo.Lib.Helper
         public static HttpWebResponse RequestHeader(Uri uri)
         {
             ServicePointManager.DefaultConnectionLimit = 512;
-            var httpWebRequest = (HttpWebRequest)HttpWebRequest.Create(uri);
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(uri);
 
             httpWebRequest.Method = "HEAD";
             httpWebRequest.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36";

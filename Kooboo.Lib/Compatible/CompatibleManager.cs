@@ -38,23 +38,23 @@ namespace Kooboo.Lib.Compatible
 
         private static object _lockObj = new object();
 
-        private static CompatibleManager instance;
+        private static CompatibleManager _instance;
 
         public static CompatibleManager Instance
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
                     lock (_lockObj)
                     {
-                        if (instance == null)
+                        if (_instance == null)
                         {
-                            instance = new CompatibleManager();
+                            _instance = new CompatibleManager();
                         }
                     }
                 }
-                return instance;
+                return _instance;
             }
         }
 

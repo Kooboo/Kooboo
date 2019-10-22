@@ -8,14 +8,16 @@ namespace Kooboo.Lib.Helper
     {
         static IPHelper()
         {
-            InternalIpPrefix = new List<string>();
-            InternalIpPrefix.Add("127.");
-            InternalIpPrefix.Add("10.");
-            InternalIpPrefix.Add("169.254.");
-            InternalIpPrefix.Add("192.0.2.");
-            InternalIpPrefix.Add("192.88.99.");
-            InternalIpPrefix.Add("192.168.");
-            InternalIpPrefix.Add("198.51.100");
+            InternalIpPrefix = new List<string>
+            {
+                "127.",
+                "10.",
+                "169.254.",
+                "192.0.2.",
+                "192.88.99.",
+                "192.168.",
+                "198.51.100"
+            };
         }
 
         private static List<string> InternalIpPrefix { get; set; }
@@ -27,7 +29,7 @@ namespace Kooboo.Lib.Helper
         public static int ToInt(string ip)
         {
             string[] segs = ip.Split('.');
-            if (segs != null && segs.Length == 4)
+            if (segs.Length == 4)
             {
                 long addvalue = 0;
                 long one = long.Parse(segs[0]) * part1;
@@ -71,7 +73,7 @@ namespace Kooboo.Lib.Helper
 
         public static bool IsInSameCClass(string ipx, string ipy)
         {
-            if (ipx == null || ipx == null)
+            if (ipx == null)
             {
                 return false;
             }

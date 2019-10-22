@@ -12,8 +12,8 @@ namespace Kooboo.Extensions
             {
                 return defaultValue;
             }
-            TValue value;
-            if (dic.TryGetValue(key, out value) && value != null)
+
+            if (dic.TryGetValue(key, out var value) && value != null)
             {
                 return value;
             }

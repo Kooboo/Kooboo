@@ -28,7 +28,7 @@ namespace Kooboo.Lib.Helper
             {
                 return CurrencyDic[currency];
             }
-            throw new Exception(string.Format("currency:{0} is not supported.", currency));
+            throw new Exception($"currency:{currency} is not supported.");
 
             // 1
 

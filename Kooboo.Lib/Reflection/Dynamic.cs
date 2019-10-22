@@ -9,23 +9,23 @@ namespace Kooboo.Lib.Reflection
     {
         private static object _lock = new object();
 
-        public static object GetObjectMember(object obj, string FullPropertyName)
+        public static object GetObjectMember(object obj, string fullPropertyName)
         {
             if (obj == null)
             {
                 return null;
             }
 
-            if (string.IsNullOrEmpty(FullPropertyName))
+            if (string.IsNullOrEmpty(fullPropertyName))
             {
                 return obj;
             }
 
             var dest = obj;
 
-            var SubProperties = FullPropertyName.Split('.');
+            var subProperties = fullPropertyName.Split('.');
 
-            foreach (var item in SubProperties)
+            foreach (var item in subProperties)
             {
                 if (dest == null)
                 {
@@ -41,8 +41,8 @@ namespace Kooboo.Lib.Reflection
                     {
                         if (!GetValueFuncs.ContainsKey(key))
                         {
-                            var GetValueFunc = Reflection.TypeHelper.GetGetObjectValue(item, objtype);
-                            GetValueFuncs[key] = GetValueFunc;
+                            var getValueFunc = Reflection.TypeHelper.GetGetObjectValue(item, objtype);
+                            GetValueFuncs[key] = getValueFunc;
                         }
                     }
                 }

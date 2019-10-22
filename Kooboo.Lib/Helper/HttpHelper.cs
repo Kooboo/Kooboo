@@ -77,7 +77,7 @@ namespace Kooboo.Lib.Helper
             return default(T);
         }
 
-        public static T Post<T>(string url, Dictionary<string, string> parameters, string UserName = null, string Password = null)
+        public static T Post<T>(string url, Dictionary<string, string> parameters, string userName = null, string password = null)
         {
             try
             {
@@ -88,9 +88,9 @@ namespace Kooboo.Lib.Helper
                     client.Headers.Add("user-agent", DefaultUserAgent);
                     client.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
 
-                    if (!string.IsNullOrEmpty(UserName) && !string.IsNullOrEmpty(Password))
+                    if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
                     {
-                        var bytes = Encoding.UTF8.GetBytes(String.Format("{0}:{1}", UserName, Password));
+                        var bytes = Encoding.UTF8.GetBytes($"{userName}:{password}");
                         client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(bytes));
                     }
 
@@ -99,31 +99,31 @@ namespace Kooboo.Lib.Helper
                     return ProcessApiResponse<T>(strResult);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //TODO: log exception
             }
             return default(T);
         }
 
-        public static T Post<T>(string url, Dictionary<string, string> Headers, byte[] postBytes, string UserName = null, string Password = null)
+        public static T Post<T>(string url, Dictionary<string, string> headers, byte[] postBytes, string userName = null, string password = null)
         {
-            if (!string.IsNullOrEmpty(UserName))
+            if (!string.IsNullOrEmpty(userName))
             {
-                if (Headers == null)
+                if (headers == null)
                 {
-                    Headers = new Dictionary<string, string>();
+                    headers = new Dictionary<string, string>();
                 }
-                var bytes = Encoding.UTF8.GetBytes(String.Format("{0}:{1}", UserName, Password));
-                Headers.Add("Authorization", "Basic " + Convert.ToBase64String(bytes));
+                var bytes = Encoding.UTF8.GetBytes($"{userName}:{password}");
+                headers.Add("Authorization", "Basic " + Convert.ToBase64String(bytes));
             }
             using (var client = new WebClient())
             {
                 client.Headers.Add("user-agent", DefaultUserAgent);
                 client.Headers.Add("Content-Type", "multipart/form-data");
-                if (Headers != null)
+                if (headers != null)
                 {
-                    foreach (var item in Headers)
+                    foreach (var item in headers)
                     {
                         client.Headers.Add(item.Key, item.Value);
                     }
@@ -135,14 +135,16 @@ namespace Kooboo.Lib.Helper
 
                     return ProcessApiResponse<T>(Encoding.UTF8.GetString(responseData));
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
+                    // ignored
                 }
+
                 return default(T);
             }
         }
 
-        public static byte[] ConvertKooboo(string url, byte[] data, Dictionary<string, string> headers, string UserName = null, string Password = null)
+        public static byte[] ConvertKooboo(string url, byte[] data, Dictionary<string, string> headers, string userName = null, string password = null)
         {
             try
             {
@@ -154,16 +156,16 @@ namespace Kooboo.Lib.Helper
                     {
                         client.Headers.Add(item.Key, item.Value);
                     }
-                    if (!string.IsNullOrEmpty(UserName))
+                    if (!string.IsNullOrEmpty(userName))
                     {
-                        var bytes = Encoding.UTF8.GetBytes(String.Format("{0}:{1}", UserName, Password));
+                        var bytes = Encoding.UTF8.GetBytes($"{userName}:{password}");
                         client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(bytes));
                     }
 
                     return client.UploadData(url, "POST", data);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //TODO: log exception
             }
@@ -174,7 +176,7 @@ namespace Kooboo.Lib.Helper
         {
             try
             {
-                json = System.Net.WebUtility.UrlEncode(json);  ///????? What is this????
+                json = System.Net.WebUtility.UrlEncode(json);  //????? What is this????
                 var postData = Encoding.UTF8.GetBytes(json);
                 using (var client = new WebClient())
                 {
@@ -194,7 +196,7 @@ namespace Kooboo.Lib.Helper
             return default(T);
         }
 
-        public static T Get<T>(string url, Dictionary<string, string> query = null, string UserName = null, string Password = null)
+        public static T Get<T>(string url, Dictionary<string, string> query = null, string userName = null, string password = null)
         {
             if (query != null)
             {
@@ -204,9 +206,9 @@ namespace Kooboo.Lib.Helper
             {
                 client.Headers.Add("user-agent", DefaultUserAgent);
 
-                if (!string.IsNullOrEmpty(UserName) && !string.IsNullOrEmpty(Password))
+                if (!string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password))
                 {
-                    var bytes = Encoding.UTF8.GetBytes(String.Format("{0}:{1}", UserName, Password));
+                    var bytes = Encoding.UTF8.GetBytes($"{userName}:{password}");
                     client.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(bytes));
                 }
                 client.Proxy = null;
@@ -232,8 +234,9 @@ namespace Kooboo.Lib.Helper
                     return client.DownloadString(url);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                // ignored
             }
 
             return null;
@@ -258,8 +261,9 @@ namespace Kooboo.Lib.Helper
                     return await client.DownloadStringTaskAsync(new Uri(url));
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                // ignored
             }
 
             return null;
@@ -286,9 +290,11 @@ namespace Kooboo.Lib.Helper
                     return ProcessApiResponse<T>(backstring);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                // ignored
             }
+
             return default(T);
         }
 
@@ -336,24 +342,24 @@ namespace Kooboo.Lib.Helper
             }
         }
 
-        public static bool PostData(string url, Dictionary<string, string> Headers, byte[] PostBytes, string UserName = null, string Password = null)
+        public static bool PostData(string url, Dictionary<string, string> headers, byte[] postBytes, string userName = null, string password = null)
         {
-            if (!string.IsNullOrEmpty(UserName))
+            if (!string.IsNullOrEmpty(userName))
             {
-                if (Headers == null)
+                if (headers == null)
                 {
-                    Headers = new Dictionary<string, string>();
+                    headers = new Dictionary<string, string>();
                 }
-                var bytes = Encoding.UTF8.GetBytes(String.Format("{0}:{1}", UserName, Password));
-                Headers.Add("Authorization", "Basic " + Convert.ToBase64String(bytes));
+                var bytes = Encoding.UTF8.GetBytes($"{userName}:{password}");
+                headers.Add("Authorization", "Basic " + Convert.ToBase64String(bytes));
             }
             using (var client = new WebClient())
             {
                 client.Headers.Add("user-agent", DefaultUserAgent);
                 client.Headers.Add("Content-Type", "multipart/form-data");
-                if (Headers != null)
+                if (headers != null)
                 {
-                    foreach (var item in Headers)
+                    foreach (var item in headers)
                     {
                         client.Headers.Add(item.Key, item.Value);
                     }
@@ -362,13 +368,13 @@ namespace Kooboo.Lib.Helper
                 bool success = false;
                 try
                 {
-                    var responseData = client.UploadData(url, "POST", PostBytes);
+                    var responseData = client.UploadData(url, "POST", postBytes);
 
                     var ok = ProcessApiResponse<bool>(Encoding.UTF8.GetString(responseData));
 
                     success = ok;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     success = false;
                 }

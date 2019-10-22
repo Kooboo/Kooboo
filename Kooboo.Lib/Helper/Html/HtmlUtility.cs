@@ -76,12 +76,7 @@ namespace Kooboo
 
             bodyindex = input.IndexOf("</body>", StringComparison.OrdinalIgnoreCase);
 
-            if (bodyindex >= 0)
-            {
-                return true;
-            }
-
-            return false;
+            return bodyindex >= 0;
         }
     }
 }

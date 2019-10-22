@@ -11,10 +11,10 @@ namespace Kooboo.Lib.Security
         public static string Encrypt(string input, string key)
         {
             byte[] inputArray = Encoding.UTF8.GetBytes(input);
-            TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
-            tripleDES.Key = GetKeyBytes(key);
-            tripleDES.Mode = CipherMode.ECB;
-            tripleDES.Padding = PaddingMode.PKCS7;
+            TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider
+            {
+                Key = GetKeyBytes(key), Mode = CipherMode.ECB, Padding = PaddingMode.PKCS7
+            };
             ICryptoTransform cTransform = tripleDES.CreateEncryptor();
             byte[] resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
             tripleDES.Clear();
@@ -27,14 +27,7 @@ namespace Kooboo.Lib.Security
             if (!string.IsNullOrEmpty(key))
             {
                 var bytes = Encoding.UTF8.GetBytes(key);
-                if (bytes.Length > 24)
-                {
-                    System.Buffer.BlockCopy(bytes, 0, result, 0, 24);
-                }
-                else
-                {
-                    System.Buffer.BlockCopy(bytes, 0, result, 0, bytes.Length);
-                }
+                System.Buffer.BlockCopy(bytes, 0, result, 0, bytes.Length > 24 ? 24 : bytes.Length);
             }
 
             return result;
@@ -43,10 +36,10 @@ namespace Kooboo.Lib.Security
         public static string Decrypt(string input, string key)
         {
             byte[] inputArray = Convert.FromBase64String(input);
-            TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider();
-            tripleDES.Key = GetKeyBytes(key);
-            tripleDES.Mode = CipherMode.ECB;
-            tripleDES.Padding = PaddingMode.PKCS7;
+            TripleDESCryptoServiceProvider tripleDES = new TripleDESCryptoServiceProvider
+            {
+                Key = GetKeyBytes(key), Mode = CipherMode.ECB, Padding = PaddingMode.PKCS7
+            };
             ICryptoTransform cTransform = tripleDES.CreateDecryptor();
             byte[] resultArray = cTransform.TransformFinalBlock(inputArray, 0, inputArray.Length);
             tripleDES.Clear();
@@ -82,7 +75,9 @@ namespace Kooboo.Lib.Security
         /// Generates 2 XML files (public and private key)
         /// </summary>
         /// <param name="privateKeyPath">RSA private key file path</param>
-        /// <param name="publicKeyPath">RSA private key file path</param> /
+        /// <param name="publicKeyPath">RSA private key file path</param>
+        /// <param name="size"></param>
+        /// /
         // <param name="size">secure size must be above 512</param>
         public static void GenerateRsa(string privateKeyPath, string publicKeyPath, int size)
         {

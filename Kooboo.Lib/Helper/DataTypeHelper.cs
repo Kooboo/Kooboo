@@ -27,6 +27,7 @@ namespace Kooboo.Lib.Helper
             }
             catch (Exception)
             {
+                // ignored
             }
 
             return false;

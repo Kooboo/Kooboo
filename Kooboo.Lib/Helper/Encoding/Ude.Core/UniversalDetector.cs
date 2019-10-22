@@ -248,10 +248,7 @@ namespace Ude.Core
             this.bestGuess = -1;
             this.inputState = InputState.PureASCII;
             this.lastChar = 0;
-            if (this.escCharsetProber != null)
-            {
-                this.escCharsetProber.Reset();
-            }
+            escCharsetProber?.Reset();
             checked
             {
                 for (int i = 0; i < 3; i++)

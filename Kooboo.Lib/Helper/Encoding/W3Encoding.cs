@@ -19,41 +19,39 @@ namespace Kooboo.Lib.Helper
         {
             get
             {
-                if (_defaultEncoding == null)
-                {
-                    _defaultEncoding = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-                    _defaultEncoding.Add("ar", "UTF-8");
-                    _defaultEncoding.Add("be", "ISO-8859-5");
-                    _defaultEncoding.Add("bg", "windows-1251");
-                    _defaultEncoding.Add("cs", "ISO-8859-2");
-                    _defaultEncoding.Add("cy", "UTF-8");
-                    _defaultEncoding.Add("fa", "UTF-8");
-                    _defaultEncoding.Add("he", "windows-1255");
-                    _defaultEncoding.Add("hr", "UTF-8");
-                    _defaultEncoding.Add("hu", "ISO-8859-2");
-                    _defaultEncoding.Add("ja", "Windows-31J");
-                    _defaultEncoding.Add("kk", "UTF-8");
-                    _defaultEncoding.Add("ko", "windows-949");
-                    _defaultEncoding.Add("ku", "windows-1254");
-                    _defaultEncoding.Add("lt", "windows-1257");
-                    _defaultEncoding.Add("lv", "ISO-8859-13");
-                    _defaultEncoding.Add("mk", "UTF-8");
-                    _defaultEncoding.Add("or", "UTF-8");
-                    _defaultEncoding.Add("pl", "ISO-8859-2");
-                    _defaultEncoding.Add("ro", "UTF-8");
-                    _defaultEncoding.Add("ru", "windows-1251");
-                    _defaultEncoding.Add("sk", "windows-1250");
-                    _defaultEncoding.Add("sl", "ISO-8859-2");
-                    _defaultEncoding.Add("sr", "UTF-8");
-                    _defaultEncoding.Add("th", "windows-874");
-                    _defaultEncoding.Add("uk", "windows-1251");
-                    _defaultEncoding.Add("vi", "UTF-8");
-                    _defaultEncoding.Add("zh-CN", "GB18030");
-                    _defaultEncoding.Add("zh-TW", "Big5");
-                    _defaultEncoding.Add("", SystemDefaultEncoding);
-                }
-                return _defaultEncoding;
+                return _defaultEncoding ?? (_defaultEncoding =
+                           new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                           {
+                               {"ar", "UTF-8"},
+                               {"be", "ISO-8859-5"},
+                               {"bg", "windows-1251"},
+                               {"cs", "ISO-8859-2"},
+                               {"cy", "UTF-8"},
+                               {"fa", "UTF-8"},
+                               {"he", "windows-1255"},
+                               {"hr", "UTF-8"},
+                               {"hu", "ISO-8859-2"},
+                               {"ja", "Windows-31J"},
+                               {"kk", "UTF-8"},
+                               {"ko", "windows-949"},
+                               {"ku", "windows-1254"},
+                               {"lt", "windows-1257"},
+                               {"lv", "ISO-8859-13"},
+                               {"mk", "UTF-8"},
+                               {"or", "UTF-8"},
+                               {"pl", "ISO-8859-2"},
+                               {"ro", "UTF-8"},
+                               {"ru", "windows-1251"},
+                               {"sk", "windows-1250"},
+                               {"sl", "ISO-8859-2"},
+                               {"sr", "UTF-8"},
+                               {"th", "windows-874"},
+                               {"uk", "windows-1251"},
+                               {"vi", "UTF-8"},
+                               {"zh-CN", "GB18030"},
+                               {"zh-TW", "Big5"},
+                               {"", SystemDefaultEncoding}
+                           });
             }
         }
 
@@ -63,14 +61,8 @@ namespace Kooboo.Lib.Helper
             {
                 locale = "";
             }
-            string encoding;
 
-            if (DefaultEncodingSet.TryGetValue(locale, out encoding))
-            {
-                return encoding;
-            }
-
-            return null;
+            return DefaultEncodingSet.TryGetValue(locale, out var encoding) ? encoding : null;
         }
 
         public static Encoding PreScanEncoding(byte[] input)
@@ -78,7 +70,7 @@ namespace Kooboo.Lib.Helper
             int len = input.Length;
             if (len > 1024)
             {
-                len = 1024;  /// scan the first 1024 bytes as suggested.
+                len = 1024;  // scan the first 1024 bytes as suggested.
             }
 
             Func<int, byte> GetByte = (index) =>
@@ -299,7 +291,7 @@ namespace Kooboo.Lib.Helper
                 goto Loop;
             }
 
-            /// Skip any U + 0009, U + 000A, U + 000C, U + 000D, or U+0020 characters that immediately follow the equals sign(there might not be any).
+            // Skip any U + 0009, U + 000A, U + 000C, U + 000D, or U+0020 characters that immediately follow the equals sign(there might not be any).
 
             position += 1;
             if (position >= len) { return null; }
@@ -311,7 +303,7 @@ namespace Kooboo.Lib.Helper
                 currentchar = s[position];
             }
 
-            /// Process the next character as follows:
+            // Process the next character as follows:
 
             //If it is a """ (U+0022) and there is a later """(U + 0022) in s
             // If it is a "'"(U + 0027) and there is a later "'"(U + 0027) in s
@@ -394,7 +386,7 @@ namespace Kooboo.Lib.Helper
 
         public static Attribute GetAttribute(ref byte[] Input, ref int Index, int Len)
         {
-            /// 1. If the byte at position is one of 0x09(ASCII TAB), 0x0A(ASCII LF), 0x0C(ASCII FF), 0x0D(ASCII CR), 0x20(ASCII space), or 0x2F(ASCII /) then advance position to the next byte and redo this step.
+            // 1. If the byte at position is one of 0x09(ASCII TAB), 0x0A(ASCII LF), 0x0C(ASCII FF), 0x0D(ASCII CR), 0x20(ASCII space), or 0x2F(ASCII /) then advance position to the next byte and redo this step.
             var currentbyte = GetByte(ref Input, Index, Len);
             while (currentbyte == 0x09 || currentbyte == 0x0A || currentbyte == 0x0C || currentbyte == 0x0D || currentbyte == 0x20 || currentbyte == 0x2F)
             {
@@ -408,11 +400,11 @@ namespace Kooboo.Lib.Helper
                 return null;
             }
 
-            /// 3.   Otherwise, the byte at position is the start of the attribute name.Let attribute name and attribute value be the empty string.
+            // 3.   Otherwise, the byte at position is the start of the attribute name.Let attribute name and attribute value be the empty string.
             string AttributeName = string.Empty;
             string AttributeValue = string.Empty;
 
-        ///  4.Attribute name: Process the byte at position as follows:
+        //  4.Attribute name: Process the byte at position as follows:
 
         GetAttributeName:
             //If it is 0x3D(ASCII =), and the attribute name is longer than the empty string
@@ -473,7 +465,7 @@ namespace Kooboo.Lib.Helper
                 currentbyte = GetByte(ref Input, Index, Len);
             }
 
-            /// If the byte at position is not 0x3D(ASCII =), abort the get an attribute algorithm. The attribute's name is the value of attribute name, its value is the empty string.
+            // If the byte at position is not 0x3D(ASCII =), abort the get an attribute algorithm. The attribute's name is the value of attribute name, its value is the empty string.
 
             if (currentbyte != 0x3D)
             {
@@ -496,7 +488,7 @@ namespace Kooboo.Lib.Helper
                 currentbyte = GetByte(ref Input, Index, Len);
             }
 
-            /// 10  Process the byte at position as follows:
+            // 10  Process the byte at position as follows:
 
             //If it is 0x22(ASCII ") or 0x27 (ASCII ')
             //Let b be the value of the byte at position.
@@ -517,7 +509,7 @@ namespace Kooboo.Lib.Helper
                 }
                 else
                 {
-                    /// Otherwise, if the value of the byte at position is in the range 0x41(ASCII A) to 0x5A(ASCII Z), then append a Unicode character to attribute value whose code point is 0x20 more than the value of the byte at position.
+                    // Otherwise, if the value of the byte at position is in the range 0x41(ASCII A) to 0x5A(ASCII Z), then append a Unicode character to attribute value whose code point is 0x20 more than the value of the byte at position.
                     //if (currentbyte >= 0x41 && currentbyte <= 0x5A)
                     //{
                     //    currentbyte = (byte)(currentbyte + 0x20);
@@ -568,10 +560,10 @@ namespace Kooboo.Lib.Helper
                 //    currentbyte = (byte)(currentbyte + 0x20);
                 //}
 
-                /// Append the Unicode character with the same code point as the value of the byte at position) to attribute value.
+                // Append the Unicode character with the same code point as the value of the byte at position) to attribute value.
                 AttributeValue += Convert.ToChar(currentbyte).ToString().ToLower();
 
-                /// Advance position to the next byte and return to the previous step.
+                // Advance position to the next byte and return to the previous step.
                 Index += 1;
                 currentbyte = GetByte(ref Input, Index, Len);
             }

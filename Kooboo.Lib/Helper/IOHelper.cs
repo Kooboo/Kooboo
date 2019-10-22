@@ -41,6 +41,7 @@ namespace Kooboo.Lib.Helper
             }
             catch (Exception)
             {
+                // ignored
             }
 
             if (extension == null)
@@ -1255,13 +1256,13 @@ namespace Kooboo.Lib.Helper
                 return true;
             };
 
-            Func<string, List<string>> ToSegments = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetSegments;
+            Func<string, List<string>> toSegments = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetSegments;
 
-            List<List<string>> AllSegments = new List<List<string>>();
+            List<List<string>> allSegments = new List<List<string>>();
 
             foreach (var item in paths)
             {
-                AllSegments.Add(ToSegments(item));
+                allSegments.Add(toSegments(item));
             }
 
             List<string> common = new List<string>();
@@ -1271,7 +1272,7 @@ namespace Kooboo.Lib.Helper
             while (i < 999)
             {
                 List<string> indexitem = new List<string>();
-                foreach (var item in AllSegments)
+                foreach (var item in allSegments)
                 {
                     if (i > item.Count() - 1)
                     {
@@ -1282,7 +1283,7 @@ namespace Kooboo.Lib.Helper
                         indexitem.Add(item[i]);
                     }
                 }
-                if (indexitem.Count() > 0 && HasSameValue(indexitem))
+                if (indexitem.Count > 0 && HasSameValue(indexitem))
                 {
                     common.Add(indexitem[0]);
                     i += 1;
@@ -1293,14 +1294,7 @@ namespace Kooboo.Lib.Helper
                 }
             }
 
-            if (common.Count() == 0)
-            {
-                return null;
-            }
-            else
-            {
-                return Kooboo.Lib.Compatible.CompatibleManager.Instance.System.JoinPath(common.ToArray());
-            }
+            return common.Count == 0 ? null : Kooboo.Lib.Compatible.CompatibleManager.Instance.System.JoinPath(common.ToArray());
         }
 
         public static int CountFiles(string Folder, bool Recursive = true)
@@ -1353,11 +1347,11 @@ namespace Kooboo.Lib.Helper
             return di.EnumerateFiles("*", SearchOption.AllDirectories).Sum(fi => fi.Length);
         }
 
-        public static string ReadAllText(string FilePath)
+        public static string ReadAllText(string filePath)
         {
-            if (File.Exists(FilePath))
+            if (File.Exists(filePath))
             {
-                System.IO.FileStream stream = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                System.IO.FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
                 var reader = new System.IO.StreamReader(stream);
 
@@ -1369,11 +1363,11 @@ namespace Kooboo.Lib.Helper
             return null;
         }
 
-        public static byte[] ReadAllBytes(string FilePath)
+        public static byte[] ReadAllBytes(string filePath)
         {
-            if (File.Exists(FilePath))
+            if (File.Exists(filePath))
             {
-                FileStream stream = new FileStream(FilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 MemoryStream ms = new MemoryStream();
                 stream.CopyTo(ms);
                 stream.Close();
@@ -1383,10 +1377,10 @@ namespace Kooboo.Lib.Helper
             return null;
         }
 
-        public static void WriteAllBytes(string FilePath, byte[] bytes)
+        public static void WriteAllBytes(string filePath, byte[] bytes)
         {
-            Lib.Helper.IOHelper.EnsureFileDirectoryExists(FilePath);
-            System.IO.File.WriteAllBytes(FilePath, bytes);
+            Lib.Helper.IOHelper.EnsureFileDirectoryExists(filePath);
+            System.IO.File.WriteAllBytes(filePath, bytes);
         }
 
         public static void Copy(string oldPath, string newPath)

@@ -29,9 +29,9 @@ namespace Kooboo.Lib.IOC
         public static Dictionary<string, Type> Transients { get; set; }
 
         // get the Singleton instance.
-        public static T GetSingleTon<T>(bool SearchImplemention = false)
+        public static T GetSingleTon<T>(bool searchImplemention = false)
         {
-            var result = GetSingleTon(typeof(T), SearchImplemention);
+            var result = GetSingleTon(typeof(T), searchImplemention);
             if (result == null)
             {
                 return default(T);
@@ -43,12 +43,12 @@ namespace Kooboo.Lib.IOC
         }
 
         // get the Singleton instance.
-        public static T GetSingleTon<T>(Type DefaultImplementation)
+        public static T GetSingleTon<T>(Type defaultImplementation)
         {
             var result = GetSingleTon(typeof(T), false);
             if (result == null)
             {
-                var newinstance = (T)Activator.CreateInstance(DefaultImplementation);
+                var newinstance = (T)Activator.CreateInstance(defaultImplementation);
                 AddSingleton<T>(newinstance);
                 return newinstance;
             }
@@ -58,13 +58,13 @@ namespace Kooboo.Lib.IOC
             }
         }
 
-        public static Object GetSingleTon(Type objType, bool SearchImplementation)
+        public static Object GetSingleTon(Type objType, bool searchImplementation)
         {
             string name = objType.Name;
 
             if (!SingleTons.ContainsKey(name))
             {
-                if (SearchImplementation)
+                if (searchImplementation)
                 {
                     lock (_lock)
                     {
@@ -106,16 +106,16 @@ namespace Kooboo.Lib.IOC
             return GetImplementationTypes(typeof(T));
         }
 
-        public static List<Type> GetImplementationTypes(Type InterfaceType)
+        public static List<Type> GetImplementationTypes(Type interfaceType)
         {
-            string name = InterfaceType.Name;
+            string name = interfaceType.Name;
             if (!InterfaceTypes.ContainsKey(name))
             {
                 lock (_lock)
                 {
                     if (!InterfaceTypes.ContainsKey(name))
                     {
-                        var types = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(InterfaceType);
+                        var types = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(interfaceType);
                         InterfaceTypes[name] = types;
                     }
                 }
@@ -130,18 +130,18 @@ namespace Kooboo.Lib.IOC
             List<T> result = new List<T>();
             foreach (var item in instances)
             {
-                var Tinstance = (T)item;
-                if (Tinstance != null)
+                var tinstance = (T)item;
+                if (tinstance != null)
                 {
-                    result.Add(Tinstance);
+                    result.Add(tinstance);
                 }
             }
             return result;
         }
 
-        public static List<object> GetInstances(Type InterfaceType)
+        public static List<object> GetInstances(Type interfaceType)
         {
-            string name = InterfaceType.Name;
+            string name = interfaceType.Name;
 
             if (!Instances.ContainsKey(name))
             {
@@ -149,18 +149,18 @@ namespace Kooboo.Lib.IOC
                 {
                     if (!Instances.ContainsKey(name))
                     {
-                        List<object> Result = new List<object>();
-                        var types = GetImplementationTypes(InterfaceType);
+                        List<object> result = new List<object>();
+                        var types = GetImplementationTypes(interfaceType);
                         foreach (var item in types)
                         {
                             var instance = Activator.CreateInstance(item);
                             if (instance != null)
                             {
-                                Result.Add(instance);
+                                result.Add(instance);
                             }
                         }
 
-                        Instances[name] = Result;
+                        Instances[name] = result;
                     }
                 }
             }

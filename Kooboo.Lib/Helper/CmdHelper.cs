@@ -9,14 +9,19 @@ namespace Kooboo.Lib.Helper
     {
         public static string ExeCmd(string cmd)
         {
-            Process p = new Process();
-            p.StartInfo.FileName = "cmd.exe";
+            Process p = new Process
+            {
+                StartInfo =
+                {
+                    FileName = "cmd.exe",
+                    UseShellExecute = false,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = false
+                }
+            };
 
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardInput = true;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.RedirectStandardError = true;
-            p.StartInfo.CreateNoWindow = false;
             p.Start();
 
             p.StandardInput.WriteLine(cmd);
@@ -88,14 +93,19 @@ namespace Kooboo.Lib.Helper
 
         public static void ExeCmdNoWait(string cmd)
         {
-            Process p = new Process();
-            p.StartInfo.FileName = "cmd.exe";
+            Process p = new Process
+            {
+                StartInfo =
+                {
+                    FileName = "cmd.exe",
+                    UseShellExecute = false,
+                    RedirectStandardInput = true,
+                    RedirectStandardOutput = true,
+                    RedirectStandardError = true,
+                    CreateNoWindow = false
+                }
+            };
 
-            p.StartInfo.UseShellExecute = false;
-            p.StartInfo.RedirectStandardInput = true;
-            p.StartInfo.RedirectStandardOutput = true;
-            p.StartInfo.RedirectStandardError = true;
-            p.StartInfo.CreateNoWindow = false;
             p.Start();
 
             p.StandardInput.WriteLine(cmd);

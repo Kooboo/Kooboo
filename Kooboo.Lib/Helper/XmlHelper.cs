@@ -18,8 +18,9 @@ namespace Kooboo.Lib.Helper
                 {
                     return XDocument.Parse(xmlstring);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
+                    // ignored
                 }
             }
             return null;
@@ -39,14 +40,12 @@ namespace Kooboo.Lib.Helper
 
         public static object GetMember(XNode node, string memberName)
         {
-            if (node is XElement)
+            if (node is XElement el)
             {
-                XElement el = node as XElement;
                 foreach (var item in el.Nodes())
                 {
-                    if (item is XElement)
+                    if (item is XElement xitem)
                     {
-                        var xitem = item as XElement;
                         if (xitem.Name == memberName)
                         {
                             if (xitem.HasElements)
@@ -61,9 +60,8 @@ namespace Kooboo.Lib.Helper
                     }
                 }
             }
-            else if (node is XDocument)
+            else if (node is XDocument doc)
             {
-                var doc = node as XDocument;
                 return GetMember(doc.Root, memberName);
             }
             return null;

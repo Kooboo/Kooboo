@@ -14,12 +14,7 @@ namespace Microsoft.AspNet.WebUtilities
         {
             get
             {
-                string values;
-                if (Headers.TryGetValue("Content-Type", out values))
-                {
-                    return values;
-                }
-                return null;
+                return Headers.TryGetValue("Content-Type", out var values) ? values : null;
             }
         }
 
@@ -27,12 +22,7 @@ namespace Microsoft.AspNet.WebUtilities
         {
             get
             {
-                string values;
-                if (Headers.TryGetValue("Content-Disposition", out values))
-                {
-                    return values;
-                }
-                return null;
+                return Headers.TryGetValue("Content-Disposition", out var values) ? values : null;
             }
         }
 

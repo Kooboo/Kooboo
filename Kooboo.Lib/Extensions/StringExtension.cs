@@ -92,14 +92,7 @@ namespace Kooboo.Extensions
             while (currentindex >= 0)
             {
                 int len = currentindex - currentposition;
-                if (len > 0)
-                {
-                    result.Add(input.Substring(currentposition, len));
-                }
-                else
-                {
-                    result.Add("");
-                }
+                result.Add(len > 0 ? input.Substring(currentposition, len) : "");
 
                 currentposition = currentindex + seperatorlen;
 
@@ -118,29 +111,22 @@ namespace Kooboo.Extensions
             return result;
         }
 
-        public static bool ContainsAllParts(this string CurrentSegment, List<string> PartialParts)
+        public static bool ContainsAllParts(this string currentSegment, List<string> partialParts)
         {
-            foreach (var item in PartialParts)
+            foreach (var item in partialParts)
             {
                 if (string.IsNullOrEmpty(item))
                 {
                     continue;
                 }
 
-                var index = CurrentSegment.IndexOf(item, StringComparison.OrdinalIgnoreCase);
+                var index = currentSegment.IndexOf(item, StringComparison.OrdinalIgnoreCase);
                 if (index == -1)
                 {
                     return false;
                 }
 
-                if (index + item.Length > CurrentSegment.Length)
-                {
-                    CurrentSegment = string.Empty;
-                }
-                else
-                {
-                    CurrentSegment = CurrentSegment.Substring(index + item.Length);
-                }
+                currentSegment = index + item.Length > currentSegment.Length ? string.Empty : currentSegment.Substring(index + item.Length);
             }
             return true;
         }
@@ -169,12 +155,7 @@ namespace Kooboo.Extensions
 
         public static bool IsAsciiDigit(this string numberstring)
         {
-            if (string.IsNullOrEmpty(numberstring))
-            {
-                return false;
-            }
-
-            return numberstring.ToCharArray().Where(item => !IsAsciiDigit(item)).All(item => item == '.' || item == ',');
+            return !string.IsNullOrEmpty(numberstring) && numberstring.ToCharArray().Where(item => !IsAsciiDigit(item)).All(item => item == '.' || item == ',');
         }
 
         private static bool IsAsciiDigit(char chr)
@@ -203,14 +184,7 @@ namespace Kooboo.Extensions
                     break;
                 }
             }
-            if (string.IsNullOrEmpty(digit))
-            {
-                return 0;
-            }
-            else
-            {
-                return Convert.ToInt32(digit);
-            }
+            return string.IsNullOrEmpty(digit) ? 0 : Convert.ToInt32(digit);
         }
 
         public static bool EqualsOrNullEmpty(this string str1, string str2, StringComparison comparisonType)
@@ -246,9 +220,7 @@ namespace Kooboo.Extensions
                 }
             }
 
-            Position pos = new Position();
-            pos.Line = linecount;
-            pos.Column = columncount;
+            Position pos = new Position {Line = linecount, Column = columncount};
 
             return pos;
         }

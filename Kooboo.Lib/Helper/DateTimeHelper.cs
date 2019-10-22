@@ -8,17 +8,17 @@ namespace Kooboo.Lib.Helper
 {
     public static class DateTimeHelper
     {
-        public static string ParseDateFormat(List<string> DateStrings)
+        public static string ParseDateFormat(List<string> dateStrings)
         {
-            HashSet<string> formates = GetPossibleFormats(DateStrings);
+            HashSet<string> formates = GetPossibleFormats(dateStrings);
 
-            return ParseDateFormat(DateStrings, formates);
+            return ParseDateFormat(dateStrings, formates);
         }
 
-        private static HashSet<string> GetPossibleFormats(List<string> DateStrings)
+        private static HashSet<string> GetPossibleFormats(List<string> dateStrings)
         {
-            var seps = getContainsSeps(DateStrings);
-            var exclus = getExclusSeps(DateStrings);
+            var seps = getContainsSeps(dateStrings);
+            var exclus = getExclusSeps(dateStrings);
 
             var formates = GetPossibleFormates(seps, exclus);
 
@@ -85,13 +85,13 @@ namespace Kooboo.Lib.Helper
             return null;
         }
 
-        public static string ParseDateFormat(IEnumerable<string> DateStrings, IEnumerable<string> availableFormats)
+        public static string ParseDateFormat(IEnumerable<string> dateStrings, IEnumerable<string> availableFormats)
         {
             foreach (var format in availableFormats)
             {
                 bool match = true;
                 DateTime output;
-                foreach (var date in DateStrings)
+                foreach (var date in dateStrings)
                 {
                     if (!DateTime.TryParseExact(date, format, DateTimeFormatInfo.InvariantInfo, DateTimeStyles.None, out output))
                     {

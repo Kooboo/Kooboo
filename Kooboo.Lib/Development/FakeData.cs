@@ -14,47 +14,47 @@ namespace Kooboo.Lib.Development
     {
         private static Random rnd = new Random();
 
-        public static object GetFakeValue(Type FieldType)
+        public static object GetFakeValue(Type fieldType)
         {
-            if (FieldType.IsAbstract || FieldType == typeof(Type))
+            if (fieldType.IsAbstract || fieldType == typeof(Type))
             {
                 return null;
             }
 
-            if (Lib.Reflection.TypeHelper.IsDictionary(FieldType))
+            if (Lib.Reflection.TypeHelper.IsDictionary(fieldType))
             {
-                return GetFakeDictionary(FieldType);
+                return GetFakeDictionary(fieldType);
             }
-            else if (Lib.Reflection.TypeHelper.IsList(FieldType))
+            else if (Lib.Reflection.TypeHelper.IsList(fieldType))
             {
-                return GetFakeList(FieldType);
+                return GetFakeList(fieldType);
             }
-            else if (Lib.Reflection.TypeHelper.IsGenericCollection(FieldType))
+            else if (Lib.Reflection.TypeHelper.IsGenericCollection(fieldType))
             {
-                return GetFakeCollection(FieldType);
+                return GetFakeCollection(fieldType);
             }
-            else if (FieldType == typeof(string))
+            else if (fieldType == typeof(string))
             {
                 return "string_" + rnd.Next(1, 9999).ToString();
             }
-            else if (FieldType == typeof(bool))
+            else if (fieldType == typeof(bool))
             {
                 return false;
             }
-            else if (FieldType == typeof(DateTime))
+            else if (fieldType == typeof(DateTime))
             {
                 return DateTime.Now;
             }
-            else if (FieldType == typeof(Guid))
+            else if (fieldType == typeof(Guid))
             {
                 return System.Guid.NewGuid();
             }
-            else if (FieldType == typeof(byte))
+            else if (fieldType == typeof(byte))
             {
                 var rand = rnd.Next(1, 100);
                 return (byte)rand;
             }
-            else if (FieldType == typeof(byte[]))
+            else if (fieldType == typeof(byte[]))
             {
                 var bytes = new byte[10];
                 for (int i = 0; i < 10; i++)
@@ -63,61 +63,61 @@ namespace Kooboo.Lib.Development
                 }
                 return bytes;
             }
-            else if (FieldType == typeof(decimal))
+            else if (fieldType == typeof(decimal))
             {
                 return (decimal)rnd.Next(0, 10000);
             }
-            else if (FieldType == typeof(double))
+            else if (fieldType == typeof(double))
             {
                 return (double)rnd.Next(0, 10000);
             }
-            else if (FieldType == typeof(float))
+            else if (fieldType == typeof(float))
             {
                 return (float)rnd.Next(0, 10000);
             }
-            else if (FieldType == typeof(Int16))
+            else if (fieldType == typeof(Int16))
             {
                 return (Int16)rnd.Next(0, 9999);
             }
-            else if (FieldType == typeof(int))
+            else if (fieldType == typeof(int))
             {
                 return rnd.Next(0, 9999);
             }
-            else if (FieldType == typeof(Int64))
+            else if (fieldType == typeof(Int64))
             {
                 return (Int64)rnd.Next(0, 9999);
             }
-            else if (FieldType == typeof(System.Net.IPAddress))
+            else if (fieldType == typeof(System.Net.IPAddress))
             {
                 int value = rnd.Next(0, 99999);
                 byte[] bytes = BitConverter.GetBytes(value);
                 System.Net.IPAddress address = new System.Net.IPAddress(bytes);
                 return address.ToString();
             }
-            else if (FieldType == typeof(object))
+            else if (fieldType == typeof(object))
             {
                 return "string_object_" + rnd.Next(0, 999).ToString();
             }
-            else if (FieldType.IsClass)
+            else if (fieldType.IsClass)
             {
-                return GetFakeClass(FieldType);
+                return GetFakeClass(fieldType);
             }
-            else if (FieldType.IsEnum)
+            else if (fieldType.IsEnum)
             {
-                return Activator.CreateInstance(FieldType);
+                return Activator.CreateInstance(fieldType);
             }
             else
             {
-                throw new Exception(FieldType.Name + " can not be identified.");
+                throw new Exception(fieldType.Name + " can not be identified.");
             }
         }
 
-        public static object GetFakeDictionary(Type DictionaryType)
+        public static object GetFakeDictionary(Type dictionaryType)
         {
-            var result = Activator.CreateInstance(DictionaryType) as System.Collections.IDictionary;
+            var result = Activator.CreateInstance(dictionaryType) as System.Collections.IDictionary;
 
-            var keytype = TypeHelper.GetDictionaryKeyType(DictionaryType);
-            var valuetype = TypeHelper.GetDictionaryValueType(DictionaryType);
+            var keytype = TypeHelper.GetDictionaryKeyType(dictionaryType);
+            var valuetype = TypeHelper.GetDictionaryValueType(dictionaryType);
 
             var key = GetFakeValue(keytype);
             var value = GetFakeValue(valuetype);
@@ -137,11 +137,11 @@ namespace Kooboo.Lib.Development
             return result;
         }
 
-        public static object GetFakeList(Type ListType)
+        public static object GetFakeList(Type listType)
         {
-            var list = Activator.CreateInstance(ListType) as System.Collections.IList;
+            var list = Activator.CreateInstance(listType) as System.Collections.IList;
 
-            var datatype = Kooboo.Lib.Reflection.TypeHelper.GetEnumberableType(ListType);
+            var datatype = Kooboo.Lib.Reflection.TypeHelper.GetEnumberableType(listType);
 
             var value = GetFakeValue(datatype);
 
@@ -157,11 +157,11 @@ namespace Kooboo.Lib.Development
         {
             var datatype = Lib.Reflection.TypeHelper.GetEnumberableType(collectionType);
 
-            var GenericHashSet = typeof(CollectionWrapper<>).MakeGenericType(datatype);
+            var genericHashSet = typeof(CollectionWrapper<>).MakeGenericType(datatype);
 
-            var OriginalInstance = Activator.CreateInstance(collectionType);
+            var originalInstance = Activator.CreateInstance(collectionType);
 
-            var list = Activator.CreateInstance(GenericHashSet, OriginalInstance) as System.Collections.IList;
+            var list = Activator.CreateInstance(genericHashSet, originalInstance) as System.Collections.IList;
 
             var value = GetFakeValue(datatype);
 
@@ -222,25 +222,25 @@ namespace Kooboo.Lib.Development
             return result;
         }
 
-        private static bool IsSelfReference(Type BaseType, Type SubType)
+        private static bool IsSelfReference(Type baseType, Type subType)
         {
-            if (BaseType == SubType)
+            if (baseType == subType)
             {
                 return true;
             }
-            if (TypeHelper.IsDictionary(SubType))
+            if (TypeHelper.IsDictionary(subType))
             {
-                var keytype = TypeHelper.GetDictionaryKeyType(SubType);
-                var valuetype = TypeHelper.GetDictionaryValueType(SubType);
-                if (keytype == BaseType || valuetype == BaseType)
+                var keytype = TypeHelper.GetDictionaryKeyType(subType);
+                var valuetype = TypeHelper.GetDictionaryValueType(subType);
+                if (keytype == baseType || valuetype == baseType)
                 {
                     return true;
                 }
             }
-            else if (TypeHelper.IsGenericCollection(SubType))
+            else if (TypeHelper.IsGenericCollection(subType))
             {
-                var keytype = TypeHelper.GetEnumberableType(SubType);
-                if (keytype == BaseType)
+                var keytype = TypeHelper.GetEnumberableType(subType);
+                if (keytype == baseType)
                 {
                     return true;
                 }
@@ -292,14 +292,7 @@ namespace Kooboo.Lib.Development
 
         public virtual bool Contains(T item)
         {
-            if (_genericCollection != null)
-            {
-                return _genericCollection.Contains(item);
-            }
-            else
-            {
-                return _list.Contains(item);
-            }
+            return _genericCollection?.Contains(item) ?? _list.Contains(item);
         }
 
         public virtual void CopyTo(T[] array, int arrayIndex)
@@ -316,32 +309,12 @@ namespace Kooboo.Lib.Development
 
         public virtual int Count
         {
-            get
-            {
-                if (_genericCollection != null)
-                {
-                    return _genericCollection.Count;
-                }
-                else
-                {
-                    return _list.Count;
-                }
-            }
+            get { return _genericCollection?.Count ?? _list.Count; }
         }
 
         public virtual bool IsReadOnly
         {
-            get
-            {
-                if (_genericCollection != null)
-                {
-                    return _genericCollection.IsReadOnly;
-                }
-                else
-                {
-                    return _list.IsReadOnly;
-                }
-            }
+            get { return _genericCollection?.IsReadOnly ?? _list.IsReadOnly; }
         }
 
         public virtual bool Remove(T item)
@@ -365,24 +338,12 @@ namespace Kooboo.Lib.Development
 
         public virtual IEnumerator<T> GetEnumerator()
         {
-            if (_genericCollection != null)
-            {
-                return _genericCollection.GetEnumerator();
-            }
-
-            return _list.Cast<T>().GetEnumerator();
+            return _genericCollection != null ? _genericCollection.GetEnumerator() : _list.Cast<T>().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            if (_genericCollection != null)
-            {
-                return _genericCollection.GetEnumerator();
-            }
-            else
-            {
-                return _list.GetEnumerator();
-            }
+            return _genericCollection?.GetEnumerator() ?? _list.GetEnumerator();
         }
 
         int IList.Add(object value)
@@ -395,12 +356,7 @@ namespace Kooboo.Lib.Development
 
         bool IList.Contains(object value)
         {
-            if (IsCompatibleObject(value))
-            {
-                return Contains((T)value);
-            }
-
-            return false;
+            return IsCompatibleObject(value) && Contains((T)value);
         }
 
         int IList.IndexOf(object value)
@@ -441,18 +397,7 @@ namespace Kooboo.Lib.Development
 
         bool IList.IsFixedSize
         {
-            get
-            {
-                if (_genericCollection != null)
-                {
-                    // ICollection<T> only has IsReadOnly
-                    return _genericCollection.IsReadOnly;
-                }
-                else
-                {
-                    return _list.IsFixedSize;
-                }
-            }
+            get { return _genericCollection?.IsReadOnly ?? _list.IsFixedSize; }
         }
 
         void IList.Remove(object value)
@@ -519,12 +464,7 @@ namespace Kooboo.Lib.Development
 
         private static bool IsCompatibleObject(object value)
         {
-            if (!(value is T) && (value != null || (typeof(T).IsValueType)))
-            {
-                return false;
-            }
-
-            return true;
+            return value is T || (value == null && (!typeof(T).IsValueType));
         }
 
         public object UnderlyingCollection

@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Jint.Parser.Ast;
 
 namespace Kooboo.Lib.Helper
 {
@@ -83,18 +84,18 @@ namespace Kooboo.Lib.Helper
             return null;
         }
 
-        public static Jint.Parser.Ast.FunctionDeclaration GetFuncByName(Jint.Parser.Ast.Program program, string FuncName)
+        public static Jint.Parser.Ast.FunctionDeclaration GetFuncByName(Jint.Parser.Ast.Program program, string funcName)
         {
             if (program == null || program.FunctionDeclarations.Count == 0)
             {
                 return null;
             }
 
-            if (string.IsNullOrEmpty(FuncName))
+            if (string.IsNullOrEmpty(funcName))
             {
                 return null;
             }
-            string lower = FuncName.ToLower();
+            string lower = funcName.ToLower();
 
             foreach (var item in program.FunctionDeclarations)
             {
@@ -186,25 +187,20 @@ namespace Kooboo.Lib.Helper
 
             var prog = parser.Parse(requireJsBlock);
 
-            if (prog != null && prog.Body.Count() > 0)
+            if (prog != null && prog.Body.Count > 0)
             {
                 var item = prog.Body.First();
 
-                if (item is Jint.Parser.Ast.ExpressionStatement)
+                if (item is ExpressionStatement expres)
                 {
-                    var expres = item as Jint.Parser.Ast.ExpressionStatement;
-
-                    if (expres.Expression is Jint.Parser.Ast.CallExpression)
+                    if (expres.Expression is CallExpression call)
                     {
-                        var call = expres.Expression as Jint.Parser.Ast.CallExpression;
-                        if (call != null && call.Arguments.Count() == 2)
+                        if (call != null && call.Arguments.Count == 2)
                         {
                             var requireargu = call.Arguments[1];
 
-                            if (requireargu != null && requireargu is Jint.Parser.Ast.FunctionExpression)
+                            if (requireargu != null && requireargu is FunctionExpression requireFunc)
                             {
-                                var requireFunc = requireargu as Jint.Parser.Ast.FunctionExpression;
-
                                 if (requireFunc != null)
                                 {
                                     return requireFunc.FunctionDeclarations.ToList();
@@ -218,25 +214,20 @@ namespace Kooboo.Lib.Helper
             return new List<Jint.Parser.Ast.FunctionDeclaration>();
         }
 
-        public static bool IsRequireJs(string JsBlock)
+        public static bool IsRequireJs(string jsBlock)
         {
             Jint.Parser.JavaScriptParser parser = new Jint.Parser.JavaScriptParser();
 
-            var prog = parser.Parse(JsBlock);
+            var prog = parser.Parse(jsBlock);
 
             foreach (var item in prog.Body)
             {
-                if (item is Jint.Parser.Ast.ExpressionStatement)
+                if (item is ExpressionStatement expres)
                 {
-                    var expres = item as Jint.Parser.Ast.ExpressionStatement;
-
-                    if (expres.Expression is Jint.Parser.Ast.CallExpression)
+                    if (expres.Expression is CallExpression call)
                     {
-                        var call = expres.Expression as Jint.Parser.Ast.CallExpression;
-
-                        if (call.Callee is Jint.Parser.Ast.Identifier)
+                        if (call.Callee is Identifier id)
                         {
-                            var id = call.Callee as Jint.Parser.Ast.Identifier;
                             if (id.Name.ToLower() == "require" || id.Name.ToLower() == "define")
                             {
                                 return true;
@@ -257,7 +248,7 @@ namespace Kooboo.Lib.Helper
                 list = ListRequireJsFuncs(Js);
             }
 
-            if (list.Count() == 0)
+            if (list.Count == 0)
             {
                 return Js;
             }
@@ -333,17 +324,17 @@ namespace Kooboo.Lib.Helper
             return value;
         }
 
-        public static object GetGebuggerValue(Jint.Engine engine, string FullProperty)
+        public static object GetGebuggerValue(Jint.Engine engine, string fullProperty)
         {
-            if (string.IsNullOrEmpty(FullProperty))
+            if (string.IsNullOrEmpty(fullProperty))
             {
                 return null;
             }
 
-            FullProperty = FullProperty.Trim();
-            FullProperty = FullProperty.TrimEnd(';');
+            fullProperty = fullProperty.Trim();
+            fullProperty = fullProperty.TrimEnd(';');
 
-            string[] parts = FullProperty.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            string[] parts = fullProperty.Split(".".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
             var info = engine.DebugHandler.GetDebugInformation();
 
             object value = null;
@@ -380,23 +371,22 @@ namespace Kooboo.Lib.Helper
             return value;
         }
 
-        private static object getMember(object obj, string PropertyName)
+        private static object getMember(object obj, string propertyName)
         {
-            if (obj is IDictionary)
+            if (obj is IDictionary dict)
             {
-                var dict = obj as IDictionary;
-                return GetValueDic(dict, PropertyName);
+                return GetValueDic(dict, propertyName);
             }
-            else if (obj is JObject)
+            else if (obj is JObject jObject)
             {
-                return Lib.Helper.JsonHelper.GetObject(obj as JObject, PropertyName);
+                return Lib.Helper.JsonHelper.GetObject(jObject, propertyName);
             }
             else if (obj is System.Dynamic.ExpandoObject)
             {
-                IDictionary<String, Object> value = obj as IDictionary<String, Object>;
+                IDictionary<String, Object> value = (IDictionary<String, Object>) obj;
                 if (value != null)
                 {
-                    return value.Where(item => EqualsIgnoreCasing(PropertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
+                    return value.Where(item => EqualsIgnoreCasing(propertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
                 }
                 return null;
             }
@@ -405,7 +395,7 @@ namespace Kooboo.Lib.Helper
                 IDictionary<string, object> value = obj as IDictionary<string, object>;
                 if (value != null)
                 {
-                    return value.Where(item => EqualsIgnoreCasing(PropertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
+                    return value.Where(item => EqualsIgnoreCasing(propertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
                 }
                 return null;
             }
@@ -419,10 +409,9 @@ namespace Kooboo.Lib.Helper
                     return null;
                 }
 
-                IDictionary<String, Object> rightvalue = jsObject as IDictionary<String, Object>;
-                if (rightvalue != null)
+                if (jsObject is IDictionary<string, object> rightvalue)
                 {
-                    return rightvalue.Where(item => EqualsIgnoreCasing(PropertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
+                    return rightvalue.Where(item => EqualsIgnoreCasing(propertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
                 }
                 else
                 {
@@ -431,18 +420,18 @@ namespace Kooboo.Lib.Helper
                         IDictionary<String, Object> expvalue = obj as IDictionary<String, Object>;
                         if (expvalue != null)
                         {
-                            return expvalue.Where(item => EqualsIgnoreCasing(PropertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
+                            return expvalue.Where(item => EqualsIgnoreCasing(propertyName, item.Key)).Select(item => item.Value).FirstOrDefault();
                         }
                         return null;
                     }
                     else
                     {
-                        return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(jsObject, PropertyName);
+                        return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(jsObject, propertyName);
                     }
                 }
             }
 
-            return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(obj, PropertyName);
+            return Kooboo.Lib.Reflection.Dynamic.GetObjectMember(obj, propertyName);
         }
 
         private static object GetValueDic(IDictionary dictionary, string name)
@@ -496,18 +485,14 @@ namespace Kooboo.Lib.Helper
             var parser = new JavaScriptParser();
             var prog = parser.Parse(code);
 
-            if (prog == null || prog.Body == null || prog.Body.Count() != 1)
+            if (prog?.Body == null || prog.Body.Count != 1)
             {
                 return false;
             }
 
             var statement = prog.Body.First();
 
-            if (statement == null)
-            {
-                return false;
-            }
-            var exp = statement as Jint.Parser.Ast.ExpressionStatement;
+            var exp = statement as ExpressionStatement;
 
             if (exp == null)
             {
@@ -516,11 +501,7 @@ namespace Kooboo.Lib.Helper
 
             var t = exp.Expression.GetType();
 
-            if (t == typeof(Jint.Parser.Ast.MemberExpression) || t == typeof(Jint.Parser.Ast.Identifier))
-            {
-                return true;
-            }
-            return false;
+            return t == typeof(Jint.Parser.Ast.MemberExpression) || t == typeof(Jint.Parser.Ast.Identifier);
         }
 
         public static bool IsAssignmentExpression(string code)
@@ -538,7 +519,7 @@ namespace Kooboo.Lib.Helper
             var parser = new JavaScriptParser();
             var prog = parser.Parse(code);
 
-            if (prog == null || prog.Body == null || prog.Body.Count() != 1)
+            if (prog?.Body == null || prog.Body.Count != 1)
             {
                 return false;
             }
@@ -558,11 +539,7 @@ namespace Kooboo.Lib.Helper
 
             var t = exp.Expression.GetType();
 
-            if (t == typeof(Jint.Parser.Ast.AssignmentExpression))
-            {
-                return true;
-            }
-            return false;
+            return t == typeof(Jint.Parser.Ast.AssignmentExpression);
         }
 
         public static object GetAssignmentValue(string code)
@@ -574,11 +551,9 @@ namespace Kooboo.Lib.Helper
 
             var exp = statement as Jint.Parser.Ast.ExpressionStatement;
 
-            var ass = exp.Expression as Jint.Parser.Ast.AssignmentExpression;
+            var ass = exp?.Expression as Jint.Parser.Ast.AssignmentExpression;
 
-            var rightvalue = ass.Right as Jint.Parser.Ast.Literal;
-
-            if (rightvalue != null)
+            if (ass?.Right is Literal rightvalue)
             {
                 return rightvalue.Value;
             }

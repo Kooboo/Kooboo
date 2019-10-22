@@ -12,18 +12,18 @@ namespace Kooboo.Lib.Helper
     {
         public static string GetLocalIpAddress()
         {
-            List<string> IpAdds = new List<string>();
+            List<string> ipAdds = new List<string>();
 
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    IpAdds.Add(ip.ToString());
+                    ipAdds.Add(ip.ToString());
                 }
             }
 
-            foreach (var item in IpAdds)
+            foreach (var item in ipAdds)
             {
                 if (item != "127.0.0.1" && !item.StartsWith("192."))
                 {
@@ -31,12 +31,12 @@ namespace Kooboo.Lib.Helper
                 }
             }
 
-            if (IpAdds.Count() == 0)
+            if (ipAdds.Count == 0)
             {
                 return null;
             }
 
-            return IpAdds.First();
+            return ipAdds.First();
         }
 
         public static bool IsPortInUse(int port)
@@ -49,7 +49,7 @@ namespace Kooboo.Lib.Helper
                 if (item.Port == port)
                 {
                     // if in use.
-                    bool IsInUsed = false;
+                    bool isInUsed = false;
                     try
                     {
                         TcpListener tcpListener = new TcpListener(System.Net.IPAddress.Any, port);
@@ -57,14 +57,14 @@ namespace Kooboo.Lib.Helper
                         tcpListener.Stop();
                         tcpListener = null;
                     }
-                    catch (SocketException ex)
+                    catch (SocketException)
                     {
-                        IsInUsed = true;
+                        isInUsed = true;
                     }
                     finally
                     {
                     }
-                    return IsInUsed;
+                    return isInUsed;
                 }
             }
 
