@@ -7,11 +7,13 @@ using System.Net.Sockets;
 using System.IO;
 using System.Linq;
 using System.Net.Security;
+using System.Threading;
 
 namespace Kooboo.Mail.Smtp
 {
     public class SmtpConnector
     {
+        private long _connectionId;
         private TcpClient _client;
         private Stream _stream;
         private StreamReader _reader;
@@ -30,8 +32,10 @@ namespace Kooboo.Mail.Smtp
 
         public IPEndPoint Client { get; set; }
 
-        public async Task Accept()
+        public async Task Accept(long cid)
         {
+            _connectionId = cid;
+
             Exception exception = null;
 
             try
@@ -51,6 +55,7 @@ namespace Kooboo.Mail.Smtp
 
                 // Service ready
                 await _writer.WriteLineAsync(session.ServiceReady().Render());
+                SmtpServer._logger.LogInformation($">gt {_connectionId} {Thread.CurrentThread.ManagedThreadId}");
 
                 var commandline = await _reader.ReadLineAsync();
                 while (commandline != null)
