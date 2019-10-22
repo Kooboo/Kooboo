@@ -19,7 +19,7 @@ namespace Kooboo.Mail.Smtp
     public class SmtpServer : Kooboo.Tasks.IWorkerStarter
     {
         internal static Logging.ILogger _logger;
-        internal static long _nextConnectionId;
+        private static long _nextConnectionId;
 
         static SmtpServer()
         {
@@ -29,7 +29,8 @@ namespace Kooboo.Mail.Smtp
         private CancellationTokenSource _cancellationTokenSource;
         private TcpListener _listener;
         private Task _listenTask;
-        internal ConcurrentDictionary<string, int> _connections;
+        private Heartbeat _heartbeat;
+        internal SmtpConnectionManager _connectionManager;
 
         public SmtpServer(string name)
             : this(name, 25)
@@ -46,7 +47,9 @@ namespace Kooboo.Mail.Smtp
             Name = name;
             Port = port;
             Certificate = cert;
-            _connections = new ConcurrentDictionary<string, int>();
+
+            _connectionManager = new SmtpConnectionManager(Options.MaxConnections);
+            _heartbeat = new Heartbeat(_connectionManager);
         }
 
         [JsonIgnore]
@@ -59,6 +62,8 @@ namespace Kooboo.Mail.Smtp
         public int Timeout { get; set; }
 
         public bool AuthenticationRequired { get; set; }
+
+        public SmtpServerOptions Options { get; set; } = new SmtpServerOptions();
 
         public void Start()
         {
@@ -93,6 +98,8 @@ namespace Kooboo.Mail.Smtp
             }
 
             _listenTask = Task.Run(() => Loop());
+
+            _heartbeat.Start();
         }
 
         public void Stop()
@@ -124,8 +131,8 @@ namespace Kooboo.Mail.Smtp
                     var tcpClient = await _listener.AcceptTcpClientAsync();
                     _logger.LogInformation($">ac {cid} {Thread.CurrentThread.ManagedThreadId} {tcpClient.Client.RemoteEndPoint}");
 
-                    var session = new SmtpConnector(this, tcpClient);
-                    _ = session.Accept(cid);
+                    var session = new SmtpConnector(this, tcpClient, cid);
+                    _ = session.Accept();
                 }
                 catch(Exception ex)
                 {
@@ -139,5 +146,14 @@ namespace Kooboo.Mail.Smtp
                 
             }
         }
+    }
+
+    public class SmtpServerOptions
+    {
+        public TimeSpan LiveTimeout { get; set; } = TimeSpan.FromSeconds(30);
+
+        public int MailsPerConnection { get; set; } = 10;
+
+        public int? MaxConnections { get; set; }
     }
 }
