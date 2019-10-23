@@ -99,7 +99,7 @@ namespace Kooboo.Data
 
         public static int MaxVisitorLogRead { get; set; } = 3000;  // only read the last  3000
 
-        public static string GetFileIoRoot(WebSite website)
+        public static string GetFileIORoot(WebSite website)
         {
             var orgid = website.OrganizationId;
 
@@ -202,8 +202,8 @@ namespace Kooboo.Data
 
         private static bool IsKoobooDiskRoot(string fullPath)
         {
-            string ScriptFolder = System.IO.Path.Combine(fullPath, "_Admin", "Scripts");
-            if (!Directory.Exists(ScriptFolder))
+            string scriptFolder = System.IO.Path.Combine(fullPath, "_Admin", "Scripts");
+            if (!Directory.Exists(scriptFolder))
             {
                 return false;
             }

@@ -127,8 +127,7 @@ namespace Kooboo.Sites.Systems
 
             if (string.IsNullOrEmpty(action) || action == "render")
             {
-                System.Guid viewid = default;
-                System.Guid.TryParse(nameOrId, out viewid);
+                System.Guid.TryParse(nameOrId, out var viewid);
                 if (viewid == default(Guid))
                 {
                     viewid = Kooboo.Data.IDGenerator.Generate(nameOrId, ConstObjectType.View);
@@ -152,14 +151,12 @@ namespace Kooboo.Sites.Systems
         {
             Image image = null;
 
-            if (System.Guid.TryParse(nameOrId, out var ImageId))
+            if (System.Guid.TryParse(nameOrId, out var imageId))
             {
-                image = context.SiteDb.Images.Get(ImageId) as Image;
+                image = context.SiteDb.Images.Get(imageId);
             }
 
-            long logid = -1;
-
-            if (long.TryParse(nameOrId, out logid))
+            if (long.TryParse(nameOrId, out var logid))
             {
                 var logentry = context.SiteDb.Log.Get(logid);
                 var repo = context.SiteDb.Images as IRepository;
@@ -176,14 +173,12 @@ namespace Kooboo.Sites.Systems
         {
             CmsFile file = null;
 
-            if (System.Guid.TryParse(nameOrId, out var FileId))
+            if (System.Guid.TryParse(nameOrId, out var fileId))
             {
-                file = context.SiteDb.Files.Get(FileId) as CmsFile;
+                file = context.SiteDb.Files.Get(fileId);
             }
 
-            long logid = -1;
-
-            if (long.TryParse(nameOrId, out logid))
+            if (long.TryParse(nameOrId, out var logid))
             {
                 var logentry = context.SiteDb.Log.Get(logid);
                 var repo = context.SiteDb.Images as IRepository;
@@ -213,16 +208,14 @@ namespace Kooboo.Sites.Systems
                 var repo = context.SiteDb.GetRepository(modeltype);
 
                 ISiteObject siteobject;
-                siteobject = repo?.GetByNameOrId(nameOrId) as ISiteObject;
+                siteobject = repo?.GetByNameOrId(nameOrId);
 
                 if (siteobject == null)
                 {
-                    long logid = -1;
-
-                    if (long.TryParse(nameOrId, out logid))
+                    if (long.TryParse(nameOrId, out var logid))
                     {
                         var logentry = context.SiteDb.Log.Get(logid);
-                        siteobject = repo.GetByLog(logentry) as ISiteObject;
+                        siteobject = repo?.GetByLog(logentry);
                     }
                 }
 
@@ -270,7 +263,7 @@ namespace Kooboo.Sites.Systems
 
             relative = Lib.Helper.StringHelper.ReplaceIgnoreCase(relative, "__kb/kfile/", "");
 
-            var root = Kooboo.Data.AppSettings.GetFileIoRoot(context.RenderContext.WebSite);
+            var root = Kooboo.Data.AppSettings.GetFileIORoot(context.RenderContext.WebSite);
 
             string fullpath = Kooboo.Lib.Helper.IOHelper.CombinePath(root, relative);
 

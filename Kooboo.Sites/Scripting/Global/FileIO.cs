@@ -12,13 +12,13 @@ namespace Kooboo.Sites.Scripting.Global
     {
         private string _rootfolder;
 
-        private string RootFolder => _rootfolder ?? (_rootfolder = Kooboo.Data.AppSettings.GetFileIoRoot(this.context.WebSite));
+        private string RootFolder => _rootfolder ?? (_rootfolder = Kooboo.Data.AppSettings.GetFileIORoot(this.Context.WebSite));
 
-        private RenderContext context { get; set; }
+        private RenderContext Context { get; set; }
 
         public FileIO(RenderContext context)
         {
-            this.context = context;
+            this.Context = context;
         }
 
         public FileInfo Write(string fileName, string content)
@@ -109,9 +109,9 @@ namespace Kooboo.Sites.Scripting.Global
             return Lib.Helper.UrlHelper.Combine(url, filename);
         }
 
-        public string Read(string FileName)
+        public string Read(string fileName)
         {
-            var name = _getfullname(FileName);
+            var name = _getfullname(fileName);
             if (!string.IsNullOrWhiteSpace(name) && System.IO.File.Exists(name))
             {
                 return System.IO.File.ReadAllText(name);
@@ -119,9 +119,9 @@ namespace Kooboo.Sites.Scripting.Global
             return null;
         }
 
-        public byte[] ReadBinary(string FileName)
+        public byte[] ReadBinary(string fileName)
         {
-            var name = _getfullname(FileName);
+            var name = _getfullname(fileName);
             if (!string.IsNullOrWhiteSpace(name) && System.IO.File.Exists(name))
             {
                 return System.IO.File.ReadAllBytes(name);
@@ -129,16 +129,16 @@ namespace Kooboo.Sites.Scripting.Global
             return null;
         }
 
-        public bool Exists(string FileName)
+        public bool Exists(string fileName)
         {
-            var name = _getfullname(FileName);
+            var name = _getfullname(fileName);
 
             return System.IO.File.Exists(name);
         }
 
-        public void Delete(string FileName)
+        public void Delete(string fileName)
         {
-            var name = _getfullname(FileName);
+            var name = _getfullname(fileName);
             if (System.IO.File.Exists(name))
             {
                 System.IO.File.Delete(name);
@@ -206,7 +206,7 @@ namespace Kooboo.Sites.Scripting.Global
 
                     string url = fullname.Replace("\\", "/");
                     url = Lib.Helper.UrlHelper.Combine("/__kb/kfile/", url);
-                    string absurl = this.context.WebSite.BaseUrl(url);
+                    string absurl = this.Context.WebSite.BaseUrl(url);
                     info.AbsoluteUrl = absurl;
                     info.RelativeUrl = url;
                     return info;
