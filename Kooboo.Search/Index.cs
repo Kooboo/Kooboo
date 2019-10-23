@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Search.Scanner;
 using System;
@@ -14,6 +14,7 @@ namespace Kooboo.Search
         public string Folder { get; set; }
 
         private WordIndex _wordindex;
+
         internal WordIndex WordIndex
         {
             get
@@ -37,7 +38,8 @@ namespace Kooboo.Search
         }
 
         private DocumentStore _docstore;
-       internal DocumentStore DocumentStore
+
+        internal DocumentStore DocumentStore
         {
             get
             {
@@ -60,6 +62,7 @@ namespace Kooboo.Search
         }
 
         private BitMap _map;
+
         internal BitMap Map
         {
             get
@@ -82,52 +85,47 @@ namespace Kooboo.Search
             }
         }
 
-        private Itokenizer _Tokenizer;
+        private Itokenizer _tokenizer;
+
         public Itokenizer Tokenizer
         {
             get
             {
-                if (_Tokenizer == null)
+                if (_tokenizer == null)
                 {
                     lock (_locker)
                     {
-                        if (_Tokenizer == null)
+                        if (_tokenizer == null)
                         {
-                            _Tokenizer = new Scanner.DefaultTokenizer();
+                            _tokenizer = new Scanner.DefaultTokenizer();
                         }
                     }
                 }
-                return _Tokenizer;
+                return _tokenizer;
             }
             set
             {
-                _Tokenizer = value;
+                _tokenizer = value;
             }
         }
 
-        private void init(string folder)
+        private void Init(string folder)
         {
-            if (!System.IO.Path.IsPathRooted(folder))
-            {
-                this.Folder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, folder);
-            }
-            else
-            {
-                this.Folder = folder;
-            } 
-            Lib.Helper.IOHelper.EnsureDirectoryExists(this.Folder); 
+            this.Folder = !System.IO.Path.IsPathRooted(folder) ? System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, folder) : folder;
+            Lib.Helper.IOHelper.EnsureDirectoryExists(this.Folder);
         }
 
         public Index(string folder)
         {
-            init(folder);
+            Init(folder);
         }
-        public Index(string folder, Itokenizer Tokenizer)
+
+        public Index(string folder, Itokenizer tokenizer)
         {
-            this.Tokenizer = Tokenizer;
-            init(folder);
+            this.Tokenizer = tokenizer;
+            Init(folder);
         }
-         
+
         public void Flush()
         {
             lock (_locker)
@@ -138,24 +136,24 @@ namespace Kooboo.Search
 
         public string GetMeta(int id)
         {
-            lock(_locker)
+            lock (_locker)
             {
-                return this.DocumentStore.GetMeta(id); 
-            } 
+                return this.DocumentStore.GetMeta(id);
+            }
         }
 
         public IndexDocument LoadByMeta(string meta)
         {
-            lock(_locker)
+            lock (_locker)
             {
-                var id =  this.DocumentStore.FindByMeta(meta);
-                if (id >-1)
+                var id = this.DocumentStore.FindByMeta(meta);
+                if (id > -1)
                 {
-                 return this.DocumentStore.Get(id);  
+                    return this.DocumentStore.Get(id);
                 }
             }
 
-            return null; 
+            return null;
         }
 
         public HashSet<int> ListWords(string content)
@@ -166,7 +164,7 @@ namespace Kooboo.Search
             tokenizer.SetDoc(content);
             var token = tokenizer.ConsumeNext();
             while (token != null)
-            { 
+            {
                 var wordid = WordIndex.GetOrAddWord(token.Value);
                 if (wordid >= 0)
                 {
@@ -199,17 +197,17 @@ namespace Kooboo.Search
         /// <summary>
         /// search and return list of metas
         /// </summary>
-        /// <param name="FullText"></param>
+        /// <param name="fullText"></param>
         /// <returns></returns>
-        public List<string> Search(string FullText)
+        public List<string> Search(string fullText)
         {
             lock (_locker)
             {
-                var FoundIds = FindAll(FullText);
+                var foundIds = FindAll(fullText);
 
                 List<string> result = new List<string>();
 
-                foreach (var item in FoundIds)
+                foreach (var item in foundIds)
                 {
                     var meta = this.DocumentStore.GetMeta(item);
                     if (meta != null)
@@ -222,24 +220,24 @@ namespace Kooboo.Search
         }
 
         /// <summary>
-        /// read only find, only for kooboo search. 
+        /// read only find, only for kooboo search.
         /// </summary>
-        /// <param name="FullText"></param>
+        /// <param name="fullText"></param>
         /// <returns></returns>
-        public List<int> FindAll(string FullText)
+        public List<int> FindAll(string fullText)
         {
             lock (_locker)
             {
-                var wordlist = ReadWords(FullText);
+                var wordlist = ReadWords(fullText);
                 return Map.FindAll(wordlist, true);
             }
         }
 
-        public void Delete(string MetaKey)
+        public void Delete(string metaKey)
         {
             lock (_locker)
             {
-                var find = this.DocumentStore.FindByMeta(MetaKey);
+                var find = this.DocumentStore.FindByMeta(metaKey);
 
                 if (find > -1)
                 {
@@ -251,21 +249,20 @@ namespace Kooboo.Search
                     }
                     this.DocumentStore.Delete(find);
                 }
-
             }
         }
 
         public void AddOrUpdate(string metakey, string body)
         {
             lock (_locker)
-            { 
-                var find = this.DocumentStore.FindByMeta(metakey); 
+            {
+                var find = this.DocumentStore.FindByMeta(metakey);
                 if (find > -1)
                 {
                     var doc = this.DocumentStore.Get(find);
                     HashSet<int> oldwords = new HashSet<int>();
                     if (doc != null)
-                    { oldwords = ListWords(doc.Body); } 
+                    { oldwords = ListWords(doc.Body); }
                     this.DocumentStore.Update(find, body);
                     HashSet<int> newwords = ListWords(body);
                     this.Map.Update(find, oldwords, newwords);
@@ -316,15 +313,17 @@ namespace Kooboo.Search
                 }
             }
         }
-         
+
         public IndexStat GetIndexStat()
         {
             lock (_locker)
             {
-                IndexStat stat = new IndexStat();
-                stat.WordCount = this.WordIndex.Words.Count;
-                stat.DocCount = this.DocumentStore.Docs.Count;
-                stat.DiskSize = this.WordIndex.DiskSize + this.DocumentStore.DiskSize + this.Map.DiskSize;
+                IndexStat stat = new IndexStat
+                {
+                    WordCount = this.WordIndex.Words.Count,
+                    DocCount = this.DocumentStore.Docs.Count,
+                    DiskSize = this.WordIndex.DiskSize + this.DocumentStore.DiskSize + this.Map.DiskSize
+                };
                 return stat;
             }
         }

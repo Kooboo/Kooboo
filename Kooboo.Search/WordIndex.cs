@@ -18,22 +18,15 @@ namespace Kooboo.Search
         public int CurrentIndex { get; set; }
         private Encoding Encoding { get; set; }
 
-        public WordIndex(string Folder, Encoding Encoding = null)
+        public WordIndex(string folder, Encoding encoding = null)
         {
-            if (Encoding == null)
-            {
-                this.Encoding = Encoding.UTF8;
-            }
-            else
-            {
-                this.Encoding = Encoding;
-            }
+            this.Encoding = encoding ?? Encoding.UTF8;
 
             this.CurrentIndex = 0;
-            if (Folder != null)
+            if (folder != null)
             {
-                Lib.Helper.IOHelper.EnsureDirectoryExists(Folder);
-                this.FullFileName = System.IO.Path.Combine(Folder, "word.dat");
+                Lib.Helper.IOHelper.EnsureDirectoryExists(folder);
+                this.FullFileName = System.IO.Path.Combine(folder, "word.dat");
             }
             this.Words = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             LoadWordList(this.FullFileName);

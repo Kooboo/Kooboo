@@ -1,6 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -34,7 +33,6 @@ namespace Kooboo.Search.Scanner
             }
         }
 
-
         public Token ConsumeNext()
         {
             char lastchar = char.MinValue;
@@ -46,7 +44,7 @@ namespace Kooboo.Search.Scanner
                 {
                     if (lastchar >= 256 && !string.IsNullOrEmpty(this.currentValue))
                     {
-                        //unicode. 
+                        //unicode.
                         lastchar = char.MinValue;
                         var token = new Token(this.currentValue);
                         this.currentValue = string.Empty;
@@ -77,7 +75,6 @@ namespace Kooboo.Search.Scanner
 
                         this.currentValue += currentChar;
                         lastchar = currentChar;
-
                     }
 
                     if (!string.IsNullOrEmpty(this.currentValue))
@@ -116,10 +113,10 @@ namespace Kooboo.Search.Scanner
             this.currentIndex = 0;
         }
 
-        public void SetHtml(string Html)
+        public void SetHtml(string html)
         {
-            string CleanText = Kooboo.Search.Utility.RemoveHtml(Html);
-            SetDoc(CleanText);
+            string cleanText = Kooboo.Search.Utility.RemoveHtml(html);
+            SetDoc(cleanText);
         }
 
         public bool IsStopToken(Token token)
@@ -129,11 +126,7 @@ namespace Kooboo.Search.Scanner
 
         public bool IsSeperator(char input)
         {
-            if (input < 128 && !Lib.Helper.CharHelper.isAlphanumeric(input))
-            { 
-                return true; 
-            } 
-            return false; 
+            return input < 128 && !Lib.Helper.CharHelper.isAlphanumeric(input);
         }
     }
 }
