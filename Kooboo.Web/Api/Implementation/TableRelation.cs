@@ -7,6 +7,7 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Kooboo.Web.Api.Implementation
 {
@@ -23,7 +24,7 @@ namespace Kooboo.Web.Api.Implementation
             {
                 if (!item.StartsWith("_sys_"))
                 {
-                    var table = db.GetOrCreateTable(item);
+                    var table = Data.DB.GetTable(db, item);
                     if (table != null)
                     {
                         TableFieldsViewModel model = new TableFieldsViewModel();
@@ -98,6 +99,7 @@ namespace Kooboo.Web.Api.Implementation
                 }
 
                 result.Add(model);
+
             }
 
             return result.ToList<object>();
@@ -125,6 +127,7 @@ namespace Kooboo.Web.Api.Implementation
 
         public string FieldA { get; set; }
 
+
         public string TableB { get; set; }
 
         public string FieldB { get; set; }
@@ -133,7 +136,10 @@ namespace Kooboo.Web.Api.Implementation
         public EnumTableRelation Relation { get; set; }
 
         public string relationName { get; set; }
+
     }
+
+
 
     public class RelationTypeViewModel
     {
@@ -147,14 +153,23 @@ namespace Kooboo.Web.Api.Implementation
         public string Name { get; set; }
 
         public List<string> Fields { get; set; } = new List<string>();
+
     }
 }
+
+
+
+
+
+
+
 
 //getTableRelationTypes
 //[{
 //  type: '',
 //  displayName: ''
 //}]
+
 
 //AddRelation
 //{
@@ -165,6 +180,7 @@ namespace Kooboo.Web.Api.Implementation
 //  fieldB: '',
 //  relationType: ''
 //}
+
 
 //RelationList
 //[{

@@ -1,12 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
 using System.IO;
 
 namespace Kooboo.IndexedDB.Dynamic
 {
+
     public class BlockFile
     {
+
         private string _fullfilename;
         private FileStream _filestream;
 
@@ -34,26 +36,28 @@ namespace Kooboo.IndexedDB.Dynamic
 
         private byte[] GetPartial(long position, int offset, int count)
         {
+
             byte[] partial = new byte[count];
             Stream.Position = position + offset;
             Stream.Read(partial, 0, count);
             return partial;
+
         }
 
-        // keep for upgrade.. not used any more.
-        public byte[] GetContent(long position, int keyColumnOffset)
+        // keep for upgrade.. not used any more. 
+        public byte[] GetContent(long position, int KeyColumnOffset)
         {
             byte[] counterbytes = GetPartial(position, 26, 4);
             int counter = BitConverter.ToInt32(counterbytes, 0);
-            return GetPartial(position, 30 + keyColumnOffset, counter);
+            return GetPartial(position, 30 + KeyColumnOffset, counter);
         }
 
-        public byte[] GetKey(long position, int columnOffset, int keyLength)
+        public byte[] GetKey(long position, int ColumnOffset, int KeyLength)
         {
-            return GetPartial(position, 30 + columnOffset, keyLength);
+            return GetPartial(position, 30 + ColumnOffset, KeyLength);
         }
 
-        #region NewAPI
+        #region  NewAPI
 
         public long Add(byte[] bytes, int TotalByteLen)
         {
@@ -85,12 +89,12 @@ namespace Kooboo.IndexedDB.Dynamic
             Stream.Position = blockposition + 2;
 
             Stream.Write(counter, 0, 4);
-
-            // Stream.Position = blockposition + 6;
-
+            
             Stream.Position = blockposition + 10;
             Stream.Write(bytes, 0, bytes.Length);
+
         }
+
 
         public byte[] Get(long position)
         {
@@ -104,6 +108,8 @@ namespace Kooboo.IndexedDB.Dynamic
             byte[] counterbytes = GetPartial(position, 6, 4);
             return BitConverter.ToInt32(counterbytes, 0);
         }
+
+
 
         public byte[] Get(long position, int ColumnLen)
         {
@@ -127,20 +133,30 @@ namespace Kooboo.IndexedDB.Dynamic
             }
             else
             {
-                // TODO: This should not needed....
+                // TODO: This should not needed.... 
             }
             return null;
         }
 
-        public void UpdateCol(long position, int relativeposition, int length, byte[] values)
+        public bool UpdateCol(long position, int relativeposition, int length, byte[] values)
         {
-            this.Stream.Position = position + 10 + relativeposition + 8;
+            var currentbytes = this.GetCol(position, relativeposition, length);
 
+            var hashone = Helper.KeyHelper.ComputeGuid(currentbytes);
+
+            var hashnew = Helper.KeyHelper.ComputeGuid(values); 
+
+            if (hashone == hashnew)
+            {
+                return false;
+            }
+
+            this.Stream.Position = position + 10 + relativeposition + 8;
             this.Stream.Write(values, 0, length);
+            return true;
         }
 
-        #endregion NewAPI
-
+        #endregion
         public void Close()
         {
             if (_filestream != null)
@@ -169,8 +185,10 @@ namespace Kooboo.IndexedDB.Dynamic
 
         public FileStream Stream
         {
+
             get
             {
+
                 if (_filestream == null || !_filestream.CanRead)
                 {
                     lock (_object)
@@ -185,5 +203,7 @@ namespace Kooboo.IndexedDB.Dynamic
                 return _filestream;
             }
         }
+
     }
+
 }

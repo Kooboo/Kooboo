@@ -5,7 +5,7 @@ using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.Scripting.Helper;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 
 namespace Kooboo.Sites.Scripting.Global
 {
@@ -20,15 +20,15 @@ namespace Kooboo.Sites.Scripting.Global
         {
             get
             {
-                return this.obj.ToDictionary(o => o.Key, o => o.Value); 
+                return this.obj.ToDictionary(o => o.Key, o => o.Value);
             }
         }
-         
+
         public DynamicTableObject(IDictionary<string, object> orgObj, Table orgtable, RenderContext renderContext)
         {
             this.obj = orgObj;
             this.context = renderContext;
-            this.table = orgtable;  
+            this.table = orgtable;
         }
 
         public object this[string key]
@@ -39,7 +39,7 @@ namespace Kooboo.Sites.Scripting.Global
             }
             set
             {
-                this.obj[key] = value; 
+                this.obj[key] = value;
             }
         }
 
@@ -61,44 +61,40 @@ namespace Kooboo.Sites.Scripting.Global
                     var db = Kooboo.Data.DB.GetKDatabase(this.context.WebSite);
 
                     if (relation.TableA == this.table.Name)
-                    {
-                        var tb = db.GetOrCreateTable(relation.TableB);
+                    { 
                         if (obj.ContainsKey(relation.FieldA))
                         {
                             var fielda = obj[relation.FieldA];
 
                             if (relation.Relation == EnumTableRelation.ManyMany || relation.Relation == EnumTableRelation.OneMany)
                             {
-                                var tableB = db.GetOrCreateTable(relation.TableB);
+                                var tableB = Data.DB.GetTable(db, relation.TableB);
                                 var result = tableB.Query.WhereEqual(relation.FieldB, fielda).Take(999);
                                 return CreateList(result.ToArray(), tableB, this.context);
                             }
                             else
                             {
-                                var tableB = db.GetOrCreateTable(relation.TableB);
+                                var tableB = Data.DB.GetTable(db, relation.TableB);
                                 var result = tableB.Query.WhereEqual(relation.FieldB, fielda).FirstOrDefault();
                                 return Create(result, tableB, this.context);
                             }
-
                         }
-
                     }
                     else if (relation.TableB == this.table.Name)
-                    {
-                        var tb = db.GetOrCreateTable(relation.TableA);
+                    { 
                         if (obj.ContainsKey(relation.FieldB))
                         {
                             var fieldb = obj[relation.FieldB];
 
                             if (relation.Relation == EnumTableRelation.ManyMany || relation.Relation == EnumTableRelation.OneMany)
                             {
-                                var tableB = db.GetOrCreateTable(relation.TableA);
+                                var tableB = Data.DB.GetTable(db, relation.TableA);
                                 var result = tableB.Query.WhereEqual(relation.FieldA, fieldb).Take(999);
                                 return CreateList(result.ToArray(), tableB, this.context);
                             }
                             else
                             {
-                                var tableB = db.GetOrCreateTable(relation.TableA);
+                                var tableB = Data.DB.GetTable(db, relation.TableA);
                                 var result = tableB.Query.WhereEqual(relation.FieldA, fieldb).FirstOrDefault();
                                 return Create(result, tableB, this.context);
                             }
@@ -113,39 +109,39 @@ namespace Kooboo.Sites.Scripting.Global
         public static DynamicTableObject[] CreateList(IDictionary<string, object>[] list, Table TargetTable, RenderContext context)
         {
             int len = list.Length;
-            
+
             DynamicTableObject[] result = new DynamicTableObject[len];
 
             for (int i = 0; i < len; i++)
             {
-                result[i] = Create(list[i], TargetTable, context); 
+                result[i] = Create(list[i], TargetTable, context);
             }
-            return result; 
+            return result;
         }
 
         public static DynamicTableObject Create(IDictionary<string, object> item, Table sourceTable, RenderContext context)
         {
-            if (item !=null)
-            { 
+            if (item != null)
+            {
                 return new DynamicTableObject(item, sourceTable, context);
             }
-            return null; 
+            return null;
 
         }
 
         public object GetValue(string FieldName)
         {
-            return GetValueFromDict(FieldName); 
+            return GetValueFromDict(FieldName);
         }
 
         public object GetValue(string FieldName, RenderContext Context)
         {
-            return GetValueFromDict(FieldName); 
+            return GetValueFromDict(FieldName);
         }
 
         public void SetValue(string FieldName, object Value)
         {
-            obj[FieldName] = Value; 
+            obj[FieldName] = Value;
         }
     }
 }

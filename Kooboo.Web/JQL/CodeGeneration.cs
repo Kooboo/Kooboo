@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
@@ -96,14 +96,16 @@ namespace Kooboo.Web.JQL
         public static List<String> GetDatabaseFields(WebSite site, string tablename)
         {
             var db = Kooboo.Data.DB.GetKDatabase(site);
-            var list = db.GetTables();
-            if (list.Contains(tablename))
+
+            var table = Kooboo.Data.DB.GetTable(site, tablename);
+
+            if (table != null)
             {
-                var table = db.GetOrCreateTable(tablename);
                 return table.Setting.Columns.Where(o => !o.IsSystem).Select(o => o.Name).ToList();
             }
             return null;
         }
+
 
         public static void GenerateDatabase(WebSite website, string TableName, List<string> actions)
         {
@@ -155,7 +157,7 @@ namespace Kooboo.Web.JQL
             var oldcode = sitedb.Code.Get(code.Id);
             if (oldcode != null)
             {
-                return; // already exists.
+                return; // already exists. 
             }
 
             code.CodeType = CodeType.Api;
@@ -164,7 +166,7 @@ namespace Kooboo.Web.JQL
             {
                 if (!sitedb.Routes.Validate(url, code.Id))
                 {
-                    // already exists...
+                    // already exists... 
                     return;
                 }
             }
@@ -176,7 +178,9 @@ namespace Kooboo.Web.JQL
             route.objectId = code.Id;
             route.DestinationConstType = ConstObjectType.Code;
             sitedb.Routes.AddOrUpdate(route);
+
         }
+
 
         public static void GenerateTextContent(WebSite website, string folderName, List<string> actions)
         {
@@ -218,6 +222,8 @@ namespace Kooboo.Web.JQL
             }
         }
 
+
+
         public static void AddTextContentApi_code(SiteDb sitedb, string folderName, string actionName, string codebody)
         {
             string url = "/textapi/" + folderName + "/" + actionName;
@@ -229,7 +235,7 @@ namespace Kooboo.Web.JQL
             var oldcode = sitedb.Code.Get(code.Id);
             if (oldcode != null)
             {
-                return; // already exists.
+                return; // already exists. 
             }
 
             code.CodeType = CodeType.Api;
@@ -238,7 +244,7 @@ namespace Kooboo.Web.JQL
             {
                 if (!sitedb.Routes.Validate(url, code.Id))
                 {
-                    // already exists...
+                    // already exists... 
                     return;
                 }
             }
@@ -252,6 +258,7 @@ namespace Kooboo.Web.JQL
             sitedb.Routes.AddOrUpdate(route);
         }
 
+
         public static string TextContentAddScript(WebSite Site, string folderName)
         {
             var fields = GetTextContentFields(Site, folderName);
@@ -264,7 +271,7 @@ namespace Kooboo.Web.JQL
                 }
                 js += "obj.folder='" + folderName + "'\r\n";
                 js += "k.site.textContents.add(obj); \r\n";
-                // js += "k.response.write('ok');";
+                // js += "k.response.write('ok');"; 
 
                 return js;
             }
@@ -276,6 +283,7 @@ namespace Kooboo.Web.JQL
             var fields = GetTextContentFields(Site, tablename);
             if (fields != null && fields.Any())
             {
+
                 string js = JsKey();
 
                 js += "if (id) {\r\n";
@@ -297,6 +305,8 @@ namespace Kooboo.Web.JQL
                 js += "}";
 
                 return js;
+
+
             }
             return null;
         }
@@ -329,6 +339,7 @@ namespace Kooboo.Web.JQL
 
         public static string TextContentListScript(WebSite Site, string folderName)
         {
+
             string js = " var list = k.site.textContents.findAll(\"folder=='" + folderName + "'\");\r\n";
             js += "if (list) {  k.response.json(list); }; ";
             return js;
@@ -349,5 +360,7 @@ namespace Kooboo.Web.JQL
             }
             return null;
         }
+
+
     }
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Data.Interface;
@@ -82,6 +82,7 @@ namespace Kooboo.Web.Api.Implementation
             string username = user.UserName;
             string password = Data.Service.UserLoginService.GetUserPassword(user);
 
+
             if (!remoteurl.ToLower().StartsWith("http"))
             {
                 remoteurl = "http://" + remoteurl;
@@ -92,12 +93,16 @@ namespace Kooboo.Web.Api.Implementation
                 remoteurl = remoteurl + "/";
             }
 
+
             remoteurl = remoteurl + "_api/publish/sitelist?OrganizationId=" + OrganizationId.ToString();
 
             List<SimpleSiteItemViewModel> model = Kooboo.Lib.Helper.HttpHelper.Get<List<SimpleSiteItemViewModel>>(remoteurl, null, username, password);
 
             return model;
         }
+
+
+
 
         public List<SyncItemViewModel> List(ApiCall call)
         {
@@ -133,8 +138,8 @@ namespace Kooboo.Web.Api.Implementation
 
             if (website != null)
             {
-                ///TODO: if remotesiteId == default(guid), call to create remote site id...
-                // url... /_api/site/create, FullDomain, SiteName....
+                ///TODO: if remotesiteId == default(guid), call to create remote site id... 
+                // url... /_api/site/create, FullDomain, SiteName.... 
 
                 if (!setting.RemoteServerUrl.ToLower().StartsWith("http"))
                 {
@@ -223,23 +228,27 @@ namespace Kooboo.Web.Api.Implementation
 
                 if (item.IsTable)
                 {
-                    var table = kdb.GetOrCreateTable(item.TableName);
-                    var logdata = table.GetLogData(item.Id, item.NewBlockPosition);
-                    PushItemViewModel viewmodel = new PushItemViewModel
-                    {
-                        Id = item.Id,
-                        ObjectType = Kooboo.Data.Language.Hardcoded.GetValue("Table", call.Context),
-                        Name = LogService.GetTableDisplayName(sitedb, item, call.Context),
-                        // KoobooType = siteojbect.ConstType,
-                        ChangeType = changetype,
-                        LastModified = item.UpdateTime,
-                        LogId = item.Id
-                    };
 
-                    result.Add(viewmodel);
+                    var table = Data.DB.GetTable(kdb, item.TableName);
+                    if (table != null)
+                    {
+                        var logdata = table.GetLogData(item);
+                        PushItemViewModel viewmodel = new PushItemViewModel
+                        {
+                            Id = item.Id,
+                            ObjectType = Kooboo.Data.Language.Hardcoded.GetValue("Table", call.Context),
+                            Name = LogService.GetTableDisplayName(sitedb, item, call.Context),
+                            // KoobooType = siteojbect.ConstType,
+                            ChangeType = changetype,
+                            LastModified = item.UpdateTime,
+                            LogId = item.Id
+                        };
+                        result.Add(viewmodel);
+                    }
                 }
                 else
                 {
+
                     var siteojbect = ObjectService.GetSiteObject(sitedb, item);
                     if (siteojbect == null)
                     {
@@ -266,6 +275,7 @@ namespace Kooboo.Web.Api.Implementation
 
                     result.Add(viewmodel);
                 }
+
             }
 
             return result;
@@ -317,6 +327,7 @@ namespace Kooboo.Web.Api.Implementation
             string username = call.Context.User.UserName;
             string password = Data.Service.UserLoginService.GetUserPassword(call.Context.User);
 
+
             foreach (var item in ids)
             {
                 var eachsync = SyncService.Prepare(sitedb, item);
@@ -350,12 +361,11 @@ namespace Kooboo.Web.Api.Implementation
                 System.Threading.Tasks.Task.Run(() => Sites.TaskQueue.QueueManager.Execute(call.WebSite.Id));
             }
         }
-
-        [Kooboo.Attributes.RequireParameters("id")]
-        public PullResult Pull(ApiCall call)
+         
+        public PullResult Pull(Guid id, ApiCall call)
         {
             var sitedb = call.WebSite.SiteDb();
-            var setting = sitedb.SyncSettings.Get(call.ObjectId);
+            var setting = sitedb.SyncSettings.Get(id);
             if (setting == null)
             {
                 throw new Exception(Data.Language.Hardcoded.GetValue("Setting not found", call.Context));
@@ -398,6 +408,7 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
+
         private void verifysite(string removeservrerurl, Guid remotesiteid, string username, string password)
         {
             string ApiSendToLocalUrl = "/_api/publish/CheckSite?SiteId=" + remotesiteid.ToString();
@@ -416,7 +427,7 @@ namespace Kooboo.Web.Api.Implementation
                     throw new Exception(model.Message);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
             }
@@ -441,21 +452,14 @@ namespace Kooboo.Web.Api.Implementation
             return res;
         }
 
-        [Kooboo.Attributes.RequireParameters("SiteId", "LastId")]
-        public SyncObject SendToClient(ApiCall call)
-        {// TODO: validate user has access to this site.
-            string strLogId = call.GetValue("LastId");
-
-            long lastlogid = -1;
-
-            if (long.TryParse(strLogId, out lastlogid))
-            {
-                return PullRequest.PullNext(call.WebSite.SiteDb(), lastlogid);
-            }
-            return null;
+        // [Kooboo.Attributes.RequireParameters("SiteId", "LastId")]
+        public SyncObject SendToClient(long LastId, Guid SiteId,  ApiCall call)
+        {
+              return PullRequest.PullNext(call.WebSite.SiteDb(), LastId);
+          
         }
 
-        [Kooboo.Attributes.RequireParameters("logid")]
+        //[Kooboo.Attributes.RequireParameters("logid")]
         public long VersionNumber(ApiCall call)
         {
             return call.WebSite.SiteDb().Log.Store.LastKey;
@@ -495,41 +499,76 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in items.Skip(model.PageNr * model.PageSize - model.PageSize).Take(model.PageSize))
             {
-                var repo = sitedb.GetRepository(item.StoreName);
-
-                if (repo != null)
+                var log = sitedb.Log.Get(item.Version);
+                if (log != null)
                 {
-                    var log = sitedb.Log.Get(item.Version);
-                    if (log != null)
+                    ChangeType changetype;
+                    if (log.EditType == IndexedDB.EditType.Add)
                     {
-                        var siteobject = repo.GetByLog(log);
+                        changetype = ChangeType.Add;
+                    }
+                    else if (log.EditType == IndexedDB.EditType.Update)
+                    { changetype = ChangeType.Update; }
+                    else
+                    {
+                        changetype = ChangeType.Delete;
+                    }
 
-                        SyncLogItemViewModel logitem = new SyncLogItemViewModel();
-                        var info = ObjectService.GetObjectInfo(sitedb, siteobject as ISiteObject);
-                        logitem.Name = info.Name;
-                        logitem.Size = Lib.Utilities.CalculateUtility.GetSizeString(info.Size);
-                        logitem.ObjectType = repo.StoreName;
-                        logitem.LastModified = log.UpdateTime;
-                        logitem.LogId = log.Id;
+                    if (log.IsTable)
+                    {
+                        var kdb = Kooboo.Data.DB.GetKDatabase(sitedb.WebSite);
+                        var table = Data.DB.GetTable(kdb, log.TableName);
 
-                        if (log.EditType == IndexedDB.EditType.Add)
+                        if (table != null)
                         {
-                            logitem.ChangeType = ChangeType.Add;
-                        }
-                        else if (log.EditType == IndexedDB.EditType.Update)
-                        { logitem.ChangeType = ChangeType.Update; }
-                        else
-                        {
-                            logitem.ChangeType = ChangeType.Delete;
-                        }
+                            var logdata = table.GetLogData(log);
 
-                        result.Add(logitem);
+                            string size = null;
+                            if (logdata != null)
+                            {
+                                var json = Lib.Helper.JsonHelper.Serialize(logdata);
+                                size = CalculateUtility.GetSizeString(json.Length);
+                            }
+
+                            var name = Kooboo.Sites.Service.LogService.GetTableDisplayName(sitedb, log, call.Context, logdata);
+
+                            SyncLogItemViewModel logitem = new SyncLogItemViewModel();
+                            logitem.Name = name;
+
+                            logitem.ObjectType = Data.Language.Hardcoded.GetValue("Table", call.Context);
+                            logitem.LastModified = log.UpdateTime;
+                            logitem.LogId = log.Id;
+                            logitem.ChangeType = changetype;
+
+                            result.Add(logitem);
+                        }
+                    }
+
+                    else
+                    {
+                        var repo = sitedb.GetRepository(item.StoreName);
+
+                        if (repo != null)
+                        {
+                            var siteobject = repo.GetByLog(log);
+
+                            SyncLogItemViewModel logitem = new SyncLogItemViewModel();
+                            var info = ObjectService.GetObjectInfo(sitedb, siteobject as ISiteObject);
+                            logitem.Name = info.Name;
+                            logitem.Size = Lib.Utilities.CalculateUtility.GetSizeString(info.Size);
+                            logitem.ObjectType = repo.StoreName;
+                            logitem.LastModified = log.UpdateTime;
+                            logitem.LogId = log.Id;
+                            logitem.ChangeType = changetype;
+
+                            result.Add(logitem);
+                        }
                     }
                 }
             }
-
             model.List = result;
             return model;
         }
     }
 }
+

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Api.ApiResponse;
@@ -59,6 +59,10 @@ namespace Kooboo.Web.Api.Implementation
 
             foreach (var item in items)
             {
+                if (item == null)
+                {
+                    continue;
+                }
                 SiteLogViewModel model = new SiteLogViewModel
                 {
                     LastModified = item.UpdateTime,
@@ -100,11 +104,13 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     list.Add(model);
                 }
+
             }
 
             result.List = list;
 
             return result;
+
         }
 
         public int PageCount(ApiCall apiCall)
@@ -247,7 +253,7 @@ namespace Kooboo.Web.Api.Implementation
             if (prelog != null)
             {
                 var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
-                var table = db.GetOrCreateTable(prelog.TableName);
+                var table = Data.DB.GetTable(db, prelog.TableName);
 
                 LogEntry nextlog;
                 if (id2 == -1)
@@ -259,12 +265,12 @@ namespace Kooboo.Web.Api.Implementation
                 {
                     nextlog = sitedb.Log.Get(id2);
                 }
-                var itemone = table.GetLogData(prelog.Id, prelog.NewBlockPosition);
+                var itemone = table.GetLogData(prelog);
                 Dictionary<string, object> itemtwo = null;
 
                 if (nextlog.EditType != EditType.Delete)
                 {
-                    itemtwo = table.GetLogData(nextlog.Id, nextlog.NewBlockPosition);
+                    itemtwo = table.GetLogData(nextlog);
                 }
 
                 model.Title1 = Data.Language.Hardcoded.GetValue("Table", call.Context) + ":" + prelog.TableName;
@@ -283,21 +289,10 @@ namespace Kooboo.Web.Api.Implementation
             return model;
         }
 
-        public bool Revert(ApiCall apiCall)
-        {
-            string strid = apiCall.GetValue("id");
-            if (string.IsNullOrEmpty(strid))
-            {
-                return false;
-            }
-
-            long id = 0;
-            if (long.TryParse(strid, out id))
-            {
-                Sites.Service.LogService.RollBack(apiCall.WebSite.SiteDb(), id);
-                return true;
-            }
-            return false;
+        public bool Revert(long id, ApiCall apiCall)
+        { 
+            Sites.Service.LogService.RollBack(apiCall.WebSite.SiteDb(), id);
+            return true; 
         }
 
         public bool Blame(ApiCall call)
@@ -316,21 +311,8 @@ namespace Kooboo.Web.Api.Implementation
             return false;
         }
 
-        public bool Restore(ApiCall apicall)
-        {
-            string strid = apicall.GetValue("id");
-            long id = -1;
-
-            if (!string.IsNullOrEmpty(strid))
-            {
-                if (!long.TryParse(strid, out id))
-                {
-                    return false;
-                }
-            }
-            else
-            { return false; }
-
+        public bool Restore(long id, ApiCall apicall)
+        { 
             if (id > -1)
             {
                 Kooboo.Sites.Service.LogService.RollBackFrom(apicall.WebSite.SiteDb(), id);
@@ -383,6 +365,7 @@ namespace Kooboo.Web.Api.Implementation
             Kooboo.Sites.Service.LogService.CheckOut(call.WebSite.SiteDb(), newwebsite.SiteDb(), id);
 
             return true;
+
         }
 
         public Guid ExportBatch(long id, ApiCall call)
@@ -404,6 +387,7 @@ namespace Kooboo.Web.Api.Implementation
 
                 return guid;
             }
+
         }
 
         public Guid ExportItems(List<long> ids, ApiCall call)

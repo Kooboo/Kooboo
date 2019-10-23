@@ -2,7 +2,7 @@
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 using Kooboo.Sites.Models;
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Repository;
@@ -25,10 +25,19 @@ namespace Kooboo.Sites.Service
         {
             if (logentry == null) { return; }
 
-            var repo = SiteDb.GetRepository(logentry.StoreName);
-            if (repo != null)
+            if (logentry.IsTable)
             {
-                repo.RollBack(logentry);
+                var kdb = Kooboo.Data.DB.GetKDatabase(SiteDb.WebSite);
+                var table = kdb.GetOrCreateTable(logentry.TableName);
+                table.RollBack(logentry);
+            }
+            else
+            {
+                var repo = SiteDb.GetRepository(logentry.StoreName);
+                if (repo != null)
+                {
+                    repo.RollBack(logentry);
+                }
             }
         }
 
@@ -119,7 +128,9 @@ namespace Kooboo.Sites.Service
 
         public static void RollBack(SiteDb SiteDb, List<LogEntry> loglist)
         {
-            foreach (var item in loglist.GroupBy(o => o.StoreName))
+            var stores = loglist.Where(o => o.IsTable == false).ToList();
+
+            foreach (var item in stores.GroupBy(o => o.StoreName))
             {
                 var SingleStoreList = item.ToList();
 
@@ -130,6 +141,18 @@ namespace Kooboo.Sites.Service
                     repo.RollBack(SingleStoreList);
                 }
             }
+
+            var tables = loglist.Where(o => o.IsTable).ToList();
+
+            var kdb = Kooboo.Data.DB.GetKDatabase(SiteDb.WebSite);
+
+            foreach (var item in tables.GroupBy(o => o.TableName))
+            {
+                var tablelist = item.ToList();
+                var table = kdb.GetOrCreateTable(item.Key);
+                table.RollBack(tablelist);
+            }
+
         }
 
         public static void RollBack(SiteDb SiteDb, List<long> loglist)
@@ -183,12 +206,25 @@ namespace Kooboo.Sites.Service
                 NewDb.TransferTasks.AddOrUpdate(item);
             }
 
+            var kdb = Kooboo.Data.DB.GetKDatabase(OldDb.WebSite);
+            var newkdb = Data.DB.GetKDatabase(NewDb.WebSite);
+
+            var alltables = kdb.GetTables();
+
+            foreach (var item in alltables)
+            {
+                var currentable = kdb.GetTable(item);
+                if (currentable != null)
+                {
+                    var table = newkdb.GetOrCreateTable(item);
+                    currentable.CheckOut(LatestLogId, table, SelfInclude);
+                }
+            }
+
             var setting = Sync.ImportExport.GetSiteSetting(OldDb.WebSite);
             Sync.ImportExport.SetSiteSetting(NewDb.WebSite, setting);
             Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(NewDb.WebSite);
         }
-
-
 
         public static string GetStoreDisplayName(SiteDb sitedb, LogEntry log)
         {
@@ -219,7 +255,7 @@ namespace Kooboo.Sites.Service
         {
             if (log.IsTable)
             {
-                return GetTableDisplayName(sitedb, log, context); 
+                return GetTableDisplayName(sitedb, log, context);
             }
             else
             {
@@ -229,31 +265,40 @@ namespace Kooboo.Sites.Service
 
         public static string GetTableDisplayName(SiteDb sitedb, LogEntry log, RenderContext context)
         {
-            string name = Data.Language.Hardcoded.GetValue("Table", context);
-            name += ": " + log.TableName; 
+            Dictionary<string, object> logdata = null;
+
+            var table = Data.DB.GetTable(sitedb.DatabaseDb, log.TableName);
+
+            if (table != null)
+            {
+                logdata = table.GetLogData(log);
+            }
+            return GetTableDisplayName(sitedb, log, context, logdata);
+        }
+
+        public static string GetTableDisplayName(SiteDb sitedb, LogEntry log, RenderContext context, Dictionary<string, object> LogData)
+        {
+            string name = log.TableName;
             if (!string.IsNullOrWhiteSpace(log.TableColName))
             {
-                name += ":" + log.TableColName; 
+                name += ":" + log.TableColName;
             }
 
-            var table = sitedb.DatabaseDb.GetOrCreateTable(log.TableName);
-
-            var items = table.GetLogData(log.Id, log.NewBlockPosition);
-
-            if (items != null)
+            if (LogData != null)
             {
-                items.Remove("_id");
+                LogData.Remove("_id");
 
-                string json = Lib.Helper.JsonHelper.Serialize(items);
+                string json = Lib.Helper.JsonHelper.Serialize(LogData);
 
                 if (!string.IsNullOrWhiteSpace(json))
                 {
-                    return Lib.Helper.StringHelper.GetSummary(json);
+                    return name + " " + Lib.Helper.StringHelper.GetSummary(json);
                 }
             }
-            return null;
+
+            return name;
         }
-         
+
 
         public static Guid GetKeyHash(Guid key)
         {

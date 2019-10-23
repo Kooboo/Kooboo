@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -16,13 +16,16 @@ namespace Kooboo.IndexedDB
         {
             string storename = GlobalSettings.EditLogUniqueName;
 
-            ObjectStoreParameters paras = new ObjectStoreParameters {EnableLog = false, EnableVersion = false};
+            ObjectStoreParameters paras = new ObjectStoreParameters();
+            paras.EnableLog = false;
+            paras.EnableVersion = false;
             paras.AddIndex<LogEntry>(o => o.KeyHash);
             paras.AddColumn<LogEntry>(o => o.StoreNameHash);
             paras.AddColumn<LogEntry>(o => o.TableNameHash);
             paras.AddColumn<LogEntry>(o => o.TimeTick);
             paras.SetPrimaryKeyField<LogEntry>(o => o.Id);
             return db.GetOrCreateObjectStore<Int64, LogEntry>(storename, paras);
+
         }
 
         public EditLog(Database db)
@@ -33,8 +36,9 @@ namespace Kooboo.IndexedDB
             SetLogId(this.Store.OwnerDatabase.Name, initid);
         }
 
+
         /// <summary>
-        /// get the new database log entry id.
+        /// get the new database log entry id. 
         /// </summary>
         /// <param name="databasename"></param>
         /// <returns></returns>
@@ -78,14 +82,14 @@ namespace Kooboo.IndexedDB
             return filter.Take(take);
         }
 
-        public LogEntry Get(long versionId)
+        public LogEntry Get(long VersionId)
         {
-            return this.Store.get(versionId);
+            return this.Store.get(VersionId);
         }
 
-        public List<LogEntry> GetByStoreName(string storeName, int take, int skip = 0, bool ascending = false)
+        public List<LogEntry> GetByStoreName(string StoreName, int take, int skip = 0, bool ascending = false)
         {
-            int namehash = storeName.GetHashCode32();
+            int namehash = StoreName.GetHashCode32();
             if (ascending)
             {
                 return this.Store.Where(o => o.StoreNameHash == namehash).OrderByAscending().Skip(skip).Take(take);
@@ -96,15 +100,28 @@ namespace Kooboo.IndexedDB
             }
         }
 
-        public List<LogEntry> GetByStoreName(string storeName)
+        public List<LogEntry> GetByTableName(string tableName, int take, int skip = 0, bool ascending = false)
         {
-            int namehash = storeName.GetHashCode32();
+            int namehash = tableName.GetHashCode32();
+            if (ascending)
+            {
+                return this.Store.Where(o => o.TableNameHash == namehash).OrderByAscending().Skip(skip).Take(take);
+            }
+            else
+            {
+                return this.Store.Where(o => o.TableNameHash == namehash).OrderByDescending().Skip(skip).Take(take);
+            }
+        }
+
+        public List<LogEntry> GetByStoreName(string StoreName)
+        {
+            int namehash = StoreName.GetHashCode32();
             return this.Store.Where(o => o.StoreNameHash == namehash).SelectAll();
         }
 
-        public void DeleteByStoreName(string storeName)
+        public void DeleteByStoreName(string StoreName)
         {
-            int namehash = storeName.GetHashCode32();
+            int namehash = StoreName.GetHashCode32();
             var allitems = this.Store.Where(o => o.StoreNameHash == namehash).SelectAll();
             foreach (var item in allitems)
             {
@@ -112,82 +129,83 @@ namespace Kooboo.IndexedDB
             }
         }
 
-        public List<LogEntry> GetByStoreNameAndKey(string storeName, byte[] keys, int take, int skip = 0, bool ascending = false)
+        public List<LogEntry> GetByStoreNameAndKey(string StoreName, byte[] Keys, int take, int skip = 0, bool ascending = false)
         {
-            Guid hashKey = LogEntry.ToHashGuid(keys);
-            int namehash = storeName.GetHashCode32();
+            Guid HashKey = LogEntry.ToHashGuid(Keys);
+            int namehash = StoreName.GetHashCode32();
             if (ascending)
             {
-                return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == hashKey).OrderByAscending().Skip(skip).Take(take);
+                return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == HashKey).OrderByAscending().Skip(skip).Take(take);
             }
             else
             {
-                return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == hashKey).OrderByDescending().Skip(skip).Take(take);
+                return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().Skip(skip).Take(take);
             }
         }
 
-        public LogEntry GetLastLogByStoreNameAndKey(string storeName, byte[] keys)
+        public LogEntry GetLastLogByStoreNameAndKey(string StoreName, byte[] Keys)
         {
-            Guid hashKey = LogEntry.ToHashGuid(keys);
-            int namehash = storeName.GetHashCode32();
+            Guid HashKey = LogEntry.ToHashGuid(Keys);
+            int namehash = StoreName.GetHashCode32();
 
-            return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == hashKey).OrderByDescending().FirstOrDefault();
+            return this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().FirstOrDefault();
         }
 
-        public List<LogEntry> GetByTableNameAndKey(string tableName, Guid id, int take, int skip = 0, bool ascending = false)
+        public List<LogEntry> GetByTableNameAndKey(string TableName,Guid Id, int take, int skip = 0, bool ascending = false)
         {
-            var keys = ObjectContainer.GuidConverter.ToByte(id);
-            return GetByTableNameAndKey(tableName, keys, take, skip, ascending);
+            var keys = ObjectContainer.GuidConverter.ToByte(Id);
+            return GetByTableNameAndKey(TableName, keys, take, skip, ascending); 
         }
 
-        public List<LogEntry> GetByTableNameAndKey(string tableName, byte[] keys, int take, int skip = 0, bool ascending = false)
+        public List<LogEntry> GetByTableNameAndKey(string TableName, byte[] Keys, int take, int skip = 0, bool ascending = false)
         {
-            Guid hashKey = LogEntry.ToHashGuid(keys);
-            int namehash = tableName.GetHashCode32();
+             Guid HashKey = LogEntry.ToHashGuid(Keys);
+            int namehash = TableName.GetHashCode32();
             if (ascending)
             {
-                return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == hashKey).OrderByAscending().Skip(skip).Take(take);
+                return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == HashKey).OrderByAscending().Skip(skip).Take(take);
             }
             else
             {
-                return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == hashKey).OrderByDescending().Skip(skip).Take(take);
+                return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().Skip(skip).Take(take);
             }
         }
 
-        public LogEntry GetLastLogByTableNameAndKey(string tableName, Guid id)
+        public LogEntry GetLastLogByTableNameAndKey(string TableName, Guid Id)
         {
-            var keys = ObjectContainer.GuidConverter.ToByte(id);
-            return GetLastLogByTableNameAndKey(tableName, keys);
+            var keys = ObjectContainer.GuidConverter.ToByte(Id);
+            return GetLastLogByTableNameAndKey(TableName, keys); 
         }
 
-        public LogEntry GetLastLogByTableNameAndKey(string tableName, byte[] keys)
+        public LogEntry GetLastLogByTableNameAndKey(string TableName, byte[] Keys)
         {
-            Guid hashKey = LogEntry.ToHashGuid(keys);
-            int namehash = tableName.GetHashCode32();
+            Guid HashKey = LogEntry.ToHashGuid(Keys);
+            int namehash = TableName.GetHashCode32();
 
-            return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == hashKey).OrderByDescending().FirstOrDefault();
+            return this.Store.Where(o => o.TableNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().FirstOrDefault();
         }
 
         public LogEntry GetPreviousTableLog(LogEntry current)
         {
-            Guid hashKey = LogEntry.ToHashGuid(current.KeyBytes);
 
-            return this.Store.Where(o => o.TableNameHash == current.TableNameHash && o.KeyHash == hashKey && o.Id < current.Id).OrderByDescending().FirstOrDefault();
+            Guid HashKey = LogEntry.ToHashGuid(current.KeyBytes);
+     
+            return this.Store.Where(o => o.TableNameHash == current.TableNameHash && o.KeyHash == HashKey && o.Id < current.Id).OrderByDescending().FirstOrDefault();
         }
 
-        public long GetJustDeletedVersion(string storeName, byte[] key)
+        public long GetJustDeletedVersion(string StoreName, byte[] key)
         {
-            int namehash = storeName.GetHashCode32();
-            Guid hashKey = LogEntry.ToHashGuid(key);
+            int namehash = StoreName.GetHashCode32();
+            Guid HashKey = LogEntry.ToHashGuid(key);
 
-            var log = this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == hashKey).OrderByDescending().FirstOrDefault();
+            var log = this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().FirstOrDefault();
 
             if (log != null && log.EditType == EditType.Delete)
             {
                 return log.Id;
             }
 
-            var last = this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == hashKey).OrderByDescending().Take(10);
+            var last = this.Store.Where(o => o.StoreNameHash == namehash && o.KeyHash == HashKey).OrderByDescending().Take(10);
 
             foreach (var item in last)
             {
@@ -200,6 +218,7 @@ namespace Kooboo.IndexedDB
             return -1;
         }
 
+
         public IEnumerable<LogEntry> GetCollection(bool ascending)
         {
             return this.Store.ItemCollection(ascending);
@@ -209,5 +228,7 @@ namespace Kooboo.IndexedDB
         {
             return this.Store.ItemCollection(ascending).Skip(skip).Take(take);
         }
+
     }
+
 }

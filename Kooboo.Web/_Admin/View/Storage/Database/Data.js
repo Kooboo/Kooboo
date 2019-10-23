@@ -39,20 +39,22 @@ $(function() {
               var model = {};
               self.columns().forEach(function(col) {
                 var data = "";
-                if (obj[col.name]) {
-                  data = obj[col.name].toString();
-                } else {
-                  if (obj[_.lowerFirst(col.name)]) {
-                    data = obj[_.lowerFirst(col.name)].toString();
-                  }
+                var find = obj.find(function(item) {
+                  return item.key == col.name;
+                });
+                if (find) {
+                  data = find.value.toString();
                 }
                 model[col.name] = data;
               });
-              model._origId = obj._id;
+              let id = obj.find(function(item) {
+                return item.key == "_id";
+              }).value;
+              model._origId = id;
               model.edit = {
                 text: Kooboo.text.common.edit,
                 url: Kooboo.Route.Get(Kooboo.Route.Database.EditDataPage, {
-                  id: obj._id,
+                  id: id,
                   table: self.name()
                 })
               };

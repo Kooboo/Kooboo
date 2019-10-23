@@ -223,11 +223,7 @@ namespace Kooboo.Data.Models
         public string DiskSyncFolder
         {
             get
-            {
-                if (Data.AppSettings.IsOnlineServer)
-                {
-                    return null;
-                }
+            { 
 
                 if (string.IsNullOrEmpty(this._localDiskSyncFolder))
                 {

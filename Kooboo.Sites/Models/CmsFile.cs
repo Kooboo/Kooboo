@@ -39,6 +39,18 @@ namespace Kooboo.Sites.Models
         [Kooboo.Attributes.SummaryIgnore]
         public byte[] ContentBytes { get; set; }
 
+        public byte[] Bytes
+        {
+            get
+            {
+                return ContentBytes;
+            }
+            set
+            {
+                ContentBytes = value;
+            }
+        }
+
         /// <summary>
         ///  this is for some file like text file, etc...
         /// </summary>

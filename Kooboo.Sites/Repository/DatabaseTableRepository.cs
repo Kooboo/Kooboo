@@ -3,7 +3,7 @@ using Kooboo.Sites.Helper;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 
 namespace Kooboo.Sites.Repository
 {
@@ -13,7 +13,7 @@ namespace Kooboo.Sites.Repository
         {
             get
             {
-               return Kooboo.Data.DB.GetKDatabase(this.WebSite);
+                return Kooboo.Data.DB.GetKDatabase(this.WebSite);
             }
         }
 
@@ -24,6 +24,8 @@ namespace Kooboo.Sites.Repository
 
         public override bool AddOrUpdate(DatabaseTable value, Guid UserId)
         {
+             VerifyData(value.Columns); 
+
             var ok = base.AddOrUpdate(value, UserId);
 
             if (ok)
@@ -35,8 +37,8 @@ namespace Kooboo.Sites.Repository
         }
 
         internal void UpdateColumns(string tablename, List<DbTableColumn> columns)
-        {  
-            var table = KDB.GetOrCreateTable(tablename);
+        {
+            var table = Data.DB.GetOrCreateTable(KDB, tablename);
 
             var setting = Lib.Serializer.Copy.DeepCopy<IndexedDB.Dynamic.Setting>(table.Setting);
 
@@ -128,22 +130,22 @@ namespace Kooboo.Sites.Repository
 
         public override void Delete(Guid id, Guid UserId)
         {
-            var old = Get(id); 
-           
-            if (old !=null)
+            var old = Get(id);
+
+            if (old != null)
             {
                 base.Delete(id, UserId);
-                KDB.DeleteTable(old.Name); 
+                KDB.DeleteTable(old.Name);
             }
         }
 
         public void DeleteTable(List<string> nameorids, Guid userid)
-        { 
+        {
             if (nameorids != null && nameorids.Count() > 0)
             {
                 foreach (var item in nameorids)
                 {
-                    DatabaseTable table = new DatabaseTable() { Name = item }; 
+                    DatabaseTable table = new DatabaseTable() { Name = item };
                     this.Delete(table.Id, userid);
                 }
             }
@@ -151,7 +153,25 @@ namespace Kooboo.Sites.Repository
 
         public bool isUniqueName(string name)
         {
-            return this.Get(name) == null; 
+            return this.Get(name) == null;
         }
+
+        public void VerifyData(List<DbTableColumn> columns)
+        {
+            var finds = columns.FindAll(o =>o.IsPrimaryKey || o.IsIndex);
+            
+            if (finds !=null)
+            {
+                foreach (var item in finds)
+                {
+                    if (item.DataType !=null && item.DataType.ToLower().Contains("date"))
+                    {
+                        throw new Exception(Data.Language.Hardcoded.GetValue("Does not support index on date time column")); 
+                    }
+                }
+            }
+
+        }
+      
     }
 }

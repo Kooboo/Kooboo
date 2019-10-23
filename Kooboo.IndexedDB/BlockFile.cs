@@ -1,12 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Kooboo.IndexedDB
 {
     public class BlockFile
     {
+
         private string _fullfilename;
         private FileStream _filestream;
 
@@ -44,20 +49,20 @@ namespace Kooboo.IndexedDB
             return null;
         }
 
-        // keep for upgrade.. not used any more.
-        public byte[] GetContent(long position, int keyColumnOffset)
+        // keep for upgrade.. not used any more. 
+        public byte[] GetContent(long position, int KeyColumnOffset)
         {
             byte[] counterbytes = GetPartial(position, 26, 4);
             int counter = BitConverter.ToInt32(counterbytes, 0);
-            return GetPartial(position, 30 + keyColumnOffset, counter);
+            return GetPartial(position, 30 + KeyColumnOffset, counter);
         }
 
-        public byte[] GetKey(long position, int columnOffset, int keyLength)
+        public byte[] GetKey(long position, int ColumnOffset, int KeyLength)
         {
-            return GetPartial(position, 30 + columnOffset, keyLength);
+            return GetPartial(position, 30 + ColumnOffset, KeyLength);
         }
 
-        #region NewAPI
+        #region  NewAPI
 
         public long Add(byte[] bytes, int TotalByteLen)
         {
@@ -72,6 +77,7 @@ namespace Kooboo.IndexedDB
             Stream.Write(header, 0, 10);
             Stream.Write(bytes, 0, TotalByteLen);
             return currentposition;
+
         }
 
         public byte[] Get(long position)
@@ -84,6 +90,7 @@ namespace Kooboo.IndexedDB
             int counter = BitConverter.ToInt32(counterbytes, 0);
             return GetPartial(position, 10, counter);
         }
+
 
         public int GetLength(long position)
         {
@@ -105,7 +112,7 @@ namespace Kooboo.IndexedDB
             }
             else
             {
-                // TODO: This should not needed....
+                // TODO: This should not needed.... 
             }
             return null;
         }
@@ -116,8 +123,7 @@ namespace Kooboo.IndexedDB
             this.Stream.Write(values, 0, length);
         }
 
-        #endregion NewAPI
-
+        #endregion
         public void Close()
         {
             if (_filestream != null)
@@ -133,6 +139,18 @@ namespace Kooboo.IndexedDB
             }
         }
 
+        public void DelSelf()
+        {
+            lock (_object)
+            {
+                this.Close();
+                if (System.IO.File.Exists(this._fullfilename))
+                {
+                    System.IO.File.Delete(this._fullfilename);
+                }
+            }  
+        }
+
         public void Flush()
         {
             if (_filestream != null)
@@ -146,8 +164,10 @@ namespace Kooboo.IndexedDB
 
         public FileStream Stream
         {
+
             get
             {
+
                 if (_filestream == null || !_filestream.CanRead)
                 {
                     lock (_object)
@@ -162,5 +182,6 @@ namespace Kooboo.IndexedDB
                 return _filestream;
             }
         }
+
     }
 }

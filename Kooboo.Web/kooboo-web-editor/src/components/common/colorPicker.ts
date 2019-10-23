@@ -41,6 +41,7 @@ export function createColorPicker(text: string, old: string, onsave: (color: str
       let app = e._root.app as HTMLElement;
       let button = e._root.button as HTMLElement;
       app.style.zIndex = STANDARD_Z_INDEX + 5 + "";
+      app.style.fontSize = "14px";
       context.container.appendChild(app);
       button.style.border = "1px solid #ccc";
     });

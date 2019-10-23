@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -10,10 +10,16 @@ namespace Kooboo.IndexedDB
     public class Database
     {
         private EditLog _log;
-
         public EditLog Log
         {
-            get { return _log ?? (_log = new EditLog(this)); }
+            get
+            {
+                if (_log == null)
+                {
+                    _log = new EditLog(this);
+                }
+                return _log;
+            }
         }
 
         private BlockFile _tablelog;
@@ -48,7 +54,6 @@ namespace Kooboo.IndexedDB
         }
 
         private string _tablePrefixFolder;
-
         public string TablePath
         {
             get
@@ -75,15 +80,24 @@ namespace Kooboo.IndexedDB
         private string _absolutepath;
 
         /// <summary>
-        /// the absolute path/folder of this database.
+        /// the absolute path/folder of this database. 
         /// </summary>
         public string AbsolutePath
         {
             get
             {
-                return _absolutepath ?? (_absolutepath = System.IO.Path.IsPathRooted(this.Name)
-                           ? this.Name
-                           : System.IO.Path.Combine(GlobalSettings.RootPath, Name));
+                if (_absolutepath == null)
+                {
+                    if (System.IO.Path.IsPathRooted(this.Name))
+                    {
+                        _absolutepath = this.Name;
+                    }
+                    else
+                    {
+                        _absolutepath = System.IO.Path.Combine(GlobalSettings.RootPath, Name);
+                    }
+                }
+                return _absolutepath;
             }
         }
 
@@ -95,7 +109,13 @@ namespace Kooboo.IndexedDB
 
         private object _locker = new object();
 
-        public bool Exists => System.IO.Directory.Exists(this.AbsolutePath);
+        public bool Exists
+        {
+            get
+            {
+                return System.IO.Directory.Exists(this.AbsolutePath);
+            }
+        }
 
         public bool HasObjectStore(string objectStoreName)
         {
@@ -118,40 +138,63 @@ namespace Kooboo.IndexedDB
             return System.IO.File.Exists(storesetting);
         }
 
-        public ObjectStore<Tkey, TValue> GetOrCreateObjectStore<Tkey, TValue>(string storeName, ObjectStoreParameters parameters = null)
-        {
-            storeName = storeName.ToValidPath();
 
-            if (this.HasObjectStore(storeName))
+        public bool HasTable(string talbeName)
+        {
+            talbeName = talbeName.ToValidPath();
+
+            if (this.openTableList.ContainsKey(talbeName))
             {
-                return this.GetObjectStore<Tkey, TValue>(storeName);
+                return true;
+            }
+
+            string folder = TableFolder(talbeName);
+
+            if (!System.IO.Directory.Exists(folder))
+            {
+                return false;
+            }
+
+            string tableSetting = TableSetitingFile(talbeName);
+
+            return System.IO.File.Exists(tableSetting);
+        }
+
+
+        public ObjectStore<Tkey, TValue> GetOrCreateObjectStore<Tkey, TValue>(string StoreName, ObjectStoreParameters Parameters = null)
+        {
+            StoreName = StoreName.ToValidPath();
+
+            if (this.HasObjectStore(StoreName))
+            {
+                return this.GetObjectStore<Tkey, TValue>(StoreName);
             }
             else
             {
                 lock (_locker)
                 {
-                    if (!HasObjectStore(storeName))
+                    if (!HasObjectStore(StoreName))
                     {
-                        // Should be removed.
-
+                        // Should be removed. 
                         #region TempUpgrade2017end
 
-                        var oldsettingfile = objectSettingFile(storeName);
+                        var oldsettingfile = objectSettingFile(StoreName);
                         if (System.IO.File.Exists(oldsettingfile))
                         {
                             var oldsetting = SettingSerializer.DeserializeObjectStoreSetting(oldsettingfile);
 
                             if (oldsetting.UseDefaultNETBinaryFormater)
                             {
-                                //clean everything. does not want to upgrade those....
-                                var folder = objectFolder(storeName);
+                                //clean everything. does not want to upgrade those....  
+                                var folder = objectFolder(StoreName);
                                 System.IO.Directory.Delete(folder, true);
-                                return GetOrCreateObjectStore<Tkey, TValue>(storeName, parameters);
+                                return GetOrCreateObjectStore<Tkey, TValue>(StoreName, Parameters);
                             }
 
                             int keyoffset = oldsetting.primaryKeyLength;
                             foreach (var item in oldsetting.ColumnList)
                             {
+
                                 if (item.KeyType == typeof(string))
                                 {
                                     keyoffset += item.length;
@@ -162,9 +205,9 @@ namespace Kooboo.IndexedDB
                                 }
                             }
 
-                            var oldfolder = this.objectFolder(storeName);
+                            var oldfolder = this.objectFolder(StoreName);
 
-                            // primary key.
+                            // primary key. 
                             var primaryIndex = new Btree.BtreeIndex<Tkey>(oldsetting.primaryKeyFieldName, true, oldsetting.primaryKeyLength, Helper.IndexHelper.GetIndexFileName(oldfolder, oldsetting.primaryKeyFieldName), oldsetting.MaxCacheLevel);
 
                             string blockfileName = System.IO.Path.Combine(oldfolder, "Data.block");
@@ -173,11 +216,11 @@ namespace Kooboo.IndexedDB
 
                             var converter = new Serializer.Simple.SimpleConverter<TValue>();
 
-                            string newname = "_koobootemp" + storeName;
+                            string newname = "_koobootemp" + StoreName;
 
                             var newfolder = this.objectFolder(newname);
 
-                            var upStore = this.GetOrCreateObjectStore<Tkey, TValue>(newname, parameters);
+                            var upStore = this.GetOrCreateObjectStore<Tkey, TValue>(newname, Parameters);
 
                             lock (_locker)
                             {
@@ -192,7 +235,7 @@ namespace Kooboo.IndexedDB
                                 primaryIndex.Close();
                                 upStore.Close();
 
-                                this.DeleteObjectStore(storeName);
+                                this.DeleteObjectStore(StoreName);
 
                                 if (System.IO.Directory.Exists(oldfolder))
                                 {
@@ -201,30 +244,30 @@ namespace Kooboo.IndexedDB
 
                                 System.IO.Directory.Move(newfolder, oldfolder);
 
-                                if (this.openStoreList.ContainsKey(storeName))
+                                if (this.openStoreList.ContainsKey(StoreName))
                                 {
-                                    this.openStoreList.Remove(storeName);
+                                    this.openStoreList.Remove(StoreName);
                                 }
                             }
 
-                            return this.GetOrCreateObjectStore<Tkey, TValue>(storeName, parameters);
+                            return this.GetOrCreateObjectStore<Tkey, TValue>(StoreName, Parameters);
                         }
 
-                        #endregion TempUpgrade2017end
+                        #endregion
 
                         clearOpenStoreCache();
-                        if (parameters == null)
+                        if (Parameters == null)
                         {
-                            parameters = new ObjectStoreParameters();
+                            Parameters = new ObjectStoreParameters();
                         }
 
-                        ObjectStore<Tkey, TValue> newstore = new ObjectStore<Tkey, TValue>(storeName, this, parameters);
+                        ObjectStore<Tkey, TValue> newstore = new ObjectStore<Tkey, TValue>(StoreName, this, Parameters);
 
-                        this.openStoreList.Add(storeName, newstore);
+                        this.openStoreList.Add(StoreName, newstore);
                     }
                 }
 
-                return this.openStoreList[storeName] as ObjectStore<Tkey, TValue>;
+                return this.openStoreList[StoreName] as ObjectStore<Tkey, TValue>;
             }
         }
 
@@ -248,6 +291,17 @@ namespace Kooboo.IndexedDB
             }
             return this.openTableList[name];
         }
+
+        public Dynamic.Table GetTable(string name)
+        {
+            if (!HasTable(name))
+            {
+                return null;
+            }
+
+            return GetOrCreateTable(name);
+        }
+
 
         public void DeleteTable(string name)
         {
@@ -294,7 +348,7 @@ namespace Kooboo.IndexedDB
         }
 
         /// <summary>
-        /// get an existing object store.
+        /// get an existing object store. 
         /// </summary>
         /// <typeparam name="TKey"></typeparam>
         /// <typeparam name="TValue"></typeparam>
@@ -348,10 +402,10 @@ namespace Kooboo.IndexedDB
             return new ObjectStore<TKey, TValue>(storename, this, paras);
         }
 
-        public ObjectStore<TOKey, TOValue> RebuildObjectStore<TOKey, TOValue>(ObjectStore<TOKey, TOValue> currentStore, ObjectStoreParameters newparas)
+        public ObjectStore<OKey, OValue> RebuildObjectStore<OKey, OValue>(ObjectStore<OKey, OValue> currentStore, ObjectStoreParameters newparas)
         {
             string storename = currentStore.Name;
-            string newname = $"_koobootemp{storename}";
+            string newname = "_koobootemp" + storename;
 
             if (currentStore == null)
             {
@@ -364,7 +418,7 @@ namespace Kooboo.IndexedDB
             }
             else
             {
-                var valuetype = typeof(TOValue);
+                var valuetype = typeof(OValue);
                 var fieldtype = valuetype.GetField(newparas.PrimaryKey);
                 if (fieldtype == null)
                 {
@@ -376,7 +430,7 @@ namespace Kooboo.IndexedDB
                 }
             }
 
-            var newstore = this.GetOrCreateObjectStore<TOKey, TOValue>(newname, newparas);
+            var newstore = this.GetOrCreateObjectStore<OKey, OValue>(newname, newparas);
             lock (_locker)
             {
                 foreach (var item in currentStore.ItemCollection())
@@ -409,11 +463,12 @@ namespace Kooboo.IndexedDB
                 this.openStoreList.Remove(newname);
             }
 
-            return this.GetObjectStore<TOKey, TOValue>(storename);
+            return this.GetObjectStore<OKey, OValue>(storename);
         }
 
         public void DeleteObjectStore(string name)
         {
+
             lock (_locker)
             {
                 string storename = name.ToValidPath();
@@ -487,6 +542,7 @@ namespace Kooboo.IndexedDB
             return filename;
         }
 
+
         /// <summary>
         /// delete current database
         /// </summary>
@@ -495,6 +551,8 @@ namespace Kooboo.IndexedDB
             lock (_locker)
             {
                 this.Log.DelSelf();
+
+                this.TableLog.DelSelf();
 
                 foreach (var item in this.openStoreList)
                 {
@@ -564,18 +622,19 @@ namespace Kooboo.IndexedDB
                         break;
                     }
                 }
+
             }
 
             foreach (var item in toBeRemovedItems)
             {
                 this.openStoreList.Remove(item);
             }
+
         }
 
         private List<string> _storelist;
-
         /// <summary>
-        /// Get the list of store names within this database.
+        /// Get the list of store names within this database. 
         /// </summary>
         /// <param name="update">update the store list before return, otherwise return cached version</param>
         /// <returns></returns>
@@ -606,6 +665,7 @@ namespace Kooboo.IndexedDB
             }
 
             return _storelist;
+
         }
 
         public IObjectStore GetStore(string Name)
@@ -628,7 +688,10 @@ namespace Kooboo.IndexedDB
 
                         Type genericListType = typeof(ObjectStore<,>).MakeGenericType(keytype, setting.ValueType);
 
-                        List<object> paras = new List<object> {storename, this, setting};
+                        List<object> paras = new List<object>();
+                        paras.Add(storename);
+                        paras.Add(this);
+                        paras.Add(setting);
                         var store = Activator.CreateInstance(genericListType, paras.ToArray()) as IObjectStore;
 
                         if (store == null)
@@ -642,6 +705,7 @@ namespace Kooboo.IndexedDB
             }
 
             return this.openStoreList[storename];
+
         }
 
         /// <summary>
@@ -701,10 +765,11 @@ namespace Kooboo.IndexedDB
                 {
                     item.Value.Flush();
                 }
+
             }
         }
 
-        // list of dynamic tables.
+        // list of dynamic tables. 
         public List<string> GetTables()
         {
             string tablefolder = this.AbsolutePath;
@@ -729,7 +794,12 @@ namespace Kooboo.IndexedDB
 
             foreach (var item in subfolders)
             {
-                // verify as subfolder.
+                if (item.Contains("_koobootemp_"))
+                {
+                    continue;
+                }
+
+                // verify as subfolder.  
                 var tablepath = System.IO.Path.Combine(tablefolder, item);
 
                 string tableSetting = System.IO.Path.Combine(tablepath, "table.config");
@@ -744,5 +814,7 @@ namespace Kooboo.IndexedDB
             }
             return result;
         }
+
     }
+
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
 //All rights reserved.
 using Kooboo.Api;
 using Kooboo.Sites.Extensions;
@@ -41,13 +41,13 @@ namespace Kooboo.Web.Api.Implementation
             return list;
         }
 
-        public PagedListViewModel<IDictionary<string, object>> Data(string table, ApiCall call)
+        public PagedListViewModel<List<DataValue>> Data(string table, ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
-            var dbtable = db.GetOrCreateTable(table);
+            var dbtable = Kooboo.Data.DB.GetOrCreateTable(db, table);
 
             string sortfield = call.GetValue("sort", "orderby", "order");
-            // verify sortfield.
+            // verify sortfield. 
 
             if (sortfield != null)
             {
@@ -67,9 +67,10 @@ namespace Kooboo.Web.Api.Implementation
                 }
             }
 
+
             var pager = ApiHelper.GetPager(call, 30);
 
-            PagedListViewModel<IDictionary<string, object>> result = new PagedListViewModel<IDictionary<string, object>>();
+            PagedListViewModel<List<DataValue>> result = new PagedListViewModel<List<DataValue>>(); 
 
             int totalcount = (int)dbtable.length;
 
@@ -95,10 +96,35 @@ namespace Kooboo.Web.Api.Implementation
 
             if (items != null && items.Count() > 0)
             {
-                result.List = items;
+                result.List = ConvertDataValue(items);
             }
 
             return result;
+        }
+
+        public List<List<DataValue>> ConvertDataValue(List<IDictionary<string, object>> input)
+        {
+            List<List<DataValue>> result = new List<List<DataValue>>();
+
+            foreach (var dict in input)
+            {
+                List<DataValue> model = new List<DataValue>();
+                foreach (var item in dict)
+                {
+                    model.Add(new DataValue() { key = item.Key, value = item.Value });
+                }
+
+                result.Add(model);
+            }
+            return result;
+        }
+
+        public class DataValue
+        {
+            public string key { get; set; }
+
+            public object value { get; set; }
+
         }
 
         public void CreateTable(string name, ApiCall call)
@@ -120,11 +146,13 @@ namespace Kooboo.Web.Api.Implementation
             repo.DeleteTable(ids, call.Context.User.Id);
         }
 
+
         public bool IsUniqueTableName(string name, ApiCall call)
         {
             var repo = call.Context.WebSite.SiteDb().GetSiteRepository<DatabaseTableRepository>();
 
             return repo.isUniqueName(name);
+
         }
 
         public List<string> AvailableControlTypes(ApiCall call)
@@ -136,16 +164,23 @@ namespace Kooboo.Web.Api.Implementation
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
-            var dbTable = db.GetOrCreateTable(table);
+            var dbTable = Kooboo.Data.DB.GetTable(db, table);
 
             List<DbTableColumn> result = new List<DbTableColumn>();
 
+            if (dbTable == null)
+            {
+                return result;
+            }
+
             foreach (var item in dbTable.Setting.Columns)
             {
+
                 if (item.IsSystem && item.Name == IndexedDB.Dynamic.Constants.DefaultIdFieldName)
                 {
                     continue;
                 }
+
 
                 DbTableColumn model = new DbTableColumn() { Name = item.Name, IsIncremental = item.IsIncremental, IsUnique = item.IsUnique, IsIndex = item.IsIndex, IsPrimaryKey = item.IsPrimaryKey, Seed = item.Seed, Scale = item.Increment, IsSystem = item.IsSystem };
 
@@ -165,7 +200,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
-            var dbTable = db.GetOrCreateTable(tablename);
+            var dbTable = Kooboo.Data.DB.GetTable(db, tablename);
 
             List<DatabaseItemEdit> result = new List<DatabaseItemEdit>();
 
@@ -191,11 +226,12 @@ namespace Kooboo.Web.Api.Implementation
             return result;
         }
 
+
         public Guid UpdateData(string tablename, Guid id, List<DatabaseItemEdit> Values, ApiCall call)
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
-            var dbTable = db.GetOrCreateTable(tablename);
+            var dbTable = Kooboo.Data.DB.GetOrCreateTable(db, tablename);
             dbTable.CurrentUserId = call.Context.User.Id;
 
             List<DatabaseItemEdit> result = new List<DatabaseItemEdit>();
@@ -253,7 +289,7 @@ namespace Kooboo.Web.Api.Implementation
         {
             var db = Kooboo.Data.DB.GetKDatabase(call.Context.WebSite);
 
-            var dbTable = db.GetOrCreateTable(tablename);
+            var dbTable = Kooboo.Data.DB.GetTable(db, tablename);
             dbTable.CurrentUserId = call.Context.User.Id;
 
             foreach (var item in values)
@@ -271,5 +307,8 @@ namespace Kooboo.Web.Api.Implementation
             var repo = sitedb.GetSiteRepository<DatabaseTableRepository>();
             repo.AddOrUpdate(table, call.Context.User.Id);
         }
+
     }
+
+
 }
