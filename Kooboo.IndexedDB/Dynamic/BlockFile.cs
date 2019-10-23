@@ -45,33 +45,33 @@ namespace Kooboo.IndexedDB.Dynamic
         }
 
         // keep for upgrade.. not used any more. 
-        public byte[] GetContent(long position, int KeyColumnOffset)
+        public byte[] GetContent(long position, int keyColumnOffset)
         {
             byte[] counterbytes = GetPartial(position, 26, 4);
             int counter = BitConverter.ToInt32(counterbytes, 0);
-            return GetPartial(position, 30 + KeyColumnOffset, counter);
+            return GetPartial(position, 30 + keyColumnOffset, counter);
         }
 
-        public byte[] GetKey(long position, int ColumnOffset, int KeyLength)
+        public byte[] GetKey(long position, int columnOffset, int keyLength)
         {
-            return GetPartial(position, 30 + ColumnOffset, KeyLength);
+            return GetPartial(position, 30 + columnOffset, keyLength);
         }
 
         #region  NewAPI
 
-        public long Add(byte[] bytes, int TotalByteLen)
+        public long Add(byte[] bytes, int totalByteLen)
         {
             byte[] header = new byte[10];
             header[0] = 10;
             header[1] = 13;
-            System.Buffer.BlockCopy(BitConverter.GetBytes(TotalByteLen), 0, header, 2, 4);
+            System.Buffer.BlockCopy(BitConverter.GetBytes(totalByteLen), 0, header, 2, 4);
 
-            int tolerance = TotalByteLen * 2;
+            int tolerance = totalByteLen * 2;
             System.Buffer.BlockCopy(BitConverter.GetBytes(tolerance), 0, header, 6, 4);
 
             byte[] total = new byte[tolerance];
 
-            System.Buffer.BlockCopy(bytes, 0, total, 0, TotalByteLen);
+            System.Buffer.BlockCopy(bytes, 0, total, 0, totalByteLen);
 
             Int64 currentposition;
             currentposition = Stream.Length;
@@ -111,9 +111,9 @@ namespace Kooboo.IndexedDB.Dynamic
 
 
 
-        public byte[] Get(long position, int ColumnLen)
+        public byte[] Get(long position, int columnLen)
         {
-            return GetPartial(position, 10, ColumnLen);
+            return GetPartial(position, 10, columnLen);
         }
 
         public byte[] GetCol(long position, int relativePos, int len)

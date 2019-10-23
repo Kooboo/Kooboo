@@ -1,20 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Collections.Generic;
-using Kooboo.IndexedDB;
-using System;
 using Kooboo.Data.Models;
+using Kooboo.IndexedDB;
 using Kooboo.IndexedDB.Dynamic;
+using System.Collections.Generic;
 
 namespace Kooboo.Data
 {
     public static class DB
     {
-
         private static object _dbobject = new object();
 
-        private static Dictionary<string, Database> _databasedictionary { get; set; } = new Dictionary<string, Database>();
-
+        private static Dictionary<string, Database> Databasedictionary { get; set; } = new Dictionary<string, Database>();
 
         public static Database GetKDatabase(WebSite website)
         {
@@ -25,19 +22,19 @@ namespace Kooboo.Data
         {
             name = name.ToValidPath();
 
-            if (!_databasedictionary.ContainsKey(name))
+            if (!Databasedictionary.ContainsKey(name))
             {
                 lock (_dbobject)
                 {
-                    if (!_databasedictionary.ContainsKey(name))
+                    if (!Databasedictionary.ContainsKey(name))
                     {
                         Database db = new Database(name);
-                        _databasedictionary.Add(name, db);
+                        Databasedictionary.Add(name, db);
                     }
                 }
             }
 
-            return _databasedictionary[name];
+            return Databasedictionary[name];
         }
 
         public static Database GetDatabase(WebSite site)
@@ -50,11 +47,11 @@ namespace Kooboo.Data
         {
             name = name.ToValidPath();
 
-            if (_databasedictionary.ContainsKey(name))
+            if (Databasedictionary.ContainsKey(name))
             {
-                var db = _databasedictionary[name];
+                var db = Databasedictionary[name];
                 db.deleteDatabase();
-                _databasedictionary.Remove(name);
+                Databasedictionary.Remove(name);
             }
             else
             {
@@ -65,11 +62,10 @@ namespace Kooboo.Data
                     db = null;
                 }
             }
-
         }
 
         /// <summary>
-        /// the global databsae for global setting. 
+        /// the global databsae for global setting.
         /// </summary>
         /// <returns></returns>
         public static Database Global()
@@ -109,25 +105,15 @@ namespace Kooboo.Data
         }
 
         public static Table GetTable(Database database, string tableName)
-        {  
-            if (!database.HasTable(tableName))
-            {
-                return null;
-            }
-            else
-            {
-                return database.GetOrCreateTable(tableName);
-            } 
+        {
+            return !database.HasTable(tableName) ? null : database.GetOrCreateTable(tableName);
         }
-
 
         public static Table GetTable(WebSite site, string tableName)
         {
             var database = GetKDatabase(site);
 
-            return GetTable(database, tableName); 
+            return GetTable(database, tableName);
         }
-
     }
-
 }

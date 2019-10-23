@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Api.ApiResponse;
+using Kooboo.Data.Context;
+using Kooboo.Data.Language;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Data.Language;
-using Kooboo.Data.Context;
 
 namespace Kooboo.Api
 {
@@ -73,7 +73,7 @@ namespace Kooboo.Api
                 var result = new JsonResponse() { Success = false };
                 result.Messages.AddRange(errors);
                 return result;
-            } 
+            }
             try
             {
                 return ExecuteMethod(call, apimethod);
@@ -98,35 +98,30 @@ namespace Kooboo.Api
                 return new JsonResponse() { Success = true, DataChange = true };
             }
 
-            if (response != null && response.GetType() == typeof(bool))
+            switch (response)
             {
-                var ok = (bool)response;
-                var result = new JsonResponse() { Success = ok };
-                if (!ok)
+                case bool ok:
                 {
-                    result.Messages.Add(Hardcoded.GetValue("Api method define a bool return type and return false", call.Context));
+                    var result = new JsonResponse() { Success = ok };
+                    if (!ok)
+                    {
+                        result.Messages.Add(Hardcoded.GetValue("Api method define a bool return type and return false", call.Context));
+                    }
+                    return result;
                 }
-                return result;
-            }
-
-            if (response == null)
-            {
-                var result = new JsonResponse() { Success = false };
-                result.Messages.Add(Hardcoded.GetValue("method return null for required object type", call.Context) + " :" + apimethod.ReturnType.ToString());
-                return result;
-            }
-
-            if (response is IResponse)
-            {
-                return response as IResponse;
-                //TODO: set the response message to multiple lingual. 
-            }
-            else
-            {
-                return new JsonResponse(response) { Success = true };
+                case null:
+                {
+                    var result = new JsonResponse() { Success = false };
+                    result.Messages.Add(Hardcoded.GetValue("method return null for required object type", call.Context) + " :" + apimethod.ReturnType.ToString());
+                    return result;
+                }
+                case IResponse response1:
+                    return response1;
+                    //TODO: set the response message to multiple lingual.
+                default:
+                    return new JsonResponse(response) { Success = true };
             }
         }
-
 
         public static bool ValidateRequirement(ApiCommand command, RenderContext context, IApiProvider apiProvider)
         {
@@ -159,10 +154,8 @@ namespace Kooboo.Api
                 }
             }
 
-
-            if (apiobject is ISecureApi)
+            if (apiobject is ISecureApi secureobj)
             {
-                var secureobj = apiobject as ISecureApi;
                 if (secureobj != null)
                 {
                     return secureobj.AccessCheck(command, context);
@@ -172,10 +165,9 @@ namespace Kooboo.Api
             return true;
         }
 
-
         public static bool ValideAssignModel(ApiMethod method, ApiCall call, Action<string> callback)
         {
-            bool IsSuccess = true;
+            bool isSuccess = true;
             if (method.RequireModelType != null)
             {
                 string json = call.Context.Request.Body;
@@ -188,7 +180,7 @@ namespace Kooboo.Api
                     }
                     catch (Exception ex)
                     {
-                        IsSuccess = false;
+                        isSuccess = false;
                         callback.Invoke(ex.Message);
                     }
                 }
@@ -209,10 +201,10 @@ namespace Kooboo.Api
                         values[item] = value;
                     }
 
-                    if (values.Count() == 0)
+                    if (values.Count == 0)
                     {
                         callback.Invoke(Hardcoded.GetValue("required model type not provided", call.Context) + ": " + method.RequireModelType.Name);
-                        IsSuccess = false;
+                        isSuccess = false;
                     }
                     else
                     {
@@ -223,26 +215,26 @@ namespace Kooboo.Api
                         }
                         catch (Exception ex)
                         {
-                            IsSuccess = false;
+                            isSuccess = false;
                             callback.Invoke(ex.Message);
                         }
                     }
                 }
             }
-            return IsSuccess;
+            return isSuccess;
         }
 
         public static bool ValideParameters(ApiMethod method, ApiCall call, Action<string> callback)
         {
-            bool IsSuccess = true;
-            if (method.RequireParas != null && method.RequireParas.Count() > 0)
+            bool isSuccess = true;
+            if (method.RequireParas != null && method.RequireParas.Any())
             {
                 foreach (var item in method.RequireParas)
                 {
                     string value = call.GetValue(item);
                     if (string.IsNullOrEmpty(value))
                     {
-                        IsSuccess = false;
+                        isSuccess = false;
                         callback.Invoke(Hardcoded.GetValue("Require parameter not found", call.Context) + ": " + item);
                     }
                 }
@@ -255,13 +247,13 @@ namespace Kooboo.Api
                     string value = call.GetValue(item.Name);
                     if (string.IsNullOrEmpty(value))
                     {
-                        IsSuccess = false;
+                        isSuccess = false;
                         callback.Invoke(Hardcoded.GetValue("Require parameter not found", call.Context) + ": " + item.Name);
                     }
                 }
             }
 
-            return IsSuccess;
+            return isSuccess;
         }
     }
 }

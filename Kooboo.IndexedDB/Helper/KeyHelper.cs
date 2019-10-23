@@ -12,14 +12,7 @@ namespace Kooboo.IndexedDB.Helper
         {
             if (keytype == typeof(string))
             {
-                if (len == 0)
-                {
-                    return GlobalSettings.defaultKeyLength;
-                }
-                else
-                {
-                    return len;
-                }
+                return len == 0 ? GlobalSettings.defaultKeyLength : len;
             }
             else if (keytype == typeof(Int32))
             {

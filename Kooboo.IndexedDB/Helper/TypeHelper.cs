@@ -12,11 +12,11 @@ namespace Kooboo.IndexedDB.Helper
 {
   public  static class TypeHelper
     { 
-        public static Dictionary<string, Type> GetPublicPropertyOrFields(Type ClassType)
+        public static Dictionary<string, Type> GetPublicPropertyOrFields(Type classType)
         {
             Dictionary<string, Type> result = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase); 
 
-            foreach (var item in ClassType.GetProperties())
+            foreach (var item in classType.GetProperties())
             {
                 if (item.IsDefined(typeof(KoobooIgnore), false))
                 {
@@ -29,7 +29,7 @@ namespace Kooboo.IndexedDB.Helper
                 } 
             }
 
-            foreach (var item in ClassType.GetFields())
+            foreach (var item in classType.GetFields())
             {
                 if (item.IsPublic && !item.IsStatic)
                 {
@@ -39,19 +39,15 @@ namespace Kooboo.IndexedDB.Helper
             return result; 
         } 
 
-        public static Type GetFieldType<TValue>(string FieldName)
+        public static Type GetFieldType<TValue>(string fieldName)
         {
-            return GetFieldType(typeof(TValue), FieldName); 
+            return GetFieldType(typeof(TValue), fieldName); 
         }
 
-        public static Type GetFieldType(Type ObjectType, string FieldName)
+        public static Type GetFieldType(Type objectType, string fieldName)
         {
-            var Fields = GetPublicPropertyOrFields(ObjectType);
-            if (Fields.ContainsKey(FieldName))
-            {
-                return Fields[FieldName];
-            }
-            return null;
+            var fields = GetPublicPropertyOrFields(objectType);
+            return fields.ContainsKey(fieldName) ? fields[fieldName] : null;
         }
 
         public static Type GetType(string typename)
@@ -85,11 +81,11 @@ namespace Kooboo.IndexedDB.Helper
             return null;
         }
 
-        public static bool IsDictIgnoreCase(Type declareType, string DictFieldName)
+        public static bool IsDictIgnoreCase(Type declareType, string dictFieldName)
         { 
             foreach (var item in declareType.GetProperties())
             {
-                if (item.Name == DictFieldName)
+                if (item.Name == dictFieldName)
                 {
                     return (item.IsDefined(typeof(KoobooKeyIgnoreCase), false)); 
                 }  
@@ -99,7 +95,7 @@ namespace Kooboo.IndexedDB.Helper
             {
                 if (item.IsPublic && !item.IsStatic)
                 {
-                    if (item.Name == DictFieldName)
+                    if (item.Name == dictFieldName)
                     {
                         return (item.IsDefined(typeof(KoobooKeyIgnoreCase), false));
                     }
