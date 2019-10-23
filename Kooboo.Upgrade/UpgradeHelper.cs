@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Diagnostics;    
-using System.Collections.Generic;
-using System.Runtime.InteropServices;    
+using System.Runtime.InteropServices;
 
 namespace Kooboo.Upgrade
 {
@@ -16,15 +16,15 @@ namespace Kooboo.Upgrade
 
         static UpgradeHelper()
         {
-            InitRootAndZip(); 
+            InitRootAndZip();
         }
 
         public static void InitRootAndZip()
         {
             RootPath = GetRoot();
-            if (RootPath !=null)
+            if (RootPath != null)
             {
-                DownloadZipFile = GetPackageZip(RootPath); 
+                DownloadZipFile = GetPackageZip(RootPath);
             }
         }
 
@@ -50,33 +50,33 @@ namespace Kooboo.Upgrade
         }
 
         private static string GetPackageZip(string root)
-        {    
-            string name = System.IO.Path.Combine(root, "upgrade", "Kooboo.zip"); 
+        {
+            string name = System.IO.Path.Combine(root, "upgrade", "Kooboo.zip");
             if (System.IO.File.Exists(name))
             {
-                return name; 
+                return name;
             }
             name = System.IO.Path.Combine(root, "upgradePackage", "Kooboo.zip");
             if (System.IO.File.Exists(name))
             {
                 return name;
-            }        
-            return null; 
+            }
+            return null;
         }
 
         public static string RootPath { get; set; }
 
         public static string DownloadZipFile { get; set; }
-                                                             
-        private static bool IsKoobooDiskRoot(string FullPath)
+
+        private static bool IsKoobooDiskRoot(string fullPath)
         {
-            string ScriptFolder = System.IO.Path.Combine(FullPath, "_Admin", "Scripts");
-            if (!Directory.Exists(ScriptFolder))
+            string scriptFolder = System.IO.Path.Combine(fullPath, "_Admin", "Scripts");
+            if (!Directory.Exists(scriptFolder))
             {
                 return false;
             }
-            string ViewFolder = System.IO.Path.Combine(FullPath, "_Admin", "View");
-            if (!Directory.Exists(ViewFolder))
+            string viewFolder = System.IO.Path.Combine(fullPath, "_Admin", "View");
+            if (!Directory.Exists(viewFolder))
             {
                 return false;
             }
@@ -109,7 +109,7 @@ namespace Kooboo.Upgrade
             {
                 foreach (var process in koobooProcesses)
                 {
-                    // make sure does not close other instance.  
+                    // make sure does not close other instance.
                     string fullPath = process.MainModule.FileName;
 
                     if (fullPath.StartsWith(RootPath))
@@ -121,11 +121,9 @@ namespace Kooboo.Upgrade
                         var close = process.CloseMainWindow();
 
                         process.Close();
-
                     }
                 }
             }
-
         }
 
         private static void ShowKoobooWindow(List<IntPtr> windows, Process process)
@@ -143,7 +141,6 @@ namespace Kooboo.Upgrade
                     ShowWindow(hwnd, SW_SHOW);
                 }
             }
-
         }
 
         private static void DeleteOldFiles()
@@ -165,26 +162,26 @@ namespace Kooboo.Upgrade
                     {
                         Directory.Delete(dir, true);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
+                        // ignored
                     }
                 }
             }
 
-            var deleteLangFiles =new string[] { "en.xml", "zh.xml" };
-            foreach(var file in deleteLangFiles)
+            var deleteLangFiles = new string[] { "en.xml", "zh.xml" };
+            foreach (var file in deleteLangFiles)
             {
-                var path= System.IO.Path.Combine(RootPath, "lang",file);
+                var path = System.IO.Path.Combine(RootPath, "lang", file);
                 try
                 {
                     File.Delete(path);
                 }
-                catch(Exception ex)
+                catch (Exception)
                 {
-
+                    // ignored
                 }
             }
-
 
             var files = Directory.GetFiles(RootPath);
             foreach (var file in files)
@@ -197,9 +194,9 @@ namespace Kooboo.Upgrade
                     {
                         File.Delete(file);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-
+                        // ignored
                     }
                 }
             }
@@ -215,7 +212,7 @@ namespace Kooboo.Upgrade
                 {
                     foreach (var entry in archive.Entries)
                     {
-                        //remove base dir// 
+                        //remove base dir//
                         string basedir = "Kooboo/";
                         string name = entry.FullName;
                         if (name.StartsWith(basedir))
@@ -233,8 +230,8 @@ namespace Kooboo.Upgrade
                         }
                         else if (entry.Name.ToLower() == "kooboo.upgrade.exe")
                         {
-                            continue;  // already updated... 
-                        }    
+                            continue;  // already updated...
+                        }
                         else
                         {
                             EnsureFileDirectoryExists(path);
@@ -242,8 +239,9 @@ namespace Kooboo.Upgrade
                             {
                                 entry.ExtractToFile(path, true);
                             }
-                            catch (Exception ex)
+                            catch (Exception)
                             {
+                                // ignored
                             }
                         }
                     }
@@ -285,6 +283,5 @@ namespace Kooboo.Upgrade
                 EnsureDirectoryExists(dir);
             }
         }
-
     }
 }

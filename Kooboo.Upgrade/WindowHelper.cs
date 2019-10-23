@@ -1,16 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Kooboo.Upgrade
 {
     public class WindowHelper
     {
         private delegate bool WNDENUMPROC(IntPtr hWnd, int lParam);
-        
+
         //enum windows
         [DllImport("user32.dll")]
         private static extern bool EnumWindows(WNDENUMPROC lpEnumFunc, int lParam);
@@ -31,7 +31,7 @@ namespace Kooboo.Upgrade
             //string windowName = "Kooboo";
             List<IntPtr> wndList = new List<IntPtr>();
 
-            //enum all desktop windows 
+            //enum all desktop windows
             EnumWindows(delegate (IntPtr hWnd, int lParam)
             {
                 StringBuilder sb = new StringBuilder(256);
@@ -42,11 +42,11 @@ namespace Kooboo.Upgrade
                 GetClassNameW(hWnd, sb, sb.Capacity);
                 var className = sb.ToString();
 
-                if (windowName == "Kooboo" && className.IndexOf("Kooboo.exe")>-1)
+                if (windowName == "Kooboo" && className.IndexOf("Kooboo.exe") > -1)
                 {
                     wndList.Add(hWnd);
                 }
-                
+
                 return true;
             }, 0);
 
@@ -59,13 +59,11 @@ namespace Kooboo.Upgrade
         /// <param name="windows"></param>
         /// <param name="processId"></param>
         /// <returns></returns>
-        public static IntPtr GetKoobooWindow(List<IntPtr> windows,int processId)
+        public static IntPtr GetKoobooWindow(List<IntPtr> windows, int processId)
         {
-
-            foreach(var window in windows)
+            foreach (var window in windows)
             {
-                int id;
-                GetWindowThreadProcessId(window, out id);
+                GetWindowThreadProcessId(window, out var id);
                 if (processId == id)
                 {
                     return window;
