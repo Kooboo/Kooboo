@@ -1,23 +1,23 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Lib.Helper;
 using System;
 
 namespace Kooboo.Render
 {
-  public  class RenderHelper
-    { 
-        public static UrlFileType GetFileType(string url, string ContentType = "")
+    public class RenderHelper
+    {
+        public static UrlFileType GetFileType(string url, string contentType = "")
         {
             if (string.IsNullOrWhiteSpace(url))
             {
                 return UrlFileType.Unknow;
             }
             string cleanurl = url.ToLower();
-            int QuestionMark = url.IndexOf("?");
-            if (QuestionMark > 0)
+            int questionMark = url.IndexOf("?");
+            if (questionMark > 0)
             {
-                cleanurl = url.Substring(0, QuestionMark);
+                cleanurl = url.Substring(0, questionMark);
             }
             cleanurl = cleanurl.Trim('\t', '\r', '\n');
             string extension = System.IO.Path.GetExtension(cleanurl);
@@ -59,32 +59,25 @@ namespace Kooboo.Render
                 }
             }
 
-            if (!string.IsNullOrWhiteSpace(ContentType))
+            if (!string.IsNullOrWhiteSpace(contentType))
             {
-                ContentType = ContentType.ToLower();
+                contentType = contentType.ToLower();
 
-                if (ContentType.Contains("image"))
+                if (contentType.Contains("image"))
                 {
                     return UrlFileType.Image;
                 }
 
-                if (ContentType.Contains("text"))
+                if (contentType.Contains("text"))
                 {
-                    if (ContentType.Contains("css") || ContentType.Contains("style"))
+                    if (contentType.Contains("css") || contentType.Contains("style"))
                     {
                         return UrlFileType.Style;
                     }
 
-                    if (ContentType.Contains("script"))
-                    {
-                        return UrlFileType.JavaScript;
-                    }
-                    else
-                    {
-                        return UrlFileType.Html;
-                    }
+                    return contentType.Contains("script") ? UrlFileType.JavaScript : UrlFileType.Html;
                 }
-                else if (ContentType.Contains("application"))
+                else if (contentType.Contains("application"))
                 {
                     return UrlFileType.File;
                 }
@@ -109,7 +102,6 @@ namespace Kooboo.Render
             }
             else if (minetype.StartsWith("text"))
             {
-
                 if (minetype.Contains("css"))
                 {
                     return UrlFileType.Style;
@@ -125,46 +117,43 @@ namespace Kooboo.Render
             }
 
             return UrlFileType.File;
-
-        }
-         
-        public static string CombinePath(string Root, string RelativeUrl)
-        {
-            return Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(Root, RelativeUrl); 
         }
 
-        public static string GetRelativeUrl(Uri AbsoluteUri, RenderOption option)
+        public static string CombinePath(string root, string relativeUrl)
         {
-            string RawRelativeUrl = Kooboo.Lib.Helper.UrlHelper.RelativePath(AbsoluteUri);
-            return GetRelativeUrl(RawRelativeUrl, option); 
+            return Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(root, relativeUrl);
         }
-        public static string GetRelativeUrl(string RawRelativeUrl, RenderOption option)
+
+        public static string GetRelativeUrl(Uri absoluteUri, RenderOption option)
         {
-           string  RelativeUrl = RemoveQuestionMark(RawRelativeUrl); 
+            string rawRelativeUrl = Kooboo.Lib.Helper.UrlHelper.RelativePath(absoluteUri);
+            return GetRelativeUrl(rawRelativeUrl, option);
+        }
+
+        public static string GetRelativeUrl(string rawRelativeUrl, RenderOption option)
+        {
+            string relativeUrl = RemoveQuestionMark(rawRelativeUrl);
             if (!string.IsNullOrEmpty(option.StartPath))
             {
-                if (RelativeUrl.ToLower().StartsWith(option.StartPath))
+                if (relativeUrl.ToLower().StartsWith(option.StartPath))
                 {
-                    RelativeUrl = RelativeUrl.Substring(option.StartPath.Length);
+                    relativeUrl = relativeUrl.Substring(option.StartPath.Length);
                 }
             }
-            return RelativeUrl;
+            return relativeUrl;
         }
 
         public static string RemoveQuestionMark(string input)
         {
             if (string.IsNullOrEmpty(input))
             {
-                return input; 
+                return input;
             }
             int mark = input.IndexOf("?");
-            if (mark > 0)
-            {
-                return input.Substring(0, mark); 
-            }
-            return input;  
+            return mark > 0 ? input.Substring(0, mark) : input;
         }
     }
+
     public enum UrlFileType
     {
         Unknow = 0,

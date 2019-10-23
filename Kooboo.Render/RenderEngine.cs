@@ -1,10 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
+using Kooboo.Lib.Helper;
 using Kooboo.Render.ObjectSource;
 using Kooboo.Sites.Render;
-using Kooboo.Lib;
-using Kooboo.Lib.Helper;
 
 namespace Kooboo.Render
 {
@@ -25,29 +24,29 @@ namespace Kooboo.Render
             return sourceprovider;
         }
 
-        public static RenderRespnose Render(RenderContext Context, RenderOption option, string relativeurl)
+        public static RenderRespnose Render(RenderContext context, RenderOption option, string relativeurl)
         {
-            var sourceprovider = GetSourceProvider(Context, option);
+            var sourceprovider = GetSourceProvider(context, option);
 
-            var FileType = RenderHelper.GetFileType(relativeurl);
+            var fileType = RenderHelper.GetFileType(relativeurl);
             RenderRespnose response = new RenderRespnose();
 
-            switch (FileType)
+            switch (fileType)
             {
                 case UrlFileType.Image:
 
-                    return RenderImage(Context, option, relativeurl);
+                    return RenderImage(context, option, relativeurl);
 
                 case UrlFileType.JavaScript:
 
-                    if (sourceprovider is CommandDiskSourceProvider)
+                    if (sourceprovider is CommandDiskSourceProvider provider)
                     {
-                        return ServerSide.ServerEngine.RenderJs(sourceprovider as CommandDiskSourceProvider, option, Context, relativeurl); 
+                        return ServerSide.ServerEngine.RenderJs(provider, option, context, relativeurl);
                     }
                     else
                     {
                         response.ContentType = "application/javascript";
-                        response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
+                        response.BinaryBytes = sourceprovider.GetBinary(context, relativeurl);
                     }
 
                     break;
@@ -55,9 +54,10 @@ namespace Kooboo.Render
                 case UrlFileType.Style:
 
                     response.ContentType = "text/css";
-                    response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
+                    response.BinaryBytes = sourceprovider.GetBinary(context, relativeurl);
 
                     break;
+
                 case UrlFileType.File:
 
                     string contenttype = IOHelper.MimeType(relativeurl);
@@ -69,7 +69,7 @@ namespace Kooboo.Render
 
                     if (contenttype.ToLower().Contains("zip"))
                     {
-                        var stream = sourceprovider.GetStream(Context, relativeurl);
+                        var stream = sourceprovider.GetStream(context, relativeurl);
 
                         if (stream != null)
                         {
@@ -77,18 +77,20 @@ namespace Kooboo.Render
                         }
                         else
                         {
-                            response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
+                            response.BinaryBytes = sourceprovider.GetBinary(context, relativeurl);
                         }
                     }
                     else
                     {
-                        response.BinaryBytes = sourceprovider.GetBinary(Context, relativeurl);
+                        response.BinaryBytes = sourceprovider.GetBinary(context, relativeurl);
                     }
-                     
+
                     break;
+
                 case UrlFileType.Html:
 
-                    return RenderHtml(Context, option, relativeurl);
+                    return RenderHtml(context, option, relativeurl);
+
                 default:
                     break;
             }
@@ -96,11 +98,10 @@ namespace Kooboo.Render
             return response;
         }
 
-        public static RenderRespnose RenderImage(RenderContext Context, RenderOption option, string relativeurl)
+        public static RenderRespnose RenderImage(RenderContext context, RenderOption option, string relativeurl)
         {
-            RenderRespnose response = new RenderRespnose();
+            RenderRespnose response = new RenderRespnose {ContentType = "image"};
 
-            response.ContentType = "image";
 
             string extension = Kooboo.Lib.Helper.UrlHelper.FileExtension(relativeurl);
             if (!string.IsNullOrWhiteSpace(extension))
@@ -113,36 +114,35 @@ namespace Kooboo.Render
 
                 if (extension.ToLower() == "svg")
                 {
-                    response.ContentType = response.ContentType + "+xml";
+                    response.ContentType += "+xml";
                 }
             }
 
-            var provider = GetSourceProvider(Context, option);
+            var provider = GetSourceProvider(context, option);
 
             if (provider != null)
             {
-                response.BinaryBytes = provider.GetBinary(Context, relativeurl);
+                response.BinaryBytes = provider.GetBinary(context, relativeurl);
             }
             return response;
         }
 
-        public static RenderRespnose RenderHtml(RenderContext Context, RenderOption option, string relativeurl)
+        public static RenderRespnose RenderHtml(RenderContext context, RenderOption option, string relativeurl)
         {
-            var sourceprovider = GetSourceProvider(Context, option);
+            var sourceprovider = GetSourceProvider(context, option);
 
-            RenderRespnose response = new RenderRespnose();
-            response.ContentType = "text/html";
+            RenderRespnose response = new RenderRespnose {ContentType = "text/html"};
             string minetype = IOHelper.MimeType(relativeurl);
             if (!string.IsNullOrEmpty(minetype))
             {
                 response.ContentType = minetype;
             }
 
-            if (Context == null || sourceprovider == null)
+            if (context == null || sourceprovider == null)
             {
                 return response;
             }
-            string htmlbody = sourceprovider.GetString(Context, relativeurl);
+            string htmlbody = sourceprovider.GetString(context, relativeurl);
 
             if (string.IsNullOrEmpty(htmlbody))
             {
@@ -151,27 +151,20 @@ namespace Kooboo.Render
 
             var hashid = Lib.Security.Hash.ComputeHashGuid(htmlbody);
 
-            var EvaluatorOption = new EvaluatorOption();
-            EvaluatorOption.Evaluators = Kooboo.Render.Components.EvaluatorContainer.ListWithServerComponent; 
-             
-            var RenderPlan = RenderPlanCache.GetOrAddRenderPlan(hashid, () => RenderEvaluator.Evaluate(htmlbody, EvaluatorOption));
+            var evaluatorOption = new EvaluatorOption
+            {
+                Evaluators = Kooboo.Render.Components.EvaluatorContainer.ListWithServerComponent
+            };
 
-            string result = Kooboo.Sites.Render.RenderHelper.Render(RenderPlan, Context);
+            var renderPlan = RenderPlanCache.GetOrAddRenderPlan(hashid, () => RenderEvaluator.Evaluate(htmlbody, evaluatorOption));
+
+            string result = Kooboo.Sites.Render.RenderHelper.Render(renderPlan, context);
 
             string finalreseult = null;
 
-            if (!string.IsNullOrEmpty(finalreseult))
-            {
-                response.Body = finalreseult;
-            }
-            else
-            {
-                response.Body = result;
-            }
+            response.Body = !string.IsNullOrEmpty(finalreseult) ? finalreseult : result;
 
             return response;
         }
-         
-         
     }
 }

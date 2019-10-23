@@ -1,10 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
-using System.Threading.Tasks;
-using Kooboo.Data.Server; 
-using System.Collections.Generic;
+using Kooboo.Data.Server;
 using Kooboo.Render.Response;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Kooboo.Render
 {
@@ -52,14 +52,7 @@ namespace Kooboo.Render
 
             Kooboo.Data.Models.User currentUser = null;
 
-            if (context.User != null)
-            {
-                currentUser = context.User;
-            }
-            else
-            {
-                currentUser = new Data.Models.User();
-            }
+            currentUser = context.User ?? new Data.Models.User();
 
             context.DataContext.Push("User", context.User);
 
@@ -86,8 +79,7 @@ namespace Kooboo.Render
                             relative = relative.Substring(0, index);
                         }
 
-                        Dictionary<string, string> returnurl = new Dictionary<string, string>();
-                        returnurl.Add("returnurl", relative);
+                        Dictionary<string, string> returnurl = new Dictionary<string, string> {{"returnurl", relative}};
                         string fullurl = Kooboo.Lib.Helper.UrlHelper.AppendQueryString(this.options.LoginPage, returnurl);
                         context.Response.Redirect(503, fullurl);
                         return;
@@ -97,7 +89,6 @@ namespace Kooboo.Render
                         context.Response.StatusCode = 503;
                         return;
                     }
-
                 }
             }
 
@@ -121,38 +112,34 @@ namespace Kooboo.Render
                 context.Culture = context.User.Language;
             }
 
-            var Response = RenderEngine.Render(context, this.options, RenderHelper.GetRelativeUrl(context.Request.RawRelativeUrl, options));
+            var response = RenderEngine.Render(context, this.options, RenderHelper.GetRelativeUrl(context.Request.RawRelativeUrl, options));
 
-            if (Response != null)
+            if (response != null)
             {
-                if (this.options.Log != null)
-                {
-                    this.options.Log(context, Response);
-                }
+                options.Log?.Invoke(context, response);
 
-                context.Response.ContentType = Response.ContentType;
+                context.Response.ContentType = response.ContentType;
 
                 context.Response.StatusCode = 200;
-                if (Response.Stream != null)
+                if (response.Stream != null)
                 {
-                    context.Response.Stream = Response.Stream;
+                    context.Response.Stream = response.Stream;
                     return;
                 }
-                else if (Response.BinaryBytes != null)
+                else if (response.BinaryBytes != null)
                 {
-                    context.Response.Body = Response.BinaryBytes;
+                    context.Response.Body = response.BinaryBytes;
                     return;
                 }
-                else if (!string.IsNullOrEmpty(Response.Body))
+                else if (!string.IsNullOrEmpty(response.Body))
                 {
-                    context.Response.Body = System.Text.Encoding.UTF8.GetBytes(Response.Body);
+                    context.Response.Body = System.Text.Encoding.UTF8.GetBytes(response.Body);
                     return;
                 }
             }
-
             else
             {
-                // try render controller... 
+                // try render controller...
                 if (this.options.Render != null)
                 {
                     string relativeurl = RenderHelper.GetRelativeUrl(context.Request.RawRelativeUrl, options);
@@ -162,7 +149,7 @@ namespace Kooboo.Render
                         SetResponse(context, resposne);
                         return;
                     }
-                } 
+                }
             }
 
             // Render controller here...
@@ -200,29 +187,24 @@ namespace Kooboo.Render
                 context.Response.ContentType = "text/html";
             }
 
-            if (response is RedirectResponse)
+            if (response is RedirectResponse redirect)
             {
-                var redirect = response as RedirectResponse;
                 if (!string.IsNullOrWhiteSpace(redirect.RedirectUrl))
                 {
                     context.Response.Redirect(302, redirect.RedirectUrl);
                     return;
                 }
             }
-             
-            if (response is BinaryResponse)
+
+            if (response is BinaryResponse binary)
             {
-                var binary = response as BinaryResponse;
                 context.Response.Body = binary.BinaryBytes;
             }
-            else if (response is StringResponse)
+            else if (response is StringResponse strres)
             {
-                var strres = response as StringResponse;
                 context.Response.Body = System.Text.Encoding.UTF8.GetBytes(strres.Content);
-                // do nothing. 
+                // do nothing.
             }
-
         }
-         
     }
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.IO;
@@ -8,12 +8,12 @@ namespace Kooboo.Render.ObjectSource
     public class DirectoryRender
     {
         public static string Resolve(string localPath, string localRootPath)
-        {  
+        {
             if (localRootPath.StartsWith(Kooboo.Data.AppSettings.RootPath))
             {
-                return null; 
+                return null;
             }
-            
+
             var fileList = string.Empty;
             DirectoryInfo directory = new DirectoryInfo(localPath);
             if (!directory.Exists)
@@ -55,16 +55,15 @@ namespace Kooboo.Render.ObjectSource
                 header = header.Replace("{time}", "");
 
                 fileList += header;
-
             }
             foreach (var info in directory.GetDirectories())
             {
-                string Folder = TemplateString.Tr.Replace("{className}", "folder");
-                Folder = Folder.Replace("{url}", info.FullName.Replace(localRootPath, string.Empty));
-                Folder = Folder.Replace("{name}", info.Name);
-                Folder = Folder.Replace("{time}", info.LastWriteTime.ToShortDateString());
+                string folder = TemplateString.Tr.Replace("{className}", "folder");
+                folder = folder.Replace("{url}", info.FullName.Replace(localRootPath, string.Empty));
+                folder = folder.Replace("{name}", info.Name);
+                folder = folder.Replace("{time}", info.LastWriteTime.ToShortDateString());
 
-                fileList += Folder;
+                fileList += folder;
             }
             foreach (var info in directory.GetFiles())
             {
@@ -80,6 +79,7 @@ namespace Kooboo.Render.ObjectSource
                     case "ico":
                         className = "file-image-o";
                         break;
+
                     case "html":
                     case "cshtml":
                     case "shtml":
@@ -93,22 +93,27 @@ namespace Kooboo.Render.ObjectSource
                     case "json":
                         className = "file-code-o";
                         break;
+
                     case "wav":
                     case "mp3":
                         className = "file-audio-o";
                         break;
+
                     case "ogg":
                     case "mp4":
                         className = "file-video-o";
                         break;
+
                     case "pdf":
                         className = "file-pdf-o";
                         break;
+
                     case "rar":
                     case "zip":
                     case "7z":
                         className = "file-archive-o";
                         break;
+
                     default:
                         className = "file-text-o";
                         break;
@@ -125,6 +130,7 @@ namespace Kooboo.Render.ObjectSource
             return TemplateString.Main.Replace("{fileList}", fileList);
         }
     }
+
     public class TemplateString
     {
         public static string Main = @"<!DOCTYPE html>
@@ -211,7 +217,7 @@ padding: 10px 0;
         .icon-file-image-o {
             background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxNTM2IDE3OTIiPjxwYXRoIGZpbGw9IiMwMDAwMDAiIGQ9Ik0xNDY4IDM4MHEyOCAyOCA0OCA3NnQyMCA4OHYxMTUycTAgNDAtMjggNjh0LTY4IDI4aC0xMzQ0cS00MCAwLTY4LTI4dC0yOC02OHYtMTYwMHEwLTQwIDI4LTY4dDY4LTI4aDg5NnE0MCAwIDg4IDIwdDc2IDQ4ek0xMDI0IDEzNnYzNzZoMzc2cS0xMC0yOS0yMi00MWwtMzEzLTMxM3EtMTItMTItNDEtMjJ6TTE0MDggMTY2NHYtMTAyNGgtNDE2cS00MCAwLTY4LTI4dC0yOC02OHYtNDE2aC03Njh2MTUzNmgxMjgwek0xMjgwIDEyMTZ2MzIwaC0xMDI0di0xOTJsMTkyLTE5MiAxMjggMTI4IDM4NC0zODR6TTQ0OCAxMDI0cS04MCAwLTEzNi01NnQtNTYtMTM2IDU2LTEzNiAxMzYtNTYgMTM2IDU2IDU2IDEzNi01NiAxMzYtMTM2IDU2eiIgLz48L3N2Zz4=') no-repeat;
         }
-        
+
         .icon-file-code-o {
             background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxNTM2IDE3OTIiPjxwYXRoIGZpbGw9IiMwMDAwMDAiIGQ9Ik0xNDY4IDM4MHEyOCAyOCA0OCA3NnQyMCA4OHYxMTUycTAgNDAtMjggNjh0LTY4IDI4aC0xMzQ0cS00MCAwLTY4LTI4dC0yOC02OHYtMTYwMHEwLTQwIDI4LTY4dDY4LTI4aDg5NnE0MCAwIDg4IDIwdDc2IDQ4ek0xMDI0IDEzNnYzNzZoMzc2cS0xMC0yOS0yMi00MWwtMzEzLTMxM3EtMTItMTItNDEtMjJ6TTE0MDggMTY2NHYtMTAyNGgtNDE2cS00MCAwLTY4LTI4dC0yOC02OHYtNDE2aC03Njh2MTUzNmgxMjgwek00ODAgNzY4cTgtMTEgMjEtMTIuNXQyNCA2LjVsNTEgMzhxMTEgOCAxMi41IDIxdC02LjUgMjRsLTE4MiAyNDMgMTgyIDI0M3E4IDExIDYuNSAyNHQtMTIuNSAyMWwtNTEgMzhxLTExIDgtMjQgNi41dC0yMS0xMi41bC0yMjYtMzAxcS0xNC0xOSAwLTM4ek0xMjgyIDEwNjlxMTQgMTkgMCAzOGwtMjI2IDMwMXEtOCAxMS0yMSAxMi41dC0yNC02LjVsLTUxLTM4cS0xMS04LTEyLjUtMjF0Ni41LTI0bDE4Mi0yNDMtMTgyLTI0M3EtOC0xMS02LjUtMjR0MTIuNS0yMWw1MS0zOHExMS04IDI0LTYuNXQyMSAxMi41ek02NjIgMTUzMHEtMTMtMi0yMC41LTEzdC01LjUtMjRsMTM4LTgzMXEyLTEzIDEzLTIwLjV0MjQtNS41bDYzIDEwcTEzIDIgMjAuNSAxM3Q1LjUgMjRsLTEzOCA4MzFxLTIgMTMtMTMgMjAuNXQtMjQgNS41eiIgLz48L3N2Zz4=') no-repeat;
         }
@@ -223,7 +229,7 @@ padding: 10px 0;
         .icon-file-video-o {
             background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxNTM2IDE3OTIiPjxwYXRoIGZpbGw9IiMwMDAwMDAiIGQ9Ik0xNDY4IDM4MHEyOCAyOCA0OCA3NnQyMCA4OHYxMTUycTAgNDAtMjggNjh0LTY4IDI4aC0xMzQ0cS00MCAwLTY4LTI4dC0yOC02OHYtMTYwMHEwLTQwIDI4LTY4dDY4LTI4aDg5NnE0MCAwIDg4IDIwdDc2IDQ4ek0xMDI0IDEzNnYzNzZoMzc2cS0xMC0yOS0yMi00MWwtMzEzLTMxM3EtMTItMTItNDEtMjJ6TTE0MDggMTY2NHYtMTAyNGgtNDE2cS00MCAwLTY4LTI4dC0yOC02OHYtNDE2aC03Njh2MTUzNmgxMjgwek03NjggNzY4cTUyIDAgOTAgMzh0MzggOTB2Mzg0cTAgNTItMzggOTB0LTkwIDM4aC0zODRxLTUyIDAtOTAtMzh0LTM4LTkwdi0zODRxMC01MiAzOC05MHQ5MC0zOGgzODR6TTEyNjAgNzcwcTIwIDggMjAgMzB2NTc2cTAgMjItMjAgMzAtOCAyLTEyIDItMTQgMC0yMy05bC0yNjUtMjY2di05MGwyNjUtMjY2cTktOSAyMy05IDQgMCAxMiAyeiIgLz48L3N2Zz4=') no-repeat;
         }
-        
+
         .icon-file-pdf-o {
             background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxNTM2IDE3OTIiPjxwYXRoIGZpbGw9IiMwMDAwMDAiIGQ9Ik0xNDY4IDM4MHEyOCAyOCA0OCA3NnQyMCA4OHYxMTUycTAgNDAtMjggNjh0LTY4IDI4aC0xMzQ0cS00MCAwLTY4LTI4dC0yOC02OHYtMTYwMHEwLTQwIDI4LTY4dDY4LTI4aDg5NnE0MCAwIDg4IDIwdDc2IDQ4ek0xMDI0IDEzNnYzNzZoMzc2cS0xMC0yOS0yMi00MWwtMzEzLTMxM3EtMTItMTItNDEtMjJ6TTE0MDggMTY2NHYtMTAyNGgtNDE2cS00MCAwLTY4LTI4dC0yOC02OHYtNDE2aC03Njh2MTUzNmgxMjgwek04OTQgMTA3MXEzMyAyNiA4NCA1NiA1OS03IDExNy03IDE0NyAwIDE3NyA0OSAxNiAyMiAyIDUyIDAgMS0xIDJsLTIgMnYxcS02IDM4LTcxIDM4LTQ4IDAtMTE1LTIwdC0xMzAtNTNxLTIyMSAyNC0zOTIgODMtMTUzIDI2Mi0yNDIgMjYyLTE1IDAtMjgtN2wtMjQtMTJxLTEtMS02LTUtMTAtMTAtNi0zNiA5LTQwIDU2LTkxLjV0MTMyLTk2LjVxMTQtOSAyMyA2IDIgMiAyIDQgNTItODUgMTA3LTE5NyA2OC0xMzYgMTA0LTI2Mi0yNC04Mi0zMC41LTE1OS41dDYuNS0xMjcuNXExMS00MCA0Mi00MGgyMSAxcTIzIDAgMzUgMTUgMTggMjEgOSA2OC0yIDYtNCA4IDEgMyAxIDh2MzBxLTIgMTIzLTE0IDE5MiA1NSAxNjQgMTQ2IDIzOHpNMzE4IDE0ODJxNTItMjQgMTM3LTE1OC01MSA0MC04Ny41IDg0dC00OS41IDc0ek03MTYgNTYycS0xNSA0Mi0yIDEzMiAxLTcgNy00NCAwLTMgNy00MyAxLTQgNC04LTEtMS0xLTJ0LTAuNS0xLjUtMC41LTEuNXEtMS0yMi0xMy0zNiAwIDEtMSAydjJ6TTU5MiAxMjIzcTEzNS01NCAyODQtODEtMi0xLTEzLTkuNXQtMTYtMTMuNXEtNzYtNjctMTI3LTE3Ni0yNyA4Ni04MyAxOTctMzAgNTYtNDUgODN6TTEyMzggMTIwN3EtMjQtMjQtMTQwLTI0IDc2IDI4IDEyNCAyOCAxNCAwIDE4LTEgMC0xLTItM3oiIC8+PC9zdmc+') no-repeat;
         }
@@ -267,8 +273,5 @@ padding: 10px 0;
     </td>
     <td>{time}</td>
 </tr>";
-
-
     }
-
 }

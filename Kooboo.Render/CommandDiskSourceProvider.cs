@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Sites.Render.Commands;
@@ -22,15 +22,14 @@ namespace Kooboo.Render.ObjectSource
         public RenderOption option { get; set; }
 
         private List<string> _startPageNames;
+
         private List<string> StartPageNames
         {
             get
             {
                 if (_startPageNames == null)
                 {
-                    _startPageNames = new List<string>();
-                    _startPageNames.Add("index");
-                    _startPageNames.Add("default");
+                    _startPageNames = new List<string> {"index", "default"};
                 }
                 return _startPageNames;
             }
@@ -51,14 +50,14 @@ namespace Kooboo.Render.ObjectSource
             return null;
         }
 
-        private string FindFile(string FullPath, List<string> extensions)
+        private string FindFile(string fullPath, List<string> extensions)
         {
-            if (System.IO.File.Exists(FullPath))
+            if (System.IO.File.Exists(fullPath))
             {
-                return FullPath;
+                return fullPath;
             }
 
-            var fileinfo = new System.IO.FileInfo(FullPath);
+            var fileinfo = new System.IO.FileInfo(fullPath);
 
             if (fileinfo.Directory.Exists)
             {
@@ -81,10 +80,10 @@ namespace Kooboo.Render.ObjectSource
                     if (files2 != null && files2.Any())
                     {
                         return files2[0].FullName;
-                    } 
+                    }
                 }
             }
-            return Kooboo.Render.Controller.ModuleFile.FindFile(FullPath);
+            return Kooboo.Render.Controller.ModuleFile.FindFile(fullPath);
         }
 
         private string ExtendViewSearch(string root, string relative, List<string> searchfolders, List<string> extensions)
@@ -102,49 +101,48 @@ namespace Kooboo.Render.ObjectSource
             return null;
         }
 
-        private string FindFileSearch(RenderContext context, string RelativeUrl, List<string> searchfolders, List<string> extensions)
+        private string FindFileSearch(RenderContext context, string relativeUrl, List<string> searchfolders, List<string> extensions)
         {
-            RelativeUrl = CleanQuestionMark(RelativeUrl);
+            relativeUrl = CleanQuestionMark(relativeUrl);
             string root = GetRoot(context);
             string route = null;
-            if (RelativeUrl.StartsWith("/") || RelativeUrl.StartsWith("\\"))
+            if (relativeUrl.StartsWith("/") || relativeUrl.StartsWith("\\"))
             {
-                RelativeUrl = RelativeUrl.Substring(1);
+                relativeUrl = relativeUrl.Substring(1);
             }
-            route = "/" + RelativeUrl;
+            route = "/" + relativeUrl;
 
             string fullpath = RenderHelper.CombinePath(root, route);
-            string Filename = FindFile(fullpath, extensions);
-            if ((searchfolders == null) || (!string.IsNullOrEmpty(Filename)))
+            string filename = FindFile(fullpath, extensions);
+            if ((searchfolders == null) || (!string.IsNullOrEmpty(filename)))
             {
-                return Filename;
+                return filename;
             }
 
             return ExtendViewSearch(root, route, searchfolders, extensions);
         }
 
-        public byte[] GetBinary(RenderContext context, string RelativeUrl)
+        public byte[] GetBinary(RenderContext context, string relativeUrl)
         {
-            string FileName = FindFileSearch(context, RelativeUrl, null, null);
+            string fileName = FindFileSearch(context, relativeUrl, null, null);
 
-            if (!string.IsNullOrEmpty(FileName))
+            if (!string.IsNullOrEmpty(fileName))
             {
-                return GetBinary(context, option, RelativeUrl, FileName);
+                return GetBinary(context, option, relativeUrl, fileName);
                 //return System.IO.File.ReadAllBytes(FileName);
             }
             return null;
         }
 
-
-        public string GetFullFileName(RenderContext context, string RelativeUrl)
+        public string GetFullFileName(RenderContext context, string relativeUrl)
         {
-            return FindFileSearch(context, RelativeUrl, null, null);
+            return FindFileSearch(context, relativeUrl, null, null);
         }
 
-        private string SearchRoute(RenderContext context, string RelativeUrl)
+        private string SearchRoute(RenderContext context, string relativeUrl)
         {
             string root = option.GetDiskRoot(context);
-            if (!string.IsNullOrEmpty(option.StartPath) && !RelativeUrl.ToLower().StartsWith(option.StartPath.ToLower()))
+            if (!string.IsNullOrEmpty(option.StartPath) && !relativeUrl.ToLower().StartsWith(option.StartPath.ToLower()))
             {
                 root = RenderHelper.CombinePath(root, option.StartPath);
             }
@@ -152,13 +150,13 @@ namespace Kooboo.Render.ObjectSource
             string result = null;
 
             bool isDirectory = false;
-            if (RelativeUrl.EndsWith("/"))
+            if (relativeUrl.EndsWith("/"))
             {
                 isDirectory = true;
             }
             else
             {
-                string diskpath = RenderHelper.CombinePath(root, RelativeUrl);
+                string diskpath = RenderHelper.CombinePath(root, relativeUrl);
                 isDirectory = System.IO.Directory.Exists(diskpath);
             }
 
@@ -166,7 +164,7 @@ namespace Kooboo.Render.ObjectSource
             {
                 foreach (var item in this.StartPageNames)
                 {
-                    string relativeurl = RenderHelper.CombinePath(RelativeUrl, item);
+                    string relativeurl = RenderHelper.CombinePath(relativeUrl, item);
                     string fullpath = RenderHelper.CombinePath(root, relativeurl);
 
                     result = FindFile(fullpath, option.Extensions);
@@ -181,79 +179,79 @@ namespace Kooboo.Render.ObjectSource
             }
             else
             {
-                string fullpath = RenderHelper.CombinePath(root, RelativeUrl);
+                string fullpath = RenderHelper.CombinePath(root, relativeUrl);
 
                 result = FindFile(fullpath, option.Extensions);
 
                 if (string.IsNullOrWhiteSpace(result))
                 {
-                    result = ExtendViewSearch(root, RelativeUrl, option.ViewFolders, option.Extensions);
+                    result = ExtendViewSearch(root, relativeUrl, option.ViewFolders, option.Extensions);
                 }
             }
 
             return result;
         }
 
-        public string GetString(RenderContext context, string RelativeUrl)
+        public string GetString(RenderContext context, string relativeUrl)
         {
-            RelativeUrl = CleanQuestionMark(RelativeUrl);
+            relativeUrl = CleanQuestionMark(relativeUrl);
 
-            string fullfilename = SearchRoute(context, RelativeUrl);
+            string fullfilename = SearchRoute(context, relativeUrl);
 
             if (!string.IsNullOrEmpty(fullfilename))
             {
-                return GetText(context, option, RelativeUrl, fullfilename);
+                return GetText(context, option, relativeUrl, fullfilename);
                 // return System.IO.File.ReadAllText(fullfilename);
             }
             else
             {
-                // try to render the directory. 
+                // try to render the directory.
                 string root = option.GetDiskRoot(context);
 
-                if (!string.IsNullOrEmpty(option.StartPath) && !RelativeUrl.ToLower().StartsWith(option.StartPath.ToLower()))
+                if (!string.IsNullOrEmpty(option.StartPath) && !relativeUrl.ToLower().StartsWith(option.StartPath.ToLower()))
                 {
                     root = RenderHelper.CombinePath(root, option.StartPath);
                 }
 
-                string localpath = RenderHelper.CombinePath(root, RelativeUrl);
+                string localpath = RenderHelper.CombinePath(root, relativeUrl);
                 return DirectoryRender.Resolve(localpath, root);
             }
         }
 
-        public string GetLayout(RenderContext context, string RelativeUrl)
+        public string GetLayout(RenderContext context, string relativeUrl)
         {
-            string FileName = FindFileSearch(context, RelativeUrl, option.LayoutFolders, null);
-            if (!string.IsNullOrEmpty(FileName))
+            string fileName = FindFileSearch(context, relativeUrl, option.LayoutFolders, null);
+            if (!string.IsNullOrEmpty(fileName))
             {
-                return GetText(context, option, RelativeUrl, FileName);
+                return GetText(context, option, relativeUrl, fileName);
                 // return System.IO.File.ReadAllText(FileName);
             }
             return null;
         }
 
-        private string CleanQuestionMark(string RelativeUrl)
+        private string CleanQuestionMark(string relativeUrl)
         {
-            if (!string.IsNullOrEmpty(RelativeUrl))
+            if (!string.IsNullOrEmpty(relativeUrl))
             {
-                int markindex = RelativeUrl.IndexOf("?");
+                int markindex = relativeUrl.IndexOf("?");
 
                 if (markindex > -1)
                 {
-                    return RelativeUrl.Substring(0, markindex);
+                    return relativeUrl.Substring(0, markindex);
                 }
             }
-            return RelativeUrl;
+            return relativeUrl;
         }
 
-        private static byte[] GetBinary(RenderContext context, RenderOption option, string RelativeUrl, string FullFileName)
+        private static byte[] GetBinary(RenderContext context, RenderOption option, string relativeUrl, string fullFileName)
         {
-            if (option.EnableMultilingual && RelativeUrl.ToLower().EndsWith(option.MultilingualJsFile))
+            if (option.EnableMultilingual && relativeUrl.ToLower().EndsWith(option.MultilingualJsFile))
             {
-                Guid key = Lib.Security.Hash.ComputeGuidIgnoreCase(RelativeUrl);
+                Guid key = Lib.Security.Hash.ComputeGuidIgnoreCase(relativeUrl);
                 byte[] bytes = null;
 #if DEBUG
                 {
-                    bytes = System.IO.File.ReadAllBytes(FullFileName);
+                    bytes = System.IO.File.ReadAllBytes(fullFileName);
                     key = Lib.Security.Hash.ComputeGuid(bytes);
                 }
 #endif
@@ -262,7 +260,7 @@ namespace Kooboo.Render.ObjectSource
                 {
                     if (bytes == null)
                     {
-                        bytes = System.IO.File.ReadAllBytes(FullFileName);
+                        bytes = System.IO.File.ReadAllBytes(fullFileName);
                     }
                     values = Kooboo.Data.Cache.MultiLingualRender.SetGetJs(context, bytes);
                 }
@@ -273,16 +271,16 @@ namespace Kooboo.Render.ObjectSource
                 byte[] result = null;
 #if DEBUG
                 {
-                    result = System.IO.File.ReadAllBytes(FullFileName);
+                    result = System.IO.File.ReadAllBytes(fullFileName);
                 }
 #endif
                 if (result == null)
                 {
-                    Guid key = Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(RelativeUrl);
+                    Guid key = Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(relativeUrl);
                     result = Kooboo.Data.Cache.RenderCache.GetBinary(key);
                     if (result == null)
                     {
-                        result = System.IO.File.ReadAllBytes(FullFileName);
+                        result = System.IO.File.ReadAllBytes(fullFileName);
                         Kooboo.Data.Cache.RenderCache.SetBinary(key, result);
                     }
                 }
@@ -297,7 +295,6 @@ namespace Kooboo.Render.ObjectSource
 
             if (option.StartPath != null)
             {
-
                 if (option.StartPath.Contains("_admin"))
                 {
 #if DEBUG
@@ -306,21 +303,18 @@ namespace Kooboo.Render.ObjectSource
                         key = Lib.Security.Hash.ComputeHashGuid(text);
                     }
 #endif
-
                 }
                 else
                 {
                     text = System.IO.File.ReadAllText(FullFileName);
                     key = Lib.Security.Hash.ComputeHashGuid(text);
                 }
-
             }
             else
             {
                 text = System.IO.File.ReadAllText(FullFileName);
                 key = Lib.Security.Hash.ComputeHashGuid(text);
             }
-
 
             if (option.EnableMultilingual)
             {
@@ -339,44 +333,36 @@ namespace Kooboo.Render.ObjectSource
             {
                 if (text == null)
                 {
-                    text = Kooboo.Data.Cache.RenderCache.GetHtml(key);
-                    if (text == null)
-                    {
-                        text = File.ReadAllText(FullFileName);
-                    }
+                    text = Kooboo.Data.Cache.RenderCache.GetHtml(key) ?? File.ReadAllText(FullFileName);
                     Kooboo.Data.Cache.RenderCache.SetHtml(key, text);
                 }
                 return text;
             }
         }
 
-        public Stream GetStream(RenderContext context, string RelativeUrl)
+        public Stream GetStream(RenderContext context, string relativeUrl)
         {
-            string FileName = FindFileSearch(context, RelativeUrl, null, null);
+            string fileName = FindFileSearch(context, relativeUrl, null, null);
 
-            if (!string.IsNullOrEmpty(FileName))
+            if (!string.IsNullOrEmpty(fileName))
             {
-                if (System.IO.File.Exists(FileName))
+                if (System.IO.File.Exists(fileName))
                 {
-                    var info = new System.IO.FileInfo(FileName);
-                    if (info != null && info.Length > 1024 * 1024 * 10)  // > 10 mb. 
+                    var info = new System.IO.FileInfo(fileName);
+                    if (info != null && info.Length > 1024 * 1024 * 10)  // > 10 mb.
                     {
-                        var filestream = new System.IO.FileStream(FileName, FileMode.Open);
+                        var filestream = new System.IO.FileStream(fileName, FileMode.Open);
                         return filestream;
                     }
                 }
 
-                var bytes = GetBinary(context, option, RelativeUrl, FileName);
+                var bytes = GetBinary(context, option, relativeUrl, fileName);
 
                 MemoryStream ms = new MemoryStream(bytes);
 
                 return ms;
-
             }
             return null;
         }
     }
-
-
-
 }

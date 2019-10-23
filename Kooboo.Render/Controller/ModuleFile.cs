@@ -1,14 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Render.Controller
 {
-    //TODO: to be refactor....  
+    //TODO: to be refactor....
     public static class ModuleFile
     {
         static ModuleFile()
@@ -23,15 +21,15 @@ namespace Kooboo.Render.Controller
 
         public static char[] seps { get; set; } = "/\\".ToCharArray();
 
-        public static string FindFile(string FullFilePath)
+        public static string FindFile(string fullFilePath)
         {
             var root = Data.AppSettings.RootPath;
-            if (FullFilePath.StartsWith(root))
+            if (fullFilePath.StartsWith(root))
             {
-                string relative = FullFilePath.Substring(root.Length);
+                string relative = fullFilePath.Substring(root.Length);
                 if (string.IsNullOrWhiteSpace(relative))
                 {
-                    return null; 
+                    return null;
                 }
 
                 if (relative.StartsWith("/") || relative.StartsWith("\\"))
@@ -41,7 +39,7 @@ namespace Kooboo.Render.Controller
 
                 if (string.IsNullOrWhiteSpace(relative))
                 {
-                    return null; 
+                    return null;
                 }
 
                 if (relative.ToLower().StartsWith(AdminPath))
@@ -51,11 +49,11 @@ namespace Kooboo.Render.Controller
 
                 if (string.IsNullOrWhiteSpace(relative))
                 {
-                    return null; 
+                    return null;
                 }
 
                 var paths = relative.Split(seps, StringSplitOptions.RemoveEmptyEntries).ToList();
-                foreach(var moduleRoot in ModuleRoots)
+                foreach (var moduleRoot in ModuleRoots)
                 {
                     paths.Insert(0, moduleRoot);
 
@@ -66,10 +64,10 @@ namespace Kooboo.Render.Controller
                         return fullpath;
                     }
                     paths.RemoveAt(0);
-                }  
+                }
             }
 
-            return null; 
+            return null;
         }
     }
 }

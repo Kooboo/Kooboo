@@ -1,23 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Render
 {
-  public   class Constants
+    public class Constants
     {
         /// <summary>
         /// the Kooboo  placeholder tag, can be:
         /// <div tal-placeholder=myposition></div> or <!--position:myid-->    <!--end-->
         /// </summary>
-        public static readonly string[] PlaceHolderAttributes = new[] { "tal-placeholder", "position", "placeholder" };
+        public static readonly string[] PlaceHolderAttributes = { "tal-placeholder", "position", "placeholder" };
 
         public const string CommentPlaceHolderEndTag = "end";
-         
+
         public const string KoobooIdAttributeName = "kooboo-id";
 
         public const string BindingKoobooContent = "kooboo_content";
@@ -27,8 +22,8 @@ namespace Kooboo.Render
         public const string BindingDefaultAttributeContent = "kooboo_content";
 
         /// <summary>
-        /// used when there is no attribute place to put the binding info. 
-        /// this is in the case like tal-replace. 
+        /// used when there is no attribute place to put the binding info.
+        /// this is in the case like tal-replace.
         /// </summary>
         public const string BindingAdditionTag = "<kooboo-begin binding='{0}'></kooboo-begin>";
 
@@ -39,6 +34,5 @@ namespace Kooboo.Render
         public const string BindingRepeaterStart = "\r\n<!--kooboo repeater: {{ alias: \"{0}\", datakey: \"{1}\", objectid: \"{2}\", folder: \"{3}\" }}-->\r\n";
 
         public const string BindingRepeaterEnd = "\r\n<!--/kooboo repeater-->\r\n";
-
     }
 }

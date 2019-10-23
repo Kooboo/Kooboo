@@ -1,19 +1,17 @@
 ﻿using Kooboo.Dom;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Render.Components
 {
-     
     public class ServerComponentSetting
     {
         public string NameOrId { get; set; }
 
-        public Dictionary<string, string> Settings { get; set; }
-  
+        public Dictionary<string, string> Settings { get; set; } 
+
         public Dictionary<string, string> Attributes { get; set; }
- 
+
         public string InnerHtml { get; set; }
 
         public ServerComponentSetting()
@@ -22,26 +20,26 @@ namespace Kooboo.Render.Components
             Attributes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
 
-        public static ServerComponentSetting LoadFromElement(Element ComponentElement)
+        public static ServerComponentSetting LoadFromElement(Element componentElement)
         {
-            ServerComponentSetting setting = new ServerComponentSetting();
+            ServerComponentSetting setting = new ServerComponentSetting
+            {
+                NameOrId = componentElement.id, InnerHtml = componentElement.InnerHtml
+            };
 
-            setting.NameOrId = ComponentElement.id; 
 
-            setting.InnerHtml = ComponentElement.InnerHtml;
 
-            foreach (var item in ComponentElement.attributes)
-            { 
+            foreach (var item in componentElement.attributes)
+            {
                 setting.Attributes.Add(item.name, item.value);
             }
-             
 
             if (string.IsNullOrWhiteSpace(setting.NameOrId) && string.IsNullOrWhiteSpace(setting.InnerHtml))
             {
                 return null;
             }
 
-            foreach (var item in ComponentElement.childNodes.item)
+            foreach (var item in componentElement.childNodes.item)
             {
                 if (item.nodeType == enumNodeType.ELEMENT)
                 {
@@ -69,12 +67,11 @@ namespace Kooboo.Render.Components
     public class SettingNode
     {
         public string Key { get; set; }
-         
+
         public string Value { get; set; }
-         
+
         public Dictionary<string, string> Attributes { get; set; }
 
-        public List<SettingNode> ChildNodes { get; set; } 
+        public List<SettingNode> ChildNodes { get; set; }
     }
-     
 }

@@ -4,39 +4,33 @@ using System.Collections.Generic;
 
 namespace Kooboo.Render.Components
 {
-    public static    class EvaluatorContainer
+    public static class EvaluatorContainer
     {
-
         private static List<IEvaluator> _list;
+
         public static List<IEvaluator> ListWithServerComponent
         {
             get
             {
-                if (_list == null)
+                return _list ?? (_list = new List<IEvaluator>
                 {
-                    _list = new List<IEvaluator>();
-                    _list.Add(new PlaceHolderEvaluator());
-                    _list.Add(new SiteLayoutEvaluator());
-                    _list.Add(new RepeaterEvaluator());
-                    _list.Add(new ConditionEvaluator());
-                    _list.Add(new ForEvaluator());
-                    _list.Add(new AttributeEvaluator());
-                 // _list.Add(new UrlEvaluator());
-                    _list.Add(new LabelEvaluator());
-                    _list.Add(new OmitTagEvaluator());
-                    _list.Add(new ContentEvaluator());
-                    _list.Add(new ComponentEvaluator());
-                    _list.Add(new HeaderEvaluator());
-                    _list.Add(new FormEvaluator());
-                    _list.Add(new CommandEvaluator());
-                    _list.Add(new KConfigContentEvaluator());
-
-                    _list.Add(new ServerComponentEvaluator()); 
-                    //add the 
-                }
-                return _list;
+                    new PlaceHolderEvaluator(),
+                    new SiteLayoutEvaluator(),
+                    new RepeaterEvaluator(),
+                    new ConditionEvaluator(),
+                    new ForEvaluator(),
+                    new AttributeEvaluator(),
+                    new LabelEvaluator(),
+                    new OmitTagEvaluator(),
+                    new ContentEvaluator(),
+                    new ComponentEvaluator(),
+                    new HeaderEvaluator(),
+                    new FormEvaluator(),
+                    new CommandEvaluator(),
+                    new KConfigContentEvaluator(),
+                    new ServerComponentEvaluator()
+                });
             }
         }
-
     }
 }

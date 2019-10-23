@@ -1,10 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Render.ServerSide
 {
@@ -12,35 +9,32 @@ namespace Kooboo.Render.ServerSide
     {
         static TaskContainer()
         {
-             
-                _list = new Dictionary<string, Type>();
+            _list = new Dictionary<string, Type>();
 
-                List<Type> types = new List<Type>();
-                types.Add(typeof(LoadJs));
-                types.Add(typeof(SetHtml));
-                types.Add(typeof(LoadJsFolder));
-                types.Add(typeof(LoadFolder));
-                types.Add(typeof(SetMethods));
+            List<Type> types = new List<Type>
+            {
+                typeof(LoadJs),
+                typeof(SetHtml),
+                typeof(LoadJsFolder),
+                typeof(LoadFolder),
+                typeof(SetMethods)
+            };
 
-                foreach (var type in types)
-                {
+            foreach (var type in types)
+            {
+                var instance = Activator.CreateInstance(type) as IServerTask;
 
-                    var instance = Activator.CreateInstance(type) as IServerTask;
+                var name = instance.name;
+                name = "k." + name;
 
-                    var name = instance.name;
-                    name = "k." + name;
-
-                    _list.Add(name, type);
-
-                }
-        
-         
+                _list.Add(name, type);
+            }
         }
 
-
-        private static object _locker = new object(); 
+        private static object _locker = new object();
 
         private static Dictionary<string, Type> _list;
+
         public static Dictionary<string, Type> list
         {
             get
@@ -53,32 +47,29 @@ namespace Kooboo.Render.ServerSide
                         {
                             _list = new Dictionary<string, Type>();
 
-                            List<Type> types = new List<Type>();
-                            types.Add(typeof(LoadJs));
-                            types.Add(typeof(SetHtml));
-                            types.Add(typeof(LoadJsFolder));
-                            types.Add(typeof(LoadFolder));
-                            types.Add(typeof(SetMethods));
+                            List<Type> types = new List<Type>
+                            {
+                                typeof(LoadJs),
+                                typeof(SetHtml),
+                                typeof(LoadJsFolder),
+                                typeof(LoadFolder),
+                                typeof(SetMethods)
+                            };
 
                             foreach (var type in types)
                             {
-
                                 var instance = Activator.CreateInstance(type) as IServerTask;
 
-                                var name = instance.name;
+                                var name = instance?.name;
                                 name = "k." + name;
 
                                 _list.Add(name, type);
-
                             }
-                             
                         }
                     }
                 }
                 return _list;
             }
         }
-  
-
     }
 }

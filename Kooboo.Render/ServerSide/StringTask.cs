@@ -1,12 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Data.Context;
 using Kooboo.Render.ObjectSource;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Render.ServerSide
 {
@@ -19,15 +16,11 @@ namespace Kooboo.Render.ServerSide
 
         public string Render(CommandDiskSourceProvider sourceProvider, RenderOption option, RenderContext context, string baseRelativeUrl)
         {
-            if (content !=null)
+            if (content != null)
             {
-                return content; 
+                return content;
             }
-            if (paras.Count()>0)
-            {
-                return paras[0]; 
-            }
-            return null; 
+            return paras.Any() ? paras[0] : null;
         }
     }
 }

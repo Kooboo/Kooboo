@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Render.ObjectSource;
@@ -10,34 +10,25 @@ namespace Kooboo.Render.ServerSide
 {
     public static class ServerEngine
     {
-        private static object _locker = new object(); 
+        private static object _locker = new object();
 
         public static Dictionary<string, JsRenderPlan> cache = new Dictionary<string, JsRenderPlan>(StringComparer.OrdinalIgnoreCase);
 
         private static JsRenderPlan GetJs(string relativeUrl)
         {
-            lock(_locker)
+            lock (_locker)
             {
-                if (cache.ContainsKey(relativeUrl))
-                {
-                    return cache[relativeUrl]; 
-                }
-                else
-                {
-                    return null; 
-                }
+                return cache.ContainsKey(relativeUrl) ? cache[relativeUrl] : null;
             }
-
         }
 
         private static void SetJs(string relativeUrl, JsRenderPlan plan)
         {
-           lock(_locker)
+            lock (_locker)
             {
-                cache[relativeUrl] = plan; 
+                cache[relativeUrl] = plan;
             }
         }
-         
 
         public static RenderRespnose RenderJs(CommandDiskSourceProvider sourceProvider, RenderOption option, RenderContext context, string RelativeUrl)
         {
@@ -49,10 +40,10 @@ namespace Kooboo.Render.ServerSide
             }
 
             if (option.EnableMultilingual && RelativeUrl.ToLower().EndsWith(option.MultilingualJsFile))
-            { 
+            {
                 return RenderJsLangFile(fullname, context);
             }
-             
+
             System.IO.FileInfo info = new System.IO.FileInfo(fullname);
 
             if (info != null && info.LastWriteTime != null)
@@ -65,18 +56,16 @@ namespace Kooboo.Render.ServerSide
 
                 if (cacheplan != null && cacheplan.Hash == hash)
                 {
-                    renderplan = cacheplan; 
+                    renderplan = cacheplan;
                 }
-                  
-                //either not key found not hash not the same. 
+
+                //either not key found not hash not the same.
                 if (renderplan == null)
                 {
                     string fulltext = System.IO.File.ReadAllText(fullname);
 
-                    renderplan = new JsRenderPlan();
-                    renderplan.Tasks = GetJsRenderPlan(fulltext);
-                    renderplan.Hash = hash;
-                    SetJs(RelativeUrl, renderplan);  
+                    renderplan = new JsRenderPlan {Tasks = GetJsRenderPlan(fulltext), Hash = hash};
+                    SetJs(RelativeUrl, renderplan);
                 }
 
                 if (renderplan != null)
@@ -87,34 +76,28 @@ namespace Kooboo.Render.ServerSide
                         result += task.Render(sourceProvider, option, context, RelativeUrl);
                     }
                     return new RenderRespnose() { Body = result, ContentType = "application/javascript" };
-
-                }  
+                }
             }
             else
             {
                 return new RenderRespnose() { Body = null };
             }
-             
-            return new RenderRespnose() { Body = null };
 
+            return new RenderRespnose() { Body = null };
         }
 
-        public static RenderRespnose RenderJsLangFile(string FullFileName, RenderContext context)
+        public static RenderRespnose RenderJsLangFile(string fullFileName, RenderContext context)
         {
-
             var values = Kooboo.Data.Cache.MultiLingualRender.GetJs(context);
             if (values == null)
             {
-
-                var bytes = System.IO.File.ReadAllBytes(FullFileName);
+                var bytes = System.IO.File.ReadAllBytes(fullFileName);
 
                 values = Kooboo.Data.Cache.MultiLingualRender.SetGetJs(context, bytes);
             }
 
-            return new RenderRespnose() { BinaryBytes = values, ContentType =  "application/javascript" }; 
-
+            return new RenderRespnose() { BinaryBytes = values, ContentType = "application/javascript" };
         }
-
 
         public static List<IServerTask> GetJsRenderPlan(CommandDiskSourceProvider sourceProvider, RenderOption option, RenderContext context, string fullfilename, string relativeUrl)
         {
@@ -132,7 +115,6 @@ namespace Kooboo.Render.ServerSide
 
             foreach (var item in TaskContainer.list)
             {
-
                 var startEndList = GetStartEndList(source, item.Key);
 
                 foreach (var one in startEndList)
@@ -145,11 +127,10 @@ namespace Kooboo.Render.ServerSide
                     taskInstance.paras = paras;
 
                     pretask.Add(new preTask() { start = one.Key, end = one.Value, Task = taskInstance });
-
                 }
             }
 
-            if (pretask.Count() > 0)
+            if (pretask.Any())
             {
                 int currentIndex = 0;
                 foreach (var item in pretask.OrderBy(o => o.start))
@@ -195,11 +176,10 @@ namespace Kooboo.Render.ServerSide
                     taskInstance.paras = paras;
 
                     pretask.Add(new preTask() { start = one.Key, end = one.Value, Task = taskInstance });
-
                 }
             }
 
-            if (pretask.Count() > 0)
+            if (pretask.Any())
             {
                 int currentIndex = 0;
                 foreach (var item in pretask.OrderBy(o => o.start))
@@ -227,17 +207,15 @@ namespace Kooboo.Render.ServerSide
             return result;
         }
 
-
         public static Dictionary<int, int> GetStartEndList(string source, string key)
         {
-            //TODO: this should be replaced by a JavaScript token parser, but the jint does not work with index now, only line + column. 
+            //TODO: this should be replaced by a JavaScript token parser, but the jint does not work with index now, only line + column.
             Dictionary<int, int> startend = new Dictionary<int, int>();
 
             int currentpos = 0;
 
             while (currentpos < source.Length - 1)
             {
-
                 int index = source.IndexOf(key, currentpos);
 
                 if (index > 0)
@@ -254,11 +232,11 @@ namespace Kooboo.Render.ServerSide
                 {
                     // find the end..
                     int end = source.IndexOf(";", index);
-                    int EndLine=source.IndexOf("\r\n", index);
+                    int endLine = source.IndexOf("\r\n", index);
 
-                    if (EndLine > 0 && EndLine < end)
+                    if (endLine > 0 && endLine < end)
                     {
-                        end = EndLine;
+                        end = endLine;
                     }
                     if (end == -1)
                     {
@@ -268,18 +246,15 @@ namespace Kooboo.Render.ServerSide
                     currentpos = end + 1;
 
                     startend.Add(index, end);
-
                 }
                 else
                 {
                     break;
                 }
-
             }
 
             return startend;
         }
-
 
         public static List<string> GetParas(string commandline)
         {
@@ -336,6 +311,5 @@ namespace Kooboo.Render.ServerSide
         public Guid Hash { get; set; }
 
         public List<IServerTask> Tasks { get; set; }
-
     }
 }

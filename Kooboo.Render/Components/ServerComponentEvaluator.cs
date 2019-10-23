@@ -1,8 +1,6 @@
 ﻿using Kooboo.Dom;
 using Kooboo.Sites.Render;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Render.Components
 {
@@ -25,11 +23,8 @@ namespace Kooboo.Render.Components
                 response.OmitTag = true;
                 response.StopNextEvaluator = true;
                 return response;
-
             }
-            return null; 
+            return null;
         }
     }
-     
-
 }

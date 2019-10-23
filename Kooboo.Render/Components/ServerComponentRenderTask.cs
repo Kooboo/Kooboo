@@ -3,11 +3,10 @@ using Kooboo.Dom;
 using Kooboo.Sites.Render;
 using Kooboo.Sites.Render.Components;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 
 namespace Kooboo.Render.Components
-{ 
-
+{
     public class ServerComponentRenderTask : IRenderTask
     {
         public ComponentSetting setting;
@@ -24,15 +23,12 @@ namespace Kooboo.Render.Components
                 foreach (var item in this.setting.TagAttributes)
                 {
                     data.Add(item.Key, item.Value);
-            
                 }
 
                 foreach (var item in this.setting.Settings)
                 {
                     data[item.Key] = item.Value;
                 }
-
-           
             }
         }
 
@@ -45,22 +41,22 @@ namespace Kooboo.Render.Components
         }
 
         public string Render(RenderContext context)
-        { 
+        {
             var component = ComponentService.GetComponent(setting.TagName);
 
-            if (this.data !=null)
+            if (this.data != null)
             {
                 context.DataContext.Push(setting.Settings);
             }
-             
+
             string result = Kooboo.Sites.Render.RenderHelper.Render(component.RenderTasks, context);
 
-            if (this.data !=null)
+            if (this.data != null)
             {
                 context.DataContext.Pop();
             }
-        
-            return result; 
+
+            return result;
         }
 
         public void AppendResult(RenderContext context, List<RenderResult> result)
@@ -68,6 +64,4 @@ namespace Kooboo.Render.Components
             result.Add(new RenderResult() { Value = Render(context) });
         }
     }
-
-
 }
