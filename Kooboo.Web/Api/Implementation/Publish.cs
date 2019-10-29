@@ -56,7 +56,7 @@ namespace Kooboo.Web.Api.Implementation
                 orgid = user.CurrentOrgId;
             }
 
-            var sites = Kooboo.Sites.Service.WebSiteService.RemoteListByUser(user.Id, orgid);
+            var sites = WebSiteService.RemoteListByUser(user.Id, orgid);
 
             List<SimpleSiteItemViewModel> result = new List<SimpleSiteItemViewModel>();
 
@@ -93,15 +93,12 @@ namespace Kooboo.Web.Api.Implementation
                 remoteurl = remoteurl + "/";
             }
 
-
             remoteurl = remoteurl + "_api/publish/sitelist?OrganizationId=" + OrganizationId.ToString();
 
-            List<SimpleSiteItemViewModel> model = Kooboo.Lib.Helper.HttpHelper.Get<List<SimpleSiteItemViewModel>>(remoteurl, null, username, password);
+            List<SimpleSiteItemViewModel> model = Lib.Helper.HttpHelper.Get<List<SimpleSiteItemViewModel>>(remoteurl, null, username, password);
 
             return model;
         }
-
-
 
 
         public List<SyncItemViewModel> List(ApiCall call)
@@ -278,7 +275,7 @@ namespace Kooboo.Web.Api.Implementation
 
             }
 
-            return result;
+            return result.OrderBy(o=>o.LogId).ToList();
         }
 
         [Kooboo.Attributes.RequireParameters("id", "logids")]

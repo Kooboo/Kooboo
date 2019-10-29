@@ -10,9 +10,7 @@ namespace Kooboo.IndexedDB.Dynamic
     public class Table
     {
         public Setting Setting { get; set; }
-
-        private bool TempDisableLog { get; set; }
-
+        
         public Guid CurrentUserId { get; set; }
 
         internal object _Locker = new object();

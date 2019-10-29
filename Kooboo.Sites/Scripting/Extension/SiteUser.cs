@@ -33,7 +33,6 @@ namespace Kooboo.Sites.Scripting.Extension
         public string get(string username)
         {
             return username + " sample"; 
-        }
-
+        } 
     }
 }

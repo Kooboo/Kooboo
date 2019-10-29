@@ -518,13 +518,12 @@ namespace Kooboo.Sites.Sync
                 bool isDelete = log.EditType == EditType.Delete;
 
                 var kdb = Kooboo.Data.DB.GetKDatabase(SiteDb.WebSite);
-                var ktable = Kooboo.Data.DB.GetOrCreateTable(kdb, log.TableName);
+                var ktable = Kooboo.Data.DB.GetTable(kdb, log.TableName);
                 if (ktable != null)
                 {
                     var data = ktable.GetLogData(log);
                     return Prepare(key, data, log.TableName, log.TableColName, log.Id, isDelete);
-                }
-
+                } 
             }
             else
             {
@@ -532,8 +531,7 @@ namespace Kooboo.Sites.Sync
                 var siteobject = repo.GetByLog(log);
                 return Prepare(siteobject, log.StoreName, log.EditType == IndexedDB.EditType.Delete);
             }
-            return null;
-
+            return null; 
         }
 
         #endregion
