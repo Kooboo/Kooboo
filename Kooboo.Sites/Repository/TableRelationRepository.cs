@@ -17,7 +17,7 @@ namespace Kooboo.Sites.Repository
 
         public TableRelation GetRelation(string currentTableName, string key)
         {
-            //Relation is in cache, can get all. 
+            //Relation is in cache, can get all.
             var all = this.List();
             var matchkey = all.Find(o => o.Name == key);
             if (matchkey != null)
@@ -28,22 +28,17 @@ namespace Kooboo.Sites.Repository
                 }
             }
 
-            // as table A. 
-            var AsTableA = all.Find(o => o.TableA == currentTableName && o.TableB == key);
+            // as table A.
+            var asTableA = all.Find(o => o.TableA == currentTableName && o.TableB == key);
 
-            if (AsTableA != null)
+            if (asTableA != null)
             {
-                return AsTableA;
+                return asTableA;
             }
 
-            var AsTableB = all.Find(o => o.TableB == currentTableName && o.TableA == key); 
-             
-            if (AsTableB != null)
-            {
-                return AsTableB;
-            } 
-            return null;  
-        } 
+            var asTableB = all.Find(o => o.TableB == currentTableName && o.TableA == key);
 
-    } 
+            return asTableB;
+        }
+    }
 }

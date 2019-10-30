@@ -1,20 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
-using System;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Contents.Models;
-using System.Collections.Generic;
-using Kooboo.Sites.Repository;
-using Kooboo.Data.Interface;
-using System.Text;
-using Kooboo.IndexedDB.Serializer.Simple;
-using System.Collections;
-using System.Reflection;
 using Kooboo.IndexedDB.ByteConverter;
 using Kooboo.IndexedDB.Helper;
+using Kooboo.Sites.Contents.Models;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
+using System;
+using System.Collections;
+using System.Reflection;
+using System.Text;
 
 namespace Kooboo.Sites.Service
 {
@@ -24,28 +22,23 @@ namespace Kooboo.Sites.Service
 
         /// <summary>
         /// Get the object information for display.
-        /// If it is the declaration or embedded, get the owner object... 
+        /// If it is the declaration or embedded, get the owner object...
         /// </summary>
-        /// <param name="SiteDb"></param>
-        /// <param name="ObjectId"></param>
-        /// <param name="ConstType"></param>
+        /// <param name="siteDb"></param>
+        /// <param name="objectId"></param>
+        /// <param name="constType"></param>
         /// <returns></returns>
-        public static ObjectInfo GetObjectInfo(SiteDb SiteDb, Guid ObjectId, byte ConstType)
+        public static ObjectInfo GetObjectInfo(SiteDb siteDb, Guid objectId, byte constType)
         {
-            var siteobject = GetSiteObject(SiteDb, ObjectId, ConstType);
-            if (siteobject == null)
-            {
-                return null;
-            }
-            return GetObjectInfo(SiteDb, siteobject);
-
+            var siteobject = GetSiteObject(siteDb, objectId, constType);
+            return siteobject == null ? null : GetObjectInfo(siteDb, siteobject);
         }
 
         public static long GetSize(ISiteObject siteobject)
         {
-            if (siteobject is IBinaryFile)
+            if (siteobject is IBinaryFile binaryFile)
             {
-                return ((IBinaryFile)siteobject).Size;
+                return binaryFile.Size;
             }
             else
             {
@@ -54,62 +47,54 @@ namespace Kooboo.Sites.Service
             }
         }
 
-        public static ObjectInfo GetObjectInfo(SiteDb SiteDb, ISiteObject siteobject)
+        public static ObjectInfo GetObjectInfo(SiteDb siteDb, ISiteObject siteobject)
         {
             if (siteobject == null)
             {
                 return null;
             }
-            ObjectInfo info = new ObjectInfo();
-            info.ObjectId = siteobject.Id;
-            info.ConstType = siteobject.ConstType;
-            info.ModelType = ConstTypeService.GetModelType(siteobject.ConstType);
 
-            if (siteobject is IBinaryFile)
+            ObjectInfo info = new ObjectInfo
             {
-                info.Size = ((IBinaryFile)siteobject).Size;
-            }
-            else if (siteobject is ITextObject)
-            {
-                info.Size = (((ITextObject)siteobject).Body ?? "").Length;
-            }
+                ObjectId = siteobject.Id,
+                ConstType = siteobject.ConstType,
+                ModelType = ConstTypeService.GetModelType(siteobject.ConstType)
+            };
 
+            if (siteobject is IBinaryFile binaryFile)
+            {
+                info.Size = binaryFile.Size;
+            }
+            else if (siteobject is ITextObject textObject)
+            {
+                info.Size = (textObject.Body ?? "").Length;
+            }
 
             if (Kooboo.Lib.Reflection.TypeHelper.HasInterface(info.ModelType, typeof(IEmbeddable)))
             {
-                var embeddable = siteobject as IEmbeddable;
-                if (embeddable.IsEmbedded)
+                if (siteobject is IEmbeddable embeddable && embeddable.IsEmbedded)
                 {
-                    return GetObjectInfo(SiteDb, embeddable.OwnerObjectId, embeddable.OwnerConstType);
+                    return GetObjectInfo(siteDb, embeddable.OwnerObjectId, embeddable.OwnerConstType);
                 }
             }
 
             if (Attributes.AttributeHelper.IsRoutable(siteobject))
             {
-                info.Url = GetObjectRelativeUrl(SiteDb, siteobject as SiteObject);
+                info.Url = GetObjectRelativeUrl(siteDb, siteobject as SiteObject);
                 info.DisplayName = info.Url;
                 info.Name = siteobject.Name;
                 return info;
             }
             else
             {
-
-
                 if (info.ModelType == typeof(CmsCssRule))
                 {
-                    var rule = siteobject as CmsCssRule;
-                    if (rule == null)
+                    if (!(siteobject is CmsCssRule rule))
                     {
                         return null;
                     }
-                    if (rule.IsInline)
-                    {
-                        return GetObjectInfo(SiteDb, rule.OwnerObjectId, rule.OwnerObjectConstType);
-                    }
-                    else
-                    {
-                        return GetObjectInfo(SiteDb, rule.ParentStyleId, ConstObjectType.Style);
-                    }
+
+                    return rule.IsInline ? GetObjectInfo(siteDb, rule.OwnerObjectId, rule.OwnerObjectConstType) : GetObjectInfo(siteDb, rule.ParentStyleId, ConstObjectType.Style);
                 }
 
                 info.Url = "/__kb/" + info.ModelType.Name + "/" + info.ObjectId.ToString();
@@ -118,28 +103,26 @@ namespace Kooboo.Sites.Service
 
                 if (info.ModelType == typeof(TextContent))
                 {
-                    info.Name = Kooboo.Sites.Helper.ContentHelper.GetSummary(siteobject as TextContent, SiteDb.WebSite.DefaultCulture);
+                    info.Name = Kooboo.Sites.Helper.ContentHelper.GetSummary(siteobject as TextContent, siteDb.WebSite.DefaultCulture);
                     info.DisplayName = info.Name;
                 }
 
                 if (info.ModelType == typeof(DataMethodSetting))
                 {
-                    var datamethod = siteobject as DataMethodSetting; 
-                    if (datamethod !=null)
+                    if (siteobject is DataMethodSetting datamethod)
                     {
                         info.Name = datamethod.OriginalMethodName;
-                        info.DisplayName = datamethod.OriginalMethodName; 
+                        info.DisplayName = datamethod.OriginalMethodName;
                     }
-                     
                 }
 
                 return info;
             }
         }
 
-        public static ISiteObject GetSiteObject(SiteDb SiteDb, LogEntry log)
+        public static ISiteObject GetSiteObject(SiteDb siteDb, LogEntry log)
         {
-            var repo = SiteDb.GetRepository(log.StoreName);
+            var repo = siteDb.GetRepository(log.StoreName);
             if (repo == null)
             {
                 return null;
@@ -147,49 +130,43 @@ namespace Kooboo.Sites.Service
 
             var objectid = KeyConverter.FromByte(log.KeyBytes);
 
-            var siteobject = repo.Get(objectid);
-            if (siteobject == null)
-            {
-                siteobject = repo.GetLastEntryFromLog(objectid);
-            }
+            var siteobject = repo.Get(objectid) ?? repo.GetLastEntryFromLog(objectid);
             return siteobject;
         }
 
-        public static ISiteObject GetSiteObject(SiteDb SiteDb, Guid ObjectId, byte ConstType, bool UseColumnOnly = false)
+        public static ISiteObject GetSiteObject(SiteDb siteDb, Guid objectId, byte constType, bool useColumnOnly = false)
         {
-            var type = ConstTypeService.GetModelType(ConstType);
+            var type = ConstTypeService.GetModelType(constType);
 
-            var repo = SiteDb.GetRepository(type);
+            var repo = siteDb.GetRepository(type);
 
-            if (repo == null || ObjectId == default(Guid))
+            if (repo == null || objectId == default(Guid))
             {
-                return null; 
+                return null;
             }
 
-            var siteobject = repo.Get(ObjectId);
+            var siteobject = repo.Get(objectId);
 
             if (siteobject != null)
             {
-                return siteobject as ISiteObject;
+                return siteobject;
             }
-
             else
             {
-                var item = repo.GetLastEntryFromLog(ObjectId);
+                var item = repo.GetLastEntryFromLog(objectId);
                 if (item != null)
                 {
-                    return item as ISiteObject;
+                    return item;
                 }
             }
 
             return null;
         }
 
-
-        public static string GetObjectFullUrl(WebSite website, Guid ObjectId)
+        public static string GetObjectFullUrl(WebSite website, Guid objectId)
         {
             string baseurl = website.BaseUrl();
-            string objectUrl = website.SiteDb().Routes.GetObjectPrimaryRelativeUrl(ObjectId);
+            string objectUrl = website.SiteDb().Routes.GetObjectPrimaryRelativeUrl(objectId);
             if (!string.IsNullOrEmpty(objectUrl))
             {
                 objectUrl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, objectUrl);
@@ -197,62 +174,59 @@ namespace Kooboo.Sites.Service
             return objectUrl;
         }
 
-        public static string GetObjectRelativeUrl(SiteDb SiteDb, SiteObject SiteObject)
+        public static string GetObjectRelativeUrl(SiteDb siteDb, SiteObject siteObject)
         {
-            if (SiteObject == null)
+            if (siteObject == null)
             {
                 return null;
             }
 
-            if (SiteObject is IEmbeddable)
+            if (siteObject is IEmbeddable embedded)
             {
-                var embedded = SiteObject as IEmbeddable;
                 if (embedded.IsEmbedded)
                 {
                     var modeltype = ConstTypeService.GetModelType(embedded.OwnerConstType);
-                    var repo = SiteDb.GetRepository(modeltype);
+                    var repo = siteDb.GetRepository(modeltype);
                     var parentobject = repo.Get(embedded.OwnerObjectId) as SiteObject;
-                    return GetObjectRelativeUrl(SiteDb, parentobject);
+                    return GetObjectRelativeUrl(siteDb, parentobject);
                 }
             }
 
-            if (SiteObject is CmsCssRule)
+            if (siteObject is CmsCssRule rule)
             {
-                var rule = SiteObject as CmsCssRule;
-                var style = SiteDb.Styles.Get(rule.ParentStyleId);
-                return GetObjectRelativeUrl(SiteDb, style);
+                var style = siteDb.Styles.Get(rule.ParentStyleId);
+                return GetObjectRelativeUrl(siteDb, style);
             }
 
-            if (SiteObject is CmsCssDeclaration)
+            if (siteObject is CmsCssDeclaration decl)
             {
-                var decl = SiteObject as CmsCssDeclaration;
-                var style = SiteDb.Styles.Get(decl.ParentStyleId);
-                return GetObjectRelativeUrl(SiteDb, style);
+                var style = siteDb.Styles.Get(decl.ParentStyleId);
+                return GetObjectRelativeUrl(siteDb, style);
             }
 
-            if (Attributes.AttributeHelper.IsRoutable(SiteObject))
+            if (Attributes.AttributeHelper.IsRoutable(siteObject))
             {
-                return SiteDb.Routes.GetObjectPrimaryRelativeUrl(SiteObject.Id);
+                return siteDb.Routes.GetObjectPrimaryRelativeUrl(siteObject.Id);
             }
 
-            string name = SiteObject.Id.ToString();
-            if (Attributes.AttributeHelper.IsNameAsId(SiteObject))
+            string name = siteObject.Id.ToString();
+            if (Attributes.AttributeHelper.IsNameAsId(siteObject))
             {
-                name = SiteObject.Name;
+                name = siteObject.Name;
             }
 
-            var modeltypex = ConstTypeService.GetModelType(SiteObject.ConstType);
+            var modeltypex = ConstTypeService.GetModelType(siteObject.ConstType);
 
             return Systems.Routes.SystemRouteTemplate.Replace("{objecttype}", modeltypex.Name).Replace("{nameorid}", name);
         }
 
-        public static string GetObjectRelativeUrl(SiteDb SiteDb, Guid ObjectId, byte ConstType)
+        public static string GetObjectRelativeUrl(SiteDb siteDb, Guid objectId, byte constType)
         {
-            var siteobject = GetSiteObject(SiteDb, ObjectId, ConstType);
-            return GetObjectRelativeUrl(SiteDb, siteobject as SiteObject);
+            var siteobject = GetSiteObject(siteDb, objectId, constType);
+            return GetObjectRelativeUrl(siteDb, siteobject as SiteObject);
         }
 
-        public static string GetSummaryText(Object value, string FieldName = null)
+        public static string GetSummaryText(Object value, string fieldName = null)
         {
             if (value == null)
             {
@@ -270,12 +244,12 @@ namespace Kooboo.Sites.Service
                 StringBuilder sb = new StringBuilder();
                 foreach (var item in dict.Keys)
                 {
-                    string dictkey = GetSummaryText(item, FieldName);
-                    string dictvalue = GetSummaryText(dict[item], FieldName);
+                    string dictkey = GetSummaryText(item, fieldName);
+                    string dictvalue = GetSummaryText(dict[item], fieldName);
 
-                    if (!string.IsNullOrEmpty(FieldName))
+                    if (!string.IsNullOrEmpty(fieldName))
                     {
-                        dictkey = FieldName + "." + dictkey;
+                        dictkey = fieldName + "." + dictkey;
                     }
                     sb.AppendLine($"------{dictkey}------");
                     sb.AppendLine(dictvalue);
@@ -316,9 +290,9 @@ namespace Kooboo.Sites.Service
                         if (fieldvalue != null)
                         {
                             string name = item.Name;
-                            if (!string.IsNullOrEmpty(FieldName))
+                            if (!string.IsNullOrEmpty(fieldName))
                             {
-                                name = FieldName + "." + name;
+                                name = fieldName + "." + name;
                             }
                             string valuetext = GetSummaryText(fieldvalue, name);
                             if (!string.IsNullOrEmpty(valuetext))
@@ -332,12 +306,10 @@ namespace Kooboo.Sites.Service
 
                 return sb.ToString();
             }
-
             else
             {
                 return value.ToString();
             }
         }
-
     }
 }

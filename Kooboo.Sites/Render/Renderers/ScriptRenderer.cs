@@ -1,7 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Threading.Tasks;
-using Kooboo.Sites.Extensions;
 using System.Text;
 
 namespace Kooboo.Sites.Render
@@ -13,7 +11,7 @@ namespace Kooboo.Sites.Render
             var script = context.SiteDb.Scripts.Get(context.Route.objectId);
             context.RenderContext.Response.ContentType = "application/javascript;charset=utf-8";
 
-            if (script != null && script.Body != null)
+            if (script?.Body != null)
             {
                 if (script.Extension == null || script.Extension == "js" || script.Extension == ".js")
                 {
@@ -36,6 +34,5 @@ namespace Kooboo.Sites.Render
                 }
             }
         }
-
     }
 }

@@ -5,7 +5,6 @@ using Kooboo.Data.Models;
 using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Kooboo.Sites.HtmlForm
 {
@@ -26,11 +25,11 @@ namespace Kooboo.Sites.HtmlForm
             return new List<SimpleSetting>();
         }
 
-        public bool Submit(RenderContext context, Guid FormId, Dictionary<string, string> settings)
+        public bool Submit(RenderContext context, Guid formId, Dictionary<string, string> settings)
         {
             Models.FormValue value = new Models.FormValue();
 
-            Dictionary<string, string> SubmittedValue = new Dictionary<string, string>();
+            Dictionary<string, string> submittedValue = new Dictionary<string, string>();
 
             if (context.Request.Forms.Count > 0)
             {
@@ -40,7 +39,7 @@ namespace Kooboo.Sites.HtmlForm
                     {
                         string key = item.ToString();
                         string keyvalue = context.Request.Forms.Get(key);
-                        SubmittedValue[key] = keyvalue;
+                        submittedValue[key] = keyvalue;
                     }
                 }
             }
@@ -52,17 +51,17 @@ namespace Kooboo.Sites.HtmlForm
                     {
                         string key = item.ToString();
                         string keyvalue = context.Request.QueryString.Get(key);
-                        SubmittedValue[key] = keyvalue;
+                        submittedValue[key] = keyvalue;
                     }
                 }
             }
 
-            if (SubmittedValue.Count() == 0)
+            if (submittedValue.Count == 0)
             {
                 return true;
             }
-            value.Values = SubmittedValue;
-            value.FormId = FormId;
+            value.Values = submittedValue;
+            value.FormId = formId;
             return context.WebSite.SiteDb().FormValues.AddOrUpdate(value);
         }
     }

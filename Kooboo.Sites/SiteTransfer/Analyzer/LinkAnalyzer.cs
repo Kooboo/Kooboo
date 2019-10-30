@@ -1,15 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Lib.Helper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Extensions;
-using Kooboo.Data;
-using Kooboo.Sites.Routing;
 
 namespace Kooboo.Sites.SiteTransfer
 {
@@ -46,7 +37,7 @@ namespace Kooboo.Sites.SiteTransfer
                             EndIndex = item.location.openTokenEndIndex,
                             NewValue = newstring
                         });
-                    } 
+                    }
                 }
                 else
                 {

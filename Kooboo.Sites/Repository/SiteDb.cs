@@ -1,22 +1,23 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.IndexedDB;
-using Kooboo.Sites.Models;
-using System;
-using System.Collections.Generic;
+using Kooboo.Data;
+using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
+using Kooboo.IndexedDB;
+using Kooboo.Lib.Helper;
+using Kooboo.Sites.Contents.Models;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Relation;
 using Kooboo.Sites.Routing;
 using Kooboo.Sites.SiteTransfer;
-using Kooboo.Data;
-using Kooboo.Sites.Contents.Models;
-using Kooboo.Sites.Relation;
-using Kooboo.Data.Interface;
+using Kooboo.Sites.SiteTransfer.Model;
 using Kooboo.Sites.ThreadPool;
 using Kooboo.Sites.ViewModel;
-using Kooboo.Lib.Helper;
-using Kooboo.Sites.SiteTransfer.Model;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+
 //using Kooboo.Sites.Ecommerce.Repository;
 //using Kooboo.Sites.Ecommerce.Models;
 
@@ -31,7 +32,7 @@ namespace Kooboo.Sites.Repository
 
         public SiteDb(WebSite website)
         {
-            this.WebSite = website; 
+            this.WebSite = website;
             this.DatabaseDb = DB.GetDatabase(website);
             this.SiteRepos = new Dictionary<string, IRepository>(StringComparer.OrdinalIgnoreCase);
         }
@@ -44,8 +45,7 @@ namespace Kooboo.Sites.Repository
 
             foreach (var item in this.ActiveRepositories())
             {
-                RepoSize reposize = new RepoSize();
-                reposize.Name = item.StoreName;
+                RepoSize reposize = new RepoSize {Name = item.StoreName};
                 string folder = item.Store.ObjectFolder;
                 reposize.Length = IOHelper.GetDirectorySize(folder);
                 reposize.ItemCount = item.Store.Count();
@@ -57,7 +57,7 @@ namespace Kooboo.Sites.Repository
 
             //disksize.ImageLogWeeks = this.GetLogWeekNames(LogType.Image);
             disksize.VisitorLogWeeks = this.LogWeekNames();
-            //disksize.ImageLog = IOHelper.GetDirectorySize(this.LogFolder); 
+            //disksize.ImageLog = IOHelper.GetDirectorySize(this.LogFolder);
             disksize.VisitorLog = IOHelper.GetDirectorySize(this.LogFolder);
 
             long editlogsize = IOHelper.GetDirectorySize(this.Log.Store.ObjectFolder);
@@ -69,26 +69,27 @@ namespace Kooboo.Sites.Repository
             return disksize;
         }
 
-        public IRepository GetRepository(Type ModelType)
+        public IRepository GetRepository(Type modelType)
         {
-            return GetSiteRepositoryByModelType(ModelType);
+            return GetSiteRepositoryByModelType(modelType);
         }
 
-        public IRepository GetRepository(byte ConstType)
+        public IRepository GetRepository(byte constType)
         {
-            var modeltype = Service.ConstTypeService.GetModelType(ConstType);
+            var modeltype = Service.ConstTypeService.GetModelType(constType);
             return GetRepository(modeltype);
         }
 
-        public IRepository GetRepository(string StoreName)
+        public IRepository GetRepository(string storeName)
         {
-            var repotype = SiteRepositoryContainer.GetRepoTypeInfo(StoreName);
+            var repotype = SiteRepositoryContainer.GetRepoTypeInfo(storeName);
             return GetSiteRepository(repotype);
         }
 
         private object _lock = new object();
 
         private string _name;
+
         public string Name
         {
             get
@@ -109,44 +110,32 @@ namespace Kooboo.Sites.Repository
 
         public WebSite WebSite { get; set; }
 
-
-
         private LayoutRepository _layouts;
+
         public LayoutRepository Layouts
         {
-            get
-            {
-                if (_layouts == null)
-                {
-                    _layouts = GetSiteRepository<LayoutRepository, Layout>();
-                }
-                return _layouts;
-            }
+            get { return _layouts ?? (_layouts = GetSiteRepository<LayoutRepository, Layout>()); }
         }
 
         private ContinueConvertRepository _continueConvert;
+
         public ContinueConvertRepository ContinueConverter
         {
             get
             {
-                if (_continueConvert == null)
-                {
-                    _continueConvert = GetSiteRepository<ContinueConvertRepository, ContinueConverter>();
-                }
-                return _continueConvert;
+                return _continueConvert ??
+                       (_continueConvert = GetSiteRepository<ContinueConvertRepository, ContinueConverter>());
             }
         }
 
         private DataMethodSettingRepository _datamethodSettings;
+
         public DataMethodSettingRepository DataMethodSettings
         {
             get
             {
-                if (_datamethodSettings == null)
-                {
-                    _datamethodSettings = GetSiteRepository<DataMethodSettingRepository, DataMethodSetting>();
-                }
-                return _datamethodSettings;
+                return _datamethodSettings ?? (_datamethodSettings =
+                           GetSiteRepository<DataMethodSettingRepository, DataMethodSetting>());
             }
         }
 
@@ -154,118 +143,78 @@ namespace Kooboo.Sites.Repository
 
         public SyncSettingRepository SyncSettings
         {
-            get
-            {
-                if (_syncsetting == null)
-                {
-                    _syncsetting = GetSiteRepository<SyncSettingRepository, SyncSetting>();
-                }
-                return _syncsetting;
-            }
+            get { return _syncsetting ?? (_syncsetting = GetSiteRepository<SyncSettingRepository, SyncSetting>()); }
         }
 
         private StorePool<Image> _imagepool;
+
         public StorePool<Image> ImagePool
         {
-            get
-            {
-                if (_imagepool == null)
-                {
-                    _imagepool = new StorePool<Image>(this.Images);
-                }
-                return _imagepool;
-            }
+            get { return _imagepool ?? (_imagepool = new StorePool<Image>(this.Images)); }
         }
 
-
         private SynchronizationRepository _sychronization;
+
         public SynchronizationRepository Synchronization
         {
             get
             {
-                if (_sychronization == null)
-                {
-                    _sychronization = GetSiteRepository<SynchronizationRepository, Synchronization>();
-                }
-                return _sychronization;
+                return _sychronization ??
+                       (_sychronization = GetSiteRepository<SynchronizationRepository, Synchronization>());
             }
         }
-
 
         private CoreSettingRepository _coresetting;
 
         public CoreSettingRepository CoreSetting
         {
-            get
-            {
-                if (_coresetting == null)
-                {
-                    _coresetting = GetSiteRepository<CoreSettingRepository, CoreSetting>();
-                }
-                return _coresetting;
-            }
+            get { return _coresetting ?? (_coresetting = GetSiteRepository<CoreSettingRepository, CoreSetting>()); }
         }
 
         private SiteClusterRepository _sitecluster;
 
         public SiteClusterRepository SiteCluster
         {
-            get
-            {
-                if (_sitecluster == null)
-                {
-                    _sitecluster = GetSiteRepository<SiteClusterRepository, SiteCluster>();
-                }
-                return _sitecluster;
-            }
+            get { return _sitecluster ?? (_sitecluster = GetSiteRepository<SiteClusterRepository, SiteCluster>()); }
         }
 
-
-        private Kooboo.Sites.Sync.SiteClusterSync.SiteClusterManager _ClusterManager;
+        private Kooboo.Sites.Sync.SiteClusterSync.SiteClusterManager _clusterManager;
 
         public Kooboo.Sites.Sync.SiteClusterSync.SiteClusterManager ClusterManager
         {
             get
             {
-                if (_ClusterManager == null)
+                if (_clusterManager == null)
                 {
                     if (this.WebSite.EnableCluster)
                     {
-                        _ClusterManager = new Sync.SiteClusterSync.SiteClusterManager(this);
+                        _clusterManager = new Sync.SiteClusterSync.SiteClusterManager(this);
                     }
                 }
-                return _ClusterManager;
+                return _clusterManager;
             }
         }
 
         private MenuRepository _menus;
+
         public MenuRepository Menus
         {
-            get
-            {
-                if (_menus == null)
-                {
-                    _menus = GetSiteRepository<MenuRepository, Menu>();
-                }
-                return _menus;
-            }
+            get { return _menus ?? (_menus = GetSiteRepository<MenuRepository, Menu>()); }
         }
-
 
         public TransferTaskRepository TransferTasks => GetSiteRepository<TransferTaskRepository, TransferTask>();
 
         public TransferPageRepository TransferPages => GetSiteRepository<TransferPageRepository, TransferPage>();
 
-
         #region newSiteRepo
 
         private object _repolocker = new object();
 
-        internal bool AllLoaded = false;   // where it should check to load all existing stores or not. 
+        internal bool AllLoaded = false;   // where it should check to load all existing stores or not.
 
         public Dictionary<string, IRepository> SiteRepos { get; set; }
 
-        // this may have slight better performance. 
+        // this may have slight better performance.
         public T GetSiteRepository<T, TModel>()
             where T : IRepository
             where TModel : class, ISiteObject
@@ -295,22 +244,21 @@ namespace Kooboo.Sites.Repository
             return SiteRepos.Values.ToList();
         }
 
-
         internal void LoadExistingStore()
         {
-            List<Type> NoActiveTypes = new List<Type>();
+            List<Type> noActiveTypes = new List<Type>();
             foreach (var item in SiteRepositoryContainer.Repos)
             {
                 if (!SiteRepos.ContainsKey(item.Key))
                 {
                     if (this.DatabaseDb.HasObjectStore(item.Key))
                     {
-                        NoActiveTypes.Add(item.Value);
+                        noActiveTypes.Add(item.Value);
                     }
                 }
             }
 
-            foreach (var item in NoActiveTypes)
+            foreach (var item in noActiveTypes)
             {
                 var repo = GetSiteRepository(item);
                 if (repo != null)
@@ -332,20 +280,19 @@ namespace Kooboo.Sites.Repository
             return (T)instance;
         }
 
-        public IRepository GetSiteRepository(Type RepositoryType)
+        public IRepository GetSiteRepository(Type repositoryType)
         {
-            if (RepositoryType == null)
+            if (repositoryType == null)
             {
                 return null;
             }
-            var modeltype = Lib.Reflection.TypeHelper.GetGenericType(RepositoryType);
-            return GetSiteRepository(RepositoryType, modeltype);
+            var modeltype = Lib.Reflection.TypeHelper.GetGenericType(repositoryType);
+            return GetSiteRepository(repositoryType, modeltype);
         }
 
-
-        public IRepository GetSiteRepository(Type RepositoryType, Type siteModelType)
+        public IRepository GetSiteRepository(Type repositoryType, Type siteModelType)
         {
-            if (RepositoryType == null || siteModelType == null)
+            if (repositoryType == null || siteModelType == null)
             {
                 return null;
             }
@@ -356,225 +303,135 @@ namespace Kooboo.Sites.Repository
                 {
                     if (!SiteRepos.ContainsKey(name))
                     {
-                        var instance = Activator.CreateInstance(RepositoryType) as IRepository;
-
-                        if (instance == null)
+                        if (!(Activator.CreateInstance(repositoryType) is IRepository instance))
                         {
                             return null;
                         }
                         else
                         {
-                            if (instance is ISiteRepositoryBase)
+                            if (instance is ISiteRepositoryBase sitebase)
                             {
-                                var sitebase = instance as ISiteRepositoryBase;
                                 sitebase.SiteDb = this;
                                 sitebase.init();
                             }
                             SiteRepos[name] = instance;
                         }
                     }
-
                 }
             }
 
             return SiteRepos[name];
         }
 
-        public IRepository GetSiteRepositoryByModelType(Type ModelType)
+        public IRepository GetSiteRepositoryByModelType(Type modelType)
         {
-            var repotype = SiteRepositoryContainer.GetRepoTypeInfo(ModelType);
-            return GetSiteRepository(repotype, ModelType);
+            var repotype = SiteRepositoryContainer.GetRepoTypeInfo(modelType);
+            return GetSiteRepository(repotype, modelType);
         }
 
-        public bool IsStoreExists(Type ModelType)
+        public bool IsStoreExists(Type modelType)
         {
-            return this.DatabaseDb.HasObjectStore(ModelType.Name);
+            return this.DatabaseDb.HasObjectStore(modelType.Name);
         }
 
-        #endregion
+        #endregion newSiteRepo
 
         private CmsFileRepository _files;
+
         public CmsFileRepository Files
         {
-            get
-            {
-                if (_files == null)
-                {
-                    _files = GetSiteRepository<CmsFileRepository, CmsFile>();
-                }
-                return _files;
-            }
+            get { return _files ?? (_files = GetSiteRepository<CmsFileRepository, CmsFile>()); }
         }
 
-
         private FolderRepository _folders;
+
         public FolderRepository Folders
         {
-            get
-            {
-                if (_folders == null)
-                {
-                    _folders = GetSiteRepository<FolderRepository, Folder>();
-                }
-                return _folders;
-            }
+            get { return _folders ?? (_folders = GetSiteRepository<FolderRepository, Folder>()); }
         }
 
         private DomElementRepository _domelements;
 
         public DomElementRepository DomElements
         {
-            get
-            {
-                if (_domelements == null)
-                {
-                    _domelements = GetSiteRepository<DomElementRepository, DomElement>();
-                }
-                return _domelements;
-            }
+            get { return _domelements ?? (_domelements = GetSiteRepository<DomElementRepository, DomElement>()); }
         }
-
 
         private RouteRepository _routes;
+
         public RouteRepository Routes
         {
-            get
-            {
-                if (_routes == null)
-                {
-                    _routes = GetSiteRepository<RouteRepository, Route>();
-                }
-                return _routes;
-            }
+            get { return _routes ?? (_routes = GetSiteRepository<RouteRepository, Route>()); }
         }
-
 
         private FormRepository _forms;
+
         public FormRepository Forms
         {
-            get
-            {
-                if (_forms == null)
-                {
-                    _forms = GetSiteRepository<FormRepository, Form>();
-                }
-                return _forms;
-            }
+            get { return _forms ?? (_forms = GetSiteRepository<FormRepository, Form>()); }
         }
 
-
-
         private FormSettingRepository _formsetting;
+
         public FormSettingRepository FormSetting
         {
-            get
-            {
-                if (_formsetting == null)
-                {
-                    _formsetting = GetSiteRepository<FormSettingRepository, FormSetting>();
-                }
-                return _formsetting;
-            }
+            get { return _formsetting ?? (_formsetting = GetSiteRepository<FormSettingRepository, FormSetting>()); }
         }
 
         private FormValueRepository _formvalues;
 
         public FormValueRepository FormValues
         {
-            get
-            {
-                if (_formvalues == null)
-                {
-                    _formvalues = GetSiteRepository<FormValueRepository, FormValue>();
-                }
-                return _formvalues;
-            }
+            get { return _formvalues ?? (_formvalues = GetSiteRepository<FormValueRepository, FormValue>()); }
         }
 
         private ImageRepository _images;
+
         public ImageRepository Images
         {
-            get
-            {
-                if (_images == null)
-                {
-                    _images = GetSiteRepository<ImageRepository, Image>();
-                }
-                return _images;
-            }
+            get { return _images ?? (_images = GetSiteRepository<ImageRepository, Image>()); }
         }
 
         private PageRepository _pages;
+
         public PageRepository Pages
         {
-            get
-            {
-                if (_pages == null)
-                {
-                    _pages = GetSiteRepository<PageRepository, Page>();
-                }
-                return _pages;
-            }
+            get { return _pages ?? (_pages = GetSiteRepository<PageRepository, Page>()); }
         }
 
         private ViewRepository _views;
+
         public ViewRepository Views
         {
-            get
-            {
-                if (_views == null)
-                {
-                    _views = GetSiteRepository<ViewRepository, View>();
-                }
-                return _views;
-            }
+            get { return _views ?? (_views = GetSiteRepository<ViewRepository, View>()); }
         }
 
         private ScriptRepository _scripts;
+
         public ScriptRepository Scripts
         {
-            get
-            {
-                if (_scripts == null)
-                {
-                    _scripts = GetSiteRepository<ScriptRepository, Script>();
-                }
-                return _scripts;
-            }
+            get { return _scripts ?? (_scripts = GetSiteRepository<ScriptRepository, Script>()); }
         }
 
-
         private CodeRepository _code;
+
         public CodeRepository Code
         {
-            get
-            {
-                if (_code == null)
-                {
-                    _code = GetSiteRepository<CodeRepository, Code>();
-                }
-                return _code;
-            }
+            get { return _code ?? (_code = GetSiteRepository<CodeRepository, Code>()); }
         }
 
         private BusinessRuleRepository _rules;
         public BusinessRuleRepository Rules => GetSiteRepository<BusinessRuleRepository, BusinessRule>();
 
         private RelationRepository _relation;
+
         public RelationRepository Relations
         {
-            get
-            {
-                if (_relation == null)
-                {
-                    _relation = GetSiteRepository<RelationRepository, ObjectRelation>();
-                }
-                return _relation;
-            }
+            get { return _relation ?? (_relation = GetSiteRepository<RelationRepository, ObjectRelation>()); }
         }
 
-
         private SearchIndexRepository _searchindex;
+
         public SearchIndexRepository SearchIndex
         {
             get
@@ -593,58 +450,47 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-
         private ViewDataMethodRepository _viewdatamethod;
 
         public ViewDataMethodRepository ViewDataMethods
         {
             get
             {
-                if (_viewdatamethod == null)
-                {
-                    _viewdatamethod = GetSiteRepository<ViewDataMethodRepository, ViewDataMethod>();
-                }
-                return _viewdatamethod;
+                return _viewdatamethod ??
+                       (_viewdatamethod = GetSiteRepository<ViewDataMethodRepository, ViewDataMethod>());
             }
         }
-
 
         public DownloadFailTrackRepository DownloadFailedLog => GetSiteRepository<DownloadFailTrackRepository, DownloadFailTrack>();
 
-        private SiteUserRepository _Siteuser;
+        private SiteUserRepository _siteuser;
 
         public SiteUserRepository SiteUser
         {
-            get
-            {
-                if (_Siteuser == null)
-                {
-                    _Siteuser = GetSiteRepository<SiteUserRepository, SiteUser>();
-                }
-                return _Siteuser;
-            }
+            get { return _siteuser ?? (_siteuser = GetSiteRepository<SiteUserRepository, SiteUser>()); }
         }
 
-        public PathTree RouteTree(byte ConstType = 0)
+        public PathTree RouteTree(byte constType = 0)
         {
-            return Cache.RouteTreeCache.RouteTree(this, ConstType);
+            return Cache.RouteTreeCache.RouteTree(this, constType);
         }
 
         #region "log"
 
-        private string _LogFolder;
+        private string _logFolder;
+
         internal string LogFolder
         {
             get
             {
-                if (_LogFolder == null)
+                if (_logFolder == null)
                 {
                     var folder = AppSettings.GetOrganizationFolder(this.WebSite.OrganizationId);
                     folder = System.IO.Path.Combine(folder, this.WebSite.Name);
-                    _LogFolder = System.IO.Path.Combine(folder, "visitorlog");
-                    Lib.Helper.IOHelper.EnsureDirectoryExists(_LogFolder);
+                    _logFolder = System.IO.Path.Combine(folder, "visitorlog");
+                    Lib.Helper.IOHelper.EnsureDirectoryExists(_logFolder);
                 }
-                return _LogFolder;
+                return _logFolder;
             }
         }
 
@@ -661,20 +507,12 @@ namespace Kooboo.Sites.Repository
                     string name = null;
 
                     int lastslash = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetLastSlash(item);
-                    if (lastslash > -1)
-                    {
-                        name = item.Substring(lastslash + 1);
-                    }
-                    else
-                    {
-                        name = item;
-                    }
+                    name = lastslash > -1 ? item.Substring(lastslash + 1) : item;
 
                     result.Add(name);
                 }
             }
             return result;
-
         }
 
         public Sequence<T> LogByWeek<T>(string weekname = null)
@@ -687,8 +525,8 @@ namespace Kooboo.Sites.Repository
             Lib.Helper.IOHelper.EnsureDirectoryExists(weekfolder);
 
             var filename = typeof(T).Name + ".log";
-            string FullFileName = System.IO.Path.Combine(weekfolder, filename);
-            return this.DatabaseDb.GetSequence<T>(FullFileName) as Sequence<T>;
+            string fullFileName = System.IO.Path.Combine(weekfolder, filename);
+            return this.DatabaseDb.GetSequence<T>(fullFileName) as Sequence<T>;
         }
 
         private int GetWeekOfYear(DateTime datetime)
@@ -705,6 +543,7 @@ namespace Kooboo.Sites.Repository
 
         private Sequence<VisitorLog> _visitorLog;
         private DateTime _visitorlogtime;
+
         public Sequence<VisitorLog> VisitorLog
         {
             get
@@ -757,30 +596,30 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        private Sequence<SiteErrorLog> _ErrorLog;
+        private Sequence<SiteErrorLog> _errorLog;
         private DateTime _errorlogtime;
 
         public Sequence<SiteErrorLog> ErrorLog
         {
             get
             {
-                if (_ErrorLog == null)
+                if (_errorLog == null)
                 {
                     lock (_lock)
                     {
-                        if (_ErrorLog == null)
+                        if (_errorLog == null)
                         {
                             _errorlogtime = DateTime.Now;
-                            _ErrorLog = LogByWeek<SiteErrorLog>(_GetWeekName(_errorlogtime));
+                            _errorLog = LogByWeek<SiteErrorLog>(_GetWeekName(_errorlogtime));
                         }
                     }
                 }
                 if (GetWeekOfYear(_errorlogtime) != GetWeekOfYear(DateTime.Now))
                 {
-                    _ErrorLog = null;
+                    _errorLog = null;
                     return ErrorLog;
                 }
-                return _ErrorLog;
+                return _errorLog;
             }
         }
 
@@ -792,40 +631,28 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-
-        #endregion
-
+        #endregion "log"
 
         private StyleRepository _styles;
 
         public StyleRepository Styles
         {
-            get
-            {
-                if (_styles == null)
-                {
-                    _styles = GetSiteRepository<StyleRepository, Style>();
-                }
-                return _styles;
-            }
+            get { return _styles ?? (_styles = GetSiteRepository<StyleRepository, Style>()); }
         }
 
-        private ResourceGroupRepository _ResourceGroups;
+        private ResourceGroupRepository _resourceGroups;
 
         public ResourceGroupRepository ResourceGroups
         {
             get
             {
-                if (_ResourceGroups == null)
-                {
-                    _ResourceGroups = GetSiteRepository<ResourceGroupRepository, ResourceGroup>();
-                }
-                return _ResourceGroups;
+                return _resourceGroups ??
+                       (_resourceGroups = GetSiteRepository<ResourceGroupRepository, ResourceGroup>());
             }
         }
 
-
         private CmsCssRuleRepository _cssrules;
+
         public CmsCssRuleRepository CssRules
         {
             get
@@ -838,100 +665,61 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        private ExternalResourceRepository _ExternalResource;
+        private ExternalResourceRepository _externalResource;
 
         public ExternalResourceRepository ExternalResource
         {
             get
             {
-                if (_ExternalResource == null)
-                {
-                    _ExternalResource = GetSiteRepository<ExternalResourceRepository, ExternalResource>();
-                }
-                return _ExternalResource;
+                return _externalResource ??
+                       (_externalResource = GetSiteRepository<ExternalResourceRepository, ExternalResource>());
             }
         }
 
-        private ThumbnailRepository _Thumbnails;
+        private ThumbnailRepository _thumbnails;
+
         public ThumbnailRepository Thumbnails
         {
-            get
-            {
-                if (_Thumbnails == null)
-                {
-                    _Thumbnails = GetSiteRepository<ThumbnailRepository, Thumbnail>();
-                }
-                return _Thumbnails;
-            }
+            get { return _thumbnails ?? (_thumbnails = GetSiteRepository<ThumbnailRepository, Thumbnail>()); }
         }
 
         private LabelRepository _labels;
+
         public LabelRepository Labels
         {
-            get
-            {
-                if (_labels == null)
-                {
-                    _labels = GetSiteRepository<LabelRepository, Label>();
-                }
-                return _labels;
-            }
+            get { return _labels ?? (_labels = GetSiteRepository<LabelRepository, Label>()); }
         }
-
 
         private kConfigRepository _kconfig;
 
         public kConfigRepository KConfig
         {
-            get
-            {
-                if (_kconfig == null)
-                {
-                    _kconfig = GetSiteRepository<kConfigRepository, KConfig>();
-                }
-                return _kconfig;
-            }
+            get { return _kconfig ?? (_kconfig = GetSiteRepository<kConfigRepository, KConfig>()); }
         }
 
         private HtmlBlockRepository _htmlblocks;
+
         public HtmlBlockRepository HtmlBlocks
         {
-            get
-            {
-                if (_htmlblocks == null)
-                {
-                    _htmlblocks = GetSiteRepository<HtmlBlockRepository, HtmlBlock>();
-                }
-                return _htmlblocks;
-            }
+            get { return _htmlblocks ?? (_htmlblocks = GetSiteRepository<HtmlBlockRepository, HtmlBlock>()); }
         }
 
-
         private ContentFolderRepository _contentfolders;
+
         public ContentFolderRepository ContentFolders
         {
             get
             {
-                if (_contentfolders == null)
-                {
-                    _contentfolders = GetSiteRepository<ContentFolderRepository, ContentFolder>();
-                }
-                return _contentfolders;
+                return _contentfolders ??
+                       (_contentfolders = GetSiteRepository<ContentFolderRepository, ContentFolder>());
             }
         }
 
+        private ContentTypeRepository _contentTypes;
 
-        private ContentTypeRepository _ContentTypes;
         public ContentTypeRepository ContentTypes
         {
-            get
-            {
-                if (_ContentTypes == null)
-                {
-                    _ContentTypes = GetSiteRepository<ContentTypeRepository, ContentType>();
-                }
-                return _ContentTypes;
-            }
+            get { return _contentTypes ?? (_contentTypes = GetSiteRepository<ContentTypeRepository, ContentType>()); }
         }
 
         private ContentCategoryRepository _contentcategory;
@@ -940,28 +728,19 @@ namespace Kooboo.Sites.Repository
         {
             get
             {
-                if (_contentcategory == null)
-                {
-                    _contentcategory = GetSiteRepository<ContentCategoryRepository, ContentCategory>();
-                }
-                return _contentcategory;
+                return _contentcategory ??
+                       (_contentcategory = GetSiteRepository<ContentCategoryRepository, ContentCategory>());
             }
         }
 
         private TextContentRepository _textcontent;
+
         public TextContentRepository TextContent
         {
-            get
-            {
-                if (_textcontent == null)
-                {
-                    _textcontent = GetSiteRepository<TextContentRepository, TextContent>();
-                }
-                return _textcontent;
-            }
-        } 
+            get { return _textcontent ?? (_textcontent = GetSiteRepository<TextContentRepository, TextContent>()); }
+        }
 
-        // rebuild the index... 
+        // rebuild the index...
         public void ClearLog(string[] storenames)
         {
             bool published = this.WebSite.Published;
@@ -984,11 +763,8 @@ namespace Kooboo.Sites.Repository
                 }
 
                 var repo = this.GetRepository(item);
-                if (repo != null && repo is ISiteRepositoryBase)
+                if (repo != null && repo is ISiteRepositoryBase siterepo)
                 {
-                    var siterepo = repo as ISiteRepositoryBase;
-
-
                     Monitor.Enter(_repolocker);
 
                     try
@@ -997,22 +773,18 @@ namespace Kooboo.Sites.Repository
                     }
                     catch (Exception)
                     {
-
+                        // ignored
                     }
                     finally
                     {
                         Monitor.Exit(_repolocker);
                     }
-
                 }
-
             }
 
             this.WebSite.Published = published;
             this.WebSite.EnableDiskSync = disksync;
             this.WebSite.ContinueDownload = continuedownload;
         }
-
     }
-
 }

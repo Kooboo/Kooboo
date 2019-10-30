@@ -1,10 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
+using System;
 
 namespace Kooboo.Sites.Scripting.Global.SiteItem
 {
@@ -12,7 +12,6 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
     {
         public RoutableTextRepository(IRepository repo, RenderContext context) : base(repo, context)
         {
-
         }
 
         public ISiteObject GetByUrl(string url)
@@ -25,26 +24,24 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             return null;
         }
 
-        public override void Add(object SiteObject)
+        public override void Add(object siteObject)
         {
             string url = null;
 
-            var data = kHelper.GetData(SiteObject);
+            var data = kHelper.GetData(siteObject);
             if (data.ContainsKey("url"))
             {
                 url = data["url"].ToString();
             }
-                  
+
             var siteobject = Lib.Reflection.TypeHelper.ToObject(data, this.repo.ModelType);
             if (siteobject != null)
             {
-                var routeobject = siteobject as Kooboo.Sites.Models.SiteObject;
-
-                if (routeobject != null)
+                if (siteobject is SiteObject routeobject)
                 {
                     if (string.IsNullOrEmpty(url))
                     {
-                        url = "/" +  routeobject.Name;       
+                        url = "/" + routeobject.Name;
                     }
 
                     if (routeobject is Models.Style || routeobject is Models.Script)
@@ -58,66 +55,56 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                             }
                             else
                             {
-                                url = url + "." + ext.Extension; 
-                             }
+                                url = url + "." + ext.Extension;
+                            }
                         }
                     }
 
                     context.WebSite.SiteDb().Routes.AddOrUpdate(url, routeobject);
                     this.repo.AddOrUpdate(routeobject);
                 }
-
             }
-
         }
 
         public string getObjectUrl(object siteobj)
         {
-            var siteobject = siteobj as SiteObject; 
-            
-            if (siteobject !=null)
+            if (siteobj is SiteObject siteobject)
             {
-                return getUrl(siteobject.Id.ToString()); 
-            }   
+                return getUrl(siteobject.Id.ToString());
+            }
 
             if (siteobj is Guid || siteobj is String)
             {
-                return getUrl(siteobj.ToString()); 
+                return getUrl(siteobj.ToString());
             }
-             
-            return null; 
+
+            return null;
         }
 
         public string getUrl(object id)
         {
-             if (id ==null)
+            if (id == null)
             {
-                return null; 
+                return null;
             }
 
             string strkey = id.ToString();
 
-            Guid guid = default(Guid); 
-            
-            if (System.Guid.TryParse(strkey, out guid))
+            if (System.Guid.TryParse(strkey, out var guid))
             {
-                var route=  this.context.WebSite.SiteDb().Routes.GetByObjectId(guid); 
-                if (route !=null)
+                var route = this.context.WebSite.SiteDb().Routes.GetByObjectId(guid);
+                if (route != null)
                 {
-                    return route.Name; 
+                    return route.Name;
                 }
-            }        
-            return null; 
+            }
+            return null;
         }
 
         public string getAbsUrl(object id)
         {
-            var relative = getUrl(id); 
-            if (!string.IsNullOrWhiteSpace(relative))
-            {
-                return this.context.WebSite.BaseUrl(relative); 
-            }
-            return null; 
+            var relative = getUrl(id);
+            return !string.IsNullOrWhiteSpace(relative) ? this.context.WebSite.BaseUrl(relative) : null;
         }
     }
 }

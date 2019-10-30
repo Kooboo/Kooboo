@@ -1,13 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Collections.Generic;
-using System.Linq;
+using Kooboo.Data.Context;
 using Kooboo.Dom;
 using Kooboo.Sites.Models;
-using Kooboo.Data.Context;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Sites.Service
-{ 
+{
     public class HtmlHeadService
     {
         //extract header information from html source...
@@ -40,28 +40,28 @@ namespace Kooboo.Sites.Service
         {
             string strbasetag = "<base href=\"" + baseurl + "\">";
             var dom = Kooboo.Dom.DomParser.CreateDom(htmlsource);
-          
+
             SourceUpdate update = new SourceUpdate();
             update.NewValue = strbasetag;
-            update.EndIndex = -1; 
+            update.EndIndex = -1;
 
             if (DomService.HasHeadTag(dom))
             {
-                var TagBase = dom.head.getElementsByTagName("base");
-                if(TagBase != null && TagBase.item.Count()>0)
+                var tagBase = dom.head.getElementsByTagName("base");
+                if (tagBase != null && tagBase.item.Any())
                 {
-                    var tagElement = TagBase.item[0];
-                    string currentbase = tagElement.getAttribute("href"); 
+                    var tagElement = tagBase.item[0];
+                    string currentbase = tagElement.getAttribute("href");
                     if (!string.IsNullOrWhiteSpace(currentbase) && currentbase == strbasetag)
-                    { return htmlsource;  }
+                    { return htmlsource; }
                     update.StartIndex = tagElement.location.openTokenStartIndex;
-                    update.EndIndex = tagElement.location.endTokenEndIndex; 
+                    update.EndIndex = tagElement.location.endTokenEndIndex;
                 }
                 else
                 {
-                    var afterheaderlocation = dom.head.location.openTokenEndIndex + 1; 
-                    update.StartIndex = afterheaderlocation; 
-                } 
+                    var afterheaderlocation = dom.head.location.openTokenEndIndex + 1;
+                    update.StartIndex = afterheaderlocation;
+                }
             }
             else
             {
@@ -72,35 +72,29 @@ namespace Kooboo.Sites.Service
 
             List<SourceUpdate> updates = new List<SourceUpdate>();
             updates.Add(update);
-               
-             return Service.DomService.UpdateSource(htmlsource, updates);
-          
+
+            return Service.DomService.UpdateSource(htmlsource, updates);
         }
 
         public static string RemoveBaseHrel(string htmlsource)
-        { 
+        {
             var dom = Kooboo.Dom.DomParser.CreateDom(htmlsource);
             List<SourceUpdate> updates = new List<SourceUpdate>();
-            var basetags = dom.head.getElementsByTagName("base"); 
-            if (basetags != null && basetags.length >0)
+            var basetags = dom.head.getElementsByTagName("base");
+            if (basetags != null && basetags.length > 0)
             {
                 foreach (var item in basetags.item)
                 {
-                    SourceUpdate update = new SourceUpdate();
-                    update.StartIndex = item.location.openTokenStartIndex;
-                    update.EndIndex = item.location.openTokenEndIndex;
-                    update.NewValue = "";
-                    updates.Add(update); 
+                    SourceUpdate update = new SourceUpdate
+                    {
+                        StartIndex = item.location.openTokenStartIndex,
+                        EndIndex = item.location.openTokenEndIndex,
+                        NewValue = ""
+                    };
+                    updates.Add(update);
                 }
             }
-            if (updates.Count() > 0)
-            {
-                return Service.DomService.UpdateSource(htmlsource, updates);
-            }
-            else
-            {
-                return htmlsource; 
-            }
+            return updates.Any() ? Service.DomService.UpdateSource(htmlsource, updates) : htmlsource;
         }
 
         private static void AppendScriptStyle(Document dom, HtmlHeader header)
@@ -143,7 +137,6 @@ namespace Kooboo.Sites.Service
                     }
                     return;
                 }
-
             }
 
             if (!string.IsNullOrWhiteSpace(httpquive))
@@ -164,16 +157,14 @@ namespace Kooboo.Sites.Service
                 return;
             }
 
-            /// add the new meta into List... 
-            HtmlMeta newmeta = new HtmlMeta();
-            newmeta.name = name;
-            newmeta.httpequiv = httpquive;
+            // add the new meta into List...
+            HtmlMeta newmeta = new HtmlMeta {name = name, httpequiv = httpquive};
             newmeta.content.Add("", content);
             newmeta.charset = charset;
             metas.Add(newmeta);
         }
-                                      
-        public static string SetHeaderToHtml(string htmlsource, HtmlHeader header, string OnlyEnableCulture = null)
+
+        public static string SetHeaderToHtml(string htmlsource, HtmlHeader header, string onlyEnableCulture = null)
         {
             if (!header.HasValue())
             {
@@ -183,7 +174,7 @@ namespace Kooboo.Sites.Service
 
             string result = string.Empty;
 
-            List<SourceUpdate> updates = GetUpdates(header, dom, OnlyEnableCulture);
+            List<SourceUpdate> updates = GetUpdates(header, dom, onlyEnableCulture);
 
             if (updates.Count > 0)
             {
@@ -193,29 +184,28 @@ namespace Kooboo.Sites.Service
             { return htmlsource; }
         }
 
-        internal static List<SourceUpdate> GetUpdates(HtmlHeader header, Document dom, string OnlyEnableCulture)
+        internal static List<SourceUpdate> GetUpdates(HtmlHeader header, Document dom, string onlyEnableCulture)
         {
-            List<SourceUpdate> result;    
+            List<SourceUpdate> result;
             if (DomService.HasHeadTag(dom))
             {
-                result = GetUpdateWithDomHeader(header, dom, OnlyEnableCulture);
+                result = GetUpdateWithDomHeader(header, dom, onlyEnableCulture);
             }
             else
             {
-                result = GetUpdateWithOutDomHeader(header, dom, OnlyEnableCulture);
+                result = GetUpdateWithOutDomHeader(header, dom, onlyEnableCulture);
             }
-                   
 
             return result;
         }
-                                         
-        internal static List<SourceUpdate> GetUpdateWithDomHeader(HtmlHeader header, Document dom, string OnlyEnableCulture)
+
+        internal static List<SourceUpdate> GetUpdateWithDomHeader(HtmlHeader header, Document dom, string onlyEnableCulture)
         {
             List<SourceUpdate> updates = new List<SourceUpdate>();
 
             string appendChanges = string.Empty;
 
-            var titlevalue = GetOnlyOrDefault(header.Titles, OnlyEnableCulture);
+            var titlevalue = GetOnlyOrDefault(header.Titles, onlyEnableCulture);
             if (!string.IsNullOrEmpty(titlevalue))
             {
                 var titletag = DomService.GetTitleElement(dom);
@@ -231,17 +221,17 @@ namespace Kooboo.Sites.Service
                         updates.Add(new SourceUpdate() { StartIndex = titletag.location.openTokenStartIndex, EndIndex = titletag.location.endTokenEndIndex, NewValue = newtitletag });
                     }
                 }
-            }        
+            }
 
             foreach (var item in header.Metas)
             {
-                var checkresult = MetaCheck(item, OnlyEnableCulture);
-                                                      
+                var checkresult = MetaCheck(item, onlyEnableCulture);
+
                 var sametags = GetSameMetaTags(dom, item);
 
                 string metatag = GenerateMetaTag(item, checkresult.ContentValue);
 
-                if (sametags != null && sametags.Count() > 0)
+                if (sametags != null && sametags.Any())
                 {
                     var tag = sametags[0];
                     if (!IsSameMeta(tag, item, checkresult.ContentValue))
@@ -275,33 +265,32 @@ namespace Kooboo.Sites.Service
             return updates;
         }
 
-        private static bool IsSameMeta(Element MetaElement, HtmlMeta Meta, string Content)
+        private static bool IsSameMeta(Element metaElement, HtmlMeta meta, string Content)
         {
-            string name = MetaElement.getAttribute("name");
-            string httpequive = MetaElement.getAttribute("http-equiv");
-            string charset = MetaElement.getAttribute("charset");
-            string content = MetaElement.getAttribute("content");
+            string name = metaElement.getAttribute("name");
+            string httpequive = metaElement.getAttribute("http-equiv");
+            string charset = metaElement.getAttribute("charset");
+            string content = metaElement.getAttribute("content");
 
-            return (SameStringValue(name, Meta.name) && SameStringValue(httpequive, Meta.httpequiv) && SameStringValue(charset, Meta.charset) && SameStringValue(content, Content));
+            return (SameStringValue(name, meta.name) && SameStringValue(httpequive, meta.httpequiv) && SameStringValue(charset, meta.charset) && SameStringValue(content, Content));
         }
 
-        internal static List<SourceUpdate> GetUpdateWithOutDomHeader(HtmlHeader header, Document dom, string OnlyEnableCulture)
+        internal static List<SourceUpdate> GetUpdateWithOutDomHeader(HtmlHeader header, Document dom, string onlyEnableCulture)
         {
             List<SourceUpdate> updates = new List<SourceUpdate>();
 
             string appendChanges = string.Empty;
 
-            var titlevalue = GetOnlyOrDefault(header.Titles, OnlyEnableCulture);
+            var titlevalue = GetOnlyOrDefault(header.Titles, onlyEnableCulture);
             if (!string.IsNullOrEmpty(titlevalue))
             {
                 appendChanges += $"<Title>{titlevalue}</Title>";
             }
-                    
 
             foreach (var item in header.Metas)
             {
-                var checkresult = MetaCheck(item, OnlyEnableCulture);
-                                              
+                var checkresult = MetaCheck(item, onlyEnableCulture);
+
                 if (checkresult.ShouldAppendToDom)
                 {
                     appendChanges = appendChanges + "\r\n" + GenerateMetaTag(item, checkresult.ContentValue);
@@ -333,7 +322,7 @@ namespace Kooboo.Sites.Service
                     }
                     else
                     {
-                        /// remove it... 
+                        // remove it...
                         updates.Add(new SourceUpdate() { StartIndex = item.Element.location.openTokenStartIndex, EndIndex = item.Element.location.endTokenEndIndex, NewValue = null });
                     }
                 }
@@ -345,7 +334,7 @@ namespace Kooboo.Sites.Service
                     }
                     else
                     {
-                        /// remove it. 
+                        // remove it.
                         updates.Add(new SourceUpdate() { StartIndex = item.Element.location.openTokenStartIndex, EndIndex = item.Element.location.endTokenEndIndex, NewValue = null });
                     }
                 }
@@ -361,15 +350,13 @@ namespace Kooboo.Sites.Service
                 string tag = $"<link rel=\"stylesheet\" href=\"{item}\" />";
                 appendChanges += tag;
             }
-
         }
 
-        internal static MetaContentkResult MetaCheck(HtmlMeta meta, string OnlyEnableCulture)
+        internal static MetaContentkResult MetaCheck(HtmlMeta meta, string onlyEnableCulture)
         {
-            MetaContentkResult result = new MetaContentkResult();
-            result.ShouldAppendToDom = true;
-            if (meta.content.Count() == 0)
-            {    
+            MetaContentkResult result = new MetaContentkResult {ShouldAppendToDom = true};
+            if (meta.content.Count == 0)
+            {
                 return result;
             }
 
@@ -380,15 +367,14 @@ namespace Kooboo.Sites.Service
                 content = meta.content.Values.First();
             }
 
-            if (string.IsNullOrEmpty(OnlyEnableCulture) || !meta.content.TryGetValue(OnlyEnableCulture, out content))
+            if (string.IsNullOrEmpty(onlyEnableCulture) || !meta.content.TryGetValue(onlyEnableCulture, out content))
             {
                 meta.content.TryGetValue("", out content);
             }
 
-            result.ContentValue = content;  
+            result.ContentValue = content;
             return result;
         }
-
 
         private static string GenerateMetaTag(HtmlMeta item, string metacontent)
         {
@@ -472,30 +458,29 @@ namespace Kooboo.Sites.Service
             return result;
         }
 
-
-        internal static string GetOnlyOrDefault(Dictionary<string, string> MultiLingualValues, string OnlyEnableCulture = null)
+        internal static string GetOnlyOrDefault(Dictionary<string, string> multiLingualValues, string onlyEnableCulture = null)
         {
-            if (MultiLingualValues == null || MultiLingualValues.Count == 0)
+            if (multiLingualValues == null || multiLingualValues.Count == 0)
             {
                 return null;
             }
             string value = null;
-            if (MultiLingualValues.Count == 1)
+            if (multiLingualValues.Count == 1)
             {
-                value = MultiLingualValues.Values.First();
+                value = multiLingualValues.Values.First();
             }
             else
             {
-                if (!string.IsNullOrEmpty(OnlyEnableCulture))
+                if (!string.IsNullOrEmpty(onlyEnableCulture))
                 {
-                    if (!MultiLingualValues.TryGetValue(OnlyEnableCulture, out value))
+                    if (!multiLingualValues.TryGetValue(onlyEnableCulture, out value))
                     {
-                        MultiLingualValues.TryGetValue("", out value);
+                        multiLingualValues.TryGetValue("", out value);
                     }
                 }
                 else
                 {
-                    MultiLingualValues.TryGetValue("", out value);
+                    multiLingualValues.TryGetValue("", out value);
                 }
             }
 
@@ -504,12 +489,11 @@ namespace Kooboo.Sites.Service
 
         internal static string GetTitle(Dom.Document dom)
         {
-            var TitleTag = DomService.GetTitleElement(dom);
-            return TitleTag != null ? TitleTag.InnerHtml : null;
+            var titleTag = DomService.GetTitleElement(dom);
+            return titleTag != null ? titleTag.InnerHtml : null;
         }
 
- 
-        public static List<HeaderBindings> GetHeaderBinding(Page page, string culture, bool IsMultilingual= false)
+        public static List<HeaderBindings> GetHeaderBinding(Page page, string culture, bool isMultilingual = false)
         {
             List<HeaderBindings> bindings = new List<HeaderBindings>();
 
@@ -517,13 +501,11 @@ namespace Kooboo.Sites.Service
 
             if (!string.IsNullOrEmpty(title))
             {
-               if (IsMultilingual ||  page.HasLayout || Service.BindingService.IsBinding(title) )
+                if (isMultilingual || page.HasLayout || Service.BindingService.IsBinding(title))
                 {
-                    HeaderBindings titlebinding = new HeaderBindings();
-                    titlebinding.IsTitle = true;
-                    titlebinding.Content = title;
+                    HeaderBindings titlebinding = new HeaderBindings {IsTitle = true, Content = title};
                     bindings.Add(titlebinding);
-              }
+                }
             }
 
             foreach (var item in page.Headers.Metas)
@@ -532,13 +514,15 @@ namespace Kooboo.Sites.Service
 
                 if (!string.IsNullOrEmpty(metabindingValue))
                 {
-                    if (IsMultilingual || page.HasLayout || Service.BindingService.IsBinding(metabindingValue))
+                    if (isMultilingual || page.HasLayout || Service.BindingService.IsBinding(metabindingValue))
                     {
-                        HeaderBindings metabinding = new HeaderBindings();
-                        metabinding.MetaName = item.name;
-                        metabinding.Content = metabindingValue;
-                        metabinding.CharSet = item.charset;
-                        metabinding.HttpEquiv = item.httpequiv;
+                        HeaderBindings metabinding = new HeaderBindings
+                        {
+                            MetaName = item.name,
+                            Content = metabindingValue,
+                            CharSet = item.charset,
+                            HttpEquiv = item.httpequiv
+                        };
                         bindings.Add(metabinding);
                     }
                 }
@@ -562,9 +546,7 @@ namespace Kooboo.Sites.Service
 
             if (!string.IsNullOrEmpty(customerHeader))
             {
-                HeaderBindings custombinding = new HeaderBindings();
-                custombinding.IsCustomHeader = true;
-                custombinding.Content = customerHeader;
+                HeaderBindings custombinding = new HeaderBindings {IsCustomHeader = true, Content = customerHeader};
                 bindings.Add(custombinding);
             }
 
@@ -591,10 +573,7 @@ namespace Kooboo.Sites.Service
                 var src = item.getAttribute("src");
                 if (!string.IsNullOrEmpty(src))
                 {
-                    ScriptStyle script = new ScriptStyle();
-                    script.IsScript = true;
-                    script.Url = src;
-                    script.Element = item;
+                    ScriptStyle script = new ScriptStyle {IsScript = true, Url = src, Element = item};
                     result.Add(script);
                 }
                 else
@@ -602,14 +581,10 @@ namespace Kooboo.Sites.Service
                     string inner = item.InnerHtml;
                     if (string.IsNullOrWhiteSpace(inner))
                     {
-                        ScriptStyle script = new ScriptStyle();
-                        script.IsScript = true;
-                        script.Url = string.Empty;
-                        script.Element = item;
+                        ScriptStyle script = new ScriptStyle {IsScript = true, Url = string.Empty, Element = item};
                         result.Add(script);
                     }
                 }
-
             }
 
             var styles = dom.getElementsByTagName("link");
@@ -618,25 +593,18 @@ namespace Kooboo.Sites.Service
             {
                 if (item.hasAttribute("rel") && item.getAttribute("rel").ToLower().Contains("stylesheet"))
                 {
-
                     string itemurl = item.getAttribute("href");
 
                     if (!string.IsNullOrEmpty(itemurl))
                     {
-                        ScriptStyle style = new ScriptStyle();
-                        style.IsStyle = true;
-                        style.Url = itemurl;
-                        style.Element = item;
+                        ScriptStyle style = new ScriptStyle {IsStyle = true, Url = itemurl, Element = item};
                         result.Add(style);
                     }
                 }
             }
 
-
-
             return result;
         }
-          
     }
 
     public class MetaContentkResult
@@ -647,7 +615,7 @@ namespace Kooboo.Sites.Service
 
         public string ContentValue { get; set; }
 
-       // public bool ShouldRender { get; set; }
+        // public bool ShouldRender { get; set; }
     }
 
     public class ScriptStyle
@@ -659,7 +627,5 @@ namespace Kooboo.Sites.Service
         public bool IsScript { get; set; }
 
         public bool IsStyle { get; set; }
-
     }
-
 }

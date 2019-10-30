@@ -14,9 +14,7 @@ namespace Kooboo.Sites.DataSources
 
             foreach (var item in site.Culture)
             {
-                MultilingualInfo info = new MultilingualInfo();
-                info.Key = item.Key;
-                info.Name = item.Value;
+                MultilingualInfo info = new MultilingualInfo {Key = item.Key, Name = item.Value};
 
                 if (item.Key == this.Context.RenderContext.Culture)
                 {
@@ -31,16 +29,15 @@ namespace Kooboo.Sites.DataSources
             return result;
         }
 
-        private string GetUrl(string relativeurl, string culture, bool EnableSitePath)
+        private string GetUrl(string relativeurl, string culture, bool enableSitePath)
         {
-            if (EnableSitePath)
+            if (enableSitePath)
             {
                 return "/" + culture + relativeurl;
             }
             else
             {
-                Dictionary<string, string> lang = new Dictionary<string, string>();
-                lang.Add("lang", culture);
+                Dictionary<string, string> lang = new Dictionary<string, string> {{"lang", culture}};
                 return Lib.Helper.UrlHelper.AppendQueryString(relativeurl, lang);
             }
         }

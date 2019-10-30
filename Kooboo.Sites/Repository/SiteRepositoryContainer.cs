@@ -1,16 +1,15 @@
 ﻿using Kooboo.Data.Interface;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Sites.Repository
 {
-  
     public static class SiteRepositoryContainer
     {
         private static object _locker = new object();
 
         private static Dictionary<string, Type> _repos;
+
         public static Dictionary<string, Type> Repos
         {
             get
@@ -21,22 +20,22 @@ namespace Kooboo.Sites.Repository
                     {
                         if (_repos == null)
                         {
-                            _repos = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase); 
+                            _repos = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
 
                             var allSiteObjectTypes = Lib.Reflection.AssemblyLoader.LoadTypeByInterface(typeof(IRepository));
 
                             foreach (var item in allSiteObjectTypes)
                             {
                                 if (IsSubclassSiteRepository(item))
-                                { 
-                                    var genetype = Lib.Reflection.TypeHelper.GetGenericType(item); 
-                                   
-                                    if (genetype !=null)
+                                {
+                                    var genetype = Lib.Reflection.TypeHelper.GetGenericType(item);
+
+                                    if (genetype != null)
                                     {
                                         var name = genetype.Name;
                                         _repos[name] = item;
-                                    } 
-                                }                                
+                                    }
+                                }
                             }
                         }
                     }
@@ -44,22 +43,22 @@ namespace Kooboo.Sites.Repository
                 return _repos;
             }
         }
-          
-        public static Type GetRepoTypeInfo(string ModelName)
+
+        public static Type GetRepoTypeInfo(string modelName)
         {
-            if (ModelName !=null && Repos.ContainsKey(ModelName))
+            if (modelName != null && Repos.ContainsKey(modelName))
             {
-                return Repos[ModelName]; 
+                return Repos[modelName];
             }
-            return null; 
+            return null;
         }
 
-        public static Type GetRepoTypeInfo(Type SiteModel)
+        public static Type GetRepoTypeInfo(Type siteModel)
         {
-            return GetRepoTypeInfo(SiteModel.Name); 
-        } 
+            return GetRepoTypeInfo(siteModel.Name);
+        }
 
-        public static  bool IsSubclassSiteRepository(Type toCheck)
+        public static bool IsSubclassSiteRepository(Type toCheck)
         {
             Type generic = typeof(Kooboo.Sites.Repository.SiteRepositoryBase<>);
 
@@ -75,6 +74,4 @@ namespace Kooboo.Sites.Repository
             return false;
         }
     }
-
-
 }

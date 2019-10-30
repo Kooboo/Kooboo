@@ -1,14 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Lib.Helper;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.SiteTransfer.Download;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Kooboo.Sites.Repository;
-using Kooboo.Lib.Helper;
-using Kooboo.Sites.SiteTransfer.Download;
-using Kooboo.Sites.Models;
 
 namespace Kooboo.Sites.SiteTransfer.Executor
 {
@@ -22,7 +21,7 @@ namespace Kooboo.Sites.SiteTransfer.Executor
         {
             if (this.SiteDb == null || this.TransferTask == null)
             {
-                return; 
+                return;
             }
 
             List<TransferPage> pagelist = SiteDb.TransferPages.TableScan.Where(o => o.taskid == TransferTask.Id && o.done == false).SelectAll();
@@ -31,14 +30,14 @@ namespace Kooboo.Sites.SiteTransfer.Executor
             List<TransferPage> transpages = new List<TransferPage>();
 
             string baseurl = null;
-            bool defaultstart = true; 
+            bool defaultstart = true;
 
             foreach (var item in pagelist)
             {
                 if (baseurl == null)
                 {
-                    baseurl = item.absoluteUrl; 
-                } 
+                    baseurl = item.absoluteUrl;
+                }
                 var down = await DownloadHelper.DownloadUrlAsync(item.absoluteUrl, manager.CookieContainer);
                 if (down == null || string.IsNullOrEmpty(down.GetString()))
                 {
@@ -70,22 +69,22 @@ namespace Kooboo.Sites.SiteTransfer.Executor
 
                 SiteObject downloadobject = TransferHelper.AddDownload(manager, down, item.absoluteUrl, defaultstart, true, baseurl);
 
-                if (downloadobject != null && downloadobject is Page)
+                if (downloadobject != null && downloadobject is Page downloadobject1)
                 {
-                    page = downloadobject as Page;
+                    page = downloadobject1;
                 }
                 if (page != null)
                 {
                     item.PageId = page.Id;
                 }
-                  
-                UpdateTransferPage(transpages, manager); 
+
+                UpdateTransferPage(transpages, manager);
 
                 if (defaultstart)
                 {
-                    defaultstart = false; 
+                    defaultstart = false;
                 }
-               // DownloadOnePage(manager, item);
+                // DownloadOnePage(manager, item);
             }
 
             while (!manager.IsComplete)
@@ -93,7 +92,7 @@ namespace Kooboo.Sites.SiteTransfer.Executor
                 System.Threading.Thread.Sleep(20);
             }
 
-            this.SiteDb.TransferTasks.SetDone(this.TransferTask.Id); 
+            this.SiteDb.TransferTasks.SetDone(this.TransferTask.Id);
         }
 
         private void UpdateTransferPage(List<TransferPage> transpages, DownloadManager manager)
@@ -120,9 +119,6 @@ namespace Kooboo.Sites.SiteTransfer.Executor
                 manager.SiteDb.TransferPages.AddOrUpdate(page);
                 transpages.RemoveAt(item);
             }
-
         }
-        
-  
     }
 }

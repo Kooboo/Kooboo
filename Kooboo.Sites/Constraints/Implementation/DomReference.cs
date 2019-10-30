@@ -30,24 +30,24 @@ namespace Kooboo.Sites.Constraints
             }
         }
 
-        private List<SourceUpdate> GetChanges(SiteDb SiteDb, DomObject DomObject, string Language = null)
+        private List<SourceUpdate> GetChanges(SiteDb siteDb, DomObject domObject, string language = null)
         {
             List<SourceUpdate> updates = new List<SourceUpdate>();
-            if (string.IsNullOrEmpty(DomObject.Body))
+            if (string.IsNullOrEmpty(domObject.Body))
             {
                 return updates;
             }
 
-            string ObjectRelativeUrl = GetObjectUrl(SiteDb, DomObject);
+            string objectRelativeUrl = GetObjectUrl(siteDb, domObject);
 
-            ObjectRelativeUrl = ObjectRelativeUrl.Replace("\\", "/");
+            objectRelativeUrl = objectRelativeUrl.Replace("\\", "/");
 
-            if (!ObjectRelativeUrl.StartsWith("/"))
+            if (!objectRelativeUrl.StartsWith("/"))
             {
-                ObjectRelativeUrl = "/" + ObjectRelativeUrl;
+                objectRelativeUrl = "/" + objectRelativeUrl;
             }
 
-            var dom = DomObject.Dom;
+            var dom = domObject.Dom;
 
             foreach (var item in dom.Links.item)
             {
@@ -55,7 +55,7 @@ namespace Kooboo.Sites.Constraints
 
                 if (!string.IsNullOrEmpty(itemsrc))
                 {
-                    CheckAndAddChange(updates, item, itemsrc, ObjectRelativeUrl);
+                    CheckAndAddChange(updates, item, itemsrc, objectRelativeUrl);
                 }
             }
 
@@ -65,7 +65,7 @@ namespace Kooboo.Sites.Constraints
             {
                 if (!string.IsNullOrEmpty(item.Value) && !Kooboo.Lib.Utilities.DataUriService.isDataUri(item.Value))
                 {
-                    CheckAndAddChange(updates, item.Key, item.Value, ObjectRelativeUrl);
+                    CheckAndAddChange(updates, item.Key, item.Value, objectRelativeUrl);
                 }
             }
 
@@ -79,7 +79,7 @@ namespace Kooboo.Sites.Constraints
 
                     if (!string.IsNullOrEmpty(srcurl))
                     {
-                        CheckAndAddChange(updates, item, srcurl, ObjectRelativeUrl);
+                        CheckAndAddChange(updates, item, srcurl, objectRelativeUrl);
                     }
                 }
             }
@@ -92,7 +92,7 @@ namespace Kooboo.Sites.Constraints
 
                 if (!string.IsNullOrEmpty(fileurl))
                 {
-                    CheckAndAddChange(updates, item, fileurl, ObjectRelativeUrl);
+                    CheckAndAddChange(updates, item, fileurl, objectRelativeUrl);
                 }
             }
 
@@ -106,7 +106,7 @@ namespace Kooboo.Sites.Constraints
 
                     if (!string.IsNullOrEmpty(itemurl))
                     {
-                        CheckAndAddChange(updates, item, itemurl, ObjectRelativeUrl);
+                        CheckAndAddChange(updates, item, itemurl, objectRelativeUrl);
                     }
                 }
             }
@@ -114,7 +114,7 @@ namespace Kooboo.Sites.Constraints
             return updates;
         }
 
-        private void CheckAndAddChange(List<SourceUpdate> updates, Dom.Element item, string itemsrc, string ObjectRelativeUrl)
+        private void CheckAndAddChange(List<SourceUpdate> updates, Dom.Element item, string itemsrc, string objectRelativeUrl)
         {
             if (string.IsNullOrEmpty(itemsrc))
             {
@@ -126,17 +126,17 @@ namespace Kooboo.Sites.Constraints
                 return;
             }
 
-            string RelativeUrl = Kooboo.Lib.Helper.UrlHelper.Combine(ObjectRelativeUrl, itemsrc);
+            string relativeUrl = Kooboo.Lib.Helper.UrlHelper.Combine(objectRelativeUrl, itemsrc);
 
-            if (RelativeUrl != null)
+            if (relativeUrl != null)
             {
-                RelativeUrl = System.Net.WebUtility.UrlDecode(RelativeUrl);
+                relativeUrl = System.Net.WebUtility.UrlDecode(relativeUrl);
             }
 
-            if (itemsrc != RelativeUrl)
+            if (itemsrc != relativeUrl)
             {
                 string oldstring = Kooboo.Sites.Service.DomService.GetOpenTag(item);
-                string newstring = oldstring.Replace(itemsrc, RelativeUrl);
+                string newstring = oldstring.Replace(itemsrc, relativeUrl);
 
                 updates.Add(new SourceUpdate()
                 {
@@ -147,22 +147,22 @@ namespace Kooboo.Sites.Constraints
             }
         }
 
-        private string GetObjectUrl(SiteDb SiteDb, DomObject DomObject)
+        private string GetObjectUrl(SiteDb siteDb, DomObject domObject)
         {
             string url;
-            if (Attributes.AttributeHelper.IsRoutable(DomObject))
+            if (Attributes.AttributeHelper.IsRoutable(domObject))
             {
-                url = SiteDb.Routes.GetObjectPrimaryRelativeUrl(DomObject.Id);
+                url = siteDb.Routes.GetObjectPrimaryRelativeUrl(domObject.Id);
             }
             else
             {
-                if (string.IsNullOrEmpty(DomObject.Name))
+                if (string.IsNullOrEmpty(domObject.Name))
                 {
                     url = "/";
                 }
                 else
                 {
-                    url = "/" + DomObject.Name;
+                    url = "/" + domObject.Name;
                 }
             }
             if (string.IsNullOrEmpty(url))
@@ -172,9 +172,9 @@ namespace Kooboo.Sites.Constraints
             return url;
         }
 
-        public void Fix(SiteDb SiteDb, DomObject domobject, string Language = null)
+        public void Fix(SiteDb siteDb, DomObject domobject, string language = null)
         {
-            var changes = GetChanges(SiteDb, domobject);
+            var changes = GetChanges(siteDb, domobject);
 
             if (changes.Count > 0)
             {
@@ -182,11 +182,11 @@ namespace Kooboo.Sites.Constraints
             }
         }
 
-        public List<ConstraintResponse> Check(SiteDb SiteDb, DomObject domobject, string Language = null)
+        public List<ConstraintResponse> Check(SiteDb siteDb, DomObject domobject, string language = null)
         {
             List<ConstraintResponse> responseresult = new List<ConstraintResponse>();
 
-            var changes = GetChanges(SiteDb, domobject);
+            var changes = GetChanges(siteDb, domobject);
 
             if (changes.Count > 0)
             {
@@ -194,8 +194,7 @@ namespace Kooboo.Sites.Constraints
                 {
                     string oldvalue = domobject.Body.Substring(item.StartIndex, item.EndIndex - item.StartIndex + 1);
 
-                    ConstraintResponse response = new ConstraintResponse();
-                    response.AffectedPart = oldvalue;
+                    ConstraintResponse response = new ConstraintResponse {AffectedPart = oldvalue};
                     var linecol = domobject.Body.GetPosition(item.StartIndex);
                     response.LineNumber = linecol.Line;
                     response.ColumnNumber = linecol.Column;
@@ -213,9 +212,11 @@ namespace Kooboo.Sites.Constraints
 
         public DisplayMetaInfo GetMeta()
         {
-            DisplayMetaInfo meta = new DisplayMetaInfo();
-            meta.Name = "DomReference";
-            meta.Description = "Check all the image, style, script, links, all the resources must start with / root.";
+            DisplayMetaInfo meta = new DisplayMetaInfo
+            {
+                Name = "DomReference",
+                Description = "Check all the image, style, script, links, all the resources must start with / root."
+            };
             return meta;
         }
     }

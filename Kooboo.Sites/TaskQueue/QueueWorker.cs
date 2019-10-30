@@ -1,7 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Interface; 
-using System; 
+using Kooboo.Data.Interface;
+using System;
 
 namespace Kooboo.Sites.TaskQueue
 {
@@ -19,7 +19,7 @@ namespace Kooboo.Sites.TaskQueue
         {
             get; set;
         }
-  
+
         public void Execute()
         {
             //if (WebSiteId != default(Guid))
@@ -28,8 +28,8 @@ namespace Kooboo.Sites.TaskQueue
             //}
             //else
             //{
-                QueueManager.Execute();
-            //} 
+            QueueManager.Execute();
+            //}
         }
-    } 
+    }
 }

@@ -1,93 +1,71 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
+using Kooboo.Sites.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Models; 
-using Kooboo.Sites.Extensions; 
-using Kooboo.Sites.SiteElements; 
 
 namespace Kooboo.Sites.SiteElements
 {
-   public class LayoutCleaner
+    public class LayoutCleaner
     {
+        public static bool CheckIsAllowedForLayout(DomElement element, List<DomElement> pageElements)
+        {
+            return VerifyTD(element, pageElements) && VerifyContainer(element);
+        }
 
+        private static bool VerifyContainer(DomElement element)
+        {
+            string[] parents = element.ParentPath.Split('/');
+            foreach (var item in parents)
+            {
+                if (Kooboo.Sites.Tag.TagGroup.isText(item))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
-       public static bool CheckIsAllowedForLayout(DomElement element, List<DomElement> pageElements)
-       {
-           if (!VerifyTD(element, pageElements))
-           {
-               return false; 
-           }
+        /// <summary>
+        /// verify whether this TD can be used as layout or not.
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="pageElements"></param>
+        /// <returns></returns>
+        public static bool VerifyTD(DomElement element, List<DomElement> pageElements)
+        {
+            //if (element.Name == "td")
+            //{
+            //    bool onlytext = true;
+            //    foreach (var item in element.SubElements)
+            //    {
+            //        if (!Kooboo.Sites.Tag.TagGroup.isText(item.Key))
+            //        {
+            //            onlytext = false;
+            //            break;
+            //        }
+            //    }
 
-           if (!VerifyContainer(element))
-           {
-               return false; 
-           }
+            //    if (onlytext)
+            //    {
+            //        ///if only text and has many similar this kind of elements...
 
-           return true; 
-       }
+            //        int count = pageElements.FindAll(o => o.ParentPathHash == element.ParentPathHash && o.Name == element.Name && o.NodeAttributeHash == element.NodeAttributeHash).Count;
 
-       private static bool VerifyContainer(DomElement element)
-       {
-           string[] parents = element.ParentPath.Split('/');
-           foreach (var item in parents)
-           {
-               if (Kooboo.Sites.Tag.TagGroup.isText(item))
-               {
-                   return false; 
-               }
-           }
-           return true; 
-       }
+            //        if (count > 2)
+            //        {
+            //            return false;
+            //        }
+            //    }
 
+            //}
 
-       /// <summary>
-       /// verify whether this TD can be used as layout or not.
-       /// </summary>
-       /// <param name="?"></param>
-       /// <returns></returns>
-       public static bool VerifyTD(DomElement element, List<DomElement> pageElements)
-       {
-           //if (element.Name == "td")
-           //{
-           //    bool onlytext = true;
-           //    foreach (var item in element.SubElements)
-           //    {
-           //        if (!Kooboo.Sites.Tag.TagGroup.isText(item.Key))
-           //        {
-           //            onlytext = false;
-           //            break; 
-           //        }
-           //    }
+            return true;
+        }
 
-           //    if (onlytext)
-           //    {
-           //        ///if only text and has many similar this kind of elements...
+        //public static List<PageElement> MergeLayout(List<PageElement> currentPlaceHolders, List<PageElement> AllPageElements)
+        //{
+        //    // merge the page elements that has the same parents.
 
-           //        int count = pageElements.FindAll(o => o.ParentPathHash == element.ParentPathHash && o.Name == element.Name && o.NodeAttributeHash == element.NodeAttributeHash).Count;
-
-           //        if (count > 2)
-           //        {
-           //            return false; 
-           //        }
-           //    }
-
-           //}
-
-           return true; 
-       }
-
-
-       //public static List<PageElement> MergeLayout(List<PageElement> currentPlaceHolders, List<PageElement> AllPageElements)
-       //{
-       //    // merge the page elements that has the same parents. 
-
-       //}
-
-
- 
+        //}
     }
 }

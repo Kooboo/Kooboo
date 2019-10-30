@@ -1,13 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Data.Context;
-using Kooboo.Sites.Render.Components;
 using Kooboo.Dom;
+using Kooboo.Sites.Render.Components;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Render
 {
@@ -24,7 +21,7 @@ namespace Kooboo.Sites.Render
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
@@ -32,19 +29,12 @@ namespace Kooboo.Sites.Render
         {
             var component = Container.Get(setting.TagName);
             Task<string> task = component.RenderAsync(context, setting);
-            if (task == null)
-            {
-                return null; 
-            }
-           else
-            {
-                return task.Result; 
-            }      
+            return task?.Result;
         }
 
         public void AppendResult(RenderContext context, List<RenderResult> result)
         {
-            result.Add(new RenderResult() { Value = Render(context) }); 
+            result.Add(new RenderResult() { Value = Render(context) });
         }
     }
 }

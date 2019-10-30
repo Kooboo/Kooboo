@@ -18,19 +18,15 @@ namespace Kooboo.Sites.Contents.Models
 
         public string Name { get; set; }
 
-        private string _DisplayName;
+        private string _displayName;
 
         public string DisplayName
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(_DisplayName))
-                {
-                    return Name;
-                }
-                return _DisplayName;
+                return string.IsNullOrWhiteSpace(_displayName) ? Name : _displayName;
             }
-            set { _DisplayName = value; }
+            set { _displayName = value; }
         }
 
         public string ControlType { get; set; }

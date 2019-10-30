@@ -1,10 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Render.RenderTasks.Tal
 {
@@ -40,7 +36,7 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
             return stringvalue.Contains(this.RightValue);
         }
     }
-    
+
     public class ConditionStartWith : IConditionEvaluator
     {
         public string ConditionOperator
@@ -108,9 +104,7 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
             {
                 var intvalue = (int)value;
 
-                int comparevalue;
-
-                if (int.TryParse(this.RightValue, out comparevalue))
+                if (int.TryParse(this.RightValue, out var comparevalue))
                 {
                     return intvalue > comparevalue;
                 }
@@ -118,9 +112,7 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
                 {
                     return false;
                 }
-
             }
-
 
             return false;
         }
@@ -160,9 +152,7 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
             {
                 var intvalue = (int)value;
 
-                int comparevalue;
-
-                if (int.TryParse(this.RightValue, out comparevalue))
+                if (int.TryParse(this.RightValue, out var comparevalue))
                 {
                     return intvalue >= comparevalue;
                 }
@@ -170,14 +160,12 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
                 {
                     return false;
                 }
-
             }
-
 
             return false;
         }
     }
-     
+
     public class ConditionLessThan : IConditionEvaluator
     {
         public string ConditionOperator
@@ -212,9 +200,7 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
             {
                 var intvalue = (int)value;
 
-                int comparevalue;
-
-                if (int.TryParse(this.RightValue, out comparevalue))
+                if (int.TryParse(this.RightValue, out var comparevalue))
                 {
                     return intvalue < comparevalue;
                 }
@@ -222,9 +208,7 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
                 {
                     return false;
                 }
-
             }
-
 
             return false;
         }
@@ -264,9 +248,7 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
             {
                 var intvalue = (int)value;
 
-                int comparevalue;
-
-                if (int.TryParse(this.RightValue, out comparevalue))
+                if (int.TryParse(this.RightValue, out var comparevalue))
                 {
                     return intvalue <= comparevalue;
                 }
@@ -274,9 +256,7 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
                 {
                     return false;
                 }
-
             }
-
 
             return false;
         }
@@ -298,6 +278,7 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
         }
 
         private string _rightvalue;
+
         public string RightValue
         {
             get { return _rightvalue; }
@@ -326,16 +307,9 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
                 return true;
             }
 
-            if (value.GetType() == typeof(bool))
+            if (value is bool boolvalue)
             {
-                bool boolrightvalue = false;
-
-                if (string.IsNullOrWhiteSpace(this.RightValue) || this.RightValue.ToLower() == "true" || this.RightValue == "1" || this.RightValue.ToLower() == "yes" || this.RightValue.ToLower() == "ok")
-                {
-                    boolrightvalue = true;
-                }
-
-                var boolvalue = (bool)value;
+                bool boolrightvalue = string.IsNullOrWhiteSpace(this.RightValue) || this.RightValue.ToLower() == "true" || this.RightValue == "1" || this.RightValue.ToLower() == "yes" || this.RightValue.ToLower() == "ok";
 
                 if (boolvalue == boolrightvalue)
                 {
@@ -363,6 +337,7 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
         }
 
         private string _rightvalue;
+
         public string RightValue
         {
             get { return _rightvalue; }
@@ -391,16 +366,9 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
                 return false;
             }
 
-            if (value.GetType() == typeof(bool))
+            if (value is bool boolvalue)
             {
-                bool boolrightvalue = false;
-
-                if (string.IsNullOrWhiteSpace(this.RightValue) || this.RightValue.ToLower() == "true" || this.RightValue == "1" || this.RightValue.ToLower() == "yes" || this.RightValue.ToLower() == "ok")
-                {
-                    boolrightvalue = true;
-                }
-
-                var boolvalue = (bool)value;
+                bool boolrightvalue = string.IsNullOrWhiteSpace(this.RightValue) || this.RightValue.ToLower() == "true" || this.RightValue == "1" || this.RightValue.ToLower() == "yes" || this.RightValue.ToLower() == "ok";
 
                 if (boolvalue == boolrightvalue)
                 {
@@ -409,7 +377,6 @@ namespace Kooboo.Sites.Render.RenderTasks.Tal
             }
 
             return true;
-
         }
     }
 }

@@ -1,17 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Tag
 {
     public class TagGroup
     {
-
-
         private static List<string> _textTag;
 
         public static List<string> TextTag
@@ -31,19 +25,15 @@ namespace Kooboo.Sites.Tag
                     }
                 }
                 return _textTag;
-
             }
         }
 
-        public static bool isText(string TagName)
+        public static bool isText(string tagName)
         {
-            /// check whether this is a text node or not. 
-            return TextTag.Contains(TagName);
-
+            // check whether this is a text node or not.
+            return TextTag.Contains(tagName);
         }
-
     }
-
 
     //    3.2.4.1.1 Metadata content
 
@@ -119,15 +109,4 @@ namespace Kooboo.Sites.Tag
     //Interactive content is content that is specifically intended for user interaction.
 
     //a audio (if the controls attribute is present) button embed iframe img (if the usemap attribute is present) input (if the type attribute is not in the hidden state) keygen label object (if the usemap attribute is present) select textarea video (if the controls attribute is present)
-
-
-
-
-
-
-
-
-
-
-
 }

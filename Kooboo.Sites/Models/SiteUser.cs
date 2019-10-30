@@ -1,13 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Interface;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Models
 {
@@ -36,9 +31,8 @@ namespace Kooboo.Sites.Models
         [JsonConverter(typeof(StringEnumConverter))]
         public Kooboo.Sites.Authorization.EnumUserRole Role { get; set; }
 
-
-
         private string _siterole;
+
         public string SiteRole
         {
             get
@@ -66,9 +60,9 @@ namespace Kooboo.Sites.Models
             }
             set
             {
-                _siterole = value; 
+                _siterole = value;
             }
-         }
+        }
 
         public override int GetHashCode()
         {

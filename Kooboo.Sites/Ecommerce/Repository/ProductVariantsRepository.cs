@@ -24,9 +24,9 @@ namespace Kooboo.Sites.Ecommerce.Repository
             }
         }
 
-        public List<ProductVariants> ListByProductId(Guid ProductId)
+        public List<ProductVariants> ListByProductId(Guid productId)
         {
-            var list = this.Query.Where(o => o.ProductId == ProductId).SelectAll();
+            var list = this.Query.Where(o => o.ProductId == productId).SelectAll();
             return list;
         }
     }

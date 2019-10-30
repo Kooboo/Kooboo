@@ -85,10 +85,12 @@ namespace Kooboo.Sites.FrontEvent
         [Attributes.SummaryIgnore]
         public List<EventConditionSetting> GetConditionSetting(RenderContext context)
         {
-            List<EventConditionSetting> result = new List<EventConditionSetting>();
-            result.Add(new EventConditionSetting() { Name = "Url" });
-            result.Add(new EventConditionSetting() { Name = "Culture" });
-            result.Add(new EventConditionSetting() { Name = "UserAgent" });
+            List<EventConditionSetting> result = new List<EventConditionSetting>
+            {
+                new EventConditionSetting() {Name = "Url"},
+                new EventConditionSetting() {Name = "Culture"},
+                new EventConditionSetting() {Name = "UserAgent"}
+            };
             return result;
         }
     }
@@ -173,10 +175,12 @@ namespace Kooboo.Sites.FrontEvent
 
         public List<EventConditionSetting> GetConditionSetting(RenderContext context)
         {
-            List<EventConditionSetting> result = new List<EventConditionSetting>();
-            result.Add(new EventConditionSetting() { Name = "Url" });
-            result.Add(new EventConditionSetting() { Name = "Culture" });
-            result.Add(new EventConditionSetting() { Name = "UserAgent" });
+            List<EventConditionSetting> result = new List<EventConditionSetting>
+            {
+                new EventConditionSetting() {Name = "Url"},
+                new EventConditionSetting() {Name = "Culture"},
+                new EventConditionSetting() {Name = "UserAgent"}
+            };
 
             Dictionary<string, string> objecttypes = new Dictionary<string, string>();
 
@@ -264,10 +268,12 @@ namespace Kooboo.Sites.FrontEvent
 
         public List<EventConditionSetting> GetConditionSetting(RenderContext context)
         {
-            List<EventConditionSetting> result = new List<EventConditionSetting>();
-            result.Add(new EventConditionSetting() { Name = "Url" });
-            result.Add(new EventConditionSetting() { Name = "Culture" });
-            result.Add(new EventConditionSetting() { Name = "UserAgent" });
+            List<EventConditionSetting> result = new List<EventConditionSetting>
+            {
+                new EventConditionSetting() {Name = "Url"},
+                new EventConditionSetting() {Name = "Culture"},
+                new EventConditionSetting() {Name = "UserAgent"}
+            };
 
             return result;
         }

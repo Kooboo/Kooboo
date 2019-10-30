@@ -1,15 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Dom;
+using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
-using Kooboo.Lib.Helper;
 using Kooboo.Sites.Models;
-using Kooboo.Sites.Routing;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq; 
-using Kooboo.Data.Models;
+using System.Linq;
 
 namespace Kooboo.Sites.Repository
 {
@@ -32,29 +28,30 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public override List<UsedByRelation> GetUsedBy(Guid ObjectId)
+        public override List<UsedByRelation> GetUsedBy(Guid objectId)
         {
-            var style = this.Get(ObjectId);
+            var style = this.Get(objectId);
             return GetUsedBy(style);
         }
 
-        public List<UsedByRelation> GetUsedBy(Style Style)
+        public List<UsedByRelation> GetUsedBy(Style style)
         {
             List<UsedByRelation> result = new List<UsedByRelation>();
-            if (Style == null)
+            if (style == null)
             { return result; }
 
-            /// for embedded style, this is belong to one parent object. 
-            if (Style.IsEmbedded)
+            // for embedded style, this is belong to one parent object.
+            if (style.IsEmbedded)
             {
-                var samestyles = this.GetSameEmbedded(Style.BodyHash);
+                var samestyles = this.GetSameEmbedded(style.BodyHash);
 
                 foreach (var item in samestyles)
                 {
-                    UsedByRelation relation = new UsedByRelation();
-                    relation.ObjectId = item.OwnerObjectId;
-                    relation.ConstType = item.OwnerConstType; 
-                    Helper.RelationHelper.SetNameUrl(this.SiteDb, relation); 
+                    UsedByRelation relation = new UsedByRelation
+                    {
+                        ObjectId = item.OwnerObjectId, ConstType = item.OwnerConstType
+                    };
+                    Helper.RelationHelper.SetNameUrl(this.SiteDb, relation);
                     relation.Remark = item.KoobooOpenTag;
                     result.Add(relation);
                 }
@@ -62,60 +59,60 @@ namespace Kooboo.Sites.Repository
                 return result;
             }
 
-            var relations = this.SiteDb.Relations.GetReferredBy(Style);
+            var relations = this.SiteDb.Relations.GetReferredBy(style);
 
             foreach (var item in relations)
             {
-                ///import rule has relation to cssrule only. 
-                ///this style if reference by another style using import rule. 
+                //import rule has relation to cssrule only.
+                //this style if reference by another style using import rule.
                 if (item.ConstTypeX == ConstObjectType.CssRule)
                 {
                     CmsCssRule cssrule = this.SiteDb.CssRules.Get(item.objectXId);
                     if (cssrule.ParentStyleId != default(Guid))
                     {
-                        Style ParentStyle = this.SiteDb.Styles.Get(cssrule.ParentStyleId);
+                        Style parentStyle = this.SiteDb.Styles.Get(cssrule.ParentStyleId);
 
-                        if (ParentStyle != null)
+                        if (parentStyle != null)
                         {
-                            var parentresults = this.GetUsedBy(ParentStyle);
-                            if (parentresults != null && parentresults.Count() > 0)
+                            var parentresults = this.GetUsedBy(parentStyle);
+                            if (parentresults != null && parentresults.Any())
                             {
                                 result.AddRange(parentresults);
                             }
 
-                            UsedByRelation relation = new UsedByRelation();
-                            relation.ObjectId = ParentStyle.Id;
-                            relation.ConstType = ParentStyle.ConstType; 
+                            UsedByRelation relation = new UsedByRelation
+                            {
+                                ObjectId = parentStyle.Id, ConstType = parentStyle.ConstType
+                            };
                             Helper.RelationHelper.SetNameUrl(this.SiteDb, relation);
                             relation.Remark = cssrule.CssText;
                             result.Add(relation);
-
                         }
                     }
                 }
                 else
                 {
-                    UsedByRelation relation = new UsedByRelation();
-                    relation.ObjectId = item.objectXId;
-                    relation.ConstType = item.ConstTypeX; 
-                    Helper.RelationHelper.SetNameUrl(this.SiteDb, relation); 
+                    UsedByRelation relation = new UsedByRelation
+                    {
+                        ObjectId = item.objectXId, ConstType = item.ConstTypeX
+                    };
+                    Helper.RelationHelper.SetNameUrl(this.SiteDb, relation);
                     result.Add(relation);
                 }
             }
             return result;
-
         }
 
         /// <summary>
-        ///  get all the routed style ids that imported by current style id. 
+        ///  get all the routed style ids that imported by current style id.
         /// </summary>
-        /// <param name="StyleId"></param>
+        /// <param name="styleId"></param>
         /// <returns></returns>
-        public List<Guid> GetImports(Guid StyleId)
+        public List<Guid> GetImports(Guid styleId)
         {
             List<Guid> result = new List<Guid>();
 
-            var allimportrules = SiteDb.CssRules.Query.Where(o => o.ParentStyleId == StyleId && o.ruleType == RuleType.ImportRule).SelectAll();
+            var allimportrules = SiteDb.CssRules.Query.Where(o => o.ParentStyleId == styleId && o.ruleType == RuleType.ImportRule).SelectAll();
 
             foreach (var item in allimportrules)
             {
@@ -129,7 +126,7 @@ namespace Kooboo.Sites.Repository
                         {
                             result.Add(route.objectId);
                             var subimports = GetImports(route.objectId);
-                            if (subimports != null && subimports.Count() > 0)
+                            if (subimports != null && subimports.Any())
                             {
                                 result.AddRange(subimports);
                             }
@@ -140,6 +137,5 @@ namespace Kooboo.Sites.Repository
 
             return result;
         }
-
     }
 }

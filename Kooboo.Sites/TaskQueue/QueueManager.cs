@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Models;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Sites.Extensions;
-using Kooboo.Data.Models;
-using Kooboo.Sites.Repository;
 
 namespace Kooboo.Sites.TaskQueue
 {
@@ -13,21 +13,24 @@ namespace Kooboo.Sites.TaskQueue
     {
         private static object _locker = new object();
 
-        private static Dictionary<Guid, int> FailTimes = new Dictionary<Guid, int>();
-        public static void Add(object queuevalue, Guid WebSiteId = default(Guid))
+        private static Dictionary<Guid, int> _failTimes = new Dictionary<Guid, int>();
+
+        public static void Add(object queuevalue, Guid webSiteId = default(Guid))
         {
-            Kooboo.Data.Models.Queue value = new Data.Models.Queue();
-            value.TaskModelType = queuevalue.GetType().FullName;
-            value.JsonModel = Lib.Helper.JsonHelper.Serialize(queuevalue);
-            value.WebSiteId = WebSiteId;
+            Kooboo.Data.Models.Queue value = new Data.Models.Queue
+            {
+                TaskModelType = queuevalue.GetType().FullName,
+                JsonModel = Lib.Helper.JsonHelper.Serialize(queuevalue),
+                WebSiteId = webSiteId
+            };
             Kooboo.Data.GlobalDb.TaskQueue.AddOrUpdate(value);
         }
 
-        public static void Execute(Guid WebSiteId)
+        public static void Execute(Guid webSiteId)
         {
             lock (_locker)
             {
-                var website = Kooboo.Data.GlobalDb.WebSites.Get(WebSiteId);
+                var website = Kooboo.Data.GlobalDb.WebSites.Get(webSiteId);
 
                 if (website != null)
                 {
@@ -35,12 +38,12 @@ namespace Kooboo.Sites.TaskQueue
                 }
             }
         }
-        
+
         public static void Execute(WebSite website)
         {
             lock (_locker)
             {
-                var all =  Data.GlobalDb.TaskQueue.Query.Where(o => o.WebSiteId == website.Id).SelectAll();
+                var all = Data.GlobalDb.TaskQueue.Query.Where(o => o.WebSiteId == website.Id).SelectAll();
                 Execute(website, all);
             }
         }
@@ -52,16 +55,16 @@ namespace Kooboo.Sites.TaskQueue
                 foreach (var item in queueitems)
                 {
                     Data.GlobalDb.TaskQueue.Delete(item.Id);
-                    FailTimes.Remove(item.Id);
+                    _failTimes.Remove(item.Id);
                 }
-                return; 
+                return;
             }
 
             SiteDb siteDb = website.SiteDb();
-     
+
             lock (_locker)
             {
-                List<Guid> ItemsOk = new List<Guid>();
+                List<Guid> itemsOk = new List<Guid>();
                 foreach (var item in queueitems)
                 {
                     try
@@ -71,7 +74,7 @@ namespace Kooboo.Sites.TaskQueue
                         {
                             if (executor.Execute(siteDb, item.JsonModel))
                             {
-                                ItemsOk.Add(item.Id);
+                                itemsOk.Add(item.Id);
                             }
                             else
                             {
@@ -80,7 +83,7 @@ namespace Kooboo.Sites.TaskQueue
                                     Data.GlobalDb.TaskQueue.Delete(item.Id);
                                     string message = item.TaskModelType + " failed 5 times";
                                     Data.GlobalDb.Notification.Add(message, message, Data.Models.NotifyType.Error, website.Id, website.OrganizationId, default(Guid));
-                                    ItemsOk.Add(item.Id);
+                                    itemsOk.Add(item.Id);
                                     Data.GlobalDb.TaskQueue.Delete(item.Id);
                                 }
                             }
@@ -94,16 +97,15 @@ namespace Kooboo.Sites.TaskQueue
 
                             Data.GlobalDb.Notification.Add(null, ex.Message, NotifyType.Error, website.Id, website.OrganizationId);
 
-                            ItemsOk.Add(item.Id);
+                            itemsOk.Add(item.Id);
                         }
-
                     }
                 }
 
-                foreach (var item in ItemsOk)
+                foreach (var item in itemsOk)
                 {
                     Data.GlobalDb.TaskQueue.Delete(item);
-                    FailTimes.Remove(item);
+                    _failTimes.Remove(item);
                 }
             }
         }
@@ -111,9 +113,9 @@ namespace Kooboo.Sites.TaskQueue
         private static bool GetSetFailTimes(Queue item)
         {
             int failedtimes = 0;
-            if (FailTimes.ContainsKey(item.Id))
+            if (_failTimes.ContainsKey(item.Id))
             {
-                failedtimes = FailTimes[item.Id];
+                failedtimes = _failTimes[item.Id];
             }
 
             failedtimes += 1;
@@ -121,12 +123,12 @@ namespace Kooboo.Sites.TaskQueue
             if (failedtimes > 5)
             {
                 return true;
-                //Kooboo.Data.GlobalDb.TaskQueue.Delete(item.Id); 
+                //Kooboo.Data.GlobalDb.TaskQueue.Delete(item.Id);
                 //FailTimes.Remove(item.Id);
             }
             else
             {
-                FailTimes[item.Id] = failedtimes;
+                _failTimes[item.Id] = failedtimes;
             }
             return false;
         }
@@ -141,7 +143,7 @@ namespace Kooboo.Sites.TaskQueue
                 {
                     var websiteid = item.Key;
                     var website = Kooboo.Data.GlobalDb.WebSites.Get(websiteid);
-                   Execute(website, item.ToList());
+                    Execute(website, item.ToList());
                 }
             }
         }

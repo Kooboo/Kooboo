@@ -1,18 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
 using Kooboo.Lib.Helper;
-using Kooboo.Sites.Models;
 
 namespace Kooboo.Sites.SiteTransfer
 {
     public class ScriptAnalyzer : ITransferAnalyzer
     {
-        public void Execute(AnalyzerContext Context)
+        public void Execute(AnalyzerContext context)
         {
             int embeddedItemIndex = 0;
 
-            HTMLCollection scripts = Context.Dom.getElementsByTagName("script");
+            HTMLCollection scripts = context.Dom.getElementsByTagName("script");
 
             foreach (var item in scripts.item)
             {
@@ -22,17 +21,16 @@ namespace Kooboo.Sites.SiteTransfer
 
                     if (string.IsNullOrEmpty(srcurl))
                     {
-                        /// script tag with a src source. does not consider as a script. 
+                        // script tag with a src source. does not consider as a script.
                         continue;
                     }
 
-                    string fullurl = UrlHelper.Combine(Context.AbsoluteUrl, srcurl);
+                    string fullurl = UrlHelper.Combine(context.AbsoluteUrl, srcurl);
 
-                    bool issamehost = Kooboo.Lib.Helper.UrlHelper.isSameHost(Context.OriginalImportUrl, fullurl);
+                    bool issamehost = Kooboo.Lib.Helper.UrlHelper.isSameHost(context.OriginalImportUrl, fullurl);
 
                     if (issamehost)
                     {
-                      
                         string relativeurl = UrlHelper.RelativePath(fullurl, issamehost);
                         relativeurl = TransferHelper.TrimQuestionMark(relativeurl);
 
@@ -40,7 +38,7 @@ namespace Kooboo.Sites.SiteTransfer
                         {
                             string oldstring = Kooboo.Sites.Service.DomService.GetOpenTag(item);
                             string newstring = oldstring.Replace(srcurl, relativeurl);
-                            Context.Changes.Add(new AnalyzerUpdate()
+                            context.Changes.Add(new AnalyzerUpdate()
                             {
                                 StartIndex = item.location.openTokenStartIndex,
                                 EndIndex = item.location.openTokenEndIndex,
@@ -48,22 +46,21 @@ namespace Kooboo.Sites.SiteTransfer
                             });
                         }
 
-
-                        Context.DownloadManager.AddTask(new Download.DownloadTask()
+                        context.DownloadManager.AddTask(new Download.DownloadTask()
                         {
                             AbsoluteUrl = fullurl,
                             RelativeUrl = relativeurl,
                             ConstType = ConstObjectType.Script,
-                            OwnerObjectId = Context.ObjectId
+                            OwnerObjectId = context.ObjectId
                         });
-                    }  
+                    }
                 }
                 else
                 {
                     //string text = item.InnerHtml;
                     //if (!string.IsNullOrEmpty(text))
                     //{
-                    //    // this is an embedded script. 
+                    //    // this is an embedded script.
                     //    var script = new Script
                     //    {
                     //        IsEmbedded = true,
@@ -80,8 +77,6 @@ namespace Kooboo.Sites.SiteTransfer
 
                     //}
                 }
-
-
             }
         }
     }

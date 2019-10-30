@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Extensions;
 using Kooboo.Lib.Helper;
@@ -14,32 +14,32 @@ using System.Threading.Tasks;
 namespace Kooboo.Sites.SiteTransfer
 {
     public class TransferManager
-    { 
-        public static TransferTask AddTask(SiteDb siteDb, string StartUrl, int totalcount, int level, Guid UserId = default(Guid))
+    {
+        public static TransferTask AddTask(SiteDb siteDb, string startUrl, int totalcount, int level, Guid userId = default(Guid))
         {
-            TransferTask newtask = new TransferTask();
-            newtask.Levels = level;
-            newtask.FullStartUrl = StartUrl;
-            newtask.TaskType = EnumTransferTaskType.ByLevel;
-            newtask.Totalpages = totalcount;
-            newtask.UserId = UserId; 
+            TransferTask newtask = new TransferTask
+            {
+                Levels = level,
+                FullStartUrl = startUrl,
+                TaskType = EnumTransferTaskType.ByLevel,
+                Totalpages = totalcount,
+                UserId = userId
+            };
 
-            newtask.Domains.Add(UrlHelper.UriHost(StartUrl, true));
+            newtask.Domains.Add(UrlHelper.UriHost(startUrl, true));
 
             siteDb.TransferTasks.AddOrUpdate(newtask);
 
             return newtask;
         }
 
-        public static TransferTask AddTask(SiteDb siteDb, List<string> AllUrls, Guid UserId = default(Guid))
+        public static TransferTask AddTask(SiteDb siteDb, List<string> allUrls, Guid userId = default(Guid))
         {
-            TransferTask newtask = new TransferTask();
-            newtask.UserId = UserId; 
-            newtask.TaskType = EnumTransferTaskType.BySelectedPages;
+            TransferTask newtask = new TransferTask {UserId = userId, TaskType = EnumTransferTaskType.BySelectedPages};
 
             bool haslink = false;
 
-            foreach (var item in AllUrls)
+            foreach (var item in allUrls)
             {
                 if (!string.IsNullOrEmpty(item) && item.ToLower().StartsWith("http") && Lib.Helper.UrlHelper.IsValidUrl(item, true))
                 {
@@ -55,7 +55,6 @@ namespace Kooboo.Sites.SiteTransfer
                     siteDb.TransferPages.AddOrUpdate(page);
 
                     newtask.Domains.Add(UrlHelper.UriHost(item, true));
-
                 }
             }
 
@@ -68,69 +67,67 @@ namespace Kooboo.Sites.SiteTransfer
             return newtask;
         }
 
-        public static TransferTask AddTask(SiteDb siteDb, string Url, string PageRelativeName = null, Guid UserId = default(Guid))
+        public static TransferTask AddTask(SiteDb siteDb, string url, string pageRelativeName = null, Guid userId = default(Guid))
         {
-            TransferTask newtask = new TransferTask();
-            newtask.TaskType = EnumTransferTaskType.SinglePage;
-            newtask.FullStartUrl = Url;
-            newtask.UserId = UserId; 
+            TransferTask newtask = new TransferTask
+            {
+                TaskType = EnumTransferTaskType.SinglePage, FullStartUrl = url, UserId = userId
+            };
 
-            newtask.Domains.Add(UrlHelper.UriHost(Url, true));
+            newtask.Domains.Add(UrlHelper.UriHost(url, true));
 
-            newtask.RelativeName = PageRelativeName;
+            newtask.RelativeName = pageRelativeName;
             siteDb.TransferTasks.AddOrUpdate(newtask);
             return newtask;
         }
 
-        public static  async Task ExecuteTask(SiteDb siteDb, TransferTask transferTask)
+        public static async Task ExecuteTask(SiteDb siteDb, TransferTask transferTask)
         {
             ITransferExecutor executor = null;
 
             if (transferTask.TaskType == EnumTransferTaskType.ByLevel)
             {
                 executor = new Executor.TransferByLevelExecutor();
-
             }
             else if (transferTask.TaskType == EnumTransferTaskType.BySelectedPages)
             {
-                executor = new Executor.TransferBySelectedPagesExecutor(); 
+                executor = new Executor.TransferBySelectedPagesExecutor();
             }
             else if (transferTask.TaskType == EnumTransferTaskType.SinglePage)
             {
                 executor = new Executor.TransferSinglePageExecutor();
             }
             executor.SiteDb = siteDb;
-            executor.TransferTask = transferTask; 
-            await  executor.Execute();  
+            executor.TransferTask = transferTask;
+            await executor.Execute();
         }
 
-        public static async Task<SiteObject> continueDownload(SiteDb siteDb,  string RelativeUrl)
+        public static async Task<SiteObject> continueDownload(SiteDb siteDb, string relativeUrl)
         {
             if (!siteDb.WebSite.ContinueDownload)
-            { return null;  }
+            { return null; }
 
             var history = siteDb.TransferTasks.History().ToList();
-            if (history.Count() == 0)
+            if (history.Count == 0)
             {
                 return null;
             }
 
-
-            /// track failed history...
-            Guid downloadid = RelativeUrl.ToHashGuid();
+            // track failed history...
+            Guid downloadid = relativeUrl.ToHashGuid();
 
             DownloadFailTrack failtrack = siteDb.DownloadFailedLog.Get(downloadid);
 
             if (failtrack != null)
             {
-                if (failtrack.HistoryTime.Where(o => o > DateTime.Now.AddMinutes(-30)).Any())
+                if (failtrack.HistoryTime.Any(o => o > DateTime.Now.AddMinutes(-30)))
                 {
                     return null;
                 }
 
-                if (failtrack.HistoryTime.Count()>3)
+                if (failtrack.HistoryTime.Count() > 3)
                 {
-                    return null; 
+                    return null;
                 }
             }
             else
@@ -138,103 +135,101 @@ namespace Kooboo.Sites.SiteTransfer
                 failtrack = new DownloadFailTrack();
                 failtrack.Id = downloadid;
             }
-             
-            var oktoDownload = await siteDb.TransferTasks.CanStartDownload(RelativeUrl); 
+
+            var oktoDownload = await siteDb.TransferTasks.CanStartDownload(relativeUrl);
 
             if (!oktoDownload)
             {
-                return null; 
+                return null;
             }
-              
-             
-            string fullurl = string.Empty;
-            DownloadContent download = null; 
 
-            string hostname = TransferHelper.GetPossibleHostName(RelativeUrl);
+            string fullurl = string.Empty;
+            DownloadContent download = null;
+
+            string hostname = TransferHelper.GetPossibleHostName(relativeUrl);
 
             if (!string.IsNullOrEmpty(hostname))
             {
                 var findurl = history.Find(o => o.ToLower().EndsWith(hostname.ToLower()));
 
                 if (!string.IsNullOrEmpty(findurl))
-                { 
-                    string newrelative = RelativeUrl.Replace(hostname+"/", "");
+                {
+                    string newrelative = relativeUrl.Replace(hostname + "/", "");
                     fullurl = UrlHelper.Combine(findurl, newrelative);
-                    var cookiecontianer = siteDb.TransferTasks.GetCookieContainerByFullUrl(fullurl); 
-                    download = await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer); 
+                    var cookiecontianer = siteDb.TransferTasks.GetCookieContainerByFullUrl(fullurl);
+                    download = await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer);
                 }
             }
-            
+
             if (download == null)
             {
                 foreach (var item in history)
                 {
-                    fullurl = UrlHelper.Combine(item, RelativeUrl);
+                    fullurl = UrlHelper.Combine(item, relativeUrl);
                     var cookiecontianer = siteDb.TransferTasks.GetCookieContainerByFullUrl(fullurl);
                     download = await DownloadHelper.DownloadUrlAsync(fullurl, cookiecontianer);
                     if (download != null)
                     {
-                        break; 
+                        break;
                     }
                 }
             }
-    
+
             ///// 301, 302, will be converted to 200 and return back as well. So it is safe to == 200.
             if (download != null && download.StatusCode == 200)
             {
-                DownloadManager downloadManager = new DownloadManager() {  SiteDb = siteDb }; 
+                DownloadManager downloadManager = new DownloadManager() { SiteDb = siteDb };
                 SiteObject downloadobject = TransferHelper.AddDownload(downloadManager, download, fullurl, false, true, fullurl);
 
                 if (downloadobject is Page || downloadobject is View)
                 {
-                    siteDb.TransferPages.AddOrUpdate(new TransferPage() { absoluteUrl = fullurl, PageId = downloadobject.Id }); 
+                    siteDb.TransferPages.AddOrUpdate(new TransferPage() { absoluteUrl = fullurl, PageId = downloadobject.Id });
                 }
 
-                siteDb.TransferTasks.ReleaseDownload(RelativeUrl); 
-                ///for continue download content... 
-                Continue.ContinueTask.Convert(siteDb, downloadobject); 
+                siteDb.TransferTasks.ReleaseDownload(relativeUrl);
+                //for continue download content...
+                Continue.ContinueTask.Convert(siteDb, downloadobject);
                 return downloadobject;
             }
             else
             {
-                siteDb.TransferTasks.ReleaseDownload(RelativeUrl); 
+                siteDb.TransferTasks.ReleaseDownload(relativeUrl);
             }
 
-            //download failed. 
+            //download failed.
             failtrack.HistoryTime.Add(DateTime.Now);
             siteDb.DownloadFailedLog.AddOrUpdate(failtrack);
-             
+
             return null;
         }
-         
-        public static bool IsUrlBanned(string FullUrl)
-        {
-            var domainresult = Data.Helper.DomainHelper.Parse(FullUrl);  
 
-            if (domainresult !=null && !string.IsNullOrWhiteSpace(domainresult.SubDomain))
+        public static bool IsUrlBanned(string fullUrl)
+        {
+            var domainresult = Data.Helper.DomainHelper.Parse(fullUrl);
+
+            if (domainresult != null && !string.IsNullOrWhiteSpace(domainresult.SubDomain))
             {
                 if (domainresult.SubDomain.Contains("."))
                 {
-                    return false; 
+                    return false;
                 }
 
-                string sub = domainresult.SubDomain.ToLower(); 
-                if (sub !="www" && sub.Length > 3)
+                string sub = domainresult.SubDomain.ToLower();
+                if (sub != "www" && sub.Length > 3)
                 {
-                    return false; 
+                    return false;
                 }
             }
 
-            var rootdomain = Kooboo.Data.Helper.DomainHelper.GetRootDomain(FullUrl);
+            var rootdomain = Kooboo.Data.Helper.DomainHelper.GetRootDomain(fullUrl);
 
-            var base64string = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(rootdomain));
+            var base64String = System.Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(rootdomain));
 
             string url = Data.Helper.AccountUrlHelper.System("IsUrlBanned");
 
-            url = url += "?base64url=" + base64string;
+            url = url += "?base64url=" + base64String;
 
             return Lib.Helper.HttpHelper.Get<bool>(url);
         }
-         
     }
 }

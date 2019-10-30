@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using Kooboo.Sites.DataSources;
@@ -27,7 +27,7 @@ namespace Kooboo.Sites.Upgrade
             }
         }
 
-        // migrate all contentdatasource. 
+        // migrate all contentdatasource.
         public void Do()
         {
             var allsites = Kooboo.Data.GlobalDb.WebSites.All();
@@ -83,46 +83,47 @@ namespace Kooboo.Sites.Upgrade
             }
 
             return newMethod;
-
         }
 
         public DataMethodSetting ConvertGetById(DataMethodSetting oldmethod)
-        { 
+        {
             var newmethod = Data.GlobalDb.DataMethodSettings.TableScan.Where(o => o.MethodName == "ById" && o.DeclareType.Contains("ContentItem")).FirstOrDefault();
 
-            var newseting = CreateNewSetting(oldmethod, newmethod);  
-            var binding = getbinding(oldmethod.ParameterBinding, "id"); 
+            var newseting = CreateNewSetting(oldmethod, newmethod);
+            var binding = getbinding(oldmethod.ParameterBinding, "id");
             var newbinding = getbinding(newseting.ParameterBinding, "Id");
-            newbinding.Binding = binding.Binding;  
-            return newseting; 
+            newbinding.Binding = binding.Binding;
+            return newseting;
         }
 
         private DataMethodSetting CreateNewSetting(DataMethodSetting oldmethod, DataMethodSetting newmethod)
         {
-            DataMethodSetting newMethodSetting = new DataMethodSetting();
-            newMethodSetting.MethodName = oldmethod.MethodName; 
-            newMethodSetting.Parameters = newmethod.Parameters;
-            newMethodSetting.ParameterBinding = newmethod.ParameterBinding; 
-            newMethodSetting.Description = oldmethod.Description;
-            newMethodSetting.MethodSignatureHash = newmethod.MethodSignatureHash;
-            newMethodSetting.OriginalMethodName = newmethod.OriginalMethodName;
-            newMethodSetting.DeclareType = newmethod.DeclareType;
-            newMethodSetting.DeclareTypeHash = newmethod.DeclareTypeHash;
-            newMethodSetting.IsPublic = oldmethod.IsPublic;
-            newMethodSetting.ReturnType = newmethod.ReturnType;
-            newMethodSetting.IsPagedResult = newmethod.IsPagedResult;
-            newMethodSetting.IsPost = newmethod.IsPost;
-            newMethodSetting.IsStatic = newmethod.IsStatic;
-            newMethodSetting.IsTask = newmethod.IsTask;
-            newMethodSetting.IsVoid = newmethod.IsVoid;  
-             
+            DataMethodSetting newMethodSetting = new DataMethodSetting
+            {
+                MethodName = oldmethod.MethodName,
+                Parameters = newmethod.Parameters,
+                ParameterBinding = newmethod.ParameterBinding,
+                Description = oldmethod.Description,
+                MethodSignatureHash = newmethod.MethodSignatureHash,
+                OriginalMethodName = newmethod.OriginalMethodName,
+                DeclareType = newmethod.DeclareType,
+                DeclareTypeHash = newmethod.DeclareTypeHash,
+                IsPublic = oldmethod.IsPublic,
+                ReturnType = newmethod.ReturnType,
+                IsPagedResult = newmethod.IsPagedResult,
+                IsPost = newmethod.IsPost,
+                IsStatic = newmethod.IsStatic,
+                IsTask = newmethod.IsTask,
+                IsVoid = newmethod.IsVoid
+            };
+
             return newMethodSetting;
         }
 
         public DataMethodSetting ConvertGetByUserKey(DataMethodSetting oldmethod)
-        { 
+        {
             var newmethod = Data.GlobalDb.DataMethodSettings.TableScan.Where(o => o.MethodName == "ByUserKey" && o.DeclareType.Contains("ContentItem")).FirstOrDefault();
-             
+
             var newseting = CreateNewSetting(oldmethod, newmethod);
 
             var binding = getbinding(oldmethod.ParameterBinding, "UserKey");
@@ -132,7 +133,6 @@ namespace Kooboo.Sites.Upgrade
             newbinding.Binding = binding.Binding;
 
             return newseting;
-
         }
 
         public DataMethodSetting ConvertList(DataMethodSetting oldmethod)
@@ -144,15 +144,15 @@ namespace Kooboo.Sites.Upgrade
 
         private DataMethodSetting ConvertContentListPara(DataMethodSetting oldmethod, DataMethodSetting newmethod)
         {
-            var newMethodSetting = CreateNewSetting(oldmethod, newmethod); 
-              
+            var newMethodSetting = CreateNewSetting(oldmethod, newmethod);
+
             var bindingFolderid = getbinding(oldmethod.ParameterBinding, "FolderId");
             var newbindingfolderid = getbinding(newMethodSetting.ParameterBinding, "FolderId");
             if (bindingFolderid != null && Lib.Helper.DataTypeHelper.IsGuid(bindingFolderid.Binding))
             {
                 newbindingfolderid.Binding = bindingFolderid.Binding;
-            } 
-        
+            }
+
             var filter = getbinding(oldmethod.ParameterBinding, "Filter");
             var newFilter = getbinding(newMethodSetting.ParameterBinding, "Filters");
 
@@ -160,14 +160,14 @@ namespace Kooboo.Sites.Upgrade
             {
                 newFilter.Binding = filter.Binding;
             }
-            
+
             var pagesize = getbinding(oldmethod.ParameterBinding, "PageSize");
             var newPageSize = getbinding(newMethodSetting.ParameterBinding, "PageSize");
 
             if (pagesize != null && !string.IsNullOrEmpty(pagesize.Binding) && Lib.Helper.DataTypeHelper.IsInt(pagesize.Binding))
             {
                 newPageSize.Binding = pagesize.Binding;
-            } 
+            }
 
             var pagenumber = getbinding(oldmethod.ParameterBinding, "PageNumber");
             var newPageNumber = getbinding(newMethodSetting.ParameterBinding, "PageNumber");
@@ -176,23 +176,23 @@ namespace Kooboo.Sites.Upgrade
             {
                 newPageNumber.Binding = pagenumber.Binding;
             }
-  
-            var SortField = getbinding(oldmethod.ParameterBinding, "SortField");
+
+            var sortField = getbinding(oldmethod.ParameterBinding, "SortField");
             var newSortField = getbinding(newMethodSetting.ParameterBinding, "SortField");
 
-            if (SortField != null && !string.IsNullOrEmpty(SortField.Binding) && !SortField.Binding.Contains("{"))
+            if (sortField != null && !string.IsNullOrEmpty(sortField.Binding) && !sortField.Binding.Contains("{"))
             {
-                newSortField.Binding = SortField.Binding;
-            } 
+                newSortField.Binding = sortField.Binding;
+            }
 
-            var Ascending = getbinding(oldmethod.ParameterBinding, "IsAscending");
+            var ascending = getbinding(oldmethod.ParameterBinding, "IsAscending");
             var newAscending = getbinding(newMethodSetting.ParameterBinding, "IsAscending");
 
-            if (Ascending != null && !string.IsNullOrEmpty(Ascending.Binding) && Lib.Helper.DataTypeHelper.IsBool(Ascending.Binding))
+            if (ascending != null && !string.IsNullOrEmpty(ascending.Binding) && Lib.Helper.DataTypeHelper.IsBool(ascending.Binding))
             {
-                newAscending.Binding = Ascending.Binding;
+                newAscending.Binding = ascending.Binding;
             }
-          
+
             return newMethodSetting;
         }
 
@@ -201,17 +201,16 @@ namespace Kooboo.Sites.Upgrade
             var newmethod = Data.GlobalDb.DataMethodSettings.TableScan.Where(o => o.MethodName == "ByCategoryId" && o.DeclareType.Contains("ContentList")).FirstOrDefault();
 
             var newsetting = ConvertContentListPara(oldmethod, newmethod);
- 
-            var Id = getbinding(oldmethod.ParameterBinding, "Id");
+
+            var id = getbinding(oldmethod.ParameterBinding, "Id");
             var newId = getbinding(newsetting.ParameterBinding, "Id");
 
-            if (Id != null && !string.IsNullOrEmpty(Id.Binding))
+            if (id != null && !string.IsNullOrEmpty(id.Binding))
             {
-                newId.Binding = Id.Binding;
+                newId.Binding = id.Binding;
             }
-           
-            return newsetting;
 
+            return newsetting;
         }
 
         public DataMethodSetting ConvertListByCategoryKey(DataMethodSetting oldmethod)
@@ -226,7 +225,7 @@ namespace Kooboo.Sites.Upgrade
             if (key != null && !string.IsNullOrEmpty(key.Binding))
             {
                 newkey.Binding = key.Binding;
-            } 
+            }
             return newsetting;
         }
 

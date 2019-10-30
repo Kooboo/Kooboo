@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Kooboo.Sites.Render.Renderers.ExternalCache;
+using System;
 using System.Threading;
-using Kooboo.Sites.Render.Renderers.ExternalCache;
 
 namespace Kooboo.Sites.Render.Renderers
 {
@@ -24,11 +24,11 @@ namespace Kooboo.Sites.Render.Renderers
                     if (!string.IsNullOrWhiteSpace(item.name))
                     {
                         context.RenderContext.Response.Headers.Add("Content-Disposition", $"filename={System.Web.HttpUtility.UrlEncode(item.name)}");
-                    } 
+                    }
 
                     context.RenderContext.Response.Body = binary;
 
-                    context.RenderContext.Response.End = true; 
+                    context.RenderContext.Response.End = true;
                 }
             }
         }
@@ -56,7 +56,6 @@ namespace Kooboo.Sites.Render.Renderers
                 }
             }
             return null;
-
         }
 
         public static byte[] GetBinary(CacheObject item)
@@ -84,7 +83,6 @@ namespace Kooboo.Sites.Render.Renderers
             return null;
         }
 
-
         public static string AddNew(string fullurl, int interval)
         {
             CacheObject item = new CacheObject(fullurl, null, null, interval);
@@ -110,9 +108,9 @@ namespace Kooboo.Sites.Render.Renderers
             }
         }
 
-        public static void SaveBinaryDisk(CacheObject item, byte[] Binary)
+        public static void SaveBinaryDisk(CacheObject item, byte[] binary)
         {
-            if (Binary == null)
+            if (binary == null)
             {
                 return;
             }
@@ -124,17 +122,17 @@ namespace Kooboo.Sites.Render.Renderers
                 if (allbytes != null)
                 {
                     var oldhash = Lib.Security.Hash.ComputeGuid(allbytes);
-                    var newhash = Lib.Security.Hash.ComputeGuid(Binary);
+                    var newhash = Lib.Security.Hash.ComputeGuid(binary);
                     if (oldhash != newhash)
                     {
-                        System.IO.File.WriteAllBytes(binarypath, Binary);
+                        System.IO.File.WriteAllBytes(binarypath, binary);
                     }
                 }
             }
             else
             {
                 Lib.Helper.IOHelper.EnsureFileDirectoryExists(binarypath);
-                System.IO.File.WriteAllBytes(binarypath, Binary);
+                System.IO.File.WriteAllBytes(binarypath, binary);
             }
 
             item.Expiration = DateTime.Now.AddSeconds(item.interval);
@@ -173,8 +171,5 @@ namespace Kooboo.Sites.Render.Renderers
             var newThread = new Thread(work.DownloadAndSave);
             newThread.Start();
         }
-
     }
-
-
 }

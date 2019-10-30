@@ -1,11 +1,8 @@
 ﻿using Kooboo.Data.Context;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Sites.Render.RenderTask
 {
-
     public class ExternalCacheRenderTask : IRenderTask
     {
         private string Url { get; set; }
@@ -21,18 +18,17 @@ namespace Kooboo.Sites.Render.RenderTask
             }
         }
 
-        public ExternalCacheRenderTask(string Url, int interval)
+        public ExternalCacheRenderTask(string url, int interval)
         {
-            this.Url = Url;
+            this.Url = url;
             this.Interval = interval;
-            // Start the new thread to download... 
-            this.cacheid  =  Kooboo.Sites.Render.Renderers.ExternalCacheRender.AddNew(this.Url, interval);  
+            // Start the new thread to download...
+            this.cacheid = Kooboo.Sites.Render.Renderers.ExternalCacheRender.AddNew(this.Url, interval);
         }
-
 
         public string Render(RenderContext context)
         {
-            return "/__kb/" + "KExternalCache/" + this.cacheid; 
+            return "/__kb/" + "KExternalCache/" + this.cacheid;
         }
 
         public void AppendResult(RenderContext context, List<RenderResult> result)
@@ -40,8 +36,4 @@ namespace Kooboo.Sites.Render.RenderTask
             result.Add(new RenderResult() { Value = Render(context) });
         }
     }
-
-
-
-
 }

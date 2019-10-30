@@ -1,8 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Dom;
 using System;
 using System.Collections.Generic;
-using Kooboo.Dom;
 
 namespace Kooboo.Sites.Render.Components
 {
@@ -15,8 +15,9 @@ namespace Kooboo.Sites.Render.Components
         public string Engine { get; set; }
 
         public Dictionary<string, string> TagAttributes { get; set; }
+
         /// <summary>
-        /// The tag name of this component, in order to get the type to render the component. 
+        /// The tag name of this component, in order to get the type to render the component.
         /// </summary>
         public string TagName { get; set; }
 
@@ -25,43 +26,45 @@ namespace Kooboo.Sites.Render.Components
         public ComponentSetting()
         {
             Settings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            TagAttributes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); 
+            TagAttributes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
 
-        public static ComponentSetting LoadFromElement(Element ComponentElement)
+        public static ComponentSetting LoadFromElement(Element componentElement)
         {
-            ComponentSetting setting = new ComponentSetting();
-
-            setting.NameOrId = ComponentElement.id;
-            setting.TagName = ComponentElement.tagName;
-
-            setting.InnerHtml = ComponentElement.InnerHtml;
-
-            foreach (var item in ComponentElement.attributes)
+            ComponentSetting setting = new ComponentSetting
             {
-                if (item !=null && item.name.ToLower() == Kooboo.Sites.Render.Components.Constants.KoobooAttributeName)
+                NameOrId = componentElement.id,
+                TagName = componentElement.tagName,
+                InnerHtml = componentElement.InnerHtml
+            };
+
+
+
+            foreach (var item in componentElement.attributes)
+            {
+                if (item != null && item.name.ToLower() == Kooboo.Sites.Render.Components.Constants.KoobooAttributeName)
                 {
-                    setting.Engine = item.value!=null? item.value.ToLower():null; 
+                    setting.Engine = item.value?.ToLower();
                 }
-                setting.TagAttributes.Add(item.name, item.value); 
+
+                if (item != null) setting.TagAttributes.Add(item.name, item.value);
             }
-             
+
             if (string.IsNullOrEmpty(setting.TagName))
             {
                 return null;
-            } 
+            }
 
             if (string.IsNullOrWhiteSpace(setting.NameOrId) && string.IsNullOrWhiteSpace(setting.InnerHtml))
             {
                 return null;
             }
-              
-            foreach (var item in ComponentElement.childNodes.item)
+
+            foreach (var item in componentElement.childNodes.item)
             {
                 if (item.nodeType == enumNodeType.ELEMENT)
                 {
-                    Element child = item as Element;
-                    if (child == null)
+                    if (!(item is Element child))
                     {
                         continue;
                     }

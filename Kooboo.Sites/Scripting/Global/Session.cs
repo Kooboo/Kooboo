@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using System;
@@ -11,16 +11,16 @@ namespace Kooboo.Sites.Scripting.Global
 {
     public class Session : IDictionary<string, object>
     {
-        private object _locker = new object(); 
+        private object _locker = new object();
 
-        private RenderContext context { get; set; }
+        private RenderContext Context { get; set; }
 
-        public ICollection<string> Keys => SessionManager.Keys(getcookie());
+        public ICollection<string> Keys => SessionManager.Keys(Getcookie());
 
-        public ICollection<object> Values => SessionManager.Values(getcookie());
+        public ICollection<object> Values => SessionManager.Values(Getcookie());
 
         [Attributes.SummaryIgnore]
-        public int Count => SessionManager.Keys(getcookie()).Count();
+        public int Count => SessionManager.Keys(Getcookie()).Count();
 
         [Attributes.SummaryIgnore]
         public bool IsReadOnly => false;
@@ -30,23 +30,22 @@ namespace Kooboo.Sites.Scripting.Global
         {
             get
             {
-                return SessionManager.Get(getcookie(), key);
+                return SessionManager.Get(Getcookie(), key);
             }
             set
             {
-                SessionManager.Set(getcookie(), key, value);
+                SessionManager.Set(Getcookie(), key, value);
             }
         }
 
         public Session(RenderContext context)
         {
-            this.context = context;
+            this.Context = context;
         }
-
 
         private Guid _cookie;
 
-        private Guid getcookie()
+        private Guid Getcookie()
         {
             if (_cookie != default(Guid))
             {
@@ -55,16 +54,14 @@ namespace Kooboo.Sites.Scripting.Global
 
             lock (_locker)
             {
-
                 if (_cookie != default(Guid))
                 {
                     return _cookie;
                 }
 
-
-                if (this.context.Request.Cookies.ContainsKey("_kb_session_id"))
+                if (this.Context.Request.Cookies.ContainsKey("_kb_session_id"))
                 {
-                    var value = this.context.Request.Cookies["_kb_session_id"];
+                    var value = this.Context.Request.Cookies["_kb_session_id"];
                     if (!string.IsNullOrEmpty(value))
                     {
                         Guid.TryParse(value, out _cookie);
@@ -76,7 +73,7 @@ namespace Kooboo.Sites.Scripting.Global
                     _cookie = Guid.NewGuid();
                 }
 
-                this.context.Response.AddCookie(new System.Net.Cookie() { Name = "_kb_session_id", Value = _cookie.ToString(), Expires = DateTime.Now.AddMinutes(30) });
+                this.Context.Response.AddCookie(new System.Net.Cookie() { Name = "_kb_session_id", Value = _cookie.ToString(), Expires = DateTime.Now.AddMinutes(30) });
 
                 return _cookie;
             }
@@ -84,13 +81,13 @@ namespace Kooboo.Sites.Scripting.Global
 
         public void set(string key, object value)
         {
-            var id = getcookie();
+            var id = Getcookie();
             SessionManager.Set(id, key, value);
         }
 
         public object get(string key)
         {
-            var id = getcookie();
+            var id = Getcookie();
             return SessionManager.Get(id, key);
         }
 
@@ -99,12 +96,12 @@ namespace Kooboo.Sites.Scripting.Global
         {
             return Contains(key);
         }
+
         public bool Contains(string key)
         {
-            var value = SessionManager.Get(getcookie(), key);
+            var value = SessionManager.Get(Getcookie(), key);
             return value != null;
         }
-
 
         [Attributes.SummaryIgnore]
         public void Add(string key, object value)
@@ -114,7 +111,7 @@ namespace Kooboo.Sites.Scripting.Global
 
         public bool Remove(string key)
         {
-            SessionManager.Remove(getcookie(), key);
+            SessionManager.Remove(Getcookie(), key);
             return true;
         }
 
@@ -130,10 +127,9 @@ namespace Kooboo.Sites.Scripting.Global
             throw new NotImplementedException();
         }
 
-
         public void Clear()
         {
-            SessionManager.Clear(getcookie());
+            SessionManager.Clear(Getcookie());
         }
 
         [Attributes.SummaryIgnore]
@@ -157,18 +153,19 @@ namespace Kooboo.Sites.Scripting.Global
         [Attributes.SummaryIgnore]
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
-            return SessionManager.All(getcookie()).GetEnumerator();
+            return SessionManager.All(Getcookie()).GetEnumerator();
         }
+
         [Attributes.SummaryIgnore]
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return SessionManager.All(getcookie()).GetEnumerator();
+            return SessionManager.All(Getcookie()).GetEnumerator();
         }
     }
 
     public static class SessionManager
     {
-        //TODO: this session needs to check for removal every 30 minutes. 
+        //TODO: this session needs to check for removal every 30 minutes.
         private static object _lock = new object();
 
         private static Dictionary<Guid, SessionData> data = new Dictionary<Guid, SessionData>();
@@ -188,7 +185,6 @@ namespace Kooboo.Sites.Scripting.Global
             }
             return null;
         }
-
 
         public static void Remove(Guid cookieid, string key)
         {
@@ -269,7 +265,6 @@ namespace Kooboo.Sites.Scripting.Global
             var existing = data[cookie];
 
             existing.LastModified = DateTime.Now;
-  
 
             if (existing.Values.Count() <= 50)
             {
@@ -296,13 +291,14 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-        private static DateTime lastcheck { get; set; } = DateTime.Now;
+        private static DateTime Lastcheck { get; set; } = DateTime.Now;
         private static object _cleanlock = new object();
+
         internal static void CheckClean()
         {
-            if (lastcheck < DateTime.Now.AddMinutes(-60))
+            if (Lastcheck < DateTime.Now.AddMinutes(-60))
             {
-                lastcheck = DateTime.Now;
+                Lastcheck = DateTime.Now;
                 Task.Factory.StartNew(CleanUp);
             }
         }
@@ -314,18 +310,10 @@ namespace Kooboo.Sites.Scripting.Global
 
         public Dictionary<string, object> Values
         {
-            get
-            {
-                if (_values == null)
-                {
-                    _values = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _values;
-            }
+            get { return _values ?? (_values = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)); }
             set { _values = value; }
         }
 
         public DateTime LastModified { get; set; }
-
     }
 }

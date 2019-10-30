@@ -30,9 +30,9 @@ namespace Kooboo.Sites.DataSources
         }
 
         [Kooboo.Attributes.RequireFolder]
-        public TextContentViewModel ByUserKey(string UserKey)
+        public TextContentViewModel ByUserKey(string userKey)
         {
-            Guid id = Lib.Security.Hash.ComputeGuidIgnoreCase(UserKey);
+            Guid id = Lib.Security.Hash.ComputeGuidIgnoreCase(userKey);
             return ById(id);
         }
     }

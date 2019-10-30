@@ -1,16 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Service.Font;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.ViewModel;
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.Models;
-using Kooboo.Extensions;
 
 namespace Kooboo.Sites.Service
 {
@@ -34,7 +28,7 @@ namespace Kooboo.Sites.Service
         //    {
         //        AllIds = SiteDb.Pages.GetRelatedOwnerObjectIds(PageId);
         //        var all = SiteDb.CssDeclarations.Query.Where(o => SearchFontDeclaration(o.PropertyNameHash)).SelectAll();
-        //        AllDeclarations = all.Where(o => AllIds.Contains(o.OwnerObjectId)).ToList(); 
+        //        AllDeclarations = all.Where(o => AllIds.Contains(o.OwnerObjectId)).ToList();
         //        AllRules = SiteDb.CssRules.Query.WhereIn<Guid>(o => o.OwnerObjectId, AllIds).SelectAll();
         //    }
 
@@ -82,8 +76,8 @@ namespace Kooboo.Sites.Service
         //                decl.OwnerConstType = rule.OwnerObjectConstType;
         //                decl.OwnerObjectId = rule.OwnerObjectId;
         //                result.Add(decl);
-        //            } 
-        //        } 
+        //            }
+        //        }
         //    }
 
         //    return result;
@@ -94,11 +88,10 @@ namespace Kooboo.Sites.Service
             return (propertyhash == FontFamilyHash || propertyhash == FontHash);
         }
 
-
-        public static LongFont ParseFont(string ShortHandFont)
+        public static LongFont ParseFont(string shortHandFont)
         {
             LongFont result = new LongFont();
-            var tokenizer = new FontTokenizer(ShortHandFont);
+            var tokenizer = new FontTokenizer(shortHandFont);
             string token = tokenizer.ConsumeNextTrim();
 
             var trylist = TryList;
@@ -131,7 +124,7 @@ namespace Kooboo.Sites.Service
                     break;
                 }
 
-                nextloop:
+            nextloop:
                 {
                     continue;
                 }
@@ -156,18 +149,21 @@ namespace Kooboo.Sites.Service
                         font.FontStretch = value;
                     }
                     break;
+
                 case TryState.Style:
                     if (font.FontStyle == "normal")
                     {
                         font.FontStyle = value;
                     }
                     break;
+
                 case TryState.Variant:
                     if (font.FontVariant == "normal")
                     {
                         font.FontVariant = value;
                     }
                     break;
+
                 case TryState.Weight:
                     {
                         if (font.FontWeight == "normal")
@@ -176,6 +172,7 @@ namespace Kooboo.Sites.Service
                         }
                     }
                     break;
+
                 case TryState.FontSize:
                     {
                         if (font.FontSize == "medium")
@@ -184,17 +181,16 @@ namespace Kooboo.Sites.Service
                         }
                     }
                     break;
+
                 default:
                     break;
             }
-
-
         }
 
         private static string TryStyle(string input)
         {
-            //The ‘font-style’ property allows italic or oblique faces to be selected. 
-            ///Name: font - style //Value: normal | italic | oblique 
+            //The ‘font-style’ property allows italic or oblique faces to be selected.
+            //Name: font - style //Value: normal | italic | oblique
             var lower = input.ToLower();
             if (lower == "normal" || lower == "italic" || lower == "oblique")
             {
@@ -205,13 +201,13 @@ namespace Kooboo.Sites.Service
 
         private static string TryVariant(string input)
         {
-            // 15.5 Small - caps: the 'font-variant' property 
+            // 15.5 Small - caps: the 'font-variant' property
             //'font-variant'
             //Value: normal | small-caps | inherit
             //Initial: normal
             //Applies to: all elements
             //Inherited: yes
-            //Percentages:N/A  
+            //Percentages:N/A
             string lower = input.ToLower();
             if (lower == "normal" || lower == "small-caps")
             {
@@ -223,7 +219,7 @@ namespace Kooboo.Sites.Service
         private static string TryWeight(string input)
         {
             //'font-weight' is matched next, it will never fail. (See 'font-weight' below.)
-            // TODO: check what is the meanning of "it will never fail". 
+            // TODO: check what is the meanning of "it will never fail".
             //	normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 |
             if (input == "100" || input == "200" || input == "300" || input == "400" || input == "500" || input == "600" || input == "700" || input == "800" || input == "900")
             {
@@ -237,7 +233,6 @@ namespace Kooboo.Sites.Service
             }
 
             return null;
-
         }
 
         private static string TryFontSize(string input)
@@ -246,7 +241,7 @@ namespace Kooboo.Sites.Service
             //Value:  < absolute - size > | < relative - size > | < length > | < percentage >
 
             char first = input[0];
-            // length or percentage... 
+            // length or percentage...
             if (CharHelper.isAsciiDigit(first))
             {
                 return input;
@@ -262,16 +257,16 @@ namespace Kooboo.Sites.Service
                 return input;
             }
 
-            int SlashIndex = -1;
-            SlashIndex = input.IndexOf("/");
-            if (SlashIndex == -1)
+            int slashIndex = -1;
+            slashIndex = input.IndexOf("/");
+            if (slashIndex == -1)
             {
-                SlashIndex = input.IndexOf("/");
+                slashIndex = input.IndexOf("/");
             }
 
-            if (SlashIndex > -1)
+            if (slashIndex > -1)
             {
-                string fontsizevalue = input.Substring(0, SlashIndex);
+                string fontsizevalue = input.Substring(0, slashIndex);
                 string back = TryFontSize(fontsizevalue);
                 if (!string.IsNullOrEmpty(back))
                 {
@@ -284,7 +279,7 @@ namespace Kooboo.Sites.Service
 
         private static string TryStretch(string input)
         {
-            ///Name: font - stretch Value: normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded 
+            //Name: font - stretch Value: normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded
             var lower = input.ToLower();
             // if (lower == "normal" || lower == "ultra-condensed" || lower == "extra-condensed" || lower == "condensed")
             if (lower == "ultra-condensed" || lower == "extra-condensed" || lower == "condensed")
@@ -295,22 +290,24 @@ namespace Kooboo.Sites.Service
         }
 
         private static List<StateTry> _trylist;
+
         private static List<StateTry> TryList
         {
             get
             {
                 if (_trylist == null)
                 {
-                    _trylist = new List<StateTry>();
-                    _trylist.Add(new StateTry { State = TryState.Stretch, Method = FontService.TryStretch });
-                    _trylist.Add(new StateTry { State = TryState.Style, Method = FontService.TryStyle });
-                    _trylist.Add(new StateTry { State = TryState.Variant, Method = FontService.TryVariant });
-                    _trylist.Add(new StateTry { State = TryState.Weight, Method = FontService.TryWeight });
-                    _trylist.Add(new StateTry { State = TryState.FontSize, Method = FontService.TryFontSize });
+                    _trylist = new List<StateTry>
+                    {
+                        new StateTry {State = TryState.Stretch, Method = FontService.TryStretch},
+                        new StateTry {State = TryState.Style, Method = FontService.TryStyle},
+                        new StateTry {State = TryState.Variant, Method = FontService.TryVariant},
+                        new StateTry {State = TryState.Weight, Method = FontService.TryWeight},
+                        new StateTry {State = TryState.FontSize, Method = FontService.TryFontSize}
+                    };
                 }
                 return _trylist;
             }
-
         }
 
         private class StateTry
@@ -318,8 +315,6 @@ namespace Kooboo.Sites.Service
             public TryState State { get; set; }
 
             public Func<string, string> Method { get; set; }
-
-
         }
 
         public enum TryState
@@ -330,18 +325,13 @@ namespace Kooboo.Sites.Service
             Weight = 4,
             FontSize = 5
         }
-
     }
-
 }
-
 
 namespace Kooboo.Sites.Service.Font
 {
-
     public class LongFont
     {
-
         public string FontStyle { get; set; } = "normal";
         public string FontVariant { get; set; } = "normal";
         public string FontWeight { get; set; } = "normal";
@@ -350,6 +340,7 @@ namespace Kooboo.Sites.Service.Font
         public string LineHeight { get; set; } = "normal";
 
         private string _fontfamily;
+
         public string FontFamily
         {
             get
@@ -393,27 +384,26 @@ namespace Kooboo.Sites.Service.Font
         //font-weight: normal
         //font-stretch: normal
         //font-size: medium
-        //line-height: normal 
-
+        //line-height: normal
     }
 
     public class FontTokenizer
     {
-        private string _value { get; set; }
-        private int index { get; set; }
-        private int len { get; set; }
-        List<char> _buffer = new List<char>();
+        private string Value { get; set; }
+        private int Index { get; set; }
+        private int Len { get; set; }
+        private List<char> _buffer = new List<char>();
 
         private bool IsEof { get; set; }
 
-        public FontTokenizer(string PropertyValue)
+        public FontTokenizer(string propertyValue)
         {
-            this._value = PropertyValue;
-            this.index = 0;
-            this.len = PropertyValue.Length;
-            if (string.IsNullOrEmpty(PropertyValue))
+            this.Value = propertyValue;
+            this.Index = 0;
+            this.Len = propertyValue.Length;
+            if (string.IsNullOrEmpty(propertyValue))
             {
-                this.len = -1;
+                this.Len = -1;
             }
         }
 
@@ -424,9 +414,9 @@ namespace Kooboo.Sites.Service.Font
                 return null;
             }
 
-            for (int i = index; i < len; i++)
+            for (int i = Index; i < Len; i++)
             {
-                var currentchar = _value[i];
+                var currentchar = Value[i];
 
                 if (currentchar == ';')
                 {
@@ -443,18 +433,18 @@ namespace Kooboo.Sites.Service.Font
 
                 if (currentchar == '\'' || currentchar == '"')
                 {
-                    if (_buffer.Count() > 0)
+                    if (_buffer.Any())
                     {
                         string value = new string(_buffer.ToArray());
                         _buffer.Clear();
-                        this.index = i;
+                        this.Index = i;
                         return value;
                     }
                     int nextend = -1;
 
-                    for (int j = i + 1; j < len; j++)
+                    for (int j = i + 1; j < Len; j++)
                     {
-                        if (_value[j] == currentchar)
+                        if (Value[j] == currentchar)
                         {
                             nextend = j;
                             break;
@@ -462,22 +452,21 @@ namespace Kooboo.Sites.Service.Font
                     }
                     if (nextend > -1)
                     {
-                        string nextpart = _value.Substring(i, nextend - i + 1);
-                        this.index = nextend + 1;
+                        string nextpart = Value.Substring(i, nextend - i + 1);
+                        this.Index = nextend + 1;
                         return nextpart;
                     }
                     else
                     {
-                        string AllToEnd = _value.Substring(i);
+                        string allToEnd = Value.Substring(i);
                         this.IsEof = true;
-                        return AllToEnd;
+                        return allToEnd;
                     }
                 }
-
                 else if (CharHelper.isSpaceCharacters(currentchar) || currentchar == ',')
                 {
-                    this.index = i + 1;
-                    if (_buffer.Count() > 0)
+                    this.Index = i + 1;
+                    if (_buffer.Any())
                     {
                         string output = new string(_buffer.ToArray());
                         _buffer.Clear();
@@ -494,7 +483,7 @@ namespace Kooboo.Sites.Service.Font
                 }
             }
             this.IsEof = true;
-            if (_buffer.Count() > 0)
+            if (_buffer.Any())
             {
                 return new string(_buffer.ToArray());
             }
@@ -503,19 +492,8 @@ namespace Kooboo.Sites.Service.Font
 
         public string ConsumeNextTrim()
         {
-            var next = this.ConsumeNext(); 
-            if (string.IsNullOrEmpty(next))
-            {
-                return null; 
-            }
-            else
-            {
-                return next.Trim(); 
-            }
+            var next = this.ConsumeNext();
+            return string.IsNullOrEmpty(next) ? null : next.Trim();
         }
     }
-
 }
-
-
-

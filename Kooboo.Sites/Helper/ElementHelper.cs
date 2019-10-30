@@ -92,7 +92,7 @@ namespace Kooboo.Sites.Helper
 
         public static string GetSiblingElementsSimple(Element element, bool before = true)
         {
-            string SiblingString = string.Empty;
+            string siblingString = string.Empty;
             List<Element> siblings = new List<Element>();
             var parent = element.parentElement;
             if (parent == null || parent.tagName == "html")
@@ -100,14 +100,7 @@ namespace Kooboo.Sites.Helper
                 return null;
             }
             List<Node> nodelist;
-            if (before)
-            {
-                nodelist = parent.childNodes.item.Where(o => o.siblingIndex < element.siblingIndex).ToList();
-            }
-            else
-            {
-                nodelist = parent.childNodes.item.Where(o => o.siblingIndex > element.siblingIndex).ToList();
-            }
+            nodelist = before ? parent.childNodes.item.Where(o => o.siblingIndex < element.siblingIndex).ToList() : parent.childNodes.item.Where(o => o.siblingIndex > element.siblingIndex).ToList();
 
             if (nodelist != null)
             {
@@ -126,15 +119,15 @@ namespace Kooboo.Sites.Helper
                 // for more strict one, this should include attributes.
                 if (before)
                 {
-                    SiblingString += item.tagName + item.id;
+                    siblingString += item.tagName + item.id;
                 }
                 else
                 {
-                    SiblingString += item.OuterHtml;
+                    siblingString += item.OuterHtml;
                 }
             }
 
-            return SiblingString;
+            return siblingString;
         }
 
         public static Element FindSameElement(Element sourceElement, Document TargetDom)
@@ -146,7 +139,7 @@ namespace Kooboo.Sites.Helper
 
             var targets = FindElementsByDepth(TargetDom, sourceElement.depth);
 
-            if (targets.Count() == 0)
+            if (targets.Count == 0)
             {
                 return null;
             }
@@ -156,7 +149,7 @@ namespace Kooboo.Sites.Helper
 
             var sameparent = targets.Where(o => GetParentPath(o) == parentpath).ToList();
 
-            if (sameparent == null || sameparent.Count() == 0)
+            if (sameparent == null || sameparent.Count == 0)
             {
                 return null;
             }
@@ -169,8 +162,8 @@ namespace Kooboo.Sites.Helper
             foreach (var item in sameinner)
             {
                 //check for sample front sibling.
-                var ItemSibling = GetSiblingElementsSimple(item);
-                if (ItemSibling == siblingpath)
+                var itemSibling = GetSiblingElementsSimple(item);
+                if (itemSibling == siblingpath)
                 {
                     return item;
                 }
@@ -179,8 +172,8 @@ namespace Kooboo.Sites.Helper
             siblingpath = GetSiblingElementsSimple(sourceElement, false);
             foreach (var item in sameinner)
             {
-                var ItemSibling = GetSiblingElementsSimple(item, false);
-                if (ItemSibling == siblingpath)
+                var itemSibling = GetSiblingElementsSimple(item, false);
+                if (itemSibling == siblingpath)
                 {
                     return item;
                 }
@@ -201,9 +194,7 @@ namespace Kooboo.Sites.Helper
         {
             if (topEl.nodeType == enumNodeType.ELEMENT)
             {
-                var el = topEl as Element;
-
-                if (el.depth == depth)
+                if (topEl is Element el && el.depth == depth)
                 {
                     col.Add(el);
                 }
@@ -222,7 +213,7 @@ namespace Kooboo.Sites.Helper
             //should remove all space between elements.
             var exactmatch = targets.Where(o => o.InnerHtml == el.InnerHtml).ToList();
 
-            if (exactmatch != null && exactmatch.Count() > 0)
+            if (exactmatch != null && exactmatch.Any())
             {
                 return exactmatch;
             }
@@ -230,7 +221,7 @@ namespace Kooboo.Sites.Helper
             var elsub = GetSubElementPath(el);
             var left = targets.Where(o => GetSubElementPath(o) == elsub).ToList();
 
-            if (left != null && left.Count() > 0)
+            if (left != null && left.Any())
             {
                 //try to check without space..
                 string nonspace = RemoveSpace(el.InnerHtml);

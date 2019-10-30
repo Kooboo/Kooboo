@@ -1,20 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using Kooboo.Sites.DataSources;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Upgrade
 {
     public class SiteContentDataSourceUpgrade : IWebSiteUpgrade
     {
-
         public System.Version LowerVersion
         {
             get
@@ -29,7 +25,7 @@ namespace Kooboo.Sites.Upgrade
             {
                 return new System.Version("0.4.0.0");
             }
-        } 
+        }
 
         public void Do(WebSite site)
         {
@@ -48,7 +44,7 @@ namespace Kooboo.Sites.Upgrade
                         sitedb.DataMethodSettings.AddOrUpdate(newMethod);
                         var viewmethods = sitedb.ViewDataMethods.Query.Where(o => o.MethodId == method.Id).SelectAll();
 
-                        if (viewmethods == null || viewmethods.Count() == 0)
+                        if (viewmethods == null || viewmethods.Count == 0)
                         {
                             sitedb.DataMethodSettings.Delete(method.Id);
                         }
@@ -58,12 +54,12 @@ namespace Kooboo.Sites.Upgrade
                             {
                                 viewmethod.MethodId = newMethod.Id;
                                 sitedb.ViewDataMethods.AddOrUpdate(viewmethod);
-                            } 
+                            }
                             sitedb.DataMethodSettings.Delete(method.Id);
                         }
                     }
                 }
-            } 
+            }
         }
 
         public DataMethodSetting UpdateToNewMethod(SiteDb sitedb, DataMethodSetting oldmethod)
@@ -91,7 +87,6 @@ namespace Kooboo.Sites.Upgrade
             }
 
             return newMethod;
-
         }
 
         public DataMethodSetting ConvertGetById(DataMethodSetting oldmethod)
@@ -109,7 +104,6 @@ namespace Kooboo.Sites.Upgrade
             {
                 newbindingfolderid.Binding = bindingFolderid.Binding;
             }
-             
 
             return newseting;
         }
@@ -148,16 +142,14 @@ namespace Kooboo.Sites.Upgrade
 
             newbinding.Binding = binding.Binding;
 
-
             var bindingFolderid = getbinding(oldmethod.ParameterBinding, "FolderId");
             var newbindingfolderid = getbinding(newseting.ParameterBinding, "FolderId");
             if (bindingFolderid != null && Lib.Helper.DataTypeHelper.IsGuid(bindingFolderid.Binding))
             {
                 newbindingfolderid.Binding = bindingFolderid.Binding;
-            } 
+            }
 
             return newseting;
-
         }
 
         public DataMethodSetting ConvertList(DataMethodSetting oldmethod)
@@ -202,20 +194,20 @@ namespace Kooboo.Sites.Upgrade
                 newPageNumber.Binding = pagenumber.Binding;
             }
 
-            var SortField = getbinding(oldmethod.ParameterBinding, "SortField");
+            var sortField = getbinding(oldmethod.ParameterBinding, "SortField");
             var newSortField = getbinding(newMethodSetting.ParameterBinding, "SortField");
 
-            if (SortField != null && !string.IsNullOrEmpty(SortField.Binding) && !SortField.Binding.Contains("{"))
+            if (sortField != null && !string.IsNullOrEmpty(sortField.Binding) && !sortField.Binding.Contains("{"))
             {
-                newSortField.Binding = SortField.Binding;
+                newSortField.Binding = sortField.Binding;
             }
 
-            var Ascending = getbinding(oldmethod.ParameterBinding, "IsAscending");
+            var ascending = getbinding(oldmethod.ParameterBinding, "IsAscending");
             var newAscending = getbinding(newMethodSetting.ParameterBinding, "IsAscending");
 
-            if (Ascending != null && !string.IsNullOrEmpty(Ascending.Binding) && Lib.Helper.DataTypeHelper.IsBool(Ascending.Binding))
+            if (ascending != null && !string.IsNullOrEmpty(ascending.Binding) && Lib.Helper.DataTypeHelper.IsBool(ascending.Binding))
             {
-                newAscending.Binding = Ascending.Binding;
+                newAscending.Binding = ascending.Binding;
             }
 
             return newMethodSetting;
@@ -236,7 +228,6 @@ namespace Kooboo.Sites.Upgrade
             }
 
             return newsetting;
-
         }
 
         public DataMethodSetting ConvertListByCategoryKey(DataMethodSetting oldmethod)
@@ -280,6 +271,5 @@ namespace Kooboo.Sites.Upgrade
 
             return null;
         }
-         
-    } 
+    }
 }

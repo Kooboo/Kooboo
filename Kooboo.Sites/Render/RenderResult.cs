@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 
@@ -9,19 +9,22 @@ namespace Kooboo.Sites.Render
         // this is to make it possible for header binding that bind later at the end...
         public Func<string> RenderString { get; set; }
 
-        private string _value; 
-        public string Value {
-            get {
+        private string _value;
+
+        public string Value
+        {
+            get
+            {
                 if (_value == null)
                 {
                     if (this.RenderString != null)
                     {
-                        _value = this.RenderString(); 
-                    } 
+                        _value = this.RenderString();
+                    }
                 }
-                return _value; 
+                return _value;
             }
-            set { _value = value;  }
+            set { _value = value; }
         }
 
         public bool ClearBefore { get; set; }
@@ -29,9 +32,10 @@ namespace Kooboo.Sites.Render
         public byte[] Bytes { get; set; }
 
         private int _len;
+
         public int Len
         {
-           get
+            get
             {
                 if (_len == 0)
                 {
@@ -55,7 +59,6 @@ namespace Kooboo.Sites.Render
                             _len = this.Bytes.Length;
                         }
                     }
-
                 }
                 return _len;
             }

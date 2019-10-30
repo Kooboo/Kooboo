@@ -1,8 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Interface;
 using System;
 using System.Collections.Generic;
-using Kooboo.Data.Interface;
 
 namespace Kooboo.Sites.Models
 {
@@ -15,10 +15,11 @@ namespace Kooboo.Sites.Models
     {
         public Form()
         {
-            this.ConstType = ConstObjectType.Form; 
+            this.ConstType = ConstObjectType.Form;
         }
 
         private string _body;
+
         public string Body
         {
             get
@@ -35,23 +36,16 @@ namespace Kooboo.Sites.Models
         public string Engine { get; set; }
 
         public string Style { get; set; }
-  
+
         private Guid _id;
+
         public override Guid Id
         {
             get
-            { 
+            {
                 if (_id == default(Guid))
-                { 
-
-                    if (this.OwnerObjectId != default(Guid))
-                    {
-                        _id = Kooboo.Data.IDGenerator.GetFormId(this.OwnerObjectId, this.KoobooId);
-                    }
-                    else
-                    {
-                        _id = Kooboo.Data.IDGenerator.Generate(this.Name, this.ConstType);  
-                    } 
+                {
+                    _id = this.OwnerObjectId != default(Guid) ? Kooboo.Data.IDGenerator.GetFormId(this.OwnerObjectId, this.KoobooId) : Kooboo.Data.IDGenerator.Generate(this.Name, this.ConstType);
                 }
                 return _id;
             }
@@ -61,24 +55,19 @@ namespace Kooboo.Sites.Models
             }
         }
 
+        private Dictionary<string, string> _attributes;
 
-        private Dictionary<string, string> _attributes; 
-        public Dictionary<string, string> Attributes {
-            get {
-               if (_attributes == null)
-                {
-                    _attributes = new Dictionary<string, string>(); 
-                }
-                return _attributes; 
-            }
-            set {
-                _attributes = value; 
+        public Dictionary<string, string> Attributes
+        {
+            get { return _attributes ?? (_attributes = new Dictionary<string, string>()); }
+            set
+            {
+                _attributes = value;
             }
         }
-     
 
         /// <summary>
-        /// the Action method, HTTP Post or Http Get. 
+        /// the Action method, HTTP Post or Http Get.
         /// </summary>
         public string Method { get; set; }
 
@@ -97,7 +86,7 @@ namespace Kooboo.Sites.Models
         public string FailedCallBack { get; set; }
 
         /// <summary>
-        /// The Kooboo Id attribute of this Dom Element. 
+        /// The Kooboo Id attribute of this Dom Element.
         /// </summary>
         public string KoobooId { get; set; }
 
@@ -107,7 +96,7 @@ namespace Kooboo.Sites.Models
         public string KoobooOpenTag { get; set; }
 
         /// <summary>
-        /// The constobjecttype, can be like page, layout or view. 
+        /// The constobjecttype, can be like page, layout or view.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public byte OwnerConstType { get; set; }
@@ -120,6 +109,7 @@ namespace Kooboo.Sites.Models
         }
 
         private int _bodyhash;
+
         [Kooboo.Attributes.SummaryIgnore]
         public int BodyHash
         {
@@ -130,7 +120,7 @@ namespace Kooboo.Sites.Models
                     _bodyhash = Lib.Security.Hash.ComputeIntCaseSensitive(Body);
                 }
                 return _bodyhash;
-            } 
+            }
             set
             {
                 _bodyhash = value;
@@ -148,18 +138,14 @@ namespace Kooboo.Sites.Models
             get { return "form"; }
         }
 
-        private Dictionary<string, string> _setting; 
-        public Dictionary<string, string> Setting {
-            get {
-                if (_setting== null)
-                {
-                    _setting = new Dictionary<string, string>(); 
-                }
-                return _setting;  
-            }
+        private Dictionary<string, string> _setting;
+
+        public Dictionary<string, string> Setting
+        {
+            get { return _setting ?? (_setting = new Dictionary<string, string>()); }
             set
             {
-                _setting = value; 
+                _setting = value;
             }
         }
 
@@ -178,7 +164,7 @@ namespace Kooboo.Sites.Models
         {
             string unique = this.Body + this.FormSubmitter + this.Method + this.RedirectUrl + this.AllowAjax.ToString() + this.FailedCallBack + this.SuccessCallBack + this.IsEmbedded.ToString();
 
-            if (_setting !=null)
+            if (_setting != null)
             {
                 foreach (var item in Setting)
                 {
@@ -186,24 +172,24 @@ namespace Kooboo.Sites.Models
                 }
             }
 
-            if (_attributes !=null)
+            if (_attributes != null)
             {
                 foreach (var item in Attributes)
                 {
                     unique += item.Key + item.Value;
                 }
-            } 
+            }
 
-            unique += this.Fields + this.Style; 
+            unique += this.Fields + this.Style;
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
 
         public FormType FormType { get; set; }
     }
-     
+
     public enum FormType
     {
         Normal = 0,
-        KoobooForm =1
+        KoobooForm = 1
     }
 }

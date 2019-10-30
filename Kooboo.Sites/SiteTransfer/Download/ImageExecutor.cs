@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Models;
@@ -29,7 +29,7 @@ namespace Kooboo.Sites.SiteTransfer.Download
             else
             {
                 this.Manager.AddRetry(this.DownloadTask);
-            }  
+            }
         }
 
         public void AddDownload(byte[] bytes)
@@ -38,8 +38,8 @@ namespace Kooboo.Sites.SiteTransfer.Download
             {
                 return;
             }
-            Image koobooimage = new Image();
-            koobooimage.Name = UrlHelper.FileName(this.DownloadTask.RelativeUrl);
+
+            Image koobooimage = new Image {Name = UrlHelper.FileName(this.DownloadTask.RelativeUrl)};
             koobooimage.Extension = UrlHelper.FileExtension(koobooimage.Name);
 
             koobooimage.ContentBytes = bytes;

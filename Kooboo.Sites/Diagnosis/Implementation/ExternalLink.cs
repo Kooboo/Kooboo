@@ -67,7 +67,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                     session.AddMessage(header, message, MessageType.Critical);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 try
                 {

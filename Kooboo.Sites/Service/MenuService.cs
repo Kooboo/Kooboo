@@ -1,24 +1,23 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Models;
+using Kooboo.Dom;
+using Kooboo.Sites.Helper;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Data.Models;
-using Kooboo.Sites.Models;
-using Kooboo.Dom;
-using Kooboo.Sites.ViewModel;
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.Helper; 
 
 namespace Kooboo.Sites.Service
 {
     public class MenuService
     {
-
         public static RawMenu FindRawMenu(Element element)
         {
             var alllinks = element.getElementsByTagName("a").item;
-            if (alllinks != null && alllinks.Count() > 0)
+            if (alllinks != null && alllinks.Any())
             {
                 var groupby = SimpleGroupBy(alllinks);
 
@@ -30,76 +29,77 @@ namespace Kooboo.Sites.Service
             return null;
         }
 
-        internal static List<List<Element>> SimpleGroupBy(List<Element> LinkElements)
+        internal static List<List<Element>> SimpleGroupBy(List<Element> linkElements)
         {
-            Func<List<Element>, int> GetFirstLocation = (elements) =>
+            Func<List<Element>, int> getFirstLocation = (elements) =>
             {
                 int result = int.MaxValue;
                 foreach (var item in elements)
                 {
                     if (item.location.openTokenStartIndex < result)
                     {
-                        result = item.location.openTokenStartIndex; 
+                        result = item.location.openTokenStartIndex;
                     }
                 }
                 return result;
-            }; 
+            };
 
-            var groupby = LinkElements.GroupBy(o => DomService.getParentPath(o));
-            
-            List<List<Element>> sortedlist = new List<List<Element>>(); 
+            var groupby = linkElements.GroupBy(o => DomService.getParentPath(o));
 
-            foreach (var item in groupby.OrderBy(o => GetFirstLocation(o.ToList())))
+            List<List<Element>> sortedlist = new List<List<Element>>();
+
+            foreach (var item in groupby.OrderBy(o => getFirstLocation(o.ToList())))
             {
-                sortedlist.Add(item.ToList()); 
-            } 
-            return sortedlist; 
+                sortedlist.Add(item.ToList());
+            }
+            return sortedlist;
         }
 
-        public static void AssignSubMenu(List<Element> Links, RawMenu ParentMenu)
+        public static void AssignSubMenu(List<Element> links, RawMenu parentMenu)
         {
-            var commonparent = DomService.FindParent(Links);
+            var commonparent = DomService.FindParent(links);
 
-            foreach (var item in Links)
+            foreach (var item in links)
             {
-                var menu = new RawMenu();
-                menu.Parent = ParentMenu;
-                menu.LinkElement = item;
-                menu.ContainerElement = FindLinkContainer(item, Links, commonparent);
-                menu.Parent = ParentMenu;
-                ParentMenu.Children.Add(menu);
+                var menu = new RawMenu
+                {
+                    Parent = parentMenu,
+                    LinkElement = item,
+                    ContainerElement = FindLinkContainer(item, links, commonparent)
+                };
+                menu.Parent = parentMenu;
+                parentMenu.Children.Add(menu);
             }
 
-            foreach (var item in ParentMenu.Children)
+            foreach (var item in parentMenu.Children)
             {
                 var sublinks = FindSubLinks(item);
-                if (sublinks != null && sublinks.Count() > 0)
+                if (sublinks != null && sublinks.Any())
                 {
-                    var itemcontainer = DomService.FindParent(sublinks);
+                    DomService.FindParent(sublinks);
                     AssignSubMenu(sublinks, item);
                 }
             }
-            return;
         }
 
         public static List<Element> FindSubLinks(RawMenu menu)
         {
-            var Sublinks = GetDirectSubLinks(menu.LinkElement, menu.ContainerElement);
-            if (Sublinks != null && Sublinks.Count() > 0)
+            var sublinks = GetDirectSubLinks(menu.LinkElement, menu.ContainerElement);
+            if (sublinks != null && sublinks.Any())
             {
-                return Sublinks;
+                return sublinks;
             }
 
             return GetSiblingSubLinks(menu.ContainerElement, menu.NextContainer());
         }
 
-        internal static List<Element> GetDirectSubLinks(Element LinkElement, Element Container)
+        internal static List<Element> GetDirectSubLinks(Element linkElement, Element container)
         {
-            var alllinks = Container.getElementsByTagName("a").item;
+            var alllinks = container.getElementsByTagName("a").item;
 
-            alllinks.Remove(LinkElement);
+            alllinks.Remove(linkElement);
 
-            if (alllinks.Count() > 0)
+            if (alllinks.Any())
             {
                 var groupby = GroupBy(alllinks);
                 return groupby[0];
@@ -107,72 +107,64 @@ namespace Kooboo.Sites.Service
             return null;
         }
 
-        internal static List<Element> GetSiblingSubLinks(Element CurrentContainer, Element NextContainer)
+        internal static List<Element> GetSiblingSubLinks(Element currentContainer, Element nextContainer)
         {
-            List<Node> BetweenNodes = new List<Node>();
+            List<Node> betweenNodes = new List<Node>();
 
-            int MaxSiblingIndex = 9999;
-            if (NextContainer != null)
+            if (nextContainer != null)
             {
-                MaxSiblingIndex = NextContainer.siblingIndex;
-                var parent = DomService.FindParent(CurrentContainer, NextContainer);
+                var parent = DomService.FindParent(currentContainer, nextContainer);
 
-                var current = CurrentContainer;
+                var current = currentContainer;
                 while (current.depth > parent.depth + 1)
                 {
                     current = current.parentElement;
                 }
 
-                var next = NextContainer;
+                var next = nextContainer;
                 while (next.depth > parent.depth + 1)
                 {
                     next = next.parentElement;
                 }
-                var NodesInBetween = parent.childNodes.item.Where(o => o.siblingIndex > current.siblingIndex && o.siblingIndex < next.siblingIndex).ToList();
+                var nodesInBetween = parent.childNodes.item.Where(o => o.siblingIndex > current.siblingIndex && o.siblingIndex < next.siblingIndex).ToList();
 
-                var alllinks = DomService.GetElementsByTagName(NodesInBetween, "a").item;
-                if (alllinks.Count() > 0)
+                var alllinks = DomService.GetElementsByTagName(nodesInBetween, "a").item;
+                if (alllinks.Any())
                 {
                     var group = GroupBy(alllinks);
                     return group[0];
                 }
-
             }
             else
             {
+                var parent = currentContainer.parentElement;
 
-                var parent = CurrentContainer.parentElement;
+                var nodesInBetween = parent.childNodes.item.Where(o => o.siblingIndex > currentContainer.siblingIndex).ToList();
 
-                var NodesInBetween = parent.childNodes.item.Where(o => o.siblingIndex > CurrentContainer.siblingIndex).ToList();
-
-                var alllinks = DomService.GetElementsByTagName(NodesInBetween, "a").item;
-                if (alllinks.Count() > 0)
+                var alllinks = DomService.GetElementsByTagName(nodesInBetween, "a").item;
+                if (alllinks.Any())
                 {
                     var group = GroupBy(alllinks);
                     return group[0];
                 }
-
             }
 
-
             return null;
-
         }
 
-
-        public static void AddNewMenu(SiteDb SiteDb, Page page, MenuViewModel NewMenuViewModel)
+        public static void AddNewMenu(SiteDb siteDb, Page page, MenuViewModel newMenuViewModel)
         {
-            // menu view can start only with item container. 
-            Menu menu = CreateMenu(page.Dom, NewMenuViewModel);
+            // menu view can start only with item container.
+            Menu menu = CreateMenu(page.Dom, newMenuViewModel);
 
             if (string.IsNullOrEmpty(menu.Name))
             {
-                menu.Name = SiteDb.Menus.GetNewMenuName();
+                menu.Name = siteDb.Menus.GetNewMenuName();
             }
 
-            SiteDb.Menus.AddOrUpdate(menu);
+            siteDb.Menus.AddOrUpdate(menu);
 
-            var maincontainer = NewMenuViewModel.ItemContainer;
+            var maincontainer = newMenuViewModel.ItemContainer;
 
             var element = DomService.GetElementByKoobooId(page.Dom, maincontainer);
 
@@ -181,115 +173,115 @@ namespace Kooboo.Sites.Service
             newbody += page.Body.Substring(element.location.endTokenEndIndex + 1);
 
             page.Body = newbody;
-            SiteDb.Pages.AddOrUpdate(page);
-
+            siteDb.Pages.AddOrUpdate(page);
         }
 
-        public static Element FindLinkContainer(Element Link, List<Element> LinkGroup, Element CommonParent)
+        public static Element FindLinkContainer(Element link, List<Element> linkGroup, Element commonParent)
         {
-            var target = Link;
+            var target = link;
 
-            var DirectParent = target;
+            var directParent = target;
 
-            while (DirectParent != null && !DirectParent.isEqualNode(CommonParent))
+            while (directParent != null && !directParent.isEqualNode(commonParent))
             {
-                foreach (var item in LinkGroup)
+                foreach (var item in linkGroup)
                 {
-                    if (!item.isEqualNode(Link))
+                    if (!item.isEqualNode(link))
                     {
-                        if (DomService.ContainsOrEqualElement(DirectParent, item))
+                        if (DomService.ContainsOrEqualElement(directParent, item))
                         {
                             break;
                         }
                     }
                 }
 
-                target = DirectParent;
-                DirectParent = target.parentElement;
+                target = directParent;
+                directParent = target.parentElement;
             }
 
             return target;
-
         }
 
-        public static Menu CreateMenu(Document doc, MenuViewModel MenuViewModel)
+        public static Menu CreateMenu(Document doc, MenuViewModel menuViewModel)
         {
             Menu menu = new Menu();
-            Element LinkElement = null;
-            Element ItemContainer = null;
-            Element ContainerElement = null;
+            Element linkElement = null;
+            Element itemContainer = null;
+            Element containerElement = null;
 
-            int MenuTemplateStart = int.MaxValue;
-            int MenuTemplaetEnd = 0;
+            int menuTemplateStart = int.MaxValue;
+            int menuTemplaetEnd = 0;
 
-            if (!string.IsNullOrEmpty(MenuViewModel.LinkElement) && !string.IsNullOrEmpty(MenuViewModel.ContainerElement))
+            if (!string.IsNullOrEmpty(menuViewModel.LinkElement) && !string.IsNullOrEmpty(menuViewModel.ContainerElement))
             {
-                var linkelement = DomService.GetElementByKoobooId(doc, MenuViewModel.LinkElement);
+                var linkelement = DomService.GetElementByKoobooId(doc, menuViewModel.LinkElement);
                 if (linkelement != null)
                 {
-                    LinkElement = linkelement as Element;
+                    linkElement = linkelement as Element;
                 }
 
-                var container = DomService.GetElementByKoobooId(doc, MenuViewModel.ContainerElement);
+                var container = DomService.GetElementByKoobooId(doc, menuViewModel.ContainerElement);
                 if (container == null && linkelement != null)
                 {
                     container = linkelement;
                 }
                 if (container != null)
                 {
-                    ContainerElement = container as Element;
-                    MenuTemplateStart = ContainerElement.location.openTokenStartIndex;
-                    MenuTemplaetEnd = ContainerElement.location.endTokenEndIndex;
+                    containerElement = container as Element;
+                    if (containerElement != null)
+                    {
+                        menuTemplateStart = containerElement.location.openTokenStartIndex;
+                        menuTemplaetEnd = containerElement.location.endTokenEndIndex;
+                    }
                 }
             }
 
-            string SubMenuItemsTemplate = null;
-            string SubMenuItemOrginalString = null;
-            int SubMenuStart = int.MaxValue;
-            int SubMenuEnd = 0;
+            string subMenuItemsTemplate = null;
+            string subMenuItemOrginalString = null;
+            int subMenuStart = int.MaxValue;
+            int subMenuEnd = 0;
 
-            if (MenuViewModel.children.Count > 0)
+            if (menuViewModel.children.Count > 0)
             {
-                List<Menu> SubMenus = new List<Menu>();
+                List<Menu> subMenus = new List<Menu>();
 
-                foreach (var item in MenuViewModel.children)
+                foreach (var item in menuViewModel.children)
                 {
                     Menu submenu = CreateMenu(doc, item);
                     if (submenu != null)
                     {
-                        SubMenus.Add(submenu);
-                        if (submenu.tempdata.StartIndex < SubMenuStart)
+                        subMenus.Add(submenu);
+                        if (submenu.tempdata.StartIndex < subMenuStart)
                         {
-                            SubMenuStart = submenu.tempdata.StartIndex;
+                            subMenuStart = submenu.tempdata.StartIndex;
                         }
-                        if (submenu.tempdata.EndIndex > SubMenuEnd)
+                        if (submenu.tempdata.EndIndex > subMenuEnd)
                         {
-                            SubMenuEnd = submenu.tempdata.EndIndex;
+                            subMenuEnd = submenu.tempdata.EndIndex;
                         }
                     }
                 }
 
-                ItemContainer = _GetItemContainer(doc, MenuViewModel);
+                itemContainer = _GetItemContainer(doc, menuViewModel);
 
-                string SubMenuString = doc.HtmlSource.Substring(SubMenuStart, SubMenuEnd - SubMenuStart + 1);
+                string subMenuString = doc.HtmlSource.Substring(subMenuStart, subMenuEnd - subMenuStart + 1);
 
-                if (ItemContainer != null)
+                if (itemContainer != null)
                 {
                     // 1, sub item within the link element...
-                    if (ContainerElement == null || DomService.ContainsOrEqualElement(ContainerElement, ItemContainer))
+                    if (containerElement == null || DomService.ContainsOrEqualElement(containerElement, itemContainer))
                     {
-                        SubMenuItemOrginalString = ItemContainer.OuterHtml;
-                        SubMenuItemsTemplate = SubMenuItemOrginalString.Replace(SubMenuString, MenuHelper.MarkSubItems); 
+                        subMenuItemOrginalString = itemContainer.OuterHtml;
+                        subMenuItemsTemplate = subMenuItemOrginalString.Replace(subMenuString, MenuHelper.MarkSubItems);
                     }
-                    else if (ContainerElement.isEqualNode(ItemContainer))
+                    else if (containerElement.isEqualNode(itemContainer))
                     {
-                        SubMenuItemOrginalString = SubMenuString;
-                        SubMenuItemsTemplate = MenuHelper.MarkSubItems;
+                        subMenuItemOrginalString = subMenuString;
+                        subMenuItemsTemplate = MenuHelper.MarkSubItems;
                     }
-
                     else
                     {
-                        var distance = DomService.GetTreeDistance(ContainerElement, ItemContainer);
+                        var distance = DomService.GetTreeDistance(containerElement, itemContainer);
                         bool sibling = false;
                         if (distance == 1)
                         {
@@ -297,7 +289,7 @@ namespace Kooboo.Sites.Service
                         }
                         else if (distance < 5)
                         {
-                            var nodes = DomService.GetNodesInBetween(doc, ContainerElement, ItemContainer);
+                            var nodes = DomService.GetNodesInBetween(doc, containerElement, itemContainer);
                             if (nodes == null || nodes.Count == 0 || IsPossibleSeperator(nodes))
                             {
                                 sibling = true;
@@ -306,87 +298,84 @@ namespace Kooboo.Sites.Service
 
                         if (sibling)
                         {
-                            if (MenuTemplateStart > ItemContainer.location.openTokenStartIndex)
+                            if (menuTemplateStart > itemContainer.location.openTokenStartIndex)
                             {
-                                MenuTemplateStart = ItemContainer.location.openTokenStartIndex;
+                                menuTemplateStart = itemContainer.location.openTokenStartIndex;
                             }
 
-                            if (MenuTemplaetEnd < ItemContainer.location.endTokenEndIndex)
+                            if (menuTemplaetEnd < itemContainer.location.endTokenEndIndex)
                             {
-                                MenuTemplaetEnd = ItemContainer.location.endTokenEndIndex;
+                                menuTemplaetEnd = itemContainer.location.endTokenEndIndex;
                             }
 
-                            SubMenuItemOrginalString = ItemContainer.OuterHtml;
-                            SubMenuItemsTemplate = SubMenuItemOrginalString.Replace(SubMenuString, MenuHelper.MarkSubItems);
+                            subMenuItemOrginalString = itemContainer.OuterHtml;
+                            subMenuItemsTemplate = subMenuItemOrginalString.Replace(subMenuString, MenuHelper.MarkSubItems);
                         }
-
                         else
                         {
                             //menu.RenderSubMenuSeperated = true;
-                            SubMenuItemOrginalString = ItemContainer.OuterHtml;
-                            SubMenuItemsTemplate = ItemContainer.OuterHtml.Replace(SubMenuString, MenuHelper.MarkSubItems);
+                            subMenuItemOrginalString = itemContainer.OuterHtml;
+                            subMenuItemsTemplate = itemContainer.OuterHtml.Replace(subMenuString, MenuHelper.MarkSubItems);
                         }
                     }
                 }
 
-                if (SubMenus.Count > 0)
+                if (subMenus.Count > 0)
                 {
-                    menu.children.AddRange(SubMenus);
+                    menu.children.AddRange(subMenus);
                 }
             }
 
-            if (MenuTemplateStart > 0 && MenuTemplaetEnd > 0)
+            if (menuTemplateStart > 0 && menuTemplaetEnd > 0)
             {
-                string menutemplate = doc.HtmlSource.Substring(MenuTemplateStart, MenuTemplaetEnd - MenuTemplateStart + 1);
+                string menutemplate = doc.HtmlSource.Substring(menuTemplateStart, menuTemplaetEnd - menuTemplateStart + 1);
 
-                if (!string.IsNullOrEmpty(SubMenuItemOrginalString))
+                if (!string.IsNullOrEmpty(subMenuItemOrginalString))
                 {
-                    menutemplate = menutemplate.Replace(SubMenuItemOrginalString, MenuHelper.MarkSubItems);
+                    menutemplate = menutemplate.Replace(subMenuItemOrginalString, MenuHelper.MarkSubItems);
                 }
 
-                string OriginalLink = LinkElement.OuterHtml;
-                string NewLInk = DomService.ReplaceLink(LinkElement, MenuHelper.MarkHref, MenuHelper.MarkAnchorText);
-                menutemplate = menutemplate.Replace(OriginalLink, NewLInk);
+                string originalLink = linkElement?.OuterHtml;
+                string newLInk = DomService.ReplaceLink(linkElement, MenuHelper.MarkHref, MenuHelper.MarkAnchorText);
+                menutemplate = menutemplate.Replace(originalLink, newLInk);
                 menu.Template = menutemplate;
-                menu.Name = MenuViewModel.text;
-                menu.Url = MenuViewModel.href;
+                menu.Name = menuViewModel.text;
+                menu.Url = menuViewModel.href;
             }
 
-            menu.SubItemContainer = SubMenuItemsTemplate;
+            menu.SubItemContainer = subMenuItemsTemplate;
 
-            menu.tempdata.StartIndex = MenuTemplateStart;
-            menu.tempdata.EndIndex = MenuTemplaetEnd;
+            menu.tempdata.StartIndex = menuTemplateStart;
+            menu.tempdata.EndIndex = menuTemplaetEnd;
 
             if (menu.tempdata.StartIndex == 0 || menu.tempdata.EndIndex == 0)
             {
-                if (ItemContainer != null)
+                if (itemContainer != null)
                 {
-                    menu.tempdata.StartIndex = ItemContainer.location.openTokenStartIndex;
-                    menu.tempdata.EndIndex = ItemContainer.location.endTokenEndIndex;
+                    menu.tempdata.StartIndex = itemContainer.location.openTokenStartIndex;
+                    menu.tempdata.EndIndex = itemContainer.location.endTokenEndIndex;
                 }
             }
             return menu;
         }
 
-        private static Element _GetItemContainer(Document doc, MenuViewModel MenuViewModel)
+        private static Element _GetItemContainer(Document doc, MenuViewModel menuViewModel)
         {
-            // find the item container. 
-            if (!string.IsNullOrEmpty(MenuViewModel.ItemContainer))
+            // find the item container.
+            if (!string.IsNullOrEmpty(menuViewModel.ItemContainer))
             {
-                var itemcontainer = DomService.GetElementByKoobooId(doc, MenuViewModel.ItemContainer) as Element;
-                if (itemcontainer != null)
+                if (DomService.GetElementByKoobooId(doc, menuViewModel.ItemContainer) is Element itemcontainer)
                 {
                     return itemcontainer;
                 }
             }
 
             List<Element> containerlist = new List<Element>();
-            foreach (var item in MenuViewModel.children)
+            foreach (var item in menuViewModel.children)
             {
                 if (!string.IsNullOrEmpty(item.ContainerElement))
                 {
-                    var element = DomService.GetElementByKoobooId(doc, item.ContainerElement) as Element;
-                    if (element != null)
+                    if (DomService.GetElementByKoobooId(doc, item.ContainerElement) is Element element)
                     {
                         containerlist.Add(element);
                     }
@@ -395,10 +384,9 @@ namespace Kooboo.Sites.Service
 
             if (containerlist.Count == 0)
             {
-                foreach (var item in MenuViewModel.children)
+                foreach (var item in menuViewModel.children)
                 {
-                    var element = DomService.GetElementByKoobooId(doc, item.LinkElement) as Element;
-                    if (element != null)
+                    if (DomService.GetElementByKoobooId(doc, item.LinkElement) is Element element)
                     {
                         containerlist.Add(element);
                     }
@@ -409,7 +397,7 @@ namespace Kooboo.Sites.Service
                 var element = DomService.FindParent(containerlist);
                 if (element != null)
                 {
-                    MenuViewModel.ItemContainer = DomService.GetKoobooId(element);
+                    menuViewModel.ItemContainer = DomService.GetKoobooId(element);
                 }
                 return element;
             }
@@ -417,25 +405,24 @@ namespace Kooboo.Sites.Service
         }
 
         /// <summary>
-        /// Group by the links into different menu group. 
+        /// Group by the links into different menu group.
         /// </summary>
         /// <param name="linkelements"></param>
-        /// <param name="ReduceGroup">Reduce the sub group within another group.... like sub menus within the main menu will be reduced.</param>
+        /// <param name="reduceGroup">Reduce the sub group within another group.... like sub menus within the main menu will be reduced.</param>
         /// <returns></returns>
-        public static List<List<Element>> GroupBy(List<Element> linkelements, bool ReduceGroup = true)
+        public static List<List<Element>> GroupBy(List<Element> linkelements, bool reduceGroup = true)
         {
             List<List<Element>> result = new List<List<Element>>();
 
             int count = linkelements.Count;
 
-            if (count == 0)
+            switch (count)
             {
-                return result;
-            }
-            else if (count == 1)
-            {
-                result.Add(linkelements);
-                return result;
+                case 0:
+                    return result;
+                case 1:
+                    result.Add(linkelements);
+                    return result;
             }
 
             List<Element> sorted = linkelements.OrderBy(o => o.depth).ThenBy(o => o.location.openTokenStartIndex).ToList();
@@ -447,7 +434,7 @@ namespace Kooboo.Sites.Service
             for (int i = 0; i < count; i++)
             {
                 addnewgroup = false;
-                ///The first one... 
+                //The first one...
                 if (i == 0)
                 {
                     addnewgroup = true;
@@ -469,33 +456,35 @@ namespace Kooboo.Sites.Service
                         }
                         else
                         {
-                            /// if there is already a group and, this new member belongs to the same parent, then it belongs to the same group. 
+                            // if there is already a group and, this new member belongs to the same parent, then it belongs to the same group.
                             if (result.LastOrDefault().Count > 1)
                             {
                                 var currentlist = result.LastOrDefault();
-                                var itemone = currentlist[currentlist.Count - 2];
-                                var itemtwo = currentlist[currentlist.Count - 1];
-                                var parent = Kooboo.Sites.Service.DomService.FindParent(itemone, itemtwo);
-
-                                /// if there is longer distance.... 
-                                if (Kooboo.Sites.Service.DomService.GetTreeDistance(current, itemtwo) > Kooboo.Sites.Service.DomService.GetTreeDistance(itemtwo, itemone))
+                                if (currentlist != null)
                                 {
-                                    addnewgroup = true;
-                                }
+                                    var itemone = currentlist[currentlist.Count - 2];
+                                    var itemtwo = currentlist[currentlist.Count - 1];
+                                    var parent = Kooboo.Sites.Service.DomService.FindParent(itemone, itemtwo);
 
-                                else
-                                {
-                                    var currentparent = Kooboo.Sites.Service.DomService.FindParent(itemone, current);
-                                    if (!parent.isEqualNode(currentparent))
+                                    // if there is longer distance....
+                                    if (Kooboo.Sites.Service.DomService.GetTreeDistance(current, itemtwo) > Kooboo.Sites.Service.DomService.GetTreeDistance(itemtwo, itemone))
                                     {
                                         addnewgroup = true;
+                                    }
+                                    else
+                                    {
+                                        var currentparent = Kooboo.Sites.Service.DomService.FindParent(itemone, current);
+                                        if (!parent.isEqualNode(currentparent))
+                                        {
+                                            addnewgroup = true;
+                                        }
                                     }
                                 }
                             }
                             else
                             {
-                                // count = 1;     
-                                var lastelement = result.LastOrDefault()[0];
+                                // count = 1;
+                                var lastelement = result.LastOrDefault()?[0];
                                 var parent = Kooboo.Sites.Service.DomService.FindParent(current, lastelement);
 
                                 if (parent.tagName != "ul" || parent.tagName != "nav")
@@ -505,7 +494,7 @@ namespace Kooboo.Sites.Service
                                         addnewgroup = true;
                                     }
 
-                                    //TODO: to be improve more rules...... 
+                                    //TODO: to be improve more rules......
                                 }
                             }
                         }
@@ -514,20 +503,18 @@ namespace Kooboo.Sites.Service
 
                 if (addnewgroup)
                 {
-                    List<Element> firstlist = new List<Element>();
-                    firstlist.Add(sorted[i]);
+                    List<Element> firstlist = new List<Element> {sorted[i]};
                     result.Add(firstlist);
                 }
                 else
                 {
-
                     if (result.Count > 0)
                     {
-                        result.LastOrDefault().Add(current);
+                        result.LastOrDefault()?.Add(current);
                     }
                 }
             }
-            if (ReduceGroup)
+            if (reduceGroup)
             {
                 ReduceGroupBy(result);
             }
@@ -541,9 +528,10 @@ namespace Kooboo.Sites.Service
             all = all.Replace(href, "{href}");
             return all;
         }
+
         /// <summary>
-        /// Test that this two elements are next to each other, this is for menu detection. 
-        /// for the menu with ul/li, this seems like enough. 
+        /// Test that this two elements are next to each other, this is for menu detection.
+        /// for the menu with ul/li, this seems like enough.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -560,7 +548,7 @@ namespace Kooboo.Sites.Service
                 return false;
             }
 
-            // first check their physical location is very closer to each other. 
+            // first check their physical location is very closer to each other.
             if (x.location.openTokenStartIndex > y.location.openTokenStartIndex)
             {
                 Element t = x;
@@ -574,7 +562,6 @@ namespace Kooboo.Sites.Service
             {
                 return true;
             }
-
             else
             {
                 string betweentext = x.ownerDocument.HtmlSource.Substring(x.location.endTokenEndIndex + 1, betweencount);
@@ -588,7 +575,7 @@ namespace Kooboo.Sites.Service
                 }
             }
 
-            // check parents. 
+            // check parents.
             if (x.parentElement.tagName == "li" && y.parentElement.tagName == "li")
             {
                 return IsElementNextToEachOther(x.parentElement, y.parentElement);
@@ -605,13 +592,12 @@ namespace Kooboo.Sites.Service
                 }
             }
 
-
             return false;
         }
 
         /// <summary>
-        /// Convert one link item with its parent element into one menu item... 
-        /// example: Li, a, website..... Convert the a under li tag into one mentu.... 
+        /// Convert one link item with its parent element into one menu item...
+        /// example: Li, a, website..... Convert the a under li tag into one mentu....
         /// </summary>
         /// <param name="parentElement"></param>
         /// <param name="linkElement"></param>
@@ -631,12 +617,12 @@ namespace Kooboo.Sites.Service
             menu.Name = anchortext;
             menu.Url = href;
 
-            // Check if there is a submenu.... 
+            // Check if there is a submenu....
             var alllinks = parentElement.getElementsByTagName("a").item;
 
             if (alllinks.Count > 1)
             {
-                /// there is sub menu...
+                // there is sub menu...
                 List<Element> sublinks = new List<Element>();
 
                 string mainhref = linkElement.getAttribute("href");
@@ -651,10 +637,10 @@ namespace Kooboo.Sites.Service
                     }
                 }
 
-                if (sublinks.Count() > 0)
+                if (sublinks.Any())
                 {
-                    int SubGroupStartIndex;
-                    int SubGroupEndIndex;
+                    int subGroupStartIndex;
+                    int subGroupEndIndex;
 
                     var groupby = GroupBy(sublinks);
 
@@ -662,69 +648,56 @@ namespace Kooboo.Sites.Service
                     {
                         var submenulinks = groupby[0];
 
-                        SubGroupStartIndex = submenulinks.First().location.openTokenStartIndex;
-                        SubGroupEndIndex = submenulinks.Last().location.endTokenEndIndex;
+                        subGroupStartIndex = submenulinks.First().location.openTokenStartIndex;
+                        subGroupEndIndex = submenulinks.Last().location.endTokenEndIndex;
 
                         var subcommonparent = DomService.FindParent(submenulinks);
-                        bool includeparent = true;
-
-                        if (subcommonparent.isEqualNode(linkElement) || subcommonparent.isEqualNode(parentElement))
-                        {
-                            includeparent = false;
-                        }
+                        bool includeparent = !(subcommonparent.isEqualNode(linkElement) || subcommonparent.isEqualNode(parentElement));
 
                         var submenu = ConvertToMenu(submenulinks, subcommonparent, includeparent, website);
 
-                        if (submenu.tempdata.EndIndex > SubGroupEndIndex)
+                        if (submenu.tempdata.EndIndex > subGroupEndIndex)
                         {
-                            SubGroupEndIndex = submenu.tempdata.EndIndex;
+                            subGroupEndIndex = submenu.tempdata.EndIndex;
                         }
 
-                        if (submenu.tempdata.StartIndex < SubGroupStartIndex)
+                        if (submenu.tempdata.StartIndex < subGroupStartIndex)
                         {
-                            SubGroupStartIndex = submenu.tempdata.StartIndex;
+                            subGroupStartIndex = submenu.tempdata.StartIndex;
                         }
 
                         menu.SubItemContainer = submenu.Template;
                         // menu.SubItemSeperator = submenu.SubItemSeperator;
                         menu.children = submenu.children;
                     }
-
                     else
                     {
-                        SubGroupStartIndex = groupby.First().First().location.openTokenStartIndex;
-                        SubGroupEndIndex = groupby.Last().Last().location.endTokenEndIndex;
+                        subGroupStartIndex = groupby.First().First().location.openTokenStartIndex;
+                        subGroupEndIndex = groupby.Last().Last().location.endTokenEndIndex;
 
                         foreach (var item in groupby)
                         {
                             var commonparent = DomService.FindParent(item);
-                            bool includeparentintemplate = false;
-
-                            if (!commonparent.isEqualNode(parentElement) && commonparent.depth > parentElement.depth)
-                            {
-                                includeparentintemplate = true;
-                            }
+                            bool includeparentintemplate = !commonparent.isEqualNode(parentElement) && commonparent.depth > parentElement.depth;
 
                             var submenu = ConvertToMenu(item, commonparent, includeparentintemplate, website);
                             // menu.Template = menu.Template.Replace(submenu.tempdata.TempOriginalText, placeholder);
 
-                            if (submenu.tempdata.EndIndex > SubGroupEndIndex)
+                            if (submenu.tempdata.EndIndex > subGroupEndIndex)
                             {
-                                SubGroupEndIndex = submenu.tempdata.EndIndex;
+                                subGroupEndIndex = submenu.tempdata.EndIndex;
                             }
 
-                            if (submenu.tempdata.StartIndex < SubGroupStartIndex)
+                            if (submenu.tempdata.StartIndex < subGroupStartIndex)
                             {
-                                SubGroupStartIndex = submenu.tempdata.StartIndex;
+                                subGroupStartIndex = submenu.tempdata.StartIndex;
                             }
 
                             menu.AddSubMenu(submenu);
                         }
 
-                        // try to find the seperator.... 
-                        List<Element> parents = new List<Element>();
-                        parents.Add(groupby[0].Last());
-                        parents.Add(groupby[1].First());
+                        // try to find the seperator....
+                        List<Element> parents = new List<Element> {groupby[0].Last(), groupby[1].First()};
                         //var seperatorparent = FindCommonParent(parents);
                         //var seperator = FindSeperator(parents, seperatorparent);
                         //if (!string.IsNullOrEmpty(seperator))
@@ -733,24 +706,20 @@ namespace Kooboo.Sites.Service
                         //}
                     }
 
-                    string subgrouptext = parentElement.ownerDocument.HtmlSource.Substring(SubGroupStartIndex, SubGroupEndIndex - SubGroupStartIndex + 1);
+                    string subgrouptext = parentElement.ownerDocument.HtmlSource.Substring(subGroupStartIndex, subGroupEndIndex - subGroupStartIndex + 1);
 
                     menu.Template = menu.Template.Replace(subgrouptext, "{items}");
-
                 }
             }
 
             return menu;
-
         }
 
         /// <summary>
-        /// Convert one group of links into menu, links must be within one group. 
+        /// Convert one group of links into menu, links must be within one group.
         /// </summary>
         /// <param name="links"></param>
         /// <param name="website"></param>
-        /// <param name="IncludeParentInTemplate"></param>
-        /// <param name="maxsiblingindex">if this links group share parents with another link group, should only check sub menu till end of next sibling start. </param>
         /// <returns></returns>
         public static Menu ConvertToMenu(List<Element> links, WebSite website)
         {
@@ -766,9 +735,8 @@ namespace Kooboo.Sites.Service
             return ConvertToMenu(links, commonparent, includeparentintemplate, website, maxsilbingindex);
         }
 
-
         /// <summary>
-        /// This is to test whether the parentelement can be used as the menu template or not. 
+        /// This is to test whether the parentelement can be used as the menu template or not.
         /// </summary>
         /// <param name="includeparentintemplate"></param>
         /// <param name="maxsilbingindex"></param>
@@ -780,8 +748,8 @@ namespace Kooboo.Sites.Service
 
             foreach (var item in linksafter)
             {
-                /// if the link is similiar, it is same level links instead of sub menu..
-                if (isSimiliarLink(lastlink, item))
+                // if the link is similiar, it is same level links instead of sub menu..
+                if (IsSimiliarLink(lastlink, item))
                 {
                     includeparentintemplate = false;
                     var parent = item;
@@ -791,7 +759,6 @@ namespace Kooboo.Sites.Service
                     }
                     maxsilbingindex = parent.siblingIndex;
                     break;
-
                 }
             }
 
@@ -810,7 +777,6 @@ namespace Kooboo.Sites.Service
                 }
             }
 
-
             foreach (var item in commonparent.childNodes.item.Where(o => o.siblingIndex > subparent.siblingIndex).ToList())
             {
                 if (!IsPossibleSeperator(item))
@@ -820,42 +786,42 @@ namespace Kooboo.Sites.Service
                     break;
                 }
             }
-            /// 
         }
 
         /// <summary>
-        /// convert one parent with sub links into a menu.... 
+        /// convert one parent with sub links into a menu....
         /// </summary>
         /// <param name="links"></param>
-        /// <param name="CommonParent"></param>
-        /// <param name="IncludeParentInTemplate"></param>
+        /// <param name="commonParent"></param>
+        /// <param name="includeParentInTemplate"></param>
         /// <param name="website"></param>
+        /// <param name="maxsiblingindex"></param>
         /// <returns></returns>
-        public static Menu ConvertToMenu(List<Element> links, Element CommonParent, bool IncludeParentInTemplate, WebSite website, int maxsiblingindex = 9999)
+        public static Menu ConvertToMenu(List<Element> links, Element commonParent, bool includeParentInTemplate, WebSite website, int maxsiblingindex = 9999)
         {
             Menu menu = new Menu();
 
             links = links.OrderBy(o => o.location.openTokenStartIndex).ToList();
 
-            List<Element> Parents = new List<Element>();
+            List<Element> parents = new List<Element>();
 
             int count = links.Count;
             for (int i = 0; i < count; i++)
             {
                 var parent = links[i];
-                while (!parent.parentElement.isEqualNode(CommonParent) && parent != null)
+                while (!parent.parentElement.isEqualNode(commonParent) && parent != null)
                 {
                     parent = parent.parentElement;
                 }
-                Parents.Add(parent);
+                parents.Add(parent);
             }
 
-            menu.tempdata.StartIndex = Parents[0].location.openTokenStartIndex;
-            menu.tempdata.EndIndex = Parents[count - 1].location.endTokenEndIndex;
+            menu.tempdata.StartIndex = parents[0].location.openTokenStartIndex;
+            menu.tempdata.EndIndex = parents[count - 1].location.endTokenEndIndex;
 
             for (int i = 0; i < count; i++)
             {
-                var parent = Parents[i];
+                var parent = parents[i];
                 var linkelement = links[i];
 
                 Menu submenu = ConvertToMenu(parent, links[i], website);
@@ -865,20 +831,20 @@ namespace Kooboo.Sites.Service
                     int nextSiblingEnds = maxsiblingindex;
                     if (i < count - 1)
                     {
-                        var nextparent = Parents[i + 1];
+                        var nextparent = parents[i + 1];
                         nextSiblingEnds = nextparent.siblingIndex;
                     }
 
-                    var tempsublinks = FindLinksAfter(CommonParent, links[i], nextSiblingEnds);
+                    var tempsublinks = FindLinksAfter(commonParent, links[i], nextSiblingEnds);
 
-                    /// Check and make sure those sub links are not similar, same level links. 
+                    // Check and make sure those sub links are not similar, same level links.
                     List<Element> sublinks = new List<Element>();
 
                     if (tempsublinks.Count > 0)
                     {
                         foreach (var item in tempsublinks)
                         {
-                            if (isSimiliarLink(item, linkelement))
+                            if (IsSimiliarLink(item, linkelement))
                             {
                                 break;
                             }
@@ -891,13 +857,9 @@ namespace Kooboo.Sites.Service
                         {
                             var subcommonparent = DomService.FindParent(item);
 
-                            bool SubIncludeParent = false;
+                            bool subIncludeParent = !subcommonparent.isEqualNode(commonParent) && subcommonparent.depth < commonParent.depth;
 
-                            if (!subcommonparent.isEqualNode(CommonParent) && subcommonparent.depth < CommonParent.depth)
-                            {
-                                SubIncludeParent = true;
-                            }
-                            Menu subsubmenu = ConvertToMenu(item, subcommonparent, SubIncludeParent, website);
+                            Menu subsubmenu = ConvertToMenu(item, subcommonparent, subIncludeParent, website);
 
                             submenu.AddSubMenu(subsubmenu);
                         }
@@ -907,22 +869,21 @@ namespace Kooboo.Sites.Service
                 menu.AddSubMenu(submenu);
             }
 
-            string menuitemsstring = CommonParent.ownerDocument.HtmlSource.Substring(menu.tempdata.StartIndex, menu.tempdata.EndIndex - menu.tempdata.StartIndex + 1);
+            string menuitemsstring = commonParent.ownerDocument.HtmlSource.Substring(menu.tempdata.StartIndex, menu.tempdata.EndIndex - menu.tempdata.StartIndex + 1);
 
-            if (IncludeParentInTemplate)
+            if (includeParentInTemplate)
             {
-
-                string tempTemplate = CommonParent.OuterHtml;
+                string tempTemplate = commonParent.OuterHtml;
                 menu.Template = tempTemplate.Replace(menuitemsstring, "{items}");
 
-                if (CommonParent.location.openTokenStartIndex < menu.tempdata.StartIndex)
+                if (commonParent.location.openTokenStartIndex < menu.tempdata.StartIndex)
                 {
-                    menu.tempdata.StartIndex = CommonParent.location.openTokenStartIndex;
+                    menu.tempdata.StartIndex = commonParent.location.openTokenStartIndex;
                 }
 
-                if (CommonParent.location.endTokenEndIndex > menu.tempdata.EndIndex)
+                if (commonParent.location.endTokenEndIndex > menu.tempdata.EndIndex)
                 {
-                    menu.tempdata.EndIndex = CommonParent.location.endTokenEndIndex;
+                    menu.tempdata.EndIndex = commonParent.location.endTokenEndIndex;
                 }
             }
             else
@@ -934,33 +895,32 @@ namespace Kooboo.Sites.Service
         }
 
         /// <summary>
-        /// Find link items after one item.... 
+        /// Find link items after one item....
         /// </summary>
-        /// <param name="CommonParent"></param>
+        /// <param name="commonParent"></param>
         /// <param name="linkitem"></param>
-        /// <param name="SiblingIndex"></param>
+        /// <param name="maxSiblingIndex"></param>
         /// <returns></returns>
-        public static List<Element> FindLinksAfter(Element CommonParent, Element linkitem, int MaxSiblingIndex = 9999)
+        public static List<Element> FindLinksAfter(Element commonParent, Element linkitem, int maxSiblingIndex = 9999)
         {
             var parent = linkitem;
-            while (!parent.parentElement.isEqualNode(CommonParent))
+            while (!parent.parentElement.isEqualNode(commonParent))
             {
                 parent = parent.parentElement;
             }
 
-            var NodesInBetween = CommonParent.childNodes.item.Where(o => o.siblingIndex > parent.siblingIndex && o.siblingIndex < MaxSiblingIndex).ToList();
+            var nodesInBetween = commonParent.childNodes.item.Where(o => o.siblingIndex > parent.siblingIndex && o.siblingIndex < maxSiblingIndex).ToList();
 
-            return Kooboo.Sites.Service.DomService.GetElementsByTagName(NodesInBetween, "a").item;
-
+            return Kooboo.Sites.Service.DomService.GetElementsByTagName(nodesInBetween, "a").item;
         }
 
         /// <summary>
-        /// similar links means same level of menu instead of sub menu.... 
+        /// similar links means same level of menu instead of sub menu....
         /// </summary>
         /// <param name="linkx"></param>
         /// <param name="linky"></param>
         /// <returns></returns>
-        private static bool isSimiliarLink(Element linkx, Element linky)
+        private static bool IsSimiliarLink(Element linkx, Element linky)
         {
             return (linkx.depth == linky.depth && Kooboo.Sites.Service.DomService.getParentPath(linkx) == Kooboo.Sites.Service.DomService.getParentPath(linky));
         }
@@ -974,8 +934,7 @@ namespace Kooboo.Sites.Service
 
             for (int i = 0; i < groupcount; i++)
             {
-                Kooboo.Lib.DataType.MultiItems<int> newitem = new Lib.DataType.MultiItems<int>();
-                newitem.Item1 = i;
+                Kooboo.Lib.DataType.MultiItems<int> newitem = new Lib.DataType.MultiItems<int> {Item1 = i};
 
                 var lists = groupbylist[i].OrderBy(o => o.location.openTokenStartIndex).ToList();
 
@@ -1014,14 +973,12 @@ namespace Kooboo.Sites.Service
             {
                 groupbylist.RemoveAt(item);
             }
-
         }
 
         private static bool IsPossibleSeperator(Node node)
         {
-            if (node is Element)
+            if (node is Element e)
             {
-                Element e = node as Element;
                 var links = e.getElementsByTagName("a").item;
                 if (links != null && links.Count > 0)
                 {
@@ -1029,11 +986,10 @@ namespace Kooboo.Sites.Service
                 }
             }
 
-            string textcontent = node.textContent.Trim(new char[] { '\r', '\n', ' ' });
+            string textcontent = node.textContent.Trim('\r', '\n', ' ');
 
             //if (string.IsNullOrEmpty(textcontent))
             //{ // return false; //}
-
             textcontent = System.Web.HttpUtility.HtmlDecode(textcontent);
 
             foreach (var item in textcontent.ToCharArray())
@@ -1059,13 +1015,13 @@ namespace Kooboo.Sites.Service
         }
 
         /// <summary>
-        /// used when there is only one link 
+        /// used when there is only one link
         /// </summary>
         /// <param name="currentParentFound"></param>
         /// <returns></returns>
         public static Element TryUpgrade(Element currentParentFound)
         {
-            // rule 1, if the parent has only one sub element and no other element, should upgrade... 
+            // rule 1, if the parent has only one sub element and no other element, should upgrade...
             var parent = currentParentFound.parentElement;
 
             foreach (var item in parent.childNodes.item)
@@ -1076,27 +1032,22 @@ namespace Kooboo.Sites.Service
                     {
                         return currentParentFound;
                     }
-                    else if (item is Kooboo.Dom.Text)
+                    else if (item is Text text)
                     {
-                        Kooboo.Dom.Text text = item as Kooboo.Dom.Text;
                         string content = text.textContent;
-                        content = content.Trim(new char[] { '\r', '\n', ' ' });
+                        content = content.Trim('\r', '\n', ' ');
 
                         if (!string.IsNullOrEmpty(content))
                         {
                             return currentParentFound;
                         }
                     }
-
                 }
             }
 
             return TryUpgrade(parent);
-
         }
-
     }
-
 
     public class RawMenu
     {
@@ -1104,6 +1055,7 @@ namespace Kooboo.Sites.Service
         {
             this.Children = new List<RawMenu>();
         }
+
         public Element LinkElement { get; set; }
 
         public Element ContainerElement { get; set; }
@@ -1119,20 +1071,18 @@ namespace Kooboo.Sites.Service
             if (Parent == null)
             {
                 return null;
-            } 
+            }
             int currentindex = this.ContainerElement.location.openTokenStartIndex;
 
-            if (currentindex >= 0 && this.Parent.Children.Count() > 0)
+            if (currentindex >= 0 && this.Parent.Children.Any())
             {
                 var others = this.Parent.Children.Where(o => o.ContainerElement.location.openTokenStartIndex > currentindex);
-                if (others != null && others.Count() > 0)
+                if (others != null && others.Any())
                 {
                     return others.OrderBy(o => o.ContainerElement.location.openTokenStartIndex).First().ContainerElement;
                 }
             }
             return null;
         }
-
     }
-
 }

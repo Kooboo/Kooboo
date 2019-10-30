@@ -1,8 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
 using System.Collections.Generic;
-  
+
 namespace Kooboo.Sites.Render
 {
     public class UrlEvaluator : IEvaluator
@@ -21,7 +21,7 @@ namespace Kooboo.Sites.Render
             var element = node as Element;
 
             string url = string.Empty;
-            string attName = null; 
+            string attName = null;
 
             foreach (var item in element.attributes)
             {
@@ -60,17 +60,16 @@ namespace Kooboo.Sites.Render
 
             if (!string.IsNullOrEmpty(url))
             {
-
                 if (Kooboo.Sites.Service.DomUrlService.IsSpecialUrl(url))
                 {
-                    return null; 
+                    return null;
                 }
 
                 var response = new EvaluatorResponse();
-                List<IRenderTask> result = new List<IRenderTask>();
-                result.Add(new ContentRenderTask(" href=\""));
-                result.Add(new UrlRenderTask(url));
-                result.Add(new ContentRenderTask("\""));
+                List<IRenderTask> result = new List<IRenderTask>
+                {
+                    new ContentRenderTask(" href=\""), new UrlRenderTask(url), new ContentRenderTask("\"")
+                };
                 response.AttributeTask = result;
 
                 if (options.RequireBindingInfo)
@@ -78,12 +77,11 @@ namespace Kooboo.Sites.Render
                     string attributeName = string.IsNullOrEmpty(attName) ? "href" : attName;
                     string koobooid = element.getAttribute(SiteConstants.KoobooIdAttributeName);
                     BindingObjectRenderTask binding = new BindingObjectRenderTask() { ObjectType = "Url", AttributeName = attributeName, BindingValue = url, KoobooId = koobooid };
-                    List<IRenderTask> bindings = new List<IRenderTask>();
-                    bindings.Add(binding);
+                    List<IRenderTask> bindings = new List<IRenderTask> {binding};
                     response.BindingTask = bindings;
                 }
 
-                element.removeAttribute("href"); 
+                element.removeAttribute("href");
 
                 return response;
             }

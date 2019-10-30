@@ -1,14 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data;
 using Kooboo.IndexedDB;
-using Kooboo.Lib.Helper;
 using Kooboo.Sites.Models;
-using Kooboo.Sites.Routing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Sites.Extensions;
 
 namespace Kooboo.Sites.Repository
 {
@@ -29,15 +25,15 @@ namespace Kooboo.Sites.Repository
                 return paras;
             }
         }
-         /// <summary>
-        /// Get the page, layout and view ids, those can be used for style owner object id. 
+
+        /// <summary>
+        /// Get the page, layout and view ids, those can be used for style owner object id.
         /// </summary>
         /// <param name="page"></param>
         /// <returns></returns>
         public List<Guid> GetRelatedObjectIds(Page page)
         {
-            List<Guid> allobjectids = new List<Guid>();
-            allobjectids.Add(page.Id);
+            List<Guid> allobjectids = new List<Guid> {page.Id};
             if (page.HasLayout && !string.IsNullOrEmpty(page.LayoutName))
             {
                 Guid layoutid = Data.IDGenerator.Generate(page.LayoutName, ConstObjectType.Layout);
@@ -58,7 +54,7 @@ namespace Kooboo.Sites.Repository
         }
 
         /// <summary>
-        /// Get all the style ids that being used by page. 
+        /// Get all the style ids that being used by page.
         /// </summary>
         /// <param name="page"></param>
         /// <returns></returns>
@@ -68,10 +64,10 @@ namespace Kooboo.Sites.Repository
 
             List<Guid> allobjectids = GetRelatedObjectIds(page);
 
-            /// embedded styles
+            // embedded styles
             var embedded = SiteDb.Styles.Query.WhereIn<Guid>(o => o.OwnerObjectId, allobjectids).UseColumnData().SelectAll();
 
-            if (embedded.Count() > 0)
+            if (embedded.Any())
             {
                 var list = embedded.Select(o => o.Id).ToList();
                 foreach (var item in list)
@@ -94,13 +90,13 @@ namespace Kooboo.Sites.Repository
                 }
             }
 
-            /// get all the imports. 
+            // get all the imports.
             List<Guid> importedids = new List<Guid>();
 
             foreach (var item in externalstyleids)
             {
                 var importes = SiteDb.Styles.GetImports(item);
-                if (importes != null && importes.Count() > 0)
+                if (importes != null && importes.Any())
                 {
                     importedids.AddRange(importes);
                 }
@@ -120,17 +116,18 @@ namespace Kooboo.Sites.Repository
         }
 
         /// <summary>
-        /// Get all the style ids that is being used by this page. 
+        /// Get all the style ids that is being used by this page.
         /// </summary>
-        /// <param name="PageId"></param>
+        /// <param name="pageId"></param>
         /// <returns></returns>
-        public List<Guid> GetRelatedOwnerObjectIds(Guid PageId)
+        public List<Guid> GetRelatedOwnerObjectIds(Guid pageId)
         {
-            var page = Get(PageId, true);
+            var page = Get(pageId, true);
             return GetRelatedOwnerObjectIds(page);
         }
+
         /// <summary>
-        /// Get all the page related owner object ids that can be used to querey css rule.. 
+        /// Get all the page related owner object ids that can be used to querey css rule..
         /// </summary>
         /// <param name="page"></param>
         /// <returns></returns>
@@ -142,88 +139,82 @@ namespace Kooboo.Sites.Repository
             return all;
         }
 
-
-        public List<Guid> GetAllMethodIds(Guid PageId)
+        public List<Guid> GetAllMethodIds(Guid pageId)
         {
-            List<Guid> MethodIds = new List<Guid>();
+            List<Guid> methodIds = new List<Guid>();
 
-            var viewrelations = this.SiteDb.Relations.GetRelations(PageId, ConstObjectType.View);
+            var viewrelations = this.SiteDb.Relations.GetRelations(pageId, ConstObjectType.View);
 
-            List<Guid> ViewIds = new List<Guid>();
+            List<Guid> viewIds = new List<Guid>();
 
             foreach (var item in viewrelations)
             {
-                ViewIds.Add(item.objectYId);
+                viewIds.Add(item.objectYId);
             }
 
-            foreach (var ViewId in ViewIds)
+            foreach (var viewId in viewIds)
             {
-                var viewmethods = this.SiteDb.ViewDataMethods.Query.Where(o => o.ViewId == ViewId).SelectAll();
+                var viewmethods = this.SiteDb.ViewDataMethods.Query.Where(o => o.ViewId == viewId).SelectAll();
 
                 foreach (var viewmethod in viewmethods)
                 {
-                    MethodIds.Add(viewmethod.MethodId);
+                    methodIds.Add(viewmethod.MethodId);
                 }
             }
-            return MethodIds;
+            return methodIds;
         }
 
-  
-        public Dictionary<byte, HashSet<Guid>> GetRelatedObject(Guid ObjectId, params byte[] DestinationConstTypes)
+        public Dictionary<byte, HashSet<Guid>> GetRelatedObject(Guid objectId, params byte[] destinationConstTypes)
         {
             var result = new Dictionary<byte, HashSet<Guid>>();
-            HashSet<Guid> ids = new HashSet<Guid>(); 
-            foreach (var item in DestinationConstTypes)
+            HashSet<Guid> ids = new HashSet<Guid>();
+            foreach (var item in destinationConstTypes)
             {
-                var relations = SiteDb.Relations.GetRelations(ObjectId, item);
+                var relations = SiteDb.Relations.GetRelations(objectId, item);
 
                 foreach (var onerelation in relations)
                 {
                     addRelatedResult(result, item, onerelation.objectYId);
-                    ids.Add(onerelation.objectYId);  
-                }  
+                    ids.Add(onerelation.objectYId);
+                }
             }
 
             foreach (var item in ids)
             {
-                var subresult = GetRelatedObject(item, DestinationConstTypes);
+                var subresult = GetRelatedObject(item, destinationConstTypes);
                 foreach (var subitem in subresult)
                 {
                     foreach (var subitemitem in subitem.Value)
                     {
-                        addRelatedResult(result, subitem.Key, subitemitem); 
+                        addRelatedResult(result, subitem.Key, subitemitem);
                     }
                 }
             }
-            return result; 
+            return result;
         }
 
-
-        private void addRelatedResult(Dictionary<byte, HashSet<Guid>> CurrentResult, byte consttype, Guid newId)
+        private void addRelatedResult(Dictionary<byte, HashSet<Guid>> currentResult, byte consttype, Guid newId)
         {
-            if (CurrentResult.ContainsKey(consttype))
+            if (currentResult.ContainsKey(consttype))
             {
-                var list = CurrentResult[consttype]; 
-                list.Add(newId); 
+                var list = currentResult[consttype];
+                list.Add(newId);
             }
             else
             {
-                var List = new HashSet<Guid>();
-                List.Add(newId);
-                CurrentResult[consttype] = List;
+                var list = new HashSet<Guid> {newId};
+                currentResult[consttype] = list;
             }
         }
-
 
         public override bool AddOrUpdate(Page value)
         {
             return this.AddOrUpdate(value, default(Guid));
         }
 
-        public override bool AddOrUpdate(Page value, Guid UserId)
+        public override bool AddOrUpdate(Page value, Guid userId)
         {
-            return base.AddOrUpdate(value, UserId);
+            return base.AddOrUpdate(value, userId);
         }
-
     }
 }

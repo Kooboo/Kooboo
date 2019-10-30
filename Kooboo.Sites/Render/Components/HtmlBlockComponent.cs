@@ -1,12 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
+using Kooboo.Data.Context;
+using Kooboo.Sites.Contents.Models;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Repository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Kooboo.Sites.Contents.Models;
-using Kooboo.Sites.Repository;
-using Kooboo.Data.Context;
-using Kooboo.Sites.Extensions;
 
 namespace Kooboo.Sites.Render.Components
 {
@@ -27,9 +26,9 @@ namespace Kooboo.Sites.Render.Components
 
         public bool IsRegularHtmlTag { get { return false; } }
 
-        public string StoreEngineName { get { return null;  } }
+        public string StoreEngineName { get { return null; } }
 
-        public byte StoreConstType { get { return ConstObjectType.HtmlBlock;  } }
+        public byte StoreConstType { get { return ConstObjectType.HtmlBlock; } }
 
         public Task<string> RenderAsync(RenderContext context, ComponentSetting settings)
         {
@@ -47,32 +46,30 @@ namespace Kooboo.Sites.Render.Components
         }
 
         public List<ComponentInfo> AvaiableObjects(SiteDb sitedb)
-        { 
-            List<ComponentInfo> Models = new List<ComponentInfo>();
+        {
+            List<ComponentInfo> models = new List<ComponentInfo>();
             var allblocks = sitedb.HtmlBlocks.All();
             foreach (var item in allblocks)
             {
-                ComponentInfo comp = new ComponentInfo();
-                comp.Id = item.Id;
-                comp.Name = item.Name;
-                Models.Add(comp);
+                ComponentInfo comp = new ComponentInfo {Id = item.Id, Name = item.Name};
+                models.Add(comp);
             }
-            return Models; 
+            return models;
         }
 
-        public string Preview(SiteDb SiteDb, string NameOrId)
+        public string Preview(SiteDb siteDb, string nameOrId)
         {
-            if (string.IsNullOrEmpty(NameOrId))
+            if (string.IsNullOrEmpty(nameOrId))
             {
                 return null;
             }
-            var item = SiteDb.HtmlBlocks.GetByNameOrId(NameOrId);
-            return item != null ? item.GetValue(SiteDb.WebSite.DefaultCulture).ToString() : null;
+            var item = siteDb.HtmlBlocks.GetByNameOrId(nameOrId);
+            return item?.GetValue(siteDb.WebSite.DefaultCulture).ToString();
         }
 
-        public string DisplayName(RenderContext Context)
+        public string DisplayName(RenderContext context)
         {
-            return Data.Language.Hardcoded.GetValue("HtmlBlock", Context); 
+            return Data.Language.Hardcoded.GetValue("HtmlBlock", context);
         }
     }
 }

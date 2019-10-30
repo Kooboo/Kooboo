@@ -1,10 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
 using Kooboo.Sites.ViewModel;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render
 {
@@ -19,7 +18,7 @@ namespace Kooboo.Sites.Render
 
         public string BindingValue { get; set; }
 
-        //for text content. 
+        //for text content.
         public string FieldName { get; set; }
 
         public bool IsEndBinding { get; set; }
@@ -30,16 +29,16 @@ namespace Kooboo.Sites.Render
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
         public void AppendResult(RenderContext context, List<RenderResult> result)
         {
             string renderresult = this.Render(context);
-            result.Add(new RenderResult() {  Value = renderresult }); 
+            result.Add(new RenderResult() { Value = renderresult });
         }
-         
+
         public virtual string Render(RenderContext context)
         {
             string result = "\r\n<!--#kooboo";
@@ -60,16 +59,15 @@ namespace Kooboo.Sites.Render
             }
             else
             {
-
                 if (!string.IsNullOrEmpty(this.ObjectType))
                 {
                     result += "--objecttype='" + this.ObjectType + "'";
                 }
 
-                string nameorid = this.NameOrId; 
+                string nameorid = this.NameOrId;
                 if (string.IsNullOrEmpty(nameorid))
                 {
-                    nameorid = GetNameOrId(context); 
+                    nameorid = GetNameOrId(context);
                 }
 
                 if (!string.IsNullOrEmpty(nameorid))
@@ -100,7 +98,6 @@ namespace Kooboo.Sites.Render
             }
         }
 
-
         private string GetNameOrId(RenderContext context)
         {
             if (string.IsNullOrEmpty(this.BindingValue))
@@ -109,35 +106,32 @@ namespace Kooboo.Sites.Render
             }
 
             string objectkey = this.BindingValue;
-           
+
             int lastDotIndex = this.BindingValue.LastIndexOf(".");
             if (lastDotIndex > -1)
             {
                 objectkey = this.BindingValue.Substring(0, lastDotIndex);
-                //Modify by cz 
+                //Modify by cz
                 if (objectkey.IndexOf("{") > -1)
                 {
                     objectkey = objectkey.TrimStart('{');
                 }
             }
-           
+
             object value = context.DataContext.GetValue(objectkey);
             if (value == null)
             {
                 return null;
             }
-            if (value is DataMethodResult)
+            if (value is DataMethodResult dataMethodResult)
             {
-                value = ((DataMethodResult)value).Value;
+                value = dataMethodResult.Value;
             }
-            if (value is TextContentViewModel)
+            if (value is TextContentViewModel textcontent)
             {
-                TextContentViewModel textcontent = value as TextContentViewModel;
-
                 return textcontent.Id.ToString();
             }
-            return null; 
+            return null;
         }
-
     }
 }

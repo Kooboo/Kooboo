@@ -13,6 +13,6 @@ namespace Kooboo.Sites.InlineEditor
 
         void Execute(RenderContext context, List<IInlineModel> updatelist);
 
-        void ExecuteObject(RenderContext context, IRepository repo, string NameOrId, List<IInlineModel> updates);
+        void ExecuteObject(RenderContext context, IRepository repo, string nameOrId, List<IInlineModel> updates);
     }
 }

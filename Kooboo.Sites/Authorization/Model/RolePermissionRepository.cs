@@ -35,16 +35,16 @@ namespace Kooboo.Sites.Authorization.Model
             return GetByNameOrId(nameorid);
         }
 
-        public override RolePermission GetByNameOrId(string NameOrGuid)
+        public override RolePermission GetByNameOrId(string nameOrGuid)
         {
             Guid key;
-            bool parseok = Guid.TryParse(NameOrGuid, out key);
+            bool parseok = Guid.TryParse(nameOrGuid, out key);
 
             if (!parseok)
             {
                 byte consttype = ConstTypeContainer.GetConstType(typeof(RolePermission));
 
-                key = Data.IDGenerator.Generate(NameOrGuid, consttype);
+                key = Data.IDGenerator.Generate(nameOrGuid, consttype);
             }
             return Get(key, false);
         }
@@ -84,16 +84,16 @@ namespace Kooboo.Sites.Authorization.Model
             return DefaultData.GetDefault(id);
         }
 
-        public override List<RolePermission> List(bool UseColumnData = false)
+        public override List<RolePermission> List(bool useColumnData = false)
         {
-            var list = base.List(UseColumnData);
+            var list = base.List(useColumnData);
             list.Add(DefaultData.Master);
             list.Add(DefaultData.Developer);
             list.Add(DefaultData.ContentManager);
             return list;
         }
 
-        public override bool AddOrUpdate(RolePermission value, Guid UserId)
+        public override bool AddOrUpdate(RolePermission value, Guid userId)
         {
             if (string.IsNullOrWhiteSpace(value.Name))
             {
@@ -108,7 +108,7 @@ namespace Kooboo.Sites.Authorization.Model
                 if (old == null)
                 {
                     RaiseBeforeEvent(value, ChangeType.Add);
-                    Store.CurrentUserId = UserId;
+                    Store.CurrentUserId = userId;
                     Store.add(value.Id, value);
                     RaiseEvent(value, ChangeType.Add);
                     return true;
@@ -119,7 +119,7 @@ namespace Kooboo.Sites.Authorization.Model
                     {
                         value.LastModified = DateTime.UtcNow;
                         RaiseBeforeEvent(value, ChangeType.Add);
-                        Store.CurrentUserId = UserId;
+                        Store.CurrentUserId = userId;
                         Store.update(value.Id, value);
                         RaiseEvent(value, ChangeType.Update, old);
                         return true;
@@ -139,7 +139,7 @@ namespace Kooboo.Sites.Authorization.Model
             this.Delete(id, default(Guid));
         }
 
-        public override void Delete(Guid id, Guid UserId)
+        public override void Delete(Guid id, Guid userId)
         {
             if (id == DefaultData.Master.Id || id == DefaultData.Developer.Id || id == DefaultData.ContentManager.Id)
             {
@@ -149,7 +149,7 @@ namespace Kooboo.Sites.Authorization.Model
             if (old != null)
             {
                 RaiseBeforeEvent(old, ChangeType.Delete);
-                this.Store.CurrentUserId = UserId;
+                this.Store.CurrentUserId = userId;
                 Store.delete(id);
             }
             RaiseEvent(old, ChangeType.Delete);

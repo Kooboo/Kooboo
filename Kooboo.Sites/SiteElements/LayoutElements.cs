@@ -1,19 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.SiteElements
 {
     public static class LayoutElements
     {
-
         /// <summary>
-        /// find the common part as placeholders. 
+        /// find the common part as placeholders.
         /// </summary>
         /// <param name="allXelements"></param>
         /// <param name="allYelements"></param>
@@ -33,7 +29,7 @@ namespace Kooboo.Sites.SiteElements
         }
 
         /// <summary>
-        ///  Find the commone parent of x and y. 
+        ///  Find the commone parent of x and y.
         /// </summary>
         /// <param name="xElement"></param>
         /// <param name="yElement"></param>
@@ -74,11 +70,10 @@ namespace Kooboo.Sites.SiteElements
             }
             for (int i = 0; i < count; i++)
             {
-                
             }
 
             //TODO: implement to find the same parents.
-            return null; 
+            return null;
         }
 
         /// <summary>
@@ -92,10 +87,8 @@ namespace Kooboo.Sites.SiteElements
         /// <returns>Ture= current elements can be used as layout. </returns>
         private static bool _FindPlaceHolders(DomElement xElement, DomElement yElement, List<DomElement> allXelements, List<DomElement> allYelements, ref List<DomElement> placeholders)
         {
-
             if (xElement.Name == yElement.Name && xElement.NodeAttributeHash == yElement.NodeAttributeHash)
             {
-
                 if (xElement.SubElementHash == yElement.SubElementHash)
                 {
                     // if all subs are the same, go to sub to check.
@@ -125,22 +118,17 @@ namespace Kooboo.Sites.SiteElements
                 }
                 else
                 {
-                    // try to see if this can be a layout... 
+                    // try to see if this can be a layout...
                     // conditions to be a layout....
                     // there is no need to test sibling, because it is top to down, it will be removed already if it is not the same siblings..
                     // try to use edit path here.... if it is added something....
 
                     placeholders.Add(xElement);
                     return true;
-
                 }
-
-
-
             }
 
             return false;
         }
-         
     }
 }

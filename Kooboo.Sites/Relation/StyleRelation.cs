@@ -1,35 +1,28 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.Routing;
+using Kooboo.Sites.Service;
 using System;
 using System.Collections.Generic;
-using Kooboo.Dom;
 using Kooboo.Dom.CSS;
-using Kooboo.IndexedDB;
-using Kooboo.Sites.Extensions;
-using Kooboo.Lib.Helper;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Routing;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.Service;
 
 namespace Kooboo.Sites.Relation
 {
     /// <summary>
-    /// Recalculate the style relation. Style has relations to css rules. 
+    /// Recalculate the style relation. Style has relations to css rules.
     /// </summary>
     public static class StyleRelation
     {
         /// <summary>
-        /// Calculate or reclculate the relation to css rule. 
+        /// Calculate or reclculate the relation to css rule.
         /// </summary>
         /// <param name="style"></param>
         /// <param name="sitedb"></param>
         public static void Compute(Style style, Repository.SiteDb sitedb)
         {
-            var body = style.Body; 
+            var body = style.Body;
 
             var covnerted = Kooboo.Sites.Service.CssService.ConvertCss(body, style.Id);
 
@@ -42,18 +35,17 @@ namespace Kooboo.Sites.Relation
                 }
             }
 
-            // remove not any more valid rules. 
+            // remove not any more valid rules.
             RemoveOldRules(style, sitedb, covnerted);
 
             string baseurl = ObjectService.GetObjectRelativeUrl(sitedb, style);
 
             foreach (var item in covnerted)
             {
-                ///compute import relation or the style image/font definition... 
+                //compute import relation or the style image/font definition...
                 if (item.CmsRule.ruleType == RuleType.ImportRule)
                 {
-                    var importrule = item.CssRule as Kooboo.Dom.CSS.CSSImportRule;
-                    if (importrule != null)
+                    if (item.CssRule is CSSImportRule importrule)
                     {
                         string url = importrule.href;
 
@@ -68,7 +60,7 @@ namespace Kooboo.Sites.Relation
 
                             if (oldrelations.Count == 1 && oldrelations[0].objectYId == routeid && oldrelations[0].ConstTypeY == ConstObjectType.Route)
                             {
-                                // the relation already there. 
+                                // the relation already there.
                                 continue;
                             }
 
@@ -90,7 +82,7 @@ namespace Kooboo.Sites.Relation
         }
 
         /// <summary>
-        /// Remove the cssrules that is not used any more. 
+        /// Remove the cssrules that is not used any more.
         /// </summary>
         private static void RemoveOldRules(Style style, SiteDb sitedb, List<CssConvertResult> covnertedRules)
         {
@@ -104,7 +96,5 @@ namespace Kooboo.Sites.Relation
                 }
             }
         }
-
     }
-
 }

@@ -1,17 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Context;
 using Kooboo.Dom;
-using System.Linq;
 using System.Collections.Generic;
-using System;
 
 namespace Kooboo.Sites.Render
 {
     public class PlaceHolderEvaluator : IEvaluator
     {
         public EvaluatorResponse Evaluate(Node node, EvaluatorOption options)
-        { 
+        {
             if (options.IgnoreEvaluators.HasFlag(EnumEvaluator.PlaceHolder))
             {
                 return null;
@@ -23,31 +20,29 @@ namespace Kooboo.Sites.Render
             }
             var element = node as Element;
 
-            //"tal-placeholder", "position", "placeholder" 
-            string PositionName = null;
+            //"tal-placeholder", "position", "placeholder"
+            string positionName = null;
             foreach (var item in element.attributes)
             {
                 var lower = item.name.ToLower();
                 if (lower == "tal-placeholder" || lower == "k-position" || lower == "tal-position" || lower == "k-placeholder")
                 {
-                    PositionName = item.name;
+                    positionName = item.name;
                     break;
                 }
             }
 
-            if (!string.IsNullOrEmpty(PositionName))
+            if (!string.IsNullOrEmpty(positionName))
             {
-               var response = new EvaluatorResponse(); 
+                var response = new EvaluatorResponse();
                 List<IRenderTask> result = new List<IRenderTask>();
-                string PositionValue = element.getAttribute(PositionName);
-                element.removeAttribute(PositionName); 
-                result.Add(new PlaceHolderRenderTask(PositionValue)); 
+                string positionValue = element.getAttribute(positionName);
+                element.removeAttribute(positionName);
+                result.Add(new PlaceHolderRenderTask(positionValue));
                 response.ContentTask = result;
-                return response; 
+                return response;
             }
-            return null; 
+            return null;
         }
     }
-
-    
 }

@@ -1,187 +1,181 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Relation;
-using Kooboo.Sites.Routing; 
+using Kooboo.Sites.Routing;
 using System;
-using Kooboo.Lib.Helper;
 
 namespace Kooboo.Sites.Service
 {
     public class ConstTypeService
     {
-        public static byte GetConstType(Type TValueType)
+        public static byte GetConstType(Type valueType)
         {
-            if (TValueType == typeof(Binding))
+            if (valueType == typeof(Binding))
             {
                 return ConstObjectType.Binding;
             }
-            else if (TValueType == typeof(ContentCategory))
+            else if (valueType == typeof(ContentCategory))
             {
                 return ConstObjectType.ContentCategory;
             }
-            else if (TValueType == typeof(ContentFolder))
+            else if (valueType == typeof(ContentFolder))
             {
                 return ConstObjectType.ContentFolder;
             }
-            else if (TValueType == typeof(ContentType))
+            else if (valueType == typeof(ContentType))
             {
                 return ConstObjectType.ContentType;
             }
-
-            else if (TValueType == typeof(CmsCssRule))
+            else if (valueType == typeof(CmsCssRule))
             {
                 return ConstObjectType.CssRule;
             }
-            else if (TValueType == typeof(DataMethodSetting))
+            else if (valueType == typeof(DataMethodSetting))
             {
                 return ConstObjectType.DataMethodSetting;
             }
-            else if (TValueType == typeof(Domain))
+            else if (valueType == typeof(Domain))
             {
                 return ConstObjectType.Domain;
             }
-            else if (TValueType == typeof(ExternalResource))
+            else if (valueType == typeof(ExternalResource))
             {
                 return ConstObjectType.ExternalResource;
             }
-            else if (TValueType == typeof(CmsFile))
+            else if (valueType == typeof(CmsFile))
             {
                 return ConstObjectType.CmsFile;
             }
-            else if (TValueType == typeof(Folder))
+            else if (valueType == typeof(Folder))
             {
                 return ConstObjectType.Folder;
             }
-            else if (TValueType == typeof(Form))
+            else if (valueType == typeof(Form))
             {
                 return ConstObjectType.Form;
             }
-
-            else if (TValueType == typeof(FormValue))
+            else if (valueType == typeof(FormValue))
             {
                 return ConstObjectType.FormValue;
             }
-            else if (TValueType == typeof(HtmlBlock))
+            else if (valueType == typeof(HtmlBlock))
             {
                 return ConstObjectType.HtmlBlock;
             }
-            else if (TValueType == typeof(Image))
+            else if (valueType == typeof(Image))
             {
                 return ConstObjectType.Image;
             }
-            else if (TValueType == typeof(Label))
+            else if (valueType == typeof(Label))
             {
                 return ConstObjectType.Label;
             }
-            else if (TValueType == typeof(Layout))
+            else if (valueType == typeof(Layout))
             {
                 return ConstObjectType.Layout;
             }
-            else if (TValueType == typeof(Menu))
+            else if (valueType == typeof(Menu))
             {
                 return ConstObjectType.Menu;
             }
-            else if (TValueType == typeof(Page))
+            else if (valueType == typeof(Page))
             {
                 return ConstObjectType.Page;
             }
-            else if (TValueType == typeof(ObjectRelation))
+            else if (valueType == typeof(ObjectRelation))
             {
                 return ConstObjectType.ObjectRelation;
             }
-            else if (TValueType == typeof(ResourceGroup))
+            else if (valueType == typeof(ResourceGroup))
             {
                 return ConstObjectType.ResourceGroup;
             }
-            else if (TValueType == typeof(Route))
+            else if (valueType == typeof(Route))
             {
                 return ConstObjectType.Route;
             }
-            else if (TValueType == typeof(Script))
+            else if (valueType == typeof(Script))
             {
                 return ConstObjectType.Script;
             }
-            else if (TValueType == typeof(Style))
+            else if (valueType == typeof(Style))
             {
                 return ConstObjectType.Style;
             }
-            else if (TValueType == typeof(SyncSetting))
+            else if (valueType == typeof(SyncSetting))
             {
                 return ConstObjectType.SyncSetting;
             }
-
-            else if (TValueType == typeof(TextContent))
+            else if (valueType == typeof(TextContent))
             {
                 return ConstObjectType.TextContent;
             }
-            else if (TValueType == typeof(Thumbnail))
+            else if (valueType == typeof(Thumbnail))
             {
                 return ConstObjectType.Thumbnail;
             }
-            else if (TValueType == typeof(User))
+            else if (valueType == typeof(User))
             {
                 return ConstObjectType.User;
             }
-            else if (TValueType == typeof(Organization))
+            else if (valueType == typeof(Organization))
             {
                 return ConstObjectType.UserGroup;
             }
-            else if (TValueType == typeof(View))
+            else if (valueType == typeof(View))
             {
                 return ConstObjectType.View;
             }
-            else if (TValueType == typeof(ViewDataMethod))
+            else if (valueType == typeof(ViewDataMethod))
             {
                 return ConstObjectType.ViewDataMethod;
             }
-            else if (TValueType == typeof(WebSite))
+            else if (valueType == typeof(WebSite))
             {
                 return ConstObjectType.WebSite;
             }
-            else if (TValueType == typeof(Synchronization))
+            else if (valueType == typeof(Synchronization))
             {
                 return ConstObjectType.Synchronization;
             }
-            else if (TValueType == typeof(SiteCluster))
+            else if (valueType == typeof(SiteCluster))
             {
                 return ConstObjectType.SiteCluster;
             }
-            else if (TValueType == typeof(FormSetting))
+            else if (valueType == typeof(FormSetting))
             {
                 return ConstObjectType.FormSetting;
             }
-     
-      
-            else if (TValueType == typeof(Code))
+            else if (valueType == typeof(Code))
             {
-                return ConstObjectType.Code; 
+                return ConstObjectType.Code;
             }
-            else if (TValueType == typeof(CoreSetting))
+            else if (valueType == typeof(CoreSetting))
             {
                 return ConstObjectType.CoreSetting;
             }
-            else if (TValueType ==typeof(SiteUser))
+            else if (valueType == typeof(SiteUser))
             {
-                return ConstObjectType.SiteUser; 
+                return ConstObjectType.SiteUser;
             }
-            else if (TValueType == typeof(BusinessRule))
+            else if (valueType == typeof(BusinessRule))
             {
                 return ConstObjectType.BusinessRule;
             }
-            else if (TValueType == typeof(KConfig))
+            else if (valueType == typeof(KConfig))
             {
-                return ConstObjectType.Kconfig; 
+                return ConstObjectType.Kconfig;
             }
 
             return ConstObjectType.Unknown;
         }
 
-        public static Type GetModelType(byte ConstType)
+        public static Type GetModelType(byte constType)
         {
-            return ConstTypeContainer.GetModelType(ConstType); 
+            return ConstTypeContainer.GetModelType(constType);
         }
 
         public static byte GetConstTypeByUrl(string url)
@@ -211,23 +205,24 @@ namespace Kooboo.Sites.Service
 
                 case Lib.Helper.UrlHelper.UrlFileType.PageOrView:
                     return ConstObjectType.Page;
+
                 default:
                     return ConstObjectType.Page;
             }
         }
 
-        public static string GetContentType(Type ModelType)
+        public static string GetContentType(Type modelType)
         {
-            if (ModelType == typeof(Style))
+            if (modelType == typeof(Style))
             {
                 return "text/css;charset=utf-8;";
             }
-            else if (ModelType == typeof(Script))
+            else if (modelType == typeof(Script))
             {
                 return "application/javascript;charset=utf-8;";
             }
-              
-            if (Kooboo.Lib.Reflection.TypeHelper.IsOfBaseTypeOrInterface(ModelType, typeof(Kooboo.Data.Interface.IBinaryFile)))
+
+            if (Kooboo.Lib.Reflection.TypeHelper.IsOfBaseTypeOrInterface(modelType, typeof(Kooboo.Data.Interface.IBinaryFile)))
             {
                 return "application/octet-stream";
             }
@@ -235,31 +230,35 @@ namespace Kooboo.Sites.Service
             return "text/html;charset=utf-8;";
         }
 
-        public static string GetContentType(byte ConstType)
+        public static string GetContentType(byte constType)
         {
-            var type = GetModelType(ConstType);
+            var type = GetModelType(constType);
             return GetContentType(type);
         }
 
-        public static Type GetModelTypeByUrl(string RelativeUrl)
+        public static Type GetModelTypeByUrl(string relativeUrl)
         {
-            var filetype = Kooboo.Lib.Helper.UrlHelper.GetFileType(RelativeUrl);
+            var filetype = Kooboo.Lib.Helper.UrlHelper.GetFileType(relativeUrl);
             switch (filetype)
             {
                 case Lib.Helper.UrlHelper.UrlFileType.Image:
                     return typeof(Image);
+
                 case Lib.Helper.UrlHelper.UrlFileType.JavaScript:
                     return typeof(Script);
+
                 case Lib.Helper.UrlHelper.UrlFileType.Style:
                     return typeof(Style);
+
                 case Lib.Helper.UrlHelper.UrlFileType.File:
                     return typeof(CmsFile);
+
                 case Lib.Helper.UrlHelper.UrlFileType.PageOrView:
                     return typeof(Page);
+
                 default:
                     return typeof(Page);
             }
         }
-
     }
 }

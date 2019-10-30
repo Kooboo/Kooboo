@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kooboo.Sites.Render.Renderers.ExternalCache
+﻿namespace Kooboo.Sites.Render.Renderers.ExternalCache
 {
     public class CacheBinaryDownloader
     {
@@ -14,15 +10,15 @@ namespace Kooboo.Sites.Render.Renderers.ExternalCache
         private CacheObject item { get; set; }
 
         public void DownloadAndSave()
-        { 
+        {
             if (item.ContentType == null)
             {
                 var down = Lib.Helper.DownloadHelper.DownloadUrl(item.FullFileUrl);
                 if (down != null)
                 {
                     ExternalCacheRender.SaveBinaryDisk(item, down.DataBytes);
-                    
-                    string contenttype=  down.ContentType;
+
+                    string contenttype = down.ContentType;
 
                     if (contenttype == null)
                     {
@@ -41,13 +37,12 @@ namespace Kooboo.Sites.Render.Renderers.ExternalCache
             }
             else
             {
-                var DownBinary = Lib.Helper.DownloadHelper.DownloadFile(item.FullFileUrl);
-                if (DownBinary != null)
+                var downBinary = Lib.Helper.DownloadHelper.DownloadFile(item.FullFileUrl);
+                if (downBinary != null)
                 {
-                    ExternalCacheRender.SaveBinaryDisk(item, DownBinary);
+                    ExternalCacheRender.SaveBinaryDisk(item, downBinary);
                 }
-            } 
+            }
         }
-
     }
 }

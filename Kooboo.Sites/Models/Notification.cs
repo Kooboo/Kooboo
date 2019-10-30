@@ -1,18 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Models
 {
     public class Notification : Kooboo.Data.Interface.ISiteObject
     {
         private Guid _id;
+
         public Guid Id
         {
             get
@@ -34,6 +31,7 @@ namespace Kooboo.Sites.Models
         } = ConstObjectType.Notification;
 
         private string _name;
+
         public string Name
         {
             get
@@ -56,12 +54,12 @@ namespace Kooboo.Sites.Models
         {
             get; set;
         } = DateTime.Now;
-  
-       [JsonConverter(typeof(StringEnumConverter))]
+
+        [JsonConverter(typeof(StringEnumConverter))]
         public NotifyType NotifyType { get; set; }
 
+        private DateTime _lastmodify;
 
-        private DateTime _lastmodify; 
         public DateTime LastModified
         {
             get
@@ -80,6 +78,7 @@ namespace Kooboo.Sites.Models
         }
 
         private long _lastmodifytick;
+
         public long LastModifyTick
         {
             get
@@ -95,7 +94,6 @@ namespace Kooboo.Sites.Models
                 _lastmodifytick = value;
             }
         }
-
     }
 
     public enum NotifyType

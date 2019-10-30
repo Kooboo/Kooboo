@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
+using Kooboo.Dom;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Kooboo.Dom;
-using Kooboo.Data.Context;
 
 namespace Kooboo.Sites.Render
 {
@@ -26,14 +26,14 @@ namespace Kooboo.Sites.Render
             }
         }
 
-        public HeaderRenderTask(Element HeaderElement = null)
+        public HeaderRenderTask(Element headerElement = null)
         {
-            if (HeaderElement != null)
+            if (headerElement != null)
             {
-                if (!Service.DomService.IsFakeElement(HeaderElement))
+                if (!Service.DomService.IsFakeElement(headerElement))
                 {
-                    this.HeaderHtml = HeaderElement.OuterHtml;
-                    this.HeaderItems = this.ProcessItems(HeaderElement);
+                    this.HeaderHtml = headerElement.OuterHtml;
+                    this.HeaderItems = this.ProcessItems(headerElement);
                 }
             }
         }
@@ -50,28 +50,29 @@ namespace Kooboo.Sites.Render
 
                     if (element.tagName.ToLower() == "title")
                     {
-                        HeaderRenderItem headerItem = new HeaderRenderItem();
-                        headerItem.OriginalHtml = element.OuterHtml;
-                        headerItem.isTitle = true;
-                        headerItem.Content = element.InnerHtml;
+                        HeaderRenderItem headerItem = new HeaderRenderItem
+                        {
+                            OriginalHtml = element.OuterHtml, isTitle = true, Content = element.InnerHtml
+                        };
                         foreach (var att in element.attributes)
                         {
                             headerItem.Attributes[att.name] = att.value;
                         }
                         result.Add(headerItem);
                     }
-
                     else if (element.tagName.ToLower() == "meta")
                     {
-                        HeaderRenderItem headerItem = new HeaderRenderItem();
-                        headerItem.OriginalHtml = element.OuterHtml;
+                        HeaderRenderItem headerItem = new HeaderRenderItem
+                        {
+                            OriginalHtml = element.OuterHtml,
+                            MetaName = element.getAttribute("name"),
+                            HttpEquive = element.getAttribute("http-equiv"),
+                            CharSet = element.getAttribute("charset"),
+                            Content = element.getAttribute("content"),
+                            IsMeta = true
+                        };
 
-                        headerItem.MetaName = element.getAttribute("name");
-                        headerItem.HttpEquive = element.getAttribute("http-equiv");
-                        headerItem.CharSet = element.getAttribute("charset");
-                        headerItem.Content = element.getAttribute("content");
 
-                        headerItem.IsMeta = true;
 
                         foreach (var att in element.attributes)
                         {
@@ -81,21 +82,18 @@ namespace Kooboo.Sites.Render
                     }
                     else
                     {
-                        HeaderRenderItem headeritem = new HeaderRenderItem();
-                        headeritem.OriginalHtml = element.OuterHtml;
-                        headeritem.NoRender = true;
+                        HeaderRenderItem headeritem = new HeaderRenderItem
+                        {
+                            OriginalHtml = element.OuterHtml, NoRender = true
+                        };
                         result.Add(headeritem);
-
                     }
                 }
-
                 else if (item.nodeType == enumNodeType.TEXT)
                 {
                     var textndoe = item as Kooboo.Dom.Text;
 
-                    HeaderRenderItem headeritem = new HeaderRenderItem();
-                    headeritem.OriginalHtml = textndoe.data;
-                    headeritem.NoRender = true;
+                    HeaderRenderItem headeritem = new HeaderRenderItem {OriginalHtml = textndoe?.data, NoRender = true};
                     result.Add(headeritem);
                 }
             }
@@ -122,7 +120,7 @@ namespace Kooboo.Sites.Render
                         var binding = headerbinding.Find(o => o.IsTitle);
                         if (binding != null)
                         {
-                            newcontent = GetBindingContent(binding, context);     
+                            newcontent = GetBindingContent(binding, context);
                             headerbinding.Remove(binding);
                         }
                         sb.Append(RenderTitle(item, newcontent));
@@ -154,7 +152,7 @@ namespace Kooboo.Sites.Render
 
         private string RenderHeaderMetaItem(HeaderRenderItem item, List<HeaderBindings> bindings, RenderContext context)
         {
-            if (bindings == null || bindings.Count() == 0)
+            if (bindings == null || bindings.Count == 0)
             {
                 return item.OriginalHtml;
             }
@@ -176,7 +174,7 @@ namespace Kooboo.Sites.Render
             if (finditem != null)
             {
                 bindings.Remove(finditem);
-                return RenderBindingItem(finditem,context);
+                return RenderBindingItem(finditem, context);
             }
             else
             {
@@ -185,17 +183,17 @@ namespace Kooboo.Sites.Render
         }
 
         private string RenderBindingItem(HeaderBindings binding, RenderContext context)
-        {   
+        {
             if (binding == null)
             {
-                return null; 
+                return null;
             }
 
-            string newcontent = GetBindingContent(binding, context); 
-           
-             if (newcontent == null)
+            string newcontent = GetBindingContent(binding, context);
+
+            if (newcontent == null)
             {
-                return null; 
+                return null;
             }
 
             if (binding.IsTitle)
@@ -234,7 +232,6 @@ namespace Kooboo.Sites.Render
 
                 return result;
             }
-
         }
 
         private string RenderTitle(HeaderRenderItem item, string newContent = null)
@@ -256,7 +253,6 @@ namespace Kooboo.Sites.Render
             }
 
             return "<Title" + att + ">" + newContent + "</Title>";
-
         }
 
         public void AppendResult(RenderContext context, List<RenderResult> result)
@@ -269,7 +265,7 @@ namespace Kooboo.Sites.Render
 
         public string GetBindingContent(HeaderBindings binding, RenderContext context)
         {
-            return binding.GetContent(context);    
+            return binding.GetContent(context);
         }
     }
 
@@ -277,6 +273,7 @@ namespace Kooboo.Sites.Render
     {
         private RenderContext _context;
         private HeaderRenderTask _headertask;
+
         public HeaderLazyRender(RenderContext context, HeaderRenderTask headerRender)
         {
             this._headertask = headerRender;
@@ -287,7 +284,6 @@ namespace Kooboo.Sites.Render
         {
             return this._headertask.Render(this._context);
         }
-
     }
 
     public class HeaderRenderItem
@@ -297,7 +293,7 @@ namespace Kooboo.Sites.Render
         public bool IsMeta { get; set; }
 
         /// <summary>
-        ///  Node that does not require render... 
+        ///  Node that does not require render...
         /// </summary>
         public bool NoRender { get; set; }
 
@@ -312,15 +308,12 @@ namespace Kooboo.Sites.Render
         public string OriginalHtml { get; set; }
 
         private Dictionary<string, string> _attributes;
+
         public Dictionary<string, string> Attributes
         {
             get
             {
-                if (_attributes == null)
-                {
-                    _attributes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _attributes;
+                return _attributes ?? (_attributes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
             }
             set
             {
@@ -328,5 +321,4 @@ namespace Kooboo.Sites.Render
             }
         }
     }
-
 }

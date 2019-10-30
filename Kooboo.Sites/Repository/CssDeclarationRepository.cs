@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 //using Kooboo.Extensions;
 //using Kooboo.IndexedDB;
@@ -8,7 +8,7 @@
 //using System.Linq;
 //using System.Text;
 //using System.Threading.Tasks;
- 
+
 //namespace Kooboo.Sites.Repository
 //{
 //    public class CssDeclarationRepository : SiteRepositoryBase<CmsCssDeclaration>
@@ -24,7 +24,7 @@
 //                paras.AddColumn<CmsCssDeclaration>(o => o.OwnerObjectId);
 //                paras.AddColumn<CmsCssDeclaration>(o => o.OwnerObjectConstType);
 //                paras.AddColumn<CmsCssDeclaration>(o => o.ParentStyleId);
-//                paras.SetPrimaryKeyField<CmsCssDeclaration>(o => o.Id); 
+//                paras.SetPrimaryKeyField<CmsCssDeclaration>(o => o.Id);
 //                return paras;
 //            }
 //        }
@@ -33,15 +33,12 @@
 //        {
 //            return Query.Where(o => o.CmsCssRuleId == CssRuleId).SelectAll();
 //        }
-       
+
 //    }
 //}
 
-
-
 //public class DeclarationUpdate
 //{
-
 //    public Guid DeclarationId { get; set; }
 
 //    public Guid CmsCssRuleId { get; set; }

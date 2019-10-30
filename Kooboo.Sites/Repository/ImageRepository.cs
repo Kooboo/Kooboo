@@ -1,17 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB;
+using Kooboo.Lib.Helper;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Relation;
-using Kooboo.Sites.Routing;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Extensions;
-using Kooboo.Lib.Helper;
 
 namespace Kooboo.Sites.Repository
 {
@@ -24,7 +19,7 @@ namespace Kooboo.Sites.Repository
                 ObjectStoreParameters paras = new ObjectStoreParameters();
                 paras.SetPrimaryKeyField<Image>(o => o.Id);
                 paras.AddColumn<Image>(o => o.Id);
-                paras.AddColumn<Image>(o => o.Height); 
+                paras.AddColumn<Image>(o => o.Height);
                 paras.AddColumn<Image>(o => o.Width);
                 paras.AddColumn<Image>(o => o.Size);
                 paras.AddColumn("Name", 100);
@@ -33,11 +28,10 @@ namespace Kooboo.Sites.Repository
                 return paras;
             }
         }
-         
-         
+
         public List<Image> ListUsedBy(byte ConstType)
         {
-            // For style. it is actually must be css declaration. 
+            // For style. it is actually must be css declaration.
             if (ConstType == ConstObjectType.Style)
             {
                 ConstType = ConstObjectType.CssRule;
@@ -57,22 +51,21 @@ namespace Kooboo.Sites.Repository
             return list;
         }
 
-        public override bool AddOrUpdate(Image value, Guid UserId)
-        { 
-             if (value !=null)
+        public override bool AddOrUpdate(Image value, Guid userId)
+        {
+            if (value != null)
             {
-                if (!value.IsSvg && value.Width <=0 || value.Height <=0)
+                if (!value.IsSvg && value.Width <= 0 || value.Height <= 0)
                 {
                     var size = Lib.Utilities.CalculateUtility.GetImageSize(value.ContentBytes);
                     value.Height = size.Height;
-                    value.Width = size.Width; 
+                    value.Width = size.Width;
                 }
 
-                return base.AddOrUpdate(value, UserId);
+                return base.AddOrUpdate(value, userId);
             }
 
-            return false;               
-          
+            return false;
         }
 
         public List<ObjectRelation> ListUsedByRelation(Image image, byte constType = 0)
@@ -87,41 +80,37 @@ namespace Kooboo.Sites.Repository
             }
             return this.SiteDb.Relations.GetReferredBy(image, constType);
         }
-        
 
-        public Image UploadImage(byte[] contentBytes, string fullName, Guid UserId)
-        { 
+        public Image UploadImage(byte[] contentBytes, string fullName, Guid userId)
+        {
             string relativeUrl = UrlHelper.RelativePath(fullName);
-            bool found = true; 
+            bool found = true;
 
-            Image koobooimage = this.GetByUrl(relativeUrl); 
+            Image koobooimage = this.GetByUrl(relativeUrl);
 
-            if (koobooimage==null)
+            if (koobooimage == null)
             {
                 koobooimage = new Image();
-                found = false; 
-            }   
+                found = false;
+            }
             koobooimage.Name = UrlHelper.FileName(fullName);
             koobooimage.Extension = UrlHelper.FileExtension(fullName);
 
             koobooimage.ContentBytes = contentBytes;
-               
+
             if (!found)
             {
-                SiteDb.Routes.AddOrUpdate(relativeUrl, ConstObjectType.Image, koobooimage.Id, UserId);
+                SiteDb.Routes.AddOrUpdate(relativeUrl, ConstObjectType.Image, koobooimage.Id, userId);
             }
 
-         
-        AddOrUpdate(koobooimage, UserId);
-      
+            AddOrUpdate(koobooimage, userId);
 
             return koobooimage;
         }
 
- 
-        public List<Image> ListUsedByPage(Guid PageId, bool UseColumnData = true)
+        public List<Image> ListUsedByPage(Guid pageId, bool useColumnData = true)
         {
-            var objectids = SiteDb.Pages.GetRelatedObjectIds(SiteDb.Pages.Get(PageId));
+            var objectids = SiteDb.Pages.GetRelatedObjectIds(SiteDb.Pages.Get(pageId));
 
             return ListUsedByObjects(objectids.ToArray());
         }
@@ -148,51 +137,51 @@ namespace Kooboo.Sites.Repository
             return images;
         }
 
-        public List<Image> ListUsedByPageStyle(Guid PageId)
+        public List<Image> ListUsedByPageStyle(Guid pageId)
         {
             List<Image> images = new List<Image>();
-            var pagedeclarations = Kooboo.Sites.Relation.CmsCssRuleRelation.ListUsedByPage(SiteDb, PageId);
+            var pagedeclarations = Kooboo.Sites.Relation.CmsCssRuleRelation.ListUsedByPage(SiteDb, pageId);
 
-            List<Guid> Ruleids = pagedeclarations.Select(o => o.Id).ToList();
+            List<Guid> ruleids = pagedeclarations.Select(o => o.Id).ToList();
 
-            var allStyleImageRelations = SiteDb.Relations.Query.Where(o => o.ConstTypeY == ConstObjectType.Route && o.RouteDestinationType == ConstObjectType.Image && o.ConstTypeX == ConstObjectType.CssRule).WhereIn<Guid>(o => o.objectXId, Ruleids).SelectAll();
+            var allStyleImageRelations = SiteDb.Relations.Query.Where(o => o.ConstTypeY == ConstObjectType.Route && o.RouteDestinationType == ConstObjectType.Image && o.ConstTypeX == ConstObjectType.CssRule).WhereIn<Guid>(o => o.objectXId, ruleids).SelectAll();
 
             foreach (var item in allStyleImageRelations)
             {
                 var route = SiteDb.Routes.Get(item.objectYId);
                 if (route != null && route.objectId != default(Guid))
-                { 
+                {
                     var image = Get(route.objectId, true);
                     if (image != null)
                     {
                         images.Add(image);
                     }
                 }
-            } 
+            }
             return images;
         }
 
         public List<Image> Search(string keyword, int skip = 0, int count = 50)
-        {  
+        {
             keyword = keyword.ToLower();
 
             Func<string, bool> HasKeyword = (input) =>
             {
                 if (string.IsNullOrEmpty(input))
                 {
-                    return false; 
+                    return false;
                 }
                 if (input.ToLower().Contains(keyword))
                 {
-                    return true; 
+                    return true;
                 }
-                return false; 
+                return false;
             };
-              
+
             var images = new List<Image>();
             var resultbyname = SiteDb.Images.TableScan.Where(o => HasKeyword(o.Name) || HasKeyword(o.Alt)).SelectAll();
-            //images.AddRange(resultbyname); 
-           // var resultbyname = SiteDb.Images.Query.Where(o=>HasKeyword(o.Name) || HasKeyword(o.Alt)).SelectAll();
+            //images.AddRange(resultbyname);
+            // var resultbyname = SiteDb.Images.Query.Where(o=>HasKeyword(o.Name) || HasKeyword(o.Alt)).SelectAll();
 
             images.AddRange(resultbyname);
 
@@ -218,8 +207,8 @@ namespace Kooboo.Sites.Repository
             return images;
         }
 
-        private void SearchPathTree(Models.Path tree, HashSet<Guid> ImageIdList, string keyword)
-        { 
+        private void SearchPathTree(Models.Path tree, HashSet<Guid> imageIdList, string keyword)
+        {
             if (tree == null)
             {
                 return;
@@ -233,15 +222,15 @@ namespace Kooboo.Sites.Repository
                     var route = SiteDb.Routes.Get(item);
                     if (route != null && route.DestinationConstType == ConstObjectType.Image)
                     {
-                        ImageIdList.Add(route.objectId);
+                        imageIdList.Add(route.objectId);
                     }
                 }
-                return; 
+                return;
             }
 
             foreach (var item in tree.Children)
             {
-                SearchPathTree(item.Value, ImageIdList, keyword);
+                SearchPathTree(item.Value, imageIdList, keyword);
             }
         }
 
@@ -251,7 +240,7 @@ namespace Kooboo.Sites.Repository
             if (tree.RouteId != default(Guid))
             {
                 result.Add(tree.RouteId);
-            } 
+            }
             foreach (var item in tree.Children)
             {
                 var subset = GetAllSubRouteId(item.Value);
@@ -262,7 +251,5 @@ namespace Kooboo.Sites.Repository
             }
             return result;
         }
-
-
     }
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
@@ -23,11 +23,10 @@ namespace Kooboo.Sites.Scripting
             this.RenderContext = context;
         }
 
-
         public IkScript this[string key] { get { return ExtensionContainer.Get(key, this.RenderContext); } set { ExtensionContainer.Set(value); } }
-         
 
         private kDataContext _data;
+
         public kDataContext DataContext
         {
             get
@@ -47,6 +46,7 @@ namespace Kooboo.Sites.Scripting
         }
 
         private Response _response;
+
         public Response Response
         {
             get
@@ -86,6 +86,7 @@ namespace Kooboo.Sites.Scripting
         }
 
         private Session _session;
+
         public Session Session
         {
             get
@@ -104,7 +105,6 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-
         private Dictionary<string, string> _viewdata;
 
         public Dictionary<string, string> ViewData
@@ -117,7 +117,7 @@ namespace Kooboo.Sites.Scripting
                     {
                         if (_viewdata == null)
                         {
-                            _viewdata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); 
+                            _viewdata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                         }
                     }
                 }
@@ -147,26 +147,20 @@ namespace Kooboo.Sites.Scripting
                             }
                         }
                     }
-
                 }
                 return _siteinfo;
             }
         }
 
-        private UserInfoModel _user; 
+        private UserInfoModel _user;
+
         public UserInfoModel User
         {
-            get
-            {
-                if (_user == null)
-                {
-                    _user = new UserInfoModel(this.RenderContext); 
-                } 
-                return _user; 
-            }  
+            get { return _user ?? (_user = new UserInfoModel(this.RenderContext)); }
         }
 
         private KTemplate _template;
+
         public KTemplate Template
         {
             get
@@ -186,28 +180,24 @@ namespace Kooboo.Sites.Scripting
             public string Name { get; set; }
 
             private Dictionary<string, string> _setting;
+
             public Dictionary<string, string> Setting
             {
                 get
                 {
-                    if (_setting == null)
-                    {
-                        _setting = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                    }
-                    return _setting;
+                    return _setting ?? (_setting = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
                 }
                 set { _setting = value; }
             }
 
-
             public UserModel User
             {
                 get; set;
-            } 
-           
+            }
         }
-                     
+
         private kSiteDb _sitedb;
+
         public kSiteDb SiteDb
         {
             get
@@ -238,6 +228,7 @@ namespace Kooboo.Sites.Scripting
         }
 
         private Curl _url;
+
         public Curl Url
         {
             get
@@ -296,12 +287,11 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-
         public Dictionary<string, string> config { get; set; }
 
         [Attributes.SummaryIgnore]
         public Kooboo.Sites.FrontEvent.IFrontEvent @event { get; set; }
-         
+
         public Kooboo.Sites.Diagnosis.KDiagnosis diagnosis { get; set; }
 
         private kKeyValue _sitestore;
@@ -346,7 +336,6 @@ namespace Kooboo.Sites.Scripting
 
         public kDatabase DB
         {
-
             get { return this.Database; }
         }
 
@@ -379,6 +368,7 @@ namespace Kooboo.Sites.Scripting
         }
 
         private Kooboo.Sites.Scripting.Global.Mail _mail;
+
         public Kooboo.Sites.Scripting.Global.Mail mail
         {
             get
@@ -397,7 +387,7 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        Kooboo.Sites.Scripting.Global.Security _security;
+        private Kooboo.Sites.Scripting.Global.Security _security;
 
         public Kooboo.Sites.Scripting.Global.Security Security
         {
@@ -417,24 +407,23 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-
         public void Import(string codename)
         {
             var sitedb = this.RenderContext.WebSite.SiteDb();
-            var code = sitedb.Code.Get(codename); 
-            if (code !=null)
+            var code = sitedb.Code.Get(codename);
+            if (code != null)
             {
-              var result =    Kooboo.Sites.Scripting.Manager.ExecuteCode(this.RenderContext, code.Body, code.Id); 
-                if (result !=null)
+                var result = Kooboo.Sites.Scripting.Manager.ExecuteCode(this.RenderContext, code.Body, code.Id);
+                if (result != null)
                 {
-                    Response.write(result); 
+                    Response.write(result);
                 }
             }
         }
 
         public void ImportCode(string codename)
         {
-            Import(codename); 
+            Import(codename);
         }
 
         #region APIHelper
@@ -453,16 +442,12 @@ namespace Kooboo.Sites.Scripting
             Response.write(html);
         }
 
-
         public List<object> ReturnValues = new List<object>();
-
-
 
         public void output(object obj)
         {
             this.ReturnValues.Add(obj);
         }
-
 
         public void export(object obj)
         {
@@ -537,8 +522,7 @@ namespace Kooboo.Sites.Scripting
                 else
                 {
                     string name = item.Name;
-                    Dictionary<string, string> para = new Dictionary<string, string>();
-                    para.Add("name", name);
+                    Dictionary<string, string> para = new Dictionary<string, string> {{"name", name}};
                     string url = Lib.Helper.UrlHelper.AppendQueryString(baseurl, para);
                     result += "<br/><br/> <a href='" + url + "'><b>" + name + "</b></a>";
                 }
@@ -547,9 +531,9 @@ namespace Kooboo.Sites.Scripting
             return result;
         }
 
-        private string print(List<MethodViewModel> input)
+        private string Print(List<MethodViewModel> input)
         {
-            if (input == null || input.Count() == 0)
+            if (input == null || input.Count == 0)
             {
                 return string.Empty;
             }
@@ -598,7 +582,7 @@ namespace Kooboo.Sites.Scripting
             return result;
         }
 
-        private List<MethodViewModel> GetMethod(Type type, string MethodPathBase)
+        private List<MethodViewModel> GetMethod(Type type, string methodPathBase)
         {
             if (type == typeof(KScriptExtension))
             {
@@ -614,8 +598,7 @@ namespace Kooboo.Sites.Scripting
                 var requirepara = item.GetCustomAttribute(typeof(Kooboo.Attributes.SummaryIgnore));
                 if (requirepara == null)
                 {
-                    MethodViewModel model = new MethodViewModel();
-                    model.Name = MethodPathBase + "." + item.Name;
+                    MethodViewModel model = new MethodViewModel {Name = methodPathBase + "." + item.Name};
                     var paras = item.GetParameters();
                     foreach (var p in paras)
                     {
@@ -628,8 +611,8 @@ namespace Kooboo.Sites.Scripting
                     {
                         if (item.ReturnType.IsClass && item.ReturnType != typeof(string))
                         {
-                            var SampleResponseData = Kooboo.Lib.Development.FakeData.GetFakeValue(item.ReturnType);
-                            model.Sample = Lib.Helper.JsonHelper.Serialize(SampleResponseData);
+                            var sampleResponseData = Kooboo.Lib.Development.FakeData.GetFakeValue(item.ReturnType);
+                            model.Sample = Lib.Helper.JsonHelper.Serialize(sampleResponseData);
                         }
                     }
                     methods.Add(model);
@@ -664,7 +647,7 @@ namespace Kooboo.Sites.Scripting
             return fieldlist;
         }
 
-        private List<MethodViewModel> GetRepositoryMethod(Type type, string MethodPathBase)
+        private List<MethodViewModel> GetRepositoryMethod(Type type, string methodPathBase)
         {
             List<MethodViewModel> methods = new List<MethodViewModel>();
 
@@ -685,7 +668,7 @@ namespace Kooboo.Sites.Scripting
             foreach (var methodname in takeMethods)
             {
                 var finds = allmethods.FindAll(o => o.Name == methodname);
-                if (finds == null || finds.Count() == 0)
+                if (finds == null || finds.Count == 0)
                 {
                     continue;
                 }
@@ -703,8 +686,7 @@ namespace Kooboo.Sites.Scripting
                     }
                 }
 
-                MethodViewModel model = new MethodViewModel();
-                model.Name = MethodPathBase + "." + item.Name;
+                MethodViewModel model = new MethodViewModel {Name = methodPathBase + "." + item.Name};
                 var paras = item.GetParameters();
                 foreach (var p in paras)
                 {
@@ -717,8 +699,8 @@ namespace Kooboo.Sites.Scripting
                 {
                     if (item.ReturnType.IsClass && item.ReturnType != typeof(string))
                     {
-                        var SampleResponseData = Kooboo.Lib.Development.FakeData.GetFakeValue(item.ReturnType);
-                        model.Sample = Lib.Helper.JsonHelper.Serialize(SampleResponseData);
+                        var sampleResponseData = Kooboo.Lib.Development.FakeData.GetFakeValue(item.ReturnType);
+                        model.Sample = Lib.Helper.JsonHelper.Serialize(sampleResponseData);
                     }
                 }
                 methods.Add(model);
@@ -727,8 +709,7 @@ namespace Kooboo.Sites.Scripting
             return methods;
         }
 
-        #endregion
-
+        #endregion APIHelper
     }
 
     public class MethodViewModel
@@ -747,24 +728,23 @@ namespace Kooboo.Sites.Scripting
         public Type ReturnType { get; set; }
     }
 
-
     public class PropertyViewModel
     {
         public PropertyViewModel()
         {
             this.Name = string.Empty;
         }
+
         public string Name { get; set; }
 
         public Type ReturnType { get; set; }
     }
 
-
     public class UserInfoModel
-    { 
+    {
         public UserInfoModel(RenderContext context)
         {
-            this.context = context; 
+            this.context = context;
         }
 
         public RenderContext context { get; set; }
@@ -778,7 +758,7 @@ namespace Kooboo.Sites.Scripting
                     return context.User.Id;
                 }
                 return default(Guid);
-            } 
+            }
         }
 
         public Guid _Id
@@ -797,39 +777,38 @@ namespace Kooboo.Sites.Scripting
         {
             get
             {
-                return context.User != null; 
+                return context.User != null;
             }
         }
 
-
-        public bool IsOfOrganization(string OrganizationName)
+        public bool IsOfOrganization(string organizationName)
         {
             if (context.User == null)
             {
-                return false; 
+                return false;
             }
-            Guid OrgId = default(Guid); 
-            if (!Guid.TryParse(OrganizationName, out OrgId))
+
+            if (!Guid.TryParse(organizationName, out var OrgId))
             {
-                OrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(OrganizationName);
-            } 
+                OrgId = Lib.Security.Hash.ComputeGuidIgnoreCase(organizationName);
+            }
 
             if (context.User.CurrentOrgId == OrgId)
             {
-                return true; 
+                return true;
             }
 
-            var orgs = Data.GlobalDb.Users.Organizations(context.User.Id); 
-            
+            var orgs = Data.GlobalDb.Users.Organizations(context.User.Id);
+
             if (orgs.Any())
             {
-                var find = orgs.Find(o => o.Id == OrgId); 
-                if (find !=null)
+                var find = orgs.Find(o => o.Id == OrgId);
+                if (find != null)
                 {
                     return true;
                 }
             }
-            return false;  
+            return false;
         }
 
         public Kooboo.Data.Models.User Get(string userName)
@@ -848,36 +827,27 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-        public string UserName {
+        public string UserName
+        {
             get
             {
-                if (context.User !=null)
-                {
-                    return context.User.UserName; 
-                }
-                return null;
+                return context.User?.UserName;
             }
         }
 
-        public string FirstName {
+        public string FirstName
+        {
             get
             {
-                if (context.User !=null)
-                {
-                    return context.User.FirstName; 
-                }
-                return null; 
+                return context.User?.FirstName;
             }
         }
 
-        public string LastName {
+        public string LastName
+        {
             get
             {
-                if (context.User !=null)
-                {
-                    return context.User.LastName; 
-                }
-                return null; 
+                return context.User?.LastName;
             }
         }
 
@@ -897,11 +867,7 @@ namespace Kooboo.Sites.Scripting
         {
             get
             {
-                if (context.User != null)
-                {
-                    return context.User.EmailAddress;
-                }
-                return null;
+                return context.User?.EmailAddress;
             }
         }
 
@@ -911,17 +877,17 @@ namespace Kooboo.Sites.Scripting
 
             if (user != null)
             {
-                context.Response.AppendCookie(DataConstants.UserApiSessionKey, user.Id.ToString(),  30);
-                context.User = user; 
-                return user; 
+                context.Response.AppendCookie(DataConstants.UserApiSessionKey, user.Id.ToString(), 30);
+                context.User = user;
+                return user;
             }
 
-            return null; 
-        }  
+            return null;
+        }
 
-        public bool Exists(string UserName)
+        public bool Exists(string userName)
         {
-            return Data.GlobalDb.Users.Get(UserName) != null; 
+            return Data.GlobalDb.Users.Get(userName) != null;
         }
 
         [Obsolete]
@@ -937,8 +903,8 @@ namespace Kooboo.Sites.Scripting
 
         public void Logout()
         {
-            // log user out. 
-            context.Response.DeleteCookie(DataConstants.UserApiSessionKey);   
-        } 
+            // log user out.
+            context.Response.DeleteCookie(DataConstants.UserApiSessionKey);
+        }
     }
 }

@@ -36,8 +36,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
 
             var res = DataManager.AddData(sitedb, name, data);
 
-            View view = new View();
-            view.Name = name;
+            View view = new View {Name = name};
 
             string viewbody = Lib.Helper.JsonHelper.GetString(result, "HtmlBody");
 
@@ -55,14 +54,14 @@ namespace Kooboo.Sites.InlineEditor.Converter
             };
         }
 
-        private bool HasCategory(SiteDb SiteDb, Guid PageId, string KoobooId)
+        private bool HasCategory(SiteDb siteDb, Guid pageId, string koobooId)
         {
             return false;
         }
 
         public string UpdateViewTemplate(string template, DataAddResponse dataResponse)
         {
-            if (dataResponse == null || dataResponse.DateList == null || !dataResponse.DateList.Any())
+            if (dataResponse?.DateList == null || !dataResponse.DateList.Any())
             {
                 return template;
             }
@@ -98,16 +97,17 @@ namespace Kooboo.Sites.InlineEditor.Converter
                     }
                 }
 
-                if (updates.Count() > 0)
+                if (updates.Any())
                 {
                     foreach (var item in updates)
                     {
                         dict[item.Key] = item.Value;
                     }
 
-                    SourceUpdate supdate = new SourceUpdate();
-                    supdate.StartIndex = el.location.openTokenStartIndex;
-                    supdate.EndIndex = el.location.openTokenEndIndex;
+                    SourceUpdate supdate = new SourceUpdate
+                    {
+                        StartIndex = el.location.openTokenStartIndex, EndIndex = el.location.openTokenEndIndex
+                    };
 
                     string newopentag = Kooboo.Sites.Service.DomService.GenerateOpenTag(dict, el.tagName);
                     supdate.NewValue = newopentag;
@@ -116,14 +116,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
                 }
             }
 
-            if (sourceUpdate.Any())
-            {
-                return Kooboo.Sites.Service.DomService.UpdateSource(template, sourceUpdate);
-            }
-            else
-            {
-                return template;
-            }
+            return sourceUpdate.Any() ? Kooboo.Sites.Service.DomService.UpdateSource(template, sourceUpdate) : template;
         }
 
         private List<Kooboo.Dom.Element> GetPossibleEls(Dom.Document doc)

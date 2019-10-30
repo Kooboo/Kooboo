@@ -9,10 +9,10 @@ namespace Kooboo.Sites.Authorization.Model
         // fullrighgts like string[] of :
         // root/sub/sub
         // root/sub/subtwo
-        public static PermissionTree GenerateTree(List<string> FullRights)
+        public static PermissionTree GenerateTree(List<string> fullRights)
         {
             PermissionTree tree = new PermissionTree();
-            foreach (var item in FullRights)
+            foreach (var item in fullRights)
             {
                 AppendToPermissionTree(tree, item);
             }
@@ -20,17 +20,17 @@ namespace Kooboo.Sites.Authorization.Model
         }
 
         // root/sub/subtwo
-        public static void AppendToPermissionTree(PermissionTree tree, string FullRightString)
+        public static void AppendToPermissionTree(PermissionTree tree, string fullRightString)
         {
             var spe = "/\\".ToCharArray();
-            var rights = FullRightString.Split(spe, StringSplitOptions.RemoveEmptyEntries);
+            var rights = fullRightString.Split(spe, StringSplitOptions.RemoveEmptyEntries);
             AppendToPermissionTree(tree, rights.ToList());
         }
 
         // single rights without \\
-        public static void AppendToPermissionTree(PermissionTree tree, List<string> SingleRights)
+        public static void AppendToPermissionTree(PermissionTree tree, List<string> singleRights)
         {
-            foreach (var item in SingleRights)
+            foreach (var item in singleRights)
             {
                 if (tree.RootAccess)
                 {

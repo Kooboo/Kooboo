@@ -1,33 +1,33 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Newtonsoft.Json;
 using Kooboo.Data.Interface;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Kooboo.Sites.Sync
 {
     public class SyncObjectConvertor
     {
-        public static Sync.SyncObject ToSyncObject(ISiteObject SiteObject)
+        public static Sync.SyncObject ToSyncObject(ISiteObject siteObject)
         {
-            if (SiteObject == null)
+            if (siteObject == null)
             { return null; }
 
-            SyncObject SyncObj = new SyncObject();
-            SyncObj.ObjectId = SiteObject.Id;
-            SyncObj.ObjectConstType = SiteObject.ConstType;
+            SyncObject syncObj = new SyncObject
+            {
+                ObjectId = siteObject.Id,
+                ObjectConstType = siteObject.ConstType,
+                JsonData = Lib.Helper.JsonHelper.Serialize(siteObject)
+            };
 
-            SyncObj.JsonData = Lib.Helper.JsonHelper.Serialize(SiteObject);
 
-            return SyncObj;
+            return syncObj;
         }
 
-        public static ISiteObject FromSyncObject(SyncObject SyncObject)
+        public static ISiteObject FromSyncObject(SyncObject syncObject)
         {
-            var modeltype = Service.ConstTypeService.GetModelType(SyncObject.ObjectConstType);
+            var modeltype = Service.ConstTypeService.GetModelType(syncObject.ObjectConstType);
 
-            var result = Lib.Helper.JsonHelper.Deserialize(SyncObject.JsonData, modeltype);
+            var result = Lib.Helper.JsonHelper.Deserialize(syncObject.JsonData, modeltype);
 
             //if (result != null && result is IBinaryFile)
             //{
@@ -44,27 +44,24 @@ namespace Kooboo.Sites.Sync
             //    return file as ISiteObject;
             //}
 
-            if (result != null)
-            {
-                return result as ISiteObject;
-            }
-            return null;
+            return result as ISiteObject;
         }
 
         public static Sync.SyncObject ToTableSyncObject(string tablename, System.Guid id, string colName, Dictionary<string, object> tableData)
         {
-            SyncObject SyncObj = new SyncObject();
-            SyncObj.TableName = tablename;
-            SyncObj.TableColName = colName;
-            SyncObj.ObjectId = id;
-            SyncObj.JsonData = Lib.Helper.JsonHelper.Serialize(tableData);
-            return SyncObj;
+            SyncObject syncObj = new SyncObject
+            {
+                TableName = tablename,
+                TableColName = colName,
+                ObjectId = id,
+                JsonData = Lib.Helper.JsonHelper.Serialize(tableData)
+            };
+            return syncObj;
         }
 
-        public static Dictionary<string, object> FromTableSyncObject(SyncObject SyncObject)
+        public static Dictionary<string, object> FromTableSyncObject(SyncObject syncObject)
         {
-            return Lib.Helper.JsonHelper.Deserialize<Dictionary<string, object>>(SyncObject.JsonData);
+            return Lib.Helper.JsonHelper.Deserialize<Dictionary<string, object>>(syncObject.JsonData);
         }
-
     }
 }

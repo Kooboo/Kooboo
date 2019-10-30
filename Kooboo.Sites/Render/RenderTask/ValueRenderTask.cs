@@ -1,21 +1,22 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Render.Functions;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Kooboo.Sites.Render
 {
     /// <summary>
-    /// Get the value for one KeyOrExpression from Datasource. this can be a datakey or an expression like http://www.baidu.com/{0}. 
+    /// Get the value for one KeyOrExpression from Datasource. this can be a datakey or an expression like http://www.baidu.com/{0}.
     /// </summary>
     public class ValueRenderTask : IRenderTask
     {
         public string KeyOrExpression;
+
         /// <summary>
-        /// check whether it is an expression or not. 
+        /// check whether it is an expression or not.
         /// </summary>
         public bool IsExpression { get; set; }
 
@@ -30,18 +31,11 @@ namespace Kooboo.Sites.Render
         private List<string> _parameters;
 
         /// <summary>
-        /// used for the {} embedded parameters, this can be multiple values. 
+        /// used for the {} embedded parameters, this can be multiple values.
         /// </summary>
         public List<string> Parameters
         {
-            get
-            {
-                if (_parameters == null)
-                {
-                    _parameters = new List<string>();
-                }
-                return _parameters;
-            }
+            get { return _parameters ?? (_parameters = new List<string>()); }
             set
             {
                 this._parameters = value;
@@ -56,26 +50,26 @@ namespace Kooboo.Sites.Render
             }
         }
 
-        public ValueRenderTask(string KeyOrExpression)
+        public ValueRenderTask(string keyOrExpression)
         {
-            if (string.IsNullOrEmpty(KeyOrExpression))
+            if (string.IsNullOrEmpty(keyOrExpression))
             {
                 return;
             }
-            KeyOrExpression = KeyOrExpression.Trim();
+            keyOrExpression = keyOrExpression.Trim();
 
-            if (KeyOrExpression.IndexOf("{") > -1 && KeyOrExpression.IndexOf("}") > -1)
+            if (keyOrExpression.IndexOf("{") > -1 && keyOrExpression.IndexOf("}") > -1)
             {
-                if (KeyOrExpression.StartsWith("{") && KeyOrExpression.EndsWith("}") && KeyOrExpression.IndexOf("{", 1) ==-1)
+                if (keyOrExpression.StartsWith("{") && keyOrExpression.EndsWith("}") && keyOrExpression.IndexOf("{", 1) == -1)
                 {
-                    this.KeyOrExpression = KeyOrExpression.Substring(1, KeyOrExpression.Length - 2);
+                    this.KeyOrExpression = keyOrExpression.Substring(1, keyOrExpression.Length - 2);
                 }
                 else
                 {
-                    this.KeyOrExpression = KeyOrExpression;
+                    this.KeyOrExpression = keyOrExpression;
                     this.IsExpression = true;
                     string regexpattern = @"\{(?<Name>.*?)\}";
-                    var matches = Regex.Matches(KeyOrExpression, regexpattern);
+                    var matches = Regex.Matches(keyOrExpression, regexpattern);
 
                     int counter = 0;
 
@@ -90,36 +84,32 @@ namespace Kooboo.Sites.Render
             }
             else
             {
-
-                if (FunctionHelper.IsFunction(KeyOrExpression))
+                if (FunctionHelper.IsFunction(keyOrExpression))
                 {
                     this.IsFunction = true;
-                    this.function = FunctionHelper.Parse(KeyOrExpression);
-                    this.KeyOrExpression = KeyOrExpression;
+                    this.function = FunctionHelper.Parse(keyOrExpression);
+                    this.KeyOrExpression = keyOrExpression;
                 }
-
-                else if (Lib.Helper.StringHelper.IsString(KeyOrExpression))
+                else if (Lib.Helper.StringHelper.IsString(keyOrExpression))
                 {
                     this.IsString = true;
-                    if (KeyOrExpression.StartsWith("'"))
+                    if (keyOrExpression.StartsWith("'"))
                     {
-                        this.StringValue = KeyOrExpression.Trim('\'');
-
+                        this.StringValue = keyOrExpression.Trim('\'');
                     }
-                    else if (KeyOrExpression.StartsWith("\""))
+                    else if (keyOrExpression.StartsWith("\""))
                     {
-                        this.StringValue = KeyOrExpression.Trim('"');
+                        this.StringValue = keyOrExpression.Trim('"');
                     }
                     else
                     {
-                        this.StringValue = KeyOrExpression;
+                        this.StringValue = keyOrExpression;
                     }
                 }
                 else
                 {
-                    this.KeyOrExpression = KeyOrExpression;
+                    this.KeyOrExpression = keyOrExpression;
                 }
-
             }
         }
 
@@ -138,12 +128,12 @@ namespace Kooboo.Sites.Render
                 {
                     result = string.Format(this.KeyOrExpression, resultvalues.ToArray());
                 }
-                catch(Exception ex)
+                catch (Exception)
                 {
                     result = this.KeyOrExpression;
                 }
-                
-                return result; 
+
+                return result;
             }
             else if (this.IsFunction && function != null)
             {
@@ -169,16 +159,11 @@ namespace Kooboo.Sites.Render
             return result;
         }
 
-        private string GetValueFromContext(string KeyOrExpression, RenderContext context)
+        private string GetValueFromContext(string keyOrExpression, RenderContext context)
         {
-            var value = context.DataContext.GetValue(KeyOrExpression);
-            if (value != null)
-            {
-                return value.ToString();
-            }
-            return null;
+            var value = context.DataContext.GetValue(keyOrExpression);
+            return value?.ToString();
         }
-         
 
         public void AppendResult(RenderContext context, List<RenderResult> result)
         {

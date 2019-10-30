@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data;
 using Kooboo.Data.Models;
@@ -9,25 +9,23 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 
-
 namespace Kooboo.Sites.Sync
 {
     public static class OrganizationSync
     {
-        public static byte[] ReadZip(Guid PackageId)
+        public static byte[] ReadZip(Guid packageId)
         {
-            string filename = System.IO.Path.Combine(AppSettings.TempDataPath, PackageId.ToString("N") + ".zip");
+            string filename = System.IO.Path.Combine(AppSettings.TempDataPath, packageId.ToString("N") + ".zip");
             if (System.IO.File.Exists(filename))
             {
-                return System.IO.File.ReadAllBytes(filename); 
+                return System.IO.File.ReadAllBytes(filename);
             }
-            return null; 
+            return null;
         }
 
-
-        public static Guid GeneratePackage(Guid OrganizationId)
+        public static Guid GeneratePackage(Guid organizationId)
         {
-            var sites = Kooboo.Data.GlobalDb.WebSites.AllSites.Values.Where(o => o.OrganizationId == OrganizationId).ToList();
+            var sites = Kooboo.Data.GlobalDb.WebSites.AllSites.Values.Where(o => o.OrganizationId == organizationId).ToList();
 
             foreach (var item in sites)
             {
@@ -36,14 +34,14 @@ namespace Kooboo.Sites.Sync
                 Kooboo.Mail.Factory.DBFactory.SetNull(item.OrganizationId);
             }
 
-            // Next we pack. 
+            // Next we pack.
             Guid guid = System.Guid.NewGuid();
 
             string filename = System.IO.Path.Combine(AppSettings.TempDataPath, guid.ToString("N") + ".zip");
 
             Lib.Helper.IOHelper.EnsureFileDirectoryExists(filename);
 
-            var orgfolder = Kooboo.Data.AppSettings.GetOrganizationFolder(OrganizationId);
+            var orgfolder = Kooboo.Data.AppSettings.GetOrganizationFolder(organizationId);
 
             var newstream = new FileStream(filename, FileMode.OpenOrCreate);
             var newarchive = new ZipArchive(newstream, ZipArchiveMode.Create, false);
@@ -51,8 +49,8 @@ namespace Kooboo.Sites.Sync
             string newtempfolder = System.IO.Path.Combine(AppSettings.TempDataPath, System.Guid.NewGuid().ToString());
             Lib.Helper.IOHelper.EnsureDirectoryExists(newtempfolder);
 
-            Lib.Helper.IOHelper.DirectoryCopy(orgfolder, newtempfolder, true); 
-             
+            Lib.Helper.IOHelper.DirectoryCopy(orgfolder, newtempfolder, true);
+
             var files = Directory.GetFiles(newtempfolder, "*.*", SearchOption.AllDirectories);
 
             foreach (var path in files)
@@ -67,9 +65,10 @@ namespace Kooboo.Sites.Sync
                 Kooboo.Sites.Cache.WebSiteCache.RemoveNull(item.Id);
                 Kooboo.Mail.Factory.DBFactory.RemoveNull(item.OrganizationId);
 
-                OrgSetting setting = new OrgSetting();
-                setting.Site = item;
-                setting.Bindings = Kooboo.Data.GlobalDb.Bindings.GetByWebSite(item.Id);
+                OrgSetting setting = new OrgSetting
+                {
+                    Site = item, Bindings = Kooboo.Data.GlobalDb.Bindings.GetByWebSite(item.Id)
+                };
 
                 settings.Add(setting);
             }
@@ -82,9 +81,9 @@ namespace Kooboo.Sites.Sync
 
             newarchive.CreateEntryFromFile(settingfilename, "sites.json");
 
-            //sssl. 
-            var ssls = Kooboo.Data.GlobalDb.SslCertificate.ListByOrganization(OrganizationId);
-            if (ssls !=null && ssls.Any())
+            //ssl.
+            var ssls = Kooboo.Data.GlobalDb.SslCertificate.ListByOrganization(organizationId);
+            if (ssls != null && ssls.Any())
             {
                 var sslJson = Lib.Helper.JsonHelper.Serialize(ssls);
 
@@ -93,7 +92,6 @@ namespace Kooboo.Sites.Sync
                 System.IO.File.WriteAllText(sslFilename, sslJson);
 
                 newarchive.CreateEntryFromFile(sslFilename, "ssl.json");
-
             }
 
             newarchive.Dispose();
@@ -101,60 +99,57 @@ namespace Kooboo.Sites.Sync
             return guid;
         }
 
-
         private static bool EqualName(string path, string target)
         {
-            if(path == null)
+            if (path == null)
             {
-                return false; 
+                return false;
             }
-            if (path.StartsWith("\\")|| path.StartsWith("/"))
+            if (path.StartsWith("\\") || path.StartsWith("/"))
             {
-                path = path.Substring(1); 
+                path = path.Substring(1);
             }
 
-            return path == target; 
+            return path == target;
         }
 
-
-        public static bool ImportOrg(ZipArchive archive, Guid OrganizationId)
-        { 
-
-            var folder = Kooboo.Data.AppSettings.GetOrganizationFolder(OrganizationId);
+        public static bool ImportOrg(ZipArchive archive, Guid organizationId)
+        {
+            var folder = Kooboo.Data.AppSettings.GetOrganizationFolder(organizationId);
             if (System.IO.Directory.Exists(folder))
-            { 
+            {
                 try
                 {
-                    var websites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(OrganizationId);
+                    var websites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(organizationId);
                     foreach (var item in websites)
                     {
-                        item.Published = false; 
+                        item.Published = false;
                     }
 
                     foreach (var item in websites)
                     {
-                        Kooboo.Sites.Service.WebSiteService.Delete(item.Id); 
+                        Kooboo.Sites.Service.WebSiteService.Delete(item.Id);
                     }
 
-                    var dirs = System.IO.Directory.GetDirectories(folder); 
-                    if (dirs !=null && dirs.Any())
+                    var dirs = System.IO.Directory.GetDirectories(folder);
+                    if (dirs != null && dirs.Any())
                     {
                         System.IO.Directory.Delete(folder, true);
-                    } 
+                    }
                 }
                 catch (Exception)
                 {
-                    return false; 
-                } 
+                    return false;
+                }
             }
 
             IOHelper.EnsureDirectoryExists(folder);
 
             List<OrgSetting> settings = null;
-            List<SslCertificate> ssls = null; 
+            List<SslCertificate> ssls = null;
 
             foreach (var entry in archive.Entries)
-            {  
+            {
                 if (EqualName(entry.Name, "sites.json"))
                 {
                     using (var stream = entry.Open())
@@ -162,7 +157,7 @@ namespace Kooboo.Sites.Sync
                         StreamReader reader = new StreamReader(stream);
                         var alltext = reader.ReadToEnd();
                         settings = Lib.Helper.JsonHelper.Deserialize<List<OrgSetting>>(alltext);
-                    }  
+                    }
                 }
                 else if (EqualName(entry.Name, "ssl.json"))
                 {
@@ -175,7 +170,7 @@ namespace Kooboo.Sites.Sync
                 }
                 else
                 {
-                    var path =  Lib.Compatible.CompatibleManager.Instance.System.CombinePath(folder, entry.FullName);
+                    var path = Lib.Compatible.CompatibleManager.Instance.System.CombinePath(folder, entry.FullName);
 
                     if (string.IsNullOrEmpty(entry.Name))
                     {
@@ -187,57 +182,53 @@ namespace Kooboo.Sites.Sync
                         entry.ExtractToFile(path, true);
                     }
                 }
-
-
             }
 
-            if (settings !=null)
+            if (settings != null)
             {
                 foreach (var item in settings)
                 {
-                    item.Site.OrganizationId = OrganizationId;
-                    item.Site.Id = default(Guid);  // reset id.  
+                    item.Site.OrganizationId = organizationId;
+                    item.Site.Id = default(Guid);  // reset id.
                     item.Site.DiskSyncFolder = null;
-                    item.Site.EnableDiskSync = false; 
+                    item.Site.EnableDiskSync = false;
                     Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(item.Site);
                     foreach (var binding in item.Bindings)
                     {
                         binding.WebSiteId = item.Site.Id;
-                        binding.OrganizationId = OrganizationId; 
-                        GlobalDb.Bindings.AddOrUpdate(binding); 
+                        binding.OrganizationId = organizationId;
+                        GlobalDb.Bindings.AddOrUpdate(binding);
                     }
                 }
             }
 
-            if (ssls !=null)
+            if (ssls != null)
             {
                 foreach (var item in ssls)
                 {
-                    item.OrganizationId = OrganizationId;  
-                    Kooboo.Data.GlobalDb.SslCertificate.AddOrUpdate(item); 
-                } 
+                    item.OrganizationId = organizationId;
+                    Kooboo.Data.GlobalDb.SslCertificate.AddOrUpdate(item);
+                }
             }
             return true;
         }
 
-        public static bool ImportOrg(byte[] contentbytes, Guid OrganizationId)
+        public static bool ImportOrg(byte[] contentbytes, Guid organizationId)
         {
             try
             {
                 ZipArchive archive = new ZipArchive(new MemoryStream(contentbytes));
 
-                return ImportOrg(archive, OrganizationId); 
+                return ImportOrg(archive, organizationId);
             }
             catch (Exception)
             {
-                 
+                // ignored
             }
 
-            return false; 
+            return false;
         }
-
     }
-
 
     public class OrgSetting
     {
@@ -245,5 +236,4 @@ namespace Kooboo.Sites.Sync
 
         public List<Binding> Bindings { get; set; }
     }
-
 }

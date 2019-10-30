@@ -1,12 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.IndexedDB;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.IndexedDB;
 
 namespace Kooboo.Sites.Repository
 {
@@ -38,7 +35,7 @@ namespace Kooboo.Sites.Repository
             return Query.Where(it => it.Type == ConstObjectType.Script).SelectAll();
         }
 
-        public   bool IsUniqueName(string name, byte consttype)
+        public bool IsUniqueName(string name, byte consttype)
         {
             Guid groupid = Kooboo.Data.IDGenerator.GetResourceGroupId(name, consttype);
 
@@ -54,7 +51,7 @@ namespace Kooboo.Sites.Repository
 
             if (route == null)
             {
-                return true; 
+                return true;
             }
 
             if (route.DestinationConstType != ConstObjectType.ResourceGroup)
@@ -64,10 +61,10 @@ namespace Kooboo.Sites.Repository
 
             if (route.objectId != default(Guid))
             {
-                var group = this.SiteDb.ResourceGroups.Get(route.objectId); 
-                if (group !=null)
+                var group = this.SiteDb.ResourceGroups.Get(route.objectId);
+                if (group != null)
                 {
-                    return false; 
+                    return false;
                 }
             }
 
@@ -78,13 +75,11 @@ namespace Kooboo.Sites.Repository
         {
             if (Lib.Helper.DataTypeHelper.IsGuid(name))
             {
-                Guid gid = default(Guid);
+                System.Guid.TryParse(name, out var gid);
 
-                System.Guid.TryParse(name, out gid);
-
-                return Get(gid);  
+                return Get(gid);
             }
-            var id = Kooboo.Data.IDGenerator.GetResourceGroupId(name, consttype); 
+            var id = Kooboo.Data.IDGenerator.GetResourceGroupId(name, consttype);
             return Get(id);
         }
     }

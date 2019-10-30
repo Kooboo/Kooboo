@@ -14,11 +14,8 @@ namespace Kooboo.Sites.Authorization
         {
             get
             {
-                if (_children == null)
-                {
-                    _children = new Dictionary<string, PermissionTree>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _children;
+                return _children ??
+                       (_children = new Dictionary<string, PermissionTree>(StringComparer.OrdinalIgnoreCase));
             }
             set
             {

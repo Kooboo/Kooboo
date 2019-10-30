@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Models;
@@ -20,13 +20,13 @@ namespace Kooboo.Sites.Repository
                 return paras;
             }
         }
- 
-        public List<Folder> GetSubFolders(string ParentFullPath, byte ConstObjectType)
+
+        public List<Folder> GetSubFolders(string parentFullPath, byte constObjectType)
         {
-            List<Folder> Result = new List<Folder>();
-            if (string.IsNullOrEmpty(ParentFullPath))
+            List<Folder> result = new List<Folder>();
+            if (string.IsNullOrEmpty(parentFullPath))
             {
-                ParentFullPath = "/";
+                parentFullPath = "/";
             }
             Func<string, string, string> GetDirectSub = (parent, sub) =>
               {
@@ -50,89 +50,87 @@ namespace Kooboo.Sites.Repository
                   return null;
               };
 
-            Action<string, string> AddNewFolder = (FolderSeg, FullPath) =>
+            Action<string, string> AddNewFolder = (folderSeg, fullPath) =>
             {
-                var lowerfolder = FolderSeg.ToLower();
+                var lowerfolder = folderSeg.ToLower();
 
-                if (Result.Find(o => o.Segment.ToLower() == lowerfolder) == null)
+                if (result.Find(o => o.Segment.ToLower() == lowerfolder) == null)
                 {
-                    Folder subfolder = new Folder(ConstObjectType);
-                    subfolder.FullPath = FullPath;
-                    subfolder.Segment = FolderSeg;
-                    Result.Add(subfolder);
+                    Folder subfolder = new Folder(constObjectType) {FullPath = fullPath, Segment = folderSeg};
+                    result.Add(subfolder);
                 }
             };
-             
 
-            ParentFullPath = ParentFullPath.ToLower();
-            var subfolders = GetDescendantFolders(ParentFullPath, ConstObjectType);
+            parentFullPath = parentFullPath.ToLower();
+            var subfolders = GetDescendantFolders(parentFullPath, constObjectType);
 
             foreach (var item in subfolders)
             {
-                string directsub = GetDirectSub(ParentFullPath, item.FullPath);
+                string directsub = GetDirectSub(parentFullPath, item.FullPath);
                 if (!string.IsNullOrEmpty(directsub))
                 {
-                    string fullpath = CombineFolder(ParentFullPath, directsub);
+                    string fullpath = CombineFolder(parentFullPath, directsub);
                     AddNewFolder(directsub, fullpath);
                 }
             }
 
-            PathTree tree = Cache.RouteTreeCache.RouteTree(this.SiteDb, ConstObjectType);
+            PathTree tree = Cache.RouteTreeCache.RouteTree(this.SiteDb, constObjectType);
 
-            var path = tree.FindPath(ParentFullPath, false);
+            var path = tree.FindPath(parentFullPath, false);
             if (path == null)
             {
-                return Result;
+                return result;
             }
             foreach (var item in path.Children)
             {
                 if (item.Value.RouteId == default(Guid) && PathHasSubObject(item.Value))
                 {
-                    string FullPath = CombineFolder(ParentFullPath, item.Value.segment);
-                    string Segment = item.Value.segment;
-                    AddNewFolder(Segment, FullPath);
+                    string fullPath = CombineFolder(parentFullPath, item.Value.segment);
+                    string segment = item.Value.segment;
+                    AddNewFolder(segment, fullPath);
                 }
             }
-            return Result;
+            return result;
         }
 
         private bool PathHasSubObject(Path path)
         {
             if (path.RouteId != default(Guid))
             {
-                var route = this.SiteDb.Routes.Get(path.RouteId); 
+                var route = this.SiteDb.Routes.Get(path.RouteId);
                 if (route != null && route.objectId != default(Guid))
                 {
                     return true;
-                } 
+                }
             }
 
             foreach (var item in path.Children)
             {
                 if (PathHasSubObject(item.Value))
                 {
-                    return true; 
+                    return true;
                 }
             }
 
-            return false; 
+            return false;
         }
 
         public string CombineFolder(string Base, string sub)
         {
             if (!Base.EndsWith("/"))
             {
-                Base = Base + "/";
+                Base += "/";
             }
             return Base + sub;
         }
+
         /// <summary>
-        /// Get all defined Descendant folders, this does not include the fake folders that generated from routes. 
+        /// Get all defined Descendant folders, this does not include the fake folders that generated from routes.
         /// </summary>
-        /// <param name="ParentFullPath"></param>
-        /// <param name="ConstObjectType"></param>
+        /// <param name="parentFullPath"></param>
+        /// <param name="constObjectType"></param>
         /// <returns></returns>
-        public List<Folder> GetDescendantFolders(string ParentFullPath, byte ConstObjectType)
+        public List<Folder> GetDescendantFolders(string parentFullPath, byte constObjectType)
         {
             Func<string, string, bool> IsSubFolder = (parent, sub) =>
             {
@@ -143,48 +141,47 @@ namespace Kooboo.Sites.Repository
                 return (sub.ToLower().StartsWith(parent) && sub.ToLower() != parent);
             };
 
-            if (string.IsNullOrEmpty(ParentFullPath))
+            if (string.IsNullOrEmpty(parentFullPath))
             {
-                ParentFullPath = "/";
+                parentFullPath = "/";
             }
 
-            if (!ParentFullPath.StartsWith("/"))
+            if (!parentFullPath.StartsWith("/"))
             {
-                ParentFullPath = "/" + ParentFullPath;
+                parentFullPath = "/" + parentFullPath;
             }
-            ParentFullPath = ParentFullPath.ToLower(); 
+            parentFullPath = parentFullPath.ToLower();
 
-            if (!ParentFullPath.EndsWith("/"))
+            if (!parentFullPath.EndsWith("/"))
             {
-                ParentFullPath = ParentFullPath + "/"; 
+                parentFullPath = parentFullPath + "/";
             }
 
-            return this.TableScan.Where(o => o.ObjectConstType == ConstObjectType && IsSubFolder(ParentFullPath, o.FullPath)).SelectAll();
+            return this.TableScan.Where(o => o.ObjectConstType == constObjectType && IsSubFolder(parentFullPath, o.FullPath)).SelectAll();
         }
 
-        public Folder GetFolder(string FullPath, byte ConstyObjectType)
+        public Folder GetFolder(string fullPath, byte constyObjectType)
         {
-            Guid id = Kooboo.Data.IDGenerator.GetFolderId(FullPath, ConstyObjectType);
+            Guid id = Kooboo.Data.IDGenerator.GetFolderId(fullPath, constyObjectType);
 
             return this.Get(id);
         }
 
-        public void AddOrUpdate(byte ConstType, string Path)
+        public void AddOrUpdate(byte constType, string path)
         {
-            if (!Path.StartsWith("/"))
+            if (!path.StartsWith("/"))
             {
-                Path = "/" + Path;
+                path = "/" + path;
             }
-            if (Path.EndsWith("/"))
+            if (path.EndsWith("/"))
             {
-                Path = Path.TrimEnd('/');
+                path = path.TrimEnd('/');
             }
-            Folder folder = new Folder(ConstType);
-            folder.FullPath = Path;
+
+            Folder folder = new Folder(constType) {FullPath = path};
             base.AddOrUpdate(folder);
         }
-         
-      
+
         public List<T> GetFolderObjects<T>(string FolderPath, bool UseColumnDataOnly = false, bool Recursive = false) where T : SiteObject
         {
             List<T> list = new List<T>();
@@ -205,35 +202,35 @@ namespace Kooboo.Sites.Repository
             return list;
         }
 
-        public List<SiteObject> GetFolderObjects(string FolderPath, byte ConstObjectType, bool UseColumnDataOnly = false, bool Recursive = false)
+        public List<SiteObject> GetFolderObjects(string folderPath, byte constObjectType, bool useColumnDataOnly = false, bool recursive = false)
         {
-            List<SiteObject> Result = new List<SiteObject>();
+            List<SiteObject> result = new List<SiteObject>();
 
-            var routes = GetFolderObjectRouteIds(FolderPath, ConstObjectType, Recursive);
+            var routes = GetFolderObjectRouteIds(folderPath, constObjectType, recursive);
 
             foreach (var item in routes)
             {
                 var route = SiteDb.Routes.Get(item);
-                if (route != null && route.objectId != default(Guid) && route.DestinationConstType == ConstObjectType)
+                if (route != null && route.objectId != default(Guid) && route.DestinationConstType == constObjectType)
                 {
-                    var siteobject = Service.ObjectService.GetSiteObject(this.SiteDb, route.objectId, ConstObjectType, UseColumnDataOnly);
-                    if (siteobject != null  &&　siteobject is SiteObject)
+                    var siteobject = Service.ObjectService.GetSiteObject(this.SiteDb, route.objectId, constObjectType, useColumnDataOnly);
+                    if (siteobject != null && siteobject is SiteObject siteObject)
                     {
-                        Result.Add(siteobject as SiteObject);
+                        result.Add(siteObject);
                     }
                 }
             }
 
-            return Result;
+            return result;
         }
 
-        public List<Guid> GetFolderObjectRouteIds(string FolderPath, byte ConstType, bool Recursive = false)
+        public List<Guid> GetFolderObjectRouteIds(string folderPath, byte constType, bool recursive = false)
         {
             List<Guid> list = new List<Guid>();
 
-            var roottree = Cache.RouteTreeCache.RouteTree(this.SiteDb, ConstType);
+            var roottree = Cache.RouteTreeCache.RouteTree(this.SiteDb, constType);
 
-            Path folderpath = roottree.FindPath(FolderPath, false); 
+            Path folderpath = roottree.FindPath(folderPath, false);
 
             if (folderpath == null)
             {
@@ -246,12 +243,12 @@ namespace Kooboo.Sites.Repository
                 {
                     list.Add(item.Value.RouteId);
                 }
-                if (Recursive)
+                if (recursive)
                 {
                     if (!item.Value.segment.StartsWith("?"))
                     {
-                        string newpath = FolderPath + "/" + item.Value.segment;
-                        var subs = GetFolderObjectRouteIds(newpath, ConstType, true);
+                        string newpath = folderPath + "/" + item.Value.segment;
+                        var subs = GetFolderObjectRouteIds(newpath, constType, true);
 
                         if (subs != null && subs.Count > 0)
                         {
@@ -263,46 +260,45 @@ namespace Kooboo.Sites.Repository
             return list;
         }
 
-        public void Delete(string FolderFullPath, byte ConstType, Guid UserId=default(Guid))
+        public void Delete(string folderFullPath, byte constType, Guid userId = default(Guid))
         {
-            var modeltype = Service.ConstTypeService.GetModelType(ConstType);
+            var modeltype = Service.ConstTypeService.GetModelType(constType);
             var repo = this.SiteDb.GetRepository(modeltype);
 
-            var allroutes = GetFolderObjectRouteIds(FolderFullPath, ConstType, true);
+            var allroutes = GetFolderObjectRouteIds(folderFullPath, constType, true);
 
             foreach (var item in allroutes)
             {
                 var route = this.SiteDb.Routes.Get(item);
                 if (route != null)
                 {
-                    if (route.DestinationConstType == ConstType && route.objectId != default(Guid))
-                    { 
-                         repo.Delete(route.objectId); 
+                    if (route.DestinationConstType == constType && route.objectId != default(Guid))
+                    {
+                        repo.Delete(route.objectId);
                     }
                     //if (route.DestinationConstType == ConstType)
                     //{
                     //    if (route.objectId == default(Guid))
                     //    {
-                    //        this.SiteDb.Routes.Delete(route.Id); 
+                    //        this.SiteDb.Routes.Delete(route.Id);
                     //    }
                     //    else
                     //    {
                     //        repo.Delete(route.objectId);
                     //    }
-                    //} 
+                    //}
                 }
             }
 
-            var allfolders = GetDescendantFolders(FolderFullPath, ConstType);
+            var allfolders = GetDescendantFolders(folderFullPath, constType);
 
             foreach (var item in allfolders)
             {
-                SiteDb.Folders.Delete(item.FullPath, ConstType, UserId);
+                SiteDb.Folders.Delete(item.FullPath, constType, userId);
             }
 
-            var selfid = Kooboo.Data.IDGenerator.GetFolderId(FolderFullPath, ConstType);
-            SiteDb.Folders.Delete(selfid, UserId);
+            var selfid = Kooboo.Data.IDGenerator.GetFolderId(folderFullPath, constType);
+            SiteDb.Folders.Delete(selfid, userId);
         }
-         
     }
 }

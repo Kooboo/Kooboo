@@ -20,16 +20,18 @@ namespace Kooboo.Sites.DataSources
 
             foreach (var item in allcodes)
             {
-                DataMethodSetting setting = new DataMethodSetting();
-                setting.DeclareType = type.FullName;
-                setting.OriginalMethodName = item.Name;
-                setting.MethodName = item.Name;
-                setting.CodeId = item.Id;
-                setting.IsPublic = true;
+                DataMethodSetting setting = new DataMethodSetting
+                {
+                    DeclareType = type.FullName,
+                    OriginalMethodName = item.Name,
+                    MethodName = item.Name,
+                    CodeId = item.Id,
+                    IsPublic = true,
+                    ReturnType = typeof(IJson).FullName,
+                    MethodSignatureHash = MethodSignatureHash(item.Id)
+                };
 
-                setting.ReturnType = typeof(IJson).FullName;
 
-                setting.MethodSignatureHash = methodSignatureHash(item.Id);
 
                 var config = Kooboo.Sites.Scripting.Manager.GetSetting(sitedb.WebSite, item);
                 if (config != null && config.Count > 0)
@@ -38,17 +40,17 @@ namespace Kooboo.Sites.DataSources
                     {
                         setting.Parameters.Add(con.Name, typeof(string).FullName);
 
-                        ParameterBinding binding = new ParameterBinding();
-                        binding.DisplayName = con.Name;
+                        ParameterBinding binding = new ParameterBinding {DisplayName = con.Name};
 
                         setting.ParameterBinding.Add(con.Name, binding);
                     }
                 }
 
                 // add the samplecode.
-                ParameterBinding samplecode = new ParameterBinding();
-                samplecode.IsData = true;
-                samplecode.DisplayName = SampleResponseFieldName;
+                ParameterBinding samplecode = new ParameterBinding
+                {
+                    IsData = true, DisplayName = SampleResponseFieldName
+                };
                 setting.Parameters.Add(samplecode.DisplayName, typeof(string).FullName);
                 setting.ParameterBinding.Add(SampleResponseFieldName, samplecode);
 
@@ -57,7 +59,7 @@ namespace Kooboo.Sites.DataSources
             return settings;
         }
 
-        private static Guid methodSignatureHash(Guid codeid)
+        private static Guid MethodSignatureHash(Guid codeid)
         {
             string unique = typeof(Kooboo.Sites.DataSources.kScript).FullName;
             unique += codeid.ToString();
@@ -71,11 +73,11 @@ namespace Kooboo.Sites.DataSources
             return list.Find(o => o.Id == methodId);
         }
 
-        public static DataMethodSetting GetByMethodHash(SiteDb sitedb, Guid MethodHashId)
+        public static DataMethodSetting GetByMethodHash(SiteDb sitedb, Guid methodHashId)
         {
             var all = GetCodeMethods(sitedb);
 
-            return all.Find(o => o.MethodSignatureHash == MethodHashId);
+            return all.Find(o => o.MethodSignatureHash == methodHashId);
         }
 
         public static string SampleResponseFieldName { get; set; } = "SampleJonResponse";

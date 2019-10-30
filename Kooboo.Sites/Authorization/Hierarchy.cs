@@ -7,13 +7,13 @@ namespace Kooboo.Sites.Authorization
 {
     public static class Hierarchy
     {
-        public static uint GetInt(byte LevelOne, byte LevelTwo = 0, byte LevelThree = 0, byte LevelFour = 0)
+        public static uint GetInt(byte levelOne, byte levelTwo = 0, byte levelThree = 0, byte levelFour = 0)
         {
             byte[] fourbytes = new byte[4];
-            fourbytes[0] = LevelOne;
-            fourbytes[1] = LevelTwo;
-            fourbytes[2] = LevelThree;
-            fourbytes[3] = LevelFour;
+            fourbytes[0] = levelOne;
+            fourbytes[1] = levelTwo;
+            fourbytes[2] = levelThree;
+            fourbytes[3] = levelFour;
 
             return BitConverter.ToUInt32(fourbytes, 0);
         }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Models;
@@ -22,24 +22,24 @@ namespace Kooboo.Sites.SiteTransfer.Download
                 AddDownload(download);
             }
             else
-            {            
-                this.Manager.AddRetry(this.DownloadTask);  
+            {
+                this.Manager.AddRetry(this.DownloadTask);
             }
 
-            // this.Manager.SiteDb.Routes.EnsureExists(this.DownloadTask.RelativeUrl, ConstObjectType.Script); 
+            // this.Manager.SiteDb.Routes.EnsureExists(this.DownloadTask.RelativeUrl, ConstObjectType.Script);
         }
 
         public void AddDownload(DownloadContent download)
         {
             if (download != null && !string.IsNullOrEmpty(download.GetString()))
             {
-                Script script = new Script();
-                script.Body = download.GetString();
-                script.Name = UrlHelper.FileName(this.DownloadTask.RelativeUrl);
+                Script script = new Script
+                {
+                    Body = download.GetString(), Name = UrlHelper.FileName(this.DownloadTask.RelativeUrl)
+                };
                 this.Manager.SiteDb.Routes.AddOrUpdate(this.DownloadTask.RelativeUrl, script, this.Manager.UserId);
                 this.Manager.SiteDb.Scripts.AddOrUpdate(script, this.Manager.UserId);
             }
         }
-
     }
 }

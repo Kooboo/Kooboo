@@ -1,47 +1,41 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.IndexedDB;
 using Kooboo.Sites.Contents.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.IndexedDB;
 
 namespace Kooboo.Sites.Repository
 {
     public class LabelRepository : SiteRepositoryBase<Label>
     {
-
         public override ObjectStoreParameters StoreParameters
         {
             get
             {
                 ObjectStoreParameters para = new ObjectStoreParameters();
                 para.SetPrimaryKeyField<Label>(o => o.Id);
-                return para; 
+                return para;
             }
         }
 
-        public void UpdateLabel(Guid LabelGuid, string culture, string Value)
+        public void UpdateLabel(Guid labelGuid, string culture, string value)
         {
-           
-            var label = Get(LabelGuid);
+            var label = Get(labelGuid);
 
             if (label != null)
             {
-                label.SetValue(culture, Value);
+                label.SetValue(culture, value);
                 if (this.WebSite.DefaultCulture == culture)
                 {
-                    label.SetValue("", Value); 
+                    label.SetValue("", value);
                 }
                 AddOrUpdate(label);
             }
         }
-  
-        public Label GetOrAdd(string LabelKey, string DefaultValue, string DefaultCulture)
+
+        public Label GetOrAdd(string labelKey, string defaultValue, string defaultCulture)
         {
-            var oldlable = GetByNameOrId(LabelKey);
+            var oldlable = GetByNameOrId(labelKey);
 
             if (oldlable != null)
             {
@@ -49,13 +43,11 @@ namespace Kooboo.Sites.Repository
             }
             else
             {
-                Label newlabel = new Label();
-                newlabel.Name = LabelKey;
-                newlabel.SetValue(DefaultCulture, DefaultValue);
+                Label newlabel = new Label {Name = labelKey};
+                newlabel.SetValue(defaultCulture, defaultValue);
                 AddOrUpdate(newlabel);
                 return newlabel;
             }
         }
-         
     }
 }

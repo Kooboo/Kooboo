@@ -11,9 +11,9 @@ namespace Kooboo.Sites.InlineEditor.Converter
 {
     public class LayoutConverter
     {
-        public static string ConvertLayout(SiteDb SiteDb, Guid PageId, List<LayoutResult> Results)
+        public static string ConvertLayout(SiteDb siteDb, Guid pageId, List<LayoutResult> results)
         {
-            var page = SiteDb.Pages.Get(PageId);
+            var page = siteDb.Pages.Get(pageId);
             if (page == null)
             {
                 return null;
@@ -23,7 +23,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
 
             var updates = new List<SourceUpdate>();
 
-            foreach (var item in Results)
+            foreach (var item in results)
             {
                 if (item.KoobooIds == null || item.KoobooIds.Count == 0)
                 {
@@ -40,7 +40,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
                         if (node != null && node.nodeType == enumNodeType.ELEMENT)
                         {
                             var element = node as Element;
-                            element.setAttribute(ConstTALAttributes.placeholder, item.Name);
+                            element?.setAttribute(ConstTALAttributes.placeholder, item.Name);
 
                             string newtag = Service.DomService.ReSerializeElement(element, "");
 
@@ -91,11 +91,11 @@ namespace Kooboo.Sites.InlineEditor.Converter
             if (updates.Any())
             {
                 string layoutbody = ConvertManager.UpdateDomSource(dom, updates);
-                var name = GetLayoutName(SiteDb);
+                var name = GetLayoutName(siteDb);
                 Layout layout = new Layout();
                 layout.Name = name;
                 layout.Body = layoutbody;
-                SiteDb.Layouts.AddOrUpdate(layout);
+                siteDb.Layouts.AddOrUpdate(layout);
             }
             return null;
         }

@@ -94,13 +94,15 @@ namespace Kooboo.Sites.DataSources
                 int index = expression.IndexOf(item);
                 if (index > -1)
                 {
-                    FilterDefinition filter = new FilterDefinition();
+                    FilterDefinition filter = new FilterDefinition
+                    {
+                        FieldName = expression.Substring(0, index).Trim(),
+                        FieldValue = expression.Substring(index + item.Length).Trim(),
+                        Comparer = ComparerHelper.GetComparer(item)
+                    };
 
-                    filter.FieldName = expression.Substring(0, index).Trim();
 
-                    filter.FieldValue = expression.Substring(index + item.Length).Trim();
 
-                    filter.Comparer = ComparerHelper.GetComparer(item);
 
                     return filter;
                 }
@@ -108,74 +110,69 @@ namespace Kooboo.Sites.DataSources
             return null;
         }
 
-        public static bool Check(string FieldValue, Comparer Comparer, string CompareValue, Type ClrType = null)
+        public static bool Check(string fieldValue, Comparer comparer, string compareValue, Type clrType = null)
         {
-            if (ClrType == null)
+            if (clrType == null)
             {
-                ClrType = ComparerHelper.DetermineCompareType(FieldValue, CompareValue);
+                clrType = ComparerHelper.DetermineCompareType(fieldValue, compareValue);
             }
 
-            if (ClrType == null)
+            if (clrType == null)
             {
                 return false;
             }
 
-            if (Comparer == Comparer.EqualTo)
+            switch (comparer)
             {
-                return Lib.Helper.StringHelper.IsSameValue(FieldValue, CompareValue);
-            }
-            else if (Comparer == Comparer.NotEqualTo)
-            {
-                return !Lib.Helper.StringHelper.IsSameValue(FieldValue, CompareValue);
-            }
-            else if (Comparer == Comparer.Contains)
-            {
-                return FieldValue.Contains(CompareValue);
-            }
-            else if (Comparer == Comparer.StartWith)
-            {
-                return FieldValue.StartsWith(CompareValue);
-            }
-            else
-            {
-                try
-                {
-                    var value = Convert.ChangeType(FieldValue, ClrType);
-                    var tovale = Convert.ChangeType(CompareValue, ClrType);
+                case Comparer.EqualTo:
+                    return Lib.Helper.StringHelper.IsSameValue(fieldValue, compareValue);
+                case Comparer.NotEqualTo:
+                    return !Lib.Helper.StringHelper.IsSameValue(fieldValue, compareValue);
+                case Comparer.Contains:
+                    return fieldValue.Contains(compareValue);
+                case Comparer.StartWith:
+                    return fieldValue.StartsWith(compareValue);
+                default:
+                    try
+                    {
+                        var value = Convert.ChangeType(fieldValue, clrType);
+                        var tovale = Convert.ChangeType(compareValue, clrType);
 
-                    if (Comparer == Comparer.GreaterThan)
-                    {
-                        if (value != null && value is IComparable && tovale is IComparable)
+                        if (comparer == Comparer.GreaterThan)
                         {
-                            return ((IComparable)value).CompareTo((IComparable)tovale) > 0;
+                            if (value != null && value is IComparable && tovale is IComparable)
+                            {
+                                return ((IComparable)value).CompareTo((IComparable)tovale) > 0;
+                            }
+                        }
+                        else if (comparer == Comparer.GreaterThanOrEqual)
+                        {
+                            if (value != null && value is IComparable && tovale is IComparable)
+                            {
+                                return ((IComparable)value).CompareTo((IComparable)tovale) >= 0;
+                            }
+                        }
+                        else if (comparer == Comparer.LessThan)
+                        {
+                            if (value != null && value is IComparable && tovale is IComparable)
+                            {
+                                return ((IComparable)value).CompareTo((IComparable)tovale) < 0;
+                            }
+                        }
+                        else if (comparer == Comparer.LessThanOrEqual)
+                        {
+                            if (value != null && value is IComparable && tovale is IComparable)
+                            {
+                                return ((IComparable)value).CompareTo((IComparable)tovale) <= 0;
+                            }
                         }
                     }
-                    else if (Comparer == Comparer.GreaterThanOrEqual)
+                    catch (Exception)
                     {
-                        if (value != null && value is IComparable && tovale is IComparable)
-                        {
-                            return ((IComparable)value).CompareTo((IComparable)tovale) >= 0;
-                        }
+                        return false;
                     }
-                    else if (Comparer == Comparer.LessThan)
-                    {
-                        if (value != null && value is IComparable && tovale is IComparable)
-                        {
-                            return ((IComparable)value).CompareTo((IComparable)tovale) < 0;
-                        }
-                    }
-                    else if (Comparer == Comparer.LessThanOrEqual)
-                    {
-                        if (value != null && value is IComparable && tovale is IComparable)
-                        {
-                            return ((IComparable)value).CompareTo((IComparable)tovale) <= 0;
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
+
+                    break;
             }
             return true;
         }
@@ -188,16 +185,18 @@ namespace Kooboo.Sites.DataSources
             {
                 if (_comparerlist == null)
                 {
-                    _comparerlist = new List<string>();
-                    _comparerlist.Add("===");
-                    _comparerlist.Add(">=");
-                    _comparerlist.Add("==");
-                    _comparerlist.Add("<=");
-                    _comparerlist.Add("!=");
-                    _comparerlist.Add("<=");
-                    _comparerlist.Add("=");
-                    _comparerlist.Add(">");
-                    _comparerlist.Add("<");
+                    _comparerlist = new List<string>
+                    {
+                        "===",
+                        ">=",
+                        "==",
+                        "<=",
+                        "!=",
+                        "<=",
+                        "=",
+                        ">",
+                        "<"
+                    };
                 }
                 return _comparerlist;
             }

@@ -1,60 +1,56 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
+using Kooboo.Data.Interface;
+using Kooboo.IndexedDB;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.Routing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Sites.Models;
-using Kooboo.IndexedDB;
-using Kooboo.Sites.Repository;
-using Kooboo.Data.Interface;
-using Kooboo.Sites.Routing;
-using Kooboo.Data.Context;
 
 namespace Kooboo.Sites.Service
 {
     public static class LogService
     {
-        public static void RollBack(SiteDb SiteDb, long logid)
+        public static void RollBack(SiteDb siteDb, long logid)
         {
-            var logentry = SiteDb.Log.Store.get(logid);
-            RollBack(SiteDb, logentry);
-
+            var logentry = siteDb.Log.Store.get(logid);
+            RollBack(siteDb, logentry);
         }
 
-        public static void RollBack(SiteDb SiteDb, LogEntry logentry)
+        public static void RollBack(SiteDb siteDb, LogEntry logentry)
         {
             if (logentry == null) { return; }
 
             if (logentry.IsTable)
             {
-                var kdb = Kooboo.Data.DB.GetKDatabase(SiteDb.WebSite);
+                var kdb = Kooboo.Data.DB.GetKDatabase(siteDb.WebSite);
                 var table = kdb.GetOrCreateTable(logentry.TableName);
                 table.RollBack(logentry);
             }
             else
             {
-                var repo = SiteDb.GetRepository(logentry.StoreName);
-                if (repo != null)
-                {
-                    repo.RollBack(logentry);
-                }
+                var repo = siteDb.GetRepository(logentry.StoreName);
+                repo?.RollBack(logentry);
             }
         }
 
-        // when undelete a route, should try to undelete its destination object as well. 
-        public static void EnsureRestoreRouteObject(SiteDb SiteDb, Route Route)
+        // when undelete a route, should try to undelete its destination object as well.
+        public static void EnsureRestoreRouteObject(SiteDb siteDb, Route route)
         {
-            /// If this is an roll back of an route, if the destination item does not exists.. should try to roll back together.. 
-            if (Route.objectId != default(Guid))
+            // If this is an roll back of an route, if the destination item does not exists.. should try to roll back together..
+            if (route.objectId != default(Guid))
             {
-                var modeltype = Service.ConstTypeService.GetModelType(Route.DestinationConstType);
-                var repo = SiteDb.GetRepository(modeltype);
+                var modeltype = Service.ConstTypeService.GetModelType(route.DestinationConstType);
+                var repo = siteDb.GetRepository(modeltype);
                 if (repo != null)
                 {
-                    var objectitme = repo.Get(Route.objectId);
+                    var objectitme = repo.Get(route.objectId);
                     if (objectitme == null)
                     {
-                        var lastitem = repo.GetLastEntryFromLog(Route.objectId);
+                        var lastitem = repo.GetLastEntryFromLog(route.objectId);
                         if (lastitem != null)
                         {
                             repo.AddOrUpdate(lastitem);
@@ -62,89 +58,76 @@ namespace Kooboo.Sites.Service
                     }
                 }
             }
-
         }
 
-        public static void EnsureRestoreObjectRoute(SiteDb SiteDb, SiteObject siteobject)
+        public static void EnsureRestoreObjectRoute(SiteDb siteDb, SiteObject siteobject)
         {
             if (siteobject != null && Attributes.AttributeHelper.IsRoutable(siteobject))
             {
-                var route = SiteDb.Routes.GetByObjectId(siteobject.Id);
+                var route = siteDb.Routes.GetByObjectId(siteobject.Id);
                 if (route == null)
                 {
-                    var repo = SiteDb.Routes as IRepository;
+                    var repo = siteDb.Routes as IRepository;
 
-                    var logs = SiteDb.Log.GetByStoreName(typeof(Route).Name);
+                    var logs = siteDb.Log.GetByStoreName(typeof(Route).Name);
                     foreach (var item in logs.OrderByDescending(o => o.Id))
                     {
                         if (item.EditType == EditType.Delete)
                         {
                             var routeitem = repo.GetByLog(item);
-                            if (routeitem != null)
+                            if (routeitem is Route oldroute && oldroute.objectId == siteobject.Id)
                             {
-                                var oldroute = routeitem as Route;
-                                if (oldroute.objectId == siteobject.Id)
-                                {
-                                    SiteDb.Routes.AddOrUpdate(oldroute);
-                                    return;
-                                }
+                                siteDb.Routes.AddOrUpdate(oldroute);
+                                return;
                             }
                         }
                     }
-
                 }
             }
         }
 
-        public static void EnsureDeleteRouteObject(SiteDb SiteDb, Route Route)
+        public static void EnsureDeleteRouteObject(SiteDb siteDb, Route route)
         {
-            if (Route.objectId != default(Guid))
+            if (route.objectId != default(Guid))
             {
-                var modeltype = Service.ConstTypeService.GetModelType(Route.DestinationConstType);
-                var repo = SiteDb.GetRepository(modeltype);
-                if (repo != null)
+                var modeltype = Service.ConstTypeService.GetModelType(route.DestinationConstType);
+                var repo = siteDb.GetRepository(modeltype);
+                var objectitem = repo?.Get(route.objectId);
+                if (objectitem != null)
                 {
-                    var Objectitem = repo.Get(Route.objectId);
-                    if (Objectitem != null)
-                    {
-                        repo.Delete(Objectitem.Id);
-                    }
+                    repo.Delete(objectitem.Id);
                 }
             }
         }
 
-        public static void EnsureDeleteObjectRoute(SiteDb SiteDb, SiteObject siteobject)
+        public static void EnsureDeleteObjectRoute(SiteDb siteDb, SiteObject siteobject)
         {
             if (siteobject != null && Attributes.AttributeHelper.IsRoutable(siteobject))
             {
-                var route = SiteDb.Routes.GetByObjectId(siteobject.Id, siteobject.ConstType);
+                var route = siteDb.Routes.GetByObjectId(siteobject.Id, siteobject.ConstType);
                 if (route != null)
                 {
-                    SiteDb.Routes.Delete(route.Id);
+                    siteDb.Routes.Delete(route.Id);
                 }
             }
         }
 
-
-        public static void RollBack(SiteDb SiteDb, List<LogEntry> loglist)
+        public static void RollBack(SiteDb siteDb, List<LogEntry> loglist)
         {
             var stores = loglist.Where(o => o.IsTable == false).ToList();
 
             foreach (var item in stores.GroupBy(o => o.StoreName))
             {
-                var SingleStoreList = item.ToList();
+                var singleStoreList = item.ToList();
 
-                var repo = SiteDb.GetRepository(item.Key);
+                var repo = siteDb.GetRepository(item.Key);
 
-                if (repo != null)
-                {
-                    repo.RollBack(SingleStoreList);
-                }
+                repo?.RollBack(singleStoreList);
             }
 
             var tables = loglist.Where(o => o.IsTable).ToList();
 
-            var kdb = Kooboo.Data.DB.GetKDatabase(SiteDb.WebSite);
+            var kdb = Kooboo.Data.DB.GetKDatabase(siteDb.WebSite);
 
             foreach (var item in tables.GroupBy(o => o.TableName))
             {
@@ -152,62 +135,62 @@ namespace Kooboo.Sites.Service
                 var table = kdb.GetOrCreateTable(item.Key);
                 table.RollBack(tablelist);
             }
-
         }
 
-        public static void RollBack(SiteDb SiteDb, List<long> loglist)
+        public static void RollBack(SiteDb siteDb, List<long> loglist)
         {
             List<LogEntry> logs = new List<LogEntry>();
             foreach (var item in loglist)
             {
-                var log = SiteDb.Log.Get(item);
+                var log = siteDb.Log.Get(item);
                 if (log != null)
                 {
                     logs.Add(log);
                 }
             }
-            RollBack(SiteDb, logs);
+            RollBack(siteDb, logs);
         }
 
         /// <summary>
-        /// roll back the website back to certain version id. 
+        /// roll back the website back to certain version id.
         /// </summary>
-        /// <param name="website"></param>
-        /// <param name="LatestVersionId"></param>
-        public static void RollBackFrom(SiteDb SiteDb, long LatestVersionId)
+        /// <param name="siteDb"></param>
+        /// <param name="latestVersionId"></param>
+        public static void RollBackFrom(SiteDb siteDb, long latestVersionId)
         {
-            var logs = SiteDb.Log.Store.Where(o => o.Id > LatestVersionId).Take(99999);
-            RollBack(SiteDb, logs);
+            var logs = siteDb.Log.Store.Where(o => o.Id > latestVersionId).Take(99999);
+            RollBack(siteDb, logs);
         }
 
         /// <summary>
-        /// Check a new website, include the lastest log id. 
+        /// Check a new website, include the lastest log id.
         /// </summary>
-        /// <param name="OldWebSite"></param>
-        /// <param name="NewWebSite"></param>
-        /// <param name="LatestLogId"></param>
-        public static void CheckOut(SiteDb OldDb, SiteDb NewDb, long LatestLogId, bool SelfInclude = true)
+        /// <param name="newDb"></param>
+        /// <param name="latestLogId"></param>
+        /// <param name="oldDb"></param>
+        /// <param name="selfInclude"></param>
+        public static void CheckOut(SiteDb oldDb, SiteDb newDb, long latestLogId, bool selfInclude = true)
         {
-            foreach (var item in OldDb.ActiveRepositories())
+            foreach (var item in oldDb.ActiveRepositories())
             {
                 var type = item.ModelType;
                 if (Kooboo.Lib.Reflection.TypeHelper.HasInterface(item.ModelType, typeof(ICoreObject)))
                 {
-                    var destrepo = NewDb.GetRepository(item.StoreName);
+                    var destrepo = newDb.GetRepository(item.StoreName);
                     if (destrepo != null)
                     {
-                        item.CheckOut(LatestLogId, destrepo, true);
+                        item.CheckOut(latestLogId, destrepo, true);
                     }
                 }
             }
 
-            foreach (var item in OldDb.TransferTasks.All())
+            foreach (var item in oldDb.TransferTasks.All())
             {
-                NewDb.TransferTasks.AddOrUpdate(item);
+                newDb.TransferTasks.AddOrUpdate(item);
             }
 
-            var kdb = Kooboo.Data.DB.GetKDatabase(OldDb.WebSite);
-            var newkdb = Data.DB.GetKDatabase(NewDb.WebSite);
+            var kdb = Kooboo.Data.DB.GetKDatabase(oldDb.WebSite);
+            var newkdb = Data.DB.GetKDatabase(newDb.WebSite);
 
             var alltables = kdb.GetTables();
 
@@ -217,38 +200,42 @@ namespace Kooboo.Sites.Service
                 if (currentable != null)
                 {
                     var table = newkdb.GetOrCreateTable(item);
-                    currentable.CheckOut(LatestLogId, table, SelfInclude);
+                    currentable.CheckOut(latestLogId, table, selfInclude);
                 }
             }
 
-            var setting = Sync.ImportExport.GetSiteSetting(OldDb.WebSite);
-            Sync.ImportExport.SetSiteSetting(NewDb.WebSite, setting);
-            Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(NewDb.WebSite);
+            var setting = Sync.ImportExport.GetSiteSetting(oldDb.WebSite);
+            Sync.ImportExport.SetSiteSetting(newDb.WebSite, setting);
+            Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(newDb.WebSite);
         }
 
         public static string GetStoreDisplayName(SiteDb sitedb, LogEntry log)
         {
             var repo = sitedb.GetRepository(log.StoreName);
             var siteobject = repo?.GetByLog(log);
-            if (siteobject == null)
+            switch (siteobject)
             {
-                return null;
-            }
-            if (siteobject is ViewDataMethod)
-            {
-                var viewmethod = siteobject as ViewDataMethod;
-                var view = sitedb.Views.Get(viewmethod.ViewId);
+                case null:
+                    return null;
+                case ViewDataMethod viewDataMethod:
+                {
+                    var viewmethod = viewDataMethod;
+                    var view = sitedb.Views.Get(viewmethod.ViewId);
 
-                return view == null ? viewmethod.AliasName : viewmethod.AliasName + "(" + view.Name + ")";
+                    return view == null ? viewmethod.AliasName : viewmethod.AliasName + "(" + view.Name + ")";
+                }
+                case IDataMethodSetting dataMethodSetting:
+                {
+                    var methodsetting = dataMethodSetting;
+                    var type = Kooboo.Lib.Reflection.TypeHelper.GetType(methodsetting.DeclareType);
+                    return type != null ? type.Name + "." + methodsetting.OriginalMethodName : methodsetting.OriginalMethodName;
+                }
+                default:
+                {
+                    var info = Service.ObjectService.GetObjectInfo(sitedb, siteobject);
+                    return info?.DisplayName;
+                }
             }
-            if (siteobject is IDataMethodSetting)
-            {
-                var methodsetting = siteobject as IDataMethodSetting;
-                var type = Kooboo.Lib.Reflection.TypeHelper.GetType(methodsetting.DeclareType);
-                return type != null ? type.Name + "." + methodsetting.OriginalMethodName : methodsetting.OriginalMethodName;
-            }
-            var info = Service.ObjectService.GetObjectInfo(sitedb, siteobject as ISiteObject);
-            return info != null ? info.DisplayName : null;
         }
 
         public static string GetLogDisplayName(SiteDb sitedb, LogEntry log, RenderContext context = null)
@@ -276,7 +263,7 @@ namespace Kooboo.Sites.Service
             return GetTableDisplayName(sitedb, log, context, logdata);
         }
 
-        public static string GetTableDisplayName(SiteDb sitedb, LogEntry log, RenderContext context, Dictionary<string, object> LogData)
+        public static string GetTableDisplayName(SiteDb sitedb, LogEntry log, RenderContext context, Dictionary<string, object> logData)
         {
             string name = log.TableName;
             if (!string.IsNullOrWhiteSpace(log.TableColName))
@@ -284,11 +271,11 @@ namespace Kooboo.Sites.Service
                 name += ":" + log.TableColName;
             }
 
-            if (LogData != null)
+            if (logData != null)
             {
-                LogData.Remove("_id");
+                logData.Remove("_id");
 
-                string json = Lib.Helper.JsonHelper.Serialize(LogData);
+                string json = Lib.Helper.JsonHelper.Serialize(logData);
 
                 if (!string.IsNullOrWhiteSpace(json))
                 {
@@ -298,7 +285,6 @@ namespace Kooboo.Sites.Service
 
             return name;
         }
-
 
         public static Guid GetKeyHash(Guid key)
         {

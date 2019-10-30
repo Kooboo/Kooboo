@@ -13,9 +13,9 @@ namespace Kooboo.Sites.InlineEditor.Converter
         /// Convert to kooboo components,
         /// </summary>
         /// <param name="context"></param>
-        /// <param name="ConvertResult">the json object...</param>
+        /// <param name="convertResult">the json object...</param>
         /// <returns></returns>
-        ConvertResponse Convert(RenderContext context, JObject ConvertResult);
+        ConvertResponse Convert(RenderContext context, JObject convertResult);
     }
 
     public class ConvertResponse

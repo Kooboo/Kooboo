@@ -13,14 +13,7 @@ namespace Kooboo.Sites.DataSources.Content
 
         public List<FilterDefinition> Filters
         {
-            get
-            {
-                if (this._filter == null)
-                {
-                    this._filter = new List<FilterDefinition>();
-                }
-                return this._filter;
-            }
+            get { return this._filter ?? (this._filter = new List<FilterDefinition>()); }
             set
             {
                 this._filter = value;

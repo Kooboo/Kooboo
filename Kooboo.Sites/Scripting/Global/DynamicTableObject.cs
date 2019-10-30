@@ -13,8 +13,8 @@ namespace Kooboo.Sites.Scripting.Global
     public class DynamicTableObject : Kooboo.Data.Interface.IDynamic
     {
         public IDictionary<string, object> obj { get; set; }
-        private RenderContext context { get; set; }
-        private Table table { get; set; }
+        private RenderContext Context { get; set; }
+        private Table Table { get; set; }
 
         public Dictionary<string, object> Values
         {
@@ -27,8 +27,8 @@ namespace Kooboo.Sites.Scripting.Global
         public DynamicTableObject(IDictionary<string, object> orgObj, Table orgtable, RenderContext renderContext)
         {
             this.obj = orgObj;
-            this.context = renderContext;
-            this.table = orgtable;
+            this.Context = renderContext;
+            this.Table = orgtable;
         }
 
         public object this[string key]
@@ -50,18 +50,18 @@ namespace Kooboo.Sites.Scripting.Global
                 return obj[key];
             }
 
-            // check if table in relation. 
-            if (context != null && context.WebSite != null)
+            // check if table in relation.
+            if (Context?.WebSite != null)
             {
-                var sitedb = context.WebSite.SiteDb();
+                var sitedb = Context.WebSite.SiteDb();
                 var repo = sitedb.GetSiteRepository<TableRelationRepository>();
-                var relation = repo.GetRelation(this.table.Name, key);
+                var relation = repo.GetRelation(this.Table.Name, key);
                 if (relation != null)
                 {
-                    var db = Kooboo.Data.DB.GetKDatabase(this.context.WebSite);
+                    var db = Kooboo.Data.DB.GetKDatabase(this.Context.WebSite);
 
-                    if (relation.TableA == this.table.Name)
-                    { 
+                    if (relation.TableA == this.Table.Name)
+                    {
                         if (obj.ContainsKey(relation.FieldA))
                         {
                             var fielda = obj[relation.FieldA];
@@ -70,18 +70,18 @@ namespace Kooboo.Sites.Scripting.Global
                             {
                                 var tableB = Data.DB.GetTable(db, relation.TableB);
                                 var result = tableB.Query.WhereEqual(relation.FieldB, fielda).Take(999);
-                                return CreateList(result.ToArray(), tableB, this.context);
+                                return CreateList(result.ToArray(), tableB, this.Context);
                             }
                             else
                             {
                                 var tableB = Data.DB.GetTable(db, relation.TableB);
                                 var result = tableB.Query.WhereEqual(relation.FieldB, fielda).FirstOrDefault();
-                                return Create(result, tableB, this.context);
+                                return Create(result, tableB, this.Context);
                             }
                         }
                     }
-                    else if (relation.TableB == this.table.Name)
-                    { 
+                    else if (relation.TableB == this.Table.Name)
+                    {
                         if (obj.ContainsKey(relation.FieldB))
                         {
                             var fieldb = obj[relation.FieldB];
@@ -90,15 +90,14 @@ namespace Kooboo.Sites.Scripting.Global
                             {
                                 var tableB = Data.DB.GetTable(db, relation.TableA);
                                 var result = tableB.Query.WhereEqual(relation.FieldA, fieldb).Take(999);
-                                return CreateList(result.ToArray(), tableB, this.context);
+                                return CreateList(result.ToArray(), tableB, this.Context);
                             }
                             else
                             {
                                 var tableB = Data.DB.GetTable(db, relation.TableA);
                                 var result = tableB.Query.WhereEqual(relation.FieldA, fieldb).FirstOrDefault();
-                                return Create(result, tableB, this.context);
+                                return Create(result, tableB, this.Context);
                             }
-
                         }
                     }
                 }
@@ -106,7 +105,7 @@ namespace Kooboo.Sites.Scripting.Global
             return null;
         }
 
-        public static DynamicTableObject[] CreateList(IDictionary<string, object>[] list, Table TargetTable, RenderContext context)
+        public static DynamicTableObject[] CreateList(IDictionary<string, object>[] list, Table targetTable, RenderContext context)
         {
             int len = list.Length;
 
@@ -114,7 +113,7 @@ namespace Kooboo.Sites.Scripting.Global
 
             for (int i = 0; i < len; i++)
             {
-                result[i] = Create(list[i], TargetTable, context);
+                result[i] = Create(list[i], targetTable, context);
             }
             return result;
         }
@@ -126,22 +125,21 @@ namespace Kooboo.Sites.Scripting.Global
                 return new DynamicTableObject(item, sourceTable, context);
             }
             return null;
-
         }
 
-        public object GetValue(string FieldName)
+        public object GetValue(string fieldName)
         {
-            return GetValueFromDict(FieldName);
+            return GetValueFromDict(fieldName);
         }
 
-        public object GetValue(string FieldName, RenderContext Context)
+        public object GetValue(string fieldName, RenderContext context)
         {
-            return GetValueFromDict(FieldName);
+            return GetValueFromDict(fieldName);
         }
 
-        public void SetValue(string FieldName, object Value)
+        public void SetValue(string fieldName, object value)
         {
-            obj[FieldName] = Value;
+            obj[fieldName] = value;
         }
     }
 }

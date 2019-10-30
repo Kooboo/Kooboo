@@ -40,14 +40,7 @@ namespace Kooboo.Sites.Contents.Models
 
         public List<EmbeddedFolder> Embedded
         {
-            get
-            {
-                if (_embedded == null)
-                {
-                    _embedded = new List<EmbeddedFolder>();
-                }
-                return _embedded;
-            }
+            get { return _embedded ?? (_embedded = new List<EmbeddedFolder>()); }
             set { _embedded = value; }
         }
 
@@ -55,14 +48,7 @@ namespace Kooboo.Sites.Contents.Models
 
         public List<CategoryFolder> Category
         {
-            get
-            {
-                if (_category == null)
-                {
-                    _category = new List<CategoryFolder>();
-                }
-                return _category;
-            }
+            get { return _category ?? (_category = new List<CategoryFolder>()); }
             set { _category = value; }
         }
 

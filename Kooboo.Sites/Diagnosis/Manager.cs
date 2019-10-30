@@ -24,7 +24,7 @@ namespace Kooboo.Sites.Diagnosis
                 if (item == typeof(CodeDiagnosis))
                 {
                     var instance = Activator.CreateInstance(item) as IDiagnosis;
-                    string groupname = instance.Group(context);
+                    string groupname = instance?.Group(context);
 
                     var sitedb = context.WebSite.SiteDb();
 
@@ -32,20 +32,17 @@ namespace Kooboo.Sites.Diagnosis
 
                     foreach (var code in allcode)
                     {
-                        var checker = new DiagnosisChecker();
-                        checker.Group = groupname;
-                        checker.Name = code.Name;
-                        checker.IsCode = true;
+                        var checker = new DiagnosisChecker {Group = groupname, Name = code.Name, IsCode = true};
                         result.Add(checker);
                     }
                 }
                 else
                 {
                     var instance = Activator.CreateInstance(item) as IDiagnosis;
-                    var checker = new DiagnosisChecker();
-                    checker.Group = instance.Group(context);
-                    checker.Name = instance.Name(context);
-                    checker.Type = item;
+                    var checker = new DiagnosisChecker
+                    {
+                        Group = instance?.Group(context), Name = instance?.Name(context), Type = item
+                    };
                     result.Add(checker);
                 }
             }
@@ -57,8 +54,7 @@ namespace Kooboo.Sites.Diagnosis
         {
             Guid sessionid = System.Guid.NewGuid();
 
-            DiagnosisSession session = new DiagnosisSession();
-            session.context = context;
+            DiagnosisSession session = new DiagnosisSession {context = context};
 
             var allcheckers = ListCheckers(context);
 
@@ -74,8 +70,7 @@ namespace Kooboo.Sites.Diagnosis
 
             session.AllCheckers = selected;
 
-            CheckerTask task = new CheckerTask();
-            task.Session = session;
+            CheckerTask task = new CheckerTask {Session = session};
 
             Thread thread = new Thread(task.Exe);
             thread.Start();
@@ -90,13 +85,15 @@ namespace Kooboo.Sites.Diagnosis
             if (sessions.ContainsKey(sessionid))
             {
                 var session = sessions[sessionid];
-                SessionStatus status = new SessionStatus();
-                status.InfoCount = session.informationCount;
-                status.CriticalCount = session.CriticalCount;
-                status.WarningCount = session.WarningCount;
-                status.Messages = session.FlushMessage();
-                status.IsFinished = session.IsFinished;
-                status.HeadLine = session.Headline;
+                SessionStatus status = new SessionStatus
+                {
+                    InfoCount = session.informationCount,
+                    CriticalCount = session.CriticalCount,
+                    WarningCount = session.WarningCount,
+                    Messages = session.FlushMessage(),
+                    IsFinished = session.IsFinished,
+                    HeadLine = session.Headline
+                };
 
                 return status;
             }

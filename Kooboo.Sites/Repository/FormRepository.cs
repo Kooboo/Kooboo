@@ -1,10 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using Kooboo.Data.Models;
 
 namespace Kooboo.Sites.Repository
 {
@@ -17,31 +17,31 @@ namespace Kooboo.Sites.Repository
                 var storeParams = new ObjectStoreParameters();
                 storeParams.AddColumn<Form>(x => x.OwnerObjectId);
                 storeParams.AddColumn<Form>(x => x.OwnerConstType);
-                storeParams.AddColumn<Form>(x => x.KoobooId); 
+                storeParams.AddColumn<Form>(x => x.KoobooId);
                 storeParams.AddColumn<Form>(x => x.BodyHash);
-                storeParams.AddColumn<Form>(x => x.Name); 
-                storeParams.SetPrimaryKeyField<Form>(o => o.Id); 
+                storeParams.AddColumn<Form>(x => x.Name);
+                storeParams.SetPrimaryKeyField<Form>(o => o.Id);
                 return storeParams;
             }
         }
 
-        public List<Form> ListByObjectId(Guid ObjectId, byte constType = 0)
+        public List<Form> ListByObjectId(Guid objectId, byte constType = 0)
         {
             List<Form> list;
             if (constType == 0)
             {
-                list = this.Query.Where(o => o.OwnerObjectId == ObjectId).SelectAll();
+                list = this.Query.Where(o => o.OwnerObjectId == objectId).SelectAll();
             }
             else
             {
-                list = this.Query.Where(o => o.OwnerConstType == constType && o.OwnerObjectId == ObjectId).SelectAll();
+                list = this.Query.Where(o => o.OwnerConstType == constType && o.OwnerObjectId == objectId).SelectAll();
             }
             return list;
         }
-         
-        public override List<UsedByRelation> GetUsedBy(Guid ObjectId)
+
+        public override List<UsedByRelation> GetUsedBy(Guid objectId)
         {
-            var form = Get(ObjectId); 
+            var form = Get(objectId);
             return _GetUsedBy(form);
         }
 
@@ -51,17 +51,18 @@ namespace Kooboo.Sites.Repository
             if (form == null)
             { return result; }
 
-            /// for embedded style, this is belong to one parent object. 
+            // for embedded style, this is belong to one parent object.
             if (form.IsEmbedded)
             {
                 var sameform = this.GetSameEmbedded(form.BodyHash);
 
                 foreach (var item in sameform)
                 {
-                    UsedByRelation relation = new UsedByRelation();
-                    relation.ObjectId = item.OwnerObjectId;
-                    relation.ConstType = item.OwnerConstType;
-                    Sites.Helper.RelationHelper.SetNameUrl(SiteDb, relation);  
+                    UsedByRelation relation = new UsedByRelation
+                    {
+                        ObjectId = item.OwnerObjectId, ConstType = item.OwnerConstType
+                    };
+                    Sites.Helper.RelationHelper.SetNameUrl(SiteDb, relation);
                     relation.Remark = item.KoobooOpenTag;
                     result.Add(relation);
                 }
@@ -73,14 +74,11 @@ namespace Kooboo.Sites.Repository
 
             foreach (var item in relations)
             {
-                UsedByRelation relation = new UsedByRelation();
-                relation.ObjectId = item.objectXId;
-                relation.ConstType = item.ConstTypeX;
-                Sites.Helper.RelationHelper.SetNameUrl(SiteDb, relation);  
+                UsedByRelation relation = new UsedByRelation {ObjectId = item.objectXId, ConstType = item.ConstTypeX};
+                Sites.Helper.RelationHelper.SetNameUrl(SiteDb, relation);
                 result.Add(relation);
             }
             return result;
-        } 
-
+        }
     }
 }

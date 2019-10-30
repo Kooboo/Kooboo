@@ -12,13 +12,13 @@ namespace Kooboo.Sites.Helper
 {
     public static class RelationHelper
     {
-        public static void SetNameUrl(SiteDb SiteDb, UsedByRelation relation)
+        public static void SetNameUrl(SiteDb siteDb, UsedByRelation relation)
         {
             if (relation.ObjectId == default(Guid) || relation.ConstType == default(byte))
             {
                 return;
             }
-            var objectinfo = Service.ObjectService.GetObjectInfo(SiteDb, relation.ObjectId, relation.ConstType);
+            var objectinfo = Service.ObjectService.GetObjectInfo(siteDb, relation.ObjectId, relation.ConstType);
             if (objectinfo != null)
             {
                 relation.Name = objectinfo.DisplayName;

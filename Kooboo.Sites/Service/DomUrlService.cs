@@ -1,21 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
 using Kooboo.Lib.Helper;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Service
 {
     /// <summary>
-    /// Get all the url relation resource within the dom document. 
+    /// Get all the url relation resource within the dom document.
     /// </summary>
     public static class DomUrlService
     {
-
         /// <summary>
         /// get all image links
         /// </summary>
@@ -25,10 +21,10 @@ namespace Kooboo.Sites.Service
         {
             var imageurls = GetImageSrcs(dom);
 
-            List<string> imgurls = new List<string>(); 
+            List<string> imgurls = new List<string>();
 
             foreach (var item in imageurls)
-            { 
+            {
                 if (!string.IsNullOrEmpty(item.Value))
                 {
                     if (!Kooboo.Lib.Utilities.DataUriService.isDataUri(item.Value))
@@ -55,7 +51,6 @@ namespace Kooboo.Sites.Service
             }
             return urls;
         }
-
 
         public static string GetLinkOrSrc(Element item)
         {
@@ -139,7 +134,7 @@ namespace Kooboo.Sites.Service
         }
 
         /// <summary>
-        /// get the list of script tag that has src defined. 
+        /// get the list of script tag that has src defined.
         /// </summary>
         /// <param name="dom"></param>
         /// <returns></returns>
@@ -166,51 +161,51 @@ namespace Kooboo.Sites.Service
             return urlList;
         }
 
-        public static string MakeUrlRelative(string Url, string BaseUrl)
+        public static string MakeUrlRelative(string url, string baseUrl)
         {
-            if (string.IsNullOrEmpty(BaseUrl))
+            if (string.IsNullOrEmpty(baseUrl))
             {
-                if (!IsExternalLink(Url))
+                if (!IsExternalLink(url))
                 {
-                    if (!Url.StartsWith("/"))
+                    if (!url.StartsWith("/"))
                     {
-                        Url = "/" + Url;
+                        url = "/" + url;
                     }
                 }
-                return Url;
+                return url;
             }
             else
             {
-                string newbase = BaseUrl.ToLower();
+                string newbase = baseUrl.ToLower();
 
                 if (!IsExternalLink(newbase))
                 {
                     newbase = UrlHelper.Combine("http://www.koobootempnonexists.com", newbase);
                 }
 
-                Url = UrlHelper.Combine(newbase, Url);
+                url = UrlHelper.Combine(newbase, url);
 
-                if (UrlHelper.isSameHost(Url, newbase))
+                if (UrlHelper.isSameHost(url, newbase))
                 {
-                    return UrlHelper.RelativePath(Url);
+                    return UrlHelper.RelativePath(url);
                 }
                 else
                 {
-                    return Url;
+                    return url;
                 }
             }
         }
 
-        public static void MakeAllUrlRelative(List<string> UrlList, string BaseUrl)
+        public static void MakeAllUrlRelative(List<string> urlList, string baseUrl)
         {
-            if (string.IsNullOrEmpty(BaseUrl))
+            if (string.IsNullOrEmpty(baseUrl))
             {
-                BaseUrl = "/";
+                baseUrl = "/";
             }
-            int counter = UrlList.Count;
+            int counter = urlList.Count;
             for (int i = 0; i < counter; i++)
             {
-                UrlList[i] = MakeUrlRelative(UrlList[i], BaseUrl);
+                urlList[i] = MakeUrlRelative(urlList[i], baseUrl);
             }
         }
 
@@ -223,12 +218,12 @@ namespace Kooboo.Sites.Service
 
             string lower = link.ToLower().Trim();
 
-            if  (lower.StartsWith("http://") || lower.StartsWith("https://"))
+            if (lower.StartsWith("http://") || lower.StartsWith("https://"))
 
             {
-                return true; 
-            } 
-            return IsSpecialUrl(lower);  
+                return true;
+            }
+            return IsSpecialUrl(lower);
         }
 
         public static bool IsSpecialUrl(string url)
@@ -239,44 +234,41 @@ namespace Kooboo.Sites.Service
             }
 
             url = url.ToLower();
-            if (url.StartsWith("#") || url.StartsWith("mailto:") || url.StartsWith("javascript:") || url.StartsWith("file://") || url.StartsWith("ftp://") )
+            if (url.StartsWith("#") || url.StartsWith("mailto:") || url.StartsWith("javascript:") || url.StartsWith("file://") || url.StartsWith("ftp://"))
             {
                 return true;
             }
             return false;
         }
 
-         
-
         private static Dictionary<Kooboo.Dom.Element, string> EnsureImageNonSrcUrl(Dictionary<Kooboo.Dom.Element, string> orgResult)
         {
-            // when all values are the same, possible non-src is the right value. 
-            Dictionary<Element, string> newvalue = new Dictionary<Element, string>(); 
+            // when all values are the same, possible non-src is the right value.
+            Dictionary<Element, string> newvalue = new Dictionary<Element, string>();
 
             if (orgResult.Count >= 2)
             {
                 List<string> sameurls = new List<string>();
 
-                foreach (var group in orgResult.GroupBy(o=>o.Value))
+                foreach (var group in orgResult.GroupBy(o => o.Value))
                 {
-                    if (group.Count()>1 && AllHasNonSrc(group.ToList()))
+                    if (group.Count() > 1 && AllHasNonSrc(group.ToList()))
                     {
                         foreach (var item in group)
                         {
-                           newvalue[item.Key]  = GetImageNonSrcUrl(item.Key); 
+                            newvalue[item.Key] = GetImageNonSrcUrl(item.Key);
                         }
                     }
-                } 
+                }
             }
 
             if (newvalue.Any())
             {
                 foreach (var item in newvalue)
                 {
-                    orgResult[item.Key] = item.Value; 
+                    orgResult[item.Key] = item.Value;
                 }
             }
-             
 
             return orgResult;
         }
@@ -287,13 +279,12 @@ namespace Kooboo.Sites.Service
             {
                 if (GetImageNonSrcUrl(item.Key) == null)
                 {
-                    return false; 
+                    return false;
                 }
             }
-            return true; 
+            return true;
         }
-     
-    
+
         public static string GetImageNonSrcUrl(Kooboo.Dom.Element imagetag)
         {
             if (imagetag == null)
@@ -303,7 +294,7 @@ namespace Kooboo.Sites.Service
 
             foreach (var item in imagetag.attributes)
             {
-                if (item != null && item.name != null)
+                if (item?.name != null)
                 {
                     string name = item.name.Trim().ToLower();
                     if (name != "src" && name.Contains("src"))
@@ -317,7 +308,7 @@ namespace Kooboo.Sites.Service
 
         public static Dictionary<Kooboo.Dom.Element, string> GetImageSrcs(Document doc)
         {
-            var imagetags = doc.images.item; 
+            var imagetags = doc.images.item;
 
             Dictionary<Kooboo.Dom.Element, string> result = new Dictionary<Dom.Element, string>();
 
@@ -338,6 +329,5 @@ namespace Kooboo.Sites.Service
 
             return EnsureImageNonSrcUrl(result);
         }
-
     }
 }

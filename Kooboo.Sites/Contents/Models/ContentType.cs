@@ -20,12 +20,7 @@ namespace Kooboo.Sites.Contents.Models
 
         public List<ContentProperty> Properties
         {
-            get
-            {
-                if (_properties == null)
-                { _properties = new List<ContentProperty>(); }
-                return _properties;
-            }
+            get { return _properties ?? (_properties = new List<ContentProperty>()); }
             set
             { _properties = value; }
         }

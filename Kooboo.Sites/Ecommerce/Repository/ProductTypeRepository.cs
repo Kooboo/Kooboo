@@ -25,17 +25,10 @@ namespace Kooboo.Sites.Ecommerce.Repository
             }
         }
 
-        public List<ProductProperty> GetColumns(Guid ProductTypeId)
+        public List<ProductProperty> GetColumns(Guid productTypeId)
         {
-            var value = this.Get(ProductTypeId);
-            if (value == null)
-            {
-                return new List<ProductProperty>();
-            }
-            else
-            {
-                return value.Properties;
-            }
+            var value = this.Get(productTypeId);
+            return value == null ? new List<ProductProperty>() : value.Properties;
         }
 
         //public List<ContentProperty> GetPropertiesByFolder(Guid FolderId)

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Sites.Contents.Models;
@@ -8,10 +8,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-
 namespace Kooboo.Sites.Scripting.Global.SiteItem
 {
-
     public class TextContentObject : IDictionary<string, object>, System.Collections.IDictionary
     {
         public RenderContext context { get; set; }
@@ -37,34 +35,22 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         public string get(string key)
         {
-
             string lower = key.ToLower();
 
-            if (lower == "userkey")
+            switch (lower)
             {
-                return this.TextContent.UserKey;
-            }
-            else if (lower == "folderid")
-            {
-                return this.TextContent.FolderId.ToString();
-            }
-
-            else if (lower == "id")
-            {
-                return this.TextContent.Id.ToString();
-            }
-            else if (lower == "contenttypeid")
-            {
-                return this.TextContent.ContentTypeId.ToString();
-            }
-
-            else if (lower == "online")
-            {
-                return this.TextContent.Online.ToString();
-            }
-            else if (lower == "lastmodified")
-            {
-                return this.TextContent.LastModified.ToString();
+                case "userkey":
+                    return this.TextContent.UserKey;
+                case "folderid":
+                    return this.TextContent.FolderId.ToString();
+                case "id":
+                    return this.TextContent.Id.ToString();
+                case "contenttypeid":
+                    return this.TextContent.ContentTypeId.ToString();
+                case "online":
+                    return this.TextContent.Online.ToString();
+                case "lastmodified":
+                    return this.TextContent.LastModified.ToString();
             }
 
             var store = this.TextContent.GetContentStore(this.Culture);
@@ -77,23 +63,26 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }
             }
 
-            if (lower == "folder")
+            switch (lower)
             {
-                var folder = this.siteDb.ContentFolders.Get(this.TextContent.FolderId);
-                return folder.Name;
-            }
-
-            else if (lower == "contenttype")
-            {
-                var type = this.siteDb.ContentTypes.Get(this.TextContent.ContentTypeId);
-                if (type != null)
+                case "folder":
                 {
-                    return type.Name;
+                    var folder = this.siteDb.ContentFolders.Get(this.TextContent.FolderId);
+                    return folder.Name;
                 }
-            }
-            else if (lower == "order" || lower == "sequence")
-            {
-                return this.TextContent.Order.ToString();
+                case "contenttype":
+                {
+                    var type = this.siteDb.ContentTypes.Get(this.TextContent.ContentTypeId);
+                    if (type != null)
+                    {
+                        return type.Name;
+                    }
+
+                    break;
+                }
+                case "order":
+                case "sequence":
+                    return this.TextContent.Order.ToString();
             }
 
             var contenttype = this.context.WebSite.SiteDb().ContentTypes.Get(this.TextContent.ContentTypeId);
@@ -114,11 +103,9 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         public object this[string key]
         {
-
             get
             {
                 return get(key);
-
             }
             set
             {
@@ -126,29 +113,35 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
         }
 
-         
-        public void SetObjectValue(string FieldName, string Value)
+        public void SetObjectValue(string fieldName, string value)
         {
-            string lower = FieldName.ToLower();
+            string lower = fieldName.ToLower();
 
-            if (lower == "folder" || lower == "contentfolder")
+            switch (lower)
             {
-                var folder = this.siteDb.ContentFolders.Get(Value);
-                if (folder != null)
+                case "folder":
+                case "contentfolder":
                 {
-                    this.TextContent.FolderId = folder.Id;
-                    return;
+                    var folder = this.siteDb.ContentFolders.Get(value);
+                    if (folder != null)
+                    {
+                        this.TextContent.FolderId = folder.Id;
+                        return;
+                    }
+
+                    break;
                 }
-            }
-
-            else if (lower == "contenttype")
-            {
-                var type = this.siteDb.ContentTypes.Get(Value);
-                if (type != null)
+                case "contenttype":
                 {
-                    contenttype = type;
-                    this.TextContent.ContentTypeId = type.Id;
-                    return;
+                    var type = this.siteDb.ContentTypes.Get(value);
+                    if (type != null)
+                    {
+                        contenttype = type;
+                        this.TextContent.ContentTypeId = type.Id;
+                        return;
+                    }
+
+                    break;
                 }
             }
 
@@ -160,32 +153,26 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }
             }
 
-            if (contenttype == null || contenttype.Properties.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, FieldName)) != null)
+            if (contenttype == null || contenttype.Properties.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, fieldName)) != null)
             {
-                this.TextContent.SetValue(FieldName, Value, this.Culture);
+                this.TextContent.SetValue(fieldName, value, this.Culture);
             }
             else
             {
-                AdditionalValues[FieldName] = Value;
-            } 
+                AdditionalValues[fieldName] = value;
+            }
         }
-         
+
         public ContentType contenttype { get; set; }
 
-        private Dictionary<string, string> _AdditionalValues;
+        private Dictionary<string, string> _additionalValues;
+
         public Dictionary<string, string> AdditionalValues
         {
-            get
-            {
-                if (_AdditionalValues == null)
-                {
-                    _AdditionalValues = new Dictionary<string, string>();
-                }
-                return _AdditionalValues;
-            }
+            get { return _additionalValues ?? (_additionalValues = new Dictionary<string, string>()); }
             set
             {
-                _AdditionalValues = value;
+                _additionalValues = value;
             }
         }
 
@@ -193,10 +180,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
         {
             get
             {
-                List<string> mykey = new List<string>();
-                mykey.Add("id");
-                mykey.Add("userKey");
-                mykey.Add("lastModifled");
+                List<string> mykey = new List<string> {"id", "userKey", "lastModifled"};
 
                 var store = this.TextContent.GetContentStore(this.Culture);
                 if (store != null)
@@ -239,7 +223,6 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
         }
 
-
         public void Add(string key, object value)
         {
             this.TextContent.SetValue(key, value.ToString(), Culture);
@@ -273,7 +256,6 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         public bool Remove(string key)
         {
-
             var store = this.TextContent.GetContentStore(this.Culture);
             if (store != null)
             {
@@ -302,13 +284,12 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
         }
 
-
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
-            return data.GetEnumerator();
+            return Data.GetEnumerator();
         }
 
-        private Dictionary<string, object> data
+        private Dictionary<string, object> Data
         {
             get
             {
@@ -329,7 +310,6 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 result["ParentId"] = this.TextContent.ParentId.ToString();
 
                 return result;
-
             }
         }
 
@@ -350,7 +330,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         IDictionaryEnumerator IDictionary.GetEnumerator()
         {
-            return data.GetEnumerator();
+            return Data.GetEnumerator();
         }
 
         public void Remove(object key)
@@ -363,7 +343,6 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             throw new NotImplementedException();
         }
 
-
         ICollection IDictionary.Keys
         {
             get
@@ -375,10 +354,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 //}
                 //return new List<string>();
 
-                List<string> mykey = new List<string>();
-                mykey.Add("id");
-                mykey.Add("userKey");
-                mykey.Add("lastModifled");
+                List<string> mykey = new List<string> {"id", "userKey", "lastModifled"};
 
                 var store = this.TextContent.GetContentStore(this.Culture);
                 if (store != null)
@@ -390,21 +366,16 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }
 
                 return mykey;
-
-
             }
         }
-
 
         public ICollection Values
         {
             get
             {
-                return this.data;
+                return this.Data;
             }
         }
-
-
 
         public bool IsFixedSize => false;
 
@@ -412,23 +383,16 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         public bool IsSynchronized => false;
 
-
-
         public object this[object key]
         {
-
             get
             {
                 return get(key.ToString());
-
             }
             set
             {
                 this.SetObjectValue(key.ToString(), value.ToString());
             }
         }
-
-
-
     }
 }

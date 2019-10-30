@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
+using Kooboo.Attributes;
 
 namespace Kooboo.Sites.DataSources
 {
@@ -21,17 +22,17 @@ namespace Kooboo.Sites.DataSources
     {
         public static void InitIDataSource()
         {
-            var DataMethodStore = GlobalDb.DataMethodSettings;
+            var dataMethodStore = GlobalDb.DataMethodSettings;
             // check all types have been loaded into system...
-            var AllCurrentSettings = DataMethodStore.All();
-            foreach (var TypeItem in AllCurrentSettings.GroupBy(o => o.DeclareType))
+            var allCurrentSettings = dataMethodStore.All();
+            foreach (var typeItem in allCurrentSettings.GroupBy(o => o.DeclareType))
             {
-                var type = Kooboo.Data.TypeCache.GetType(TypeItem.Key);
+                var type = Kooboo.Data.TypeCache.GetType(typeItem.Key);
                 if (type == null)
                 {
-                    foreach (var item in TypeItem)
+                    foreach (var item in typeItem)
                     {
-                        DataMethodStore.Delete(item);
+                        dataMethodStore.Delete(item);
                     }
                 }
             }
@@ -42,21 +43,21 @@ namespace Kooboo.Sites.DataSources
             {
                 Guid typehash = item.FullName.ToHashGuid();
 
-                var oldsetting = DataMethodStore.Query.Where(o => o.DeclareTypeHash == typehash).SelectAll();
+                var oldsetting = dataMethodStore.Query.Where(o => o.DeclareTypeHash == typehash).SelectAll();
 
                 var newsettings = GetDefaultMethodSettings(item, false);
 
-                foreach (var MethodItem in oldsetting)
+                foreach (var methodItem in oldsetting)
                 {
-                    if (!newsettings.Any(o => o.MethodSignatureHash == MethodItem.MethodSignatureHash))
+                    if (!newsettings.Any(o => o.MethodSignatureHash == methodItem.MethodSignatureHash))
                     {
-                        DataMethodStore.Delete(MethodItem.Id);
+                        dataMethodStore.Delete(methodItem.Id);
                     }
                 }
 
-                foreach (var MethodItem in newsettings)
+                foreach (var methodItem in newsettings)
                 {
-                    DataMethodStore.AddOrUpdate(MethodItem);
+                    dataMethodStore.AddOrUpdate(methodItem);
                 }
             }
         }
@@ -122,10 +123,12 @@ namespace Kooboo.Sites.DataSources
             }
             if (!hasfolder)
             {
-                ParameterBinding binding = new ParameterBinding();
-                binding.FullTypeName = typeof(System.Guid).Name;
-                binding.Binding = default(Guid).ToString();
-                binding.IsContentFolder = true;
+                ParameterBinding binding = new ParameterBinding
+                {
+                    FullTypeName = typeof(System.Guid).Name,
+                    Binding = default(Guid).ToString(),
+                    IsContentFolder = true
+                };
                 currentBinding.Add("FolderId", binding);
             }
         }
@@ -145,33 +148,34 @@ namespace Kooboo.Sites.DataSources
             }
             if (!hasfolder)
             {
-                ParameterBinding binding = new ParameterBinding();
-                binding.FullTypeName = typeof(System.Guid).Name;
-                binding.Binding = default(Guid).ToString();
-                binding.IsProductType = true;
+                ParameterBinding binding = new ParameterBinding
+                {
+                    FullTypeName = typeof(System.Guid).Name,
+                    Binding = default(Guid).ToString(),
+                    IsProductType = true
+                };
                 currentBinding.Add("ProductTypeId", binding);
             }
         }
 
         public static Dictionary<string, string> GetMethodParametes(MethodInfo method)
         {
-            Dictionary<string, string> Parameters = new Dictionary<string, string>();
+            Dictionary<string, string> parameters = new Dictionary<string, string>();
             foreach (var item in method.GetParameters())
             {
-                Parameters.Add(item.Name, item.ParameterType.FullName);
+                parameters.Add(item.Name, item.ParameterType.FullName);
             }
-            return Parameters;
+            return parameters;
         }
 
-        public static Dictionary<string, ParameterBinding> GetDefaultBinding(Dictionary<string, string> Parameters)
+        public static Dictionary<string, ParameterBinding> GetDefaultBinding(Dictionary<string, string> parameters)
         {
-            Dictionary<string, ParameterBinding> Bindings = new Dictionary<string, ParameterBinding>();
+            Dictionary<string, ParameterBinding> bindings = new Dictionary<string, ParameterBinding>();
 
-            foreach (var item in Parameters)
+            foreach (var item in parameters)
             {
                 Type itemtype = Kooboo.Data.TypeCache.GetType(item.Value);
-                ParameterBinding binding = new ParameterBinding();
-                binding.FullTypeName = itemtype.FullName;
+                ParameterBinding binding = new ParameterBinding {FullTypeName = itemtype.FullName};
 
                 if (TypeHelper.IsFieldType(itemtype))
                 {
@@ -198,13 +202,13 @@ namespace Kooboo.Sites.DataSources
                 }
                 else if (itemtype.IsClass)
                 {
-                    string ClassName = itemtype.Name;
-                    binding.Binding = "{" + ClassName + "}";
+                    string className = itemtype.Name;
+                    binding.Binding = "{" + className + "}";
                     binding.IsClass = true;
 
-                    foreach (var FieldItem in Lib.Reflection.TypeHelper.GetPublicFieldOrProperties(itemtype))
+                    foreach (var fieldItem in Lib.Reflection.TypeHelper.GetPublicFieldOrProperties(itemtype))
                     {
-                        var subitems = GetSubBinding(FieldItem.Key, FieldItem.Value);
+                        var subitems = GetSubBinding(fieldItem.Key, fieldItem.Value);
                         foreach (var subitem in subitems)
                         {
                             string key = item.Key + "." + subitem.Key;
@@ -213,14 +217,14 @@ namespace Kooboo.Sites.DataSources
                             {
                                 if (!string.IsNullOrEmpty(value.Binding) && !value.Binding.Contains("."))
                                 {
-                                    value.Binding = "{" + ClassName + "." + value.Binding + "}";
+                                    value.Binding = "{" + className + "." + value.Binding + "}";
                                 }
                             }
                             value.IsContentFolder = IsContentFolder(subitem.Key);
                             value.IsProductType = IsProductType(subitem.Key);
                             value.IsData = IsData(subitem.Key);
                             value.IsOrderBy = IsOrderBy(subitem.Key);
-                            Bindings.Add(key, value);
+                            bindings.Add(key, value);
                         }
                     }
                 }
@@ -229,9 +233,9 @@ namespace Kooboo.Sites.DataSources
                     continue;
                 }
 
-                Bindings.Add(item.Key, binding);
+                bindings.Add(item.Key, binding);
             }
-            return Bindings;
+            return bindings;
         }
 
         private static bool IsContentFolder(string name)
@@ -244,9 +248,9 @@ namespace Kooboo.Sites.DataSources
             return name.ToLower() == "producttype" || name.ToLower() == "producttypeid";
         }
 
-        private static bool IsData(string Name)
+        private static bool IsData(string name)
         {
-            return Name.ToLower().Contains("sample");
+            return name.ToLower().Contains("sample");
         }
 
         private static bool IsOrderBy(string name)
@@ -256,48 +260,54 @@ namespace Kooboo.Sites.DataSources
             return lower.Contains("sortfield") || lower.Contains("orderby");
         }
 
-        private static Dictionary<string, ParameterBinding> GetSubBinding(string FieldName, Type FieldType)
+        private static Dictionary<string, ParameterBinding> GetSubBinding(string fieldName, Type fieldType)
         {
             Dictionary<string, ParameterBinding> bindings = new Dictionary<string, ParameterBinding>();
 
-            if (TypeHelper.IsFieldType(FieldType))
+            if (TypeHelper.IsFieldType(fieldType))
             {
-                ParameterBinding binding = new ParameterBinding();
-                binding.Binding = FieldName;
-                binding.FullTypeName = FieldType.FullName;
-                bindings.Add(FieldName, binding);
-            }
-            else if (TypeHelper.IsDictionary(FieldType))
-            {
-                ParameterBinding binding = new ParameterBinding();
-                binding.FullTypeName = FieldType.FullName;
-                binding.IsDictionary = true;
-                binding.KeyType = Lib.Reflection.TypeHelper.GetDictionaryKeyType(FieldType).FullName;
-                binding.ValueType = Lib.Reflection.TypeHelper.GetDictionaryValueType(FieldType).FullName;
-                bindings.Add(FieldName, binding);
-            }
-            else if (TypeHelper.IsGenericCollection(FieldType))
-            {
-                ParameterBinding binding = new ParameterBinding();
-                binding.FullTypeName = FieldType.FullName;
-                binding.IsCollection = true;
-                binding.IsContentFolder = IsContentFolder(FieldName);
-                binding.IsProductType = IsProductType(FieldName);
-                binding.KeyType = Lib.Reflection.TypeHelper.GetEnumberableType(FieldType).FullName;
-                bindings.Add(FieldName, binding);
-            }
-            else if (FieldType.IsClass)
-            {
-                string classname = FieldType.Name;
-
-                ParameterBinding binding = new ParameterBinding();
-                binding.Binding = FieldName;
-                binding.FullTypeName = FieldType.FullName;
-                bindings.Add(FieldName, binding);
-
-                foreach (var FieldItem in Lib.Reflection.TypeHelper.GetPublicFieldOrProperties(FieldType))
+                ParameterBinding binding = new ParameterBinding
                 {
-                    var dict = GetSubBinding(FieldItem.Key, FieldItem.Value);
+                    Binding = fieldName, FullTypeName = fieldType.FullName
+                };
+                bindings.Add(fieldName, binding);
+            }
+            else if (TypeHelper.IsDictionary(fieldType))
+            {
+                ParameterBinding binding = new ParameterBinding
+                {
+                    FullTypeName = fieldType.FullName,
+                    IsDictionary = true,
+                    KeyType = Lib.Reflection.TypeHelper.GetDictionaryKeyType(fieldType).FullName,
+                    ValueType = Lib.Reflection.TypeHelper.GetDictionaryValueType(fieldType).FullName
+                };
+                bindings.Add(fieldName, binding);
+            }
+            else if (TypeHelper.IsGenericCollection(fieldType))
+            {
+                ParameterBinding binding = new ParameterBinding
+                {
+                    FullTypeName = fieldType.FullName,
+                    IsCollection = true,
+                    IsContentFolder = IsContentFolder(fieldName),
+                    IsProductType = IsProductType(fieldName),
+                    KeyType = Lib.Reflection.TypeHelper.GetEnumberableType(fieldType).FullName
+                };
+                bindings.Add(fieldName, binding);
+            }
+            else if (fieldType.IsClass)
+            {
+                string classname = fieldType.Name;
+
+                ParameterBinding binding = new ParameterBinding
+                {
+                    Binding = fieldName, FullTypeName = fieldType.FullName
+                };
+                bindings.Add(fieldName, binding);
+
+                foreach (var fieldItem in fieldType.GetPublicFieldOrProperties())
+                {
+                    var dict = GetSubBinding(fieldItem.Key, fieldItem.Value);
 
                     foreach (var item in dict)
                     {
@@ -305,7 +315,7 @@ namespace Kooboo.Sites.DataSources
                         {
                             item.Value.Binding = classname + "." + item.Value.Binding;
                         }
-                        bindings.Add(FieldName + "." + item.Key, item.Value);
+                        bindings.Add(fieldName + "." + item.Key, item.Value);
                     }
                 }
             }
@@ -319,48 +329,42 @@ namespace Kooboo.Sites.DataSources
         /// <returns></returns>
         internal static string ConvertParameterName(string input)
         {
-            List<int> CapitalLetterPosition = new List<int>();
+            List<int> capitalLetterPosition = new List<int>();
 
             for (int i = 1; i < input.Length; i++)
             {
                 if (Lib.Helper.CharHelper.isUppercaseAscii(input[i]))
                 {
-                    CapitalLetterPosition.Add(i);
+                    capitalLetterPosition.Add(i);
                 }
             }
 
-            if (CapitalLetterPosition.Count == 1)
+            if (capitalLetterPosition.Count == 1)
             {
-                int position = CapitalLetterPosition[0];
+                int position = capitalLetterPosition[0];
                 return input.Substring(0, position) + "." + input.Substring(position);
             }
 
             return input;
         }
 
-        public static TypeInfoModel GetFields(SiteDb SiteDb, Guid MethoId)
+        public static TypeInfoModel GetFields(SiteDb siteDb, Guid methoId)
         {
-            var methodsetting = SiteDb.DataMethodSettings.Get(MethoId);
-            if (methodsetting == null)
-            {
-                methodsetting = GlobalDb.DataMethodSettings.Get(MethoId);
-            }
+            var methodsetting = siteDb.DataMethodSettings.Get(methoId) ?? GlobalDb.DataMethodSettings.Get(methoId);
 
-            if (methodsetting != null)
-            {
-                return GetFields(SiteDb, methodsetting);
-            }
-            return null;
+            return methodsetting != null ? GetFields(siteDb, methodsetting) : null;
         }
 
         public static TypeInfoModel GetFields(SiteDb siteDb, IDataMethodSetting setting)
         {
-            var model = new TypeInfoModel();
-            model.Id = setting.Id;
-            model.Name = setting.MethodName;
-            model.DeclareType = setting.DeclareType;
-            model.ItemFields = new List<TypeFieldModel>();
-            model.IsPublic = setting.IsPublic;
+            var model = new TypeInfoModel
+            {
+                Id = setting.Id,
+                Name = setting.MethodName,
+                DeclareType = setting.DeclareType,
+                ItemFields = new List<TypeFieldModel>(),
+                IsPublic = setting.IsPublic
+            };
 
             var type = TypeCache.GetType(setting.ReturnType);
             if (type == null)
@@ -378,12 +382,10 @@ namespace Kooboo.Sites.DataSources
 
             if (type == typeof(TextContentViewModel))
             {
-                var folderIdKey = setting.ParameterBinding.Keys.FirstOrDefault(it => Isfolderid(it));
-                ParameterBinding binding;
-                if (!String.IsNullOrEmpty(folderIdKey) && setting.ParameterBinding.TryGetValue(folderIdKey, out binding))
+                var folderIdKey = setting.ParameterBinding.Keys.FirstOrDefault(Isfolderid);
+                if (!String.IsNullOrEmpty(folderIdKey) && setting.ParameterBinding.TryGetValue(folderIdKey, out var binding))
                 {
-                    Guid folderId;
-                    if (Guid.TryParse(binding.Binding, out folderId))
+                    if (Guid.TryParse(binding.Binding, out var folderId))
                     {
                         var folder = siteDb.ContentFolders.Get(folderId);
                         if (folder != null)
@@ -395,11 +397,14 @@ namespace Kooboo.Sites.DataSources
                                 var catfolder = siteDb.ContentFolders.Get(item.FolderId);
                                 if (catfolder != null)
                                 {
-                                    TypeFieldModel fieldmodel = new TypeFieldModel();
-                                    fieldmodel.Name = item.Alias;// catfolder.Name;
-                                    fieldmodel.Fields = GetContentTypeField(siteDb, catfolder.ContentTypeId);
-                                    fieldmodel.IsComplexType = true;
-                                    fieldmodel.Enumerable = item.Multiple;
+                                    TypeFieldModel fieldmodel = new TypeFieldModel
+                                    {
+                                        Name = item.Alias,
+                                        Fields = GetContentTypeField(siteDb, catfolder.ContentTypeId),
+                                        IsComplexType = true,
+                                        Enumerable = item.Multiple
+                                    };
+                                    // catfolder.Name;
                                     model.ItemFields.Add(fieldmodel);
                                 }
                             }
@@ -409,11 +414,14 @@ namespace Kooboo.Sites.DataSources
                                 var embedfolder = siteDb.ContentFolders.Get(item.FolderId);
                                 if (embedfolder != null)
                                 {
-                                    TypeFieldModel fieldmodel = new TypeFieldModel();
-                                    fieldmodel.Name = item.Alias;  //embedfolder.Name;
-                                    fieldmodel.Fields = GetContentTypeField(siteDb, embedfolder.ContentTypeId);
-                                    fieldmodel.IsComplexType = true;
-                                    fieldmodel.Enumerable = true;
+                                    TypeFieldModel fieldmodel = new TypeFieldModel
+                                    {
+                                        Name = item.Alias,
+                                        Fields = GetContentTypeField(siteDb, embedfolder.ContentTypeId),
+                                        IsComplexType = true,
+                                        Enumerable = true
+                                    };
+                                    //embedfolder.Name;
                                     model.ItemFields.Add(fieldmodel);
                                 }
                             }
@@ -515,18 +523,19 @@ namespace Kooboo.Sites.DataSources
             return fields;
         }
 
-        internal static List<TypeFieldModel> GetJsonTypeFields(string Json)
+        internal static List<TypeFieldModel> GetJsonTypeFields(string json)
         {
             try
             {
-                var jsonobject = (JObject)Lib.Helper.JsonHelper.Deserialize(Json);
+                var jsonobject = (JObject)Lib.Helper.JsonHelper.Deserialize(json);
                 if (jsonobject != null)
                 {
                     return _GetJsonTypeInfo(jsonobject);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
+                // ignored
             }
 
             return new List<TypeFieldModel>();
@@ -588,7 +597,7 @@ namespace Kooboo.Sites.DataSources
         internal static List<TypeFieldModel> GetXmlTypeFields(string xml)
         {
             var xdoc = Lib.Helper.XmlHelper.DeSerialize(xml);
-            if (xdoc != null && xdoc.Root != null)
+            if (xdoc?.Root != null)
             {
                 return _GetXmlTypeInfo(xdoc.Root);
             }
@@ -601,20 +610,18 @@ namespace Kooboo.Sites.DataSources
         {
             get
             {
-                if (_xmldatatypes == null)
+                return _xmldatatypes ?? (_xmldatatypes = new List<string>
                 {
-                    _xmldatatypes = new List<string>();
-                    _xmldatatypes.Add("string");
-                    _xmldatatypes.Add("boolean");
-                    _xmldatatypes.Add("decimal");
-                    _xmldatatypes.Add("float");
-                    _xmldatatypes.Add("double");
-                    _xmldatatypes.Add("dateTime");
-                    _xmldatatypes.Add("date");
-                    _xmldatatypes.Add("time");
-                    _xmldatatypes.Add("integer");
-                }
-                return _xmldatatypes;
+                    "string",
+                    "boolean",
+                    "decimal",
+                    "float",
+                    "double",
+                    "dateTime",
+                    "date",
+                    "time",
+                    "integer"
+                });
             }
         }
 
@@ -693,8 +700,7 @@ namespace Kooboo.Sites.DataSources
             string name = el.Name.ToString();
             foreach (var item in el.Nodes())
             {
-                var itemel = item as XElement;
-                if (itemel != null)
+                if (item is XElement itemel)
                 {
                     name += itemel.Name.ToString();
                 }
@@ -716,17 +722,10 @@ namespace Kooboo.Sites.DataSources
 
                 bool isComplex = false;
                 bool isCollection = IsXmlCollection(elitem);
-                if (isCollection)
-                {
-                    isComplex = IsXmlComplexType(elitem.Nodes().First() as XElement);
-                }
-                else
-                {
-                    isComplex = IsXmlComplexType(elitem);
-                }
+                isComplex = isCollection ? IsXmlComplexType(elitem?.Nodes().First() as XElement) : IsXmlComplexType(elitem);
                 var field = new TypeFieldModel
                 {
-                    Name = elitem.Name.ToString(),
+                    Name = elitem?.Name.ToString(),
                     Type = typeof(string).FullName,
                     Enumerable = isCollection,
                     IsComplexType = isComplex
@@ -736,33 +735,24 @@ namespace Kooboo.Sites.DataSources
                 {
                     field.Type = typeof(object).FullName;
 
-                    if (isCollection)
-                    {
-                        field.Fields = _GetXmlTypeInfo(elitem.Nodes().First() as XElement);
-                    }
-                    else
-                    {
-                        field.Fields = _GetXmlTypeInfo(elitem as XElement);
-                    }
+                    field.Fields = isCollection ? _GetXmlTypeInfo(elitem?.Nodes().First() as XElement) : _GetXmlTypeInfo(elitem);
                 }
                 fields.Add(field);
             }
             return fields;
         }
 
-        public static List<TypeFieldModel> GetContentTypeField(SiteDb sitedb, Guid ContentTypeId)
+        public static List<TypeFieldModel> GetContentTypeField(SiteDb sitedb, Guid contentTypeId)
         {
             List<TypeFieldModel> result = new List<TypeFieldModel>();
-            var contentType = sitedb.ContentTypes.Get(ContentTypeId);
+            var contentType = sitedb.ContentTypes.Get(contentTypeId);
             if (contentType != null)
             {
                 foreach (var item in contentType.Properties)
                 {
                     if (!item.IsSystemField)
                     {
-                        TypeFieldModel model = new TypeFieldModel();
-                        model.Name = item.Name;
-                        model.IsComplexType = false;
+                        TypeFieldModel model = new TypeFieldModel {Name = item.Name, IsComplexType = false};
                         if (item.MultipleValue)
                         {
                             model.Enumerable = true;
@@ -812,23 +802,19 @@ namespace Kooboo.Sites.DataSources
         //    return result;
         //}
 
-        public static Type ReturnType(MethodInfo MethodInfo)
+        public static Type ReturnType(MethodInfo methodInfo)
         {
-            var defineType = MethodInfo.GetCustomAttribute(typeof(Attributes.ReturnType));
-            if (defineType != null)
+            var defineType = methodInfo.GetCustomAttribute(typeof(Attributes.ReturnType));
+            if (defineType is ReturnType definereturn && definereturn.Type != null)
             {
-                var definereturn = defineType as Attributes.ReturnType;
-                if (definereturn != null && definereturn.Type != null)
-                {
-                    return definereturn.Type;
-                }
+                return definereturn.Type;
             }
-            return MethodInfo.ReturnType;
+            return methodInfo.ReturnType;
         }
 
-        private static bool IsPagedResult(MethodInfo MethodInfo)
+        private static bool IsPagedResult(MethodInfo methodInfo)
         {
-            return MethodInfo.ReturnType == typeof(Kooboo.Data.Models.PagedResult);
+            return methodInfo.ReturnType == typeof(Kooboo.Data.Models.PagedResult);
         }
     }
 }

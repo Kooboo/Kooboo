@@ -9,13 +9,11 @@ namespace Kooboo.Sites.Models
 {
     public class CmsCssRule : SiteObject
     {
-        ///How to identify a css rule.
+        //How to identify a css rule.
         // When this is a css rule under a style sheet, identified by the style sheet id and itemindex. if this is also under a like media rule, should also check into the media rule.
         /// <summary>
         /// Css Rule of StyleSheet.  This is the CMS CSS Rule, Not the DOM Css Rule.
         /// </summary>
-        /// <param name="selectorText"></param>
-        /// <param name="ItemIndex"></param>
         public CmsCssRule()
         {
             this.ConstType = ConstObjectType.CssRule;
@@ -93,7 +91,7 @@ namespace Kooboo.Sites.Models
             {
                 if (this.selectorPositionIndex <= 0)
                 {
-                    /// try to make again...
+                    // try to make again...
                     if (!string.IsNullOrEmpty(this.CssText))
                     {
                         int bracketindex = this.CssText.IndexOf("{");
@@ -184,17 +182,7 @@ namespace Kooboo.Sites.Models
         /// </summary>
         public string DisplayName
         {
-            get
-            {
-                if (string.IsNullOrEmpty(_displayName))
-                {
-                    return this.SelectorText;
-                }
-                else
-                {
-                    return _displayName;
-                }
-            }
+            get { return string.IsNullOrEmpty(_displayName) ? this.SelectorText : _displayName; }
             set
             {
                 _displayName = value;
@@ -223,14 +211,7 @@ namespace Kooboo.Sites.Models
 
         public List<string> Properties
         {
-            get
-            {
-                if (_properties == null)
-                {
-                    _properties = new List<string>();
-                }
-                return _properties;
-            }
+            get { return _properties ?? (_properties = new List<string>()); }
             set { _properties = value; }
         }
     }

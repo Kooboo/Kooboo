@@ -17,14 +17,7 @@ namespace Kooboo.Sites.Authorization.Model
         // In the format of development/view.
         public List<string> Permission
         {
-            get
-            {
-                if (_permission == null)
-                {
-                    _permission = new List<string>();
-                }
-                return _permission;
-            }
+            get { return _permission ?? (_permission = new List<string>()); }
 
             set
             {

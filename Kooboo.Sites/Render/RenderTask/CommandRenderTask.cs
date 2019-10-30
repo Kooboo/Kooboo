@@ -1,46 +1,43 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Dom;
 using Kooboo.Sites.Render.Commands;
 using System;
 using System.Collections.Generic;
-  
+
 namespace Kooboo.Sites.Render.RenderTask
 {
     public class CommandRenderTask : IRenderTask
     {
-        private Command command { get; set; }
+        private Command Command { get; set; }
 
         public bool ClearBefore
         {
-            get; 
-            set; 
+            get;
+            set;
         }
 
         public CommandRenderTask(string commentline)
         {
-            this.command = CommandParser.ParseCommand(commentline);
+            this.Command = CommandParser.ParseCommand(commentline);
         }
+
         public CommandRenderTask(Comment comment)
         {
-            this.command = CommandParser.ParseCommand(comment);
+            this.Command = CommandParser.ParseCommand(comment);
         }
 
         public string Render(RenderContext context)
-        { 
-           if (!context.HasItem<ICommandSourceProvider>("commandsource"))
+        {
+            if (!context.HasItem<ICommandSourceProvider>("commandsource"))
             {
                 var sourceprovider = new DBCommandSourceProvider();
-                context.SetItem<ICommandSourceProvider>(sourceprovider, "commandsource"); 
+                context.SetItem<ICommandSourceProvider>(sourceprovider, "commandsource");
             }
 
-            var command = CommandManager.GetCommand(this.command.Name);
-            if (command != null)
-            {
-                return command.Execute(context, this.command.Attributes);
-            }
-            return null;
+            var command = CommandManager.GetCommand(this.Command.Name);
+            return command?.Execute(context, this.Command.Attributes);
         }
 
         public void AppendResult(RenderContext context, List<RenderResult> result)

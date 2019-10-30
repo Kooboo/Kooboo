@@ -66,14 +66,7 @@ namespace Kooboo.Sites.Extensions
                 if (string.IsNullOrEmpty(hostname))
                 {
                     var ip = Lib.Helper.NetworkHelper.GetLocalIpAddress();
-                    if (ip == "127.0.0.1")
-                    {
-                        hostname = "localhost";
-                    }
-                    else
-                    {
-                        hostname = ip;
-                    }
+                    hostname = ip == "127.0.0.1" ? "localhost" : ip;
                 }
 
                 if (site.ForceSSL)

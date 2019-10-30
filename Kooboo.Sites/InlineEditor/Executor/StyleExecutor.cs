@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Kooboo.Dom;
 
 namespace Kooboo.Sites.InlineEditor.Executor
 {
@@ -22,7 +23,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
             }
         }
 
-        public void ExecuteObject(RenderContext context, IRepository repo, string NameOrId, List<IInlineModel> updates)
+        public void ExecuteObject(RenderContext context, IRepository repo, string nameOrId, List<IInlineModel> updates)
         {
             throw new NotImplementedException();
         }
@@ -48,9 +49,9 @@ namespace Kooboo.Sites.InlineEditor.Executor
                     }
                     else
                     {
-                        string CssUrl = item.StyleSheetUrl;
+                        string cssUrl = item.StyleSheetUrl;
 
-                        if (string.IsNullOrEmpty(CssUrl))
+                        if (string.IsNullOrEmpty(cssUrl))
                         {
                             var allPageCssUrl = Relation.DomRelation.GetReferenceStyleUrl(page.Dom, page.Headers);
                             allPageCssUrl.Reverse();
@@ -58,15 +59,15 @@ namespace Kooboo.Sites.InlineEditor.Executor
                             {
                                 if (!string.IsNullOrEmpty(cssitem) && !Service.DomUrlService.IsExternalLink(cssitem))
                                 {
-                                    CssUrl = cssitem;
+                                    cssUrl = cssitem;
                                 }
                             }
                         }
 
-                        if (!string.IsNullOrEmpty(CssUrl))
+                        if (!string.IsNullOrEmpty(cssUrl))
                         {
                             Guid styleid = default(Guid);
-                            string relativeurl = Kooboo.Lib.Helper.UrlHelper.RelativePath(CssUrl);
+                            string relativeurl = Kooboo.Lib.Helper.UrlHelper.RelativePath(cssUrl);
 
                             if (UrlIdMaps.ContainsKey(relativeurl))
                             {
@@ -88,7 +89,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         {
                             var allstyle = context.WebSite.SiteDb().Styles.Query.Where(o => o.OwnerObjectId == page.Id).SelectAll().OrderByDescending(o => o.ItemIndex);
 
-                            if (allstyle.Count() > 0)
+                            if (allstyle.Any())
                             {
                                 item.StyleId = allstyle.First().Id;
                             }
@@ -98,39 +99,36 @@ namespace Kooboo.Sites.InlineEditor.Executor
             }
         }
 
-        public Guid GetStyleIdByKoobooTag(RenderContext Context, string StyleTagKoobooId, string ObjectType = null, string NameOrId = null)
+        public Guid GetStyleIdByKoobooTag(RenderContext context, string styleTagKoobooId, string objectType = null, string nameOrId = null)
         {
             IDomObject domobject = null;
             Guid objectid = default(Guid);
 
-            if (!string.IsNullOrEmpty(ObjectType) && !string.IsNullOrEmpty(NameOrId))
+            if (!string.IsNullOrEmpty(objectType) && !string.IsNullOrEmpty(nameOrId))
             {
-                var repo = Context.WebSite.SiteDb().GetRepository(ObjectType);
-                if (repo != null)
+                var repo = context.WebSite.SiteDb().GetRepository(objectType);
+                var siteobject = repo?.GetByNameOrId(nameOrId);
+                if (siteobject != null && siteobject is IDomObject domObject)
                 {
-                    var siteobject = repo.GetByNameOrId(NameOrId);
-                    if (siteobject != null && siteobject is IDomObject)
-                    {
-                        domobject = siteobject as IDomObject;
-                        objectid = domobject.Id;
-                    }
+                    domobject = domObject;
+                    objectid = domobject.Id;
                 }
             }
 
             if (objectid == default(Guid))
             {
-                var page = Context.GetItem<Page>();
-                domobject = page as IDomObject;
+                var page = context.GetItem<Page>();
+                domobject = page;
                 objectid = page.Id;
             }
 
-            var element = Service.DomService.GetElementByKoobooId(domobject.Dom, StyleTagKoobooId);
+            var element = Service.DomService.GetElementByKoobooId(domobject?.Dom, styleTagKoobooId);
             if (element != null)
             {
                 string inner = element.InnerHtml;
                 int bodyhash = Lib.Security.Hash.ComputeIntCaseSensitive(inner);
 
-                var style = Context.WebSite.SiteDb().Styles.Query.Where(o => o.OwnerObjectId == objectid && o.BodyHash == bodyhash).FirstOrDefault();
+                var style = context.WebSite.SiteDb().Styles.Query.Where(o => o.OwnerObjectId == objectid && o.BodyHash == bodyhash).FirstOrDefault();
                 if (style != null)
                 {
                     return style.Id;
@@ -157,7 +155,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         {
                             var foundrules = allrules.FindAll(o => CssSelectorComparer.IsEqual(o.SelectorText, ruleitem.Selector));
 
-                            if (foundrules != null && foundrules.Count() > 0)
+                            if (foundrules != null && foundrules.Any())
                             {
                                 if (!string.IsNullOrWhiteSpace(ruleitem.MediaRuleList))
                                 {
@@ -188,13 +186,13 @@ namespace Kooboo.Sites.InlineEditor.Executor
 
         public List<Model.StyleModel> AssignRuleId(Model.StyleModel item, List<CmsCssRule> foundrules)
         {
-            List<Model.StyleModel> AdditionRules = new List<Model.StyleModel>();
+            List<Model.StyleModel> additionRules = new List<Model.StyleModel>();
 
             var matchrule = foundrules.OrderByDescending(o => o.DuplicateIndex).First();
 
             item.RuleId = matchrule.Id;
 
-            bool IsWithinMedia = matchrule.ParentCssRuleId != default(Guid);
+            bool isWithinMedia = matchrule.ParentCssRuleId != default(Guid);
             foundrules.Remove(matchrule);
 
             var othermediaruls = foundrules.FindAll(o => o.ParentCssRuleId != default(Guid));
@@ -202,23 +200,23 @@ namespace Kooboo.Sites.InlineEditor.Executor
             {
                 var copyitem = Lib.Serializer.Copy.DeepCopy<Model.StyleModel>(item);
                 copyitem.RuleId = rule.Id;
-                AdditionRules.Add(copyitem);
+                additionRules.Add(copyitem);
             }
 
-            if (IsWithinMedia)
+            if (isWithinMedia)
             {
                 //outside should change the last index.
                 var otherNonMediaRules = foundrules.Where(o => o.ParentCssRuleId == default(Guid)).ToList();
-                if (otherNonMediaRules != null && otherNonMediaRules.Count() > 0)
+                if (otherNonMediaRules != null && otherNonMediaRules.Any())
                 {
                     var lastNonMedia = otherNonMediaRules.OrderByDescending(o => o.DuplicateIndex).First();
                     var copyitem = Lib.Serializer.Copy.DeepCopy<Model.StyleModel>(item);
                     copyitem.RuleId = lastNonMedia.Id;
-                    AdditionRules.Add(copyitem);
+                    additionRules.Add(copyitem);
                 }
             }
 
-            return AdditionRules;
+            return additionRules;
         }
 
         public void Execute(RenderContext context, List<IInlineModel> updatelist)
@@ -251,14 +249,14 @@ namespace Kooboo.Sites.InlineEditor.Executor
 
         public void ProcessInlineCss(RenderContext context, List<Model.StyleModel> changes)
         {
-            List<IInlineModel> DomUpdates = ConvertToDomUpdate(context, changes);
+            List<IInlineModel> domUpdates = ConvertToDomUpdate(context, changes);
 
-            new DomExecutor().Execute(context, DomUpdates);
+            new DomExecutor().Execute(context, domUpdates);
         }
 
         public List<IInlineModel> ConvertToDomUpdate(RenderContext context, List<StyleModel> changes)
         {
-            List<IInlineModel> DomUpdates = new List<IInlineModel>();
+            List<IInlineModel> domUpdates = new List<IInlineModel>();
             foreach (var item in changes.GroupBy(o => o.ObjectType))
             {
                 var objecttype = item.Key;
@@ -272,16 +270,13 @@ namespace Kooboo.Sites.InlineEditor.Executor
                 {
                     string nameorid = subitem.Key;
                     var siteobject = repo.GetByNameOrId(nameorid);
-                    if (siteobject != null && siteobject is IDomObject)
+                    if (siteobject != null && siteobject is IDomObject domobject)
                     {
-                        var domobject = siteobject as IDomObject;
                         foreach (var updateitem in subitem.GroupBy(o => o.KoobooId))
                         {
                             string koobooid = updateitem.Key;
 
-                            var el = Sites.Service.DomService.GetElementByKoobooId(domobject.Dom, koobooid) as Kooboo.Dom.Element;
-
-                            if (el != null)
+                            if (Sites.Service.DomService.GetElementByKoobooId(domobject.Dom, koobooid) is Element el)
                             {
                                 var style = el.getAttribute("style");
 
@@ -292,25 +287,27 @@ namespace Kooboo.Sites.InlineEditor.Executor
                                 }
                                 var newstylevalue = UpdateHelper.UpdateOrAppendInlineCss(style, propertychanges);
 
-                                DomModel model = new DomModel();
-                                model.KoobooId = koobooid;
-                                model.NameOrId = nameorid;
-                                model.ObjectType = objecttype;
-                                model.AttributeName = "style";
-                                model.Value = newstylevalue;
-                                DomUpdates.Add(model);
+                                DomModel model = new DomModel
+                                {
+                                    KoobooId = koobooid,
+                                    NameOrId = nameorid,
+                                    ObjectType = objecttype,
+                                    AttributeName = "style",
+                                    Value = newstylevalue
+                                };
+                                domUpdates.Add(model);
                             }
                         }
                     }
                 }
             }
 
-            return DomUpdates;
+            return domUpdates;
         }
 
-        private void ProcessInline(RenderContext context, List<Model.StyleModel> changes, string ObjectType, string NameOrId)
+        private void ProcessInline(RenderContext context, List<Model.StyleModel> changes, string objectType, string nameOrId)
         {
-            if (changes.Count() == 0 || string.IsNullOrEmpty(ObjectType) || string.IsNullOrEmpty(NameOrId))
+            if (changes.Count == 0 || string.IsNullOrEmpty(objectType) || string.IsNullOrEmpty(nameOrId))
             {
                 return;
             }
@@ -343,13 +340,12 @@ namespace Kooboo.Sites.InlineEditor.Executor
                 }
             }
 
-            var repo = context.WebSite.SiteDb().GetRepository(ObjectType);
+            var repo = context.WebSite.SiteDb().GetRepository(objectType);
 
-            var koobooobject = repo.GetByNameOrId(NameOrId);
+            var koobooobject = repo.GetByNameOrId(nameOrId);
 
-            if (koobooobject is IDomObject && inlinechanges.Count() > 0)
+            if (koobooobject is IDomObject domobject && inlinechanges.Any())
             {
-                var domobject = koobooobject as IDomObject;
                 domobject.Body = Service.DomService.UpdateInlineStyle(domobject.Body, inlinechanges);
                 repo.AddOrUpdate(domobject);
             }
@@ -455,9 +451,10 @@ namespace Kooboo.Sites.InlineEditor.Executor
                     current = prechanges.Find(o => o.RuleId == default(Guid) && o.Selector == item.Selector);
                     if (current == null)
                     {
-                        current = new RuleChange();
-                        current.Selector = item.Selector;
-                        current.Declarations = new Dom.CSS.CSSDeclarationBlock();
+                        current = new RuleChange
+                        {
+                            Selector = item.Selector, Declarations = new Dom.CSS.CSSDeclarationBlock()
+                        };
                         prechanges.Add(current);
                     }
                 }
@@ -485,25 +482,20 @@ namespace Kooboo.Sites.InlineEditor.Executor
 
             foreach (var item in prechanges)
             {
-                var onechange = new CmsCssRuleChanges();
-                onechange.CssRuleId = item.RuleId;
-                onechange.selectorText = item.Selector;
-                onechange.DeclarationText = item.Declarations.GenerateCssText();
+                var onechange = new CmsCssRuleChanges
+                {
+                    CssRuleId = item.RuleId,
+                    selectorText = item.Selector,
+                    DeclarationText = item.Declarations.GenerateCssText()
+                };
 
-                if (item.Declarations.item.Count() == 0)
+                if (item.Declarations.item.Count == 0)
                 {
                     onechange.ChangeType = ChangeType.Delete;
                 }
                 else
                 {
-                    if (item.RuleId == default(Guid))
-                    {
-                        onechange.ChangeType = ChangeType.Add;
-                    }
-                    else
-                    {
-                        onechange.ChangeType = ChangeType.Update;
-                    }
+                    onechange.ChangeType = item.RuleId == default(Guid) ? ChangeType.Add : ChangeType.Update;
                 }
 
                 changelist.Add(onechange);

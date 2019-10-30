@@ -1,24 +1,23 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using Kooboo.Sites.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Linq; 
 
 namespace Kooboo.Sites.Sync.SiteClusterSync
 {
     public class SiteSetting
     {
-        // update site based on the remote host checkin.  // this will be updated instantly... 
+        // update site based on the remote host checkin.  // this will be updated instantly...
         public static WebSite AddOrUpdate(ClusterSiteEditModel editModel)
         {
             WebSite site = new WebSite() { Name = editModel.Name, OrganizationId = editModel.OrganizationId };
 
             ImportExport.SetSiteSetting(site, editModel.Settiing);
 
-            site.Id = default(Guid); // reset. 
-            site.EnableCluster = true; 
+            site.Id = default(Guid); // reset.
+            site.EnableCluster = true;
 
             Data.GlobalDb.WebSites.AddOrUpdate(site);
 
@@ -39,11 +38,11 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
 
         public static ClusterSiteEditModel GetModel(WebSite site, string destPrimaryDomain)
         {
-            ClusterSiteEditModel editmodel = new ClusterSiteEditModel();
+            ClusterSiteEditModel editmodel = new ClusterSiteEditModel
+            {
+                PrimaryDomain = destPrimaryDomain, Name = site.Name, OrganizationId = site.OrganizationId
+            };
 
-            editmodel.PrimaryDomain = destPrimaryDomain;
-            editmodel.Name = site.Name;
-            editmodel.OrganizationId = site.OrganizationId;
 
             var bindings = Kooboo.Data.GlobalDb.Bindings.GetByWebSite(site.Id);
 
@@ -56,5 +55,5 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
 
             return editmodel;
         }
-    } 
+    }
 }

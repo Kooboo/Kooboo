@@ -1,8 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Models;
+using System;
 
 namespace Kooboo.Sites.Repository
 {
@@ -15,42 +15,41 @@ namespace Kooboo.Sites.Repository
                 ObjectStoreParameters paras = new ObjectStoreParameters();
                 paras.AddColumn<ExternalResource>(o => o.DestinationObjectType);
                 paras.AddColumn<ExternalResource>(o => o.UrlHash);
-                paras.SetPrimaryKeyField<ExternalResource>(o => o.Id); 
+                paras.SetPrimaryKeyField<ExternalResource>(o => o.Id);
                 return paras;
-
             }
         }
 
-        public void AddOrUpdate(string FullUrl, byte DestinationObjectType)
+        public void AddOrUpdate(string fullUrl, byte destinationObjectType)
         {
-            ExternalResource resource = new ExternalResource();
-            resource.FullUrl = FullUrl;
-            resource.DestinationObjectType = DestinationObjectType;
+            ExternalResource resource = new ExternalResource
+            {
+                FullUrl = fullUrl, DestinationObjectType = destinationObjectType
+            };
             AddOrUpdate(resource);
         }
 
-        public override ExternalResource GetByUrl(string Url)
+        public override ExternalResource GetByUrl(string url)
         {
-            var id = Kooboo.Data.IDGenerator.Generate(Url, ConstObjectType.ExternalResource);
+            var id = Kooboo.Data.IDGenerator.Generate(url, ConstObjectType.ExternalResource);
             return this.Get(id);
         }
 
-        public void ChangeUrl(Guid Id, string NewUrl)
+        public void ChangeUrl(Guid id, string newUrl)
         {
-            var siteobject = this.Get(Id);
+            var siteobject = this.Get(id);
             if (siteobject != null)
             {
                 var usedby = this.GetUsedBy(siteobject.Id);
                 foreach (var item in usedby)
                 {
                     var type = item.ConstType;
-                    var repo = this.SiteDb.GetRepository(type); 
-                    Helper.ChangeHelper.ChangeUrl(this.SiteDb, repo, item.ObjectId, siteobject.FullUrl, NewUrl);   
+                    var repo = this.SiteDb.GetRepository(type);
+                    Helper.ChangeHelper.ChangeUrl(this.SiteDb, repo, item.ObjectId, siteobject.FullUrl, newUrl);
                 }
 
-                this.Delete(Id); 
+                this.Delete(id);
             }
         }
-
     }
 }

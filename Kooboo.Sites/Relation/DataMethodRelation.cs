@@ -1,21 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Interface;
-using Kooboo.Data.Models;
 using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Relation
-{ 
-
+{
     public static class DataMethodRelation
     {
         public static void Compute(IDataMethodSetting methodsetting, SiteDb sitedb)
-        { 
+        {
             var values = methodsetting.ParameterBinding.Values;
 
             var allfolderids = GetFolderIds(methodsetting);
@@ -31,44 +26,35 @@ namespace Kooboo.Sites.Relation
             }
             foreach (var item in allfolderids)
             {
-                sitedb.Relations.AddOrUpdate(methodsetting.Id, item, ConstObjectType.DataMethodSetting, ConstObjectType.Folder);  
+                sitedb.Relations.AddOrUpdate(methodsetting.Id, item, ConstObjectType.DataMethodSetting, ConstObjectType.Folder);
             }
-
         }
 
-                
-        public static void Clean(SiteDb SiteDb, Guid DataMethodId)
+        public static void Clean(SiteDb siteDb, Guid dataMethodId)
         {
-            var existings = SiteDb.Relations.GetRelations(DataMethodId);
+            var existings = siteDb.Relations.GetRelations(dataMethodId);
             foreach (var item in existings)
             {
-                SiteDb.Relations.Delete(item.Id); 
+                siteDb.Relations.Delete(item.Id);
             }
         }
-
-
-
 
         public static List<Guid> GetFolderIds(IDataMethodSetting methodsetting)
         {
-            List<Guid> folderids = new List<Guid>();  
+            List<Guid> folderids = new List<Guid>();
 
             foreach (var item in methodsetting.ParameterBinding)
             {
                 if (item.Key.ToLower() == "folderid")
                 {
-                    string strguid =  item.Value.Binding;
-                    Guid folderid = default(Guid); 
-                    if (System.Guid.TryParse(strguid, out folderid))
+                    string strguid = item.Value.Binding;
+                    if (System.Guid.TryParse(strguid, out var folderid))
                     {
-                        folderids.Add(folderid); 
+                        folderids.Add(folderid);
                     }
                 }
-            } 
-            return folderids;  
+            }
+            return folderids;
         }
     }
-
-
-
 }

@@ -47,8 +47,7 @@ namespace Kooboo.Sites.Events
             {
                 if (!_handlers.ContainsKey(typeof(T)))
                 {
-                    List<object> target = new List<object>();
-                    target.Add(handle);
+                    List<object> target = new List<object> {handle};
                     _handlers.Add(typeof(T), target);
                 }
                 else
@@ -68,61 +67,60 @@ namespace Kooboo.Sites.Events
 
             foreach (var item in handler)
             {
-                var HandleItem = item as Action<SiteObjectEvent<T>>;
-                if (HandleItem != null)
+                if (item is Action<SiteObjectEvent<T>> handleItem)
                 {
-                    HandleItem(e);
+                    handleItem(e);
                 }
             }
         }
 
-        private static void HandleRoute(SiteObjectEvent<Routing.Route> ChangeEvent)
+        private static void HandleRoute(SiteObjectEvent<Routing.Route> changeEvent)
         {
-            if (ChangeEvent.ChangeType == ChangeType.Add)
+            if (changeEvent.ChangeType == ChangeType.Add)
             {
-                Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb).AddOrUpdate(ChangeEvent.Value);
-                Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb, ChangeEvent.Value.DestinationConstType).AddOrUpdate(ChangeEvent.Value);
+                Cache.RouteTreeCache.RouteTree(changeEvent.SiteDb).AddOrUpdate(changeEvent.Value);
+                Cache.RouteTreeCache.RouteTree(changeEvent.SiteDb, changeEvent.Value.DestinationConstType).AddOrUpdate(changeEvent.Value);
             }
-            else if (ChangeEvent.ChangeType == ChangeType.Update)
+            else if (changeEvent.ChangeType == ChangeType.Update)
             {
-                if (ChangeEvent.OldValue.Name.ToLower() != ChangeEvent.Value.Name.ToLower())
+                if (changeEvent.OldValue.Name.ToLower() != changeEvent.Value.Name.ToLower())
                 {
-                    Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb).Del(ChangeEvent.OldValue.Name);
-                    Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb, ChangeEvent.OldValue.DestinationConstType).Del(ChangeEvent.OldValue.Name);
+                    Cache.RouteTreeCache.RouteTree(changeEvent.SiteDb).Del(changeEvent.OldValue.Name);
+                    Cache.RouteTreeCache.RouteTree(changeEvent.SiteDb, changeEvent.OldValue.DestinationConstType).Del(changeEvent.OldValue.Name);
                 }
 
-                Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb).AddOrUpdate(ChangeEvent.Value);
-                Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb, ChangeEvent.Value.DestinationConstType).AddOrUpdate(ChangeEvent.Value);
+                Cache.RouteTreeCache.RouteTree(changeEvent.SiteDb).AddOrUpdate(changeEvent.Value);
+                Cache.RouteTreeCache.RouteTree(changeEvent.SiteDb, changeEvent.Value.DestinationConstType).AddOrUpdate(changeEvent.Value);
             }
             else
             {
                 // delete an route..
-                Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb).Del(ChangeEvent.Value.Name);
-                Cache.RouteTreeCache.RouteTree(ChangeEvent.SiteDb, ChangeEvent.Value.DestinationConstType).Del(ChangeEvent.Value.Name);
+                Cache.RouteTreeCache.RouteTree(changeEvent.SiteDb).Del(changeEvent.Value.Name);
+                Cache.RouteTreeCache.RouteTree(changeEvent.SiteDb, changeEvent.Value.DestinationConstType).Del(changeEvent.Value.Name);
             }
         }
 
-        private static void HandlePageChange(SiteObjectEvent<Page> PageEvent)
+        private static void HandlePageChange(SiteObjectEvent<Page> pageEvent)
         {
-            if (PageEvent.ChangeType == ChangeType.Add)
+            switch (pageEvent.ChangeType)
             {
-                //PageEvent.SiteDb.DomElements.AddOrUpdateDom(PageEvent.Value.Dom, PageEvent.Value.Id, PageEvent.Value.ConstType);
-            }
-            else if (PageEvent.ChangeType == ChangeType.Update)
-            {
-                //if (PageEvent.OldValue.Body != PageEvent.Value.Body)
-                //{
-                //   PageEvent.SiteDb.DomElements.AddOrUpdateDom(PageEvent.Value.Dom, PageEvent.Value.Id, PageEvent.Value.ConstType);
-                //}
-                Cache.RenderPlan.RemovePlan(PageEvent.SiteDb, PageEvent.OldValue.Id);
-            }
-            else
-            {
-                Cache.RenderPlan.RemovePlan(PageEvent.SiteDb, PageEvent.Value.Id);
-                //PageEvent.SiteDb.DomElements.CleanObject(PageEvent.Value.Id, PageEvent.Value.ConstType);
+                case ChangeType.Add:
+                    //PageEvent.SiteDb.DomElements.AddOrUpdateDom(PageEvent.Value.Dom, PageEvent.Value.Id, PageEvent.Value.ConstType);
+                    break;
+                case ChangeType.Update:
+                    //if (PageEvent.OldValue.Body != PageEvent.Value.Body)
+                    //{
+                    //   PageEvent.SiteDb.DomElements.AddOrUpdateDom(PageEvent.Value.Dom, PageEvent.Value.Id, PageEvent.Value.ConstType);
+                    //}
+                    Cache.RenderPlan.RemovePlan(pageEvent.SiteDb, pageEvent.OldValue.Id);
+                    break;
+                default:
+                    Cache.RenderPlan.RemovePlan(pageEvent.SiteDb, pageEvent.Value.Id);
+                    //PageEvent.SiteDb.DomElements.CleanObject(PageEvent.Value.Id, PageEvent.Value.ConstType);
+                    break;
             }
 
-            Routing.PageRoute.UpdatePageRouteParameter(PageEvent.SiteDb, PageEvent.Value.Id);
+            Routing.PageRoute.UpdatePageRouteParameter(pageEvent.SiteDb, pageEvent.Value.Id);
         }
 
         private static void HandleTransferTask(SiteObjectEvent<SiteTransfer.TransferTask> taskEvent)
@@ -149,139 +147,158 @@ namespace Kooboo.Sites.Events
             }
         }
 
-        private static void HandleViewChange(SiteObjectEvent<View> ViewEvent)
+        private static void HandleViewChange(SiteObjectEvent<View> viewEvent)
         {
-            if (ViewEvent.ChangeType == ChangeType.Add)
+            switch (viewEvent.ChangeType)
             {
-            }
-            else if (ViewEvent.ChangeType == ChangeType.Update)
-            {
-                if (ViewEvent.Value.Body != ViewEvent.OldValue.Body)
+                case ChangeType.Add:
+                    break;
+                case ChangeType.Update:
                 {
-                    Cache.RenderPlan.RemovePlan(ViewEvent.SiteDb, ViewEvent.Value.Id);
+                    if (viewEvent.Value.Body != viewEvent.OldValue.Body)
+                    {
+                        Cache.RenderPlan.RemovePlan(viewEvent.SiteDb, viewEvent.Value.Id);
 
-                    var pageviewrelation = ViewEvent.SiteDb.Relations.GetReferredBy(ViewEvent.Value, ConstObjectType.Page);
+                        var pageviewrelation = viewEvent.SiteDb.Relations.GetReferredBy(viewEvent.Value, ConstObjectType.Page);
+                        foreach (var item in pageviewrelation)
+                        {
+                            Cache.RenderPlan.RemovePlan(viewEvent.SiteDb, item.objectXId);
+
+                            // also the route parameter.
+                            Routing.PageRoute.UpdatePageRouteParameter(viewEvent.SiteDb, item.objectXId);
+                        }
+                    }
+
+                    break;
+                }
+                default:
+                {
+                    Cache.RenderPlan.RemovePlan(viewEvent.SiteDb, viewEvent.Value.Id);
+
+                    var pageviewrelation = viewEvent.SiteDb.Relations.GetReferredBy(viewEvent.Value);
                     foreach (var item in pageviewrelation)
                     {
-                        Cache.RenderPlan.RemovePlan(ViewEvent.SiteDb, item.objectXId);
+                        Cache.RenderPlan.RemovePlan(viewEvent.SiteDb, item.objectXId);
 
                         // also the route parameter.
-                        Routing.PageRoute.UpdatePageRouteParameter(ViewEvent.SiteDb, item.objectXId);
+                        Routing.PageRoute.UpdatePageRouteParameter(viewEvent.SiteDb, item.objectXId);
                     }
-                }
-            }
-            else
-            {
-                Cache.RenderPlan.RemovePlan(ViewEvent.SiteDb, ViewEvent.Value.Id);
 
-                var pageviewrelation = ViewEvent.SiteDb.Relations.GetReferredBy(ViewEvent.Value);
-                foreach (var item in pageviewrelation)
-                {
-                    Cache.RenderPlan.RemovePlan(ViewEvent.SiteDb, item.objectXId);
+                    // delete view date method.
+                    var viewmethods = viewEvent.SiteDb.ViewDataMethods.Query.Where(o => o.ViewId == viewEvent.Value.Id).SelectAll();
 
-                    // also the route parameter.
-                    Routing.PageRoute.UpdatePageRouteParameter(ViewEvent.SiteDb, item.objectXId);
-                }
+                    foreach (var item in viewmethods)
+                    {
+                        viewEvent.SiteDb.ViewDataMethods.Delete(item.Id);
+                    }
 
-                // delete view date method.
-                var viewmethods = ViewEvent.SiteDb.ViewDataMethods.Query.Where(o => o.ViewId == ViewEvent.Value.Id).SelectAll();
-
-                foreach (var item in viewmethods)
-                {
-                    ViewEvent.SiteDb.ViewDataMethods.Delete(item.Id);
+                    break;
                 }
             }
         }
 
-        private static void HandleLayoutChange(SiteObjectEvent<Layout> LayoutEvent)
+        private static void HandleLayoutChange(SiteObjectEvent<Layout> layoutEvent)
         {
-            if (LayoutEvent.ChangeType == ChangeType.Add)
+            switch (layoutEvent.ChangeType)
             {
-            }
-            else if (LayoutEvent.ChangeType == ChangeType.Update)
-            {
-                if (LayoutEvent.Value.Body != LayoutEvent.OldValue.Body)
+                case ChangeType.Add:
+                    break;
+                case ChangeType.Update:
                 {
-                    Kooboo.Sites.Cache.RenderPlan.RemovePlan(LayoutEvent.SiteDb, LayoutEvent.Value.Id);
+                    if (layoutEvent.Value.Body != layoutEvent.OldValue.Body)
+                    {
+                        Kooboo.Sites.Cache.RenderPlan.RemovePlan(layoutEvent.SiteDb, layoutEvent.Value.Id);
 
-                    var allpages = LayoutEvent.SiteDb.Pages.TableScan.Where(o => o.LayoutName == LayoutEvent.Value.Name).SelectAll();
+                        var allpages = layoutEvent.SiteDb.Pages.TableScan.Where(o => o.LayoutName == layoutEvent.Value.Name).SelectAll();
+
+                        foreach (var item in allpages)
+                        {
+                            Kooboo.Sites.Cache.RenderPlan.RemovePlan(layoutEvent.SiteDb, item.Id);
+                        }
+                    }
+
+                    break;
+                }
+                default:
+                {
+                    Kooboo.Sites.Cache.RenderPlan.RemovePlan(layoutEvent.SiteDb, layoutEvent.Value.Id);
+
+                    var allpages = layoutEvent.SiteDb.Pages.TableScan.Where(o => o.LayoutName == layoutEvent.Value.Name).SelectAll();
 
                     foreach (var item in allpages)
                     {
-                        Kooboo.Sites.Cache.RenderPlan.RemovePlan(LayoutEvent.SiteDb, item.Id);
+                        Kooboo.Sites.Cache.RenderPlan.RemovePlan(layoutEvent.SiteDb, item.Id);
                     }
-                }
-            }
-            else
-            {
-                Kooboo.Sites.Cache.RenderPlan.RemovePlan(LayoutEvent.SiteDb, LayoutEvent.Value.Id);
 
-                var allpages = LayoutEvent.SiteDb.Pages.TableScan.Where(o => o.LayoutName == LayoutEvent.Value.Name).SelectAll();
-
-                foreach (var item in allpages)
-                {
-                    Kooboo.Sites.Cache.RenderPlan.RemovePlan(LayoutEvent.SiteDb, item.Id);
+                    break;
                 }
             }
         }
 
         private static void HandleContentTypeChange(SiteObjectEvent<ContentType> contenttypeevent)
         {
-            if (contenttypeevent.ChangeType == ChangeType.Add)
+            switch (contenttypeevent.ChangeType)
             {
-                var folder = contenttypeevent.SiteDb.ContentFolders.Query.Where(it => it.Name == contenttypeevent.Value.Name).FirstOrDefault();
-                if (folder == null)
+                case ChangeType.Add:
                 {
-                    folder = new ContentFolder
+                    var folder = contenttypeevent.SiteDb.ContentFolders.Query.Where(it => it.Name == contenttypeevent.Value.Name).FirstOrDefault();
+                    if (folder == null)
                     {
-                        Name = contenttypeevent.Value.Name,
-                        ContentTypeId = contenttypeevent.Value.Id,
-                    };
-                    contenttypeevent.SiteDb.ContentFolders.AddOrUpdate(folder);
-                }
-            }
-            else if (contenttypeevent.ChangeType == ChangeType.Delete)
-            {
-                var allfolders = contenttypeevent.SiteDb.ContentFolders.Query.Where(o => o.ContentTypeId == contenttypeevent.Value.Id).SelectAll();
+                        folder = new ContentFolder
+                        {
+                            Name = contenttypeevent.Value.Name,
+                            ContentTypeId = contenttypeevent.Value.Id,
+                        };
+                        contenttypeevent.SiteDb.ContentFolders.AddOrUpdate(folder);
+                    }
 
-                foreach (var item in allfolders)
+                    break;
+                }
+                case ChangeType.Delete:
                 {
-                    contenttypeevent.SiteDb.ContentFolders.Delete(item.Id);
+                    var allfolders = contenttypeevent.SiteDb.ContentFolders.Query.Where(o => o.ContentTypeId == contenttypeevent.Value.Id).SelectAll();
+
+                    foreach (var item in allfolders)
+                    {
+                        contenttypeevent.SiteDb.ContentFolders.Delete(item.Id);
+                    }
+
+                    break;
                 }
             }
         }
 
-        private static void HandleContentFolderChange(SiteObjectEvent<ContentFolder> TheEvent)
+        private static void HandleContentFolderChange(SiteObjectEvent<ContentFolder> theEvent)
         {
-            var sitedb = TheEvent.SiteDb;
-            if (TheEvent.Value == null || TheEvent.Value.Id == default(Guid))
+            var sitedb = theEvent.SiteDb;
+            if (theEvent.Value == null || theEvent.Value.Id == default(Guid))
             {
                 return;
             }
 
-            if (TheEvent.ChangeType == ChangeType.Delete)
+            if (theEvent.ChangeType == ChangeType.Delete)
             {
                 // delete content folder, delete all content.
-                var foldercontent = sitedb.TextContent.Query.Where(o => o.FolderId == TheEvent.Value.Id).UseColumnData().SelectAll();
+                var foldercontent = sitedb.TextContent.Query.Where(o => o.FolderId == theEvent.Value.Id).UseColumnData().SelectAll();
 
                 foreach (var item in foldercontent)
                 {
-                    TheEvent.SiteDb.TextContent.Delete(item.Id);
+                    theEvent.SiteDb.TextContent.Delete(item.Id);
                 }
                 // delete all  categories.
 
-                var AllAssignedCategories = sitedb.ContentCategories.Query.Where(o => o.CategoryFolder == TheEvent.Value.Id).SelectAll();
-                foreach (var item in AllAssignedCategories)
+                var allAssignedCategories = sitedb.ContentCategories.Query.Where(o => o.CategoryFolder == theEvent.Value.Id).SelectAll();
+                foreach (var item in allAssignedCategories)
                 {
                     sitedb.ContentCategories.Delete(item.Id);
                 }
 
-                var allfolder = sitedb.ContentFolders.All().ToList().Where(o => o.Id != TheEvent.Value.Id).ToList();
+                var allfolder = sitedb.ContentFolders.All().ToList().Where(o => o.Id != theEvent.Value.Id).ToList();
 
                 foreach (var folder in allfolder)
                 {
-                    var catteds = folder.Category.FindAll(o => o.FolderId == TheEvent.Value.Id).ToList();
-                    if (catteds != null && catteds.Count() > 0)
+                    var catteds = folder.Category.FindAll(o => o.FolderId == theEvent.Value.Id).ToList();
+                    if (catteds != null && catteds.Any())
                     {
                         foreach (var item in catteds)
                         {
@@ -295,9 +312,9 @@ namespace Kooboo.Sites.Events
 
                 foreach (var folder in allfolder)
                 {
-                    var embedfolders = folder.Embedded.FindAll(o => o.FolderId == TheEvent.Value.Id).ToList();
+                    var embedfolders = folder.Embedded.FindAll(o => o.FolderId == theEvent.Value.Id).ToList();
 
-                    if (embedfolders != null && embedfolders.Count() > 0)
+                    if (embedfolders != null && embedfolders.Any())
                     {
                         foreach (var embedfolder in embedfolders)
                         {
@@ -309,9 +326,9 @@ namespace Kooboo.Sites.Events
                         var allTextContents = sitedb.TextContent.Query.Where(o => o.FolderId == folder.Id).SelectAll();
                         foreach (var item in allTextContents)
                         {
-                            if (item.Embedded.ContainsKey(TheEvent.Value.Id))
+                            if (item.Embedded.ContainsKey(theEvent.Value.Id))
                             {
-                                item.Embedded.Remove(TheEvent.Value.Id);
+                                item.Embedded.Remove(theEvent.Value.Id);
                                 sitedb.TextContent.AddOrUpdate(item);
                             }
                         }
@@ -353,15 +370,15 @@ namespace Kooboo.Sites.Events
             //}
         }
 
-        private static void HandleDataMethodSettingChange(Kooboo.Events.Cms.SiteObjectEvent<Kooboo.Data.Models.DataMethodSetting> MethodEvent)
+        private static void HandleDataMethodSettingChange(Kooboo.Events.Cms.SiteObjectEvent<Kooboo.Data.Models.DataMethodSetting> methodEvent)
         {
-            var sitedb = MethodEvent.SiteDb;
+            var sitedb = methodEvent.SiteDb;
 
-            Cache.CompileMethodCache.Remove(sitedb, MethodEvent.Value.Id);
+            Cache.CompileMethodCache.Remove(sitedb, methodEvent.Value.Id);
 
-            var allviewmethods = sitedb.ViewDataMethods.Query.Where(o => o.MethodId == MethodEvent.Value.Id).SelectAll();
+            var allviewmethods = sitedb.ViewDataMethods.Query.Where(o => o.MethodId == methodEvent.Value.Id).SelectAll();
 
-            if (MethodEvent.ChangeType == ChangeType.Delete)
+            if (methodEvent.ChangeType == ChangeType.Delete)
             {
                 // when delete viewdatamethod, it will update the route parameters as well.
                 foreach (var item in allviewmethods)
@@ -393,33 +410,33 @@ namespace Kooboo.Sites.Events
             }
         }
 
-        private static void HandleViewDataMethodChange(Kooboo.Events.Cms.SiteObjectEvent<ViewDataMethod> ViewDataMethodEvent)
+        private static void HandleViewDataMethodChange(Kooboo.Events.Cms.SiteObjectEvent<ViewDataMethod> viewDataMethodEvent)
         {
-            var viewid = ViewDataMethodEvent.Value.ViewId;
-            var pages = ViewDataMethodEvent.SiteDb.Relations.GetReferredByRelations(viewid, ConstObjectType.Page);
+            var viewid = viewDataMethodEvent.Value.ViewId;
+            var pages = viewDataMethodEvent.SiteDb.Relations.GetReferredByRelations(viewid, ConstObjectType.Page);
 
             foreach (var item in pages)
             {
-                Sites.Routing.PageRoute.UpdatePageRouteParameter(ViewDataMethodEvent.SiteDb, item.objectXId);
+                Sites.Routing.PageRoute.UpdatePageRouteParameter(viewDataMethodEvent.SiteDb, item.objectXId);
             }
 
-            if (ViewDataMethodEvent.ChangeType == ChangeType.Delete)
+            if (viewDataMethodEvent.ChangeType == ChangeType.Delete)
             {
-                var methodid = ViewDataMethodEvent.Value.MethodId;
-                var sitemethod = ViewDataMethodEvent.SiteDb.DataMethodSettings.Get(methodid);
+                var methodid = viewDataMethodEvent.Value.MethodId;
+                var sitemethod = viewDataMethodEvent.SiteDb.DataMethodSettings.Get(methodid);
                 if (sitemethod != null && !sitemethod.IsPublic)
                 {
                     // check being used or not.
-                    var viewdatamethod = ViewDataMethodEvent.SiteDb.ViewDataMethods.Query.Where(o => o.MethodId == sitemethod.Id).SelectAll();
+                    var viewdatamethod = viewDataMethodEvent.SiteDb.ViewDataMethods.Query.Where(o => o.MethodId == sitemethod.Id).SelectAll();
                     if (viewdatamethod == null || viewdatamethod.Count == 0)
                     {
-                        ViewDataMethodEvent.SiteDb.DataMethodSettings.Delete(sitemethod.Id);
+                        viewDataMethodEvent.SiteDb.DataMethodSettings.Delete(sitemethod.Id);
                     }
                 }
             }
         }
 
-        private static void HandleCssRuleChange(Kooboo.Events.Cms.SiteObjectEvent<CmsCssRule> CssRuleEvent)
+        private static void HandleCssRuleChange(Kooboo.Events.Cms.SiteObjectEvent<CmsCssRule> cssRuleEvent)
         {
             //if (CssRuleEvent.ChangeType == ChangeType.Add)
             //{
@@ -455,59 +472,52 @@ namespace Kooboo.Sites.Events
             //}
         }
 
-        private static void HandleFormChange(Kooboo.Events.Cms.SiteObjectEvent<Form> FormEvent)
+        private static void HandleFormChange(Kooboo.Events.Cms.SiteObjectEvent<Form> formEvent)
         {
-            if (FormEvent.ChangeType == ChangeType.Delete)
+            if (formEvent.ChangeType == ChangeType.Delete)
             {
-                foreach (var item in FormEvent.SiteDb.FormValues.Query.Where(o => o.FormId == FormEvent.Value.Id).SelectAll())
+                foreach (var item in formEvent.SiteDb.FormValues.Query.Where(o => o.FormId == formEvent.Value.Id).SelectAll())
                 {
-                    FormEvent.SiteDb.FormValues.Delete(item.Id);
+                    formEvent.SiteDb.FormValues.Delete(item.Id);
                 }
 
-                FormEvent.SiteDb.Relations.CleanObjectRelation(FormEvent.Value.Id);
+                formEvent.SiteDb.Relations.CleanObjectRelation(formEvent.Value.Id);
             }
         }
 
-        private static void HandleImageChange(Kooboo.Events.Cms.SiteObjectEvent<Image> ImageEvent)
+        private static void HandleImageChange(Kooboo.Events.Cms.SiteObjectEvent<Image> imageEvent)
         {
             Guid imageid = default(Guid);
-            if (ImageEvent.Value != null)
-            {
-                imageid = ImageEvent.Value.Id;
-            }
-            else
-            {
-                imageid = ImageEvent.OldValue.Id;
-            }
+            imageid = imageEvent.Value != null ? imageEvent.Value.Id : imageEvent.OldValue.Id;
 
-            ImageEvent.SiteDb.Thumbnails.DeleteByImageId(imageid);
+            imageEvent.SiteDb.Thumbnails.DeleteByImageId(imageid);
         }
 
-        private static void HandleCodeChange(Kooboo.Events.Cms.SiteObjectEvent<Code> CodeEvent)
+        private static void HandleCodeChange(Kooboo.Events.Cms.SiteObjectEvent<Code> codeEvent)
         {
-            if (CodeEvent.ChangeType == ChangeType.Delete)
+            if (codeEvent.ChangeType == ChangeType.Delete)
             {
-                if (CodeEvent.Value.CodeType == CodeType.Api && CodeEvent.Value != null)
+                if (codeEvent.Value.CodeType == CodeType.Api && codeEvent.Value != null)
                 {
                     // for api, also need to remove the url.
-                    var route = CodeEvent.SiteDb.Routes.GetByObjectId(CodeEvent.Value.Id);
+                    var route = codeEvent.SiteDb.Routes.GetByObjectId(codeEvent.Value.Id);
                     if (route != null)
                     {
-                        CodeEvent.SiteDb.Routes.Delete(route.Id);
+                        codeEvent.SiteDb.Routes.Delete(route.Id);
                     }
                 }
             }
 
-            if (CodeEvent.Value.CodeType == CodeType.Event)
+            if (codeEvent.Value.CodeType == CodeType.Event)
             {
-                var website = CodeEvent.SiteDb.WebSite;
+                var website = codeEvent.SiteDb.WebSite;
 
-                if (CodeEvent.ChangeType == ChangeType.Delete)
+                if (codeEvent.ChangeType == ChangeType.Delete)
                 {
                     // check if there is any event....
                     if (website.EnableFrontEvents)
                     {
-                        var events = CodeEvent.SiteDb.Code.Query.Where(o => o.CodeType == CodeType.Event).Count();
+                        var events = codeEvent.SiteDb.Code.Query.Where(o => o.CodeType == CodeType.Event).Count();
                         if (events == 0)
                         {
                             website.EnableFrontEvents = false;
@@ -517,7 +527,7 @@ namespace Kooboo.Sites.Events
                 }
                 else
                 {
-                    CodeEvent.SiteDb.WebSite.EnableFrontEvents = true;
+                    codeEvent.SiteDb.WebSite.EnableFrontEvents = true;
                     Kooboo.Data.GlobalDb.WebSites.AddOrUpdate(website);
                 }
             }

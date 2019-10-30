@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
@@ -7,8 +7,8 @@ using System.Linq;
 
 namespace Kooboo.Sites.TaskQueue
 {
-    // This is a backup to ensure that some tasks are running. 
-   
+    // This is a backup to ensure that some tasks are running.
+
     public class EusureWorker : IBackgroundWorker
     {
         public static object _locker = new object();
@@ -25,24 +25,18 @@ namespace Kooboo.Sites.TaskQueue
         {
             get; set;
         }
-         
+
         public void Execute()
         {
-            EnsureCluster(); 
+            EnsureCluster();
         }
 
         public void EnsureCluster()
         {
-            foreach (var item in Kooboo.Data.GlobalDb.WebSites.All().Where(o=>o.EnableCluster))
+            foreach (var item in Kooboo.Data.GlobalDb.WebSites.All().Where(o => o.EnableCluster))
             {
-                item.SiteDb().ClusterManager.EnsureStart();  
+                item.SiteDb().ClusterManager.EnsureStart();
             }
         }
-      
-
     }
 }
-
-
-
- 

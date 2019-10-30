@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using System;
@@ -10,6 +10,7 @@ namespace Kooboo.Sites.Scripting.Global
     public class Request
     {
         private RenderContext context { get; set; }
+
         public Request(RenderContext context)
         {
             this.context = context;
@@ -24,11 +25,7 @@ namespace Kooboo.Sites.Scripting.Global
                 return value;
             }
             var dataContextValue = context.DataContext.GetValue(key);
-            if (dataContextValue != null)
-            {
-                return dataContextValue.ToString();
-            }
-            return null;
+            return dataContextValue?.ToString();
         }
 
         [Attributes.SummaryIgnore]
@@ -45,6 +42,7 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         private MyDictionary _query;
+
         public MyDictionary queryString
         {
             get
@@ -63,6 +61,7 @@ namespace Kooboo.Sites.Scripting.Global
         }
 
         private MyDictionary _form;
+
         public MyDictionary form
         {
             get
@@ -100,7 +99,7 @@ namespace Kooboo.Sites.Scripting.Global
                         foreach (var item in this.context.Request.Files)
                         {
                             if (!string.IsNullOrWhiteSpace(item.FileName) && item.Bytes != null)
-                            { 
+                            {
                                 UploadFile uploadfile = new UploadFile(this.context);
                                 uploadfile.FileName = item.FileName;
                                 uploadfile.ContentType = item.ContentType;
@@ -110,13 +109,10 @@ namespace Kooboo.Sites.Scripting.Global
                         }
                     }
                     _files = fileList.ToArray();
-
                 }
                 return _files;
-
             }
         }
-
 
         public string body
         {
@@ -124,7 +120,6 @@ namespace Kooboo.Sites.Scripting.Global
             {
                 return this.context.Request.Body;
             }
-
         }
 
         public byte[] postData
@@ -134,8 +129,6 @@ namespace Kooboo.Sites.Scripting.Global
                 return this.context.Request.PostData;
             }
         }
-
-
 
         public string method
         {
@@ -178,40 +171,38 @@ namespace Kooboo.Sites.Scripting.Global
 
     public class MyDictionary : IDictionary<string, string>, System.Collections.IDictionary
     {
-        private Dictionary<string, string> data = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        private Dictionary<string, string> _data = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         public string this[string key]
         {
             get
             {
-
-                if (data.ContainsKey(key))
+                if (_data.ContainsKey(key))
                 {
-                    return data[key];
+                    return _data[key];
                 }
                 return null;
-
             }
             set
             {
-                data[key] = value;
+                _data[key] = value;
             }
         }
 
         public ICollection<string> Keys
         {
-            get { return data.Keys; }
+            get { return _data.Keys; }
         }
 
         public ICollection<string> Values
         {
-            get { return data.Values; }
+            get { return _data.Values; }
         }
 
         [Attributes.SummaryIgnore]
         public int Count
         {
-            get { return data.Count; }
+            get { return _data.Count; }
         }
 
         public int length
@@ -224,9 +215,9 @@ namespace Kooboo.Sites.Scripting.Global
 
         public string Get(string key)
         {
-            if (data.ContainsKey(key))
+            if (_data.ContainsKey(key))
             {
-                return data[key];
+                return _data[key];
             }
             return null;
         }
@@ -240,11 +231,11 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-        ICollection IDictionary.Keys { get { return data.Keys; } }
+        ICollection IDictionary.Keys { get { return _data.Keys; } }
 
         ICollection IDictionary.Values
         {
-            get { return data.Values; }
+            get { return _data.Values; }
         }
 
         [Attributes.SummaryIgnore]
@@ -262,23 +253,22 @@ namespace Kooboo.Sites.Scripting.Global
             get
             {
                 string strkey = key.ToString();
-                if (this.data.ContainsKey(strkey))
+                if (this._data.ContainsKey(strkey))
                 {
-                    return this.data[strkey];
+                    return this._data[strkey];
                 }
                 return null;
             }
             set
             {
                 string strkey = key.ToString();
-                this.data[strkey] = value.ToString();
+                this._data[strkey] = value.ToString();
             }
         }
 
-
         public void Add(string key, string value)
         {
-            this.data.Add(key, value);
+            this._data.Add(key, value);
         }
 
         [Attributes.SummaryIgnore]
@@ -290,7 +280,7 @@ namespace Kooboo.Sites.Scripting.Global
         [Attributes.SummaryIgnore]
         public void Clear()
         {
-            this.data.Clear();
+            this._data.Clear();
         }
 
         [Attributes.SummaryIgnore]
@@ -298,10 +288,11 @@ namespace Kooboo.Sites.Scripting.Global
         {
             throw new NotImplementedException();
         }
+
         [Attributes.SummaryIgnore]
         public bool ContainsKey(string key)
         {
-            return data.ContainsKey(key);
+            return _data.ContainsKey(key);
         }
 
         [Attributes.SummaryIgnore]
@@ -313,14 +304,13 @@ namespace Kooboo.Sites.Scripting.Global
         [Attributes.SummaryIgnore]
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
         {
-            return data.GetEnumerator();
+            return _data.GetEnumerator();
         }
-
 
         [Attributes.SummaryIgnore]
         public bool Remove(string key)
         {
-            return data.Remove(key);
+            return _data.Remove(key);
         }
 
         [Attributes.SummaryIgnore]
@@ -338,14 +328,13 @@ namespace Kooboo.Sites.Scripting.Global
         [Attributes.SummaryIgnore]
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return data.GetEnumerator();
+            return _data.GetEnumerator();
         }
 
         public bool Contains(object key)
         {
             return this.ContainsKey(key.ToString());
         }
-
 
         public void Add(object key, object value)
         {
@@ -355,7 +344,7 @@ namespace Kooboo.Sites.Scripting.Global
         [Attributes.SummaryIgnore]
         IDictionaryEnumerator IDictionary.GetEnumerator()
         {
-            return data.GetEnumerator();
+            return _data.GetEnumerator();
         }
 
         [Attributes.SummaryIgnore]
@@ -370,5 +359,4 @@ namespace Kooboo.Sites.Scripting.Global
             throw new NotImplementedException();
         }
     }
-
 }

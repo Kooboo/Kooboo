@@ -1,21 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
-using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.ViewModel;
 
 namespace Kooboo.Sites.Render
 {
     public class BindingContentRenderTask : BindingObjectRenderTask
-    { 
+    {
         public override string Render(RenderContext context)
         {
             string objecttype = this.ObjectType;
             string nameorid = this.NameOrId;
 
-            SetBindingInfo(context, ref objecttype, ref nameorid); 
-             
+            SetBindingInfo(context, ref objecttype, ref nameorid);
+
             string result = "\r\n<!--#kooboo";
             if (this.IsEndBinding)
             {
@@ -35,7 +34,6 @@ namespace Kooboo.Sites.Render
             }
             else
             {
-
                 if (!string.IsNullOrEmpty(objecttype))
                 {
                     result += "--objecttype='" + this.ObjectType + "'";
@@ -71,36 +69,35 @@ namespace Kooboo.Sites.Render
                 return result;
             }
         }
-          
+
         private void SetBindingInfo(RenderContext context, ref string objecttype, ref string nameorid)
-        {  
+        {
             if (string.IsNullOrEmpty(this.BindingValue))
             {
-                return; 
+                return;
             }
 
-            string objectkey = this.BindingValue; 
-             int lastDotIndex = this.BindingValue.LastIndexOf(".");
+            string objectkey = this.BindingValue;
+            int lastDotIndex = this.BindingValue.LastIndexOf(".");
             if (lastDotIndex > -1)
             {
-                objectkey = this.BindingValue.Substring(0, lastDotIndex); 
+                objectkey = this.BindingValue.Substring(0, lastDotIndex);
             }
 
             object value = context.DataContext.GetValue(objectkey);
             if (value == null)
             {
-                return; 
-            } 
-            if (value is DataMethodResult)
+                return;
+            }
+            if (value is DataMethodResult dataMethodResult)
             {
-                value = ((DataMethodResult)value).Value;
-            } 
-            if (value is TextContentViewModel)
+                value = dataMethodResult.Value;
+            }
+            if (value is TextContentViewModel textcontent)
             {
-                TextContentViewModel textcontent = value as TextContentViewModel;
                 objecttype = "content";
                 nameorid = textcontent.Id.ToString();
-            } 
-        } 
+            }
+        }
     }
 }

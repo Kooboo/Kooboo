@@ -22,7 +22,7 @@ namespace Kooboo.Sites.InlineEditor
                 {
                     var element = node as Element;
                     var kooboolist = item.ToList();
-                    if (element != null && kooboolist != null && kooboolist.Count() > 0)
+                    if (element != null && kooboolist != null && kooboolist.Any())
                     {
                         var koobooupdate = GetElementUpdate(doc, element, item.ToList());
                         sourceupdates.AddRange(koobooupdate);
@@ -33,11 +33,11 @@ namespace Kooboo.Sites.InlineEditor
             return Service.DomService.UpdateSource(source, sourceupdates);
         }
 
-        private static List<SourceUpdate> GetElementUpdate(Document doc, Element element, List<InlineSourceUpdate> KoobooIdUpdates)
+        private static List<SourceUpdate> GetElementUpdate(Document doc, Element element, List<InlineSourceUpdate> koobooIdUpdates)
         {
             List<SourceUpdate> sourceupdates = new List<SourceUpdate>();
-            bool HasAttChange = false;
-            foreach (var item in KoobooIdUpdates)
+            bool hasAttChange = false;
+            foreach (var item in koobooIdUpdates)
             {
                 if (item.IsDelete)
                 {
@@ -73,41 +73,43 @@ namespace Kooboo.Sites.InlineEditor
                     }
                     else
                     {
-                        HasAttChange = true;
+                        hasAttChange = true;
                         element.setAttribute(item.AttributeName, item.Value);
                     }
                 }
             }
 
-            if (HasAttChange)
+            if (hasAttChange)
             {
-                SourceUpdate update = new SourceUpdate();
-                update.StartIndex = element.location.openTokenStartIndex;
-                update.EndIndex = element.location.openTokenEndIndex;
-                update.NewValue = Kooboo.Sites.Service.DomService.ReSerializeOpenTag(element);
+                SourceUpdate update = new SourceUpdate
+                {
+                    StartIndex = element.location.openTokenStartIndex,
+                    EndIndex = element.location.openTokenEndIndex,
+                    NewValue = Kooboo.Sites.Service.DomService.ReSerializeOpenTag(element)
+                };
                 sourceupdates.Add(update);
             }
             return sourceupdates;
         }
 
-        public static string UpdateOrAppendInlineCss(string InlineCss, List<Kooboo.Dom.CSS.CSSDeclaration> NewDeclarations)
+        public static string UpdateOrAppendInlineCss(string inlineCss, List<Kooboo.Dom.CSS.CSSDeclaration> newDeclarations)
         {
-            var currentblock = Kooboo.Dom.CSS.CSSSerializer.deserializeDeclarationBlock(InlineCss);
-            var CurrentItems = currentblock.item;
+            var currentblock = Kooboo.Dom.CSS.CSSSerializer.deserializeDeclarationBlock(inlineCss);
+            var currentItems = currentblock.item;
 
-            foreach (var item in NewDeclarations)
+            foreach (var item in newDeclarations)
             {
-                var exist = CurrentItems.Find(o => o.propertyname.ToLower() == item.propertyname.ToLower());
+                var exist = currentItems.Find(o => o.propertyname.ToLower() == item.propertyname.ToLower());
                 if (exist == null)
                 {
-                    CurrentItems.Add(item);
+                    currentItems.Add(item);
                 }
                 else
                 {
                     exist.value = item.value;
                     exist.important = item.important;
-                    CurrentItems.Remove(exist);
-                    CurrentItems.Add(exist);
+                    currentItems.Remove(exist);
+                    currentItems.Add(exist);
                 }
             }
 

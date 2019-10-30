@@ -1,14 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Models
 {
-
     public class ChangePlan
     {
         public int StartIndex { get; set; }
@@ -46,7 +42,6 @@ namespace Kooboo.Sites.Models
                             _declarationText += " !important";
                         }
                         _declarationText += ";\r\n";
-
                     }
                 }
                 return _declarationText;
@@ -55,7 +50,6 @@ namespace Kooboo.Sites.Models
             {
                 _declarationText = value;
             }
-
         }
 
         public ChangeType ChangeType { get; set; }
@@ -77,7 +71,7 @@ namespace Kooboo.Sites.Models
                     }
                     else
                     {
-                        if (selectorText.IndexOf("@import", StringComparison.OrdinalIgnoreCase)==-1)
+                        if (selectorText.IndexOf("@import", StringComparison.OrdinalIgnoreCase) == -1)
                         {
                             _csstext += "\r\n{\r\n" + DeclarationText + "\r\n}";
                         }
@@ -103,18 +97,16 @@ namespace Kooboo.Sites.Models
     {
         public InlineStyleChange()
         {
-            this.PropertyValues = new Dictionary<string, string>(); 
+            this.PropertyValues = new Dictionary<string, string>();
         }
 
         public string KoobooId { get; set; }
 
-     public   Dictionary<string, string> PropertyValues { get; set; }
- 
+        public Dictionary<string, string> PropertyValues { get; set; }
     }
 
     public class changecompare : IComparer<ChangePlan>
     {
-
         public int Compare(ChangePlan x, ChangePlan y)
         {
             if (x.StartIndex > y.StartIndex)
@@ -131,5 +123,4 @@ namespace Kooboo.Sites.Models
             }
         }
     }
-
 }

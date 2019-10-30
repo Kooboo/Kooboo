@@ -13,14 +13,14 @@ namespace Kooboo.Sites.InlineEditor.Converter
 {
     public class ConvertManager
     {
-        public static string UpdateDomSource(Document doc, List<SourceUpdate> Updates)
+        public static string UpdateDomSource(Document doc, List<SourceUpdate> updates)
         {
             int currentindex = 0;
             int totallen = doc.HtmlSource.Length;
             StringBuilder sb = new StringBuilder();
 
             // update to real html source.
-            foreach (var item in Updates.OrderBy(o => o.StartIndex))
+            foreach (var item in updates.OrderBy(o => o.StartIndex))
             {
                 string currentString = doc.HtmlSource.Substring(currentindex, item.StartIndex - currentindex);
                 if (!string.IsNullOrEmpty(currentString))
@@ -40,14 +40,14 @@ namespace Kooboo.Sites.InlineEditor.Converter
             return sb.ToString();
         }
 
-        public static void ConvertComponent(RenderContext context, List<JObject> ConvertResult)
+        public static void ConvertComponent(RenderContext context, List<JObject> convertResult)
         {
             var page = context.GetItem<Page>();
 
             List<ConvertSourceUpdate> changes = new List<ConvertSourceUpdate>();
 
             var converters = GetConverters();
-            foreach (var item in ConvertResult)
+            foreach (var item in convertResult)
             {
                 string converttype = Lib.Helper.JsonHelper.GetString(item, "ConvertToType");
 
@@ -59,14 +59,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
                         var response = converter.Convert(context, item);
 
                         string koobooid = null;
-                        if (!string.IsNullOrEmpty(response.KoobooId))
-                        {
-                            koobooid = response.KoobooId;
-                        }
-                        else
-                        {
-                            koobooid = Lib.Helper.JsonHelper.GetString(item, "KoobooId");
-                        }
+                        koobooid = !string.IsNullOrEmpty(response.KoobooId) ? response.KoobooId : Lib.Helper.JsonHelper.GetString(item, "KoobooId");
                         var element = Service.DomService.GetElementByKoobooId(page.Dom, koobooid);
 
                         changes.Add(new ConvertSourceUpdate
@@ -112,24 +105,24 @@ namespace Kooboo.Sites.InlineEditor.Converter
             }
         }
 
-        public static string UpdatePageChange(string PageHtmlSource, List<ConvertSourceUpdate> updates)
+        public static string UpdatePageChange(string pageHtmlSource, List<ConvertSourceUpdate> updates)
         {
             List<SourceUpdate> sourceupdates = new List<SourceUpdate>();
             foreach (var one in updates)
             {
-                SourceUpdate newupdate = new SourceUpdate();
-                newupdate.StartIndex = one.StartIndex;
-                newupdate.EndIndex = one.EndIndex;
-                newupdate.NewValue = one.NewValue;
+                SourceUpdate newupdate = new SourceUpdate
+                {
+                    StartIndex = one.StartIndex, EndIndex = one.EndIndex, NewValue = one.NewValue
+                };
                 if (newupdate.StartIndex > 0 && newupdate.EndIndex > 0)
                 {
                     sourceupdates.Add(newupdate);
                 }
             }
 
-            if (!string.IsNullOrEmpty(PageHtmlSource))
+            if (!string.IsNullOrEmpty(pageHtmlSource))
             {
-                return Service.DomService.UpdateSource(PageHtmlSource, sourceupdates);
+                return Service.DomService.UpdateSource(pageHtmlSource, sourceupdates);
             }
 
             return null;
@@ -141,138 +134,137 @@ namespace Kooboo.Sites.InlineEditor.Converter
         {
             if (_converters == null)
             {
-                _converters = new List<IConverter>();
-                _converters.Add(new MenuConverter());
-                _converters.Add(new ViewConverter());
-                _converters.Add(new HtmlBlockConverter());
-                _converters.Add(new ContentListConverter());
+                _converters = new List<IConverter>
+                {
+                    new MenuConverter(), new ViewConverter(), new HtmlBlockConverter(), new ContentListConverter()
+                };
             }
             return _converters;
         }
 
-        public static string GetUniqueName(RenderContext Context, string ConvertType, string Name)
+        public static string GetUniqueName(RenderContext context, string convertType, string name)
         {
-            if (string.IsNullOrEmpty(ConvertType))
-            { ConvertType = Name; }
-            ConvertType = ConvertType.ToLower();
+            if (string.IsNullOrEmpty(convertType))
+            { convertType = name; }
+            convertType = convertType.ToLower();
 
-            var sitedb = Context.WebSite.SiteDb();
+            var sitedb = context.WebSite.SiteDb();
 
-            switch (ConvertType)
+            switch (convertType)
             {
                 case "htmlblock":
                     {
-                        var block = sitedb.HtmlBlocks.GetByNameOrId(Name);
+                        var block = sitedb.HtmlBlocks.GetByNameOrId(name);
                         if (block == null)
                         {
-                            return Name;
+                            return name;
                         }
 
                         for (int i = 0; i < 999; i++)
                         {
-                            Name = Name + i.ToString();
-                            block = sitedb.HtmlBlocks.GetByNameOrId(Name);
+                            name += i.ToString();
+                            block = sitedb.HtmlBlocks.GetByNameOrId(name);
                             if (block == null)
                             {
-                                return Name;
+                                return name;
                             }
                         }
 
-                        Name = Name + System.Guid.NewGuid();
+                        name += System.Guid.NewGuid();
 
-                        return Name;
+                        return name;
                     }
 
                 case "view":
                     {
-                        var block = sitedb.Views.GetByNameOrId(Name);
+                        var block = sitedb.Views.GetByNameOrId(name);
                         if (block == null)
                         {
-                            return Name;
+                            return name;
                         }
 
                         for (int i = 0; i < 999; i++)
                         {
-                            Name = Name + i.ToString();
-                            block = sitedb.Views.GetByNameOrId(Name);
+                            name += i.ToString();
+                            block = sitedb.Views.GetByNameOrId(name);
                             if (block == null)
                             {
-                                return Name;
+                                return name;
                             }
                         }
 
-                        Name = Name + System.Guid.NewGuid();
+                        name += System.Guid.NewGuid();
 
-                        return Name;
+                        return name;
                     }
 
                 case "contentlist":
                     {
-                        var block = sitedb.Views.GetByNameOrId(Name);
+                        var block = sitedb.Views.GetByNameOrId(name);
                         if (block == null)
                         {
-                            return Name;
+                            return name;
                         }
 
                         for (int i = 0; i < 999; i++)
                         {
-                            Name = Name + i.ToString();
-                            block = sitedb.Views.GetByNameOrId(Name);
+                            name += i.ToString();
+                            block = sitedb.Views.GetByNameOrId(name);
                             if (block == null)
                             {
-                                return Name;
+                                return name;
                             }
                         }
 
-                        Name = Name + System.Guid.NewGuid();
+                        name += System.Guid.NewGuid();
 
-                        return Name;
+                        return name;
                     }
 
                 case "category":
                     {
-                        var block = sitedb.Views.GetByNameOrId(Name);
+                        var block = sitedb.Views.GetByNameOrId(name);
                         if (block == null)
                         {
-                            return Name;
+                            return name;
                         }
 
                         for (int i = 0; i < 999; i++)
                         {
-                            Name = Name + i.ToString();
-                            block = sitedb.Views.GetByNameOrId(Name);
+                            name += i.ToString();
+                            block = sitedb.Views.GetByNameOrId(name);
                             if (block == null)
                             {
-                                return Name;
+                                return name;
                             }
                         }
 
-                        Name = Name + System.Guid.NewGuid();
+                        name += System.Guid.NewGuid();
 
-                        return Name;
+                        return name;
                     }
 
                 case "menu":
                     {
-                        var block = sitedb.Menus.GetByNameOrId(Name);
+                        var block = sitedb.Menus.GetByNameOrId(name);
                         if (block == null)
                         {
-                            return Name;
+                            return name;
                         }
 
                         for (int i = 0; i < 999; i++)
                         {
-                            Name = Name + i.ToString();
-                            block = sitedb.Menus.GetByNameOrId(Name);
+                            name += i.ToString();
+                            block = sitedb.Menus.GetByNameOrId(name);
                             if (block == null)
                             {
-                                return Name;
+                                return name;
                             }
                         }
 
-                        Name = Name + System.Guid.NewGuid();
+                        name += System.Guid.NewGuid();
 
-                        return Name;
+                        return name;
                     }
 
                 default:

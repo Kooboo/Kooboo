@@ -1,29 +1,25 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
-using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Repository;
-using Kooboo.Sites.Sync;
 using Kooboo.Sites.Sync.Cluster;
 using System;
 
-
 namespace Kooboo.Sites.Sync
 {
- public static  class Stores
+    public static class Stores
     {
-        public static  ObjectStore<Guid, ClusterNode> ClusterNodes(SiteDb SiteDb)
+        public static ObjectStore<Guid, ClusterNode> ClusterNodes(SiteDb siteDb)
         {
             string storename = typeof(ClusterNode).Name;
 
-            ObjectStoreParameters paras = new ObjectStoreParameters(); 
+            ObjectStoreParameters paras = new ObjectStoreParameters();
 
-            return SiteDb.DatabaseDb.GetOrCreateObjectStore<Guid, ClusterNode>(storename, paras);
+            return siteDb.DatabaseDb.GetOrCreateObjectStore<Guid, ClusterNode>(storename, paras);
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="db"></param>
         /// <returns></returns>
@@ -36,17 +32,15 @@ namespace Kooboo.Sites.Sync
             return db.DatabaseDb.GetOrCreateObjectStore<Guid, NodeProgress>(storename, paras);
         }
 
-        public static ObjectStore<Guid,NodeUpdate> ClusterUpdateHistory(SiteDb db)
+        public static ObjectStore<Guid, NodeUpdate> ClusterUpdateHistory(SiteDb db)
         {
             string storename = typeof(NodeUpdate).Name;
 
             ObjectStoreParameters paras = new ObjectStoreParameters();
             paras.AddIndex<NodeUpdate>(o => o.ObjectId);
-            paras.AddIndex<NodeUpdate>(o => o.LocalVersion); 
-             
+            paras.AddIndex<NodeUpdate>(o => o.LocalVersion);
+
             return db.DatabaseDb.GetOrCreateObjectStore<Guid, NodeUpdate>(storename, paras);
         }
-        
-
     }
 }

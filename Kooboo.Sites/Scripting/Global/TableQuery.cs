@@ -1,10 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Scripting.Global
 {
@@ -12,7 +8,7 @@ namespace Kooboo.Sites.Scripting.Global
     {
         public TableQuery(KTable table)
         {
-            this.ktable = table;  
+            this.ktable = table;
         }
 
         [Attributes.SummaryIgnore]
@@ -27,7 +23,7 @@ namespace Kooboo.Sites.Scripting.Global
         public string SearchCondition { get; set; }
 
         public TableQuery skip(int skip)
-        { 
+        {
             this.skipcount = skip;
             return this;
         }
@@ -55,11 +51,11 @@ namespace Kooboo.Sites.Scripting.Global
         public DynamicTableObject[] take(int count)
         {
             var query = new IndexedDB.Dynamic.Query(this.ktable.table);
-             
+
             if (!string.IsNullOrEmpty(this.SearchCondition))
             {
                 var filter = query.ParserFilter(this.SearchCondition);
-                query.items = filter; 
+                query.items = filter;
             }
             else
             {
@@ -77,24 +73,16 @@ namespace Kooboo.Sites.Scripting.Global
                     query.OrderByDescending(this.OrderByField);
                 }
             }
-            
-            var result =  query.Skip(this.skipcount).Take(count).ToArray();
-            return DynamicTableObject.CreateList(result, this.ktable.table, this.ktable.context); 
 
+            var result = query.Skip(this.skipcount).Take(count).ToArray();
+            return DynamicTableObject.CreateList(result, this.ktable.table, this.ktable.context);
         }
-         
+
         public int count()
         {
             // TODO: improve performance.
-            var all = take(99999); 
-            if (all == null)
-            {
-                return 0; 
-            }
-            else
-            {
-                return all.Count(); 
-            }
+            var all = take(99999);
+            return all == null ? 0 : all.Count();
         }
     }
 }

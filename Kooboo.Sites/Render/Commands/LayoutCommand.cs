@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
@@ -22,8 +22,8 @@ namespace Kooboo.Sites.Render.Commands
         }
 
         public string Execute(RenderContext context, Dictionary<string, string> Paras)
-        { 
-            if (Paras != null && Paras.Count() > 0)
+        {
+            if (Paras != null && Paras.Any())
             {
                 Dictionary<string, string> datavalue = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                 foreach (var item in Paras)
@@ -33,7 +33,7 @@ namespace Kooboo.Sites.Render.Commands
                         datavalue.Add(item.Key, item.Value);
                     }
                 }
-                if (datavalue.Count() > 0)
+                if (datavalue.Any())
                 {
                     context.DataContext.Push(datavalue);
                 }
@@ -49,17 +49,15 @@ namespace Kooboo.Sites.Render.Commands
                 if (!string.IsNullOrEmpty(layoutbody))
                 {
                     List<IRenderTask> renderplan;
-                    EvaluatorOption options = new EvaluatorOption();
-                    options.RenderUrl = false;
-                    options.RenderHeader = true;
+                    EvaluatorOption options = new EvaluatorOption {RenderUrl = false, RenderHeader = true};
 
-                    Guid sourceid = Lib.Security.Hash.ComputeHashGuid(layoutbody);  // GetLayoutGuid(layoutNameOrId); 
+                    Guid sourceid = Lib.Security.Hash.ComputeHashGuid(layoutbody);  // GetLayoutGuid(layoutNameOrId);
 
                     if (context.Request.Channel == RequestChannel.InlineDesign)
                     {
                         layoutbody = DomService.ApplyKoobooId(layoutbody);
                         options.RequireBindingInfo = true;
-                        renderplan = RenderEvaluator.Evaluate(layoutbody, options);  
+                        renderplan = RenderEvaluator.Evaluate(layoutbody, options);
                     }
                     else
                     {
@@ -79,28 +77,27 @@ namespace Kooboo.Sites.Render.Commands
                     return RenderHelper.Render(renderplan, context);
                 }
             }
-             
+
             return null;
         }
 
-        private Guid GetLayoutGuid(string LayoutNameOrId)
+        private Guid GetLayoutGuid(string layoutNameOrId)
         {
             // Guid LayoutId = Data.IDGenerator.Generate(this.Name, this.ConstType);
-            Guid LayoutId; 
-            if (System.Guid.TryParse(LayoutNameOrId, out LayoutId))
+            if (System.Guid.TryParse(layoutNameOrId, out var layoutId))
             {
-                return LayoutId; 
+                return layoutId;
             }
             else
             {
-                return Kooboo.Data.IDGenerator.Generate(LayoutNameOrId, ConstObjectType.Layout); 
+                return Kooboo.Data.IDGenerator.Generate(layoutNameOrId, ConstObjectType.Layout);
             }
         }
 
-        private static string GetLayoutNameOrId(Dictionary<string, string> Paras)
+        private static string GetLayoutNameOrId(Dictionary<string, string> paras)
         {
             string layoutid = null;
-            foreach (var item in Paras)
+            foreach (var item in paras)
             {
                 if (item.Key.ToLower() == "name" || item.Key.ToLower() == "id")
                 {
@@ -110,7 +107,7 @@ namespace Kooboo.Sites.Render.Commands
 
             if (string.IsNullOrEmpty(layoutid))
             {
-                foreach (var item in Paras)
+                foreach (var item in paras)
                 {
                     if (item.Key.ToLower().StartsWith("name") || item.Key.ToLower().StartsWith("id"))
                     {
@@ -131,7 +128,7 @@ namespace Kooboo.Sites.Render.Commands
                 sourceprovider = new DBCommandSourceProvider();
             }
 
-            return sourceprovider.GetLayout(context, layoutNameOrId); 
+            return sourceprovider.GetLayout(context, layoutNameOrId);
         }
 
         private static string GetPrefixLayoutSource(RenderContext context, string filename)
@@ -155,8 +152,7 @@ namespace Kooboo.Sites.Render.Commands
                 lower = lower.Substring("layout/".Length);
             }
             var layout = context.WebSite.SiteDb().Layouts.GetByNameOrId(lower);
-            return layout != null ? layout.Body : null;
+            return layout?.Body;
         }
-
     }
 }

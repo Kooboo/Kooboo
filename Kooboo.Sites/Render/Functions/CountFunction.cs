@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Data.Context;
-using System.Collections;
-using Newtonsoft.Json.Linq;
 
 namespace Kooboo.Sites.Render.Functions
 {
@@ -15,57 +15,52 @@ namespace Kooboo.Sites.Render.Functions
         {
             get
             {
-                return "Count"; 
+                return "Count";
             }
         }
 
         public List<IFunction> Parameters
         {
-            get;set;
+            get; set;
         }
 
         public object Render(RenderContext context)
         {
             var paras = FunctionHelper.RenderParameter(context, this.Parameters);
 
-            if (paras != null && paras.Count() > 0)
-            { 
+            if (paras != null && paras.Any())
+            {
                 var value = paras[0];
                 if (value != null)
                 {
-                    if (value is ICollection)
+                    if (value is ICollection col)
                     {
-                        var col = (ICollection)value;
                         if (col != null)
                         {
                             return col.Count;
                         }
-
                     }
                     else if (value is string)
                     {
                         try
                         {
-                            var jarray = Lib.Helper.JsonHelper.DeserialzeBaseObject(value.ToString()); 
-                            if (jarray !=null && jarray is JArray)
+                            var jarray = Lib.Helper.JsonHelper.DeserialzeBaseObject(value.ToString());
+                            if (jarray is JArray jr)
                             {
-                                var jr = jarray as JArray; 
-                                if (jr !=null)
+                                if (jr != null)
                                 {
-                                    return jr.Count; 
+                                    return jr.Count;
                                 }
                             }
                         }
                         catch (Exception)
-                        { 
-                        } 
-                      
+                        {
+                            // ignored
+                        }
                     }
-                   
                 }
             }
-            return 0; 
+            return 0;
         }
-           
     }
 }

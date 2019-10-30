@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using Kooboo.Dom;
+﻿using Kooboo.Dom;
 using Kooboo.Sites.Render.RenderTask;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render.Evaluators
 {
@@ -22,23 +21,23 @@ namespace Kooboo.Sites.Render.Evaluators
 
             int interval = 60 * 60;
 
-            string LabelName = null;
+            string labelName = null;
             foreach (var item in element.attributes)
             {
                 var lower = item.name.ToLower();
                 if (lower == "k-externalcache")
                 {
-                    LabelName = item.name;
+                    labelName = item.name;
                     break;
                 }
             }
-            if (!string.IsNullOrEmpty(LabelName))
+            if (!string.IsNullOrEmpty(labelName))
             {
                 var response = new EvaluatorResponse();
-             
-                string value = element.getAttribute(LabelName);
 
-                element.removeAttribute(LabelName);
+                string value = element.getAttribute(labelName);
+
+                element.removeAttribute(labelName);
 
                 string strinternval = element.getAttribute("k-interval");
                 if (!string.IsNullOrWhiteSpace(strinternval))
@@ -49,22 +48,17 @@ namespace Kooboo.Sites.Render.Evaluators
                 }
                 element.removeAttribute("href");
 
-                List<IRenderTask> result = new List<IRenderTask>();
-                result.Add(new ContentRenderTask(" href=\""));
-                result.Add(new ExternalCacheRenderTask(value, interval));
-                result.Add(new ContentRenderTask("\""));
-                response.AttributeTask = result; 
-                 
+                List<IRenderTask> result = new List<IRenderTask>
+                {
+                    new ContentRenderTask(" href=\""),
+                    new ExternalCacheRenderTask(value, interval),
+                    new ContentRenderTask("\"")
+                };
+                response.AttributeTask = result;
+
                 return response;
             }
             return null;
         }
     }
-
-
-
-
-
-
-
 }

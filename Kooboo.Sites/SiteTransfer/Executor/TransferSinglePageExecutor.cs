@@ -1,14 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Repository;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
 using Kooboo.Sites.SiteTransfer.Download;
+using System;
+using System.Threading.Tasks;
 
 namespace Kooboo.Sites.SiteTransfer.Executor
 {
@@ -27,9 +24,10 @@ namespace Kooboo.Sites.SiteTransfer.Executor
 
             var cookieContainer = new System.Net.CookieContainer();
 
-            TransferPage transpage = new TransferPage();
-            transpage.absoluteUrl = TransferTask.FullStartUrl;
-            transpage.taskid = TransferTask.Id;
+            TransferPage transpage = new TransferPage
+            {
+                absoluteUrl = TransferTask.FullStartUrl, taskid = TransferTask.Id
+            };
 
             var oldpage = SiteDb.TransferPages.Get(transpage.Id);
 
@@ -56,48 +54,46 @@ namespace Kooboo.Sites.SiteTransfer.Executor
                     if (name.EndsWith("/"))
                     {
                         name = name.TrimEnd('/');
-                    }     
+                    }
 
                     name = System.IO.Path.GetFileNameWithoutExtension(name);
                 }
 
                 if (!string.IsNullOrWhiteSpace(name))
                 {
-                    savepage.Name = name;  
-                }      
-
-                htmlsource = UrlHelper.ReplaceMetaCharSet(htmlsource);
-                string FirstImportUrl = SiteDb.TransferTasks.FirstImportHost();
-
-                if (string.IsNullOrEmpty(FirstImportUrl))
-                {
-                    FirstImportUrl = TransferTask.FullStartUrl;
+                    savepage.Name = name;
                 }
 
-                DownloadManager manager = new DownloadManager() { SiteDb = SiteDb };
-                manager.OriginalImportUrl = FirstImportUrl;
+                htmlsource = UrlHelper.ReplaceMetaCharSet(htmlsource);
+                string firstImportUrl = SiteDb.TransferTasks.FirstImportHost();
 
-                var context = AnalyzerManager.Execute(htmlsource, transpage.absoluteUrl, savepage.Id, savepage.ConstType, manager, FirstImportUrl);
+                if (string.IsNullOrEmpty(firstImportUrl))
+                {
+                    firstImportUrl = TransferTask.FullStartUrl;
+                }
+
+                DownloadManager manager = new DownloadManager {SiteDb = SiteDb, OriginalImportUrl = firstImportUrl};
+
+                var context = AnalyzerManager.Execute(htmlsource, transpage.absoluteUrl, savepage.Id, savepage.ConstType, manager, firstImportUrl);
 
                 htmlsource = context.HtmlSource;
 
                 savepage.Body = htmlsource;
 
-                string PageRelativeName = TransferTask.RelativeName;
+                string pageRelativeName = TransferTask.RelativeName;
 
-
-                if (string.IsNullOrWhiteSpace(PageRelativeName))
+                if (string.IsNullOrWhiteSpace(pageRelativeName))
                 {
-                    bool issamehost = Kooboo.Lib.Helper.UrlHelper.isSameHost(TransferTask.FullStartUrl, FirstImportUrl);
-                    PageRelativeName = UrlHelper.RelativePath(TransferTask.FullStartUrl, issamehost);
+                    bool issamehost = Kooboo.Lib.Helper.UrlHelper.isSameHost(TransferTask.FullStartUrl, firstImportUrl);
+                    pageRelativeName = UrlHelper.RelativePath(TransferTask.FullStartUrl, issamehost);
                 }
 
-                if (!PageRelativeName.StartsWith("/"))
+                if (!pageRelativeName.StartsWith("/"))
                 {
-                    PageRelativeName = "/" + PageRelativeName;
+                    pageRelativeName = "/" + pageRelativeName;
                 }
 
-                SiteDb.Routes.AddOrUpdate(PageRelativeName, savepage.ConstType, savepage.Id, this.TransferTask.UserId);
+                SiteDb.Routes.AddOrUpdate(pageRelativeName, savepage.ConstType, savepage.Id, this.TransferTask.UserId);
 
                 SiteDb.Pages.AddOrUpdate(savepage, this.TransferTask.UserId);
 
@@ -109,13 +105,9 @@ namespace Kooboo.Sites.SiteTransfer.Executor
                 transpage.done = true;
                 transpage.PageId = savepage.Id;
                 SiteDb.TransferPages.AddOrUpdate(transpage);
-
             }
 
-
             this.SiteDb.TransferTasks.SetDone(this.TransferTask.Id);
-
         }
-
     }
 }

@@ -1,11 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using Kooboo.Extensions;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Extensions;
-using System.Collections.Generic;
 using Kooboo.Data.Interface;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Models
 {
@@ -19,15 +16,14 @@ namespace Kooboo.Sites.Models
         }
 
         private Guid _id;
+
         public override Guid Id
         {
             set { _id = value; }
             get
             {
-
                 if (_id == default(Guid))
                 {
-
                     if (this.OwnerObjectId != default(Guid))
                     {
                         string unique = this.ConstType.ToString() + this.OwnerObjectId.ToString() + this.ItemIndex.ToString();
@@ -44,6 +40,7 @@ namespace Kooboo.Sites.Models
         }
 
         private string _name;
+
         public override string Name
         {
             get
@@ -55,16 +52,15 @@ namespace Kooboo.Sites.Models
                 _name = value;
                 if (!string.IsNullOrEmpty(_name))
                 {
-                    _name = Lib.Helper.StringHelper.ToValidFileName(_name); 
+                    _name = Lib.Helper.StringHelper.ToValidFileName(_name);
                 }
-
             }
         }
 
         public string Engine { get; set; }
 
         /// <summary>
-        /// embedded or external reference. 
+        /// embedded or external reference.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public bool IsEmbedded
@@ -73,36 +69,23 @@ namespace Kooboo.Sites.Models
             set;
         }
 
-        private string _extension; 
+        private string _extension;
 
         [Kooboo.Attributes.SummaryIgnore]
-        public string Extension {
-
-            get
-            {
-                if (string.IsNullOrWhiteSpace(_extension))
-                {
-                    return "css"; 
-                }
-                else
-                {
-                    return _extension; 
-                }   
-            }
+        public string Extension
+        {
+            get { return string.IsNullOrWhiteSpace(_extension) ? "css" : _extension; }
             set
             {
-                _extension = value; 
-                if(_extension !=null)
-                {
-                    _extension = _extension.ToLower(); 
-                }
-            }   
-        } 
+                _extension = value;
+                _extension = _extension?.ToLower();
+            }
+        }
 
         private int _bodyhash;
 
         /// <summary>
-        /// The hash code of Css text. 
+        /// The hash code of Css text.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public int BodyHash
@@ -128,14 +111,15 @@ namespace Kooboo.Sites.Models
                 return this.Name;
             }
         }
+
         /// <summary>
-        /// For embedded css, the parent object id. this can be view, layout, page or textcontent. 
+        /// For embedded css, the parent object id. this can be view, layout, page or textcontent.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public Guid OwnerObjectId { get; set; }
 
         /// <summary>
-        /// The type of owner object id. 
+        /// The type of owner object id.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public byte OwnerConstType { get; set; }
@@ -143,11 +127,11 @@ namespace Kooboo.Sites.Models
         public string KoobooOpenTag { get; set; }
 
         /// <summary>
-        /// the item index of embedded style sheet. 
+        /// the item index of embedded style sheet.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public int ItemIndex { get; set; }
-        
+
         //HTMLStyleElement.media
         //Is a DOMString representing the intended destination medium for style information.
         public string media { get; set; }
@@ -155,11 +139,11 @@ namespace Kooboo.Sites.Models
         //HTMLStyleElement.type
         //Is a DOMString representing the type of style being applied by this statement.
         public string type { get; set; }
-          
+
         private string _csstext;
 
         /// <summary>
-        /// the embedded css text. 
+        /// the embedded css text.
         /// </summary>
         public string Body
         {
@@ -169,34 +153,32 @@ namespace Kooboo.Sites.Models
             }
             set
             {
-                if (!string.IsNullOrWhiteSpace(_csstext) && value !=null && _csstext != value)
+                if (!string.IsNullOrWhiteSpace(_csstext) && value != null && _csstext != value)
                 {
-                    this.SourceChange = true; 
-                }     
+                    this.SourceChange = true;
+                }
                 _csstext = value;
                 if (!string.IsNullOrEmpty(_csstext))
                 {
-                    _csstext = _csstext.Trim(new[] { '\uFEFF', '\u200B' });
-                } 
+                    _csstext = _csstext.Trim('\uFEFF', '\u200B');
+                }
                 this._bodyhash = default(int);
             }
         }
-
 
         #region "less, scss, sass"
 
         public string Source { get; set; }
 
-        public bool SourceChange { get; set; } = false;   
+        public bool SourceChange { get; set; } = false;
 
-        #endregion
-
+        #endregion "less, scss, sass"
 
         public string DomTagName
         {
             get
             {
-                return "style"; 
+                return "style";
             }
         }
 
@@ -210,15 +192,15 @@ namespace Kooboo.Sites.Models
             unique += this.KoobooOpenTag + ItemIndex.ToString() + this.media;
             unique += this.type;
 
-            unique += this.Source + this.SourceChange.ToString(); 
+            unique += this.Source + this.SourceChange.ToString();
 
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }
 
     public class CssWebSaveFonts
     {
-        public static IEnumerable<string> Fonts = new[] { 
+        public static IEnumerable<string> Fonts = new[] {
             "Georgia","serif","Palatino Linotype","Book Antiqua","Palatino","serif","Times New Roman","Times","serif","Arial","Helvetica","sans-serif","Arial Black","Gadget","sans-serif","Comic Sans MS","cursive","sans-serif","Impact","Charcoal","sans-serif","Lucida Sans Unicode","Lucida Grande","sans-serif","Tahoma","Geneva","sans-serif","Trebuchet MS","Helvetica","sans-serif","Verdana","Geneva","sans-serif","Courier New","Courier","monospace","Lucida Console","Monaco","monospace"
         };
     }

@@ -1,11 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data;
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Routing;
 using System;
 using System.Collections.Generic;
-  
+
 namespace Kooboo.Sites.Repository
 {
     public class RouteRepository : SiteRepositoryBase<Kooboo.Sites.Routing.Route>
@@ -23,26 +22,23 @@ namespace Kooboo.Sites.Repository
                 return paras;
             }
         }
-         
-        public void AddOrUpdate(string relativeUrl, byte ConstType, Guid objectId, Guid UserId = default(Guid))
+
+        public void AddOrUpdate(string relativeUrl, byte constType, Guid objectId, Guid userId = default(Guid))
         {
-            Route newroute = new Route();
-            newroute.DestinationConstType = ConstType;
-            newroute.objectId = objectId;
-            newroute.Name = relativeUrl; 
-            AddOrUpdate(newroute, UserId);
+            Route newroute = new Route {DestinationConstType = constType, objectId = objectId, Name = relativeUrl};
+            AddOrUpdate(newroute, userId);
         }
 
-        public void AddOrUpdate(string relativeUrl,  Models.SiteObject siteobject, Guid UserId = default(Guid))
+        public void AddOrUpdate(string relativeUrl, Models.SiteObject siteobject, Guid userId = default(Guid))
         {
-            Route newroute = new Route();
-            newroute.DestinationConstType = siteobject.ConstType;
-            newroute.objectId = siteobject.Id;
-            newroute.Name = relativeUrl;
-            AddOrUpdate(newroute, UserId);
+            Route newroute = new Route
+            {
+                DestinationConstType = siteobject.ConstType, objectId = siteobject.Id, Name = relativeUrl
+            };
+            AddOrUpdate(newroute, userId);
         }
 
-        public override bool AddOrUpdate(Route value, Guid UserId)
+        public override bool AddOrUpdate(Route value, Guid userId)
         {
             lock (_locker)
             {
@@ -51,10 +47,10 @@ namespace Kooboo.Sites.Repository
                     var route = this.GetByObjectId(value.objectId);
                     if (route != null && route.Name != value.Name)
                     {
-                        this.Delete(route.Id, UserId);
+                        this.Delete(route.Id, userId);
                     }
                 }
-                return base.AddOrUpdate(value, UserId);
+                return base.AddOrUpdate(value, userId);
             }
         }
 
@@ -63,177 +59,169 @@ namespace Kooboo.Sites.Repository
             return this.AddOrUpdate(value, default(Guid));
         }
 
-        public void appendRoute(Route route, Guid UserId)
+        public void appendRoute(Route route, Guid userId)
         {
-            base.AddOrUpdate(route, UserId); 
+            base.AddOrUpdate(route, userId);
         }
-          
-        public void EnsureExists(string relativeUrl, byte ConstType)
-        { 
-            var route = _getbyurl(relativeUrl); 
+
+        public void EnsureExists(string relativeUrl, byte constType)
+        {
+            var route = _getbyurl(relativeUrl);
 
             if (route == null)
             {
-                lock(_locker)
+                lock (_locker)
                 {
-                    route = _getbyurl(relativeUrl); 
+                    route = _getbyurl(relativeUrl);
                     if (route == null)
                     {
-                        AddOrUpdate(relativeUrl, ConstType, default(Guid), default(Guid));
+                        AddOrUpdate(relativeUrl, constType, default(Guid), default(Guid));
                     }
                 }
-            }  
+            }
         }
 
         private Route _getbyurl(string url)
-        { 
-            Route route = GetByUrl(url);
-            if (route == null)
-            {
-                route = Kooboo.Sites.Routing.ObjectRoute.GetRoute(this.SiteDb, url); 
-            }
-            return route; 
+        {
+            Route route = GetByUrl(url) ?? Kooboo.Sites.Routing.ObjectRoute.GetRoute(this.SiteDb, url);
+            return route;
         }
 
-          
-        public List<Route> GetByType(byte ConstType)
+        public List<Route> GetByType(byte constType)
         {
-            return this.Query.Where(o => o.DestinationConstType == ConstType).SelectAll();  
+            return this.Query.Where(o => o.DestinationConstType == constType).SelectAll();
         }
 
         /// <summary>
-        /// rename..... 
+        /// rename.....
         /// </summary>
-        /// <param name="OldRelativeUrl"></param>
-        /// <param name="NewRelativeUrl"></param>
-        public void ChangeRoute(string OldRelativeUrl, string NewRelativeUrl)
+        /// <param name="oldRelativeUrl"></param>
+        /// <param name="newRelativeUrl"></param>
+        public void ChangeRoute(string oldRelativeUrl, string newRelativeUrl)
         {
-            ///TODO: this is a rename, should change 
-            var oldroute = GetByUrl(OldRelativeUrl); 
-            
+            //TODO: this is a rename, should change
+            var oldroute = GetByUrl(oldRelativeUrl);
+
             if (oldroute != null)
             {
-                Route newroute = new Route(); 
-                newroute.DestinationConstType = oldroute.DestinationConstType;
-                newroute.objectId = oldroute.objectId;
-                newroute.Name = NewRelativeUrl;
+                Route newroute = new Route
+                {
+                    DestinationConstType = oldroute.DestinationConstType,
+                    objectId = oldroute.objectId,
+                    Name = newRelativeUrl
+                };
 
                 AddOrUpdate(newroute);
                 Delete(oldroute.Id);
 
-                Sync.DiskSyncHelper.ChangeRoute(this.SiteDb, OldRelativeUrl, newroute.Name); 
-
+                Sync.DiskSyncHelper.ChangeRoute(this.SiteDb, oldRelativeUrl, newroute.Name);
             }
-
         }
 
         public override Route GetByUrl(string relativeUrl)
-        { 
+        {
             return Get(Data.IDGenerator.GetRouteId(relativeUrl));
         }
 
-        public Route GetByObjectId(Guid objectId, byte DestinationConstType=0)
+        public Route GetByObjectId(Guid objectId, byte destinationConstType = 0)
         {
-            if (DestinationConstType == 0)
+            if (destinationConstType == 0)
             {
                 return Store.Where(o => o.objectId == objectId).FirstOrDefault();
             }
             else
             {
-                return Store.Where(o => o.objectId == objectId && o.DestinationConstType == DestinationConstType).FirstOrDefault();
-            } 
+                return Store.Where(o => o.objectId == objectId && o.DestinationConstType == destinationConstType).FirstOrDefault();
+            }
         }
 
-        public void Delete(string RelativeUrl)
+        public void Delete(string relativeUrl)
         {
-            Route route = GetByUrl(RelativeUrl);
+            Route route = GetByUrl(relativeUrl);
             if (route != null)
             {
                 Delete(route.Id);
             }
         }
 
-        public override void Delete(Guid id, Guid UserId)
+        public override void Delete(Guid id, Guid userId)
         {
-            lock(_locker)
+            lock (_locker)
             {
-                base.Delete(id, UserId);
-                DeleteAlias(id, UserId);
+                base.Delete(id, userId);
+                DeleteAlias(id, userId);
             }
-  
         }
 
         public override void Delete(Guid id)
         {
-            this.Delete(id, default(Guid)); 
+            this.Delete(id, default(Guid));
         }
 
-        internal void DeleteAlias(Guid routeid, Guid Userid)
+        internal void DeleteAlias(Guid routeid, Guid userid)
         {
-            var list = Store.Where(o => o.objectId == routeid && o.DestinationConstType == ConstObjectType.Route).SelectAll(); 
+            var list = Store.Where(o => o.objectId == routeid && o.DestinationConstType == ConstObjectType.Route).SelectAll();
             foreach (var item in list)
-            { 
-                this.Delete(item.Id, Userid); 
+            {
+                this.Delete(item.Id, userid);
             }
-            // delete resource group.. 
-            var relations = this.SiteDb.Relations.GetReferredBy(typeof(Route), routeid, ConstObjectType.ResourceGroup); 
-            if (relations!=null && relations.Count>0)
+            // delete resource group..
+            var relations = this.SiteDb.Relations.GetReferredBy(typeof(Route), routeid, ConstObjectType.ResourceGroup);
+            if (relations != null && relations.Count > 0)
             {
                 foreach (var item in relations)
                 {
-                    var group = this.SiteDb.ResourceGroups.Get(item.objectXId); 
-                    if (group !=null && group.Children !=null &&  group.Children.ContainsKey(routeid)) 
+                    var group = this.SiteDb.ResourceGroups.Get(item.objectXId);
+                    if (group != null && group.Children != null && group.Children.ContainsKey(routeid))
                     {
                         group.Children.Remove(routeid);
-                        SiteDb.ResourceGroups.AddOrUpdate(group); 
+                        SiteDb.ResourceGroups.AddOrUpdate(group);
                     }
                 }
             }
         }
 
         public string GetObjectPrimaryRelativeUrl(Guid objectId)
-        { 
+        {
             var route = this.Store.Where(o => o.objectId == objectId).FirstOrDefault();
 
             if (route != null && !string.IsNullOrEmpty(route.Name))
             {
                 return route.Name;
-            } 
+            }
             return string.Empty;
         }
-        
 
-        public bool Validate(string RouteName, Guid ObjectId)
-        { 
-            if (!RouteName.StartsWith("/"))
+        public bool Validate(string routeName, Guid objectId)
+        {
+            if (!routeName.StartsWith("/"))
             {
-                RouteName = "/" + RouteName; 
+                routeName = "/" + routeName;
             }
 
-            var route = this.GetByUrl(RouteName); 
+            var route = this.GetByUrl(routeName);
             if (route == null)
             {
-                return true; 
+                return true;
             }
             else
             {
-               if (route.objectId == default(Guid))
+                if (route.objectId == default(Guid))
                 {
-                    return true; 
+                    return true;
                 }
-               else
+                else
                 {
-                    if (route.objectId == ObjectId)
+                    if (route.objectId == objectId)
                     {
-                        return true; 
+                        return true;
                     }
                     else
                     {
-                        return false; 
-                    } 
-                }  
+                        return false;
+                    }
+                }
             }
-
         }
     }
 }

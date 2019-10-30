@@ -1,11 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using Kooboo.Extensions;
-using Kooboo.Data;
+using Kooboo.Attributes;
 using Kooboo.Data.Interface;
-using Kooboo.Attributes; 
+using System;
 
 namespace Kooboo.Sites.Models
 {
@@ -13,8 +10,8 @@ namespace Kooboo.Sites.Models
     [Diskable(DiskType.Text)]
     public class Layout : DomObject, IExtensionable
     {
-
         private Guid _id;
+
         [Kooboo.Attributes.SummaryIgnore]
         public override Guid Id
         {
@@ -25,7 +22,7 @@ namespace Kooboo.Sites.Models
                     if (!string.IsNullOrEmpty(this.Name))
                     {
                         _id = Data.IDGenerator.Generate(this.Name, this.ConstType);
-                    } 
+                    }
                 }
                 return _id;
             }
@@ -52,9 +49,8 @@ namespace Kooboo.Sites.Models
 
         public Layout()
         {
-            this.ConstType = ConstObjectType.Layout; 
+            this.ConstType = ConstObjectType.Layout;
         }
-
 
         /// <summary>
         /// Layout extension,default:TAL
@@ -64,8 +60,7 @@ namespace Kooboo.Sites.Models
 
         public override int GetHashCode()
         {
-            return Lib.Security.Hash.ComputeIntCaseSensitive(Body); 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(Body);
         }
-         
     }
 }

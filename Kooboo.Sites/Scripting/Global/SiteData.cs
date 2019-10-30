@@ -1,19 +1,21 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 
 namespace Kooboo.Sites.Scripting.Global
 {
-    public class kDataContext 
+    public class kDataContext
     {
-        private RenderContext context { get; set; }
+        private RenderContext Context { get; set; }
+
         public kDataContext(RenderContext context)
         {
-            this.context = context; 
-        } 
+            this.Context = context;
+        }
+
         public void set(string key, object value)
         {
-            this.context.DataContext.Push(key, value); 
+            this.Context.DataContext.Push(key, value);
         }
 
         [Attributes.SummaryIgnore]
@@ -21,17 +23,17 @@ namespace Kooboo.Sites.Scripting.Global
         {
             get
             {
-                return this.get(key); 
+                return this.get(key);
             }
             set
             {
-                this.set(key, value); 
+                this.set(key, value);
             }
         }
 
         public object get(string key)
         {
-            return this.context.DataContext.GetValue(key); 
+            return this.Context.DataContext.GetValue(key);
         }
     }
 }

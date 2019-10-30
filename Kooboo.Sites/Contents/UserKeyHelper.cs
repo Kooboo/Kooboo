@@ -28,7 +28,7 @@ namespace Kooboo.Sites.Contents
             input = input.Replace(" ", "-");
             // 空格  !	#	$	%	+	@	:	=	?
             string back = System.Net.WebUtility.UrlEncode(input);
-            back = back.Replace("%", "");
+            back = back?.Replace("%", "");
             return back;
         }
 

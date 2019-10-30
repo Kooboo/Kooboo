@@ -1,15 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using Kooboo.Extensions; 
 
 namespace Kooboo.Sites.Routing
 {
     public class Route : Models.CoreObject
     {
         public Route()
-        { 
+        {
             this.ConstType = ConstObjectType.Route;
         }
 
@@ -19,25 +18,25 @@ namespace Kooboo.Sites.Routing
         {
             get
             {
-                return _name; 
+                return _name;
             }
 
             set
             {
-               _name = value;
+                _name = value;
                 if (!string.IsNullOrEmpty(_name))
                 {
-                   //_name = Lib.Helper.StringHelper.ToValidFileName(_name); 
+                    //_name = Lib.Helper.StringHelper.ToValidFileName(_name);
                     if (_name.StartsWith("\\"))
                     {
-                        _name = "/" + _name.Substring(1); 
+                        _name = "/" + _name.Substring(1);
                     }
                     if (!_name.StartsWith("/"))
                     {
                         _name = "/" + _name;
-                    } 
-                    _name = System.Net.WebUtility.UrlDecode(_name); 
-                } 
+                    }
+                    _name = System.Net.WebUtility.UrlDecode(_name);
+                }
             }
         }
 
@@ -45,7 +44,7 @@ namespace Kooboo.Sites.Routing
 
         /// <summary>
         /// the destination object type. it can also be another route.
-        /// this is not the consttype of this site object. 
+        /// this is not the consttype of this site object.
         /// </summary>
         public byte DestinationConstType { get; set; }
 
@@ -53,22 +52,16 @@ namespace Kooboo.Sites.Routing
         /// The parsed parameters of dynamic routes also the parameters that is not in the route itself but defined by ViewDataMethod.
         /// The format key: input.Field, value: {input.Field}
         /// </summary>
-        public Dictionary<string, string> Parameters {
-            get
-            {
-                if (_parameters == null)
-                {
-                    _parameters = new Dictionary<string, string>(); 
-                }
-                return _parameters; 
-            }
+        public Dictionary<string, string> Parameters
+        {
+            get { return _parameters ?? (_parameters = new Dictionary<string, string>()); }
             set
             {
-                _parameters = value; 
+                _parameters = value;
             }
         }
-         
-        private Dictionary<string, string> _parameters; 
+
+        private Dictionary<string, string> _parameters;
 
         public override int GetHashCode()
         {
@@ -80,10 +73,8 @@ namespace Kooboo.Sites.Routing
                     unique += item.Key + item.Value;
                 }
             }
-        
-            return Lib.Security.Hash.ComputeInt(unique); 
-        }
-         
-    }
 
+            return Lib.Security.Hash.ComputeInt(unique);
+        }
+    }
 }

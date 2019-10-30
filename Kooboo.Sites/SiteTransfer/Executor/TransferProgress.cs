@@ -1,11 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Lib.Helper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.SiteTransfer.Executor
 {
@@ -16,17 +12,18 @@ namespace Kooboo.Sites.SiteTransfer.Executor
 
         public string TransferDomain { get; set; }
 
-        public void SetDomain(string FullStartUrl)
+        public void SetDomain(string fullStartUrl)
         {
-            if (!string.IsNullOrEmpty(FullStartUrl))
+            if (!string.IsNullOrEmpty(fullStartUrl))
             {
-                this.TransferDomain = UrlHelper.UriHost(FullStartUrl, true);
+                this.TransferDomain = UrlHelper.UriHost(fullStartUrl, true);
             }
         }
 
         public string FullStartUrl { get; set; }
 
         private string _baseurl;
+
         public string BaseUrl
         {
             get
@@ -67,7 +64,5 @@ namespace Kooboo.Sites.SiteTransfer.Executor
         public int TotalPages { get; set; }
 
         public int Levels { get; set; }
-
-
     }
 }

@@ -1,7 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Interface;
-using System; 
 namespace Kooboo.Web.Upgrade
 {
     //public class UpdateChecker : IBackgroundWorker
@@ -10,7 +8,7 @@ namespace Kooboo.Web.Upgrade
     //    {
     //        get
     //        {
-    //            return  2* 24 * 60 * 60; // 2 days 
+    //            return  2* 24 * 60 * 60; // 2 days
     //        }
     //    }
 

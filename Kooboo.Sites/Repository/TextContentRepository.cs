@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Contents;
@@ -27,14 +27,14 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public override TextContent GetByNameOrId(string NameOrGuid)
+        public override TextContent GetByNameOrId(string nameOrGuid)
         {
             Guid key;
-            bool parseok = Guid.TryParse(NameOrGuid, out key);
+            bool parseok = Guid.TryParse(nameOrGuid, out key);
 
             if (!parseok)
             {
-                key = Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(NameOrGuid);
+                key = Kooboo.Lib.Security.Hash.ComputeGuidIgnoreCase(nameOrGuid);
             }
             return Get(key);
         }
@@ -47,11 +47,11 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public override bool AddOrUpdate(TextContent textContent, Guid UserId = default(Guid))
+        public override bool AddOrUpdate(TextContent textContent, Guid userId = default(Guid))
         {
-            EnsureUserKey(textContent);  
+            EnsureUserKey(textContent);
 
-            return base.AddOrUpdate(textContent, UserId);
+            return base.AddOrUpdate(textContent, userId);
         }
 
         public TextContentViewModel GetView(Guid id, string lang)
@@ -70,19 +70,19 @@ namespace Kooboo.Sites.Repository
         }
 
         // get the default content item...search for all possible text repositories..
-        public TextContentViewModel GetDefaultContentFromFolder(Guid FolderId, string CurrentCulture = null)
+        public TextContentViewModel GetDefaultContentFromFolder(Guid folderId, string currentCulture = null)
         {
-            if (string.IsNullOrWhiteSpace(CurrentCulture))
+            if (string.IsNullOrWhiteSpace(currentCulture))
             {
-                CurrentCulture = this.WebSite.DefaultCulture;
+                currentCulture = this.WebSite.DefaultCulture;
             }
 
-            var list = this.Query.Where(o => o.FolderId == FolderId).Take(10);
+            var list = this.Query.Where(o => o.FolderId == folderId).Take(10);
 
             foreach (var item in list.Where(o => o.Online))
             {
-                var view = GetView(item, CurrentCulture);
-                if (view != null && view.TextValues.Count() > 0)
+                var view = GetView(item, currentCulture);
+                if (view != null && view.TextValues.Any())
                 {
                     return view;
                 }
@@ -90,8 +90,8 @@ namespace Kooboo.Sites.Repository
 
             foreach (var item in list.Where(o => !o.Online))
             {
-                var view = GetView(item, CurrentCulture);
-                if (view != null && view.TextValues.Count() > 0)
+                var view = GetView(item, currentCulture);
+                if (view != null && view.TextValues.Any())
                 {
                     return view;
                 }
@@ -192,12 +192,11 @@ namespace Kooboo.Sites.Repository
                 contenttype = this.SiteDb.ContentTypes.Get(content.ContentTypeId);
             }
 
-
             string defaultculture = this.SiteDb.WebSite.DefaultCulture;
 
-            var NoSysNoMul = contenttype.Properties.Where(o => o.IsSystemField == false && o.MultipleLanguage == false).ToList();
+            var noSysNoMul = contenttype.Properties.Where(o => o.IsSystemField == false && o.MultipleLanguage == false).ToList();
 
-            foreach (var item in NoSysNoMul)
+            foreach (var item in noSysNoMul)
             {
                 string value = null;
                 var langstore = content.GetContentStore(defaultculture);
@@ -219,7 +218,7 @@ namespace Kooboo.Sites.Repository
                 }
 
                 bool valueset = false;
-                // remove the key...  
+                // remove the key...
                 foreach (var citem in content.Contents)
                 {
                     if (citem.Lang != defaultculture)
@@ -237,7 +236,6 @@ namespace Kooboo.Sites.Repository
                 {
                     content.SetValue(item.Name, value, defaultculture);
                 }
-
             }
         }
     }

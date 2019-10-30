@@ -1,17 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Context; 
-using Kooboo.Sites.Render;
+using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Render;
 
 namespace Kooboo.Sites.Scripting.Global
 {
     public class Response
     {
-        private RenderContext context { get; set; }
+        private RenderContext Context { get; set; }
+
         public Response(RenderContext context)
         {
-            this.context = context;
+            this.Context = context;
         }
 
         public void write(object value)
@@ -20,17 +21,17 @@ namespace Kooboo.Sites.Scripting.Global
             {
                 return;
             }
-            string output = ToJson(value); 
+            string output = ToJson(value);
 
-            var item = this.context.GetItem<string>(Constants.OutputName);
+            var item = this.Context.GetItem<string>(Constants.OutputName);
             if (item == null)
             {
-                this.context.SetItem<string>(output, Constants.OutputName);
+                this.Context.SetItem<string>(output, Constants.OutputName);
             }
             else
             {
                 item += output;
-                this.context.SetItem<string>(item, Constants.OutputName);
+                this.Context.SetItem<string>(item, Constants.OutputName);
             }
         }
 
@@ -61,25 +62,25 @@ namespace Kooboo.Sites.Scripting.Global
                 //}
                 //else
                 //{
-                output = Lib.Helper.JsonHelper.SerializeCaseSensitive(value,new Kooboo.Lib.Helper.IntJsonConvert());
+                output = Lib.Helper.JsonHelper.SerializeCaseSensitive(value, new Kooboo.Lib.Helper.IntJsonConvert());
                 //}
             }
             else
             {
                 output = value.ToString();
-            } 
+            }
             return output;
         }
 
         public void setHeader(string key, string value)
         {
-            this.context.Response.Headers[key] = value;
+            this.Context.Response.Headers[key] = value;
         }
 
         public void redirect(string url)
         {
-            this.context.Response.Redirect(302, url);
-        } 
+            this.Context.Response.Redirect(302, url);
+        }
 
         public void Json(object value)
         {
@@ -87,43 +88,42 @@ namespace Kooboo.Sites.Scripting.Global
             write(value);
         }
 
-        public void binary(string contentType,byte[] bytes)
+        public void binary(string contentType, byte[] bytes)
         {
-            this.context.Response.ContentType = contentType;
-            this.context.Response.Body = bytes;
+            this.Context.Response.ContentType = contentType;
+            this.Context.Response.Body = bytes;
         }
 
         public void StatusCode(int code)
         {
-            this.context.Response.StatusCode = code; 
+            this.Context.Response.StatusCode = code;
         }
-         
+
         public void Execute(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
-                return; 
+                return;
             }
 
-            string value = null; 
+            string value = null;
 
             if (url.ToLower().StartsWith("https://") || url.ToLower().StartsWith("http://"))
             {
                 Curl curl = new Curl();
-                value =   curl.get(url); 
+                value = curl.get(url);
             }
-
             else
             {
-                var route = Kooboo.Sites.Routing.ObjectRoute.GetRoute(context.WebSite.SiteDb(), url);
+                var route = Kooboo.Sites.Routing.ObjectRoute.GetRoute(Context.WebSite.SiteDb(), url);
                 if (route != null)
                 {
                     RenderContext newcontext = new RenderContext();
-                    newcontext.Request = context.Request;
-                    newcontext.User = context.User;
-                    newcontext.WebSite = context.WebSite;
-                    newcontext.Culture = context.Culture; 
-                     
+                    newcontext.Request = Context.Request;
+                    newcontext.User = Context.User;
+                    newcontext.WebSite = Context.WebSite;
+                    newcontext.Culture = Context.Culture;
+
                     FrontContext kooboocontext = new FrontContext();
                     newcontext.SetItem<FrontContext>(kooboocontext);
                     kooboocontext.RenderContext = newcontext;
@@ -137,18 +137,17 @@ namespace Kooboo.Sites.Scripting.Global
                         value = System.Text.Encoding.UTF8.GetString(newcontext.Response.Body);
                     }
                 }
-            } 
+            }
 
-
-            var item = this.context.GetItem<string>(Constants.OutputName);
+            var item = this.Context.GetItem<string>(Constants.OutputName);
             if (item == null)
             {
-                this.context.SetItem<string>(value, Constants.OutputName);
+                this.Context.SetItem<string>(value, Constants.OutputName);
             }
             else
             {
                 item += value;
-                this.context.SetItem<string>(item, Constants.OutputName);
+                this.Context.SetItem<string>(item, Constants.OutputName);
             }
         }
     }

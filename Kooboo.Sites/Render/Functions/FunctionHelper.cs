@@ -1,28 +1,28 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render.Functions
 {
-   public static class FunctionHelper
+    public static class FunctionHelper
     {
         public static bool IsFunction(string input)
         {
-            input = input.Trim();  
-            return (input.IndexOf(")") > 0 && input.EndsWith(")"));  
+            input = input.Trim();
+            return (input.IndexOf(")") > 0 && input.EndsWith(")"));
         }
-         
+
         public static IFunction Parse(string expression)
         {
-            var functionexpr = ParseFunctionExpr(expression); 
+            var functionexpr = ParseFunctionExpr(expression);
             if (functionexpr != null && !string.IsNullOrEmpty(functionexpr.Name))
             {
-                var function = FunctionContainer.GetFunction(functionexpr.Name); 
+                var function = FunctionContainer.GetFunction(functionexpr.Name);
                 if (function != null)
                 {
-                    function.Parameters = ParseParamter(functionexpr.Body); 
-                    return function; 
+                    function.Parameters = ParseParamter(functionexpr.Body);
+                    return function;
                 }
                 else
                 {
@@ -32,13 +32,13 @@ namespace Kooboo.Sites.Render.Functions
                         if (index > -1)
                         {
                             string objectname = functionexpr.Name.Substring(0, index);
-                            string methodname = functionexpr.Name.Substring(index + 1); 
+                            string methodname = functionexpr.Name.Substring(index + 1);
                             if (!string.IsNullOrEmpty(objectname) && !string.IsNullOrEmpty(methodname))
                             {
                                 var method = FunctionContainer.GetFunction(methodname);
                                 if (method != null)
                                 {
-                                    method.Parameters = ParseParamter(objectname); 
+                                    method.Parameters = ParseParamter(objectname);
                                     return method;
                                 }
                             }
@@ -46,14 +46,15 @@ namespace Kooboo.Sites.Render.Functions
                     }
                     else
                     {
-                        var kfunc = new kScriptFunction(); 
-                        kfunc.Parameters = ParseParamter(functionexpr.Body);
-                        kfunc.FunctionName = functionexpr.Name;
-                        return kfunc;  
+                        var kfunc = new kScriptFunction
+                        {
+                            Parameters = ParseParamter(functionexpr.Body), FunctionName = functionexpr.Name
+                        };
+                        return kfunc;
                     }
                 }
-            } 
-        
+            }
+
             return null;
         }
 
@@ -74,22 +75,21 @@ namespace Kooboo.Sites.Render.Functions
             return false;
         }
 
-
         public static List<IFunction> ParseParamter(string functionbody)
         {
             if (!string.IsNullOrEmpty(functionbody))
             {
                 string[] paras = functionbody.Split(',');
 
-                var result = new List<IFunction>(); 
-                  
+                var result = new List<IFunction>();
+
                 foreach (var item in paras)
                 {
-                   if (item == null)
+                    if (item == null)
                     {
-                        continue; 
+                        continue;
                     }
-                    string value = item.Trim(); 
+                    string value = item.Trim();
 
                     var parafunction = Parse(value);
                     if (parafunction == null)
@@ -111,9 +111,9 @@ namespace Kooboo.Sites.Render.Functions
                     }
                 }
 
-                return result; 
+                return result;
             }
-            return null; 
+            return null;
         }
 
         public static FunctionExpression ParseFunctionExpr(string input)
@@ -121,55 +121,52 @@ namespace Kooboo.Sites.Render.Functions
             int index = input.IndexOf("(");
             if (index == -1)
             {
-                return null; 
+                return null;
             }
 
             string functionname = input.Substring(0, index);
             string functionbody = input.Substring(index);
 
-           if (!string.IsNullOrEmpty(functionbody))
+            if (!string.IsNullOrEmpty(functionbody))
             {
                 int begine = functionbody.IndexOf("(");
-                int end = functionbody.LastIndexOf(")"); 
-                if (begine >-1 && end > begine)
+                int end = functionbody.LastIndexOf(")");
+                if (begine > -1 && end > begine)
                 {
-                    functionbody = functionbody.Substring(begine + 1, end - begine-1); 
+                    functionbody = functionbody.Substring(begine + 1, end - begine - 1);
                 }
                 else
                 {
-                    return null; 
-                } 
+                    return null;
+                }
             }
-             
+
             if (!string.IsNullOrEmpty(functionname))
             {
-                return new FunctionExpression() { Name = functionname, Body = functionbody }; 
-
+                return new FunctionExpression() { Name = functionname, Body = functionbody };
             }
-            return null; 
+            return null;
         }
 
         public static List<object> RenderParameter(RenderContext context, List<IFunction> paras)
         {
             List<object> values = new List<object>();
             if (paras != null)
-            { 
+            {
                 foreach (var item in paras)
                 {
                     var value = item.Render(context);
                     values.Add(value);
                 }
             }
-            return values; 
+            return values;
         }
-          
+
         public class FunctionExpression
         {
             public string Name { get; set; }
 
             public string Body { get; set; }
         }
-
-          
     }
 }

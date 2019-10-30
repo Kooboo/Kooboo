@@ -32,10 +32,10 @@ namespace Kooboo.Sites.Contents.Models
             }
             set
             {
-                string DomHtml = value;
-                if (!string.IsNullOrEmpty(DomHtml))
+                string domHtml = value;
+                if (!string.IsNullOrEmpty(domHtml))
                 {
-                    var dom = Kooboo.Dom.DomParser.CreateDom(DomHtml);
+                    var dom = Kooboo.Dom.DomParser.CreateDom(domHtml);
                     var kooboos = dom.getElementsByTagName("KoobooField");
 
                     foreach (var item in kooboos.item)

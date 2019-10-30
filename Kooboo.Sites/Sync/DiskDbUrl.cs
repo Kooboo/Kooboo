@@ -1,39 +1,34 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Models;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Sync
 {
     public class DiskDbUrl
     {
-
-        public static string CorrectDomUrl(Data.Models.WebSite WebSite, string PageSource, string FilePath)
+        public static string CorrectDomUrl(Data.Models.WebSite webSite, string pageSource, string filePath)
         {
-            if (WebSite == null || string.IsNullOrEmpty(WebSite.DiskSyncFolder))
+            if (webSite == null || string.IsNullOrEmpty(webSite.DiskSyncFolder))
             {
-                return PageSource;
+                return pageSource;
             }
 
-            if (string.IsNullOrEmpty(PageSource))
+            if (string.IsNullOrEmpty(pageSource))
             {
-                return PageSource; 
+                return pageSource;
             }
-            string FileRelativePath = RemoveBaseCaseInsensitive(FilePath, WebSite.DiskSyncFolder);
+            string fileRelativePath = RemoveBaseCaseInsensitive(filePath, webSite.DiskSyncFolder);
 
-            FileRelativePath = FileRelativePath.Replace("\\", "/");
+            fileRelativePath = fileRelativePath.Replace("\\", "/");
 
-            if (!FileRelativePath.StartsWith("/"))
+            if (!fileRelativePath.StartsWith("/"))
             {
-                FileRelativePath = "/" + FileRelativePath;
+                fileRelativePath = "/" + fileRelativePath;
             }
 
-            var dom = Kooboo.Dom.DomParser.CreateDom(PageSource);
+            var dom = Kooboo.Dom.DomParser.CreateDom(pageSource);
 
             List<SourceUpdate> updates = new List<SourceUpdate>();
 
@@ -48,51 +43,46 @@ namespace Kooboo.Sites.Sync
 
                 string rightsrc = itemsrc.Replace("\\", "/");
 
-                string RelativeUrl = Kooboo.Lib.Helper.UrlHelper.Combine(FileRelativePath, rightsrc);
+                string relativeUrl = Kooboo.Lib.Helper.UrlHelper.Combine(fileRelativePath, rightsrc);
 
-                if (itemsrc != RelativeUrl)
+                if (itemsrc != relativeUrl)
                 {
                     string oldstring = Kooboo.Sites.Service.DomService.GetOpenTag(item);
-                    string newstring = oldstring.Replace(itemsrc, RelativeUrl);
-
+                    string newstring = oldstring.Replace(itemsrc, relativeUrl);
 
                     updates.Add(new SourceUpdate()
                     {
                         StartIndex = item.location.openTokenStartIndex,
                         EndIndex = item.location.openTokenEndIndex,
                         NewValue = newstring
-
                     });
-
                 }
             }
 
             if (updates.Count > 0)
             {
-
-                return Kooboo.Sites.Service.DomService.UpdateSource(PageSource, updates);
+                return Kooboo.Sites.Service.DomService.UpdateSource(pageSource, updates);
             }
             else
             {
-                return PageSource;
-            } 
-
+                return pageSource;
+            }
         }
 
-        public static string CorrectCssUrl(Data.Models.WebSite website, string CssText, string FilePath)
+        public static string CorrectCssUrl(Data.Models.WebSite website, string cssText, string filePath)
         {
             if (website == null || string.IsNullOrEmpty(website.DiskSyncFolder))
             {
-                return CssText;
+                return cssText;
             }
 
-            string FileRelativePath = RemoveBaseCaseInsensitive(FilePath, website.DiskSyncFolder);
+            string fileRelativePath = RemoveBaseCaseInsensitive(filePath, website.DiskSyncFolder);
 
-            FileRelativePath = Kooboo.Lib.Helper.UrlHelper.ReplaceBackSlash(FileRelativePath, true); 
-            return ProcessCssText(CssText, FileRelativePath);
+            fileRelativePath = Kooboo.Lib.Helper.UrlHelper.ReplaceBackSlash(fileRelativePath, true);
+            return ProcessCssText(cssText, fileRelativePath);
         }
-         
-        private static string ProcessCssText(string cssText, string CssFileRelativeUrl)
+
+        private static string ProcessCssText(string cssText, string cssFileRelativeUrl)
         {
             if (string.IsNullOrEmpty(cssText))
             {
@@ -105,60 +95,51 @@ namespace Kooboo.Sites.Sync
 
             foreach (var item in urlInfos)
             {
-
                 if (!Kooboo.Lib.Utilities.DataUriService.isDataUri(item.PureUrl))
                 {
-                    string righturl = Kooboo.Lib.Helper.UrlHelper.ReplaceBackSlash(item.PureUrl);  
-                    string NewRelativeUrl = Kooboo.Lib.Helper.UrlHelper.Combine(CssFileRelativeUrl, righturl);
+                    string righturl = Kooboo.Lib.Helper.UrlHelper.ReplaceBackSlash(item.PureUrl);
+                    string newRelativeUrl = Kooboo.Lib.Helper.UrlHelper.Combine(cssFileRelativeUrl, righturl);
 
-                    if (item.PureUrl != NewRelativeUrl)
+                    if (item.PureUrl != newRelativeUrl)
                     {
                         string newvalue;
                         if (item.isUrlToken)
                         {
-                            newvalue = "url(\"" + NewRelativeUrl + "\")";
+                            newvalue = "url(\"" + newRelativeUrl + "\")";
                         }
                         else
                         {
-                            newvalue = "\"" + NewRelativeUrl + "\"";
+                            newvalue = "\"" + newRelativeUrl + "\"";
                         }
 
                         updates.Add(new SourceUpdate { StartIndex = item.StartIndex, EndIndex = item.EndIndex, NewValue = newvalue });
-
                     }
-
                 }
             }
-
 
             if (updates.Count > 0)
             {
                 return Service.DomService.UpdateSource(cssText, updates);
             }
-
             else
             {
                 return cssText;
             }
-
-
         }
 
-        private static string RemoveBaseCaseInsensitive(string FullUrl, string BasePath)
+        private static string RemoveBaseCaseInsensitive(string fullUrl, string basePath)
         {
-            int index = FullUrl.IndexOf(BasePath, StringComparison.OrdinalIgnoreCase);
+            int index = fullUrl.IndexOf(basePath, StringComparison.OrdinalIgnoreCase);
             if (index > -1)
             {
-                int start = index + BasePath.Length;
+                int start = index + basePath.Length;
 
-                return FullUrl.Substring(start);
+                return fullUrl.Substring(start);
             }
             else
             {
-                return FullUrl;
+                return fullUrl;
             }
-
         }
-         
     }
 }

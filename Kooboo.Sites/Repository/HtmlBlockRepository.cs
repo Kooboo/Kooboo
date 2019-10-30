@@ -1,18 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Contents.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Repository
 {
     public class HtmlBlockRepository : SiteRepositoryBase<HtmlBlock>
     {
-
         public override ObjectStoreParameters StoreParameters
         {
             get
@@ -26,16 +22,15 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public void AddOrUpdate(string name, Dictionary<string, string> values, Guid HtmlBlockId = default(Guid))
+        public void AddOrUpdate(string name, Dictionary<string, string> values, Guid htmlBlockId = default(Guid))
         {
-            HtmlBlock newblock = new HtmlBlock();
-            newblock.Name = name;
+            HtmlBlock newblock = new HtmlBlock {Name = name};
             foreach (var item in values)
             {
                 newblock.Values[item.Key] = item.Value;
             }
 
-            if (HtmlBlockId == default(Guid))
+            if (htmlBlockId == default(Guid))
             {
                 AddOrUpdate(newblock);
             }
@@ -47,10 +42,10 @@ namespace Kooboo.Sites.Repository
 
         public HtmlBlock Get(string nameOrId)
         {
-            return GetByNameOrId(nameOrId); 
+            return GetByNameOrId(nameOrId);
         }
 
-        public HtmlBlock GetOrAdd(string blockName, string DefaultValue, string DefaultCulture)
+        public HtmlBlock GetOrAdd(string blockName, string defaultValue, string defaultCulture)
         {
             var old = GetByNameOrId(blockName);
 
@@ -60,13 +55,11 @@ namespace Kooboo.Sites.Repository
             }
             else
             {
-                HtmlBlock block = new HtmlBlock();
-                block.Name = blockName;
-                block.SetValue(DefaultCulture, DefaultValue);
+                HtmlBlock block = new HtmlBlock {Name = blockName};
+                block.SetValue(defaultCulture, defaultValue);
                 AddOrUpdate(block);
                 return block;
             }
         }
-
     }
 }

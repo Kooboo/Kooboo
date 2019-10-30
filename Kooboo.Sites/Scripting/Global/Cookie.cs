@@ -1,17 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Scripting.Global
 {
-  
-    public class Cookie: IDictionary<string, string>
+    public class Cookie : IDictionary<string, string>
     {
         private RenderContext context { get; set; }
 
@@ -22,7 +19,7 @@ namespace Kooboo.Sites.Scripting.Global
         [Attributes.SummaryIgnore]
         public int Count => context.Request.Cookies.Count();
 
-        public int length => this.Count; 
+        public int length => this.Count;
 
         [Attributes.SummaryIgnore]
         public bool IsReadOnly => true;
@@ -33,7 +30,7 @@ namespace Kooboo.Sites.Scripting.Global
         {
             this.context = context;
         }
-         
+
         public void set(string name, string value, int days)
         {
             this.context.Response.AppendCookie(name, value, days);
@@ -43,51 +40,50 @@ namespace Kooboo.Sites.Scripting.Global
         {
             this.context.Response.AppendCookie(name, value, DateTime.Now.AddMinutes(mins));
         }
-         
+
         public void set(string name, string value)
         {
-            if(string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value))
             {
-                this.context.Response.DeleteCookie(name); 
+                this.context.Response.DeleteCookie(name);
             }
             else
             {
                 this.context.Response.AppendCookie(name, value, 1);
             }
-            
         }
 
-        public string get(string Name)
+        public string get(string name)
         {
-            if (this.context.Request.Cookies.ContainsKey(Name))
+            if (this.context.Request.Cookies.ContainsKey(name))
             {
-                return this.context.Request.Cookies[Name]; 
+                return this.context.Request.Cookies[name];
             }
-            return null; 
+            return null;
         }
 
         public bool ContainsKey(string key)
         {
-            return this.context.Request.Cookies.ContainsKey(key); 
+            return this.context.Request.Cookies.ContainsKey(key);
         }
 
         [Attributes.SummaryIgnore]
         public void Add(string key, string value)
         {
-            this.set(key, value); 
+            this.set(key, value);
         }
-         
+
         public bool Remove(string key)
         {
             this.context.Response.DeleteCookie(key);
-            return true; 
+            return true;
         }
 
         [Attributes.SummaryIgnore]
         public bool TryGetValue(string key, out string value)
         {
             value = this.get(key);
-            return true; 
+            return true;
         }
 
         [Attributes.SummaryIgnore]
@@ -100,7 +96,7 @@ namespace Kooboo.Sites.Scripting.Global
         {
             foreach (var item in this.Keys)
             {
-                this.context.Response.DeleteCookie(item); 
+                this.context.Response.DeleteCookie(item);
             }
         }
 
@@ -124,12 +120,12 @@ namespace Kooboo.Sites.Scripting.Global
 
         public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
         {
-           return this.context.Request.Cookies.GetEnumerator(); 
+            return this.context.Request.Cookies.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return this.context.Request.Cookies.GetEnumerator(); 
+            return this.context.Request.Cookies.GetEnumerator();
         }
     }
 }

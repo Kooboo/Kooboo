@@ -26,13 +26,13 @@ namespace Kooboo.Sites.Ecommerce.Repository
             }
         }
 
-        public override bool AddOrUpdate(Product product, Guid UserId = default(Guid))
+        public override bool AddOrUpdate(Product product, Guid userId = default(Guid))
         {
             if (string.IsNullOrWhiteSpace(product.UserKey))
             {
                 product.UserKey = this.GenerateUserKey(product);
             }
-            return base.AddOrUpdate(product, UserId);
+            return base.AddOrUpdate(product, userId);
         }
 
         public ProductViewModel GetView(Guid id, string lang)
@@ -221,7 +221,7 @@ namespace Kooboo.Sites.Ecommerce.Repository
         //    }
         //}
 
-        public void UpdateVariants(Guid ProductId, List<ProductVariants> variants)
+        public void UpdateVariants(Guid productId, List<ProductVariants> variants)
         {
             if (variants == null)
             {
@@ -230,13 +230,13 @@ namespace Kooboo.Sites.Ecommerce.Repository
 
             foreach (var item in variants)
             {
-                item.ProductId = ProductId;
+                item.ProductId = productId;
                 item.Id = default(Guid); // reset id.
             }
 
             var repo = this.SiteDb.GetSiteRepository<ProductVariantsRepository>();
 
-            var old = repo.ListByProductId(ProductId);
+            var old = repo.ListByProductId(productId);
 
             foreach (var item in old)
             {
@@ -252,9 +252,9 @@ namespace Kooboo.Sites.Ecommerce.Repository
             }
         }
 
-        public List<Product> GetByCategory(Guid CategoryId)
+        public List<Product> GetByCategory(Guid categoryId)
         {
-            var allcats = GetAllSubCats(CategoryId).ToList();
+            var allcats = GetAllSubCats(categoryId).ToList();
 
             var allproductcats = this.SiteDb.GetSiteRepository<ProductCategoryRepository>().List();
 
@@ -263,18 +263,18 @@ namespace Kooboo.Sites.Ecommerce.Repository
             return this.Query.WhereIn<Guid>(o => o.Id, allproductids.ToList()).SelectAll();
         }
 
-        private HashSet<Guid> GetAllSubCats(Guid Id)
+        private HashSet<Guid> GetAllSubCats(Guid id)
         {
             HashSet<Guid> result = new HashSet<Guid>();
             var all = this.SiteDb.GetSiteRepository<CategoryRepository>().All();
-            result.Add(Id);
-            SetSubs(all, Id, ref result);
+            result.Add(id);
+            SetSubs(all, id, ref result);
             return result;
         }
 
-        private void SetSubs(List<Ecommerce.Models.Category> all, Guid ParentId, ref HashSet<Guid> result)
+        private void SetSubs(List<Ecommerce.Models.Category> all, Guid parentId, ref HashSet<Guid> result)
         {
-            var subs = all.Where(o => o.ParentId == ParentId).ToList();
+            var subs = all.Where(o => o.ParentId == parentId).ToList();
             foreach (var item in subs)
             {
                 result.Add(item.Id);

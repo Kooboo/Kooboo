@@ -9,13 +9,13 @@ namespace Kooboo.Sites.Cache
 {
     public static class RouteTreeCache
     {
-        private static Dictionary<string, PathTree> _RouteTree = new Dictionary<string, PathTree>();
+        private static Dictionary<string, PathTree> _routeTree = new Dictionary<string, PathTree>();
 
         private static Dictionary<Guid, Dictionary<byte, PathTree>> SiteTypeRouteTrees = new Dictionary<Guid, Dictionary<byte, PathTree>>();
 
         private static object _object = new object();
 
-        public static PathTree RouteTree(SiteDb sitedb, byte ConstType = 0)
+        public static PathTree RouteTree(SiteDb sitedb, byte constType = 0)
         {
             lock (_object)
             {
@@ -32,25 +32,25 @@ namespace Kooboo.Sites.Cache
 
                 PathTree pathtree;
 
-                if (sitetree.ContainsKey(ConstType))
+                if (sitetree.ContainsKey(constType))
                 {
-                    pathtree = sitetree[ConstType];
+                    pathtree = sitetree[constType];
                 }
                 else
                 {
-                    pathtree = GetRouteTree(sitedb, ConstType);
-                    sitetree[ConstType] = pathtree;
+                    pathtree = GetRouteTree(sitedb, constType);
+                    sitetree[constType] = pathtree;
                 }
                 return pathtree;
             }
         }
 
-        private static PathTree GetRouteTree(SiteDb db, byte ObjectType = 0)
+        private static PathTree GetRouteTree(SiteDb db, byte objectType = 0)
         {
             var filter = db.Routes.Query;
-            if (ObjectType != 0)
+            if (objectType != 0)
             {
-                filter.Where(o => o.DestinationConstType == ObjectType);
+                filter.Where(o => o.DestinationConstType == objectType);
             }
 
             var routelist = filter.SelectAll();

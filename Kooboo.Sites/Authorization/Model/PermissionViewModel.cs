@@ -34,10 +34,10 @@ namespace Kooboo.Sites.Authorization.Model
 
         public PermissionViewModel Clone()
         {
-            PermissionViewModel result = new PermissionViewModel();
-            result.Name = this.Name;
-            result.Id = this.Id;
-            result.Selected = this.Selected;
+            PermissionViewModel result = new PermissionViewModel
+            {
+                Name = this.Name, Id = this.Id, Selected = this.Selected
+            };
 
             if (_subitems != null && _subitems.Any())
             {

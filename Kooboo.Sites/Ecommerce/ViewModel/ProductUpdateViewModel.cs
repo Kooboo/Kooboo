@@ -25,14 +25,7 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
         /// </summary>
         public Dictionary<string, Dictionary<string, string>> Values
         {
-            get
-            {
-                if (_values == null)
-                {
-                    _values = new Dictionary<string, Dictionary<string, string>>();
-                }
-                return _values;
-            }
+            get { return _values ?? (_values = new Dictionary<string, Dictionary<string, string>>()); }
             set { _values = value; }
         }
 

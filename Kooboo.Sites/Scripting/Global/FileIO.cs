@@ -198,7 +198,7 @@ namespace Kooboo.Sites.Scripting.Global
                     string name = fullfilename.Substring(lastslash + 1);
                     string fullname = fullfilename.Substring(this.RootFolder.Length + 1);
 
-                    FileInfo info = new FileInfo {Name = name, FullName = fullname};
+                    FileInfo info = new FileInfo { Name = name, FullName = fullname };
                     var iofile = new System.IO.FileInfo(fullfilename);
                     info.Size = iofile.Length;
                     info.LastModified = iofile.LastWriteTime;
@@ -236,7 +236,7 @@ namespace Kooboo.Sites.Scripting.Global
                 {
                     string fullname = item.Substring(this.RootFolder.Length + 1);
                     string name = item.Substring(folder.Length + 1);
-                    FolderInfo info = new FolderInfo {Name = name, FullName = fullname};
+                    FolderInfo info = new FolderInfo { Name = name, FullName = fullname };
                     subs.Add(info);
                 }
             }

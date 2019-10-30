@@ -1,8 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Dom;
 using System;
 using System.Collections.Generic;
-using Kooboo.Dom;
 
 namespace Kooboo.Sites.Render
 {
@@ -26,11 +26,11 @@ namespace Kooboo.Sites.Render
                 var response = new EvaluatorResponse();
                 List<IRenderTask> result = new List<IRenderTask>();
 
-                Guid OwnerObjectId = options.OwnerObjectId;
-                string KoobooId = Service.DomService.GetKoobooId(element);
-                Guid FormId = Kooboo.Data.IDGenerator.GetFormId(OwnerObjectId, KoobooId);
+                Guid ownerObjectId = options.OwnerObjectId;
+                string koobooId = Service.DomService.GetKoobooId(element);
+                Guid formId = Kooboo.Data.IDGenerator.GetFormId(ownerObjectId, koobooId);
 
-                result.Add(new FormRenderTask(element, OwnerObjectId, FormId, options));
+                result.Add(new FormRenderTask(element, ownerObjectId, formId, options));
 
                 response.ContentTask = result;
                 response.StopNextEvaluator = true;
@@ -41,16 +41,14 @@ namespace Kooboo.Sites.Render
                     string boundary = Kooboo.Lib.Helper.StringHelper.GetUniqueBoundary();
 
                     var startbinding = new BindingObjectRenderTask()
-                    { ObjectType = "form", Boundary = boundary, NameOrId = FormId.ToString() };
-                    List<IRenderTask> bindingstarts = new List<IRenderTask>();
-                    bindingstarts.Add(startbinding);
+                    { ObjectType = "form", Boundary = boundary, NameOrId = formId.ToString() };
+                    List<IRenderTask> bindingstarts = new List<IRenderTask> {startbinding};
                     response.BindingTask = bindingstarts;
 
                     var endbinding = new BindingObjectRenderTask()
-                    { ObjectType = "form", IsEndBinding = true, Boundary = boundary, NameOrId = FormId.ToString() };
+                    { ObjectType = "form", IsEndBinding = true, Boundary = boundary, NameOrId = formId.ToString() };
 
-                    List<IRenderTask> bindingends = new List<IRenderTask>();
-                    bindingends.Add(endbinding);
+                    List<IRenderTask> bindingends = new List<IRenderTask> {endbinding};
                     response.EndBindingTask = bindingends;
                 }
                 return response;
@@ -65,12 +63,7 @@ namespace Kooboo.Sites.Render
             {
                 return false;
             }
-            if (Service.DomService.IsAspNetWebForm(el))
-            {
-                return false; 
-            }
-
-            return true;  
+            return !Service.DomService.IsAspNetWebForm(el);
         }
     }
 }

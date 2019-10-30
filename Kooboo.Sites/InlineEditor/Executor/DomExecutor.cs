@@ -40,10 +40,10 @@ namespace Kooboo.Sites.InlineEditor.Executor
             }
         }
 
-        public void ExecuteObject(RenderContext context, IRepository repo, string NameOrId, List<IInlineModel> inlineupdates)
+        public void ExecuteObject(RenderContext context, IRepository repo, string nameOrId, List<IInlineModel> inlineupdates)
         {
             var updates = inlineupdates.Cast<DomModel>();
-            var koobooobject = repo.GetByNameOrId(NameOrId);
+            var koobooobject = repo.GetByNameOrId(nameOrId);
 
             if (koobooobject != null)
             {
@@ -53,12 +53,12 @@ namespace Kooboo.Sites.InlineEditor.Executor
                 {
                     if (!string.IsNullOrEmpty(item.KoobooId))
                     {
-                        InlineSourceUpdate oneupdate = new InlineSourceUpdate();
-                        oneupdate.KoobooId = item.KoobooId;
-                        oneupdate.AttributeName = item.AttributeName;
-                        oneupdate.Value = item.Value;
+                        InlineSourceUpdate oneupdate = new InlineSourceUpdate
+                        {
+                            KoobooId = item.KoobooId, AttributeName = item.AttributeName, Value = item.Value
+                        };
 
-                        if (item.Action != null && item.Action.ToString().ToLower() == "delete")
+                        if (item.Action.ToString().ToLower() == "delete")
                         {
                             oneupdate.IsDelete = true;
                         }
@@ -66,10 +66,8 @@ namespace Kooboo.Sites.InlineEditor.Executor
                     }
                 }
 
-                if (koobooobject is IDomObject && sourceupdates.Count() > 0)
+                if (koobooobject is IDomObject domobject && sourceupdates.Any())
                 {
-                    var domobject = koobooobject as IDomObject;
-
                     Page savepage = null;
                     if (repo.ModelType == typeof(Page))
                     {
@@ -80,11 +78,13 @@ namespace Kooboo.Sites.InlineEditor.Executor
                     repo.AddOrUpdate(domobject, context.User.Id);
                     if (savepage != null)
                     {
-                        var updateothers = new UpdateSamePage();
-                        updateothers.sitedb = context.WebSite.SiteDb();
-                        updateothers.updates = sourceupdates;
-                        updateothers.CurrentPage = savepage;
-                        updateothers.UserId = context.User.Id;
+                        var updateothers = new UpdateSamePage
+                        {
+                            sitedb = context.WebSite.SiteDb(),
+                            updates = sourceupdates,
+                            CurrentPage = savepage,
+                            UserId = context.User.Id
+                        };
                         System.Threading.Tasks.Task.Factory.StartNew(updateothers.Execute);
                     }
                 }
@@ -123,7 +123,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
                     }
                 }
 
-                if (itemupdates.Count() > 0)
+                if (itemupdates.Any())
                 {
                     item.Body = UpdateHelper.Update(item.Body, itemupdates);
                     sitedb.Pages.AddOrUpdate(item);

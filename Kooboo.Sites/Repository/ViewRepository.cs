@@ -1,55 +1,52 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.IndexedDB;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Extensions;
-using Kooboo.IndexedDB;
 
 namespace Kooboo.Sites.Repository
 {
-   public class ViewRepository : SiteRepositoryBase<View>
+    public class ViewRepository : SiteRepositoryBase<View>
     {
         public override ObjectStoreParameters StoreParameters
         {
             get
             {
-                var para = new ObjectStoreParameters(); 
+                var para = new ObjectStoreParameters();
                 para.AddColumn("Name", 100);
                 para.AddColumn<View>(o => o.LastModified);
-                para.AddColumn<View>(o => o.ModuleId); 
+                para.AddColumn<View>(o => o.ModuleId);
                 para.SetPrimaryKeyField<View>(o => o.Id);
                 return para;
             }
         }
 
-        public  void UpdateDataSources( Guid ViewId, IEnumerable<ViewDataMethod> ViewDataMethods, Guid UserId = default(Guid))
+        public void UpdateDataSources(Guid viewId, IEnumerable<ViewDataMethod> viewDataMethods, Guid userId = default(Guid))
         {
-            foreach (var item in ViewDataMethods)
+            foreach (var item in viewDataMethods)
             {
-                item.ViewId = ViewId; 
+                item.ViewId = viewId;
             }
 
-            var oldlist = this.SiteDb.ViewDataMethods.Query.Where(o => o.ViewId == ViewId).SelectAll();
+            var oldlist = this.SiteDb.ViewDataMethods.Query.Where(o => o.ViewId == viewId).SelectAll();
 
             var oldguidlist = oldlist.Select(o => o.Id).ToList();
 
-            var newguidlist = ViewDataMethods.Select(o => o.Id).ToList();
+            var newguidlist = viewDataMethods.Select(o => o.Id).ToList();
 
             foreach (var item in oldguidlist)
             {
                 if (!newguidlist.Contains(item))
                 {
-                   this.SiteDb.ViewDataMethods.Delete(item, UserId);
+                    this.SiteDb.ViewDataMethods.Delete(item, userId);
                 }
-            } 
-            foreach (var item in ViewDataMethods)
-            { 
-                this.SiteDb.ViewDataMethods.AddOrUpdate(item, UserId);
-            } 
+            }
+            foreach (var item in viewDataMethods)
+            {
+                this.SiteDb.ViewDataMethods.AddOrUpdate(item, userId);
+            }
         }
     }
 }

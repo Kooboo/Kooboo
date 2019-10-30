@@ -1,13 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
-using Kooboo.Sites.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Kooboo.Sites.Contents.Models;
 
 namespace Kooboo.Sites.Scripting.Global.SiteItem
 {
@@ -28,8 +27,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             List<MultilingualObject> result = new List<MultilingualObject>();
             foreach (var item in this.repo.All())
             {
-                var siteobjct = item as Kooboo.Sites.Contents.Models.MultipleLanguageObject;
-                if (siteobjct != null)
+                if (item is MultipleLanguageObject siteobjct)
                 {
                     var model = new MultilingualObject(siteobjct, this.context);
                     result.Add(model);
@@ -38,25 +36,20 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             return result;
         }
 
-        public virtual void Update(object SiteObject)
+        public virtual void Update(object siteObject)
         {
-
-            if (SiteObject is MultilingualObject)
+            if (siteObject is MultilingualObject multi)
             {
                 var result = Activator.CreateInstance(this.repo.ModelType) as Kooboo.Sites.Contents.Models.MultipleLanguageObject;
-
-                var multi = SiteObject as MultilingualObject;
 
                 result.Name = multi.Name;
                 result.Values = multi.Values;
 
                 this.repo.AddOrUpdate(result);
-
             }
             else
             {
-
-                var data = this.GetData(SiteObject);
+                var data = this.GetData(siteObject);
 
                 if (data == null || !data.Any())
                 {
@@ -82,17 +75,15 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                     }
                 }
                 this.repo.AddOrUpdate(result);
-
             }
-
         }
 
         public virtual MultilingualObject Get(object nameOrId)
         {
             var item = this.repo.GetByNameOrId(nameOrId.ToString());
-            if (item != null && item is Kooboo.Sites.Contents.Models.MultipleLanguageObject)
+            if (item != null && item is MultipleLanguageObject languageObject)
             {
-                return new MultilingualObject(item as Contents.Models.MultipleLanguageObject, this.context);
+                return new MultilingualObject(languageObject, this.context);
             }
             return null;
         }
@@ -106,9 +97,9 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
         }
 
-        public virtual void Add(object SiteObject)
+        public virtual void Add(object siteObject)
         {
-            var data = this.GetData(SiteObject);
+            var data = this.GetData(siteObject);
 
             var result = Activator.CreateInstance(this.repo.ModelType) as Kooboo.Sites.Contents.Models.MultipleLanguageObject;
 
@@ -127,20 +118,16 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 {
                     result.SetValue(item.Key, item.Value);
                 }
-
             }
 
             this.repo.AddOrUpdate(result);
         }
 
-
         internal Dictionary<string, object> GetData(object dataobj)
         {
             Dictionary<string, object> data = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
-            System.Collections.IDictionary idict = dataobj as System.Collections.IDictionary;
-
-            if (idict != null)
+            if (dataobj is IDictionary idict)
             {
                 foreach (var item in idict.Keys)
                 {
@@ -153,8 +140,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
             else
             {
-                var dynamicobj = dataobj as IDictionary<string, object>;
-                if (dynamicobj != null)
+                if (dataobj is IDictionary<string, object> dynamicobj)
                 {
                     foreach (var item in dynamicobj.Keys)
                     {
@@ -169,13 +155,5 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
             return data;
         }
-
-
-        
-
-
-
-
-
     }
 }

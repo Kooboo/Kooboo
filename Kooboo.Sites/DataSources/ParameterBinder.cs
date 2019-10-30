@@ -10,51 +10,47 @@ namespace Kooboo.Sites.DataSources
 {
     public static class ParameterBinder
     {
-        public static List<object> Bind(Dictionary<string, string> Parameters, Dictionary<string, ParameterBinding> Bindings, DataContext dataContext)
+        public static List<object> Bind(Dictionary<string, string> parameters, Dictionary<string, ParameterBinding> bindings, DataContext dataContext)
         {
             List<object> paras = new List<object>();
 
-            foreach (var item in Parameters)
+            foreach (var item in parameters)
             {
-                object value = GetValueByObjectAndProperty(item.Key, item.Value, Parameters, Bindings, dataContext);
+                object value = GetValueByObjectAndProperty(item.Key, item.Value, parameters, bindings, dataContext);
                 paras.Add(value);
             }
             return paras;
         }
 
-        public static Dictionary<string, object> BindKScript(Dictionary<string, string> Parameters, Dictionary<string, ParameterBinding> Bindings, DataContext dataContext)
+        public static Dictionary<string, object> BindKScript(Dictionary<string, string> parameters, Dictionary<string, ParameterBinding> bindings, DataContext dataContext)
         {
             Dictionary<string, object> paras = new Dictionary<string, object>();
 
-            foreach (var item in Parameters)
+            foreach (var item in parameters)
             {
-                var type = item.Value;
-                if (type == null)
-                {
-                    type = typeof(string).FullName;
-                }
-                object value = GetValueByObjectAndProperty(item.Key, type, Parameters, Bindings, dataContext);
+                var type = item.Value ?? typeof(string).FullName;
+                object value = GetValueByObjectAndProperty(item.Key, type, parameters, bindings, dataContext);
                 paras.Add(item.Key, value);
             }
             return paras;
         }
 
-        private static object GetValueByObjectAndProperty(string ParentKey, string ParentType, Dictionary<string, string> Parameters, Dictionary<string, ParameterBinding> Bindings, DataContext dataContext)
+        private static object GetValueByObjectAndProperty(string parentKey, string parentType, Dictionary<string, string> parameters, Dictionary<string, ParameterBinding> bindings, DataContext dataContext)
         {
-            Type returntype = Data.TypeCache.GetType(ParentType);
+            Type returntype = Data.TypeCache.GetType(parentType);
 
-            if (Bindings.ContainsKey(ParentKey))
+            if (bindings.ContainsKey(parentKey))
             {
-                var binding = Bindings[ParentKey];
+                var binding = bindings[parentKey];
                 string key = binding.Binding;
 
                 if (binding.IsCollection)
                 {
-                    return BindList(ParentKey, ParentType, Parameters, Bindings, dataContext);
+                    return BindList(parentKey, parentType, parameters, bindings, dataContext);
                 }
                 else if (binding.IsDictionary)
                 {
-                    return BindDictionary(ParentKey, ParentType, Parameters, Bindings, dataContext);
+                    return BindDictionary(parentKey, parentType, parameters, bindings, dataContext);
                 }
 
                 if (!string.IsNullOrWhiteSpace(key))
@@ -65,7 +61,7 @@ namespace Kooboo.Sites.DataSources
                     }
 
                     key = GetBindingKey(key);
-                    object value = GetValue(key, ParentType, dataContext);
+                    object value = GetValue(key, parentType, dataContext);
 
                     if (value != null && !IsValueBinding(value.ToString()))
                     {
@@ -74,7 +70,7 @@ namespace Kooboo.Sites.DataSources
                 }
             }
 
-            var subs = GetSubPropertyBindings(ParentKey, Bindings);
+            var subs = GetSubPropertyBindings(parentKey, bindings);
             if (subs.Count > 0)
             {
                 object instance = Activator.CreateInstance(returntype);
@@ -82,11 +78,11 @@ namespace Kooboo.Sites.DataSources
 
                 foreach (var item in subs)
                 {
-                    object subvalue = GetValueByObjectAndProperty(item.Key, item.Value.FullTypeName, Parameters, Bindings, dataContext);
+                    object subvalue = GetValueByObjectAndProperty(item.Key, item.Value.FullTypeName, parameters, bindings, dataContext);
                     if (subvalue != null)
                     {
-                        string FieldName = item.Key.Substring(ParentKey.Length + 1);
-                        var setvalue = Data.TypeCache.GetSetValue(ParentType, returntype, FieldName);
+                        string fieldName = item.Key.Substring(parentKey.Length + 1);
+                        var setvalue = Data.TypeCache.GetSetValue(parentType, returntype, fieldName);
                         if (setvalue != null)
                         {
                             setvalue(instance, subvalue);
@@ -102,30 +98,29 @@ namespace Kooboo.Sites.DataSources
             return null;
         }
 
-        private static object BindDictionary(string ParentKey, string ParentType, Dictionary<string, string> Parameters, Dictionary<string, ParameterBinding> Bindings, DataContext dataContext)
+        private static object BindDictionary(string parentKey, string parentType, Dictionary<string, string> parameters, Dictionary<string, ParameterBinding> bindings, DataContext dataContext)
         {
-            ParameterBinding binding;
-            if (!Bindings.TryGetValue(ParentKey, out binding))
+            if (!bindings.TryGetValue(parentKey, out var binding))
             {
                 return null;
             }
 
-            string BindingString = binding.Binding;
-            if (string.IsNullOrWhiteSpace(BindingString))
+            string bindingString = binding.Binding;
+            if (string.IsNullOrWhiteSpace(bindingString))
             {
                 return null;
             }
 
-            Type DictType = Data.TypeCache.GetType(ParentType);
-            Type KeyType = Data.TypeCache.GetType(binding.KeyType);
-            Type ValueType = Data.TypeCache.GetType(binding.ValueType);
+            Type dictType = Data.TypeCache.GetType(parentType);
+            Type keyType = Data.TypeCache.GetType(binding.KeyType);
+            Type valueType = Data.TypeCache.GetType(binding.ValueType);
 
             // try... jsonbinding first.
             Dictionary<string, string> dictjson = null;
 
             try
             {
-                dictjson = Lib.Helper.JsonHelper.Deserialize<Dictionary<string, string>>(BindingString);
+                dictjson = Lib.Helper.JsonHelper.Deserialize<Dictionary<string, string>>(bindingString);
             }
             catch (Exception)
             {
@@ -134,50 +129,36 @@ namespace Kooboo.Sites.DataSources
 
             if (dictjson != null)
             {
-                var dict = Activator.CreateInstance(DictType) as System.Collections.IDictionary;
+                var dict = Activator.CreateInstance(dictType) as System.Collections.IDictionary;
 
-                Dictionary<string, object> RightValues = new Dictionary<string, object>();
+                Dictionary<string, object> rightValues = new Dictionary<string, object>();
 
                 foreach (var item in dictjson)
                 {
-                    string ValueExpression = item.Value;
+                    string valueExpression = item.Value;
                     object valueback;
-                    if (ValueExpression.Contains("{"))
-                    {
-                        valueback = GetValue(ValueExpression, binding.ValueType, dataContext);
-                    }
-                    else
-                    {
-                        valueback = ValueExpression;
-                    }
+                    valueback = valueExpression.Contains("{") ? GetValue(valueExpression, binding.ValueType, dataContext) : valueExpression;
 
-                    string KeyExpression = item.Key;
-                    object KeyBack;
-                    if (KeyExpression.Contains("{"))
-                    {
-                        KeyBack = GetValue(KeyExpression, binding.KeyType, dataContext);
-                    }
-                    else
-                    {
-                        KeyBack = KeyExpression;
-                    }
+                    string keyExpression = item.Key;
+                    object keyBack;
+                    keyBack = keyExpression.Contains("{") ? GetValue(keyExpression, binding.KeyType, dataContext) : keyExpression;
 
-                    RightValues.Add(item.Key, valueback);
+                    rightValues.Add(item.Key, valueback);
                 }
 
-                foreach (var item in RightValues)
+                foreach (var item in rightValues)
                 {
-                    object key = TypeHelper.ChangeType(item.Key, KeyType);
-                    object value = TypeHelper.ChangeType(item.Value, ValueType);
-                    dict.Add(key, value);
+                    object key = TypeHelper.ChangeType(item.Key, keyType);
+                    object value = TypeHelper.ChangeType(item.Value, valueType);
+                    dict?.Add(key, value);
                 }
                 return dict;
             }
             else
             {
-                string key = GetBindingKey(BindingString);
+                string key = GetBindingKey(bindingString);
                 var valueback = GetValue(key, binding.FullTypeName, dataContext);
-                if (valueback != null && valueback.GetType() == DictType)
+                if (valueback != null && valueback.GetType() == dictType)
                 {
                     return valueback;
                 }
@@ -186,53 +167,58 @@ namespace Kooboo.Sites.DataSources
             return null;
         }
 
-        private static object BindList(string ParentKey, string ParentType, Dictionary<string, string> Parameters, Dictionary<string, ParameterBinding> Bindings, DataContext dataContext)
+        private static object BindList(string parentKey, string parentType, Dictionary<string, string> parameters, Dictionary<string, ParameterBinding> bindings, DataContext dataContext)
         {
             ParameterBinding binding;
-            if (!Bindings.TryGetValue(ParentKey, out binding))
+            if (!bindings.TryGetValue(parentKey, out binding))
             {
                 return null;
             }
 
-            string BindingString = binding.Binding;
-            if (string.IsNullOrWhiteSpace(BindingString))
+            string bindingString = binding.Binding;
+            if (string.IsNullOrWhiteSpace(bindingString))
             {
                 return null;
             }
 
             Type keytype = Data.TypeCache.GetType(binding.KeyType);
-            Type collectiontype = Data.TypeCache.GetType(ParentType);
+            Type collectiontype = Data.TypeCache.GetType(parentType);
 
             try
             {
-                var value = Lib.Helper.JsonHelper.Deserialize(BindingString, collectiontype);
+                var value = Lib.Helper.JsonHelper.Deserialize(bindingString, collectiontype);
                 if (value != null)
                 {
                     var list = value as System.Collections.IList;
-                    var count = list.Count;
-                    for (int i = 0; i < count; i++)
+                    if (list != null)
                     {
-                        var item = list[i];
-                        if (item != null)
+                        var count = list.Count;
+                        for (int i = 0; i < count; i++)
                         {
-                            object KeyBack;
-                            string stritem = item.ToString();
-                            if (IsValueBinding(stritem))
+                            var item = list[i];
+                            if (item != null)
                             {
-                                string key = GetBindingKey(stritem);
-                                KeyBack = GetValue(key, binding.KeyType, dataContext);
-                                list[i] = TypeHelper.ChangeType(KeyBack, keytype);
+                                object KeyBack;
+                                string stritem = item.ToString();
+                                if (IsValueBinding(stritem))
+                                {
+                                    string key = GetBindingKey(stritem);
+                                    KeyBack = GetValue(key, binding.KeyType, dataContext);
+                                    list[i] = TypeHelper.ChangeType(KeyBack, keytype);
+                                }
                             }
                         }
                     }
+
                     return list;
                 }
             }
             catch (Exception)
             {
+                // ignored
             }
 
-            string bkey = GetBindingKey(BindingString);
+            string bkey = GetBindingKey(bindingString);
             var valueback = GetValue(bkey, binding.FullTypeName, dataContext);
             if (valueback != null && valueback.GetType() == collectiontype)
             {
@@ -243,15 +229,15 @@ namespace Kooboo.Sites.DataSources
         }
 
         // Get the one level down property of current type...
-        private static Dictionary<string, ParameterBinding> GetSubPropertyBindings(string ParentKey, Dictionary<string, ParameterBinding> Bindings)
+        private static Dictionary<string, ParameterBinding> GetSubPropertyBindings(string parentKey, Dictionary<string, ParameterBinding> bindings)
         {
-            string Prefix = ParentKey + ".";
+            string prefix = parentKey + ".";
             Dictionary<string, ParameterBinding> subs = new Dictionary<string, ParameterBinding>();
-            foreach (var item in Bindings)
+            foreach (var item in bindings)
             {
-                if (item.Key.StartsWith(Prefix))
+                if (item.Key.StartsWith(prefix))
                 {
-                    string left = item.Key.Substring(Prefix.Length);
+                    string left = item.Key.Substring(prefix.Length);
                     if (!left.Contains("."))
                     {
                         subs.Add(item.Key, item.Value);
@@ -261,14 +247,14 @@ namespace Kooboo.Sites.DataSources
             return subs;
         }
 
-        public static string GetBindingKey(string BindingString)
+        public static string GetBindingKey(string bindingString)
         {
-            int start = BindingString.IndexOf("{");
-            int end = BindingString.IndexOf("}");
+            int start = bindingString.IndexOf("{");
+            int end = bindingString.IndexOf("}");
 
             if (end > start && start > -1)
             {
-                return BindingString.Substring(start + 1, end - start - 1);
+                return bindingString.Substring(start + 1, end - start - 1);
             }
             return string.Empty;
         }
@@ -282,37 +268,33 @@ namespace Kooboo.Sites.DataSources
             return input.Contains("{") && input.Contains("}");
         }
 
-        private static object GetValue(string Key, string ObjectTypeName, DataContext dataContext)
+        private static object GetValue(string key, string objectTypeName, DataContext dataContext)
         {
-            object value = dataContext.GetValue(Key);
+            object value = dataContext.GetValue(key) ?? GetValueByObjectType(key, objectTypeName, dataContext);
             if (value == null)
             {
-                value = GetValueByObjectType(Key, ObjectTypeName, dataContext);
-            }
-            if (value == null)
-            {
-                string subkey = GetSubKey(Key);
+                string subkey = GetSubKey(key);
                 if (!string.IsNullOrEmpty(subkey))
                 {
-                    value = GetValue(subkey, ObjectTypeName, dataContext);
+                    value = GetValue(subkey, objectTypeName, dataContext);
                 }
             }
             return value;
         }
 
-        private static object GetValueByObjectType(string OriginalKey, string KeyTypeName, DataContext dataContext)
+        private static object GetValueByObjectType(string originalKey, string keyTypeName, DataContext dataContext)
         {
-            int firstdot = OriginalKey.IndexOf(".");
+            int firstdot = originalKey.IndexOf(".");
             if (firstdot > 0)
             {
-                Type type = Data.TypeCache.GetType(KeyTypeName);
+                Type type = Data.TypeCache.GetType(keyTypeName);
                 if (type.IsClass && type != typeof(string))
                 {
-                    string TypeName = type.Name;
-                    string prefixkey = OriginalKey.Substring(0, firstdot);
-                    if (TypeName.ToLower() != prefixkey.ToLower())
+                    string typeName = type.Name;
+                    string prefixkey = originalKey.Substring(0, firstdot);
+                    if (typeName.ToLower() != prefixkey.ToLower())
                     {
-                        string newkey = TypeName + "." + OriginalKey.Substring(firstdot + 1);
+                        string newkey = typeName + "." + originalKey.Substring(firstdot + 1);
                         var value = dataContext.GetValueByObjectType(newkey);
                         if (value != null)
                         {
@@ -323,11 +305,11 @@ namespace Kooboo.Sites.DataSources
             }
             else
             {
-                Type type = Data.TypeCache.GetType(KeyTypeName);
+                Type type = Data.TypeCache.GetType(keyTypeName);
                 if (type.IsClass && type != typeof(string))
                 {
-                    string TypeName = type.Name;
-                    var value = dataContext.GetValueByObjectType(TypeName);
+                    string typeName = type.Name;
+                    var value = dataContext.GetValueByObjectType(typeName);
                     if (value != null)
                     {
                         return value;
@@ -351,32 +333,32 @@ namespace Kooboo.Sites.DataSources
                 }
             }
 
-            bool HasLower = false;
-            bool HasUpperAgain = false;
+            bool hasLower = false;
+            bool hasUpperAgain = false;
 
             int currentindex = 0;
             while (currentindex < key.Length)
             {
                 var currentchar = key[currentindex];
-                if (!HasLower)
+                if (!hasLower)
                 {
                     if (Kooboo.Lib.Helper.CharHelper.isLowercaseAscii(currentchar))
                     {
-                        HasLower = true;
+                        hasLower = true;
                     }
                 }
                 else
                 {
                     if (Kooboo.Lib.Helper.CharHelper.isUppercaseAscii(currentchar))
                     {
-                        HasUpperAgain = true;
+                        hasUpperAgain = true;
                         break;
                     }
                 }
                 currentindex += 1;
             }
 
-            if (HasUpperAgain && currentindex < key.Length)
+            if (hasUpperAgain && currentindex < key.Length)
             {
                 string sub = key.Substring(currentindex);
                 return sub;

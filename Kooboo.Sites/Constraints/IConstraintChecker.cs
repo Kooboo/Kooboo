@@ -10,19 +10,19 @@ namespace Kooboo.Sites.Constraints
     {
         /// <summary>
         /// </summary>
-        /// <param name="SiteDb"></param>
-        /// <param name="SiteObject"></param>
-        /// <param name="Language">This is only used by text content language</param>
-        void Fix(SiteDb SiteDb, T SiteObject, string Language = null);
+        /// <param name="siteDb"></param>
+        /// <param name="siteObject"></param>
+        /// <param name="language">This is only used by text content language</param>
+        void Fix(SiteDb siteDb, T siteObject, string language = null);
 
         /// <summary>
         /// verify and return the error messages.
         /// </summary>
-        /// <param name="SiteDb"></param>
-        /// <param name="SiteObjectg"></param>
-        /// <param name="Language"></param>
+        /// <param name="siteDb"></param>
+        /// <param name="siteObject"></param>
+        /// <param name="language"></param>
         /// <returns></returns>
-        List<ConstraintResponse> Check(SiteDb SiteDb, T SiteObject, string Language = null);
+        List<ConstraintResponse> Check(SiteDb siteDb, T siteObject, string language = null);
 
         bool HasFix { get; }
 

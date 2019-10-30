@@ -5,6 +5,7 @@ using Kooboo.Lib.Reflection;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
+using Kooboo.Data.Interface;
 
 namespace Kooboo.Sites.HtmlForm
 {
@@ -19,8 +20,7 @@ namespace Kooboo.Sites.HtmlForm
 
             foreach (var item in types)
             {
-                var instance = Activator.CreateInstance(item) as Data.Interface.IFormSubmitter;
-                if (instance != null)
+                if (Activator.CreateInstance(item) is IFormSubmitter instance)
                 {
                     List.Add(instance);
                 }

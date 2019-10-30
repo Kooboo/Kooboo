@@ -1,29 +1,22 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Scripting.Helper;
 using System.IO;
-using System.Xml;
+using System.Text;
 using System.Xml.Serialization;
 
 namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
 {
     public class ScriptHelperReader
     {
+        public static Dictionary<string, SettingBase> Settings { get; set; }
 
-        public static Dictionary<string,SettingBase> Settings { get; set; }
-
-        
         public static Tree GetTree()
         {
             Settings = ReadSettings();
-         
-            var tree = new Tree();
-            tree.Nodes = new List<Node>();
+
+            var tree = new Tree {Nodes = new List<Node>()};
 
             var rootName = DocumentHelper.RootName;
             if (Settings.ContainsKey(rootName))
@@ -31,13 +24,13 @@ namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
                 var setting = Settings[rootName];
                 if (setting != null)
                 {
-                    var node = new Node()
+                    var node = new Node
                     {
-                        ShowName= rootName,
+                        ShowName = rootName,
                         setting = setting,
-                        Url=DocumentHelper.GetTypeUrl(rootName)
+                        Url = DocumentHelper.GetTypeUrl(rootName),
+                        Nodes = new List<Node>()
                     };
-                    node.Nodes = new List<Node>();
                     var kscriptSetting = setting as KScriptSetting;
 
                     foreach (var prop in kscriptSetting.Props)
@@ -50,11 +43,11 @@ namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
                         };
                         if (prop.Childrens.Count > 0)
                         {
-                            foreach(var child in prop.Childrens)
+                            foreach (var child in prop.Childrens)
                             {
                                 childNode.Nodes = new List<Node>();
                                 var childSetting = Settings[child.ToLower()];
-                                if(childSetting!=null)
+                                if (childSetting != null)
                                 {
                                     childNode.Nodes.Add(new Node()
                                     {
@@ -63,12 +56,9 @@ namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
                                         Url = DocumentHelper.GetTypeUrl(child)
                                     });
                                 }
-                                
                             }
-                            
                         }
                         node.Nodes.Add(childNode);
-
                     }
 
                     foreach (var method in kscriptSetting.Methods)
@@ -83,19 +73,18 @@ namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
                         {
                             ShowName = method.Name,
                             setting = method,
-                            Url=DocumentHelper.GetMethodUrl("k",method.Name, paramBuilder.ToString())
+                            Url = DocumentHelper.GetMethodUrl("k", method.Name, paramBuilder.ToString())
                         });
                     }
-                    
+
                     tree.Nodes.Add(node);
                 }
-                
             }
-            
+
             return tree;
         }
 
-        private static Dictionary<string,SettingBase> ReadSettings()
+        private static Dictionary<string, SettingBase> ReadSettings()
         {
             //XmlSerializer serializer = new XmlSerializer(typeof(KScriptSetting));
 
@@ -103,32 +92,31 @@ namespace Kooboo.Sites.Scripting.Helper.ScriptHelper
 XmlSerializer.FromTypes(new[] { typeof(KScriptSetting) })[0];
 
             var path = GetPath();
-            var settings = new Dictionary<string,SettingBase>();
+            var settings = new Dictionary<string, SettingBase>();
             var files = Directory.GetFiles(path);
             for (var i = 0; i < files.Length; i++)
             {
                 var file = files[i];
                 var reader = new StreamReader(file);
                 try
-                {  
+                {
                     KScriptSetting setting = serializer.Deserialize(reader) as KScriptSetting;
 
                     var fileName = Path.GetFileNameWithoutExtension(file).ToLower();
                     settings.Add(fileName, setting);
                 }
-                catch(Exception ex)
+                catch (Exception)
                 {
-
+                    // ignored
                 }
                 finally
                 {
                     reader.Close();
                 }
-
             }
             return settings;
-
         }
+
         public static string GetPath()
         {
             var path = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.CombinePath(Kooboo.Data.AppSettings.RootPath, @"_Admin\help\kScript");

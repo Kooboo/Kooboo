@@ -1,16 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Models;
 using Kooboo.IndexedDB;
+using Kooboo.Sites.Models;
 
 namespace Kooboo.Sites.Repository
 {
-   public class NotificationRepository : SiteRepositoryBase<Notification>
+    public class NotificationRepository : SiteRepositoryBase<Notification>
     {
         public override ObjectStoreParameters StoreParameters
         {

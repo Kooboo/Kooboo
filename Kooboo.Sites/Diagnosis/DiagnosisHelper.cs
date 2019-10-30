@@ -40,8 +40,7 @@ namespace Kooboo.Sites.Diagnosis
 
         public static string DisplayUsedBy(RenderContext context, Kooboo.Sites.Models.SiteObject usedObject)
         {
-            List<SiteObject> models = new List<SiteObject>();
-            models.Add(usedObject);
+            List<SiteObject> models = new List<SiteObject> {usedObject};
             return DisplayUsedBy(context, models);
         }
 

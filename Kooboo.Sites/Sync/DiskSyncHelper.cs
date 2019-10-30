@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Interface;
 using Kooboo.Lib.Helper;
@@ -8,80 +8,76 @@ using System.Collections.Generic;
 
 namespace Kooboo.Sites.Sync
 {
- public static   class DiskSyncHelper
-    { 
+    public static class DiskSyncHelper
+    {
         static DiskSyncHelper()
         {
             _locker = new object();
-            ManagerCache = new Dictionary<Guid, DiskSyncManager>(); 
+            ManagerCache = new Dictionary<Guid, DiskSyncManager>();
         }
 
         private static object _locker { get; set; }
 
         private static Dictionary<Guid, DiskSyncManager> ManagerCache { get; set; }
-        
-        public static DiskSyncManager GetSyncManager(Guid WebSiteId)
+
+        public static DiskSyncManager GetSyncManager(Guid webSiteId)
         {
-            if (!ManagerCache.ContainsKey(WebSiteId))
+            if (!ManagerCache.ContainsKey(webSiteId))
             {
-                lock(_locker)
+                lock (_locker)
                 {
-                    if (!ManagerCache.ContainsKey(WebSiteId))
+                    if (!ManagerCache.ContainsKey(webSiteId))
                     {
-                        var newmanager = new DiskSyncManager(WebSiteId);
-                        ManagerCache[WebSiteId] = newmanager; 
+                        var newmanager = new DiskSyncManager(webSiteId);
+                        ManagerCache[webSiteId] = newmanager;
                     }
                 }
-            } 
-            return ManagerCache[WebSiteId]; 
+            }
+            return ManagerCache[webSiteId];
         }
 
-        public static void RemoveDiskSyncManager(Guid WebSiteId)
+        public static void RemoveDiskSyncManager(Guid webSiteId)
         {
-            lock(_locker)
+            lock (_locker)
             {
-                ManagerCache.Remove(WebSiteId); 
+                ManagerCache.Remove(webSiteId);
             }
         }
 
-        public static string SyncToDisk(SiteDb SiteDb, ISiteObject Value, ChangeType ChangeType, string StoreName)
+        public static string SyncToDisk(SiteDb siteDb, ISiteObject value, ChangeType changeType, string storeName)
         {
-            var manager = GetSyncManager(SiteDb.WebSite.Id);
-            return  manager.SyncToDisk(SiteDb, Value, ChangeType, StoreName); 
-        } 
+            var manager = GetSyncManager(siteDb.WebSite.Id);
+            return manager.SyncToDisk(siteDb, value, changeType, storeName);
+        }
 
-        public static void ChangeRoute(SiteDb SiteDb, string OldRelative, string NewRelative)
+        public static void ChangeRoute(SiteDb siteDb, string oldRelative, string newRelative)
         {
-            if (SiteDb.WebSite.EnableDiskSync)
+            if (siteDb.WebSite.EnableDiskSync)
             {
-                var OldFullPath = DiskPathService.GetFullDiskPath(SiteDb.WebSite, OldRelative);
+                var oldFullPath = DiskPathService.GetFullDiskPath(siteDb.WebSite, oldRelative);
 
-                var NewFullPath = DiskPathService.GetFullDiskPath(SiteDb.WebSite, NewRelative);
-                
-                if (System.IO.File.Exists(OldFullPath) && !System.IO.File.Exists(NewFullPath))
-                { 
-                    var manager = GetSyncManager(SiteDb.WebSite.Id); 
-                    IOHelper.EnsureFileDirectoryExists(NewFullPath);
+                var newFullPath = DiskPathService.GetFullDiskPath(siteDb.WebSite, newRelative);
 
+                if (System.IO.File.Exists(oldFullPath) && !System.IO.File.Exists(newFullPath))
+                {
+                    var manager = GetSyncManager(siteDb.WebSite.Id);
+                    IOHelper.EnsureFileDirectoryExists(newFullPath);
 
-                    var allbytes = Lib.Helper.IOHelper.ReadAllBytes(OldFullPath);
+                    var allbytes = Lib.Helper.IOHelper.ReadAllBytes(oldFullPath);
 
-                    manager.SyncMediator.AbsoluteLock(NewFullPath);
+                    manager.SyncMediator.AbsoluteLock(newFullPath);
 
-                    manager.WriteBytes(NewFullPath, allbytes);
+                    manager.WriteBytes(newFullPath, allbytes);
 
-                    manager.SyncMediator.LockDisk3Seconds(NewFullPath);
-                    manager.SyncMediator.ReleaseAbsoluteLock(NewFullPath);
+                    manager.SyncMediator.LockDisk3Seconds(newFullPath);
+                    manager.SyncMediator.ReleaseAbsoluteLock(newFullPath);
 
-                                                        
+                    manager.SyncMediator.AbsoluteLock(oldFullPath);
 
-                    manager.SyncMediator.AbsoluteLock(OldFullPath);
+                    System.IO.File.Delete(oldFullPath);
 
-                    System.IO.File.Delete(OldFullPath);
-
-                    manager.SyncMediator.LockDisk3Seconds(OldFullPath);
-                    manager.SyncMediator.ReleaseAbsoluteLock(OldFullPath);    
-                                                     
+                    manager.SyncMediator.LockDisk3Seconds(oldFullPath);
+                    manager.SyncMediator.ReleaseAbsoluteLock(oldFullPath);
                 }
             }
         }

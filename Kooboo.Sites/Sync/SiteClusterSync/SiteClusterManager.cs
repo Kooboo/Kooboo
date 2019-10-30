@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Interface;
 using Kooboo.IndexedDB;
@@ -19,15 +19,15 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
         private SiteDb SiteDb { get; set; }
 
         private IByteConverter<Guid> KeyConverter { get; set; } = ObjectContainer.GetConverter<Guid>();
-          
-        public ControlFlow Control { get; set; } = new ControlFlow(); 
-         
+
+        public ControlFlow Control { get; set; } = new ControlFlow();
+
         private object _queuelocker = new object();
 
         private object _locktask = new object();
         public bool IsRunning { get; set; } = false;
 
-        private bool ShouldNotifyDns = false;
+        private bool _shouldNotifyDns = false;
 
         public SiteClusterManager(SiteDb sitedb)
         {
@@ -36,15 +36,15 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
 
         public SortedSet<PushTask> PushQueue { get; set; } = new SortedSet<PushTask>();
 
-        // Add from SiteRepositoryBase Event.... 
+        // Add from SiteRepositoryBase Event....
         public void AddTask(IRepository repo, ISiteObject value, ChangeType changetype)
         {
             if (repo == null || value == null)
             {
                 return;
             }
-            var core = value as ICoreObject;
-            if (core == null)
+
+            if (!(value is ICoreObject core))
             {
                 return;
             }
@@ -61,7 +61,7 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
                 else
                 {
                     task.Version = core.Version;
-                } 
+                }
                 this.AddTask(task);
             }
         }
@@ -71,15 +71,15 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
             lock (_queuelocker)
             {
                 foreach (var cluster in this.SiteCluster)
-                { 
+                {
                     if (!this.Control.HasLock(cluster.Id, intask.ObjectId))
                     {
-                        // clone a new task. 
+                        // clone a new task.
                         PushTask task = new PushTask() { ObjectId = intask.ObjectId, Version = intask.Version, StoreName = intask.StoreName, ClusterId = cluster.Id, IsDelete = intask.IsDelete };
 
-                        // check for each site cluster.. 
-                        var SameItems = this.PushQueue.Where(o => o.ClusterId == task.ClusterId && o.ObjectId == task.ObjectId).ToList();
-                        if (SameItems == null || SameItems.Count == 0)
+                        // check for each site cluster..
+                        var sameItems = this.PushQueue.Where(o => o.ClusterId == task.ClusterId && o.ObjectId == task.ObjectId).ToList();
+                        if (sameItems == null || sameItems.Count == 0)
                         {
                             this.PushQueue.Add(task);
                         }
@@ -87,7 +87,7 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
                         {
                             if (task.IsDelete)
                             {
-                                foreach (var item in SameItems)
+                                foreach (var item in sameItems)
                                 {
                                     this.PushQueue.Remove(item);
                                 }
@@ -104,7 +104,7 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
         {
             lock (_queuelocker)
             {
-                if (this.PushQueue.Count() > 0)
+                if (this.PushQueue.Any())
                 {
                     var item = this.PushQueue.First();
                     this.PushQueue.Remove(item);
@@ -118,14 +118,7 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
 
         public List<SiteCluster> SiteCluster
         {
-            get
-            {
-                if (_sitecluster == null)
-                {
-                    _sitecluster = this.SiteDb.SiteCluster.All(); 
-                }
-                return _sitecluster;
-            }
+            get { return _sitecluster ?? (_sitecluster = this.SiteDb.SiteCluster.All()); }
             set { _sitecluster = value; }
         }
 
@@ -134,15 +127,15 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
             this._sitecluster = null;
         }
 
-        public void SetClusterVersion(Guid ClusterId, long Version)
+        public void SetClusterVersion(Guid clusterId, long version)
         {
             lock (_queuelocker)
             {
-                var curent = this.SiteCluster.Find(o => o.Id == ClusterId);
+                var curent = this.SiteCluster.Find(o => o.Id == clusterId);
                 if (curent != null)
                 {
-                    this.SiteDb.SiteCluster.UpdateVersion(ClusterId, Version);
-                    curent.Version = Version;
+                    this.SiteDb.SiteCluster.UpdateVersion(clusterId, version);
+                    curent.Version = version;
                 }
             }
         }
@@ -163,27 +156,26 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
                         }
                         catch (Exception)
                         {
+                            // ignored
                         }
 
                         IsRunning = false;
 
-                        if (ShouldNotifyDns)
+                        if (_shouldNotifyDns)
                         {
                             NotifyDns();
                         }
 
-                        ShouldNotifyDns = false;
+                        _shouldNotifyDns = false;
                     }
                 }
             }
-
         }
 
         internal void NotifyDns()
         {
             if (Kooboo.Data.AppSettings.Global.IsOnlineServer)
             {
-
             }
             // TODO: to be implemented.
         }
@@ -195,9 +187,11 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
             {
                 SyncObject syncobject = GetSyncObject(task);
 
-                PostSyncObject postobject = new PostSyncObject() { SyncObject = syncobject };
+                PostSyncObject postobject = new PostSyncObject
+                {
+                    SyncObject = syncobject, RemoteSiteId = this.SiteDb.WebSite.Id
+                };
 
-                postobject.RemoteSiteId = this.SiteDb.WebSite.Id;
 
                 TaskQueue.TaskExecutor.PostSyncObjectTask executor = new TaskQueue.TaskExecutor.PostSyncObjectTask();
 
@@ -212,10 +206,10 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
                             TaskQueue.QueueManager.Add(postobject, this.SiteDb.WebSite.Id);
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         TaskQueue.QueueManager.Add(postobject, this.SiteDb.WebSite.Id);
-                        // TODO: log to system log. 
+                        // TODO: log to system log.
                     }
                 }
                 _Processtask();
@@ -241,9 +235,7 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
 
             if (task.IsDelete)
             {
-                syncobject = new SyncObject();
-                syncobject.IsDelete = true;
-                syncobject.ObjectId = task.ObjectId;
+                syncobject = new SyncObject {IsDelete = true, ObjectId = task.ObjectId};
             }
             else
             {
@@ -270,16 +262,16 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
         private string GetStoreName(byte consttype)
         {
             var repo = this.SiteDb.GetRepository(consttype);
-            return repo != null ? repo.StoreName : null;
+            return repo?.StoreName;
         }
 
-        public void Receive(SyncObject SyncObject, string ClientIp)
+        public void Receive(SyncObject syncObject, string clientIp)
         {
             SiteCluster node = null;
 
             foreach (var item in this.SiteCluster)
             {
-                if (Lib.Helper.IPHelper.IsInSameCClass(ClientIp, item.ServerIp))
+                if (Lib.Helper.IPHelper.IsInSameCClass(clientIp, item.ServerIp))
                 {
                     node = item;
                     break;
@@ -288,43 +280,41 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
 
             if (node != null)
             {
-                Receive(SyncObject, node);
+                Receive(syncObject, node);
             }
         }
 
-        public void Receive(SyncObject SyncObject, SiteCluster FromNode)
+        public void Receive(SyncObject syncObject, SiteCluster fromNode)
         {
-            var repo = this.SiteDb.GetRepository(SyncObject.StoreName);
+            var repo = this.SiteDb.GetRepository(syncObject.StoreName);
 
             if (repo == null)
             {
                 return;
             }
-             
-            this.Control.LockItem(FromNode.Id, SyncObject.ObjectId); 
-             
-            if (SyncObject.IsDelete)
+
+            this.Control.LockItem(fromNode.Id, syncObject.ObjectId);
+
+            if (syncObject.IsDelete)
             {
-                repo.Delete(SyncObject.ObjectId);
- 
+                repo.Delete(syncObject.ObjectId);
             }
             else
             {
-                var siteobject = SyncObjectConvertor.FromSyncObject(SyncObject);
-                if (siteobject is ICoreObject)
+                var siteobject = SyncObjectConvertor.FromSyncObject(syncObject);
+                if (siteobject is ICoreObject core)
                 {
-                    var core = siteobject as ICoreObject;
                     core.Version = -1;
-                    repo.AddOrUpdate(core); 
+                    repo.AddOrUpdate(core);
                 }
             }
 
-            this.Control.UnlockItem(FromNode.Id, SyncObject.ObjectId); 
+            this.Control.UnlockItem(fromNode.Id, syncObject.ObjectId);
         }
 
-        private long GetJustDeltedVersion(IRepository repo, Guid ObjectId)
+        private long GetJustDeltedVersion(IRepository repo, Guid objectId)
         {
-            byte[] key = Service.ObjectService.KeyConverter.ToByte(ObjectId);
+            byte[] key = Service.ObjectService.KeyConverter.ToByte(objectId);
             var oldlogs = SiteDb.Log.GetByStoreNameAndKey(repo.StoreName, key, 1);
             if (oldlogs == null || oldlogs.Count() == 0)
             { return -1; }
@@ -347,7 +337,7 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
 
         public void InitStart()
         {
-            ShouldNotifyDns = true;
+            _shouldNotifyDns = true;
             InitTask();
             EnsureStart();
         }
@@ -368,17 +358,19 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
 
                 foreach (var log in alllogs.OrderBy(o => o.Id))
                 {
-                    PushTask task = new PushTask();
-                    task.ObjectId = this.KeyConverter.FromByte(log.KeyBytes);
-                    task.IsDelete = log.EditType == EditType.Delete;
-                    task.StoreName = log.StoreName;
-                    task.Version = log.Id;
+                    PushTask task = new PushTask
+                    {
+                        ObjectId = this.KeyConverter.FromByte(log.KeyBytes),
+                        IsDelete = log.EditType == EditType.Delete,
+                        StoreName = log.StoreName,
+                        Version = log.Id
+                    };
                     this.AddTask(task);
                 }
             }
         }
 
-        //Get items to push to remote.. based on the log.... this can only be push from lower to higher... 
+        //Get items to push to remote.. based on the log.... this can only be push from lower to higher...
         public List<LogEntry> GetLogItems(Guid clusterId)
         {
             var cluster = this.SiteCluster.Find(o => o.Id == clusterId);
@@ -427,7 +419,6 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
                         }
                     }
                 }
-
             }
             return result;
         }
@@ -470,7 +461,7 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
             return hashcode;
         }
     }
-      
+
     public class ControlFlow
     {
         private HashSet<Guid> Items = new HashSet<Guid>();
@@ -478,7 +469,7 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
         public object _locker = new object();
 
         private Guid GetId(Guid one, Guid two)
-        {   
+        {
             byte[] data = new byte[32];
             one.ToByteArray().CopyTo(data, 0);
             two.ToByteArray().CopyTo(data, 16);
@@ -486,35 +477,34 @@ namespace Kooboo.Sites.Sync.SiteClusterSync
             byte[] hash = MD5.Create().ComputeHash(data);
             return new Guid(hash);
         }
-        public void LockItem(Guid ClusterId, Guid ObjectId)
+
+        public void LockItem(Guid clusterId, Guid objectId)
         {
-            var id = GetId(ClusterId, ObjectId);
-            lock(_locker)
+            var id = GetId(clusterId, objectId);
+            lock (_locker)
             {
-                Items.Add(id); 
-            } 
-        }
-
-        public void UnlockItem(Guid ClusterId, Guid ObjectId)
-        {
-            var id = GetId(ClusterId, ObjectId);
-
-            lock(_locker)
-            {
-                Items.Remove(id); 
-            } 
-        }
-
-        public bool HasLock(Guid ClusterId, Guid ObjectId)
-        {
-            var id = GetId(ClusterId, ObjectId); 
-
-            lock(_locker)
-            {
-                return Items.Contains(id); 
+                Items.Add(id);
             }
         }
 
-    }
+        public void UnlockItem(Guid clusterId, Guid objectId)
+        {
+            var id = GetId(clusterId, objectId);
 
+            lock (_locker)
+            {
+                Items.Remove(id);
+            }
+        }
+
+        public bool HasLock(Guid clusterId, Guid objectId)
+        {
+            var id = GetId(clusterId, objectId);
+
+            lock (_locker)
+            {
+                return Items.Contains(id);
+            }
+        }
+    }
 }

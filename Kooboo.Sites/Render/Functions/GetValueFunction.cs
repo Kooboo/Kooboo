@@ -1,11 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Data.Context;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render.Functions
 {
@@ -13,17 +9,18 @@ namespace Kooboo.Sites.Render.Functions
     {
         public GetValueFunction()
         {
-
         }
+
         public GetValueFunction(string keyorexpression)
         {
-            this.Key = keyorexpression; 
+            this.Key = keyorexpression;
         }
+
         public string Name
         {
             get
             {
-                return "GetValue"; 
+                return "GetValue";
             }
         }
 
@@ -31,12 +28,12 @@ namespace Kooboo.Sites.Render.Functions
 
         public List<IFunction> Parameters
         {
-            get;set;
+            get; set;
         }
 
         public object Render(RenderContext context)
         {
-            return context.DataContext.GetValue(this.Key); 
+            return context.DataContext.GetValue(this.Key);
         }
     }
 }

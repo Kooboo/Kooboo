@@ -15,14 +15,7 @@ namespace Kooboo.Sites.Models
 
         public Dictionary<string, string> Values
         {
-            get
-            {
-                if (_values == null)
-                {
-                    _values = new Dictionary<string, string>();
-                }
-                return _values;
-            }
+            get { return _values ?? (_values = new Dictionary<string, string>()); }
             set
             {
                 _values = value;

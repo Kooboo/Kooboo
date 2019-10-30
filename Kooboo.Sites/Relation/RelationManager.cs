@@ -1,5 +1,6 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Interface;
 using Kooboo.Dom;
 using Kooboo.Events.Cms;
 using Kooboo.Sites.Contents.Models;
@@ -7,116 +8,112 @@ using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
-using Kooboo.Data.Interface;
+using System.Text;
 
 namespace Kooboo.Sites.Relation
 {
     public static class RelationManager
     {
-        public static void Compute(SiteObjectEvent SiteEvent)
+        public static void Compute(SiteObjectEvent siteEvent)
         {
-            if (SiteEvent == null || SiteEvent.Value == null)
+            if (siteEvent?.Value == null)
             {
                 return;
             }
 
-            if (SiteEvent.Value is Style)
+            if (siteEvent.Value is Style)
             {
-                ComputeStyle(SiteEvent);
+                ComputeStyle(siteEvent);
                 return;
             }
 
-            if (SiteEvent.Value is IDataMethodSetting)
+            if (siteEvent.Value is IDataMethodSetting dataMethodSetting)
             {
-                if (SiteEvent.ChangeType == ChangeType.Delete)
+                if (siteEvent.ChangeType == ChangeType.Delete)
                 {
-                    DataMethodRelation.Clean(SiteEvent.SiteDb, SiteEvent.Value.Id); 
+                    DataMethodRelation.Clean(siteEvent.SiteDb, siteEvent.Value.Id);
                 }
                 else
                 {
-                    DataMethodRelation.Compute(SiteEvent.Value as IDataMethodSetting, SiteEvent.SiteDb);
-                }   
+                    DataMethodRelation.Compute(dataMethodSetting, siteEvent.SiteDb);
+                }
             }
 
-            if (SiteEvent.Value is ResourceGroup)
+            if (siteEvent.Value is ResourceGroup)
             {
-                if (SiteEvent.ChangeType == ChangeType.Delete)
+                if (siteEvent.ChangeType == ChangeType.Delete)
                 {
-                    SiteEvent.SiteDb.Relations.CleanObjectRelation(SiteEvent.Value.Id); 
+                    siteEvent.SiteDb.Relations.CleanObjectRelation(siteEvent.Value.Id);
                 }
                 else
                 {
-                    GroupRelation.Compute(SiteEvent.Value as ResourceGroup, SiteEvent.SiteDb);
-                } 
+                    GroupRelation.Compute(siteEvent.Value as ResourceGroup, siteEvent.SiteDb);
+                }
             }
 
-            Type ModelType = SiteEvent.Value.GetType();
+            Type modelType = siteEvent.Value.GetType();
 
-            //only below needs to compute relation. 
-            if (SiteEvent.Value is IDomObject || ModelType == typeof(CmsCssRule))
+            //only below needs to compute relation.
+            if (siteEvent.Value is IDomObject || modelType == typeof(CmsCssRule))
             {
                 string basurl = null;
                 HtmlHeader header = null;
-                Document Dom = null;
+                Document dom = null;
 
-
-                if (Attributes.AttributeHelper.IsRoutable(ModelType))
+                if (Attributes.AttributeHelper.IsRoutable(modelType))
                 {
-                    basurl = Service.ObjectService.GetObjectRelativeUrl(SiteEvent.SiteDb, SiteEvent.Value.Id, SiteEvent.Value.ConstType);
+                    basurl = Service.ObjectService.GetObjectRelativeUrl(siteEvent.SiteDb, siteEvent.Value.Id, siteEvent.Value.ConstType);
                 }
 
-                if (ModelType == typeof(Page))
+                if (modelType == typeof(Page))
                 {
-                    var page = SiteEvent.Value as Page;
-                    header = page.Headers;
+                    var page = siteEvent.Value as Page;
+                    header = page?.Headers;
                 }
 
-                if (!ShouldCheck(ModelType, SiteEvent))
+                if (!ShouldCheck(modelType, siteEvent))
                 {
                     return;
                 }
 
-                Dom = GetDom(ModelType, SiteEvent);
+                dom = GetDom(modelType, siteEvent);
 
-                if (SiteEvent.ChangeType == ChangeType.Delete)
+                if (siteEvent.ChangeType == ChangeType.Delete)
                 {
-                    var siteobject = SiteEvent.Value as SiteObject;
-                    if (siteobject != null)
+                    if (siteEvent.Value is SiteObject siteobject)
                     {
-                        RelationManager.Clean(SiteEvent.SiteDb, siteobject);
+                        RelationManager.Clean(siteEvent.SiteDb, siteobject);
                     }
                 }
                 else
                 {
-                    if (Dom != null || SiteEvent.Value is IDomObject)
+                    if (dom != null || siteEvent.Value is IDomObject)
                     {
-                        DomRelation.Compute(SiteEvent.SiteDb, Dom, SiteEvent.Value.Id, SiteEvent.Value.ConstType, basurl, header);
+                        DomRelation.Compute(siteEvent.SiteDb, dom, siteEvent.Value.Id, siteEvent.Value.ConstType, basurl, header);
                     }
                 }
             }
         }
 
-        public static Document GetDom(Type ModelType, SiteObjectEvent SiteEvent)
+        public static Document GetDom(Type modelType, SiteObjectEvent siteEvent)
         {
             string domhtml = string.Empty;
-            if (SiteEvent.ChangeType == ChangeType.Update || SiteEvent.ChangeType == ChangeType.Add)
+            if (siteEvent.ChangeType == ChangeType.Update || siteEvent.ChangeType == ChangeType.Add)
             {
-                if (ModelType == typeof(TextContent))
+                if (modelType == typeof(TextContent))
                 {
-                    domhtml = GetTextContentBody(SiteEvent.Value as TextContent, SiteEvent.SiteDb); 
+                    domhtml = GetTextContentBody(siteEvent.Value as TextContent, siteEvent.SiteDb);
                 }
                 else
                 {
-                    var newvalue = SiteEvent.Value as IDomObject;
-                    if (newvalue != null)
+                    if (siteEvent.Value is IDomObject newvalue)
                     {
                         domhtml = newvalue.Body;
                     }
                 }
             }
-            return Kooboo.Dom.DomParser.CreateDom(domhtml); 
+            return Kooboo.Dom.DomParser.CreateDom(domhtml);
         }
 
         public static string GetTextContentBody(TextContent content, SiteDb sitedb)
@@ -128,7 +125,7 @@ namespace Kooboo.Sites.Relation
                 return content.Body;
             }
             else
-            { 
+            {
                 StringBuilder sb = new StringBuilder();
                 foreach (var item in content.Contents)
                 {
@@ -148,32 +145,21 @@ namespace Kooboo.Sites.Relation
                                         List<string> values = Lib.Helper.JsonHelper.Deserialize<List<string>>(field.Value);
                                         foreach (var value in values)
                                         {
-                                            if (Lib.Helper.IOHelper.MimeType(value).ToLower().Contains("image"))
-                                            {
-                                                sb.Append($"<KoobooField name=\"{field.Key}\"><img src=\"{value}\" /></KoobooField>");
-                                            }
-                                            else
-                                            {
-                                                sb.Append($"<KoobooField name=\"{field.Key}\">{field.Value}</KoobooField>");
-                                            }
+                                            sb.Append(Lib.Helper.IOHelper.MimeType(value).ToLower().Contains("image")
+                                                ? $"<KoobooField name=\"{field.Key}\"><img src=\"{value}\" /></KoobooField>"
+                                                : $"<KoobooField name=\"{field.Key}\">{field.Value}</KoobooField>");
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    if (Lib.Helper.IOHelper.MimeType(field.Value).ToLower().Contains("image"))
-                                    {
-                                        sb.Append($"<KoobooField name=\"{field.Key}\"><img src=\"{field.Value}\" /></KoobooField>");
-                                    }
-                                    else
-                                    {
-                                        sb.Append($"<KoobooField name=\"{field.Key}\">{field.Value}</KoobooField>");
-                                    }
-                                } 
+                                    sb.Append(Lib.Helper.IOHelper.MimeType(field.Value).ToLower().Contains("image")
+                                        ? $"<KoobooField name=\"{field.Key}\"><img src=\"{field.Value}\" /></KoobooField>"
+                                        : $"<KoobooField name=\"{field.Key}\">{field.Value}</KoobooField>");
+                                }
                             }
                             else
                             {
-
                                 sb.Append($"<KoobooField name=\"{field.Key}\">{field.Value}</KoobooField>");
                             }
                         }
@@ -183,144 +169,137 @@ namespace Kooboo.Sites.Relation
                 return sb.ToString();
             }
         }
-       
-        public static bool ShouldCheck(Type ModelType, SiteObjectEvent SiteEvent)
-        { 
-            if (SiteEvent.ChangeType == ChangeType.Update)
-            { 
-                // this can only be idomobject now because of early check.
-                var old = SiteEvent.OldValue as IDomObject;
-                var newvalue = SiteEvent.Value as IDomObject;
 
-                if (old != null && newvalue != null)
+        public static bool ShouldCheck(Type modelType, SiteObjectEvent siteEvent)
+        {
+            if (siteEvent.ChangeType == ChangeType.Update)
+            {
+                // this can only be idomobject now because of early check.
+                var old = siteEvent.OldValue as IDomObject;
+
+                if (old != null && siteEvent.Value is IDomObject newvalue)
                 {
                     if (Lib.Helper.StringHelper.IsSameValue(old.Body, newvalue.Body))
                     {
-                        if (ModelType == typeof(Page))
+                        if (modelType == typeof(Page))
                         {
                             // if page and the header does not change..
                             var oldpage = old as Page;
-                            var newpage = newvalue as Page; 
+                            var newpage = newvalue as Page;
                             if (oldpage.Headers.GetHashCode() == newpage.Headers.GetHashCode())
                             {
-                                return false; 
+                                return false;
                             }
                         }
                         else
                         {
                             return false;
                         }
-                        
                     }
                 }
             }
 
-            if ((ModelType == typeof(CmsCssRule) ) && SiteEvent.ChangeType != ChangeType.Delete)
+            if ((modelType == typeof(CmsCssRule)) && siteEvent.ChangeType != ChangeType.Delete)
             {
                 return false;
             }
             return true;
-
         }
-         
-        public static void Clean(SiteDb SiteDb, SiteObject SiteObject)
+
+        public static void Clean(SiteDb siteDb, SiteObject siteObject)
         {
-            if (SiteObject == null)
+            if (siteObject == null)
             {
                 return;
             }
             //embedded css rules.
-            if (SiteObject.ConstType == ConstObjectType.CssRule)
+            if (siteObject.ConstType == ConstObjectType.CssRule)
             {
-                List<CmsCssRule> rules = SiteDb.CssRules.Query.Where(o => o.ParentCssRuleId == SiteObject.Id).SelectAll();
+                List<CmsCssRule> rules = siteDb.CssRules.Query.Where(o => o.ParentCssRuleId == siteObject.Id).SelectAll();
 
                 foreach (var item in rules)
                 {
-                    SiteDb.CssRules.Delete(item.Id);
+                    siteDb.CssRules.Delete(item.Id);
                 }
-                
             }
 
-            // remove embedded style and scripts. 
-            var embeddedstyles = SiteDb.Styles.Query.Where(o => o.OwnerObjectId == SiteObject.Id).SelectAll();
+            // remove embedded style and scripts.
+            var embeddedstyles = siteDb.Styles.Query.Where(o => o.OwnerObjectId == siteObject.Id).SelectAll();
             foreach (var item in embeddedstyles)
             {
-                SiteDb.Styles.Delete(item.Id, false, false);
+                siteDb.Styles.Delete(item.Id, false, false);
             }
 
-            var embeddedkscript = SiteDb.Code.Query.Where(o => o.OwnerObjectId == SiteObject.Id).SelectAll();
+            var embeddedkscript = siteDb.Code.Query.Where(o => o.OwnerObjectId == siteObject.Id).SelectAll();
             foreach (var item in embeddedkscript)
             {
-                SiteDb.Code.Delete(item.Id, false, false);
+                siteDb.Code.Delete(item.Id, false, false);
             }
-
 
             // embedded scripts.
-            var embeddedscripts = SiteDb.Scripts.Query.Where(o => o.OwnerObjectId == SiteObject.Id).SelectAll();
+            var embeddedscripts = siteDb.Scripts.Query.Where(o => o.OwnerObjectId == siteObject.Id).SelectAll();
             foreach (var item in embeddedscripts)
             {
-                SiteDb.Scripts.Delete(item.Id, false, false);
+                siteDb.Scripts.Delete(item.Id, false, false);
             }
 
-            var inlinecss = SiteDb.CssRules.Query.Where(o => o.OwnerObjectId == SiteObject.Id && o.ParentStyleId == default(Guid)).SelectAll();
+            var inlinecss = siteDb.CssRules.Query.Where(o => o.OwnerObjectId == siteObject.Id && o.ParentStyleId == default(Guid)).SelectAll();
             foreach (var item in inlinecss)
             {
-                SiteDb.CssRules.Delete(item.Id);
+                siteDb.CssRules.Delete(item.Id);
             }
 
-            var forms = SiteDb.Forms.Query.Where(o => o.OwnerObjectId == SiteObject.Id).SelectAll();
+            var forms = siteDb.Forms.Query.Where(o => o.OwnerObjectId == siteObject.Id).SelectAll();
 
             foreach (var item in forms)
             {
-                SiteDb.Forms.Delete(item.Id);
+                siteDb.Forms.Delete(item.Id);
             }
 
-            SiteDb.Relations.CleanObjectRelation(SiteObject.Id);
+            siteDb.Relations.CleanObjectRelation(siteObject.Id);
         }
-         
-        public static void ComputeStyle(SiteObjectEvent StyleEvent)
-        {
-            var sitedb = StyleEvent.SiteDb; 
 
-            var style = StyleEvent.Value as Style;
+        public static void ComputeStyle(SiteObjectEvent styleEvent)
+        {
+            var sitedb = styleEvent.SiteDb;
+
+            var style = styleEvent.Value as Style;
             if (style == null)
             {
-               return;
+                return;
             }
 
-            if (StyleEvent.ChangeType == ChangeType.Add)
+            if (styleEvent.ChangeType == ChangeType.Add)
             {
                 StyleRelation.Compute(style, sitedb);
             }
-            else if (StyleEvent.ChangeType == ChangeType.Update)
+            else if (styleEvent.ChangeType == ChangeType.Update)
             {
-                var oldvalue = StyleEvent.OldValue as Style;
-                if (oldvalue == null || !Lib.Helper.StringHelper.IsSameValue(oldvalue.Body, style.Body))
+                if (!(styleEvent.OldValue is Style oldvalue) || !Lib.Helper.StringHelper.IsSameValue(oldvalue.Body, style.Body))
                 {
-                  StyleRelation.Compute(style, sitedb);
+                    StyleRelation.Compute(style, sitedb);
                 }
             }
             else
             {
-                // this is to delete style sheet... 
-                List<Guid> ownerguid = new List<Guid>();
-                ownerguid.Add(style.Id);
-                 
+                // this is to delete style sheet...
+                List<Guid> ownerguid = new List<Guid> {style.Id};
+
                 var allownerrules = sitedb.CssRules.Query.Where(o => o.OwnerObjectId == style.Id).SelectAll();
                 var allstylerules = sitedb.CssRules.Query.Where(o => o.ParentStyleId == style.Id).SelectAll();
 
                 List<Guid> allruleid = new List<Guid>();
                 allruleid.AddRange(allownerrules.Select(o => o.Id).ToList());
-                 allruleid.AddRange(allstylerules.Select(o => o.Id).ToList()); 
+                allruleid.AddRange(allstylerules.Select(o => o.Id).ToList());
 
                 foreach (var item in allruleid.Distinct())
                 {
-                    sitedb.CssRules.Store.delete(item); 
-                } 
-                 
-                ownerguid.AddRange(allruleid.Distinct()); 
-         
-                StyleEvent.SiteDb.Relations.CleanObjectRelation(StyleEvent.Value.Id);
+                    sitedb.CssRules.Store.delete(item);
+                }
+
+                ownerguid.AddRange(allruleid.Distinct());
+
+                styleEvent.SiteDb.Relations.CleanObjectRelation(styleEvent.Value.Id);
 
                 var relations = sitedb.Relations.Query.WhereIn<Guid>(o => o.objectXId, ownerguid).SelectAll();
 
@@ -329,14 +308,13 @@ namespace Kooboo.Sites.Relation
                     sitedb.Relations.Store.delete(item.Id);
                 }
 
-                var ReferByRelation = sitedb.Relations.Query.WhereIn<Guid>(o => o.objectYId, ownerguid).SelectAll();
+                var referByRelation = sitedb.Relations.Query.WhereIn<Guid>(o => o.objectYId, ownerguid).SelectAll();
 
-                foreach (var item in ReferByRelation)
+                foreach (var item in referByRelation)
                 {
                     sitedb.Relations.Store.delete(item.Id);
-                } 
-            } 
+                }
+            }
         }
-         
     }
 }

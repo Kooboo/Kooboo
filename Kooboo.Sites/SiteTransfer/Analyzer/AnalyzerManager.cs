@@ -1,15 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.SiteTransfer.Download;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.SiteTransfer
 {
-  public static  class AnalyzerManager
+    public static class AnalyzerManager
     {
         private static List<ITransferAnalyzer> _listofanalyzer;
 
@@ -18,7 +17,7 @@ namespace Kooboo.Sites.SiteTransfer
             if (_listofanalyzer == null)
             {
                 _listofanalyzer = new List<ITransferAnalyzer>();
-               // _listofanalyzer.Add(new LinkAnalyzer());
+                // _listofanalyzer.Add(new LinkAnalyzer());
                 _listofanalyzer.Add(new CSSAnalyzer());
                 _listofanalyzer.Add(new EmbeddedAnalyzer());
                 _listofanalyzer.Add(new ImageAnalyzer());
@@ -28,27 +27,27 @@ namespace Kooboo.Sites.SiteTransfer
             return _listofanalyzer;
         }
 
-      /// <summary>
-      /// Execute all the analyzer. 
-      /// </summary>
+        /// <summary>
+        /// Execute all the analyzer.
+        /// </summary>
         public static AnalyzerContext Execute(AnalyzerContext context)
-        { 
+        {
             var allAnalyzer = getAnalyzers();
-     
+
             foreach (var item in allAnalyzer)
             {
-                item.Execute(context);  
+                item.Execute(context);
             }
-             
-            AppendRemoveBaseHrefChange(context);  
+
+            AppendRemoveBaseHrefChange(context);
             if (context.Changes.Count > 0)
             {
-                context.HtmlSource = ParseChanges(context.HtmlSource, context.Changes);  
+                context.HtmlSource = ParseChanges(context.HtmlSource, context.Changes);
             }
             return context;
         }
 
-       private static void AppendRemoveBaseHrefChange(AnalyzerContext context)
+        private static void AppendRemoveBaseHrefChange(AnalyzerContext context)
         {
             var basetag = context.Dom.documentElement.getOneElementByTagName("base");
 
@@ -59,14 +58,13 @@ namespace Kooboo.Sites.SiteTransfer
                 {
                     endindx = basetag.location.endTokenEndIndex;
                 }
-                context.Changes.Add(new AnalyzerUpdate() { StartIndex = basetag.location.openTokenStartIndex, EndIndex = endindx, NewValue = string.Empty }); 
+                context.Changes.Add(new AnalyzerUpdate() { StartIndex = basetag.location.openTokenStartIndex, EndIndex = endindx, NewValue = string.Empty });
             }
-
         }
 
         public static string ParseChanges(string input, List<AnalyzerUpdate> changes)
         {
-            changes = changes.Where(o => o != null && o.StartIndex > 0 && o.EndIndex > 0).OrderBy(o=>o.StartIndex).ToList(); 
+            changes = changes.Where(o => o != null && o.StartIndex > 0 && o.EndIndex > 0).OrderBy(o => o.StartIndex).ToList();
 
             string result = string.Empty;
 
@@ -74,9 +72,9 @@ namespace Kooboo.Sites.SiteTransfer
             int length = input.Length;
             StringBuilder sb = new StringBuilder();
 
-            List<Replacer> replace = new List<Replacer>(); 
-                         
-            foreach (var item in  changes)
+            List<Replacer> replace = new List<Replacer>();
+
+            foreach (var item in changes)
             {
                 if (item.StartIndex == -1 && item.EndIndex == -1)
                 {
@@ -87,7 +85,7 @@ namespace Kooboo.Sites.SiteTransfer
                     if (item.IsReplace)
                     {
                         string sub = input.Substring(item.StartIndex, item.EndIndex - item.StartIndex);
-                        replace.Add(new Replacer() { WholeString = sub, oldValue = item.OldValue, NewValue = item.NewValue }); 
+                        replace.Add(new Replacer() { WholeString = sub, oldValue = item.OldValue, NewValue = item.NewValue });
                     }
                     else
                     {
@@ -96,48 +94,47 @@ namespace Kooboo.Sites.SiteTransfer
                         currentindex = item.EndIndex + 1;
                     }
                 }
-            } 
+            }
 
             if (currentindex < length - 1)
             {
                 sb.Append(input.Substring(currentindex, length - currentindex));
             }
-            string returnresult =  sb.ToString() + result;
+            string returnresult = sb.ToString() + result;
 
-            if(replace.Count()>0)
+            if (replace.Count() > 0)
             {
-                foreach (var item in replace.GroupBy(o=>o.WholeString))
+                foreach (var item in replace.GroupBy(o => o.WholeString))
                 {
                     var oldtext = item.Key;
-                    string newtext = oldtext; 
+                    string newtext = oldtext;
                     foreach (var onereplace in item.ToList())
                     {
-                        newtext = newtext.Replace(onereplace.oldValue, onereplace.NewValue); 
+                        newtext = newtext.Replace(onereplace.oldValue, onereplace.NewValue);
                     }
 
-                    returnresult = returnresult.Replace(oldtext, newtext); 
+                    returnresult = returnresult.Replace(oldtext, newtext);
                 }
             }
 
-            return returnresult; 
+            return returnresult;
         }
 
-        public static AnalyzerContext Execute(string HtmlSource, string BaseUrl, Guid ObjectId, byte ObjectType, DownloadManager manager, string OriginalImortUrl = "")
+        public static AnalyzerContext Execute(string htmlSource, string baseUrl, Guid objectId, byte objectType, DownloadManager manager, string originalImortUrl = "")
         {
-            AnalyzerContext context = GetContext(HtmlSource, BaseUrl, ObjectId, ObjectType, manager.SiteDb, OriginalImortUrl);
-            context.DownloadManager = manager;  
+            AnalyzerContext context = GetContext(htmlSource, baseUrl, objectId, objectType, manager.SiteDb, originalImortUrl);
+            context.DownloadManager = manager;
             return Execute(context);
         }
 
-        public static AnalyzerContext GetContext(string HtmlSource, string BaseUrl, Guid ObjectId, byte ObjectType, Repository.SiteDb SiteDb, string OriginalImortUrl="")
+        public static AnalyzerContext GetContext(string htmlSource, string baseUrl, Guid objectId, byte objectType, Repository.SiteDb siteDb, string originalImortUrl = "")
         {
-            string baseurl = BaseUrl;
+            string baseurl = baseUrl;
 
-            AnalyzerContext context = new AnalyzerContext();
-            context.SiteDb = SiteDb;
-            context.ObjectId = ObjectId;
-            context.ObjectType = ObjectType;
-            context.HtmlSource = HtmlSource;
+            AnalyzerContext context = new AnalyzerContext
+            {
+                SiteDb = siteDb, ObjectId = objectId, ObjectType = objectType, HtmlSource = htmlSource
+            };
 
             string htmlbase = context.Dom.baseURI;
 
@@ -148,9 +145,9 @@ namespace Kooboo.Sites.SiteTransfer
 
             context.AbsoluteUrl = baseurl;
 
-            if (!string.IsNullOrEmpty(OriginalImortUrl))
+            if (!string.IsNullOrEmpty(originalImortUrl))
             {
-                context.OriginalImportUrl = OriginalImortUrl;
+                context.OriginalImportUrl = originalImortUrl;
             }
 
             return context;
@@ -165,6 +162,4 @@ namespace Kooboo.Sites.SiteTransfer
 
         public string NewValue { get; set; }
     }
-
-
 }

@@ -18,11 +18,7 @@ namespace Kooboo.Sites.Contents.Models
         {
             get
             {
-                if (_lang == null)
-                {
-                    return string.Empty;
-                }
-                return _lang;
+                return _lang ?? string.Empty;
             }
             set { _lang = value; }
         }
@@ -34,11 +30,8 @@ namespace Kooboo.Sites.Contents.Models
         {
             get
             {
-                if (_fieldvalues == null)
-                {
-                    _fieldvalues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _fieldvalues;
+                return _fieldvalues ??
+                       (_fieldvalues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
             }
             set
             {
@@ -131,7 +124,7 @@ namespace Kooboo.Sites.Contents.Models
             {
                 var content = this.GetContentStore(null);
 
-                if (content != null && content.FieldValues.Count() > 0)
+                if (content != null && content.FieldValues.Any())
                 {
                     return content.FieldValues.First().Value;
                 }
@@ -143,14 +136,7 @@ namespace Kooboo.Sites.Contents.Models
 
         public Dictionary<Guid, List<Guid>> Embedded
         {
-            get
-            {
-                if (_embedded == null)
-                {
-                    _embedded = new Dictionary<Guid, List<Guid>>();
-                }
-                return _embedded;
-            }
+            get { return _embedded ?? (_embedded = new Dictionary<Guid, List<Guid>>()); }
             set
             {
                 _embedded = value;
@@ -166,14 +152,7 @@ namespace Kooboo.Sites.Contents.Models
         [Kooboo.Attributes.SummaryIgnore]
         public Document Dom
         {
-            get
-            {
-                if (_dom == null)
-                {
-                    _dom = DomParser.CreateDom(this.Body);
-                }
-                return _dom;
-            }
+            get { return _dom ?? (_dom = DomParser.CreateDom(this.Body)); }
             set
             {
                 _dom = value;
@@ -206,20 +185,16 @@ namespace Kooboo.Sites.Contents.Models
 
             set
             {
-                string DomHtml = value;
+                string domHtml = value;
 
-                if (!string.IsNullOrEmpty(DomHtml))
+                if (!string.IsNullOrEmpty(domHtml))
                 {
-                    var dom = Kooboo.Dom.DomParser.CreateDom(DomHtml);
+                    var dom = Kooboo.Dom.DomParser.CreateDom(domHtml);
                     var langcontents = dom.getElementsByTagName("KooobooLanguage");
 
                     foreach (var item in langcontents.item)
                     {
-                        string lang = item.getAttribute("name");
-                        if (lang == null)
-                        {
-                            lang = string.Empty;
-                        }
+                        string lang = item.getAttribute("name") ?? string.Empty;
                         foreach (var field in item.getElementsByTagName("KoobooField").item)
                         {
                             var key = field.getAttribute("name");
@@ -231,21 +206,21 @@ namespace Kooboo.Sites.Contents.Models
             }
         }
 
-        internal MultilingualContent GetContentStore(string Lang, bool createNew = false)
+        internal MultilingualContent GetContentStore(string lang, bool createNew = false)
         {
             MultilingualContent content = null;
-            if (!string.IsNullOrEmpty(Lang))
+            if (!string.IsNullOrEmpty(lang))
             {
-                content = this.Contents.Find(o => o.Lang == Lang);
+                content = this.Contents.Find(o => o.Lang == lang);
             }
-            if (content == null && this.Contents.Count() > 0)
+            if (content == null && this.Contents.Any())
             {
                 content = this.Contents.Find(o => string.IsNullOrEmpty(o.Lang));
             }
 
-            if (content == null && this.Contents.Count() > 0 && !string.IsNullOrEmpty(Lang))
+            if (content == null && this.Contents.Any() && !string.IsNullOrEmpty(lang))
             {
-                string lower = Lang.ToLower();
+                string lower = lang.ToLower();
                 if (lower.Length > 2)
                 {
                     lower = lower.Substring(0, 2);
@@ -264,10 +239,10 @@ namespace Kooboo.Sites.Contents.Models
                 if (createNew)
                 {
                     content = new MultilingualContent();
-                    content.Lang = Lang;
+                    content.Lang = lang;
                     this.Contents.Add(content);
                 }
-                else if (this.Contents.Count() > 0)
+                else if (this.Contents.Any())
                 {
                     return this.Contents.First();
                 }
@@ -275,14 +250,14 @@ namespace Kooboo.Sites.Contents.Models
             return content;
         }
 
-        public object GetValue(string FieldName, string Lang = null)
+        public object GetValue(string fieldName, string lang = null)
         {
-            if (FieldName == null)
+            if (fieldName == null)
             {
                 return null;
             }
 
-            string lower = FieldName.ToLower();
+            string lower = fieldName.ToLower();
             if (lower == "userkey")
             {
                 return this.UserKey;
@@ -296,10 +271,10 @@ namespace Kooboo.Sites.Contents.Models
                 return this.Order;
             }
 
-            MultilingualContent content = GetContentStore(Lang);
-            if (content != null && content.FieldValues.ContainsKey(FieldName))
+            MultilingualContent content = GetContentStore(lang);
+            if (content != null && content.FieldValues.ContainsKey(fieldName))
             {
-                return content.FieldValues[FieldName];
+                return content.FieldValues[fieldName];
             }
 
             if (lower == "folderid")
@@ -325,27 +300,26 @@ namespace Kooboo.Sites.Contents.Models
 
             foreach (var item in this.Contents)
             {
-                if (item.FieldValues.ContainsKey(FieldName))
+                if (item.FieldValues.ContainsKey(fieldName))
                 {
-                    return item.FieldValues[FieldName];
+                    return item.FieldValues[fieldName];
                 }
             }
 
             return null;
         }
 
-        public void SetValue(string FieldName, string Value, string Lang = null)
+        public void SetValue(string fieldName, string value, string lang = null)
         {
-            string lower = FieldName.ToLower();
+            string lower = fieldName.ToLower();
             if (lower == "userkey")
             {
-                this.UserKey = Value;
+                this.UserKey = value;
                 return;
             }
             else if (lower == "folderid")
             {
-                Guid folderid;
-                if (System.Guid.TryParse(Value, out folderid))
+                if (System.Guid.TryParse(value, out var folderid))
                 {
                     this.FolderId = folderid;
                     return;
@@ -353,8 +327,7 @@ namespace Kooboo.Sites.Contents.Models
             }
             else if (lower == "id")
             {
-                Guid id;
-                if (Guid.TryParse(Value, out id))
+                if (Guid.TryParse(value, out var id))
                 {
                     this.Id = id;
                     return;
@@ -362,8 +335,7 @@ namespace Kooboo.Sites.Contents.Models
             }
             else if (lower == "parentid")
             {
-                Guid parentid;
-                if (Guid.TryParse(Value, out parentid))
+                if (Guid.TryParse(value, out var parentid))
                 {
                     this.ParentId = parentid;
                     return;
@@ -371,8 +343,7 @@ namespace Kooboo.Sites.Contents.Models
             }
             else if (lower == "contenttypeid")
             {
-                Guid contenttypeid;
-                if (Guid.TryParse(Value, out contenttypeid))
+                if (Guid.TryParse(value, out var contenttypeid))
                 {
                     this.ContentTypeId = contenttypeid;
                     return;
@@ -380,8 +351,7 @@ namespace Kooboo.Sites.Contents.Models
             }
             else if (lower == "order")
             {
-                int order = 0;
-                if (int.TryParse(Value, out order))
+                if (int.TryParse(value, out var order))
                 {
                     this.Order = order;
                     return;
@@ -389,8 +359,7 @@ namespace Kooboo.Sites.Contents.Models
             }
             else if (lower == "online")
             {
-                bool online = false;
-                if (bool.TryParse(Value, out online))
+                if (bool.TryParse(value, out var online))
                 {
                     this.Online = online;
                     return;
@@ -398,15 +367,14 @@ namespace Kooboo.Sites.Contents.Models
             }
             else if (lower == "lastmodify" || lower == "lastmodified")
             {
-                DateTime date;
-                if (DateTime.TryParse(Value, out date))
+                if (DateTime.TryParse(value, out var date))
                 {
                     this.LastModified = date;
                     return;
                 }
             }
-            var content = GetContentStore(Lang, true);
-            content.FieldValues[FieldName] = Value;
+            var content = GetContentStore(lang, true);
+            content.FieldValues[fieldName] = value;
         }
 
         public override int GetHashCode()

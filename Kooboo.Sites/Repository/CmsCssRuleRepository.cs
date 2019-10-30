@@ -1,18 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Interface;
+using Kooboo.Data.Models;
 using Kooboo.Dom;
 using Kooboo.Dom.CSS;
 using Kooboo.IndexedDB;
-using Kooboo.Sites.Contents.Models;
 using Kooboo.Sites.Models;
-using Kooboo.Sites.Relation;
+using Kooboo.Sites.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Kooboo.Data.Interface;
-using Kooboo.Sites.Service;
-using Kooboo.Data.Models;
 
 namespace Kooboo.Sites.Repository
 {
@@ -37,12 +35,12 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public override bool AddOrUpdate(CmsCssRule value, Guid UserId = default(Guid))
+        public override bool AddOrUpdate(CmsCssRule value, Guid userId = default(Guid))
         {
-            return AddOrUpdate(value, UserId, false);
+            return AddOrUpdate(value, userId, false);
         }
 
-        public bool AddOrUpdate(Models.CmsCssRule value, Guid UserId = default(Guid), bool updateSource = false)
+        public bool AddOrUpdate(Models.CmsCssRule value, Guid userId = default(Guid), bool updateSource = false)
         {
             var old = Get(value.Id);
             if (old == null)
@@ -65,9 +63,7 @@ namespace Kooboo.Sites.Repository
 
                     RaiseEvent(value, ChangeType.Add);
                 }
-
             }
-
             else
             {
                 if (!IsEqual(value, old))
@@ -84,15 +80,13 @@ namespace Kooboo.Sites.Repository
                         }
                         else
                         {
-                            CmsCssRuleChanges change = new CmsCssRuleChanges();
-                            change.ChangeType = ChangeType.Update;
-                            change.CssText = value.CssText;
-                            change.CssRuleId = value.Id;
+                            CmsCssRuleChanges change = new CmsCssRuleChanges
+                            {
+                                ChangeType = ChangeType.Update, CssText = value.CssText, CssRuleId = value.Id
+                            };
 
-                            List<CmsCssRuleChanges> list = new List<CmsCssRuleChanges>();
-                            list.Add(change);
+                            List<CmsCssRuleChanges> list = new List<CmsCssRuleChanges> {change};
                             UpdateStyle(list, value.ParentStyleId);
-
                         }
                     }
 
@@ -103,7 +97,7 @@ namespace Kooboo.Sites.Repository
             return true;
         }
 
-        public override void Delete(Guid id, Guid Userid = default(Guid))
+        public override void Delete(Guid id, Guid userid = default(Guid))
         {
             Delete(id, true);
         }
@@ -115,49 +109,47 @@ namespace Kooboo.Sites.Repository
             if (cssrule == null)
             { return; }
 
-
             if (updatesource)
             {
                 if (cssrule.IsInline)
                 { _RemoveInlineCss(cssrule); }
                 else
                 {
-                    ///remove the css rule...
-                    CmsCssRuleChanges change = new CmsCssRuleChanges();
-                    change.ChangeType = ChangeType.Delete;
-                    change.CssText = cssrule.CssText;
-                    change.CssRuleId = cssrule.Id;
+                    //remove the css rule...
+                    CmsCssRuleChanges change = new CmsCssRuleChanges
+                    {
+                        ChangeType = ChangeType.Delete, CssText = cssrule.CssText, CssRuleId = cssrule.Id
+                    };
 
-                    List<CmsCssRuleChanges> list = new List<CmsCssRuleChanges>();
-                    list.Add(change);
-                    UpdateStyle(list, cssrule.ParentStyleId); 
+                    List<CmsCssRuleChanges> list = new List<CmsCssRuleChanges> {change};
+                    UpdateStyle(list, cssrule.ParentStyleId);
                 }
-            } 
+            }
             RaiseBeforeEvent(cssrule, ChangeType.Delete);
             Store.delete(id, false);
-            RaiseEvent(cssrule, ChangeType.Delete); 
+            RaiseEvent(cssrule, ChangeType.Delete);
         }
 
         /// <summary>
         /// Update the inline css style, this cmscssrule must be verified to be inline
         /// </summary>
-        /// <param name="CmsCssRuleId"></param>
-        /// <param name="RuleText"></param>
-        public void UpdateInlineCss(Guid CmsCssRuleId, string RuleText)
+        /// <param name="cmsCssRuleId"></param>
+        /// <param name="ruleText"></param>
+        public void UpdateInlineCss(Guid cmsCssRuleId, string ruleText)
         {
-            CmsCssRule cssrule = Get(CmsCssRuleId);
+            CmsCssRule cssrule = Get(cmsCssRuleId);
             if (cssrule == null)
             {
                 return;
             }
-            UpdateInlineCss(cssrule, RuleText);
+            UpdateInlineCss(cssrule, ruleText);
         }
 
-        public void UpdateInlineCss(CmsCssRule cssrule, string RuleText)
+        public void UpdateInlineCss(CmsCssRule cssrule, string ruleText)
         {
             if (cssrule.IsInline)
             {
-                cssrule.CssText = RuleText;
+                cssrule.CssText = ruleText;
                 var ownertype = Service.ConstTypeService.GetModelType(cssrule.OwnerObjectConstType);
 
                 var repo = this.SiteDb.GetRepository(ownertype);
@@ -167,9 +159,8 @@ namespace Kooboo.Sites.Repository
                 }
                 var siteobject = repo.Get(cssrule.OwnerObjectId);
 
-                if (siteobject != null && siteobject is IDomObject)
+                if (siteobject != null && siteobject is IDomObject domobject)
                 {
-                    var domobject = siteobject as IDomObject;
                     string newhtml = string.Empty;
 
                     Node node = Service.DomService.GetElementByKoobooId(domobject.Dom, cssrule.KoobooId);
@@ -177,7 +168,7 @@ namespace Kooboo.Sites.Repository
                     {
                         Element element = node as Element;
                         element.removeAttribute("style");
-                        element.attributes.Add(new Attr() { name = "style", value = RuleText });
+                        element.attributes.Add(new Attr() { name = "style", value = ruleText });
                         newhtml = domobject.Dom.HtmlSource.Substring(0, element.location.openTokenStartIndex);
                         newhtml += Service.DomService.ReSerializeOpenTag(element);
                         newhtml += domobject.Dom.HtmlSource.Substring(element.location.openTokenEndIndex + 1);
@@ -188,48 +179,39 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public void AddInlineCss(Guid ObjectId, byte ObjectType, string KoobooId, string RuleText)
+        public void AddInlineCss(Guid objectId, byte objectType, string koobooId, string ruleText)
         {
-
-            var ownertype = Service.ConstTypeService.GetModelType(ObjectType);
+            var ownertype = Service.ConstTypeService.GetModelType(objectType);
 
             var repo = this.SiteDb.GetRepository(ownertype);
-            if (repo == null)
-            {
-                return;
-            }
-            var siteobject = repo.Get(ObjectId);
+            var siteobject = repo?.Get(objectId);
 
-            if (siteobject != null && siteobject is IDomObject)
+            if (siteobject != null && siteobject is IDomObject domobject)
             {
-                var domobject = siteobject as IDomObject;
                 string newhtml = string.Empty;
 
-                Node node = Service.DomService.GetElementByKoobooId(domobject.Dom, KoobooId);
+                Node node = Service.DomService.GetElementByKoobooId(domobject.Dom, koobooId);
                 if (node.nodeType == enumNodeType.ELEMENT)
                 {
                     Element element = node as Element;
                     element.removeAttribute("style");
-                    element.attributes.Add(new Attr() { name = "style", value = RuleText });
+                    element.attributes.Add(new Attr() { name = "style", value = ruleText });
                     newhtml = domobject.Dom.HtmlSource.Substring(0, element.location.openTokenStartIndex);
                     newhtml += Service.DomService.ReSerializeOpenTag(element);
                     newhtml += domobject.Dom.HtmlSource.Substring(element.location.openTokenEndIndex + 1);
                 }
                 domobject.Body = newhtml;
                 repo.AddOrUpdate(domobject);
-
             }
-
         }
 
         /// <summary>
-        /// remove inline css from the source and also from the relations. 
+        /// remove inline css from the source and also from the relations.
         /// </summary>
-        /// <param name="store"></param>
-        /// <param name="CmsCssRuleId"></param>
-        public void RemoveInlineCss(Guid CmsCssRuleId)
+        /// <param name="cmsCssRuleId"></param>
+        public void RemoveInlineCss(Guid cmsCssRuleId)
         {
-            CmsCssRule cssrule = Get(CmsCssRuleId);
+            CmsCssRule cssrule = Get(cmsCssRuleId);
             _RemoveInlineCss(cssrule);
         }
 
@@ -262,54 +244,48 @@ namespace Kooboo.Sites.Repository
                     }
                     domobject.Body = newhtml;
                     repo.AddOrUpdate(domobject);
-
                 }
             }
-
         }
 
-        public void AddNewCssRule(Guid ParentStyleId, string selector, string declarationText)
+        public void AddNewCssRule(Guid parentStyleId, string selector, string declarationText)
         {
-            CmsCssRuleChanges change = new CmsCssRuleChanges();
-            change.selectorText = selector;
-            change.ChangeType = ChangeType.Add;
-            change.DeclarationText = declarationText;
-
-            List<CmsCssRuleChanges> list = new List<CmsCssRuleChanges>();
-            list.Add(change);
-            UpdateStyle(list, ParentStyleId);
-        }
-
-        public void AddNewCssRule(Guid ParentStyleId, string cssText)
-        {
-            CmsCssRuleChanges change = new CmsCssRuleChanges();
-            change.CssText = cssText;
-            change.ChangeType = ChangeType.Add;
-
-            List<CmsCssRuleChanges> list = new List<CmsCssRuleChanges>();
-            list.Add(change);
-            UpdateStyle(list, ParentStyleId);
-        }
-
-        public void AddOrUpdateDeclaration(Guid CmsCssRuleId, string PropertyName, string Value, bool Importance = false)
-        { 
-            var currentRule = Get(CmsCssRuleId);
-            if (currentRule !=null)
+            CmsCssRuleChanges change = new CmsCssRuleChanges
             {
-                string newvalue = GetRuleTextAddOrUpdateDeclaration(CmsCssRuleId, PropertyName, Value, Importance);
-                currentRule.CssText = newvalue;
-                AddOrUpdate(currentRule, default(Guid), true);  
-            } 
+                selectorText = selector, ChangeType = ChangeType.Add, DeclarationText = declarationText
+            };
+
+            List<CmsCssRuleChanges> list = new List<CmsCssRuleChanges> {change};
+            UpdateStyle(list, parentStyleId);
         }
-         
-        // only for style rule. 
-        public string GetRuleTextAddOrUpdateDeclaration(Guid CmsCssRuleId, string PropertyName, string Value, bool Importance = false)
+
+        public void AddNewCssRule(Guid parentStyleId, string cssText)
         {
-            var cmsrule = SiteDb.CssRules.Get(CmsCssRuleId);
+            CmsCssRuleChanges change = new CmsCssRuleChanges {CssText = cssText, ChangeType = ChangeType.Add};
+
+            List<CmsCssRuleChanges> list = new List<CmsCssRuleChanges> {change};
+            UpdateStyle(list, parentStyleId);
+        }
+
+        public void AddOrUpdateDeclaration(Guid cmsCssRuleId, string propertyName, string value, bool importance = false)
+        {
+            var currentRule = Get(cmsCssRuleId);
+            if (currentRule != null)
+            {
+                string newvalue = GetRuleTextAddOrUpdateDeclaration(cmsCssRuleId, propertyName, value, importance);
+                currentRule.CssText = newvalue;
+                AddOrUpdate(currentRule, default(Guid), true);
+            }
+        }
+
+        // only for style rule.
+        public string GetRuleTextAddOrUpdateDeclaration(Guid cmsCssRuleId, string propertyName, string value, bool importance = false)
+        {
+            var cmsrule = SiteDb.CssRules.Get(cmsCssRuleId);
             if (cmsrule != null)
             {
                 var declarations = CSSSerializer.deserializeDeclarationBlock(cmsrule.CssText);
-                declarations.updateDeclaration(new CSSDeclaration() { propertyname = PropertyName, value = Value, important = Importance });
+                declarations.updateDeclaration(new CSSDeclaration() { propertyname = propertyName, value = value, important = importance });
                 string ruletext = CSSSerializer.serializeDeclarationBlock(declarations);
 
                 string newruletext = cmsrule.SelectorText + "\r\n{\r\n" + ruletext + "\r\n}\r\n";
@@ -319,19 +295,19 @@ namespace Kooboo.Sites.Repository
         }
 
         /// <summary>
-        /// make a list of changes to cssrules. 
+        /// make a list of changes to cssrules.
         /// </summary>
-        /// <param name="store"></param>
         /// <param name="changelist"></param>
-        public void UpdateStyle(List<CmsCssRuleChanges> changelist, Guid ParentStyleId)
+        /// <param name="parentStyleId"></param>
+        public void UpdateStyle(List<CmsCssRuleChanges> changelist, Guid parentStyleId)
         {
-            Style style = SiteDb.Styles.Get(ParentStyleId);
+            Style style = SiteDb.Styles.Get(parentStyleId);
             if (style == null)
             {
                 return;
             }
 
-            var ConvertedCssRules = Kooboo.Sites.Service.CssService.ConvertCss(style.Body, style.Id);
+            var convertedCssRules = Kooboo.Sites.Service.CssService.ConvertCss(style.Body, style.Id);
 
             List<ChangePlan> changeplans = new List<ChangePlan>();
 
@@ -341,9 +317,9 @@ namespace Kooboo.Sites.Repository
             {
                 if (item.ChangeType == ChangeType.Update || item.ChangeType == ChangeType.Delete)
                 {
-                    var converted = ConvertedCssRules.Find(o => o.RuleId == item.CssRuleId);
+                    var converted = convertedCssRules.Find(o => o.RuleId == item.CssRuleId);
 
-                    CmsCssRule oldrule = converted != null ? converted.CmsRule : null;
+                    CmsCssRule oldrule = converted?.CmsRule;
 
                     if (oldrule != null)
                     {
@@ -360,10 +336,9 @@ namespace Kooboo.Sites.Repository
                                 changeplans.Add(new ChangePlan() { StartIndex = cssrule.StartIndex, EndIndex = cssrule.EndIndex, ChangeInto = item.CssText });
                             }
                         }
-
                         else if (oldrule.ruleType == RuleType.MediaRule)
                         {
-                            // media rule can only change selector text. 
+                            // media rule can only change selector text.
                             if (item.ChangeType == ChangeType.Update)
                             {
                                 string newselector = item.selectorText;
@@ -371,7 +346,7 @@ namespace Kooboo.Sites.Repository
                             }
                             else
                             {
-                                /// this is del this media rule. 
+                                // this is del this media rule.
                                 changeplans.Add(new ChangePlan() { StartIndex = cssrule.StartIndex, EndIndex = cssrule.EndIndex, ChangeInto = "" });
                             }
                         }
@@ -384,10 +359,9 @@ namespace Kooboo.Sites.Repository
                             }
                             else
                             {
-                                // to del one rule. 
+                                // to del one rule.
                                 changeplans.Add(new ChangePlan() { StartIndex = cssrule.StartIndex, EndIndex = cssrule.EndIndex, ChangeInto = "" });
                             }
-
                         }
                         else if (oldrule.ruleType == RuleType.ImportRule)
                         {
@@ -403,19 +377,17 @@ namespace Kooboo.Sites.Repository
                         }
                     }
                 }
-
                 else
                 {
                     //this is a new add.
-                    string newstring = "\r\n" + item.CssText;  
-                    int insertposition = GetAppendIndex(ConvertedCssRules);
-                    
-                    if (item.CssText.IndexOf("@import", StringComparison.OrdinalIgnoreCase)!=-1)
+                    string newstring = "\r\n" + item.CssText;
+                    int insertposition = GetAppendIndex(convertedCssRules);
+
+                    if (item.CssText.IndexOf("@import", StringComparison.OrdinalIgnoreCase) != -1)
                     {
                         changeplans.Add(new ChangePlan() { StartIndex = 0, EndIndex = -1, ChangeInto = newstring });
                     }
-
-                  else  if (insertposition > -1)
+                    else if (insertposition > -1)
                     {
                         changeplans.Add(new ChangePlan() { StartIndex = insertposition, EndIndex = insertposition - 1, ChangeInto = newstring });
                     }
@@ -432,7 +404,6 @@ namespace Kooboo.Sites.Repository
 
             SiteDb.Styles.AddOrUpdate(style, true, true);
         }
-
 
         private int GetAppendIndex(List<CssConvertResult> rules)
         {
@@ -454,24 +425,18 @@ namespace Kooboo.Sites.Repository
             return endindex;
         }
 
-        public void UpdateDom(List<CmsCssRuleChanges> changes, Guid OwnerObjectId, byte OwnerObjectType)
+        public void UpdateDom(List<CmsCssRuleChanges> changes, Guid ownerObjectId, byte ownerObjectType)
         {
             IRepository repo;
             List<SourceUpdate> sourceupdates = new List<SourceUpdate>();
 
-            var ownertype = Service.ConstTypeService.GetModelType(OwnerObjectType);
+            var ownertype = Service.ConstTypeService.GetModelType(ownerObjectType);
 
             repo = this.SiteDb.GetRepository(ownertype);
-            if (repo == null)
-            {
-                return;
-            }
-            var siteobject = repo.Get(OwnerObjectId);
+            var siteobject = repo?.Get(ownerObjectId);
 
-            if (siteobject != null && siteobject is DomObject)
+            if (siteobject != null && siteobject is DomObject domobject)
             {
-                var domobject = siteobject as DomObject;
-
                 foreach (var item in changes)
                 {
                     var cmsrule = SiteDb.CssRules.Get(item.CssRuleId);
@@ -488,12 +453,10 @@ namespace Kooboo.Sites.Repository
                         string newopentag = Service.DomService.ReSerializeOpenTag(element);
 
                         sourceupdates.Add(new SourceUpdate() { StartIndex = element.location.openTokenStartIndex, EndIndex = element.location.openTokenEndIndex, NewValue = newopentag });
-
-
                     }
                 }
 
-                if (sourceupdates.Count() > 0)
+                if (sourceupdates.Any())
                 {
                     domobject.Body = Sites.Service.DomService.UpdateSource(domobject.Dom.HtmlSource, sourceupdates);
 
@@ -501,7 +464,6 @@ namespace Kooboo.Sites.Repository
                 }
             }
         }
-         
 
         public static string ParseChange(string cssText, List<ChangePlan> changeplans)
         {
@@ -520,7 +482,7 @@ namespace Kooboo.Sites.Repository
                     appendAddedCss += "\r\n" + item.ChangeInto;
                 }
                 else
-                { 
+                {
                     sb.Append(cssText.Substring(currentindex, item.StartIndex - currentindex));
                     sb.Append(item.ChangeInto);
 
@@ -535,42 +497,40 @@ namespace Kooboo.Sites.Repository
             return sb.ToString() + appendAddedCss;
         }
 
-
         /// <summary>
         /// get the sub cssrule of this style id.
         /// </summary>
-        /// <param name="StyleId"></param>
+        /// <param name="styleId"></param>
         /// <returns></returns>
-        public List<CmsCssRule> GetByStyleId(Guid StyleId)
+        public List<CmsCssRule> GetByStyleId(Guid styleId)
         {
-            return Query.Where(o => o.ParentStyleId == StyleId && o.ParentCssRuleId == default(Guid)).SelectAll();
+            return Query.Where(o => o.ParentStyleId == styleId && o.ParentCssRuleId == default(Guid)).SelectAll();
         }
 
         /// <summary>
         /// get the sub rule of current cmscssrule.
         /// </summary>
-        /// <param name="store"></param>
-        /// <param name="CssRuleId"></param>
+        /// <param name="cssRuleId"></param>
         /// <returns></returns>
-        public List<CmsCssRule> GetByRuleId(Guid CssRuleId)
+        public List<CmsCssRule> GetByRuleId(Guid cssRuleId)
         {
-            return Query.Where(o => o.ParentCssRuleId == CssRuleId).SelectAll();
+            return Query.Where(o => o.ParentCssRuleId == cssRuleId).SelectAll();
         }
 
         public List<CmsCssRule> GetInLineRules()
         {
             return Query.Where(o => o.IsInline).SelectAll().OrderBy(o => o.LastModified).Take(9999).ToList();
         }
+
         /// <summary>
         /// Used to show whethere this rule is being used or not.
         /// This determined based Dom Css Selector match.
         /// </summary>
-        /// <param name="SiteDb"></param>
-        /// <param name="CssRuleId"></param>
+        /// <param name="cssRuleId"></param>
         /// <returns></returns>
-        public List<UsedByRelation> ShowRelations(Guid CssRuleId)
+        public List<UsedByRelation> ShowRelations(Guid cssRuleId)
         {
-            var cssrule = SiteDb.CssRules.Get(CssRuleId);
+            var cssrule = SiteDb.CssRules.Get(cssRuleId);
             return ShowRelations(cssrule);
         }
 
@@ -583,12 +543,14 @@ namespace Kooboo.Sites.Repository
             if (cssrule.IsInline)
             {
                 var objectinfo = Service.ObjectService.GetObjectInfo(SiteDb, cssrule.OwnerObjectId, cssrule.OwnerObjectConstType);
-                UsedByRelation usedby = new UsedByRelation();
-                usedby.Name = objectinfo.Name;
-                usedby.Remark = cssrule.KoobooOpenTag;
-                usedby.ObjectId = objectinfo.ObjectId;
-                usedby.ConstType = objectinfo.ConstType;
-                usedby.Url = objectinfo.Url;
+                UsedByRelation usedby = new UsedByRelation
+                {
+                    Name = objectinfo.Name,
+                    Remark = cssrule.KoobooOpenTag,
+                    ObjectId = objectinfo.ObjectId,
+                    ConstType = objectinfo.ConstType,
+                    Url = objectinfo.Url
+                };
                 result.Add(usedby);
                 return result;
             }
@@ -601,9 +563,8 @@ namespace Kooboo.Sites.Repository
             {
                 var siteobject = Service.ObjectService.GetSiteObject(SiteDb, item.ObjectId, item.ConstType);
                 Document dom = null;
-                if (siteobject is IDomObject)
+                if (siteobject is IDomObject domobject)
                 {
-                    var domobject = siteobject as IDomObject;
                     dom = domobject.Dom;
                 }
 
@@ -613,7 +574,7 @@ namespace Kooboo.Sites.Repository
 
                     string name = null;
                     byte consttype = 0;
-                    Guid ObjectId = default(Guid);
+                    Guid objectId = default(Guid);
                     string url = null;
 
                     if (elements != null && elements.length > 0)
@@ -621,19 +582,21 @@ namespace Kooboo.Sites.Repository
                         var objectinfo = Service.ObjectService.GetObjectInfo(SiteDb, siteobject);
                         name = objectinfo.Name;
                         consttype = objectinfo.ConstType;
-                        ObjectId = objectinfo.ObjectId;
+                        objectId = objectinfo.ObjectId;
                         url = objectinfo.Url;
                     }
 
                     foreach (var eitem in elements.item)
                     {
                         var objectinfo = Service.ObjectService.GetObjectInfo(SiteDb, cssrule);
-                        UsedByRelation usedby = new UsedByRelation();
-                        usedby.Name = name;
-                        usedby.ObjectId = ObjectId;
-                        usedby.ConstType = consttype;
-                        usedby.Remark = Service.DomService.GetOpenTag(eitem);
-                        usedby.Url = url;
+                        UsedByRelation usedby = new UsedByRelation
+                        {
+                            Name = name,
+                            ObjectId = objectId,
+                            ConstType = consttype,
+                            Remark = Service.DomService.GetOpenTag(eitem),
+                            Url = url
+                        };
                         result.Add(usedby);
                     }
                 }
@@ -642,7 +605,7 @@ namespace Kooboo.Sites.Repository
         }
 
         /// <summary>
-        /// List the rules that can be clean, that is not being used any more. 
+        /// List the rules that can be clean, that is not being used any more.
         /// </summary>
         /// <returns></returns>
         public List<CmsCssRule> CleanUp()
@@ -684,7 +647,6 @@ namespace Kooboo.Sites.Repository
 
                         if (dom != null)
                         {
-
                             var elements = dom.getElementsByCSSSelector(item.SelectorText);
 
                             if (elements == null || elements.length == 0)
@@ -692,18 +654,17 @@ namespace Kooboo.Sites.Repository
                                 results.Add(item);
                                 break;
                             }
-
                         }
                     }
                 }
             }
             return results;
         }
-         
-        public List<CmsCssRule> ListUsedByPage(Guid PageId)
+
+        public List<CmsCssRule> ListUsedByPage(Guid pageId)
         {
-            var relativeobjectids = this.SiteDb.Pages.GetRelatedOwnerObjectIds(PageId);
+            var relativeobjectids = this.SiteDb.Pages.GetRelatedOwnerObjectIds(pageId);
             return this.Query.WhereIn<Guid>(o => o.OwnerObjectId, relativeobjectids).SelectAll();
-        } 
+        }
     }
 }

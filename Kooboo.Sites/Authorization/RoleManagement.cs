@@ -6,55 +6,53 @@ namespace Kooboo.Sites.Authorization
 {
     public static class RoleManagement
     {
-        private static Dictionary<EnumUserRole, HashSet<uint>> roleActions { get; set; }
+        private static Dictionary<EnumUserRole, HashSet<uint>> RoleActions { get; set; }
 
         static RoleManagement()
         {
             // this is hard code for now..
 
-            if (roleActions == null)
+            if (RoleActions == null)
             {
-                roleActions = new Dictionary<EnumUserRole, HashSet<uint>>();
+                RoleActions = new Dictionary<EnumUserRole, HashSet<uint>>();
 
-                HashSet<uint> admin = new HashSet<uint>();
-                admin.Add(Actions.Admin);
+                HashSet<uint> admin = new HashSet<uint> {Actions.Admin};
 
-                roleActions.Add(EnumUserRole.Administrator, admin);
+                RoleActions.Add(EnumUserRole.Administrator, admin);
 
-                HashSet<uint> siteowner = new HashSet<uint>();
-                siteowner.Add(Actions.System);
-                siteowner.Add(Actions.Development);
-                siteowner.Add(Actions.Content);
-                siteowner.Add(Actions.Storage);
+                HashSet<uint> siteowner = new HashSet<uint>
+                {
+                    Actions.System, Actions.Development, Actions.Content, Actions.Storage
+                };
 
-                roleActions.Add(EnumUserRole.SiteMaster, admin);
+                RoleActions.Add(EnumUserRole.SiteMaster, admin);
 
-                HashSet<uint> development = new HashSet<uint>();
+                HashSet<uint> development = new HashSet<uint>
+                {
+                    Actions.Development,
+                    Actions.Content,
+                    Actions.Storage,
+                    Actions.Systems.SiteLogs,
+                    Actions.Systems.Jobs,
+                    Actions.Systems.Disk,
+                    Actions.Systems.Events
+                };
 
-                development.Add(Actions.Development);
-                development.Add(Actions.Content);
-                development.Add(Actions.Storage);
-                development.Add(Actions.Systems.SiteLogs);
-                development.Add(Actions.Systems.Jobs);
-                development.Add(Actions.Systems.Disk);
-                development.Add(Actions.Systems.Events);
 
-                roleActions.Add(EnumUserRole.Developer, development);
+                RoleActions.Add(EnumUserRole.Developer, development);
 
-                HashSet<uint> contentManager = new HashSet<uint>();
+                HashSet<uint> contentManager = new HashSet<uint> {Actions.Content, Actions.Storage};
 
-                contentManager.Add(Actions.Content);
-                contentManager.Add(Actions.Storage);
 
-                roleActions.Add(EnumUserRole.ContentManager, contentManager);
+                RoleActions.Add(EnumUserRole.ContentManager, contentManager);
             }
         }
 
         public static bool HasRights(uint actionRights, EnumUserRole role)
         {
-            if (roleActions.ContainsKey(role))
+            if (RoleActions.ContainsKey(role))
             {
-                var items = roleActions[role];
+                var items = RoleActions[role];
 
                 if (Hierarchy.HasRights(actionRights, items))
                 {

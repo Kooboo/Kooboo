@@ -1,38 +1,37 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
+using Kooboo.Sites.Cache;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Render;
+using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.Render;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Cache;
-using Kooboo.Data.Context;
-using Kooboo.Sites.Extensions;
-using System.Collections;
 
 namespace Kooboo.Sites.Routing
 {
     public static class PageRoute
     {
-        public static void UpdatePageRouteParameter(SiteDb SiteDb, Guid PageId, List<string> Paras)
+        public static void UpdatePageRouteParameter(SiteDb siteDb, Guid pageId, List<string> paras)
         {
-            var route = SiteDb.Routes.GetByObjectId(PageId, ConstObjectType.Page);
+            var route = siteDb.Routes.GetByObjectId(pageId, ConstObjectType.Page);
 
             if (route != null)
             {
-                UpdateRouteParameters(SiteDb, route, Paras);
+                UpdateRouteParameters(siteDb, route, paras);
             }
         }
 
-        public static void UpdatePageRouteParameter(SiteDb SiteDb, Guid PageId)
+        public static void UpdatePageRouteParameter(SiteDb siteDb, Guid pageId)
         {
-            HashSet<string> paras = new HashSet<string>(); 
-             
-            var relativeViews = SiteDb.Relations.GetRelations(PageId, ConstObjectType.View);
+            HashSet<string> paras = new HashSet<string>();
+
+            var relativeViews = siteDb.Relations.GetRelations(pageId, ConstObjectType.View);
             foreach (var item in relativeViews)
             {
-                var viewparas = GetViewParameters(SiteDb, item.objectYId);
+                var viewparas = GetViewParameters(siteDb, item.objectYId);
                 foreach (var para in viewparas)
                 {
                     if (!paras.Contains(para))
@@ -42,41 +41,41 @@ namespace Kooboo.Sites.Routing
                 }
             }
 
-            var page = SiteDb.Pages.Get(PageId);
-            if (page !=null && page.RequestParas !=null)
+            var page = siteDb.Pages.Get(pageId);
+            if (page?.RequestParas != null)
             {
                 foreach (var item in page.RequestParas)
                 {
-                    paras.Add(item); 
+                    paras.Add(item);
                 }
             }
 
-            UpdatePageRouteParameter(SiteDb, PageId, paras.ToList());
+            UpdatePageRouteParameter(siteDb, pageId, paras.ToList());
         }
 
-        public static void UpdateRouteParameters(SiteDb SiteDb, Route Route, List<string> NewParas)
+        public static void UpdateRouteParameters(SiteDb siteDb, Route route, List<string> newParas)
         {
-            Dictionary<string, string> DictNewParas = new Dictionary<string, string>();
-            foreach (var item in NewParas)
+            Dictionary<string, string> dictNewParas = new Dictionary<string, string>();
+            foreach (var item in newParas)
             {
-                var key = Sites.DataSources.ParameterBinder.GetBindingKey(item); 
+                var key = Sites.DataSources.ParameterBinder.GetBindingKey(item);
                 if (string.IsNullOrWhiteSpace(key))
                 {
-                    key = item; 
+                    key = item;
                 }
-                DictNewParas.Add(key, item);
+                dictNewParas.Add(key, item);
             }
 
             bool haschange = false;
-            if (Route == null)
+            if (route == null)
             {
                 return;
             }
             // remote old ones.
             List<string> toberemoved = new List<string>();
-            foreach (var item in Route.Parameters)
+            foreach (var item in route.Parameters)
             {
-                if (!DictNewParas.ContainsKey(item.Key))
+                if (!dictNewParas.ContainsKey(item.Key))
                 {
                     toberemoved.Add(item.Key);
                 }
@@ -84,52 +83,45 @@ namespace Kooboo.Sites.Routing
 
             foreach (var item in toberemoved)
             {
-                Route.Parameters.Remove(item);
-                /// TODO: check whether need to remove items form the route name or not...
+                route.Parameters.Remove(item);
+                // TODO: check whether need to remove items form the route name or not...
                 haschange = true;
             }
 
-            foreach (var item in DictNewParas)
+            foreach (var item in dictNewParas)
             {
-                if (!Route.Parameters.ContainsKey(item.Key))
+                if (!route.Parameters.ContainsKey(item.Key))
                 {
-                    Route.Parameters.Add(item.Key, item.Value);
+                    route.Parameters.Add(item.Key, item.Value);
                     haschange = true;
                 }
                 else
                 {
-                    if (Route.Parameters[item.Key] != item.Value)
+                    if (route.Parameters[item.Key] != item.Value)
                     {
-                        Route.Parameters[item.Key] = item.Value;
+                        route.Parameters[item.Key] = item.Value;
                         haschange = true;
                     }
-
                 }
             }
 
             if (haschange)
             {
-                SiteDb.Routes.AddOrUpdate(Route);
+                siteDb.Routes.AddOrUpdate(route);
             }
-
         }
 
-        public static List<string> GetViewParameters(SiteDb sitedb, Guid ViewId)
+        public static List<string> GetViewParameters(SiteDb sitedb, Guid viewId)
         {
             HashSet<string> paras = new HashSet<string>();
 
-            var datamethods = Cache.SiteObjectCache<ViewDataMethod>.List(sitedb).Where(o => o.ViewId == ViewId).ToList();
+            var datamethods = Cache.SiteObjectCache<ViewDataMethod>.List(sitedb).Where(o => o.ViewId == viewId).ToList();
 
             if (datamethods != null)
             {
                 foreach (var item in datamethods)
                 {
-                    var method = sitedb.DataMethodSettings.Get(item.MethodId);
-
-                    if (method == null)
-                    {
-                        method = Data.GlobalDb.DataMethodSettings.Get(item.MethodId);
-                    }
+                    var method = sitedb.DataMethodSettings.Get(item.MethodId) ?? Data.GlobalDb.DataMethodSettings.Get(item.MethodId);
 
                     if (method != null)
                     {
@@ -144,25 +136,25 @@ namespace Kooboo.Sites.Routing
                 }
             }
 
-            // add the kscript part into the parameters. 
-            var view = sitedb.Views.Get(ViewId);
-            if (view != null && view.RequestParas != null)
+            // add the kscript part into the parameters.
+            var view = sitedb.Views.Get(viewId);
+            if (view?.RequestParas != null)
             {
                 foreach (var item in view.RequestParas)
                 {
                     paras.Add(item);
-                } 
+                }
             }
 
             return paras.ToList();
         }
 
-        public static string GetRelativeUrl(string RelativeUrl, Render.FrontContext context)
+        public static string GetRelativeUrl(string relativeUrl, Render.FrontContext context)
         {
-            var route = ObjectRoute.GetRoute(context.SiteDb, RelativeUrl);
+            var route = ObjectRoute.GetRoute(context.SiteDb, relativeUrl);
             if (route == null)
             {
-                return RelativeUrl;
+                return relativeUrl;
             }
 
             return GetRelativeUrl(route, context);
@@ -173,16 +165,16 @@ namespace Kooboo.Sites.Routing
             return GetRelativeUrl(route.Name, route.Parameters, context);
         }
 
-        public static string GetRelativeUrl(string RouteName, Dictionary<string, string> Parameters, FrontContext context)
+        public static string GetRelativeUrl(string routeName, Dictionary<string, string> parameters, FrontContext context)
         {
-            if (Parameters == null || Parameters.Count == 0)
+            if (parameters == null || parameters.Count == 0)
             {
-                return RouteName;
+                return routeName;
             }
 
             Dictionary<string, string> querystring = new Dictionary<string, string>();
 
-            foreach (var item in Parameters)
+            foreach (var item in parameters)
             {
                 string key = item.Key;
                 string value = item.Value;
@@ -192,9 +184,9 @@ namespace Kooboo.Sites.Routing
 
                 if (ValueResult != null)
                 {
-                    if (RouteName.IndexOf("{" + key + "}", StringComparison.OrdinalIgnoreCase) > -1)
+                    if (routeName.IndexOf("{" + key + "}", StringComparison.OrdinalIgnoreCase) > -1)
                     {
-                        RouteName = Lib.Helper.StringHelper.ReplaceIgnoreCase(RouteName, "{" + key + "}", ValueResult.ToString());
+                        routeName = Lib.Helper.StringHelper.ReplaceIgnoreCase(routeName, "{" + key + "}", ValueResult.ToString());
                     }
                     else
                     {
@@ -205,34 +197,28 @@ namespace Kooboo.Sites.Routing
 
             if (querystring.Count > 0)
             {
-                RouteName = Kooboo.Lib.Helper.UrlHelper.AppendQueryString(RouteName, querystring);
+                routeName = Kooboo.Lib.Helper.UrlHelper.AppendQueryString(routeName, querystring);
             }
 
-            return RouteName;
+            return routeName;
         }
 
-        public static Dictionary<string, string> GetViewParameterValues(SiteDb SiteDb, View view, FrontContext Context)
+        public static Dictionary<string, string> GetViewParameterValues(SiteDb siteDb, View view, FrontContext context)
         {
             Dictionary<string, string> result = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             if (view == null)
             {
-                return result; 
+                return result;
             }
 
-            var datamethods = Cache.SiteObjectCache<ViewDataMethod>.List(SiteDb).Where(o => o.ViewId == view.Id).ToList();
+            var datamethods = Cache.SiteObjectCache<ViewDataMethod>.List(siteDb).Where(o => o.ViewId == view.Id).ToList();
 
             if (datamethods != null)
             {
                 foreach (var item in datamethods)
                 {
-
-                    var method = SiteDb.DataMethodSettings.Get(item.MethodId);
-
-                    if (method == null)
-                    {
-                        method = Data.GlobalDb.DataMethodSettings.Get(item.MethodId);
-                    }
+                    var method = siteDb.DataMethodSettings.Get(item.MethodId) ?? Data.GlobalDb.DataMethodSettings.Get(item.MethodId);
 
                     if (method != null)
                     {
@@ -242,107 +228,98 @@ namespace Kooboo.Sites.Routing
                             {
                                 if (!result.ContainsKey(eachbinding.Key))
                                 {
-                                    object ValueResult = GetValueFromContext(eachbinding.Key, eachbinding.Value.Binding, Context);
+                                    object valueResult = GetValueFromContext(eachbinding.Key, eachbinding.Value.Binding, context);
 
-                                    if (ValueResult != null)
+                                    if (valueResult != null)
                                     {
-                                        result[eachbinding.Key] = ValueResult.ToString();
+                                        result[eachbinding.Key] = valueResult.ToString();
                                     }
-
                                 }
                             }
                         }
                     }
                 }
             }
-             
 
-            if (view !=null && view.RequestParas !=null)
+            if (view?.RequestParas != null)
             {
                 foreach (var p in view.RequestParas)
                 {
-                    var pkey = p; 
-                    if (pkey.IndexOf("}")>-1)
+                    var pkey = p;
+                    if (pkey.IndexOf("}") > -1)
                     {
-                        pkey = Kooboo.Sites.DataSources.ParameterBinder.GetBindingKey(pkey); 
+                        pkey = Kooboo.Sites.DataSources.ParameterBinder.GetBindingKey(pkey);
                     }
 
                     if (!result.ContainsKey(pkey))
                     {
-                        object ValueResult = GetValueFromContext(pkey, "{" + pkey + "}", Context);
+                        object valueResult = GetValueFromContext(pkey, "{" + pkey + "}", context);
 
-                        if (ValueResult != null)
+                        if (valueResult != null)
                         {
-                            result[pkey] = ValueResult.ToString();
-                        } 
-                    } 
-              
+                            result[pkey] = valueResult.ToString();
+                        }
+                    }
                 }
             }
-            
+
             return result;
         }
 
-        private static object GetValueFromContext(string Key, string Value, FrontContext context)
+        private static object GetValueFromContext(string key, string value, FrontContext context)
         {
-
-            if (!DataSources.ParameterBinder.IsValueBinding(Value))
+            if (!DataSources.ParameterBinder.IsValueBinding(value))
             {
-                return Value;
-            }
-            object ValueResult = null;
-
-            string expression = DataSources.ParameterBinder.GetBindingKey(Value);
-
-            // rule 1, get the value directly from context.. 
-            ValueResult = context.RenderContext.DataContext.GetValue(expression);
-
-            // TODO: this is new method... should be replaced by this only in the near future... 
-            if (ValueResult == null)
-            {
-                ValueResult = RenderContextHelper.GetValue(Key, Value, context.RenderContext);
+                return value;
             }
 
-            if (ValueResult == null)
+            string expression = DataSources.ParameterBinder.GetBindingKey(value);
+
+            // rule 1, get the value directly from context..
+            object valueResult = context.RenderContext.DataContext.GetValue(expression) ?? RenderContextHelper.GetValue(key, value, context.RenderContext);
+
+            // TODO: this is new method... should be replaced by this only in the near future...
+
+            if (valueResult == null)
             {
-                // rule 2, get the value as field value from all data objects... 
+                // rule 2, get the value as field value from all data objects...
                 // first check the value that has the same type as the datamethod return type.
-                ValueResult = GetValueByMethodReturnType(Key, Value, context);
+                valueResult = GetValueByMethodReturnType(key, value, context);
             }
 
-            if (ValueResult == null)
+            if (valueResult == null)
             {
-                ValueResult = GetValueByNamingConvention(Key, Value, context);
+                valueResult = GetValueByNamingConvention(key, value, context);
             }
 
-            // last try to id alternative. 
-            if (ValueResult == null)
+            // last try to id alternative.
+            if (valueResult == null)
             {
-                //check for id == _id convertion. 
+                //check for id == _id convertion.
                 string lower = expression.ToLower();
                 if (lower == "_id")
                 {
-                    ValueResult = context.RenderContext.DataContext.GetValue("id"); 
-                    if (ValueResult == null)
+                    valueResult = context.RenderContext.DataContext.GetValue("id");
+                    if (valueResult == null)
                     {
-                        ValueResult = RenderContextHelper.GetValue("{id}", Value, context.RenderContext);
+                        valueResult = RenderContextHelper.GetValue("{id}", value, context.RenderContext);
                     }
                 }
                 else if (lower == "id")
                 {
-                    ValueResult = context.RenderContext.DataContext.GetValue("_id");
-                    if (ValueResult == null)
+                    valueResult = context.RenderContext.DataContext.GetValue("_id");
+                    if (valueResult == null)
                     {
-                        ValueResult = RenderContextHelper.GetValue("{_id}", Value, context.RenderContext);
+                        valueResult = RenderContextHelper.GetValue("{_id}", value, context.RenderContext);
                     }
                 }
             }
-            
-            return ValueResult;
+
+            return valueResult;
         }
 
         /// <summary>
-        /// For example, Id ==> ReturnType(News).Id; 
+        /// For example, Id ==> ReturnType(News).Id;
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
@@ -410,15 +387,13 @@ namespace Kooboo.Sites.Routing
                 {
                     return result;
                 }
-
             }
 
             return result;
-
         }
 
         /// <summary>
-        /// Change ProductName into Product.Name to get the product information.. 
+        /// Change ProductName into Product.Name to get the product information..
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
@@ -426,7 +401,7 @@ namespace Kooboo.Sites.Routing
         /// <returns></returns>
         private static object GetValueByNamingConvention(string key, string value, FrontContext context)
         {
-            // in the case of contains ., it is already 
+            // in the case of contains ., it is already
             if (key.Contains("."))
             {
                 return null;
@@ -454,46 +429,42 @@ namespace Kooboo.Sites.Routing
                 }
             }
 
-
             return null;
         }
-
     }
-
 
     public static class RenderContextHelper
     {
-        public static object GetValue(string Key, string Value, RenderContext context)
+        public static object GetValue(string key, string value, RenderContext context)
         {
-
-            if (!DataSources.ParameterBinder.IsValueBinding(Value))
+            if (!DataSources.ParameterBinder.IsValueBinding(value))
             {
-                return Value;
+                return value;
             }
-            object ValueResult = null;
+            object valueResult = null;
 
-            string expression = DataSources.ParameterBinder.GetBindingKey(Value);
+            string expression = DataSources.ParameterBinder.GetBindingKey(value);
 
-            // rule 1, get the value directly from context.. 
-            ValueResult = context.DataContext.GetValue(expression);
+            // rule 1, get the value directly from context..
+            valueResult = context.DataContext.GetValue(expression);
 
-            if (ValueResult == null)
+            if (valueResult == null)
             {
-                // rule 2, get the value as field value from all data objects... 
+                // rule 2, get the value as field value from all data objects...
                 // first check the value that has the same type as the datamethod return type.
-                ValueResult = ByMethodReturnType(Key, Value, context);
+                valueResult = ByMethodReturnType(key, value, context);
             }
 
-            if (ValueResult == null)
+            if (valueResult == null)
             {
-                ValueResult = ByNamingConvention(Key, Value, context);
+                valueResult = ByNamingConvention(key, value, context);
             }
 
-            return ValueResult;
+            return valueResult;
         }
 
         /// <summary>
-        /// For example, Id ==> ReturnType(News).Id; 
+        /// For example, Id ==> ReturnType(News).Id;
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
@@ -565,11 +536,10 @@ namespace Kooboo.Sites.Routing
                 }
             }
             return result;
-
         }
 
         /// <summary>
-        /// Change ProductName into Product.Name to get the product information.. 
+        /// Change ProductName into Product.Name to get the product information..
         /// </summary>
         /// <param name="key"></param>
         /// <param name="value"></param>
@@ -577,7 +547,7 @@ namespace Kooboo.Sites.Routing
         /// <returns></returns>
         private static object ByNamingConvention(string key, string value, RenderContext context)
         {
-            // in the case of contains ., it is already 
+            // in the case of contains ., it is already
             if (key.Contains("."))
             {
                 return null;
@@ -607,6 +577,5 @@ namespace Kooboo.Sites.Routing
 
             return null;
         }
-
     }
 }

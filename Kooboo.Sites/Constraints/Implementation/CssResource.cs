@@ -40,23 +40,22 @@ namespace Kooboo.Sites.Constraints
             };
         }
 
-        public List<ConstraintResponse> Check(SiteDb SiteDb, Style SiteObject, string Language = null)
+        public List<ConstraintResponse> Check(SiteDb siteDb, Style siteObject, string language = null)
         {
             List<ConstraintResponse> responseresult = new List<ConstraintResponse>();
 
-            if (SiteObject.Extension != null && (SiteObject.Extension.ToLower() == "css" || SiteObject.Extension.ToLower() == ".css"))
+            if (siteObject.Extension != null && (siteObject.Extension.ToLower() == "css" || siteObject.Extension.ToLower() == ".css"))
             {
-                var changes = GetChanges(SiteObject.Body, Language);
+                var changes = GetChanges(siteObject.Body, language);
 
                 if (changes.Count > 0)
                 {
                     foreach (var item in changes)
                     {
-                        string oldvalue = SiteObject.Body.Substring(item.StartIndex, item.EndIndex - item.StartIndex);
+                        string oldvalue = siteObject.Body.Substring(item.StartIndex, item.EndIndex - item.StartIndex);
 
-                        ConstraintResponse response = new ConstraintResponse();
-                        response.AffectedPart = oldvalue;
-                        var linecol = SiteObject.Body.GetPosition(item.StartIndex);
+                        ConstraintResponse response = new ConstraintResponse {AffectedPart = oldvalue};
+                        var linecol = siteObject.Body.GetPosition(item.StartIndex);
                         response.LineNumber = linecol.Line;
                         response.ColumnNumber = linecol.Column;
 
@@ -71,28 +70,28 @@ namespace Kooboo.Sites.Constraints
             return responseresult;
         }
 
-        public void Fix(SiteDb SiteDb, Style SiteObject, string Language = null)
+        public void Fix(SiteDb siteDb, Style siteObject, string language = null)
         {
-            if (!SiteObject.IsEmbedded)
+            if (!siteObject.IsEmbedded)
             {
-                if (SiteObject.Extension != null && (SiteObject.Extension.ToLower() == "css" || SiteObject.Extension.ToLower() == ".css"))
+                if (siteObject.Extension != null && (siteObject.Extension.ToLower() == "css" || siteObject.Extension.ToLower() == ".css"))
                 {
-                    string relativecssrule = Service.ObjectService.GetObjectRelativeUrl(SiteDb, SiteObject);
+                    string relativecssrule = Service.ObjectService.GetObjectRelativeUrl(siteDb, siteObject);
                     if (string.IsNullOrEmpty(relativecssrule))
                     {
                         relativecssrule = "/";
                     }
-                    var changes = GetChanges(SiteObject.Body, relativecssrule);
+                    var changes = GetChanges(siteObject.Body, relativecssrule);
 
                     if (changes.Count > 0)
                     {
-                        SiteObject.Body = Kooboo.Sites.Service.DomService.UpdateSource(SiteObject.Body, changes);
+                        siteObject.Body = Kooboo.Sites.Service.DomService.UpdateSource(siteObject.Body, changes);
                     }
                 }
             }
         }
 
-        private List<SourceUpdate> GetChanges(string cssText, string CssFileRelativeUrl)
+        private List<SourceUpdate> GetChanges(string cssText, string cssFileRelativeUrl)
         {
             List<SourceUpdate> updates = new List<SourceUpdate>();
 
@@ -107,18 +106,18 @@ namespace Kooboo.Sites.Constraints
                 if (!Kooboo.Lib.Utilities.DataUriService.isDataUri(item.PureUrl))
                 {
                     string righturl = Kooboo.Lib.Helper.UrlHelper.ReplaceBackSlash(item.PureUrl);
-                    string NewRelativeUrl = Kooboo.Lib.Helper.UrlHelper.Combine(CssFileRelativeUrl, righturl);
+                    string newRelativeUrl = Kooboo.Lib.Helper.UrlHelper.Combine(cssFileRelativeUrl, righturl);
 
-                    if (item.PureUrl != NewRelativeUrl)
+                    if (item.PureUrl != newRelativeUrl)
                     {
                         string newvalue;
                         if (item.isUrlToken)
                         {
-                            newvalue = "url(\"" + NewRelativeUrl + "\")";
+                            newvalue = "url(\"" + newRelativeUrl + "\")";
                         }
                         else
                         {
-                            newvalue = "\"" + NewRelativeUrl + "\"";
+                            newvalue = "\"" + newRelativeUrl + "\"";
                         }
 
                         updates.Add(new SourceUpdate { StartIndex = item.StartIndex, EndIndex = item.EndIndex, NewValue = newvalue });

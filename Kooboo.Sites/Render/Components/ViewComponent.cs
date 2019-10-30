@@ -1,15 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
+using Kooboo.Data.Models;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.Service;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Kooboo.Sites.Service;
-using Kooboo.Sites.Models;
 using System.Linq;
-using Kooboo.Data.Context;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Repository;
-using Kooboo.Data.Models;
+using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Render.Components
 {
@@ -30,67 +30,63 @@ namespace Kooboo.Sites.Render.Components
 
         public bool IsRegularHtmlTag { get { return false; } }
 
-        public string StoreEngineName { get { return null;  } }
+        public string StoreEngineName { get { return null; } }
 
-        public byte StoreConstType { get { return ConstObjectType.View;  } }
+        public byte StoreConstType { get { return ConstObjectType.View; } }
 
-        public string DisplayName(RenderContext Context)
+        public string DisplayName(RenderContext context)
         {
-            return Data.Language.Hardcoded.GetValue("View", Context); 
+            return Data.Language.Hardcoded.GetValue("View", context);
         }
 
         public List<ComponentInfo> AvaiableObjects(SiteDb sitedb)
         {
-            List<ComponentInfo> Models = new List<ComponentInfo>();
+            List<ComponentInfo> models = new List<ComponentInfo>();
             var allview = sitedb.Views.All();
             foreach (var item in allview)
             {
-                ComponentInfo comp = new ComponentInfo();
-                comp.Id = item.Id;
-                comp.Name = item.Name;
-                Models.Add(comp);
+                ComponentInfo comp = new ComponentInfo {Id = item.Id, Name = item.Name};
+                models.Add(comp);
             }
-            return Models;
+            return models;
         }
 
-
-        public string Preview(SiteDb SiteDb, string NameOrId)
+        public string Preview(SiteDb siteDb, string nameOrId)
         {
-            if (string.IsNullOrEmpty(NameOrId))
+            if (string.IsNullOrEmpty(nameOrId))
             {
                 return null;
             }
-            var view = SiteDb.Views.GetByNameOrId(NameOrId);
-            return view != null ? view.Body : null;
+            var view = siteDb.Views.GetByNameOrId(nameOrId);
+            return view?.Body;
         }
 
         public Task<string> RenderAsync(RenderContext context, ComponentSetting setting)
         {
             var frontcontext = context.GetItem<FrontContext>();
             DateTime logstart = DateTime.UtcNow;
-             
+
             View view = null;
 
             if (context.WebSite.EnableFrontEvents && context.IsSiteBinding)
             {
+                view = Kooboo.Sites.FrontEvent.Manager.RaiseViewEvent(FrontEvent.enumEventType.ViewFinding, context, setting);
 
-                view = Kooboo.Sites.FrontEvent.Manager.RaiseViewEvent(FrontEvent.enumEventType.ViewFinding, context, setting); 
-                
                 if (view == null)
-                { 
+                {
                     view = context.WebSite.SiteDb().Views.GetByNameOrId(setting.NameOrId);
                     if (view != null)
                     {
-                        var result = FrontEvent.Manager.RaiseViewEvent(FrontEvent.enumEventType.ViewFound, context, setting, view); 
+                        var result = FrontEvent.Manager.RaiseViewEvent(FrontEvent.enumEventType.ViewFound, context, setting, view);
 
-                        if (result !=null)
+                        if (result != null)
                         {
-                            view = result; 
-                        }  
+                            view = result;
+                        }
                     }
                     else
                     {
-                        view = FrontEvent.Manager.RaiseViewEvent(FrontEvent.enumEventType.ViewNotFound, context, setting);  
+                        view = FrontEvent.Manager.RaiseViewEvent(FrontEvent.enumEventType.ViewNotFound, context, setting);
                     }
                 }
             }
@@ -99,7 +95,6 @@ namespace Kooboo.Sites.Render.Components
             {
                 view = context.WebSite.SiteDb().Views.GetByNameOrId(setting.NameOrId);
             }
-
 
             if (view == null)
             {
@@ -115,7 +110,7 @@ namespace Kooboo.Sites.Render.Components
             string viewBody = null;
             frontcontext.Views.Add(view);
 
-            if (setting.Settings != null && setting.Settings.Count() > 0)
+            if (setting.Settings != null && setting.Settings.Any())
             {
                 context.DataContext.Push(setting.Settings);
             }
@@ -129,29 +124,27 @@ namespace Kooboo.Sites.Render.Components
                 var result = DataSources.DataMethodExecutor.ExecuteViewDataMethod(frontcontext, datemethod);
 
                 if (result != null)
-                { 
-                    if (result is PagedResult)
-                    { 
-                        var pagedresult = result as  PagedResult; 
-                 
-                        dataResults[datemethod.AliasName] = pagedresult.DataList; 
+                {
+                    if (result is PagedResult pagedresult)
+                    {
+                        dataResults[datemethod.AliasName] = pagedresult.DataList;
                         dataResults[datemethod.AliasName + ".TotalPages"] = pagedresult.TotalPages;
-                        List<int> PageNrs = new List<int>();
+                        List<int> pageNrs = new List<int>();
                         for (int i = 1; i <= pagedresult.TotalPages; i++)
                         {
-                            PageNrs.Add(i); 
+                            pageNrs.Add(i);
                         }
                         dataResults[datemethod.AliasName + ".CurrentPage"] = pagedresult.PageNumber;
-                        dataResults[datemethod.AliasName + ".Pages"] = PageNrs;
-                    } 
+                        dataResults[datemethod.AliasName + ".Pages"] = pageNrs;
+                    }
                     else
                     {
                         //if (result is DataMethodResult)
                         //{
-                        //    var methodresult = result as DataMethodResult; 
+                        //    var methodresult = result as DataMethodResult;
                         //    if (methodresult.Value is PagedResult)
                         //    {
-                        //        var pagedresult = methodresult.Value as PagedResult; 
+                        //        var pagedresult = methodresult.Value as PagedResult;
 
                         //        dataResults[datemethod.AliasName + ".TotalPages"] = pagedresult.TotalPages;
                         //        List<int> PageNrs = new List<int>();
@@ -181,55 +174,50 @@ namespace Kooboo.Sites.Render.Components
             List<IRenderTask> renderplan;
             string returnstring = string.Empty;
 
-            EvaluatorOption options = new EvaluatorOption();
-            options.RenderUrl = true;
-            options.RenderHeader = false;
-            options.OwnerObjectId = view.Id;
+            EvaluatorOption options = new EvaluatorOption
+            {
+                RenderUrl = true, RenderHeader = false, OwnerObjectId = view.Id
+            };
 
             if (frontcontext.RenderContext.Request.Channel == RequestChannel.InlineDesign)
             {
                 viewBody = DomService.ApplyKoobooId(viewBody);
                 options.RequireBindingInfo = true;
-                renderplan = RenderEvaluator.Evaluate(viewBody, options); 
+                renderplan = RenderEvaluator.Evaluate(viewBody, options);
             }
             else
-            { 
+            {
                 renderplan = Cache.RenderPlan.GetOrAddRenderPlan(frontcontext.SiteDb, viewid, () => RenderEvaluator.Evaluate(viewBody, options));
             }
-             
 
-            returnstring += RenderHelper.Render(renderplan, frontcontext.RenderContext);
+            returnstring += renderplan.Render(frontcontext.RenderContext);
 
             if (dataResults.Count > 0)
             {
                 context.DataContext.Pop();
             }
 
-
-            if (setting.Settings != null && setting.Settings.Count() > 0)
+            if (setting.Settings != null && setting.Settings.Any())
             {
                 context.DataContext.Pop();
             }
-            
 
             frontcontext.AddLogEntry("view", view.Name, logstart, 200);
 
             frontcontext.ExecutingView = null;
             return Task.FromResult(returnstring);
-
         }
 
-        private View CheckAlternativeView(View CurrentView, FrontContext Context)
+        private View CheckAlternativeView(View currentView, FrontContext context)
         {
-            string StrAlternative = Context.RenderContext.Request.QueryString.Get(SiteConstants.AlternativeViewQueryName);
+            string strAlternative = context.RenderContext.Request.QueryString.Get(SiteConstants.AlternativeViewQueryName);
 
-            int alternativeid;
-            if (!string.IsNullOrEmpty(StrAlternative) && int.TryParse(StrAlternative, out alternativeid))
+            if (!string.IsNullOrEmpty(strAlternative) && int.TryParse(strAlternative, out var alternativeid))
             {
-                var alterviewid = Cache.ViewInSamePosition.GetAlternaitiveViewId(alternativeid, CurrentView.Id);
+                var alterviewid = Cache.ViewInSamePosition.GetAlternaitiveViewId(alternativeid, currentView.Id);
                 if (alterviewid != default(Guid))
                 {
-                    var alterview = Context.SiteDb.Views.Get(alterviewid);
+                    var alterview = context.SiteDb.Views.Get(alterviewid);
                     if (alterview != null)
                     {
                         return alterview;
@@ -237,14 +225,14 @@ namespace Kooboo.Sites.Render.Components
                 }
             }
 
-            if (Context.AltervativeViews != null)
+            if (context.AltervativeViews != null)
             {
-                foreach (var item in Context.AltervativeViews)
+                foreach (var item in context.AltervativeViews)
                 {
-                    var alterviewid = Cache.ViewInSamePosition.GetAlternaitiveViewId(item, CurrentView.Id);
+                    var alterviewid = Cache.ViewInSamePosition.GetAlternaitiveViewId(item, currentView.Id);
                     if (alterviewid != default(Guid))
                     {
-                        var alterview = Context.SiteDb.Views.Get(alterviewid);
+                        var alterview = context.SiteDb.Views.Get(alterviewid);
                         if (alterview != null)
                         {
                             return alterview;
@@ -253,7 +241,7 @@ namespace Kooboo.Sites.Render.Components
                 }
             }
 
-            return CurrentView;
+            return currentView;
         }
     }
 }

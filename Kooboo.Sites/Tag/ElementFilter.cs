@@ -1,118 +1,111 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Dom;
 using System;
-using System.Collections.Generic;
-using Kooboo.Dom; 
 
 namespace Kooboo.Sites.Tag
 {
-
     /// <summary>
-    /// used to filter out nodes that can not be used for one or more kind of automation analyzers. 
+    /// used to filter out nodes that can not be used for one or more kind of automation analyzers.
     /// </summary>
-  public static  class ElementFilter
+    public static class ElementFilter
     {
+        public static Func<Node, bool> GetFilter(Byte siteObjectType)
+        {
+            switch (siteObjectType)
+            {
+                case ConstObjectType.Layout:
+                    return LayoutFilter;
 
-      public static Func<Node, bool> GetFilter(Byte SiteObjectType)
-      {
-          switch (SiteObjectType)
-          {
-              case ConstObjectType.Layout:
-                 return LayoutFilter;
+                case ConstObjectType.Menu:
+                    break;
 
-              case ConstObjectType.Menu:
-                  break;
-              case ConstObjectType.View:
-                  break;
-              default:
-                  break;
-          }
+                case ConstObjectType.View:
+                    break;
 
-          return null; 
-      }
+                default:
+                    break;
+            }
 
-      /// <summary>
-      /// Select the nodes that might be used as layout. 
-      /// </summary>
-      /// <param name="node"></param>
-      /// <returns></returns>
-      public static bool LayoutFilter(Node node)
-      {
-          if (node.nodeType == enumNodeType.ELEMENT)
-          {
-              // for element type, meta and text tag are not allowed, the rest is accept. 
+            return null;
+        }
 
-              Element e = node as Element;
-              if (e.tagName == "body" || e.tagName == "html")
-              {
-                  return true;
-              }
+        /// <summary>
+        /// Select the nodes that might be used as layout.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static bool LayoutFilter(Node node)
+        {
+            if (node.nodeType == enumNodeType.ELEMENT)
+            {
+                // for element type, meta and text tag are not allowed, the rest is accept.
 
-              if (Tag.ContentModel.MetaList.Contains(e.tagName))
-              {
-                  return false; 
-              }
+                Element e = node as Element;
+                if (e.tagName == "body" || e.tagName == "html")
+                {
+                    return true;
+                }
 
-              if (Tag.ContentModel.TextList.Contains(e.tagName))
-              {
-                  return false; 
-              }
+                if (Tag.ContentModel.MetaList.Contains(e.tagName))
+                {
+                    return false;
+                }
 
-              return true; 
-          }
-          //else if (node.nodeType == enumNodeType.TEXT)
-          //{
-          //    return !StringContainsSpeceOnly(node.textContent);
-          //}
+                if (Tag.ContentModel.TextList.Contains(e.tagName))
+                {
+                    return false;
+                }
 
-          return false; 
-      }
+                return true;
+            }
+            //else if (node.nodeType == enumNodeType.TEXT)
+            //{
+            //    return !StringContainsSpaceOnly(node.textContent);
+            //}
 
-      /// <summary>
-      /// return element and non-null text node. 
-      /// </summary>
-      /// <param name="node"></param>
-      /// <returns></returns>
-      public static bool ElementNTextNode(Node node)
-      {
-          if (node.nodeType == enumNodeType.ELEMENT)
-          {
-              return true;
-          }
+            return false;
+        }
 
-          if (node.nodeType == enumNodeType.TEXT)
-          {
+        /// <summary>
+        /// return element and non-null text node.
+        /// </summary>
+        /// <param name="node"></param>
+        /// <returns></returns>
+        public static bool ElementNTextNode(Node node)
+        {
+            if (node.nodeType == enumNodeType.ELEMENT)
+            {
+                return true;
+            }
 
-              return !StringContainsSpeceOnly(node.textContent);
-              
-          }
+            if (node.nodeType == enumNodeType.TEXT)
+            {
+                return !StringContainsSpaceOnly(node.textContent);
+            }
 
-          return false; 
-      }
+            return false;
+        }
 
-      private static bool StringContainsSpeceOnly(string input)
-      {
-          int len = input.Length;
+        private static bool StringContainsSpaceOnly(string input)
+        {
+            int len = input.Length;
 
-          for (int i = 0; i < len; i++)
-          {
-              char ichar = input[i];
+            for (int i = 0; i < len; i++)
+            {
+                char ichar = input[i];
 
-              if (ichar == '\u0020' || ichar == '\u0009' || ichar == '\u000a' || ichar == '\u000c' || ichar == '\u000d')
-              {
-                  continue;
-              }
-              else
-              {
-                  return false;
-              }
-          }
+                if (ichar == '\u0020' || ichar == '\u0009' || ichar == '\u000a' || ichar == '\u000c' || ichar == '\u000d')
+                {
+                    continue;
+                }
+                else
+                {
+                    return false;
+                }
+            }
 
-          return true; 
-
-      }
-
+            return true;
+        }
     }
-
- 
 }

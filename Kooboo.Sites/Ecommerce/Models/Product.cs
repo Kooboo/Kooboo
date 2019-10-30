@@ -49,7 +49,7 @@ namespace Kooboo.Sites.Ecommerce.Models
             {
                 var content = this.GetContentStore(null);
 
-                if (content != null && content.FieldValues.Count() > 0)
+                if (content != null && content.FieldValues.Any())
                 {
                     return content.FieldValues.First().Value;
                 }
@@ -66,14 +66,7 @@ namespace Kooboo.Sites.Ecommerce.Models
         [Kooboo.Attributes.SummaryIgnore]
         public Document Dom
         {
-            get
-            {
-                if (_dom == null)
-                {
-                    _dom = DomParser.CreateDom(this.Body);
-                }
-                return _dom;
-            }
+            get { return _dom ?? (_dom = DomParser.CreateDom(this.Body)); }
             set
             {
                 _dom = value;
@@ -138,12 +131,12 @@ namespace Kooboo.Sites.Ecommerce.Models
             {
                 content = this.Contents.Find(o => o.Lang == Lang);
             }
-            if (content == null && this.Contents.Count() > 0)
+            if (content == null && this.Contents.Any())
             {
                 content = this.Contents.Find(o => string.IsNullOrEmpty(o.Lang));
             }
 
-            if (content == null && this.Contents.Count() > 0 && !string.IsNullOrEmpty(Lang))
+            if (content == null && this.Contents.Any() && !string.IsNullOrEmpty(Lang))
             {
                 string lower = Lang.ToLower();
                 if (lower.Length > 2)
@@ -167,7 +160,7 @@ namespace Kooboo.Sites.Ecommerce.Models
                     content.Lang = Lang;
                     this.Contents.Add(content);
                 }
-                else if (this.Contents.Count() > 0)
+                else if (this.Contents.Any())
                 {
                     return this.Contents.First();
                 }
@@ -175,14 +168,14 @@ namespace Kooboo.Sites.Ecommerce.Models
             return content;
         }
 
-        public object GetValue(string FieldName, string Lang = null)
+        public object GetValue(string fieldName, string lang = null)
         {
-            if (FieldName == null)
+            if (fieldName == null)
             {
                 return null;
             }
 
-            string lower = FieldName.ToLower();
+            string lower = fieldName.ToLower();
             if (lower == "key")
             {
                 return this.UserKey;
@@ -192,10 +185,10 @@ namespace Kooboo.Sites.Ecommerce.Models
                 return this.Id;
             }
 
-            MultilingualContent content = GetContentStore(Lang);
-            if (content != null && content.FieldValues.ContainsKey(FieldName))
+            MultilingualContent content = GetContentStore(lang);
+            if (content != null && content.FieldValues.ContainsKey(fieldName))
             {
-                return content.FieldValues[FieldName];
+                return content.FieldValues[fieldName];
             }
             else if (lower == "ProductTypeId")
             {
@@ -212,27 +205,26 @@ namespace Kooboo.Sites.Ecommerce.Models
 
             foreach (var item in this.Contents)
             {
-                if (item.FieldValues.ContainsKey(FieldName))
+                if (item.FieldValues.ContainsKey(fieldName))
                 {
-                    return item.FieldValues[FieldName];
+                    return item.FieldValues[fieldName];
                 }
             }
 
             return null;
         }
 
-        public void SetValue(string FieldName, string Value, string Lang = null)
+        public void SetValue(string fieldName, string value, string lang = null)
         {
-            string lower = FieldName.ToLower();
+            string lower = fieldName.ToLower();
             if (lower == "key")
             {
-                this.UserKey = Value;
+                this.UserKey = value;
                 return;
             }
             else if (lower == "id")
             {
-                Guid id;
-                if (Guid.TryParse(Value, out id))
+                if (Guid.TryParse(value, out var id))
                 {
                     this.Id = id;
                     return;
@@ -240,8 +232,7 @@ namespace Kooboo.Sites.Ecommerce.Models
             }
             else if (lower == "ProductTypeId")
             {
-                Guid contenttypeid;
-                if (Guid.TryParse(Value, out contenttypeid))
+                if (Guid.TryParse(value, out var contenttypeid))
                 {
                     this.ProductTypeId = contenttypeid;
                     return;
@@ -249,8 +240,7 @@ namespace Kooboo.Sites.Ecommerce.Models
             }
             else if (lower == "online")
             {
-                bool online = false;
-                if (bool.TryParse(Value, out online))
+                if (bool.TryParse(value, out var online))
                 {
                     this.Online = online;
                     return;
@@ -258,15 +248,14 @@ namespace Kooboo.Sites.Ecommerce.Models
             }
             else if (lower == "lastmodify" || lower == "lastmodified")
             {
-                DateTime date;
-                if (DateTime.TryParse(Value, out date))
+                if (DateTime.TryParse(value, out var date))
                 {
                     this.LastModified = date;
                     return;
                 }
             }
-            var content = GetContentStore(Lang, true);
-            content.FieldValues[FieldName] = Value;
+            var content = GetContentStore(lang, true);
+            content.FieldValues[fieldName] = value;
         }
 
         public int Order { get; set; }

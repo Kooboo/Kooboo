@@ -1,16 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
 using Kooboo.Dom;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.SiteTransfer.Download;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.SiteTransfer
 {
     public interface ITransferAnalyzer
     {
-        void Execute(AnalyzerContext Context);
+        void Execute(AnalyzerContext context);
     }
 
     public class AnalyzerContext
@@ -23,50 +23,50 @@ namespace Kooboo.Sites.SiteTransfer
         public Guid ObjectId { get; set; }
 
         /// <summary>
-        /// The site object const type. 
+        /// The site object const type.
         /// </summary>
         public byte ObjectType { get; set; }
 
         /// <summary>
-        /// The absolute URL of this object. 
+        /// The absolute URL of this object.
         /// </summary>
         public string AbsoluteUrl { get; set; }
 
-        private string _OriginalImportUrl; 
+        private string _originalImportUrl;
 
         /// <summary>
-        /// This is used to test when the resource links needs to contains domains part or not. 
-        /// Example: http://www.kooboo.com/page/a.png, can be relative of /page/a.png or /kooboo.com/page/a.png. 
+        /// This is used to test when the resource links needs to contains domains part or not.
+        /// Example: http://www.kooboo.com/page/a.png, can be relative of /page/a.png or /kooboo.com/page/a.png.
         /// </summary>
-        public string OriginalImportUrl {
+        public string OriginalImportUrl
+        {
             get
             {
-                if (string.IsNullOrEmpty(_OriginalImportUrl))
+                if (string.IsNullOrEmpty(_originalImportUrl))
                 {
-                    _OriginalImportUrl = this.SiteDb.TransferTasks.FirstImportHost();  
+                    _originalImportUrl = this.SiteDb.TransferTasks.FirstImportHost();
 
-                    if (string.IsNullOrEmpty(_OriginalImportUrl))
+                    if (string.IsNullOrEmpty(_originalImportUrl))
                     {
-                        _OriginalImportUrl = this.AbsoluteUrl;
+                        _originalImportUrl = this.AbsoluteUrl;
                     }
-                   
                 }
-                return _OriginalImportUrl; 
+                return _originalImportUrl;
             }
             set
             {
-                _OriginalImportUrl = value; 
+                _originalImportUrl = value;
             }
         }
 
         /// <summary>
-        /// Used when importing a page, to determine whether it is same as the original domain or not. 
+        /// Used when importing a page, to determine whether it is same as the original domain or not.
         /// </summary>
-        
+
         private string _htmlsource;
 
         /// <summary>
-        /// The html source code. 
+        /// The html source code.
         /// </summary>
         public string HtmlSource
         {
@@ -81,7 +81,7 @@ namespace Kooboo.Sites.SiteTransfer
                     if (string.IsNullOrEmpty(_htmlsource))
                     {
                         _htmlsource = value;
-                        _dom = null; 
+                        _dom = null;
                     }
                     else
                     {
@@ -97,7 +97,6 @@ namespace Kooboo.Sites.SiteTransfer
 
         public SiteDb SiteDb { get; set; }
 
-
         private Document _dom;
 
         public Document Dom
@@ -106,20 +105,19 @@ namespace Kooboo.Sites.SiteTransfer
             {
                 if (_dom == null)
                 {
-                    _dom = Kooboo.Dom.DomParser.CreateDom(this.HtmlSource); 
+                    _dom = Kooboo.Dom.DomParser.CreateDom(this.HtmlSource);
                 }
                 return _dom;
             }
             set
             {
-                _dom = value; 
+                _dom = value;
             }
         }
 
         public List<AnalyzerUpdate> Changes { get; set; }
 
         public DownloadManager DownloadManager { get; set; }
-         
     }
 
     public class AnalyzerUpdate

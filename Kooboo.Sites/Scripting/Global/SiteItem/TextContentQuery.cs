@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Definition;
 using Kooboo.Sites.Contents.Models;
@@ -6,8 +6,6 @@ using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Scripting.Global.SiteItem
 {
@@ -57,12 +55,11 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         public TextContentQuery OrderByDesc(string fieldname)
         {
-            return this.OrderByDescending(fieldname); 
+            return this.OrderByDescending(fieldname);
         }
 
         public List<TextContentObject> take(int count)
         {
-
             var sitedb = this.txtObjRepo.context.WebSite.SiteDb();
 
             var allContentTypes = sitedb.ContentTypes.All();
@@ -78,24 +75,23 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             {
                 tablequery.Where(o => o.FolderId == condition.FolderId);
 
-                var folder = sitedb.ContentFolders.Get(condition.FolderId); 
-                if(folder !=null)
+                var folder = sitedb.ContentFolders.Get(condition.FolderId);
+                if (folder != null)
                 {
                     onlyFolder = folder;
-                    onlyType = sitedb.ContentTypes.Get(folder.ContentTypeId); 
-                }   
+                    onlyType = sitedb.ContentTypes.Get(folder.ContentTypeId);
+                }
             }
 
             if (condition.ContentTypeId != default(Guid))
             {
                 tablequery.Where(o => o.ContentTypeId == condition.ContentTypeId);
-                var type = sitedb.ContentTypes.Get(condition.ContentTypeId); 
-                if (type !=null)
+                var type = sitedb.ContentTypes.Get(condition.ContentTypeId);
+                if (type != null)
                 {
-                    onlyType = type; 
-                }   
+                    onlyType = type;
+                }
             }
-
 
             if (condition.CategoryId != default(Guid))
             {
@@ -105,7 +101,6 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
 
             var all = tablequery.SelectAll();
-                          
 
             var filteritems = this.txtObjRepo.filterItems(all, condition.Conditions, onlyType, onlyFolder);
 
@@ -114,14 +109,13 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 return new List<TextContentObject>();
             }
 
-
             if (!string.IsNullOrWhiteSpace(this.OrderByField))
             {
                 ContentProperty prop = null;
                 if (onlyType != null)
                 {
-                    prop = onlyType.Properties.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, this.OrderByField));  
-                }       
+                    prop = onlyType.Properties.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, this.OrderByField));
+                }
 
                 if (prop == null)
                 {
@@ -131,20 +125,20 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
                     foreach (var item in uniqueC)
                     {
-                        var uniquetype = sitedb.ContentTypes.Get(item); 
-                        if (uniquetype !=null)
+                        var uniquetype = sitedb.ContentTypes.Get(item);
+                        if (uniquetype != null)
                         {
-                             var find = uniquetype.Properties.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, this.OrderByField));
-                            if (find !=null)
+                            var find = uniquetype.Properties.Find(o => Lib.Helper.StringHelper.IsSameValue(o.Name, this.OrderByField));
+                            if (find != null)
                             {
                                 prop = find;
                                 break;
                             }
                         }
-                    }   
+                    }
                 }
 
-                if (prop !=null)
+                if (prop != null)
                 {
                     if (this.Ascending)
                     {
@@ -154,9 +148,8 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                     {
                         filteritems = filteritems.OrderByDescending(c => GetValue(c.GetValue(OrderByField), prop.DataType)).ToList();
                     }
-                }     
+                }
             }
-                      
 
             var txtResult = filteritems.Skip(this.skipcount).Take(count);
 
@@ -165,11 +158,10 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             foreach (var item in txtResult)
             {
                 var obj = new TextContentObject(item, this.txtObjRepo.context);
-                result.Add(obj); 
+                result.Add(obj);
             }
-            return result; 
+            return result;
         }
-
 
         private object GetValue(object input, DataTypes datatype)
         {
@@ -179,83 +171,47 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
             else
             {
-                if (datatype == DataTypes.Undefined)
+                switch (datatype)
                 {
-                    return input;
-                }
-                if (datatype == DataTypes.DateTime)
-                {
-                    DateTime value;
-                    if (input.GetType() == typeof(DateTime))
-                    {
+                    case DataTypes.Undefined:
                         return input;
-                    }
-                    else
+                    case DataTypes.DateTime when input is DateTime:
+                        return input;
+                    case DataTypes.DateTime:
                     {
-                        if (DateTime.TryParse(input.ToString(), out value))
+                        return DateTime.TryParse(input.ToString(), out var value) ? value : default(DateTime);
+                    }
+                    case DataTypes.Bool:
+                    {
+                        return bool.TryParse(input.ToString(), out var value) && value;
+                    }
+                    case DataTypes.Decimal:
+                    {
+                        return Decimal.TryParse(input.ToString(), out var value) ? value : default(Decimal);
+                    }
+                    case DataTypes.Guid:
+                    {
+                        return System.Guid.TryParse(input.ToString(), out var value) ? value : default(Guid);
+                    }
+                    case DataTypes.Number:
+                    {
+                        if (System.Int32.TryParse(input.ToString(), out var value))
                         {
                             return value;
                         }
-                        return default(DateTime);
-                    }
-
-                }
-                else if (datatype == DataTypes.Bool)
-                {
-                    bool value;
-                    if (bool.TryParse(input.ToString(), out value))
-                    {
                         return value;
                     }
-                    return false;
+                    default:
+                        return input;
                 }
-                else if (datatype == DataTypes.Decimal)
-                {
-                    Decimal value;
-                    if (Decimal.TryParse(input.ToString(), out value))
-                    {
-                        return value;
-                    }
-                    return default(Decimal);
-                }
-                else if (datatype == DataTypes.Guid)
-                {
-                    Guid value = default(Guid);
-                    if (System.Guid.TryParse(input.ToString(), out value))
-                    {
-                        return value;
-                    }
-                    return default(Guid);
-                }
-                else if (datatype == DataTypes.Number)
-                {
-                    int value = default(int);
-                    if (System.Int32.TryParse(input.ToString(), out value))
-                    {
-                        return value;
-                    }
-                    return value;
-                }
-                return input;
             }
         }
-
 
         public int count()
         {
             // TODO: improve performance.
             var all = take(99999);
-            if (all == null)
-            {
-                return 0;
-            }
-            else
-            {
-                return all.Count();
-            }
+            return all == null ? 0 : all.Count();
         }
-
     }
-
-
 }

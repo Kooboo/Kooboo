@@ -1,10 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.IndexedDB;
 using Kooboo.Sites.Models;
 using System;
-using Kooboo.IndexedDB;
-using System.Collections.Generic;
-using System.Collections;
 
 namespace Kooboo.Sites.Repository
 {
@@ -44,36 +42,29 @@ namespace Kooboo.Sites.Repository
             return null;
         }
 
-        public void UpdateVersion(Guid SiteClusterId, long newversion)
+        public void UpdateVersion(Guid siteClusterId, long newversion)
         {
-            this.Store.UpdateColumn<long>(SiteClusterId, o => o.Version, newversion);
+            this.Store.UpdateColumn<long>(siteClusterId, o => o.Version, newversion);
         }
 
         public override bool AddOrUpdate(SiteCluster value)
         {
             var exists = this.Get(value.Id);
-            if (exists == null)
-            {
-                return Add(value);
-            }
-            else
-            {
-                return Update(exists, value);
-            }
+            return exists == null ? Add(value) : Update(exists, value);
         }
 
         public bool Add(SiteCluster newcluster)
-        { 
-            var ok =  base.AddOrUpdate(newcluster);
+        {
+            var ok = base.AddOrUpdate(newcluster);
 
             if (ok)
             {
-                // TODO: should notfify DNS for this change.  
-                 this.SiteDb.ClusterManager.InitStart(); 
+                // TODO: should notfify DNS for this change.
+                this.SiteDb.ClusterManager.InitStart();
             }
-            return ok; 
+            return ok;
         }
-         
+
         public bool Update(SiteCluster oldvalue, SiteCluster newvalue)
         {
             oldvalue.Name = newvalue.Name;
@@ -81,14 +72,12 @@ namespace Kooboo.Sites.Repository
 
             return base.AddOrUpdate(oldvalue);
         }
-         
+
         public override void Delete(Guid id)
         {
-            //TODO: 
-            // Should notify the remote Server to remove it, and also if online, notify DNS change. 
+            //TODO:
+            // Should notify the remote Server to remove it, and also if online, notify DNS change.
             base.Delete(id);
         }
-
     }
-
 }

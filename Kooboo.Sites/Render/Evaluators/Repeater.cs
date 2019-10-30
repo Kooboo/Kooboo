@@ -1,10 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
 using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render
-{ 
+{
     public class RepeaterEvaluator : IEvaluator
     {
         public EvaluatorResponse Evaluate(Node node, EvaluatorOption options)
@@ -28,72 +28,69 @@ namespace Kooboo.Sites.Render
                 {
                     attName = item.name;
                     break;
-                } 
+                }
             }
 
             if (string.IsNullOrEmpty(attName))
             {
-                return null; 
-            } 
+                return null;
+            }
             string repeatitems = element.getAttribute(attName).Trim();
 
-            if(string.IsNullOrEmpty(repeatitems))
+            if (string.IsNullOrEmpty(repeatitems))
             {
-                return null; 
+                return null;
             }
 
             //if (!options.RequireBindingInfo)
-           // {
-                element.removeAttribute(attName);
+            // {
+            element.removeAttribute(attName);
             //}
 
-            bool repeatself = false;  
+            bool repeatself = false;
             if (element.hasAttribute("repeat-self"))
             {
-                repeatself = true; 
-                element.removeAttribute("repeat-self"); 
-            } 
-           else if (element.hasAttribute("tal-repeat-self"))
+                repeatself = true;
+                element.removeAttribute("repeat-self");
+            }
+            else if (element.hasAttribute("tal-repeat-self"))
             {
-                repeatself = true; 
-                 element.removeAttribute("tal-repeat-self"); 
+                repeatself = true;
+                element.removeAttribute("tal-repeat-self");
             }
             else if (element.hasAttribute("k-repeat-self"))
             {
-                repeatself = true; 
-                 element.removeAttribute("k-repeat-self");
+                repeatself = true;
+                element.removeAttribute("k-repeat-self");
             }
-              
-                string datakey;
-                string alias = string.Empty;
-                // the repeat item can be with or without an alias. it can be like articles or "item articles"; 
-                string[] items = repeatitems.Split(' ');
-                if (items.Length == 1)
-                {
-                    datakey = items[0];
-                }
-                else if (items.Length == 2)
-                {
-                    datakey = items[1];
-                    alias = items[0];
-                }
-                else
-                { 
-                    return null;
-                }
-              
+
+            string datakey;
+            string alias = string.Empty;
+            // the repeat item can be with or without an alias. it can be like articles or "item articles";
+            string[] items = repeatitems.Split(' ');
+            if (items.Length == 1)
+            {
+                datakey = items[0];
+            }
+            else if (items.Length == 2)
+            {
+                datakey = items[1];
+                alias = items[0];
+            }
+            else
+            {
+                return null;
+            }
+
             RepeatRenderTask task = new RepeatRenderTask(datakey, alias, repeatself, element, options);
-              
+
             var response = new EvaluatorResponse();
-            List<IRenderTask> result = new List<IRenderTask>(); 
-            result.Add(task);
+            List<IRenderTask> result = new List<IRenderTask> {task};
             response.ContentTask = result;
             response.OmitTag = true;
-            response.StopNextEvaluator = true; 
-            
-            return response;
+            response.StopNextEvaluator = true;
 
+            return response;
         }
-    } 
-    
+    }
 }

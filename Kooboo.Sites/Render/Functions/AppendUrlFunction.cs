@@ -1,9 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
 using System;
 using System.Collections.Generic;
-using System.Linq; 
-using Kooboo.Data.Context;
+using System.Linq;
 
 namespace Kooboo.Sites.Render.Functions
 {
@@ -13,13 +13,13 @@ namespace Kooboo.Sites.Render.Functions
         {
             get
             {
-                return "AppendUrl"; 
+                return "AppendUrl";
             }
         }
 
         public List<IFunction> Parameters
         {
-            get;set;
+            get; set;
         }
 
         public object Render(RenderContext context)
@@ -41,7 +41,7 @@ namespace Kooboo.Sites.Render.Functions
                     paras.Add(item, value);
                 }
             }
-             
+
             var providedParas = FunctionHelper.RenderParameter(context, this.Parameters);
 
             var dict = ToDictionary(providedParas);
@@ -50,21 +50,14 @@ namespace Kooboo.Sites.Render.Functions
             {
                 paras[item.Key] = item.Value;
             }
-            if (paras.Count()>0)
-            {
-                return Lib.Helper.UrlHelper.AppendQueryString(relative, paras); 
-            }
-           else
-            {
-                return relative; 
-            }
+            return paras.Any() ? Lib.Helper.UrlHelper.AppendQueryString(relative, paras) : relative;
         }
 
-       private Dictionary<string, string> ToDictionary(List<object> input)
+        private Dictionary<string, string> ToDictionary(List<object> input)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             string name = null;
-            string value = null; 
+            string value = null;
             foreach (var item in input)
             {
                 if (item != null)
@@ -75,7 +68,7 @@ namespace Kooboo.Sites.Render.Functions
                     }
                     else if (string.IsNullOrEmpty(value))
                     {
-                        value = item.ToString(); 
+                        value = item.ToString();
                     }
 
                     if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(value))
@@ -84,7 +77,6 @@ namespace Kooboo.Sites.Render.Functions
                         name = null;
                         value = null;
                     }
-
                 }
                 else
                 {
@@ -92,16 +84,16 @@ namespace Kooboo.Sites.Render.Functions
                     {
                         dict[name] = value;
                         name = null;
-                        value = null; 
+                        value = null;
                     }
-                    else 
+                    else
                     {
-                        value = null; 
+                        value = null;
                     }
                 }
             }
 
-            return dict; 
+            return dict;
         }
     }
 }

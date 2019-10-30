@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data;
 using Kooboo.Data.Models;
@@ -15,20 +15,20 @@ namespace Kooboo.Sites.Service
 {
     public static class WebSiteService
     {
-        public static void Delete(Guid WebSiteId, User user = null)
+        public static void Delete(Guid webSiteId, User user = null)
         {
-            var website = Data.GlobalDb.WebSites.Get(WebSiteId);
+            var website = Data.GlobalDb.WebSites.Get(webSiteId);
             if (website != null)
             {
                 if (user != null && user.CurrentOrgId != website.OrganizationId)
                 {
-                    // has no right to delete. 
+                    // has no right to delete.
                     return;
                 }
 
                 // make sure not request to website can be made any more...
-                // We need to wait till all request is finished! How????? 
-                GlobalDb.WebSites.Delete(WebSiteId);
+                // We need to wait till all request is finished! How?????
+                GlobalDb.WebSites.Delete(webSiteId);
 
                 Thread.Sleep(20);
 
@@ -42,13 +42,13 @@ namespace Kooboo.Sites.Service
                 }
 
                 sitedb.ImagePool.ClearAll();
-                //website.Locked = true; 
+                //website.Locked = true;
                 website.EnableDiskSync = false;
                 website.EnableFrontEvents = false;
                 website.EnableSitePath = false;
                 website.EnableVisitorLog = false;
                 website.ContinueDownload = false;
-                website.Published = false; 
+                website.Published = false;
 
                 sitedb.SearchIndex.DelSelf();
                 sitedb.ImagePool.ClearAll();
@@ -58,7 +58,7 @@ namespace Kooboo.Sites.Service
                 sitedb.DatabaseDb.Close();
 
                 sitedb.DatabaseDb.deleteDatabase();
-                  
+
                 Thread.Sleep(20);
 
                 Cache.WebSiteCache.RemoveWebSitePlan(website.Id);
@@ -73,7 +73,7 @@ namespace Kooboo.Sites.Service
                     }
                     catch (Exception)
                     {
-                        Kooboo.Sites.TaskQueue.QueueManager.Add(new Kooboo.Sites.TaskQueue.Model.DeleteDisk() { FullPath = folder, IsFolder = true }, WebSiteId);
+                        Kooboo.Sites.TaskQueue.QueueManager.Add(new Kooboo.Sites.TaskQueue.Model.DeleteDisk() { FullPath = folder, IsFolder = true }, webSiteId);
                     }
                 }
 
@@ -91,7 +91,7 @@ namespace Kooboo.Sites.Service
             {
                 foreach (var langcontent in item.Contents)
                 {
-                    if (langcontent != null && langcontent.Lang != null)
+                    if (langcontent?.Lang != null)
                     {
                         cultures.Add(langcontent.Lang);
                     }
@@ -132,7 +132,7 @@ namespace Kooboo.Sites.Service
                 }
             }
 
-            if (contentcounter.Count() > 0)
+            if (contentcounter.Any())
             {
                 var keyvalue = contentcounter.OrderByDescending(o => o.Value).First();
                 return keyvalue.Key;
@@ -175,45 +175,27 @@ namespace Kooboo.Sites.Service
             if (website.CustomErrors.ContainsKey(statusCode))
             {
                 var page = website.CustomErrors[statusCode];
-                Guid PageId = default(Guid);
-                if (System.Guid.TryParse(page, out PageId))
-                {
-                    return ObjectService.GetObjectRelativeUrl(website.SiteDb(), PageId, ConstObjectType.Page);
-                }
-                else
-                {
-                    return page;
-                }
+                return System.Guid.TryParse(page, out var pageId) ? ObjectService.GetObjectRelativeUrl(website.SiteDb(), pageId, ConstObjectType.Page) : page;
             }
             else
             {
-                if (statusCode == 404)
+                switch (statusCode)
                 {
-                    return DataConstants.Default404Page;
+                    case 404:
+                        return DataConstants.Default404Page;
+                    case 500:
+                        return DataConstants.Default500Page;
+                    case 403:
+                        return DataConstants.Default403Page;
+                    case 407:
+                        return DataConstants.Default407Page;
+                    case 402:
+                        return DataConstants.Default402Page;
+                    default:
+                        return DataConstants.DefaultError;
                 }
-                else if (statusCode == 500)
-                {
-                    return DataConstants.Default500Page;
-                }
-                else if (statusCode == 403)
-                {
-                    return DataConstants.Default403Page;
-                }
-                else if (statusCode == 407)
-                {
-                    return DataConstants.Default407Page;
-                }
-
-                else if (statusCode == 402)
-                {
-                    return DataConstants.Default402Page;
-                }
-
-                return DataConstants.DefaultError;
             }
-
         }
-
 
         public static List<WebSite> ListByUser(User user)
         {
@@ -227,7 +209,6 @@ namespace Kooboo.Sites.Service
             List<WebSite> ownsites = new List<WebSite>();
             foreach (var item in sites)
             {
-
                 var sitedb = item.SiteDb();
                 if (sitedb.SiteUser.All().Find(o => o.UserId == user.Id) != null)
                 {
@@ -237,11 +218,11 @@ namespace Kooboo.Sites.Service
             return ownsites;
         }
 
-        public static List<WebSite> RemoteListByUser(Guid UserId, Guid OrgId)
+        public static List<WebSite> RemoteListByUser(Guid userId, Guid orgId)
         {
-            List<WebSite> sites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(OrgId);
+            List<WebSite> sites = Kooboo.Data.GlobalDb.WebSites.ListByOrg(orgId);
 
-            if (UserId == OrgId)
+            if (userId == orgId)
             {
                 return sites;
             }
@@ -250,7 +231,7 @@ namespace Kooboo.Sites.Service
             foreach (var item in sites)
             {
                 var sitedb = item.SiteDb();
-                if (sitedb.SiteUser.All().Find(o => o.UserId == UserId) != null)
+                if (sitedb.SiteUser.All().Find(o => o.UserId == userId) != null)
                 {
                     ownsites.Add(item);
                 }
@@ -258,22 +239,22 @@ namespace Kooboo.Sites.Service
             return ownsites;
         }
 
-        public static WebSite AddNewSite(Guid organizationId, string SiteName, string FullDomain, Guid UserId)
+        public static WebSite AddNewSite(Guid organizationId, string siteName, string fullDomain, Guid userId)
         {
-            var newsite = GlobalDb.WebSites.AddNewWebSite(organizationId, SiteName, FullDomain);
+            var newsite = GlobalDb.WebSites.AddNewWebSite(organizationId, siteName, fullDomain);
 
-            if (!GlobalDb.Users.IsAdmin(organizationId, UserId))
+            if (!GlobalDb.Users.IsAdmin(organizationId, userId))
             {
                 string name = null;
 
-                var user = GlobalDb.Users.Get(UserId);
+                var user = GlobalDb.Users.Get(userId);
                 if (user != null)
                 {
                     name = user.UserName;
                 }
 
                 var sitedb = newsite.SiteDb();
-                sitedb.SiteUser.AddOrUpdate(new Models.SiteUser() { Id = UserId, UserId = UserId, Role = Authorization.EnumUserRole.SiteMaster, Name = name });
+                sitedb.SiteUser.AddOrUpdate(new Models.SiteUser() { Id = userId, UserId = userId, Role = Authorization.EnumUserRole.SiteMaster, Name = name });
             }
 
             return newsite;
@@ -335,13 +316,13 @@ namespace Kooboo.Sites.Service
 
             return "Internal Server Error";
         }
- 
+
         public static void VerifyFrontendEvent(WebSite website)
-        { 
-            // check if there is any event.... 
+        {
+            // check if there is any event....
             if (website.EnableFrontEvents)
             {
-                var sitedb = website.SiteDb(); 
+                var sitedb = website.SiteDb();
 
                 var events = sitedb.Code.Query.Where(o => o.CodeType == CodeType.Event).Count();
                 if (events == 0)
@@ -351,6 +332,5 @@ namespace Kooboo.Sites.Service
                 }
             }
         }
-         
     }
 }

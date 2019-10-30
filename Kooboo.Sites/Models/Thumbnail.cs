@@ -1,24 +1,21 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using Kooboo.Data;
 
 namespace Kooboo.Sites.Models
 {
-
     /// <summary>
-    /// The cache of image thumbnail. 
+    /// The cache of image thumbnail.
     /// </summary>
     public class Thumbnail : SiteObject
     {
-
         public Thumbnail()
         {
             ConstType = ConstObjectType.Thumbnail;
         }
 
         private Guid _id;
+
         public override Guid Id
         {
             set { _id = value; }
@@ -27,7 +24,6 @@ namespace Kooboo.Sites.Models
                 if (_id == default(Guid))
                 {
                     _id = Kooboo.Data.IDGenerator.GetImageThumbNailId(ImageId, Height, Width);
-
                 }
                 return _id;
             }
@@ -44,7 +40,5 @@ namespace Kooboo.Sites.Models
         public string Extension { get; set; }
 
         public string ContentType { get; set; }
-
-
     }
 }

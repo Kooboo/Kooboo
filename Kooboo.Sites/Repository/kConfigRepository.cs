@@ -1,18 +1,14 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Repository
 {
     public class kConfigRepository : SiteRepositoryBase<KConfig>
     {
-
         public override ObjectStoreParameters StoreParameters
         {
             get
@@ -23,7 +19,7 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public KConfig GetOrAdd(string key, string TagName, string TagHtml)
+        public KConfig GetOrAdd(string key, string tagName, string tagHtml)
         {
             var old = GetByNameOrId(key);
 
@@ -33,17 +29,13 @@ namespace Kooboo.Sites.Repository
             }
             else
             {
-                KConfig config = new KConfig();
-                config.Name = key;
-                config.TagHtml = TagHtml;
-                config.TagName = TagName;
+                KConfig config = new KConfig {Name = key, TagHtml = tagHtml, TagName = tagName};
                 AddOrUpdate(config);
                 return config;
             }
         }
 
-
-        public KConfig GetOrAdd(string key, Kooboo.Dom.Element El)
+        public KConfig GetOrAdd(string key, Kooboo.Dom.Element el)
         {
             var old = GetByNameOrId(key);
 
@@ -53,34 +45,33 @@ namespace Kooboo.Sites.Repository
             }
             else
             {
-                KConfig config = new KConfig();
-                config.Name = key;
-                config.TagHtml = El.OuterHtml;
-                config.TagName = El.tagName;
+                KConfig config = new KConfig
+                {
+                    Name = key, TagHtml = el.OuterHtml, TagName = el.tagName, Binding = GetBindings(el)
+                };
 
-                config.Binding = GetBindings(El);
                 AddOrUpdate(config);
                 return config;
             }
         }
 
-        public Dictionary<string, string> GetBindings(Kooboo.Dom.Element El)
+        public Dictionary<string, string> GetBindings(Kooboo.Dom.Element el)
         {
-            Dictionary<string, string> Bindings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, string> bindings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (var item in El.attributes)
+            foreach (var item in el.attributes)
             {
                 if (!IsIgnoreAttribute(item.name))
                 {
-                    Bindings[item.name] = item.value;
+                    bindings[item.name] = item.value;
                 }
             }
 
-            if (!Service.DomService.IsSelfCloseTag(El.tagName))
+            if (!Service.DomService.IsSelfCloseTag(el.tagName))
             {
                 // if (!Bindings.ContainsKey("innerHtml"))
                 // {
-                Bindings["innerHtml"] = El.InnerHtml;
+                bindings["innerHtml"] = el.InnerHtml;
                 // }
                 //else
                 //{
@@ -88,9 +79,8 @@ namespace Kooboo.Sites.Repository
                 //}
             }
 
-            return Bindings;
+            return bindings;
         }
-
 
         public bool IsIgnoreAttribute(string name)
         {
@@ -108,6 +98,4 @@ namespace Kooboo.Sites.Repository
             return false;
         }
     }
-
-
 }

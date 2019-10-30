@@ -1,6 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Context;
 using Kooboo.Dom;
 using System.Collections.Generic;
 
@@ -23,33 +22,30 @@ namespace Kooboo.Sites.Render
 
             if (element.tagName == "layout" && (element.hasAttribute("id") || element.hasAttribute("name")))
             {
-               var response = new EvaluatorResponse();
-                var result = new List<IRenderTask>(); 
-                result.Add(new SiteLayoutRenderTask(element, options));
-                response.ContentTask = result; 
+                var response = new EvaluatorResponse();
+                var result = new List<IRenderTask> {new SiteLayoutRenderTask(element, options)};
+                response.ContentTask = result;
                 response.OmitTag = true;
-                 
+
                 if (options.RequireBindingInfo)
                 {
                     string boundary = Kooboo.Lib.Helper.StringHelper.GetUniqueBoundary();
 
                     var startbinding = new BindingObjectRenderTask()
                     { ObjectType = "layout", Boundary = boundary, NameOrId = element.id };
-                    List<IRenderTask> bindingstarts = new List<IRenderTask>();
-                    bindingstarts.Add(startbinding);
+                    List<IRenderTask> bindingstarts = new List<IRenderTask> {startbinding};
                     response.BindingTask = bindingstarts;
 
                     var endbinding = new BindingObjectRenderTask()
                     { ObjectType = "layout", IsEndBinding = true, Boundary = boundary, NameOrId = element.id };
 
-                    List<IRenderTask> bindingends = new List<IRenderTask>();
-                    bindingends.Add(endbinding);
+                    List<IRenderTask> bindingends = new List<IRenderTask> {endbinding};
                     response.EndBindingTask = bindingends;
                 }
                 return response;
             }
 
-            return null; 
+            return null;
         }
-    } 
+    }
 }

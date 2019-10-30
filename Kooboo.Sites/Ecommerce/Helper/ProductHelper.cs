@@ -9,19 +9,22 @@ namespace Kooboo.Sites.Ecommerce.Helper
 {
     public static class ProductHelper
     {
-        public static ProductViewModel ToView(Product product, string lang, List<Models.ProductProperty> Properties)
+        public static ProductViewModel ToView(Product product, string lang, List<Models.ProductProperty> properties)
         {
             if (product == null)
             {
                 return null;
             }
-            ProductViewModel model = new ProductViewModel();
-            model.Id = product.Id;
-            model.ProductTypeId = product.ProductTypeId;
-            model.UserKey = product.UserKey;
-            model.LastModified = product.LastModified;
-            model.Online = product.Online;
-            model.CreationDate = product.CreationDate;
+
+            ProductViewModel model = new ProductViewModel
+            {
+                Id = product.Id,
+                ProductTypeId = product.ProductTypeId,
+                UserKey = product.UserKey,
+                LastModified = product.LastModified,
+                Online = product.Online,
+                CreationDate = product.CreationDate
+            };
 
             var langcontent = product.GetContentStore(lang);
             if (langcontent != null)
@@ -29,9 +32,9 @@ namespace Kooboo.Sites.Ecommerce.Helper
                 model.Values = langcontent.FieldValues;
             }
 
-            if (Properties != null)
+            if (properties != null)
             {
-                foreach (var item in Properties.Where(o => !o.IsSystemField && !o.MultipleLanguage))
+                foreach (var item in properties.Where(o => !o.IsSystemField && !o.MultipleLanguage))
                 {
                     if (!model.Values.ContainsKey(item.Name) || string.IsNullOrEmpty(model.Values[item.Name]))
                     {

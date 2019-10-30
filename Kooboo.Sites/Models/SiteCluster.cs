@@ -1,18 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Interface;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Models
 {
-    // change this into only the sync related info. 
+    // change this into only the sync related info.
     public class SiteCluster : ISiteObject
     {
         private Guid _id;
+
         public Guid Id
         {
             get
@@ -25,12 +22,12 @@ namespace Kooboo.Sites.Models
                     }
                     else if (!string.IsNullOrEmpty(ServerIp))
                     {
-                        string unique = this.ServerIp; 
+                        string unique = this.ServerIp;
                         if (this.Port != 80)
                         {
-                            unique += this.Port.ToString(); 
+                            unique += this.Port.ToString();
                         }
-                        _id = Lib.Security.Hash.ComputeGuidIgnoreCase(unique); 
+                        _id = Lib.Security.Hash.ComputeGuidIgnoreCase(unique);
                     }
                 }
                 return _id;
@@ -44,13 +41,13 @@ namespace Kooboo.Sites.Models
 
         public int Port { get; set; } = 80;
 
-        public  bool IsSelected { get; set; }
+        public bool IsSelected { get; set; }
 
         public string DataCenter { get; set; }
 
         // The root server...
         public bool IsRoot { get; set; }
-          
+
         public string PrimaryDomain { get; set; }
 
         public long Version { get; set; }
@@ -60,7 +57,5 @@ namespace Kooboo.Sites.Models
         public DateTime CreationDate { get; set; }
         public DateTime LastModified { get; set; }
         public string Name { get; set; }
-
     }
-
 }

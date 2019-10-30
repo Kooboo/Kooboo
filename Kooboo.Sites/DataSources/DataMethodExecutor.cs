@@ -17,35 +17,35 @@ namespace Kooboo.Sites.DataSources
 {
     public static class DataMethodExecutor
     {
-        public static object ExecuteViewDataMethod(Render.FrontContext context, ViewDataMethod ViewMethod, DataContext parentDataContext = null)
+        public static object ExecuteViewDataMethod(Render.FrontContext context, ViewDataMethod viewMethod, DataContext parentDataContext = null)
         {
-            var CompiledMethod = CompileMethodCache.GetCompiledMethod(context.SiteDb, ViewMethod.MethodId);
-            if (CompiledMethod == null)
+            var compiledMethod = CompileMethodCache.GetCompiledMethod(context.SiteDb, viewMethod.MethodId);
+            if (compiledMethod == null)
             {
                 return null;
             }
 
-            var ParameterBindings = CompiledMethod.ParameterBindings;
+            var parameterBindings = compiledMethod.ParameterBindings;
 
-            DataContext dataContext = parentDataContext == null ? context.RenderContext.DataContext : parentDataContext;
+            DataContext dataContext = parentDataContext ?? context.RenderContext.DataContext;
 
-            if (CompiledMethod.IsKScript)
+            if (compiledMethod.IsKScript)
             {
-                var dictparas = ParameterBinder.BindKScript(CompiledMethod.Parameters, ParameterBindings, dataContext);
+                var dictparas = ParameterBinder.BindKScript(compiledMethod.Parameters, parameterBindings, dataContext);
 
-                return Kooboo.Sites.Scripting.Manager.ExecuteDataSource(context.RenderContext, CompiledMethod.CodeId, dictparas);
+                return Kooboo.Sites.Scripting.Manager.ExecuteDataSource(context.RenderContext, compiledMethod.CodeId, dictparas);
             }
 
-            List<object> paras = ParameterBinder.Bind(CompiledMethod.Parameters, ParameterBindings, dataContext);
+            List<object> paras = ParameterBinder.Bind(compiledMethod.Parameters, parameterBindings, dataContext);
 
-            CheckAndAssignDefaultValue(paras, CompiledMethod, context, ViewMethod.MethodId);
+            CheckAndAssignDefaultValue(paras, compiledMethod, context, viewMethod.MethodId);
 
-            var result = Execute(CompiledMethod, paras.ToArray(), context);
+            var result = Execute(compiledMethod, paras.ToArray(), context);
             if (result == null)
             {
                 return null;
             }
-            if (ViewMethod.HasChildren)
+            if (viewMethod.HasChildren)
             {
                 var type = result.GetType();
 
@@ -55,21 +55,19 @@ namespace Kooboo.Sites.DataSources
                     var itemcollection = ((IEnumerable)result).Cast<object>().ToList();
                     foreach (var item in itemcollection)
                     {
-                        var itemresult = ExecuteSubViewDataMethod(context, item, ViewMethod.Children);
+                        var itemresult = ExecuteSubViewDataMethod(context, item, viewMethod.Children);
 
                         results.Add(itemresult);
                     }
                     return results;
                 }
-                else if (result is PagedResult)
+                else if (result is PagedResult pagedresult)
                 {
-                    var pagedresult = result as PagedResult;
-
                     List<DataMethodResult> results = new List<DataMethodResult>();
                     var itemcollection = ((IEnumerable)pagedresult.DataList).Cast<object>().ToList();
                     foreach (var item in itemcollection)
                     {
-                        var itemresult = ExecuteSubViewDataMethod(context, item, ViewMethod.Children);
+                        var itemresult = ExecuteSubViewDataMethod(context, item, viewMethod.Children);
 
                         results.Add(itemresult);
                     }
@@ -80,7 +78,7 @@ namespace Kooboo.Sites.DataSources
                 }
                 else
                 {
-                    return ExecuteSubViewDataMethod(context, result, ViewMethod.Children);
+                    return ExecuteSubViewDataMethod(context, result, viewMethod.Children);
                 }
             }
             else
@@ -89,15 +87,15 @@ namespace Kooboo.Sites.DataSources
             }
         }
 
-        internal static object Execute(Render.FrontContext context, DataMethodCompiled CompiledMethod)
+        internal static object Execute(Render.FrontContext context, DataMethodCompiled compiledMethod)
         {
-            List<object> paras = ParameterBinder.Bind(CompiledMethod.Parameters, CompiledMethod.ParameterBindings, context.RenderContext.DataContext);
+            List<object> paras = ParameterBinder.Bind(compiledMethod.Parameters, compiledMethod.ParameterBindings, context.RenderContext.DataContext);
 
-            CheckAndAssignDefaultValue(paras, CompiledMethod, context, default(Guid));
-            return Execute(CompiledMethod, paras.ToArray(), context);
+            CheckAndAssignDefaultValue(paras, compiledMethod, context, default(Guid));
+            return Execute(compiledMethod, paras.ToArray(), context);
         }
 
-        internal static object Execute(DataMethodCompiled method, object[] Paras, Render.FrontContext Context)
+        internal static object Execute(DataMethodCompiled method, object[] paras, Render.FrontContext context)
         {
             // assign default values.
 
@@ -107,41 +105,40 @@ namespace Kooboo.Sites.DataSources
             {
                 if (method.IsVoid)
                 {
-                    method.StaticVoid(Paras);
+                    method.StaticVoid(paras);
                     return null;
                 }
                 else
                 {
-                    result = method.StaticFunc(Paras);
+                    result = method.StaticFunc(paras);
                 }
             }
             else
             {
                 var instance = Activator.CreateInstance(method.DeclareType);
-                if (instance is SiteDataSource)
+                if (instance is SiteDataSource datasource)
                 {
-                    var datasource = instance as SiteDataSource;
-                    datasource.Context = Context;
+                    datasource.Context = context;
                     if (method.IsVoid)
                     {
-                        method.Void(datasource, Paras);
+                        method.Void(datasource, paras);
                         return null;
                     }
                     else
                     {
-                        result = method.Func(datasource, Paras);
+                        result = method.Func(datasource, paras);
                     }
                 }
                 else
                 {
                     if (method.IsVoid)
                     {
-                        method.Void(instance, Paras);
+                        method.Void(instance, paras);
                         return null;
                     }
                     else
                     {
-                        result = method.Func(instance, Paras);
+                        result = method.Func(instance, paras);
                     }
                 }
             }
@@ -150,8 +147,7 @@ namespace Kooboo.Sites.DataSources
             { return null; }
             else
             {
-                var resultAsTask = result as Task;
-                if (resultAsTask != null)
+                if (result is Task resultAsTask)
                 {
                     if (method.ReturnType == typeof(Task))
                     {
@@ -165,7 +161,7 @@ namespace Kooboo.Sites.DataSources
                     {
                         // for: public Task<T> Action()
                         // constructs: return (Task<object>)Convert<T>((Task<T>)result)
-                        var genericMethodInfo = _convertOfTMethod.MakeGenericMethod(taskValueType);
+                        var genericMethodInfo = ConvertOfTMethod.MakeGenericMethod(taskValueType);
                         var convertedResult = genericMethodInfo.Invoke(null, new object[] { result });
                         return convertedResult;
                     }
@@ -174,10 +170,7 @@ namespace Kooboo.Sites.DataSources
                     // 1. Types which have derived from Task and Task<T>,
                     // 2. Action methods which use dynamic keyword but return a Task or Task<T>.
                     throw new InvalidOperationException(
-                        String.Format("The method '{0}' on type '{1}' returned a Task instance even though it is not an asynchronous method.",
-                            "Not getted",
-                            method.DeclareType
-                        )
+                        $"The method '{"Not getted"}' on type '{method.DeclareType}' returned a Task instance even though it is not an asynchronous method."
                     );
                 }
                 else
@@ -187,28 +180,26 @@ namespace Kooboo.Sites.DataSources
             }
         }
 
-        private static DataMethodResult ExecuteSubViewDataMethod(Render.FrontContext Context, object itemvalue, List<ViewDataMethod> Children)
+        private static DataMethodResult ExecuteSubViewDataMethod(Render.FrontContext context, object itemvalue, List<ViewDataMethod> children)
         {
-            DataMethodResult dataresult = new DataMethodResult();
-            dataresult.Value = itemvalue;
+            DataMethodResult dataresult = new DataMethodResult {Value = itemvalue};
 
-            DataContext parentcontext = new DataContext(Context.RenderContext);
+            DataContext parentcontext = new DataContext(context.RenderContext);
             parentcontext.Push("", itemvalue);
 
-            foreach (var item in Children)
+            foreach (var item in children)
             {
-                var subResult = ExecuteViewDataMethod(Context, item, parentcontext);
+                var subResult = ExecuteViewDataMethod(context, item, parentcontext);
 
                 if (subResult != null)
                 {
-                    if (subResult is DataMethodResult)
+                    if (subResult is DataMethodResult result)
                     {
-                        dataresult.Children.Add(item.AliasName, subResult as DataMethodResult);
+                        dataresult.Children.Add(item.AliasName, result);
                     }
                     else
                     {
-                        DataMethodResult subMethodResult = new DataMethodResult();
-                        subMethodResult.Value = subResult;
+                        DataMethodResult subMethodResult = new DataMethodResult {Value = subResult};
                         dataresult.Children.Add(item.AliasName, subMethodResult);
                     }
                 }
@@ -222,31 +213,30 @@ namespace Kooboo.Sites.DataSources
             var itemcollection = ((IEnumerable)data).Cast<object>().ToList();
             foreach (var item in itemcollection)
             {
-                DataMethodResult oneresult = new DataMethodResult();
-                oneresult.Value = item;
+                DataMethodResult oneresult = new DataMethodResult {Value = item};
             }
             return null;
         }
 
-        internal static void CheckAndAssignDefaultValue(List<object> values, DataMethodCompiled CompiledMethod, Render.FrontContext context, Guid CurrentMethodId)
+        internal static void CheckAndAssignDefaultValue(List<object> values, DataMethodCompiled compiledMethod, Render.FrontContext context, Guid currentMethodId)
         {
-            if (!values.Where(o => o == null).Any())
+            if (!values.Any(o => o == null))
             {
                 return;
             }
 
-            int count = CompiledMethod.Parameters.Count();
-            var keylist = CompiledMethod.Parameters.Keys.ToList();
+            int count = compiledMethod.Parameters.Count();
+            var keylist = compiledMethod.Parameters.Keys.ToList();
 
-            bool IsContentList = CompiledMethod.DeclareType == typeof(Kooboo.Sites.DataSources.ContentList);
+            bool isContentList = compiledMethod.DeclareType == typeof(Kooboo.Sites.DataSources.ContentList);
 
-            bool IsContentQueried = false;
+            bool isContentQueried = false;
 
-            bool IsTextContentMethod = CompiledMethod.ReturnType == typeof(TextContentViewModel) || Kooboo.Lib.Reflection.TypeHelper.GetGenericType(CompiledMethod.ReturnType) == typeof(TextContentViewModel);
+            bool isTextContentMethod = compiledMethod.ReturnType == typeof(TextContentViewModel) || Kooboo.Lib.Reflection.TypeHelper.GetGenericType(compiledMethod.ReturnType) == typeof(TextContentViewModel);
 
             TextContentViewModel samplecontent = null;
 
-            bool IsByCategory = IsQueryByCategory(CompiledMethod);
+            bool isByCategory = IsQueryByCategory(compiledMethod);
 
             for (int i = 0; i < count; i++)
             {
@@ -254,18 +244,18 @@ namespace Kooboo.Sites.DataSources
                 {
                     var paraname = keylist[i];
 
-                    if (IsContentList)
+                    if (isContentList)
                     {
                         //int PageSize, int PageNumber, string SortField, Boolean IsAscending
                         if (paraname == "PageSize" || paraname == "PageNumber" || paraname == "SortField" || paraname == "IsAscending")
                         {
                             var x = keylist[i];
-                            var paratype = CompiledMethod.Parameters[x];
+                            var paratype = compiledMethod.Parameters[x];
                             values[i] = GetDefaultValueForDataType(paratype);
                         }
                     }
 
-                    if (IsByCategory)
+                    if (isByCategory)
                     {
                         if (paraname.ToLower() == "id")
                         {
@@ -279,19 +269,19 @@ namespace Kooboo.Sites.DataSources
                         }
                     }
 
-                    if (!IsContentQueried)
+                    if (!isContentQueried)
                     {
-                        if (IsTextContentMethod)
+                        if (isTextContentMethod)
                         {
-                            var folderid = TryGetFolderGuid(CompiledMethod.ParameterBindings);
+                            var folderid = TryGetFolderGuid(compiledMethod.ParameterBindings);
                             samplecontent = context.SiteDb.TextContent.GetDefaultContentFromFolder(folderid, context.RenderContext.Culture);
                         }
-                        IsContentQueried = true;
+                        isContentQueried = true;
                     }
 
                     if (samplecontent != null)
                     {
-                        var key = GetBindingKey(paraname, CompiledMethod.ParameterBindings);
+                        var key = GetBindingKey(paraname, compiledMethod.ParameterBindings);
                         var value = Kooboo.Lib.Reflection.Dynamic.GetObjectMember(samplecontent, key);
 
                         if (value != null)
@@ -303,18 +293,18 @@ namespace Kooboo.Sites.DataSources
                     if (values[i] == null)
                     {
                         var x = keylist[i];
-                        var paratype = CompiledMethod.Parameters[x];
+                        var paratype = compiledMethod.Parameters[x];
                         values[i] = GetDefaultValueForDataType(paratype);
                     }
                 }
             }
         }
 
-        private static bool IsQueryByCategory(DataMethodCompiled CompiledMethod)
+        private static bool IsQueryByCategory(DataMethodCompiled compiledMethod)
         {
-            if (!string.IsNullOrEmpty(CompiledMethod.OriginalMethodName))
+            if (!string.IsNullOrEmpty(compiledMethod.OriginalMethodName))
             {
-                if (CompiledMethod.OriginalMethodName.ToLower().Contains("bycategory"))
+                if (compiledMethod.OriginalMethodName.ToLower().Contains("bycategory"))
                 {
                     return true;
                 }
@@ -322,14 +312,14 @@ namespace Kooboo.Sites.DataSources
             return false;
         }
 
-        private static object GetDefaultValue(DataMethodCompiled CompiledMethod, Render.FrontContext context, Guid CurrentMethodId, string paraname, Guid folderid)
+        private static object GetDefaultValue(DataMethodCompiled compiledMethod, Render.FrontContext context, Guid currentMethodId, string paraname, Guid folderid)
         {
             object value = null;
 
-            var defaultcontent = GetDefaultContentNew(folderid, context, CurrentMethodId);
+            var defaultcontent = GetDefaultContentNew(folderid, context, currentMethodId);
             if (defaultcontent != null)
             {
-                var key = GetBindingKey(paraname, CompiledMethod.ParameterBindings);
+                var key = GetBindingKey(paraname, compiledMethod.ParameterBindings);
                 value = Kooboo.Lib.Reflection.Dynamic.GetObjectMember(defaultcontent, key);
             }
 
@@ -366,12 +356,12 @@ namespace Kooboo.Sites.DataSources
             return null;
         }
 
-        private static string GetBindingKey(string Paraname, Dictionary<string, ParameterBinding> bindings)
+        private static string GetBindingKey(string paraname, Dictionary<string, ParameterBinding> bindings)
         {
-            Paraname = Paraname.ToLower();
+            paraname = paraname.ToLower();
             foreach (var item in bindings)
             {
-                if (item.Key.ToLower() == Paraname)
+                if (item.Key.ToLower() == paraname)
                 {
                     var value = item.Value.Binding;
 
@@ -386,85 +376,79 @@ namespace Kooboo.Sites.DataSources
             return null;
         }
 
-        internal static TextContentViewModel GetDefaultContentNew(Guid FolderId, Render.FrontContext context, Guid CurrentMethodId = default(Guid))
+        internal static TextContentViewModel GetDefaultContentNew(Guid folderId, Render.FrontContext context, Guid currentMethodId = default(Guid))
         {
-            List<DataMethodSetting> CorrectMethods = new List<DataMethodSetting>();
+            List<DataMethodSetting> correctMethods = new List<DataMethodSetting>();
 
-            var allmethods = context.SiteDb.DataMethodSettings.GetByFolder(FolderId);
+            var allmethods = context.SiteDb.DataMethodSettings.GetByFolder(folderId);
 
             foreach (var item in allmethods)
             {
-                if (item.Id != CurrentMethodId)
+                if (item.Id != currentMethodId)
                 {
                     var type = Kooboo.Data.TypeCache.GetType(item.ReturnType);
 
                     if (type != null && Kooboo.Lib.Reflection.TypeHelper.IsGenericCollection(type))
                     {
-                        CorrectMethods.Add(item);
+                        correctMethods.Add(item);
                     }
                 }
             }
-            if (CorrectMethods.Count > 0)
+            if (correctMethods.Count > 0)
             {
                 // first execute on the same page...
                 if (context.Page != null)
                 {
                     var pagemethods = context.SiteDb.Pages.GetAllMethodIds(context.Page.Id);
 
-                    var withinmethod = CorrectMethods.FindAll(o => pagemethods.Contains(o.Id));
+                    var withinmethod = correctMethods.FindAll(o => pagemethods.Contains(o.Id));
 
                     foreach (var item in withinmethod)
                     {
                         var result = DataMethodExecutor.ExecuteDataMethod(context, item.Id);
-                        if (result != null)
+                        var itemcollection = ((IEnumerable) result)?.Cast<object>().ToList();
+
+                        if (itemcollection != null && itemcollection.Any())
                         {
-                            var itemcollection = ((IEnumerable)result).Cast<object>().ToList();
+                            var contentitem = itemcollection[0];
 
-                            if (itemcollection != null && itemcollection.Count() > 0)
+                            if (contentitem is TextContentViewModel model)
                             {
-                                var contentitem = itemcollection[0];
-
-                                if (contentitem is TextContentViewModel)
-                                {
-                                    return contentitem as TextContentViewModel;
-                                }
+                                return model;
                             }
                         }
-                        CorrectMethods.Remove(item);
+                        correctMethods.Remove(item);
                     }
 
-                    ///execute pages that link to current page...
+                    //execute pages that link to current page...
                     var allotherpages = context.SiteDb.Relations.GetReferredBy(context.Page, ConstObjectType.Page);
 
                     foreach (var item in allotherpages)
                     {
                         var otherpagemethods = context.SiteDb.Pages.GetAllMethodIds(item.objectXId);
 
-                        var otherwithinmethod = CorrectMethods.FindAll(o => otherpagemethods.Contains(o.Id));
+                        var otherwithinmethod = correctMethods.FindAll(o => otherpagemethods.Contains(o.Id));
 
                         foreach (var otheritem in otherwithinmethod)
                         {
                             var result = DataMethodExecutor.ExecuteDataMethod(context, otheritem.Id);
-                            if (result != null)
+                            var itemcollection = ((IEnumerable) result)?.Cast<object>().ToList();
+
+                            if (itemcollection != null && itemcollection.Any())
                             {
-                                var itemcollection = ((IEnumerable)result).Cast<object>().ToList();
+                                var contentitem = itemcollection[0];
 
-                                if (itemcollection != null && itemcollection.Count() > 0)
+                                if (contentitem is TextContentViewModel model)
                                 {
-                                    var contentitem = itemcollection[0];
-
-                                    if (contentitem is TextContentViewModel)
-                                    {
-                                        return contentitem as TextContentViewModel;
-                                    }
+                                    return model;
                                 }
                             }
-                            CorrectMethods.Remove(otheritem);
+                            correctMethods.Remove(otheritem);
                         }
                     }
                 }
 
-                foreach (var item in CorrectMethods)
+                foreach (var item in correctMethods)
                 {
                     var result = DataMethodExecutor.ExecuteDataMethod(context, item.Id);
                     if (result != null)
@@ -476,13 +460,13 @@ namespace Kooboo.Sites.DataSources
                             var paged = result as PagedResult;
                             itemcollection = ((IEnumerable)paged.DataList).Cast<object>().ToList();
 
-                            if (itemcollection != null && itemcollection.Count() > 0)
+                            if (itemcollection != null && itemcollection.Any())
                             {
                                 var contentitem = itemcollection[0];
 
-                                if (contentitem is TextContentViewModel)
+                                if (contentitem is TextContentViewModel textContentViewModel)
                                 {
-                                    return contentitem as TextContentViewModel;
+                                    return textContentViewModel;
                                 }
                             }
                         }
@@ -490,13 +474,13 @@ namespace Kooboo.Sites.DataSources
                         {
                             itemcollection = ((IEnumerable)result).Cast<object>().ToList();
 
-                            if (itemcollection != null && itemcollection.Count() > 0)
+                            if (itemcollection != null && itemcollection.Any())
                             {
                                 var contentitem = itemcollection[0];
 
-                                if (contentitem is TextContentViewModel)
+                                if (contentitem is TextContentViewModel textContentViewModel)
                                 {
-                                    return contentitem as TextContentViewModel;
+                                    return textContentViewModel;
                                 }
                             }
                         }
@@ -504,7 +488,7 @@ namespace Kooboo.Sites.DataSources
                 }
             }
 
-            return context.SiteDb.TextContent.GetDefaultContentFromFolder(FolderId, context.RenderContext.Culture);
+            return context.SiteDb.TextContent.GetDefaultContentFromFolder(folderId, context.RenderContext.Culture);
         }
 
         private static Guid TryGetFolderGuid(Dictionary<string, ParameterBinding> bindings)
@@ -525,21 +509,21 @@ namespace Kooboo.Sites.DataSources
             return folderid;
         }
 
-        private static object ExecuteDataMethod(Render.FrontContext context, Guid MethodId)
+        private static object ExecuteDataMethod(Render.FrontContext context, Guid methodId)
         {
-            var CompiledMethod = CompileMethodCache.GetCompiledMethod(context.SiteDb, MethodId);
-            if (CompiledMethod == null)
+            var compiledMethod = CompileMethodCache.GetCompiledMethod(context.SiteDb, methodId);
+            if (compiledMethod == null)
             {
                 return null;
             }
 
-            var ParameterBindings = CompiledMethod.ParameterBindings;
+            var parameterBindings = compiledMethod.ParameterBindings;
 
-            List<object> paras = ParameterBinder.Bind(CompiledMethod.Parameters, ParameterBindings, context.RenderContext.DataContext);
+            List<object> paras = ParameterBinder.Bind(compiledMethod.Parameters, parameterBindings, context.RenderContext.DataContext);
 
-            CheckAndAssignDefaultValue(paras, CompiledMethod, context, MethodId);
+            CheckAndAssignDefaultValue(paras, compiledMethod, context, methodId);
 
-            return Execute(CompiledMethod, paras.ToArray(), context);
+            return Execute(compiledMethod, paras.ToArray(), context);
         }
 
         private static void ThrowIfWrappedTaskInstance(Type actualTypeReturned, string methodName, Type declaringType)
@@ -552,11 +536,7 @@ namespace Kooboo.Sites.DataSources
                 if (innerTaskType != null && typeof(Task).IsAssignableFrom(innerTaskType))
                 {
                     throw new InvalidOperationException(
-                        String.Format("The method '{0}' on type '{1}' returned an instance of '{2}'.Make sure to call Unwrap on the returned value to avoid unobserved faulted Task.",
-                            methodName,
-                            declaringType,
-                            actualTypeReturned.FullName
-                        )
+                        $"The method '{methodName}' on type '{declaringType}' returned an instance of '{actualTypeReturned.FullName}'.Make sure to call Unwrap on the returned value to avoid unobserved faulted Task."
                     );
                 }
             }
@@ -610,7 +590,7 @@ namespace Kooboo.Sites.DataSources
             return queryType.GetInterfaces().FirstOrDefault(matchesInterface);
         }
 
-        private static readonly MethodInfo _convertOfTMethod =
+        private static readonly MethodInfo ConvertOfTMethod =
             typeof(DataMethodExecutor).GetRuntimeMethods().Single(methodInfo => methodInfo.Name == "Convert");
 
         // Method called via reflection.

@@ -1,14 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Extensions;
+using Kooboo.Lib.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using Kooboo.Extensions;
-using Kooboo.Lib.Helper;
 
 namespace Kooboo.Sites.SiteTransfer
 {
@@ -36,7 +34,6 @@ namespace Kooboo.Sites.SiteTransfer
             var content = DownloadHelper.DownloadUrl(rootUrl);
             if (content != null)
             {
-                 
                 var html = content.ContentString;
                 if (urlContentDictionary.ContainsKey(rootUrl))
                 {

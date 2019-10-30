@@ -1,12 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using Kooboo.Data;
-using Kooboo.Extensions;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Extensions;
 using Kooboo.Data.Interface;
-using Kooboo.Attributes;
+using System;
 
 namespace Kooboo.Sites.Models
 {
@@ -20,12 +15,12 @@ namespace Kooboo.Sites.Models
         }
 
         private Guid _id;
+
         public override Guid Id
         {
             set { _id = value; }
             get
             {
-
                 if (_id == default(Guid))
                 {
                     if (this.OwnerObjectId != default(Guid))
@@ -44,6 +39,7 @@ namespace Kooboo.Sites.Models
         }
 
         private string _name;
+
         public override string Name
         {
             get
@@ -57,15 +53,14 @@ namespace Kooboo.Sites.Models
                 {
                     _name = Lib.Helper.StringHelper.ToValidFileName(_name);
                 }
-
             }
         }
 
         public string Engine { get; set; }
 
         /// <summary>
-        /// embedded or external reference. 
-        /// Depreciated, not valid any more. 
+        /// embedded or external reference.
+        /// Depreciated, not valid any more.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public bool IsEmbedded
@@ -73,7 +68,6 @@ namespace Kooboo.Sites.Models
             get;
             set;
         }
-
 
         private string _extension;
 
@@ -94,22 +88,18 @@ namespace Kooboo.Sites.Models
             set
             {
                 _extension = value;
-                if (_extension != null)
-                {
-                    _extension = _extension.ToLower();
-                }
+                _extension = _extension?.ToLower();
             }
         }
 
-
         /// <summary>
-        /// For embedded css, the parent object id. this can be view, layout, page or textcontent. 
+        /// For embedded css, the parent object id. this can be view, layout, page or textcontent.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public Guid OwnerObjectId { get; set; }
 
         /// <summary>
-        /// The type of owner object id. 
+        /// The type of owner object id.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public byte OwnerConstType { get; set; }
@@ -117,7 +107,7 @@ namespace Kooboo.Sites.Models
         public string KoobooOpenTag { get; set; }
 
         /// <summary>
-        /// the item index of embedded style sheet. 
+        /// the item index of embedded style sheet.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public int ItemIndex { get; set; }
@@ -125,9 +115,9 @@ namespace Kooboo.Sites.Models
         private int _bodyhash;
 
         /// <summary>
-        /// The hash code of script text. This is used to find similiar script. 
+        /// The hash code of script text. This is used to find similiar script.
         /// </summary>
-        /// 
+        ///
         [Kooboo.Attributes.SummaryIgnore]
         public int BodyHash
         {
@@ -154,16 +144,17 @@ namespace Kooboo.Sites.Models
         public bool async { get; set; }
 
         /// <summary>
-        /// The script will be exected at the end. 
-        /// W3C Standard. 
+        /// The script will be exected at the end.
+        /// W3C Standard.
         /// </summary>
         public bool defer { get; set; }
 
         public string crossOrigin { get; set; }
 
         private string _text;
+
         /// <summary>
-        /// the embedded script text. 
+        /// the embedded script text.
         /// </summary>
         public string Body
         {
@@ -176,7 +167,6 @@ namespace Kooboo.Sites.Models
             }
         }
 
-
         public string DomTagName
         {
             get
@@ -188,9 +178,8 @@ namespace Kooboo.Sites.Models
         public override int GetHashCode()
         {
             string unique = this.Name + this.BodyHash.ToString() + defer.ToString() + this.async.ToString();
-            unique += this.Extension + this.Engine; 
+            unique += this.Extension + this.Engine;
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
-
     }
 }

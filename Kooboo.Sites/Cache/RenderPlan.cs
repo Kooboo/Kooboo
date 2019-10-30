@@ -12,97 +12,90 @@ namespace Kooboo.Sites.Cache
     {
         private static object _locker = new object();
 
-        private static Dictionary<Guid, Dictionary<Guid, List<IRenderTask>>> SiteRenderPlans = new Dictionary<Guid, Dictionary<Guid, List<IRenderTask>>>();
+        private static Dictionary<Guid, Dictionary<Guid, List<IRenderTask>>> _siteRenderPlans = new Dictionary<Guid, Dictionary<Guid, List<IRenderTask>>>();
 
-        public static List<IRenderTask> GetOrAddRenderPlan(SiteDb SiteDb, Guid UniqueObjectId, Func<List<IRenderTask>> EvaluatePlan)
+        public static List<IRenderTask> GetOrAddRenderPlan(SiteDb siteDb, Guid uniqueObjectId, Func<List<IRenderTask>> evaluatePlan)
         {
             lock (_locker)
             {
-                Dictionary<Guid, List<IRenderTask>> SitePageRenderPlan = null;
-                if (SiteRenderPlans.ContainsKey(SiteDb.Id))
+                Dictionary<Guid, List<IRenderTask>> sitePageRenderPlan = null;
+                if (_siteRenderPlans.ContainsKey(siteDb.Id))
                 {
-                    SitePageRenderPlan = SiteRenderPlans[SiteDb.Id];
+                    sitePageRenderPlan = _siteRenderPlans[siteDb.Id];
                 }
                 else
                 {
-                    SitePageRenderPlan = new Dictionary<Guid, List<IRenderTask>>();
-                    SiteRenderPlans[SiteDb.Id] = SitePageRenderPlan;
+                    sitePageRenderPlan = new Dictionary<Guid, List<IRenderTask>>();
+                    _siteRenderPlans[siteDb.Id] = sitePageRenderPlan;
                 }
 
-                if (!SitePageRenderPlan.ContainsKey(UniqueObjectId))
+                if (!sitePageRenderPlan.ContainsKey(uniqueObjectId))
                 {
-                    var plan = EvaluatePlan();
-                    SitePageRenderPlan[UniqueObjectId] = plan;
+                    var plan = evaluatePlan();
+                    sitePageRenderPlan[uniqueObjectId] = plan;
                 }
                 //var plan = EvaluatePlan();
                 //SitePageRenderPlan[UniqueObjectId] = plan;
-                return SitePageRenderPlan[UniqueObjectId];
+                return sitePageRenderPlan[uniqueObjectId];
             }
         }
 
-        public static List<IRenderTask> Get(SiteDb SiteDb, Guid UniqueObjectId)
+        public static List<IRenderTask> Get(SiteDb siteDb, Guid uniqueObjectId)
         {
             lock (_locker)
             {
-                Dictionary<Guid, List<IRenderTask>> SitePageRenderPlan = null;
-                if (SiteRenderPlans.ContainsKey(SiteDb.Id))
+                Dictionary<Guid, List<IRenderTask>> sitePageRenderPlan = null;
+                if (_siteRenderPlans.ContainsKey(siteDb.Id))
                 {
-                    SitePageRenderPlan = SiteRenderPlans[SiteDb.Id];
+                    sitePageRenderPlan = _siteRenderPlans[siteDb.Id];
                 }
                 else
                 {
-                    SitePageRenderPlan = new Dictionary<Guid, List<IRenderTask>>();
-                    SiteRenderPlans[SiteDb.Id] = SitePageRenderPlan;
+                    sitePageRenderPlan = new Dictionary<Guid, List<IRenderTask>>();
+                    _siteRenderPlans[siteDb.Id] = sitePageRenderPlan;
                 }
 
-                if (!SitePageRenderPlan.ContainsKey(UniqueObjectId))
-                {
-                    return null;
-                }
-                else
-                {
-                    return SitePageRenderPlan[UniqueObjectId];
-                }
+                return !sitePageRenderPlan.ContainsKey(uniqueObjectId) ? null : sitePageRenderPlan[uniqueObjectId];
             }
         }
 
-        public static void Set(SiteDb SiteDb, Guid UniqueObjectId, List<IRenderTask> plans)
+        public static void Set(SiteDb siteDb, Guid uniqueObjectId, List<IRenderTask> plans)
         {
             lock (_locker)
             {
-                Dictionary<Guid, List<IRenderTask>> SitePageRenderPlan = null;
-                if (SiteRenderPlans.ContainsKey(SiteDb.Id))
+                Dictionary<Guid, List<IRenderTask>> sitePageRenderPlan = null;
+                if (_siteRenderPlans.ContainsKey(siteDb.Id))
                 {
-                    SitePageRenderPlan = SiteRenderPlans[SiteDb.Id];
+                    sitePageRenderPlan = _siteRenderPlans[siteDb.Id];
                 }
                 else
                 {
-                    SitePageRenderPlan = new Dictionary<Guid, List<IRenderTask>>();
-                    SiteRenderPlans[SiteDb.Id] = SitePageRenderPlan;
+                    sitePageRenderPlan = new Dictionary<Guid, List<IRenderTask>>();
+                    _siteRenderPlans[siteDb.Id] = sitePageRenderPlan;
                 }
-                SitePageRenderPlan[UniqueObjectId] = plans;
+                sitePageRenderPlan[uniqueObjectId] = plans;
             }
         }
 
-        public static void RemovePlan(SiteDb SiteDb, Guid ObjectId)
+        public static void RemovePlan(SiteDb siteDb, Guid objectId)
         {
-            var indeisngid = ObjectId.ToString().ToHashGuid();
+            var indeisngid = objectId.ToString().ToHashGuid();
 
             lock (_locker)
             {
-                Dictionary<Guid, List<IRenderTask>> SiteRenderPlan = null;
-                if (SiteRenderPlans.ContainsKey(SiteDb.Id))
+                Dictionary<Guid, List<IRenderTask>> siteRenderPlan = null;
+                if (_siteRenderPlans.ContainsKey(siteDb.Id))
                 {
-                    SiteRenderPlan = SiteRenderPlans[SiteDb.Id];
+                    siteRenderPlan = _siteRenderPlans[siteDb.Id];
                 }
                 else
                 {
-                    SiteRenderPlan = new Dictionary<Guid, List<IRenderTask>>();
-                    SiteRenderPlans[SiteDb.Id] = SiteRenderPlan;
+                    siteRenderPlan = new Dictionary<Guid, List<IRenderTask>>();
+                    _siteRenderPlans[siteDb.Id] = siteRenderPlan;
                 }
 
-                SiteRenderPlan.Remove(ObjectId);
-                SiteRenderPlan.Remove(indeisngid);
+                siteRenderPlan.Remove(objectId);
+                siteRenderPlan.Remove(indeisngid);
             }
         }
 
@@ -110,7 +103,7 @@ namespace Kooboo.Sites.Cache
         {
             lock (_locker)
             {
-                SiteRenderPlans.Remove(id);
+                _siteRenderPlans.Remove(id);
             }
         }
     }

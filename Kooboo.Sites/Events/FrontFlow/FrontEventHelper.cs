@@ -11,11 +11,16 @@ namespace Kooboo.Sites.Events.FrontFlow
     {
         public static List<EventConditionSetting> GetPageSetting(SiteDb siteDb)
         {
-            List<EventConditionSetting> result = new List<EventConditionSetting>();
+            List<EventConditionSetting> result = new List<EventConditionSetting>
+            {
+                new EventConditionSetting() {Name = "Page.Name"},
+                new EventConditionSetting()
+                {
+                    Name = "Page.DefaultStart", ControlType = Data.ControlType.CheckBox, DataType = typeof(bool)
+                },
+                new EventConditionSetting() {Name = "Page.Body"}
+            };
 
-            result.Add(new EventConditionSetting() { Name = "Page.Name" });
-            result.Add(new EventConditionSetting() { Name = "Page.DefaultStart", ControlType = Data.ControlType.CheckBox, DataType = typeof(bool) });
-            result.Add(new EventConditionSetting() { Name = "Page.Body" });
 
             Dictionary<string, string> pagenames = new Dictionary<string, string>();
             foreach (var item in siteDb.Pages.All())

@@ -41,8 +41,7 @@ namespace Kooboo.Sites.Diagnosis.Advanced
 
                     foreach (var item in allitems)
                     {
-                        var domobj = item as DomObject;
-                        if (domobj != null)
+                        if (item is DomObject domobj)
                         {
                             List<string> errors = new List<string>();
 

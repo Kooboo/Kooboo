@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Lib.Reflection;
 using System;
@@ -10,7 +10,7 @@ namespace Kooboo.Sites.Render.Components
     public static class Container
     {
         static Container()
-        {   
+        {
             List = new Dictionary<string, IComponent>(StringComparer.OrdinalIgnoreCase);
 
             var typelist = AssemblyLoader.LoadTypeByInterface(typeof(IComponent));
@@ -24,30 +24,28 @@ namespace Kooboo.Sites.Render.Components
                 }
             }
         }
+
         /// <summary>
-        /// Return the list of components. 
+        /// Return the list of components.
         /// </summary>
         /// <returns></returns>
         public static Dictionary<string, IComponent> List
         {
             get; set;
         }
-            
-        public static IComponent Get(string ComponentTagName)
+
+        public static IComponent Get(string componentTagName)
         {
-            if (List.ContainsKey(ComponentTagName))
+            if (List.ContainsKey(componentTagName))
             {
-                return List[ComponentTagName];
+                return List[componentTagName];
             }
             return null;
         }
 
-
         public static IComponent GetByConstType(byte constObjectType)
         {
             return List.Values.ToList().Find(o => o.StoreConstType == constObjectType);
-
         }
-
     }
 }

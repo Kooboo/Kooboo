@@ -15,25 +15,25 @@ namespace Kooboo.Sites.Cache
 
         public static Dictionary<Guid, DataMethodCompiled> MethodCache = new Dictionary<Guid, DataMethodCompiled>();
 
-        public static DataMethodCompiled GetGlobalCompiledMethod(Guid MethodId)
+        public static DataMethodCompiled GetGlobalCompiledMethod(Guid methodId)
         {
             lock (_lock)
             {
                 DataMethodCompiled compiled;
-                if (MethodCache.TryGetValue(MethodId, out compiled))
+                if (MethodCache.TryGetValue(methodId, out compiled))
                 {
                     return compiled;
                 }
-                IDataMethodSetting DataMethod = Data.GlobalDb.DataMethodSettings.Get(MethodId);
-                compiled = new DataMethodCompiled(DataMethod);
-                MethodCache[MethodId] = compiled;
+                IDataMethodSetting dataMethod = Data.GlobalDb.DataMethodSettings.Get(methodId);
+                compiled = new DataMethodCompiled(dataMethod);
+                MethodCache[methodId] = compiled;
                 return compiled;
             }
         }
 
-        public static DataMethodCompiled GetCompiledMethod(SiteDb SiteDb, Guid MethodId)
+        public static DataMethodCompiled GetCompiledMethod(SiteDb siteDb, Guid methodId)
         {
-            Guid id = GetId(SiteDb, MethodId);
+            Guid id = GetId(siteDb, methodId);
             lock (_lock)
             {
                 DataMethodCompiled compiled;
@@ -44,33 +44,33 @@ namespace Kooboo.Sites.Cache
 
                 // Global does not have site id.
 
-                if (MethodCache.TryGetValue(MethodId, out compiled))
+                if (MethodCache.TryGetValue(methodId, out compiled))
                 {
                     return compiled;
                 }
 
-                IDataMethodSetting DataMethod = SiteDb.DataMethodSettings.Get(MethodId);
-                if (DataMethod != null)
+                IDataMethodSetting dataMethod = siteDb.DataMethodSettings.Get(methodId);
+                if (dataMethod != null)
                 {
-                    compiled = new DataMethodCompiled(DataMethod);
+                    compiled = new DataMethodCompiled(dataMethod);
                     MethodCache[id] = compiled;
                     return compiled;
                 }
 
-                DataMethod = Data.GlobalDb.DataMethodSettings.Get(MethodId);
-                if (DataMethod != null)
+                dataMethod = Data.GlobalDb.DataMethodSettings.Get(methodId);
+                if (dataMethod != null)
                 {
-                    compiled = new DataMethodCompiled(DataMethod);
-                    MethodCache[MethodId] = compiled;
+                    compiled = new DataMethodCompiled(dataMethod);
+                    MethodCache[methodId] = compiled;
                     return compiled;
                 }
             }
             return null;
         }
 
-        public static void Remove(SiteDb SiteDb, Guid MethodId)
+        public static void Remove(SiteDb siteDb, Guid methodId)
         {
-            Guid id = GetId(SiteDb, MethodId);
+            Guid id = GetId(siteDb, methodId);
 
             lock (_lock)
             {
@@ -81,9 +81,9 @@ namespace Kooboo.Sites.Cache
             }
         }
 
-        private static Guid GetId(SiteDb sitedb, Guid MethodId)
+        private static Guid GetId(SiteDb sitedb, Guid methodId)
         {
-            string unique = sitedb.WebSite.Id.ToString() + MethodId.ToString();
+            string unique = sitedb.WebSite.Id.ToString() + methodId.ToString();
             return unique.ToHashGuid();
         }
     }

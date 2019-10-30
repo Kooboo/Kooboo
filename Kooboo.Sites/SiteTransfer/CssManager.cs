@@ -1,19 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.SiteTransfer.Download;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.SiteTransfer
 {
     public static class CssManager
     {
-        public static void ProcessResource(ref string cssText, string baseurl, DownloadManager manager, Guid OwnerObjectId)
+        public static void ProcessResource(ref string cssText, string baseurl, DownloadManager manager, Guid ownerObjectId)
         {
             if (string.IsNullOrEmpty(cssText))
             {
@@ -28,7 +25,7 @@ namespace Kooboo.Sites.SiteTransfer
             {
                 if (item.isImportRule)
                 {
-                    string newurl = AddImport(item.PureUrl, baseurl, manager, OwnerObjectId);
+                    string newurl = AddImport(item.PureUrl, baseurl, manager, ownerObjectId);
                     if (newurl != item.PureUrl)
                     {
                         string newvalue;
@@ -46,7 +43,7 @@ namespace Kooboo.Sites.SiteTransfer
                 }
                 else
                 {
-                    DownloadUrl(item, replaces, updates, baseurl, manager, OwnerObjectId);
+                    DownloadUrl(item, replaces, updates, baseurl, manager, ownerObjectId);
                 }
             }
 
@@ -61,7 +58,7 @@ namespace Kooboo.Sites.SiteTransfer
             }
         }
 
-        public static List<AnalyzerUpdate> ProcessInlineResource(Kooboo.Dom.Element inlineElement, string baseurl, DownloadManager manager, Guid OwnerObjectId)
+        public static List<AnalyzerUpdate> ProcessInlineResource(Kooboo.Dom.Element inlineElement, string baseurl, DownloadManager manager, Guid ownerObjectId)
         {
             List<AnalyzerUpdate> updates = new List<AnalyzerUpdate>();
 
@@ -78,7 +75,7 @@ namespace Kooboo.Sites.SiteTransfer
             {
                 if (item.isImportRule)
                 {
-                    string newurl = AddImport(item.PureUrl, baseurl, manager, OwnerObjectId);
+                    string newurl = AddImport(item.PureUrl, baseurl, manager, ownerObjectId);
                     if (newurl != item.PureUrl)
                     {
                         updates.Add(new AnalyzerUpdate { StartIndex = inlineElement.location.openTokenStartIndex, EndIndex = inlineElement.location.openTokenEndIndex, IsReplace = true, OldValue = item.PureUrl, NewValue = newurl });
@@ -87,44 +84,37 @@ namespace Kooboo.Sites.SiteTransfer
                 else
                 {
                     string newurl = string.Empty;
-                    if (Kooboo.Lib.Utilities.DataUriService.isDataUri(item.PureUrl))
-                    {
-                        newurl = ParseDataUri(item.PureUrl, manager);
-                    }
-                    else
-                    {
-                        newurl = DownloadCssFile(item.PureUrl, baseurl, manager, OwnerObjectId);
-                    }
+                    newurl = Kooboo.Lib.Utilities.DataUriService.isDataUri(item.PureUrl) ? ParseDataUri(item.PureUrl, manager) : DownloadCssFile(item.PureUrl, baseurl, manager, ownerObjectId);
 
                     updates.Add(new AnalyzerUpdate { StartIndex = inlineElement.location.openTokenStartIndex, EndIndex = inlineElement.location.openTokenEndIndex, IsReplace = true, OldValue = item.PureUrl, NewValue = newurl });
-
                 }
             }
 
             return updates;
-
         }
-         
-        public static string AddImport(string importurl, string baseurl, DownloadManager manager, Guid OwnerObjectId)
+
+        public static string AddImport(string importurl, string baseurl, DownloadManager manager, Guid ownerObjectId)
         {
             string fullimporturl = UrlHelper.Combine(baseurl, importurl);
 
-            string OriginalImportUrl = string.IsNullOrEmpty(manager.OriginalImportUrl) ? baseurl : manager.OriginalImportUrl;
+            string originalImportUrl = string.IsNullOrEmpty(manager.OriginalImportUrl) ? baseurl : manager.OriginalImportUrl;
 
-            bool issamehost = UrlHelper.isSameHost(fullimporturl, OriginalImportUrl);
+            bool issamehost = UrlHelper.isSameHost(fullimporturl, originalImportUrl);
 
             string relativeimporturl = UrlHelper.RelativePath(fullimporturl, issamehost);
 
-            DownloadTask newdownload = new DownloadTask();
-            newdownload.AbsoluteUrl = fullimporturl;
-            newdownload.ConstType = ConstObjectType.Style;
-            newdownload.RelativeUrl = relativeimporturl;
-            newdownload.OwnerObjectId = OwnerObjectId;
+            DownloadTask newdownload = new DownloadTask
+            {
+                AbsoluteUrl = fullimporturl,
+                ConstType = ConstObjectType.Style,
+                RelativeUrl = relativeimporturl,
+                OwnerObjectId = ownerObjectId
+            };
             manager.AddTask(newdownload);
             return relativeimporturl;
         }
 
-        private static void DownloadUrl(Service.UrlInfo item, Dictionary<string, string> replaces, List<AnalyzerUpdate> updates, string baseurl, DownloadManager manager, Guid OwnerObjectId)
+        private static void DownloadUrl(Service.UrlInfo item, Dictionary<string, string> replaces, List<AnalyzerUpdate> updates, string baseurl, DownloadManager manager, Guid ownerObjectId)
         {
             string newurl = string.Empty;
             if (Kooboo.Lib.Utilities.DataUriService.isDataUri(item.PureUrl))
@@ -138,7 +128,7 @@ namespace Kooboo.Sites.SiteTransfer
             }
             else
             {
-                newurl = DownloadCssFile(item.PureUrl, baseurl, manager, OwnerObjectId);
+                newurl = DownloadCssFile(item.PureUrl, baseurl, manager, ownerObjectId);
 
                 if (newurl != item.PureUrl)
                 {
@@ -154,8 +144,6 @@ namespace Kooboo.Sites.SiteTransfer
                     updates.Add(new AnalyzerUpdate { StartIndex = item.StartIndex, EndIndex = item.EndIndex, NewValue = newvalue });
                 }
             }
-
-
         }
 
         public static string ParseDataUri(string datastring, DownloadManager manager)
@@ -181,41 +169,33 @@ namespace Kooboo.Sites.SiteTransfer
                 }
                 else
                 {
-                    // TODO: other encoding not implemented yet. 
+                    // TODO: other encoding not implemented yet.
                 }
             }
             return null;
         }
 
-        public static string DownloadCssFile(string ResourceUrl, string BaseUrl, DownloadManager manager, Guid OwnerObjectId)
+        public static string DownloadCssFile(string resourceUrl, string baseUrl, DownloadManager manager, Guid ownerObjectId)
         {
-            string fullurl = UrlHelper.Combine(BaseUrl, ResourceUrl);
+            string fullurl = UrlHelper.Combine(baseUrl, resourceUrl);
 
-            string OriginalImportUrl = string.IsNullOrEmpty(manager.OriginalImportUrl) ? BaseUrl : manager.OriginalImportUrl;
+            string originalImportUrl = string.IsNullOrEmpty(manager.OriginalImportUrl) ? baseUrl : manager.OriginalImportUrl;
 
-            bool issamehost = UrlHelper.isSameHost(fullurl, OriginalImportUrl);
+            bool issamehost = UrlHelper.isSameHost(fullurl, originalImportUrl);
 
             string relativeurl = UrlHelper.RelativePath(fullurl, issamehost);
 
             var minetype = IOHelper.MimeType(relativeurl);
 
-            DownloadTask newdownload = new DownloadTask();
-            newdownload.AbsoluteUrl = fullurl;
-
-            newdownload.RelativeUrl = relativeurl;
-            newdownload.OwnerObjectId = OwnerObjectId;
-
-            if (Kooboo.Lib.Helper.UrlHelper.IsImage(fullurl))
+            DownloadTask newdownload = new DownloadTask
             {
-                newdownload.ConstType = ConstObjectType.Image;
-            }
-            else
-            {
-                newdownload.ConstType = ConstObjectType.CmsFile;
-            }
+                AbsoluteUrl = fullurl, RelativeUrl = relativeurl, OwnerObjectId = ownerObjectId
+            };
+
+
+            newdownload.ConstType = Kooboo.Lib.Helper.UrlHelper.IsImage(fullurl) ? ConstObjectType.Image : ConstObjectType.CmsFile;
             manager.AddTask(newdownload);
             return relativeurl;
         }
-
     }
 }

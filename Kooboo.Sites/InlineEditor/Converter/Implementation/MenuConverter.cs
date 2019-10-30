@@ -66,13 +66,12 @@ namespace Kooboo.Sites.InlineEditor.Converter
 
             if (sitedb.WebSite.ContinueConvert)
             {
-                var DomNode = DomService.GetElementByKoobooId(page.Dom, koobooid);
-                var DomElement = DomNode as Kooboo.Dom.Element;
-                if (DomElement != null)
+                var domNode = DomService.GetElementByKoobooId(page.Dom, koobooid);
+                if (domNode is Element domElement)
                 {
-                    var elementpaths = Kooboo.Sites.Service.DomService.GetElementPath(DomElement as Kooboo.Dom.Element);
+                    var elementpaths = Kooboo.Sites.Service.DomService.GetElementPath(domElement as Kooboo.Dom.Element);
 
-                    sitedb.ContinueConverter.AddConverter(this.Type, page.Id, response.Tag, response.ComponentNameOrId, koobooid, elementpaths, DomElement.tagName);
+                    sitedb.ContinueConverter.AddConverter(this.Type, page.Id, response.Tag, response.ComponentNameOrId, koobooid, elementpaths, domElement.tagName);
                     // var OtherPages = sitedb.Pages.All().Where(o => o.Id != page.Id && !o.HasLayout).ToList();
                     //foreach (var item in OtherPages)
                     //{
@@ -92,18 +91,18 @@ namespace Kooboo.Sites.InlineEditor.Converter
             return response;
         }
 
-        public void ContinueConvert(SiteDb siteDb, Guid OriginalPageId, string ConvertedTag, string ObjectNameOrId, string KoobooId, Page CurrentPage, List<string> ElementPath)
+        public void ContinueConvert(SiteDb siteDb, Guid originalPageId, string convertedTag, string objectNameOrId, string koobooId, Page currentPage, List<string> elementPath)
         {
-            if (OriginalPageId == CurrentPage.Id)
+            if (originalPageId == currentPage.Id)
             {
                 return;
             }
-            Menu menu = siteDb.Menus.GetByNameOrId(ObjectNameOrId);
+            Menu menu = siteDb.Menus.GetByNameOrId(objectNameOrId);
             if (menu == null)
             {
                 return;
             }
-            var menuelement = DomService.GetElementByPath(CurrentPage.Dom, ElementPath);
+            var menuelement = DomService.GetElementByPath(currentPage.Dom, elementPath);
 
             if (menuelement != null)
             {
@@ -112,9 +111,9 @@ namespace Kooboo.Sites.InlineEditor.Converter
                 {
                     AssignRawMenu(menu, rawmenu);
                 }
-                CurrentPage.Body = CurrentPage.Body.Substring(0, menuelement.location.openTokenStartIndex) + ConvertedTag + CurrentPage.Body.Substring(menuelement.location.endTokenEndIndex + 1);
+                currentPage.Body = currentPage.Body.Substring(0, menuelement.location.openTokenStartIndex) + convertedTag + currentPage.Body.Substring(menuelement.location.endTokenEndIndex + 1);
 
-                siteDb.Pages.AddOrUpdate(CurrentPage);
+                siteDb.Pages.AddOrUpdate(currentPage);
             }
         }
 
@@ -131,37 +130,35 @@ namespace Kooboo.Sites.InlineEditor.Converter
             }
         }
 
-        public void AssignRawMenu(Menu CurrentMenu, RawMenu Raw)
+        public void AssignRawMenu(Menu currentMenu, RawMenu raw)
         {
-            foreach (var item in Raw.Children)
+            foreach (var item in raw.Children)
             {
                 if (item.LinkElement != null)
                 {
                     var href = item.LinkElement.getAttribute("href");
-                    var find = CurrentMenu.children.Find(o => o.Url == href);
+                    var find = currentMenu.children.Find(o => o.Url == href);
                     if (find != null)
                     {
                         AssignRawMenu(find, item);
                     }
                     else
                     {
-                        Menu newmenu = new Menu();
-                        newmenu.Url = href;
-                        newmenu.Name = item.LinkElement.InnerHtml;
-                        CurrentMenu.children.Add(newmenu);
+                        Menu newmenu = new Menu {Url = href, Name = item.LinkElement.InnerHtml};
+                        currentMenu.children.Add(newmenu);
                         AssignRawMenu(newmenu, item);
                     }
                 }
             }
         }
 
-        public string FindSameKoobooId(SiteDb SiteDb, Page DestinationPage, Menu CurrentMenu, Guid ParentPathHash)
+        public string FindSameKoobooId(SiteDb siteDb, Page destinationPage, Menu currentMenu, Guid parentPathHash)
         {
-            var candidates = SiteDb.DomElements.Query.Where(o => o.OwnerObjectId == DestinationPage.Id && o.ParentPathHash == ParentPathHash).SelectAll();
+            var candidates = siteDb.DomElements.Query.Where(o => o.OwnerObjectId == destinationPage.Id && o.ParentPathHash == parentPathHash).SelectAll();
 
             foreach (var item in candidates)
             {
-                if (VerifyAsMenu(SiteDb, DestinationPage, item, CurrentMenu))
+                if (VerifyAsMenu(siteDb, destinationPage, item, currentMenu))
                 {
                     return item.KoobooId;
                 }
@@ -170,20 +167,19 @@ namespace Kooboo.Sites.InlineEditor.Converter
             return null;
         }
 
-        internal bool VerifyAsMenu(SiteDb SiteDb, Page Page, DomElement FoundElement, Menu CurrentMenu)
+        internal bool VerifyAsMenu(SiteDb siteDb, Page page, DomElement foundElement, Menu currentMenu)
         {
-            var koobooid = FoundElement.KoobooId;
+            var koobooid = foundElement.KoobooId;
 
-            var domelement = Service.DomService.GetElementByKoobooId(Page.Dom, koobooid);
+            var domelement = Service.DomService.GetElementByKoobooId(page.Dom, koobooid);
 
             if (domelement != null)
             {
-                var element = domelement as Element;
-                if (element != null)
+                if (domelement is Element element)
                 {
                     var rawmenu = Service.MenuService.FindRawMenu(element);
 
-                    if (GuessSameMenu(CurrentMenu, rawmenu))
+                    if (GuessSameMenu(currentMenu, rawmenu))
                     {
                         return true;
                     }
@@ -193,7 +189,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
             return false;
         }
 
-        internal bool GuessSameMenu(Menu Menu, RawMenu rawmenu)
+        internal bool GuessSameMenu(Menu menu, RawMenu rawmenu)
         {
             if (rawmenu != null)
             {
@@ -202,7 +198,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
                     var href = rawmenu.LinkElement.getAttribute("href");
                     if (!string.IsNullOrEmpty(href))
                     {
-                        if (HasLink(Menu, ref href))
+                        if (HasLink(menu, ref href))
                         {
                             return true;
                         }
@@ -210,7 +206,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
                 }
                 foreach (var item in rawmenu.Children)
                 {
-                    if (GuessSameMenu(Menu, item))
+                    if (GuessSameMenu(menu, item))
                     {
                         return true;
                     }
@@ -239,13 +235,13 @@ namespace Kooboo.Sites.InlineEditor.Converter
             return false;
         }
 
-        public string GetMenuName(SiteDb SiteDb, string name)
+        public string GetMenuName(SiteDb siteDb, string name)
         {
             if (string.IsNullOrEmpty(name))
             {
                 name = "Menu";
             }
-            if (SiteDb.Menus.IsNameAvailable(name))
+            if (siteDb.Menus.IsNameAvailable(name))
             {
                 return name;
             }
@@ -253,7 +249,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
             for (int i = 0; i < 999; i++)
             {
                 string newname = name + i.ToString();
-                if (SiteDb.Menus.IsNameAvailable(newname))
+                if (siteDb.Menus.IsNameAvailable(newname))
                 {
                     return newname;
                 }
@@ -263,12 +259,12 @@ namespace Kooboo.Sites.InlineEditor.Converter
 
         public string DetectKoobooId(Document dom, Menu menu)
         {
-            if (menu.children.Count() == 0)
+            if (menu.children.Count == 0)
             {
                 return null;
             }
 
-            if (menu.children.Count() > 1)
+            if (menu.children.Count > 1)
             {
                 var links = menu.children.Select(o => o.Url).ToList();
                 return DomService.DetectKoobooId(dom, links);

@@ -1,51 +1,55 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using Kooboo.Sites.Models;
- 
+
 namespace Kooboo.Sites.SiteTransfer
-{ 
-    public  class TransferTask : SiteObject
+{
+    public class TransferTask : SiteObject
     {
         public TransferTask()
         {
             this.ConstType = ConstObjectType.TransferTask;
         }
 
-        private Guid _id; 
-        public override Guid Id {
+        private Guid _id;
+
+        public override Guid Id
+        {
             get
             {
                 if (_id == default(Guid))
                 {
-                    _id = System.Guid.NewGuid(); 
+                    _id = System.Guid.NewGuid();
                 }
-                return _id; 
+                return _id;
             }
             set
             {
-                _id = value; 
+                _id = value;
             }
         }
 
-        private HashSet<string> _domains; 
-        public HashSet<string> Domains {
+        private HashSet<string> _domains;
+
+        public HashSet<string> Domains
+        {
             get
             {
                 if (_domains == null)
                 {
-                    _domains = new HashSet<string>(); 
+                    _domains = new HashSet<string>();
                 }
-                return _domains; 
+                return _domains;
             }
-            set { _domains = value;  }
+            set { _domains = value; }
         }
 
         public EnumTransferTaskType TaskType { get; set; }
 
         private string _fullstarturl;
-        
+
         public string FullStartUrl
         {
             get
@@ -63,31 +67,33 @@ namespace Kooboo.Sites.SiteTransfer
                 }
             }
         }
-         
+
         public int Levels { get; set; }
 
         public bool done { get; set; }
 
         public int Totalpages { get; set; }
 
-       // only for transfer single page. 
+        // only for transfer single page.
         public string RelativeName { get; set; }
 
         public Guid UserId { get; set; }
 
-        private Dictionary<string, string> _cookie; 
-        public Dictionary<string, string> cookies {
+        private Dictionary<string, string> _cookie;
+
+        public Dictionary<string, string> cookies
+        {
             get
             {
-                if (_cookie ==null)
+                if (_cookie == null)
                 {
                     _cookie = new Dictionary<string, string>();
                 }
-                return _cookie; 
+                return _cookie;
             }
             set
             {
-                _cookie = value; 
+                _cookie = value;
             }
         }
 
@@ -96,18 +102,17 @@ namespace Kooboo.Sites.SiteTransfer
             string unique = this.FullStartUrl + this.Levels.ToString() + this.Totalpages.ToString();
             unique += this.UserId.ToString() + this.RelativeName + this.Levels.ToString();
 
-            unique += this.done.ToString(); 
+            unique += this.done.ToString();
 
             foreach (var item in this.Domains)
             {
-                unique += item; 
+                unique += item;
             }
             foreach (var item in this.cookies)
             {
-                unique += item.Key + item.Value; 
+                unique += item.Key + item.Value;
             }
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }
-      
 }

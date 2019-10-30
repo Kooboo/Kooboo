@@ -1,11 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Sites.Models;
 using Kooboo.IndexedDB;
+using Kooboo.Sites.Models;
 using System;
 using System.Linq;
-using Kooboo.Sites.Relation;
-using System.Collections.Generic;
 
 namespace Kooboo.Sites.Repository
 {
@@ -22,47 +20,44 @@ namespace Kooboo.Sites.Repository
                 return para;
             }
         }
-        
-        public override Menu GetByNameOrId(string NameOrGuid)
+
+        public override Menu GetByNameOrId(string nameOrGuid)
         {
-            Guid key;
-            bool parseok = Guid.TryParse(NameOrGuid, out key);
+            bool parseok = Guid.TryParse(nameOrGuid, out var key);
             if (!parseok)
-            { 
-                key = Data.IDGenerator.GetOrGenerate(NameOrGuid, ConstObjectType.Menu);
+            {
+                key = Data.IDGenerator.GetOrGenerate(nameOrGuid, ConstObjectType.Menu);
             }
             return Get(key);
         }
 
         public override bool AddOrUpdate(Menu value)
         {
-            EnsureNewRender(value); 
+            EnsureNewRender(value);
             return base.AddOrUpdate(value);
         }
 
-        public override bool AddOrUpdate(Menu value, Guid UserId)
+        public override bool AddOrUpdate(Menu value, Guid userId)
         {
             EnsureNewRender(value);
-            return base.AddOrUpdate(value, UserId);
+            return base.AddOrUpdate(value, userId);
         }
-         
 
         private void EnsureNewRender(Menu menu)
         {
             if (menu == null)
             {
-                return; 
+                return;
             }
             menu.TempRenderData = null;
 
-            if (menu.children !=null)
+            if (menu.children != null)
             {
                 foreach (var item in menu.children)
                 {
-                    EnsureNewRender(item); 
+                    EnsureNewRender(item);
                 }
             }
-            
         }
 
         private bool HasActive(Menu menu, ref string searchstring)
@@ -88,9 +83,9 @@ namespace Kooboo.Sites.Repository
             return false;
         }
 
-        public bool IsNameAvailable(string MenuName)
+        public bool IsNameAvailable(string menuName)
         {
-            var current = this.GetByNameOrId(MenuName);
+            var current = this.GetByNameOrId(menuName);
             return current == null;
         }
 
@@ -110,67 +105,67 @@ namespace Kooboo.Sites.Repository
             return null;
         }
 
-       public void Swap(Guid RootId, Guid IdA, Guid IdB, Guid UserId = default(Guid))
+        public void Swap(Guid rootId, Guid idA, Guid idB, Guid userId = default(Guid))
         {
-            var menu = this.Get(RootId); 
-            if (menu !=null)
+            var menu = this.Get(rootId);
+            if (menu != null)
             {
-               if (_swap(menu, IdA, IdB))
+                if (_swap(menu, idA, idB))
                 {
-                    this.AddOrUpdate(menu, UserId); 
+                    this.AddOrUpdate(menu, userId);
                 }
             }
         }
-        
-        private bool _swap(Menu ParentMenu, Guid IdA, Guid IdB)
+
+        private bool _swap(Menu parentMenu, Guid idA, Guid idB)
         {
-            if (ParentMenu.children == null || ParentMenu.children.Count() ==0)
+            if (parentMenu.children == null || parentMenu.children.Count == 0)
             {
                 return false;
             }
 
-            var founda = ParentMenu.children.Find(o => o.Id == IdA);
-            var foundb = ParentMenu.children.Find(o => o.Id == IdB); 
+            var founda = parentMenu.children.Find(o => o.Id == idA);
+            var foundb = parentMenu.children.Find(o => o.Id == idB);
 
-            if (founda !=null && foundb !=null)
+            if (founda != null && foundb != null)
             {
-                int x=0;
-                int y=0;
+                int x = 0;
+                int y = 0;
 
-                for (int i = 0; i < ParentMenu.children.Count; i++)
+                for (int i = 0; i < parentMenu.children.Count; i++)
                 {
-                    var item = ParentMenu.children[i]; 
-                    if (item.Id == IdA)
+                    var item = parentMenu.children[i];
+                    if (item.Id == idA)
                     {
-                        x = i; 
+                        x = i;
                     }
-                   if (item.Id == IdB)
+                    if (item.Id == idB)
                     {
-                        y = i; 
-                    } 
+                        y = i;
+                    }
                 }
 
-                if (x !=y)
+                if (x != y)
                 {
-                    var old = ParentMenu.children[x];
-                    ParentMenu.children[x] = ParentMenu.children[y];
-                    ParentMenu.children[y] = old;
-                    return true; 
-                } 
+                    var old = parentMenu.children[x];
+                    parentMenu.children[x] = parentMenu.children[y];
+                    parentMenu.children[y] = old;
+                    return true;
+                }
             }
             else if (founda == null && foundb == null)
             {
-                foreach (var item in ParentMenu.children)
+                foreach (var item in parentMenu.children)
                 {
-                    var ok = _swap(item, IdA, IdB); 
+                    var ok = _swap(item, idA, idB);
                     if (ok)
                     {
-                        return true; 
+                        return true;
                     }
                 }
             }
 
-            return false; 
+            return false;
         }
     }
 }

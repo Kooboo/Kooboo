@@ -47,23 +47,21 @@ namespace Kooboo.Sites.Contents.Models
             IsSystemField = true
         };
 
-        private static List<string> _ReservedFields;
+        private static List<string> _reservedFields;
 
         public static List<string> ReservedFields
         {
             get
             {
-                if (_ReservedFields == null)
+                return _reservedFields ?? (_reservedFields = new List<string>
                 {
-                    _ReservedFields = new List<string>();
-                    _ReservedFields.Add("folderid");
-                    _ReservedFields.Add("id");
-                    _ReservedFields.Add("parentid");
-                    _ReservedFields.Add("contenttypeid");
-                    _ReservedFields.Add("lastmodified");
-                    _ReservedFields.Add("creationdate");
-                }
-                return _ReservedFields;
+                    "folderid",
+                    "id",
+                    "parentid",
+                    "contenttypeid",
+                    "lastmodified",
+                    "creationdate"
+                });
             }
         }
     }

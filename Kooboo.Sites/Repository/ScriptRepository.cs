@@ -1,13 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Models;
-using Kooboo.Dom;
 using Kooboo.IndexedDB;
-using Kooboo.Lib.Helper;
 using Kooboo.Sites.Models;
-using Kooboo.Sites.Relation;
-using System;
-using System.Collections.Generic;
 
 namespace Kooboo.Sites.Repository
 {
@@ -33,18 +27,18 @@ namespace Kooboo.Sites.Repository
 
         //public override List<UsedByRelation> GetUsedBy(Guid ObjectId)
         //{
-        //    var script = Get(ObjectId); 
+        //    var script = Get(ObjectId);
 
         //    return GetUsedBy(script);
         //}
-         
+
         //public   List<UsedByRelation> GetUsedBy(Script Script)
         //{
         //    List<UsedByRelation> result = new List<UsedByRelation>();
         //    if (Script == null)
         //    { return result; }
 
-        //    /// for embedded style, this is belong to one parent object. 
+        //    /// for embedded style, this is belong to one parent object.
         //    if (Script.IsEmbedded)
         //    {
         //        var samestyles = this.GetSameEmbedded(Script.BodyHash);
@@ -54,7 +48,7 @@ namespace Kooboo.Sites.Repository
         //            UsedByRelation relation = new UsedByRelation();
         //            relation.ObjectId = item.OwnerObjectId;
         //            relation.ConstType = item.OwnerConstType;
-        //            Helper.RelationHelper.SetNameUrl(SiteDb, relation); 
+        //            Helper.RelationHelper.SetNameUrl(SiteDb, relation);
         //            relation.Remark = item.KoobooOpenTag;
         //            result.Add(relation);
         //        }
@@ -68,11 +62,11 @@ namespace Kooboo.Sites.Repository
         //    {
         //        UsedByRelation relation = new UsedByRelation();
         //        relation.ObjectId = item.objectXId;
-        //        relation.ConstType = item.ConstTypeX; 
-        //        Helper.RelationHelper.SetNameUrl(this.SiteDb, relation); 
+        //        relation.ConstType = item.ConstTypeX;
+        //        Helper.RelationHelper.SetNameUrl(this.SiteDb, relation);
         //        result.Add(relation);
         //    }
-        //    return result; 
+        //    return result;
         //}
     }
 }

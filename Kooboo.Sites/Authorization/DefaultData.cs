@@ -72,8 +72,7 @@ namespace Kooboo.Sites.Authorization
             {
                 if (_master == null)
                 {
-                    _master = new RolePermission();
-                    _master.Name = "master";
+                    _master = new RolePermission {Name = "master"};
                     _master.Permission.Add("feature");
                     _master.Permission.Add("Development");
                     _master.Permission.Add("System");
@@ -92,8 +91,7 @@ namespace Kooboo.Sites.Authorization
             {
                 if (_developer == null)
                 {
-                    _developer = new RolePermission();
-                    _developer.Name = "developer";
+                    _developer = new RolePermission {Name = "developer"};
                     _developer.Permission.Add("feature");
                     _developer.Permission.Add("Development");
                     _developer.Permission.Add("Contents");
@@ -111,8 +109,7 @@ namespace Kooboo.Sites.Authorization
             {
                 if (_contentmanager == null)
                 {
-                    _contentmanager = new RolePermission();
-                    _contentmanager.Name = "contentmanager";
+                    _contentmanager = new RolePermission {Name = "contentmanager"};
                     _contentmanager.Permission.Add("Contents");
                     _contentmanager.Permission.Add("Database");
                 }

@@ -17,9 +17,7 @@ namespace Kooboo.Sites.Engine
 
             foreach (var item in Lib.Reflection.AssemblyLoader.LoadTypeByInterface(typeof(IEngine)))
             {
-                var instance = Activator.CreateInstance(item) as IEngine;
-
-                if (instance != null)
+                if (Activator.CreateInstance(item) is IEngine instance)
                 {
                     List[instance.Name] = instance;
                 }

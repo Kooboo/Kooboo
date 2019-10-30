@@ -16,29 +16,29 @@ namespace Kooboo.Sites.Cache
 
         private static Kooboo.IndexedDB.Serializer.Simple.SimpleConverter<TValue> serializer = new IndexedDB.Serializer.Simple.SimpleConverter<TValue>();
 
-        private static TValue clone(TValue input)
+        private static TValue Clone(TValue input)
         {
             var bytes = serializer.ToBytes(input);
             var back = serializer.FromBytes(bytes);
             return back;
         }
 
-        public static void Remove(SiteDb SiteDb, TValue value)
+        public static void Remove(SiteDb siteDb, TValue value)
         {
             lock (_locker)
             {
-                if (SiteObjects.ContainsKey(SiteDb.Id))
+                if (SiteObjects.ContainsKey(siteDb.Id))
                 {
-                    var siteobject = SiteObjects[SiteDb.Id];
+                    var siteobject = SiteObjects[siteDb.Id];
 
                     siteobject.Remove(value.Id);
                 }
             }
         }
 
-        public static void AddOrUpdate(SiteDb SiteDb, TValue Value)
+        public static void AddOrUpdate(SiteDb siteDb, TValue value)
         {
-            if (Value == null)
+            if (value == null)
             {
                 return;
             }
@@ -47,62 +47,62 @@ namespace Kooboo.Sites.Cache
             {
                 Dictionary<Guid, TValue> siteobject = null;
 
-                if (SiteObjects.ContainsKey(SiteDb.Id))
+                if (SiteObjects.ContainsKey(siteDb.Id))
                 {
-                    siteobject = SiteObjects[SiteDb.Id];
+                    siteobject = SiteObjects[siteDb.Id];
                 }
                 else
-                {/// should never come here...
+                {
+                    // should never come here...
                     siteobject = new Dictionary<Guid, TValue>();
-                    SiteObjects[SiteDb.Id] = siteobject;
+                    SiteObjects[siteDb.Id] = siteobject;
                 }
 
-                siteobject[Value.Id] = clone(Value);
+                siteobject[value.Id] = Clone(value);
             }
         }
 
-        public static TValue Get(SiteDb SiteDb, string NameOrId)
+        public static TValue Get(SiteDb siteDb, string nameOrId)
         {
-            Guid id;
-            if (!System.Guid.TryParse(NameOrId, out id))
+            if (!System.Guid.TryParse(nameOrId, out var id))
             {
                 var consttype = ConstTypeContainer.GetConstType(typeof(TValue));
-                id = Kooboo.Data.IDGenerator.Generate(NameOrId, consttype);
+                id = Kooboo.Data.IDGenerator.Generate(nameOrId, consttype);
             }
-            return Get(SiteDb, id);
+            return Get(siteDb, id);
         }
 
-        public static TValue Get(SiteDb SiteDb, Guid ObjectId)
+        public static TValue Get(SiteDb siteDb, Guid objectId)
         {
             lock (_locker)
             {
-                if (SiteObjects.ContainsKey(SiteDb.Id))
+                if (SiteObjects.ContainsKey(siteDb.Id))
                 {
-                    var siteobject = SiteObjects[SiteDb.Id];
+                    var siteobject = SiteObjects[siteDb.Id];
 
-                    if (siteobject.ContainsKey(ObjectId))
+                    if (siteobject.ContainsKey(objectId))
                     {
-                        TValue value = siteobject[ObjectId];
-                        return clone(value);
+                        TValue value = siteobject[objectId];
+                        return Clone(value);
                     }
                 }
             }
             return default(TValue);
         }
 
-        public static List<TValue> List(SiteDb SiteDb, bool cloneObject = true)
+        public static List<TValue> List(SiteDb siteDb, bool cloneObject = true)
         {
             List<TValue> result = null;
             lock (_locker)
             {
-                if (SiteObjects.ContainsKey(SiteDb.Id))
+                if (SiteObjects.ContainsKey(siteDb.Id))
                 {
-                    var siteobject = SiteObjects[SiteDb.Id];
+                    var siteobject = SiteObjects[siteDb.Id];
                     result = siteobject.Values.ToList();
                 }
                 else
                 {
-                    var repo = SiteDb.GetRepository(typeof(TValue));
+                    var repo = siteDb.GetRepository(typeof(TValue));
                     if (repo == null)
                     {
                         return new List<TValue>();
@@ -114,7 +114,7 @@ namespace Kooboo.Sites.Cache
                     {
                         siteobject[item.Id] = (TValue)item;
                     }
-                    SiteObjects[SiteDb.Id] = siteobject;
+                    SiteObjects[siteDb.Id] = siteobject;
 
                     result = siteobject.Values.ToList();
                 }
@@ -129,7 +129,7 @@ namespace Kooboo.Sites.Cache
                 List<TValue> cloned = new List<TValue>();
                 foreach (var item in result)
                 {
-                    var newitem = clone(item);
+                    var newitem = Clone(item);
                     cloned.Add(newitem);
                 }
                 return cloned;
@@ -140,11 +140,11 @@ namespace Kooboo.Sites.Cache
             }
         }
 
-        public static void RemoveSiteDb(Guid Id)
+        public static void RemoveSiteDb(Guid id)
         {
             lock (_locker)
             {
-                SiteObjects.Remove(Id);
+                SiteObjects.Remove(id);
             }
         }
     }

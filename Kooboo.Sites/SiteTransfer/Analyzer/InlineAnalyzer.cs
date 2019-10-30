@@ -1,73 +1,73 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Lib.Helper; 
-using System.Collections.Generic;
-using System.Linq; 
 using Kooboo.Dom;
+using Kooboo.Lib.Helper;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Sites.SiteTransfer
-{ 
+{
     public class InlineAnalyzer : ITransferAnalyzer
     {
-        public void Execute(AnalyzerContext Context)
+        public void Execute(AnalyzerContext context)
         {
-            List<Kooboo.Dom.Element> doneitems = new List<Dom.Element>(); 
+            List<Kooboo.Dom.Element> doneitems = new List<Dom.Element>();
 
-            foreach (var item in Context.Dom.Links.item)
+            foreach (var item in context.Dom.Links.item)
             {
-                doneitems.Add(item); 
+                doneitems.Add(item);
 
-                Dictionary<string, string> replace = new Dictionary<string, string>(); 
-                var linkreplace = ReplaceLinks(item, Context); 
-                var cssreplace = ReplaceInlineCssUrl(item, Context); 
+                Dictionary<string, string> replace = new Dictionary<string, string>();
+                var linkreplace = ReplaceLinks(item, context);
+                var cssreplace = ReplaceInlineCssUrl(item, context);
 
-                if (linkreplace !=null && linkreplace.Count()>0)
+                if (linkreplace != null && linkreplace.Count() > 0)
                 {
                     foreach (var linkrep in linkreplace)
                     {
-                        replace[linkrep.Key] = linkrep.Value; 
+                        replace[linkrep.Key] = linkrep.Value;
                     }
                 }
 
-                if (cssreplace != null && cssreplace.Count()>0)
+                if (cssreplace != null && cssreplace.Any())
                 {
                     foreach (var cssrep in cssreplace)
                     {
-                        replace[cssrep.Key] = cssrep.Value; 
+                        replace[cssrep.Key] = cssrep.Value;
                     }
                 }
 
-                if (replace.Count()>0)
+                if (replace.Any())
                 {
-                    string oldstring = Kooboo.Sites.Service.DomService.GetOpenTag(item); 
+                    string oldstring = Kooboo.Sites.Service.DomService.GetOpenTag(item);
                     string newstring = oldstring;
                     foreach (var repitem in replace)
                     {
-                        newstring = newstring.Replace(repitem.Key, repitem.Value);  
+                        newstring = newstring.Replace(repitem.Key, repitem.Value);
                     }
- 
-                    Context.Changes.Add(new AnalyzerUpdate()
+
+                    context.Changes.Add(new AnalyzerUpdate()
                     {
                         StartIndex = item.location.openTokenStartIndex,
                         EndIndex = item.location.openTokenEndIndex,
                         NewValue = newstring
-                    }); 
-                } 
+                    });
+                }
             }
 
-            // process inline css, but exclusive items that has been in the links. 
-            HTMLCollection inlinestyle = Context.Dom.getElementByAttribute("style");
+            // process inline css, but exclusive items that has been in the links.
+            HTMLCollection inlinestyle = context.Dom.getElementByAttribute("style");
 
             foreach (var item in inlinestyle.item)
             {
-                if (doneitems.Where(o=>o.isEqualNode(item)).Any())
+                if (doneitems.Where(o => o.isEqualNode(item)).Any())
                 {
-                    continue; 
+                    continue;
                 }
 
-                var updates = ReplaceInlineCssUrl(item, Context);
+                var updates = ReplaceInlineCssUrl(item, context);
 
-                if (updates != null && updates.Count() > 0)
+                if (updates != null && updates.Any())
                 {
                     string oldstring = Kooboo.Sites.Service.DomService.GetOpenTag(item);
                     string newstring = oldstring;
@@ -76,18 +76,17 @@ namespace Kooboo.Sites.SiteTransfer
                         newstring = newstring.Replace(repitem.Key, repitem.Value);
                     }
 
-                    Context.Changes.Add(new AnalyzerUpdate()
+                    context.Changes.Add(new AnalyzerUpdate()
                     {
                         StartIndex = item.location.openTokenStartIndex,
                         EndIndex = item.location.openTokenEndIndex,
                         NewValue = newstring
                     });
                 }
-            } 
-
+            }
         }
 
-        private Dictionary<string, string> ReplaceLinks(Kooboo.Dom.Element element, AnalyzerContext Context)
+        private Dictionary<string, string> ReplaceLinks(Kooboo.Dom.Element element, AnalyzerContext context)
         {
             string itemsrc = Service.DomUrlService.GetLinkOrSrc(element);
 
@@ -96,11 +95,11 @@ namespace Kooboo.Sites.SiteTransfer
                 return null;
             }
 
-            Dictionary<string, string> replace = new Dictionary<string, string>(); 
+            Dictionary<string, string> replace = new Dictionary<string, string>();
 
-            string absoluteurl = UrlHelper.Combine(Context.AbsoluteUrl, itemsrc);
+            string absoluteurl = UrlHelper.Combine(context.AbsoluteUrl, itemsrc);
 
-            bool issamehost = UrlHelper.isSameHost(absoluteurl, Context.OriginalImportUrl);
+            bool issamehost = UrlHelper.isSameHost(absoluteurl, context.OriginalImportUrl);
 
             var objectType = Service.ConstTypeService.GetConstTypeByUrl(absoluteurl);
 
@@ -117,47 +116,46 @@ namespace Kooboo.Sites.SiteTransfer
             {
                 if (itemsrc != absoluteurl)
                 {
-                    replace.Add(itemsrc, absoluteurl);  
+                    replace.Add(itemsrc, absoluteurl);
                 }
             }
 
-            return replace;  
+            return replace;
         }
-         
-        private Dictionary<string, string> ReplaceInlineCssUrl(Kooboo.Dom.Element element, AnalyzerContext Context)
+
+        private Dictionary<string, string> ReplaceInlineCssUrl(Kooboo.Dom.Element element, AnalyzerContext context)
         {
             string csstext = element.getAttribute("style");
             if (string.IsNullOrEmpty(csstext))
             {
                 return null;
             }
-         
+
             Dictionary<string, string> replace = new Dictionary<string, string>();
 
             var urlInfos = Service.CssService.GetUrlInfos(csstext);
 
             foreach (var item in urlInfos)
             {
-
                 if (string.IsNullOrEmpty(item.PureUrl) || item.PureUrl.Trim().ToLower().StartsWith("#"))
                 {
-                    continue; 
+                    continue;
                 }
 
                 string newurl = string.Empty;
                 if (item.isImportRule)
                 {
-                    newurl = CssManager.AddImport(item.PureUrl, Context.AbsoluteUrl,Context.DownloadManager, Context.ObjectId);
+                    newurl = CssManager.AddImport(item.PureUrl, context.AbsoluteUrl, context.DownloadManager, context.ObjectId);
                 }
                 else
                 {
                     if (Kooboo.Lib.Utilities.DataUriService.isDataUri(item.PureUrl))
                     {
-                        newurl = CssManager.ParseDataUri(item.PureUrl, Context.DownloadManager);
+                        newurl = CssManager.ParseDataUri(item.PureUrl, context.DownloadManager);
                     }
                     else
                     {
-                        newurl = CssManager.DownloadCssFile(item.PureUrl, Context.AbsoluteUrl, Context.DownloadManager, Context.ObjectId); 
+                        newurl = CssManager.DownloadCssFile(item.PureUrl, context.AbsoluteUrl, context.DownloadManager, context.ObjectId);
                     }
                 }
 
@@ -165,16 +163,9 @@ namespace Kooboo.Sites.SiteTransfer
                 {
                     replace.Add(item.PureUrl, newurl);
                 }
-
             }
 
             return replace;
-
-
-
         }
-          
     }
-
-
 }

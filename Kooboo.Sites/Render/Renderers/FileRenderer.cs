@@ -1,9 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Threading.Tasks;
-using Kooboo.Extensions;
-using Kooboo.Sites.Extensions;
-using Kooboo.Lib;
 using Kooboo.Lib.Helper;
 
 namespace Kooboo.Sites.Render
@@ -25,14 +21,7 @@ namespace Kooboo.Sites.Render
         {
             string contentType;
 
-            if (!string.IsNullOrEmpty(file.ContentType))
-            {
-                contentType = file.ContentType;
-            }
-            else
-            {
-                contentType = IOHelper.MimeType(file.Name);
-            }
+            contentType = !string.IsNullOrEmpty(file.ContentType) ? file.ContentType : IOHelper.MimeType(file.Name);
 
             context.RenderContext.Response.ContentType = contentType;
 

@@ -1,12 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using Kooboo.Extensions;
+using System;
 
 namespace Kooboo.Sites.Models
 {
     /// <summary>
-    /// Links to External resource like external url, image, css, font, etc.  
+    /// Links to External resource like external url, image, css, font, etc.
     /// </summary>
     public class ExternalResource : SiteObject
     {
@@ -24,11 +24,12 @@ namespace Kooboo.Sites.Models
         }
 
         /// <summary>
-        /// The const type of destination object type. 
+        /// The const type of destination object type.
         /// </summary>
         public byte DestinationObjectType { get; set; }
 
         private string _fullurl;
+
         public string FullUrl
         {
             get
@@ -41,6 +42,7 @@ namespace Kooboo.Sites.Models
         }
 
         private Guid _urlhash;
+
         public Guid UrlHash
         {
             get
@@ -55,12 +57,10 @@ namespace Kooboo.Sites.Models
             { _urlhash = value; }
         }
 
-
         public override int GetHashCode()
         {
             string unique = this.FullUrl + this.DestinationObjectType.ToString();
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
-
     }
 }

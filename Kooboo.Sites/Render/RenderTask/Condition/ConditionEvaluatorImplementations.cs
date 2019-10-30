@@ -1,7 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
-using System; 
+using System;
 
 namespace Kooboo.Sites.Render
 {
@@ -37,7 +37,6 @@ namespace Kooboo.Sites.Render
             return stringvalue.Contains(this.RightValue);
         }
     }
-
 
     public class ConditionStartWith : IConditionEvaluator
     {
@@ -116,9 +115,7 @@ namespace Kooboo.Sites.Render
                 {
                     return false;
                 }
-
             }
-
 
             return false;
         }
@@ -168,14 +165,11 @@ namespace Kooboo.Sites.Render
                 {
                     return false;
                 }
-
             }
-
 
             return false;
         }
     }
-
 
     public class ConditionLessThan : IConditionEvaluator
     {
@@ -221,9 +215,7 @@ namespace Kooboo.Sites.Render
                 {
                     return false;
                 }
-
             }
-
 
             return false;
         }
@@ -273,9 +265,7 @@ namespace Kooboo.Sites.Render
                 {
                     return false;
                 }
-
             }
-
 
             return false;
         }
@@ -297,6 +287,7 @@ namespace Kooboo.Sites.Render
         }
 
         private string _rightvalue;
+
         public string RightValue
         {
             get { return _rightvalue; }
@@ -325,16 +316,9 @@ namespace Kooboo.Sites.Render
                 return true;
             }
 
-            if (value.GetType() == typeof(bool))
+            if (value is bool boolvalue)
             {
-                bool boolrightvalue = false;
-
-                if (string.IsNullOrWhiteSpace(this.RightValue) || this.RightValue.ToLower() == "true" || this.RightValue == "1" || this.RightValue.ToLower() == "yes" || this.RightValue.ToLower() == "ok")
-                {
-                    boolrightvalue = true;
-                }
-
-                var boolvalue = (bool)value;
+                bool boolrightvalue = string.IsNullOrWhiteSpace(this.RightValue) || this.RightValue.ToLower() == "true" || this.RightValue == "1" || this.RightValue.ToLower() == "yes" || this.RightValue.ToLower() == "ok";
 
                 if (boolvalue == boolrightvalue)
                 {
@@ -362,6 +346,7 @@ namespace Kooboo.Sites.Render
         }
 
         private string _rightvalue;
+
         public string RightValue
         {
             get { return _rightvalue; }
@@ -390,16 +375,9 @@ namespace Kooboo.Sites.Render
                 return false;
             }
 
-            if (value.GetType() == typeof(bool))
+            if (value is bool boolvalue)
             {
-                bool boolrightvalue = false;
-
-                if (string.IsNullOrWhiteSpace(this.RightValue) || this.RightValue.ToLower() == "true" || this.RightValue == "1" || this.RightValue.ToLower() == "yes" || this.RightValue.ToLower() == "ok")
-                {
-                    boolrightvalue = true;
-                }
-
-                var boolvalue = (bool)value;
+                bool boolrightvalue = string.IsNullOrWhiteSpace(this.RightValue) || this.RightValue.ToLower() == "true" || this.RightValue == "1" || this.RightValue.ToLower() == "yes" || this.RightValue.ToLower() == "ok";
 
                 if (boolvalue == boolrightvalue)
                 {
@@ -408,7 +386,6 @@ namespace Kooboo.Sites.Render
             }
 
             return true;
-
         }
     }
 }

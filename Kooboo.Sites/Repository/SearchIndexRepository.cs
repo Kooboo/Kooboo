@@ -1,18 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Interface;
-using Kooboo.Sites.Contents.Models;
-using System.Collections.Generic;
-using System;
-using System.Linq;
 using Kooboo.Data.Context;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Extensions;
+using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
 using Kooboo.Search;
+using Kooboo.Sites.Contents.Models;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Models;
 using Kooboo.Sites.ViewModel;
-using System.Text;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kooboo.Sites.Repository
 {
@@ -22,21 +21,19 @@ namespace Kooboo.Sites.Repository
 
         private object _loglocker = new object();
 
-        private List<byte> _IndexType;
+        private List<byte> _indexType;
+
         private List<byte> IndexType
         {
             get
             {
-                if (_IndexType == null)
+                return _indexType ?? (_indexType = new List<byte>
                 {
-                    _IndexType = new List<byte>();
-                    _IndexType.Add(ConstObjectType.Page);
-                    //_IndexType.Add(ConstObjectType.View);
-                    _IndexType.Add(ConstObjectType.Layout);
-                    _IndexType.Add(ConstObjectType.HtmlBlock);
-                    _IndexType.Add(ConstObjectType.TextContent);
-                }
-                return _IndexType;
+                    ConstObjectType.Page,
+                    ConstObjectType.Layout,
+                    ConstObjectType.HtmlBlock,
+                    ConstObjectType.TextContent
+                });
             }
         }
 
@@ -66,9 +63,9 @@ namespace Kooboo.Sites.Repository
             this.SiteDb = sitedb;
         }
 
-        #region "log" 
+        #region "log"
 
-        private Sequence<SearchLog> _Log;
+        private Sequence<SearchLog> _log;
         private DateTime _logtime;
 
         public Sequence<SearchLog> Log
@@ -78,22 +75,22 @@ namespace Kooboo.Sites.Repository
                 if (_logtime.DayOfYear != DateTime.Now.DayOfYear)
                 {
                     _logtime = default(DateTime);
-                    _Log = null;
+                    _log = null;
                 }
 
-                if (_Log == null)
+                if (_log == null)
                 {
                     lock (_locker)
                     {
-                        if (_Log == null)
+                        if (_log == null)
                         {
                             _logtime = DateTime.Now;
                             string logname = System.IO.Path.Combine(this.LogFolder, Lib.Helper.MiscHelper.GetWeekName(_logtime) + ".log");
-                            _Log = this.SiteDb.DatabaseDb.GetSequence<SearchLog>(logname);
+                            _log = this.SiteDb.DatabaseDb.GetSequence<SearchLog>(logname);
                         }
                     }
                 }
-                return _Log;
+                return _log;
             }
         }
 
@@ -124,11 +121,11 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public Dictionary<string, int> SearchCount(string WeekName)
+        public Dictionary<string, int> SearchCount(string weekName)
         {
             lock (_loglocker)
             {
-                Sequence<SearchLog> log = GetLog(WeekName);
+                Sequence<SearchLog> log = GetLog(weekName);
                 Dictionary<string, int> set = new Dictionary<string, int>();
 
                 foreach (var item in log.GetCollection())
@@ -160,13 +157,13 @@ namespace Kooboo.Sites.Repository
 
                 var currentlog = this.Log;
                 var currentweekname = Lib.Helper.MiscHelper.GetWeekName(_logtime);
-                var AllWeekNames = this.GetWeekNames();
+                var allWeekNames = this.GetWeekNames();
 
                 int i = 0;
 
                 while (i <= count || currentlog == null)
                 {
-                    foreach (var item in currentlog.GetCollection())
+                    foreach (var item in currentlog?.GetCollection())
                     {
                         result.Add(item);
                         i += 1;
@@ -184,7 +181,7 @@ namespace Kooboo.Sites.Repository
                     {
                         string nextweek = null;
                         bool found = false;
-                        foreach (var item in AllWeekNames.OrderByDescending(o => o))
+                        foreach (var item in allWeekNames.OrderByDescending(o => o))
                         {
                             if (found)
                             {
@@ -209,15 +206,13 @@ namespace Kooboo.Sites.Repository
                             break;
                         }
                     }
-
                 }
 
                 return result;
             }
         }
 
-        #endregion
-
+        #endregion "log"
 
         internal string GetMetaKey(ISiteObject siteobject)
         {
@@ -270,7 +265,7 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public List<SearchResult> Search(string keywords, int Top = 20, string HighLightAttr = null, RenderContext context = null)
+        public List<SearchResult> Search(string keywords, int top = 20, string highLightAttr = null, RenderContext context = null)
         {
             if (context == null)
             {
@@ -308,22 +303,21 @@ namespace Kooboo.Sites.Repository
                         }
                     }
 
-                    if (icount >= Top)
+                    if (icount >= top)
                     {
                         break;
                     }
-
                 }
             }
 
-            SetData(result, keywords, context.Culture, HighLightAttr);
+            SetData(result, keywords, context.Culture, highLightAttr);
 
             this.Log.Add(new SearchLog() { IP = context.Request.IP, Keywords = keywords, Time = DateTime.Now, DocFound = ids.Count, ResultCount = result.Count(), Skip = 0 });
 
             return result;
         }
 
-        public void SetData(List<SearchResult> recordSet, string keywords, string culture, string HightLightTag = null)
+        public void SetData(List<SearchResult> recordSet, string keywords, string culture, string hightLightTag = null)
         {
             List<string> words = ToWordList(keywords);
             string baseurl = this.SiteDb.WebSite.BaseUrl();
@@ -342,16 +336,15 @@ namespace Kooboo.Sites.Repository
                     if (content != null)
                     {
                         var contentview = Sites.Helper.ContentHelper.ToView(content, culture, SiteDb.ContentTypes.GetColumns(content.ContentTypeId));
-                        item.Title = this.HighLight(Helper.ContentHelper.GetTitle(this.SiteDb, contentview), words, HightLightTag);
+                        item.Title = this.HighLight(Helper.ContentHelper.GetTitle(this.SiteDb, contentview), words, hightLightTag);
 
                         var fulltext = string.Join(" ", contentview.TextValues.Values);
 
-                        item.Summary = this.GetSummary(fulltext, words, HightLightTag, 250);
+                        item.Summary = this.GetSummary(fulltext, words, hightLightTag, 250);
 
                         continue;
                     }
                 }
-
 
                 find = item.Found.Find(o => o.ObjectType.ToLower() == "htmlblock");
                 if (find != null)
@@ -367,11 +360,11 @@ namespace Kooboo.Sites.Repository
                         {
                             var textvaluepart = Lib.Helper.StringHelper.SementicSubString(textvalue, 0, 150);
 
-                            item.Title = this.HighLight(textvaluepart, words, HightLightTag);
+                            item.Title = this.HighLight(textvaluepart, words, hightLightTag);
 
-                            item.Summary = this.GetSummary(textvalue, words, HightLightTag, 280);
-                            continue;    
-                        }   
+                            item.Summary = this.GetSummary(textvalue, words, hightLightTag, 280);
+                            continue;
+                        }
                     }
                 }
 
@@ -383,14 +376,14 @@ namespace Kooboo.Sites.Repository
                     {
                         string body = Lib.Helper.StringHelper.StripHTML(page.Body);
 
-                        item.Summary = this.GetSummary(body, words, HightLightTag, 280);
+                        item.Summary = this.GetSummary(body, words, hightLightTag, 280);
 
                         var title = GetTitle(culture, page);
                         if (string.IsNullOrEmpty(title))
                         {
                             title = Lib.Helper.StringHelper.SementicSubString(item.Summary, 0, 150);
                         }
-                        item.Title = HighLight(title, words, HightLightTag);
+                        item.Title = HighLight(title, words, hightLightTag);
                         continue;
                     }
                 }
@@ -403,9 +396,9 @@ namespace Kooboo.Sites.Repository
                     if (view != null)
                     {
                         String body = Lib.Helper.StringHelper.StripHTML(view.Body);
-                        item.Summary = this.GetSummary(body, words, HightLightTag, 280);
+                        item.Summary = this.GetSummary(body, words, hightLightTag, 280);
                         string title = Lib.Helper.StringHelper.SementicSubString(body, 0, 150);
-                        item.Title = HighLight(title, words, HightLightTag);
+                        item.Title = HighLight(title, words, hightLightTag);
                         continue;
                     }
                 }
@@ -413,23 +406,21 @@ namespace Kooboo.Sites.Repository
                 find = item.Found.Find(o => o.ObjectType.ToLower() == "layout");
                 if (find != null)
                 {
-                    var layout = this.SiteDb.Layouts.Get(find.ObjectId); 
+                    var layout = this.SiteDb.Layouts.Get(find.ObjectId);
 
-                    if (layout !=null)
+                    if (layout != null)
                     {
                         String body = Lib.Helper.StringHelper.StripHTML(layout.Body);
-                        item.Summary = this.GetSummary(body, words, HightLightTag, 280);
+                        item.Summary = this.GetSummary(body, words, hightLightTag, 280);
                         string title = Lib.Helper.StringHelper.SementicSubString(body, 0, 150);
-                        item.Title = HighLight(title, words, HightLightTag);
-                        continue;  
-                    }      
-
+                        item.Title = HighLight(title, words, hightLightTag);
+                        continue;
+                    }
                 }
-
             }
         }
 
-        public PagedResult SearchWithPaging(string keywords, int pagesize = 20, int pagenumber = 1, string HighLightAttr = null, RenderContext context = null)
+        public PagedResult SearchWithPaging(string keywords, int pagesize = 20, int pagenumber = 1, string highLightAttr = null, RenderContext context = null)
         {
             if (context == null)
             {
@@ -486,9 +477,8 @@ namespace Kooboo.Sites.Repository
 
             var resultset = result.Skip(skip).Take(pagesize).ToList();
 
-            // set summary.     
-            SetData(resultset, keywords, context.Culture, HighLightAttr);
-
+            // set summary.
+            SetData(resultset, keywords, context.Culture, highLightAttr);
 
             this.Log.Add(new SearchLog() { IP = context.Request.IP, Keywords = keywords, Time = DateTime.Now, DocFound = ids.Count, ResultCount = resultset.Count(), Skip = skip });
 
@@ -496,7 +486,7 @@ namespace Kooboo.Sites.Repository
             return pageresult;
         }
 
-        public PagedResult SearchByFolders(List<Guid> FolderIds, string keywords, int pagesize = 20, int pagenumber = 1, string HighLightAttr = null, RenderContext context = null)
+        public PagedResult SearchByFolders(List<Guid> folderIds, string keywords, int pagesize = 20, int pagenumber = 1, string highLightAttr = null, RenderContext context = null)
         {
             if (context == null)
             {
@@ -535,14 +525,14 @@ namespace Kooboo.Sites.Repository
 
                     if (searchresult != null)
                     {
-                        // if already set, 
+                        // if already set,
                         var resultfind = result.Find(o => o.Id == searchresult.Id);
                         if (resultfind != null)
                         {
                             continue;
                         }
 
-                        // try to find textcontent..... 
+                        // try to find textcontent.....
                         var contentresults = searchresult.Found.FindAll(o => o.ObjectType.ToLower() == "textcontent");
                         if (contentresults == null || !contentresults.Any())
                         {
@@ -553,23 +543,21 @@ namespace Kooboo.Sites.Repository
                         {
                             var content = this.SiteDb.TextContent.Get(contentresult.ObjectId);
 
-                            if (content != null && FolderIds.Contains(content.FolderId))
+                            if (content != null && folderIds.Contains(content.FolderId))
                             {
                                 var contentview = Sites.Helper.ContentHelper.ToView(content, context.Culture, null);
-                                searchresult.Title = this.HighLight(Helper.ContentHelper.GetTitle(this.SiteDb, contentview), words, HighLightAttr);
+                                searchresult.Title = this.HighLight(Helper.ContentHelper.GetTitle(this.SiteDb, contentview), words, highLightAttr);
 
                                 var fulltext = string.Join(" ", contentview.TextValues.Values);
 
-                                searchresult.Summary = this.GetSummary(fulltext, words, HighLightAttr, 250);
+                                searchresult.Summary = this.GetSummary(fulltext, words, highLightAttr, 250);
 
                                 if (!searchresult.Url.ToLower().StartsWith("http://") && !searchresult.Url.ToLower().StartsWith("https://"))
                                 {
                                     searchresult.Url = Lib.Helper.UrlHelper.Combine(baseurl, searchresult.Url);
                                 }
                                 result.Add(searchresult);
-
                             }
-
                         }
                     }
                 }
@@ -593,15 +581,15 @@ namespace Kooboo.Sites.Repository
             return string.Join(" ", model.TextValues);
         }
 
-        public void Sync(SiteDb SiteDb, ISiteObject Value, ChangeType ChangeType, string StoreName)
+        public void Sync(SiteDb siteDb, ISiteObject value, ChangeType changeType, string storeName)
         {
-            if (ChangeType == ChangeType.Add || ChangeType == ChangeType.Update)
+            if (changeType == ChangeType.Add || changeType == ChangeType.Update)
             {
-                this.AddOrUpdate(Value);
+                this.AddOrUpdate(value);
             }
             else
             {
-                this.Delete(Value);
+                this.Delete(value);
             }
             this.IndexData.Close();
         }
@@ -616,7 +604,7 @@ namespace Kooboo.Sites.Repository
 
         internal void InitIndex()
         {
-            // all pages. 
+            // all pages.
             foreach (var item in this.IndexType)
             {
                 var repo = this.SiteDb.GetRepository(item);
@@ -636,7 +624,6 @@ namespace Kooboo.Sites.Repository
         {
             return this.IndexData.GetIndexStat();
         }
-
 
         public string GetSummary(string body, List<string> words, int summaryLen = 250)
         {
@@ -675,19 +662,12 @@ namespace Kooboo.Sites.Repository
                 part = null;
             }
 
-            goout:
+        goout:
 
-            if (part == null)
-            {
-                part = Lib.Helper.StringHelper.SementicSubString(body, 0, summaryLen);
-            }
-
-            return part;
+            return part ?? (part = Lib.Helper.StringHelper.SementicSubString(body, 0, summaryLen));
         }
 
-
-
-        public string GetSummary(string body, List<string> words, string HighLightAttribute = null, int summaryLen = 250)
+        public string GetSummary(string body, List<string> words, string highLightAttribute = null, int summaryLen = 250)
         {
             if (body == null)
             {
@@ -699,7 +679,7 @@ namespace Kooboo.Sites.Repository
             int len = body.Length;
             if (len <= summaryLen)
             {
-                return HighLight(body, words, HighLightAttribute);
+                return HighLight(body, words, highLightAttribute);
             }
 
             int i = 0;
@@ -719,29 +699,29 @@ namespace Kooboo.Sites.Repository
                 i += part.Length;
                 while (i < len && IsSeperator(body[i]))
                 {
-                    i = i + 1;
+                    i += 1;
                 }
                 part = null;
             }
 
-            goout:
+        goout:
 
             if (part == null)
             {
                 part = Lib.Helper.StringHelper.SementicSubString(body, 0, summaryLen);
             }
 
-            return HighLight(part, words, HighLightAttribute);
+            return HighLight(part, words, highLightAttribute);
         }
 
-        public string HighLight(string text, List<string> Keywords, string tagAttribute)
+        public string HighLight(string text, List<string> keywords, string tagAttribute)
         {
             if (string.IsNullOrEmpty(tagAttribute) || string.IsNullOrEmpty(text))
             {
                 return text;
             }
 
-            if (Keywords == null || Keywords.Count() == 0)
+            if (keywords == null || keywords.Count == 0)
             {
                 return text;
             }
@@ -749,7 +729,7 @@ namespace Kooboo.Sites.Repository
             string starttag = "<span " + tagAttribute + ">";
             string endtag = "</span>";
 
-            foreach (var item in Keywords)
+            foreach (var item in keywords)
             {
                 text = Lib.Helper.StringHelper.ReplaceIgnoreCase(text, item, starttag + item + endtag);
             }
@@ -803,17 +783,17 @@ namespace Kooboo.Sites.Repository
     {
         public MetaIndex()
         {
-
         }
+
         public MetaIndex(string meta)
         {
             Parse(meta);
         }
 
-        public MetaIndex(string model, Guid ObjectId)
+        public MetaIndex(string model, Guid objectId)
         {
             this.Model = model;
-            this.ObjectId = ObjectId;
+            this.ObjectId = objectId;
         }
 
         public string Model { get; set; }
@@ -840,8 +820,7 @@ namespace Kooboo.Sites.Repository
                     return false;
                 }
                 string strguid = meta.Substring(index + 2);
-                Guid outid;
-                if (!Guid.TryParse(strguid, out outid))
+                if (!Guid.TryParse(strguid, out var outid))
                 {
                     return false;
                 }
@@ -861,6 +840,7 @@ namespace Kooboo.Sites.Repository
     public class SearchResult : IEqualityComparer<SearchResult>
     {
         private Guid _id;
+
         public Guid Id
         {
             get
@@ -879,6 +859,7 @@ namespace Kooboo.Sites.Repository
         public string Summary { get; set; }
 
         private string _url;
+
         public string Url
         {
             get { return _url; }
@@ -887,13 +868,11 @@ namespace Kooboo.Sites.Repository
 
         internal List<FoundResult> Found { get; set; } = new List<SearchResult.FoundResult>();
 
-        public void AddFound(string ObjectType, Guid ObjectId)
+        public void AddFound(string objectType, Guid objectId)
         {
-            if (!string.IsNullOrEmpty(ObjectType))
+            if (!string.IsNullOrEmpty(objectType))
             {
-                FoundResult found = new FoundResult();
-                found.ObjectId = ObjectId;
-                found.ObjectType = ObjectType.ToLower();
+                FoundResult found = new FoundResult {ObjectId = objectId, ObjectType = objectType.ToLower()};
                 this.Found.Add(found);
             }
         }
@@ -912,22 +891,19 @@ namespace Kooboo.Sites.Repository
         {
             public string ObjectType { get; set; }
             public Guid ObjectId { get; set; }
-
         }
-
     }
 
     public static class SearchResultConverter
     {
-
-        public static string HighLight(string text, List<string> Keywords, string tagAttribute)
+        public static string HighLight(string text, List<string> keywords, string tagAttribute)
         {
             if (string.IsNullOrEmpty(tagAttribute) || string.IsNullOrEmpty(text))
             {
                 return text;
             }
 
-            if (Keywords == null || Keywords.Count() == 0)
+            if (keywords == null || keywords.Count == 0)
             {
                 return text;
             }
@@ -935,13 +911,12 @@ namespace Kooboo.Sites.Repository
             string starttag = "<span " + tagAttribute + ">";
             string endtag = "</span>";
 
-            foreach (var item in Keywords)
+            foreach (var item in keywords)
             {
                 text = Lib.Helper.StringHelper.ReplaceIgnoreCase(text, item, starttag + item + endtag);
             }
             return text;
         }
-
 
         public static SearchResult ConvertTo(RenderContext context, string meta)
         {
@@ -994,107 +969,110 @@ namespace Kooboo.Sites.Repository
             return page.Name;
         }
 
-        public static SearchResult ConvertPage(SiteDb SiteDb, Guid ObjectId, string culture = null)
+        public static SearchResult ConvertPage(SiteDb siteDb, Guid objectId, string culture = null)
         {
             if (string.IsNullOrEmpty(culture))
             {
-                culture = SiteDb.WebSite.DefaultCulture;
+                culture = siteDb.WebSite.DefaultCulture;
             }
             SearchResult result = new SearchResult();
 
-            var page = SiteDb.Pages.Get(ObjectId);
+            var page = siteDb.Pages.Get(objectId);
             if (page == null)
             {
                 return null;
             }
             result.Title = GetTitle(culture, page);
-            ///result.Summary = GetSummary(page.Body, keywords, SpanAttribute);  
-            result.Url = Kooboo.Sites.Service.ObjectService.GetObjectFullUrl(SiteDb.WebSite, ObjectId);
+            //result.Summary = GetSummary(page.Body, keywords, SpanAttribute);
+            result.Url = Kooboo.Sites.Service.ObjectService.GetObjectFullUrl(siteDb.WebSite, objectId);
 
-            result.AddFound("Page", ObjectId);
+            result.AddFound("Page", objectId);
             return result;
         }
 
-        public static SearchResult ConvertView(SiteDb SiteDb, Guid ObjectId, string culture = null)
+        public static SearchResult ConvertView(SiteDb siteDb, Guid objectId, string culture = null)
         {
-            // view only need to find the related page.... 
+            // view only need to find the related page....
 
-            var view = SiteDb.Views.Get(ObjectId);
+            var view = siteDb.Views.Get(objectId);
             if (view == null)
             {
                 return null;
             }
-            var page = GetViewPage(SiteDb, ObjectId);
+            var page = GetViewPage(siteDb, objectId);
             if (page != null)
             {
-                SearchResult result = new SearchResult();
-                result.Title = GetTitle(culture, page);
-                result.Url = Service.ObjectService.GetObjectFullUrl(SiteDb.WebSite, page.Id);
-                result.AddFound("View", ObjectId);
+                SearchResult result = new SearchResult
+                {
+                    Title = GetTitle(culture, page),
+                    Url = Service.ObjectService.GetObjectFullUrl(siteDb.WebSite, page.Id)
+                };
+                result.AddFound("View", objectId);
                 return result;
             }
             return null;
         }
 
-        public static SearchResult ConvertLayout(SiteDb SiteDb, Guid ObjectId, string culture = null)
+        public static SearchResult ConvertLayout(SiteDb siteDb, Guid objectId, string culture = null)
         {
-            // view only need to find the related page.... 
+            // view only need to find the related page....
             SearchResult result = new SearchResult();
-            var layout = SiteDb.Layouts.Get(ObjectId);
+            var layout = siteDb.Layouts.Get(objectId);
             if (layout == null)
             {
                 return null;
             }
-            var page = GetLayoutPage(SiteDb, ObjectId);
+            var page = GetLayoutPage(siteDb, objectId);
             if (page != null)
             {
                 result.Title = GetTitle(culture, page);
-                result.Url = Service.ObjectService.GetObjectFullUrl(SiteDb.WebSite, page.Id);
-                result.AddFound("Layout", ObjectId);
+                result.Url = Service.ObjectService.GetObjectFullUrl(siteDb.WebSite, page.Id);
+                result.AddFound("Layout", objectId);
                 return result;
             }
             return null;
-
         }
 
-        public static SearchResult ConvertHtmlBlock(SiteDb SiteDb, Guid ObjectId, string culture = null)
+        public static SearchResult ConvertHtmlBlock(SiteDb siteDb, Guid objectId, string culture = null)
         {
-            var htmlblock = SiteDb.HtmlBlocks.Get(ObjectId);
+            var htmlblock = siteDb.HtmlBlocks.Get(objectId);
             if (htmlblock == null)
             {
                 return null;
             }
-            var page = GetHtmlBlockPage(SiteDb, ObjectId);
+            var page = GetHtmlBlockPage(siteDb, objectId);
             if (page != null)
             {
-                SearchResult result = new SearchResult();
-                result.Title = GetTitle(culture, page);
-                result.Url = Service.ObjectService.GetObjectFullUrl(SiteDb.WebSite, page.Id);
-                result.AddFound("HtmlBlock", ObjectId);
+                SearchResult result = new SearchResult
+                {
+                    Title = GetTitle(culture, page),
+                    Url = Service.ObjectService.GetObjectFullUrl(siteDb.WebSite, page.Id)
+                };
+                result.AddFound("HtmlBlock", objectId);
                 return result;
             }
             return null;
         }
 
-        public static SearchResult ConvertTextContent(SiteDb SiteDb, Guid ObjectId, string culture = null)
+        public static SearchResult ConvertTextContent(SiteDb siteDb, Guid objectId, string culture = null)
         {
-            var content = SiteDb.TextContent.Get(ObjectId);
+            var content = siteDb.TextContent.Get(objectId);
             if (content == null) { return null; }
 
-            var Setting = GetContentDefaultDetailMethodSetting(SiteDb, content);
-            if (Setting == null)
+            var setting = GetContentDefaultDetailMethodSetting(siteDb, content);
+            if (setting == null)
             {
                 return null;
             }
-            foreach (var item in Setting.ParameterBinding)
+            foreach (var item in setting.ParameterBinding)
             {
                 if (item.Key.ToLower() == "id")
                 {
-                    return ConvertContentByKey(Setting, item.Value.Binding, content.Id.ToString(), SiteDb, content, culture);
+                    return ConvertContentByKey(setting, item.Value.Binding, content.Id.ToString(), siteDb, content, culture);
                 }
                 else if (item.Key.ToLower() == "userkey")
                 {
-                    return ConvertContentByKey(Setting, item.Value.Binding, content.UserKey, SiteDb, content, culture);
+                    return ConvertContentByKey(setting, item.Value.Binding, content.UserKey, siteDb, content, culture);
                 }
             }
 
@@ -1117,8 +1095,7 @@ namespace Kooboo.Sites.Repository
                 var page = GetViewPage(sitedb, item.ViewId);
                 if (page != null)
                 {
-                    SearchResult result = new SearchResult();
-                    result.Title = GetTitle(culture, page);
+                    SearchResult result = new SearchResult {Title = GetTitle(culture, page)};
 
                     var route = sitedb.Routes.GetByObjectId(page.Id);
 
@@ -1148,18 +1125,14 @@ namespace Kooboo.Sites.Repository
             return null;
         }
 
-
-
-
-
         public static List<DataMethodSetting> GetContentDetailMethodSettings(SiteDb siteDb, TextContent content)
         {
             List<DataMethodSetting> result = new List<DataMethodSetting>();
             var folderid = content.FolderId;
             var allsetting = siteDb.DataMethodSettings.All();
-            var Settings = allsetting.Where(o => o.ReturnType == typeof(ViewModel.TextContentViewModel).FullName).ToList();
+            var settings = allsetting.Where(o => o.ReturnType == typeof(ViewModel.TextContentViewModel).FullName).ToList();
 
-            foreach (var item in Settings)
+            foreach (var item in settings)
             {
                 Guid itemfolderid;
 
@@ -1192,32 +1165,33 @@ namespace Kooboo.Sites.Repository
             }
             return null;
         }
-        public static Page GetPage(SiteDb sitedb, byte constType, Guid ObjectId)
+
+        public static Page GetPage(SiteDb sitedb, byte constType, Guid objectId)
         {
             if (constType == ConstObjectType.Page)
             {
-                return sitedb.Pages.Get(ObjectId);
+                return sitedb.Pages.Get(objectId);
             }
             else if (constType == ConstObjectType.View)
             {
-                return GetViewPage(sitedb, ObjectId);
+                return GetViewPage(sitedb, objectId);
             }
             else if (constType == ConstObjectType.Layout)
             {
-                return GetLayoutPage(sitedb, ObjectId);
+                return GetLayoutPage(sitedb, objectId);
             }
             return null;
         }
 
-        internal static Page GetViewPage(SiteDb sitedb, Guid ObjectId, int loopcount = 0)
+        internal static Page GetViewPage(SiteDb sitedb, Guid objectId, int loopcount = 0)
         {
             if (loopcount > 7)
             {
                 return null;
             }
-            var relations = sitedb.Views.GetUsedBy(ObjectId);
+            var relations = sitedb.Views.GetUsedBy(objectId);
 
-            if (relations == null || relations.Count() == 0)
+            if (relations == null || relations.Count == 0)
             {
                 return null;
             }
@@ -1243,7 +1217,7 @@ namespace Kooboo.Sites.Repository
 
             var others = relations.Where(o => o.ConstType != ConstObjectType.Page && o.ConstType != ConstObjectType.Layout).ToList();
 
-            // only possible for view now. 
+            // only possible for view now.
             foreach (var item in others)
             {
                 if (item.ConstType == ConstObjectType.View)
@@ -1254,15 +1228,15 @@ namespace Kooboo.Sites.Repository
             return null;
         }
 
-        internal static Page GetLayoutPage(SiteDb sitedb, Guid LayoutId, int loopcount = 0)
+        internal static Page GetLayoutPage(SiteDb sitedb, Guid layoutId, int loopcount = 0)
         {
             if (loopcount > 7)
             {
                 return null;
             }
-            var relations = sitedb.Layouts.GetUsedBy(LayoutId);
+            var relations = sitedb.Layouts.GetUsedBy(layoutId);
 
-            if (relations == null || relations.Count() == 0)
+            if (relations == null || relations.Count == 0)
             {
                 return null;
             }
@@ -1290,12 +1264,11 @@ namespace Kooboo.Sites.Repository
             return null;
         }
 
-        internal static Page GetHtmlBlockPage(SiteDb sitedb, Guid ObjectId)
+        internal static Page GetHtmlBlockPage(SiteDb sitedb, Guid objectId)
         {
+            var relations = sitedb.HtmlBlocks.GetUsedBy(objectId);
 
-            var relations = sitedb.HtmlBlocks.GetUsedBy(ObjectId);
-
-            if (relations == null || relations.Count() == 0)
+            if (relations == null || relations.Count == 0)
             {
                 return null;
             }
@@ -1332,8 +1305,6 @@ namespace Kooboo.Sites.Repository
 
             return null;
         }
-
-
     }
 
     public class SearchLog
@@ -1349,6 +1320,5 @@ namespace Kooboo.Sites.Repository
         public int Skip { get; set; }
 
         public int DocFound { get; set; }
-
     }
 }

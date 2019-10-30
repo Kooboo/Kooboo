@@ -1,6 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data;
 using Kooboo.Data.Context;
 using System;
 using System.Collections;
@@ -10,7 +9,7 @@ namespace Kooboo.Sites.Scripting.Global
 {
     public class kKeyValue : System.Collections.Generic.IDictionary<string, string>
     {
-        private RenderContext context { get; set; }
+        private RenderContext Context { get; set; }
 
         public ICollection<string> Keys
         {
@@ -62,12 +61,11 @@ namespace Kooboo.Sites.Scripting.Global
             {
                 if (_table == null)
                 {
-                    _table = Kooboo.Data.DB.GetOrCreateTable(this.context.WebSite, "_sys_keyvalues");   
+                    _table = Kooboo.Data.DB.GetOrCreateTable(this.Context.WebSite, "_sys_keyvalues");
                 }
                 return _table;
             }
         }
-
 
         [Attributes.SummaryIgnore]
         public int Count
@@ -78,7 +76,6 @@ namespace Kooboo.Sites.Scripting.Global
                 return index.Count(true);
             }
         }
-
 
         public int length
         {
@@ -106,7 +103,7 @@ namespace Kooboo.Sites.Scripting.Global
 
         public kKeyValue(RenderContext context)
         {
-            this.context = context;
+            this.Context = context;
         }
 
         public void set(string key, string value)
@@ -116,7 +113,7 @@ namespace Kooboo.Sites.Scripting.Global
                 var bytes = System.Text.Encoding.UTF8.GetBytes(value);
                 if (bytes.Length > this.MaxValueLen)
                 {
-                    throw new Exception(Data.Language.Hardcoded.GetValue("Maximun value length reached", this.context));
+                    throw new Exception(Data.Language.Hardcoded.GetValue("Maximun value length reached", this.Context));
                 }
             }
 
@@ -142,7 +139,6 @@ namespace Kooboo.Sites.Scripting.Global
                 }
             }
         }
-
 
         public string get(string key)
         {
@@ -176,7 +172,6 @@ namespace Kooboo.Sites.Scripting.Global
             var value = this.table.Get(hash);
             return value != null;
         }
-
 
         [Attributes.SummaryIgnore]
         public void Add(string key, string value)
@@ -214,7 +209,6 @@ namespace Kooboo.Sites.Scripting.Global
         {
             set(item.Key, item.Value);
         }
-
 
         [Attributes.SummaryIgnore]
         public void Clear()

@@ -1,12 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Dom;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Render
 {
@@ -32,39 +30,36 @@ namespace Kooboo.Sites.Render
         public static void OptimizeTask(List<IRenderTask> task)
         {
             int count = task.Count();
-            bool IsPreviousContent = false;
+            bool isPreviousContent = false;
             int lastContentI = -1;
-            List<int> ToRemoved = new List<int>();
+            List<int> toRemoved = new List<int>();
             for (int i = 0; i < count; i++)
             {
                 var item = task[i];
 
-                if (item is ContentRenderTask)
+                if (item is ContentRenderTask contenttask)
                 {
-                    if (IsPreviousContent && lastContentI != -1)
+                    if (isPreviousContent && lastContentI != -1)
                     {
-                        var contenttask = item as ContentRenderTask;
-
                         var lastcontenttask = task[lastContentI] as ContentRenderTask;
                         lastcontenttask.Content += contenttask.Content;
-                        ToRemoved.Add(i);
+                        toRemoved.Add(i);
                     }
-                    IsPreviousContent = true;
+                    isPreviousContent = true;
                     if (lastContentI == -1)
                     {
                         lastContentI = i;
                     }
                 }
-
                 else
                 {
-                    IsPreviousContent = false;
+                    isPreviousContent = false;
                     lastContentI = -1;
                 }
             }
 
-            ToRemoved.Reverse();
-            foreach (var item in ToRemoved)
+            toRemoved.Reverse();
+            foreach (var item in toRemoved)
             {
                 task.RemoveAt(item);
             }
@@ -72,8 +67,7 @@ namespace Kooboo.Sites.Render
 
         public static string GetHalfOpenTag(Element element)
         {
-            string ehtml = string.Empty;
-            ehtml = "<" + element.tagName;
+            var ehtml = "<" + element.tagName;
             foreach (var item in element.attributes)
             {
                 ehtml += " " + item.name;
@@ -115,17 +109,17 @@ namespace Kooboo.Sites.Render
             return sb.ToString();
         }
 
-        public static string ModelBind(object Model, string Html, string ModelName="model")
+        public static string ModelBind(object model, string html, string modelName = "model")
         {
-            if (Model == null)
+            if (model == null)
             {
-                return Html; 
+                return html;
             }
             RenderContext context = new RenderContext();
-            context.DataContext.Push(ModelName, Model);
+            context.DataContext.Push(modelName, model);
 
-            var plans = RenderEvaluator.Evaluate(Html, new EvaluatorOption());
-            return Render(plans, context);  
+            var plans = RenderEvaluator.Evaluate(html, new EvaluatorOption());
+            return Render(plans, context);
         }
     }
 }

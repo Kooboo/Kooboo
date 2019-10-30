@@ -1,13 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.IndexedDB;
+using Kooboo.Lib.Helper;
 using Kooboo.Sites.SiteTransfer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.IndexedDB;
-using Kooboo.Lib.Helper;
 using System.Net;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Repository
@@ -31,9 +30,9 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        public void SetDone(Guid TaskId)
+        public void SetDone(Guid taskId)
         {
-            var task = this.Get(TaskId);
+            var task = this.Get(taskId);
             if (task != null)
             {
                 task.done = true;
@@ -53,23 +52,21 @@ namespace Kooboo.Sites.Repository
             return false;
         }
 
-
-        public override bool AddOrUpdate(TransferTask value, Guid UserId = default(Guid))
+        public override bool AddOrUpdate(TransferTask value, Guid userId = default(Guid))
         {
-            if (value.Domains.Count() == 0)
+            if (value.Domains.Count == 0)
             {
                 if (!string.IsNullOrEmpty(value.FullStartUrl))
                 {
                     value.Domains.Add(UrlHelper.UriHost(value.FullStartUrl, true));
                 }
             }
-            return base.AddOrUpdate(value, UserId);
+            return base.AddOrUpdate(value, userId);
         }
 
         /// <summary>
-        /// stop all download tasks of this website. 
+        /// stop all download tasks of this website.
         /// </summary>
-        /// <param name="website"></param>
         public void CancelDownload()
         {
             var alltask = this.TableScan.Where(o => o.done == false && o.CreationDate > DateTime.Now.AddMinutes(-30)).SelectAll();
@@ -99,14 +96,9 @@ namespace Kooboo.Sites.Repository
                 {
                     if (!string.IsNullOrEmpty(domain))
                     {
-                        if (!domain.ToLower().StartsWith("http://") && !domain.ToLower().StartsWith("https://"))
-                        {
-                            return "http://" + domain;
-                        }
-                        else
-                        {
-                            return domain;
-                        }
+                        return !domain.ToLower().StartsWith("http://") && !domain.ToLower().StartsWith("https://")
+                            ? "http://" + domain
+                            : domain;
                     }
                 }
             }
@@ -132,7 +124,7 @@ namespace Kooboo.Sites.Repository
             {
                 foreach (var item in all.OrderBy(o => o.CreationDate))
                 {
-                    if (item.Domains.Count() > 0)
+                    if (item.Domains.Count > 0)
                     {
                         foreach (var domain in item.Domains)
                         {
@@ -170,7 +162,6 @@ namespace Kooboo.Sites.Repository
                             result.Add(item.FullStartUrl);
                         }
                     }
-
                 }
             }
 
@@ -206,13 +197,12 @@ namespace Kooboo.Sites.Repository
                         this.AddOrUpdate(task);
                     }
                 }
-
             }
         }
 
-        public CookieContainer GetCookieContainer(Guid TaskId)
+        public CookieContainer GetCookieContainer(Guid taskId)
         {
-            var task = this.Get(TaskId);
+            var task = this.Get(taskId);
             return GetCookieContainer(task);
         }
 
@@ -227,16 +217,15 @@ namespace Kooboo.Sites.Repository
                 foreach (var item in task.cookies)
                 {
                     container.Add(new Cookie() { Name = item.Key, Value = item.Value, Domain = uri.Host });
-
                 }
             }
 
             return container;
         }
 
-        public CookieContainer GetCookieContainer(string Domain)
+        public CookieContainer GetCookieContainer(string domain)
         {
-            if (string.IsNullOrWhiteSpace(Domain))
+            if (string.IsNullOrWhiteSpace(domain))
             {
                 return null;
             }
@@ -245,7 +234,7 @@ namespace Kooboo.Sites.Repository
 
             foreach (var item in all)
             {
-                if (item.Domains.Contains(Domain, StringComparer.OrdinalIgnoreCase))
+                if (item.Domains.Contains(domain, StringComparer.OrdinalIgnoreCase))
                 {
                     return GetCookieContainer(item);
                 }
@@ -269,8 +258,6 @@ namespace Kooboo.Sites.Repository
 
         #region ContinueDownload
 
-
-
         public Dictionary<string, DownloadingTask> ContinueDownloading { get; set; }
 
         public async Task<bool> CanStartDownload(string relativeUrl)
@@ -281,10 +268,9 @@ namespace Kooboo.Sites.Repository
                 relativeUrl = "/";
             }
 
-
             if (!this.ContinueDownloading.ContainsKey(relativeUrl))
             {
-                // if not download yet, start download. 
+                // if not download yet, start download.
                 this.ContinueDownloading[relativeUrl] = new DownloadingTask() { StartTime = DateTime.Now };
                 return true;
             }
@@ -297,8 +283,7 @@ namespace Kooboo.Sites.Repository
 
         public void ReleaseDownload(string relativeUrl)
         {
-            DownloadingTask last;
-            if (this.ContinueDownloading.TryGetValue(relativeUrl, out last))
+            if (this.ContinueDownloading.TryGetValue(relativeUrl, out var last))
             {
                 last.IsCompleted = true;
             }
@@ -306,12 +291,11 @@ namespace Kooboo.Sites.Repository
 
         private async Task<bool> EnterWait(string relativeUrl)
         {
-            DownloadingTask lastdownload;
-            if (this.ContinueDownloading.TryGetValue(relativeUrl, out lastdownload))
+            if (this.ContinueDownloading.TryGetValue(relativeUrl, out var lastdownload))
             {
                 if (lastdownload.IsCompleted)
                 {
-                    return false; 
+                    return false;
                 }
 
                 if (lastdownload.StartTime > DateTime.Now.AddMinutes(-2))
@@ -333,20 +317,17 @@ namespace Kooboo.Sites.Repository
                     return false;
                 }
             }
-            // not exists any more, continue download. 
+            // not exists any more, continue download.
             return true;
         }
 
-        #endregion
-
+        #endregion ContinueDownload
 
         public class DownloadingTask
         {
             public DateTime StartTime { get; set; }
 
             public bool IsCompleted { get; set; }
-
         }
-
     }
 }

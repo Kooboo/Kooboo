@@ -1,9 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 
 namespace Kooboo.Sites.Models
 {
@@ -12,10 +11,11 @@ namespace Kooboo.Sites.Models
     {
         public ViewDataMethod()
         {
-            ConstType = ConstObjectType.ViewDataMethod; 
+            ConstType = ConstObjectType.ViewDataMethod;
         }
 
         private Guid _id;
+
         public override Guid Id
         {
             get
@@ -31,18 +31,19 @@ namespace Kooboo.Sites.Models
             {
                 _id = value;
             }
-        } 
+        }
 
         /// <summary>
-        /// Alias for data binding or other purpose. Can be same as 
+        /// Alias for data binding or other purpose. Can be same as
         /// </summary>
         public string AliasName { get; set; }
 
         public Guid MethodId { get; set; }
-  
+
         public Guid ViewId { get; set; }
 
-        private List<ViewDataMethod> _children; 
+        private List<ViewDataMethod> _children;
+
         public List<ViewDataMethod> Children
         {
             get
@@ -51,34 +52,33 @@ namespace Kooboo.Sites.Models
                 {
                     _children = new List<ViewDataMethod>();
                 }
-                return _children; 
+                return _children;
             }
             set
-            { _children = value;  }
+            { _children = value; }
         }
-         
+
         public bool HasChildren
         {
             get
             {
-                return (_children != null &&  _children.Count() > 0); 
+                return (_children != null && _children.Any());
             }
         }
-         
+
         public override int GetHashCode()
         {
-            string unique = this.ViewId.ToString()+ this.MethodId.ToString() +this.AliasName;
+            string unique = this.ViewId.ToString() + this.MethodId.ToString() + this.AliasName;
 
-            if (_children !=null && _children.Count()>0)
+            if (_children != null && _children.Count() > 0)
             {
                 foreach (var item in _children)
                 {
-                    unique += item.GetHashCode().ToString(); 
+                    unique += item.GetHashCode().ToString();
                 }
             }
-             
+
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
-
     }
 }

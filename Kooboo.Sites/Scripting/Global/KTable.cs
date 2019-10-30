@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.IndexedDB.Dynamic;
@@ -71,9 +71,8 @@ namespace Kooboo.Sites.Scripting.Global
 
         private object CleanDynamicObject(object Value)
         {
-            if (Value is DynamicTableObject)
+            if (Value is DynamicTableObject dynamictable)
             {
-                var dynamictable = Value as DynamicTableObject;
                 return dynamictable.obj;
             }
             return Value;
@@ -121,7 +120,6 @@ namespace Kooboo.Sites.Scripting.Global
             return result;
         }
 
-
         public void createIndex(string fieldname)
         {
             this.table.CreateIndex(fieldname, false);
@@ -132,6 +130,5 @@ namespace Kooboo.Sites.Scripting.Global
             var all = this.table.All();
             return DynamicTableObject.CreateList(all.ToArray(), this.table, this.context);
         }
-
     }
 }

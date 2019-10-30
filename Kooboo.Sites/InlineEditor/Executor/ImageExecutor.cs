@@ -59,37 +59,37 @@ namespace Kooboo.Sites.InlineEditor.Executor
             }
         }
 
-        private void UpdateDomObject(RenderContext context, byte ConstType, Guid ObjectId, List<ImageModel> updates)
+        private void UpdateDomObject(RenderContext context, byte constType, Guid objectId, List<ImageModel> updates)
         {
-            if (updates == null || updates.Count() == 0)
+            if (updates == null || updates.Count == 0)
             {
                 return;
             }
-            var repo = context.WebSite.SiteDb().GetRepository(ConstType);
-            if (repo != null)
+            var repo = context.WebSite.SiteDb().GetRepository(constType);
+            var siteobject = repo?.Get(objectId);
+            if (siteobject != null)
             {
-                var siteobject = repo.Get(ObjectId);
-                if (siteobject != null)
+                // now we only handle dom object, it can be textcontent or htmlblock.
+                var domobject = siteobject as DomObject;
+                List<InlineSourceUpdate> inlineupdates = new List<InlineSourceUpdate>();
+                foreach (var item in updates)
                 {
-                    /// now we only handle dom object, it can be textcontent or htmlblock.
-                    var domobject = siteobject as DomObject;
-                    List<InlineSourceUpdate> inlineupdates = new List<InlineSourceUpdate>();
-                    foreach (var item in updates)
+                    if (!string.IsNullOrEmpty(item.KoobooId))
                     {
-                        if (!string.IsNullOrEmpty(item.KoobooId))
+                        var element = Service.DomService.GetElementByKoobooId(domobject?.Dom, item.KoobooId);
+                        if (verify(context, element as Kooboo.Dom.Element, item.ImageId))
                         {
-                            var element = Service.DomService.GetElementByKoobooId(domobject.Dom, item.KoobooId);
-                            if (verify(context, element as Kooboo.Dom.Element, item.ImageId))
+                            InlineSourceUpdate sourceupdate = new InlineSourceUpdate
                             {
-                                InlineSourceUpdate sourceupdate = new InlineSourceUpdate();
-                                sourceupdate.AttributeName = "src";
-                                sourceupdate.KoobooId = item.KoobooId;
-                                sourceupdate.Value = item.Value;
-                                inlineupdates.Add(sourceupdate);
-                            }
+                                AttributeName = "src", KoobooId = item.KoobooId, Value = item.Value
+                            };
+                            inlineupdates.Add(sourceupdate);
                         }
                     }
+                }
 
+                if (domobject != null)
+                {
                     domobject.Body = UpdateHelper.Update(domobject.Body, inlineupdates);
 
                     repo.AddOrUpdate(domobject, context.User.Id);
@@ -97,14 +97,14 @@ namespace Kooboo.Sites.InlineEditor.Executor
             }
         }
 
-        private bool verify(RenderContext context, Kooboo.Dom.Element element, Guid ImageId)
+        private bool verify(RenderContext context, Kooboo.Dom.Element element, Guid imageId)
         {
             if (element == null || element.tagName != "img")
             {
                 return false;
             }
             string src = Service.DomUrlService.GetLinkOrSrc(element);
-            var route = context.WebSite.SiteDb().Routes.GetByObjectId(ImageId);
+            var route = context.WebSite.SiteDb().Routes.GetByObjectId(imageId);
 
             if (route == null || string.IsNullOrEmpty(route.Name) || string.IsNullOrEmpty(src))
             {
@@ -119,7 +119,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
             return true;
         }
 
-        public void ExecuteObject(RenderContext context, IRepository repo, string NameOrId, List<IInlineModel> updates)
+        public void ExecuteObject(RenderContext context, IRepository repo, string nameOrId, List<IInlineModel> updates)
         {
             throw new NotImplementedException();
         }

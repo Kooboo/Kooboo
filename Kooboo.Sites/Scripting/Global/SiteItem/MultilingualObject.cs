@@ -1,12 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Scripting.Global.SiteItem
 {
@@ -14,7 +12,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
     {
         public MultilingualObject()
         {
-            // should not use. 
+            // should not use.
         }
 
         public RenderContext context { get; set; }
@@ -26,13 +24,10 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             this.Name = siteobject.Name;
         }
 
-
         public object this[string key]
         {
-
             get
             {
-
                 if (this.Values.ContainsKey(key))
                 {
                     return this.Values[key];
@@ -41,18 +36,10 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 if (key.ToLower() == "value")
                 {
                     var culture = this.context.Culture;
-                    if (this.Values.ContainsKey(culture))
-                    {
-                        return this.Values[culture];
-                    }
-                    else  
-                    {
-                        return this.Values.First();
-                    }
+                    return this.Values.ContainsKey(culture) ? this.Values[culture] : this.Values.First();
                 }
 
                 return null;
-
             }
             set
             {
@@ -102,11 +89,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             {
                 return true;
             }
-            if (key.ToLower()== "value")
-            {
-                return true; 
-            }
-            return false; 
+            return key.ToLower() == "value";
         }
 
         public void CopyTo(KeyValuePair<string, object>[] array, int arrayIndex)
@@ -137,11 +120,11 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 var culture = this.context.Culture;
                 if (this.Values.ContainsKey(culture))
                 {
-                    value =  this.Values[culture];
-                    return true; 
+                    value = this.Values[culture];
+                    return true;
                 }
                 else
-                {  
+                {
                     if (this.Values.Any())
                     {
                         value = this.Values.First();
@@ -149,10 +132,9 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                     }
                     else
                     {
-                        value = null; 
-                        return false; 
+                        value = null;
+                        return false;
                     }
-                   
                 }
             }
 
@@ -168,7 +150,6 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
         }
 
-
         [Attributes.SummaryIgnore]
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
@@ -180,20 +161,5 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
         {
             return GetEnumerator();
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }

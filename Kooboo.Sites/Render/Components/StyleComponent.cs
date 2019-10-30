@@ -1,16 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Sites.Repository;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Render.Components
 {
-
     public class StyleComponent : IComponent
     {
         public string TagName
@@ -29,14 +25,7 @@ namespace Kooboo.Sites.Render.Components
 
         public Dictionary<string, string> Setttings
         {
-            get
-            {
-                if (_settings == null)
-                {
-                    _settings = new Dictionary<string, string>();
-                }
-                return _settings;
-            }
+            get { return _settings ?? (_settings = new Dictionary<string, string>()); }
             set
             {
                 _settings = value;
@@ -45,24 +34,24 @@ namespace Kooboo.Sites.Render.Components
 
         public byte StoreConstType { get { return 0; } }
 
-        public List<ComponentInfo> AvaiableObjects(SiteDb SiteDb)
+        public List<ComponentInfo> AvaiableObjects(SiteDb siteDb)
         {
             return new List<ComponentInfo>();
         }
 
-        public string DisplayName(RenderContext Context)
+        public string DisplayName(RenderContext context)
         {
-            return Data.Language.Hardcoded.GetValue("Style", Context);
+            return Data.Language.Hardcoded.GetValue("Style", context);
         }
 
-        public string Preview(SiteDb SiteDb, string NameOrId)
+        public string Preview(SiteDb siteDb, string nameOrId)
         {
             return "<style></style>";
         }
 
         public Task<string> RenderAsync(RenderContext context, ComponentSetting settings)
         {
-            // other engine only support inner html or dynamic render....  
+            // other engine only support inner html or dynamic render....
             string result = Kooboo.Sites.Engine.Manager.Execute(settings.Engine, context, settings.InnerHtml, settings.TagName, settings.TagAttributes);
             return Task.FromResult<string>(result);
         }

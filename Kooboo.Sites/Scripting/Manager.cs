@@ -1,18 +1,19 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Jint.Native;
+using Jint.Runtime;
 using Jint.Runtime.Environments;
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
+using Kooboo.Lib.Reflection;
 using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Scripting.Global;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using Kooboo.Lib.Reflection;
-using Jint.Runtime;
-using Kooboo.Sites.Scripting.Global;
 
 namespace Kooboo.Sites.Scripting
 {
@@ -46,7 +47,6 @@ namespace Kooboo.Sites.Scripting
             }
             return ksession;
         }
-
 
         public static Jint.Engine GetJsEngine(RenderContext context)
         {
@@ -91,8 +91,7 @@ namespace Kooboo.Sites.Scripting
 
         public static object ExeConfig(Models.Code code, WebSite site)
         {
-            RenderContext context = new RenderContext();
-            context.WebSite = site;
+            RenderContext context = new RenderContext {WebSite = site};
             var engine = new Jint.Engine(JintSetting.SetOption);
             var kcontext = new k(context);
             engine.SetValue("k", kcontext);
@@ -104,11 +103,12 @@ namespace Kooboo.Sites.Scripting
             {
                 engine.Execute(code.Config);
             }
-            catch (System.Exception ex)
+            catch (System.Exception)
             {
+                // ignored
             }
 
-            if (kcontext.ReturnValues.Count() > 0)
+            if (kcontext.ReturnValues.Any())
             {
                 return kcontext.ReturnValues.Last();
             }
@@ -121,20 +121,19 @@ namespace Kooboo.Sites.Scripting
 
             List<Data.Models.SimpleSetting> settings = new List<SimpleSetting>();
 
-            if (config != null)
+            var items = ((IEnumerable) config)?.Cast<object>().ToList();
+
+            if (items != null && items.Any())
             {
-                var items = ((IEnumerable)config).Cast<object>().ToList();
-
-                if (items != null && items.Count() > 0)
+                foreach (var item in items)
                 {
-                    foreach (var item in items)
-                    {
-                        SimpleSetting setting = new SimpleSetting();
+                    SimpleSetting setting = new SimpleSetting();
 
-                        var dict = item as IDictionary<string, object>;
+                    var dict = item as IDictionary<string, object>;
 
-                        object SelectionValues = null;
+                    object selectionValues = null;
 
+                    if (dict != null)
                         foreach (var keyvalue in dict)
                         {
                             var lowerkey = keyvalue.Key.ToLower();
@@ -145,7 +144,7 @@ namespace Kooboo.Sites.Scripting
                             }
                             else if (lowerkey == "tooltip")
                             {
-                                setting.ToolTip = keyvalue.Value.ToString(); 
+                                setting.ToolTip = keyvalue.Value.ToString();
                             }
                             else if (lowerkey == "controltype")
                             {
@@ -157,32 +156,27 @@ namespace Kooboo.Sites.Scripting
                             }
                             else if (lowerkey == "selectionvalues" || lowerkey == "selectionvalues")
                             {
-                                SelectionValues = keyvalue.Value;
+                                selectionValues = keyvalue.Value;
                             }
                         }
 
-                        if (setting.ControlType == Data.ControlType.Selection && SelectionValues != null)
+                    if (setting.ControlType == Data.ControlType.Selection && selectionValues != null)
+                    {
+                        if (selectionValues is IDictionary<string, object> selections)
                         {
-
-                            var selections = SelectionValues as IDictionary<string, object>;
-
-                            if (selections != null)
+                            if (setting.SelectionValues == null)
                             {
-                                if (setting.SelectionValues == null)
-                                {
-                                    setting.SelectionValues = new Dictionary<string, string>();
-                                }
-
-                                foreach (var se in selections)
-                                {
-                                    setting.SelectionValues.Add(se.Key, se.Value.ToString());
-                                }
+                                setting.SelectionValues = new Dictionary<string, string>();
                             }
 
+                            foreach (var se in selections)
+                            {
+                                setting.SelectionValues.Add(se.Key, se.Value.ToString());
+                            }
                         }
-
-                        settings.Add(setting);
                     }
+
+                    settings.Add(setting);
                 }
             }
 
@@ -196,37 +190,32 @@ namespace Kooboo.Sites.Scripting
                 return Data.ControlType.TextBox;
             }
             var lower = input.ToLower();
-            if (lower == "textarea")
+            switch (lower)
             {
-                return Data.ControlType.TextArea;
+                case "textarea":
+                    return Data.ControlType.TextArea;
+                case "textbox":
+                    return Data.ControlType.TextBox;
+                case "selection":
+                case "selections":
+                    return Data.ControlType.Selection;
+                case "checkbox":
+                    return Data.ControlType.CheckBox;
+                default:
+                    return Data.ControlType.TextBox;
             }
-            else if (lower == "textbox")
-            {
-                return Data.ControlType.TextBox;
-            }
-            else if (lower == "selection" || lower == "selections")
-            {
-                return Data.ControlType.Selection;
-            }
-            else if (lower == "checkbox")
-            {
-                return Data.ControlType.CheckBox;
-            }
-
-            return Data.ControlType.TextBox;
         }
 
-        public static string ExecuteCode(RenderContext context, string JsCode, Guid CodeId = default(Guid))
+        public static string ExecuteCode(RenderContext context, string jsCode, Guid codeId = default(Guid))
         {
-            if (string.IsNullOrEmpty(JsCode))
+            if (string.IsNullOrEmpty(jsCode))
             {
                 return null;
             }
 
-
             Jint.Engine engine = null;
 
-            var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(context, CodeId);
+            var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(context, codeId);
 
             if (debugsession == null)
             {
@@ -246,12 +235,10 @@ namespace Kooboo.Sites.Scripting
                 engine.Break += (s, e) => Engine_Break(s, e, debugsession);
 
                 engine.Step += (s, e) => Engine_Step(s, e, debugsession);
-
             }
             try
             {
-                engine.Execute(JsCode);
-               
+                engine.Execute(jsCode);
             }
             catch (Exception ex)
             {
@@ -266,9 +253,8 @@ namespace Kooboo.Sites.Scripting
                         IsException = true
                     };
 
-                    if (ex is JavaScriptException)
+                    if (ex is JavaScriptException jsex)
                     {
-                        var jsex = ex as JavaScriptException;
                         info.Start.Line = jsex.LineNumber;
                         info.End.Line = jsex.LineNumber;
 
@@ -283,7 +269,6 @@ namespace Kooboo.Sites.Scripting
                 }
 
                 return ex.Message + " " + ex.Source;
-
             }
 
             if (debugsession != null)
@@ -312,18 +297,17 @@ namespace Kooboo.Sites.Scripting
             }
             return output;
         }
-         
 
-        public static string ExecuteInnerScript(RenderContext context, string InnerJsCode)
+        public static string ExecuteInnerScript(RenderContext context, string innerJsCode)
         {
-            if (string.IsNullOrEmpty(InnerJsCode))
+            if (string.IsNullOrEmpty(innerJsCode))
             {
                 return null;
             }
 
             Jint.Engine engine = null;
 
-            var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(context, InnerJsCode);
+            var debugsession = Kooboo.Sites.ScriptDebugger.SessionManager.GetDebugSession(context, innerJsCode);
 
             if (debugsession == null)
             {
@@ -343,11 +327,10 @@ namespace Kooboo.Sites.Scripting
                 engine.Break += (s, e) => Engine_Break(s, e, debugsession);
 
                 engine.Step += (s, e) => Engine_Step(s, e, debugsession);
-
             }
             try
             {
-                engine.Execute(InnerJsCode);
+                engine.Execute(innerJsCode);
             }
             catch (Exception ex)
             {
@@ -374,11 +357,11 @@ namespace Kooboo.Sites.Scripting
             return output;
         }
 
-        public static object ExecuteDataSource(RenderContext context, Guid CodeId, Dictionary<string, object> parameters)
+        public static object ExecuteDataSource(RenderContext context, Guid codeId, Dictionary<string, object> parameters)
         {
             var sitedb = context.WebSite.SiteDb();
 
-            var code = sitedb.Code.Get(CodeId);
+            var code = sitedb.Code.Get(codeId);
 
             if (code == null)
             {
@@ -408,12 +391,10 @@ namespace Kooboo.Sites.Scripting
                 engine.Break += (s, e) => Engine_Break(s, e, debugsession);
 
                 engine.Step += (s, e) => Engine_Step(s, e, debugsession);
-
             }
 
             try
             {
-
                 var kcontext = context.GetItem<k>();
 
                 Dictionary<string, string> config = new Dictionary<string, string>();
@@ -443,7 +424,6 @@ namespace Kooboo.Sites.Scripting
                 {
                     result = kcontext.ReturnValues.Last();
                 }
-
             }
             catch (Exception ex)
             {
@@ -464,7 +444,6 @@ namespace Kooboo.Sites.Scripting
 
             return result;
         }
-
 
         private static Jint.Runtime.Debugger.StepMode Engine_Step(object sender, Jint.Runtime.Debugger.DebugInformation e, ScriptDebugger.DebugSession session)
         {
@@ -498,7 +477,6 @@ namespace Kooboo.Sites.Scripting
                     return Jint.Runtime.Debugger.StepMode.None;
                 }
             }
-
 
             if (session.EndOfSession)
             {
@@ -580,7 +558,7 @@ namespace Kooboo.Sites.Scripting
         private static Dictionary<string, object> GetLocalVariables(LexicalEnvironment lex)
         {
             Dictionary<string, object> locals = new Dictionary<string, object>();
-            if (lex != null && lex.Record != null)
+            if (lex?.Record != null)
             {
                 AddRecordsFromEnvironment(lex, locals);
             }
@@ -592,7 +570,7 @@ namespace Kooboo.Sites.Scripting
             Dictionary<string, object> globals = new Dictionary<string, object>();
             LexicalEnvironment tempLex = lex;
 
-            while (tempLex != null && tempLex.Record != null)
+            while (tempLex?.Record != null)
             {
                 AddRecordsFromEnvironment(tempLex, globals);
                 tempLex = tempLex.Outer;
@@ -643,19 +621,18 @@ namespace Kooboo.Sites.Scripting
                 return "undefined";
             }
 
-            if (value.GetType().IsValueType || value.GetType() == typeof(string))
+            if (value.GetType().IsValueType || value is string)
             {
                 return value.ToString();
             }
             else
             {
-                if (value is Jint.Native.JsValue)
+                if (value is JsValue jsvalue)
                 {
-                    var jsvalue = value as Jint.Native.JsValue;
                     if (jsvalue != null)
                     {
                         var jsobject = jsvalue.ToObject();
-                        if (jsobject != null && (jsobject.GetType().IsValueType || jsobject.GetType() == typeof(string)))
+                        if (jsobject != null && (jsobject.GetType().IsValueType || jsobject is string))
                         {
                             return jsobject.ToString();
                         }
@@ -677,7 +654,7 @@ namespace Kooboo.Sites.Scripting
                         {
                             builder.Append(",");
                         }
-                        builder.Append(string.Format("\"{0}\"", GetPropValue(item.GetType(), item)));
+                        builder.Append($"\"{GetPropValue(item.GetType(), item)}\"");
                     }
                     builder.Insert(0, "[");
                     builder.Append("]");
@@ -689,111 +666,111 @@ namespace Kooboo.Sites.Scripting
             }
         }
 
-
         private static Dictionary<string, string> GetDynamicMembers(object obj)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
-            if (obj == null)
+            switch (obj)
             {
-                return result;
-            }
-
-            if (obj is System.Dynamic.ExpandoObject)
-            {
-                IDictionary<String, Object> ExpValues = obj as IDictionary<String, Object>;
-
-                foreach (var item in ExpValues)
+                case null:
+                    return result;
+                case ExpandoObject expandoObject:
                 {
-                    var value = item.Value;
-                    if (value == null)
-                    {
-                        result[item.Key] = null;
-                    }
-                    else
-                    {
-                        result[item.Key] = value.ToString();
-                    }
-                }
-            }
-            else if (obj is IDictionary<string, object>)
-            {
-                IDictionary<string, object> dictvalues = obj as IDictionary<string, object>;
+                    IDictionary<String, Object> expValues = expandoObject;
 
-                foreach (var item in dictvalues)
-                {
-                    var value = item.Value;
-                    if (value == null)
+                    foreach (var item in expValues)
                     {
-                        result[item.Key] = null;
-                    }
-                    else
-                    {
-                        result[item.Key] = value.ToString();
-                    }
-                }
-
-            }
-            else if (obj is Jint.Native.JsValue)
-            {
-                var value = obj as Jint.Native.JsValue;
-
-                if (value != null)
-                {
-                    var jsObject = value.ToObject();
-                    return GetDynamicMembers(jsObject);
-                }
-            }
-
-            else if (obj is IDictionary)
-            {
-                var dict = obj as IDictionary;
-
-                foreach (var item in dict.Keys)
-                {
-                    if (item != null)
-                    {
-                        var itemvalue = dict[item];
-                        string key = item.ToString();
-                        if (itemvalue == null)
+                        var value = item.Value;
+                        if (value == null)
                         {
-                            result[key] = null;
+                            result[item.Key] = null;
                         }
                         else
                         {
-                            result[key] = itemvalue.ToString();
+                            result[item.Key] = value.ToString();
                         }
                     }
+
+                    break;
                 }
-            }
-
-            else if (Lib.Reflection.TypeHelper.IsGenericCollection(obj.GetType()))
-            {
-                return result;
-            }
-
-            else if (obj.GetType().IsClass)
-            {
-
-                Type myType = obj.GetType();
-                IList<PropertyInfo> props = new List<PropertyInfo>(myType.GetProperties());
-
-                foreach (PropertyInfo prop in props)
+                case IDictionary<string, object> dictvalues:
                 {
-                    try
+                    foreach (var item in dictvalues)
                     {
-                        object propValue = prop.GetValue(obj, null);
-
-                        result[prop.Name] = GetPropValue(prop.PropertyType, propValue);
+                        var value = item.Value;
+                        if (value == null)
+                        {
+                            result[item.Key] = null;
+                        }
+                        else
+                        {
+                            result[item.Key] = value.ToString();
+                        }
                     }
-                    catch (Exception)
-                    {
 
-                    }
+                    break;
                 }
+                case JsValue value:
+                {
+                    if (value != null)
+                    {
+                        var jsObject = value.ToObject();
+                        return GetDynamicMembers(jsObject);
+                    }
 
-                // TODO: also get the methods...
+                    break;
+                }
+                case IDictionary dict:
+                {
+                    foreach (var item in dict.Keys)
+                    {
+                        if (item != null)
+                        {
+                            var itemvalue = dict[item];
+                            string key = item.ToString();
+                            if (itemvalue == null)
+                            {
+                                result[key] = null;
+                            }
+                            else
+                            {
+                                result[key] = itemvalue.ToString();
+                            }
+                        }
+                    }
 
+                    break;
+                }
+                default:
+                {
+                    if (Lib.Reflection.TypeHelper.IsGenericCollection(obj.GetType()))
+                    {
+                        return result;
+                    }
+                    else if (obj.GetType().IsClass)
+                    {
+                        Type myType = obj.GetType();
+                        IList<PropertyInfo> props = new List<PropertyInfo>(myType.GetProperties());
+
+                        foreach (PropertyInfo prop in props)
+                        {
+                            try
+                            {
+                                object propValue = prop.GetValue(obj, null);
+
+                                result[prop.Name] = GetPropValue(prop.PropertyType, propValue);
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+
+                        // TODO: also get the methods...
+                    }
+
+                    break;
+                }
             }
 
             return result;
@@ -808,7 +785,7 @@ namespace Kooboo.Sites.Scripting
                 if (IsArray(returnType))
                 {
                     int arrayCount = GetArrayCount(returnType, propValue);
-                    value = string.Format("Array({0})", arrayCount);
+                    value = $"Array({arrayCount})";
                 }
                 else if ((returnType.IsClass && returnType != typeof(string)) ||
                     TypeHelper.IsDictionary(returnType))
@@ -829,15 +806,15 @@ namespace Kooboo.Sites.Scripting
             var propInfo = countPropInfo != null ? countPropInfo : type.GetProperty("Length");
             if (propInfo != null)
             {
-                int count;
-                int.TryParse(propInfo.GetValue(value).ToString(), out count);
+                int.TryParse(propInfo.GetValue(value).ToString(), out var count);
                 return count;
             }
             return 0;
         }
+
         private static bool IsArray(Type type)
         {
-            bool isArray = false;
+            bool isArray;
             if (type.IsArray)
             {
                 isArray = true;
@@ -845,18 +822,11 @@ namespace Kooboo.Sites.Scripting
             else
             {
                 bool isCol = TypeHelper.IsGenericCollection(type);
-                if (TypeHelper.IsDictionary(type))
-                {
-                    isArray = false;
-                }
-                else
-                {
-                    isArray = isCol;
-                }
-
+                isArray = !TypeHelper.IsDictionary(type) && isCol;
             }
             return isArray;
         }
+
         private static Object GetObject(object obj)
         {
             var type = obj.GetType();
@@ -864,30 +834,16 @@ namespace Kooboo.Sites.Scripting
             {
                 return obj;
             }
-
-            else if (obj is Jint.Native.JsValue)
+            else if (obj is JsValue value)
             {
-                var value = obj as Jint.Native.JsValue;
-
                 if (value != null)
                 {
                     var jsObject = value.ToObject();
-                    if (jsObject != null)
-                    {
-                        return GetObject(jsObject);
-                    }
-                    else
-                    {
-                        return "undefined";
-                    }
-
+                    return jsObject != null ? GetObject(jsObject) : "undefined";
                 }
-                return null;
             }
 
             return GetDynamicMembers(obj);
         }
-
-
     }
 }

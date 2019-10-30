@@ -1,14 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Data.Context;
 using Kooboo.Lib.Helper;
-using System.IO;
 using Kooboo.Sites.Scripting.Helper;
+using System.IO;
+using System.Text;
 
 namespace Kooboo.Sites.Scripting
 {
@@ -18,13 +14,13 @@ namespace Kooboo.Sites.Scripting
         {
             return string.Empty;
         }
-        public virtual string Render(RenderContext context,Tree tree)
+
+        public virtual string Render(RenderContext context, Tree tree)
         {
             var node = GetFirstNode(tree);
             var detail = RenderDetail(context, node);
 
             return Render(context, tree, detail);
-
         }
 
         private Node GetFirstNode(Tree tree)
@@ -36,7 +32,8 @@ namespace Kooboo.Sites.Scripting
             }
             return node;
         }
-        private string Render(RenderContext context, Tree tree,string detail)
+
+        private string Render(RenderContext context, Tree tree, string detail)
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(GetScript());
@@ -85,11 +82,12 @@ namespace Kooboo.Sites.Scripting
 
             return builder.ToString();
         }
-        public virtual string RenderDetail(RenderContext context,Node node)
-        {
 
+        public virtual string RenderDetail(RenderContext context, Node node)
+        {
             return string.Empty;
         }
+
         public virtual bool IsHelpDetail(RenderContext context)
         {
             return false;
@@ -105,6 +103,7 @@ namespace Kooboo.Sites.Scripting
         {
             return string.Empty;
         }
+
         protected string GetBaseurl(RenderContext context)
         {
             var baseUrl = context.Request.Url;
@@ -112,7 +111,9 @@ namespace Kooboo.Sites.Scripting
                 baseUrl = baseUrl.Split('?')[0];
             return baseUrl;
         }
+
         #region kscrip help style and script
+
         private string GetPath()
         {
             StringBuilder builder = new StringBuilder();
@@ -142,9 +143,9 @@ namespace Kooboo.Sites.Scripting
             builder.AppendFormat("<script>{0}</script>", File.ReadAllText(Path.Combine(path, "bootstrap-treeview.js")));
 
             return builder.ToString();
-
         }
-        #endregion
+
+        #endregion kscrip help style and script
 
         protected string RenderModelBase(SettingBase model)
         {
@@ -158,15 +159,16 @@ namespace Kooboo.Sites.Scripting
             {
                 builder.AppendFormat("<p>{0}</p>", model.Description);
             }
-            if(model is ExampleSetting)
+            if (model is ExampleSetting exampleSetting)
             {
-                builder.AppendFormat("<textarea style='display:none' disabled='true' class='code'>{0}</textarea>", (model as ExampleSetting).Example);
+                builder.AppendFormat("<textarea style='display:none' disabled='true' class='code'>{0}</textarea>", exampleSetting.Example);
                 builder.AppendFormat("<pre><code class='language-markup'></code></pre>");
             }
-            
+
             //builder.AppendFormat("<textarea class='language-JavaScript'>{0}</textarea>", model.Example);
             return builder.ToString();
         }
+
         protected string RenderDetailStart()
         {
             StringBuilder builder = new StringBuilder();
@@ -181,6 +183,7 @@ namespace Kooboo.Sites.Scripting
             builder.Append("<div id='content' class='news_content'>");
             return builder.ToString();
         }
+
         protected string RenderDetailEnd()
         {
             StringBuilder builder = new StringBuilder();
@@ -191,5 +194,4 @@ namespace Kooboo.Sites.Scripting
             return builder.ToString();
         }
     }
-
 }

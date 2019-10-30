@@ -20,26 +20,23 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
 
         public Dictionary<string, string> Values { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        public Object GetValue(string FieldName)
+        public Object GetValue(string fieldName)
         {
-            string lower = FieldName.ToLower();
+            string lower = fieldName.ToLower();
 
-            if (lower == "userkey")
+            switch (lower)
             {
-                return this.UserKey;
-            }
-            else if (lower == "id")
-            {
-                return this.Id;
-            }
-            else if (lower == "sequence")
-            {
-                return this.Order;
+                case "userkey":
+                    return this.UserKey;
+                case "id":
+                    return this.Id;
+                case "sequence":
+                    return this.Order;
             }
 
-            if (Values.ContainsKey(FieldName))
+            if (Values.ContainsKey(fieldName))
             {
-                return Values[FieldName];
+                return Values[fieldName];
             }
             else if (lower == "contenttypeid")
             {
@@ -64,17 +61,17 @@ namespace Kooboo.Sites.Ecommerce.ViewModel
             return null;
         }
 
-        public void SetValue(string FieldName, object Value)
+        public void SetValue(string fieldName, object value)
         {
-            this.Values[FieldName] = Value.ToString();
+            this.Values[fieldName] = value.ToString();
         }
 
-        public Object GetValue(string FieldName, RenderContext Context)
+        public Object GetValue(string fieldName, RenderContext context)
         {
-            string culture = Context.Culture;
+            string culture = context.Culture;
 
-            var result = GetValue(FieldName);
-            if (result == null && Context != null)
+            var result = GetValue(fieldName);
+            if (result == null && context != null)
             {
                 //// check category and embedded.
                 //var sitedb = Context.WebSite.SiteDb();

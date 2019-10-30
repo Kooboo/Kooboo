@@ -26,16 +26,9 @@ namespace Kooboo.Sites.Diagnosis.Implementation
 
         private string _line;
 
-        private string line
+        private string Line
         {
-            get
-            {
-                if (_line == null)
-                {
-                    _line = Hardcoded.GetValue("Line", this.session.context);
-                }
-                return _line;
-            }
+            get { return _line ?? (_line = Hardcoded.GetValue("Line", this.session.context)); }
         }
 
         public void Check()
@@ -55,8 +48,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
 
                     foreach (var item in allitems)
                     {
-                        var domobj = item as IDomObject;
-                        if (domobj != null)
+                        if (item is IDomObject domobj)
                         {
                             var dom = domobj.Dom;
 
@@ -81,7 +73,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
             }
             string name = Hardcoded.GetValue("Empty tag", session.context);
             HTMLCollection col = new HTMLCollection();
-            getEmptyTag(dom.body, col);
+            GetEmptyTag(dom.body, col);
 
             foreach (var item in col.item)
             {
@@ -91,7 +83,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
             }
         }
 
-        private void getEmptyTag(Node topElement, HTMLCollection collection)
+        private void GetEmptyTag(Node topElement, HTMLCollection collection)
         {
             if (topElement.nodeType == enumNodeType.ELEMENT)
             {
@@ -105,7 +97,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                 {
                     foreach (var item in topElement.childNodes.item)
                     {
-                        getEmptyTag(item, collection);
+                        GetEmptyTag(item, collection);
                     }
                 }
             }
@@ -121,8 +113,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                 }
                 else if (item.nodeType == enumNodeType.TEXT)
                 {
-                    var textnode = item as Text;
-                    if (textnode != null && !string.IsNullOrWhiteSpace(textnode.data))
+                    if (item is Text textnode && !string.IsNullOrWhiteSpace(textnode.data))
                     {
                         return false;
                     }
@@ -138,12 +129,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                 return false;
             }
 
-            if (el.attributes != null && el.attributes.Count > 0)
-            {
-                return false;
-            }
-
-            return true;
+            return el.attributes == null || el.attributes.Count <= 0;
         }
 
         public void CheckDepth(SiteObject siteobject, Kooboo.Dom.Document dom)
@@ -233,7 +219,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
 
                 if (element != null)
                 {
-                    if (element.tagName != null && outdatetags.Contains(element.tagName.ToLower()))
+                    if (element.tagName != null && Outdatetags.Contains(element.tagName.ToLower()))
                     {
                         collection.Add(element);
                     }
@@ -273,7 +259,7 @@ namespace Kooboo.Sites.Diagnosis.Implementation
 
                 if (element != null)
                 {
-                    bool isInline = inline.Contains(element.tagName.ToLower());
+                    bool isInline = Inline.Contains(element.tagName.ToLower());
 
                     if (isInline)
                     {
@@ -320,14 +306,15 @@ namespace Kooboo.Sites.Diagnosis.Implementation
 
         private HashSet<string> _outdatetags;
 
-        private HashSet<string> outdatetags
+        private HashSet<string> Outdatetags
         {
             get
             {
                 if (_outdatetags == null)
                 {
                     _outdatetags = new HashSet<string>();
-                    string tags = "strike,u,acronym,tt,xmp,font,basefont,applet,bgsound,big,blink,center,dir,marquee,multicol,nextid,nobr,noembed,plaintext,spacer";
+                    string tags =
+                        $"strike,u,acronym,tt,xmp,font,basefont,applet,bgsound,big,blink,center,dir,marquee,multicol,nextid,nobr,noembed,plaintext,spacer";
 
                     string[] list = tags.Split(',');
                     foreach (var item in list)
@@ -344,14 +331,15 @@ namespace Kooboo.Sites.Diagnosis.Implementation
 
         private HashSet<string> _inline;
 
-        private HashSet<string> inline
+        private HashSet<string> Inline
         {
             get
             {
                 if (_inline == null)
                 {
                     _inline = new HashSet<string>();
-                    string tags = "a,abbr,acronym,b,bdo,big,br,cite,code,dfn,em,font,i,img,input,kbd,label,q,s,samp,select,small,span,strike,strong,sub,sup,textarea,tt,u,var";
+                    string tags =
+                        $"a,abbr,acronym,b,bdo,big,br,cite,code,dfn,em,font,i,img,input,kbd,label,q,s,samp,select,small,span,strike,strong,sub,sup,textarea,tt,u,var";
 
                     string[] list = tags.Split(',');
                     foreach (var item in list)
@@ -375,7 +363,8 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                 if (_block == null)
                 {
                     _block = new HashSet<string>();
-                    string tags = "address,blockquote,center,dir,div,dl,dt,dd,fieldset,form,h1,h2,h3,h4,h5,h6,hr,isindex,menu,noframes,noscript,ol,p,pre,table,ul";
+                    string tags =
+                        $"address,blockquote,center,dir,div,dl,dt,dd,fieldset,form,h1,h2,h3,h4,h5,h6,hr,isindex,menu,noframes,noscript,ol,p,pre,table,ul";
 
                     string[] list = tags.Split(',');
                     foreach (var item in list)

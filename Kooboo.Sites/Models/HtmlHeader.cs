@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,6 @@ using System.Linq;
 
 namespace Kooboo.Sites.Models
 {
-
     public class HtmlHeader : SiteObject
     {
         private Dictionary<string, string> _title;
@@ -18,7 +17,7 @@ namespace Kooboo.Sites.Models
                 return true;
             }
 
-            if (_Metas != null && _Metas.Count > 0)
+            if (_metas != null && _metas.Count > 0)
             {
                 return true;
             }
@@ -38,22 +37,14 @@ namespace Kooboo.Sites.Models
                 return true;
             }
             return false;
-        }     
-  
+        }
+
         public Dictionary<string, string> Titles
         {
-            get
-            {
-                if (_title == null)
-                {
-                    _title = new Dictionary<string, string>();
-                }
-                return _title;
-            }
+            get { return _title ?? (_title = new Dictionary<string, string>()); }
             set
             {
                 _title = value;
-
             }
         }
 
@@ -79,7 +70,6 @@ namespace Kooboo.Sites.Models
             }
 
             return this.Titles.First().Value;
-
         }
 
         public void SetTitle(string value, string culture = null)
@@ -94,21 +84,14 @@ namespace Kooboo.Sites.Models
             }
         }
 
-        private List<HtmlMeta> _Metas;
+        private List<HtmlMeta> _metas;
 
         public List<HtmlMeta> Metas
         {
-            get
-            {
-                if (_Metas == null)
-                {
-                    _Metas = new List<HtmlMeta>();
-                }
-                return _Metas;
-            }
+            get { return _metas ?? (_metas = new List<HtmlMeta>()); }
             set
             {
-                _Metas = value;
+                _metas = value;
             }
         }
 
@@ -116,31 +99,18 @@ namespace Kooboo.Sites.Models
 
         public HashSet<string> Styles
         {
-            get
-            {
-                if (_styles == null)
-                {
-                    _styles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _styles;
-            }
+            get { return _styles ?? (_styles = new HashSet<string>(StringComparer.OrdinalIgnoreCase)); }
             set { _styles = value; }
         }
 
         private HashSet<string> _script;
+
         public HashSet<string> Scripts
         {
-            get
-            {
-                if (_script == null)
-                {
-                    _script = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _script;
-            }
+            get { return _script ?? (_script = new HashSet<string>(StringComparer.OrdinalIgnoreCase)); }
             set { _script = value; }
         }
-                                                     
+
         //[Kooboo.Attributes.SummaryIgnore]
         //public string PreSetCulture { get; set; }
 
@@ -181,10 +151,8 @@ namespace Kooboo.Sites.Models
             }
 
             unique += this.CustomHeader;
-                                 
+
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
-
         }
-
     }
 }

@@ -336,7 +336,7 @@ namespace Kooboo.Lib.Helper
             {
                 return await GetAsync<T>(url, headers, query);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return default(T);
             }

@@ -1,7 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Threading.Tasks;
-using Kooboo.Extensions;
 using Kooboo.Sites.Extensions;
 using System;
 
@@ -13,7 +11,7 @@ namespace Kooboo.Sites.Render
         {
             var image = context.SiteDb.ImagePool.Get(context.Route.objectId);
 
-            if (image == null || image.ContentBytes == null)
+            if (image?.ContentBytes == null)
             {
                 image = context.SiteDb.Images.Get(context.Route.objectId);
             }
@@ -21,26 +19,28 @@ namespace Kooboo.Sites.Render
 
             if (context.RenderContext.WebSite.EnableImageLog)
             {
-               if (context.RenderContext.Request.Channel == Data.Context.RequestChannel.Default)
+                if (context.RenderContext.Request.Channel == Data.Context.RequestChannel.Default)
                 {
-                    Kooboo.Data.Models.ImageLog log = new Data.Models.ImageLog();
-                    log.ClientIP = context.RenderContext.Request.IP;
-                    log.Url = context.RenderContext.Request.RawRelativeUrl;
-                    log.StartTime = DateTime.Now; 
-                    
+                    Kooboo.Data.Models.ImageLog log = new Data.Models.ImageLog
+                    {
+                        ClientIP = context.RenderContext.Request.IP,
+                        Url = context.RenderContext.Request.RawRelativeUrl,
+                        StartTime = DateTime.Now
+                    };
+
                     if (image != null)
                     {
                         log.Size = image.Size;
-                        log.ImageId = image.Id; 
+                        log.ImageId = image.Id;
                     }
-                    context.RenderContext.WebSite.SiteDb().ImageLog.Add(log); 
+                    context.RenderContext.WebSite.SiteDb().ImageLog.Add(log);
                 }
             }
 
             if (image == null)
             {
                 return;
-            } 
+            }
             RenderImage(context, image);
         }
 
@@ -61,7 +61,7 @@ namespace Kooboo.Sites.Render
             //"image/svg+xml"
             if (image.Extension == "svg" || image.Extension == ".svg")
             {
-                context.RenderContext.Response.ContentType +=  "+xml";
+                context.RenderContext.Response.ContentType += "+xml";
             }
 
             context.RenderContext.Response.Body = image.ContentBytes;
@@ -72,12 +72,8 @@ namespace Kooboo.Sites.Render
             if (image.ContentBytes == null)
             {
                 var sitedb = context.RenderContext.WebSite.SiteDb();
-                 
             }
-            return image.ContentBytes; 
+            return image.ContentBytes;
         }
-
-
-
     }
 }

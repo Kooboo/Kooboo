@@ -1,23 +1,22 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Extensions;
 using System;
-using Kooboo.Lib.Helper;
-using Kooboo.Extensions; 
 
 namespace Kooboo.Sites.SiteTransfer
 {
     /// <summary>
-    /// this is named importpage, but actually can be a pdf or download file. etc. 
+    /// this is named importpage, but actually can be a pdf or download file. etc.
     /// </summary>
-    public class TransferPage  : Kooboo.Sites.Models.SiteObject
+    public class TransferPage : Kooboo.Sites.Models.SiteObject
     {
-
         public TransferPage()
         {
-            this.ConstType = ConstObjectType.TransferPage;  
+            this.ConstType = ConstObjectType.TransferPage;
         }
-       
-        private Guid _id; 
+
+        private Guid _id;
+
         public override Guid Id
         {
             get
@@ -32,7 +31,7 @@ namespace Kooboo.Sites.SiteTransfer
 
             set
             {
-                _id = value; 
+                _id = value;
             }
         }
 
@@ -42,14 +41,14 @@ namespace Kooboo.Sites.SiteTransfer
         public Guid taskid { get; set; }
 
         /// <summary>
-        /// The page id that this transfer page had been converted to. 
+        /// The page id that this transfer page had been converted to.
         /// </summary>
-        public Guid PageId { get; set; } 
+        public Guid PageId { get; set; }
 
         /// <summary>
-       /// The absolute url start with http to download.
-       /// </summary>
-        public string absoluteUrl {get;set;}
+        /// The absolute url start with http to download.
+        /// </summary>
+        public string absoluteUrl { get; set; }
 
         public Guid HtmlSourceHash { get; set; }
 
@@ -66,8 +65,7 @@ namespace Kooboo.Sites.SiteTransfer
         {
             string unique = this.taskid.ToString() + this.PageId.ToString() + this.absoluteUrl + this.depth.ToString() + this.done.ToString() + this.DefaultStartPage.ToString();
 
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
-
     }
 }

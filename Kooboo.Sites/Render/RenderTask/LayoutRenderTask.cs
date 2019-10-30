@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Dom;
@@ -16,24 +16,24 @@ namespace Kooboo.Sites.Render
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
         public Dictionary<string, List<IRenderTask>> Components = new Dictionary<string, List<IRenderTask>>();
 
-        public SiteLayoutRenderTask(Element LayoutElement, EvaluatorOption option)
+        public SiteLayoutRenderTask(Element layoutElement, EvaluatorOption option)
         {
-            if (LayoutElement.hasAttribute("id"))
+            if (layoutElement.hasAttribute("id"))
             {
-                this.LayoutName = LayoutElement.getAttribute("id");
+                this.LayoutName = layoutElement.getAttribute("id");
             }
-            else if (LayoutElement.hasAttribute("name"))
+            else if (layoutElement.hasAttribute("name"))
             {
-                this.LayoutName = LayoutElement.getAttribute("name");
+                this.LayoutName = layoutElement.getAttribute("name");
             }
 
-            LoadComponents(LayoutElement, option);
+            LoadComponents(layoutElement, option);
         }
 
         private void LoadComponents(Element element, EvaluatorOption option)
@@ -56,29 +56,28 @@ namespace Kooboo.Sites.Render
                         {
                             continue;
                         }
-                        List<IRenderTask> ComTask = new List<IRenderTask>();
+                        List<IRenderTask> comTask = new List<IRenderTask>();
 
                         string innerhtml = child.InnerHtml;
 
                         if (!string.IsNullOrWhiteSpace(innerhtml))
                         {
                             var newoption = option.Clone();
-                            newoption.RenderHeader = false; 
-                            ComTask =  RenderEvaluator.Evaluate(innerhtml, option);
+                            newoption.RenderHeader = false;
+                            comTask = RenderEvaluator.Evaluate(innerhtml, option);
                         }
-                          
+
                         if (Components.ContainsKey(positionname))
                         {
                             var current = Components[positionname];
-                            current.AddRange(ComTask);
+                            current.AddRange(comTask);
                             Components[positionname] = current;
                         }
                         else
                         {
-                            Components[positionname] = ComTask;
+                            Components[positionname] = comTask;
                         }
                     }
-
                 }
             }
         }
@@ -87,31 +86,31 @@ namespace Kooboo.Sites.Render
         {
             RenderComponent(context);
             var plans = RenderPlanManager.GetLayoutPlan(this.LayoutName, context);
-            var result = RenderHelper.Render(plans, context);
-            return result; 
+            var result = plans.Render(context);
+            return result;
         }
 
         private void RenderComponent(RenderContext context)
         {
             foreach (var item in Components)
             {
-                string ComponentContent = item.Value.Render(context);
+                string componentContent = item.Value.Render(context);
 
                 if (context.PlaceholderContents.ContainsKey(item.Key))
                 {
                     var current = context.PlaceholderContents[item.Key];
-                    context.PlaceholderContents[item.Key] = current + ComponentContent;
+                    context.PlaceholderContents[item.Key] = current + componentContent;
                 }
                 else
                 {
-                    context.PlaceholderContents[item.Key] = ComponentContent;
+                    context.PlaceholderContents[item.Key] = componentContent;
                 }
             }
         }
 
         public void AppendResult(RenderContext context, List<RenderResult> result)
         {
-            result.Add(new RenderResult() { Value = this.Render(context) });  
+            result.Add(new RenderResult() { Value = this.Render(context) });
         }
     }
 }

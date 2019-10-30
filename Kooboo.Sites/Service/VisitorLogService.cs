@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using Kooboo.Sites.Repository;
@@ -9,8 +9,7 @@ using System.Linq;
 namespace Kooboo.Sites.Service
 {
     public static class VisitorLogService
-    {      
-
+    {
         public static SiteVisitorOverview GetOverView(SiteDb sitedb, string weekname = null)
         {
             var logs = GetLogs(sitedb, weekname);
@@ -97,11 +96,11 @@ namespace Kooboo.Sites.Service
             }
             return referercount.OrderByDescending(o => o.Count).ToList();
         }
-        
-        public static List<ResourceCount> TopPages(SiteDb sitedb, string WeekName = null)
+
+        public static List<ResourceCount> TopPages(SiteDb sitedb, string weekName = null)
         {
             List<ResourceCount> pagecountes = new List<ResourceCount>();
-            var logs = GetLogs(sitedb, WeekName);
+            var logs = GetLogs(sitedb, weekName);
             foreach (var item in logs.GroupBy(o => o.ObjectId))
             {
                 var objectid = item.Key;
@@ -120,73 +119,73 @@ namespace Kooboo.Sites.Service
             return pagecountes.OrderByDescending(o => o.Count).ToList();
         }
 
-        public static List<VisitorLog> GetLogs(SiteDb sitedb, string WeekName = null)
+        public static List<VisitorLog> GetLogs(SiteDb sitedb, string weekName = null)
         {
-            if (string.IsNullOrEmpty(WeekName))
+            if (string.IsNullOrEmpty(weekName))
             {
-                return sitedb.VisitorLog.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead);  
+                return sitedb.VisitorLog.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead);
             }
             else
             {
-                var repo = sitedb.LogByWeek<VisitorLog>(WeekName);
-                var list = repo.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead); 
+                var repo = sitedb.LogByWeek<VisitorLog>(weekName);
+                var list = repo.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead);
                 repo.Close();
                 return list;
             }
         }
 
-        public static List<ImageLog> GetImageLogs(SiteDb sitedb, string WeekName = null)
+        public static List<ImageLog> GetImageLogs(SiteDb sitedb, string weekName = null)
         {
-            if (string.IsNullOrEmpty(WeekName))
+            if (string.IsNullOrEmpty(weekName))
             {
-                return sitedb.ImageLog.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead); 
-               // return sitedb.ImageLog.AllItemList();
+                return sitedb.ImageLog.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead);
+                // return sitedb.ImageLog.AllItemList();
             }
             else
             {
-                var store = sitedb.LogByWeek<ImageLog>(WeekName);
-                var list = store.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead);  
+                var store = sitedb.LogByWeek<ImageLog>(weekName);
+                var list = store.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead);
                 //var list = store.AllItemList();
                 store.Close();
                 return list;
             }
         }
 
-        public static List<SiteErrorLog> GetErrorLogs(SiteDb sitedb, string WeekName = null)
+        public static List<SiteErrorLog> GetErrorLogs(SiteDb sitedb, string weekName = null)
         {
-            if (string.IsNullOrEmpty(WeekName))
+            if (string.IsNullOrEmpty(weekName))
             {
-                return sitedb.ErrorLog.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead); 
+                return sitedb.ErrorLog.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead);
                 //return sitedb.ErrorLog.AllItemList();
             }
             else
             {
-                var store = sitedb.LogByWeek<SiteErrorLog>(WeekName);
-                var list = store.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead); 
+                var store = sitedb.LogByWeek<SiteErrorLog>(weekName);
+                var list = store.Take(false, 0, Kooboo.Data.AppSettings.MaxVisitorLogRead);
                 //var list = store.AllItemList();
                 store.Close();
                 return list;
             }
         }
 
-        public static List<ResourceCount> TopImages(SiteDb sitedb, string WeekName = null)
+        public static List<ResourceCount> TopImages(SiteDb sitedb, string weekName = null)
         {
             List<ResourceCount> imagecounts = new List<ResourceCount>();
-            var logs = GetImageLogs(sitedb, WeekName);
+            var logs = GetImageLogs(sitedb, weekName);
             foreach (var item in logs.GroupBy(o => o.Url, StringComparer.OrdinalIgnoreCase))
             {
                 string url = item.Key;
                 if (!string.IsNullOrEmpty(url))
                 {
-                    ResourceCount count = new ResourceCount();
-                    count.Name = url;
-                    count.Count = item.Count();
-                    count.Size = item.First().Size;
+                    ResourceCount count = new ResourceCount
+                    {
+                        Name = url, Count = item.Count(), Size = item.First().Size
+                    };
                     imagecounts.Add(count);
                 }
             }
             return imagecounts.OrderByDescending(o => o.Count).ToList();
-        } 
+        }
 
         public static List<ResourceCount> MonthlyVisitors(SiteDb sitedb)
         {
@@ -207,9 +206,7 @@ namespace Kooboo.Sites.Service
 
             foreach (var item in groupby)
             {
-                ResourceCount resouce = new ResourceCount();
-                resouce.Name = item.Key;
-                resouce.Count = item.Count();
+                ResourceCount resouce = new ResourceCount {Name = item.Key, Count = item.Count()};
                 monthly.Add(resouce);
             }
 
@@ -228,7 +225,6 @@ namespace Kooboo.Sites.Service
             else
             { result += "-" + month.ToString(); }
 
-
             if (day < 10)
             {
                 result += "-0" + day.ToString();
@@ -240,7 +236,6 @@ namespace Kooboo.Sites.Service
 
             return result;
         }
-
     }
 
     public class SiteVisitorOverview
@@ -261,5 +256,4 @@ namespace Kooboo.Sites.Service
 
         public long Size { get; set; }
     }
-
 }

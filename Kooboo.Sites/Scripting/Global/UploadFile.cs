@@ -6,11 +6,11 @@ namespace Kooboo.Sites.Scripting.Global
 {
     public class UploadFile
     {
-        private RenderContext context { get; set; }
+        private RenderContext Context { get; set; }
 
         public UploadFile(RenderContext context)
         {
-            this.context = context;
+            this.Context = context;
         }
 
         public string ContentType { get; set; }
@@ -21,7 +21,7 @@ namespace Kooboo.Sites.Scripting.Global
 
         public FileInfo Save(string filename)
         {
-            FileIO io = new FileIO(this.context);
+            FileIO io = new FileIO(this.Context);
             return io.WriteBinary(filename, this.Bytes);
         }
     }

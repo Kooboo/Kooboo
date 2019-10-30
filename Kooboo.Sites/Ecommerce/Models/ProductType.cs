@@ -18,12 +18,7 @@ namespace Kooboo.Sites.Ecommerce.Models
 
         public List<ProductProperty> Properties
         {
-            get
-            {
-                if (_properties == null)
-                { _properties = new List<ProductProperty>(); }
-                return _properties;
-            }
+            get { return _properties ?? (_properties = new List<ProductProperty>()); }
             set
             { _properties = value; }
         }

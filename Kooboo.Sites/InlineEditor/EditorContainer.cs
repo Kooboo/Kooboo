@@ -8,56 +8,48 @@ namespace Kooboo.Sites.InlineEditor
 {
     public static class EditorContainer
     {
-        private static List<IInlineModel> _List;
+        private static List<IInlineModel> _list;
 
         public static List<IInlineModel> ModelList
         {
             get
             {
-                if (_List == null)
+                return _list ?? (_list = new List<IInlineModel>
                 {
-                    _List = new List<IInlineModel>();
-                    _List.Add(new ContentModel());
-                    _List.Add(new DomModel());
-                    _List.Add(new HtmlblockModel());
-                    _List.Add(new LabelModel());
-                    _List.Add(new StyleModel());
-                    _List.Add(new ImageModel());
-                    _List.Add(new ConverterModel());
-                }
-                return _List;
+                    new ContentModel(),
+                    new DomModel(),
+                    new HtmlblockModel(),
+                    new LabelModel(),
+                    new StyleModel(),
+                    new ImageModel(),
+                    new ConverterModel()
+                });
             }
         }
 
-        private static List<IInlineExecutor> _ExecutorList;
+        private static List<IInlineExecutor> _executorList;
 
         public static List<IInlineExecutor> ExecutorList
         {
             get
             {
-                if (_ExecutorList == null)
+                return _executorList ?? (_executorList = new List<IInlineExecutor>
                 {
-                    _ExecutorList = new List<IInlineExecutor>();
-                    _ExecutorList.Add(new Executor.DomExecutor());
-                    _ExecutorList.Add(new Executor.LabelExecutor());
-                    _ExecutorList.Add(new Executor.ContentExecutor());
-                    _ExecutorList.Add(new Executor.HtmlBlockExecutor());
-                    _ExecutorList.Add(new Executor.StyleExecutor());
-                    _ExecutorList.Add(new Executor.ImageExecutor());
-                    _ExecutorList.Add(new Executor.ConverterExecutor());
-                }
-                return _ExecutorList;
+                    new Executor.DomExecutor(),
+                    new Executor.LabelExecutor(),
+                    new Executor.ContentExecutor(),
+                    new Executor.HtmlBlockExecutor(),
+                    new Executor.StyleExecutor(),
+                    new Executor.ImageExecutor(),
+                    new Executor.ConverterExecutor()
+                });
             }
         }
 
         public static Type GetModelType(string editorType)
         {
             var type = ModelList.Find(o => o.EditorType == editorType);
-            if (type != null)
-            {
-                return type.GetType();
-            }
-            return null;
+            return type?.GetType();
         }
 
         public static IInlineExecutor GetExecutor(string editorType)

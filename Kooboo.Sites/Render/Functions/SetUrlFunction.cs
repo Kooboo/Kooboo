@@ -1,16 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Render.Functions
 {
- 
-
     public class SetUrlFunction : IFunction
     {
         public string Name
@@ -35,7 +31,7 @@ namespace Kooboo.Sites.Render.Functions
             }
 
             var paras = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
- 
+
             var providedParas = FunctionHelper.RenderParameter(context, this.Parameters);
 
             var dict = ToDictionary(providedParas);
@@ -44,7 +40,7 @@ namespace Kooboo.Sites.Render.Functions
             {
                 paras[item.Key] = item.Value;
             }
-            if (paras.Count() > 0)
+            if (paras.Any())
             {
                 return Lib.Helper.UrlHelper.AppendQueryString(relative, paras);
             }
@@ -78,7 +74,6 @@ namespace Kooboo.Sites.Render.Functions
                         name = null;
                         value = null;
                     }
-
                 }
                 else
                 {
@@ -98,16 +93,4 @@ namespace Kooboo.Sites.Render.Functions
             return dict;
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
 }

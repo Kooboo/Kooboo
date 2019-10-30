@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data;
 using Kooboo.Data.Context;
@@ -22,8 +22,7 @@ namespace Kooboo.Sites.TaskQueue
 
                 if (website != null)
                 {
-                    RenderContext context = new RenderContext();
-                    context.WebSite = website;
+                    RenderContext context = new RenderContext {WebSite = website};
 
                     var sitedb = website.SiteDb();
 
@@ -36,7 +35,7 @@ namespace Kooboo.Sites.TaskQueue
                     else
                     {
                         AddJobLog(jobinfo.Item.JobName, false, DateTime.Now, jobinfo.Item.WebSiteId, "Job code not found");
-                        return; 
+                        return;
                     }
                 }
 
@@ -50,7 +49,7 @@ namespace Kooboo.Sites.TaskQueue
 
         public void ExecuteRepeatingJob(RepeatItem<Job> repeatingJob)
         {
-            if (repeatingJob != null && repeatingJob.Item != null)
+            if (repeatingJob?.Item != null)
             {
                 try
                 {
@@ -58,8 +57,7 @@ namespace Kooboo.Sites.TaskQueue
 
                     if (website != null)
                     {
-                        RenderContext context = new RenderContext();
-                        context.WebSite = website;
+                        RenderContext context = new RenderContext {WebSite = website};
 
                         var sitedb = website.SiteDb();
 
@@ -72,7 +70,7 @@ namespace Kooboo.Sites.TaskQueue
                         else
                         {
                             AddJobLog(repeatingJob.Item.JobName, false, DateTime.Now, repeatingJob.Item.WebSiteId, "Job code not found");
-                            return; 
+                            return;
                         }
                     }
                     else
@@ -81,7 +79,6 @@ namespace Kooboo.Sites.TaskQueue
                     }
 
                     AddJobLog(repeatingJob.Item.JobName, true, DateTime.Now, repeatingJob.Item.WebSiteId, "");
-
                 }
                 catch (Exception ex)
                 {
@@ -95,15 +92,15 @@ namespace Kooboo.Sites.TaskQueue
             option.MaxStatements(500);
             option.Strict(false);
         }
-        
-        public  void AddJobLog(string JobName, bool isSuccess, DateTime ExecutionTime, Guid WebSiteId, string message)
+
+        public void AddJobLog(string jobName, bool isSuccess, DateTime executionTime, Guid webSiteId, string message)
         {
             GlobalDb.JobLog().Add(new JobLog()
             {
-                JobName = JobName,
+                JobName = jobName,
                 Success = isSuccess,
-                ExecutionTime = ExecutionTime,
-                WebSiteId = WebSiteId,
+                ExecutionTime = executionTime,
+                WebSiteId = webSiteId,
                 Message = message
             });
         }
@@ -119,21 +116,17 @@ namespace Kooboo.Sites.TaskQueue
             {
                 ExecuteScheduleJob(scheduleJob);
                 scheduleJob = GlobalDb.ScheduleJob().DeQueue();
-            } 
+            }
 
-            var repeatingJobs = GlobalDb.RepeatingJob().DequeueItems(); 
-            
-            if (repeatingJobs !=null &&  repeatingJobs.Any())
+            var repeatingJobs = GlobalDb.RepeatingJob().DequeueItems();
+
+            if (repeatingJobs != null && repeatingJobs.Any())
             {
                 foreach (var item in repeatingJobs)
                 {
                     ExecuteRepeatingJob(item);
-                } 
+                }
             }
-        
         }
-
     }
 }
-
-

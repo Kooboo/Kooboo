@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Definition;
+using Kooboo.IndexedDB;
 using Kooboo.Sites.Contents.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.IndexedDB;
-using Kooboo.Data.Definition;
 
 namespace Kooboo.Sites.Repository
 {
@@ -24,42 +24,29 @@ namespace Kooboo.Sites.Repository
                 return paras;
             }
         }
-    
 
-        public List<ContentProperty> GetColumns(Guid ContentTypeId)
+        public List<ContentProperty> GetColumns(Guid contentTypeId)
         {
-            var value = this.Get(ContentTypeId); 
-            if (value == null)
-            {
-                return new List<ContentProperty>(); 
-            }
-            else
-            {
-                return value.Properties; 
-            }
+            var value = this.Get(contentTypeId);
+            return value == null ? new List<ContentProperty>() : value.Properties;
         }
 
-        public List<ContentProperty> GetPropertiesByFolder(Guid FolderId)
+        public List<ContentProperty> GetPropertiesByFolder(Guid folderId)
         {
-            var folder = this.SiteDb.ContentFolders.Get(FolderId); 
-            if (folder !=null)
-            {
-                return GetColumns(folder.ContentTypeId); 
-            }
-            return null; 
+            var folder = this.SiteDb.ContentFolders.Get(folderId);
+            return folder != null ? GetColumns(folder.ContentTypeId) : null;
         }
-
 
         public override bool AddOrUpdate(ContentType value)
         {
-            EnsureSystemFields(value); 
+            EnsureSystemFields(value);
             return base.AddOrUpdate(value);
         }
 
-        public override bool AddOrUpdate(ContentType value, Guid UserId)
+        public override bool AddOrUpdate(ContentType value, Guid userId)
         {
-            EnsureSystemFields(value); 
-            return base.AddOrUpdate(value, UserId);
+            EnsureSystemFields(value);
+            return base.AddOrUpdate(value, userId);
         }
 
         public void EnsureSystemFields(ContentType contenttype)
@@ -89,7 +76,7 @@ namespace Kooboo.Sites.Repository
                 }
             }
 
-            // remove duplicate system fields... 
+            // remove duplicate system fields...
             List<ContentProperty> removeProp = new List<ContentProperty>();
 
             bool hasuserkey = false;
@@ -114,7 +101,6 @@ namespace Kooboo.Sites.Repository
                     }
                     else { hasseq = true; }
                 }
-
                 else if (item.Name.ToLower() == SystemFields.Online.Name.ToLower())
                 {
                     if (hasonline)
@@ -123,54 +109,48 @@ namespace Kooboo.Sites.Repository
                     }
                     else { hasonline = true; }
                 }
-
             }
 
             foreach (var item in removeProp)
             {
-                contenttype.Properties.Remove(item); 
+                contenttype.Properties.Remove(item);
             }
 
             if (!hasonline)
             {
-                contenttype.Properties.Add(SystemFields.Online);  
+                contenttype.Properties.Add(SystemFields.Online);
             }
         }
-         
 
         public bool IsNameExists(string contentTypeName)
         {
             var type = this.GetByNameOrId(contentTypeName);
             return (type != null);
         }
-   
+
         public List<string> GetTitleColumns(Guid contentTypeId)
         {
-            List<string> names = new List<string>();  
+            List<string> names = new List<string>();
             var contentType = this.Get(contentTypeId);
 
-            foreach (var item in contentType.Properties.Where(o=>o.IsSummaryField && !o.IsSystemField))
+            foreach (var item in contentType.Properties.Where(o => o.IsSummaryField && !o.IsSystemField))
             {
-                names.Add(item.Name);  
+                names.Add(item.Name);
             }
 
             if (names.Any())
             {
-                return names; 
+                return names;
             }
 
             names.Add(contentType.Properties.OrderBy(o => o.Order).First().Name);
-            return names;  
+            return names;
         }
 
-        public ContentType GetByFolder(Guid FolderId)
+        public ContentType GetByFolder(Guid folderId)
         {
-            var folder = this.SiteDb.ContentFolders.Get(FolderId);  
-            if (folder != null)
-            {
-                return this.Get(folder.ContentTypeId); 
-            }
-            return null; 
+            var folder = this.SiteDb.ContentFolders.Get(folderId);
+            return folder != null ? this.Get(folder.ContentTypeId) : null;
         }
     }
 }

@@ -1,24 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Sites.Repository;
 using Kooboo.Sites.TaskQueue.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Sites.Repository;
 
 namespace Kooboo.Sites.TaskQueue.TaskExecutor
 {
-    class DeleteDiskExecutor : ITaskExecutor<DeleteDisk>
+    internal class DeleteDiskExecutor : ITaskExecutor<DeleteDisk>
     {
-        public bool Execute(SiteDb SiteDb, string JsonModel)
+        public bool Execute(SiteDb siteDb, string jsonModel)
         {
-            var item = Lib.Helper.JsonHelper.Deserialize<DeleteDisk>(JsonModel);
+            var item = Lib.Helper.JsonHelper.Deserialize<DeleteDisk>(jsonModel);
 
             if (item == null)
-            { return true;  }
- 
+            { return true; }
+
             if (item.IsFolder)
             {
                 if (System.IO.Directory.Exists(item.FullPath))
@@ -26,18 +22,17 @@ namespace Kooboo.Sites.TaskQueue.TaskExecutor
                     try
                     {
                         System.IO.Directory.Delete(item.FullPath, true);
-                        return true; 
+                        return true;
                     }
                     catch (Exception)
                     {
-                        return false; 
+                        return false;
                     }
                 }
                 else
                 {
-                    return true; 
+                    return true;
                 }
-               
             }
             else
             {
@@ -51,14 +46,13 @@ namespace Kooboo.Sites.TaskQueue.TaskExecutor
                     catch (Exception)
                     {
                         return false;
-                    } 
+                    }
                 }
                 else
                 {
-                    return true; 
-                } 
+                    return true;
+                }
             }
-            
         }
     }
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
@@ -13,23 +13,23 @@ using System.Linq;
 
 namespace Kooboo.Sites.Scripting.Global.SiteItem
 {
-
     public class TextContentObjectRepository
     {
         public RenderContext context { get; set; }
 
         public IRepository repo { get; set; }
+
         public TextContentObjectRepository(IRepository repo, RenderContext context)
         {
             this.context = context;
             this.repo = repo;
         }
 
-        public void Add(object SiteObject)
+        public void Add(object siteObject)
         {
             var sitedb = this.context.WebSite.SiteDb();
 
-            var data = kHelper.GetData(SiteObject);
+            var data = kHelper.GetData(siteObject);
 
             var culture = this.context.Culture;
 
@@ -39,71 +39,67 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             ContentFolder folder = null;
             Dictionary<string, string> initValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-
             foreach (var item in data)
             {
                 var lower = item.Key.ToLower();
 
-                if (lower == "userkey")
+                switch (lower)
                 {
-                    content.UserKey = item.Value.ToString();
-                    continue;
-                }
-                else if (lower == "id")
-                {
-                    if (Guid.TryParse(lower, out Guid Id))
-                    {
+                    case "userkey":
+                        content.UserKey = item.Value.ToString();
+                        continue;
+                    case "id" when Guid.TryParse(lower, out Guid Id):
                         content.Id = Id;
                         continue;
-                    }
-                }
-                else if (lower == "Order" || lower == "sequence")
-                {
-                    int value;
-                    if (int.TryParse(item.Value.ToString(), out value))
+                    case "Order":
+                    case "sequence":
                     {
-                        content.Order = value;
-                        continue;
+                        int value;
+                        if (int.TryParse(item.Value.ToString(), out value))
+                        {
+                            content.Order = value;
+                            continue;
+                        }
+
+                        break;
                     }
-                }
-                else if (lower == "contenttype")
-                {
-                    type = sitedb.ContentTypes.Get(lower);
-                    if (type != null)
+                    case "contenttype":
                     {
-                        content.ContentTypeId = type.Id;
-                        folder = sitedb.ContentFolders.All().Find(o => o.ContentTypeId == type.Id);
+                        type = sitedb.ContentTypes.Get(lower);
+                        if (type != null)
+                        {
+                            content.ContentTypeId = type.Id;
+                            folder = sitedb.ContentFolders.All().Find(o => o.ContentTypeId == type.Id);
+                            if (folder != null)
+                            {
+                                content.FolderId = folder.Id;
+                                continue;
+                            }
+                        }
+
+                        break;
+                    }
+                    case "contentfolder":
+                    case "folder":
+                    {
+                        folder = sitedb.ContentFolders.Get(item.Value.ToString());
                         if (folder != null)
                         {
                             content.FolderId = folder.Id;
+                            content.ContentTypeId = folder.ContentTypeId;
                             continue;
                         }
-                    }
-                }
-                else if (lower == "contentfolder" || lower == "folder")
-                {
-                    folder = sitedb.ContentFolders.Get(item.Value.ToString());
-                    if (folder != null)
-                    {
-                        content.FolderId = folder.Id;
-                        content.ContentTypeId = folder.ContentTypeId;
-                        continue;
-                    }
-                }
 
-                else if (lower == "online")
-                {
-                    if (bool.TryParse(lower, out bool isonline))
-                    {
+                        break;
+                    }
+                    case "online" when bool.TryParse(lower, out bool isonline):
                         content.Online = isonline;
                         continue;
-                    }
                 }
 
                 // content.SetValue(item.Key, item.Value.ToString(), culture);
 
                 initValues.Add(item.Key, item.Value.ToString());
-
             }
 
             if (content.ContentTypeId == default(Guid) && content.FolderId == default(Guid))
@@ -124,7 +120,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }
             }
 
-            // prepare and set values... 
+            // prepare and set values...
             if (type == null && folder != null)
             {
                 type = sitedb.ContentTypes.Get(folder.ContentTypeId);
@@ -157,15 +153,15 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
             foreach (var item in nonfields)
             {
-                Guid ValueId = Lib.Helper.IDHelper.GetOrParseKey(item.Value);
+                Guid valueId = Lib.Helper.IDHelper.GetOrParseKey(item.Value);
 
                 var category = GetCatFolder(item.Key);
                 if (category != null)
                 {
-                    var catitem = siteDb.TextContent.Get(ValueId);
+                    var catitem = siteDb.TextContent.Get(valueId);
                     if (catitem != null)
                     {
-                        siteDb.ContentCategories.AddOrUpdate(new ContentCategory() { ContentId = content.Id, CategoryFolder = category.FolderId, CategoryId = ValueId });
+                        siteDb.ContentCategories.AddOrUpdate(new ContentCategory() { ContentId = content.Id, CategoryFolder = category.FolderId, CategoryId = valueId });
                     }
                 }
                 else
@@ -182,16 +178,12 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                         }
                         if (beEmbedded != null)
                         {
-                            var parentcontent = siteDb.TextContent.Get(ValueId);
+                            var parentcontent = siteDb.TextContent.Get(valueId);
                             if (parentcontent != null)
                             {
                                 if (parentcontent.Embedded.ContainsKey(folder.Id))
                                 {
-                                    var list = parentcontent.Embedded[folder.Id];
-                                    if (list == null)
-                                    {
-                                        list = new List<Guid>();
-                                    }
+                                    var list = parentcontent.Embedded[folder.Id] ?? new List<Guid>();
                                     if (!list.Contains(content.Id))
                                     {
                                         list.Add(content.Id);
@@ -199,8 +191,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                                 }
                                 else
                                 {
-                                    List<Guid> ids = new List<Guid>();
-                                    ids.Add(content.Id);
+                                    List<Guid> ids = new List<Guid> {content.Id};
                                     parentcontent.Embedded[folder.Id] = ids;
                                 }
 
@@ -211,14 +202,9 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }
             }
 
-
             List<EmbeddedBy> GetBY()
             {
-                if (embeddedby == null)
-                {
-                    embeddedby = siteDb.ContentFolders.GetEmbeddedBy(folder.Id);
-                }
-                return embeddedby;
+                return embeddedby ?? (embeddedby = siteDb.ContentFolders.GetEmbeddedBy(folder.Id));
             }
 
             CategoryFolder GetCatFolder(string foldername)
@@ -246,18 +232,17 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
         }
 
-        public void Update(object SiteObject)
+        public void Update(object siteObject)
         {
-            if (SiteObject is TextContentObject)
+            if (siteObject is TextContentObject obj)
             {
-                var obj = SiteObject as TextContentObject;
                 var sitedb = this.context.WebSite.SiteDb();
 
                 sitedb.TextContent.AddOrUpdate(obj.TextContent);
 
                 if (obj.AdditionalValues.Any())
                 {
-                    // handle additioanl values... like blog...but how to remove then?  
+                    // handle additioanl values... like blog...but how to remove then?
                     ContentFolder folder = sitedb.ContentFolders.Get(obj.TextContent.FolderId);
                     if (folder != null)
                     {
@@ -267,23 +252,22 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
         }
 
-
         private void UpdateAdditional(Dictionary<string, string> additionalData, TextContent content, ContentFolder folder, SiteDb siteDb)
         {
             List<EmbeddedBy> embeddedby = null;
 
             foreach (var item in additionalData)
             {
-                Guid ValueId = default(Guid);
+                Guid valueId = default(Guid);
                 if (!String.IsNullOrWhiteSpace(item.Value))
                 {
-                    ValueId = Lib.Helper.IDHelper.GetOrParseKey(item.Value);
+                    valueId = Lib.Helper.IDHelper.GetOrParseKey(item.Value);
                 }
 
                 var category = GetCatFolder(item.Key);
                 if (category != null)
                 {
-                    if (ValueId == default(Guid))
+                    if (valueId == default(Guid))
                     {
                         //To remove item..
                         var currentItems = siteDb.ContentCategories.GetCategories(category.FolderId, content.Id);
@@ -294,10 +278,10 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                     }
                     else
                     {
-                        var catitem = siteDb.TextContent.Get(ValueId);
+                        var catitem = siteDb.TextContent.Get(valueId);
                         if (catitem != null)
                         {
-                            siteDb.ContentCategories.AddOrUpdate(new ContentCategory() { ContentId = content.Id, CategoryFolder = category.FolderId, CategoryId = ValueId });
+                            siteDb.ContentCategories.AddOrUpdate(new ContentCategory() { ContentId = content.Id, CategoryFolder = category.FolderId, CategoryId = valueId });
                         }
                     }
                 }
@@ -315,18 +299,14 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                         }
                         if (beEmbedded != null)
                         {
-                            if (ValueId != default(Guid))
+                            if (valueId != default(Guid))
                             {
-                                var parentcontent = siteDb.TextContent.Get(ValueId);
+                                var parentcontent = siteDb.TextContent.Get(valueId);
                                 if (parentcontent != null)
                                 {
                                     if (parentcontent.Embedded.ContainsKey(folder.Id))
                                     {
-                                        var list = parentcontent.Embedded[folder.Id];
-                                        if (list == null)
-                                        {
-                                            list = new List<Guid>();
-                                        }
+                                        var list = parentcontent.Embedded[folder.Id] ?? new List<Guid>();
                                         if (!list.Contains(content.Id))
                                         {
                                             list.Add(content.Id);
@@ -334,8 +314,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                                     }
                                     else
                                     {
-                                        List<Guid> ids = new List<Guid>();
-                                        ids.Add(content.Id);
+                                        List<Guid> ids = new List<Guid> {content.Id};
                                         parentcontent.Embedded[folder.Id] = ids;
                                     }
 
@@ -344,23 +323,18 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                             }
                             else
                             {
-                                // TODO: 
+                                // TODO:
                                 // this is to remove one item from the embedded...This is not happening often.
-                                // only we need to find out which item embed this one which is not easy... as we need to check every items. 
+                                // only we need to find out which item embed this one which is not easy... as we need to check every items.
                             }
                         }
                     }
                 }
             }
 
-
             List<EmbeddedBy> GetBY()
             {
-                if (embeddedby == null)
-                {
-                    embeddedby = siteDb.ContentFolders.GetEmbeddedBy(folder.Id);
-                }
-                return embeddedby;
+                return embeddedby ?? (embeddedby = siteDb.ContentFolders.GetEmbeddedBy(folder.Id));
             }
 
             CategoryFolder GetCatFolder(string foldername)
@@ -403,7 +377,6 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         public void Delete(object nameOrId)
         {
-
             var key = Lib.Helper.IDHelper.ParseKey(nameOrId);
 
             var content = this.context.WebSite.SiteDb().TextContent.Get(key);
@@ -413,7 +386,6 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 this.context.WebSite.SiteDb().TextContent.Delete(content.Id);
             }
         }
-
 
         public List<TextContentObject> All()
         {
@@ -433,7 +405,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
         {
             // todo: improve the performance.
             var all = FindAll(query);
-            if (all != null && all.Count() > 0)
+            if (all != null && all.Any())
             {
                 return all.First();
             }
@@ -475,9 +447,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                     onlyFolder = folder;
                     onlyType = sitedb.ContentTypes.Get(folder.ContentTypeId);
                 }
-
             }
-
             else if (condition.ContentTypeId != default(Guid))
             {
                 tablequery.Where(o => o.ContentTypeId == condition.ContentTypeId);
@@ -488,7 +458,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }
             }
 
-            // var allcontentids = this.Context.SiteDb.ContentCategories.Query.Where(o => o.CategoryId == CategoryId).SelectAll().Select(o => o.ContentId).ToList();    
+            // var allcontentids = this.Context.SiteDb.ContentCategories.Query.Where(o => o.CategoryId == CategoryId).SelectAll().Select(o => o.ContentId).ToList();
             //    var categoryContentquery = this.Context.SiteDb.TextContent.Query.Where(o => o.FolderId == ContentFolderId).WhereIn("Id", allcontentids);
 
             if (condition.CategoryId != default(Guid))
@@ -514,11 +484,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
             foreach (var item in input)
             {
-                ContentType contenttype = type;
-                if (contenttype == null)
-                {
-                    contenttype = alltypes.Find(o => o.Id == item.ContentTypeId);
-                }
+                ContentType contenttype = type ?? alltypes.Find(o => o.Id == item.ContentTypeId);
 
                 if (contenttype != null)
                 {
@@ -532,9 +498,8 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             return result;
         }
 
-        public bool CheckItem(TextContent TextContent, List<IndexedDB.Dynamic.ConditionItem> conditions, ContentType contenttype, ContentFolder folder = null)
+        public bool CheckItem(TextContent textContent, List<IndexedDB.Dynamic.ConditionItem> conditions, ContentType contenttype, ContentFolder folder = null)
         {
-
             foreach (var item in conditions)
             {
                 var col = contenttype.Properties.Find(o => o.Name == item.Field);
@@ -548,7 +513,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                         bool isPassed = false;
                         foreach (var cul in this.context.WebSite.Culture)
                         {
-                            var value = TextContent.GetValue(col.Name, cul.Key);
+                            var value = textContent.GetValue(col.Name, cul.Key);
 
                             if (value != null && FilterHelper.Check(value.ToString(), ToFilterCompare(item.Comparer), item.Value, clrtype))
                             {
@@ -560,7 +525,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                     }
                     else
                     {
-                        var value = TextContent.GetValue(col.Name);
+                        var value = textContent.GetValue(col.Name);
                         if (value != null)
                         {
                             if (FilterHelper.Check(value.ToString(), ToFilterCompare(item.Comparer), item.Value, clrtype))
@@ -580,11 +545,11 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 }
                 else
                 {
-                    // TODO: Should check for category fields...   
-                    ///----------------------------------------- 
+                    // TODO: Should check for category fields...
+                    //-----------------------------------------
                     if (folder != null)
                     {
-                        //check category.  
+                        //check category.
                         string fieldname = item.Field;
                         string subfieldname = null;
                         var category = folder.Category.Find(o => o.Alias == fieldname);
@@ -600,7 +565,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
                         if (category != null)
                         {
-                            var ids = this.context.WebSite.SiteDb().ContentCategories.Query.Where(o => o.ContentId == TextContent.Id && o.CategoryFolder == category.FolderId).SelectAll().Select(o => o.CategoryId).ToList();
+                            var ids = this.context.WebSite.SiteDb().ContentCategories.Query.Where(o => o.ContentId == textContent.Id && o.CategoryFolder == category.FolderId).SelectAll().Select(o => o.CategoryId).ToList();
 
                             foreach (var catid in ids)
                             {
@@ -639,7 +604,6 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                                             }
                                         }
 
-
                                         value = catcontent.GetValue("name");
                                         if (value != null)
                                         {
@@ -648,30 +612,20 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                                                 return true;
                                             }
                                         }
-
-
-
                                     }
-
                                 }
-
                             }
-
                         }
-
                     }
 
-                    ///----------------
-
+                    //----------------
 
                     return false;
                 }
             }
 
             return true;
-
         }
-
 
         private Kooboo.Data.Definition.Comparer ToFilterCompare(Kooboo.IndexedDB.Query.Comparer input)
         {
@@ -679,34 +633,40 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             {
                 case IndexedDB.Query.Comparer.EqualTo:
                     return Data.Definition.Comparer.EqualTo;
+
                 case IndexedDB.Query.Comparer.GreaterThan:
                     return Data.Definition.Comparer.GreaterThan;
+
                 case IndexedDB.Query.Comparer.GreaterThanOrEqual:
                     return Data.Definition.Comparer.GreaterThanOrEqual;
+
                 case IndexedDB.Query.Comparer.LessThan:
                     return Data.Definition.Comparer.LessThan;
+
                 case IndexedDB.Query.Comparer.LessThanOrEqual:
                     return Data.Definition.Comparer.LessThanOrEqual;
+
                 case IndexedDB.Query.Comparer.NotEqualTo:
                     return Data.Definition.Comparer.NotEqualTo;
+
                 case IndexedDB.Query.Comparer.StartWith:
                     return Data.Definition.Comparer.StartWith;
+
                 case IndexedDB.Query.Comparer.Contains:
                     return Data.Definition.Comparer.Contains;
+
                 default:
                     return Data.Definition.Comparer.EqualTo;
             }
         }
 
-
         public FindCondition ParseCondition(string query)
         {
             var conditions = Kooboo.IndexedDB.Dynamic.QueryPraser.ParseConditoin(query);
 
-            Guid FolderId = default(Guid);
-            Guid ContentTypeId = default(Guid);
-            Guid CategoryId = default(Guid);
-
+            Guid folderId = default(Guid);
+            Guid contentTypeId = default(Guid);
+            Guid categoryId = default(Guid);
 
             var folderidcon = conditions.Find(o => o.Field.ToLower() == "folderid");
 
@@ -714,10 +674,10 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             {
                 conditions.Remove(folderidcon);
 
-                Guid.TryParse(folderidcon.Value, out FolderId);
+                Guid.TryParse(folderidcon.Value, out folderId);
             }
 
-            if (FolderId == default(Guid))
+            if (folderId == default(Guid))
             {
                 var foldername = conditions.Find(o => o.Field.ToLower() == "folder");
                 if (foldername != null)
@@ -726,22 +686,22 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                     if (folder != null)
                     {
                         conditions.Remove(foldername);
-                        FolderId = folder.Id;
+                        folderId = folder.Id;
                     }
                 }
             }
 
-            if (FolderId == default(Guid))
+            if (folderId == default(Guid))
             {
                 var typecon = conditions.Find(o => o.Field.ToLower() == "contenttypeid");
 
                 if (typecon != null)
                 {
                     conditions.Remove(typecon);
-                    Guid.TryParse(typecon.Value, out ContentTypeId);
+                    Guid.TryParse(typecon.Value, out contentTypeId);
                 }
 
-                if (ContentTypeId == default(Guid))
+                if (contentTypeId == default(Guid))
                 {
                     var typename = conditions.Find(o => o.Field.ToLower() == "contenttype");
                     if (typename != null)
@@ -751,13 +711,11 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                         {
                             conditions.Remove(typename);
 
-                            ContentTypeId = type.Id;
+                            contentTypeId = type.Id;
                         }
                     }
                 }
             }
-
-
 
             var catname = conditions.Find(o => o.Field.ToLower() == "category");
             if (catname != null)
@@ -766,20 +724,16 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
                 if (cat != null)
                 {
                     conditions.Remove(catname);
-                    CategoryId = cat.Id;
+                    categoryId = cat.Id;
                 }
             }
 
-
-
-            FindCondition result = new FindCondition();
-            result.FolderId = FolderId;
-            result.ContentTypeId = ContentTypeId;
-            result.CategoryId = CategoryId;
-            result.Conditions = conditions;
+            FindCondition result = new FindCondition
+            {
+                FolderId = folderId, ContentTypeId = contentTypeId, CategoryId = categoryId, Conditions = conditions
+            };
             return result;
         }
-
 
         public TextContentQuery Query(string searchCondition)
         {
@@ -807,10 +761,8 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         //    var allcontents = Helper.ContentHelper.ToViews(allorgcontents, this.Context.RenderContext.Culture, props);
 
-        //    return SortFilterContentViews(allcontents, ContentFolderId, Filters, SortField, IsAscending); 
+        //    return SortFilterContentViews(allcontents, ContentFolderId, Filters, SortField, IsAscending);
         //}
-
-
     }
 
     public class FindCondition
@@ -823,10 +775,4 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
 
         public List<IndexedDB.Dynamic.ConditionItem> Conditions { get; set; }
     }
-
-
-
-
-
-
 }

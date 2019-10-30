@@ -22,11 +22,11 @@ namespace Kooboo.Sites.Repository
             return AddOrUpdate(value, default(Guid));
         }
 
-        public override bool AddOrUpdate(DatabaseTable value, Guid UserId)
+        public override bool AddOrUpdate(DatabaseTable value, Guid userId)
         {
-             VerifyData(value.Columns); 
+            VerifyData(value.Columns);
 
-            var ok = base.AddOrUpdate(value, UserId);
+            var ok = base.AddOrUpdate(value, userId);
 
             if (ok)
             {
@@ -42,10 +42,10 @@ namespace Kooboo.Sites.Repository
 
             var setting = Lib.Serializer.Copy.DeepCopy<IndexedDB.Dynamic.Setting>(table.Setting);
 
-            // deleted items. 
+            // deleted items.
             setting.Columns.RemoveWhere(o => columns.Find(m => o.Name.ToLower() == m.Name.ToLower()) == null && o.Name != IndexedDB.Dynamic.Constants.DefaultIdFieldName);
 
-            // update items or new added items. 
+            // update items or new added items.
 
             foreach (var item in columns)
             {
@@ -78,7 +78,6 @@ namespace Kooboo.Sites.Repository
                                 length = 256;
                             }
                         }
-
                     }
 
                     setting.AppendColumn(item.Name, datatype, length);
@@ -97,7 +96,7 @@ namespace Kooboo.Sites.Repository
                 {
                     find.Setting = item.Setting;
 
-                    // check string change the controltype from textbox to textarea. 
+                    // check string change the controltype from textbox to textarea.
                     if (find.ClrType == typeof(string))
                     {
                         if (find.Length != item.Length && item.Length > 0)
@@ -128,20 +127,20 @@ namespace Kooboo.Sites.Repository
             this.Delete(id, default(Guid));
         }
 
-        public override void Delete(Guid id, Guid UserId)
+        public override void Delete(Guid id, Guid userId)
         {
             var old = Get(id);
 
             if (old != null)
             {
-                base.Delete(id, UserId);
+                base.Delete(id, userId);
                 KDB.DeleteTable(old.Name);
             }
         }
 
         public void DeleteTable(List<string> nameorids, Guid userid)
         {
-            if (nameorids != null && nameorids.Count() > 0)
+            if (nameorids != null && nameorids.Any())
             {
                 foreach (var item in nameorids)
                 {
@@ -158,20 +157,18 @@ namespace Kooboo.Sites.Repository
 
         public void VerifyData(List<DbTableColumn> columns)
         {
-            var finds = columns.FindAll(o =>o.IsPrimaryKey || o.IsIndex);
-            
-            if (finds !=null)
+            var finds = columns.FindAll(o => o.IsPrimaryKey || o.IsIndex);
+
+            if (finds != null)
             {
                 foreach (var item in finds)
                 {
-                    if (item.DataType !=null && item.DataType.ToLower().Contains("date"))
+                    if (item.DataType != null && item.DataType.ToLower().Contains("date"))
                     {
-                        throw new Exception(Data.Language.Hardcoded.GetValue("Does not support index on date time column")); 
+                        throw new Exception(Data.Language.Hardcoded.GetValue("Does not support index on date time column"));
                     }
                 }
             }
-
         }
-      
     }
 }

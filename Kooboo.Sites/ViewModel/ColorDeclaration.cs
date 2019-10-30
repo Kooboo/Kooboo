@@ -1,17 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.ViewModel
-{ 
+{
     public class ColorDeclaration
     {
         public bool IsInline { get; set; }
-  
+
         public string KoobooId { get; set; }
 
         public string Selector { get; set; }
@@ -26,7 +22,7 @@ namespace Kooboo.Sites.ViewModel
 
         public bool Important { get; set; }
 
-       public string CssProperty { get { return Property;  } }
+        public string CssProperty { get { return Property; } }
 
         public string Value { get; set; }
 
@@ -35,7 +31,5 @@ namespace Kooboo.Sites.ViewModel
         public Guid OwnerObjectId { get; set; }
 
         public byte OwnerConstType { get; set; }
-         
-
     }
 }

@@ -1,28 +1,28 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.Models;
 using Kooboo.Data.Interface;
-using System.IO;
-using System;
-using Kooboo.Sites.TaskQueue.Model;
-using System.Linq;
-using Kooboo.Lib.Helper;
-using Kooboo.Sites.Routing;
-using System.Collections.Generic;
 using Kooboo.IndexedDB;
+using Kooboo.Lib.Helper;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.Routing;
+using Kooboo.Sites.TaskQueue.Model;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Kooboo.Sites.Sync
 {
     public class SyncService
     {
-        public static void DeleteDiskFolder(string FullPath, SiteDb SiteDb)
+        public static void DeleteDiskFolder(string fullPath, SiteDb siteDb)
         {
-            string nonroutable = DiskPathService.GetNonRoutableFolder(FullPath);
+            string nonroutable = DiskPathService.GetNonRoutableFolder(fullPath);
             if (!string.IsNullOrEmpty(nonroutable))
             {
-                // delete all routable.. 
-                var repo = SiteDb.GetRepository(nonroutable);
+                // delete all routable..
+                var repo = siteDb.GetRepository(nonroutable);
                 if (repo != null)
                 {
                     var all = repo.All();
@@ -35,7 +35,7 @@ namespace Kooboo.Sites.Sync
             else
             {
                 // delete all.
-                var relative = DiskPathService.GetRelativeUrl(SiteDb.WebSite, FullPath);
+                var relative = DiskPathService.GetRelativeUrl(siteDb.WebSite, fullPath);
 
                 if (!string.IsNullOrEmpty(relative))
                 {
@@ -45,7 +45,7 @@ namespace Kooboo.Sites.Sync
                         relative = relative + "/";
                     }
                     List<Route> routesToRemove = new List<Route>();
-                    foreach (var item in SiteDb.Routes.All())
+                    foreach (var item in siteDb.Routes.All())
                     {
                         if (item.Name.ToLower().StartsWith(relative))
                         {
@@ -57,31 +57,30 @@ namespace Kooboo.Sites.Sync
                     {
                         if (item.objectId != default(Guid))
                         {
-                            var repo = SiteDb.GetRepository(item.DestinationConstType);
+                            var repo = siteDb.GetRepository(item.DestinationConstType);
                             repo.Delete(item.objectId);
-                            SiteDb.Routes.Delete(item.Id);
+                            siteDb.Routes.Delete(item.Id);
                         }
                     }
                 }
-
             }
         }
 
-        public static void DiskFileRename(SiteDb SiteDb, string OldPath, string NewPath)
+        public static void DiskFileRename(SiteDb siteDb, string oldPath, string newPath)
         {
-            NonRoutableObject NonRoutable = null;
+            NonRoutableObject nonRoutable = null;
             IRepository repo = null;
 
-            NonRoutable = DiskPathService.GetNonRoutableObject(OldPath);
+            nonRoutable = DiskPathService.GetNonRoutableObject(oldPath);
 
-            if (NonRoutable != null)
+            if (nonRoutable != null)
             {
-                var NewNonRoutable = DiskPathService.GetNonRoutableObject(NewPath);
+                var newNonRoutable = DiskPathService.GetNonRoutableObject(newPath);
 
-                if (NewNonRoutable != null && !string.IsNullOrEmpty(NonRoutable.Name) && !string.IsNullOrEmpty(NewNonRoutable.Name))
+                if (newNonRoutable != null && !string.IsNullOrEmpty(nonRoutable.Name) && !string.IsNullOrEmpty(newNonRoutable.Name))
                 {
-                    repo = SiteDb.GetRepository(NonRoutable.StoreName);
-                    var siteobject = repo?.GetByNameOrId(NonRoutable.Name);
+                    repo = siteDb.GetRepository(nonRoutable.StoreName);
+                    var siteobject = repo?.GetByNameOrId(nonRoutable.Name);
                     if (siteobject == null)
                     {
                         return;
@@ -89,34 +88,33 @@ namespace Kooboo.Sites.Sync
 
                     var oldid = siteobject.Id;
 
-                    siteobject.Name = NewNonRoutable.Name;
+                    siteobject.Name = newNonRoutable.Name;
                     siteobject.Id = default(Guid);
 
                     repo.Delete(oldid);
                     repo.AddOrUpdate(siteobject);
-
                 }
             }
             else
             {
-                string OldRelative = DiskPathService.GetRelativeUrl(SiteDb.WebSite, OldPath);
-                string NewRelative = DiskPathService.GetRelativeUrl(SiteDb.WebSite, NewPath);
-                if (!string.IsNullOrEmpty(OldRelative) && !string.IsNullOrEmpty(NewRelative))
+                string oldRelative = DiskPathService.GetRelativeUrl(siteDb.WebSite, oldPath);
+                string newRelative = DiskPathService.GetRelativeUrl(siteDb.WebSite, newPath);
+                if (!string.IsNullOrEmpty(oldRelative) && !string.IsNullOrEmpty(newRelative))
                 {
-                    SiteDb.Routes.ChangeRoute(OldRelative, NewRelative);
+                    siteDb.Routes.ChangeRoute(oldRelative, newRelative);
                 }
             }
         }
 
-        public static void DiskFolderRename(SiteDb sitedb, string oldFolder, string NewFolder)
+        public static void DiskFolderRename(SiteDb sitedb, string oldFolder, string newFolder)
         {
-            string nonroutable = DiskPathService.GetNonRoutableFolder(NewFolder);
+            string nonroutable = DiskPathService.GetNonRoutableFolder(newFolder);
             if (!string.IsNullOrEmpty(nonroutable))
             {
                 return;
             }
             string oldrelative = DiskPathService.GetRelativeUrl(sitedb.WebSite, oldFolder);
-            string newrelative = DiskPathService.GetRelativeUrl(sitedb.WebSite, NewFolder);
+            string newrelative = DiskPathService.GetRelativeUrl(sitedb.WebSite, newFolder);
 
             if (!oldrelative.EndsWith("/"))
             {
@@ -129,24 +127,24 @@ namespace Kooboo.Sites.Sync
             var loweroldrelative = oldrelative.ToLower();
             var lowernewrelative = newrelative.ToLower();
 
-            List<Route> ChangeRoutes = new List<Route>();
+            List<Route> changeRoutes = new List<Route>();
             foreach (var item in sitedb.Routes.All())
             {
                 if (item.Name.StartsWith(loweroldrelative, StringComparison.OrdinalIgnoreCase))
                 {
-                    ChangeRoutes.Add(item);
+                    changeRoutes.Add(item);
                 }
             }
 
             int oldlen = loweroldrelative.Length;
-            foreach (var item in ChangeRoutes)
+            foreach (var item in changeRoutes)
             {
                 string newroute = newrelative + item.Name.Substring(oldlen);
                 sitedb.Routes.ChangeRoute(item.Name, newroute);
             }
         }
 
-        public static bool WriteToDisk(SiteDb SiteDb, WriteToDisk task)
+        public static bool WriteToDisk(SiteDb siteDb, WriteToDisk task)
         {
             if (string.IsNullOrEmpty(task.FullPath))
             {
@@ -194,15 +192,13 @@ namespace Kooboo.Sites.Sync
                     }
                 }
 
-
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ///throw;
+                //throw;
                 return false;
             }
-
         }
 
         public static byte[] GetObjectBytes(ISiteObject siteobject)
@@ -213,17 +209,15 @@ namespace Kooboo.Sites.Sync
             }
             var disktype = Kooboo.Attributes.AttributeHelper.GetDiskType(siteobject);
 
-            if (disktype == Attributes.DiskType.Text && siteobject is ITextObject)
+            if (disktype == Attributes.DiskType.Text && siteobject is ITextObject textobject)
             {
-                var textobject = siteobject as ITextObject;
                 if (!string.IsNullOrEmpty(textobject.Body))
                 {
                     return System.Text.Encoding.UTF8.GetBytes(textobject.Body);
                 }
             }
-            else if (disktype == Attributes.DiskType.Binary && siteobject is IBinaryFile)
+            else if (disktype == Attributes.DiskType.Binary && siteobject is IBinaryFile binaryfile)
             {
-                var binaryfile = siteobject as IBinaryFile;
                 return binaryfile.ContentBytes;
             }
             else
@@ -237,22 +231,21 @@ namespace Kooboo.Sites.Sync
             return null;
         }
 
-        #region "remote publish" 
+        #region "remote publish"
 
-        public static void Receive(SiteDb SiteDb, Kooboo.Sites.Sync.SyncObject SyncObject, SyncSetting setting = null, Guid UserId = default(Guid))
+        public static void Receive(SiteDb siteDb, Kooboo.Sites.Sync.SyncObject syncObject, SyncSetting setting = null, Guid userId = default(Guid))
         {
-            if (SyncObject == null)
+            if (syncObject == null)
             { return; }
 
-            if (SyncObject.IsTable)
+            if (syncObject.IsTable)
             {
-                ReceiveTableData(SiteDb, SyncObject, setting, UserId);
+                ReceiveTableData(siteDb, syncObject, setting, userId);
             }
             else
             {
-                ReceiveSiteObject(SiteDb, SyncObject, setting, UserId);
+                ReceiveSiteObject(siteDb, syncObject, setting, userId);
             }
-
         }
 
         private static void ReceiveSiteObject(SiteDb SiteDb, SyncObject SyncObject, SyncSetting setting, Guid UserId)
@@ -280,9 +273,8 @@ namespace Kooboo.Sites.Sync
                 else
                 {
                     var siteobject = Kooboo.Sites.Sync.SyncObjectConvertor.FromSyncObject(SyncObject);
-                    if (siteobject is ICoreObject)
+                    if (siteobject is ICoreObject core)
                     {
-                        var core = siteobject as ICoreObject;
                         core.Version = -1;
 
                         bool ok = repo.AddOrUpdate(core, UserId);
@@ -292,14 +284,12 @@ namespace Kooboo.Sites.Sync
                             var localversion = core.Version;
                             if (localversion == -1)
                             {
-                                var currentsiteobject = core as SiteObject;
-                                if (currentsiteobject != null)
+                                if (core is SiteObject currentsiteobject)
                                 {
                                     var dbobject = repo.Get(currentsiteobject.Id);
                                     if (dbobject != null)
                                     {
-                                        var dbcoreobject = dbobject as CoreObject;
-                                        localversion = dbcoreobject.Version;
+                                        if (dbobject is CoreObject dbcoreobject) localversion = dbcoreobject.Version;
                                     }
                                 }
                             }
@@ -310,85 +300,83 @@ namespace Kooboo.Sites.Sync
                     {
                         repo.AddOrUpdate(siteobject);
                     }
-                } 
+                }
             }
         }
 
-        private static void ReceiveTableData(SiteDb SiteDb, SyncObject SyncObject, SyncSetting setting, Guid UserId)
+        private static void ReceiveTableData(SiteDb siteDb, SyncObject syncObject, SyncSetting setting, Guid userId)
         {
-
-            var table = Data.DB.GetOrCreateTable(SiteDb.WebSite, SyncObject.TableName);
+            var table = Data.DB.GetOrCreateTable(siteDb.WebSite, syncObject.TableName);
 
             if (table != null)
             {
-                if (SyncObject.IsDelete)
+                if (syncObject.IsDelete)
                 {
-                    bool deleteOk = table.Delete(SyncObject.ObjectId);
+                    bool deleteOk = table.Delete(syncObject.ObjectId);
 
                     if (deleteOk && setting != null)
                     {
-                        var logid = GetJustDeletedVersion(SiteDb, table.Name, SyncObject.ObjectId);
+                        var logid = GetJustDeletedVersion(siteDb, table.Name, syncObject.ObjectId);
                         if (logid > -1)
                         {
-                            SiteDb.Synchronization.AddOrUpdate(new Synchronization { SyncSettingId = setting.Id, TableName = table.Name, ObjectId = SyncObject.ObjectId, In = true, Version = logid, RemoteVersion = SyncObject.SenderVersion });
+                            siteDb.Synchronization.AddOrUpdate(new Synchronization { SyncSettingId = setting.Id, TableName = table.Name, ObjectId = syncObject.ObjectId, In = true, Version = logid, RemoteVersion = syncObject.SenderVersion });
                         }
                     }
                 }
                 else
                 {
-                    var data = Kooboo.Sites.Sync.SyncObjectConvertor.FromTableSyncObject(SyncObject);
+                    var data = Kooboo.Sites.Sync.SyncObjectConvertor.FromTableSyncObject(syncObject);
 
                     if (data == null || (data.Count == 1 && data.ContainsKey("_id")))
                     {
-                        Kooboo.Data.Log.Instance.Exception.Write("null pull table data/r/n" + Lib.Helper.JsonHelper.Serialize(setting) + Lib.Helper.JsonHelper.Serialize(SyncObject));
+                        Kooboo.Data.Log.Instance.Exception.Write("null pull table data/r/n" + Lib.Helper.JsonHelper.Serialize(setting) + Lib.Helper.JsonHelper.Serialize(syncObject));
                         return;
                     }
 
-                    Guid TableItemKey = SyncObject.ObjectId;
-                    var item = table.Get(TableItemKey);
+                    Guid tableItemKey = syncObject.ObjectId;
+                    var item = table.Get(tableItemKey);
 
                     bool updateok = false;
                     if (item != null)
                     {
-                        if (!string.IsNullOrWhiteSpace(SyncObject.TableColName))
+                        if (!string.IsNullOrWhiteSpace(syncObject.TableColName))
                         {
                             object value = null;
-                            if (data.ContainsKey(SyncObject.TableColName))
+                            if (data.ContainsKey(syncObject.TableColName))
                             {
-                                value = data[SyncObject.TableColName];
+                                value = data[syncObject.TableColName];
                             }
-                            updateok = table.UpdateColumn(SyncObject.ObjectId, SyncObject.TableColName, value);
+                            updateok = table.UpdateColumn(syncObject.ObjectId, syncObject.TableColName, value);
                         }
                         else
                         {
-                            updateok = table.Update(SyncObject.ObjectId, data);
+                            updateok = table.Update(syncObject.ObjectId, data);
                         }
                     }
                     else
                     {
-                        TableItemKey = table.Add(data, true);
-                        updateok = TableItemKey != default(Guid);
+                        tableItemKey = table.Add(data, true);
+                        updateok = tableItemKey != default(Guid);
                     }
 
                     if (updateok && setting != null)
-                    { 
-                        var AddLog = table.OwnerDatabase.Log.GetLastLogByTableNameAndKey(table.Name, TableItemKey);
+                    {
+                        var addLog = table.OwnerDatabase.Log.GetLastLogByTableNameAndKey(table.Name, tableItemKey);
 
-                        if (AddLog != null)
+                        if (addLog != null)
                         {
-                            SiteDb.Synchronization.AddOrUpdate(new Synchronization { SyncSettingId = setting.Id, TableName = table.Name, ObjectId = TableItemKey, Version = AddLog.Id, RemoteVersion = SyncObject.SenderVersion, In = true });
+                            siteDb.Synchronization.AddOrUpdate(new Synchronization { SyncSettingId = setting.Id, TableName = table.Name, ObjectId = tableItemKey, Version = addLog.Id, RemoteVersion = syncObject.SenderVersion, In = true });
                         }
                     }
                 }
-
             }
         }
 
-        internal static long GetJustDeletedVersion(SiteDb SiteDb, IRepository repo, Guid ObjectId)
+        internal static long GetJustDeletedVersion(SiteDb siteDb, IRepository repo, Guid objectId)
         {
-            byte[] key = Service.ObjectService.KeyConverter.ToByte(ObjectId);
-            var oldlogs = SiteDb.Log.GetByStoreNameAndKey(repo.StoreName, key, 1);
-            if (oldlogs == null || oldlogs.Count() == 0)
+            byte[] key = Service.ObjectService.KeyConverter.ToByte(objectId);
+            var oldlogs = siteDb.Log.GetByStoreNameAndKey(repo.StoreName, key, 1);
+            if (oldlogs == null || oldlogs.Count == 0)
             { return -1; }
             var log = oldlogs.First();
             if (log.EditType == IndexedDB.EditType.Delete)
@@ -396,7 +384,7 @@ namespace Kooboo.Sites.Sync
                 return log.Id;
             }
 
-            var logs = SiteDb.Log.GetByStoreNameAndKey(repo.StoreName, key, 10);
+            var logs = siteDb.Log.GetByStoreNameAndKey(repo.StoreName, key, 10);
             foreach (var item in logs.OrderByDescending(o => o.Id))
             {
                 if (item.EditType == IndexedDB.EditType.Delete)
@@ -407,11 +395,11 @@ namespace Kooboo.Sites.Sync
             return -1;
         }
 
-        internal static long GetJustDeletedVersion(SiteDb SiteDb, string TableName, Guid ObjectId)
+        internal static long GetJustDeletedVersion(SiteDb siteDb, string tableName, Guid objectId)
         {
-            byte[] key = Service.ObjectService.KeyConverter.ToByte(ObjectId);
-            var oldlogs = SiteDb.Log.GetByTableNameAndKey(TableName, key, 1);
-            if (oldlogs == null || oldlogs.Count() == 0)
+            byte[] key = Service.ObjectService.KeyConverter.ToByte(objectId);
+            var oldlogs = siteDb.Log.GetByTableNameAndKey(tableName, key, 1);
+            if (oldlogs == null || oldlogs.Count == 0)
             { return -1; }
             var log = oldlogs.First();
             if (log.EditType == IndexedDB.EditType.Delete)
@@ -419,7 +407,7 @@ namespace Kooboo.Sites.Sync
                 return log.Id;
             }
 
-            var logs = SiteDb.Log.GetByStoreNameAndKey(TableName, key, 10);
+            var logs = siteDb.Log.GetByStoreNameAndKey(tableName, key, 10);
             foreach (var item in logs.OrderByDescending(o => o.Id))
             {
                 if (item.EditType == IndexedDB.EditType.Delete)
@@ -430,74 +418,68 @@ namespace Kooboo.Sites.Sync
             return -1;
         }
 
-
-
-        internal static IRepository GetRepository(SiteDb SiteDb, SyncObject SyncObject)
+        internal static IRepository GetRepository(SiteDb siteDb, SyncObject syncObject)
         {
-            if (!string.IsNullOrEmpty(SyncObject.StoreName))
+            if (!string.IsNullOrEmpty(syncObject.StoreName))
             {
-                var repo = SiteDb.GetRepository(SyncObject.StoreName);
+                var repo = siteDb.GetRepository(syncObject.StoreName);
                 if (repo != null)
                 {
                     return repo;
                 }
             }
 
-            var modeltype = Service.ConstTypeService.GetModelType(SyncObject.ObjectConstType);
+            var modeltype = Service.ConstTypeService.GetModelType(syncObject.ObjectConstType);
 
             if (modeltype != null)
             {
-                var repo = SiteDb.GetRepository(modeltype);
+                var repo = siteDb.GetRepository(modeltype);
                 return repo;
             }
             return null;
         }
 
-        internal static SyncObject Prepare(ISiteObject SiteObject, string StoreName = null, bool IsDelete = false)
+        internal static SyncObject Prepare(ISiteObject siteObject, string storeName = null, bool isDelete = false)
         {
             SyncObject syncobject = null;
 
-            if (IsDelete)
+            if (isDelete)
             {
-                syncobject = new SyncObject();
-                syncobject.IsDelete = true;
-                syncobject.ObjectConstType = SiteObject.ConstType;
-                syncobject.ObjectId = SiteObject.Id;
+                syncobject = new SyncObject
+                {
+                    IsDelete = true, ObjectConstType = siteObject.ConstType, ObjectId = siteObject.Id
+                };
             }
             else
             {
-                syncobject = SyncObjectConvertor.ToSyncObject(SiteObject);
+                syncobject = SyncObjectConvertor.ToSyncObject(siteObject);
             }
 
-            if (string.IsNullOrEmpty(StoreName))
+            if (string.IsNullOrEmpty(storeName))
             {
-                StoreName = SiteObject.GetType().Name;
+                storeName = siteObject.GetType().Name;
             }
-            syncobject.StoreName = StoreName;
+            syncobject.StoreName = storeName;
 
-            if (SiteObject is ICoreObject)
+            if (siteObject is ICoreObject coreobject)
             {
-                var coreobject = SiteObject as ICoreObject;
                 syncobject.SenderVersion = coreobject.Version;
             }
 
             return syncobject;
         }
 
-        internal static SyncObject Prepare(Guid Id, Dictionary<string, object> Data, string tableName, string colName, long version, bool IsDelete = false)
+        internal static SyncObject Prepare(Guid id, Dictionary<string, object> data, string tableName, string colName, long version, bool isDelete = false)
         {
             SyncObject syncobject = null;
 
-            if (IsDelete)
+            if (isDelete)
             {
-                syncobject = new SyncObject();
-                syncobject.IsDelete = true;
-                syncobject.TableName = tableName;
-                syncobject.ObjectId = Id;
+                syncobject = new SyncObject {IsDelete = true, TableName = tableName, ObjectId = id};
             }
             else
             {
-                syncobject = SyncObjectConvertor.ToTableSyncObject(tableName, Id, colName, Data);
+                syncobject = SyncObjectConvertor.ToTableSyncObject(tableName, id, colName, data);
             }
 
             syncobject.SenderVersion = version;
@@ -505,37 +487,35 @@ namespace Kooboo.Sites.Sync
             return syncobject;
         }
 
-        public static SyncObject Prepare(SiteDb SiteDb, long LogVersionId)
+        public static SyncObject Prepare(SiteDb siteDb, long logVersionId)
         {
-            return Prepare(SiteDb, SiteDb.Log.Get(LogVersionId));
+            return Prepare(siteDb, siteDb.Log.Get(logVersionId));
         }
 
-        public static SyncObject Prepare(SiteDb SiteDb, LogEntry log)
+        public static SyncObject Prepare(SiteDb siteDb, LogEntry log)
         {
             if (log.IsTable)
             {
                 var key = Kooboo.IndexedDB.ObjectContainer.GuidConverter.FromByte(log.KeyBytes);
                 bool isDelete = log.EditType == EditType.Delete;
 
-                var kdb = Kooboo.Data.DB.GetKDatabase(SiteDb.WebSite);
+                var kdb = Kooboo.Data.DB.GetKDatabase(siteDb.WebSite);
                 var ktable = Kooboo.Data.DB.GetOrCreateTable(kdb, log.TableName);
                 if (ktable != null)
                 {
                     var data = ktable.GetLogData(log);
                     return Prepare(key, data, log.TableName, log.TableColName, log.Id, isDelete);
                 }
-
             }
             else
             {
-                var repo = SiteDb.GetRepository(log.StoreName);
+                var repo = siteDb.GetRepository(log.StoreName);
                 var siteobject = repo.GetByLog(log);
                 return Prepare(siteobject, log.StoreName, log.EditType == IndexedDB.EditType.Delete);
             }
             return null;
-
         }
 
-        #endregion
+        #endregion "remote publish"
     }
 }

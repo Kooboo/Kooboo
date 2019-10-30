@@ -14,16 +14,16 @@ namespace Kooboo.Sites.Cache
 
         private static Object _locker = new object();
 
-        public static int GetAlternativeCode(Guid ListViewId, Guid DestinationViewId)
+        public static int GetAlternativeCode(Guid listViewId, Guid destinationViewId)
         {
-            int key = ListViewId.GetHashCode();
+            int key = listViewId.GetHashCode();
 
             if (!cachelist.ContainsKey(key))
             {
-                AlternativeView record = new AlternativeView();
-                record.ListViewId = ListViewId;
-                record.DestinationViewId = DestinationViewId;
-                record.Id = key;
+                AlternativeView record = new AlternativeView
+                {
+                    ListViewId = listViewId, DestinationViewId = destinationViewId, Id = key
+                };
                 cachelist[key] = record;
                 return key;
             }
@@ -32,7 +32,7 @@ namespace Kooboo.Sites.Cache
                 while (cachelist.ContainsKey(key))
                 {
                     var result = cachelist[key];
-                    if (result.ListViewId == ListViewId && result.DestinationViewId == DestinationViewId)
+                    if (result.ListViewId == listViewId && result.DestinationViewId == destinationViewId)
                     {
                         return result.Id;
                     }
@@ -41,21 +41,22 @@ namespace Kooboo.Sites.Cache
                         key = key.GetHashCode();
                     }
                 }
-                AlternativeView record = new AlternativeView();
-                record.ListViewId = ListViewId;
-                record.DestinationViewId = DestinationViewId;
-                record.Id = key;
+
+                AlternativeView record = new AlternativeView
+                {
+                    ListViewId = listViewId, DestinationViewId = destinationViewId, Id = key
+                };
                 cachelist[key] = record;
                 return key;
             }
         }
 
-        public static Guid GetAlternaitiveViewId(int AlternativeId, Guid ListViewId)
+        public static Guid GetAlternaitiveViewId(int alternativeId, Guid listViewId)
         {
-            if (cachelist.ContainsKey(AlternativeId))
+            if (cachelist.ContainsKey(alternativeId))
             {
-                var result = cachelist[AlternativeId];
-                if (result.ListViewId == ListViewId)
+                var result = cachelist[alternativeId];
+                if (result.ListViewId == listViewId)
                 {
                     return result.DestinationViewId;
                 }

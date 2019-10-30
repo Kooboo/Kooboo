@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
@@ -10,134 +10,124 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-
 namespace Kooboo.Sites.Repository
 {
     public class IEmbeddableRepositoryBase<T> : SiteRepositoryBase<T>, IEmbeddableRepository where T : class, IEmbeddable
     {
         private object _locker = new object();
 
-        public override bool AddOrUpdate(T Value, Guid UserId = default(Guid))
+        public override bool AddOrUpdate(T value, Guid userId = default(Guid))
         {
-            return AddOrUpdate(Value, false, false, UserId);
+            return AddOrUpdate(value, false, false, userId);
         }
 
-        public bool AddOrUpdate(T Value, bool updateSource = false, bool UpdateSameEmbedded = false, Guid UserId = default(Guid))
+        public bool AddOrUpdate(T value, bool updateSource = false, bool updateSameEmbedded = false, Guid userId = default(Guid))
         {
             lock (_locker)
             {
-                var old = Get(Value.Id);
-                if (!Value.IsEmbedded)
+                var old = Get(value.Id);
+                if (!value.IsEmbedded)
                 {
-                    this.Store.CurrentUserId = UserId;
+                    this.Store.CurrentUserId = userId;
                 }
 
                 if (old == null)
                 {
-                    if (Value.IsEmbedded && updateSource)
+                    if (value.IsEmbedded && updateSource)
                     {
-                        this.UpdateEmbedded(Value, Value.Body);
+                        this.UpdateEmbedded(value, value.Body);
                     }
                     else
                     {
-                        RaiseBeforeEvent(Value, ChangeType.Add);
-                        this.Store.add(Value.Id, Value, !Value.IsEmbedded);
-                        RaiseEvent(Value, ChangeType.Add);
+                        RaiseBeforeEvent(value, ChangeType.Add);
+                        this.Store.add(value.Id, value, !value.IsEmbedded);
+                        RaiseEvent(value, ChangeType.Add);
                     }
                     return true;
                 }
                 else
                 {
-                    if (!IsEqual(old, Value))
+                    if (!IsEqual(old, value))
                     {
-                        RaiseBeforeEvent(Value, ChangeType.Update, old);
+                        RaiseBeforeEvent(value, ChangeType.Update, old);
 
-                        if (!(Value.IsEmbedded && updateSource))
+                        if (!(value.IsEmbedded && updateSource))
                         {
-                            Value.LastModified = DateTime.UtcNow;
-                            Store.update(Value.Id, Value, !Value.IsEmbedded);
+                            value.LastModified = DateTime.UtcNow;
+                            Store.update(value.Id, value, !value.IsEmbedded);
                         }
 
-                        if (Value.IsEmbedded)
+                        if (value.IsEmbedded)
                         {
                             if (updateSource)
                             {
-                                this.UpdateEmbedded(Value, Value.Body);
+                                this.UpdateEmbedded(value, value.Body);
                             }
 
-                            if (UpdateSameEmbedded)
+                            if (updateSameEmbedded)
                             {
                                 foreach (var item in GetSameEmbedded(old.BodyHash))
                                 {
-                                    if (item.Id != Value.Id)
+                                    if (item.Id != value.Id)
                                     {
-                                        item.Body = Value.Body;
+                                        item.Body = value.Body;
                                         AddOrUpdate(item, updateSource, false);
                                     }
                                 }
                             }
                         }
 
-                        RaiseEvent(Value, ChangeType.Update, old);
+                        RaiseEvent(value, ChangeType.Update, old);
 
                         return true;
                     }
                 }
                 return false;
             }
-
         }
 
-        public void Delete(Guid id, bool UpdateSource = true, bool UpdateSameEmbedded = false, Guid UserId = default(Guid))
+        public void Delete(Guid id, bool updateSource = true, bool updateSameEmbedded = false, Guid userId = default(Guid))
         {
-            var Value = Get(id);
-            Delete(Value, UpdateSource, UpdateSameEmbedded, UserId);
+            var value = Get(id);
+            Delete(value, updateSource, updateSameEmbedded, userId);
         }
 
-        public override void Delete(Guid id, Guid UserId = default(Guid))
+        public override void Delete(Guid id, Guid userId = default(Guid))
         {
-            Delete(id, true, false, UserId);
+            Delete(id, true, false, userId);
         }
 
-        private void Delete(T Value, bool UpdateSource = true, bool UpdateSameEmbedded = false, Guid UserId = default(Guid))
+        private void Delete(T value, bool updateSource = true, bool updateSameEmbedded = false, Guid userId = default(Guid))
         {
-            if (Value == null)
+            if (value == null)
             { return; }
 
-            if (UpdateSource)
+            if (updateSource)
             {
-                Clean(Value);  
+                Clean(value);
             }
-            RaiseBeforeEvent(Value, ChangeType.Delete, default(T));
-            this.Store.delete(Value.Id, !Value.IsEmbedded);
+            RaiseBeforeEvent(value, ChangeType.Delete, default(T));
+            this.Store.delete(value.Id, !value.IsEmbedded);
 
-            if (UpdateSameEmbedded)
+            if (updateSameEmbedded)
             {
-                foreach (var item in GetSameEmbedded(Value.BodyHash))
+                foreach (var item in GetSameEmbedded(value.BodyHash))
                 {
-                    if (item.Id != Value.Id)
+                    if (item.Id != value.Id)
                     {
-                        item.Body = Value.Body;
-                        Delete(item.Id, UpdateSource, false);
+                        item.Body = value.Body;
+                        Delete(item.Id, updateSource, false);
                     }
                 }
             }
-            RaiseEvent(Value, ChangeType.Delete, default(T));
+            RaiseEvent(value, ChangeType.Delete, default(T));
         }
 
-        public override T GetByNameOrId(string NameOrGuid)
+        public override T GetByNameOrId(string nameOrGuid)
         {
-            Guid key;
-            bool parseok = Guid.TryParse(NameOrGuid, out key);
+            bool parseok = Guid.TryParse(nameOrGuid, out var key);
 
-            if (parseok)
-            {
-                return Get(key);
-            }
-            else
-            {
-                return this.Query.Where(o => o.Name == NameOrGuid).FirstOrDefault();
-            }
+            return parseok ? Get(key) : this.Query.Where(o => o.Name == nameOrGuid).FirstOrDefault();
         }
 
         public void RemoveEmbedded(T value)
@@ -150,37 +140,32 @@ namespace Kooboo.Sites.Repository
 
                 var parentobject = repo?.Get(value.OwnerObjectId);
 
-                if (parentobject != null && parentobject is IDomObject)
+                if (parentobject != null && parentobject is IDomObject domobject)
                 {
-                    var domobject = parentobject as IDomObject;
-
-                    string newhtml = string.Empty;
-
                     var element = Relation.DomRelation.GetEmbeddedByItemIndex(domobject.Dom, value.ItemIndex, value.DomTagName);
 
                     if (element != null)
                     {
-                        newhtml = domobject.Dom.HtmlSource.Substring(0, element.location.openTokenStartIndex);
+                        var newhtml = domobject.Dom.HtmlSource.Substring(0, element.location.openTokenStartIndex);
                         newhtml += domobject.Dom.HtmlSource.Substring(element.location.endTokenEndIndex + 1);
 
                         domobject.Body = newhtml;
                         repo.AddOrUpdate(domobject);
                     }
-
                 }
             }
         }
-        
+
         public void RemoveExternalStyleScript(T value)
         {
             if (value != null && !value.IsEmbedded)
-            { 
+            {
                 var route = this.SiteDb.Routes.GetByObjectId(value.Id);
-                string objecturl = route != null ? route.Name : null;
+                string objecturl = route?.Name;
 
                 if (objecturl == null)
                 {
-                    return; // not url, should not be possible. 
+                    return; // not url, should not be possible.
                 }
 
                 var relations = this.SiteDb.Relations.GetReferredBy(value as SiteObject);
@@ -191,13 +176,10 @@ namespace Kooboo.Sites.Repository
 
                     var parentobject = repo?.Get(item.objectXId);
 
-                    if (parentobject != null && parentobject is IDomObject)
+                    if (parentobject != null && parentobject is IDomObject domobject)
                     {
-                        var domobject = parentobject as IDomObject;
-
-                        if (domobject is Page)
+                        if (domobject is Page page)
                         {
-                            var page = domobject as Page;
                             page.Headers.Styles.Remove(objecturl);
                             page.Headers.Scripts.Remove(objecturl);
                         }
@@ -205,7 +187,7 @@ namespace Kooboo.Sites.Repository
                         List<SourceUpdate> updates = new List<SourceUpdate>();
 
                         if (value.ConstType == ConstObjectType.Style)
-                        { 
+                        {
                             HTMLCollection styletags = domobject.Dom.getElementsByTagName("link");
 
                             foreach (var cssitem in styletags.item)
@@ -214,16 +196,15 @@ namespace Kooboo.Sites.Repository
                                 {
                                     string itemurl = DomUrlService.GetLinkOrSrc(cssitem);
 
-                                    if (Lib.Helper.StringHelper.IsSameValue(itemurl,objecturl))
+                                    if (Lib.Helper.StringHelper.IsSameValue(itemurl, objecturl))
                                     {
-                                        updates.Add(new SourceUpdate() { StartIndex = cssitem.location.openTokenStartIndex, EndIndex = cssitem.location.endTokenEndIndex }); 
-                                    } 
+                                        updates.Add(new SourceUpdate() { StartIndex = cssitem.location.openTokenStartIndex, EndIndex = cssitem.location.endTokenEndIndex });
+                                    }
                                 }
-                            }  
+                            }
                         }
                         else if (value.ConstType == ConstObjectType.Script)
                         {
-
                             HTMLCollection scripttags = domobject.Dom.getElementsByTagName("script");
 
                             foreach (var jsitem in scripttags.item)
@@ -235,21 +216,18 @@ namespace Kooboo.Sites.Repository
                                     if (Lib.Helper.StringHelper.IsSameValue(itemurl, objecturl))
                                     {
                                         updates.Add(new SourceUpdate() { StartIndex = jsitem.location.openTokenStartIndex, EndIndex = jsitem.location.endTokenEndIndex });
-                                    } 
+                                    }
                                 }
-                            }  
+                            }
                         }
 
-                        // Form is handlbed by component... 
+                        // Form is handlbed by component...
 
                         domobject.Body = Kooboo.Sites.Service.DomService.UpdateSource(domobject.Body, updates);
 
-                        repo.AddOrUpdate(domobject); 
-                    } 
-
+                        repo.AddOrUpdate(domobject);
+                    }
                 }
-
-
             }
         }
 
@@ -257,56 +235,51 @@ namespace Kooboo.Sites.Repository
         {
             if (value.IsEmbedded)
             {
-                RemoveEmbedded(value); 
+                RemoveEmbedded(value);
             }
-           else
+            else
             {
-                RemoveExternalStyleScript(value); 
+                RemoveExternalStyleScript(value);
             }
-        } 
+        }
 
-        public void UpdateEmbedded(T Value, string body)
+        public void UpdateEmbedded(T value, string body)
         {
-            if (Value == null)
+            if (value == null)
             {
                 return;
             }
-            if (Value.IsEmbedded)
+            if (value.IsEmbedded)
             {
-                var modeltype = Service.ConstTypeService.GetModelType(Value.OwnerConstType);
+                var modeltype = Service.ConstTypeService.GetModelType(value.OwnerConstType);
 
                 var repo = this.SiteDb.GetRepository(modeltype);
 
-                var parentobject = repo?.Get(Value.OwnerObjectId);
+                var parentobject = repo?.Get(value.OwnerObjectId);
 
-                if (parentobject != null && parentobject is IDomObject)
+                if (parentobject != null && parentobject is IDomObject domobject)
                 {
-                    var domobject = parentobject as IDomObject;
-
-                    string newhtml = string.Empty;
-
-                    var element = Relation.DomRelation.GetEmbeddedByItemIndex(domobject.Dom, Value.ItemIndex, Value.DomTagName);
+                    var element = Relation.DomRelation.GetEmbeddedByItemIndex(domobject.Dom, value.ItemIndex, value.DomTagName);
 
                     if (element != null)
                     {
-                        newhtml = domobject.Dom.HtmlSource.Substring(0, element.location.openTokenEndIndex + 1);
+                        var newhtml = domobject.Dom.HtmlSource.Substring(0, element.location.openTokenEndIndex + 1);
                         newhtml += body;
                         newhtml += domobject.Dom.HtmlSource.Substring(element.location.endTokenStartIndex);
 
                         domobject.Body = newhtml;
-
                     }
                     else
                     {
-                        if (Value.ConstType == ConstObjectType.Style)
+                        if (value.ConstType == ConstObjectType.Style)
                         {
                             body = "<style>" + body + "</style>";
                         }
-                        else if (Value.ConstType == ConstObjectType.Script)
+                        else if (value.ConstType == ConstObjectType.Script)
                         {
                             body = "<script>" + body + "</script>";
                         }
-                        else if (Value.ConstType == ConstObjectType.Form)
+                        else if (value.ConstType == ConstObjectType.Form)
                         {
                             body = "<form>" + body + "</form>";
                         }
@@ -318,19 +291,17 @@ namespace Kooboo.Sites.Repository
                         }
                         if (bodylocation > 0)
                         {
-
                             domobject.Body = domobject.Body.Substring(0, bodylocation) + body + domobject.Body.Substring(bodylocation);
                         }
                         else
                         {
-                            domobject.Body = domobject.Body + body;
+                            domobject.Body += body;
                         }
                     }
 
                     repo.AddOrUpdate(domobject);
                 }
             }
-
         }
 
         public List<T> GetExternals()
@@ -338,11 +309,11 @@ namespace Kooboo.Sites.Repository
             return Query.Where(it => it.OwnerObjectId == default(Guid)).SelectAll();
         }
 
-        public List<T> GetEmbeddeds(bool Distinct = true)
+        public List<T> GetEmbeddeds(bool distinct = true)
         {
             var list = Query.Where(o => o.OwnerObjectId != default(Guid)).SelectAll();
 
-            if (Distinct)
+            if (distinct)
             {
                 List<T> result = new List<T>();
 
@@ -359,26 +330,24 @@ namespace Kooboo.Sites.Repository
             {
                 return list;
             }
-
-
         }
 
-        public int CountSameEmbedded(int BodyHash)
+        public int CountSameEmbedded(int bodyHash)
         {
-            return Query.Where(o => o.BodyHash == BodyHash && o.OwnerObjectId != default(Guid)).Count();
+            return Query.Where(o => o.BodyHash == bodyHash && o.OwnerObjectId != default(Guid)).Count();
         }
 
-        public List<T> GetSameEmbedded(int BodyHash)
+        public List<T> GetSameEmbedded(int bodyHash)
         {
-            return Query.Where(o => o.BodyHash == BodyHash && o.OwnerObjectId != default(Guid)).SelectAll();
+            return Query.Where(o => o.BodyHash == bodyHash && o.OwnerObjectId != default(Guid)).SelectAll();
         }
 
-        public List<T> GetByOwnerId(Guid OwnerId, byte OwnerConstType)
+        public List<T> GetByOwnerId(Guid ownerId, byte ownerConstType)
         {
-            return Query.Where(o => o.OwnerObjectId == OwnerId && o.OwnerConstType == OwnerConstType).SelectAll();
+            return Query.Where(o => o.OwnerObjectId == ownerId && o.OwnerConstType == ownerConstType).SelectAll();
         }
-         
-        public T Upload(byte[] contentBytes, string fullName, Guid UserId)
+
+        public T Upload(byte[] contentBytes, string fullName, Guid userId)
         {
             string relativeUrl = UrlHelper.RelativePath(fullName);
 
@@ -399,7 +368,7 @@ namespace Kooboo.Sites.Repository
             if (old != null)
             {
                 old.Body = body;
-                this.AddOrUpdate(old, UserId);
+                this.AddOrUpdate(old, userId);
                 return old;
             }
             else
@@ -407,25 +376,25 @@ namespace Kooboo.Sites.Repository
                 T newvalue = (T)Activator.CreateInstance(typeof(T));
                 newvalue.Name = UrlHelper.FileName(fullName);
                 newvalue.Body = body;
-                SiteDb.Routes.AddOrUpdate(relativeUrl, newvalue as SiteObject, UserId);
-                this.AddOrUpdate(newvalue, UserId);
+                SiteDb.Routes.AddOrUpdate(relativeUrl, newvalue as SiteObject, userId);
+                this.AddOrUpdate(newvalue, userId);
                 return newvalue;
             }
         }
 
-        List<object> IEmbeddableRepository.GetSameEmbedded(int BodyHash)
+        List<object> IEmbeddableRepository.GetSameEmbedded(int bodyHash)
         {
-            var result = this.GetSameEmbedded(BodyHash);
-            if (result != null && result.Count() > 0)
+            var result = this.GetSameEmbedded(bodyHash);
+            if (result != null && result.Any())
             {
                 return result.ToList<object>();
             }
             return new List<object>();
         }
 
-        public override List<UsedByRelation> GetUsedBy(Guid ObjectId)
+        public override List<UsedByRelation> GetUsedBy(Guid objectId)
         {
-            var value = Get(ObjectId);
+            var value = Get(objectId);
 
             return _GetUsedBy(value);
         }
@@ -442,9 +411,10 @@ namespace Kooboo.Sites.Repository
 
                 foreach (var item in samestyles)
                 {
-                    UsedByRelation relation = new UsedByRelation();
-                    relation.ObjectId = item.OwnerObjectId;
-                    relation.ConstType = item.OwnerConstType;
+                    UsedByRelation relation = new UsedByRelation
+                    {
+                        ObjectId = item.OwnerObjectId, ConstType = item.OwnerConstType
+                    };
                     Helper.RelationHelper.SetNameUrl(SiteDb, relation);
                     relation.Remark = item.KoobooOpenTag;
                     result.Add(relation);
@@ -457,12 +427,10 @@ namespace Kooboo.Sites.Repository
                 return base.GetUsedBy(value.Id);
             }
         }
-
     }
-
 
     public interface IEmbeddableRepository
     {
-        List<Object> GetSameEmbedded(int BodyHash);
+        List<Object> GetSameEmbedded(int bodyHash);
     }
 }

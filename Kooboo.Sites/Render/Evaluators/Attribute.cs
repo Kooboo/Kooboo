@@ -1,40 +1,36 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Dom;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Dom;
 
 namespace Kooboo.Sites.Render
 {
     public class AttributeEvaluator : IEvaluator
     {
         private Dictionary<string, string> _appendattributes;
+
         private Dictionary<string, string> AppendAttributes
         {
             get
             {
-                if (_appendattributes == null)
-                {
-                    _appendattributes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                    _appendattributes.Add("style", ";");
-                    _appendattributes.Add("class", " ");
-                }
-                return _appendattributes;
+                return _appendattributes ?? (_appendattributes =
+                           new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                           {
+                               {"style", ";"}, {"class", " "}
+                           });
             }
         }
-
 
         public EvaluatorResponse Evaluate(Node node, EvaluatorOption options)
         {
             if (options.IgnoreEvaluators.HasFlag(EnumEvaluator.Attribute))
             {
-                return null; 
+                return null;
             }
 
-            Dictionary<string, string> appendValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase); 
+            Dictionary<string, string> appendValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
             if (node.nodeType != enumNodeType.ELEMENT)
             {
@@ -85,32 +81,31 @@ namespace Kooboo.Sites.Render
 
                 if (AppendAttributes.ContainsKey(attributeName))
                 {
-                    string sep = AppendAttributes[attributeName]; 
-                    string value = element.getAttribute(attributeName); 
-                    
+                    string sep = AppendAttributes[attributeName];
+                    string value = element.getAttribute(attributeName);
+
                     if (!string.IsNullOrEmpty(value))
-                    { 
+                    {
                         if (!value.Trim().EndsWith(sep))
                         {
-                            value = value + sep; 
-                        }  
+                            value = value + sep;
+                        }
                         if (appendValues.ContainsKey(attributeName))
                         {
                             var orgvalue = appendValues[attributeName];
-                            value = orgvalue + value; 
-                        } 
-                        appendValues[attributeName] = value;  
+                            value = orgvalue + value;
+                        }
+                        appendValues[attributeName] = value;
                     }
                 }
 
-                List<IRenderTask> tasks = new List<IRenderTask>();
-                tasks.Add(new ContentRenderTask(" " + attributeName + "=\""));
+                List<IRenderTask> tasks = new List<IRenderTask> {new ContentRenderTask(" " + attributeName + "=\"")};
 
                 if (appendValues.ContainsKey(attributeName))
                 {
                     tasks.Add(new ContentRenderTask(appendValues[attributeName]));
                 }
-                 
+
                 tasks.Add(new ValueRenderTask(attributeValue));
                 tasks.Add(new ContentRenderTask("\""));
 
@@ -129,8 +124,7 @@ namespace Kooboo.Sites.Render
                 {
                     string koobooid = element.getAttribute(SiteConstants.KoobooIdAttributeName);
                     BindingObjectRenderTask binding = new BindingObjectRenderTask() { ObjectType = "attribute", AttributeName = attributeName, BindingValue = attributeValue, KoobooId = koobooid };
-                    List<IRenderTask> bindings = new List<IRenderTask>();
-                    bindings.Add(binding);
+                    List<IRenderTask> bindings = new List<IRenderTask> {binding};
                     if (response.BindingTask == null)
                     {
                         response.BindingTask = bindings;
@@ -142,7 +136,7 @@ namespace Kooboo.Sites.Render
                 }
             }
 
-            if (response.AttributeTask == null || response.AttributeTask.Count() == 0)
+            if (response.AttributeTask == null || response.AttributeTask.Count == 0)
             {
                 return null;
             }
@@ -167,10 +161,11 @@ namespace Kooboo.Sites.Render
                 return null;
             }
 
-            AttKeyValue result = new AttKeyValue();
+            AttKeyValue result = new AttKeyValue
+            {
+                Key = input.Substring(0, spaceindex), Value = input.Substring(spaceindex).Trim()
+            };
 
-            result.Key = input.Substring(0, spaceindex);
-            result.Value = input.Substring(spaceindex).Trim();
             return result;
         }
 
@@ -183,9 +178,7 @@ namespace Kooboo.Sites.Render
         public class AppendValues
         {
             public string AttName { get; set; }
-            public string Value { get; set; } 
+            public string Value { get; set; }
         }
     }
-
-
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
@@ -8,14 +8,11 @@ using Kooboo.Sites.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Repository
 {
     public class ContentFolderRepository : SiteRepositoryBase<ContentFolder>
     {
-
         public override ObjectStoreParameters StoreParameters
         {
             get
@@ -45,24 +42,19 @@ namespace Kooboo.Sites.Repository
         {
             var contentType = SiteDb.ContentTypes.Get(folder.ContentTypeId);
 
-            if (contentType == null)
-            {
-                return null;
-            }
-
-            return contentType.GetProperty(columnName);
+            return contentType?.GetProperty(columnName);
         }
 
-        public ContentFolder GetByName(string FolderName)
+        public ContentFolder GetByName(string folderName)
         {
-            return this.Query.Where(o => o.Name == FolderName).FirstOrDefault();
+            return this.Query.Where(o => o.Name == folderName).FirstOrDefault();
         }
 
-        public bool IsFolderNameExists(string FolderName)
+        public bool IsFolderNameExists(string folderName)
         {
-            Guid Key = Kooboo.Data.IDGenerator.Generate(FolderName, ConstObjectType.ContentFolder);
+            Guid key = Kooboo.Data.IDGenerator.Generate(folderName, ConstObjectType.ContentFolder);
 
-            var folder = this.Get(Key);
+            var folder = this.Get(key);
             return folder != null;
         }
 
@@ -74,26 +66,21 @@ namespace Kooboo.Sites.Repository
             }
             var contentType = SiteDb.ContentTypes.Get(folder.ContentTypeId);
 
-            if (contentType == null)
-            {
-                return false;
-            }
-            return contentType.IsNested;
+            return contentType != null && contentType.IsNested;
         }
 
-
-        public override List<UsedByRelation> GetUsedBy(Guid ObjectId)
+        public override List<UsedByRelation> GetUsedBy(Guid objectId)
         {
-            var objectrelations = this.SiteDb.Relations.GetReferredBy(this.SiteObjectType, ObjectId);
+            var objectrelations = this.SiteDb.Relations.GetReferredBy(this.SiteObjectType, objectId);
 
-            // content folder only used by datamethodsetting.     
+            // content folder only used by datamethodsetting.
             var result = Helper.RelationHelper.ShowUsedBy(this.SiteDb, objectrelations);
 
             foreach (var item in result)
             {
                 var viewmethod = GetViewDataMethods(item.ObjectId);
 
-                if (viewmethod != null && viewmethod.Count() > 0)
+                if (viewmethod != null && viewmethod.Any())
                 {
                     foreach (var viewm in viewmethod)
                     {
@@ -103,13 +90,11 @@ namespace Kooboo.Sites.Repository
                 }
                 else
                 {
-
                 }
             }
 
             return result;
         }
-
 
         public List<ViewDataMethod> GetViewDataMethods(Guid methodId)
         {
@@ -155,11 +140,9 @@ namespace Kooboo.Sites.Repository
             var allviewmethods = this.SiteDb.ViewDataMethods.All();
 
             return input.Where(o => allviewmethods.Find(v => v.MethodId == o.objectXId) != null).ToList();
-
         }
 
-
-        public List<EmbeddedBy> GetEmbeddedBy(Guid FolderId)
+        public List<EmbeddedBy> GetEmbeddedBy(Guid folderId)
         {
             List<EmbeddedBy> result = new List<EmbeddedBy>();
 
@@ -167,19 +150,15 @@ namespace Kooboo.Sites.Repository
 
             foreach (var item in allfolder)
             {
-                var find = item.Embedded.Find(o => o.FolderId == FolderId);
+                var find = item.Embedded.Find(o => o.FolderId == folderId);
                 if (find != null)
                 {
-                    EmbeddedBy model = new EmbeddedBy();
-                    model.FolderId = item.Id;
-                    model.FolderName = item.Name;
+                    EmbeddedBy model = new EmbeddedBy {FolderId = item.Id, FolderName = item.Name};
                     result.Add(model);
                 }
             }
 
             return result;
         }
- 
-
     }
 }

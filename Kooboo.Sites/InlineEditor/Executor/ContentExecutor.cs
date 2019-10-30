@@ -30,7 +30,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
             }
         }
 
-        public void ExecuteObject(RenderContext context, IRepository repo, string NameOrId, List<IInlineModel> updates)
+        public void ExecuteObject(RenderContext context, IRepository repo, string nameOrId, List<IInlineModel> updates)
         {
             var sitedb = context.WebSite.SiteDb();
             string culture = context.Culture;
@@ -40,16 +40,15 @@ namespace Kooboo.Sites.InlineEditor.Executor
             }
             //  var repo = context.WebSite.SiteDb().TextContents(culture);
             var contentmodels = updates.Cast<Model.ContentModel>().ToList();
-            if (contentmodels.Where(o => o.Action == ActionType.Delete).Any())
+            if (contentmodels.Any(o => o.Action == ActionType.Delete))
             {
-                var textcontent = sitedb.TextContent.GetByNameOrId(NameOrId) as TextContent;
-                if (textcontent != null)
+                if (sitedb.TextContent.GetByNameOrId(nameOrId) is TextContent textcontent)
                 {
                     sitedb.TextContent.Delete(textcontent.Id);
                 }
                 return;
             }
-            else if (contentmodels.Where(o => o.Action == ActionType.Copy).Any())
+            else if (contentmodels.Any(o => o.Action == ActionType.Copy))
             {
                 var orgitem = contentmodels.Find(o => !string.IsNullOrEmpty(o.OrgNameOrId));
                 if (orgitem != null)
@@ -58,11 +57,13 @@ namespace Kooboo.Sites.InlineEditor.Executor
                     var oldcontent = sitedb.TextContent.GetByNameOrId(oldnameorid);
                     if (oldcontent != null)
                     {
-                        TextContent newcontent = new TextContent();
-                        newcontent.FolderId = oldcontent.FolderId;
-                        newcontent.ContentTypeId = oldcontent.ContentTypeId;
-                        newcontent.Contents = oldcontent.Contents;
-                        newcontent.UserKey = NameOrId;
+                        TextContent newcontent = new TextContent
+                        {
+                            FolderId = oldcontent.FolderId,
+                            ContentTypeId = oldcontent.ContentTypeId,
+                            Contents = oldcontent.Contents,
+                            UserKey = nameOrId
+                        };
                         //newcontent.Embedded = oldcontent.Embedded;
                         foreach (var item in contentmodels)
                         {
@@ -78,16 +79,18 @@ namespace Kooboo.Sites.InlineEditor.Executor
                         var allcats = sitedb.ContentCategories.Query.Where(o => o.ContentId == oldcontent.Id).SelectAll();
                         foreach (var item in allcats)
                         {
-                            var newcat = new ContentCategory();
-                            newcat.CategoryFolder = item.CategoryFolder;
-                            newcat.CategoryId = item.CategoryId;
-                            newcat.ContentId = newcontent.Id;
+                            var newcat = new ContentCategory
+                            {
+                                CategoryFolder = item.CategoryFolder,
+                                CategoryId = item.CategoryId,
+                                ContentId = newcontent.Id
+                            };
                             sitedb.ContentCategories.AddOrUpdate(newcat, context.User.Id);
                         }
                     }
                 }
             }
-            else if (contentmodels.Where(o => o.Action == ActionType.Add).Any())
+            else if (contentmodels.Any(o => o.Action == ActionType.Add))
             {
                 var newcontent = new TextContent();
                 foreach (var item in contentmodels)
@@ -98,7 +101,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
             }
             else
             {
-                var content = sitedb.TextContent.GetByNameOrId(NameOrId);
+                var content = sitedb.TextContent.GetByNameOrId(nameOrId);
                 if (content != null)
                 {
                     foreach (var item in contentmodels)

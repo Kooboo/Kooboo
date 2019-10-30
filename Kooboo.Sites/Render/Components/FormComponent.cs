@@ -1,29 +1,29 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Kooboo.Data.Context;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Repository;
 
 namespace Kooboo.Sites.Render.Components
-{  
+{
     public class FormComponent : IComponent
     {
         public FormComponent()
         {
-             
         }
 
         public string TagName
         {
             get { return "Form"; }
         }
+
         public bool IsRegularHtmlTag { get { return true; } }
 
-        public string StoreEngineName { get { return "kform";  } }
+        public string StoreEngineName { get { return "kform"; } }
 
         public Dictionary<string, string> Setttings
         {
@@ -31,20 +31,20 @@ namespace Kooboo.Sites.Render.Components
             {
                 return null;
             }
-        }  
-        public Task<string> RenderAsync(RenderContext context, ComponentSetting settings)
-        { 
+        }
 
+        public Task<string> RenderAsync(RenderContext context, ComponentSetting settings)
+        {
             if (settings == null || string.IsNullOrWhiteSpace(settings.NameOrId))
             {
-                return null; 
+                return null;
             }
             var sitedb = context.WebSite.SiteDb();
 
-            var formid = Data.IDGenerator.GetOrGenerate(settings.NameOrId, ConstObjectType.Form); 
+            var formid = Data.IDGenerator.GetOrGenerate(settings.NameOrId, ConstObjectType.Form);
 
-            var form = sitedb.Forms.Get(formid);  
-            if (form == null)  { return null;  }
+            var form = sitedb.Forms.Get(formid);
+            if (form == null) { return null; }
 
             var formsetting = sitedb.FormSetting.GetByFormId(form.Id);
 
@@ -55,41 +55,41 @@ namespace Kooboo.Sites.Render.Components
             }
 
             if (formsetting == null || formsetting.Enable == false || string.IsNullOrWhiteSpace(formsetting.FormSubmitter))
-            {   return Task.FromResult(body);  }
-             
-            var computeHash = Lib.Security.Hash.ComputeHashGuid(body); 
+            { return Task.FromResult(body); }
+
+            var computeHash = Lib.Security.Hash.ComputeHashGuid(body);
             if (computeHash != this.FormHash)
             {
-                this.FormHash = computeHash; 
+                this.FormHash = computeHash;
                 // reset form...
                 var el = GetFormElement(body);
-                this.FormAttributes = new Dictionary<string, string>(); 
+                this.FormAttributes = new Dictionary<string, string>();
 
                 foreach (var item in el.attributes)
                 {
                     this.FormAttributes.Add(item.name, item.value);
-                } 
-                this.bodyRenderTask =  RenderEvaluator.Evaluate(el.InnerHtml, new EvaluatorOption());
-
+                }
+                this.BodyRenderTask = RenderEvaluator.Evaluate(el.InnerHtml, new EvaluatorOption());
             }
 
             string submiturl = Kooboo.Sites.HtmlForm.FormManager.GetSubmitUrl(form, formsetting, context);
-                                             
 
-            Dictionary<string, string> attributes = new Dictionary<string, string>(this.FormAttributes);
+            Dictionary<string, string> attributes = new Dictionary<string, string>(this.FormAttributes)
+            {
+                ["action"] = submiturl,
+                ["method"] = string.IsNullOrEmpty(formsetting.Method) ? "post" : formsetting.Method
+            };
 
-            attributes["action"] = submiturl;
-            attributes["method"] = string.IsNullOrEmpty(formsetting.Method) ? "post" : formsetting.Method;
 
             if (formsetting.AllowAjax)
             {
                 attributes["onsubmit"] = "return false;";
             }
 
-            string key = "kform_" + Lib.Security.ShortGuid.GetNewShortId();
+            string key = $"kform_{Lib.Security.ShortGuid.GetNewShortId()}";
 
-            /// append additional koobooform id.....
-            if (form.FormType ==  Models.FormType.KoobooForm)
+            // append additional koobooform id.....
+            if (form.FormType == Models.FormType.KoobooForm)
             {
                 attributes["id"] = key;
             }
@@ -101,56 +101,53 @@ namespace Kooboo.Sites.Render.Components
                 opentag = opentag + "<input type='hidden' name=\"" + Sites.HtmlForm.FormManager.FormUrlName + "\" value=\"" + context.Request.RawRelativeUrl + "\" />";
             }
 
-            // If ajax, append the additional text here... 
-
-      
+            // If ajax, append the additional text here...
 
             //opentag += JsString(key, formsetting.SuccessCallBack, formsetting.FailedCallBack);
 
-
-            string result= opentag + RenderHelper.Render(GetBodyTask(form.Body), context) + "</form>";
+            string result = opentag + RenderHelper.Render(GetBodyTask(form.Body), context) + "</form>";
 
             result += JsString(key, formsetting.SuccessCallBack, formsetting.FailedCallBack);
 
-            return Task.FromResult(result); 
+            return Task.FromResult(result);
         }
 
         private string JsString(string key, string success, string fail)
         {
-            string addtionalJS = "<script src=\"/_admin/scripts/lib/jquery.min.js\"></script><script src=\"/_admin/scripts/lib/jqBootstrapValidation.js\"></script>";
+            string addtionalJS = $"<script src=\"/_admin/scripts/lib/jquery.min.js\"></script><script src=\"/_admin/scripts/lib/jqBootstrapValidation.js\"></script>";
 
             string ajax = "<script>$(\"#{key}\").find(\"input, textarea\").not(\"[type=submit]\").jqBootstrapValidation({preventSubmit: false,submitSuccess: function($form, event) {var data = {};$form.find('[name]').each(function(idx, el) {data[$(el).attr('name')] = $(el).val()});$.ajax({url: $form.attr('action'),method: $form.attr('method'),data: data,success: function(res) {{Success}}})},submitError: function($form, event, errors) {{Fail}}})</script>";
 
-            ajax =  ajax.Replace("{key}", key).Replace("{Success}", success).Replace("{Fail}", fail);
+            ajax = ajax.Replace("{key}", key).Replace("{Success}", success).Replace("{Fail}", fail);
 
-            return addtionalJS + ajax; 
+            return addtionalJS + ajax;
         }
 
         private Kooboo.Dom.Element GetFormElement(string formbody)
         {
             var doc = Kooboo.Dom.DomParser.CreateDom(formbody);
 
-            var form = doc.getElementsByTagName("form"); 
+            var form = doc.getElementsByTagName("form");
 
-            if (form !=null &&　form.length >0)
+            if (form != null && form.length > 0)
             {
-                return form.item[0]; 
+                return form.item[0];
             }
-            return null; 
+            return null;
         }
-         
-        private Dictionary<string, string> FormAttributes { get; set; } 
-        private List<IRenderTask> bodyRenderTask { get; set; }
-        private Guid _bodyhash; 
+
+        private Dictionary<string, string> FormAttributes { get; set; }
+        private List<IRenderTask> BodyRenderTask { get; set; }
+        private Guid _bodyhash;
 
         private Guid FormHash { get; set; }
-        public byte StoreConstType { get { return ConstObjectType.Form;  } }
+        public byte StoreConstType { get { return ConstObjectType.Form; } }
 
         private List<IRenderTask> GetBodyTask(string body)
         {
-            if (bodyRenderTask == null)
+            if (BodyRenderTask == null)
             {
-                bodyRenderTask = RenderEvaluator.Evaluate(body, new EvaluatorOption());
+                BodyRenderTask = RenderEvaluator.Evaluate(body, new EvaluatorOption());
                 _bodyhash = Lib.Security.Hash.ComputeHashGuid(body);
             }
             else
@@ -158,52 +155,50 @@ namespace Kooboo.Sites.Render.Components
                 var hash = Lib.Security.Hash.ComputeHashGuid(body);
                 if (hash != _bodyhash)
                 {
-                    bodyRenderTask = RenderEvaluator.Evaluate(body, new EvaluatorOption());
+                    BodyRenderTask = RenderEvaluator.Evaluate(body, new EvaluatorOption());
                     _bodyhash = hash;
                 }
             }
-            return bodyRenderTask;
+            return BodyRenderTask;
         }
 
         public List<ComponentInfo> AvaiableObjects(SiteDb sitedb)
         {
-            List<ComponentInfo> Models = new List<ComponentInfo>();
-            var allobjs = sitedb.Forms.All().Where(o=>!o.IsEmbedded).ToList();
+            List<ComponentInfo> models = new List<ComponentInfo>();
+            var allobjs = sitedb.Forms.All().Where(o => !o.IsEmbedded).ToList();
             foreach (var item in allobjs)
             {
-                ComponentInfo comp = new ComponentInfo();
-                comp.Id = item.Id;
-                comp.Name = item.Name;
-                Models.Add(comp);
+                ComponentInfo comp = new ComponentInfo {Id = item.Id, Name = item.Name};
+                models.Add(comp);
             }
-            return Models;
+            return models;
         }
 
-        public string Preview(SiteDb SiteDb, string NameOrId)
+        public string Preview(SiteDb siteDb, string nameOrId)
         {
-            if (string.IsNullOrEmpty(NameOrId))
+            if (string.IsNullOrEmpty(nameOrId))
             {
                 return null;
             }
-            var item = SiteDb.Forms.GetByNameOrId(NameOrId);
+            var item = siteDb.Forms.GetByNameOrId(nameOrId);
 
-            if (item!=null && !string.IsNullOrEmpty(item.Body))
+            if (item != null && !string.IsNullOrEmpty(item.Body))
             {
-                return FormInnerHtml(item.Body); 
+                return FormInnerHtml(item.Body);
             }
 
-            return null; 
+            return null;
         }
 
         private string FormInnerHtml(string formbody)
         {
-            if (formbody.IndexOf("<form", StringComparison.OrdinalIgnoreCase)>-1)
+            if (formbody.IndexOf("<form", StringComparison.OrdinalIgnoreCase) > -1)
             {
                 string newbody = "<html><body>" + formbody + "</body></html>";
-                var dom = Kooboo.Dom.DomParser.CreateDom(newbody); 
+                var dom = Kooboo.Dom.DomParser.CreateDom(newbody);
                 if (dom == null || dom.forms.length == 0)
                 {
-                    return null; 
+                    return null;
                 }
                 else
                 {
@@ -213,15 +208,13 @@ namespace Kooboo.Sites.Render.Components
             }
             else
             {
-                return formbody; 
+                return formbody;
             }
-            
         }
 
-
-        public string DisplayName(RenderContext Context)
+        public string DisplayName(RenderContext context)
         {
-            return Kooboo.Data.Language.Hardcoded.GetValue("Form", Context); 
+            return Kooboo.Data.Language.Hardcoded.GetValue("Form", context);
         }
-    }  
+    }
 }

@@ -30,9 +30,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
 
             var name = ConvertManager.GetUniqueName(context, converttype, convertname);
 
-            View view = new View();
-            view.Name = name;
-            view.Body = Lib.Helper.JsonHelper.GetString(result, "HtmlBody");
+            View view = new View {Name = name, Body = Lib.Helper.JsonHelper.GetString(result, "HtmlBody")};
 
             context.WebSite.SiteDb().Views.AddOrUpdate(view);
 

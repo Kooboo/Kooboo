@@ -1,18 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.Service;
 using System;
 using System.Collections.Generic;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Extensions;
-using Kooboo.Dom.CSS;
-using Kooboo.Dom;
 using System.Linq;
-using Kooboo.Data.Models;
-using Kooboo.Data.Extensions;
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.Routing;
-using Kooboo.Sites.Service;
-using Kooboo.Sites.Contents.Models;
 
 namespace Kooboo.Sites.Relation
 {
@@ -21,24 +14,24 @@ namespace Kooboo.Sites.Relation
         /// <summary>
         /// Get the object used by Page.
         /// </summary>
-        /// <param name="website"></param>
-        /// <param name="PageId"></param>
+        /// <param name="siteDb"></param>
+        /// <param name="pageId"></param>
+        /// <param name="styleRuleOnly"></param>
         /// <returns></returns>
-        public static List<CmsCssRule> ListUsedByPage(SiteDb SiteDb, Guid PageId, bool StyleRuleOnly = true)
+        public static List<CmsCssRule> ListUsedByPage(SiteDb siteDb, Guid pageId, bool styleRuleOnly = true)
         {
-            var allobjectids = SiteDb.Pages.GetRelatedOwnerObjectIds(PageId);
+            var allobjectids = siteDb.Pages.GetRelatedOwnerObjectIds(pageId);
             // inline or embedded style rules.
-            List<CmsCssRule> InRules = new List<CmsCssRule>();
 
-            InRules = SiteDb.CssRules.Query.WhereIn<Guid>(o => o.OwnerObjectId, allobjectids).SelectAll();
+            var inRules = siteDb.CssRules.Query.WhereIn<Guid>(o => o.OwnerObjectId, allobjectids).SelectAll();
 
-            if (StyleRuleOnly)
+            if (styleRuleOnly)
             {
                 List<int> removeindex = new List<int>();
-                int count = InRules.Count();
+                int count = inRules.Count();
                 for (int i = 0; i < count; i++)
                 {
-                    if (InRules[i].ruleType != RuleType.StyleRule)
+                    if (inRules[i].ruleType != RuleType.StyleRule)
                     {
                         removeindex.Add(i);
                     }
@@ -46,20 +39,20 @@ namespace Kooboo.Sites.Relation
 
                 foreach (var item in removeindex.OrderByDescending(o => o))
                 {
-                    InRules.RemoveAt(item);
+                    inRules.RemoveAt(item);
                 }
             }
 
-            return InRules;
+            return inRules;
         }
-          
-        public static void ComputeUrl(CmsCssRule CmsCssRule, string baseurl, SiteDb sitedb)
+
+        public static void ComputeUrl(CmsCssRule cmsCssRule, string baseurl, SiteDb sitedb)
         {
             bool canhaveuri = false;
 
-            var currentRelations = sitedb.Relations.GetRelations(CmsCssRule.Id);
+            var currentRelations = sitedb.Relations.GetRelations(cmsCssRule.Id);
 
-            foreach (var item in CmsCssRule.Properties)
+            foreach (var item in cmsCssRule.Properties)
             {
                 if (Kooboo.Sites.Tag.Property.CanHaveUri(item))
                 { canhaveuri = true; break; }
@@ -73,11 +66,11 @@ namespace Kooboo.Sites.Relation
                 return;
             }
 
-            var urls = Kooboo.Sites.Service.CssService.GetUrlInfos(CmsCssRule.RuleText).Select(o => o.PureUrl).ToList();
+            var urls = Kooboo.Sites.Service.CssService.GetUrlInfos(cmsCssRule.RuleText).Select(o => o.PureUrl).ToList();
 
-            urls = urls.Where(o => Kooboo.Lib.Utilities.DataUriService.isDataUri(o) == false).ToList(); 
+            urls = urls.Where(o => Kooboo.Lib.Utilities.DataUriService.isDataUri(o) == false).ToList();
 
-            ComputeUrlRelation(sitedb, CmsCssRule.Id, CmsCssRule.ConstType, urls); 
+            ComputeUrlRelation(sitedb, cmsCssRule.Id, cmsCssRule.ConstType, urls);
 
             //Dictionary<Guid, string> routelist = null;
 
@@ -94,7 +87,7 @@ namespace Kooboo.Sites.Relation
             //{
             //    if (!routelist.Keys.Contains(item.objectYId))
             //    {
-            //        sitedb.Relations.Delete(item.Id); 
+            //        sitedb.Relations.Delete(item.Id);
             //    }
             //}
 
@@ -123,24 +116,24 @@ namespace Kooboo.Sites.Relation
         public static void ComputeUrlRelation(SiteDb sitedb, Guid objectId, byte constType, List<string> urllist)
         {
             List<Guid> internalRoutes = new List<Guid>();
-            List<Guid> ExternalResource = new List<Guid>();
-            
+            List<Guid> externalResource = new List<Guid>();
+
             var oldRouteRelations = sitedb.Relations.GetRelationViaRoutes(objectId);
             var oldExternalResourceRelations = sitedb.Relations.GetExternalRelations(objectId, 0);
 
-            byte FinalDestConstType = 0; 
+            byte finalDestConstType = 0;
 
             foreach (var item in urllist.Distinct())
             {
-                  FinalDestConstType = ConstTypeService.GetConstTypeByUrl(item); ;
-                
+                finalDestConstType = ConstTypeService.GetConstTypeByUrl(item); ;
+
                 if (Service.DomUrlService.IsExternalLink(item))
                 {
                     Guid externalid = Kooboo.Data.IDGenerator.Generate(item, ConstObjectType.ExternalResource);
-                    ExternalResource.Add(externalid);
+                    externalResource.Add(externalid);
                     if (oldExternalResourceRelations.Find(o => o.objectYId == externalid) == null)
                     {
-                        sitedb.ExternalResource.AddOrUpdate(item, FinalDestConstType);
+                        sitedb.ExternalResource.AddOrUpdate(item, finalDestConstType);
                     }
                 }
                 else
@@ -149,7 +142,7 @@ namespace Kooboo.Sites.Relation
                     internalRoutes.AddRange(routeids);
                     if (routeids.Count == 1 && oldRouteRelations.Find(o => o.objectYId == routeids[0]) == null)
                     {
-                        sitedb.Routes.EnsureExists(item, FinalDestConstType);
+                        sitedb.Routes.EnsureExists(item, finalDestConstType);
                     }
                 }
             }
@@ -166,29 +159,25 @@ namespace Kooboo.Sites.Relation
             {
                 if (oldRouteRelations.Find(o => o.objectYId == item) == null)
                 {
-                    sitedb.Relations.AddOrUpdate(objectId, item, constType, ConstObjectType.Route, FinalDestConstType);
+                    sitedb.Relations.AddOrUpdate(objectId, item, constType, ConstObjectType.Route, finalDestConstType);
                 }
             }
 
-
             foreach (var item in oldExternalResourceRelations)
             {
-                if (!ExternalResource.Contains(item.objectYId))
+                if (!externalResource.Contains(item.objectYId))
                 {
                     sitedb.Relations.Delete(item.Id);
                 }
             }
 
-            foreach (var item in ExternalResource)
+            foreach (var item in externalResource)
             {
                 if (oldExternalResourceRelations.Find(o => o.objectYId == item) == null)
                 {
-                    sitedb.Relations.AddOrUpdate(objectId, item, constType, ConstObjectType.ExternalResource, FinalDestConstType);
+                    sitedb.Relations.AddOrUpdate(objectId, item, constType, ConstObjectType.ExternalResource, finalDestConstType);
                 }
             }
         }
-
-        
     }
-
 }

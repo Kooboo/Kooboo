@@ -6,49 +6,47 @@ namespace Kooboo.Sites.InlineEditor
 {
     public class CssSelectorComparer
     {
-        private static HashSet<char> _Combinators;
+        private static HashSet<char> _combinators;
 
         public static HashSet<char> Combinators
         {
             get
             {
-                if (_Combinators == null)
+                return _combinators ?? (_combinators = new HashSet<char>
                 {
-                    _Combinators = new HashSet<char>();
-                    _Combinators.Add('+');
-                    _Combinators.Add('|');
-                    _Combinators.Add('$');
-                    _Combinators.Add('^');
-                    _Combinators.Add('[');
-                    _Combinators.Add(']');
-                    _Combinators.Add('*');
-                    _Combinators.Add('=');
-                    _Combinators.Add(':');
-                    _Combinators.Add('~');
-                    _Combinators.Add('.');
-                    _Combinators.Add('#');
-                    _Combinators.Add('>');
-                    _Combinators.Add(',');
-                    _Combinators.Add('!');
-                }
-                return _Combinators;
+                    '+',
+                    '|',
+                    '$',
+                    '^',
+                    '[',
+                    ']',
+                    '*',
+                    '=',
+                    ':',
+                    '~',
+                    '.',
+                    '#',
+                    '>',
+                    ',',
+                    '!'
+                });
             }
         }
 
-        public static bool IsEqual(string RuleA, string RuleB)
+        public static bool IsEqual(string ruleA, string ruleB)
         {
-            if (string.IsNullOrEmpty(RuleA) || string.IsNullOrEmpty(RuleB))
+            if (string.IsNullOrEmpty(ruleA) || string.IsNullOrEmpty(ruleB))
             {
                 return false;
             }
-            if (RuleA == RuleB)
+            if (ruleA == ruleB)
             {
                 return true;
             }
 
             var regx = new System.Text.RegularExpressions.Regex("[\n|\t|\r| ]");
-            var noEmptyContentA = regx.Replace(RuleA, "");
-            var noEmptyContentB = regx.Replace(RuleB, "");
+            var noEmptyContentA = regx.Replace(ruleA, "");
+            var noEmptyContentB = regx.Replace(ruleB, "");
             if (noEmptyContentA != noEmptyContentB)
             {
                 return false;
@@ -61,20 +59,20 @@ namespace Kooboo.Sites.InlineEditor
             //}
 
             // verify they are the same by the rules.
-            int maxi = RuleA.Length;
-            if (maxi < RuleB.Length)
+            int maxi = ruleA.Length;
+            if (maxi < ruleB.Length)
             {
-                maxi = RuleB.Length;
+                maxi = ruleB.Length;
             }
-            int maxa = RuleA.Length;
-            int maxb = RuleB.Length;
+            int maxa = ruleA.Length;
+            int maxb = ruleB.Length;
             int ai = 0;
             int bi = 0;
             char previous = ' ';
             while (ai < maxa && bi < maxb)
             {
-                char a = RuleA[ai];
-                char b = RuleB[bi];
+                char a = ruleA[ai];
+                char b = ruleB[bi];
                 if (a == b)
                 {
                     previous = a;
@@ -102,7 +100,7 @@ namespace Kooboo.Sites.InlineEditor
                     {
                         if (IsSpace(a))
                         {
-                            var next = GetNextNonSpace(ref RuleA, ref ai, maxa);
+                            var next = GetNextNonSpace(ref ruleA, ref ai, maxa);
                             if (next == b)
                             {
                                 continue;
@@ -112,7 +110,7 @@ namespace Kooboo.Sites.InlineEditor
                         }
                         else
                         {
-                            var nextb = GetNextNonSpace(ref RuleB, ref bi, maxb);
+                            var nextb = GetNextNonSpace(ref ruleB, ref bi, maxb);
                             if (nextb == a)
                             {
                                 continue;

@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Models;
 
 namespace Kooboo.Sites.Repository
 {
-  public  class LayoutRepository : SiteRepositoryBase<Layout>
+    public class LayoutRepository : SiteRepositoryBase<Layout>
     {
         public override ObjectStoreParameters StoreParameters
         {

@@ -1,13 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Interface;
+using Kooboo.Extensions;
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Extensions;
-using Kooboo.IndexedDB.Btree.Comparer;
-using Kooboo.Data.Interface;
 
 namespace Kooboo.Sites.Repository
 {
@@ -16,14 +15,14 @@ namespace Kooboo.Sites.Repository
         public Guid DiskSyncSettingId = ("___kooboodisksync" + Environment.MachineName).ToHashGuid();
 
         public Guid GlobalObjectId = default(Guid);
-        
+
         public override ObjectStoreParameters StoreParameters
         {
             get
             {
                 ObjectStoreParameters paras = new ObjectStoreParameters();
                 paras.AddColumn<Synchronization>(it => it.ObjectId);
-                paras.AddColumn<Synchronization>(o => o.SyncSettingId); 
+                paras.AddColumn<Synchronization>(o => o.SyncSettingId);
                 paras.AddColumn<Synchronization>(o => o.In);
                 paras.AddIndex<Synchronization>(o => o.Version);
                 paras.AddIndex<Synchronization>(o => o.RemoteVersion);
@@ -34,45 +33,45 @@ namespace Kooboo.Sites.Repository
         }
 
         //Get items to push to remote..
-        public List<LogEntry> GetPushItems(Guid SyncSettingId)
+        public List<LogEntry> GetPushItems(Guid syncSettingId)
         {
-           // var currentlogid = GetLastOut(SyncSettingId);
+            // var currentlogid = GetLastOut(SyncSettingId);
             var currentlogid = -1;
-            List<LogEntry> result = new List<LogEntry>(); 
-            Dictionary<Guid, long> ObjectLastSyncVersion = new Dictionary<Guid, long>();
+            List<LogEntry> result = new List<LogEntry>();
+            Dictionary<Guid, long> objectLastSyncVersion = new Dictionary<Guid, long>();
 
-            long LastVersion = -1;
+            long lastVersion = -1;
 
             var alllogs = this.SiteDb.Log.Store.Where(o => o.Id > currentlogid).SelectAll();
-            var allversion = this.SiteDb.Synchronization.Query.Where(o => o.SyncSettingId == SyncSettingId).SelectAll();
-           var pastversion =  allversion.Select(o => o.Version).Distinct().ToList();
+            var allversion = this.SiteDb.Synchronization.Query.Where(o => o.SyncSettingId == syncSettingId).SelectAll();
+            var pastversion = allversion.Select(o => o.Version).Distinct().ToList();
 
-            alllogs = alllogs.Where(o=> o !=null && !pastversion.Contains(o.Id)).ToList(); 
+            alllogs = alllogs.Where(o => o != null && !pastversion.Contains(o.Id)).ToList();
 
             foreach (var item in alllogs.OrderByDescending(o => o.Id))
-            { 
+            {
                 if (item.KeyBytes == null)
                 {
-                    continue; 
-                } 
+                    continue;
+                }
                 Guid key = this.Store.KeyConverter.FromByte(item.KeyBytes);
 
-                if (!ObjectLastSyncVersion.ContainsKey(key))
+                if (!objectLastSyncVersion.ContainsKey(key))
                 {
-                    LastVersion = GetLastSyncVersion(SyncSettingId, item.StoreName, key);
-                    ObjectLastSyncVersion[key] = LastVersion;
+                    lastVersion = GetLastSyncVersion(syncSettingId, item.StoreName, key);
+                    objectLastSyncVersion[key] = lastVersion;
                 }
                 else
                 {
-                    LastVersion = ObjectLastSyncVersion[key];
+                    lastVersion = objectLastSyncVersion[key];
                 }
 
-                if (LastVersion >= item.Id)
-                { 
+                if (lastVersion >= item.Id)
+                {
                     continue;
                 }
-    
-                var currentrecord = result.Find(o =>o.KeyHash == item.KeyHash);
+
+                var currentrecord = result.Find(o => o.KeyHash == item.KeyHash);
 
                 if (currentrecord == null)
                 {
@@ -92,16 +91,15 @@ namespace Kooboo.Sites.Repository
                         }
                     }
                 }
-
-            } 
+            }
             return result;
         }
 
-        public List<Synchronization> GetRecords(Guid SyncSettingId, bool In, int skip, int take)
+        public List<Synchronization> GetRecords(Guid syncSettingId, bool In, int skip, int take)
         {
-            if (!In && SyncSettingId != default(Guid))
+            if (!In && syncSettingId != default(Guid))
             {
-                return this.Query.Where(o => o.SyncSettingId == SyncSettingId && o.In == false).OrderByAscending(o=>o.Version).Skip(skip).Take(take);
+                return this.Query.Where(o => o.SyncSettingId == syncSettingId && o.In == false).OrderByAscending(o => o.Version).Skip(skip).Take(take);
             }
             else
             {
@@ -109,19 +107,19 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        // used in the grid view to show how many items to be be published. 
-        public int QueueCount(Guid SyncSettingId)
+        // used in the grid view to show how many items to be be published.
+        public int QueueCount(Guid syncSettingId)
         {
-            return GetPushItems(SyncSettingId).Count;
+            return GetPushItems(syncSettingId).Count;
         }
 
-        public long GetLastOut(Guid SyncSettingId)
+        public long GetLastOut(Guid syncSettingId)
         {
             Synchronization item = new Synchronization();
-            item.SyncSettingId = SyncSettingId;
+            item.SyncSettingId = syncSettingId;
             item.ObjectId = default(Guid);
             var log = this.Get(item.Id);
-             
+
             long generallog = -1;
 
             if (log != null)
@@ -129,49 +127,49 @@ namespace Kooboo.Sites.Repository
                 generallog = log.Version;
             }
 
-            var logitem = this.Query.Where(o => o.SyncSettingId == SyncSettingId && o.In == false).OrderByDescending(o => o.Version).FirstOrDefault();
+            var logitem = this.Query.Where(o => o.SyncSettingId == syncSettingId && o.In == false).OrderByDescending(o => o.Version).FirstOrDefault();
 
             if (logitem != null && logitem.Version > generallog)
             {
                 generallog = logitem.Version;
             }
 
-            return generallog; 
+            return generallog;
         }
-         
-        public long GetLastIn(Guid SyncSettingId)
+
+        public long GetLastIn(Guid syncSettingId)
         {
-            Synchronization item = new Synchronization();
-            item.SyncSettingId = SyncSettingId;
-            item.ObjectId = default(Guid);
-            item.In = true; 
-            var log = this.Get(item.Id); 
-            long generallog = -1; 
+            Synchronization item = new Synchronization
+            {
+                SyncSettingId = syncSettingId, ObjectId = default(Guid), In = true
+            };
+            var log = this.Get(item.Id);
+            long generallog = -1;
 
             if (log != null)
             {
-                generallog = log.RemoteVersion; 
+                generallog = log.RemoteVersion;
             }
 
-            var logitem = this.Query.Where(o => o.SyncSettingId == SyncSettingId && o.In == true).OrderByDescending(o => o.RemoteVersion).FirstOrDefault(); 
+            var logitem = this.Query.Where(o => o.SyncSettingId == syncSettingId && o.In == true).OrderByDescending(o => o.RemoteVersion).FirstOrDefault();
 
             if (logitem != null && logitem.RemoteVersion > generallog)
             {
-                generallog = logitem.RemoteVersion; 
+                generallog = logitem.RemoteVersion;
             }
 
-            return generallog; 
+            return generallog;
         }
 
-        public long GetLastSyncVersion(Guid SyncSettingId, string StoreName, Guid ObjectId)
+        public long GetLastSyncVersion(Guid syncSettingId, string storeName, Guid objectId)
         {
             long lastid = -1;
 
-            var logs = this.Query.Where(o => o.SyncSettingId == SyncSettingId && o.ObjectId == ObjectId).SelectAll();
+            var logs = this.Query.Where(o => o.SyncSettingId == syncSettingId && o.ObjectId == objectId).SelectAll();
 
             foreach (var item in logs)
             {
-                if (Kooboo.Lib.Helper.StringHelper.IsSameValue(StoreName, item.StoreName))
+                if (Kooboo.Lib.Helper.StringHelper.IsSameValue(storeName, item.StoreName))
                 {
                     if (lastid < item.Version)
                     {
@@ -182,36 +180,31 @@ namespace Kooboo.Sites.Repository
 
             return lastid;
         }
-          
-        public bool CanSyncToDisk(ISiteObject value, string StoreName)
-        {
-            /// verify if this item has been sync to disk....
-            /// this is a double, should not happen... 
-            if (value == null)
-            {
-                return false; 
-            }
 
-            ICoreObject coreobject = value as ICoreObject; 
-            if (coreobject == null)
-            { return false;  }
-    
+        public bool CanSyncToDisk(ISiteObject value, string storeName)
+        {
+            // verify if this item has been sync to disk....
+            // this is a double, should not happen...
+
+            if (!(value is ICoreObject coreobject))
+            { return false; }
+
             var logs = this.Query.Where(o => o.SyncSettingId == this.DiskSyncSettingId && o.ObjectId == value.Id).SelectAll();
 
             foreach (var item in logs)
             {
-                if (Kooboo.Lib.Helper.StringHelper.IsSameValue(StoreName, item.StoreName))
+                if (Kooboo.Lib.Helper.StringHelper.IsSameValue(storeName, item.StoreName))
                 {
-                   if (item.Version >= coreobject.Version)
+                    if (item.Version >= coreobject.Version)
                     {
                         return false;
-                    } 
+                    }
                 }
             }
 
-            this.AddOrUpdate(new Synchronization { SyncSettingId = this.DiskSyncSettingId, ObjectId = value.Id, Version = coreobject.Version, StoreName = StoreName });
+            this.AddOrUpdate(new Synchronization { SyncSettingId = this.DiskSyncSettingId, ObjectId = value.Id, Version = coreobject.Version, StoreName = storeName });
 
-            return true;  
+            return true;
         }
     }
 }

@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
@@ -7,17 +7,17 @@ namespace Kooboo.Sites.Scripting.Global
 {
     public class kSiteDb
     {
-        private RenderContext context { get; set; }
+        private RenderContext Context { get; set; }
 
         public kSiteDb(RenderContext context)
         {
-            this.context = context;
+            this.Context = context;
             _locker = new object();
         }
 
         private static object _locker;
 
-        SiteItem.RoutableTextRepository _page;
+        private SiteItem.RoutableTextRepository _page;
 
         public SiteItem.RoutableTextRepository Pages
         {
@@ -29,7 +29,7 @@ namespace Kooboo.Sites.Scripting.Global
                     {
                         if (_page == null)
                         {
-                            _page = new SiteItem.RoutableTextRepository(this.context.WebSite.SiteDb().Pages, this.context);
+                            _page = new SiteItem.RoutableTextRepository(this.Context.WebSite.SiteDb().Pages, this.Context);
                         }
                     }
                 }
@@ -37,11 +37,7 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-
-
-
-
-        SiteItem.TextRepository _views;
+        private SiteItem.TextRepository _views;
 
         public SiteItem.TextRepository Views
         {
@@ -53,7 +49,7 @@ namespace Kooboo.Sites.Scripting.Global
                     {
                         if (_views == null)
                         {
-                            _views = new SiteItem.TextRepository(this.context.WebSite.SiteDb().Views, this.context);
+                            _views = new SiteItem.TextRepository(this.Context.WebSite.SiteDb().Views, this.Context);
                         }
                     }
                 }
@@ -61,7 +57,7 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-        SiteItem.TextRepository _layout;
+        private SiteItem.TextRepository _layout;
 
         public SiteItem.TextRepository Layouts
         {
@@ -73,7 +69,7 @@ namespace Kooboo.Sites.Scripting.Global
                     {
                         if (_layout == null)
                         {
-                            _layout = new SiteItem.TextRepository(this.context.WebSite.SiteDb().Layouts, this.context);
+                            _layout = new SiteItem.TextRepository(this.Context.WebSite.SiteDb().Layouts, this.Context);
                         }
                     }
                 }
@@ -81,7 +77,7 @@ namespace Kooboo.Sites.Scripting.Global
             }
         }
 
-        SiteItem.TextContentObjectRepository _textcontents;
+        private SiteItem.TextContentObjectRepository _textcontents;
 
         public SiteItem.TextContentObjectRepository TextContents
         {
@@ -93,7 +89,7 @@ namespace Kooboo.Sites.Scripting.Global
                     {
                         if (_textcontents == null)
                         {
-                            _textcontents = new SiteItem.TextContentObjectRepository(this.context.WebSite.SiteDb().TextContent, this.context);
+                            _textcontents = new SiteItem.TextContentObjectRepository(this.Context.WebSite.SiteDb().TextContent, this.Context);
                         }
                     }
                 }
@@ -105,11 +101,9 @@ namespace Kooboo.Sites.Scripting.Global
         {
             get
             {
-                return this.TextContents; 
+                return this.TextContents;
             }
         }
-
-
 
         private SiteItem.MultilingualRepository _htmlblock;
 
@@ -123,7 +117,7 @@ namespace Kooboo.Sites.Scripting.Global
                     {
                         if (_htmlblock == null)
                         {
-                            _htmlblock = new SiteItem.MultilingualRepository(this.context.WebSite.SiteDb().HtmlBlocks, this.context);
+                            _htmlblock = new SiteItem.MultilingualRepository(this.Context.WebSite.SiteDb().HtmlBlocks, this.Context);
                         }
                     }
                 }
@@ -143,16 +137,15 @@ namespace Kooboo.Sites.Scripting.Global
                     {
                         if (_labels == null)
                         {
-                            _labels = new SiteItem.MultilingualRepository(this.context.WebSite.SiteDb().Labels, this.context);
+                            _labels = new SiteItem.MultilingualRepository(this.Context.WebSite.SiteDb().Labels, this.Context);
                         }
                     }
                 }
                 return _labels;
-            }    
+            }
         }
 
-
-        private SiteItem.RoutableTextRepository _script; 
+        private SiteItem.RoutableTextRepository _script;
 
         public SiteItem.RoutableTextRepository Scripts
         {
@@ -164,16 +157,15 @@ namespace Kooboo.Sites.Scripting.Global
                     {
                         if (_script == null)
                         {
-                            _script = new SiteItem.RoutableTextRepository(this.context.WebSite.SiteDb().Scripts, this.context);
+                            _script = new SiteItem.RoutableTextRepository(this.Context.WebSite.SiteDb().Scripts, this.Context);
                         }
                     }
                 }
                 return _script;
-            }            
+            }
         }
 
-
-        private SiteItem.RoutableTextRepository _styles; 
+        private SiteItem.RoutableTextRepository _styles;
 
         public SiteItem.RoutableTextRepository Styles
         {
@@ -185,18 +177,18 @@ namespace Kooboo.Sites.Scripting.Global
                     {
                         if (_styles == null)
                         {
-                            _styles = new SiteItem.RoutableTextRepository(this.context.WebSite.SiteDb().Styles, this.context);
+                            _styles = new SiteItem.RoutableTextRepository(this.Context.WebSite.SiteDb().Styles, this.Context);
                         }
                     }
                 }
                 return _styles;
-            }    
+            }
         }
 
+        private SiteItem.BinaryRepository _images;
 
-        private SiteItem.BinaryRepository _images;       
         public SiteItem.BinaryRepository Images
-        {   
+        {
             get
             {
                 if (_images == null)
@@ -205,15 +197,16 @@ namespace Kooboo.Sites.Scripting.Global
                     {
                         if (_images == null)
                         {
-                            _images = new SiteItem.BinaryRepository(this.context.WebSite.SiteDb().Images, this.context);
+                            _images = new SiteItem.BinaryRepository(this.Context.WebSite.SiteDb().Images, this.Context);
                         }
                     }
                 }
                 return _images;
-            }         
+            }
         }
 
-        private SiteItem.BinaryRepository _files; 
+        private SiteItem.BinaryRepository _files;
+
         public SiteItem.BinaryRepository Files
         {
             get
@@ -224,23 +217,23 @@ namespace Kooboo.Sites.Scripting.Global
                     {
                         if (_files == null)
                         {
-                            _files = new SiteItem.BinaryRepository(this.context.WebSite.SiteDb().Files, this.context);
+                            _files = new SiteItem.BinaryRepository(this.Context.WebSite.SiteDb().Files, this.Context);
                         }
                     }
                 }
                 return _files;
-            }    
-        }
-                      
-        public Repository.RouteRepository Routes
-        {
-            get
-            {     
-                return this.context.WebSite != null ? this.context.WebSite.SiteDb().Routes : null;
             }
         }
 
-        SiteItem.FormValuesRepository _formValues;
+        public Repository.RouteRepository Routes
+        {
+            get
+            {
+                return this.Context.WebSite != null ? this.Context.WebSite.SiteDb().Routes : null;
+            }
+        }
+
+        private SiteItem.FormValuesRepository _formValues;
 
         public SiteItem.FormValuesRepository FormValues
         {
@@ -252,15 +245,12 @@ namespace Kooboo.Sites.Scripting.Global
                     {
                         if (_formValues == null)
                         {
-                            _formValues = new SiteItem.FormValuesRepository(this.context.WebSite.SiteDb().FormValues, this.context);
+                            _formValues = new SiteItem.FormValuesRepository(this.Context.WebSite.SiteDb().FormValues, this.Context);
                         }
                     }
                 }
                 return _formValues;
             }
         }
-
-
     }
-
 }

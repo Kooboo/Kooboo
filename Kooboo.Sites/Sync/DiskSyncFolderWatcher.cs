@@ -1,13 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Models;
+using Kooboo.Lib.Helper;
 using System;
 using System.Collections.Generic;
-using Kooboo.Data.Models;
 using System.IO;
-using Kooboo.Sites.Extensions;
-using System.Threading.Tasks;
-using System.Threading;
-using Kooboo.Lib.Helper;
 
 namespace Kooboo.Sites.Sync
 {
@@ -17,23 +14,20 @@ namespace Kooboo.Sites.Sync
 
         public static HashSet<Guid> PathHash = new HashSet<Guid>();
 
-
         private static object _lockobject = new object();
 
-        public static void StartDiskWatcher(Data.Models.WebSite WebSite)
+        public static void StartDiskWatcher(Data.Models.WebSite webSite)
         {
-            if (!WebSite.EnableDiskSync)
+            if (!webSite.EnableDiskSync)
             { return; }
 
-            if (!watchers.ContainsKey(WebSite.Id))
+            if (!watchers.ContainsKey(webSite.Id))
             {
                 lock (_lockobject)
                 {
-
-                    if (!watchers.ContainsKey(WebSite.Id))
+                    if (!watchers.ContainsKey(webSite.Id))
                     {
-
-                        var hash = Lib.Security.Hash.ComputeGuidIgnoreCase(WebSite.DiskSyncFolder);
+                        var hash = Lib.Security.Hash.ComputeGuidIgnoreCase(webSite.DiskSyncFolder);
 
                         if (PathHash.Contains(hash))
                         {
@@ -42,20 +36,23 @@ namespace Kooboo.Sites.Sync
 
                         try
                         {
-                            IOHelper.EnsureDirectoryExists(WebSite.DiskSyncFolder);
+                            IOHelper.EnsureDirectoryExists(webSite.DiskSyncFolder);
                         }
                         catch (Exception)
                         {
                             return;
                         }
 
-                        FileSystemWatcher watcher = new System.IO.FileSystemWatcher(WebSite.DiskSyncFolder);
+                        FileSystemWatcher watcher = new System.IO.FileSystemWatcher(webSite.DiskSyncFolder)
+                        {
+                            IncludeSubdirectories = true,
+                            NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite |
+                                           NotifyFilters.DirectoryName
+                        };
 
-                        watcher.IncludeSubdirectories = true;
 
-                        watcher.NotifyFilter = NotifyFilters.FileName | NotifyFilters.LastWrite | NotifyFilters.DirectoryName;
 
-                        DiskSyncManager manager = DiskSyncHelper.GetSyncManager(WebSite.Id);
+                        DiskSyncManager manager = DiskSyncHelper.GetSyncManager(webSite.Id);
 
                         watcher.Changed += new FileSystemEventHandler(manager.OnChanged);
                         watcher.Created += new FileSystemEventHandler(manager.OnChanged);
@@ -64,17 +61,12 @@ namespace Kooboo.Sites.Sync
 
                         watcher.EnableRaisingEvents = true;
 
-                        watchers[WebSite.Id] = watcher;
+                        watchers[webSite.Id] = watcher;
 
                         PathHash.Add(hash);
-
-                    }    
+                    }
                 }
-
-
             }
-
-
         }
 
         public static void StopDiskWatcher(Data.Models.WebSite website)
@@ -92,11 +84,8 @@ namespace Kooboo.Sites.Sync
                     var hash = Lib.Security.Hash.ComputeGuidIgnoreCase(website.DiskSyncFolder);
 
                     PathHash.Remove(hash);
-
                 }
             }
         }
     }
-
-
 }

@@ -1,9 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Interface;
 using Kooboo.Data.Models;
 using Kooboo.IndexedDB;
-using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
 
@@ -19,17 +17,17 @@ namespace Kooboo.Sites.Repository
                 para.AddColumn<DataMethodSetting>(o => o.DeclareTypeHash);
                 para.AddColumn<DataMethodSetting>(o => o.MethodSignatureHash);
                 para.AddColumn<DataMethodSetting>(o => o.IsPublic);
-                para.SetPrimaryKeyField<DataMethodSetting>(o => o.Id); 
-                return para; 
+                para.SetPrimaryKeyField<DataMethodSetting>(o => o.Id);
+                return para;
             }
         }
 
         /// <summary>
         /// Get all the methods that have the folderid parameters..
         /// </summary>
-        /// <param name="FolderId"></param>
+        /// <param name="folderId"></param>
         /// <returns></returns>
-        public List<DataMethodSetting> GetByFolder(Guid FolderId)
+        public List<DataMethodSetting> GetByFolder(Guid folderId)
         {
             List<DataMethodSetting> result = new List<DataMethodSetting>();
 
@@ -37,7 +35,7 @@ namespace Kooboo.Sites.Repository
             foreach (var item in all)
             {
                 if (item.DeclareType.Contains(typeof(Kooboo.Sites.DataSources.ContentItem).Name) || item.DeclareType.Contains(typeof(Kooboo.Sites.DataSources.ContentList).Name))
-                { 
+                {
                     var keys = item.ParameterBinding.Keys;
                     foreach (var key in keys)
                     {
@@ -45,11 +43,9 @@ namespace Kooboo.Sites.Repository
                         {
                             var value = item.ParameterBinding[key];
 
-                            var bindingguid = default(Guid);
-
-                            if (Guid.TryParse(value.Binding, out bindingguid))
+                            if (Guid.TryParse(value.Binding, out var bindingguid))
                             {
-                                if (bindingguid == FolderId)
+                                if (bindingguid == folderId)
                                 {
                                     result.Add(item);
                                 }
@@ -59,19 +55,19 @@ namespace Kooboo.Sites.Repository
                 }
             }
 
-            return result; 
+            return result;
         }
 
-        public override  List<UsedByRelation> GetUsedBy(Guid ObjectId)
+        public override List<UsedByRelation> GetUsedBy(Guid objectId)
         {
-            var viewmethods = this.SiteDb.ViewDataMethods.Query.Where(o => o.MethodId == ObjectId).SelectAll();
-             
+            var viewmethods = this.SiteDb.ViewDataMethods.Query.Where(o => o.MethodId == objectId).SelectAll();
+
             List<UsedByRelation> relations = new List<UsedByRelation>();
 
             foreach (var item in viewmethods)
             {
                 UsedByRelation relation = new UsedByRelation();
-                  
+
                 var objectinfo = Sites.Service.ObjectService.GetObjectInfo(this.SiteDb, item.ViewId, ConstObjectType.View);
                 relation.Name = objectinfo.DisplayName;
                 relation.Url = objectinfo.Url;
@@ -83,9 +79,6 @@ namespace Kooboo.Sites.Repository
             }
 
             return relations;
-
-
         }
-
     }
 }

@@ -21,35 +21,33 @@ namespace Kooboo.Sites.Ecommerce.Repository
             }
         }
 
-        public void UpdateCategory(Guid ProductId, List<Guid> CatIds)
+        public void UpdateCategory(Guid productId, List<Guid> catIds)
         {
-            if (CatIds == null)
+            if (catIds == null)
             {
-                CatIds = new List<Guid>();
+                catIds = new List<Guid>();
             }
 
-            var olds = this.Query.Where(o => o.ProductId == ProductId).SelectAll();
+            var olds = this.Query.Where(o => o.ProductId == productId).SelectAll();
 
             foreach (var item in olds)
             {
-                if (!CatIds.Contains(item.CategoryId))
+                if (!catIds.Contains(item.CategoryId))
                 {
                     this.Delete(item.Id);
                 }
             }
 
-            foreach (var item in CatIds)
+            foreach (var item in catIds)
             {
-                ProductCategory productcat = new ProductCategory();
-                productcat.ProductId = ProductId;
-                productcat.CategoryId = item;
+                ProductCategory productcat = new ProductCategory {ProductId = productId, CategoryId = item};
                 this.AddOrUpdate(productcat);
             }
         }
 
-        public List<ProductCategory> GetCatIdByProduct(Guid ProductId)
+        public List<ProductCategory> GetCatIdByProduct(Guid productId)
         {
-            var list = this.Query.Where(o => o.ProductId == ProductId).SelectAll();
+            var list = this.Query.Where(o => o.ProductId == productId).SelectAll();
 
             return list;
         }

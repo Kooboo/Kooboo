@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Extensions;
 using Kooboo.Sites.Models;
@@ -11,10 +11,11 @@ namespace Kooboo.Sites.SiteTransfer.Model
     {
         public ContinueConverter()
         {
-            this.ConstType = ConstObjectType.ContinueConverter; 
+            this.ConstType = ConstObjectType.ContinueConverter;
         }
 
         private Guid _id;
+
         public override Guid Id
         {
             get
@@ -47,6 +48,5 @@ namespace Kooboo.Sites.SiteTransfer.Model
         public string ElementTag { get; set; }
 
         public Guid Hash { get; set; }
-
     }
 }

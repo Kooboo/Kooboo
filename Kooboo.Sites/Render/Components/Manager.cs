@@ -1,25 +1,18 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Data.Context;
 using Kooboo.Dom;
 using Kooboo.Sites.Repository;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render.Components
 {
     public static class Manager
     {
-        public static string Preview(SiteDb sitedb, string TagName, string NameOrId)
+        public static string Preview(SiteDb sitedb, string tagName, string nameOrId)
         {
-            var component = Container.Get(TagName);
-            if (component != null)
-            {
-                return component.Preview(sitedb, NameOrId);
-            }
-            return null;
+            var component = Container.Get(tagName);
+            return component?.Preview(sitedb, nameOrId);
         }
-
 
         public static bool ElementHasEngine(Element element)
         {
@@ -35,16 +28,14 @@ namespace Kooboo.Sites.Render.Components
             }
         }
 
-
         public static bool IsComponent(Element element)
         {
             return IsComponentElement(element);
         }
 
-        // should save the special store for this component or as embedded. etc. 
+        // should save the special store for this component or as embedded. etc.
         public static bool IsComponentElement(Element element)
         {
-
             var component = Container.Get(element.tagName);
 
             if (component == null)
@@ -59,7 +50,7 @@ namespace Kooboo.Sites.Render.Components
                     return true;
                 }
             }
-            else      
+            else
             {
                 return true;
             }
@@ -67,22 +58,20 @@ namespace Kooboo.Sites.Render.Components
             if (string.IsNullOrWhiteSpace(element.id))
             {
                 return false;
-            }    
+            }
 
             foreach (var item in element.childNodes.item)
             {
                 if (item.nodeType == enumNodeType.TEXT)
                 {
-                    var textnode = item as Text;
-                    if (textnode != null && !string.IsNullOrWhiteSpace(textnode.data))
+                    if (item is Text textnode && !string.IsNullOrWhiteSpace(textnode.data))
                     {
                         return false;
                     }
                 }
                 else if (item.nodeType == enumNodeType.ELEMENT)
                 {
-                    var el = item as Element;
-                    if (el != null)
+                    if (item is Element el)
                     {
                         var tag = el.tagName.ToLower();
                         if (tag != "id" && !tag.StartsWith("kooboo") && !tag.StartsWith("kb") && !tag.StartsWith("setting"))
@@ -92,7 +81,6 @@ namespace Kooboo.Sites.Render.Components
                     }
                 }
             }
-
 
             foreach (var item in element.attributes)
             {
@@ -111,11 +99,10 @@ namespace Kooboo.Sites.Render.Components
                 return false;
             }
 
-
             return true;
         }
 
-        // should save the special store for this component or as embedded. etc. 
+        // should save the special store for this component or as embedded. etc.
         public static bool IsKScript(Element element)
         {
             if (element.tagName.ToLower() == "script")
@@ -131,15 +118,10 @@ namespace Kooboo.Sites.Render.Components
             return false;
         }
 
-
-        public static List<ComponentInfo> AvailableObjects(SiteDb sitedb, string TagName)
+        public static List<ComponentInfo> AvailableObjects(SiteDb sitedb, string tagName)
         {
-            var component = Container.Get(TagName);
-            if (component != null)
-            {
-                return component.AvaiableObjects(sitedb);
-            }
-            return null;
+            var component = Container.Get(tagName);
+            return component?.AvaiableObjects(sitedb);
         }
     }
 }

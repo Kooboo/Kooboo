@@ -24,9 +24,7 @@ namespace Kooboo.Sites.HtmlForm
         public List<SimpleSetting> Settings(RenderContext context)
         {
             var setting = new List<SimpleSetting>();
-            SimpleSetting item = new SimpleSetting();
-            item.Name = "Url";
-            item.ControlType = Data.ControlType.Selection;
+            SimpleSetting item = new SimpleSetting {Name = "Url", ControlType = Data.ControlType.Selection};
 
             var sitedb = context.WebSite.SiteDb();
 
@@ -52,7 +50,7 @@ namespace Kooboo.Sites.HtmlForm
             return setting;
         }
 
-        public bool Submit(RenderContext context, Guid FormId, Dictionary<string, string> settings)
+        public bool Submit(RenderContext context, Guid formId, Dictionary<string, string> settings)
         {
             // this will post directly to the url...
             return true;

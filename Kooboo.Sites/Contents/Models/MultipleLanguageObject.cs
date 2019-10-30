@@ -14,14 +14,7 @@ namespace Kooboo.Sites.Contents.Models
 
         public Dictionary<string, object> Values
         {
-            get
-            {
-                if (_values == null)
-                {
-                    _values = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _values;
-            }
+            get { return _values ?? (_values = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase)); }
             set
             {
                 _values = value;
@@ -72,9 +65,9 @@ namespace Kooboo.Sites.Contents.Models
             return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
 
-        public Object GetValue(string FieldName, RenderContext Context)
+        public Object GetValue(string fieldName, RenderContext context)
         {
-            return GetValue(FieldName);
+            return GetValue(fieldName);
         }
     }
 }

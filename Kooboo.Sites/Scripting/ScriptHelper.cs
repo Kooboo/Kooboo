@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.Repository;
 using System;
@@ -8,14 +8,14 @@ using System.Linq;
 namespace Kooboo.Sites.Scripting
 {
     public static class ScriptHelper
-    { 
+    {
         public static List<string> GetkScriptParaFromDom(SiteDb sitedb, Kooboo.Dom.Document doc)
         {
             HashSet<string> paras = new HashSet<string>();
 
             if (doc == null)
             {
-                return paras.ToList(); 
+                return paras.ToList();
             }
 
             var scripts = doc.getElementsByTagName("script");
@@ -27,19 +27,19 @@ namespace Kooboo.Sites.Scripting
                     if (!string.IsNullOrEmpty(item.id))
                     {
                         var code = sitedb.Code.Get(item.id);
-                        if (code != null && code.Parameters !=null)
+                        if (code?.Parameters != null)
                         {
                             foreach (var p in code.Parameters)
                             {
                                 if (!string.IsNullOrWhiteSpace(p))
                                 {
                                     paras.Add(p);
-                                } 
+                                }
                             }
                         }
                     }
 
-                    // script component, only kscript now. 
+                    // script component, only kscript now.
                     else if (!string.IsNullOrEmpty(item.InnerHtml))
                     {
                         var scriptparas = GetKScriptParameters(item.InnerHtml);
@@ -66,12 +66,12 @@ namespace Kooboo.Sites.Scripting
 
             if (string.IsNullOrWhiteSpace(source))
             {
-                return paras; 
+                return paras;
             }
 
             int len = source.Length;
 
-            Func<int, char> GetChar = (index) =>
+            Func<int, char> getChar = (index) =>
             {
                 if (index >= len || index < 0)
                 {
@@ -80,24 +80,23 @@ namespace Kooboo.Sites.Scripting
                 return source[index];
             };
 
-
             int position = 0;
 
             while (position < len)
             {
-                var current = GetChar(position);
+                var current = getChar(position);
 
                 if (current == '\'' || current == '\"')
                 {
                     int nextindex = position + 1;
-                    var nextchar = GetChar(nextindex);
+                    var nextchar = getChar(nextindex);
 
                     while (true)
                     {
                         if (nextchar == '\\')
                         {
                             nextindex += 2;
-                            nextchar = GetChar(nextindex);
+                            nextchar = getChar(nextindex);
                             continue;
                         }
 
@@ -113,65 +112,61 @@ namespace Kooboo.Sites.Scripting
                             break;
                         }
                         nextindex += 1;
-                        nextchar = GetChar(nextindex);
+                        nextchar = getChar(nextindex);
                     }
                     continue;
                 }
 
                 if (current == '/')
                 {
-
                     var nextindex = position + 1;
-                    var nextchar = GetChar(nextindex);
-                    // for the // 
+                    var nextchar = getChar(nextindex);
+                    // for the //
                     if (nextchar == '/')
                     {
-                        // look till the next line. 
+                        // look till the next line.
                         nextindex += 1;
-                        nextchar = GetChar(nextindex);
+                        nextchar = getChar(nextindex);
                         while (nextchar != '\r' && nextchar != '\n' && nextchar != default(char))
                         {
                             nextindex += 1;
-                            nextchar = GetChar(nextindex);
+                            nextchar = getChar(nextindex);
                         }
 
                         position = nextindex + 1;
                         continue;
-
                     }
                     else if (nextchar == '*')
                     {
                         // for the /*
-                        // look till the next */. 
+                        // look till the next */.
                         nextindex += 1;
-                        nextchar = GetChar(nextindex);
+                        nextchar = getChar(nextindex);
 
-                        while (nextchar != '*' && GetChar(nextindex + 1) != '/')
+                        while (nextchar != '*' && getChar(nextindex + 1) != '/')
                         {
                             nextindex += 1;
-                            nextchar = GetChar(nextindex);
+                            nextchar = getChar(nextindex);
                         }
                         position = nextindex + 2;
                         continue;
                     }
-
                 }
 
-
                 // k.request.
-                if (GetChar(position) == 'k' && GetChar(position + 1) == '.' && GetChar(position + 2) == 'r' && GetChar(position + 3) == 'e' && GetChar(position + 4) == 'q' && GetChar(position + 5) == 'u' && GetChar(position + 6) == 'e' && GetChar(position + 7) == 's' && GetChar(position + 8) == 't')
+                if (getChar(position) == 'k' && getChar(position + 1) == '.' && getChar(position + 2) == 'r' && getChar(position + 3) == 'e' && getChar(position + 4) == 'q' && getChar(position + 5) == 'u' && getChar(position + 6) == 'e' && getChar(position + 7) == 's' && getChar(position + 8) == 't')
                 {
-                    // and make sure that k is not part of something. 
-                    var prechar = GetChar(position - 1);
+                    // and make sure that k is not part of something.
+                    var prechar = getChar(position - 1);
                     if (!IsValidVarName(prechar))
                     {
                         int end = 0;
-                        // get the para value. 
+                        // get the para value.
                         var key = GetParaKey(source, position + 8 + 1, len, ref end);
 
                         if (!string.IsNullOrWhiteSpace(key))
                         {
-                            key = "{" + key + "}"; 
+                            key = "{" + key + "}";
                             paras.Add(key);
 
                             int nextpos = position + 8 + 1;
@@ -180,17 +175,14 @@ namespace Kooboo.Sites.Scripting
                                 nextpos = end;
                             }
                             position = nextpos;
-                        } 
-                    } 
+                        }
+                    }
                 }
 
                 position += 1;
             }
 
-
             return paras;
-
-
         }
 
         private static bool IsValidVarName(char chr)
@@ -200,20 +192,20 @@ namespace Kooboo.Sites.Scripting
             {
                 return true;
             }
-            //a-z, ascii 97-122. 
+            //a-z, ascii 97-122.
             if (chr >= 97 && chr <= 122)
             {
                 return true;
             }
-            //0-9, acsii 48-57. 
+            //0-9, acsii 48-57.
             if (chr >= 48 && chr <= 57)
             {
                 return true;
             }
 
-            if (chr=='_')
+            if (chr == '_')
             {
-                return true; 
+                return true;
             }
             return false;
         }
@@ -234,7 +226,6 @@ namespace Kooboo.Sites.Scripting
 
         private static string GetParaKey(string source, int pos, int Len, ref int end)
         {
-
             Func<int, char> GetChar = (index) =>
             {
                 if (index >= Len || index < 0)
@@ -244,7 +235,7 @@ namespace Kooboo.Sites.Scripting
                 return source[index];
             };
 
-            // for .querystring, skip the query. 
+            // for .querystring, skip the query.
             var currentChr = GetChar(pos);
 
             if (currentChr == '.' && GetChar(pos + 1) == 'q' && GetChar(pos + 2) == 'u' && GetChar(pos + 3) == 'e' && GetChar(pos + 4) == 'r' && GetChar(pos + 5) == 'y' && GetChar(pos + 6) == 'S' && GetChar(pos + 7) == 't' && GetChar(pos + 8) == 'r' && GetChar(pos + 9) == 'i' && GetChar(pos + 10) == 'n' && GetChar(pos + 11) == 'g')
@@ -258,7 +249,7 @@ namespace Kooboo.Sites.Scripting
                 }
             }
 
-            // for .form, skip... 
+            // for .form, skip...
             if (currentChr == '.' && GetChar(pos + 1) == 'f' && GetChar(pos + 2) == 'o' && GetChar(pos + 3) == 'r' && GetChar(pos + 4) == 'm')
             {
                 var next = GetChar(pos + 5);
@@ -271,7 +262,7 @@ namespace Kooboo.Sites.Scripting
             // if []
             if (currentChr == '[')
             {
-                // read till the next ]; 
+                // read till the next ];
                 string text = string.Empty;
                 pos += 1;
                 currentChr = GetChar(pos);
@@ -297,7 +288,7 @@ namespace Kooboo.Sites.Scripting
                     text = text.Trim('\'');
                     text = text.Trim('"');
                     text = text.Trim();
-                    // check to make sure it is a valid. 
+                    // check to make sure it is a valid.
                     if (IsValidParaKey(text))
                     {
                         end = pos;
@@ -305,7 +296,6 @@ namespace Kooboo.Sites.Scripting
                     }
                 }
             }
-
             else if (currentChr == '.' && GetChar(pos + 1) == 'g' && GetChar(pos + 2) == 'e' && GetChar(pos + 3) == 't')
             {
                 int nextindex = pos + 4;
@@ -322,7 +312,7 @@ namespace Kooboo.Sites.Scripting
                 }
                 else
                 {
-                    // read till the next ]; 
+                    // read till the next ];
                     string text = string.Empty;
                     nextindex += 1;
                     currentChr = GetChar(nextindex);
@@ -347,7 +337,7 @@ namespace Kooboo.Sites.Scripting
                         text = text.Trim('\'');
                         text = text.Trim('"');
                         text = text.Trim();
-                        // check to make sure it is a valid. 
+                        // check to make sure it is a valid.
                         if (IsValidParaKey(text))
                         {
                             end = nextindex;
@@ -355,13 +345,11 @@ namespace Kooboo.Sites.Scripting
                             return text;
                         }
                     }
-
                 }
             }
-
             else if (currentChr == '.')
             {
-                // the case of k.request.key; 
+                // the case of k.request.key;
                 string text = string.Empty;
                 pos += 1;
                 currentChr = GetChar(pos);
@@ -385,12 +373,9 @@ namespace Kooboo.Sites.Scripting
                     end = pos;
                     return text;
                 }
-
             }
 
             return null;
-
         }
-
     }
 }

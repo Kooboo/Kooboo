@@ -1,9 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using Kooboo.Extensions;
-using System.Security.Cryptography;
 using Kooboo.Data.Interface;
+using System;
+using System.Security.Cryptography;
 
 namespace Kooboo.Sites.Models
 {
@@ -15,6 +14,7 @@ namespace Kooboo.Sites.Models
         {
             this.ConstType = ConstObjectType.Image;
         }
+
         private Guid _id;
 
         public override Guid Id
@@ -25,7 +25,6 @@ namespace Kooboo.Sites.Models
                 if (_id == default(Guid))
                 {
                     _id = System.Guid.NewGuid();
-
                 }
                 return _id;
             }
@@ -50,11 +49,10 @@ namespace Kooboo.Sites.Models
                 }
                 return false;
             }
-
         }
 
         /// <summary>
-        /// For some websites, they put the image as a base64 embeded into webpage. we may ignore those images. 
+        /// For some websites, they put the image as a base64 embeded into webpage. we may ignore those images.
         /// </summary>
         /// public Guid PageId { get; set; }
 
@@ -71,7 +69,7 @@ namespace Kooboo.Sites.Models
         private int _size;
 
         /// <summary>
-        /// size in  bytes. 
+        /// size in  bytes.
         /// </summary>
         public int Size
         {
@@ -79,12 +77,10 @@ namespace Kooboo.Sites.Models
             {
                 if (_size == default(int))
                 {
-
                     if (ContentBytes != null)
                     {
                         _size = ContentBytes.Length;
                     }
-
                 }
                 return _size;
             }
@@ -95,7 +91,7 @@ namespace Kooboo.Sites.Models
         }
 
         /// <summary>
-        /// the content bytes of this file. 
+        /// the content bytes of this file.
         /// </summary>
         [Kooboo.Attributes.SummaryIgnore]
         public byte[] ContentBytes
@@ -115,7 +111,6 @@ namespace Kooboo.Sites.Models
                 ContentBytes = value;
             }
         }
-
 
         public void ResetSize()
         {

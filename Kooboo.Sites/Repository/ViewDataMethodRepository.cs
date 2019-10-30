@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Models;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Kooboo.Sites.Repository
 {
-   public class ViewDataMethodRepository : SiteRepositoryBase<ViewDataMethod>
+    public class ViewDataMethodRepository : SiteRepositoryBase<ViewDataMethod>
     {
         public override ObjectStoreParameters StoreParameters
         {
@@ -21,27 +21,26 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-       public List<ViewDataMethod> FlatListByView(Guid ViewId)
-        { 
-            List<ViewDataMethod> result = new List<ViewDataMethod>();  
-            var top = this.Query.Where(o => o.ViewId == ViewId).SelectAll(); 
-           
+        public List<ViewDataMethod> FlatListByView(Guid viewId)
+        {
+            List<ViewDataMethod> result = new List<ViewDataMethod>();
+            var top = this.Query.Where(o => o.ViewId == viewId).SelectAll();
+
             foreach (var item in top)
             {
-                appendMethod(result, item, ViewId); 
+                appendMethod(result, item, viewId);
             }
-            return result; 
+            return result;
         }
 
-        private void appendMethod(List<ViewDataMethod> list, ViewDataMethod current, Guid ViewId)
+        private void appendMethod(List<ViewDataMethod> list, ViewDataMethod current, Guid viewId)
         {
-            current.ViewId = ViewId;
+            current.ViewId = viewId;
             list.Add(current);
             foreach (var item in current.Children)
             {
-                appendMethod(list, item, ViewId);
+                appendMethod(list, item, viewId);
             }
         }
-    
     }
 }

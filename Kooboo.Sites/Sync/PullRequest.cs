@@ -1,18 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.IndexedDB;
 using Kooboo.Sites.Repository;
-using System;
-using System.Linq;
 
 namespace Kooboo.Sites.Sync
 {
     public static class PullRequest
     {
         // pull response to local request.
-        public static Sync.SyncObject PullNext(SiteDb SiteDb, long CurrentLogId)
+        public static Sync.SyncObject PullNext(SiteDb siteDb, long currentLogId)
         {
-            var log = GetNextLog(SiteDb, CurrentLogId); 
+            var log = GetNextLog(siteDb, currentLogId);
             if (log == null)
             { return null; }
 
@@ -22,29 +20,28 @@ namespace Kooboo.Sites.Sync
             //}
             //else
             //{
-                return Kooboo.Sites.Sync.SyncService.Prepare(SiteDb, log);  
-           // }
+            return Kooboo.Sites.Sync.SyncService.Prepare(siteDb, log);
+            // }
         }
 
-        public static LogEntry GetNextLog(SiteDb SiteDb, long CurrentLog)
+        public static LogEntry GetNextLog(SiteDb siteDb, long currentLog)
         {
-            for (long i = CurrentLog + 1; i < CurrentLog + 10; i++)
+            for (long i = currentLog + 1; i < currentLog + 10; i++)
             {
-                var log = SiteDb.Log.Get(i);
+                var log = siteDb.Log.Get(i);
                 if (log != null)
                 {
                     return log;
                 }
             }
-            return SiteDb.Log.Store.Where(o => o.Id > CurrentLog).OrderByAscending(o => o.Id).FirstOrDefault(); 
+            return siteDb.Log.Store.Where(o => o.Id > currentLog).OrderByAscending(o => o.Id).FirstOrDefault();
         }
 
-        public static bool HasFurtherLog(SiteDb SiteDb, LogEntry log)
+        public static bool HasFurtherLog(SiteDb siteDb, LogEntry log)
         {
-            var nextlog = SiteDb.Log.Store.Where(o => o.Id > log.Id && o.KeyHash == log.KeyHash).OrderByDescending().FirstOrDefault();
+            var nextlog = siteDb.Log.Store.Where(o => o.Id > log.Id && o.KeyHash == log.KeyHash).OrderByDescending().FirstOrDefault();
 
-            return nextlog != null;   
-
-        } 
-    } 
+            return nextlog != null;
+        }
+    }
 }

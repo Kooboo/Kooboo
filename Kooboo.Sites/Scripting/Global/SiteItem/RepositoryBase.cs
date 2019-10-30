@@ -1,17 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Scripting.Global.SiteItem
 {
-
     public class RepositoryBase
     {
         public RepositoryBase(IRepository repo, RenderContext context)
@@ -19,8 +14,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             this.repo = repo;
             this.context = context;
         }
-         
-         
+
         protected IRepository repo { get; set; }
 
         internal RenderContext context { get; set; }
@@ -30,8 +24,7 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             List<SiteObject> result = new List<SiteObject>();
             foreach (var item in this.repo.All())
             {
-                var siteobjct = item as SiteObject;
-                if (siteobjct != null)
+                if (item is SiteObject siteobjct)
                 {
                     result.Add(siteobjct);
                 }
@@ -39,9 +32,9 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             return result;
         }
 
-        public virtual void Update(object SiteObject)
+        public virtual void Update(object siteObject)
         {
-            this.repo.AddOrUpdate(SiteObject);
+            this.repo.AddOrUpdate(siteObject);
         }
 
         public virtual ISiteObject Get(object nameOrId)
@@ -58,17 +51,10 @@ namespace Kooboo.Sites.Scripting.Global.SiteItem
             }
         }
 
-        public virtual void Add(object SiteObject)
+        public virtual void Add(object siteObject)
         {
-            var rightobject = kHelper.PrepareData(SiteObject, this.repo.ModelType);
+            var rightobject = kHelper.PrepareData(siteObject, this.repo.ModelType);
             this.repo.AddOrUpdate(rightobject);
         }
-
-
-
-
-
     }
-
-
 }

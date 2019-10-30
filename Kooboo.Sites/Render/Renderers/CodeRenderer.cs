@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System.Text;
 
@@ -8,21 +8,12 @@ namespace Kooboo.Sites.Render
     {
         public static void Render(FrontContext context)
         {
-            var code  = context.SiteDb.Code.Get(context.Route.objectId);
+            var code = context.SiteDb.Code.Get(context.Route.objectId);
 
             if (code != null)
             {
-                string result = string.Empty; 
-               
-                if (code.IsJson)
-                {
-                    result = code.Body; 
-                }
-                else
-                { 
-                    result = Scripting.Manager.ExecuteCode(context.RenderContext, code.Body, code.Id);
-                } 
-                 
+                var result = code.IsJson ? code.Body : Scripting.Manager.ExecuteCode(context.RenderContext, code.Body, code.Id);
+
                 //context.RenderContext.Response.ContentType = "application/javascript";
 
                 if (code.Cors)
@@ -39,9 +30,6 @@ namespace Kooboo.Sites.Render
             {
                 context.RenderContext.Response.StatusCode = 404;
             }
-
         }
     }
-
-
 }

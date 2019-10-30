@@ -5,7 +5,6 @@
 
 //namespace Kooboo.Sites.Scripting.Global
 //{
-     
 //    public class kPay
 //    {
 //        private RenderContext context { get; set; }
@@ -36,7 +35,6 @@
 //            }
 //            set
 //            {
-
 //            }
 //        }
 

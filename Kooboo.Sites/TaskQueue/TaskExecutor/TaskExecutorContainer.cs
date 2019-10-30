@@ -1,21 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Lib;
 using Kooboo.Lib.Reflection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.TaskQueue.TaskExecutor
 {
-   public class TaskExecutorContainer
+    public class TaskExecutorContainer
     {
         private static object _locker = new object();
 
-        private static Dictionary<string, IExecutor> _list; 
-         
+        private static Dictionary<string, IExecutor> _list;
+
         public static Dictionary<string, IExecutor> List
         {
             get
@@ -30,13 +26,12 @@ namespace Kooboo.Sites.TaskQueue.TaskExecutor
 
                             var alltypes = AssemblyLoader.LoadTypeByGenericInterface(typeof(ITaskExecutor<>));
                             foreach (var item in alltypes)
-                            { 
-                                var iteminstance = Activator.CreateInstance(item) as IExecutor;
-                                if (iteminstance != null)
-                                { 
-                                    string FullTypeName = TypeHelper.GetGenericType(item).FullName;
+                            {
+                                if (Activator.CreateInstance(item) is IExecutor iteminstance)
+                                {
+                                    string fullTypeName = TypeHelper.GetGenericType(item).FullName;
 
-                                    _list[FullTypeName] = iteminstance; 
+                                    _list[fullTypeName] = iteminstance;
                                 }
                             }
                         }
@@ -47,14 +42,13 @@ namespace Kooboo.Sites.TaskQueue.TaskExecutor
             }
         }
 
-        public static IExecutor GetExecutor(string FullTypeName)
+        public static IExecutor GetExecutor(string fullTypeName)
         {
-            if (List.ContainsKey(FullTypeName))
+            if (List.ContainsKey(fullTypeName))
             {
-                return List[FullTypeName];
+                return List[fullTypeName];
             }
             return null;
         }
     }
- 
 }

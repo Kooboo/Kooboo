@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System.Threading.Tasks;
 
@@ -35,7 +35,7 @@ namespace Kooboo.Sites.Render
                         ScriptRenderer.Render(context);
                         break;
                     }
- 
+
                 case ConstObjectType.Style:
                     {
                         StyleRenderer.Render(context);
@@ -56,10 +56,10 @@ namespace Kooboo.Sites.Render
                         Systems.SystemRender.ResourceGroupRender(context, context.Route.objectId.ToString());
                         break;
                     }
-                case ConstObjectType.Code: 
+                case ConstObjectType.Code:
                     {
                         CodeRenderer.Render(context);
-                        break; 
+                        break;
                     }
                 default:
                     break;

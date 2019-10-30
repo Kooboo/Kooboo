@@ -40,7 +40,8 @@ namespace Kooboo.Sites.Diagnosis.Implementation
 
                 int size = item.Size;
 
-                string message = string.Format("<b>{0}: {1}, {2}: {3}<b><br/>", imageNameText, item.Name, imageSizeText, Kooboo.Lib.Utilities.CalculateUtility.GetSizeString(size));
+                string message =
+                    $"<b>{imageNameText}: {item.Name}, {imageSizeText}: {Kooboo.Lib.Utilities.CalculateUtility.GetSizeString(size)}<b><br/>";
 
                 if (size > terriblesize)
                 {

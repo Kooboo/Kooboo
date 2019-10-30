@@ -1,25 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
 using Kooboo.Lib.Helper;
-using Kooboo.Sites.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Kooboo.Sites.Routing;
-using Kooboo.Extensions;
-
 
 namespace Kooboo.Sites.SiteTransfer
 {
     public class CSSAnalyzer : ITransferAnalyzer
     {
-        public void Execute(AnalyzerContext Context)
+        public void Execute(AnalyzerContext context)
         {
-            ProcessInPage(Context);
-            ProcessExternal(Context);
-           // ProcessInline(Context);
+            ProcessInPage(context);
+            ProcessExternal(context);
+            // ProcessInline(Context);
         }
 
         /// <summary>
@@ -38,7 +30,7 @@ namespace Kooboo.Sites.SiteTransfer
                 if (string.IsNullOrEmpty(csstext))
                 {
                     continue;
-                } 
+                }
                 //var style = new Style
                 //{
                 //    IsEmbedded = true,
@@ -48,12 +40,12 @@ namespace Kooboo.Sites.SiteTransfer
                 //    Name = UrlHelper.FileName(context.AbsoluteUrl)
                 //};
 
-                CssManager.ProcessResource(ref csstext, context.AbsoluteUrl, context.DownloadManager, context.ObjectId); 
+                CssManager.ProcessResource(ref csstext, context.AbsoluteUrl, context.DownloadManager, context.ObjectId);
 
-                //style.Body = csstext; 
-                //context.SiteDb.Styles.AddOrUpdate(style, context.DownloadManager.UserId); 
+                //style.Body = csstext;
+                //context.SiteDb.Styles.AddOrUpdate(style, context.DownloadManager.UserId);
                 //itemindexcounter += 1;
-                
+
                 if (item.InnerHtml != csstext)
                 {
                     var change = new AnalyzerUpdate()
@@ -61,19 +53,19 @@ namespace Kooboo.Sites.SiteTransfer
                         StartIndex = item.location.openTokenEndIndex + 1,
                         EndIndex = item.location.endTokenStartIndex - 1,
                         NewValue = csstext
-                    }; 
+                    };
 
                     if (change.EndIndex > change.StartIndex)
                     {
                         context.Changes.Add(change);
-                    } 
+                    }
                 }
             }
         }
 
-        private void ProcessExternal(AnalyzerContext Context)
+        private void ProcessExternal(AnalyzerContext context)
         {
-            HTMLCollection styletags = Context.Dom.getElementsByTagName("link");
+            HTMLCollection styletags = context.Dom.getElementsByTagName("link");
 
             foreach (var item in styletags.item)
             {
@@ -85,9 +77,9 @@ namespace Kooboo.Sites.SiteTransfer
                     {
                         itemurl = TransferHelper.TrimQuestionMark(itemurl);
 
-                        string absoluteUrl = UrlHelper.Combine(Context.AbsoluteUrl, itemurl);
+                        string absoluteUrl = UrlHelper.Combine(context.AbsoluteUrl, itemurl);
 
-                        bool issamehost = UrlHelper.isSameHost(Context.OriginalImportUrl, absoluteUrl);
+                        bool issamehost = UrlHelper.isSameHost(context.OriginalImportUrl, absoluteUrl);
 
                         string relativeurl = UrlHelper.RelativePath(absoluteUrl, issamehost);
 
@@ -95,7 +87,7 @@ namespace Kooboo.Sites.SiteTransfer
                         {
                             string oldstring = Kooboo.Sites.Service.DomService.GetOpenTag(item);
                             string newstring = oldstring.Replace(itemurl, relativeurl);
-                            Context.Changes.Add(new AnalyzerUpdate()
+                            context.Changes.Add(new AnalyzerUpdate()
                             {
                                 StartIndex = item.location.openTokenStartIndex,
                                 EndIndex = item.location.openTokenEndIndex,
@@ -103,20 +95,16 @@ namespace Kooboo.Sites.SiteTransfer
                             });
                         }
 
-                        Context.DownloadManager.AddTask(new Download.DownloadTask()
+                        context.DownloadManager.AddTask(new Download.DownloadTask()
                         {
                             AbsoluteUrl = absoluteUrl,
                             RelativeUrl = relativeurl,
                             ConstType = ConstObjectType.Style,
-                            OwnerObjectId = Context.ObjectId
+                            OwnerObjectId = context.ObjectId
                         });
                     }
-
                 }
             }
         }
-         
-           
     }
-
 }

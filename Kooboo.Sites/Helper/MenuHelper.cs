@@ -25,20 +25,20 @@ namespace Kooboo.Sites.Helper
 
         public static string DefaultSubItemTemplate = $"<li><a href=\"{MenuHelper.MarkHref}\">{MenuHelper.MarkAnchorText}</a>{MenuHelper.MarkSubItems}</li>";
 
-        public static bool IsActive(Menu CurrentMenu, RenderContext context)
+        public static bool IsActive(Menu currentMenu, RenderContext context)
         {
-            if (context == null || CurrentMenu == null)
+            if (context == null || currentMenu == null)
             {
                 return false;
             }
 
             var url = context.Request.RelativeUrl.ToLower();
 
-            if (!string.IsNullOrEmpty(CurrentMenu.Url) && CurrentMenu.Url.ToLower() == url)
+            if (!string.IsNullOrEmpty(currentMenu.Url) && currentMenu.Url.ToLower() == url)
             {
                 return true;
             }
-            foreach (var item in CurrentMenu.children)
+            foreach (var item in currentMenu.children)
             {
                 if (IsActive(item, context))
                 {
@@ -124,7 +124,7 @@ namespace Kooboo.Sites.Helper
             return subitemcontainer;
         }
 
-        private static string getMenuUrl(Menu menu, RenderContext context)
+        private static string GetMenuUrl(Menu menu, RenderContext context)
         {
             if (menu == null)
             {
@@ -183,33 +183,33 @@ namespace Kooboo.Sites.Helper
         /// Render current menu and output the string.
         /// </summary>
         /// <returns></returns>
-        public static string Render(Menu Menu, Render.FrontContext context = null)
+        public static string Render(Menu menu, Render.FrontContext context = null)
         {
             string template = null;
-            if (!string.IsNullOrEmpty(Menu.Url) && !string.IsNullOrEmpty(Menu.Name))
+            if (!string.IsNullOrEmpty(menu.Url) && !string.IsNullOrEmpty(menu.Name))
             {
-                EnsureMenuRenderData(Menu);
+                EnsureMenuRenderData(menu);
 
-                var renderdata = Menu.TempRenderData;
+                var renderdata = menu.TempRenderData;
 
                 template = renderdata.FineTemplate;
 
-                template = template.Replace(MenuHelper.MarkHref, Menu.Url);
-                template = template.Replace(MenuHelper.MarkAnchorText, Menu.Name);
+                template = template.Replace(MenuHelper.MarkHref, menu.Url);
+                template = template.Replace(MenuHelper.MarkAnchorText, menu.Name);
                 if (renderdata.RenderId)
                 {
-                    string parentid = null; if (Menu.Parent != null)
-                    { parentid = Menu.Parent.Id.ToString(); }
+                    string parentid = null; if (menu.Parent != null)
+                    { parentid = menu.Parent.Id.ToString(); }
                     if (!string.IsNullOrEmpty(parentid))
                     {
                         template = template.Replace(MenuHelper.MarkParentId, parentid);
                     }
-                    template = template.Replace(MenuHelper.MarkCurrentId, Menu.Id.ToString());
+                    template = template.Replace(MenuHelper.MarkCurrentId, menu.Id.ToString());
                 }
                 if (renderdata.HasActiveClass)
                 {
                     string activeclassname = string.Empty;
-                    if (MenuHelper.IsActive(Menu, context.RenderContext))
+                    if (MenuHelper.IsActive(menu, context?.RenderContext))
                     {
                         activeclassname = renderdata.ActiveClass;
                     }
@@ -218,16 +218,16 @@ namespace Kooboo.Sites.Helper
             }
             string submenustring = string.Empty;
 
-            foreach (var item in Menu.children)
+            foreach (var item in menu.children)
             {
                 if (item.Parent == null)
                 {
-                    item.Parent = Menu;
+                    item.Parent = menu;
                 }
                 string rendermenu = Render(item, context);
                 submenustring += rendermenu;
             }
-            string subitemcontainer = MenuHelper.PraseSubItemContainer(Menu);
+            string subitemcontainer = MenuHelper.PraseSubItemContainer(menu);
 
             if (!string.IsNullOrEmpty(subitemcontainer) && subitemcontainer.Contains(MenuHelper.MarkSubItems) && !string.IsNullOrEmpty(submenustring))
             {
@@ -251,37 +251,37 @@ namespace Kooboo.Sites.Helper
             }
         }
 
-        public static string Render(Menu Menu, RenderContext context, int levels = 999)
+        public static string Render(Menu menu, RenderContext context, int levels = 999)
         {
             string template = null;
 
             string menuname = string.Empty;
             if (context != null)
             {
-                menuname = GetName(Menu, context.Culture);
+                menuname = GetName(menu, context.Culture);
             }
             else
             {
-                if (!string.IsNullOrEmpty(Menu.Name))
+                if (!string.IsNullOrEmpty(menu.Name))
                 {
-                    menuname = Menu.Name;
+                    menuname = menu.Name;
                 }
                 else
                 {
-                    if (Menu.Values != null && Menu.Values.Count() > 0)
+                    if (menu.Values != null && menu.Values.Any())
                     {
-                        menuname = Menu.Values.First().Value;
+                        menuname = menu.Values.First().Value;
                     }
                 }
             }
 
-            if (!string.IsNullOrEmpty(Menu.Url) && !string.IsNullOrEmpty(menuname))
+            if (!string.IsNullOrEmpty(menu.Url) && !string.IsNullOrEmpty(menuname))
             {
-                string url = getMenuUrl(Menu, context);
+                string url = GetMenuUrl(menu, context);
 
-                EnsureMenuRenderData(Menu);
+                EnsureMenuRenderData(menu);
 
-                var renderdata = Menu.TempRenderData;
+                var renderdata = menu.TempRenderData;
 
                 template = renderdata.FineTemplate;
 
@@ -290,18 +290,18 @@ namespace Kooboo.Sites.Helper
 
                 if (renderdata.RenderId)
                 {
-                    string parentid = null; if (Menu.Parent != null)
-                    { parentid = Menu.Parent.Id.ToString(); }
+                    string parentid = null; if (menu.Parent != null)
+                    { parentid = menu.Parent.Id.ToString(); }
                     if (!string.IsNullOrEmpty(parentid))
                     {
                         template = template.Replace(MenuHelper.MarkParentId, parentid);
                     }
-                    template = template.Replace(MenuHelper.MarkCurrentId, Menu.Id.ToString());
+                    template = template.Replace(MenuHelper.MarkCurrentId, menu.Id.ToString());
                 }
                 if (renderdata.HasActiveClass)
                 {
                     string activeclassname = string.Empty;
-                    if (MenuHelper.IsActive(Menu, context))
+                    if (MenuHelper.IsActive(menu, context))
                     {
                         activeclassname = renderdata.ActiveClass;
                     }
@@ -312,18 +312,18 @@ namespace Kooboo.Sites.Helper
 
             if (levels > 0)
             {
-                foreach (var item in Menu.children)
+                foreach (var item in menu.children)
                 {
                     if (item.Parent == null)
                     {
-                        item.Parent = Menu;
+                        item.Parent = menu;
                     }
                     string rendermenu = Render(item, context, levels - 1);
                     submenustring += rendermenu;
                 }
             }
 
-            string subitemcontainer = MenuHelper.PraseSubItemContainer(Menu);
+            string subitemcontainer = MenuHelper.PraseSubItemContainer(menu);
 
             if (!string.IsNullOrEmpty(subitemcontainer) && subitemcontainer.Contains(MenuHelper.MarkSubItems) && !string.IsNullOrEmpty(submenustring))
             {
@@ -360,14 +360,14 @@ namespace Kooboo.Sites.Helper
 
             int totallen = template.Length;
 
-            int EqualMark = template.IndexOf("=", index);
+            int equalMark = template.IndexOf("=", index);
 
-            if (EqualMark == -1)
+            if (equalMark == -1)
             {
                 return -1;
             }
 
-            for (int i = EqualMark + 1; i < totallen; i++)
+            for (int i = equalMark + 1; i < totallen; i++)
             {
                 var currentchar = template[i];
                 if (!Lib.Helper.CharHelper.isSpaceCharacters(currentchar))
@@ -402,7 +402,7 @@ namespace Kooboo.Sites.Helper
             {
                 return menu.Name;
             }
-            if (menu.Values.Count > 0)
+            if (menu.Values != null && menu.Values.Count > 0)
             {
                 return menu.Values.First().Value;
             }

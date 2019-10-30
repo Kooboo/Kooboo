@@ -1,7 +1,5 @@
-﻿using System;
+﻿using Kooboo.Data.Context;
 using System.Collections.Generic;
-using System.Text;
-using Kooboo.Data.Context;
 
 namespace Kooboo.Sites.Render.Functions
 {
@@ -13,29 +11,25 @@ namespace Kooboo.Sites.Render.Functions
 
         public List<IFunction> Parameters { get; set; }
 
-
-        // TODO, improve performance. 
+        // TODO, improve performance.
         public object Render(RenderContext context)
         {
-             var engine = Scripting.Manager.GetJsEngine(context);
-             
+            var engine = Scripting.Manager.GetJsEngine(context);
 
             var prog = engine.GetValue(FunctionName);
-            
 
             if (prog != null)
             {
                 var paras = FunctionHelper.RenderParameter(context, this.Parameters);
-                  
+
                 var result = engine.Invoke(prog, paras.ToArray());
 
-                if (result !=null)
+                if (result != null)
                 {
-                    return result.ToString(); 
-                } 
-            }  
-            return null; 
-
+                    return result.ToString();
+                }
+            }
+            return null;
         }
     }
 }

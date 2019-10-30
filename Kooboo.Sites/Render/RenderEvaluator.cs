@@ -1,19 +1,19 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
 using Kooboo.Sites.Render.RenderTask;
 using System.Collections.Generic;
 using System.Linq;
-using System; 
 
 namespace Kooboo.Sites.Render
 {
     public static class RenderEvaluator
     {
         /// <summary>
-        /// Evaluate the to be rendered HTML into a list of RenderTask. 
+        /// Evaluate the to be rendered HTML into a list of RenderTask.
         /// </summary>
         /// <param name="html"></param>
+        /// <param name="options"></param>
         /// <returns></returns>
         public static List<IRenderTask> Evaluate(string html, EvaluatorOption options)
         {
@@ -33,12 +33,12 @@ namespace Kooboo.Sites.Render
             int currentindex = 0;
             int totallen = html.Length;
 
-            // handle comment in the top.  
+            // handle comment in the top.
             foreach (var item in doc.childNodes.item)
             {
-                if (item is Comment && Kooboo.Sites.Render.Commands.CommandManager.IsCommand(item as Comment))
+                if (item is Comment node && Kooboo.Sites.Render.Commands.CommandManager.IsCommand(node))
                 {
-                    var command = Kooboo.Sites.Render.Commands.CommandParser.ParseCommand(item as Comment);
+                    var command = Kooboo.Sites.Render.Commands.CommandParser.ParseCommand(node);
 
                     if (command.Name.ToLower() == "layout")
                     {
@@ -48,8 +48,7 @@ namespace Kooboo.Sites.Render
                         }
                     }
 
-                    var comment = item as Comment;
-                    if (comment != null)
+                    if (node is Comment comment)
                     {
                         if (comment.location.endTokenEndIndex <= doc.documentElement.location.openTokenStartIndex)
                         {
@@ -92,22 +91,14 @@ namespace Kooboo.Sites.Render
 
             List<EvaluatorResponse> responseList = new List<EvaluatorResponse>();
 
-            List<IEvaluator> Evaluator; 
-            if (options.Evaluators !=null)
-            {
-                Evaluator = options.Evaluators;
-            }
-            else
-            {
-                Evaluator = EvaluatorContainer.DefaultList; 
-            }
+            List<IEvaluator> evaluator;
+            evaluator = options.Evaluators ?? EvaluatorContainer.DefaultList;
 
             while (nextnode != null)
             {
                 if (ShouldTryRender(nextnode))
                 {
-
-                    foreach (var item in Evaluator)
+                    foreach (var item in evaluator)
                     {
                         var response = item.Evaluate(nextnode, options);
                         if (response != null)
@@ -122,12 +113,11 @@ namespace Kooboo.Sites.Render
                     int len = nextnode.location.openTokenStartIndex - currentindex;
                     //document parse error,may cause nextnode openTokenStartIndex less than currentindex.
                     //then get repeated content
-                    if (responseList.Count() > 0 && len >= 0)
+                    if (responseList.Any() && len >= 0)
                     {
                         var element = nextnode as Element;
-                        bool IsSelfClosed = element == null ? false : Service.DomService.IsSelfCloseTag(element.tagName);
-                        bool OmitTag = responseList.Any(o => o.OmitTag);
-
+                        bool isSelfClosed = element != null && Service.DomService.IsSelfCloseTag(element.tagName);
+                        bool omitTag = responseList.Any(o => o.OmitTag);
 
                         if (len > 0)
                         {
@@ -141,9 +131,9 @@ namespace Kooboo.Sites.Render
                         var attributes = GetAttribute(responseList);
                         var contenttask = GetContent(responseList);
 
-                        if (IsSelfClosed)
+                        if (isSelfClosed)
                         {
-                            if (attributes != null && !OmitTag)
+                            if (attributes != null && !omitTag)
                             {
                                 tasklist.Add(new ContentRenderTask(GetHalfOpenTag(element)));
                                 tasklist.AddRange(attributes);
@@ -151,7 +141,7 @@ namespace Kooboo.Sites.Render
                             }
                             else
                             {
-                                if (contenttask !=null)
+                                if (contenttask != null)
                                 {
                                     tasklist.AddRange(contenttask);
                                 }
@@ -159,7 +149,7 @@ namespace Kooboo.Sites.Render
                         }
                         else
                         {
-                            if (attributes != null && !OmitTag)
+                            if (attributes != null && !omitTag)
                             {
                                 tasklist.Add(new ContentRenderTask(GetHalfOpenTag(element)));
                                 tasklist.AddRange(attributes);
@@ -167,7 +157,7 @@ namespace Kooboo.Sites.Render
                             }
                             else
                             {
-                                if (!OmitTag)
+                                if (!omitTag)
                                 {
                                     tasklist.Add(new ContentRenderTask(GetHalfOpenTag(element) + ">"));
                                 }
@@ -178,7 +168,7 @@ namespace Kooboo.Sites.Render
                                 tasklist.AddRange(contenttask);
                             }
 
-                            if (!OmitTag && contenttask != null)
+                            if (!omitTag && contenttask != null)
                             {
                                 tasklist.Add(new ContentRenderTask("</" + element.tagName + ">"));
                             }
@@ -228,7 +218,6 @@ namespace Kooboo.Sites.Render
                 {
                     nextnode = iterator.nextNode();
                 }
-                
             }
 
             if (currentindex < totallen - 1)
@@ -236,7 +225,7 @@ namespace Kooboo.Sites.Render
                 tasklist.Add(new ContentRenderTask(doc.HtmlSource.Substring(currentindex, totallen - currentindex)));
             }
 
-            if (appendtask.Count() > 0)
+            if (appendtask.Any())
             {
                 tasklist.AddRange(appendtask);
             }
@@ -244,7 +233,6 @@ namespace Kooboo.Sites.Render
 
             return tasklist;
         }
-                     
 
         private static bool IsFakeHeader(Element element)
         {
@@ -319,6 +307,7 @@ namespace Kooboo.Sites.Render
             }
             return null;
         }
+
         private static List<IRenderTask> GetAppend(List<EvaluatorResponse> results)
         {
             if (results.Any(o => o.AppendTask != null))
@@ -338,8 +327,7 @@ namespace Kooboo.Sites.Render
 
         private static string GetHalfOpenTag(Element element)
         {
-            string ehtml = string.Empty;
-            ehtml = "<" + element.tagName;
+            var ehtml = "<" + element.tagName;
             foreach (var item in element.attributes)
             {
                 ehtml += " " + item.name;
@@ -357,20 +345,18 @@ namespace Kooboo.Sites.Render
             {
                 if (node.nodeType == enumNodeType.ELEMENT)
                 {
-                    var el = node as Element;
-                    foreach (var item in el.attributes)
-                    {
-                        if (item.name.ToLower() == "k-ignore")
+                    if (node is Element el)
+                        foreach (var item in el.attributes)
                         {
-                            return false;
+                            if (item.name.ToLower() == "k-ignore")
+                            {
+                                return false;
+                            }
                         }
-                    }
-                } 
-                return true; 
+                }
+                return true;
             }
             return false;
-
-
         }
     }
 }

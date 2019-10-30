@@ -136,7 +136,7 @@ namespace Kooboo.Sites.FrontEvent
 
         public static void ExecuteRule(SiteDb sitedb, Kooboo.Sites.Scripting.k kcontext, IFrontEvent theevent, Kooboo.Sites.Models.IFElseRule rule)
         {
-            if (rule.Do != null && rule.Do.Count() > 0)
+            if (rule.Do != null && rule.Do.Any())
             {
                 foreach (var item in rule.Do)
                 {
@@ -156,13 +156,13 @@ namespace Kooboo.Sites.FrontEvent
                 }
             }
 
-            if (rule.IF != null && rule.IF.Count() > 0)
+            if (rule.IF != null && rule.IF.Any())
             {
                 var check = EvaluteCondition(theevent, rule.IF);
 
                 if (check)
                 {
-                    if (rule.Then != null && rule.Then.Count() > 0)
+                    if (rule.Then != null && rule.Then.Any())
                     {
                         foreach (var item in rule.Then)
                         {
@@ -172,7 +172,7 @@ namespace Kooboo.Sites.FrontEvent
                 }
                 else
                 {
-                    if (rule.Else != null && rule.Else.Count() > 0)
+                    if (rule.Else != null && rule.Else.Any())
                     {
                         foreach (var item in rule.Else)
                         {

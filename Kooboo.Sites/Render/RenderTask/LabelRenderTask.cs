@@ -1,12 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Render
 {
@@ -18,7 +14,7 @@ namespace Kooboo.Sites.Render
         {
             get
             {
-                return false; 
+                return false;
             }
         }
 
@@ -26,6 +22,7 @@ namespace Kooboo.Sites.Render
         {
             this.Key = key;
         }
+
         public string Render(RenderContext context)
         {
             var label = context.WebSite.SiteDb().Labels.GetByNameOrId(this.Key);
@@ -39,7 +36,7 @@ namespace Kooboo.Sites.Render
 
         public void AppendResult(RenderContext context, List<RenderResult> result)
         {
-            result.Add(new RenderResult() { Value = Render(context) }); 
+            result.Add(new RenderResult() { Value = Render(context) });
         }
     }
 }

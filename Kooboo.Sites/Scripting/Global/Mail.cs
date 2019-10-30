@@ -1,7 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -10,7 +11,6 @@ namespace Kooboo.Sites.Scripting.Global
 {
     public class Mail
     {
-
         private RenderContext context { get; set; }
 
         public Mail(RenderContext context)
@@ -34,7 +34,6 @@ namespace Kooboo.Sites.Scripting.Global
                 }
 
                 var orgid = this.context.WebSite.OrganizationId;
-
 
                 string messagebody = null;
                 if (maildata.HtmlBody != null)
@@ -68,7 +67,6 @@ namespace Kooboo.Sites.Scripting.Global
 
                     Kooboo.Data.Infrastructure.InfraManager.Add(orgid, Data.Infrastructure.InfraType.Email, allrcptos.Count(), string.Join(",", allrcptos));
                 }
-
             }
             else
             {
@@ -86,9 +84,7 @@ namespace Kooboo.Sites.Scripting.Global
         {
             Dictionary<string, object> data = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
-            System.Collections.IDictionary idict = dataobj as System.Collections.IDictionary;
-
-            if (idict != null)
+            if (dataobj is IDictionary idict)
             {
                 foreach (var item in idict.Keys)
                 {
@@ -101,8 +97,7 @@ namespace Kooboo.Sites.Scripting.Global
             }
             else
             {
-                var dynamicobj = dataobj as IDictionary<string, object>;
-                if (dynamicobj != null)
+                if (dataobj is IDictionary<string, object> dynamicobj)
                 {
                     foreach (var item in dynamicobj.Keys)
                     {
@@ -128,7 +123,6 @@ namespace Kooboo.Sites.Scripting.Global
                     result.originalToString = values;
                 }
             }
-
 
             if (data.ContainsKey("from"))
             {
@@ -178,8 +172,7 @@ namespace Kooboo.Sites.Scripting.Global
                 }
             }
 
-
-            if (result.To == null || result.To.Count() == 0 || result.From == null)
+            if (result.To == null || result.To.Count == 0 || result.From == null)
             {
                 return null;
             }
@@ -195,21 +188,21 @@ namespace Kooboo.Sites.Scripting.Global
             }
 
             return result;
-
         }
 
-        public void SmtpSend(object SmtpServer, object MailMessage)
+        public void SmtpSend(object smtpServer, object mailMessage)
         {
-            var server = GetSmtpServer(SmtpServer);
+            var server = GetSmtpServer(smtpServer);
             if (!string.IsNullOrEmpty(server.Host))
             {
-                var mailobj = PrepareData(MailMessage);
+                var mailobj = PrepareData(mailMessage);
 
                 if (!string.IsNullOrWhiteSpace(mailobj.From) && mailobj.To != null && mailobj.To.Any())
                 {
-
-                    System.Net.Mail.MailMessage msg = new System.Net.Mail.MailMessage();
-                    msg.From = new System.Net.Mail.MailAddress(mailobj.From);
+                    System.Net.Mail.MailMessage msg = new System.Net.Mail.MailMessage
+                    {
+                        From = new System.Net.Mail.MailAddress(mailobj.From)
+                    };
 
                     foreach (var item in mailobj.To)
                     {
@@ -240,14 +233,7 @@ namespace Kooboo.Sites.Scripting.Global
 
                     System.Net.Mail.SmtpClient client;
 
-                    if (server.port > 0)
-                    {
-                        client = new System.Net.Mail.SmtpClient(server.Host, server.port);
-                    }
-                    else
-                    {
-                        client = new System.Net.Mail.SmtpClient(server.Host);
-                    }
+                    client = server.port > 0 ? new System.Net.Mail.SmtpClient(server.Host, server.port) : new System.Net.Mail.SmtpClient(server.Host);
 
                     if (server.username != null && server.password != null)
                     {
@@ -261,21 +247,15 @@ namespace Kooboo.Sites.Scripting.Global
                     }
 
                     client.Send(msg);
-
                 }
-
-
             }
         }
-
 
         internal SmtpServer GetSmtpServer(object dataobj)
         {
             Dictionary<string, object> data = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
-            System.Collections.IDictionary idict = dataobj as System.Collections.IDictionary;
-
-            if (idict != null)
+            if (dataobj is IDictionary idict)
             {
                 foreach (var item in idict.Keys)
                 {
@@ -288,8 +268,7 @@ namespace Kooboo.Sites.Scripting.Global
             }
             else
             {
-                var dynamicobj = dataobj as IDictionary<string, object>;
-                if (dynamicobj != null)
+                if (dataobj is IDictionary<string, object> dynamicobj)
                 {
                     foreach (var item in dynamicobj.Keys)
                     {
@@ -318,8 +297,7 @@ namespace Kooboo.Sites.Scripting.Global
                 var value = data["ssl"];
                 if (value != null)
                 {
-                    bool ssl = false;
-                    bool.TryParse(value.ToString(), out ssl);
+                    bool.TryParse(value.ToString(), out var ssl);
                     result.Ssl = ssl;
                 }
             }
@@ -347,9 +325,7 @@ namespace Kooboo.Sites.Scripting.Global
                 var value = data["port"];
                 if (value != null)
                 {
-                    int port = 0;
-
-                    if (int.TryParse(value.ToString(), out port))
+                    if (int.TryParse(value.ToString(), out var port))
                     {
                         if (port > 0)
                         {
@@ -360,13 +336,8 @@ namespace Kooboo.Sites.Scripting.Global
             }
 
             return result;
-
         }
-
-
-
     }
-
 
     public class MailObject
     {
@@ -385,9 +356,7 @@ namespace Kooboo.Sites.Scripting.Global
         public string TextBody { get; set; }
 
         public string HtmlBody { get; set; }
-
     }
-
 
     public class SmtpServer
     {

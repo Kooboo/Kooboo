@@ -14,19 +14,19 @@ namespace Kooboo.Sites.Constraints
     {
         private static object _locker = new object();
 
-        private static List<CheckerInstance> _List;
+        private static List<CheckerInstance> _list;
 
         public static List<CheckerInstance> List
         {
             get
             {
-                if (_List == null)
+                if (_list == null)
                 {
                     lock (_locker)
                     {
-                        if (_List == null)
+                        if (_list == null)
                         {
-                            _List = new List<CheckerInstance>();
+                            _list = new List<CheckerInstance>();
 
                             var alltypes = AssemblyLoader.LoadTypeByGenericInterface(typeof(IConstraintChecker<>));
                             foreach (var item in alltypes)
@@ -38,38 +38,38 @@ namespace Kooboo.Sites.Constraints
 
                                 instance.ModelType = TypeHelper.GetGenericType(item);
 
-                                var meta = item.GetMethod("GetMeta").Invoke(iteminstance, null);
+                                var meta = item.GetMethod("GetMeta")?.Invoke(iteminstance, null);
                                 if (meta != null)
                                 {
                                     var display = meta as DisplayMetaInfo;
-                                    instance.Name = display.Name;
+                                    instance.Name = display?.Name;
                                     instance.Description = display.Description;
                                 }
 
-                                instance.HasFix = (bool)item.GetProperty("HasFix").GetValue(iteminstance, null);
+                                instance.HasFix = (bool)item.GetProperty("HasFix")?.GetValue(iteminstance, null);
 
-                                instance.HasCheck = (bool)item.GetProperty("HasCheck").GetValue(iteminstance, null);
+                                instance.HasCheck = (bool)item.GetProperty("HasCheck")?.GetValue(iteminstance, null);
 
-                                instance.FixOnSave = (bool)item.GetProperty("AutoFixOnSave").GetValue(iteminstance, null);
+                                instance.FixOnSave = (bool)item.GetProperty("AutoFixOnSave")?.GetValue(iteminstance, null);
 
                                 instance.Fix = item.GetMethod("Fix");
                                 instance.Check = item.GetMethod("Check");
 
-                                _List.Add(instance);
+                                _list.Add(instance);
                             }
                         }
                     }
                 }
 
-                return _List;
+                return _list;
             }
         }
 
         private static Dictionary<string, List<CheckerInstance>> SiteObjectCheckers = new Dictionary<string, List<CheckerInstance>>();
 
-        private static List<CheckerInstance> GetCheckers(Type SiteObjectType)
+        private static List<CheckerInstance> GetCheckers(Type siteObjectType)
         {
-            string name = SiteObjectType.FullName;
+            string name = siteObjectType.FullName;
 
             if (!SiteObjectCheckers.ContainsKey(name))
             {
@@ -78,7 +78,7 @@ namespace Kooboo.Sites.Constraints
                     List<CheckerInstance> checkerlist = new List<CheckerInstance>();
                     foreach (var item in List)
                     {
-                        if (TypeHelper.IsOfBaseTypeOrInterface(SiteObjectType, item.ModelType))
+                        if (TypeHelper.IsOfBaseTypeOrInterface(siteObjectType, item.ModelType))
                         {
                             checkerlist.Add(item);
                         }
@@ -89,70 +89,60 @@ namespace Kooboo.Sites.Constraints
             return SiteObjectCheckers[name];
         }
 
-        public static void FixOnSave(SiteDb SiteDb, SiteObject SiteObject, string Language = null)
+        public static void FixOnSave(SiteDb siteDb, SiteObject siteObject, string language = null)
         {
-            if (SiteDb == null || SiteObject == null)
+            if (siteDb == null || siteObject == null)
             {
                 return;
             }
-            foreach (var item in GetCheckers(SiteObject.GetType()))
+            foreach (var item in GetCheckers(siteObject.GetType()))
             {
                 if (item.FixOnSave)
                 {
-                    List<object> paras = new List<object>();
-                    paras.Add(SiteDb);
-                    paras.Add(SiteObject);
-                    paras.Add(Language);
+                    List<object> paras = new List<object> {siteDb, siteObject, language};
 
                     item.Fix.Invoke(item.ClassInstance, paras.ToArray());
                 }
             }
         }
 
-        public static void FixConstraint(SiteDb SiteDb, SiteObject SiteObject, string ConstrainName, string Language = null)
+        public static void FixConstraint(SiteDb siteDb, SiteObject siteObject, string constrainName, string language = null)
         {
-            if (string.IsNullOrEmpty(ConstrainName) || SiteDb == null || SiteObject == null)
+            if (string.IsNullOrEmpty(constrainName) || siteDb == null || siteObject == null)
             {
                 return;
             }
 
-            foreach (var item in GetCheckers(SiteObject.GetType()))
+            foreach (var item in GetCheckers(siteObject.GetType()))
             {
-                if (item.HasFix && item.Name.ToLower() == ConstrainName.ToLower())
+                if (item.HasFix && item.Name.ToLower() == constrainName.ToLower())
                 {
-                    List<object> paras = new List<object>();
-                    paras.Add(SiteDb);
-                    paras.Add(SiteObject);
-                    paras.Add(Language);
+                    List<object> paras = new List<object> {siteDb, siteObject, language};
 
                     item.Fix.Invoke(item.ClassInstance, paras.ToArray());
                 }
             }
         }
 
-        public static List<ConstraintResponse> Check(SiteDb SiteDb, SiteObject SiteObject, string Language)
+        public static List<ConstraintResponse> Check(SiteDb siteDb, SiteObject siteObject, string language)
         {
             List<ConstraintResponse> result = new List<ConstraintResponse>();
 
-            if (SiteDb == null || SiteObject == null)
+            if (siteDb == null || siteObject == null)
             {
                 return result;
             }
-            foreach (var item in GetCheckers(SiteObject.GetType()))
+            foreach (var item in GetCheckers(siteObject.GetType()))
             {
                 if (item.HasCheck)
                 {
-                    List<object> paras = new List<object>();
-                    paras.Add(SiteDb);
-                    paras.Add(SiteObject);
-                    paras.Add(Language);
+                    List<object> paras = new List<object> {siteDb, siteObject, language};
 
                     var oneresult = item.Check.Invoke(item.ClassInstance, paras.ToArray());
 
                     if (oneresult != null)
                     {
-                        var listresult = oneresult as List<ConstraintResponse>;
-                        if (listresult != null && listresult.Count() > 0)
+                        if (oneresult is List<ConstraintResponse> listresult && listresult.Any())
                         {
                             result.AddRange(listresult);
                         }
@@ -163,31 +153,27 @@ namespace Kooboo.Sites.Constraints
             return result;
         }
 
-        public static List<ConstraintResponse> CheckConstraint(SiteDb SiteDb, SiteObject SiteObject, string ConstrainName, string Language = null)
+        public static List<ConstraintResponse> CheckConstraint(SiteDb siteDb, SiteObject siteObject, string constrainName, string language = null)
         {
             List<ConstraintResponse> result = new List<ConstraintResponse>();
 
-            if (SiteDb == null || SiteObject == null)
+            if (siteDb == null || siteObject == null)
             {
                 return result;
             }
             foreach (var item in List)
             {
-                if (item.HasCheck && TypeHelper.IsOfBaseTypeOrInterface(SiteObject.GetType(), item.ModelType))
+                if (item.HasCheck && TypeHelper.IsOfBaseTypeOrInterface(siteObject.GetType(), item.ModelType))
                 {
-                    if (item.Name.ToLower() == ConstrainName.ToLower())
+                    if (item.Name.ToLower() == constrainName.ToLower())
                     {
-                        List<object> paras = new List<object>();
-                        paras.Add(SiteDb);
-                        paras.Add(SiteObject);
-                        paras.Add(Language);
+                        List<object> paras = new List<object> {siteDb, siteObject, language};
 
                         var oneresult = item.Check.Invoke(item.ClassInstance, paras.ToArray());
 
                         if (oneresult != null)
                         {
-                            var listresult = oneresult as List<ConstraintResponse>;
-                            if (listresult != null && listresult.Count() > 0)
+                            if (oneresult is List<ConstraintResponse> listresult && listresult.Any())
                             {
                                 result.AddRange(listresult);
                             }

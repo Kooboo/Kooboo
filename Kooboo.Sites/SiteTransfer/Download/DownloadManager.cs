@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.Repository;
 using System;
@@ -13,17 +13,9 @@ namespace Kooboo.Sites.SiteTransfer.Download
         public DownloadManager()
         {
             this.MaxThread = 30;
-            if (Kooboo.Data.AppSettings.IsOnlineServer)
-            {
-                this.MaxThread = 30;
-            }
-            else
-            {
-                this.MaxThread = 500;
-            }
+            this.MaxThread = Kooboo.Data.AppSettings.IsOnlineServer ? 30 : 500;
             this.CookieContainer = new System.Net.CookieContainer();
         }
-
 
         public System.Net.CookieContainer CookieContainer
         {
@@ -34,15 +26,15 @@ namespace Kooboo.Sites.SiteTransfer.Download
 
         public HashSet<Guid> AddedAbsUrl = new HashSet<Guid>();
 
-        private List<Guid> pageids = new List<Guid>();
+        private List<Guid> _pageids = new List<Guid>();
 
         private int MaxThread { get; set; } = 200;
-        private int CurrentThreadCount = 0;
+        private int _currentThreadCount = 0;
 
         private bool CanAccept
         {
             get
-            { return this.CurrentThreadCount < MaxThread; }
+            { return this._currentThreadCount < MaxThread; }
         }
 
         private object _locker = new object();
@@ -51,7 +43,7 @@ namespace Kooboo.Sites.SiteTransfer.Download
 
         public SiteDb SiteDb { get; set; }
 
-        // the init transfer url... 
+        // the init transfer url...
         public string OriginalImportUrl { get; set; }
 
         public void AddTask(DownloadTask task)
@@ -69,7 +61,7 @@ namespace Kooboo.Sites.SiteTransfer.Download
             }
 
             this.Queue.Enqueue(task);
-            /// }
+            // }
 
             if (this.EnableDownload)
             {
@@ -102,7 +94,7 @@ namespace Kooboo.Sites.SiteTransfer.Download
         {
             if (this.CanAccept)
             {
-                Interlocked.Increment(ref this.CurrentThreadCount);
+                Interlocked.Increment(ref this._currentThreadCount);
 
                 try
                 {
@@ -138,7 +130,7 @@ namespace Kooboo.Sites.SiteTransfer.Download
                     var error = ex.Message;
                 }
 
-                Interlocked.Decrement(ref this.CurrentThreadCount);
+                Interlocked.Decrement(ref this._currentThreadCount);
 
                 if (this.EnableDownload)
                 {
@@ -185,11 +177,10 @@ namespace Kooboo.Sites.SiteTransfer.Download
         {
             get
             {
-                return this.CurrentThreadCount == 0 && this.Queue.Count == 0;
+                return this._currentThreadCount == 0 && this.Queue.Count == 0;
             }
         }
 
         public Guid UserId { get; set; }
-
     }
 }

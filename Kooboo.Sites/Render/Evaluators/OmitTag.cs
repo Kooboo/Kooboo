@@ -1,10 +1,5 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Dom;
 
 namespace Kooboo.Sites.Render
@@ -25,15 +20,14 @@ namespace Kooboo.Sites.Render
             var element = node as Element;
 
             foreach (var item in element.attributes)
-            { 
+            {
                 if (item.name == "k-omit" || item.name == "omittag" || item.name == "omit-tag")
                 {
-                    element.removeAttribute(item.name); 
-                   return new EvaluatorResponse() { OmitTag = true};  
+                    element.removeAttribute(item.name);
+                    return new EvaluatorResponse() { OmitTag = true };
                 }
-            } 
+            }
             return null;
         }
     }
- 
 }

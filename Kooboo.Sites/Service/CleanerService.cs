@@ -1,12 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Service
 {
@@ -26,7 +23,6 @@ namespace Kooboo.Sites.Service
                 }
             }
         }
-
 
         public static List<Guid> GetAllMethods(List<ViewDataMethod> viewmethods)
         {

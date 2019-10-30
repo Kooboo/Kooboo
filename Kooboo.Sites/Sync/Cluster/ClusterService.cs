@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data;
 using Kooboo.Data.Interface;
@@ -21,24 +21,24 @@ namespace Kooboo.Sites.Sync.Cluster
 
         private static Dictionary<Guid, List<Guid>> ClusterTo = new Dictionary<Guid, List<Guid>>();
 
-        public static List<Guid> GetClusterTo(Data.Models.WebSite WebSite)
+        public static List<Guid> GetClusterTo(Data.Models.WebSite webSite)
         {
             lock (_locker)
             {
-                if (!ClusterTo.ContainsKey(WebSite.Id))
+                if (!ClusterTo.ContainsKey(webSite.Id))
                 {
-                    var tos = CalculateClusterTo(WebSite);
-                    ClusterTo[WebSite.Id] = tos;
+                    var tos = CalculateClusterTo(webSite);
+                    ClusterTo[webSite.Id] = tos;
                 }
-                return ClusterTo[WebSite.Id];
+                return ClusterTo[webSite.Id];
             }
         }
 
-        internal static List<Guid> CalculateClusterTo(Data.Models.WebSite WebSite)
+        internal static List<Guid> CalculateClusterTo(Data.Models.WebSite webSite)
         {
             HashSet<Guid> result = new HashSet<Guid>();
 
-            var store = Stores.ClusterNodes(WebSite.SiteDb());
+            var store = Stores.ClusterNodes(webSite.SiteDb());
 
             var allitems = store.Filter.SelectAll().OrderBy(o => o.ServerUrl).ToList();
 
@@ -51,7 +51,7 @@ namespace Kooboo.Sites.Sync.Cluster
 
             for (int i = 0; i < count; i++)
             {
-                if (allitems[i].ServerWebSiteId == WebSite.Id)
+                if (allitems[i].ServerWebSiteId == webSite.Id)
                 {
                     currentposition = i;
                 }
@@ -74,7 +74,6 @@ namespace Kooboo.Sites.Sync.Cluster
             }
 
             return result.ToList();
-
         }
 
         private static int CorrectIndex(int index, int totalcount)
@@ -86,76 +85,75 @@ namespace Kooboo.Sites.Sync.Cluster
             return index;
         }
 
-
-        public static void EnableLocalSite(Guid LocalWebSiteId, string LocalUrl, string LocalUserName, string LocalPassword)
+        public static void EnableLocalSite(Guid localWebSiteId, string localUrl, string localUserName, string localPassword)
         {
             lock (_locker)
             {
-                var website = Data.GlobalDb.WebSites.Get(LocalWebSiteId);
+                var website = Data.GlobalDb.WebSites.Get(localWebSiteId);
                 if (website != null)
                 {
                     if (!website.EnableCluster)
                     {
                         website.EnableCluster = true;
                         Data.GlobalDb.WebSites.AddOrUpdate(website);
-                        website = Data.GlobalDb.WebSites.Get(LocalWebSiteId);
+                        website = Data.GlobalDb.WebSites.Get(localWebSiteId);
                     }
 
                     var store = Stores.ClusterNodes(website.SiteDb());
 
-                    if (string.IsNullOrEmpty(LocalUrl))
+                    if (string.IsNullOrEmpty(localUrl))
                     {
-                        LocalUrl = GetLocalServerUrl(LocalWebSiteId);
+                        localUrl = GetLocalServerUrl(localWebSiteId);
                     }
 
-                    AddOrUpdate(store, LocalUrl, LocalUserName, LocalPassword, LocalWebSiteId, true);
+                    AddOrUpdate(store, localUrl, localUserName, localPassword, localWebSiteId, true);
 
-                    ClusterTo.Remove(LocalWebSiteId);
+                    ClusterTo.Remove(localWebSiteId);
                 }
             }
         }
-
 
         /// <summary>
-        /// Add remote server and then need to PostToCheckIn. 
+        /// Add remote server and then need to PostToCheckIn.
         /// </summary>
-        /// <param name="LocalWebSiteId"></param>
-        /// <param name="RemoteServerUrl"></param>
-        /// <param name="RemoteServerUserName"></param>
-        /// <param name="RemoteServerPassword"></param>
-        /// <param name="RemoteWebSiteId"></param>
-        public static void AddRemoteServer(Guid LocalWebSiteId, string RemoteServerUrl, string RemoteServerUserName, string RemoteServerPassword, Guid RemoteWebSiteId)
+        /// <param name="localWebSiteId"></param>
+        /// <param name="remoteServerUrl"></param>
+        /// <param name="remoteServerUserName"></param>
+        /// <param name="remoteServerPassword"></param>
+        /// <param name="remoteWebSiteId"></param>
+        public static void AddRemoteServer(Guid localWebSiteId, string remoteServerUrl, string remoteServerUserName, string remoteServerPassword, Guid remoteWebSiteId)
         {
             lock (_locker)
             {
-                var website = Data.GlobalDb.WebSites.Get(LocalWebSiteId);
+                var website = Data.GlobalDb.WebSites.Get(localWebSiteId);
                 if (website != null)
                 {
                     if (!website.EnableCluster)
                     {
                         website.EnableCluster = true;
                         Data.GlobalDb.WebSites.AddOrUpdate(website);
-                        website = Data.GlobalDb.WebSites.Get(LocalWebSiteId);
+                        website = Data.GlobalDb.WebSites.Get(localWebSiteId);
                     }
 
                     var store = Stores.ClusterNodes(website.SiteDb());
 
-                    AddOrUpdate(store, RemoteServerUrl, RemoteServerUserName, RemoteServerPassword, RemoteWebSiteId);
+                    AddOrUpdate(store, remoteServerUrl, remoteServerUserName, remoteServerPassword, remoteWebSiteId);
 
-                    ClusterTo.Remove(LocalWebSiteId);
+                    ClusterTo.Remove(localWebSiteId);
                 }
             }
         }
 
-        internal static ClusterNode AddOrUpdate(ObjectStore<Guid, ClusterNode> store, string ServerUrl, string UserName, string Password, Guid TargetWebSiteId, bool IsLocal = false)
+        internal static ClusterNode AddOrUpdate(ObjectStore<Guid, ClusterNode> store, string serverUrl, string userName, string password, Guid targetWebSiteId, bool isLocal = false)
         {
-           
-            ClusterNode item = new ClusterNode();
-            item.ServerUrl = ServerUrl;
-            item.UserName = UserName;
-            item.Password = Password;
-            item.ServerWebSiteId = TargetWebSiteId;
-            item.IsLocal = IsLocal;
+            ClusterNode item = new ClusterNode
+            {
+                ServerUrl = serverUrl,
+                UserName = userName,
+                Password = password,
+                ServerWebSiteId = targetWebSiteId,
+                IsLocal = isLocal
+            };
 
             var old = store.get(item.Id);
 
@@ -175,14 +173,14 @@ namespace Kooboo.Sites.Sync.Cluster
                 {
                     return null;
                 }
-            } 
+            }
         }
-         
-        public static bool CheckInByRemote(Guid LocalWebSiteId, ClusterNode RemoteNode)
+
+        public static bool CheckInByRemote(Guid localWebSiteId, ClusterNode remoteNode)
         {
             lock (_locker)
             {
-                var website = Data.GlobalDb.WebSites.Get(LocalWebSiteId);
+                var website = Data.GlobalDb.WebSites.Get(localWebSiteId);
                 if (website != null)
                 {
                     if (!website.EnableCluster)
@@ -197,10 +195,10 @@ namespace Kooboo.Sites.Sync.Cluster
                         return false;
                     }
 
-                    var node = AddOrUpdate(store, RemoteNode.ServerUrl, RemoteNode.UserName, RemoteNode.Password, RemoteNode.ServerWebSiteId);
+                    var node = AddOrUpdate(store, remoteNode.ServerUrl, remoteNode.UserName, remoteNode.Password, remoteNode.ServerWebSiteId);
                     if (node != null)
                     {
-                        SyncSettingToRemote(LocalWebSiteId, node);
+                        SyncSettingToRemote(localWebSiteId, node);
                     }
                 }
 
@@ -208,36 +206,38 @@ namespace Kooboo.Sites.Sync.Cluster
             }
         }
 
-        public static void CheckInToRemote(SiteDb SiteDb, string RemoteServerUrl, string RemoteServerUserName, string RemoteServerPassword, Guid RemoteWebSiteId)
+        public static void CheckInToRemote(SiteDb siteDb, string remoteServerUrl, string remoteServerUserName, string remoteServerPassword, Guid remoteWebSiteId)
         {
-            var store = Stores.ClusterNodes(SiteDb);
+            var store = Stores.ClusterNodes(siteDb);
 
-            var LocalSelfRecord = store.Where(o => o.IsLocal && o.ServerWebSiteId == SiteDb.WebSite.Id).FirstOrDefault();
-            if (LocalSelfRecord == null)
+            var localSelfRecord = store.Where(o => o.IsLocal && o.ServerWebSiteId == siteDb.WebSite.Id).FirstOrDefault();
+            if (localSelfRecord == null)
             {
                 return;
             }
 
-            ClusterNode node = new ClusterNode();
-            node.ServerUrl = LocalSelfRecord.ServerUrl;
-            node.ServerWebSiteId = SiteDb.WebSite.Id;
-            node.UserName = LocalSelfRecord.UserName;
-            node.Password = LocalSelfRecord.Password;
+            ClusterNode node = new ClusterNode
+            {
+                ServerUrl = localSelfRecord.ServerUrl,
+                ServerWebSiteId = siteDb.WebSite.Id,
+                UserName = localSelfRecord.UserName,
+                Password = localSelfRecord.Password
+            };
 
-            CheckInToRemote(SiteDb, RemoteServerUrl, RemoteServerUserName, RemoteServerPassword, RemoteWebSiteId, node);
+            CheckInToRemote(siteDb, remoteServerUrl, remoteServerUserName, remoteServerPassword, remoteWebSiteId, node);
         }
 
-        private static void CheckInToRemote(SiteDb SiteDb, string RemoteServerUrl, string RemoteServerUserName, string RemoteServerPassword, Guid RemoteWebSiteId, ClusterNode node)
+        private static void CheckInToRemote(SiteDb siteDb, string remoteServerUrl, string remoteServerUserName, string remoteServerPassword, Guid remoteWebSiteId, ClusterNode node)
         {
             string data = Lib.Helper.JsonHelper.Serialize(node);
 
-            string url = RemoteServerUrl + ClusterService.ClusterSyncSettingUrl + "?siteid=" + RemoteWebSiteId.ToString();
+            string url = remoteServerUrl + ClusterService.ClusterSyncSettingUrl + "?siteid=" + remoteWebSiteId.ToString();
 
             bool submitok = true;
 
             try
             {
-                submitok =  Kooboo.Lib.Helper.HttpHelper.PostData(url, null, System.Text.Encoding.UTF8.GetBytes(data), RemoteServerUserName, RemoteServerPassword);  
+                submitok = Kooboo.Lib.Helper.HttpHelper.PostData(url, null, System.Text.Encoding.UTF8.GetBytes(data), remoteServerUserName, remoteServerPassword);
             }
             catch (Exception)
             {
@@ -246,15 +246,15 @@ namespace Kooboo.Sites.Sync.Cluster
 
             if (!submitok)
             {
-                Sites.TaskQueue.QueueManager.Add(new TaskQueue.HttpPostStringContent() { RemoteUrl = url, UserName = RemoteServerUserName, Password = RemoteServerPassword, StringContent = data }, SiteDb.WebSite.Id);  
+                Sites.TaskQueue.QueueManager.Add(new TaskQueue.HttpPostStringContent() { RemoteUrl = url, UserName = remoteServerUserName, Password = remoteServerPassword, StringContent = data }, siteDb.WebSite.Id);
             }
         }
 
-        internal static string GetLocalServerUrl(Guid WebSiteId)
+        internal static string GetLocalServerUrl(Guid webSiteId)
         {
-            var website = Data.GlobalDb.WebSites.Get(WebSiteId);
+            var website = Data.GlobalDb.WebSites.Get(webSiteId);
 
-            var binding = Data.GlobalDb.Bindings.GetByWebSite(WebSiteId).FirstOrDefault();
+            var binding = Data.GlobalDb.Bindings.GetByWebSite(webSiteId).FirstOrDefault();
 
             string starturl = string.Empty;
             if (binding != null)
@@ -287,12 +287,12 @@ namespace Kooboo.Sites.Sync.Cluster
                 starturl = starturl + ":" + AppSettings.CurrentUsedPort;
             }
 
-            return starturl; 
+            return starturl;
         }
 
-        public static void  SyncSettingToRemote(Guid LocalWebSiteId, ClusterNode node)
+        public static void SyncSettingToRemote(Guid localWebSiteId, ClusterNode node)
         {
-            var website = Data.GlobalDb.WebSites.Get(LocalWebSiteId);
+            var website = Data.GlobalDb.WebSites.Get(localWebSiteId);
             if (website == null || !website.EnableCluster)
             {
                 return;
@@ -307,18 +307,18 @@ namespace Kooboo.Sites.Sync.Cluster
                 var server = store.get(item);
                 if (server != null)
                 {
-                    CheckInToRemote(website.SiteDb(), server.ServerUrl, server.UserName, server.Password, server.ServerWebSiteId, node); 
+                    CheckInToRemote(website.SiteDb(), server.ServerUrl, server.UserName, server.Password, server.ServerWebSiteId, node);
                 }
-            } 
+            }
         }
 
-        public static Sync.SyncObject GetSyncObject(SiteDb SiteDb, LogEntry log, bool GenerateClusterInfo = true)
+        public static Sync.SyncObject GetSyncObject(SiteDb siteDb, LogEntry log, bool generateClusterInfo = true)
         {
             var key = Kooboo.IndexedDB.ByteConverter.GuidConverter.ConvertFromByte(log.KeyBytes);
 
             Sync.SyncObject item = new Sync.SyncObject();
 
-            var repo = SiteDb.GetRepository(log.StoreName);
+            var repo = siteDb.GetRepository(log.StoreName);
 
             var siteobject = repo.GetByLog(log) as ISiteObject;
 
@@ -336,59 +336,61 @@ namespace Kooboo.Sites.Sync.Cluster
                 }
             }
 
-            if (GenerateClusterInfo)
+            if (generateClusterInfo)
             {
-                Sync.Cluster.Integrity.Generate(SiteDb, item, log.Id);
+                Sync.Cluster.Integrity.Generate(siteDb, item, log.Id);
             }
 
-            item.SenderVersion = log.Id; 
+            item.SenderVersion = log.Id;
 
             return item;
         }
 
-        public static void ReceiveRemote(SiteDb SiteDb, Sync.SyncObject SyncObject)
+        public static void ReceiveRemote(SiteDb siteDb, Sync.SyncObject syncObject)
         {
-            if (Integrity.Verify(SiteDb, SyncObject))
+            if (Integrity.Verify(siteDb, syncObject))
             {
-                var modeltype = Service.ConstTypeService.GetModelType(SyncObject.ObjectConstType);
-                var repo = SiteDb.GetRepository(modeltype);
+                var modeltype = Service.ConstTypeService.GetModelType(syncObject.ObjectConstType);
+                var repo = siteDb.GetRepository(modeltype);
 
                 ISiteObject siteobject;
 
-                if (SyncObject.IsDelete)
+                if (syncObject.IsDelete)
                 {
                     siteobject = Activator.CreateInstance(modeltype) as ISiteObject;
-                    repo.Delete(SyncObject.ObjectId);
-                    siteobject.ConstType = SyncObject.ObjectConstType;
-                    siteobject.Id = SyncObject.ObjectId;
+                    repo.Delete(syncObject.ObjectId);
+                    if (siteobject != null)
+                    {
+                        siteobject.ConstType = syncObject.ObjectConstType;
+                        siteobject.Id = syncObject.ObjectId;
+                    }
                 }
                 else
                 {
-                    siteobject = Sync.SyncObjectConvertor.FromSyncObject(SyncObject);
+                    siteobject = Sync.SyncObjectConvertor.FromSyncObject(syncObject);
                     repo.AddOrUpdate(siteobject);
                 }
 
-                Integrity.AddHistory(SiteDb, SyncObject, siteobject);
+                Integrity.AddHistory(siteDb, syncObject, siteobject);
             }
-
         }
 
-        public static bool PostToRemote(SiteDb SiteDb, LogEntry log, Guid RemoteClusterId)
+        public static bool PostToRemote(SiteDb siteDb, LogEntry log, Guid remoteClusterId)
         {
             string url = ClusterService.ClusterUpdateUrl;
 
-            url = url + "?siteid=" + SiteDb.Id.ToString();
+            url = url + "?siteid=" + siteDb.Id.ToString();
 
-            var store = Stores.ClusterNodes(SiteDb);
+            var store = Stores.ClusterNodes(siteDb);
 
-            var server = store.get(RemoteClusterId);
+            var server = store.get(remoteClusterId);
 
             if (server == null)
             { return false; }
 
             url = server.ServerUrl + url;
 
-            var item = GetSyncObject(SiteDb, log);
+            var item = GetSyncObject(siteDb, log);
 
             if (item == null)
             {
@@ -396,8 +398,8 @@ namespace Kooboo.Sites.Sync.Cluster
             }
 
             string data = Lib.Helper.JsonHelper.Serialize(item);
-             
-            return Kooboo.Lib.Helper.HttpHelper.PostData(url, null, System.Text.Encoding.UTF8.GetBytes(data), server.UserName, server.Password); 
-        } 
+
+            return Kooboo.Lib.Helper.HttpHelper.PostData(url, null, System.Text.Encoding.UTF8.GetBytes(data), server.UserName, server.Password);
+        }
     }
 }

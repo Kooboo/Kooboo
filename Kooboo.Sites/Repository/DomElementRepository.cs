@@ -1,25 +1,23 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Dom;
+using Kooboo.Extensions;
+using Kooboo.IndexedDB;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.SiteElements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.IndexedDB;
-using Kooboo.Sites.Models;
-using Kooboo.Extensions;
-using Kooboo.Sites.SiteElements;
-using Kooboo.Dom;
 
 namespace Kooboo.Sites.Repository
 {
-   public class DomElementRepository : SiteRepositoryBase<DomElement>
+    public class DomElementRepository : SiteRepositoryBase<DomElement>
     {
         public override ObjectStoreParameters StoreParameters
         {
             get
             {
-                ObjectStoreParameters paras = new ObjectStoreParameters(); 
+                ObjectStoreParameters paras = new ObjectStoreParameters();
                 paras.AddColumn<DomElement>(o => o.KoobooIdHash);
                 paras.AddColumn<DomElement>(o => o.ParentPathHash);
                 //paras.AddColumn<PageElement>(o => o.SubElementHash);
@@ -29,21 +27,21 @@ namespace Kooboo.Sites.Repository
                 paras.AddColumn<DomElement>(o => o.InnerHtmlHash);
                 paras.AddColumn<DomElement>(o => o.Depth);
                 paras.AddColumn<DomElement>(o => o.Sibling);
-                paras.SetPrimaryKeyField<DomElement>(o => o.Id);             
-                return paras; 
+                paras.SetPrimaryKeyField<DomElement>(o => o.Id);
+                return paras;
             }
         }
-        
-        public DomElement GetByKoobooId(Guid OwnerObjectId, byte OwnerConstType, string KoobooId)
+
+        public DomElement GetByKoobooId(Guid ownerObjectId, byte ownerConstType, string koobooId)
         {
-            /// this can only has one record, otherwise it is a an error. 
-            Guid KoobooIdHash = KoobooId.ToHashGuid();
-            return this.Query.Where(o => o.OwnerObjectId == OwnerObjectId && o.KoobooIdHash == KoobooIdHash && o.OwnerObjectType == OwnerConstType).FirstOrDefault();
+            // this can only has one record, otherwise it is a an error.
+            Guid koobooIdHash = koobooId.ToHashGuid();
+            return this.Query.Where(o => o.OwnerObjectId == ownerObjectId && o.KoobooIdHash == koobooIdHash && o.OwnerObjectType == ownerConstType).FirstOrDefault();
         }
 
-        public DomElement GetSamePageElement(DomElement pageelement, Guid DesitinationObjectId, byte ConstType)
+        public DomElement GetSamePageElement(DomElement pageelement, Guid desitinationObjectId, byte constType)
         {
-            var allcandicates = Query.Where(o => o.ParentPathHash == pageelement.ParentPathHash && o.InnerHtmlHash == pageelement.InnerHtmlHash && o.OwnerObjectId == DesitinationObjectId).SelectAll();
+            var allcandicates = Query.Where(o => o.ParentPathHash == pageelement.ParentPathHash && o.InnerHtmlHash == pageelement.InnerHtmlHash && o.OwnerObjectId == desitinationObjectId).SelectAll();
 
             var currentObjectSiblings = Query.Where(o => o.ParentId == pageelement.ParentId && o.OwnerObjectId == pageelement.OwnerObjectId).SelectAll();
 
@@ -51,63 +49,62 @@ namespace Kooboo.Sites.Repository
             {
                 var ysibling = Query.Where(o => o.ParentId == item.ParentId && o.OwnerObjectId == item.OwnerObjectId).SelectAll();
 
-                if (isSameSibling(pageelement, item, currentObjectSiblings, ysibling))
+                if (IsSameSibling(pageelement, item, currentObjectSiblings, ysibling))
                 {
                     return item;
                 }
-
             }
 
             return null;
         }
-        
-        private  bool isSameSibling(DomElement elementX, DomElement elementY, List<DomElement> XSiblings, List<DomElement> YSiblings)
+
+        private bool IsSameSibling(DomElement elementX, DomElement elementY, List<DomElement> xSiblings, List<DomElement> ySiblings)
         {
-            var xleft = XSiblings.Where(o => o.Sibling < elementX.Sibling).ToList();
-            var xright = XSiblings.Where(o => o.Sibling > elementX.Sibling).ToList();
+            var xleft = xSiblings.Where(o => o.Sibling < elementX.Sibling).ToList();
+            var xright = xSiblings.Where(o => o.Sibling > elementX.Sibling).ToList();
 
-            var yleft = YSiblings.Where(o => o.Sibling < elementY.Sibling).ToList();
+            var yleft = ySiblings.Where(o => o.Sibling < elementY.Sibling).ToList();
 
-            var yright = YSiblings.Where(o => o.Sibling > elementY.Sibling).ToList();
+            var yright = ySiblings.Where(o => o.Sibling > elementY.Sibling).ToList();
 
-            return (isSameList(xleft, yleft) || isSameList(xright, yright));
+            return (IsSameList(xleft, yleft) || IsSameList(xright, yright));
         }
-        
+
         /// <summary>
-        /// clean current object and all its subs. 
+        /// clean current object and all its subs.
         /// </summary>
-        /// <param name="store"></param>
-        /// <param name="PageElementId"></param>
-        public   void CleanSub(Guid PageElementId, List<DomElement> AllOwnerElements)
+        /// <param name="pageElementId"></param>
+        /// <param name="allOwnerElements"></param>
+        public void CleanSub(Guid pageElementId, List<DomElement> allOwnerElements)
         {
-           this.Delete(PageElementId);
+            this.Delete(pageElementId);
 
-            var subs = AllOwnerElements.Where(o => o.ParentId == PageElementId); 
+            var subs = allOwnerElements.Where(o => o.ParentId == pageElementId);
 
-            if (subs !=null && subs.Count()>0)
+            if (subs != null && subs.Any())
             {
                 foreach (var item in subs)
                 {
-                    CleanSub(item.Id, AllOwnerElements);
+                    CleanSub(item.Id, allOwnerElements);
                 }
-            } 
+            }
         }
 
-        public  void CleanObject( Guid OwnerObjectId, byte ConstType)
+        public void CleanObject(Guid ownerObjectId, byte constType)
         {
-            var allitems = Query.Where(o => o.OwnerObjectId == OwnerObjectId && o.OwnerObjectType == ConstType).SelectAll();
+            var allitems = Query.Where(o => o.OwnerObjectId == ownerObjectId && o.OwnerObjectType == constType).SelectAll();
             foreach (var item in allitems)
             {
                 Delete(item.Id);
             }
         }
 
-        public  List<DomElement> ListSub(Guid ParentId)
+        public List<DomElement> ListSub(Guid parentId)
         {
-            return Query.Where(o => o.ParentId == ParentId).SelectAll();
+            return Query.Where(o => o.ParentId == parentId).SelectAll();
         }
 
-        private  bool isSamePageElement(DomElement x, DomElement y)
+        private bool isSamePageElement(DomElement x, DomElement y)
         {
             if (x.ParentPathHash != y.ParentPathHash)
             {
@@ -137,7 +134,7 @@ namespace Kooboo.Sites.Repository
             return true;
         }
 
-        private  bool isSameList(List<DomElement> listx, List<DomElement> listy)
+        private bool IsSameList(List<DomElement> listx, List<DomElement> listy)
         {
             if (listx.Count != listy.Count)
             {
@@ -157,31 +154,31 @@ namespace Kooboo.Sites.Repository
             return true;
         }
 
-        public  override bool AddOrUpdate(DomElement element, Guid UserId = default(Guid))
+        public override bool AddOrUpdate(DomElement element, Guid userId = default(Guid))
         {
             var old = Get(element.Id);
             if (old == null)
             {
-               this.Store.add(element.Id, element);
-                return true; 
+                this.Store.add(element.Id, element);
+                return true;
             }
             else
             {
                 if (!isSamePageElement(old, element))
                 {
                     this.Store.update(element.Id, element);
-                    return true; 
+                    return true;
                 }
             }
-            return false; 
+            return false;
         }
 
-        public  void AddOrUpdateDom(Document Dom, Guid OwnerObjectId, byte OwnerConstType, bool NewThread = true)
+        public void AddOrUpdateDom(Document dom, Guid ownerObjectId, byte ownerConstType, bool newThread = true)
         {
-            if (Dom == null)
-            { return;  }
+            if (dom == null)
+            { return; }
 
-            var OwnerElements = this.Query.Where(o => o.OwnerObjectId == OwnerObjectId).SelectAll(); 
+            var ownerElements = this.Query.Where(o => o.OwnerObjectId == ownerObjectId).SelectAll();
 
             //if (NewThread)
             //{
@@ -189,27 +186,26 @@ namespace Kooboo.Sites.Repository
             //}
             //else
             //{
-                _AddOrUpdateElement(Dom.body, default(Guid), OwnerObjectId, OwnerConstType,   OwnerElements);
+            _AddOrUpdateElement(dom.body, default(Guid), ownerObjectId, ownerConstType, ownerElements);
             //}
         }
-        
-        private  DomElement _AddOrUpdateElement(Element element, Guid ParentPageElementId, Guid OwnerObjectId, byte OwnerConstType,   List<DomElement> AllOwnerElements)
+
+        private DomElement _AddOrUpdateElement(Element element, Guid parentPageElementId, Guid ownerObjectId, byte ownerConstType, List<DomElement> allOwnerElements)
         {
             List<Guid> newsubs = new List<Guid>();
             var pagenode = PageElementManager.ConvertToPageElement(element);
-            pagenode.OwnerObjectType = OwnerConstType;
-            pagenode.OwnerObjectId = OwnerObjectId;
-            pagenode.ParentId = ParentPageElementId;
+            pagenode.OwnerObjectType = ownerConstType;
+            pagenode.OwnerObjectId = ownerObjectId;
+            pagenode.ParentId = parentPageElementId;
             AddOrUpdate(pagenode);
 
-            var currentsubs = AllOwnerElements.Where(o => o.ParentId == pagenode.Id);  
+            var currentsubs = allOwnerElements.Where(o => o.ParentId == pagenode.Id);
 
             foreach (var item in element.childNodes.item)
             {
-                if (item is Element)
+                if (item is Element e)
                 {
-                    Element e = item as Element;
-                    var back = _AddOrUpdateElement(e, pagenode.Id, OwnerObjectId, OwnerConstType,   AllOwnerElements);
+                    var back = _AddOrUpdateElement(e, pagenode.Id, ownerObjectId, ownerConstType, allOwnerElements);
                     newsubs.Add(back.Id);
                 }
             }
@@ -219,7 +215,7 @@ namespace Kooboo.Sites.Repository
             {
                 if (!newsubs.Contains(item.Id))
                 {
-                    CleanSub(item.Id, AllOwnerElements);
+                    CleanSub(item.Id, allOwnerElements);
                 }
             }
             return pagenode;
@@ -228,29 +224,27 @@ namespace Kooboo.Sites.Repository
         /// <summary>
         /// Suggest layout for two objects...
         /// </summary>
-        /// <param name="store"></param>
-        /// <param name="ObjectX"></param>
-        /// <param name="ObjectY"></param>
-        /// <param name="ConstType"></param>
+        /// <param name="objectX"></param>
+        /// <param name="objectY"></param>
+        /// <param name="constType"></param>
         /// <returns></returns>
-        public  List<DomElement> SuggestLayout(Guid ObjectX, Guid ObjectY, byte ConstType)
+        public List<DomElement> SuggestLayout(Guid objectX, Guid objectY, byte constType)
         {
-            var allXelements = Query.Where(o => o.OwnerObjectId == ObjectX && o.OwnerObjectType == ConstType).SelectAll();
+            var allXelements = Query.Where(o => o.OwnerObjectId == objectX && o.OwnerObjectType == constType).SelectAll();
 
-            var allYelements = Query.Where(o => o.OwnerObjectId == ObjectY && o.OwnerObjectType == ConstType).SelectAll();
+            var allYelements = Query.Where(o => o.OwnerObjectId == objectY && o.OwnerObjectType == constType).SelectAll();
 
             return LayoutElements.FindPlaceHolders(allXelements, allYelements);
             //  return FindPlaceHolders(allXelements, allYelements);
         }
 
-
         /// <summary>
-        /// find the common part as placeholders. 
+        /// find the common part as placeholders.
         /// </summary>
         /// <param name="allXelements"></param>
         /// <param name="allYelements"></param>
         /// <returns></returns>
-        private  List<DomElement> FindPlaceHolders(List<DomElement> allXelements, List<DomElement> allYelements)
+        private List<DomElement> FindPlaceHolders(List<DomElement> allXelements, List<DomElement> allYelements)
         {
             List<DomElement> placeholders = new List<DomElement>();
 
@@ -276,7 +270,7 @@ namespace Kooboo.Sites.Repository
                 {
                     var ysiblings = allYelements.Where(o => o.ParentId == yitem.ParentId).ToList();
 
-                    if (isSameSibling(item, yitem, xSiblings, ysiblings))
+                    if (IsSameSibling(item, yitem, xSiblings, ysiblings))
                     {
                         if (LayoutCleaner.CheckIsAllowedForLayout(item, allXelements))
                         {
@@ -290,8 +284,7 @@ namespace Kooboo.Sites.Repository
             return placeholders;
         }
 
-
-        private  DomElement FindSameElement(DomElement element, List<DomElement> currentElementSiblings, List<DomElement> allcandidates)
+        private DomElement FindSameElement(DomElement element, List<DomElement> currentElementSiblings, List<DomElement> allcandidates)
         {
             var candicates = allcandidates.Where(o => o.ParentPathHash == element.ParentPathHash && o.Depth == element.Depth && o.Name == element.Name && o.NodeAttributeHash == element.NodeAttributeHash && o.InnerHtmlHash == element.InnerHtmlHash);
 
@@ -299,34 +292,31 @@ namespace Kooboo.Sites.Repository
             {
                 var ysiblings = allcandidates.Where(o => o.ParentId == sameitem.ParentId).ToList();
 
-                if (isSameSibling(element, sameitem, currentElementSiblings, ysiblings))
+                if (IsSameSibling(element, sameitem, currentElementSiblings, ysiblings))
                 {
                     return sameitem;
                 }
             }
 
             return null;
-
         }
 
-
         /// <summary>
-        /// Layout can only extract out of page. 
+        /// Layout can only extract out of page.
         /// </summary>
-        /// <param name="store"></param>
-        /// <param name="ObjectIds"></param>
-        /// <param name="ConstType"></param>
+        /// <param name="objectIds"></param>
+        /// <param name="constType"></param>
         /// <returns></returns>
-        public  List<DomElement> SuggestLayout(List<Guid> ObjectIds, byte ConstType)
+        public List<DomElement> SuggestLayout(List<Guid> objectIds, byte constType)
         {
             List<DomElement> layouts = new List<DomElement>();
 
-            List<List<DomElement>> sitePages =  getAllPageElements(ObjectIds, ConstType);
+            List<List<DomElement>> sitePages = getAllPageElements(objectIds, constType);
 
             List<DomElement> unionset = GetSamePageElements(sitePages);
 
-            /// step 2, check to make sure that the element indeed can be used as layout. 
-            List<Guid> PageElementIdToRemove = new List<Guid>();
+            // step 2, check to make sure that the element indeed can be used as layout.
+            List<Guid> pageElementIdToRemove = new List<Guid>();
 
             foreach (var item in unionset)
             {
@@ -336,13 +326,13 @@ namespace Kooboo.Sites.Repository
             return null;
         }
 
-        public  List<List<DomElement>> getAllPageElements(List<Guid> ObjectIds, byte ConstType)
+        public List<List<DomElement>> getAllPageElements(List<Guid> objectIds, byte constType)
         {
             List<List<DomElement>> sitePages = new List<List<DomElement>>();
 
-            foreach (var item in ObjectIds)
+            foreach (var item in objectIds)
             {
-                var allitems = Query.Where(o => o.OwnerObjectId == item && o.OwnerObjectType == ConstType).SelectAll();
+                var allitems = Query.Where(o => o.OwnerObjectId == item && o.OwnerObjectType == constType).SelectAll();
                 if (allitems.Count > 0)
                 {
                     sitePages.Add(allitems);
@@ -352,17 +342,17 @@ namespace Kooboo.Sites.Repository
         }
 
         /// <summary>
-        /// Check whether this selected page elements can be used as layout or not. 
+        /// Check whether this selected page elements can be used as layout or not.
         /// Layout means the subitem as something different....
         /// </summary>
         /// <param name="element"></param>
         /// <param name="sitePages"></param>
         /// <returns></returns>
-        public  bool TestAsLayout(DomElement element, List<List<DomElement>> sitePages)
+        public bool TestAsLayout(DomElement element, List<List<DomElement>> sitePages)
         {
             if (sitePages.Count == 1) { return true; }
 
-            /// test to see they all the same left or right sibling. 
+            // test to see they all the same left or right sibling.
             bool rightok = true;
             bool leftok = true;
 
@@ -382,7 +372,7 @@ namespace Kooboo.Sites.Repository
 
                 if (leftok)
                 {
-                    if (!isSameList(currentleft, newleft))
+                    if (!IsSameList(currentleft, newleft))
                     {
                         leftok = false;
                     }
@@ -392,28 +382,23 @@ namespace Kooboo.Sites.Repository
                 {
                     return false;
                 }
-
             }
 
             return true;
-
-
         }
-         
+
         /// <summary>
-        /// return all the page elements that has similar parent and with different subs. 
+        /// return all the page elements that has similar parent and with different subs.
         /// </summary>
         /// <param name="sitePages"></param>
         /// <returns></returns>
         public static List<DomElement> GetSamePageElements(List<List<DomElement>> sitePages)
         {
-            //step 1, union those layout elements. 
-            List<DomElement> unionset = new List<DomElement>();
-            unionset = sitePages[0];
+            //step 1, union those layout elements.
 
             int counter = sitePages.Count;
 
-            unionset = sitePages[0];
+            var unionset = sitePages[0];
 
             for (int i = 0; i < counter - 1; i++)
             {
@@ -428,11 +413,7 @@ namespace Kooboo.Sites.Repository
         {
             var find = targetPage.Find(o => o.ParentPathHash == element.ParentPathHash && o.Depth == element.Depth && o.Name == element.Name && o.NodeAttributeHash == element.NodeAttributeHash);
 
-            if (find != null)
-            {
-                return true;
-            }
-            return false;
+            return find != null;
         }
     }
 }

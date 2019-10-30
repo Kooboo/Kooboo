@@ -32,31 +32,32 @@ namespace Kooboo.Sites.Diagnosis.Implementation
                     {
                         var domitem = item as IDomObject;
 
-                        var dom = domitem.Dom;
+                        var dom = domitem?.Dom;
 
                         var ids = new HashSet<string>();
-                        var allidelements = dom.getElementByAttribute("id");
+                        var allidelements = dom?.getElementByAttribute("id");
 
-                        foreach (var el in allidelements.item)
-                        {
-                            var id = el.id;
-                            if (!string.IsNullOrEmpty(id))
+                        if (allidelements?.item != null)
+                            foreach (var el in allidelements?.item)
                             {
-                                if (ids.Contains(id))
+                                var id = el.id;
+                                if (!string.IsNullOrEmpty(id))
                                 {
-                                    string opentag = HttpUtility.HtmlEncode(Service.DomService.GetOpenTag(el));
-                                    var message = id + " " + opentag;
+                                    if (ids.Contains(id))
+                                    {
+                                        string opentag = HttpUtility.HtmlEncode(Service.DomService.GetOpenTag(el));
+                                        var message = id + " " + opentag;
 
-                                    message += DiagnosisHelper.DisplayUsedBy(session.context, item as SiteObject);
+                                        message += DiagnosisHelper.DisplayUsedBy(session.context, item as SiteObject);
 
-                                    session.AddMessage(name, message, MessageType.Critical);
-                                }
-                                else
-                                {
-                                    ids.Add(id);
+                                        session.AddMessage(name, message, MessageType.Critical);
+                                    }
+                                    else
+                                    {
+                                        ids.Add(id);
+                                    }
                                 }
                             }
-                        }
                     }
                 }
             }

@@ -1,12 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System.Collections.Generic;
-using System.Threading.Tasks;
+using Kooboo.Data.Context;
+using Kooboo.Sites.Helper;
 using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
-using Kooboo.Sites.Helper;
-using Kooboo.Data.Context;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Render.Components
 {
@@ -22,31 +22,22 @@ namespace Kooboo.Sites.Render.Components
         {
             get
             {
-                return "Menu"; 
+                return "Menu";
             }
         }
-          
+
         private Dictionary<string, string> _settings;
-         
 
         public Dictionary<string, string> Setttings
         {
-            get
-            {
-             if (_settings == null)
-                {
-                    _settings = new Dictionary<string, string>();
-                    _settings.Add(MenuLevelSettingName, ""); 
-                }
-                return _settings; 
-            }
+            get { return _settings ?? (_settings = new Dictionary<string, string> {{MenuLevelSettingName, ""}}); }
         }
 
-        public bool IsRegularHtmlTag { get { return false;  } }
+        public bool IsRegularHtmlTag { get { return false; } }
 
-        public string StoreEngineName { get { return null;  } }
+        public string StoreEngineName { get { return null; } }
 
-        public byte StoreConstType { get { return ConstObjectType.Menu;  } }
+        public byte StoreConstType { get { return ConstObjectType.Menu; } }
 
         public Task<string> RenderAsync(RenderContext context, ComponentSetting settings)
         {
@@ -64,66 +55,64 @@ namespace Kooboo.Sites.Render.Components
                 frontcontext.AddLogEntry("menu", "", logstart, 404);
                 return Task.FromResult(string.Empty);
             }
-              
-            string returnstring =  MenuHelper.Render(menu, context, GetRenderLevel(settings));
+
+            string returnstring = MenuHelper.Render(menu, context, GetRenderLevel(settings));
 
             frontcontext.AddLogEntry("menu", menu.Name, logstart, 200);
 
             return Task.FromResult(returnstring);
-        } 
-         
+        }
+
         private int GetRenderLevel(ComponentSetting setting)
         {
             int result = 999;
 
-            if (setting.Settings!= null)
+            if (setting.Settings != null)
             {
-               if (setting.Settings.ContainsKey(MenuLevelSettingName))
+                if (setting.Settings.ContainsKey(MenuLevelSettingName))
                 {
-                    var strlevel = setting.Settings[MenuLevelSettingName]; 
-                    int.TryParse(strlevel, out result);  
+                    var strlevel = setting.Settings[MenuLevelSettingName];
+                    int.TryParse(strlevel, out result);
                 }
-            } 
-
-            return result; 
-        }
-
-        public List<ComponentInfo> AvaiableObjects(SiteDb SiteDb)
-        {
-            List<ComponentInfo> Models = new List<ComponentInfo>();
-            var allmenu = SiteDb.Menus.List();
-            foreach (var item in allmenu)
-            {
-                ComponentInfo comp = new ComponentInfo();
-                comp.Id = item.Id;
-                comp.Name = item.Name;
-                comp.Settings.Add("MenuLevel", ""); 
-                Models.Add(comp); 
             }
 
-            return Models; 
+            return result;
         }
 
-        public string Preview(SiteDb SiteDb, string NameOrId)
+        public List<ComponentInfo> AvaiableObjects(SiteDb siteDb)
         {
-            if (string.IsNullOrEmpty(NameOrId))
+            List<ComponentInfo> models = new List<ComponentInfo>();
+            var allmenu = siteDb.Menus.List();
+            foreach (var item in allmenu)
             {
-                return null; 
-            } 
-            Menu menu = SiteDb.Menus.GetByNameOrId(NameOrId);
+                ComponentInfo comp = new ComponentInfo {Id = item.Id, Name = item.Name};
+                comp.Settings.Add("MenuLevel", "");
+                models.Add(comp);
+            }
+
+            return models;
+        }
+
+        public string Preview(SiteDb siteDb, string nameOrId)
+        {
+            if (string.IsNullOrEmpty(nameOrId))
+            {
+                return null;
+            }
+            Menu menu = siteDb.Menus.GetByNameOrId(nameOrId);
 
             if (menu == null)
             {
-                return null; 
+                return null;
             }
-            RenderContext previewContext = new RenderContext();
-            previewContext.WebSite = SiteDb.WebSite; 
-           return MenuHelper.Render(menu, previewContext, 99); 
+
+            RenderContext previewContext = new RenderContext {WebSite = siteDb.WebSite};
+            return MenuHelper.Render(menu, previewContext, 99);
         }
 
-        public string DisplayName(RenderContext Context)
+        public string DisplayName(RenderContext context)
         {
-            return Data.Language.Hardcoded.GetValue("Menu", Context);  
+            return Data.Language.Hardcoded.GetValue("Menu", context);
         }
     }
 }

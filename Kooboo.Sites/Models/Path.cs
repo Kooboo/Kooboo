@@ -1,24 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Models
 {
     /// <summary>
-    /// used for folder or routes path. 
+    /// used for folder or routes path.
     /// </summary>
     public class Path
     {
         public Path()
         {
-
         }
-
 
         public Path ParentPath { get; set; }
 
@@ -39,7 +35,7 @@ namespace Kooboo.Sites.Models
             set
             {
                 _children = value;
-            }      
+            }
         }
 
         public Guid RouteId { get; set; }
@@ -49,6 +45,7 @@ namespace Kooboo.Sites.Models
         public bool PartialWildCard { get; set; }
 
         private List<string> _PartialParts;
+
         public List<string> PartialParts
         {
             get
@@ -66,7 +63,6 @@ namespace Kooboo.Sites.Models
                 return _PartialParts;
             }
         }
-
     }
 
     [DataContract]
@@ -79,11 +75,9 @@ namespace Kooboo.Sites.Models
         public string Name { get; set; }
 
         /// <summary>
-        /// The full Path from root to current. 
+        /// The full Path from root to current.
         /// </summary>
         [DataMember(Name = "fullPath")]
         public string FullPath { get; set; }
     }
-
 }
-

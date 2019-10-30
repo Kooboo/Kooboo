@@ -42,17 +42,17 @@ namespace Kooboo.Sites.Diagnosis
             {
                 message.CheckerId = this.Current.Id;
                 this.Messages.Add(message);
-                if (message.Type == MessageType.Critical)
+                switch (message.Type)
                 {
-                    this.CriticalCount += 1;
-                }
-                else if (message.Type == MessageType.Warning)
-                {
-                    this.WarningCount += 1;
-                }
-                else
-                {
-                    this.informationCount += 1;
+                    case MessageType.Critical:
+                        this.CriticalCount += 1;
+                        break;
+                    case MessageType.Warning:
+                        this.WarningCount += 1;
+                        break;
+                    default:
+                        this.informationCount += 1;
+                        break;
                 }
             }
         }

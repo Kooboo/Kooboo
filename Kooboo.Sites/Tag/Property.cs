@@ -1,41 +1,36 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Tag
 {
     public static class Property
     {
-
         private static List<string> _layoutProperties;
 
         /// <summary>
-        /// the list of the properties that must be the same the in order to be an layout. 
+        /// the list of the properties that must be the same the in order to be an layout.
         /// </summary>
         /// <returns></returns>
         public static List<string> LayoutProperties
         {
             get
             {
-
                 if (_layoutProperties == null)
                 {
-                    _layoutProperties = new List<string>();
-                    _layoutProperties.Add("width");
-                    _layoutProperties.Add("position");
-                    _layoutProperties.Add("left");
-                    _layoutProperties.Add("right");
-                    _layoutProperties.Add("buttom");
-                    _layoutProperties.Add("top");
-
-                    _layoutProperties.Add("max-height");
-                    _layoutProperties.Add("min-height");
-                    _layoutProperties.Add("max-width");
-                    _layoutProperties.Add("min-width");
+                    _layoutProperties = new List<string>
+                    {
+                        "width",
+                        "position",
+                        "left",
+                        "right",
+                        "buttom",
+                        "top",
+                        "max-height",
+                        "min-height",
+                        "max-width",
+                        "min-width"
+                    };
 
 
                     //  'border-spacing'
@@ -44,66 +39,55 @@ namespace Kooboo.Sites.Tag
 
                     //   'margin-right' 'margin-left'	<margin-width> | inherit	0	all elements except elements with table display types other than table-caption, table and inline-table	no	refer to width of containing block	visual
                     //'margin-top' 'margin-bottom'
-
-
                 }
 
-
                 return _layoutProperties;
-
-
             }
-
         }
 
         private static List<string> _inheritedProperties;
 
         public static List<string> InheritedProperties()
         {
-            if (_inheritedProperties == null)
-            {
-                _inheritedProperties = new List<string>();
-
-            }
-
-            return _inheritedProperties;
+            return _inheritedProperties ?? (_inheritedProperties = new List<string>());
         }
 
-
-        private static List<string> _UriProperty;
+        private static List<string> _uriProperty;
 
         /// <summary>
-        ///  Properties that might assigned a Uri value. 
+        ///  Properties that might assigned a Uri value.
         /// </summary>
         private static List<string> UriProperty
         {
             get
             {
-                if (_UriProperty == null)
+                if (_uriProperty == null)
                 {
-                    _UriProperty = new List<string>();
-                    _UriProperty.Add("background-image");
-                    _UriProperty.Add("background");
-                    _UriProperty.Add("content");
-                    _UriProperty.Add("cue-before");
-                    _UriProperty.Add("cue");
-                    _UriProperty.Add("cue-after");
-                    _UriProperty.Add("src");
-                    _UriProperty.Add("cursor");
-                    _UriProperty.Add("play-during");
+                    _uriProperty = new List<string>
+                    {
+                        "background-image",
+                        "background",
+                        "content",
+                        "cue-before",
+                        "cue",
+                        "cue-after",
+                        "src",
+                        "cursor",
+                        "play-during"
+                    };
                 }
-                return _UriProperty;
+                return _uriProperty;
             }
         }
 
-         //properties that can define uri. 
-        public static bool CanHaveUri(string PropertyName)
+        //properties that can define uri.
+        public static bool CanHaveUri(string propertyName)
         {
-            if (string.IsNullOrEmpty(PropertyName))
+            if (string.IsNullOrEmpty(propertyName))
             {
                 return false;
             }
-            string name = PropertyName.ToLower();
+            string name = propertyName.ToLower();
 
             return (name == "background-image"
                 || name == "background"
@@ -116,13 +100,13 @@ namespace Kooboo.Sites.Tag
                 || name == "play-during");
         }
 
-        public static bool CanHaveColor(string PropertyName)
-        { 
-            if (string.IsNullOrEmpty(PropertyName))
+        public static bool CanHaveColor(string propertyName)
+        {
+            if (string.IsNullOrEmpty(propertyName))
             {
                 return false;
             }
-            string name = PropertyName.ToLower();
+            string name = propertyName.ToLower();
 
             return (name == "background"
                 || name == "background-color"
@@ -144,8 +128,8 @@ namespace Kooboo.Sites.Tag
                 || name == "color"
                 || name == "text-shadow"
                 || name == "text-emphasis"
-                || name == "text-outline" 
-                || name == "scrollbar-3dlight-color" 
+                || name == "text-outline"
+                || name == "scrollbar-3dlight-color"
                 || name == "scrollbar-darkshadow-color"
                 || name == "scrollbar-hightlight-color"
                 || name == "scrollbar-shadow-color"
@@ -153,9 +137,6 @@ namespace Kooboo.Sites.Tag
                 || name == "scrollbar-face-color"
                 || name == "scrollbar-track-color"
                 || name == "scrollbar-base-color");
-              
-
         }
-        
     }
 }

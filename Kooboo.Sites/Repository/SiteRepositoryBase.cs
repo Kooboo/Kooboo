@@ -35,18 +35,18 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        private Type _SiteObjectType;
+        private Type _siteObjectType;
         public Type SiteObjectType
         {
             get
             {
-                if (_SiteObjectType == null)
+                if (_siteObjectType == null)
                 {
-                    _SiteObjectType = typeof(TValue);
+                    _siteObjectType = typeof(TValue);
                 }
-                return _SiteObjectType;
+                return _siteObjectType;
             }
-            set { _SiteObjectType = value; }
+            set { _siteObjectType = value; }
         }
 
         public bool UseCache { get; set; }
@@ -161,7 +161,7 @@ namespace Kooboo.Sites.Repository
             }
         }
           
-        public virtual bool AddOrUpdate(TValue value, Guid UserId)
+        public virtual bool AddOrUpdate(TValue value, Guid userId)
         {
             lock (_locker)
             {
@@ -169,7 +169,7 @@ namespace Kooboo.Sites.Repository
                 if (old == null)
                 {
                     RaiseBeforeEvent(value, ChangeType.Add);
-                    Store.CurrentUserId = UserId;
+                    Store.CurrentUserId = userId;
                     Store.add(value.Id, value);
                     RaiseEvent(value, ChangeType.Add);
                     return true;
@@ -180,7 +180,7 @@ namespace Kooboo.Sites.Repository
                     {
                         value.LastModified = DateTime.UtcNow;
                         RaiseBeforeEvent(value, ChangeType.Add);
-                        Store.CurrentUserId = UserId;
+                        Store.CurrentUserId = userId;
                         Store.update(value.Id, value);
                         RaiseEvent(value, ChangeType.Update, old);
                         return true;
@@ -200,7 +200,7 @@ namespace Kooboo.Sites.Repository
             this.Delete(id, default(Guid));
         }
 
-        public virtual void Delete(Guid id, Guid UserId)
+        public virtual void Delete(Guid id, Guid userId)
         {
             lock (_locker)
             {
@@ -208,7 +208,7 @@ namespace Kooboo.Sites.Repository
                 if (old != null)
                 {
                     RaiseBeforeEvent(old, ChangeType.Delete);
-                    this.Store.CurrentUserId = UserId;
+                    this.Store.CurrentUserId = userId;
                     Store.delete(id);
                 }
                 RaiseEvent(old, ChangeType.Delete);
@@ -294,21 +294,21 @@ namespace Kooboo.Sites.Repository
         }
 
 
-        public virtual TValue GetByNameOrId(string NameOrGuid)
+        public virtual TValue GetByNameOrId(string nameOrGuid)
         {
             Guid key;
-            bool parseok = Guid.TryParse(NameOrGuid, out key);
+            bool parseok = Guid.TryParse(nameOrGuid, out key);
 
             if (!parseok)
             {
                 byte consttype = ConstTypeContainer.GetConstType(typeof(TValue));
 
-                key = Data.IDGenerator.Generate(NameOrGuid, consttype);
+                key = Data.IDGenerator.Generate(nameOrGuid, consttype);
             }
             return Get(key);
         }
 
-        public virtual List<UsedByRelation> GetUsedBy(Guid ObjectId)
+        public virtual List<UsedByRelation> GetUsedBy(Guid objectId)
         {
             //var siteojbect = this.Store.getValueFromColumns(ObjectId) as SiteObject;
 
@@ -318,7 +318,7 @@ namespace Kooboo.Sites.Repository
             //    return Helper.RelationHelper.ShowUsedBy(this.SiteDb, objectrelations);
             //}
 
-            var objectrelations = this.SiteDb.Relations.GetReferredBy(this.SiteObjectType, ObjectId);
+            var objectrelations = this.SiteDb.Relations.GetReferredBy(this.SiteObjectType, objectId);
             return Helper.RelationHelper.ShowUsedBy(this.SiteDb, objectrelations);
 
             // return new List<UsedByRelation>(); 
@@ -349,18 +349,11 @@ namespace Kooboo.Sites.Repository
         /// <summary>
         /// Query all items out..... caution with performance.
         /// </summary>
-        /// <param name="UseColumnData"></param>
+        /// <param name="useColumnData"></param>
         /// <returns></returns>
-        public virtual List<TValue> All(bool UseColumnData)
+        public virtual List<TValue> All(bool useColumnData)
         {
-            if (UseColumnData)
-            {
-                return this.Store.Filter.UseColumnData().SelectAll();
-            }
-            else
-            {
-                return this.Store.Filter.SelectAll();
-            }
+            return useColumnData ? this.Store.Filter.UseColumnData().SelectAll() : this.Store.Filter.SelectAll();
         }
 
         public virtual List<TValue> All()
@@ -372,16 +365,9 @@ namespace Kooboo.Sites.Repository
         /// get a list of the site object. will use cache first if enabled
         /// </summary>
         /// <returns></returns>
-        public virtual List<TValue> List(bool UseColumnData = false)
+        public virtual List<TValue> List(bool useColumnData = false)
         {
-            if (this.UseCache)
-            {
-                return Cache.SiteObjectCache<TValue>.List(this.SiteDb);
-            }
-            else
-            {
-                return All();
-            }
+            return this.UseCache ? Cache.SiteObjectCache<TValue>.List(this.SiteDb) : All();
         }
 
         public virtual bool IsEqual(TValue x, TValue y)
@@ -403,8 +389,7 @@ namespace Kooboo.Sites.Repository
                 {
                     if (this.SiteObjectType == typeof(Route))
                     {
-                        var route = siteobject as Route;
-                        if (route != null)
+                        if (siteobject is Route route)
                         {
                             Service.LogService.EnsureDeleteRouteObject(this.SiteDb, route);
                         }
@@ -430,8 +415,7 @@ namespace Kooboo.Sites.Repository
                 AddOrUpdate(oldvalue);
                 if (this.SiteObjectType == typeof(Route))
                 {
-                    var route = oldvalue as Route;
-                    if (route != null)
+                    if (oldvalue is Route route)
                     {
                         Service.LogService.EnsureRestoreRouteObject(this.SiteDb, route);
                     }
@@ -461,20 +445,18 @@ namespace Kooboo.Sites.Repository
         }
 
 
-        public virtual List<Relation.ObjectRelation> CheckBeingUsed(TValue SiteObject)
+        public virtual List<Relation.ObjectRelation> CheckBeingUsed(TValue siteObject)
         {
-
-            var converted = SiteObject as SiteObject;
-            if (converted == null)
+            if (!(siteObject is SiteObject converted))
             {
                 return null;
             }
             return this.SiteDb.Relations.GetReferredBy(converted);
         }
 
-        public List<Relation.ObjectRelation> CheckBeingUsed(Guid ObjectId)
+        public List<Relation.ObjectRelation> CheckBeingUsed(Guid objectId)
         {
-            var siteobject = this.Get(ObjectId);
+            var siteobject = this.Get(objectId);
             return this.CheckBeingUsed(siteobject);
         }
 
@@ -500,11 +482,9 @@ namespace Kooboo.Sites.Repository
             }
 
             // for kscript parameters. 
-            if (value is IScriptable)
+            if (value is IScriptable kscriptobject)
             {
-                var kscriptobject = value as IScriptable;
-                var domobjct = value as IDomObject;
-                if (kscriptobject != null && domobjct != null)
+                if (kscriptobject != null && kscriptobject is IDomObject domobjct)
                 {
                     kscriptobject.RequestParas = Kooboo.Sites.Scripting.ScriptHelper.GetkScriptParaFromDom(this.SiteDb, domobjct.Dom);
                 }
@@ -609,7 +589,7 @@ namespace Kooboo.Sites.Repository
                 this.SiteDb.ClusterManager.AddTask(this, value, changetype);
             }
 
-            ///add to cache. 
+            //add to cache. 
             if (this.UseCache)
             {
                 if (changetype == ChangeType.Delete)
@@ -638,9 +618,8 @@ namespace Kooboo.Sites.Repository
 
             Data.Events.EventBus.Raise(siteevent);
 
-            if (siteevent.Value is DomObject)
+            if (siteevent.Value is DomObject newojbect)
             {
-                var newojbect = siteevent.Value as DomObject;
                 newojbect.DisposeDom();
             }
 
@@ -649,7 +628,7 @@ namespace Kooboo.Sites.Repository
                 PageRoute.UpdatePageRouteParameter(siteevent.SiteDb, siteevent.Value.Id);
             }
 
-            ///close database
+            //close database
             if (value is ICoreObject)
             {
                 this.Store.Close();
@@ -683,11 +662,11 @@ namespace Kooboo.Sites.Repository
 
         #region NonGeneric
 
-        bool IRepository.AddOrUpdate(Object value, Guid UserId)
+        bool IRepository.AddOrUpdate(Object value, Guid userId)
         {
             var tvalue = (TValue)value;
 
-            return this.AddOrUpdate(tvalue, UserId);
+            return this.AddOrUpdate(tvalue, userId);
         }
 
         void IRepository.RollBack(LogEntry log)
@@ -700,9 +679,9 @@ namespace Kooboo.Sites.Repository
             this.RollBack(loglist);
         }
 
-        void IRepository.Delete(Guid id, Guid UserId = default(Guid))
+        void IRepository.Delete(Guid id, Guid userId = default(Guid))
         {
-            this.Delete(id, UserId);
+            this.Delete(id, userId);
         }
 
         ISiteObject IRepository.Get(Guid id, bool getColumnDataOnly)
@@ -710,29 +689,21 @@ namespace Kooboo.Sites.Repository
             return this.Get(id, getColumnDataOnly);
         }
 
-        ISiteObject IRepository.GetByNameOrId(string NameOrId)
+        ISiteObject IRepository.GetByNameOrId(string nameOrId)
         {
-            return this.GetByNameOrId(NameOrId);
+            return this.GetByNameOrId(nameOrId);
         }
 
         ISiteObject IRepository.GetByLog(LogEntry log)
         {
             long blockposition = 0;
-            if (log.EditType == EditType.Delete)
-            {
-                blockposition = log.OldBlockPosition;
-            }
-            else
-            {
-                blockposition = log.NewBlockPosition;
-            }
+            blockposition = log.EditType == EditType.Delete ? log.OldBlockPosition : log.NewBlockPosition;
 
             var result = this.Store.getValue(blockposition);
 
-            if (result is ICoreObject)
+            if (result is ICoreObject core)
             {
                 // in case it is an delete. 
-                var core = result as ICoreObject;
                 if (core != null)
                 {
                     core.Version = log.Id;
@@ -741,31 +712,23 @@ namespace Kooboo.Sites.Repository
             return result;
         }
 
-        ISiteObject IRepository.GetLastEntryFromLog(Guid ObjectId)
+        ISiteObject IRepository.GetLastEntryFromLog(Guid objectId)
         {
-            if (ObjectId == default(Guid))
+            if (objectId == default(Guid))
             { return null; }
-            var result = this.Get(ObjectId);
+            var result = this.Get(objectId);
             if (result != null)
             {
                 return result;
             }
 
-            var keybytes = this.Store.KeyConverter.ToByte(ObjectId);
+            var keybytes = this.Store.KeyConverter.ToByte(objectId);
 
             var logentry = this.SiteDb.Log.GetLastLogByStoreNameAndKey(this.StoreName, keybytes);
 
             if (logentry != null)
             {
-                long blockposition = 0;
-                if (logentry.EditType == EditType.Delete)
-                {
-                    blockposition = logentry.OldBlockPosition;
-                }
-                else
-                {
-                    blockposition = logentry.NewBlockPosition;
-                }
+                var blockposition = logentry.EditType == EditType.Delete ? logentry.OldBlockPosition : logentry.NewBlockPosition;
 
                 return this.Store.getValue(blockposition);
             }
@@ -773,9 +736,9 @@ namespace Kooboo.Sites.Repository
             return null;
         }
 
-        List<ISiteObject> IRepository.All(bool UseColumnData)
+        List<ISiteObject> IRepository.All(bool useColumnData)
         {
-            var list = this.All(UseColumnData);
+            var list = this.All(useColumnData);
             return list.Select(it => (ISiteObject)it).ToList();
         }
 
@@ -802,29 +765,29 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        void IRepository.CheckOut(Int64 VersionId, IRepository DestinationRepository, bool SelfIncluded)
+        void IRepository.CheckOut(Int64 versionId, IRepository destinationRepository, bool selfIncluded)
         {
             List<LogEntry> logs;
             int namehash = this.StoreName.GetHashCode32();
-            if (SelfIncluded)
+            if (selfIncluded)
             {
-                logs = this.SiteDb.Log.Store.Where(o => o.Id > VersionId && o.StoreNameHash == namehash).Take(99999);
+                logs = this.SiteDb.Log.Store.Where(o => o.Id > versionId && o.StoreNameHash == namehash).Take(99999);
             }
             else
             {
-                logs = this.SiteDb.Log.Store.Where(o => o.Id >= VersionId && o.StoreNameHash == namehash).Take(99999);
+                logs = this.SiteDb.Log.Store.Where(o => o.Id >= versionId && o.StoreNameHash == namehash).Take(99999);
             }
 
-            CheckOutExcl(logs, DestinationRepository);
+            CheckOutExcl(logs, destinationRepository);
 
         }
 
-        List<UsedByRelation> IRepository.GetUsedBy(Guid ObjectId)
+        List<UsedByRelation> IRepository.GetUsedBy(Guid objectId)
         {
-            return this.GetUsedBy(ObjectId);
+            return this.GetUsedBy(objectId);
         }
 
-        internal void CheckOut(List<LogEntry> logs, IRepository DestinationRepository)
+        internal void CheckOut(List<LogEntry> logs, IRepository destinationRepository)
         {
             HashSet<Guid> donekeys = new HashSet<Guid>();
             foreach (var item in logs.OrderByDescending(o => o.TimeTick))
@@ -839,7 +802,7 @@ namespace Kooboo.Sites.Repository
                 if (item.EditType == EditType.Add || item.EditType == EditType.Update)
                 {
                     TValue value = this.Store.getValue(item.NewBlockPosition);
-                    DestinationRepository.AddOrUpdate(value);
+                    destinationRepository.AddOrUpdate(value);
 
                     donekeys.Add(key);
                 }
@@ -850,9 +813,9 @@ namespace Kooboo.Sites.Repository
             }
         }
 
-        internal void CheckOutExcl(List<LogEntry> ExclLogs, IRepository DestinationRepository)
+        internal void CheckOutExcl(List<LogEntry> exclLogs, IRepository destinationRepository)
         {
-            var exclitems = GetExclItems(ExclLogs);
+            var exclitems = GetExclItems(exclLogs);
 
             var processed = new HashSet<Guid>();
 
@@ -863,14 +826,14 @@ namespace Kooboo.Sites.Repository
                 var changeitem = exclitems.Find(o => o.Id == item.Id);
                 if (changeitem == null)
                 {
-                    DestinationRepository.AddOrUpdate(item);
+                    destinationRepository.AddOrUpdate(item);
                 }
                 else
                 {
                     if (changeitem.Log.EditType == EditType.Update || changeitem.Log.EditType == EditType.Delete)
                     {
                         TValue value = this.Store.getValue(changeitem.Log.OldBlockPosition);
-                        DestinationRepository.AddOrUpdate(value);
+                        destinationRepository.AddOrUpdate(value);
                     }
                     processed.Add(changeitem.Id);
                 }
@@ -881,7 +844,7 @@ namespace Kooboo.Sites.Repository
                 if (item.Log.EditType == EditType.Update || item.Log.EditType == EditType.Delete)
                 {
                     TValue value = this.Store.getValue(item.Log.OldBlockPosition);
-                    DestinationRepository.AddOrUpdate(value);
+                    destinationRepository.AddOrUpdate(value);
                 }
             }
         }
@@ -894,9 +857,8 @@ namespace Kooboo.Sites.Repository
             {
                 var key = this.Store.KeyConverter.FromByte(item.KeyBytes);
 
-                var exclitem = new ExclLogItem();
-                exclitem.Id = key;
-                exclitem.Log = item; 
+                var exclitem = new ExclLogItem {Id = key, Log = item};
+
 
                 if (result.Find(o=>o.Id == key)==null)
                 { 

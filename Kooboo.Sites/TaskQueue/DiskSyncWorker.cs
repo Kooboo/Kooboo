@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Interface;
 using Kooboo.Sites.Extensions;
@@ -25,12 +25,11 @@ namespace Kooboo.Sites.TaskQueue
             get; set;
         }
 
-
         public void Execute()
         {
             if (Data.AppSettings.IsOnlineServer)
             {
-                return; // only available for local version... 
+                return; // only available for local version...
             }
 
             //if (WebSiteId != default(Guid))
@@ -88,11 +87,10 @@ namespace Kooboo.Sites.TaskQueue
 
                     manager.SyncToDisk(sitedb, siteobject, changetype, item.StoreName);
 
-                    // Ensure Double check..... cost performance for integrity. 
+                    // Ensure Double check..... cost performance for integrity.
                     sitedb.Synchronization.AddOrUpdate(new Models.Synchronization() { SyncSettingId = sitedb.Synchronization.DiskSyncSettingId, ObjectId = siteobject.Id, Version = item.Id, In = false, StoreName = repo.StoreName });
                 }
             }
         }
-
     }
 }

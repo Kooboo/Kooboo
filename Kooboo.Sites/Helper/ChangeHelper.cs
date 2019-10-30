@@ -10,31 +10,31 @@ namespace Kooboo.Sites.Helper
 {
     public static class ChangeHelper
     {
-        public static void ChangeUrl(SiteDb sitedb, IRepository repo, Guid ObjectId, string OldUrl, string NewUrl)
+        public static void ChangeUrl(SiteDb sitedb, IRepository repo, Guid objectId, string oldUrl, string newUrl)
         {
-            var UseObject = repo.Get(ObjectId);
-            if (UseObject != null)
+            var useObject = repo.Get(objectId);
+            if (useObject != null)
             {
-                if (UseObject is IDomObject)
+                if (useObject is IDomObject)
                 {
-                    var domobject = UseObject as IDomObject;
+                    var domobject = useObject as IDomObject;
                     if (domobject != null)
                     {
                         string body = domobject.Body;
-                        string newbody = Service.DomService.UpdateUrl(body, OldUrl, NewUrl);
+                        string newbody = Service.DomService.UpdateUrl(body, oldUrl, newUrl);
                         domobject.Body = newbody;
                         repo.AddOrUpdate(domobject);
                     }
                 }
-                else if (UseObject is Style)
+                else if (useObject is Style)
                 {
-                    var style = UseObject as Style;
-                    style.Body = Lib.Helper.StringHelper.ReplaceIgnoreCase(style.Body, OldUrl, NewUrl);
+                    var style = useObject as Style;
+                    style.Body = Lib.Helper.StringHelper.ReplaceIgnoreCase(style.Body, oldUrl, newUrl);
                     sitedb.Styles.AddOrUpdate(style);
                 }
-                else if (UseObject is CmsCssRule)
+                else if (useObject is CmsCssRule)
                 {
-                    var rule = UseObject as CmsCssRule;
+                    var rule = useObject as CmsCssRule;
                     if (rule.IsInline)
                     {
                         var rulerepo = sitedb.GetRepository(rule.OwnerObjectConstType);
@@ -52,14 +52,21 @@ namespace Kooboo.Sites.Helper
 
                                     if (!string.IsNullOrEmpty(style))
                                     {
-                                        style = Lib.Helper.StringHelper.ReplaceIgnoreCase(style, OldUrl, NewUrl);
+                                        style = Lib.Helper.StringHelper.ReplaceIgnoreCase(style, oldUrl, newUrl);
                                     }
                                     el.setAttribute("style", style);
 
                                     string newhtml = Service.DomService.ReSerializeElement(el);
 
-                                    List<SourceUpdate> updates = new List<SourceUpdate>();
-                                    updates.Add(new SourceUpdate() { StartIndex = el.location.openTokenStartIndex, EndIndex = el.location.endTokenEndIndex, NewValue = newhtml });
+                                    List<SourceUpdate> updates = new List<SourceUpdate>
+                                    {
+                                        new SourceUpdate()
+                                        {
+                                            StartIndex = el.location.openTokenStartIndex,
+                                            EndIndex = el.location.endTokenEndIndex,
+                                            NewValue = newhtml
+                                        }
+                                    };
 
                                     domobject.Body = Service.DomService.UpdateSource(domobject.Body, updates);
                                     rulerepo.AddOrUpdate(domobject);
@@ -69,14 +76,17 @@ namespace Kooboo.Sites.Helper
                     }
                     else if (rule.ruleType == RuleType.ImportRule)
                     {
-                        string newdecltext = Lib.Helper.StringHelper.ReplaceIgnoreCase(rule.RuleText, OldUrl, NewUrl);
+                        string newdecltext = Lib.Helper.StringHelper.ReplaceIgnoreCase(rule.RuleText, oldUrl, newUrl);
 
                         List<CmsCssRuleChanges> changelist = new List<CmsCssRuleChanges>();
-                        CmsCssRuleChanges changes = new CmsCssRuleChanges();
-                        changes.CssRuleId = rule.Id;
-                        changes.selectorText = newdecltext; // rule.SelectorText;
-                        changes.DeclarationText = newdecltext;
-                        changes.ChangeType = ChangeType.Update;
+                        CmsCssRuleChanges changes = new CmsCssRuleChanges
+                        {
+                            CssRuleId = rule.Id,
+                            selectorText = newdecltext,
+                            DeclarationText = newdecltext,
+                            ChangeType = ChangeType.Update
+                        };
+                        // rule.SelectorText;
                         changelist.Add(changes);
 
                         Guid parentstyle = rule.ParentStyleId;
@@ -91,19 +101,21 @@ namespace Kooboo.Sites.Helper
                         var declaration = Kooboo.Dom.CSS.CSSSerializer.deserializeDeclarationBlock(rule.CssText);
                         foreach (var item in declaration.item)
                         {
-                            if (item.value.IndexOf(OldUrl, StringComparison.OrdinalIgnoreCase) > -1)
+                            if (item.value.IndexOf(oldUrl, StringComparison.OrdinalIgnoreCase) > -1)
                             {
-                                item.value = Lib.Helper.StringHelper.ReplaceIgnoreCase(item.value, OldUrl, NewUrl);
+                                item.value = Lib.Helper.StringHelper.ReplaceIgnoreCase(item.value, oldUrl, newUrl);
                             }
                         }
                         string newdecltext = Kooboo.Dom.CSS.CSSSerializer.serializeDeclarationBlock(declaration);
 
                         List<CmsCssRuleChanges> changelist = new List<CmsCssRuleChanges>();
-                        CmsCssRuleChanges changes = new CmsCssRuleChanges();
-                        changes.CssRuleId = rule.Id;
-                        changes.selectorText = rule.SelectorText;
-                        changes.DeclarationText = newdecltext;
-                        changes.ChangeType = ChangeType.Update;
+                        CmsCssRuleChanges changes = new CmsCssRuleChanges
+                        {
+                            CssRuleId = rule.Id,
+                            selectorText = rule.SelectorText,
+                            DeclarationText = newdecltext,
+                            ChangeType = ChangeType.Update
+                        };
                         changelist.Add(changes);
                         Guid parentstyle = rule.ParentStyleId;
                         if (parentstyle == default(Guid))
@@ -113,11 +125,11 @@ namespace Kooboo.Sites.Helper
                         sitedb.CssRules.UpdateStyle(changelist, parentstyle);
                     }
                 }
-                else if (UseObject is ResourceGroup)
+                else if (useObject is ResourceGroup)
                 {
-                    var oldid = Data.IDGenerator.GetRouteId(OldUrl);
+                    var oldid = Data.IDGenerator.GetRouteId(oldUrl);
 
-                    var group = UseObject as ResourceGroup;
+                    var group = useObject as ResourceGroup;
 
                     int neworder = 0;
 
@@ -128,9 +140,9 @@ namespace Kooboo.Sites.Helper
 
                     group.Children.Remove(oldid);
 
-                    if (NewUrl != null && !NewUrl.ToLower().StartsWith("http://") && !NewUrl.ToLower().StartsWith("https://"))
+                    if (newUrl != null && !newUrl.ToLower().StartsWith("http://") && !newUrl.ToLower().StartsWith("https://"))
                     {
-                        var newid = Data.IDGenerator.GetRouteId(NewUrl);
+                        var newid = Data.IDGenerator.GetRouteId(newUrl);
                         group.Children[newid] = neworder;
                         sitedb.ResourceGroups.AddOrUpdate(group);
                     }
@@ -138,31 +150,31 @@ namespace Kooboo.Sites.Helper
             }
         }
 
-        public static void DeleteUrl(SiteDb sitedb, IRepository repo, Guid ObjectId, string OldUrl)
+        public static void DeleteUrl(SiteDb sitedb, IRepository repo, Guid objectId, string oldUrl)
         {
-            var UseObject = repo.Get(ObjectId);
-            if (UseObject != null)
+            var useObject = repo.Get(objectId);
+            if (useObject != null)
             {
-                if (UseObject is IDomObject)
+                if (useObject is IDomObject)
                 {
-                    var domobject = UseObject as IDomObject;
+                    var domobject = useObject as IDomObject;
                     if (domobject != null)
                     {
                         string body = domobject.Body;
-                        string newbody = Service.DomService.DeleteUrl(body, OldUrl);
+                        string newbody = Service.DomService.DeleteUrl(body, oldUrl);
                         domobject.Body = newbody;
                         repo.AddOrUpdate(domobject);
                     }
                 }
-                else if (UseObject is Style)
+                else if (useObject is Style)
                 {
-                    var style = UseObject as Style;
-                    style.Body = Lib.Helper.StringHelper.ReplaceIgnoreCase(style.Body, OldUrl, "");
+                    var style = useObject as Style;
+                    style.Body = Lib.Helper.StringHelper.ReplaceIgnoreCase(style.Body, oldUrl, "");
                     sitedb.Styles.AddOrUpdate(style);
                 }
-                else if (UseObject is CmsCssRule)
+                else if (useObject is CmsCssRule)
                 {
-                    var rule = UseObject as CmsCssRule;
+                    var rule = useObject as CmsCssRule;
                     if (rule.IsInline)
                     {
                         var rulerepo = sitedb.GetRepository(rule.OwnerObjectConstType);
@@ -185,7 +197,7 @@ namespace Kooboo.Sites.Helper
                                         int count = parts.Length;
                                         for (int i = 0; i < count; i++)
                                         {
-                                            if (parts[i].IndexOf(OldUrl, StringComparison.OrdinalIgnoreCase) > -1)
+                                            if (parts[i].IndexOf(oldUrl, StringComparison.OrdinalIgnoreCase) > -1)
                                             {
                                                 parts[i] = "";
                                             }
@@ -204,8 +216,15 @@ namespace Kooboo.Sites.Helper
 
                                     string newhtml = Service.DomService.ReSerializeElement(el);
 
-                                    List<SourceUpdate> updates = new List<SourceUpdate>();
-                                    updates.Add(new SourceUpdate() { StartIndex = el.location.openTokenStartIndex, EndIndex = el.location.endTokenEndIndex, NewValue = newhtml });
+                                    List<SourceUpdate> updates = new List<SourceUpdate>
+                                    {
+                                        new SourceUpdate()
+                                        {
+                                            StartIndex = el.location.openTokenStartIndex,
+                                            EndIndex = el.location.endTokenEndIndex,
+                                            NewValue = newhtml
+                                        }
+                                    };
 
                                     domobject.Body = Service.DomService.UpdateSource(domobject.Body, updates);
                                     rulerepo.AddOrUpdate(domobject);
@@ -216,11 +235,13 @@ namespace Kooboo.Sites.Helper
                     else if (rule.ruleType == RuleType.ImportRule)
                     {
                         List<CmsCssRuleChanges> changelist = new List<CmsCssRuleChanges>();
-                        CmsCssRuleChanges changes = new CmsCssRuleChanges();
-                        changes.CssRuleId = rule.Id;
-                        changes.selectorText = rule.SelectorText;
-                        changes.DeclarationText = "";
-                        changes.ChangeType = ChangeType.Delete;
+                        CmsCssRuleChanges changes = new CmsCssRuleChanges
+                        {
+                            CssRuleId = rule.Id,
+                            selectorText = rule.SelectorText,
+                            DeclarationText = "",
+                            ChangeType = ChangeType.Delete
+                        };
                         changelist.Add(changes);
                         Guid parentstyle = rule.ParentStyleId;
                         if (parentstyle == default(Guid))
@@ -234,7 +255,7 @@ namespace Kooboo.Sites.Helper
                     {
                         var declaration = Kooboo.Dom.CSS.CSSSerializer.deserializeDeclarationBlock(rule.CssText);
 
-                        var found = declaration.item.FindAll(o => !string.IsNullOrEmpty(o.value) && o.value.IndexOf(OldUrl, StringComparison.OrdinalIgnoreCase) > -1);
+                        var found = declaration.item.FindAll(o => !string.IsNullOrEmpty(o.value) && o.value.IndexOf(oldUrl, StringComparison.OrdinalIgnoreCase) > -1);
                         if (found != null && found.Count > 0)
                         {
                             foreach (var founditem in found)
@@ -246,11 +267,13 @@ namespace Kooboo.Sites.Helper
                         string newdecltext = Kooboo.Dom.CSS.CSSSerializer.serializeDeclarationBlock(declaration);
 
                         List<CmsCssRuleChanges> changelist = new List<CmsCssRuleChanges>();
-                        CmsCssRuleChanges changes = new CmsCssRuleChanges();
-                        changes.CssRuleId = rule.Id;
-                        changes.selectorText = rule.SelectorText;
-                        changes.DeclarationText = newdecltext;
-                        changes.ChangeType = ChangeType.Update;
+                        CmsCssRuleChanges changes = new CmsCssRuleChanges
+                        {
+                            CssRuleId = rule.Id,
+                            selectorText = rule.SelectorText,
+                            DeclarationText = newdecltext,
+                            ChangeType = ChangeType.Update
+                        };
                         changelist.Add(changes);
                         Guid parentstyle = rule.ParentStyleId;
                         if (parentstyle == default(Guid))
@@ -260,11 +283,11 @@ namespace Kooboo.Sites.Helper
                         sitedb.CssRules.UpdateStyle(changelist, parentstyle);
                     }
                 }
-                else if (UseObject is ResourceGroup)
+                else if (useObject is ResourceGroup)
                 {
-                    var oldid = Data.IDGenerator.GetRouteId(OldUrl);
+                    var oldid = Data.IDGenerator.GetRouteId(oldUrl);
 
-                    var group = UseObject as ResourceGroup;
+                    var group = useObject as ResourceGroup;
 
                     group.Children.Remove(oldid);
 

@@ -18,13 +18,15 @@ namespace Kooboo.Sites.Diagnosis
                 {
                     try
                     {
-                        var instance = Activator.CreateInstance(item.Type) as IDiagnosis;
-
-                        instance.session = Session;
-                        instance.Check();
+                        if (Activator.CreateInstance(item.Type) is IDiagnosis instance)
+                        {
+                            instance.session = Session;
+                            instance.Check();
+                        }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
+                        // ignored
                     }
                 }
                 else

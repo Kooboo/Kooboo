@@ -1,20 +1,21 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
+using Kooboo.Dom;
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Models;
-using Kooboo.Dom;
 using Kooboo.Sites.Repository;
 using Kooboo.Sites.SiteTransfer.Download;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.SiteTransfer
 {
     public static class TransferHelper
     {
         private static object _object = new object();
+
         /// <summary>
-        /// Get the possible domain part from the relative url. For the second import link, it will be attached with the domain. 
+        /// Get the possible domain part from the relative url. For the second import link, it will be attached with the domain.
         /// </summary>
         /// <param name="relativeUrl"></param>
         /// <returns></returns>
@@ -24,37 +25,23 @@ namespace Kooboo.Sites.SiteTransfer
             {
                 int nextslash = relativeUrl.IndexOf("/", 2);
 
-                string PossibleDomain;
+                string possibleDomain;
 
                 if (nextslash > 0)
                 {
-                    if (relativeUrl.StartsWith("/"))
-                    {
-                        PossibleDomain = relativeUrl.Substring(1, nextslash - 1);
-                    }
-                    else
-                    {
-                        PossibleDomain = relativeUrl.Substring(0, nextslash);
-                    }
+                    possibleDomain = relativeUrl.StartsWith("/") ? relativeUrl.Substring(1, nextslash - 1) : relativeUrl.Substring(0, nextslash);
                 }
                 else
                 {
-                    if (relativeUrl.StartsWith("/"))
-                    {
-                        PossibleDomain = relativeUrl.Substring(1);
-                    }
-                    else
-                    {
-                        PossibleDomain = relativeUrl;
-                    }
+                    possibleDomain = relativeUrl.StartsWith("/") ? relativeUrl.Substring(1) : relativeUrl;
                 }
-                if (PossibleDomain.Contains("."))
+                if (possibleDomain.Contains("."))
                 {
-                    // and the part after dot must be like domains... 
-                    int index = PossibleDomain.LastIndexOf(".");
+                    // and the part after dot must be like domains...
+                    int index = possibleDomain.LastIndexOf(".");
                     if (index > -1)
                     {
-                        var lastpart = PossibleDomain.Substring(index);
+                        var lastpart = possibleDomain.Substring(index);
                         lastpart = lastpart.Trim();
                         if (lastpart.StartsWith("."))
                         {
@@ -62,10 +49,9 @@ namespace Kooboo.Sites.SiteTransfer
                         }
                         if (lastpart != null && OnlyAscii(lastpart.Trim()))
                         {
-                            return PossibleDomain;
+                            return possibleDomain;
                         }
                     }
-
                 }
             }
 
@@ -93,25 +79,25 @@ namespace Kooboo.Sites.SiteTransfer
 
         /// <summary>
         /// get all page links with http. if Base href is defined in the page, it will be used,
-        /// otherwise gthe PageUrl parameter will be used as base url. 
+        /// otherwise gthe PageUrl parameter will be used as base url.
         /// </summary>
-        /// <param name="HtmlSource"></param>
-        /// <param name="PageUrl"></param>
+        /// <param name="htmlSource"></param>
+        /// <param name="pageUrl"></param>
         /// <returns></returns>
-        public static List<string> GetAbsoluteLinks(string HtmlSource, string PageUrl)
+        public static List<string> GetAbsoluteLinks(string htmlSource, string pageUrl)
         {
-            Document doc = Dom.DomParser.CreateDom(HtmlSource);
+            Document doc = Dom.DomParser.CreateDom(htmlSource);
             string baseurl = doc.baseURI;
             if (string.IsNullOrEmpty(baseurl))
             {
-                baseurl = PageUrl;
+                baseurl = pageUrl;
             }
             return GetAbsoluteLinks(doc, baseurl);
         }
 
-        public static List<string> GetRelativeLinks(string HtmlSource)
+        public static List<string> GetRelativeLinks(string htmlSource)
         {
-            return GetRelativeLinks(DomParser.CreateDom(HtmlSource));
+            return GetRelativeLinks(DomParser.CreateDom(htmlSource));
         }
 
         public static List<Element> GetLinkElements(string htmlSource)
@@ -122,7 +108,7 @@ namespace Kooboo.Sites.SiteTransfer
 
         public static List<string> GetRelativeLinks(Document doc)
         {
-            List<string> RelativeUrlList = new List<string>();
+            List<string> relativeUrlList = new List<string>();
             foreach (var item in doc.Links.item)
             {
                 string href = Service.DomUrlService.GetLinkOrSrc(item);
@@ -134,66 +120,65 @@ namespace Kooboo.Sites.SiteTransfer
 
                 href = Kooboo.Lib.Helper.UrlHelper.RemoveLocalLink(UrlHelper.RemoveSessionId(href));
 
-                if (!RelativeUrlList.Contains(href))
+                if (!relativeUrlList.Contains(href))
                 {
-                    RelativeUrlList.Add(href);
+                    relativeUrlList.Add(href);
                 }
             }
 
-            return RelativeUrlList;
-
+            return relativeUrlList;
         }
 
         /// <summary>
         /// get all page links with http. if Base href is defined in the page, it will be used,
-        /// otherwise gthe PageUrl parameter will be used as base url. 
+        /// otherwise gthe PageUrl parameter will be used as base url.
         /// </summary>
         /// <param name="doc"></param>
-        /// <param name="PageUrl"></param>
+        /// <param name="pageUrl"></param>
         /// <returns></returns>
-        public static List<string> GetAbsoluteLinks(Document doc, string PageUrl)
+        public static List<string> GetAbsoluteLinks(Document doc, string pageUrl)
         {
             var list = GetRelativeLinks(doc);
             for (int i = 0; i < list.Count; i++)
             {
-                list[i] = UrlHelper.Combine(PageUrl, list[i]);
+                list[i] = UrlHelper.Combine(pageUrl, list[i]);
             }
             return list;
         }
 
-        public static void AddPageRoute(SiteDb sitedb, Guid PageId, string absoluteUrl, string originalimporturl)
+        public static void AddPageRoute(SiteDb sitedb, Guid pageId, string absoluteUrl, string originalimporturl)
         {
             bool issamehost = Kooboo.Lib.Helper.UrlHelper.isSameHost(originalimporturl, absoluteUrl);
             string relativeurl = UrlHelper.RelativePath(absoluteUrl, issamehost);
 
-            AddPageRoute(sitedb, PageId, relativeurl);
+            AddPageRoute(sitedb, pageId, relativeurl);
         }
 
-        public static void AddPageRoute(SiteDb sitedb, Guid PageId, string relativeurl)
+        public static void AddPageRoute(SiteDb sitedb, Guid pageId, string relativeurl)
         {
-            var oldroute = sitedb.Routes.GetByObjectId(PageId);
+            var oldroute = sitedb.Routes.GetByObjectId(pageId);
             if (oldroute != null)
             {
                 if (!Lib.Helper.StringHelper.IsSameValue(oldroute.Name, relativeurl))
-                { 
-                    Routing.Route newroute = new Routing.Route();
-                    newroute.Name = relativeurl;
-                    newroute.objectId = oldroute.Id;
-                    newroute.DestinationConstType = ConstObjectType.Route;
+                {
+                    Routing.Route newroute = new Routing.Route
+                    {
+                        Name = relativeurl, objectId = oldroute.Id, DestinationConstType = ConstObjectType.Route
+                    };
                     sitedb.Routes.appendRoute(newroute, default(Guid));
                 }
             }
             else
             {
-                Routing.Route route = new Routing.Route();
-                route.Name = relativeurl;
-                route.objectId = PageId;
-                route.DestinationConstType = ConstObjectType.Page;
+                Routing.Route route = new Routing.Route
+                {
+                    Name = relativeurl, objectId = pageId, DestinationConstType = ConstObjectType.Page
+                };
                 sitedb.Routes.appendRoute(route, default(Guid));
             }
         }
 
-        public static SiteObject AddDownload(DownloadManager manager, DownloadContent download, string absoluteUrl, bool DefaultStartPage, bool AnalyzePage, string originalimporturl = "")
+        public static SiteObject AddDownload(DownloadManager manager, DownloadContent download, string absoluteUrl, bool defaultStartPage, bool analyzePage, string originalimporturl = "")
         {
             var sitedb = manager.SiteDb;
 
@@ -203,30 +188,34 @@ namespace Kooboo.Sites.SiteTransfer
 
             byte consttype = 0;
 
-            var FileType = Kooboo.Lib.Helper.UrlHelper.GetFileType(relativeurl, download.ContentType);
+            var fileType = Kooboo.Lib.Helper.UrlHelper.GetFileType(relativeurl, download.ContentType);
 
-            switch (FileType)
+            switch (fileType)
             {
                 case UrlHelper.UrlFileType.Image:
                     {
                         consttype = ConstObjectType.Image;
                     }
                     break;
+
                 case UrlHelper.UrlFileType.JavaScript:
                     {
                         consttype = ConstObjectType.Script;
                     }
                     break;
+
                 case UrlHelper.UrlFileType.Style:
                     {
                         consttype = ConstObjectType.Style;
                     }
                     break;
+
                 case UrlHelper.UrlFileType.File:
                     {
                         consttype = ConstObjectType.CmsFile;
                     }
                     break;
+
                 default:
                     {
                         string htmlsource = download.GetString();
@@ -247,15 +236,17 @@ namespace Kooboo.Sites.SiteTransfer
             {
                 case ConstObjectType.Page:
                     {
-                        Page page = new Page();
-                        page.IsStatic = true;
-                        page.DefaultStart = DefaultStartPage;
+                        Page page = new Page
+                        {
+                            IsStatic = true,
+                            DefaultStart = defaultStartPage,
+                            Name = Service.PageService.GetPageNameFromUrl(relativeurl)
+                        };
 
-                        page.Name = Service.PageService.GetPageNameFromUrl(relativeurl);
 
                         string htmlsource = UrlHelper.ReplaceMetaCharSet(download.GetString());
 
-                        if (AnalyzePage)
+                        if (analyzePage)
                         {
                             var context = AnalyzerManager.Execute(htmlsource, absoluteUrl, page.Id, page.ConstType, manager, originalimporturl);
                             htmlsource = context.HtmlSource;
@@ -273,7 +264,6 @@ namespace Kooboo.Sites.SiteTransfer
                                     title = Lib.Helper.StringHelper.SementicSubString(title, 0, 30);
                                     page.Name = title.Trim();
                                 }
-
                             }
                         }
 
@@ -286,12 +276,12 @@ namespace Kooboo.Sites.SiteTransfer
                 case ConstObjectType.Style:
                     {
                         string csstext = download.GetString();
-                        if (AnalyzePage)
+                        if (analyzePage)
                         {
                             CssManager.ProcessResource(ref csstext, absoluteUrl, manager, default(Guid));
                         }
-                        var style = new Style();
-                        style.Body = csstext;
+
+                        var style = new Style {Body = csstext};
                         sitedb.Routes.AddOrUpdate(relativeurl, style, manager.UserId);
                         sitedb.Styles.AddOrUpdate(style, manager.UserId);
                         return style;
@@ -315,7 +305,6 @@ namespace Kooboo.Sites.SiteTransfer
                             Name = UrlHelper.FileName(relativeurl),
                         };
 
-
                         sitedb.Routes.AddOrUpdate(relativeurl, koobooimage, manager.UserId);
                         sitedb.Images.AddOrUpdate(koobooimage, manager.UserId);
                         return koobooimage;
@@ -332,7 +321,7 @@ namespace Kooboo.Sites.SiteTransfer
                         view.Name = name;
 
                         string htmlsource = UrlHelper.ReplaceMetaCharSet(download.GetString());
-                        if (AnalyzePage)
+                        if (analyzePage)
                         {
                             var context = AnalyzerManager.Execute(htmlsource, absoluteUrl, view.Id, view.ConstType, manager, originalimporturl);
                             htmlsource = context.HtmlSource;
@@ -347,7 +336,7 @@ namespace Kooboo.Sites.SiteTransfer
 
                 default:
                     {
-                        /// default treat it as file. 
+                        // default treat it as file.
                         var kooboofile = new CmsFile
                         {
                             ContentType = download.ContentType,
@@ -363,18 +352,10 @@ namespace Kooboo.Sites.SiteTransfer
             }
         }
 
-
         public static bool IsPageUrl(string url)
         {
             var filetype = Lib.Helper.UrlHelper.GetFileType(url);
-            if (filetype == UrlHelper.UrlFileType.PageOrView)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return filetype == UrlHelper.UrlFileType.PageOrView;
         }
 
         public static bool IsLowerPrioUrl(string url)
@@ -383,16 +364,19 @@ namespace Kooboo.Sites.SiteTransfer
             {
                 return false;
             }
-            List<string> keywords = new List<string>();
-            keywords.Add("login");
-            keywords.Add("logon");
-            keywords.Add("signin");
-            keywords.Add("signup");
-            keywords.Add("forgotpassword");
-            keywords.Add("forgetpassword");
-            keywords.Add("profile");
-            keywords.Add("privacy");
-            keywords.Add("cookie");
+
+            List<string> keywords = new List<string>
+            {
+                "login",
+                "logon",
+                "signin",
+                "signup",
+                "forgotpassword",
+                "forgetpassword",
+                "profile",
+                "privacy",
+                "cookie"
+            };
 
             var lower = url.ToLower();
 
@@ -422,12 +406,7 @@ namespace Kooboo.Sites.SiteTransfer
             }
             int index = input.IndexOf("?");
 
-            if (index > -1)
-            {
-                return input.Substring(0, index);
-            }
-            return input;
+            return index > -1 ? input.Substring(0, index) : input;
         }
-
     }
 }

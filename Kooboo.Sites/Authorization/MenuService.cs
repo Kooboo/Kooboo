@@ -10,9 +10,8 @@ namespace Kooboo.Sites.Authorization
             {
                 return null;
             }
-            if (menu is ISideBarMenu)
+            if (menu is ISideBarMenu sidebarmenu)
             {
-                var sidebarmenu = menu as ISideBarMenu;
                 if (sidebarmenu.Parent == SideBarSection.Root)
                 {
                     return sidebarmenu.Name;

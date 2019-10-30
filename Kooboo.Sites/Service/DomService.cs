@@ -1,18 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Dom;
+using Kooboo.Sites.Models;
 using System;
 using System.Collections.Generic;
-using Kooboo.Dom;
-using System.Text;
 using System.Linq;
-using Newtonsoft.Json;
-using Kooboo.Sites.Models;
+using System.Text;
 
 namespace Kooboo.Sites.Service
 {
     public static class DomService
     {
-
         public static string ApplyKoobooId(string html)
         {
             if (string.IsNullOrEmpty(html))
@@ -33,8 +31,7 @@ namespace Kooboo.Sites.Service
             {
                 string koobooid = GetKoobooId(nextNode);
 
-                var element = nextNode as Element;
-                if (element != null && element.location.openTokenEndIndex > 0)
+                if (nextNode is Element element && element.location.openTokenEndIndex > 0)
                 {
                     int openTokenEndIndex = nextNode.location.openTokenEndIndex;
                     if (IsSelfCloseTag(element.tagName) && element.ownerDocument.HtmlSource[openTokenEndIndex - 1] == '/')
@@ -46,8 +43,7 @@ namespace Kooboo.Sites.Service
 
                     newHtml.Append(" ").Append(Kooboo.Sites.SiteConstants.KoobooIdAttributeName).AppendFormat("=\"{0}\"", koobooid);
 
-                    currentIndex = openTokenEndIndex; 
-
+                    currentIndex = openTokenEndIndex;
                 }
 
                 nextNode = iterator.nextNode();
@@ -59,14 +55,12 @@ namespace Kooboo.Sites.Service
             }
 
             return newHtml.ToString();
-
         }
 
         public static string GetKoobooId(Node node)
         {
-            List<int> indexlist = new List<int>();
+            List<int> indexlist = new List<int> {node.siblingIndex};
 
-            indexlist.Add(node.siblingIndex);
 
             Node parentNode = node.parentNode;
 
@@ -80,14 +74,13 @@ namespace Kooboo.Sites.Service
             indexlist.Reverse();
 
             return ConvertIntListToString(indexlist);
-
         }
 
-        public static Node GetElementByKoobooId(Document doc, string KoobooId)
+        public static Node GetElementByKoobooId(Document doc, string koobooId)
         {
             Node node = doc.documentElement;
 
-            List<int> intlist = ConvertStringToIntList(KoobooId);
+            List<int> intlist = ConvertStringToIntList(koobooId);
 
             foreach (int item in intlist)
             {
@@ -101,11 +94,11 @@ namespace Kooboo.Sites.Service
             return node;
         }
 
-        public static List<int> ConvertStringToIntList(string IntListString)
+        public static List<int> ConvertStringToIntList(string intListString)
         {
             List<int> intlist = new List<int>();
 
-            string[] stringlist = IntListString.Split('-');
+            string[] stringlist = intListString.Split('-');
 
             foreach (var item in stringlist)
             {
@@ -115,9 +108,9 @@ namespace Kooboo.Sites.Service
             return intlist;
         }
 
-        public static string ConvertIntListToString(List<int> IntList)
+        public static string ConvertIntListToString(List<int> intList)
         {
-            return string.Join("-", IntList);
+            return string.Join("-", intList);
         }
 
         public static string GetElementDisplayName(Element element)
@@ -144,8 +137,7 @@ namespace Kooboo.Sites.Service
         /// <returns></returns>
         public static string ReSerializeElement(Element element)
         {
-            string ehtml = string.Empty;
-            ehtml = "<" + element.tagName;
+            var ehtml = "<" + element.tagName;
             foreach (var item in element.attributes)
             {
                 ehtml += " " + item.name;
@@ -171,8 +163,7 @@ namespace Kooboo.Sites.Service
 
         public static string ReSerializeOpenTag(Element element)
         {
-            string ehtml = string.Empty;
-            ehtml = "<" + element.tagName;
+            var ehtml = "<" + element.tagName;
             foreach (var item in element.attributes)
             {
                 ehtml += " " + item.name;
@@ -196,9 +187,8 @@ namespace Kooboo.Sites.Service
 
         public static string GenerateOpenTag(Dictionary<string, string> attributes, string tagName)
         {
-            string ehtml = string.Empty;
-            ehtml = "<" + tagName;
-            if (attributes !=null)
+            var ehtml = "<" + tagName;
+            if (attributes != null)
             {
                 foreach (var item in attributes)
                 {
@@ -209,13 +199,13 @@ namespace Kooboo.Sites.Service
                     }
                 }
             }
-  
+
             ehtml += ">";
             return ehtml;
         }
 
         /// <summary>
-        /// get the open tag part of this element without reserialize the element. 
+        /// get the open tag part of this element without reserialize the element.
         /// </summary>
         /// <param name="element"></param>
         /// <returns></returns>
@@ -233,7 +223,7 @@ namespace Kooboo.Sites.Service
                 }
                 else
                 {
-                    if (element.attributes ==null)
+                    if (element.attributes == null)
                     {
                         return GenerateOpenTag(null, element.tagName);
                     }
@@ -242,17 +232,15 @@ namespace Kooboo.Sites.Service
                         Dictionary<string, string> attr = new Dictionary<string, string>();
                         foreach (var item in element.attributes)
                         {
-                            if (item != null && item.name != null)
+                            if (item?.name != null)
                             {
                                 attr.Add(item.name, item.value);
-                            } 
-                        } 
-                        return GenerateOpenTag(attr, element.tagName); 
+                            }
+                        }
+                        return GenerateOpenTag(attr, element.tagName);
                     }
-                   
-                } 
+                }
             }
-
         }
 
         public static bool HasHeadTag(Dom.Document doc)
@@ -260,13 +248,12 @@ namespace Kooboo.Sites.Service
             var head = doc.head;
 
             return !IsFakeElement(head);
-
         }
 
         /// <summary>
-        /// Is Fake and generated element, like Head.. without the <head> tag. 
+        /// Is Fake and generated element, like Head.. without the <head> tag.
         /// </summary>
-        /// <param name="doc"></param>
+        /// <param name="el"></param>
         /// <returns></returns>
         public static bool IsFakeElement(Element el)
         {
@@ -286,18 +273,12 @@ namespace Kooboo.Sites.Service
                 return true;
             }
 
-            if (el.location.endTokenEndIndex > 1)
-            {
-                return false;
-            }
-
-            return true;
+            return el.location.endTokenEndIndex <= 1;
         }
 
         public static string ReSerializeElement(Element element, string innerHtml)
         {
-            string ehtml = string.Empty;
-            ehtml = "<" + element.tagName;
+            var ehtml = "<" + element.tagName;
             foreach (var item in element.attributes)
             {
                 ehtml += " " + item.name;
@@ -321,14 +302,14 @@ namespace Kooboo.Sites.Service
         }
 
         /// <summary>
-        /// Parse the string into Dom Element. This method is only true when there is only one Element inside the Html String, the TAL element. 
-        /// If there are more element, only the first element will be returned. 
+        /// Parse the string into Dom Element. This method is only true when there is only one Element inside the Html String, the TAL element.
+        /// If there are more element, only the first element will be returned.
         /// </summary>
-        /// <param name="Html"></param>
+        /// <param name="html"></param>
         /// <returns></returns>
-        public static Element ConvertToElement(string Html)
+        public static Element ConvertToElement(string html)
         {
-            var doc = Dom.DomParser.CreateDom(Html);
+            var doc = Dom.DomParser.CreateDom(html);
 
             foreach (var item in doc.body.childNodes.item)
             {
@@ -354,23 +335,23 @@ namespace Kooboo.Sites.Service
         }
 
         /// <summary>
-        /// Update a html source based on koobooid and new values. 
+        /// Update a html source based on koobooid and new values.
         /// </summary>
-        /// <param name="Source"></param>
-        /// <param name="Updates">Now use prefix kooboo_attribute to indicate that it is a change of attributes. </param>
+        /// <param name="source"></param>
+        /// <param name="updates">Now use prefix kooboo_attribute to indicate that it is a change of attributes. </param>
         /// <returns></returns>
-        public static string UpdateSource(string Source, Dictionary<string, string> Updates)
+        public static string UpdateSource(string source, Dictionary<string, string> updates)
         {
-            Document doc = Kooboo.Dom.DomParser.CreateDom(Source);
+            Document doc = Kooboo.Dom.DomParser.CreateDom(source);
 
-            return UpdateSource(doc, Updates);
+            return UpdateSource(doc, updates);
         }
 
-        public static string UpdateSource(Document doc, Dictionary<string, string> Updates)
+        public static string UpdateSource(Document doc, Dictionary<string, string> updates)
         {
             List<SourceUpdate> sourceupdates = new List<SourceUpdate>();
 
-            foreach (var item in Updates)
+            foreach (var item in updates)
             {
                 string koobooid = CleanKoobooId(item.Key);
                 if (!string.IsNullOrEmpty(koobooid))
@@ -381,31 +362,32 @@ namespace Kooboo.Sites.Service
                     {
                         if (item.Value.StartsWith(SiteConstants.UpdateDomAttributePrefix))
                         {
-                            /// this is to change the element attribute.  
+                            // this is to change the element attribute.
                             Element currentitem = element as Element;
-                            string AttributeJson = item.Value.Substring(SiteConstants.UpdateDomAttributePrefix.Length);
+                            string attributeJson = item.Value.Substring(SiteConstants.UpdateDomAttributePrefix.Length);
 
-                            Dictionary<string, string> attrs = Lib.Helper.JsonHelper.Deserialize<Dictionary<string, string>>(AttributeJson);
+                            Dictionary<string, string> attrs = Lib.Helper.JsonHelper.Deserialize<Dictionary<string, string>>(attributeJson);
 
                             foreach (var att in attrs)
                             {
-                                // for safety reason. convert all duouble quote to single quote within the attribute value. 
+                                // for safety reason. convert all duouble quote to single quote within the attribute value.
                                 string value = att.Value;
                                 if (!string.IsNullOrEmpty(value))
                                 {
                                     value = value.Replace("\"\"", "\"");
                                     value = value.Replace("\"", "'");
                                 }
-                                currentitem.setAttribute(att.Key, value);
+                                currentitem?.setAttribute(att.Key, value);
                             }
 
-                            SourceUpdate update = new SourceUpdate();
-                            update.StartIndex = currentitem.location.openTokenStartIndex;
-                            update.EndIndex = currentitem.location.openTokenEndIndex;
-                            update.NewValue = Kooboo.Sites.Service.DomService.ReSerializeOpenTag(currentitem);
+                            SourceUpdate update = new SourceUpdate
+                            {
+                                StartIndex = currentitem.location.openTokenStartIndex,
+                                EndIndex = currentitem.location.openTokenEndIndex,
+                                NewValue = Kooboo.Sites.Service.DomService.ReSerializeOpenTag(currentitem)
+                            };
 
                             sourceupdates.Add(update);
-
                         }
                         else
                         {
@@ -423,7 +405,6 @@ namespace Kooboo.Sites.Service
                             });
                         }
                     }
-
                 }
             }
 
@@ -431,8 +412,8 @@ namespace Kooboo.Sites.Service
         }
 
         /// <summary>
-        /// Update the source html based on the index location. 
-        /// TODO: add  insertation, can be like endindex = -1; 
+        /// Update the source html based on the index location.
+        /// TODO: add  insertation, can be like endindex = -1;
         /// </summary>
         /// <param name="htmlsource"></param>
         /// <param name="sourceupdates"></param>
@@ -446,7 +427,7 @@ namespace Kooboo.Sites.Service
             int laststart = -1;
             int lastend = -1;
 
-            // update to real html source. 
+            // update to real html source.
             foreach (var item in sourceupdates.OrderBy(o => o.StartIndex))
             {
                 if (item.StartIndex <= laststart || item.StartIndex < currentindex)
@@ -478,7 +459,7 @@ namespace Kooboo.Sites.Service
                     }
                     else
                     {
-                        // this should be treated as insertation. 
+                        // this should be treated as insertation.
                         if (item.StartIndex > currentindex)
                         {
                             string currentString = htmlsource.Substring(currentindex, item.StartIndex - currentindex);
@@ -496,7 +477,6 @@ namespace Kooboo.Sites.Service
                 {
                     lastend = item.EndIndex;
                 }
-
             }
 
             if (currentindex < totallen - 1)
@@ -507,12 +487,12 @@ namespace Kooboo.Sites.Service
             return sb.ToString();
         }
 
-        public static string UpdateInlineStyle(string HtmlSource, List<Kooboo.Sites.Models.InlineStyleChange> changes)
+        public static string UpdateInlineStyle(string htmlSource, List<Kooboo.Sites.Models.InlineStyleChange> changes)
         {
             int currentindex = 0;
-            int totallen = HtmlSource.Length;
+            int totallen = htmlSource.Length;
             StringBuilder sb = new StringBuilder();
-            Document doc = Kooboo.Dom.DomParser.CreateDom(HtmlSource);
+            Document doc = Kooboo.Dom.DomParser.CreateDom(htmlSource);
 
             List<SourceUpdate> sourceupdates = new List<SourceUpdate>();
 
@@ -522,22 +502,14 @@ namespace Kooboo.Sites.Service
                 { continue; }
 
                 var node = GetElementByKoobooId(doc, item.KoobooId);
-                if (node == null)
-                { continue; }
-                var element = node as Element;
 
-                if (element == null)
+                if (!(node is Element element))
                 { continue; }
 
                 var declarationtext = element.getAttribute("style");
 
                 Kooboo.Dom.CSS.CSSDeclarationBlock declaration;
-                if (string.IsNullOrEmpty(declarationtext))
-                { declaration = new Dom.CSS.CSSDeclarationBlock(); }
-                else
-                {
-                    declaration = Kooboo.Dom.CSS.CSSSerializer.deserializeDeclarationBlock(declarationtext);
-                }
+                declaration = string.IsNullOrEmpty(declarationtext) ? new Dom.CSS.CSSDeclarationBlock() : Kooboo.Dom.CSS.CSSSerializer.deserializeDeclarationBlock(declarationtext);
 
                 foreach (var propertychange in item.PropertyValues)
                 {
@@ -558,18 +530,19 @@ namespace Kooboo.Sites.Service
                 else
                 { element.setAttribute("style", newtext); }
 
-
                 string elementstring = ReSerializeOpenTag(element);
 
-                SourceUpdate update = new SourceUpdate();
-                update.StartIndex = element.location.openTokenStartIndex;
-                update.EndIndex = element.location.openTokenEndIndex + 1;
-                update.NewValue = Kooboo.Sites.Service.DomService.ReSerializeOpenTag(element);
+                SourceUpdate update = new SourceUpdate
+                {
+                    StartIndex = element.location.openTokenStartIndex,
+                    EndIndex = element.location.openTokenEndIndex + 1,
+                    NewValue = Kooboo.Sites.Service.DomService.ReSerializeOpenTag(element)
+                };
 
                 sourceupdates.Add(update);
             }
 
-            // update to real html source. 
+            // update to real html source.
             foreach (var item in sourceupdates.OrderBy(o => o.StartIndex))
             {
                 string currentString = doc.HtmlSource.Substring(currentindex, item.StartIndex - currentindex);
@@ -594,14 +567,7 @@ namespace Kooboo.Sites.Service
         {
             int commaindex = originalKoobooId.IndexOf(":");
 
-            if (commaindex > -1)
-            {
-                return originalKoobooId.Substring(commaindex + 1);
-            }
-            else
-            {
-                return originalKoobooId;
-            }
+            return commaindex > -1 ? originalKoobooId.Substring(commaindex + 1) : originalKoobooId;
         }
 
         public static bool IsSelfCloseTag(string tagName)
@@ -616,19 +582,19 @@ namespace Kooboo.Sites.Service
         }
 
         /// <summary>
-        /// Find the same element in the body container. 
+        /// Find the same element in the body container.
         /// </summary>
         /// <param name="targetElement"></param>
-        /// <param name="BodyContainer"></param>
+        /// <param name="bodyContainer"></param>
         /// <returns></returns>
-        public static Element getSameElement(Element targetElement, Element BodyContainer)
+        public static Element getSameElement(Element targetElement, Element bodyContainer)
         {
             var parent = targetElement;
             while (parent.tagName != "body")
             {
                 parent = parent.parentElement;
             }
-            var element = _getSameElement(targetElement, parent, BodyContainer);
+            var element = _getSameElement(targetElement, parent, bodyContainer);
             return element;
         }
 
@@ -637,32 +603,29 @@ namespace Kooboo.Sites.Service
             return getSameElement(targetElement, destinationDom.body);
         }
 
-        private static Element _getSameElement(Element target, Element targetParent, Element ContainerElement)
+        private static Element _getSameElement(Element target, Element targetParent, Element containerElement)
         {
-            if (isSameElement(target, ContainerElement))
+            if (IsSameElement(target, containerElement))
             {
-                return ContainerElement;
+                return containerElement;
             }
 
-            if (ContainerElement.depth >= target.depth)
+            if (containerElement.depth >= target.depth)
             {
                 return null;
             }
 
-            foreach (var item in ContainerElement.childNodes.item)
+            foreach (var item in containerElement.childNodes.item)
             {
-                if (item is Element)
+                if (item is Element itemElement)
                 {
                     foreach (var subParent in targetParent.childNodes.item)
                     {
-                        if (subParent is Element)
+                        if (subParent is Element subParentElement)
                         {
-                            Element subParentElement = subParent as Element;
-                            Element itemElement = item as Element;
+                            //TODO: check same element.
 
-                            //TODO: check same element. 
-
-                            Element returnelement = _getSameElement(target, subParent as Element, item as Element);
+                            Element returnelement = _getSameElement(target, subParentElement, itemElement);
                             if (returnelement != null)
                             {
                                 return returnelement;
@@ -670,13 +633,12 @@ namespace Kooboo.Sites.Service
                         }
                     }
                 }
-
             }
 
             return null;
         }
 
-        private static bool isSameElement(Element x, Element y)
+        private static bool IsSameElement(Element x, Element y)
         {
             if (x.depth != y.depth)
             {
@@ -688,7 +650,7 @@ namespace Kooboo.Sites.Service
                 return false;
             }
 
-            /// check inner html. 
+            // check inner html.
             if (x.InnerHtml != y.InnerHtml)
             {
                 return false;
@@ -696,7 +658,7 @@ namespace Kooboo.Sites.Service
 
             foreach (var item in x.attributes)
             {
-                /// class can be like class = "active", we skip the class attribute for now...
+                // class can be like class = "active", we skip the class attribute for now...
                 if (item.name != "class")
                 {
                     var yitem = y.attributes.Find(o => o.name == item.name);
@@ -714,14 +676,11 @@ namespace Kooboo.Sites.Service
                 }
             }
 
-
             return true;
-
         }
 
-
         /// <summary>
-        ///  Find the common parents of two elements. 
+        ///  Find the common parents of two elements.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -749,7 +708,6 @@ namespace Kooboo.Sites.Service
 
         private static Element _FindParent(Element x, Element y)
         {
-
             if (x.isEqualNode(y))
             {
                 return x;
@@ -768,19 +726,13 @@ namespace Kooboo.Sites.Service
             Element parent = null;
             foreach (var item in elements)
             {
-                if (parent == null)
-                {
-                    parent = item;
-                }
-                else
-                {
-                    parent = FindParent(parent, item);
-                }
+                parent = parent == null ? item : FindParent(parent, item);
             }
             return parent;
         }
+
         /// <summary>
-        /// Find the distince between two elements based on the node tree distince... 
+        /// Find the distince between two elements based on the node tree distince...
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -841,7 +793,6 @@ namespace Kooboo.Sites.Service
             }
 
             return Math.Abs(xvalue - yvalue);
-
         }
 
         /// <summary>
@@ -871,7 +822,6 @@ namespace Kooboo.Sites.Service
 
         public static HTMLCollection GetElementsByTagName(List<Node> nodelist, string tagName)
         {
-
             HTMLCollection cols = new HTMLCollection();
 
             foreach (var item in nodelist)
@@ -891,20 +841,19 @@ namespace Kooboo.Sites.Service
             return cols;
         }
 
-
         /// <summary>
-        /// test whether the sub element is contained with the parent or not.. 
+        /// test whether the sub element is contained with the parent or not..
         /// </summary>
-        /// <param name="Parent"></param>
-        /// <param name="Sub"></param>
+        /// <param name="parent"></param>
+        /// <param name="sub"></param>
         /// <returns></returns>
-        public static bool ContainsOrEqualElement(Element Parent, Element Sub)
+        public static bool ContainsOrEqualElement(Element parent, Element sub)
         {
-            if (Sub.depth < Parent.depth)
+            if (sub.depth < parent.depth)
             { return false; }
 
-            var element = Sub;
-            while (element.depth > Parent.depth)
+            var element = sub;
+            while (element.depth > parent.depth)
             {
                 element = element.parentElement;
                 if (element == null)
@@ -912,13 +861,13 @@ namespace Kooboo.Sites.Service
                     return false;
                 }
             }
-            return element.isEqualNode(Parent);
+            return element.isEqualNode(parent);
         }
 
-
         /// <summary>
-        ///  get all node sitting between x & y. 
+        ///  get all node sitting between x & y.
         /// </summary>
+        /// <param name="doc"></param>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
@@ -953,7 +902,6 @@ namespace Kooboo.Sites.Service
                     return col;
                 }
             }
-
         }
 
         private static void _GetNodesInBetween(Node topElement, List<Node> collection, int startindex, int endindex)
@@ -978,12 +926,11 @@ namespace Kooboo.Sites.Service
             return ReSerializeElement(linkElement, linktext);
         }
 
-
         public static Element GetTitleElement(Dom.Document doc)
         {
             if (doc == null)
             {
-                return null; 
+                return null;
             }
 
             var head = doc.head;
@@ -1025,28 +972,25 @@ namespace Kooboo.Sites.Service
                         meta.content = el.getAttribute("content");
 
                         metas.Add(meta);
-
                     }
                 }
             }
 
             return metas;
-
-
         }
 
-        public static string DetectKoobooId(Document dom, List<string> SubLinks)
+        public static string DetectKoobooId(Document dom, List<string> subLinks)
         {
             var allinks = dom.getElementsByTagName("a").item;
-            var GroupbyLinks = MenuService.SimpleGroupBy(allinks);
+            var groupbyLinks = MenuService.SimpleGroupBy(allinks);
             bool match = true;
             bool onetimedismatch = false;
-            foreach (var item in GroupbyLinks)
+            foreach (var item in groupbyLinks)
             {
                 var allgrouplinks = item.Select(o => o.getAttribute("href"));
 
                 match = false;
-                foreach (var link in SubLinks)
+                foreach (var link in subLinks)
                 {
                     if (allgrouplinks.Any(o => IsSameUrl(o, link)))
                     {
@@ -1064,7 +1008,6 @@ namespace Kooboo.Sites.Service
                             break;
                         }
                     }
-
                 }
 
                 if (match)
@@ -1079,7 +1022,6 @@ namespace Kooboo.Sites.Service
 
             return null;
         }
-
 
         private static bool IsSameUrl(string x, string y)
         {
@@ -1102,75 +1044,75 @@ namespace Kooboo.Sites.Service
             return false;
         }
 
-        public static string UpdateUrl(string Source, string OldUrl, string NewUrl)
+        public static string UpdateUrl(string source, string oldUrl, string newUrl)
         {
-            if (string.IsNullOrEmpty(OldUrl))
+            if (string.IsNullOrEmpty(oldUrl))
             {
-                return Source;
+                return source;
             }
-            OldUrl = OldUrl.ToLower().Trim();
+            oldUrl = oldUrl.ToLower().Trim();
             List<SourceUpdate> updates = new List<SourceUpdate>();
 
-            var doc = Kooboo.Dom.DomParser.CreateDom(Source);
-            var els = GetElementsByUrl(doc, OldUrl);
+            var doc = Kooboo.Dom.DomParser.CreateDom(source);
+            var els = GetElementsByUrl(doc, oldUrl);
 
             foreach (var item in els)
             {
                 foreach (var att in item.attributes)
                 {
-                    if (!string.IsNullOrEmpty(att.value) && att.value.ToLower().Trim() == OldUrl)
+                    if (!string.IsNullOrEmpty(att.value) && att.value.ToLower().Trim() == oldUrl)
                     {
-                        att.value = NewUrl;
+                        att.value = newUrl;
                         string newhtml = ReSerializeOpenTag(item);
                         updates.Add(new SourceUpdate() { StartIndex = item.location.openTokenStartIndex, EndIndex = item.location.openTokenEndIndex, NewValue = newhtml });
                     }
                 }
             }
 
-            // this maybe a text with url directly in the field. in the case of text content media file.  
-            els = Helper.ContentHelper.GetByTextContentMedia(doc, OldUrl);
+            // this maybe a text with url directly in the field. in the case of text content media file.
+            els = Helper.ContentHelper.GetByTextContentMedia(doc, oldUrl);
             foreach (var item in els)
             {
                 string value = item.InnerHtml;
 
                 string newvalue = string.Empty;
 
-                if (!string.IsNullOrEmpty(value) && value.ToLower().Trim() == OldUrl)
+                if (!string.IsNullOrEmpty(value) && value.ToLower().Trim() == oldUrl)
                 {
-                    newvalue = NewUrl;
+                    newvalue = newUrl;
                 }
-                else if (value.IndexOf(OldUrl, StringComparison.OrdinalIgnoreCase) > -1)
+                else if (value != null && value.IndexOf(oldUrl, StringComparison.OrdinalIgnoreCase) > -1)
                 {
-                    newvalue = Lib.Helper.StringHelper.ReplaceIgnoreCase(value, OldUrl, NewUrl);
+                    newvalue = Lib.Helper.StringHelper.ReplaceIgnoreCase(value, oldUrl, newUrl);
                 }
 
                 updates.Add(new SourceUpdate() { StartIndex = item.location.openTokenEndIndex + 1, EndIndex = item.location.endTokenStartIndex - 1, NewValue = newvalue });
             }
 
-            if (updates.Count() > 0)
+            if (updates.Any())
             {
-                return UpdateSource(Source, updates);
+                return UpdateSource(source, updates);
             }
-            return Source;
+            return source;
         }
 
-        public static string DeleteUrl(string Source, string OldUrl)
+        public static string DeleteUrl(string source, string oldUrl)
         {
-            if (string.IsNullOrEmpty(OldUrl))
+            if (string.IsNullOrEmpty(oldUrl))
             {
-                return Source;
+                return source;
             }
-            OldUrl = OldUrl.ToLower().Trim();
+            oldUrl = oldUrl.ToLower().Trim();
             List<SourceUpdate> updates = new List<SourceUpdate>();
 
-            var doc = Kooboo.Dom.DomParser.CreateDom(Source);
-            var els = GetElementsByUrl(doc, OldUrl);
+            var doc = Kooboo.Dom.DomParser.CreateDom(source);
+            var els = GetElementsByUrl(doc, oldUrl);
 
             foreach (var item in els)
             {
                 foreach (var att in item.attributes)
                 {
-                    if (!string.IsNullOrEmpty(att.value) && att.value.ToLower().Trim() == OldUrl)
+                    if (!string.IsNullOrEmpty(att.value) && att.value.ToLower().Trim() == oldUrl)
                     {
                         //item.removeAttribute(att.name);
                         //string newhtml = ReSerializeOpenTag(item);
@@ -1180,8 +1122,8 @@ namespace Kooboo.Sites.Service
                 }
             }
 
-            // this maybe a text with url directly in the field. in the case of text content media file.  
-            els = Helper.ContentHelper.GetByTextContentMedia(doc, OldUrl);
+            // this maybe a text with url directly in the field. in the case of text content media file.
+            els = Helper.ContentHelper.GetByTextContentMedia(doc, oldUrl);
             foreach (var item in els)
             {
                 string value = item.InnerHtml;
@@ -1192,35 +1134,35 @@ namespace Kooboo.Sites.Service
                 value = value.Trim();
                 string newvalue = string.Empty;
 
-                if (!string.IsNullOrEmpty(value) && value.ToLower() == OldUrl)
+                if (!string.IsNullOrEmpty(value) && value.ToLower() == oldUrl)
                 {
                     newvalue = "";
                     updates.Add(new SourceUpdate() { StartIndex = item.location.openTokenEndIndex + 1, EndIndex = item.location.endTokenStartIndex - 1, NewValue = newvalue });
                 }
-                else if (value.IndexOf(OldUrl, StringComparison.OrdinalIgnoreCase) > -1)
+                else if (value.IndexOf(oldUrl, StringComparison.OrdinalIgnoreCase) > -1)
                 {
-                    // this is only the text content multile values.  
+                    // this is only the text content multile values.
                     if (value.StartsWith("[") && value.EndsWith("]"))
                     {
                         try
                         {
                             List<string> files = Lib.Helper.JsonHelper.Deserialize<List<string>>(value);
 
-                            if (files != null && files.Count() > 0)
+                            if (files != null && files.Any())
                             {
                                 List<int> removeindex = new List<int>();
-                                int count = files.Count();
+                                int count = files.Count;
                                 for (int i = 0; i < count; i++)
                                 {
                                     var file = files[i];
 
-                                    if (!string.IsNullOrWhiteSpace(file) && file.ToLower().Trim() == OldUrl)
+                                    if (!string.IsNullOrWhiteSpace(file) && file.ToLower().Trim() == oldUrl)
                                     {
                                         removeindex.Add(i);
                                     }
                                 }
 
-                                if (removeindex.Count() > 0)
+                                if (removeindex.Count > 0)
                                 {
                                     foreach (var remove in removeindex.OrderByDescending(o => o))
                                     {
@@ -1228,24 +1170,18 @@ namespace Kooboo.Sites.Service
                                     }
                                     newvalue = Lib.Helper.JsonHelper.Serialize(files);
                                     updates.Add(new SourceUpdate() { StartIndex = item.location.openTokenEndIndex + 1, EndIndex = item.location.endTokenStartIndex - 1, NewValue = newvalue });
-
                                 }
                             }
-
                         }
                         catch (Exception)
                         {
+                            // ignored
                         }
-
                     }
                 }
             }
 
-            if (updates.Count() > 0)
-            {
-                return UpdateSource(Source, updates);
-            }
-            return Source;
+            return updates.Any() ? UpdateSource(source, updates) : source;
         }
 
         public static List<Element> GetElementsByUrl(Document doc, string url)
@@ -1315,8 +1251,7 @@ namespace Kooboo.Sites.Service
                 int count = 0;
                 foreach (var item in parent.childNodes.item)
                 {
-                    var itemel = item as Element;
-                    if (itemel != null)
+                    if (item is Element itemel)
                     {
                         if (itemel.isEqualNode(el))
                         {
@@ -1329,18 +1264,17 @@ namespace Kooboo.Sites.Service
                     }
                 }
 
-                key = key + count.ToString();
+                key += count.ToString();
             }
 
             return key.ToLower();
-
         }
 
-        public static Element GetElementByPath(Document doc, List<string> Paths)
+        public static Element GetElementByPath(Document doc, List<string> paths)
         {
             var el = doc.body;
             int index = 0;
-            int pathcount = Paths.Count();
+            int pathcount = paths.Count();
 
             if (pathcount == 0)
             {
@@ -1348,11 +1282,11 @@ namespace Kooboo.Sites.Service
             }
             var bodykey = _GetElementKey(el);
 
-            if (bodykey != Paths[0])
+            if (bodykey != paths[0])
             {
                 return null;
             }
-             
+
             while (index <= pathcount - 1)
             {
                 if (index == pathcount - 1)
@@ -1362,63 +1296,55 @@ namespace Kooboo.Sites.Service
                 else
                 {
                     Element sub = null;
-                    var deeperkey = Paths[index + 1]; 
+                    var deeperkey = paths[index + 1];
                     foreach (var item in el.childNodes.item)
                     {
-                        var itemel = item as Element; 
-                        if (itemel !=null)
+                        if (item is Element itemel)
                         {
-                            var itemkey = _GetElementKey(itemel); 
+                            var itemkey = _GetElementKey(itemel);
                             if (itemkey == deeperkey)
                             {
-                                sub = itemel; 
+                                sub = itemel;
                             }
                         }
                     }
 
-                    if (sub !=null )
+                    if (sub != null)
                     {
                         el = sub;
-                        index += 1; 
+                        index += 1;
                     }
                     else
                     {
-                        return null; 
+                        return null;
                     }
-                } 
-
+                }
             }
-             
 
-            return null; 
-
-
+            return null;
         }
-          
 
-        // el.tagName =='form' should have been checked before. 
+        // el.tagName =='form' should have been checked before.
         public static bool IsAspNetWebForm(Element el)
-        { 
+        {
             foreach (var item in el.childNodes.item)
             {
                 if (item.nodeType == enumNodeType.ELEMENT)
                 {
                     var childel = item as Element;
 
-                    if (childel.tagName == "input" && childel.id !=null && childel.id == "__VIEWSTATE")
+                    if (childel != null && (childel.tagName == "input" && childel.id != null && childel.id == "__VIEWSTATE"))
                     {
-                        return true; 
+                        return true;
                     }
 
                     if (IsAspNetWebForm(childel))
                     {
-                        return true; 
+                        return true;
                     }
                 }
-            } 
-            return false;   
+            }
+            return false;
         }
-         
     }
-
 }

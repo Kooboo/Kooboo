@@ -1,31 +1,26 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Data.Context;
 using Kooboo.Sites.Extensions;
+using System.IO;
 
 namespace Kooboo.Sites.Render.Commands
 {
     public class DBCommandSourceProvider : ICommandSourceProvider
-    { 
-        public string GetLayout(RenderContext context, string RelativeUrl)
+    {
+        public string GetLayout(RenderContext context, string relativeUrl)
         {
-            return GetLayoutSourceFromDb(context, RelativeUrl); 
+            return GetLayoutSourceFromDb(context, relativeUrl);
         }
 
-        public string GetString(RenderContext context, string RelativeUrl)
+        public string GetString(RenderContext context, string relativeUrl)
         {
-            return GetSourceFromDb(context, RelativeUrl); 
+            return GetSourceFromDb(context, relativeUrl);
         }
-         
-        private   string GetSourceFromDb(RenderContext context, string filename)
+
+        private string GetSourceFromDb(RenderContext context, string filename)
         {
-            /// try get view... 
+            // try get view...
             var view = context.WebSite.SiteDb().Views.GetByNameOrId(filename);
             if (view != null)
             {
@@ -49,7 +44,7 @@ namespace Kooboo.Sites.Render.Commands
             return null;
         }
 
-        private   string GetPrefixViewSource(RenderContext context, string filename)
+        private string GetPrefixViewSource(RenderContext context, string filename)
         {
             string lower = filename.ToLower();
             // check prefix
@@ -70,26 +65,26 @@ namespace Kooboo.Sites.Render.Commands
                 lower = lower.Substring("view/".Length);
             }
             var view = context.WebSite.SiteDb().Views.GetByNameOrId(lower);
-            return view != null ? view.Body : null;
+            return view?.Body;
         }
-          
-        private   string GetLayoutSourceFromDb(RenderContext context, string LayoutRelativeUrl)
+
+        private string GetLayoutSourceFromDb(RenderContext context, string layoutRelativeUrl)
         {
-            var layout = context.WebSite.SiteDb().Layouts.GetByNameOrId(LayoutRelativeUrl);
+            var layout = context.WebSite.SiteDb().Layouts.GetByNameOrId(layoutRelativeUrl);
             if (layout != null)
             {
                 return layout.Body;
             }
-            if (LayoutRelativeUrl.StartsWith("/"))
+            if (layoutRelativeUrl.StartsWith("/"))
             {
-                string name = LayoutRelativeUrl.Substring(1);
+                string name = layoutRelativeUrl.Substring(1);
                 layout = context.WebSite.SiteDb().Layouts.GetByNameOrId(name);
                 if (layout != null)
                 {
                     return layout.Body;
                 }
             }
-            var prefixview = GetPrefixLayoutSource(context, LayoutRelativeUrl);
+            var prefixview = GetPrefixLayoutSource(context, layoutRelativeUrl);
             if (!string.IsNullOrEmpty(prefixview))
             {
                 return prefixview;
@@ -119,17 +114,17 @@ namespace Kooboo.Sites.Render.Commands
                 lower = lower.Substring("layout/".Length);
             }
             var layout = context.WebSite.SiteDb().Layouts.GetByNameOrId(lower);
-            return layout != null ? layout.Body : null;
+            return layout?.Body;
         }
 
-        public byte[] GetBinary(RenderContext context, string RelativeUrl)
+        public byte[] GetBinary(RenderContext context, string relativeUrl)
         {
-            return null; 
+            return null;
         }
 
-        public Stream GetStream(RenderContext context, string RelativeUrl)
+        public Stream GetStream(RenderContext context, string relativeUrl)
         {
-            return null; 
+            return null;
         }
     }
 }

@@ -1,28 +1,22 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Service
 {
- public   class DownloadEncoding
+    public class DownloadEncoding
     {
-
-        public string GetDefaultEncoding(List<string> AcceptLanguages)
+        public string GetDefaultEncoding(List<string> acceptLanguages)
         {
-            string encoding = null; 
-            foreach (var item in AcceptLanguages)
+            string encoding = null;
+            foreach (var item in acceptLanguages)
             {
                 if (Kooboo.Dom.EncodingDetector.DefaultEncodingSet.TryGetValue(item, out encoding))
                 {
-                    return encoding; 
+                    return encoding;
                 }
             }
-            return null; 
-        }         
-
+            return null;
+        }
     }
 }

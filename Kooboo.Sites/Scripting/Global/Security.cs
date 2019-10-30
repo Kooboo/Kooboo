@@ -1,16 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Scripting.Global
 {
-  public  class Security
+    public class Security
     {
         public string md5(string input)
         {
@@ -21,13 +18,13 @@ namespace Kooboo.Sites.Scripting.Global
         public string sha1(string input)
         {
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(input);
-            SHA1CryptoServiceProvider cryptoTransformSHA1 = new SHA1CryptoServiceProvider();
+            SHA1CryptoServiceProvider cryptoTransformSha1 = new SHA1CryptoServiceProvider();
 
-            var hash = cryptoTransformSHA1.ComputeHash(bytes);
+            var hash = cryptoTransformSha1.ComputeHash(bytes);
 
-            return HexStringFromBytes(hash);  
+            return HexStringFromBytes(hash);
         }
-             
+
         private string HexStringFromBytes(byte[] bytes)
         {
             var sb = new StringBuilder();
@@ -39,35 +36,34 @@ namespace Kooboo.Sites.Scripting.Global
             return sb.ToString();
         }
 
-
         public string encrypt(string input, string key)
         {
-            return EncryptHelper.EncryptString(input, key); 
+            return EncryptHelper.EncryptString(input, key);
         }
 
         public string decrypt(string input, string key)
         {
-            return EncryptHelper.DecryptString(input, key); 
+            return EncryptHelper.DecryptString(input, key);
         }
     }
-
 
     public static class EncryptHelper
     {
         // This size of the IV (in bytes) must = (keysize / 8).  Default keysize is 256, so the IV must be
         // 32 bytes long.  Using a 16 character string here gives us 32 bytes when converted to a byte array.
-        private const string initVector = "pemgail9uzpgzl88";
+        private const string InitVector = "pemgail9uzpgzl88";
+
         // This constant is used to determine the keysize of the encryption algorithm
-        private const int keysize = 256;
+        private const int Keysize = 256;
+
         //Encrypt
         public static string EncryptString(string plainText, string passPhrase)
         {
-            byte[] initVectorBytes = Encoding.UTF8.GetBytes(initVector);
+            byte[] initVectorBytes = Encoding.UTF8.GetBytes(InitVector);
             byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
             PasswordDeriveBytes password = new PasswordDeriveBytes(passPhrase, null);
-            byte[] keyBytes = password.GetBytes(keysize / 8);
-            RijndaelManaged symmetricKey = new RijndaelManaged();
-            symmetricKey.Mode = CipherMode.CBC;
+            byte[] keyBytes = password.GetBytes(Keysize / 8);
+            RijndaelManaged symmetricKey = new RijndaelManaged {Mode = CipherMode.CBC};
             ICryptoTransform encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes);
             MemoryStream memoryStream = new MemoryStream();
             CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write);
@@ -78,15 +74,15 @@ namespace Kooboo.Sites.Scripting.Global
             cryptoStream.Close();
             return Convert.ToBase64String(cipherTextBytes);
         }
+
         //Decrypt
         public static string DecryptString(string cipherText, string passPhrase)
         {
-            byte[] initVectorBytes = Encoding.UTF8.GetBytes(initVector);
+            byte[] initVectorBytes = Encoding.UTF8.GetBytes(InitVector);
             byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
             PasswordDeriveBytes password = new PasswordDeriveBytes(passPhrase, null);
-            byte[] keyBytes = password.GetBytes(keysize / 8);
-            RijndaelManaged symmetricKey = new RijndaelManaged();
-            symmetricKey.Mode = CipherMode.CBC;
+            byte[] keyBytes = password.GetBytes(Keysize / 8);
+            RijndaelManaged symmetricKey = new RijndaelManaged {Mode = CipherMode.CBC};
             ICryptoTransform decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
             MemoryStream memoryStream = new MemoryStream(cipherTextBytes);
             CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
@@ -97,5 +93,4 @@ namespace Kooboo.Sites.Scripting.Global
             return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
         }
     }
-
-}   
+}

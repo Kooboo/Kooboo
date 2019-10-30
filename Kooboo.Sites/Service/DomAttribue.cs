@@ -1,20 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using Kooboo.Dom.Dom;
 using Kooboo.Dom;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using System.Linq; 
-
-
 
 namespace Kooboo.Sites.Service
 {
-
     /// <summary>
     /// This class is used to add new html element attribute the dom and generate a new html string back.
-    /// 
+    ///
     /// </summary>
     public class DomAttribue
     {
@@ -26,7 +21,7 @@ namespace Kooboo.Sites.Service
         public DomAttribue(Dom.Document sourceDocument)
         {
             this.ToBeAdded = new Dictionary<Element, Dictionary<string, string>>();
-            this.document = sourceDocument; 
+            this.document = sourceDocument;
         }
 
         public Dom.Document document { get; set; }
@@ -50,24 +45,23 @@ namespace Kooboo.Sites.Service
             }
             else
             {
-                Dictionary<string, string> newvalue = new Dictionary<string, string>();
-                newvalue.Add(attributeName, attributeValue);
+                Dictionary<string, string> newvalue = new Dictionary<string, string> {{attributeName, attributeValue}};
                 ToBeAdded.Add(element, newvalue);
             }
         }
 
         /// <summary>
-        /// Reserialize the dom with new attribute values and return the new html source string. 
+        /// Reserialize the dom with new attribute values and return the new html source string.
         /// </summary>
         /// <returns></returns>
         public string ReSerialize()
         {
             if (this.document == null)
             {
-                return string.Empty; 
+                return string.Empty;
             }
 
-            // first make sure that the dictionary is sorted by the element token start index. 
+            // first make sure that the dictionary is sorted by the element token start index.
             int currentindex = 0;
             int totallen = document.HtmlSource.Length;
 
@@ -83,27 +77,23 @@ namespace Kooboo.Sites.Service
 
                     currentindex = item.Key.location.openTokenStartIndex + taglen;
 
-                    string koobooattribute; 
-                    
-                    koobooattribute= "";
+                    string koobooattribute;
+
+                    koobooattribute = "";
 
                     foreach (var aitem in item.Value)
                     {
-
                         koobooattribute += " " + aitem.Key;
 
                         if (!string.IsNullOrEmpty(aitem.Value))
                         {
-
                             koobooattribute += "=\"" + aitem.Value + "\"";
                         }
                     }
 
                     sb.Append(previous);
                     sb.Append(koobooattribute);
-
                 }
-
             }
 
             if (currentindex < totallen)
@@ -112,8 +102,6 @@ namespace Kooboo.Sites.Service
             }
 
             return sb.ToString();
-
         }
-
     }
 }

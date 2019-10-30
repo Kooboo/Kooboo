@@ -1,13 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Extensions;
 using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Routing;
-using System.Collections.Generic;
-using System;
-using Kooboo.Sites.Relation;
 using Kooboo.Sites.Models;
+using Kooboo.Sites.Relation;
+using Kooboo.Sites.Routing;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render
 {
@@ -19,7 +19,7 @@ namespace Kooboo.Sites.Render
 
         private bool IsExternalLink { get; set; }
 
-        // special, no change. 
+        // special, no change.
         private bool IsSpecial { get; set; }
 
         public bool ClearBefore
@@ -30,43 +30,42 @@ namespace Kooboo.Sites.Render
             }
         }
 
-        public UrlRenderTask(string Url)
+        public UrlRenderTask(string url)
         {
-            this.Url = Url;
+            this.Url = url;
 
-          this.IsSpecial = Kooboo.Sites.Service.DomUrlService.IsSpecialUrl(Url);
+            this.IsSpecial = Kooboo.Sites.Service.DomUrlService.IsSpecialUrl(url);
 
             if (!IsSpecial)
             {
                 if (Functions.FunctionHelper.IsFunction(this.Url))
                 {
-                    /// might be a function.  
-                    this.RenderUrlValueTask = new ValueRenderTask(this.Url); 
+                    // might be a function.
+                    this.RenderUrlValueTask = new ValueRenderTask(this.Url);
                 }
 
-                if (Service.DomUrlService.IsExternalLink(Url) || Url == "#")
+                if (Service.DomUrlService.IsExternalLink(url) || url == "#")
                 {
                     this.IsExternalLink = true;
                 }
             }
         }
 
-        private Dictionary<string, string> UrlPara;
+        private Dictionary<string, string> _urlPara;
 
-        public UrlRenderTask(ValueRenderTask GetValueTask)
+        public UrlRenderTask(ValueRenderTask getValueTask)
         {
-            this.RenderUrlValueTask = GetValueTask;
+            this.RenderUrlValueTask = getValueTask;
         }
 
         public string Render(RenderContext context)
         {
-            string result = string.Empty;
+            string result;
 
             if (IsSpecial)
             {
                 return this.Url;
             }
-
             else if (this.RenderUrlValueTask != null)
             {
                 result = RenderUrlValueTask.Render(context);
@@ -89,17 +88,17 @@ namespace Kooboo.Sites.Render
                         }
                         else
                         {
-                            if (UrlPara == null)
+                            if (_urlPara == null)
                             {
-                                UrlPara = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                                _urlPara = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
                                 var para = Kooboo.Sites.Routing.ObjectRoute.ParseParameters(route, this.Url);
                                 foreach (var p in para)
                                 {
-                                    UrlPara[p.Key] = p.Value;
+                                    _urlPara[p.Key] = p.Value;
                                 }
                             }
 
-                            result = RenderPageRoute(context, route, UrlPara);
+                            result = RenderPageRoute(context, route, _urlPara);
                         }
                     }
                     else
@@ -107,14 +106,7 @@ namespace Kooboo.Sites.Render
                         if (PossibleKey(Url))
                         {
                             var contextvalue = context.DataContext.GetValue(Url);
-                            if (contextvalue != null)
-                            {
-                                result = contextvalue.ToString();
-                            }
-                            else
-                            {
-                                result = Url;
-                            }
+                            result = contextvalue != null ? contextvalue.ToString() : Url;
                         }
                         else
                         {
@@ -154,7 +146,6 @@ namespace Kooboo.Sites.Render
                         }
                     }
                 }
-
             }
 
             return result;
@@ -184,7 +175,7 @@ namespace Kooboo.Sites.Render
 
             string result;
             string tempurl = route.Name;
-            Dictionary<string, string> Parameters = CopyParameters(route.Parameters);
+            Dictionary<string, string> parameters = CopyParameters(route.Parameters);
 
             int questionmark = Url.IndexOf("?");
 
@@ -201,26 +192,25 @@ namespace Kooboo.Sites.Render
                     }
                     string value = namevalues.Get(item);
 
-                    Parameters[item] = value;
+                    parameters[item] = value;
                 }
             }
 
             if (urlpara != null && urlpara.Count > 0)
             {
-
                 foreach (var item in urlpara)
                 {
                     var value = urlpara[item.Key];
 
                     if (!DataSources.ParameterBinder.IsValueBinding(value))
                     {
-                        if (Parameters.ContainsKey(item.Key))
+                        if (parameters.ContainsKey(item.Key))
                         {
-                            var paravalue = Parameters[item.Key];
+                            var paravalue = parameters[item.Key];
 
                             if (DataSources.ParameterBinder.IsValueBinding(paravalue))
                             {
-                                Parameters[item.Key] = value;
+                                parameters[item.Key] = value;
                             }
                         }
                     }
@@ -228,15 +218,13 @@ namespace Kooboo.Sites.Render
                     {
                         // if (!Parameters.ContainsKey(item.Key))
                         //{
-                        Parameters[item.Key] = item.Value;
+                        parameters[item.Key] = item.Value;
                         // }
                     }
-
                 }
-
             }
 
-            result = Routing.PageRoute.GetRelativeUrl(route.Name, Parameters, frontContext);
+            result = Routing.PageRoute.GetRelativeUrl(route.Name, parameters, frontContext);
             return result;
         }
 
@@ -287,14 +275,12 @@ namespace Kooboo.Sites.Render
                 {
                     return result;
                 }
-
             }
             else
             {
                 return result;
             }
         }
-
 
         public string RenderSystemLink(RenderContext context, Routing.Route route)
         {
@@ -315,7 +301,7 @@ namespace Kooboo.Sites.Render
                 var view = context.WebSite.SiteDb().Views.GetByNameOrId(id);
 
                 if (view != null)
-                { 
+                {
                     var relation = GetViewPageRelation(context, view, context.WebSite.SiteDb().Log.Store.LastKey);
 
                     if (relation != null && relation.Count > 0)
@@ -329,7 +315,7 @@ namespace Kooboo.Sites.Render
                             return RenderPageRoute(context, pageroute);
                         }
                     }
-                    /// if view was not rendered within and by the page... try to render with rendercode.  
+                    // if view was not rendered within and by the page... try to render with rendercode.
                     if (frontContext.Page != null && frontContext.ExecutingView != null)
                     {
                         string currenturl = context.Request.RelativeUrl;
@@ -341,7 +327,6 @@ namespace Kooboo.Sites.Render
                         values.Add(SiteConstants.AlternativeViewQueryName, alternativeviewcode.ToString());
                         return Kooboo.Lib.Helper.UrlHelper.AppendQueryString(currenturl, values);
                     }
-
                     else if (frontContext.Page == null)
                     {
                         var values = PageRoute.GetViewParameterValues(context.WebSite.SiteDb(), view, frontContext);
@@ -358,29 +343,28 @@ namespace Kooboo.Sites.Render
             result.Add(new RenderResult() { Value = Render(context) });
         }
 
+        // relation cache...
+        private long LastLog { get; set; } = 0;
 
-        // relation cache... 
-        private long lastLog { get; set; } = 0; 
-        public List<ObjectRelation> GetViewPageRelation(RenderContext context, View view, long LastChange)
+        public List<ObjectRelation> GetViewPageRelation(RenderContext context, View view, long lastChange)
         {
-            if (LastChange != lastLog)
+            if (lastChange != LastLog)
             {
-                ViewPageRelationCache = new Dictionary<Guid, List<ObjectRelation>>(); 
+                ViewPageRelationCache = new Dictionary<Guid, List<ObjectRelation>>();
             }
 
             if (!ViewPageRelationCache.ContainsKey(view.Id))
             {
                 var relation = context.WebSite.SiteDb().Relations.GetReferredBy(view, ConstObjectType.Page);
                 ViewPageRelationCache[view.Id] = relation;
-                return relation; 
+                return relation;
             }
             else
             {
-                return ViewPageRelationCache[view.Id]; 
+                return ViewPageRelationCache[view.Id];
             }
         }
 
-        public Dictionary<Guid, List<ObjectRelation>> ViewPageRelationCache { get; set; } = new Dictionary<Guid, List<ObjectRelation>>(); 
-
+        public Dictionary<Guid, List<ObjectRelation>> ViewPageRelationCache { get; set; } = new Dictionary<Guid, List<ObjectRelation>>();
     }
 }

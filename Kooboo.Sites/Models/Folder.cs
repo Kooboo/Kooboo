@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Linq;
@@ -6,32 +6,33 @@ using System.Linq;
 namespace Kooboo.Sites.Models
 {
     /// <summary>
-    /// When creating a folder, must specify the full path starts with /. 
-    /// When generating folder collection, it must take the consideration of Folder and Routing. 
-    /// </summary> 
+    /// When creating a folder, must specify the full path starts with /.
+    /// When generating folder collection, it must take the consideration of Folder and Routing.
+    /// </summary>
     public class Folder : CoreObject
     {
         /// <summary>
-        /// This constructor is required for the Serializer tool 
+        /// This constructor is required for the Serializer tool
         /// </summary>
         public Folder()
         {
             this.ConstType = ConstObjectType.Folder;
         }
 
-        public Folder(byte ObjectConstType)
+        public Folder(byte objectConstType)
         {
-            this.ObjectConstType = ObjectConstType;
+            this.ObjectConstType = objectConstType;
             this.ConstType = ConstObjectType.Folder;
         }
 
-        private Guid _id; 
+        private Guid _id;
+
         public override Guid Id
         {
             get
             {
                 if (_id == default(Guid))
-                { 
+                {
                     _id = Data.IDGenerator.GetFolderId(Name, this.ObjectConstType);
                 }
                 return _id;
@@ -54,23 +55,24 @@ namespace Kooboo.Sites.Models
         {
             get
             {
-                return _fullpath; 
+                return _fullpath;
             }
             set
             {
-               if (!string.IsNullOrEmpty(value))
+                if (!string.IsNullOrEmpty(value))
                 {
-                    _fullpath = value.Replace("\\", "/");  
+                    _fullpath = value.Replace("\\", "/");
                     if (_fullpath.EndsWith("/"))
                     {
-                        _fullpath = _fullpath.TrimEnd('/'); 
+                        _fullpath = _fullpath.TrimEnd('/');
                     }
-                    _segment = null; 
+                    _segment = null;
                 }
             }
         }
 
         private string _segment;
+
         public string Segment
         {
             get
@@ -88,7 +90,6 @@ namespace Kooboo.Sites.Models
                                 break;
                             }
                         }
-
                     }
                 }
                 return _segment;
@@ -98,7 +99,7 @@ namespace Kooboo.Sites.Models
                 _segment = value;
             }
         }
-         
+
         public override string Name
         {
             get
@@ -110,7 +111,7 @@ namespace Kooboo.Sites.Models
         public override int GetHashCode()
         {
             string unique = this.ConstType.ToString() + this.FullPath;
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }
 }

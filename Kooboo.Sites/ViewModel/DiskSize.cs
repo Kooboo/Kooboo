@@ -1,24 +1,22 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 
 namespace Kooboo.Sites.ViewModel
 {
-  public  class DiskSize
+    public class DiskSize
     {
-        public long Total{ get; set; } 
+        public long Total { get; set; }
 
-        public string TotalSize { get { return Lib.Utilities.CalculateUtility.GetSizeString(this.Total);  } }
+        public string TotalSize { get { return Lib.Utilities.CalculateUtility.GetSizeString(this.Total); } }
 
-        public List<RepoSize> RepositorySize { get; set; } = new List<RepoSize>(); 
+        public List<RepoSize> RepositorySize { get; set; } = new List<RepoSize>();
 
         public long VisitorLog { get; set; }
 
-        public List<string> VisitorLogWeeks { get; set; } = new List<string>(); 
-           
-        public long RepositoryEditCount { get; set; } 
-         
+        public List<string> VisitorLogWeeks { get; set; } = new List<string>();
+
+        public long RepositoryEditCount { get; set; }
     }
 
     public class RepoSize
@@ -33,7 +31,7 @@ namespace Kooboo.Sites.ViewModel
         {
             get
             {
-                return Lib.Utilities.CalculateUtility.GetSizeString(this.Length); 
+                return Lib.Utilities.CalculateUtility.GetSizeString(this.Length);
             }
         }
     }

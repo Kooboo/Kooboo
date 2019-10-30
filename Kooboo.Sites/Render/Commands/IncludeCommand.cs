@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Data.Context;
 using Kooboo.Data.Models;
@@ -9,121 +9,109 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-
 namespace Kooboo.Sites.Render.Commands
 {
     public class IncludeCommand : ICommand
-    { 
+    {
         public string Name
         {
             get
             {
-                return "include"; 
+                return "include";
             }
         }
-          
-        public string Execute(RenderContext context, Dictionary<string, string> Paras)
-        { 
-            if (Paras != null && Paras.Count() > 0)
+
+        public string Execute(RenderContext context, Dictionary<string, string> paras)
+        {
+            if (paras != null && paras.Any())
             {
                 Dictionary<string, string> datavalue = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                foreach (var item in Paras)
+                foreach (var item in paras)
                 {
                     if (item.Key.ToLower() != "file" && item.Key.ToLower() != "virtual")
                     {
-                        datavalue.Add(item.Key, item.Value); 
+                        datavalue.Add(item.Key, item.Value);
                     }
                 }
-                if (datavalue.Count() > 0)
+                if (datavalue.Any())
                 {
-                   context.DataContext.Push(datavalue);
+                    context.DataContext.Push(datavalue);
                 }
             }
 
-            var file = GetFilePath(context, Paras);
+            var file = GetFilePath(context, paras);
 
-            var source = GetSourceFromDb(context, file); 
+            var source = GetSourceFromDb(context, file);
 
             if (!string.IsNullOrEmpty(source))
             {
-                List<IRenderTask> renderplan; 
-                EvaluatorOption options = new EvaluatorOption();
-                options.RenderUrl = true;
-                options.RenderHeader = false;
+                List<IRenderTask> renderplan;
+                EvaluatorOption options = new EvaluatorOption {RenderUrl = true, RenderHeader = false};
 
-                Guid sourceid = Lib.Security.Hash.ComputeGuidIgnoreCase(source); 
-            
+                Guid sourceid = Lib.Security.Hash.ComputeGuidIgnoreCase(source);
+
                 if (context.Request.Channel == RequestChannel.InlineDesign)
                 {
                     source = DomService.ApplyKoobooId(source);
                     options.RequireBindingInfo = true;
-                    renderplan = RenderEvaluator.Evaluate(source, options); 
-                    
+                    renderplan = RenderEvaluator.Evaluate(source, options);
                 }
                 else
                 {
-                    SiteDb sitedb; 
+                    SiteDb sitedb;
                     if (context.WebSite == null)
                     {
                         var site = new WebSite() { Name = "__Koobootemp" };
-                        sitedb = site.SiteDb(); 
+                        sitedb = site.SiteDb();
                     }
                     else
                     {
-                        sitedb  = context.WebSite.SiteDb();
+                        sitedb = context.WebSite.SiteDb();
                     }
-                    
+
                     renderplan = Cache.RenderPlan.GetOrAddRenderPlan(sitedb, sourceid, () => RenderEvaluator.Evaluate(source, options));
                 }
 
-               return RenderHelper.Render(renderplan, context);
-
+                return renderplan.Render(context);
             }
 
             return null;
         }
 
-        public string GetFilePath(RenderContext context, Dictionary<string, string> Paras)
+        public string GetFilePath(RenderContext context, Dictionary<string, string> paras)
         {
-            if (Paras.ContainsKey("file"))
+            if (paras.ContainsKey("file"))
             {
-                string file = Paras["file"];
+                string file = paras["file"];
                 string relativefile = Kooboo.Lib.Helper.UrlHelper.Combine(context.Request.RelativeUrl, file);
 
-                return relativefile;  
+                return relativefile;
             }
-            else if (Paras.ContainsKey("virtual"))
+            else if (paras.ContainsKey("virtual"))
             {
-                string file = Paras["virtual"];
-                return file; 
+                string file = paras["virtual"];
+                return file;
             }
             else
             {
-                foreach (var item in Paras)
+                foreach (var item in paras)
                 {
-                    if (item.Key.ToLower() =="name"|| item.Key.ToLower()== "id")
+                    if (item.Key.ToLower() == "name" || item.Key.ToLower() == "id")
                     {
-                        return item.Value; 
+                        return item.Value;
                     }
                 }
             }
 
-            return null; 
+            return null;
         }
-         
+
         public static string GetSourceFromDb(RenderContext context, string filename)
         {
-            /// try get view... 
-            /// 
-          var sourceprovider =   context.GetItem<ICommandSourceProvider>("commandsource");
+            // try get view...
+            var sourceprovider = context.GetItem<ICommandSourceProvider>("commandsource") ?? new DBCommandSourceProvider();
 
-            if (sourceprovider == null)
-            {
-                sourceprovider = new DBCommandSourceProvider();  
-            }
-
-            return sourceprovider.GetString(context, filename); 
+            return sourceprovider.GetString(context, filename);
         }
-          
     }
 }

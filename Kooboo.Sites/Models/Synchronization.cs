@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Extensions;
 using System;
@@ -11,16 +11,17 @@ namespace Kooboo.Sites.Models
         {
             this.ConstType = ConstObjectType.Synchronization;
         }
+
         private Guid _id;
+
         public override Guid Id
         {
-            /// for objectid = default(guid), there can only be one version nr. the rest objectid must have multiple. 
+            // for objectid = default(guid), there can only be one version nr. the rest objectid must have multiple.
             get
             {
                 if (_id == default(Guid))
                 {
                     string unique = this.SyncSettingId.ToString() + this.In.ToString();
-
 
                     if (!string.IsNullOrWhiteSpace(this.StoreName))
                     {
@@ -30,7 +31,7 @@ namespace Kooboo.Sites.Models
                     {
                         unique += "_tb_" + this.TableName;
                     }
-                     
+
                     if (this.ObjectId != default(Guid))
                     {
                         unique += this.ObjectId.ToString();
@@ -68,15 +69,16 @@ namespace Kooboo.Sites.Models
             }
         }
 
-        // default(Guid) =  the main index... 
+        // default(Guid) =  the main index...
         public Guid ObjectId { get; set; }
 
-        // in or out.. 
+        // in or out..
         public bool In { get; set; }
 
         public long Version { get; set; }
 
         public long RemoteVersion { get; set; }
+
         public override int GetHashCode()
         {
             if (this.In)
@@ -88,6 +90,5 @@ namespace Kooboo.Sites.Models
                 return Lib.Security.Hash.ComputeIntCaseSensitive(Version.ToString());
             }
         }
-
     }
 }

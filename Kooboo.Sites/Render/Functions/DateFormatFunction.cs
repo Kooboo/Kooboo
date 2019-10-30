@@ -1,8 +1,8 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic; 
 using Kooboo.Data.Context;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render.Functions
 {
@@ -12,22 +12,22 @@ namespace Kooboo.Sites.Render.Functions
         {
             get
             {
-                return "DateFormat"; 
+                return "DateFormat";
             }
         }
 
         public List<IFunction> Parameters
         {
-            get;set;
-        }  
+            get; set;
+        }
 
         public object Render(RenderContext context)
         {
-            var paras = FunctionHelper.RenderParameter(context, this.Parameters); 
+            var paras = FunctionHelper.RenderParameter(context, this.Parameters);
             string formatestring = paras[1].ToString();
-            var datetiem = Convert.ToDateTime(paras[0]); 
-             
-            return datetiem.ToString(formatestring);  
+            var datetiem = Convert.ToDateTime(paras[0]);
+
+            return datetiem.ToString(formatestring);
         }
     }
 

@@ -1,21 +1,16 @@
-﻿using Kooboo.Data.Context;
-using Kooboo.Data.Interface;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Scripting.Global;
-using Kooboo.Sites.Scripting.Global.SiteItem;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Kooboo.Sites.Repository;
-using System.IO;
-using Kooboo.Data;
+﻿using Kooboo.Data;
+using Kooboo.Data.Context;
 using Kooboo.Data.Models;
-using Kooboo.Sites.Sync;
-using Kooboo.Sites.Routing;
+using Kooboo.Data.Template;
 using Kooboo.Lib.Compatible;
 using Kooboo.Lib.Helper;
-using Kooboo.Data.Template;
+using Kooboo.Sites.Extensions;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.Routing;
+using Kooboo.Sites.Sync;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Kooboo.Sites.Scripting.Global
@@ -24,6 +19,7 @@ namespace Kooboo.Sites.Scripting.Global
     {
         public static string ImagePath { get; set; } = Path.Combine(Data.AppSettings.ThemeFolder, "img");
         public RenderContext _context;
+
         public KTemplate(RenderContext context)
         {
             _context = context;
@@ -35,7 +31,8 @@ namespace Kooboo.Sites.Scripting.Global
             var model = converter.FromBytes(postData);
             return model != null ? model.Id.ToString() : "";
         }
-        public Dictionary<string,object> UpdateTemplate(string domain,byte[] postData, DynamicTableObject obj)
+
+        public Dictionary<string, object> UpdateTemplate(string domain, byte[] postData, DynamicTableObject obj)
         {
             var oldTemplate = obj.Values;
             IndexedDB.Serializer.Simple.SimpleConverter<TemplateUpdateModel> converter = new IndexedDB.Serializer.Simple.SimpleConverter<TemplateUpdateModel>();
@@ -60,30 +57,30 @@ namespace Kooboo.Sites.Scripting.Global
             {
                 var oldlist = Kooboo.Lib.Helper.JsonHelper.Deserialize<List<string>>(oldTemplate["images"].ToString());
                 var newlist = JsonHelper.Deserialize<List<string>>(model.Images);
-                existImages = clearImagePath(oldlist, newlist);
+                existImages = ClearImagePath(oldlist, newlist);
             }
 
             var images = new List<ScreenshotImage>();
             var thumbnail = string.Empty;
 
-            if (model.Bytes!=null && model.Bytes.Length > 0)
+            if (model.Bytes != null && model.Bytes.Length > 0)
             {
                 Guid oldsiteid = model.Id;
                 // there is a change of zip.
                 File.WriteAllBytes(GetFilePath(model.Id.ToString()), model.Bytes);
                 oldTemplate["size"] = model.Bytes.Length;
                 // update to preview sites.
-                var siteDb= ImportBinary(domain,model.Bytes, oldTemplate);
+                var siteDb = ImportBinary(domain, model.Bytes, oldTemplate);
 
-                if (model.NewImages.Count == 0 && existImages.Count()==0)
+                if (model.NewImages.Count == 0 && existImages.Count() == 0)
                 {
-                    images = GetScreenshotImages(siteDb,domain);
+                    images = GetScreenshotImages(siteDb, domain);
                     if (images.Count > 0)
                     {
                         thumbnail = images[0].FileName;
                     }
                 }
-                // remove the old site. 
+                // remove the old site.
                 Sites.Service.WebSiteService.Delete(oldsiteid);
             }
             foreach (var image in model.NewImages)
@@ -113,26 +110,27 @@ namespace Kooboo.Sites.Scripting.Global
             oldTemplate["images"] = existImages.ToArray();
             oldTemplate["thumbNail"] = string.IsNullOrEmpty(thumbnail) ? GetDefaultImage(existImages, model.NewDefault) : thumbnail;
             return oldTemplate;
-
         }
 
-        public Dictionary<string,object> UploadOldFormat(string domain,byte[] postData)
+        public Dictionary<string, object> UploadOldFormat(string domain, byte[] postData)
         {
             IndexedDB.Serializer.Simple.SimpleConverter<TemplateDataModel> converter = new IndexedDB.Serializer.Simple.SimpleConverter<TemplateDataModel>();
             var model = converter.FromBytes(postData);
             var hash = Lib.Security.Hash.ComputeGuid(model.Bytes);
-            if (hash != model.ByteHash||
-                model.UserId == default(Guid)|| model.Bytes.Length==0)
+            if (hash != model.ByteHash ||
+                model.UserId == default(Guid) || model.Bytes.Length == 0)
             {
                 return null;
             }
 
-            var dic = new Dictionary<string, object>();
-            dic["name"] = model.Name;
-            dic["link"] = model.Link;
-            dic["description"] = model.Description;
-            dic["tags"] = model.Tags;
-            dic["userId"] = model.UserId;
+            var dic = new Dictionary<string, object>
+            {
+                ["name"] = model.Name,
+                ["link"] = model.Link,
+                ["description"] = model.Description,
+                ["tags"] = model.Tags,
+                ["userId"] = model.UserId
+            };
             var user = Data.GlobalDb.Users.Get(model.UserId);
             if (user != null)
             {
@@ -156,7 +154,7 @@ namespace Kooboo.Sites.Scripting.Global
             var thumbnail = "";
             if (model.Images.Count() == 0)
             {
-                images = GetScreenshotImages(siteDb,domain);
+                images = GetScreenshotImages(siteDb, domain);
                 if (images.Count > 0)
                 {
                     thumbnail = images[0].FileName;
@@ -177,7 +175,7 @@ namespace Kooboo.Sites.Scripting.Global
                         thumbnail = screenshotImage.FileName;
                     }
                 }
-                if(string.IsNullOrEmpty(thumbnail) && images.Count > 0)
+                if (string.IsNullOrEmpty(thumbnail) && images.Count > 0)
                 {
                     thumbnail = images[0].FileName;
                 }
@@ -197,6 +195,7 @@ namespace Kooboo.Sites.Scripting.Global
 
             return dic;
         }
+
         public Dictionary<string, object> Upload(string domain, byte[] postdata)
         {
             var dic = new Dictionary<string, object>();
@@ -225,7 +224,7 @@ namespace Kooboo.Sites.Scripting.Global
             dic["score"] = 0;
             dic["id"] = Guid.NewGuid().ToString();
 
-            if (formResult.Files.Count() > 0)
+            if (formResult.Files.Any())
             {
                 var zipfile = formResult.Files.Find(f => System.IO.Path.GetExtension(f.FileName).Equals(".zip", StringComparison.OrdinalIgnoreCase));
                 if (zipfile == null)
@@ -245,16 +244,16 @@ namespace Kooboo.Sites.Scripting.Global
                 var images = new List<ScreenshotImage>();
                 if (uploadImages.Count == 0)
                 {
-                    images = GetScreenshotImages(siteDb,domain);
+                    images = GetScreenshotImages(siteDb, domain);
                 }
                 else
                 {
-                    foreach(var image in uploadImages)
+                    foreach (var image in uploadImages)
                     {
                         images.Add(new ScreenshotImage
                         {
-                            Bytes= image.Bytes,
-                            FileName= Guid.NewGuid().ToString().Replace("-", "") + Kooboo.Lib.Helper.UrlHelper.FileExtension(image.FileName)
+                            Bytes = image.Bytes,
+                            FileName = Guid.NewGuid().ToString().Replace("-", "") + Kooboo.Lib.Helper.UrlHelper.FileExtension(image.FileName)
                         });
                     }
                 }
@@ -275,7 +274,7 @@ namespace Kooboo.Sites.Scripting.Global
             return dic;
         }
 
-        private string GetDefaultImage(List<string> images,string newDefault)
+        private string GetDefaultImage(List<string> images, string newDefault)
         {
             if (images.Count > 0)
             {
@@ -286,7 +285,6 @@ namespace Kooboo.Sites.Scripting.Global
                         if (index < images.Count())
                         {
                             return images[index];
-                            
                         }
                     }
                     return newDefault;
@@ -297,6 +295,7 @@ namespace Kooboo.Sites.Scripting.Global
 
             return string.Empty;
         }
+
         /// <summary>
         /// get template from old template server
         /// can be removed after all template is imported
@@ -304,14 +303,15 @@ namespace Kooboo.Sites.Scripting.Global
         /// <param name="domain"></param>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public Dictionary<string,object> GetTemplateFromRemote(string domain, System.Dynamic.ExpandoObject obj)
+        public Dictionary<string, object> GetTemplateFromRemote(string domain, System.Dynamic.ExpandoObject obj)
         {
-            var result = new Dictionary<string, object>();
-            result["lastModified"] = DateTime.UtcNow;
-            result["lastModifiedTimeStamp"] = DateTime.UtcNow.Ticks;
+            var result = new Dictionary<string, object>
+            {
+                ["lastModified"] = DateTime.UtcNow, ["lastModifiedTimeStamp"] = DateTime.UtcNow.Ticks
+            };
 
-            var dic=obj as IDictionary<string,object>;
-            var id =Guid.Parse(dic["id"].ToString());
+            var dic = obj as IDictionary<string, object>;
+            var id = Guid.Parse(dic["id"].ToString());
 
             //get download package
             var packageurl = "http://47.52.131.96/_api/download/package?id=" + id.ToString("N");
@@ -326,11 +326,11 @@ namespace Kooboo.Sites.Scripting.Global
             //download images
             var imageStr = dic["images"].ToString();
             var images = JsonHelper.Deserialize<List<string>>(imageStr);
-            foreach(var image in images)
+            foreach (var image in images)
             {
-                var imageUrl= "http://47.52.131.96/_api/download/themeimg/" + image;
+                var imageUrl = "http://47.52.131.96/_api/download/themeimg/" + image;
 
-                bytes= Kooboo.Lib.Helper.HttpHelper.ConvertKooboo(imageUrl, new byte[0], new Dictionary<string, string>());
+                bytes = Kooboo.Lib.Helper.HttpHelper.ConvertKooboo(imageUrl, new byte[0], new Dictionary<string, string>());
                 var filepath = GetImagePath(image);
                 File.WriteAllBytes(filepath, bytes);
             }
@@ -359,7 +359,8 @@ namespace Kooboo.Sites.Scripting.Global
 
             Sites.Service.WebSiteService.Delete(Guid.Parse(oldtemplate["siteId"].ToString()));
         }
-        private List<ScreenshotImage> GetScreenshotImages(SiteDb siteDb,string domain)
+
+        private List<ScreenshotImage> GetScreenshotImages(SiteDb siteDb, string domain)
         {
             var pageids = GetPageIds(siteDb);
 
@@ -381,7 +382,7 @@ namespace Kooboo.Sites.Scripting.Global
                                 Base64 = base64image,
                                 FileName = Lib.Security.ShortGuid.GetNewShortId() + ".png"
                             });
-                            
+
                             if (images.Count >= 2)
                             {
                                 return images;
@@ -394,11 +395,10 @@ namespace Kooboo.Sites.Scripting.Global
             return images;
         }
 
-        private string GetObjectFullUrl(WebSite website, Guid ObjectId,string domain)
+        private string GetObjectFullUrl(WebSite website, Guid objectId, string domain)
         {
-           
             var baseurl = GetBaseUrl(website, domain);
-            string objectUrl = website.SiteDb().Routes.GetObjectPrimaryRelativeUrl(ObjectId);
+            string objectUrl = website.SiteDb().Routes.GetObjectPrimaryRelativeUrl(objectId);
             if (!string.IsNullOrEmpty(objectUrl))
             {
                 objectUrl = Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, objectUrl);
@@ -406,11 +406,11 @@ namespace Kooboo.Sites.Scripting.Global
             return objectUrl;
         }
 
-        private static List<string> clearImagePath(List<string> oldlist, List<string> newlist)
+        private static List<string> ClearImagePath(List<string> oldlist, List<string> newlist)
         {
             List<string> result = new List<string>();
 
-            foreach(var item in oldlist)
+            foreach (var item in oldlist)
             {
                 var exist = newlist.Exists(i => i.IndexOf(item) > -1);
                 if (exist)
@@ -421,39 +421,40 @@ namespace Kooboo.Sites.Scripting.Global
 
             return result;
         }
+
         private string GetScreenShot(string url, int width = 600, int height = 450)
         {
             var screenshoturl = "http://sslgenerator.com/_api/screenshot/get";
 
             url = System.Net.WebUtility.UrlEncode(url);
-            var nodeScreenShotUrl = string.Format("{0}?url={1}&width={2}&height={3}", screenshoturl, url, width, height);
+            var nodeScreenShotUrl = $"{screenshoturl}?url={url}&width={width}&height={height}";
             try
             {
                 var base64Image = HttpHelper.Get<string>(nodeScreenShotUrl);
                 base64Image = CompatibleManager.Instance.Framework.GetThumbnailImage(base64Image, new ImageSize() { Width = width, Height = height });
-                // should verify as base64 here.. 
+                // should verify as base64 here..
                 return base64Image;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return string.Empty;
             }
         }
 
-        public string GetPreviewUrl(string siteid,string domain)
+        public string GetPreviewUrl(string siteid, string domain)
         {
             var site = GlobalDb.WebSites.Get(Guid.Parse(siteid));
             //string baseurl = site.BaseUrl();
 
-            var hostname =string.Format("{0}.{1}",site.Name,domain);
+            var hostname = $"{site.Name}.{domain}";
             var baseurl = GetBaseUrl(site, domain);
             return Lib.Helper.UrlHelper.Combine(baseurl, GetStartRelativeUrl(site));
         }
 
-        private string GetBaseUrl(WebSite site,string domain)
+        private string GetBaseUrl(WebSite site, string domain)
         {
             //string baseurl = website.BaseUrl();
-            var hostname = string.Format("{0}.{1}", site.Name, domain);
+            var hostname = $"{site.Name}.{domain}";
             var baseurl = string.Empty;
             if (site.ForceSSL)
             {
@@ -467,6 +468,7 @@ namespace Kooboo.Sites.Scripting.Global
             }
             return baseurl;
         }
+
         /// <summary>
         /// download site package
         /// </summary>
@@ -491,8 +493,9 @@ namespace Kooboo.Sites.Scripting.Global
         /// <returns></returns>
         public byte[] GetImage(string imagename)
         {
-            return GetImage(imagename,0,0);
+            return GetImage(imagename, 0, 0);
         }
+
         public byte[] GetImage(string imagename, int width, int height)
         {
             var path = GetImagePath(imagename);
@@ -507,7 +510,6 @@ namespace Kooboo.Sites.Scripting.Global
                 {
                     allbytes = System.IO.File.ReadAllBytes(path);
                 }
-
             }
 
             return allbytes;
@@ -560,7 +562,6 @@ namespace Kooboo.Sites.Scripting.Global
                         width = (int)height * image.Width / image.Height;
                     }
                     CompatibleManager.Instance.Framework.SaveThumbnailImage(allbytes, width, height, thumbnailpath);
-
                 }
             }
 
@@ -570,9 +571,10 @@ namespace Kooboo.Sites.Scripting.Global
             }
             return new byte[0];
         }
-        private SiteDb ImportBinary(string domain, byte[] Bytes, Dictionary<string, object> dic)
+
+        private SiteDb ImportBinary(string domain, byte[] bytes, Dictionary<string, object> dic)
         {
-            MemoryStream filestream = new MemoryStream(Bytes);
+            MemoryStream filestream = new MemoryStream(bytes);
 
             string newguid = Guid.NewGuid().ToString().Replace("-", "");
             string hostname = newguid + "." + domain;
@@ -612,7 +614,7 @@ namespace Kooboo.Sites.Scripting.Global
         private string GetStartRelativeUrl(Data.Models.WebSite site)
         {
             var startpages = site.StartPages();
-            if (startpages != null && startpages.Count() > 0)
+            if (startpages != null && startpages.Any())
             {
                 foreach (var item in startpages)
                 {
@@ -627,7 +629,7 @@ namespace Kooboo.Sites.Scripting.Global
 
             var allpages = site.SiteDb().Pages.All();
 
-            if (allpages != null && allpages.Count() > 0)
+            if (allpages != null && allpages.Any())
             {
                 foreach (var item in allpages)
                 {
@@ -640,7 +642,7 @@ namespace Kooboo.Sites.Scripting.Global
                 }
             }
 
-            if (allpages != null && allpages.Count() > 0)
+            if (allpages != null && allpages.Any())
             {
                 foreach (var item in allpages)
                 {
@@ -658,31 +660,31 @@ namespace Kooboo.Sites.Scripting.Global
 
         private static HashSet<Guid> GetPageIds(SiteDb sitedb)
         {
-            HashSet<Guid> Pageids = new HashSet<Guid>();
+            HashSet<Guid> pageids = new HashSet<Guid>();
 
             var starts = sitedb.WebSite.StartPages();
             if (starts != null)
             {
                 foreach (var item in starts)
                 {
-                    Pageids.Add(item.Id);
+                    pageids.Add(item.Id);
                 }
             }
-            if (Pageids.Count >= 10)
+            if (pageids.Count >= 10)
             {
-                return Pageids;
+                return pageids;
             }
 
             foreach (var item in sitedb.Pages.All(true))
             {
-                Pageids.Add(item.Id);
-                if (Pageids.Count() >= 10)
+                pageids.Add(item.Id);
+                if (pageids.Count() >= 10)
                 {
-                    return Pageids;
+                    return pageids;
                 }
             }
 
-            return Pageids;
+            return pageids;
         }
     }
 
@@ -693,21 +695,14 @@ namespace Kooboo.Sites.Scripting.Global
         public string Base64 { get; set; }
 
         private byte[] _bytes;
+
         public byte[] Bytes
         {
-            get
-            {
-                if (_bytes == null)
-                {
-                    _bytes= Convert.FromBase64String(Base64);
-                }
-                return _bytes;
-            }
+            get { return _bytes ?? (_bytes = Convert.FromBase64String(Base64)); }
             set
             {
                 _bytes = value;
             }
         }
-        
     }
 }

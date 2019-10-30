@@ -24,7 +24,7 @@ namespace Kooboo.Sites.DataSources
         }
 
         [Kooboo.Attributes.ReturnType(typeof(List<SearchResult>))]
-        public PagedResult PagedResult(string keyword, int PageSize, int PageNumber, string HighLightAttr)
+        public PagedResult PagedResult(string keyword, int pageSize, int pageNumber, string highLightAttr)
         {
             var sitedb = this.Context.WebSite.SiteDb();
             if (string.IsNullOrEmpty(keyword))
@@ -34,11 +34,11 @@ namespace Kooboo.Sites.DataSources
 
             keyword = System.Net.WebUtility.UrlDecode(keyword);
 
-            return sitedb.SearchIndex.SearchWithPaging(keyword, PageSize, PageNumber, HighLightAttr, this.Context.RenderContext);
+            return sitedb.SearchIndex.SearchWithPaging(keyword, pageSize, pageNumber, highLightAttr, this.Context.RenderContext);
         }
 
         [Kooboo.Attributes.ReturnType(typeof(List<SearchResult>))]
-        public PagedResult ByFolder(List<Guid> FolderId, string keyword, int PageSize, int PageNumber, string HighLightAttr)
+        public PagedResult ByFolder(List<Guid> folderId, string keyword, int pageSize, int pageNumber, string highLightAttr)
         {
             var sitedb = this.Context.WebSite.SiteDb();
             if (string.IsNullOrEmpty(keyword))
@@ -48,7 +48,7 @@ namespace Kooboo.Sites.DataSources
 
             keyword = System.Net.WebUtility.UrlDecode(keyword);
 
-            return sitedb.SearchIndex.SearchByFolders(FolderId, keyword, PageSize, PageNumber, HighLightAttr, this.Context.RenderContext);
+            return sitedb.SearchIndex.SearchByFolders(folderId, keyword, pageSize, pageNumber, highLightAttr, this.Context.RenderContext);
         }
     }
 }

@@ -27,9 +27,7 @@ namespace Kooboo.Sites.HtmlForm
         public List<SimpleSetting> Settings(RenderContext context)
         {
             List<SimpleSetting> setting = new List<SimpleSetting>();
-            SimpleSetting foldersetting = new SimpleSetting();
-            foldersetting.Name = "Api";
-            foldersetting.ControlType = Data.ControlType.Selection;
+            SimpleSetting foldersetting = new SimpleSetting {Name = "Api", ControlType = Data.ControlType.Selection};
 
             var codes = context.WebSite.SiteDb().Code.ListByCodeType(Models.CodeType.Api);
             foreach (var item in codes)
@@ -41,7 +39,7 @@ namespace Kooboo.Sites.HtmlForm
             return setting;
         }
 
-        public bool Submit(RenderContext context, Guid FormId, Dictionary<string, string> settings)
+        public bool Submit(RenderContext context, Guid formId, Dictionary<string, string> settings)
         {
             var sitedb = context.WebSite.SiteDb();
             // right now, only one setting.. the code id.

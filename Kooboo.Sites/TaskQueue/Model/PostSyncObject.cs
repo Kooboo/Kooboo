@@ -1,10 +1,10 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 
 namespace Kooboo.Sites.TaskQueue.Model
 {
-  public  class PostSyncObject
+    public class PostSyncObject
     {
         public string RemoteUrl { get; set; }
         public string UserName { get; set; }

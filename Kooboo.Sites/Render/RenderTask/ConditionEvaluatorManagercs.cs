@@ -1,41 +1,32 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Render
 {
-  public  class ConditionEvaluatorManagercs
+    public class ConditionEvaluatorManagercs
     {
-        private static List<string> _Operators; 
+        private static List<string> _operators;
+
         public static List<string> Operators
         {
             get
             {
-                if (_Operators == null)
+                return _operators ?? (_operators = new List<string>
                 {
-                    _Operators = new List<string>();
-                    _Operators.Add(">");
-                    _Operators.Add(">=");
-                    _Operators.Add("<");
-                    _Operators.Add("<=");
-                    _Operators.Add("=");
-                    _Operators.Add("contains");
-                    _Operators.Add("startwith"); 
-
-                }
-
-                return _Operators; 
-
+                    ">",
+                    ">=",
+                    "<",
+                    "<=",
+                    "=",
+                    "contains",
+                    "startwith"
+                });
             }
-
         }
 
         /// <summary>
-        ///  The formate is always leftExpression  [operator] rightvalue. 
+        ///  The formate is always leftExpression  [operator] rightvalue.
         /// </summary>
         /// <param name="expression"></param>
         /// <returns></returns>
@@ -43,84 +34,79 @@ namespace Kooboo.Sites.Render
         {
             expression = expression.Replace("  ", " ");
 
-            string[] three = expression.Split(' '); 
+            string[] three = expression.Split(' ');
 
-            if (three.Length ==1)
+            if (three.Length == 1)
             {
-                var evalutor = new ConditionEqual();
-                evalutor.LeftExpression = three[0];
-                evalutor.RightValue = "true";
-                return evalutor; 
+                var evalutor = new ConditionEqual {LeftExpression = three[0], RightValue = "true"};
+                return evalutor;
             }
-            else if (three.Length ==3)
+            else if (three.Length == 3)
             {
-                var evalutor = GetNewEvaluator(three[1]); 
+                var evalutor = GetNewEvaluator(three[1]);
                 if (evalutor != null)
                 {
                     evalutor.LeftExpression = three[0];
                     evalutor.RightValue = three[2];
-                    return evalutor; 
+                    return evalutor;
                 }
             }
-            return null; 
+            return null;
         }
 
-        private static IConditionEvaluator GetNewEvaluator(string MatchOperator)
+        private static IConditionEvaluator GetNewEvaluator(string matchOperator)
         {
-            if (string.IsNullOrEmpty(MatchOperator))
+            if (string.IsNullOrEmpty(matchOperator))
             {
-                return null; 
+                return null;
             }
 
-            MatchOperator = MatchOperator.ToLower(); 
+            matchOperator = matchOperator.ToLower();
 
-            switch (MatchOperator)
+            switch (matchOperator)
             {
                 case ">":
                     {
-                        return new ConditionGreaterThan(); 
+                        return new ConditionGreaterThan();
                     }
                 case ">=":
                     {
-                        return new ConditionGreaterThanOrEqual(); 
+                        return new ConditionGreaterThanOrEqual();
                     }
                 case "<":
                     {
-                        return new ConditionLessThan(); 
+                        return new ConditionLessThan();
                     }
                 case "<=":
                     {
-                        return new ConditionLessThanOrEqual(); 
+                        return new ConditionLessThanOrEqual();
                     }
                 case "contains":
                     {
-                        return new ConditionContains(); 
+                        return new ConditionContains();
                     }
                 case "startwith":
                     {
-                        return new ConditionStartWith(); 
+                        return new ConditionStartWith();
                     }
                 case "=":
                     {
                         return new ConditionEqual();
-
                     }
                 case "==":
                     {
-                        return new ConditionEqual(); 
+                        return new ConditionEqual();
                     }
                 case "!=":
                     {
-                        return new ConditionNotEqual(); 
+                        return new ConditionNotEqual();
                     }
 
                 default:
                     break;
             }
 
-            return null; 
-            
+            return null;
         }
-         
     }
 }

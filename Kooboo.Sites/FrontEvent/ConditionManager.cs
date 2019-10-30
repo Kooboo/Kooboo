@@ -7,9 +7,9 @@ namespace Kooboo.Sites.FrontEvent
 {
     public static class ConditionManager
     {
-        public static bool Evaluate(IFrontEvent TheEvent, Condition condition)
+        public static bool Evaluate(IFrontEvent theEvent, Condition condition)
         {
-            var value = Lib.Reflection.Dynamic.GetObjectMember(TheEvent, condition.Left);
+            var value = Lib.Reflection.Dynamic.GetObjectMember(theEvent, condition.Left);
             if (value == null)
             {
                 return false;
@@ -147,34 +147,34 @@ namespace Kooboo.Sites.FrontEvent
 
         public static List<string> GetOperators(Type datatype)
         {
-            List<string> Operators = new List<string>();
+            List<string> operators = new List<string>();
 
             if (datatype == typeof(Int32) || datatype == typeof(Int16) || datatype == typeof(Int64) || datatype == typeof(Decimal) || datatype == typeof(float) || datatype == typeof(DateTime) || datatype == typeof(byte) || datatype == typeof(double))
             {
-                Operators.Add(">");
-                Operators.Add(">=");
-                Operators.Add("<=");
-                Operators.Add("<");
-                Operators.Add("=");
-                Operators.Add("!=");
+                operators.Add(">");
+                operators.Add(">=");
+                operators.Add("<=");
+                operators.Add("<");
+                operators.Add("=");
+                operators.Add("!=");
             }
             else if (datatype == typeof(Guid) || datatype == typeof(bool))
             {
-                Operators.Add("=");
-                Operators.Add("!=");
+                operators.Add("=");
+                operators.Add("!=");
             }
             else if (datatype == typeof(string))
 
             {
-                Operators.Add("=");
-                Operators.Add("!=");
-                Operators.Add("Contains");
-                Operators.Add("NotContains");
-                Operators.Add("Startwith");
-                Operators.Add("NotStartwith");
+                operators.Add("=");
+                operators.Add("!=");
+                operators.Add("Contains");
+                operators.Add("NotContains");
+                operators.Add("Startwith");
+                operators.Add("NotStartwith");
             }
 
-            return Operators;
+            return operators;
         }
     }
 }

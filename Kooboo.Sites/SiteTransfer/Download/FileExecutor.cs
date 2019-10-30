@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Models;
@@ -16,10 +16,10 @@ namespace Kooboo.Sites.SiteTransfer.Download
 
         public async Task Execute()
         {
-            byte[] FileBytes = await DownloadHelper.DownloadFileAsync(this.DownloadTask.AbsoluteUrl, Manager.CookieContainer);
-            if (FileBytes != null && FileBytes.Length > 0)
+            byte[] fileBytes = await DownloadHelper.DownloadFileAsync(this.DownloadTask.AbsoluteUrl, Manager.CookieContainer);
+            if (fileBytes != null && fileBytes.Length > 0)
             {
-                this.AddDownload(FileBytes);
+                this.AddDownload(fileBytes);
             }
             else
             {
@@ -27,15 +27,14 @@ namespace Kooboo.Sites.SiteTransfer.Download
             }
 
             //this.Manager.SiteDb.Routes.EnsureExists(this.DownloadTask.RelativeUrl, ConstObjectType.File);
-
         }
 
-        public void AddDownload(byte[] Bytes)
+        public void AddDownload(byte[] bytes)
         {
             CmsFile kooboofile = new CmsFile();
             kooboofile.Extension = UrlHelper.FileExtension(kooboofile.Name);
             kooboofile.Name = UrlHelper.FileName(this.DownloadTask.RelativeUrl);
-            kooboofile.ContentBytes = Bytes;
+            kooboofile.ContentBytes = bytes;
             this.Manager.SiteDb.Routes.AddOrUpdate(this.DownloadTask.RelativeUrl, kooboofile, Manager.UserId);
             this.Manager.SiteDb.Files.AddOrUpdate(kooboofile, this.Manager.UserId);
         }

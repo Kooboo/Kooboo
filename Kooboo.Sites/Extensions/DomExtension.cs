@@ -97,7 +97,7 @@ namespace Kooboo.Sites.Extensions
                 return true;
             }
 
-            /// check the next sibling.
+            // check the next sibling.
             nextnode = this.currentnode.nextSibling();
 
             if (nextnode != null)
@@ -108,7 +108,7 @@ namespace Kooboo.Sites.Extensions
 
             //go to parent next sibling, until reach the lastnode.
 
-            nextnode = getParentNextSibling(this.currentnode);
+            nextnode = GetParentNextSibling(this.currentnode);
 
             if (nextnode != null)
             {
@@ -119,7 +119,7 @@ namespace Kooboo.Sites.Extensions
             return false;
         }
 
-        private Node getParentNextSibling(Node checknode)
+        private Node GetParentNextSibling(Node checknode)
         {
             if (checknode.isEqualNode(this.lastnode))
             {
@@ -141,7 +141,7 @@ namespace Kooboo.Sites.Extensions
             }
             else
             {
-                return getParentNextSibling(parent);
+                return GetParentNextSibling(parent);
             }
         }
 
@@ -217,7 +217,7 @@ namespace Kooboo.Sites.Extensions
             {
                 skipsub = false;
             }
-            /// check the next sibling.
+            // check the next sibling.
             nextnode = this.currentnode.nextSibling();
 
             if (nextnode != null)
@@ -228,7 +228,7 @@ namespace Kooboo.Sites.Extensions
 
             //go to parent next sibling, until reach the lastnode.
 
-            nextnode = getParentNextSibling(this.currentnode);
+            nextnode = GetParentNextSibling(this.currentnode);
 
             if (nextnode != null)
             {
@@ -246,7 +246,7 @@ namespace Kooboo.Sites.Extensions
             this.nextnode = null;
         }
 
-        private Node getParentNextSibling(Node checknode)
+        private Node GetParentNextSibling(Node checknode)
         {
             if (checknode.isEqualNode(this.lastnode))
             {
@@ -268,7 +268,7 @@ namespace Kooboo.Sites.Extensions
             }
             else
             {
-                return getParentNextSibling(parent);
+                return GetParentNextSibling(parent);
             }
         }
 

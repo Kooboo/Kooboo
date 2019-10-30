@@ -1,32 +1,28 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Extensions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Sync.Cluster
 {
-  public  class NodeUpdate
+    public class NodeUpdate
     {
-        private Guid _id; 
-       
+        private Guid _id;
+
         public Guid Id
         {
-            get {
-
+            get
+            {
                 if (_id == default(Guid))
                 {
                     string unique = this.ObjectId.ToString() + this.Sender.ToString() + this.SenderTick.ToString() + this.IsDelete.ToString() + this.Language;
-                    _id=  unique.ToHashGuid();  
+                    _id = unique.ToHashGuid();
                 }
-                return _id; 
+                return _id;
             }
             set
             {
-                _id = value; 
+                _id = value;
             }
         }
 
@@ -38,26 +34,26 @@ namespace Kooboo.Sites.Sync.Cluster
         public bool IsDelete { get; set; }
 
         /// <summary>
-        /// The log version number on local database of this object. 
-        /// After an object is saved, it will get a version number. 
+        /// The log version number on local database of this object.
+        /// After an object is saved, it will get a version number.
         /// </summary>
         public long LocalVersion { get; set; }
-          
+
         public byte ObjectConstType { get; set; }
- 
+
         /// <summary>
         /// The culture of text content....
         /// </summary>
         public string Language { get; set; }
-         
+
         /// <summary>
-        /// Used for multi master synchronization. 
+        /// Used for multi master synchronization.
         /// </summary>
         public int Sender { get; set; }
+
         /// <summary>
         /// Used for multi master synchronization
         /// </summary>
-        public long SenderTick { get; set; } 
-   
+        public long SenderTick { get; set; }
     }
 }

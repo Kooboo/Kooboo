@@ -1,22 +1,20 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Extensions;
 
 namespace Kooboo.Sites.Models
 {
     public class DomElement : Kooboo.Data.Interface.ISiteObject
-    { 
+    {
         public DomElement()
         {
-            this.ConstType = ConstObjectType.DomElement; 
+            this.ConstType = ConstObjectType.DomElement;
         }
 
         private Guid _id;
+
         public Guid Id
         {
             set { _id = value; }
@@ -37,7 +35,7 @@ namespace Kooboo.Sites.Models
         }
 
         /// <summary>
-        /// TagName or Node Name. 
+        /// TagName or Node Name.
         /// </summary>
         public string Name { get; set; }
 
@@ -50,7 +48,7 @@ namespace Kooboo.Sites.Models
         private Dictionary<string, string> _nodeattributes;
 
         /// <summary>
-        /// used for display. 
+        /// used for display.
         /// </summary>
         public Dictionary<string, string> NodeAttributes
         {
@@ -69,6 +67,7 @@ namespace Kooboo.Sites.Models
         }
 
         private Guid _nodeattributehash;
+
         public Guid NodeAttributeHash
         {
             get
@@ -82,6 +81,7 @@ namespace Kooboo.Sites.Models
         }
 
         private string _NodeAttributeString;
+
         public string NodeAttributeString
         {
             get
@@ -99,6 +99,7 @@ namespace Kooboo.Sites.Models
         }
 
         private Guid _parentPathHash;
+
         public Guid ParentPathHash
         {
             get
@@ -116,9 +117,10 @@ namespace Kooboo.Sites.Models
         }
 
         private string _ParentPath;
-         /// <summary>
+
+        /// <summary>
         /// example: body/div/p/span
-        /// The path from body to this element. 
+        /// The path from body to this element.
         /// </summary>
         public string ParentPath
         {
@@ -132,7 +134,7 @@ namespace Kooboo.Sites.Models
                 this.ParentPathHash = _ParentPath.ToHashGuid();
             }
         }
-          
+
         private string _subElementString;
 
         public string SubElementString
@@ -147,34 +149,35 @@ namespace Kooboo.Sites.Models
                 //        _subElementString += item.Key + item.Value;
                 //    }
                 //    _subElementString = _subElementString.Replace(" ", "");
-                //    _subElementString = _subElementString.Replace(Environment.NewLine, ""); 
+                //    _subElementString = _subElementString.Replace(Environment.NewLine, "");
                 //}
-                        
-                return _subElementString; 
+
+                return _subElementString;
             }
             set
             {
-                _subElementString = value; 
+                _subElementString = value;
             }
         }
 
-        private Guid _SubElementHash;
+        private Guid _subElementHash;
+
         public Guid SubElementHash
         {
             get
             {
-                if (_SubElementHash == default(Guid) && !string.IsNullOrEmpty(_subElementString))
-                { 
-                    _SubElementHash = this._subElementString.ToHashGuid(); 
+                if (_subElementHash == default(Guid) && !string.IsNullOrEmpty(_subElementString))
+                {
+                    _subElementHash = this._subElementString.ToHashGuid();
                 }
-                return _SubElementHash;
-            } 
+                return _subElementHash;
+            }
         }
 
         private string _koobooid;
 
         /// <summary>
-        /// The Kooboo id of this elements, can be used to retrieve this element back. 
+        /// The Kooboo id of this elements, can be used to retrieve this element back.
         /// </summary>
         public string KoobooId
         {
@@ -203,10 +206,8 @@ namespace Kooboo.Sites.Models
             {
                 _koobooIdHash = value;
             }
-
         }
 
-     
         public Guid InnerHtmlHash
         {
             get;
@@ -216,20 +217,19 @@ namespace Kooboo.Sites.Models
         public Guid OwnerObjectId { get; set; }
 
         public byte OwnerObjectType { get; set; }
-          
+
         public byte ConstType { get; set; } = ConstObjectType.DomElement;
 
         [Kooboo.IndexedDB.CustomAttributes.KoobooIgnore]
         public DateTime CreationDate
         {
-            get;set;
+            get; set;
         }
 
         [Kooboo.IndexedDB.CustomAttributes.KoobooIgnore]
         public DateTime LastModified
         {
-            get;set;
+            get; set;
         }
     }
-     
 }

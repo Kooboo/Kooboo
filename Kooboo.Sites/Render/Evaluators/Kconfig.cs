@@ -1,16 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Dom;
 using Kooboo.Sites.Render.RenderTask;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render.Evaluators
 {
-                                           
     public class KConfigContentEvaluator : IEvaluator
     {
         public EvaluatorResponse Evaluate(Node node, EvaluatorOption options)
@@ -27,30 +22,27 @@ namespace Kooboo.Sites.Render.Evaluators
             var element = node as Element;
 
             string attName = null;
-            string attValue = null; 
+            string attValue = null;
             foreach (var item in element.attributes)
             {
                 if (item.name == "k-config")
                 {
                     attName = item.name;
-                    attValue = item.value; 
+                    attValue = item.value;
                     break;
                 }
             }
             if (!string.IsNullOrEmpty(attName))
             {
                 var response = new EvaluatorResponse();
-                List<IRenderTask> result = new List<IRenderTask>();
+                List<IRenderTask> result = new List<IRenderTask> {new KConfigRenderTask(element, attValue)};
 
-                result.Add(new KConfigRenderTask(element, attValue));  
                 response.ContentTask = result;
-                response.OmitTag = true; 
-                      
+                response.OmitTag = true;
+
                 return response;
             }
             return null;
         }
-                  
     }
-
 }

@@ -38,10 +38,10 @@ namespace Kooboo.Sites.InlineEditor.Executor
                 }
             }
             ConvertManager.ConvertComponent(context, result);
-            /// if it has both category and contentlist... needs to link the content list with category....
+            // if it has both category and contentlist... needs to link the content list with category....
         }
 
-        public void ExecuteObject(RenderContext context, IRepository repo, string NameOrId, List<IInlineModel> updates)
+        public void ExecuteObject(RenderContext context, IRepository repo, string nameOrId, List<IInlineModel> updates)
         {
             throw new NotImplementedException();
         }

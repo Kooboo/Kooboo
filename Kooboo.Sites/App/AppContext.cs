@@ -7,7 +7,7 @@ namespace Kooboo.Sites.App
 {
     public static class AppContext
     {
-        public static RenderContext GetAppContext(FrontContext context, string AppId)
+        public static RenderContext GetAppContext(FrontContext context, string appId)
         {
             //clone and build a context for APP.
             string url = context.RenderContext.Request.RelativeUrl;

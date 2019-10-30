@@ -20,12 +20,12 @@ namespace Kooboo.Sites.FrontEvent
         public ViewFinding(RenderContext context, ComponentSetting comsetting)
         {
             this.Context = context;
-            this.componentSetting = comsetting;
+            this.ComponentSetting = comsetting;
         }
 
         public string Name
         {
-            get { return this.componentSetting.NameOrId; }
+            get { return this.ComponentSetting.NameOrId; }
         }
 
         public Dictionary<string, string> setting
@@ -33,9 +33,9 @@ namespace Kooboo.Sites.FrontEvent
             get
             {
                 Dictionary<string, string> result = new Dictionary<string, string>();
-                if (this.componentSetting.Settings != null)
+                if (this.ComponentSetting.Settings != null)
                 {
-                    foreach (var item in this.componentSetting.Settings)
+                    foreach (var item in this.ComponentSetting.Settings)
                     {
                         result.Add(item.Key, item.Value);
                     }
@@ -44,7 +44,7 @@ namespace Kooboo.Sites.FrontEvent
             }
         }
 
-        private ComponentSetting componentSetting { get; set; }
+        private ComponentSetting ComponentSetting { get; set; }
 
         public RenderContext Context { get; set; }
 
@@ -59,8 +59,10 @@ namespace Kooboo.Sites.FrontEvent
 
         public List<EventConditionSetting> GetConditionSetting(RenderContext context)
         {
-            List<EventConditionSetting> result = new List<EventConditionSetting>();
-            result.Add(new EventConditionSetting() { Name = "NameOrId" });
+            List<EventConditionSetting> result = new List<EventConditionSetting>
+            {
+                new EventConditionSetting() {Name = "NameOrId"}
+            };
             return result;
         }
     }
@@ -71,16 +73,16 @@ namespace Kooboo.Sites.FrontEvent
         {
         }
 
-        public ViewFound(RenderContext context, ComponentSetting comsetting, View View)
+        public ViewFound(RenderContext context, ComponentSetting comsetting, View view)
         {
             this.Context = context;
-            this._view = View;
-            this.componentSetting = comsetting;
+            this._view = view;
+            this.ComponentSetting = comsetting;
         }
 
         public string Name
         {
-            get { return this.componentSetting.NameOrId; }
+            get { return this.ComponentSetting.NameOrId; }
         }
 
         public Dictionary<string, string> setting
@@ -88,9 +90,9 @@ namespace Kooboo.Sites.FrontEvent
             get
             {
                 Dictionary<string, string> result = new Dictionary<string, string>();
-                if (this.componentSetting.Settings != null)
+                if (this.ComponentSetting.Settings != null)
                 {
-                    foreach (var item in this.componentSetting.Settings)
+                    foreach (var item in this.ComponentSetting.Settings)
                     {
                         result.Add(item.Key, item.Value);
                     }
@@ -99,7 +101,7 @@ namespace Kooboo.Sites.FrontEvent
             }
         }
 
-        private ComponentSetting componentSetting { get; set; }
+        private ComponentSetting ComponentSetting { get; set; }
 
         public RenderContext Context { get; set; }
 
@@ -138,18 +140,18 @@ namespace Kooboo.Sites.FrontEvent
         {
         }
 
-        public ViewNotFound(RenderContext context, ComponentSetting ComSettings)
+        public ViewNotFound(RenderContext context, ComponentSetting comSettings)
         {
             this.Context = context;
-            this.componentSetting = ComSettings;
+            this.ComponentSetting = comSettings;
         }
 
         public string Name
         {
-            get { return this.componentSetting.NameOrId; }
+            get { return this.ComponentSetting.NameOrId; }
         }
 
-        private ComponentSetting componentSetting { get; set; }
+        private ComponentSetting ComponentSetting { get; set; }
 
         public RenderContext Context { get; set; }
 
@@ -167,8 +169,10 @@ namespace Kooboo.Sites.FrontEvent
 
         public List<EventConditionSetting> GetConditionSetting(RenderContext context)
         {
-            List<EventConditionSetting> result = new List<EventConditionSetting>();
-            result.Add(new EventConditionSetting() { Name = "NameOrId" });
+            List<EventConditionSetting> result = new List<EventConditionSetting>
+            {
+                new EventConditionSetting() {Name = "NameOrId"}
+            };
             return result;
         }
     }

@@ -13,38 +13,41 @@ namespace Kooboo.Sites.Helper
 {
     public static class ContentHelper
     {
-        public static TextContentViewModel ToView(TextContent Content, string lang, List<ContentProperty> Properties)
+        public static TextContentViewModel ToView(TextContent content, string lang, List<ContentProperty> properties)
         {
-            if (Content == null)
+            if (content == null)
             {
                 return null;
             }
-            TextContentViewModel model = new TextContentViewModel();
-            model.Id = Content.Id;
-            model.ParentId = Content.ParentId;
-            model.FolderId = Content.FolderId;
-            model.ContentTypeId = Content.ContentTypeId;
-            model.UserKey = Content.UserKey;
-            model.LastModified = Content.LastModified;
-            model.Order = Content.Order;
-            model.Online = Content.Online;
-            model.Embedded = Content.Embedded;
-            model.CreationDate = Content.CreationDate;
 
-            var langcontent = Content.GetContentStore(lang);
+            TextContentViewModel model = new TextContentViewModel
+            {
+                Id = content.Id,
+                ParentId = content.ParentId,
+                FolderId = content.FolderId,
+                ContentTypeId = content.ContentTypeId,
+                UserKey = content.UserKey,
+                LastModified = content.LastModified,
+                Order = content.Order,
+                Online = content.Online,
+                Embedded = content.Embedded,
+                CreationDate = content.CreationDate
+            };
+
+            var langcontent = content.GetContentStore(lang);
             if (langcontent != null)
             {
                 model.TextValues = langcontent.FieldValues;
             }
 
-            if (Properties != null)
+            if (properties != null)
             {
-                foreach (var item in Properties.Where(o => !o.IsSystemField && !o.MultipleLanguage))
+                foreach (var item in properties.Where(o => !o.IsSystemField && !o.MultipleLanguage))
                 {
                     if (!model.TextValues.ContainsKey(item.Name) || string.IsNullOrEmpty(model.TextValues[item.Name]))
                     {
                         bool found = false;
-                        foreach (var citem in Content.Contents)
+                        foreach (var citem in content.Contents)
                         {
                             foreach (var fielditem in citem.FieldValues)
                             {
@@ -65,19 +68,19 @@ namespace Kooboo.Sites.Helper
             return model;
         }
 
-        public static TextContentViewModel ToListDisplayView(TextContent Content, ContentType ContentType, string lang = null)
+        public static TextContentViewModel ToListDisplayView(TextContent Content, ContentType contentType, string lang = null)
         {
             Dictionary<string, string> displayFields = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            var fields = ContentType.Properties.FindAll(o => o.IsSummaryField && !o.IsSystemField);
-            if (fields == null || fields.Count() == 0)
+            var fields = contentType.Properties.FindAll(o => o.IsSummaryField && !o.IsSystemField);
+            if (fields == null || fields.Count == 0)
             {
-                fields = ContentType.Properties.FindAll(o => !o.IsSystemField && o.DataType == Data.Definition.DataTypes.String);
+                fields = contentType.Properties.FindAll(o => !o.IsSystemField && o.DataType == Data.Definition.DataTypes.String);
             }
 
-            if (fields == null || fields.Count() == 0)
+            if (fields == null || fields.Count == 0)
             {
-                fields = ContentType.Properties.FindAll(o => !o.IsSystemField);
+                fields = contentType.Properties.FindAll(o => !o.IsSystemField);
             }
 
             foreach (var item in fields)
@@ -92,17 +95,20 @@ namespace Kooboo.Sites.Helper
             {
                 return null;
             }
-            TextContentViewModel model = new TextContentViewModel();
-            model.Id = Content.Id;
-            model.ParentId = Content.ParentId;
-            model.FolderId = Content.FolderId;
-            model.ContentTypeId = Content.ContentTypeId;
-            model.UserKey = Content.UserKey;
-            model.LastModified = Content.LastModified;
-            model.Order = Content.Order;
-            model.Online = Content.Online;
-            model.Embedded = Content.Embedded;
-            model.CreationDate = Content.CreationDate;
+
+            TextContentViewModel model = new TextContentViewModel
+            {
+                Id = Content.Id,
+                ParentId = Content.ParentId,
+                FolderId = Content.FolderId,
+                ContentTypeId = Content.ContentTypeId,
+                UserKey = Content.UserKey,
+                LastModified = Content.LastModified,
+                Order = Content.Order,
+                Online = Content.Online,
+                Embedded = Content.Embedded,
+                CreationDate = Content.CreationDate
+            };
 
             var content = Content.GetContentStore(lang);
             if (content != null)
@@ -121,25 +127,25 @@ namespace Kooboo.Sites.Helper
             {
                 if (!string.IsNullOrEmpty(Content.UserKey))
                 {
-                    var userKeyField = ContentType.Properties.Find(o => o.Name == "UserKey");
+                    var userKeyField = contentType.Properties.Find(o => o.Name == "UserKey");
                     model.TextValues[userKeyField.DisplayName] = Content.UserKey;
                 }
             }
             return model;
         }
 
-        public static List<TextContentViewModel> ToViews(List<TextContent> Contents, string lang, List<ContentProperty> Properties)
+        public static List<TextContentViewModel> ToViews(List<TextContent> contents, string lang, List<ContentProperty> properties)
         {
-            if (Contents == null || Contents.Count() == 0)
+            if (contents == null || contents.Count == 0)
             {
                 return new List<TextContentViewModel>();
             }
 
             List<TextContentViewModel> result = new List<TextContentViewModel>();
 
-            foreach (var item in Contents)
+            foreach (var item in contents)
             {
-                result.Add(ToView(item, lang, Properties));
+                result.Add(ToView(item, lang, properties));
             }
             return result;
         }
@@ -165,15 +171,11 @@ namespace Kooboo.Sites.Helper
         {
             List<EmbeddedContentViewModel> embedded = new List<EmbeddedContentViewModel>();
             var folder = sitedb.ContentFolders.Get(folderId);
-            if (folder == null || (folder.Embedded == null || folder.Embedded.Count() == 0))
+            if (folder?.Embedded == null || folder.Embedded.Count == 0)
             {
                 return embedded;
             }
-            TextContent content = sitedb.TextContent.Get(textContentId);
-            if (content == null)
-            {
-                content = new TextContent();
-            }
+            TextContent content = sitedb.TextContent.Get(textContentId) ?? new TextContent();
 
             foreach (var item in folder.Embedded)
             {
@@ -189,8 +191,7 @@ namespace Kooboo.Sites.Helper
                     }
                 }
 
-                EmbeddedContentViewModel model = new EmbeddedContentViewModel();
-                model.EmbeddedFolder = embeddedFolder;
+                EmbeddedContentViewModel model = new EmbeddedContentViewModel {EmbeddedFolder = embeddedFolder};
 
                 var contents = sitedb.TextContent.Query.
                             Where(it => it.FolderId == item.FolderId)
@@ -264,7 +265,7 @@ namespace Kooboo.Sites.Helper
             return result;
         }
 
-        private static void _GetByTextContentMedia(Element el, string Url, ref List<Element> result)
+        private static void _GetByTextContentMedia(Element el, string url, ref List<Element> result)
         {
             if (OnlyTextSubNode(el))
             {
@@ -273,7 +274,7 @@ namespace Kooboo.Sites.Helper
                 {
                     link = link.ToLower().Trim();
 
-                    if (link == Url)
+                    if (link == url)
                     {
                         result.Add(el);
                     }
@@ -286,11 +287,11 @@ namespace Kooboo.Sites.Helper
                             {
                                 List<string> files = Lib.Helper.JsonHelper.Deserialize<List<string>>(link);
 
-                                if (files != null && files.Count() > 0)
+                                if (files != null && files.Any())
                                 {
                                     foreach (var item in files)
                                     {
-                                        if (!string.IsNullOrWhiteSpace(item) && item.ToLower().Trim() == Url)
+                                        if (!string.IsNullOrWhiteSpace(item) && item.ToLower().Trim() == url)
                                         {
                                             result.Add(el);
                                         }
@@ -299,6 +300,7 @@ namespace Kooboo.Sites.Helper
                             }
                             catch (Exception)
                             {
+                                // ignored
                             }
                         }
                     }
@@ -311,7 +313,7 @@ namespace Kooboo.Sites.Helper
                     if (item.nodeType == enumNodeType.ELEMENT)
                     {
                         var subel = item as Element;
-                        _GetByTextContentMedia(subel, Url, ref result);
+                        _GetByTextContentMedia(subel, url, ref result);
                     }
                 }
             }

@@ -1,11 +1,7 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Kooboo.Dom;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render
 {
@@ -26,7 +22,7 @@ namespace Kooboo.Sites.Render
 
             string attName = null;
             foreach (var item in element.attributes)
-            { 
+            {
                 if (item.name == "tal-content" || item.name == "k-content" || item.name == "tal-replace" || item.name == "k-replace")
                 {
                     attName = item.name;
@@ -43,34 +39,29 @@ namespace Kooboo.Sites.Render
                 response.ContentTask = result;
                 if (attName == "tal-replace" || attName == "k-replace")
                 {
-                    response.OmitTag = true; 
+                    response.OmitTag = true;
                 }
-                
+
                 if (options.RequireBindingInfo)
                 {
-                    string koobooid = element.getAttribute(SiteConstants.KoobooIdAttributeName); 
+                    string koobooid = element.getAttribute(SiteConstants.KoobooIdAttributeName);
                     if (!string.IsNullOrEmpty(koobooid))
-                    {  
+                    {
                         BindingContentRenderTask binding = new BindingContentRenderTask() { ObjectType = "content", BindingValue = value, KoobooId = koobooid };
-                        List<IRenderTask> bindings = new List<IRenderTask>();
-                        bindings.Add(binding);
-                        response.BindingTask = bindings;  
+                        List<IRenderTask> bindings = new List<IRenderTask> {binding};
+                        response.BindingTask = bindings;
                     }
-                    else 
+                    else
                     {
                         string boundary = Kooboo.Lib.Helper.StringHelper.GetUniqueBoundary();
                         BindingContentRenderTask binding = new BindingContentRenderTask() { ObjectType = "content", BindingValue = value, Boundary = boundary, KoobooId = koobooid };
-                        List<IRenderTask> bindings = new List<IRenderTask>();
-                        bindings.Add(binding);
+                        List<IRenderTask> bindings = new List<IRenderTask> {binding};
                         response.BindingTask = bindings;
-                        
+
                         BindingContentRenderTask bindingend = new BindingContentRenderTask() { ObjectType = "content", BindingValue = value, Boundary = boundary, KoobooId = koobooid, IsEndBinding = true };
-                        List<IRenderTask> bindingsend = new List<IRenderTask>();
-                        bindingsend.Add(bindingend);
-                        response.EndBindingTask = bindingsend; 
-
-                    } 
-
+                        List<IRenderTask> bindingsend = new List<IRenderTask> {bindingend};
+                        response.EndBindingTask = bindingsend;
+                    }
                 }
 
                 return response;

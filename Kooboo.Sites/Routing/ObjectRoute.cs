@@ -1,4 +1,4 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Lib.Helper;
 using Kooboo.Sites.Extensions;
@@ -27,30 +27,27 @@ namespace Kooboo.Sites.Routing
                     {
                         var relativeUrl = context.RenderContext.Request.RelativeUrl;
                         int questionMarkIndex = relativeUrl.IndexOf("?");
-                        if (questionMarkIndex>0)
+                        if (questionMarkIndex > 0)
                         {
                             relativeUrl = relativeUrl.Substring(0, questionMarkIndex);
                         }
-                        var lastSlashIndex= relativeUrl.LastIndexOf("/");
+                        var lastSlashIndex = relativeUrl.LastIndexOf("/");
                         if (lastSlashIndex > -1)
                         {
                             var url = relativeUrl.Substring(0, lastSlashIndex);
                             nameOrId = relativeUrl.Substring(lastSlashIndex + 1);
                             foundroute = GetRoute(context, url);
                         }
-                        
                     }
                     if (foundroute != null && foundroute.objectId != default)
                     // if (foundroute != null)
                     {
                         var foundRouteEventResult = FrontEvent.Manager.RaiseRouteEvent(FrontEvent.enumEventType.RouteFound, context.RenderContext, foundroute);
 
-
                         if (foundRouteEventResult != null && foundRouteEventResult.objectId != default)
                         {
                             foundroute = foundRouteEventResult;
                         }
-
                     }
                     else
                     {
@@ -107,7 +104,6 @@ namespace Kooboo.Sites.Routing
                     }
 
                     return dest;
-
                 }
             }
             else
@@ -119,7 +115,6 @@ namespace Kooboo.Sites.Routing
 
         public static Route GetDestinationRoute(SiteDb sitedb, Route originalRoute, ref int counter)
         {
-
             if (originalRoute.Id == originalRoute.objectId)
             {
                 return originalRoute;
@@ -210,12 +205,12 @@ namespace Kooboo.Sites.Routing
                 return sitedb.Routes.Get(routeid);
             }
 
-            // find system route...  
+            // find system route...
             return GetSystemRoute(relativeurl);
             // return null;
         }
 
-        // if other routes does not match... find the system route. 
+        // if other routes does not match... find the system route.
         public static Route GetSystemRoute(List<String> segments, SiteDb sitedb = null)
         {
             // public static string SystemRouteTemplate = "/__kb/{objecttype}/{nameorid}"; /{objecttype}/{nameorid}
@@ -225,7 +220,7 @@ namespace Kooboo.Sites.Routing
             //actionsystemroute.Name = SystemRouteTemplateWithAction;
             //actionsystemroute.objectId = "tempid".ToHashGuid();
             //actionsystemroute.DestinationConstType = ConstObjectType.KoobooSystem;
-            //routes.Add(actionsystemroute); 
+            //routes.Add(actionsystemroute);
 
             if (segments == null || segments.Count < 2)
             {
@@ -305,7 +300,7 @@ namespace Kooboo.Sites.Routing
                     }
                 }
 
-                // this kind of route require one more check. 
+                // this kind of route require one more check.
                 if (sitedb != null && repo != null && nameorid != null)
                 {
                     var siteobj = repo.GetByNameOrId(nameorid);
@@ -318,9 +313,7 @@ namespace Kooboo.Sites.Routing
                 {
                     return null;
                 }
-
             }
-
 
             return sysRoute.Name != null ? sysRoute : null;
         }
@@ -330,7 +323,6 @@ namespace Kooboo.Sites.Routing
             var segs = GetSegments(relativeUrl);
             return GetSystemRoute(segs.ToList(), sitedb);
         }
-
 
         public static string[] GetSegments(string relativeurl)
         {
@@ -346,7 +338,6 @@ namespace Kooboo.Sites.Routing
 
             return relativeurl.Split(sep, StringSplitOptions.RemoveEmptyEntries);
         }
-
 
         public static Dictionary<string, string> ParseParameters(Route route, string relativeUrl)
         {
@@ -398,30 +389,29 @@ namespace Kooboo.Sites.Routing
             return parameters;
         }
 
-        public static Dictionary<string, string> GetParameterValues(string ParaPattern, string RealUrl)
+        public static Dictionary<string, string> GetParameterValues(string paraPattern, string realUrl)
         {
-            if (string.IsNullOrEmpty(ParaPattern) || string.IsNullOrEmpty(RealUrl))
+            if (string.IsNullOrEmpty(paraPattern) || string.IsNullOrEmpty(realUrl))
             {
                 return null;
             }
             List<string> sourceKeys = new List<string>();
-            List<string> RealKeys = new List<string>();
+            List<string> realKeys = new List<string>();
 
             int sourceposition = 0;
-            int SourceindexStart = ParaPattern.IndexOf("{");
-            int SourceindexEnd = ParaPattern.IndexOf("}");
+            int sourceindexStart = paraPattern.IndexOf("{");
+            int sourceindexEnd = paraPattern.IndexOf("}");
 
-            if (SourceindexStart == 1)
+            if (sourceindexStart == 1)
             {
                 return null;
             }
 
             Dictionary<string, string> result = new Dictionary<string, string>();
 
-            while (SourceindexStart >= 0 && SourceindexEnd >= 0)
+            while (sourceindexStart >= 0 && sourceindexEnd >= 0)
             {
-                string startwith = null;
-                int len = SourceindexStart - sourceposition;
+                int len = sourceindexStart - sourceposition;
                 if (len < 0)
                 {
                     break;
@@ -429,12 +419,12 @@ namespace Kooboo.Sites.Routing
 
                 if (len > 0)
                 {
-                    startwith = ParaPattern.Substring(sourceposition, len);
+                    var startwith = paraPattern.Substring(sourceposition, len);
 
-                    string sourcekey = ParaPattern.Substring(SourceindexStart + 1, SourceindexEnd - SourceindexStart - 1);
+                    string sourcekey = paraPattern.Substring(sourceindexStart + 1, sourceindexEnd - sourceindexStart - 1);
                     sourceKeys.Add(sourcekey);
 
-                    var realIndexStart = RealUrl.IndexOf(startwith, StringComparison.OrdinalIgnoreCase);
+                    var realIndexStart = realUrl.IndexOf(startwith, StringComparison.OrdinalIgnoreCase);
 
                     if (realIndexStart == -1)
                     {
@@ -442,46 +432,39 @@ namespace Kooboo.Sites.Routing
                     }
                     if (realIndexStart > 0)
                     {
-                        string part = RealUrl.Substring(0, realIndexStart);
-                        RealKeys.Add(part);
+                        string part = realUrl.Substring(0, realIndexStart);
+                        realKeys.Add(part);
                     }
-                    if (RealUrl.Length > realIndexStart + startwith.Length)
-                    {
-                        RealUrl = RealUrl.Substring(realIndexStart + startwith.Length);
-                    }
-                    else
-                    { RealUrl = string.Empty; }
+                    realUrl = realUrl.Length > realIndexStart + startwith.Length ? realUrl.Substring(realIndexStart + startwith.Length) : string.Empty;
                 }
                 else
                 {
-                    string sourcekey = ParaPattern.Substring(SourceindexStart + 1, SourceindexEnd - SourceindexStart - 1);
+                    string sourcekey = paraPattern.Substring(sourceindexStart + 1, sourceindexEnd - sourceindexStart - 1);
                     sourceKeys.Add(sourcekey);
                 }
 
-                sourceposition = SourceindexEnd + 1;
-                SourceindexStart = ParaPattern.IndexOf("{", sourceposition);
-                SourceindexEnd = ParaPattern.IndexOf("}", sourceposition);
-
+                sourceposition = sourceindexEnd + 1;
+                sourceindexStart = paraPattern.IndexOf("{", sourceposition);
+                sourceindexEnd = paraPattern.IndexOf("}", sourceposition);
             }
 
-            if (ParaPattern.Length > sourceposition)
+            if (paraPattern.Length > sourceposition)
             {
-                string endstring = ParaPattern.Substring(sourceposition, ParaPattern.Length - sourceposition);
+                string endstring = paraPattern.Substring(sourceposition, paraPattern.Length - sourceposition);
 
-                if (RealUrl.EndsWith(endstring, StringComparison.OrdinalIgnoreCase))
+                if (realUrl.EndsWith(endstring, StringComparison.OrdinalIgnoreCase))
                 {
-                    int leftlen = RealUrl.Length - endstring.Length;
-                    RealUrl = leftlen > 0 ? RealUrl.Substring(0, leftlen) : string.Empty;
+                    int leftlen = realUrl.Length - endstring.Length;
+                    realUrl = leftlen > 0 ? realUrl.Substring(0, leftlen) : string.Empty;
                 }
-
             }
 
-            RealKeys.Add(RealUrl);
+            realKeys.Add(realUrl);
 
             for (int i = 0; i < sourceKeys.Count; i++)
             {
                 var key = sourceKeys[i];
-                var value = RealKeys[i];
+                var value = realKeys[i];
                 result.Add(key, value);
             }
             return result;

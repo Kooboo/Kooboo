@@ -1,60 +1,60 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
 using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render.Commands
 {
-  public  class CommandParser
+    public class CommandParser
     {
-       public  static string GetCommandName(Comment comment)
-        { 
+        public static string GetCommandName(Comment comment)
+        {
             return GetCommandName(comment.data);
         }
 
-        public static string GetCommandName(string CommentLine)
+        public static string GetCommandName(string commentLine)
         {
             int index = 0;
-            return GetName(CommentLine, ref index);
+            return GetName(commentLine, ref index);
         }
 
-       public static Command ParseCommand(Comment comment)
-        { 
+        public static Command ParseCommand(Comment comment)
+        {
             return ParseCommand(comment.data);
         }
 
-       public static Command ParseCommand(string ComentCommandLine)
+        public static Command ParseCommand(string comentCommandLine)
         {
-            Command command = new Command(); 
+            Command command = new Command();
 
             int index = 0;
-            command.Name = GetName(ComentCommandLine, ref index);
+            command.Name = GetName(comentCommandLine, ref index);
 
             if (string.IsNullOrEmpty(command.Name))
             {
-                return null; 
+                return null;
             }
-            int totallen = ComentCommandLine.Length; 
+            int totallen = comentCommandLine.Length;
 
-            var attribute = GetAttribute(ref ComentCommandLine, ref index, totallen); 
+            var attribute = GetAttribute(ref comentCommandLine, ref index, totallen);
             while (!string.IsNullOrEmpty(attribute.Key))
             {
                 command.Attributes.Add(attribute.Key, attribute.Value);
-                attribute = GetAttribute(ref ComentCommandLine, ref index, totallen);
+                attribute = GetAttribute(ref comentCommandLine, ref index, totallen);
             }
 
-            return command;  
+            return command;
         }
 
-       private static string GetName(string input, ref int index)
+        private static string GetName(string input, ref int index)
         {
             int len = input.Length;
-            string name = string.Empty; 
+            string name = string.Empty;
 
-            bool found = false;   
-            while(index < len)
-            { 
-               var current = input[index];
+            bool found = false;
+            while (index < len)
+            {
+                var current = input[index];
 
                 if (found)
                 {
@@ -64,7 +64,7 @@ namespace Kooboo.Sites.Render.Commands
                     }
                     else
                     {
-                        name += current; 
+                        name += current;
                     }
                 }
                 else
@@ -74,34 +74,34 @@ namespace Kooboo.Sites.Render.Commands
                         found = true;
                     }
                 }
-                index += 1; 
+                index += 1;
             }
-           if (found & !string.IsNullOrEmpty(name))
+            if (found & !string.IsNullOrEmpty(name))
             {
-                return name; 
+                return name;
             }
 
-            return null; 
+            return null;
         }
 
-       public static KeyValuePair<string, string> GetAttribute(ref string input, ref int index, int len)
+        public static KeyValuePair<string, string> GetAttribute(ref string input, ref int index, int len)
         {
-            string name=string.Empty;
-            string value = string.Empty; 
+            string name = string.Empty;
+            string value = string.Empty;
             var state = AttributeState.beforeName;
 
             char quote = default(char);
-            bool hasquote = false; 
+            bool hasquote = false;
 
-            while(index <len)
-            { 
-                var current = input[index]; 
+            while (index < len)
+            {
+                var current = input[index];
                 if (state == AttributeState.beforeName)
                 {
-                   if (!NonData(current)) 
+                    if (!NonData(current))
                     {
                         name += current;
-                        state = AttributeState.InName; 
+                        state = AttributeState.InName;
                     }
                 }
                 else if (state == AttributeState.InName)
@@ -109,45 +109,45 @@ namespace Kooboo.Sites.Render.Commands
                     if (NonData(current))
                     {
                         state = AttributeState.AfterName;
-                        index--; 
-                        if(index <0)
+                        index--;
+                        if (index < 0)
                         {
-                            index = 0; 
+                            index = 0;
                         }
                     }
                     else
                     {
-                        name += current; 
+                        name += current;
                     }
                 }
                 else if (state == AttributeState.AfterName)
                 {
                     if (current == '=')
                     {
-                        state = AttributeState.BeforeValue; 
+                        state = AttributeState.BeforeValue;
                     }
                     else
                     {
                         if (!NonData(current))
                         {
-                            break; 
+                            break;
                         }
                     }
                 }
                 else if (state == AttributeState.BeforeValue)
                 {
-                     if (!NonData(current))
+                    if (!NonData(current))
                     {
-                        if (current =='\'' ||current == '\"' )
+                        if (current == '\'' || current == '\"')
                         {
                             hasquote = true;
                             quote = current;
-                            state = AttributeState.InValue; 
+                            state = AttributeState.InValue;
                         }
                         else
                         {
                             value += current;
-                            state = AttributeState.InValue; 
+                            state = AttributeState.InValue;
                         }
                     }
                 }
@@ -157,53 +157,52 @@ namespace Kooboo.Sites.Render.Commands
                     {
                         if (current == quote)
                         {
-                            break; 
+                            break;
                         }
                         else
                         {
-                            value += current; 
+                            value += current;
                         }
                     }
                     else
                     {
                         if (NonData(current))
                         {
-                            break; 
+                            break;
                         }
                         else
                         {
-                            value += current; 
+                            value += current;
                         }
                     }
-
                 }
                 else
                 {
                     break;
                 }
 
-                index += 1; 
+                index += 1;
             }
-            index += 1; 
-           return new KeyValuePair<string, string>(name, value); 
+            index += 1;
+            return new KeyValuePair<string, string>(name, value);
         }
-        
-       private static bool NonData(char current)
+
+        private static bool NonData(char current)
         {
-          if (Kooboo.Lib.Helper.CharHelper.isSpaceCharacters(current) || current == '-'|| current == '=' || current == '>')
+            if (Kooboo.Lib.Helper.CharHelper.isSpaceCharacters(current) || current == '-' || current == '=' || current == '>')
             {
-                return true; 
+                return true;
             }
-            return false; 
+            return false;
         }
     }
 
     public enum AttributeState
-    { 
-        beforeName=0,
+    {
+        beforeName = 0,
         InName = 1,
-        AfterName=2,
+        AfterName = 2,
         BeforeValue = 3,
-        InValue=4
+        InValue = 4
     }
 }

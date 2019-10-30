@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kooboo.Sites.Render.Renderers.ExternalCache
 {
@@ -8,7 +6,6 @@ namespace Kooboo.Sites.Render.Renderers.ExternalCache
     {
         public CacheObject()
         {
-
         }
 
         public CacheObject(string fullurl, string name, string contenttype, int interval)
@@ -20,17 +17,16 @@ namespace Kooboo.Sites.Render.Renderers.ExternalCache
 
             if (this.interval <= 0)
             {
-                this.interval = 60 * 60; // default one hour. 
+                this.interval = 60 * 60; // default one hour.
             }
 
             // this.Expiration = DateTime.Now.AddSeconds(this.interval);
         }
 
-        // seconds. 
+        // seconds.
         public int interval { get; set; }
 
         public DateTime Expiration { get; set; }
-
 
         private string _contenttype;
 
@@ -39,8 +35,8 @@ namespace Kooboo.Sites.Render.Renderers.ExternalCache
             get; set;
         }
 
-
         private Guid _id;
+
         public Guid Id
         {
             get
@@ -59,6 +55,7 @@ namespace Kooboo.Sites.Render.Renderers.ExternalCache
         public string FullFileUrl { get; set; }
 
         private string _name;
+
         public string name
         {
             get
@@ -74,6 +71,5 @@ namespace Kooboo.Sites.Render.Renderers.ExternalCache
                 _name = value;
             }
         }
-
     }
 }

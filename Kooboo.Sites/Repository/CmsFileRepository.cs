@@ -1,13 +1,13 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Sites.Models;
 using Kooboo.Lib.Helper;
+using Kooboo.Sites.Models;
 
 namespace Kooboo.Sites.Repository
 {
     public class CmsFileRepository : SiteRepositoryBase<CmsFile>
-    { 
-        public CmsFile Upload(byte[] contentBytes, string fullName, System.Guid UserId)
+    {
+        public CmsFile Upload(byte[] contentBytes, string fullName, System.Guid userId)
         {
             string relativeUrl = UrlHelper.RelativePath(fullName);
             bool found = true;
@@ -23,16 +23,15 @@ namespace Kooboo.Sites.Repository
             file.Extension = UrlHelper.FileExtension(fullName);
 
             file.ContentBytes = contentBytes;
-             
+
             if (!found)
             {
-                SiteDb.Routes.AddOrUpdate(relativeUrl, ConstObjectType.CmsFile, file.Id, UserId);
+                SiteDb.Routes.AddOrUpdate(relativeUrl, ConstObjectType.CmsFile, file.Id, userId);
             }
 
-            this.AddOrUpdate(file, UserId); 
+            this.AddOrUpdate(file, userId);
 
             return file;
         }
-          
     }
 }

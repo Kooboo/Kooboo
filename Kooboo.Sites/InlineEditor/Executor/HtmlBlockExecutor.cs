@@ -27,34 +27,44 @@ namespace Kooboo.Sites.InlineEditor.Executor
                 {
                     continue;
                 }
-                if (blockupdate.Action == ActionType.Add)
+                switch (blockupdate.Action)
                 {
-                    Kooboo.Sites.Contents.Models.HtmlBlock block = new Contents.Models.HtmlBlock();
-                    block.Name = blockupdate.NameOrId;
-                    block.SetValue(context.Culture, blockupdate.Value);
-                    context.WebSite.SiteDb().HtmlBlocks.AddOrUpdate(block, context.User.Id);
-                }
-                else if (blockupdate.Action == ActionType.Update)
-                {
-                    var block = context.WebSite.SiteDb().HtmlBlocks.GetByNameOrId(blockupdate.NameOrId);
-                    if (block != null)
+                    case ActionType.Add:
                     {
+                        Kooboo.Sites.Contents.Models.HtmlBlock block = new Contents.Models.HtmlBlock
+                        {
+                            Name = blockupdate.NameOrId
+                        };
                         block.SetValue(context.Culture, blockupdate.Value);
                         context.WebSite.SiteDb().HtmlBlocks.AddOrUpdate(block, context.User.Id);
+                        break;
                     }
-                }
-                else if (blockupdate.Action == ActionType.Delete)
-                {
-                    var block = context.WebSite.SiteDb().HtmlBlocks.GetByNameOrId(blockupdate.NameOrId);
-                    if (block != null)
+                    case ActionType.Update:
                     {
-                        context.WebSite.SiteDb().HtmlBlocks.Delete(block.Id, context.User.Id);
+                        var block = context.WebSite.SiteDb().HtmlBlocks.GetByNameOrId(blockupdate.NameOrId);
+                        if (block != null)
+                        {
+                            block.SetValue(context.Culture, blockupdate.Value);
+                            context.WebSite.SiteDb().HtmlBlocks.AddOrUpdate(block, context.User.Id);
+                        }
+
+                        break;
+                    }
+                    case ActionType.Delete:
+                    {
+                        var block = context.WebSite.SiteDb().HtmlBlocks.GetByNameOrId(blockupdate.NameOrId);
+                        if (block != null)
+                        {
+                            context.WebSite.SiteDb().HtmlBlocks.Delete(block.Id, context.User.Id);
+                        }
+
+                        break;
                     }
                 }
             }
         }
 
-        public void ExecuteObject(RenderContext context, IRepository repo, string NameOrId, List<IInlineModel> updates)
+        public void ExecuteObject(RenderContext context, IRepository repo, string nameOrId, List<IInlineModel> updates)
         {
             throw new NotImplementedException();
         }

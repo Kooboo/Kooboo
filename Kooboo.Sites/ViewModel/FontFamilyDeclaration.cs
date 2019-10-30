@@ -1,17 +1,16 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.ViewModel
 {
     public class FontFamilyDeclaration
-    { 
+    {
         public bool IsInline { get; set; }
-        //for inline 
+
+        //for inline
         public string KoobooId { get; set; }
 
         public string Selector { get; set; }
@@ -26,46 +25,44 @@ namespace Kooboo.Sites.ViewModel
 
         public string Value { get; set; }
 
-        private string _fontfamily; 
-        public string FontFamily {
+        private string _fontfamily;
+
+        public string FontFamily
+        {
             get
             {
                 if (string.IsNullOrEmpty(_fontfamily))
                 {
-                    if (_FontFamilyList != null)
+                    if (_fontFamilyList != null)
                     {
-                        return string.Join(",", _FontFamilyList.ToArray()); 
+                        return string.Join(",", _fontFamilyList.ToArray());
                     }
                 }
-                return _fontfamily; 
+                return _fontfamily;
             }
-            set { _fontfamily = value;  }
+            set { _fontfamily = value; }
         }
 
-        private List<string> _FontFamilyList; 
+        private List<string> _fontFamilyList;
 
-        public List<string> FontFamilyList {
+        public List<string> FontFamilyList
+        {
             get
-            { 
-                if (_FontFamilyList == null)
+            {
+                if (_fontFamilyList == null)
                 {
                     if (!string.IsNullOrWhiteSpace(_fontfamily))
                     {
-                        _FontFamilyList = _fontfamily.Split(',').ToList(); 
+                        _fontFamilyList = _fontfamily.Split(',').ToList();
                     }
                 }
-                return _FontFamilyList; 
+                return _fontFamilyList;
             }
-            set { _FontFamilyList = value;  }
+            set { _fontFamilyList = value; }
         }
 
         public Guid OwnerObjectId { get; set; }
 
         public byte OwnerConstType { get; set; }
-
     }
-
-
-   
-
 }

@@ -1,9 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
 using System;
 using System.Collections.Generic;
-using System.Linq; 
-using Kooboo.Data.Context;
+using System.Linq;
 
 namespace Kooboo.Sites.Render.Functions
 {
@@ -13,13 +13,13 @@ namespace Kooboo.Sites.Render.Functions
         {
             get
             {
-                return "Pager"; 
+                return "Pager";
             }
         }
 
         public List<IFunction> Parameters
         {
-            get;set;
+            get; set;
         }
 
         public object Render(RenderContext context)
@@ -41,23 +41,15 @@ namespace Kooboo.Sites.Render.Functions
                     paras.Add(item, value);
                 }
             }
-             
+
             var providedParas = FunctionHelper.RenderParameter(context, this.Parameters);
 
-           if (providedParas !=null && providedParas.Count()>0)
+            if (providedParas != null && providedParas.Any())
             {
                 paras["PageNumber"] = providedParas[0].ToString();
             }
-            
-            if (paras.Count()>0)
-            {
-                return Lib.Helper.UrlHelper.AppendQueryString(relative, paras); 
-            }
-           else
-            {
-                return relative; 
-            }
+
+            return paras.Any() ? Lib.Helper.UrlHelper.AppendQueryString(relative, paras) : relative;
         }
-        
     }
 }

@@ -1,31 +1,31 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Render.Components;
+using Kooboo.Sites.Repository;
+using Kooboo.Sites.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Sites.Models;
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.Service;
-using Kooboo.Sites.Render.Components;
 
 namespace Kooboo.Sites.Relation
 {
     /// <summary>
-    /// compute the relation of items that has dom document. like page, view, layout, text content. 
+    /// compute the relation of items that has dom document. like page, view, layout, text content.
     /// NOTE: condition to use this method is that all links to internal object is start with / and all reference url to external object is start with http or https. This is the case after any website import into kooboo.
     /// </summary>
     public class DomRelation
     {
-        public static void Compute(SiteDb SiteDb, Document dom, Guid OwnerObjectId, byte OwnerConstType, string baseUrl = "", HtmlHeader header = null)
+        public static void Compute(SiteDb siteDb, Document dom, Guid ownerObjectId, byte ownerConstType, string baseUrl = "", HtmlHeader header = null)
         {
-            List<string> ResourceGroupUrl = ComputeReferenceStyle(dom, SiteDb, OwnerObjectId, OwnerConstType, baseUrl, header);
+            List<string> resourceGroupUrl = ComputeReferenceStyle(dom, siteDb, ownerObjectId, ownerConstType, baseUrl, header);
 
-            var scriptgroup = ComputeReferenceScript(dom, SiteDb, OwnerObjectId, OwnerConstType, baseUrl, header);
+            var scriptgroup = ComputeReferenceScript(dom, siteDb, ownerObjectId, ownerConstType, baseUrl, header);
 
-            ResourceGroupUrl.AddRange(scriptgroup);
+            resourceGroupUrl.AddRange(scriptgroup);
 
-            ComputeUrlRelation(SiteDb, OwnerObjectId, OwnerConstType, ResourceGroupUrl, ConstObjectType.ResourceGroup);
+            ComputeUrlRelation(siteDb, ownerObjectId, ownerConstType, resourceGroupUrl, ConstObjectType.ResourceGroup);
 
             if (dom != null)
             {
@@ -33,29 +33,29 @@ namespace Kooboo.Sites.Relation
                 {
                     dom.URL = baseUrl;
                 }
-                ComputeImage(dom, SiteDb, OwnerObjectId, OwnerConstType, baseUrl);
+                ComputeImage(dom, siteDb, ownerObjectId, ownerConstType, baseUrl);
 
-                ComputeEmbeddedStyle(dom, SiteDb, OwnerObjectId, OwnerConstType);
+                ComputeEmbeddedStyle(dom, siteDb, ownerObjectId, ownerConstType);
 
-                ComputeEmbeddedForms(dom, SiteDb, OwnerObjectId, OwnerConstType);
+                ComputeEmbeddedForms(dom, siteDb, ownerObjectId, ownerConstType);
 
-                ComputeEmbeddedScript(dom, SiteDb, OwnerObjectId, OwnerConstType);
+                ComputeEmbeddedScript(dom, siteDb, ownerObjectId, ownerConstType);
 
-                ComputeEmbeddedKKScript(dom, SiteDb, OwnerObjectId, OwnerConstType);
+                ComputeEmbeddedKKScript(dom, siteDb, ownerObjectId, ownerConstType);
 
-                ComputeInlineCss(dom, SiteDb, OwnerObjectId, OwnerConstType, baseUrl);
+                ComputeInlineCss(dom, siteDb, ownerObjectId, ownerConstType, baseUrl);
 
-                ComputeEmbededImage(dom, SiteDb, OwnerObjectId, OwnerConstType);
+                ComputeEmbededImage(dom, siteDb, ownerObjectId, ownerConstType);
 
-                ComputeLinks(dom, SiteDb, OwnerObjectId, OwnerConstType);
+                ComputeLinks(dom, siteDb, ownerObjectId, ownerConstType);
 
-                computeLabel(dom, SiteDb, OwnerObjectId, OwnerConstType);
+                computeLabel(dom, siteDb, ownerObjectId, ownerConstType);
 
-                computekConfig(dom, SiteDb, OwnerObjectId, OwnerConstType);
+                computekConfig(dom, siteDb, ownerObjectId, ownerConstType);
 
-                ComputeComponent(dom, SiteDb, OwnerObjectId, OwnerConstType);
+                ComputeComponent(dom, siteDb, ownerObjectId, ownerConstType);
 
-                computeLayout(dom, SiteDb, OwnerObjectId, OwnerConstType);      
+                computeLayout(dom, siteDb, ownerObjectId, ownerConstType);
             }
         }
 
@@ -101,25 +101,12 @@ namespace Kooboo.Sites.Relation
                     sitedb.Relations.AddOrUpdate(objectId, id, constType, com.StoreConstType);
                 }
             }
-
         }
 
         public static bool IsComponent(Element element, IComponent com)
         {
-            if (com.IsRegularHtmlTag)
-            {
-                if (Render.Components.Manager.ElementHasEngine(element))
-                {
-                    return true;
-                }
-
-                return false;
-                // return  Kooboo.Sites.Render.Components.Manager.IsComponentElement(element);     
-            }
-
-            return true;
+            return !com.IsRegularHtmlTag || Render.Components.Manager.ElementHasEngine(element);
         }
-
 
         public static void computeLabel(Document dom, SiteDb sitedb, Guid objectId, byte constType)
         {
@@ -130,7 +117,6 @@ namespace Kooboo.Sites.Relation
             labelitems.AddRange(oldlabels);
             var newlabels = dom.getElementByAttribute("k-label").item;
             labelitems.AddRange(newlabels);
-
 
             foreach (var item in labelitems)
             {
@@ -170,24 +156,23 @@ namespace Kooboo.Sites.Relation
             foreach (var item in labelid)
             {
                 sitedb.Relations.AddOrUpdate(objectId, item, constType, ConstObjectType.Label);
-            }   
+            }
         }
-
 
         public static void computekConfig(Document dom, SiteDb sitedb, Guid objectId, byte constType)
         {
             List<Guid> configids = new List<Guid>();
 
             List<Element> configitems = new List<Element>();
-         
+
             var configtags = dom.getElementByAttribute("k-config").item;
 
             configitems.AddRange(configtags);
-                                               
+
             foreach (var item in configitems)
             {
                 string key = item.getAttribute("k-config");
-                
+
                 if (string.IsNullOrEmpty(key))
                 {
                     continue;
@@ -213,8 +198,6 @@ namespace Kooboo.Sites.Relation
             }
         }
 
-
-
         public static void computeLayout(Document dom, SiteDb sitedb, Guid objectId, byte constType)
         {
             List<Guid> layoutids = new List<Guid>();
@@ -222,8 +205,7 @@ namespace Kooboo.Sites.Relation
             {
                 if (!string.IsNullOrEmpty(item.id))
                 {
-                    Guid layoutid = default(Guid);
-                    if (!System.Guid.TryParse(item.id, out layoutid))
+                    if (!System.Guid.TryParse(item.id, out var layoutid))
                     {
                         layoutid = Data.IDGenerator.Generate(item.id, ConstObjectType.Layout);
                     }
@@ -250,7 +232,6 @@ namespace Kooboo.Sites.Relation
             }
         }
 
-
         #region Embedded Relation
 
         private static List<Style> GetEmbeddedStyles(Document dom, Guid objectId, byte constType)
@@ -262,14 +243,16 @@ namespace Kooboo.Sites.Relation
 
             foreach (var item in embedStyle.item)
             {
-                Style style = new Style();
-                style.OwnerObjectId = objectId;
-                style.OwnerConstType = constType;
-                style.ItemIndex = itemindexcounter;
-                style.Body = item.InnerHtml;
-                style.IsEmbedded = true;
-                style.media = item.getAttribute("media");
-                style.Engine = item.getAttribute("engine");
+                Style style = new Style
+                {
+                    OwnerObjectId = objectId,
+                    OwnerConstType = constType,
+                    ItemIndex = itemindexcounter,
+                    Body = item.InnerHtml,
+                    IsEmbedded = true,
+                    media = item.getAttribute("media"),
+                    Engine = item.getAttribute("engine")
+                };
                 if (!string.IsNullOrWhiteSpace(style.Engine))
                 {
                     style.Extension = style.Engine;
@@ -298,12 +281,12 @@ namespace Kooboo.Sites.Relation
                             Body = item.InnerHtml,
                             KoobooId = DomService.GetKoobooId(item),
                             Method = item.getAttribute("method") ?? "get",
-                            IsEmbedded = true
+                            IsEmbedded = true,
+                            Engine = item.getAttribute("engine"),
+                            ItemIndex = itemindexcounter
                         };
 
-                        form.Engine = item.getAttribute("engine");
 
-                        form.ItemIndex = itemindexcounter;
 
                         foreach (var att in item.attributes)
                         {
@@ -312,14 +295,13 @@ namespace Kooboo.Sites.Relation
                         formlist.Add(form);
                     }
                 }
-
             }
             return formlist;
         }
 
         private static List<Script> GetEmbeddedScripts(Document dom, Guid objectId, byte constType)
         {
-            List<Script> ScriptList = new List<Script>();
+            List<Script> scriptList = new List<Script>();
 
             HTMLCollection embedScript = dom.getElementsByTagName("script");
             int itemindexcounter = 0;
@@ -335,30 +317,33 @@ namespace Kooboo.Sites.Relation
                         {
                             continue;
                         }
-                        Script script = new Script();
-                        script.OwnerObjectId = objectId;
-                        script.OwnerConstType = constType;
-                        script.ItemIndex = itemindexcounter;
-                        script.IsEmbedded = true;
-                        script.Body = scripttext;
-                        script.Engine = item.getAttribute("engine");
+
+                        Script script = new Script
+                        {
+                            OwnerObjectId = objectId,
+                            OwnerConstType = constType,
+                            ItemIndex = itemindexcounter,
+                            IsEmbedded = true,
+                            Body = scripttext,
+                            Engine = item.getAttribute("engine")
+                        };
 
                         if (!string.IsNullOrWhiteSpace(script.Engine))
                         {
                             script.Extension = script.Engine;
                         }
 
-                        ScriptList.Add(script);
+                        scriptList.Add(script);
                     }
                 }
                 itemindexcounter += 1;
             }
-            return ScriptList;
+            return scriptList;
         }
 
         private static List<Code> GetEmbeddedKKScripts(Document dom, Guid objectId, byte constType)
         {
-            List<Code> ScriptList = new List<Code>();
+            List<Code> scriptList = new List<Code>();
 
             HTMLCollection embedScript = dom.getElementsByTagName("script");
             int itemindexcounter = 0;
@@ -374,22 +359,24 @@ namespace Kooboo.Sites.Relation
                         {
                             continue;
                         }
-                        Code script = new Code();
-                        script.OwnerObjectId = objectId;
-                        script.OwnerConstType = constType;
-                        script.ItemIndex = itemindexcounter;
-                        script.IsEmbedded = true;
-                        script.CodeType = CodeType.PageScript;
-                        script.Body = scripttext;
-                        script.Engine = item.getAttribute("engine");
-                        ScriptList.Add(script);
+
+                        Code script = new Code
+                        {
+                            OwnerObjectId = objectId,
+                            OwnerConstType = constType,
+                            ItemIndex = itemindexcounter,
+                            IsEmbedded = true,
+                            CodeType = CodeType.PageScript,
+                            Body = scripttext,
+                            Engine = item.getAttribute("engine")
+                        };
+                        scriptList.Add(script);
                     }
                 }
                 itemindexcounter += 1;
             }
-            return ScriptList;
+            return scriptList;
         }
-
 
         public static Element GetEmbeddedByItemIndex(Document dom, int itemindex, string tagName)
         {
@@ -409,19 +396,19 @@ namespace Kooboo.Sites.Relation
 
         public static void ComputeEmbeddedStyle(Document dom, SiteDb sitedb, Guid objectId, byte constType)
         {
-            var NewStyleList = GetEmbeddedStyles(dom, objectId, constType);
+            var newStyleList = GetEmbeddedStyles(dom, objectId, constType);
 
             var oldStyles = sitedb.Styles.Query.Where(o => o.OwnerObjectId == objectId && o.IsEmbedded == true).SelectAll();
 
             foreach (var item in oldStyles)
             {
-                if (NewStyleList.Find(o => o.Id == item.Id) == null)
+                if (newStyleList.Find(o => o.Id == item.Id) == null)
                 {
                     sitedb.Styles.Delete(item.Id, false);
                 }
             }
 
-            foreach (var item in NewStyleList)
+            foreach (var item in newStyleList)
             {
                 sitedb.Styles.AddOrUpdate(item);
             }
@@ -443,7 +430,7 @@ namespace Kooboo.Sites.Relation
 
             foreach (var item in newforms)
             {
-                // form, do not overwritte existing setting. 
+                // form, do not overwritte existing setting.
                 var existing = sitedb.Forms.Get(item.Id);
 
                 if (existing != null)
@@ -468,7 +455,7 @@ namespace Kooboo.Sites.Relation
 
             foreach (var item in oldscript)
             {
-                if (!newScriptList.Where(o => o.Id == item.Id).Any())
+                if (!newScriptList.Any(o => o.Id == item.Id))
                 {
                     sitedb.Scripts.Delete(item.Id, false);
                 }
@@ -488,7 +475,7 @@ namespace Kooboo.Sites.Relation
 
             foreach (var item in oldscript)
             {
-                if (!newScriptList.Where(o => o.Id == item.Id).Any())
+                if (!newScriptList.Any(o => o.Id == item.Id))
                 {
                     sitedb.Code.Delete(item.Id, false);
                 }
@@ -500,7 +487,7 @@ namespace Kooboo.Sites.Relation
             }
         }
 
-        #endregion
+        #endregion Embedded Relation
 
         /// <summary>
         /// compute the styles of
@@ -509,13 +496,13 @@ namespace Kooboo.Sites.Relation
         /// <param name="sitedb"></param>
         public static List<string> ComputeReferenceStyle(Document doc, SiteDb sitedb, Guid objectId, byte constType, string baseUrl = "", HtmlHeader header = null)
         {
-            List<string> UrlList = GetReferenceStyleUrl(doc, header);
-            DomUrlService.MakeAllUrlRelative(UrlList, baseUrl);
+            List<string> urlList = GetReferenceStyleUrl(doc, header);
+            DomUrlService.MakeAllUrlRelative(urlList, baseUrl);
 
             List<string> styleurls = new List<string>();
             List<string> groupurls = new List<string>();
 
-            foreach (var item in UrlList)
+            foreach (var item in urlList)
             {
                 if (Kooboo.Sites.Service.GroupService.IsGroupUrl(item))
                 {
@@ -534,16 +521,16 @@ namespace Kooboo.Sites.Relation
 
         public static List<string> GetReferenceStyleUrl(Document doc, HtmlHeader header)
         {
-            List<string> UrlList = Service.DomUrlService.GetReferenceStyles(doc);
+            List<string> urlList = Service.DomUrlService.GetReferenceStyles(doc);
             if (header != null)
             {
-                UrlList.AddRange(header.Styles);
+                urlList.AddRange(header.Styles);
             }
-            return UrlList;
+            return urlList;
         }
 
         /// <summary>
-        /// compute html tag inline css. 
+        /// compute html tag inline css.
         /// </summary>
         /// <param name="doc"></param>
         /// <param name="sitedb"></param>
@@ -561,26 +548,28 @@ namespace Kooboo.Sites.Relation
 
                 if (!string.IsNullOrEmpty(style))
                 {
-                    CmsCssRule rule = new CmsCssRule();
-                    rule.OwnerObjectId = objectId;
-                    rule.OwnerObjectConstType = constType;
-                    rule.IsInline = true;
-                    rule.CssText = style;
-                    rule.KoobooId = Service.DomService.GetKoobooId(item);
-                    rule.KoobooOpenTag = Service.DomService.GetOpenTag(item);
-                    rule.DisplayName = Service.DomService.GetElementDisplayName(item);
+                    CmsCssRule rule = new CmsCssRule
+                    {
+                        OwnerObjectId = objectId,
+                        OwnerObjectConstType = constType,
+                        IsInline = true,
+                        CssText = style,
+                        KoobooId = Service.DomService.GetKoobooId(item),
+                        KoobooOpenTag = Service.DomService.GetOpenTag(item),
+                        DisplayName = Service.DomService.GetElementDisplayName(item)
+                    };
                     var decls = Kooboo.Dom.CSS.CSSSerializer.deserializeDeclarationBlock(style);
                     rule.Properties = decls.item.Select(o => o.propertyname).ToList();
                     cmsrules.Add(rule);
                 }
             }
 
-            /// get old relation. 
+            // get old relation.
             List<CmsCssRule> oldrules = sitedb.CssRules.Query.Where(o => o.OwnerObjectId == objectId && o.IsInline).SelectAll();
 
             foreach (var item in oldrules)
             {
-                if (!cmsrules.Where(o => o.Id == item.Id).Any())
+                if (!cmsrules.Any(o => o.Id == item.Id))
                 {
                     sitedb.CssRules.Delete(item.Id, false);
                 }
@@ -594,7 +583,7 @@ namespace Kooboo.Sites.Relation
         }
 
         /// <summary>
-        /// Compute the image references, includes internal and external image references. 
+        /// Compute the image references, includes internal and external image references.
         /// </summary>
         /// <param name="page"></param>
         /// <param name="sitedb"></param>
@@ -605,11 +594,10 @@ namespace Kooboo.Sites.Relation
             DomUrlService.MakeAllUrlRelative(imagelinks, baseUrl);
 
             ComputeUrlRelation(sitedb, objectId, constType, imagelinks, ConstObjectType.Image);
-
         }
 
         /// <summary>
-        /// Compute the embedded image that use base64 encoded image. 
+        /// Compute the embedded image that use base64 encoded image.
         /// </summary>
         /// <param name="page"></param>
         /// <param name="sitedb"></param>
@@ -620,17 +608,17 @@ namespace Kooboo.Sites.Relation
 
         public static List<string> ComputeReferenceScript(Document doc, SiteDb sitedb, Guid objectId, byte constType, string baseUrl = "", HtmlHeader header = null)
         {
-            List<string> UrlList = Service.DomUrlService.GetReferenceScripts(doc);
+            List<string> urlList = Service.DomUrlService.GetReferenceScripts(doc);
             if (header != null)
             {
-                UrlList.AddRange(header.Scripts);
+                urlList.AddRange(header.Scripts);
             }
-            DomUrlService.MakeAllUrlRelative(UrlList, baseUrl);
+            DomUrlService.MakeAllUrlRelative(urlList, baseUrl);
 
             List<string> scripturls = new List<string>();
             List<string> groupurls = new List<string>();
 
-            foreach (var item in UrlList)
+            foreach (var item in urlList)
             {
                 if (Kooboo.Sites.Service.GroupService.IsGroupUrl(item))
                 {
@@ -649,23 +637,23 @@ namespace Kooboo.Sites.Relation
 
         public static void ComputeLinks(Document doc, SiteDb sitedb, Guid objectId, byte constType, string baseUrl = "")
         {
-            List<string> UrlList = DomUrlService.GetLinks(doc);
-            DomUrlService.MakeAllUrlRelative(UrlList, baseUrl);
+            List<string> urlList = DomUrlService.GetLinks(doc);
+            DomUrlService.MakeAllUrlRelative(urlList, baseUrl);
 
-            ComputeUrlRelation(sitedb, objectId, constType, UrlList, ConstObjectType.Link);
+            ComputeUrlRelation(sitedb, objectId, constType, urlList, ConstObjectType.Link);
         }
 
-        public static List<Guid> GetRouteIds(SiteDb SiteDb, string Url)
+        public static List<Guid> GetRouteIds(SiteDb siteDb, string url)
         {
             List<Guid> result = new List<Guid>();
-            if (Url.StartsWith(Sites.Systems.Routes.SystemRoutePrefix))
+            if (url.StartsWith(Sites.Systems.Routes.SystemRoutePrefix))
             {
                 // this only has resoruce group...
-                var dict = Sites.Systems.Routes.ParseSystemRoute(SiteDb, Url);
+                var dict = Sites.Systems.Routes.ParseSystemRoute(siteDb, url);
                 if (dict.ContainsKey("nameorid"))
                 {
                     var nameorid = dict["nameorid"];
-                    var group = SiteDb.ResourceGroups.GetByNameOrId(nameorid);
+                    var group = siteDb.ResourceGroups.GetByNameOrId(nameorid);
 
                     if (group != null)
                     {
@@ -675,7 +663,7 @@ namespace Kooboo.Sites.Relation
             }
             else
             {
-                var route = Kooboo.Sites.Routing.ObjectRoute.GetRoute(SiteDb, Url);
+                var route = Kooboo.Sites.Routing.ObjectRoute.GetRoute(siteDb, url);
 
                 if (route != null)
                 {
@@ -683,13 +671,12 @@ namespace Kooboo.Sites.Relation
                 }
                 else
                 {
-                    Guid routeid = Data.IDGenerator.GetRouteId(Url);
+                    Guid routeid = Data.IDGenerator.GetRouteId(url);
                     result.Add(routeid);
                 }
             }
 
             return result;
-
         }
 
         public static void ComputeEmbed(Document doc, SiteDb sitedb, Guid objectId, byte constType)
@@ -710,31 +697,31 @@ namespace Kooboo.Sites.Relation
             ComputeUrlRelation(sitedb, objectId, constType, UrlList, ConstObjectType.CmsFile);
         }
 
-        public static void ComputeUrlRelation(SiteDb sitedb, Guid objectId, byte constType, List<string> urllist, byte DestConstType)
+        public static void ComputeUrlRelation(SiteDb sitedb, Guid objectId, byte constType, List<string> urllist, byte destConstType)
         {
             List<Guid> internalRoutes = new List<Guid>();
-            List<Guid> ExternalResource = new List<Guid>();
+            List<Guid> externalResource = new List<Guid>();
 
-            var FinalDestConstType = DestConstType;
+            var finalDestConstType = destConstType;
 
-            var oldRouteRelations = sitedb.Relations.GetRelationViaRoutes(objectId, DestConstType);
+            var oldRouteRelations = sitedb.Relations.GetRelationViaRoutes(objectId, destConstType);
 
-            var oldExternalResourceRelations = sitedb.Relations.GetExternalRelations(objectId, DestConstType);
+            var oldExternalResourceRelations = sitedb.Relations.GetExternalRelations(objectId, destConstType);
 
             foreach (var item in urllist.Distinct())
             {
-                if (DestConstType == ConstObjectType.Link)
+                if (destConstType == ConstObjectType.Link)
                 {
-                    FinalDestConstType = Kooboo.Sites.Service.ConstTypeService.GetConstTypeByUrl(item);
+                    finalDestConstType = Kooboo.Sites.Service.ConstTypeService.GetConstTypeByUrl(item);
                 }
 
                 if (Service.DomUrlService.IsExternalLink(item))
                 {
                     Guid externalid = Kooboo.Data.IDGenerator.Generate(item, ConstObjectType.ExternalResource);
-                    ExternalResource.Add(externalid);
+                    externalResource.Add(externalid);
                     if (oldExternalResourceRelations.Find(o => o.objectYId == externalid) == null)
                     {
-                        sitedb.ExternalResource.AddOrUpdate(item, FinalDestConstType);
+                        sitedb.ExternalResource.AddOrUpdate(item, finalDestConstType);
                     }
                 }
                 else
@@ -743,7 +730,7 @@ namespace Kooboo.Sites.Relation
                     internalRoutes.AddRange(routeids);
                     if (routeids.Count == 1 && oldRouteRelations.Find(o => o.objectYId == routeids[0]) == null)
                     {
-                        sitedb.Routes.EnsureExists(item, FinalDestConstType);
+                        sitedb.Routes.EnsureExists(item, finalDestConstType);
                     }
                 }
             }
@@ -760,26 +747,25 @@ namespace Kooboo.Sites.Relation
             {
                 if (oldRouteRelations.Find(o => o.objectYId == item) == null)
                 {
-                    sitedb.Relations.AddOrUpdate(objectId, item, constType, ConstObjectType.Route, DestConstType);
+                    sitedb.Relations.AddOrUpdate(objectId, item, constType, ConstObjectType.Route, destConstType);
                 }
             }
 
             foreach (var item in oldExternalResourceRelations)
             {
-                if (!ExternalResource.Contains(item.objectYId))
+                if (!externalResource.Contains(item.objectYId))
                 {
                     sitedb.Relations.Delete(item.Id);
                 }
             }
 
-            foreach (var item in ExternalResource)
+            foreach (var item in externalResource)
             {
                 if (oldExternalResourceRelations.Find(o => o.objectYId == item) == null)
                 {
-                    sitedb.Relations.AddOrUpdate(objectId, item, constType, ConstObjectType.ExternalResource, DestConstType);
+                    sitedb.Relations.AddOrUpdate(objectId, item, constType, ConstObjectType.ExternalResource, destConstType);
                 }
             }
         }
-
     }
 }

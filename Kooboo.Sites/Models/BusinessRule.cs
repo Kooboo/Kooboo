@@ -23,14 +23,7 @@ namespace Kooboo.Sites.Models
 
         public IFElseRule Rule
         {
-            get
-            {
-                if (_rule == null)
-                {
-                    _rule = new IFElseRule();
-                }
-                return _rule;
-            }
+            get { return _rule ?? (_rule = new IFElseRule()); }
             set
             {
                 _rule = value;
@@ -44,14 +37,7 @@ namespace Kooboo.Sites.Models
 
         public List<Condition> IF
         {
-            get
-            {
-                if (_if == null)
-                {
-                    _if = new List<Condition>();
-                }
-                return _if;
-            }
+            get { return _if ?? (_if = new List<Condition>()); }
             set
             {
                 _if = value;
@@ -72,14 +58,7 @@ namespace Kooboo.Sites.Models
 
         public List<Action> Do
         {
-            get
-            {
-                if (_do == null)
-                {
-                    _do = new List<Action>();
-                }
-                return _do;
-            }
+            get { return _do ?? (_do = new List<Action>()); }
             set
             {
                 _do = value;

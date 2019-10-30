@@ -1,15 +1,15 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
+using Kooboo.Dom;
+using Kooboo.Sites.DataSources;
 using System.Collections.Generic;
 using System.Text;
-using Kooboo.Dom;
-using Kooboo.Data.Context;
-using Kooboo.Sites.DataSources;
 
 namespace Kooboo.Sites.Render
 {
     /// <summary>
-    /// conditional render task first check the condition, and if true, render the sub tasks, otherwise do nothing. 
+    /// conditional render task first check the condition, and if true, render the sub tasks, otherwise do nothing.
     /// </summary>
     public class ConditionRenderTask : IRenderTask
     {
@@ -23,23 +23,22 @@ namespace Kooboo.Sites.Render
 
         private ValueRenderTask CompareValueRenderTask { get; set; }
 
-        public ConditionRenderTask(Element element, string ConditionText, EvaluatorOption options)
+        public ConditionRenderTask(Element element, string conditionText, EvaluatorOption options)
         {
-            if (ConditionText.ToLower().StartsWith("repeat"))
+            if (conditionText.ToLower().StartsWith("repeat"))
             {
                 this.IsRepeatCondition = true;
-                this.ConditionText = GetConditionText(ConditionText);
+                this.ConditionText = GetConditionText(conditionText);
             }
             else
             {
-                this.Filter = FilterHelper.GetFilter(ConditionText);
-                 FilterHelper.CheckValueType(this.Filter); 
+                this.Filter = FilterHelper.GetFilter(conditionText);
+                FilterHelper.CheckValueType(this.Filter);
             }
-            string NewElementString = Service.DomService.ReSerializeElement(element);
+            string newElementString = Service.DomService.ReSerializeElement(element);
 
-            this.SubTasks = RenderEvaluator.Evaluate(NewElementString, options);
+            this.SubTasks = RenderEvaluator.Evaluate(newElementString, options);
         }
-         
 
         public string Render(RenderContext context)
         {
@@ -80,10 +79,10 @@ namespace Kooboo.Sites.Render
             {
                 if (this.Filter != null)
                 {
-                    string value = null; 
+                    string value = null;
                     if (this.Filter.IsNameValueType)
                     {
-                        value = this.Filter.FieldName; 
+                        value = this.Filter.FieldName;
                     }
                     else
                     {
@@ -92,13 +91,12 @@ namespace Kooboo.Sites.Render
                             this.ValueRenderTask = new ValueRenderTask(this.Filter.FieldName);
                         }
 
-                       value = this.ValueRenderTask.Render(context);
+                        value = this.ValueRenderTask.Render(context);
                     }
-                   
 
                     if (value == null)
                     {
-                        // TODO: add more k-system fields. 
+                        // TODO: add more k-system fields.
                         if (this.Filter.FieldName == "k-index")
                         {
                             value = context.DataContext.RepeatCounter.CurrentCounter.Current.ToString();
@@ -108,7 +106,6 @@ namespace Kooboo.Sites.Render
                             return false;
                         }
                     }
-
 
                     string comparevalue = null;
                     if (this.Filter.IsValueValueType)
@@ -122,18 +119,10 @@ namespace Kooboo.Sites.Render
                             this.CompareValueRenderTask = new ValueRenderTask(this.Filter.FieldValue);
                         }
 
-                        var contextcomparevalue = this.CompareValueRenderTask.Render(context); 
+                        var contextcomparevalue = this.CompareValueRenderTask.Render(context);
 
-                        if (!string.IsNullOrWhiteSpace(contextcomparevalue))
-                        {
-                            comparevalue = contextcomparevalue; 
-                        } 
-                        else
-                        {
-                            comparevalue = this.Filter.FieldValue; 
-                        }
+                        comparevalue = !string.IsNullOrWhiteSpace(contextcomparevalue) ? contextcomparevalue : this.Filter.FieldValue;
                     }
-
 
                     return FilterHelper.Check(value.ToString(), this.Filter.Comparer, comparevalue);
                 }
@@ -151,13 +140,7 @@ namespace Kooboo.Sites.Render
             }
 
             index = input.IndexOf("/");
-            if (index > 0)
-            {
-                return input.Substring(index + 1).ToLower().Trim();
-            }
-
-            return input;
-
+            return index > 0 ? input.Substring(index + 1).ToLower().Trim() : input;
         }
 
         public void AppendResult(RenderContext context, List<RenderResult> result)
@@ -177,4 +160,3 @@ namespace Kooboo.Sites.Render
         public string KeyOrExpression { get; set; }
     }
 }
-

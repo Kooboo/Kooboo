@@ -1,39 +1,36 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Extensions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 
 namespace Kooboo.Sites.Sync.Cluster
 {
-   public class ClusterNode
+    public class ClusterNode
     {
-        private Guid _Id; 
+        private Guid _id;
+
         public Guid Id
         {
             get
             {
-                if (_Id == default(Guid))
+                if (_id == default(Guid))
                 {
-                    string unique =  this.ServerUrl + this.ServerWebSiteId.ToString();
-                    _Id = unique.ToHashGuid();  
+                    string unique = this.ServerUrl + this.ServerWebSiteId.ToString();
+                    _id = unique.ToHashGuid();
                 }
-                return _Id; 
+                return _id;
             }
             set
             {
-                _Id = value; 
+                _id = value;
             }
-        } 
-          
+        }
+
         /// <summary>
-        /// includes http and port number. 
+        /// includes http and port number.
         /// </summary>
         public string ServerUrl { get; set; }
+
         public string UserName { get; set; }
         public string Password { get; set; }
         public Guid ServerWebSiteId { get; set; }
@@ -43,8 +40,7 @@ namespace Kooboo.Sites.Sync.Cluster
         public override int GetHashCode()
         {
             string unique = this.ServerUrl + this.UserName + this.Password + this.ServerWebSiteId.ToString();
-            return Lib.Security.Hash.ComputeIntCaseSensitive(unique); 
-
+            return Lib.Security.Hash.ComputeIntCaseSensitive(unique);
         }
     }
 }

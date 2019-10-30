@@ -1,13 +1,9 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using Kooboo.Sites.Routing;
+using Kooboo.Sites.Models;
+using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Models;
-using Kooboo.Data.Models;
-using Kooboo.Data.Extensions;
-using Kooboo.Sites.Repository;
 using System.Linq;
 
 namespace Kooboo.Sites.Service
@@ -15,40 +11,40 @@ namespace Kooboo.Sites.Service
     public static class PathService
     {
         /// <summary>
-        /// return the full navigation from root to this path. 
+        /// return the full navigation from root to this path.
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
         public static string GetFullPath(Path path)
         {
-            string FullPath = "/" + path.segment;
+            string fullPath = "/" + path.segment;
 
             var parent = path.ParentPath;
             while (parent != null && !string.IsNullOrEmpty(parent.segment))
             {
-                FullPath = "/" + parent.segment + FullPath;
+                fullPath = "/" + parent.segment + fullPath;
                 parent = parent.ParentPath;
             }
 
-            return FullPath;
+            return fullPath;
         }
 
-        public static List<CrumbPath> GetCrumbPath(string FullFolderPath)
+        public static List<CrumbPath> GetCrumbPath(string fullFolderPath)
         {
-            if (string.IsNullOrEmpty(FullFolderPath))
+            if (string.IsNullOrEmpty(fullFolderPath))
             {
                 return null;
             }
-            FullFolderPath = FullFolderPath.Trim();
+            fullFolderPath = fullFolderPath.Trim();
 
-            if (!FullFolderPath.StartsWith("/"))
+            if (!fullFolderPath.StartsWith("/"))
             {
-                FullFolderPath = "/" + FullFolderPath;
+                fullFolderPath = "/" + fullFolderPath;
             }
 
             List<CrumbPath> result = new List<CrumbPath>();
 
-            string[] segments = FullFolderPath.Split('/');
+            string[] segments = fullFolderPath.Split('/');
 
             bool rootused = false;
             string currentpath = string.Empty;
@@ -78,17 +74,15 @@ namespace Kooboo.Sites.Service
                     path.Name = name;
                     result.Add(path);
                 }
-
             }
 
             return result;
-
         }
 
-        public static DateTime GetLastModified(SiteDb SiteDb, string FullPath, byte ConstType)
+        public static DateTime GetLastModified(SiteDb siteDb, string fullPath, byte constType)
         {
-            DateTime LastTime = Kooboo.IndexedDB.GlobalSettings.UTCStartdate;
-            var allfolder = SiteDb.Folders.GetDescendantFolders(FullPath, ConstType);
+            DateTime lastTime = Kooboo.IndexedDB.GlobalSettings.UTCStartdate;
+            var allfolder = siteDb.Folders.GetDescendantFolders(fullPath, constType);
 
             bool hastime = false;
 
@@ -96,23 +90,23 @@ namespace Kooboo.Sites.Service
             {
                 foreach (var item in allfolder)
                 {
-                    if (item.LastModified > LastTime)
+                    if (item.LastModified > lastTime)
                     {
-                        LastTime = item.LastModified;
+                        lastTime = item.LastModified;
                     }
                 }
                 hastime = true;
             }
 
-            var allobjects = SiteDb.Folders.GetFolderObjects(FullPath, ConstType, true, true);
+            var allobjects = siteDb.Folders.GetFolderObjects(fullPath, constType, true, true);
 
             if (allobjects != null && allobjects.Count > 0)
             {
                 foreach (var item in allobjects)
                 {
-                    if (item.LastModified > LastTime)
+                    if (item.LastModified > lastTime)
                     {
-                        LastTime = item.LastModified;
+                        lastTime = item.LastModified;
                     }
                 }
                 hastime = true;
@@ -120,18 +114,18 @@ namespace Kooboo.Sites.Service
 
             if (!hastime)
             {
-                var folder = SiteDb.Folders.GetFolder(FullPath, ConstType);
+                var folder = siteDb.Folders.GetFolder(fullPath, constType);
                 if (folder != null)
                 {
                     return folder.LastModified;
                 }
             }
-            return LastTime;
+            return lastTime;
         }
 
         public static List<string> FindCommonPath(List<string> paths)
         {
-            Func<List<string>, bool> HasSameValue = (list) =>
+            Func<List<string>, bool> hasSameValue = (list) =>
             {
                 string current = null;
 
@@ -142,7 +136,7 @@ namespace Kooboo.Sites.Service
                         current = item;
                         if (current.ToLower().Contains("_kooboo"))
                         {
-                            return false; 
+                            return false;
                         }
                     }
                     else
@@ -150,19 +144,19 @@ namespace Kooboo.Sites.Service
                         if (!Kooboo.Lib.Helper.StringHelper.IsSameValue(current, item))
                         {
                             return false;
-                        } 
+                        }
                     }
                 }
                 return true;
             };
 
-            Func<string, List<string>> ToSegments = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetSegments; ; ;
+            Func<string, List<string>> toSegments = Kooboo.Lib.Compatible.CompatibleManager.Instance.System.GetSegments; ; ;
 
-            List<List<string>> AllSegments = new List<List<string>>();
+            List<List<string>> allSegments = new List<List<string>>();
 
             foreach (var item in paths)
             {
-                AllSegments.Add(ToSegments(item));
+                allSegments.Add(toSegments(item));
             }
 
             List<string> common = new List<string>();
@@ -172,7 +166,7 @@ namespace Kooboo.Sites.Service
             while (i < 999)
             {
                 List<string> indexitem = new List<string>();
-                foreach (var item in AllSegments)
+                foreach (var item in allSegments)
                 {
                     if (i > item.Count() - 1)
                     {
@@ -183,7 +177,7 @@ namespace Kooboo.Sites.Service
                         indexitem.Add(item[i]);
                     }
                 }
-                if (indexitem.Count() > 0 && HasSameValue(indexitem))
+                if (indexitem.Any() && hasSameValue(indexitem))
                 {
                     common.Add(indexitem[0]);
                     i += 1;
@@ -194,10 +188,7 @@ namespace Kooboo.Sites.Service
                 }
             }
 
-            return common;  
-             
+            return common;
         }
-         
     }
-     
 }

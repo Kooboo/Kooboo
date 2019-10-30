@@ -1,23 +1,17 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Kooboo.Sites.Render
-{ 
+{
     public class RepeatCondition
     {
-
         public Stack<RepeaterCounter> stack = new Stack<RepeaterCounter>();
 
-        public void Push(int Total)
+        public void Push(int total)
         {
-            RepeaterCounter counter = new RepeaterCounter();
-            counter.Total = Total;
-            counter.Current = 0;
+            RepeaterCounter counter = new RepeaterCounter {Total = total, Current = 0};
 
             this.stack.Push(counter);
         }
@@ -34,7 +28,7 @@ namespace Kooboo.Sites.Render
                 return this.stack.First();
             }
         }
-         
+
         public bool Check(string condition)
         {
             if (string.IsNullOrEmpty(condition))
@@ -62,9 +56,7 @@ namespace Kooboo.Sites.Render
             }
             else
             {
-                int counter;
-
-                if (int.TryParse(lower, out counter))
+                if (int.TryParse(lower, out var counter))
                 {
                     return counter == this.CurrentCounter.Current;
                 }
@@ -82,6 +74,5 @@ namespace Kooboo.Sites.Render
             public int Total { get; set; }
             public int Current { get; set; }
         }
-         
     }
 }

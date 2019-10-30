@@ -1,11 +1,9 @@
-﻿ 
-using System.Collections.Generic; 
+﻿using System.Collections.Generic;
 
 namespace Kooboo.Sites.Models
 {
     public class DatabaseTable : CoreObject
     {
-
         public DatabaseTable()
         {
             this.ConstType = ConstObjectType.DatabaseTable;
@@ -22,7 +20,7 @@ namespace Kooboo.Sites.Models
                     _columns = new List<DbTableColumn>();
                 }
 
-                return _columns; 
+                return _columns;
             }
             set
             {
@@ -30,7 +28,6 @@ namespace Kooboo.Sites.Models
             }
         }
     }
-
 
     public class DbTableColumn
     {
@@ -48,7 +45,7 @@ namespace Kooboo.Sites.Models
         public int Scale { get; set; }
 
         public bool IsIndex { get; set; }
-         
+
         public bool IsPrimaryKey { get; set; }
 
         public bool IsUnique { get; set; }
@@ -61,6 +58,4 @@ namespace Kooboo.Sites.Models
 
         public int Length { get; set; }
     }
-
-
 }

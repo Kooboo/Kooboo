@@ -15,9 +15,9 @@ namespace Kooboo.Sites.Cache
     {
         private static object _locker = new object();
 
-        public static void RemoveWebSitePlan(Guid WebSiteId)
+        public static void RemoveWebSitePlan(Guid webSiteId)
         {
-            string id = WebSiteId.ToString();
+            string id = webSiteId.ToString();
 
             //lock (_locker)
             //{
@@ -56,7 +56,7 @@ namespace Kooboo.Sites.Cache
 
         private static object _object = new object();
 
-        private static Dictionary<Guid, SiteDb> _SiteDbs = new Dictionary<Guid, SiteDb>();
+        private static Dictionary<Guid, SiteDb> _siteDbs = new Dictionary<Guid, SiteDb>();
 
         public static SiteDb GetSiteDb(WebSite website)
         {
@@ -64,30 +64,30 @@ namespace Kooboo.Sites.Cache
             {
                 return null;
             }
-            if (!_SiteDbs.ContainsKey(website.Id))
+            if (!_siteDbs.ContainsKey(website.Id))
             {
                 lock (_object)
                 {
-                    if (!_SiteDbs.ContainsKey(website.Id))
+                    if (!_siteDbs.ContainsKey(website.Id))
                     {
                         var sitedb = new SiteDb(website);
-                        _SiteDbs[website.Id] = sitedb;
+                        _siteDbs[website.Id] = sitedb;
                     }
                 }
             }
-            var result = _SiteDbs[website.Id];
+            var result = _siteDbs[website.Id];
             result.WebSite = website;
             return result;
         }
 
-        public static void SetNull(Guid SiteId)
+        public static void SetNull(Guid siteId)
         {
-            _SiteDbs[SiteId] = null;
+            _siteDbs[siteId] = null;
         }
 
-        public static void RemoveNull(Guid SiteId)
+        public static void RemoveNull(Guid siteId)
         {
-            _SiteDbs.Remove(SiteId);
+            _siteDbs.Remove(siteId);
         }
 
         public static void Remove(SiteDb sitedb)
@@ -121,27 +121,27 @@ namespace Kooboo.Sites.Cache
             Cache.SiteObjectCache<Script>.RemoveSiteDb(sitedb.Id);
             Cache.SiteObjectCache<Image>.RemoveSiteDb(sitedb.Id);
 
-            _SiteDbs.Remove(sitedb.WebSite.Id);
+            _siteDbs.Remove(sitedb.WebSite.Id);
         }
 
-        public static bool EnableCache(WebSite website, Type TValueType)
+        public static bool EnableCache(WebSite website, Type valueType)
         {
-            if (TValueType == typeof(Label)
-                || TValueType == typeof(View)
-                || TValueType == typeof(Layout)
-                || TValueType == typeof(ViewDataMethod)
-                || TValueType == typeof(DataMethodSetting)
-                || TValueType == typeof(SyncSetting)
-                || TValueType == typeof(ContentFolder)
-                || TValueType == typeof(ContentType)
-                || TValueType == typeof(Route)
-                || TValueType == typeof(ContentCategory)
-                || TValueType == typeof(SiteCluster)
-                || TValueType == typeof(Code)
-                || TValueType == typeof(KConfig)
-                || TValueType == typeof(TableRelation)
-                || TValueType == typeof(RolePermission)
-                || TValueType == typeof(SiteUser)
+            if (valueType == typeof(Label)
+                || valueType == typeof(View)
+                || valueType == typeof(Layout)
+                || valueType == typeof(ViewDataMethod)
+                || valueType == typeof(DataMethodSetting)
+                || valueType == typeof(SyncSetting)
+                || valueType == typeof(ContentFolder)
+                || valueType == typeof(ContentType)
+                || valueType == typeof(Route)
+                || valueType == typeof(ContentCategory)
+                || valueType == typeof(SiteCluster)
+                || valueType == typeof(Code)
+                || valueType == typeof(KConfig)
+                || valueType == typeof(TableRelation)
+                || valueType == typeof(RolePermission)
+                || valueType == typeof(SiteUser)
                 )
             {
                 return true;
@@ -149,11 +149,11 @@ namespace Kooboo.Sites.Cache
 
             if (!Kooboo.Data.AppSettings.Global.IsOnlineServer)
             {
-                if (TValueType == typeof(Page)
-              || TValueType == typeof(HtmlBlock)
-              || TValueType == typeof(Style)
-              || TValueType == typeof(Script)
-              || TValueType == typeof(Image)
+                if (valueType == typeof(Page)
+              || valueType == typeof(HtmlBlock)
+              || valueType == typeof(Style)
+              || valueType == typeof(Script)
+              || valueType == typeof(Image)
                )
                 {
                     return true;

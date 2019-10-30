@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Newtonsoft.Json;
+using Kooboo.Data.Interface;
 
 namespace Kooboo.Sites.Scripting.Helper
 {
@@ -9,26 +8,20 @@ namespace Kooboo.Sites.Scripting.Helper
     {
         public override bool CanConvert(Type objectType)
         {
-            return true; 
+            return true;
         }
-         
 
         public override object ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer)
         {
-            
-          return serializer.Deserialize(reader, typeof(IDictionary<string, object>));
-             
+            return serializer.Deserialize(reader, typeof(IDictionary<string, object>));
         }
 
         public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer)
         {
-            if (value is Kooboo.Data.Interface.IDynamic)
+            if (value is IDynamic @dynamic)
             {
-                var dynamic = value as Kooboo.Data.Interface.IDynamic;
-
-                serializer.Serialize(writer, dynamic.Values);  
+                serializer.Serialize(writer, @dynamic.Values);
             }
         }
-
     }
 }

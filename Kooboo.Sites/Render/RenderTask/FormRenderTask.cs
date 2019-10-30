@@ -1,11 +1,11 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
-using System;
-using System.Collections.Generic;
 using Kooboo.Data.Context;
 using Kooboo.Dom;
 using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
+using System;
+using System.Collections.Generic;
 
 namespace Kooboo.Sites.Render
 {
@@ -29,11 +29,8 @@ namespace Kooboo.Sites.Render
         {
             get
             {
-                if (_formattribute == null)
-                {
-                    _formattribute = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                }
-                return _formattribute;
+                return _formattribute ??
+                       (_formattribute = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
             }
             set
             {
@@ -47,7 +44,7 @@ namespace Kooboo.Sites.Render
 
         private Guid FormId { get; set; }
 
-        public FormRenderTask(Element element, Guid OwnerObjectId, Guid FormId, EvaluatorOption evalutionOption)
+        public FormRenderTask(Element element, Guid ownerObjectId, Guid formId, EvaluatorOption evalutionOption)
         {
             this.options = options;
 
@@ -55,11 +52,11 @@ namespace Kooboo.Sites.Render
             {
                 this.FormAttributes.Add(item.name, item.value);
             }
-            this.OwnerObjectId = OwnerObjectId;
+            this.OwnerObjectId = ownerObjectId;
 
             this.OriginalInnerHtml = element.InnerHtml;
 
-            this.FormId = FormId;
+            this.FormId = formId;
 
             InitOrgTask();
         }
@@ -97,10 +94,10 @@ namespace Kooboo.Sites.Render
         {
             if (this.OwnerObjectId == default(Guid))
             {
-                // this should not happen... just in case... 
+                // this should not happen... just in case...
                 InitOrgTask();
                 string open = Kooboo.Sites.Service.DomService.GenerateOpenTag(this.FormAttributes, "form");
-                return open + RenderHelper.Render(this.BodyTask, context) + "</form>";
+                return open + this.BodyTask.Render(context) + "</form>";
             }
 
             var sitedb = context.WebSite.SiteDb();
@@ -117,23 +114,22 @@ namespace Kooboo.Sites.Render
             {
                 InitOrgTask();
                 string open = Kooboo.Sites.Service.DomService.GenerateOpenTag(this.FormAttributes, "form");
-                return open + RenderHelper.Render(this.BodyTask, context) + "</form>";
+                return open + this.BodyTask.Render(context) + "</form>";
             }
-            // or else result 
-                                
-            string submiturl = Kooboo.Sites.HtmlForm.FormManager.GetSubmitUrl(form, formsetting, context);  
+            // or else result
+
+            string submiturl = Kooboo.Sites.HtmlForm.FormManager.GetSubmitUrl(form, formsetting, context);
+
+            Dictionary<string, string> attributes = new Dictionary<string, string>(FormAttributes)
+            {
+                ["action"] = submiturl,
+                ["method"] = string.IsNullOrEmpty(formsetting.Method) ? "post" : formsetting.Method
+            };
 
 
+            string key = $"kform_{Lib.Security.ShortGuid.GetNewShortId()}";
 
-
-            Dictionary<string, string> attributes = new Dictionary<string, string>(FormAttributes);
-
-            attributes["action"] = submiturl;
-            attributes["method"] = string.IsNullOrEmpty(formsetting.Method) ? "post" : formsetting.Method;
-
-            string key = "kform_" + Lib.Security.ShortGuid.GetNewShortId();
-
-            /// append additional koobooform id.....
+            // append additional koobooform id.....
             //if (form.FormType == FormType.KoobooForm || formsetting.AllowAjax)
             //{
             attributes["id"] = key;
@@ -146,7 +142,6 @@ namespace Kooboo.Sites.Render
                 opentag = opentag + "<input type='hidden' name=\"" + Sites.HtmlForm.FormManager.FormUrlName + "\" value=\"" + context.Request.RawRelativeUrl + "\" />";
             }
 
-
             //if (formsetting.AllowAjax)
             //{
             string addtionalJS = "<script src=\"/_admin/scripts/lib/jquery.min.js\"></script><script src=\"/_admin/scripts/lib/jqBootstrapValidation.js\"></script>";
@@ -156,28 +151,24 @@ namespace Kooboo.Sites.Render
             opentag += JsString(key, formsetting.SuccessCallBack, formsetting.FailedCallBack);
             // }
 
-
             if (!string.IsNullOrEmpty(form.Body))
             {
                 InitFormBodyTask(form.Body);
-                return opentag + RenderHelper.Render(this.BodyTask, context) + "</form>";
+                return opentag + this.BodyTask.Render(context) + "</form>";
             }
             else
             {
                 InitOrgTask();
-                return opentag + RenderHelper.Render(this.BodyTask, context) + "</form>";
+                return opentag + this.BodyTask.Render(context) + "</form>";
             }
-
         }
 
         private string JsString(string key, string success, string fail)
         {
-
             string ajax = "<script>$(\"#{key}\").find(\"input, textarea\").not(\"[type=submit]\").jqBootstrapValidation({preventSubmit: false,submitSuccess: function($form, event) {var data = {};$form.find('[name]').each(function(idx, el) {data[$(el).attr('name')] = $(el).val()});$.ajax({url: $form.attr('action'),method: $form.attr('method'),data: data,success: function(res) {{Success}}})},submitError: function($form, event, errors) {{Fail}}})</script>";
 
             return ajax.Replace("{key}", key).Replace("{Success}", success).Replace("{Fail}", fail);
         }
-
 
         private List<IRenderTask> GetBodyTask(string body, EvaluatorOption option)
         {

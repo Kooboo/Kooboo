@@ -1,37 +1,33 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Interface;
+using Kooboo.Sites.Models;
 using Kooboo.Sites.Repository;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Kooboo.Extensions;
-using Kooboo.Sites.Models;
-using Kooboo.Data.Interface;
 
 namespace Kooboo.Sites.Sync.Cluster
 {
     public static class Integrity
     {
         /// <summary>
-        /// Add the object sender information... this information should be append to all synchronization... 
-        /// If this object received from remote, appender the remote sender and tick, otherwise append local. 
+        /// Add the object sender information... this information should be append to all synchronization...
+        /// If this object received from remote, appender the remote sender and tick, otherwise append local.
         /// </summary>
-        /// <param name="SiteDb"></param>
-        /// <param name="SyncObject"></param>
-        /// <param name="LocalVersion"></param>
-        public static void Generate(SiteDb SiteDb, SyncObject SyncObject, long LocalVersion)
+        /// <param name="siteDb"></param>
+        /// <param name="syncObject"></param>
+        /// <param name="localVersion"></param>
+        public static void Generate(SiteDb siteDb, SyncObject syncObject, long localVersion)
         {
-            /// Check and use the local version number. 
-            if (SiteDb != null && SyncObject != null)
+            // Check and use the local version number.
+            if (siteDb != null && syncObject != null)
             {
-                // first check log to see if there are others..  
-                 
-                var store = Stores.ClusterUpdateHistory(SiteDb);
-                var items = store.Where(o => o.LocalVersion == LocalVersion).SelectAll();
+                // first check log to see if there are others..
 
-                if (items != null && items.Count() > 0)
+                var store = Stores.ClusterUpdateHistory(siteDb);
+                var items = store.Where(o => o.LocalVersion == localVersion).SelectAll();
+
+                if (items != null && items.Any())
                 {
                     if (items.Count() > 1)
                     {
@@ -40,38 +36,35 @@ namespace Kooboo.Sites.Sync.Cluster
                     else
                     {
                         var item = items[0];
-                        SyncObject.Sender = item.Sender;
-                        SyncObject.SenderTick = item.SenderTick;
+                        syncObject.Sender = item.Sender;
+                        syncObject.SenderTick = item.SenderTick;
                         return;
                     }
-
                 }
                 else
                 {
-                    SyncObject.Sender  = Lib.Security.Hash.ComputeIntCaseSensitive(SiteDb.WebSite.Id.ToString());
-                    SyncObject.SenderTick = DateTime.UtcNow.Ticks; 
+                    syncObject.Sender = Lib.Security.Hash.ComputeIntCaseSensitive(siteDb.WebSite.Id.ToString());
+                    syncObject.SenderTick = DateTime.UtcNow.Ticks;
                 }
-
             }
         }
 
         /// <summary>
         /// verify whether this item can be should be added into the local repository or not.
-        /// Rule: if local contains a newer version, ignore, otherwise add, update or delete. 
+        /// Rule: if local contains a newer version, ignore, otherwise add, update or delete.
         /// </summary>
-        /// <param name="SiteDb"></param>
-        /// <param name="SyncObject"></param>
+        /// <param name="siteDb"></param>
+        /// <param name="syncObject"></param>
         /// <returns></returns>
-        public static bool Verify(SiteDb SiteDb, SyncObject SyncObject)
+        public static bool Verify(SiteDb siteDb, SyncObject syncObject)
         {
+            var modeltype = Kooboo.Sites.Service.ConstTypeService.GetModelType(syncObject.ObjectConstType);
 
-            var modeltype = Kooboo.Sites.Service.ConstTypeService.GetModelType(SyncObject.ObjectConstType);
+            var repo = siteDb.GetRepository(modeltype);
 
-            var repo = SiteDb.GetRepository(modeltype);
+            var historystore = Stores.ClusterUpdateHistory(siteDb);
 
-            var historystore = Stores.ClusterUpdateHistory(SiteDb);
-
-            var logs = historystore.Where(it => it.ObjectId == SyncObject.ObjectId).SelectAll();
+            var logs = historystore.Where(it => it.ObjectId == syncObject.ObjectId).SelectAll();
 
             if (logs == null || logs.Count == 0)
             {
@@ -80,38 +73,33 @@ namespace Kooboo.Sites.Sync.Cluster
 
             var lastlog = logs.OrderByDescending(o => o.SenderTick).First();
 
-            if (lastlog.SenderTick > SyncObject.SenderTick)
-            {
-                return false;
-            }
-
-            return true;
+            return lastlog.SenderTick <= syncObject.SenderTick;
         }
 
-        public static void AddHistory(SiteDb SiteDb, SyncObject SyncObject, ISiteObject SiteObject)
+        public static void AddHistory(SiteDb siteDb, SyncObject syncObject, ISiteObject siteObject)
         {
-
-            NodeUpdate update = new NodeUpdate();
-            update.ObjectId = SyncObject.ObjectId;
-            update.ObjectConstType = SyncObject.ObjectConstType;
-            update.IsDelete = SyncObject.IsDelete;
-            update.Language = SyncObject.Language;
-            update.Sender = SyncObject.Sender;
-            update.SenderTick = SyncObject.SenderTick;
-
-            if (SiteObject is CoreObject)
+            NodeUpdate update = new NodeUpdate
             {
-                var core = SiteObject as CoreObject;
+                ObjectId = syncObject.ObjectId,
+                ObjectConstType = syncObject.ObjectConstType,
+                IsDelete = syncObject.IsDelete,
+                Language = syncObject.Language,
+                Sender = syncObject.Sender,
+                SenderTick = syncObject.SenderTick
+            };
+
+            if (siteObject is CoreObject core)
+            {
                 update.LocalVersion = core.Version;
             }
 
-            var store = Stores.ClusterUpdateHistory(SiteDb);
+            var store = Stores.ClusterUpdateHistory(siteDb);
 
             var old = store.get(update.Id);
             if (old == null)
             {
                 store.add(update.Id, update);
-            } 
+            }
         }
     }
 }

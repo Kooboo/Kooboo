@@ -22,42 +22,41 @@ namespace Kooboo.Sites.DataSources
 
         [Kooboo.Attributes.RequireFolder]
         [Kooboo.Attributes.ReturnType(typeof(List<TextContentViewModel>))]
-        public PagedResult ByFolder(Guid FolderId, List<FilterDefinition> Filters, int PageSize, int PageNumber, string SortField, Boolean IsAscending)
+        public PagedResult ByFolder(Guid folderId, List<FilterDefinition> filters, int pageSize, int pageNumber, string sortField, Boolean isAscending)
         {
-            var query = Context.SiteDb.TextContent.Query.Where(o => o.FolderId == FolderId);
+            var query = Context.SiteDb.TextContent.Query.Where(o => o.FolderId == folderId);
 
             if (this.IsDefault)
             {
-                query.Where(o => o.Online == true);
+                query.Where(o => o.Online);
             }
             var orgcontents = query.SelectAll();
-            var props = Context.SiteDb.ContentTypes.GetPropertiesByFolder(FolderId);
+            var props = Context.SiteDb.ContentTypes.GetPropertiesByFolder(folderId);
 
-            SetSortField(ref SortField, props);
+            SetSortField(ref sortField, props);
 
             var contentviews = Helper.ContentHelper.ToViews(orgcontents, this.Context.RenderContext.Culture, props);
 
-            contentviews = SortFilterContentViews(contentviews, FolderId, Filters, SortField, IsAscending);
-            return GetPagedResult(contentviews, PageSize, PageNumber);
+            contentviews = SortFilterContentViews(contentviews, folderId, filters, sortField, isAscending);
+            return GetPagedResult(contentviews, pageSize, pageNumber);
         }
 
-        private static PagedResult GetPagedResult(List<TextContentViewModel> contents, int PageSize, int PageNumber)
+        private static PagedResult GetPagedResult(List<TextContentViewModel> contents, int pageSize, int pageNumber)
         {
-            if (PageSize <= 0)
+            if (pageSize <= 0)
             {
-                PageSize = 100;
+                pageSize = 100;
             }
-            if (PageNumber <= 0)
+            if (pageNumber <= 0)
             {
-                PageNumber = 1;
+                pageNumber = 1;
             }
             if (contents != null)
             {
-                int skip = (PageNumber - 1) * PageSize;
-                PagedResult pagedresult = new PagedResult();
-                pagedresult.TotalCount = contents.Count();
-                pagedresult.TotalPages = Lib.Helper.CalculationHelper.GetPageCount(pagedresult.TotalCount, PageSize);
-                pagedresult.DataList = contents.Skip(skip).Take(PageSize).ToList().ToList<object>();
+                int skip = (pageNumber - 1) * pageSize;
+                PagedResult pagedresult = new PagedResult {TotalCount = contents.Count()};
+                pagedresult.TotalPages = Lib.Helper.CalculationHelper.GetPageCount(pagedresult.TotalCount, pageSize);
+                pagedresult.DataList = contents.Skip(skip).Take(pageSize).ToList().ToList<object>();
                 return pagedresult;
             }
             return null;
@@ -77,51 +76,30 @@ namespace Kooboo.Sites.DataSources
                 }
                 if (datatype == DataTypes.DateTime)
                 {
-                    DateTime value;
-                    if (input.GetType() == typeof(DateTime))
+                    if (input is DateTime)
                     {
                         return input;
                     }
                     else
                     {
-                        if (DateTime.TryParse(input.ToString(), out value))
-                        {
-                            return value;
-                        }
-                        return default(DateTime);
+                        return DateTime.TryParse(input.ToString(), out var value) ? value : default(DateTime);
                     }
                 }
                 else if (datatype == DataTypes.Bool)
                 {
-                    bool value;
-                    if (bool.TryParse(input.ToString(), out value))
-                    {
-                        return value;
-                    }
-                    return false;
+                    return bool.TryParse(input.ToString(), out var value) && value;
                 }
                 else if (datatype == DataTypes.Decimal)
                 {
-                    Decimal value;
-                    if (Decimal.TryParse(input.ToString(), out value))
-                    {
-                        return value;
-                    }
-                    return default(Decimal);
+                    return Decimal.TryParse(input.ToString(), out var value) ? value : default(Decimal);
                 }
                 else if (datatype == DataTypes.Guid)
                 {
-                    Guid value = default(Guid);
-                    if (System.Guid.TryParse(input.ToString(), out value))
-                    {
-                        return value;
-                    }
-                    return default(Guid);
+                    return System.Guid.TryParse(input.ToString(), out var value) ? value : default(Guid);
                 }
                 else if (datatype == DataTypes.Number)
                 {
-                    int value = default(int);
-                    if (System.Int32.TryParse(input.ToString(), out value))
+                    if (System.Int32.TryParse(input.ToString(), out var value))
                     {
                         return value;
                     }
@@ -134,57 +112,50 @@ namespace Kooboo.Sites.DataSources
         private object ChangeType(object input, Type clrType)
         {
             var value = Convert.ChangeType(input, clrType);
-            if (value != null)
-            {
-                return value;
-            }
-            return value.ToString();
+            return value ?? value?.ToString();
         }
 
-        private List<TextContentViewModel> SortFilterContentViews(List<TextContentViewModel> contentviews, Guid FolderId, List<FilterDefinition> Filters, string SortField, bool IsAscending)
+        private List<TextContentViewModel> SortFilterContentViews(List<TextContentViewModel> contentviews, Guid folderId, List<FilterDefinition> filters, string sortField, bool isAscending)
         {
-            if (Filters != null && Filters.Count > 0)
+            if (filters != null && filters.Count > 0)
             {
-                var folder = Context.SiteDb.ContentFolders.Get(FolderId);
+                var folder = Context.SiteDb.ContentFolders.Get(folderId);
                 if (folder == null)
                 {
                     return null;
                 }
                 var columns = Context.SiteDb.ContentFolders.GetColumns(folder).ToList();
 
-                foreach (var filter in Filters)
+                foreach (var filter in filters)
                 {
                     contentviews = Filter(contentviews, filter.FieldName, filter.Comparer, filter.FieldValue, columns);
                 }
             }
 
-            if (!String.IsNullOrWhiteSpace(SortField))
+            if (!String.IsNullOrWhiteSpace(sortField))
             {
                 DataTypes datatype = DataTypes.Undefined;
-                var contenttype = this.Context.SiteDb.ContentTypes.GetByFolder(FolderId);
-                if (contenttype != null)
+                var contenttype = this.Context.SiteDb.ContentTypes.GetByFolder(folderId);
+                var field = contenttype?.Properties.Find(o => o.Name == sortField);
+                if (field != null)
                 {
-                    var field = contenttype.Properties.Find(o => o.Name == SortField);
-                    if (field != null)
-                    {
-                        datatype = field.DataType;
-                    }
+                    datatype = field.DataType;
                 }
 
                 Type clrtype = Data.Helper.DataTypeHelper.ToClrType(datatype);
 
-                if (IsAscending)
+                if (isAscending)
                 {
-                    return contentviews.OrderBy(c => GetValue(c.GetValue(SortField), datatype)).ToList();
+                    return contentviews.OrderBy(c => GetValue(c.GetValue(sortField), datatype)).ToList();
                 }
                 else
                 {
-                    return contentviews.OrderByDescending(c => GetValue(c.GetValue(SortField), datatype)).ToList();
+                    return contentviews.OrderByDescending(c => GetValue(c.GetValue(sortField), datatype)).ToList();
                 }
             }
             else
             {
-                if (IsAscending)
+                if (isAscending)
                 {
                     return contentviews.OrderBy(c => c.LastModified).ToList();
                 }
@@ -231,11 +202,11 @@ namespace Kooboo.Sites.DataSources
             return result;
         }
 
-        internal List<TextContentViewModel> ByCategory(Guid CategoryId, Guid ContentFolderId, List<FilterDefinition> Filters, string SortField, Boolean IsAscending)
+        internal List<TextContentViewModel> ByCategory(Guid categoryId, Guid contentFolderId, List<FilterDefinition> filters, string sortField, Boolean isAscending)
         {
-            var allcontentids = this.Context.SiteDb.ContentCategories.Query.Where(o => o.CategoryId == CategoryId).SelectAll().Select(o => o.ContentId).ToList();
+            var allcontentids = this.Context.SiteDb.ContentCategories.Query.Where(o => o.CategoryId == categoryId).SelectAll().Select(o => o.ContentId).ToList();
 
-            var categoryContentquery = this.Context.SiteDb.TextContent.Query.Where(o => o.FolderId == ContentFolderId).WhereIn("Id", allcontentids);
+            var categoryContentquery = this.Context.SiteDb.TextContent.Query.Where(o => o.FolderId == contentFolderId).WhereIn("Id", allcontentids);
 
             if (this.IsDefault)
             {
@@ -244,20 +215,20 @@ namespace Kooboo.Sites.DataSources
 
             var allorgcontents = categoryContentquery.SelectAll();
 
-            var props = Context.SiteDb.ContentTypes.GetPropertiesByFolder(ContentFolderId);
+            var props = Context.SiteDb.ContentTypes.GetPropertiesByFolder(contentFolderId);
 
-            SetSortField(ref SortField, props);
+            SetSortField(ref sortField, props);
 
             var allcontents = Helper.ContentHelper.ToViews(allorgcontents, this.Context.RenderContext.Culture, props);
 
-            return SortFilterContentViews(allcontents, ContentFolderId, Filters, SortField, IsAscending);
+            return SortFilterContentViews(allcontents, contentFolderId, filters, sortField, isAscending);
         }
 
-        private List<TextContentViewModel> ByAllCategory(Guid ContentFolderId, List<FilterDefinition> Filters, string SortField, Boolean IsAscending)
+        private List<TextContentViewModel> ByAllCategory(Guid contentFolderId, List<FilterDefinition> filters, string sortField, Boolean isAscending)
         {
-            var AllContentInCategoryIds = this.Context.SiteDb.ContentCategories.Query.SelectAll().Select(o => o.ContentId).ToList();
+            var allContentInCategoryIds = this.Context.SiteDb.ContentCategories.Query.SelectAll().Select(o => o.ContentId).ToList();
 
-            var allcategoryquery = this.Context.SiteDb.TextContent.Query.Where(o => o.FolderId == ContentFolderId).WhereIn("Id", AllContentInCategoryIds);
+            var allcategoryquery = this.Context.SiteDb.TextContent.Query.Where(o => o.FolderId == contentFolderId).WhereIn("Id", allContentInCategoryIds);
 
             if (this.IsDefault)
             {
@@ -265,42 +236,42 @@ namespace Kooboo.Sites.DataSources
             }
             var allorgcontents = allcategoryquery.SelectAll();
 
-            var props = Context.SiteDb.ContentTypes.GetPropertiesByFolder(ContentFolderId);
+            var props = Context.SiteDb.ContentTypes.GetPropertiesByFolder(contentFolderId);
 
-            SetSortField(ref SortField, props);
+            SetSortField(ref sortField, props);
 
             var allcontents = Helper.ContentHelper.ToViews(allorgcontents, this.Context.RenderContext.Culture, props);
 
-            return SortFilterContentViews(allcontents, ContentFolderId, Filters, SortField, IsAscending);
+            return SortFilterContentViews(allcontents, contentFolderId, filters, sortField, isAscending);
         }
 
         [Kooboo.Attributes.RequireFolder]
         [Kooboo.Attributes.ReturnType(typeof(List<TextContentViewModel>))]
-        public PagedResult ByCategoryId(Guid Id, Guid FolderId, List<FilterDefinition> Filters, int PageSize, int PageNumber, string SortField, Boolean IsAscending)
+        public PagedResult ByCategoryId(Guid id, Guid folderId, List<FilterDefinition> filters, int pageSize, int pageNumber, string sortField, Boolean isAscending)
         {
             List<TextContentViewModel> result;
-            if (Id != default(Guid))
+            if (id != default(Guid))
             {
-                var category = this.Context.SiteDb.TextContent.Get(Id);
-                result = ByCategory(category.Id, FolderId, Filters, SortField, IsAscending);
+                var category = this.Context.SiteDb.TextContent.Get(id);
+                result = ByCategory(category.Id, folderId, filters, sortField, isAscending);
             }
             else
             {
-                result = ByAllCategory(FolderId, Filters, SortField, IsAscending);
+                result = ByAllCategory(folderId, filters, sortField, isAscending);
             }
-            return GetPagedResult(result, PageSize, PageNumber);
+            return GetPagedResult(result, pageSize, pageNumber);
         }
 
         [Kooboo.Attributes.RequireFolder]
         [Kooboo.Attributes.ReturnType(typeof(List<TextContentViewModel>))]
-        public PagedResult ByCategoryKey(string UserKey, Guid FolderId, List<FilterDefinition> Filters, int PageSize, int PageNumber, string SortField, Boolean IsAscending)
+        public PagedResult ByCategoryKey(string userKey, Guid folderId, List<FilterDefinition> filters, int pageSize, int pageNumber, string sortField, Boolean isAscending)
         {
-            Guid Id = default(Guid);
-            if (!string.IsNullOrEmpty(UserKey))
+            Guid id = default(Guid);
+            if (!string.IsNullOrEmpty(userKey))
             {
-                Id = Lib.Security.Hash.ComputeGuidIgnoreCase(UserKey);
+                id = Lib.Security.Hash.ComputeGuidIgnoreCase(userKey);
             }
-            return ByCategoryId(Id, FolderId, Filters, PageSize, PageNumber, SortField, IsAscending);
+            return ByCategoryId(id, folderId, filters, pageSize, pageNumber, sortField, isAscending);
         }
 
         private void SetSortField(ref string sortField, List<ContentProperty> props)

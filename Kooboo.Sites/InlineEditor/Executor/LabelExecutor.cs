@@ -23,15 +23,13 @@ namespace Kooboo.Sites.InlineEditor.Executor
         {
             foreach (var item in updatelist)
             {
-                var labelupate = item as LabelModel;
-                if (labelupate == null)
+                if (!(item is LabelModel labelupate))
                 {
                     continue;
                 }
                 if (labelupate.Action == ActionType.Add)
                 {
-                    Kooboo.Sites.Contents.Models.Label label = new Contents.Models.Label();
-                    label.Name = labelupate.NameOrId;
+                    Kooboo.Sites.Contents.Models.Label label = new Contents.Models.Label {Name = labelupate.NameOrId};
                     label.SetValue(context.Culture, labelupate.Value);
                     context.WebSite.SiteDb().Labels.AddOrUpdate(label, context.User.Id);
                 }
@@ -55,7 +53,7 @@ namespace Kooboo.Sites.InlineEditor.Executor
             }
         }
 
-        public void ExecuteObject(RenderContext context, IRepository repo, string NameOrId, List<IInlineModel> updates)
+        public void ExecuteObject(RenderContext context, IRepository repo, string nameOrId, List<IInlineModel> updates)
         {
             throw new NotImplementedException();
         }

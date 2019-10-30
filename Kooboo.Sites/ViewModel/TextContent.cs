@@ -1,12 +1,12 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
+using Kooboo.Data.Context;
 using Kooboo.Data.Interface;
+using Kooboo.Sites.Contents.Models;
+using Kooboo.Sites.Extensions;
 using System;
 using System.Collections.Generic;
-using Kooboo.Data.Context;
-using Kooboo.Sites.Extensions;
 using System.Linq;
-using Kooboo.Sites.Contents.Models;
 
 namespace Kooboo.Sites.ViewModel
 {
@@ -28,78 +28,66 @@ namespace Kooboo.Sites.ViewModel
 
         public Dictionary<string, string> TextValues = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-        public Object GetValue(string FieldName)
-        {  
-            string lower = FieldName.ToLower();
+        public Object GetValue(string fieldName)
+        {
+            string lower = fieldName.ToLower();
 
-            if (lower == "userkey")
+            switch (lower)
             {
-                return this.UserKey;
-            }
-            else if (lower == "folderid")
-            {
-                return this.FolderId;
-            }
-            else if (lower == "id")
-            {
-                return this.Id;
-            }
-            else if (lower == "sequence")
-            {
-                return this.Order; 
+                case "userkey":
+                    return this.UserKey;
+                case "folderid":
+                    return this.FolderId;
+                case "id":
+                    return this.Id;
+                case "sequence":
+                    return this.Order;
             }
 
-            if (TextValues.ContainsKey(FieldName))
+            if (TextValues.ContainsKey(fieldName))
             {
-                return TextValues[FieldName];
+                return TextValues[fieldName];
             }
-   
-              if (lower == "parentid")
+
+            switch (lower)
             {
-                return this.ParentId;
+                case "parentid":
+                    return this.ParentId;
+                case "contenttypeid":
+                    return this.ContentTypeId;
+                case "order":
+                    return this.Order;
+                case "online":
+                    return this.Online;
+                case "lastmodify":
+                case "lastmodified":
+                    return this.LastModified;
+                case "creationdate":
+                    return this.CreationDate;
+                default:
+                    return null;
             }
-            else if (lower == "contenttypeid")
-            {
-                return this.ContentTypeId;
-            }
-            else if (lower == "order")
-            {
-                return this.Order;
-            }
-            else if (lower == "online")
-            {
-                return this.Online;
-            }
-            else if (lower == "lastmodify" || lower == "lastmodified")
-            {
-                return this.LastModified;
-            }
-            else if (lower == "creationdate")
-            {
-                return this.CreationDate;
-            }
-            return null;
         }
 
-        public void SetValue(string FieldName, object Value)
+        public void SetValue(string fieldName, object value)
         {
-            this.TextValues[FieldName] = Value.ToString();
+            this.TextValues[fieldName] = value.ToString();
         }
 
-        public Object GetValue(string FieldName, RenderContext Context)
+        public Object GetValue(string fieldName, RenderContext context)
         {
-            string culture = Context.Culture; 
+            string culture = context.Culture;
 
-            var result = GetValue(FieldName);
-            if (result == null && Context != null)
+            var result = GetValue(fieldName);
+            if (result == null && context != null)
             {
-                // check category and embedded. 
-                var sitedb = Context.WebSite.SiteDb();
+                // check category and embedded.
+                var sitedb = context.WebSite.SiteDb();
                 var folder = sitedb.ContentFolders.Get(this.FolderId);
                 if (folder != null)
                 {
                     //check category.
-                    var category = folder.Category.Find(o => o.Alias == FieldName);
+                    var category = folder.Category.Find(o => o.Alias == fieldName);
                     if (category != null)
                     {
                         List<TextContentViewModel> mulresult = new List<TextContentViewModel>();
@@ -122,16 +110,11 @@ namespace Kooboo.Sites.ViewModel
                             }
                         }
 
-                        if (mulresult.Count() > 0)
-                        {
-                            return mulresult;
-                        }
-                        else
-                        { return null; }
+                        return mulresult.Any() ? mulresult : null;
                     }
                     //check embedded.
 
-                    var embed = folder.Embedded.Find(o => o.Alias == FieldName);
+                    var embed = folder.Embedded.Find(o => o.Alias == fieldName);
                     if (embed != null)
                     {
                         List<TextContentViewModel> emresult = new List<TextContentViewModel>();
@@ -140,8 +123,8 @@ namespace Kooboo.Sites.ViewModel
                         {
                             var ids = this.Embedded[embed.FolderId];
 
-                            if (ids != null && ids.Count() > 0)
-                            { 
+                            if (ids != null && ids.Any())
+                            {
                                 foreach (var item in ids)
                                 {
                                     var view = sitedb.TextContent.GetView(item, culture);
@@ -150,23 +133,22 @@ namespace Kooboo.Sites.ViewModel
                                         emresult.Add(view);
                                     }
                                 }
-
                             }
                         }
 
                         var byParentIds = sitedb.TextContent.Query.Where(o => o.FolderId == embed.FolderId && o.ParentId == this.Id).SelectAll();
 
-                        if (byParentIds != null && byParentIds.Count() > 0)
+                        if (byParentIds != null && byParentIds.Any())
                         {
                             foreach (var subitem in byParentIds)
                             {
                                 if (emresult.Find(o => o.Id == subitem.Id) == null)
                                 {
-                                    emresult.Add(sitedb.TextContent.GetView(subitem, Context.Culture));
+                                    emresult.Add(sitedb.TextContent.GetView(subitem, context.Culture));
                                 }
                             }
                         }
-                        return emresult.OrderByDescending(o=>o.LastModified).ToList(); 
+                        return emresult.OrderByDescending(o => o.LastModified).ToList();
                     }
                 }
             }
@@ -184,27 +166,25 @@ namespace Kooboo.Sites.ViewModel
         {
             get
             {
-                var result =  this.TextValues.ToDictionary(o => o.Key, o => (object)o.Value);
+                var result = this.TextValues.ToDictionary(o => o.Key, o => (object)o.Value);
                 result["Id"] = this.Id.ToString();
                 result["ParentId"] = this.ParentId.ToString();
                 result["ContentTypeId"] = this.ContentTypeId.ToString();
                 result["UserKey"] = this.UserKey;
                 result["LastModified"] = this.LastModified.ToString();
-                result["Online"] = this.Online.ToString(); 
- 
-                return result; 
+                result["Online"] = this.Online.ToString();
+
+                return result;
             }
         }
     }
-     
+
     public class EmbeddedContentViewModel
     {
         public ContentFolder EmbeddedFolder { get; set; }
         public List<TextContentViewModel> Contents { get; set; } = new List<TextContentViewModel>();
         public string Alias { get; set; }
-
     }
-
 
     public class EmbeddedBy
     {
@@ -212,6 +192,4 @@ namespace Kooboo.Sites.ViewModel
 
         public Guid FolderId { get; set; }
     }
-
- 
 }

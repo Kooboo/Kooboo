@@ -7,20 +7,20 @@ namespace Kooboo.Sites.FrontEvent
 {
     public class EventConditionSetting : Kooboo.Data.Models.SimpleSetting
     {
-        private List<string> _Operator;
+        private List<string> _operator;
 
         public List<string> Operator
         {
             get
             {
-                if ((_Operator == null || _Operator.Count() == 0) && this.DataType != null)
+                if ((_operator == null || !_operator.Any()) && this.DataType != null)
                 {
-                    _Operator = FrontEvent.ConditionManager.GetOperators(this.DataType);
+                    _operator = FrontEvent.ConditionManager.GetOperators(this.DataType);
                 }
-                return _Operator;
+                return _operator;
             }
             set
-            { _Operator = value; }
+            { _operator = value; }
         }
     }
 }

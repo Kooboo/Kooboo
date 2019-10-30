@@ -17,7 +17,7 @@ namespace Kooboo.Sites.InlineEditor.Converter
             }
         }
 
-        public ConvertResponse Convert(RenderContext context, JObject ConvertResult)
+        public ConvertResponse Convert(RenderContext context, JObject convertResult)
         {
             var page = context.GetItem<Page>();
 
@@ -25,14 +25,13 @@ namespace Kooboo.Sites.InlineEditor.Converter
             {
                 return null;
             }
-            string convertname = Lib.Helper.JsonHelper.GetString(ConvertResult, "name");
-            string converttype = Lib.Helper.JsonHelper.GetString(ConvertResult, "ConvertToType");
+            string convertname = Lib.Helper.JsonHelper.GetString(convertResult, "name");
+            string converttype = Lib.Helper.JsonHelper.GetString(convertResult, "ConvertToType");
 
             var name = ConvertManager.GetUniqueName(context, converttype, convertname);
 
-            Sites.Contents.Models.HtmlBlock block = new Contents.Models.HtmlBlock();
-            block.Name = name;
-            string convertvalue = Lib.Helper.JsonHelper.GetString(ConvertResult, "HtmlBody");
+            Sites.Contents.Models.HtmlBlock block = new Contents.Models.HtmlBlock {Name = name};
+            string convertvalue = Lib.Helper.JsonHelper.GetString(convertResult, "HtmlBody");
             var culture = string.IsNullOrEmpty(context.Culture) ? string.Empty : context.Culture;
             block.SetValue(culture, convertvalue);
 

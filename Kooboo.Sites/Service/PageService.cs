@@ -1,25 +1,23 @@
-//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com 
+//Copyright (c) 2018 Yardi Technology Limited. Http://www.kooboo.com
 //All rights reserved.
 using Kooboo.Dom;
 using Kooboo.Dom.CSS;
 using Kooboo.Lib.Helper;
+using Kooboo.Sites.DataSources.New.Models;
+using Kooboo.Sites.Extensions;
 using Kooboo.Sites.Models;
+using Kooboo.Sites.Render.Components;
+using Kooboo.Sites.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Kooboo.Sites.Extensions;
-using Kooboo.Sites.Repository;
-using Kooboo.Sites.DataSources.New.Models;
-using Kooboo.Sites.Render.Components;
-using Kooboo.Sites.Render; 
 
 namespace Kooboo.Sites.Service
 {
     public static class PageService
     {
-
         /// <summary>
-        /// The all the absolute url link with the page source. 
+        /// The all the absolute url link with the page source.
         /// </summary>
         /// <param name="pageHtmlSource"></param>
         /// <param name="pageOrBaseUrl"></param>
@@ -32,7 +30,7 @@ namespace Kooboo.Sites.Service
         }
 
         /// <summary>
-        /// The all the absolute url link with the page source. 
+        /// The all the absolute url link with the page source.
         /// </summary>
         /// <param name="dom"></param>
         /// <param name="pageOrBaseUrl"></param>
@@ -94,11 +92,10 @@ namespace Kooboo.Sites.Service
             }
 
             return urlList;
-
         }
 
         /// <summary>
-        /// get all image links, that already combined with the pagebaseurl. 
+        /// get all image links, that already combined with the pagebaseurl.
         /// </summary>
         /// <param name="dom"></param>
         /// <param name="pageOrBaseUrl"></param>
@@ -121,36 +118,35 @@ namespace Kooboo.Sites.Service
         }
 
         /// <summary>
-        /// apply the style sheet to all Dom Elements. 
+        /// apply the style sheet to all Dom Elements.
         /// </summary>
         /// <param name="page"></param>
-        public static void ApplySiteStyle(Page page, Repository.SiteDb SiteDb)
+        /// <param name="siteDb"></param>
+        public static void ApplySiteStyle(Page page, Repository.SiteDb siteDb)
         {
             var dom = page.Dom;
 
             if (!dom.hasParseCSS && dom.StyleSheets.item.Count == 0)
             {
-                ParseSiteStyleSheet(page, SiteDb);
+                ParseSiteStyleSheet(page, siteDb);
             }
 
             foreach (var item in dom.StyleSheets.item)
             {
-                CSSStyleSheet stylesheet = item as CSSStyleSheet;
-                if (stylesheet != null)
+                if (item is CSSStyleSheet stylesheet)
                 {
                     dom.ApplyCssRules(stylesheet.cssRules, "");
                 }
             }
         }
 
-        public static void ParseSiteStyleSheet(Page page, Repository.SiteDb SiteDb)
+        public static void ParseSiteStyleSheet(Page page, Repository.SiteDb siteDb)
         {
             var dom = page.Dom;
 
-            string pageRelativeUrl = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(SiteDb, page);
+            string pageRelativeUrl = Kooboo.Sites.Service.ObjectService.GetObjectRelativeUrl(siteDb, page);
 
-            string pageAbsoluteUrl = UrlHelper.Combine(SiteDb.WebSite.BaseUrl(), pageRelativeUrl);
-
+            string pageAbsoluteUrl = UrlHelper.Combine(siteDb.WebSite.BaseUrl(), pageRelativeUrl);
 
             HTMLCollection styletags = dom.getElementsByTagName("link, style");
 
@@ -162,7 +158,6 @@ namespace Kooboo.Sites.Service
                 {
                     availablesheets.Add(item);
                 }
-
                 else if (item.hasAttribute("type"))
                 {
                     if (item.getAttribute("type").ToLower().Contains("css"))
@@ -193,13 +188,13 @@ namespace Kooboo.Sites.Service
                     string cssrelativeUrl = UrlHelper.Combine(pageRelativeUrl, href);
                     cssrelativeUrl = UrlHelper.RelativePath(cssrelativeUrl);
 
-                    var route = Sites.Routing.ObjectRoute.GetRoute(SiteDb, cssrelativeUrl);
+                    var route = Sites.Routing.ObjectRoute.GetRoute(siteDb, cssrelativeUrl);
                     if (route == null || route.DestinationConstType != ConstObjectType.Style)
                     {
                         continue;
                     }
 
-                    string cssText = SiteDb.Styles.Get(route.objectId).Body;
+                    string cssText = siteDb.Styles.Get(route.objectId).Body;
 
                     string cssabsoluteUrl = UrlHelper.Combine(pageAbsoluteUrl, cssrelativeUrl);
 
@@ -226,9 +221,7 @@ namespace Kooboo.Sites.Service
                         }
                         dom.StyleSheets.appendStyleSheet(newStyleSheet);
                     }
-
                 }
-
                 else if (item.tagName == "style")
                 {
                     string cssText = item.InnerHtml;
@@ -248,43 +241,42 @@ namespace Kooboo.Sites.Service
                     }
                     dom.StyleSheets.appendStyleSheet(newStyleSheet);
                 }
-
             }
 
             dom.hasParseCSS = true;
         }
 
-        internal static string SetPreviewPara(Page Page, string Url)
+        internal static string SetPreviewPara(Page page, string url)
         {
-            if (string.IsNullOrEmpty(Url))
+            if (string.IsNullOrEmpty(url))
             {
-                return Url;
+                return url;
             }
 
-            int start = Url.IndexOf("{");
+            int start = url.IndexOf("{");
 
             if (start == -1)
             {
-                return Url;
+                return url;
             }
 
-            int end = Url.IndexOf("}", start);
+            int end = url.IndexOf("}", start);
             if (end == -1)
             {
-                return Url;
+                return url;
             }
 
-            string para = Url.Substring(start + 1, end - start - 1);
+            string para = url.Substring(start + 1, end - start - 1);
             if (string.IsNullOrWhiteSpace(para))
             {
-                return Url;
+                return url;
             }
 
             string value = null;
 
-            if (Page.Parameters.ContainsKey(para))
+            if (page.Parameters.ContainsKey(para))
             {
-                var paravalue = Page.Parameters[para];
+                var paravalue = page.Parameters[para];
                 if (!Service.BindingService.IsBinding(paravalue))
                 {
                     value = paravalue;
@@ -293,37 +285,37 @@ namespace Kooboo.Sites.Service
 
             if (!string.IsNullOrEmpty(value))
             {
-                string newurl = Url.Substring(0, start) + value + Url.Substring(end + 1);
-                return SetPreviewPara(Page, newurl);
+                string newurl = url.Substring(0, start) + value + url.Substring(end + 1);
+                return SetPreviewPara(page, newurl);
             }
             else
             {
-                return Url;
+                return url;
             }
         }
 
-        public static string GetPreviewUrl(SiteDb SiteDb, Page page)
+        public static string GetPreviewUrl(SiteDb siteDb, Page page)
         {
-            var siteId = SiteDb.WebSite.Id;
+            var siteId = siteDb.WebSite.Id;
 
             var bindings = Data.GlobalDb.Bindings.GetByWebSite(siteId);
-            var route = SiteDb.Routes.GetByObjectId(page.Id);
+            var route = siteDb.Routes.GetByObjectId(page.Id);
             if (bindings == null || bindings.Count < 1 || route == null)
-            { 
+            {
                 return "#";
             }
             var binding = bindings.FirstOrDefault();
-            string PageRelativeUrl = SetPreviewPara(page, route.Name);
+            string pageRelativeUrl = SetPreviewPara(page, route.Name);
 
-            string baseurl = SiteDb.WebSite.BaseUrl(); 
+            string baseurl = siteDb.WebSite.BaseUrl();
             if (string.IsNullOrEmpty(baseurl))
             {
-                return null; 
-            } 
-            return Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, PageRelativeUrl); 
+                return null;
+            }
+            return Kooboo.Lib.Helper.UrlHelper.Combine(baseurl, pageRelativeUrl);
         }
 
-        public static bool RequireRenderLink(Dom.Element hrefElement, Repository.SiteDb SiteDb = null)
+        public static bool RequireRenderLink(Dom.Element hrefElement, Repository.SiteDb siteDb = null)
         {
             if (hrefElement.hasAttribute(Kooboo.Sites.ConstTALAttributes.href))
             {
@@ -344,12 +336,12 @@ namespace Kooboo.Sites.Service
                 return true;
             }
 
-            if (SiteDb == null)
+            if (siteDb == null)
             {
                 return false;
             }
 
-            if (SiteDb.WebSite != null && SiteDb.WebSite.EnableSitePath && SiteDb.WebSite.SitePath != null && SiteDb.WebSite.HasSitePath())
+            if (siteDb.WebSite != null && siteDb.WebSite.EnableSitePath && siteDb.WebSite.SitePath != null && siteDb.WebSite.HasSitePath())
             {
                 return true;
             }
@@ -359,7 +351,7 @@ namespace Kooboo.Sites.Service
                 return false;
             }
 
-            var route = Routing.ObjectRoute.GetRoute(SiteDb, href);
+            var route = Routing.ObjectRoute.GetRoute(siteDb, href);
 
             if (route == null)
             {
@@ -373,7 +365,7 @@ namespace Kooboo.Sites.Service
 
             if (route.DestinationConstType == ConstObjectType.Page)
             {
-                var page = SiteDb.Pages.Get(route.objectId);
+                var page = siteDb.Pages.Get(route.objectId);
                 if (page != null && page.Parameters.Count > 0)
                 { return true; }
             }
@@ -411,31 +403,30 @@ namespace Kooboo.Sites.Service
             return name;
         }
 
-
         /// <summary>
-        /// Get available paras to be used on Url. 
+        /// Get available paras to be used on Url.
         /// </summary>
         /// <param name="sitedb"></param>
-        /// <param name="PageId"></param>
+        /// <param name="pageId"></param>
         /// <returns></returns>
-        public static List<string> GetUrlParas(SiteDb sitedb, Guid PageId)
+        public static List<string> GetUrlParas(SiteDb sitedb, Guid pageId)
         {
-            var viewrelations = sitedb.Relations.GetRelations(PageId, ConstObjectType.View);
-            List<Guid> ViewIds = new List<Guid>();
+            var viewrelations = sitedb.Relations.GetRelations(pageId, ConstObjectType.View);
+            List<Guid> viewIds = new List<Guid>();
 
             foreach (var item in viewrelations)
             {
-                ViewIds.Add(item.objectYId);
+                viewIds.Add(item.objectYId);
             }
 
-            return GetUrlParas(sitedb, ViewIds);
+            return GetUrlParas(sitedb, viewIds);
         }
 
-        public static List<string> GetUrlParas(SiteDb sitedb, List<Guid> ViewIds)
+        public static List<string> GetUrlParas(SiteDb sitedb, List<Guid> viewIds)
         {
             List<string> allparameters = new List<string>();
 
-            foreach (var viewid in ViewIds)
+            foreach (var viewid in viewIds)
             {
                 var viewparas = Kooboo.Sites.Routing.PageRoute.GetViewParameters(sitedb, viewid);
                 foreach (var para in viewparas)
@@ -458,23 +449,22 @@ namespace Kooboo.Sites.Service
 
             string lower = input.ToLower();
             lower = lower.Replace("{", "");
-            lower = lower.Replace("}", ""); 
+            lower = lower.Replace("}", "");
             if (lower.Contains("."))
             {
                 int index = lower.LastIndexOf(".");
-                lower = lower.Substring(index + 1); 
+                lower = lower.Substring(index + 1);
             }
-            
+
             if (lower == "folderid" || lower == "sortfield" || lower == "limit" || lower == "isascending" || lower == "enablepaging" || lower == "pagesize" || lower == "pagenumber" || lower == "contentlistparams")
             {
-                return true; 
+                return true;
             }
-            return false; 
+            return false;
         }
-         
 
         /// <summary>
-        /// {TextContent.Title}, {TextContent.Summary} 
+        /// {TextContent.Title}, {TextContent.Summary}
         /// </summary>
         /// <param name="sitedb"></param>
         /// <param name="PageId"></param>
@@ -483,29 +473,29 @@ namespace Kooboo.Sites.Service
         {
             var viewrelations = sitedb.Relations.GetRelations(PageId, ConstObjectType.View);
 
-            List<Guid> ViewIds = new List<Guid>();
+            List<Guid> viewIds = new List<Guid>();
 
             foreach (var item in viewrelations)
             {
-                ViewIds.Add(item.objectYId);
+                viewIds.Add(item.objectYId);
             }
 
-            return GetMetaBindings(sitedb, ViewIds); 
+            return GetMetaBindings(sitedb, viewIds);
         }
 
         /// <summary>
-        /// {GetById.Title}, {GetById.Summary}.... .. 
+        /// {GetById.Title}, {GetById.Summary}.... ..
         /// </summary>
         /// <param name="sitedb"></param>
-        /// <param name="ViewIds"></param>
+        /// <param name="viewIds"></param>
         /// <returns></returns>
-        public static List<string> GetMetaBindings(SiteDb sitedb, List<Guid> ViewIds)
+        public static List<string> GetMetaBindings(SiteDb sitedb, List<Guid> viewIds)
         {
-            List<string> AvailableBindings = new List<string>();
+            List<string> availableBindings = new List<string>();
 
-            foreach (var ViewId in ViewIds)
+            foreach (var viewId in viewIds)
             {
-                var viewmethods = sitedb.ViewDataMethods.Query.Where(o => o.ViewId == ViewId).SelectAll();
+                var viewmethods = sitedb.ViewDataMethods.Query.Where(o => o.ViewId == viewId).SelectAll();
 
                 foreach (var viewmethod in viewmethods)
                 {
@@ -515,112 +505,105 @@ namespace Kooboo.Sites.Service
 
                     if (!fields.Enumerable)
                     {
-                        analyzeBinding(fields.ItemFields, viewmethod.AliasName, ref bindings);
+                        AnalyzeBinding(fields.ItemFields, viewmethod.AliasName, ref bindings);
                     }
 
                     foreach (var bind in bindings)
                     {
-                        if (!AvailableBindings.Contains(bind))
+                        if (!availableBindings.Contains(bind))
                         {
-                            AvailableBindings.Add(bind);
+                            availableBindings.Add(bind);
                         }
                     }
                 }
-
             }
 
-            return AvailableBindings;
-
+            return availableBindings;
         }
 
-        private static void analyzeBinding(List<TypeFieldModel> Fields, string ParentTypeName, ref List<string> bindings)
+        private static void AnalyzeBinding(List<TypeFieldModel> fields, string parentTypeName, ref List<string> bindings)
         {
-
-            foreach (var field in Fields)
+            foreach (var field in fields)
             {
                 if (!field.IsComplexType)
                 {
-                    string bindingfield = ParentTypeName + "." + field.Name;
+                    string bindingfield = parentTypeName + "." + field.Name;
 
                     if (!bindings.Contains(bindingfield))
                     {
                         bindings.Add(bindingfield);
                     }
                 }
-
                 else
                 {
-                    string parent = ParentTypeName + "." + field.Name;
-                    analyzeBinding(field.Fields, parent, ref bindings);
+                    string parent = parentTypeName + "." + field.Name;
+                    AnalyzeBinding(field.Fields, parent, ref bindings);
                 }
-
             }
         }
 
         public static string GetLayoutName(Page page)
         {
-          if (page == null)
+            if (page == null)
             {
-                return null; 
+                return null;
             }
-          if (!string.IsNullOrEmpty(page.LayoutName))
+            if (!string.IsNullOrEmpty(page.LayoutName))
             {
-                return page.LayoutName; 
+                return page.LayoutName;
             }
 
-            var dom =  DomParser.CreateDom(page.Body);
+            var dom = DomParser.CreateDom(page.Body);
             var layoutTags = dom.getElementsByTagName("layout");
-             
-            if (layoutTags != null && layoutTags.item.Count()>0)
+
+            if (layoutTags != null && layoutTags.item.Any())
             {
                 var tag = layoutTags.item[0];
-                return tag.id; 
+                return tag.id;
             }
-            return null; 
+            return null;
         }
 
-        public static Dictionary<string, List<ComponentSetting>> GetComponentSettings(string HtmlSource, string LayoutNameOrId = null)
-        { 
-            if (string.IsNullOrWhiteSpace(HtmlSource))
+        public static Dictionary<string, List<ComponentSetting>> GetComponentSettings(string htmlSource, string layoutNameOrId = null)
+        {
+            if (string.IsNullOrWhiteSpace(htmlSource))
             {
-                return new Dictionary<string, List<ComponentSetting>>(); 
+                return new Dictionary<string, List<ComponentSetting>>();
             }
 
-            var dom = Kooboo.Dom.DomParser.CreateDom(HtmlSource); 
-            
-            if (!string.IsNullOrEmpty(LayoutNameOrId))
+            var dom = Kooboo.Dom.DomParser.CreateDom(htmlSource);
+
+            if (!string.IsNullOrEmpty(layoutNameOrId))
             {
-                var layoutelement = dom.getElementById(LayoutNameOrId);
-                return GetComponentSettingsFromElement(layoutelement); 
+                var layoutelement = dom.getElementById(layoutNameOrId);
+                return GetComponentSettingsFromElement(layoutelement);
             }
             else
             {
-                var elements = dom.getElementsByTagName("layout"); 
-                if (elements!= null && elements.length >0)
+                var elements = dom.getElementsByTagName("layout");
+                if (elements != null && elements.length > 0)
                 {
                     var layoutelement = elements.item[0];
-                    return GetComponentSettingsFromElement(layoutelement); 
+                    return GetComponentSettingsFromElement(layoutelement);
                 }
             }
-           
+
             return new Dictionary<string, List<ComponentSetting>>();
         }
 
-        private static Dictionary<string, List<ComponentSetting>> GetComponentSettingsFromElement(Element LayoutElement)
+        private static Dictionary<string, List<ComponentSetting>> GetComponentSettingsFromElement(Element layoutElement)
         {
-            Dictionary<string, List<ComponentSetting>> result = new Dictionary<string, List<ComponentSetting>>(); 
-            if (LayoutElement == null)
+            Dictionary<string, List<ComponentSetting>> result = new Dictionary<string, List<ComponentSetting>>();
+            if (layoutElement == null)
             {
-                return result; 
+                return result;
             }
-             
-            foreach (var item in LayoutElement.childNodes.item)
+
+            foreach (var item in layoutElement.childNodes.item)
             {
                 if (item.nodeType == enumNodeType.ELEMENT)
                 {
-                    Element child = item as Element;
-
-                    if (child.tagName == "position" || child.tagName == "placeholder")
+                    if (item is Element child && (child.tagName == "position" || child.tagName == "placeholder"))
                     {
                         string positionname = child.id;
                         if (string.IsNullOrEmpty(positionname))
@@ -634,13 +617,13 @@ namespace Kooboo.Sites.Service
 
                         List<ComponentSetting> settingList;
                         if (result.ContainsKey(positionname))
-                        {  settingList = result[positionname];   }  
+                        { settingList = result[positionname]; }
                         else
-                        { settingList = new List<ComponentSetting>();
-                            result[positionname] = settingList; 
+                        {
+                            settingList = new List<ComponentSetting>();
+                            result[positionname] = settingList;
                         }
-                         
-                         
+
                         foreach (var comNodeItem in child.childNodes.item)
                         {
                             if (comNodeItem.nodeType == enumNodeType.ELEMENT)
@@ -649,22 +632,20 @@ namespace Kooboo.Sites.Service
                                 if (Manager.IsComponent(comElement))
                                 {
                                     var setting = ComponentSetting.LoadFromElement(comElement);
-                                    settingList.Add(setting); 
+                                    settingList.Add(setting);
                                 }
                             }
-                        } 
-                         
+                        }
                     }
-
                 }
             }
 
             return result;
         }
 
-        public static string ToLayoutPageSource(string LayoutName, Dictionary<string, List<ComponentSetting>> components)
+        public static string ToLayoutPageSource(string layoutName, Dictionary<string, List<ComponentSetting>> components)
         {
-            string result = "<layout id='" + LayoutName + "'>\r\n";
+            string result = "<layout id='" + layoutName + "'>\r\n";
 
             foreach (var item in components)
             {
@@ -676,17 +657,17 @@ namespace Kooboo.Sites.Service
 
                     foreach (var setting in onecomponent.Settings)
                     {
-                        result += "<" + setting.Key + ">" + setting.Value + "></" + setting.Key + ">"; 
+                        result += "<" + setting.Key + ">" + setting.Value + "></" + setting.Key + ">";
                     }
 
-                    result += "</" + onecomponent.TagName + ">\r\n"; 
+                    result += "</" + onecomponent.TagName + ">\r\n";
                 }
 
-                 result += "</placeholder>\r\n"; 
+                result += "</placeholder>\r\n";
             }
             result += "\r\n</layout>";
 
-            return result; 
+            return result;
         }
     }
 }

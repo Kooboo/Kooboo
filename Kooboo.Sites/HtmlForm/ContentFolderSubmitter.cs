@@ -27,9 +27,10 @@ namespace Kooboo.Sites.HtmlForm
         public List<SimpleSetting> Settings(RenderContext context)
         {
             List<SimpleSetting> setting = new List<SimpleSetting>();
-            SimpleSetting foldersetting = new SimpleSetting();
-            foldersetting.Name = "ContentFolder";
-            foldersetting.ControlType = Data.ControlType.Selection;
+            SimpleSetting foldersetting = new SimpleSetting
+            {
+                Name = "ContentFolder", ControlType = Data.ControlType.Selection
+            };
             var folders = context.WebSite.SiteDb().ContentFolders.All();
             foreach (var item in folders)
             {
@@ -39,29 +40,28 @@ namespace Kooboo.Sites.HtmlForm
             return setting;
         }
 
-        public bool Submit(RenderContext context, Guid FormId, Dictionary<string, string> settings)
+        public bool Submit(RenderContext context, Guid formId, Dictionary<string, string> settings)
         {
             var sitedb = context.WebSite.SiteDb();
 
-            Guid ContentFolderId = default(Guid);
+            Guid contentFolderId = default(Guid);
             foreach (var item in settings)
             {
                 if (item.Key.ToLower().Contains("folder"))
                 {
                     var value = item.Value;
-                    if (System.Guid.TryParse(value, out ContentFolderId))
+                    if (System.Guid.TryParse(value, out contentFolderId))
                     {
                         break;
                     }
                 }
             }
 
-            if (ContentFolderId != default(Guid))
+            if (contentFolderId != default(Guid))
             {
                 string culture = context.Culture;
 
-                TextContent content = new TextContent();
-                content.FolderId = ContentFolderId;
+                TextContent content = new TextContent {FolderId = contentFolderId};
 
                 if (context.Request.Forms.Count > 0)
                 {
