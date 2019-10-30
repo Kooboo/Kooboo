@@ -192,7 +192,6 @@ namespace Kooboo.IndexedDB.Query
             return filter.Take(count);
         }
 
-
         private void ParseLambda(LambdaExpression lambda)
         {
             ParseExpression(lambda.Body);
