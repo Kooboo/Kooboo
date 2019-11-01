@@ -1,10 +1,10 @@
 <div class="page-bar">
   <ol class="breadcrumb">
-    <template v-for="(item,index) in bindingList" :key="index">
-      <li v-if="index==bindingList.length - 1" class="active">
+    <template v-for="(item,index) in bindingList">
+      <li v-if="index==bindingList.length - 1" class="active" :key="index">
         {{ item.text }}
       </li>
-      <li v-else>
+      <li v-else :key="index">
         <a :href="item.url" @click="SPAClick(item,$event)">{{ item.text }}</a>
       </li>
     </template>
