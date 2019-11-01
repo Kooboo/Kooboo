@@ -11,13 +11,7 @@
             </a>
         </div>
     </div>
-    <div data-bind="component: { name: 'kb-breadcrumb', params:[{
-        name: 'SITES'
-    },{
-        name: 'DASHBOARD'
-    },{
-        name: Kooboo.text.common.mediaLibrary
-    }]}"></div>
+    <kb-breadcrumb :breads="breads"></kb-breadcrumb>
     <ul class="nav nav-tabs">
         <li v-for="$data in imgTypes" :class="{ active: curImgType == $data.value }" @click="changeImgType($data.value)">
             <a href="javascript:;">{{ $data.displayName }}</a>
@@ -28,7 +22,7 @@
             <a data-bind="click: onCreateFolder" class="btn green navbar-btn">New folder</a>
             <a class="btn green navbar-btn btn-file">
                 <span>Upload images</span>
-                <input data-bind="upload:{
+                <input v-upload="{
                     allowMultiple: true,
                     acceptTypes: ['image/bmp','image/x-windows-bmp','image/png','image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml', 'image/x-icon'],
                     acceptSuffix: ['bmp', 'png', 'jpg', 'jpeg', 'gif', 'svg', 'ico', 'webp'],
@@ -193,7 +187,7 @@
 <script>
     (function() {
         Kooboo.loadJS([
-            "/_Admin/Scripts/components/kbBreadcrumb.js",
+            "/_Admin/Scripts/vue-components/kbBreadcrumb.js",
             "/_Admin/Scripts/components/kbRelationModal.js",
             "/_Admin/Scripts/components/kbPager.js"
         ])

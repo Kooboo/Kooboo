@@ -1,9 +1,137 @@
 $(function () {
   Vue.prototype.Kooboo = Kooboo;
+  Vue.directive('upload', {
+    bind: function (element, binding) {
+      var config = binding.value;
+      config.allowMultiple
+        ? $(element).attr("multiple", true)
+        : $(element).removeAttr("multiple");
+
+      if (config.acceptTypes && config.acceptTypes.length) {
+        $(element).attr("accept", config.acceptTypes.join(","));
+      }
+
+      $(element).change(function () {
+        var files = this.files,
+          len = files.length,
+          acceptableFilesLength = 0;
+
+        var availableFiles = [];
+
+        if (len) {
+          var data = new FormData();
+
+          var errors = {
+            size: [],
+            type: [],
+            suffix: []
+          };
+
+          _.forEach(files, function (file, idx) {
+            var fileName = file.name;
+
+            if (!config.acceptSuffix || !config.acceptSuffix.length) {
+              if (!config.acceptTypes || !config.acceptTypes.length) {
+                alert("Upload failed: please init the acceptType first.");
+              } else {
+                if (
+                  config.acceptTypes.indexOf(file.type) > -1 ||
+                  config.acceptTypes.indexOf("*/*") > -1
+                ) {
+                  if (file.size) {
+                    data.append("file_" + idx, file);
+                    availableFiles.push(file);
+                    acceptableFilesLength++;
+                  } else {
+                    errors.size.push(file.name);
+                  }
+                } else {
+                  errors.type.push(file.name);
+                }
+              }
+            } else {
+              if (fileName.indexOf(".") > -1) {
+                var suffix = fileName
+                  .split(".")
+                  .reverse()[0]
+                  .toLowerCase();
+
+                if (config.acceptSuffix.indexOf(suffix) > -1) {
+                  if (file.size) {
+                    data.append("file_" + idx, file);
+                    availableFiles.push(file);
+                    acceptableFilesLength++;
+                  } else {
+                    errors.size.push(file.name);
+                  }
+                } else {
+                  errors.suffix.push(file.name);
+                }
+              }
+            }
+          });
+
+          config.callback(data, availableFiles);
+          resetValue(element);
+
+          var errorString = getErrorString();
+          errorString && alert(errorString);
+
+          function getErrorString() {
+            var string = "";
+            if (errors.size.length) {
+              string +=
+                Kooboo.text.common.File +
+                " " +
+                errors.size.join(", ") +
+                " " +
+                Kooboo.text.alert.fileUpload.emptyFile +
+                "\n";
+            }
+            if (errors.type.length) {
+              string +=
+                Kooboo.text.common.File +
+                " " +
+                errors.type.join(", ") +
+                " " +
+                Kooboo.text.alert.fileUpload.invalidSuffix +
+                "\n";
+            }
+            if (errors.suffix.length) {
+              string +=
+                Kooboo.text.common.File +
+                " " +
+                errors.suffix.join(", ") +
+                " " +
+                Kooboo.text.alert.fileUpload.invalidType +
+                "\n";
+            }
+            return string;
+          }
+        }
+      });
+
+      function resetValue(el) {
+        $(el)
+          .wrap("<form>")
+          .parent("form")
+          .trigger("reset");
+        $(el).unwrap();
+      }
+    }
+  });
+
   var self;
   var vm = new Vue({
     el: '#app',
     data: {
+      breads: [{
+        name: 'SITES'
+      }, {
+        name: 'DASHBOARD'
+      }, {
+        name: Kooboo.text.common.mediaLibrary
+      }],
       curType: "list",
       pager: {},
       currentPath: undefined,
@@ -174,15 +302,15 @@ $(function () {
       },
       editImage: function (m) {
         var id = "";
-  
+
         if (self.curType == "grid") {
           id = self.selectedFiles[0].id;
         } else {
           id = m.id;
         }
-  
+
         var crumbPath = _.cloneDeep(self.crumbPath);
-  
+
         location.href =
           Kooboo.Route.Get(Kooboo.Route.Image.Edit, {
             Id: id
@@ -204,25 +332,25 @@ $(function () {
               self.selectAll = false;
               self.selectedFiles = [];
               self.crumbPath = res.model.crumbPath;
-  
+
               var _folders = [];
               _.forEach(res.model.folders, function (folder) {
                 _folders.push(new folderModel(folder));
               });
               self.folders = _folders;
               self._folders = _folders;
-  
+
               var _files = [];
               _.forEach(res.model.files.list, function (file) {
                 _files.push(new fileModel(file));
               });
               self.files = _files;
               self._files = _files;
-  
+
               self.pager = res.model.files;
-  
+
               self.reorder();
-  
+
               self.currentPath = path;
               if (path !== "/") {
                 location.hash = path;
@@ -248,7 +376,7 @@ $(function () {
         if (confirm(Kooboo.text.confirm.deleteItems)) {
           var folders = [],
             files = [];
-  
+
           _.forEach(self.selectedFiles, function (selected) {
             if (selected.type == "folder") {
               folders.push(selected.fullPath);
@@ -256,33 +384,33 @@ $(function () {
               files.push(selected.id);
             }
           });
-  
+
           Kooboo.Media.deleteFolders(JSON.stringify(folders)).then(function (res) {
             if (res.success) {
               _.forEach(folders, function (fullPath) {
                 var _find = _.find(self.folders, function (folder) {
                   return folder.fullPath == fullPath;
                 });
-                if(_find) {
+                if (_find) {
                   self.folders = _.without(self.folders, _find);
                 }
               });
             }
           });
-  
+
           Kooboo.Media.deleteImages(JSON.stringify(files)).then(function (res) {
             if (res.success) {
               _.forEach(files, function (id) {
                 var _find = _.find(self.files, function (files) {
                   return files.id == id;
                 });
-                if(_find) {
+                if (_find) {
                   self.files = _.without(self.files, _find);
                 }
               });
             }
           });
-  
+
           self.selectedFiles = [];
         }
       },
@@ -297,7 +425,7 @@ $(function () {
             }
           });
         }
-  
+
         if (!Kooboo.isFileNameExist(files, self.files)) {
           upload();
         } else {
@@ -328,11 +456,11 @@ $(function () {
           });
         }
       },
-      showDeleteBtn: function() {
+      showDeleteBtn: function () {
         return this.selectedFiles.length;
       }
     },
-    mounted: function() {
+    mounted: function () {
       Kooboo.EventBus.subscribe("kb/pager/change", function (page) {
         if (self.curImgType == "all") {
           self.onChoosingFolder(self.currentPath, page);
@@ -348,19 +476,19 @@ $(function () {
               });
               self.folders = _folders;
               self._folders = _folders;
-    
+
               var _files = [];
               _.forEach(res.model.files.list, function (file) {
                 _files.push(new fileModel(file));
               });
               self.files = _files;
               self._files = _files;
-    
+
               self.pager = res.model.files;
-    
+
               self.crumbPath = res.model.crumbPath;
               self.curImgType = type;
-    
+
               self.reorder();
               location.hash = "";
             }
@@ -454,7 +582,7 @@ $(function () {
   };
 
   vm.onChoosingFolder(location.hash ? location.hash.split("#")[1] : "");
-  
+
   Kooboo.EventBus.subscribe("window/popstate", function () {
     $(".modal").modal("hide");
     if (location.hash) {
