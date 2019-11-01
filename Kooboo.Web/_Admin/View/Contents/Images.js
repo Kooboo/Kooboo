@@ -1,137 +1,19 @@
-$(function () {
-  Vue.prototype.Kooboo = Kooboo;
-  Vue.directive('upload', {
-    bind: function (element, binding) {
-      var config = binding.value;
-      config.allowMultiple
-        ? $(element).attr("multiple", true)
-        : $(element).removeAttr("multiple");
-
-      if (config.acceptTypes && config.acceptTypes.length) {
-        $(element).attr("accept", config.acceptTypes.join(","));
-      }
-
-      $(element).change(function () {
-        var files = this.files,
-          len = files.length,
-          acceptableFilesLength = 0;
-
-        var availableFiles = [];
-
-        if (len) {
-          var data = new FormData();
-
-          var errors = {
-            size: [],
-            type: [],
-            suffix: []
-          };
-
-          _.forEach(files, function (file, idx) {
-            var fileName = file.name;
-
-            if (!config.acceptSuffix || !config.acceptSuffix.length) {
-              if (!config.acceptTypes || !config.acceptTypes.length) {
-                alert("Upload failed: please init the acceptType first.");
-              } else {
-                if (
-                  config.acceptTypes.indexOf(file.type) > -1 ||
-                  config.acceptTypes.indexOf("*/*") > -1
-                ) {
-                  if (file.size) {
-                    data.append("file_" + idx, file);
-                    availableFiles.push(file);
-                    acceptableFilesLength++;
-                  } else {
-                    errors.size.push(file.name);
-                  }
-                } else {
-                  errors.type.push(file.name);
-                }
-              }
-            } else {
-              if (fileName.indexOf(".") > -1) {
-                var suffix = fileName
-                  .split(".")
-                  .reverse()[0]
-                  .toLowerCase();
-
-                if (config.acceptSuffix.indexOf(suffix) > -1) {
-                  if (file.size) {
-                    data.append("file_" + idx, file);
-                    availableFiles.push(file);
-                    acceptableFilesLength++;
-                  } else {
-                    errors.size.push(file.name);
-                  }
-                } else {
-                  errors.suffix.push(file.name);
-                }
-              }
-            }
-          });
-
-          config.callback(data, availableFiles);
-          resetValue(element);
-
-          var errorString = getErrorString();
-          errorString && alert(errorString);
-
-          function getErrorString() {
-            var string = "";
-            if (errors.size.length) {
-              string +=
-                Kooboo.text.common.File +
-                " " +
-                errors.size.join(", ") +
-                " " +
-                Kooboo.text.alert.fileUpload.emptyFile +
-                "\n";
-            }
-            if (errors.type.length) {
-              string +=
-                Kooboo.text.common.File +
-                " " +
-                errors.type.join(", ") +
-                " " +
-                Kooboo.text.alert.fileUpload.invalidSuffix +
-                "\n";
-            }
-            if (errors.suffix.length) {
-              string +=
-                Kooboo.text.common.File +
-                " " +
-                errors.suffix.join(", ") +
-                " " +
-                Kooboo.text.alert.fileUpload.invalidType +
-                "\n";
-            }
-            return string;
-          }
-        }
-      });
-
-      function resetValue(el) {
-        $(el)
-          .wrap("<form>")
-          .parent("form")
-          .trigger("reset");
-        $(el).unwrap();
-      }
-    }
-  });
-
+$(function() {
   var self;
   var vm = new Vue({
-    el: '#app',
+    el: "#app",
     data: {
-      breads: [{
-        name: 'SITES'
-      }, {
-        name: 'DASHBOARD'
-      }, {
-        name: Kooboo.text.common.mediaLibrary
-      }],
+      breads: [
+        {
+          name: "SITES"
+        },
+        {
+          name: "DASHBOARD"
+        },
+        {
+          name: Kooboo.text.common.mediaLibrary
+        }
+      ],
       curType: "list",
       pager: {},
       currentPath: undefined,
@@ -177,11 +59,11 @@ $(function () {
       newFolderModal: false,
       showError: false
     },
-    beforeCreate: function () {
+    beforeCreate: function() {
       self = this;
     },
     methods: {
-      changeType: function (type) {
+      changeType: function(type) {
         self.curType = type;
         // _.debounce(
         //   function (type) {
@@ -193,23 +75,23 @@ $(function () {
         //   }
         // )(type)
       },
-      changeImgType: function (type) {
+      changeImgType: function(type) {
         if (type !== self.curImgType) {
           if (type !== "all") {
             self.currentPath = undefined;
             Kooboo.Media.getPagedListBy({
               by: type
-            }).then(function (res) {
+            }).then(function(res) {
               if (res.success) {
                 var _folders = [];
-                _.forEach(res.model.folders, function (folder) {
+                _.forEach(res.model.folders, function(folder) {
                   _folders.push(new folderModel(folder));
                 });
                 self.folders = _folders;
                 self._folders = _folders;
 
                 var _files = [];
-                _.forEach(res.model.files.list, function (file) {
+                _.forEach(res.model.files.list, function(file) {
                   _files.push(new fileModel(file));
                 });
                 self.files = _files;
@@ -230,53 +112,53 @@ $(function () {
           }
         }
       },
-      resetCurImgType: function () {
+      resetCurImgType: function() {
         this.changeImgType("all");
       },
-      currentOrderCSS: function (type) {
+      currentOrderCSS: function(type) {
         if (self.currentSort == type) {
           return this.isAsc ? "asc" : "desc";
         } else {
           return "";
         }
       },
-      changeSort: function (sort) {
+      changeSort: function(sort) {
         self.isAsc = self.currentSort == sort ? !self.isAsc : false;
         self.currentSort = sort;
         self.reorder();
       },
-      reorder: function () {
+      reorder: function() {
         var _folders = _.cloneDeep(self.folders),
           _files = _.cloneDeep(self.files);
 
         switch (self.currentSort) {
           case "url":
             _folders = _.sortBy(self.folders, [
-              function (f) {
+              function(f) {
                 return f.name;
               }
             ]);
             _files = _.sortBy(self.files, [
-              function (f) {
+              function(f) {
                 return f.name;
               }
             ]);
             break;
           case "size":
             _files = _.sortBy(self.files, [
-              function (f) {
+              function(f) {
                 return f.size;
               }
             ]);
             break;
           case "date":
             _folders = _.sortBy(self.folders, [
-              function (f) {
+              function(f) {
                 return f.lastModified;
               }
             ]);
             _files = _.sortBy(self.files, [
-              function (f) {
+              function(f) {
                 return f.lastModified;
               }
             ]);
@@ -291,7 +173,7 @@ $(function () {
           self.files.reverse();
         }
       },
-      selectDoc: function (doc) {
+      selectDoc: function(doc) {
         doc.selected = !doc.selected;
         if (doc.selected) {
           self.selectedFiles.push(doc);
@@ -300,7 +182,7 @@ $(function () {
         }
         return true;
       },
-      editImage: function (m) {
+      editImage: function(m) {
         var id = "";
 
         if (self.curType == "grid") {
@@ -318,7 +200,7 @@ $(function () {
           "#" +
           crumbPath.reverse()[0].fullPath;
       },
-      onChoosingFolder: function (path, page) {
+      onChoosingFolder: function(path, page) {
         if (
           !self.currentPath ||
           self.currentPath !== path ||
@@ -327,21 +209,21 @@ $(function () {
           Kooboo.Media.getPagedList({
             path: path,
             pageNr: page ? (typeof page == "number" ? page : 1) : 1
-          }).then(function (res) {
+          }).then(function(res) {
             if (res.success) {
               self.selectAll = false;
               self.selectedFiles = [];
               self.crumbPath = res.model.crumbPath;
 
               var _folders = [];
-              _.forEach(res.model.folders, function (folder) {
+              _.forEach(res.model.folders, function(folder) {
                 _folders.push(new folderModel(folder));
               });
               self.folders = _folders;
               self._folders = _folders;
 
               var _files = [];
-              _.forEach(res.model.files.list, function (file) {
+              _.forEach(res.model.files.list, function(file) {
                 _files.push(new fileModel(file));
               });
               self.files = _files;
@@ -361,23 +243,23 @@ $(function () {
           });
         }
       },
-      getRelation: function (file, type) {
+      getRelation: function(file, type) {
         Kooboo.EventBus.publish("kb/relation/modal/show", {
           id: file.id,
           by: type,
           type: "Image"
         });
       },
-      localDate: function (date) {
+      localDate: function(date) {
         var d = new Date(date);
         return d.toDefaultLangString();
       },
-      onDelete: function () {
+      onDelete: function() {
         if (confirm(Kooboo.text.confirm.deleteItems)) {
           var folders = [],
             files = [];
 
-          _.forEach(self.selectedFiles, function (selected) {
+          _.forEach(self.selectedFiles, function(selected) {
             if (selected.type == "folder") {
               folders.push(selected.fullPath);
             } else if (selected.type == "file") {
@@ -385,10 +267,12 @@ $(function () {
             }
           });
 
-          Kooboo.Media.deleteFolders(JSON.stringify(folders)).then(function (res) {
+          Kooboo.Media.deleteFolders(JSON.stringify(folders)).then(function(
+            res
+          ) {
             if (res.success) {
-              _.forEach(folders, function (fullPath) {
-                var _find = _.find(self.folders, function (folder) {
+              _.forEach(folders, function(fullPath) {
+                var _find = _.find(self.folders, function(folder) {
                   return folder.fullPath == fullPath;
                 });
                 if (_find) {
@@ -398,10 +282,10 @@ $(function () {
             }
           });
 
-          Kooboo.Media.deleteImages(JSON.stringify(files)).then(function (res) {
+          Kooboo.Media.deleteImages(JSON.stringify(files)).then(function(res) {
             if (res.success) {
-              _.forEach(files, function (id) {
-                var _find = _.find(self.files, function (files) {
+              _.forEach(files, function(id) {
+                var _find = _.find(self.files, function(files) {
                   return files.id == id;
                 });
                 if (_find) {
@@ -414,11 +298,11 @@ $(function () {
           self.selectedFiles = [];
         }
       },
-      uploadImage: function (data, files) {
+      uploadImage: function(data, files) {
         function upload() {
           var folders = _.cloneDeep(self.crumbPath);
           data.append("folder", folders.reverse()[0].fullPath);
-          Kooboo.Upload.Images(data).then(function (res) {
+          Kooboo.Upload.Images(data).then(function(res) {
             if (res.success) {
               self.currentPath = "";
               self.onChoosingFolder(folders[0].fullPath);
@@ -433,52 +317,52 @@ $(function () {
             upload();
           }
         }
-      },
+      }
     },
     computed: {
       selectAll: {
-        get: function () {
+        get: function() {
           var allLength = self.folders.length + self.files.length;
           if (allLength === 0) {
             return false;
           }
           return self.selectedFiles.length == allLength;
         },
-        set: function (checked) {
+        set: function(checked) {
           self.selectedFiles = [];
-          _.forEach(self.folders, function (folder) {
+          _.forEach(self.folders, function(folder) {
             folder.selected = checked;
             checked && self.selectedFiles.push(folder);
           });
-          _.forEach(self.files, function (file) {
+          _.forEach(self.files, function(file) {
             file.selected = checked;
             checked && self.selectedFiles.push(file);
           });
         }
       },
-      showDeleteBtn: function () {
+      showDeleteBtn: function() {
         return this.selectedFiles.length;
       }
     },
-    mounted: function () {
-      Kooboo.EventBus.subscribe("kb/pager/change", function (page) {
+    mounted: function() {
+      Kooboo.EventBus.subscribe("kb/pager/change", function(page) {
         if (self.curImgType == "all") {
           self.onChoosingFolder(self.currentPath, page);
         } else {
           Kooboo.Media.getPagedListBy({
             by: type,
             pageNr: page
-          }).then(function (res) {
+          }).then(function(res) {
             if (res.success) {
               var _folders = [];
-              _.forEach(res.model.folders, function (folder) {
+              _.forEach(res.model.folders, function(folder) {
                 _folders.push(new folderModel(folder));
               });
               self.folders = _folders;
               self._folders = _folders;
 
               var _files = [];
-              _.forEach(res.model.files.list, function (file) {
+              _.forEach(res.model.files.list, function(file) {
                 _files.push(new fileModel(file));
               });
               self.files = _files;
@@ -498,7 +382,7 @@ $(function () {
     }
   });
 
-  var fileModel = function (file) {
+  var fileModel = function(file) {
     file.thumbnail = file.thumbnail + "&timestamp=" + +new Date();
     file.type = "file";
     file.selected = false;
@@ -506,22 +390,21 @@ $(function () {
     return file;
   };
 
-  var folderModel = function (folder) {
+  var folderModel = function(folder) {
     folder.type = "folder";
     folder.selected = false;
     return folder;
   };
 
-
-  var mediaViewModel = function () {
+  var mediaViewModel = function() {
     // Create Folder
 
     this.folderName = ko.validateField({
       required: Kooboo.text.validation.required,
       localUnique: {
-        compare: function () {
+        compare: function() {
           var list = [];
-          _.forEach(self.folders(), function (folder) {
+          _.forEach(self.folders(), function(folder) {
             list.push(folder.name());
           });
           list.push(self.folderName());
@@ -545,20 +428,20 @@ $(function () {
       }
     });
 
-    this.onCreateFolder = function () {
+    this.onCreateFolder = function() {
       self.folderName("");
       self.newFolderModal(true);
     };
 
-    this.onNewFolderModalReset = function () {
+    this.onNewFolderModalReset = function() {
       self.newFolderModal(false);
       self.folderName("");
       self.showError(false);
     };
 
-    this.onNewFolderModalSubmit = function () {
+    this.onNewFolderModalSubmit = function() {
       if (self.folderName.isValid()) {
-        var isExistFolder = _.find(self.folders, function (folder) {
+        var isExistFolder = _.find(self.folders, function(folder) {
           return self.folderName() == folder.name();
         });
 
@@ -568,7 +451,7 @@ $(function () {
           Kooboo.Media.createFolder({
             path: self.crumbPath()[self.crumbPath().length - 1].fullPath,
             name: self.folderName()
-          }).then(function (res) {
+          }).then(function(res) {
             if (res.success) {
               self.folders.push(new folderModel(res.model));
               self.onNewFolderModalReset();
@@ -583,7 +466,7 @@ $(function () {
 
   vm.onChoosingFolder(location.hash ? location.hash.split("#")[1] : "");
 
-  Kooboo.EventBus.subscribe("window/popstate", function () {
+  Kooboo.EventBus.subscribe("window/popstate", function() {
     $(".modal").modal("hide");
     if (location.hash) {
       var path = location.hash.split("#")[1];
