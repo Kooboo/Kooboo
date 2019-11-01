@@ -1,0 +1,20 @@
+﻿<aside id="sidebar">
+    <!-- ko if: hasSiteName -->
+    <div class="topbar">
+        <div class="block-sitemanager">
+            <a class="return-link" data-bind="attr: { href: dashboardUrl }, click: $component.SPAClick" title="Dashboard"><i class="fa fa-tachometer"></i></a>
+            <h6 class="title" data-bind="text: Kooboo.text.component.sidebar.currentSite"></h6>
+            <div class="switcher block">
+                <span class="current">
+                    <span data-bind="text: siteName"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+    <!-- /ko -->
+    <div data-bind="css: {wrap:hasSiteName}" class="wrap">
+        <nav class="block-menu">
+            <sidebar-list params="listData: sidebar"></sidebar-list>
+        </nav>
+    </div>
+</aside>

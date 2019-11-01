@@ -1,0 +1,79 @@
+﻿<ul>
+    <!-- ko foreach: listData -->
+
+    <!-- ko if: !icon && !url && level===1 -->
+    <li class="title" data-bind="text: displayName, attr:{'data-id': name}"></li>
+    <!-- ko if: items.length>0 -->
+    <!-- ko component: {
+            name: "sidebar-list",
+            params: { listData: items }
+        } -->
+    <!-- /ko -->
+    <!-- /ko -->
+    <!-- /ko -->
+
+    <!-- ko if: !icon && !url && level > 1 -->
+    <li data-bind="css:{active: !!active}, attr:{'data-id': name}">
+        <span class="arrow" data-toggle="expand"><i class="icon fa"></i></span>
+        <a data-bind="text: displayName" href="javascript:;" data-toggle="expand" target="_self">
+        </a>
+        <!-- ko if: items.length>0 -->
+        <!-- ko component: {
+            name: "sidebar-list",
+            params: { listData: items }
+        } -->
+        <!-- /ko -->
+        <!-- /ko -->
+    </li>
+    <!-- /ko -->
+
+
+    <!-- ko if: !!icon && !!url -->
+    <li data-bind="css: {current: !!current}, attr:{'data-id': name}">
+        <a data-bind="attr:{'href': url}, click: $component.SPAClick" target="_self">
+            <i data-bind="attr:{'class': icon}"></i>
+            <!-- ko text: displayName -->
+            <!-- /ko -->
+        </a>
+    </li>
+    <!-- /ko -->
+
+    <!-- ko if: !!icon && !url -->
+    <li data-bind="css:{active: !!active}, attr:{'data-id': name}">
+        <span class="arrow" data-toggle="expand"><i class="icon fa"></i></span>
+        <a href="javascript:;" data-toggle="expand" target="_self">
+            <i data-bind="attr:{'class': icon}"></i>
+            <!-- ko text: displayName -->
+            <!-- /ko -->
+        </a>
+        <!-- ko if: items.length>0 -->
+        <!-- ko component: {
+            name: "sidebar-list",
+            params: { listData: items }
+        } -->
+        <!-- /ko -->
+        <!-- /ko -->
+    </li>
+    <!-- /ko -->
+
+    <!-- ko if: !icon && !!url -->
+    <li data-bind="css: {current: !!current, active: !!active}, attr:{'data-id': name}">
+        <!-- ko if: items.length>0 -->
+        <span class="arrow" data-toggle="expand"><i class="icon fa"></i></span>
+        <!-- /ko -->
+        <a data-bind="attr:{'href': url}, click: $component.SPAClick" target="_self">
+            <!-- ko text: displayName -->
+            <!-- /ko -->
+        </a>
+        <!-- ko if: items.length>0 -->
+        <!-- ko component: {
+            name: "sidebar-list",
+            params: { listData: items }
+        } -->
+        <!-- /ko -->
+        <!-- /ko -->
+    </li>
+    <!-- /ko -->
+
+    <!-- /ko -->
+</ul>

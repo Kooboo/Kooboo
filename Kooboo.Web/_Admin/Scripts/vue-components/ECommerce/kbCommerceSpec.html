@@ -1,0 +1,26 @@
+<div class="form-horizontal">
+    <!-- ko foreach: dynamicSpecs -->
+    <div class="form-group">
+        <label data-bind="text: $data.name" class="control-label col-md-3"></label>
+        <div class="col-md-9">
+            <!-- ko foreach: { data: $data.options, as: 'opt' } -->
+            <span class="btn btn-default">
+            <!-- ko text: opt -->
+            <!-- /ko -->
+            <i class="fa fa-close" data-bind="click: $parent.removeOption.bind(this)"></i>
+        </span>
+            <!-- /ko -->
+            <!-- ko if: showNewOptionForm -->
+            <div class="form-inline" style="display: inline-block;">
+                <div class="form-group">
+                    <input type="text" class="form-control" data-bind="value: newValue, error: newValue, errorPlacement: 'top'">
+                    <button class="btn btn-default" data-bind="click: saveOption"><i class="fa fa-check"></i></button>
+                    <button class="btn btn-default" data-bind="click: resetForm"><i class="fa fa-close"></i></button>
+                </div>
+            </div>
+            <!-- /ko -->
+            <button class="btn dark" data-bind="click: addOption, visible: !showNewOptionForm()"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <!-- /ko -->
+</div>
